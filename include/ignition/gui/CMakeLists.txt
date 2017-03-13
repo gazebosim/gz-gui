@@ -2,6 +2,7 @@ include (${project_cmake_dir}/Utils.cmake)
 
 set (headers
   Example.hh
+  ign.hh
   System.hh
 )
 
