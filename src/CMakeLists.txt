@@ -1,17 +1,15 @@
-include (${project_cmake_dir}/Utils.cmake)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 set (sources
-  Example.cc
-  ign.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Example.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
+  PARENT_SCOPE
 )
 
 set (gtest_sources
   Example_TEST.cc
 )
 
-ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION} ${sources})
 ign_build_tests(${gtest_sources})
-ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})
 
 add_subdirectory(cmd)

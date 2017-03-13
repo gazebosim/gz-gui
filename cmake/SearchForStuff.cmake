@@ -17,3 +17,25 @@ if (IGNITION-TOOLS_BINARY_DIRS)
 else()
   BUILD_WARNING ("ignition-tools not found, for command line utilities, please install ignition-tools.")
 endif()
+
+########################################
+# Find QT
+find_package (Qt5Widgets)
+if (NOT Qt5Widgets_FOUND)
+  BUILD_ERROR("Missing: Qt5Widgets")
+endif()
+
+find_package (Qt5Core)
+if (NOT Qt5Core_FOUND)
+  BUILD_ERROR("Missing: Qt5Core")
+endif()
+
+find_package (Qt5OpenGL)
+if (NOT Qt5OpenGL_FOUND)
+  BUILD_ERROR("Missing: Qt5OpenGL")
+endif()
+
+find_package (Qt5Test)
+if (NOT Qt5Test_FOUND)
+  BUILD_ERROR("Missing: Qt5Test")
+endif()

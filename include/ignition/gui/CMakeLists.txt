@@ -1,16 +1,41 @@
 include (${project_cmake_dir}/Utils.cmake)
 
+include_directories(
+  ${Qt5Core_INCLUDE_DIRS}
+)
+
+set (CMAKE_AUTOMOC ON)
+
+add_definitions(${Qt5Core_DEFINITIONS})
+
+set (qt_headers
+  Iface.hh
+  MainWindow.hh
+)
+
 set (headers
   Example.hh
   ign.hh
+  qt.h
   System.hh
 )
+
+QT5_WRAP_CPP(headers_MOC ${qt_headers})
+
+ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION} ${sources} ${headers_MOC})
+
+target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
+  ${Qt5Core_LIBRARIES}
+  ${Qt5Widgets_LIBRARIES}
+)
+
+ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})
 
 #################################################
 ### Do not change the following
 
 set (ign_headers "" CACHE INTERNAL "Ignition headers" FORCE)
-foreach (hdr ${headers})
+foreach (hdr ${headers} ${qt_headers})
   APPEND_TO_CACHED_STRING(ign_headers
     "Ignition headers" "#include <ignition/${IGN_PROJECT_NAME}/${hdr}>\n")
 endforeach()
@@ -19,4 +44,5 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/ign_auto_headers.hh.in
   ${CMAKE_CURRENT_BINARY_DIR}/${IGN_PROJECT_NAME}.hh)
 
 ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_PROJECT_NAME}.hh)
-ign_install_includes(${IGN_PROJECT_NAME} ${headers})
+ign_install_includes(${IGN_PROJECT_NAME} ${headers} ${qt_headers})
+
