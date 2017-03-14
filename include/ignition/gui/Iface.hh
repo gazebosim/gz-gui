@@ -38,6 +38,14 @@ namespace ignition
     /// \brief Stop the graphical interface.
     IGNITION_GUI_VISIBLE
     void stop();
+
+    /// \brief
+    IGNITION_GUI_VISIBLE
+    bool installSignalHandler();
+
+    /// \brief
+    IGNITION_GUI_VISIBLE
+    bool standalonePlugin(const std::string &_filename);
   }
 }
 #endif

@@ -41,6 +41,8 @@ COMMANDS = {  'gui' =>
                        "  ign gui [options]\n\n"                             +
                        "Options:\n\n"                                          +
                        "  -l [ --list ]      List all available plugins.\n"       +
+                       "  -s [ --standalone ] arg Run a plugin as a standalone window." +
+                                                 "Give the plugin filename as an argument\n"       +
                        COMMON_OPTIONS,
             }
 
@@ -66,6 +68,10 @@ class Cmd
       end
       opts.on('-l', '--list', 'List plugins') do |l|
         options['list'] = l
+      end
+      opts.on('-s standalone', '--standalone', String,
+          'Run a plugin standalone') do |s|
+        options['standalone'] = s
       end
 
     end
@@ -129,6 +135,9 @@ class Cmd
         if options.key?('list')
           Importer.extern 'void cmdPluginList()'
           Importer.cmdPluginList
+        elsif options.key?('standalone')
+          Importer.extern 'void cmdStandalone(const char *)'
+          Importer.cmdStandalone(options['standalone'])
         else
           puts 'Command error: I do not have an implementation '\
                'for this command.'

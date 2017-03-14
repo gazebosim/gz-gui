@@ -19,6 +19,7 @@
 
 #include <iostream>
 
+#include "ignition/gui/Iface.hh"
 #include "ignition/gui/ign.hh"
 #include "ignition/gui/System.hh"
 
@@ -26,6 +27,12 @@
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
   std::cout << "Here you see the list of available plugins" << std::endl;
+}
+
+//////////////////////////////////////////////////
+extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
+{
+  ignition::gui::standalonePlugin(std::string(_filename));
 }
 
 //////////////////////////////////////////////////

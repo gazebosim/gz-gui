@@ -11,6 +11,7 @@ add_definitions(${Qt5Core_DEFINITIONS})
 set (qt_headers
   Iface.hh
   MainWindow.hh
+  Plugin.hh
 )
 
 set (headers

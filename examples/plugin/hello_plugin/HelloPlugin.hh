@@ -15,19 +15,36 @@
  *
 */
 
-#ifndef IGNITION_GUI_IGN_HH_
-#define IGNITION_GUI_IGN_HH_
+#ifndef IGNITION_GUI_HELLOPLUGIN_HH_
+#define IGNITION_GUI_HELLOPLUGIN_HH_
 
-#include "ignition/gui/System.hh"
+#ifndef Q_MOC_RUN
+  #include <ignition/gui/qt.h>
+  #include <ignition/gui/Plugin.hh>
+#endif
 
-/// \brief External hook to execute 'ign gui -l' from the command line.
-extern "C" IGNITION_GUI_VISIBLE void cmdPluginList();
+using namespace ignition;
+using namespace gui;
 
-/// \brief External hook to execute 'ign gui -s' from the command line.
-extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename);
+namespace ignition
+{
+  namespace gui
+  {
+    class IGNITION_GUI_VISIBLE HelloPlugin : public GUIPlugin
+    {
+      Q_OBJECT
 
-/// \brief External hook to read the library version.
-/// \return C-string representing the version. Ex.: 0.1.2
-extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion();
+      /// \brief Constructor
+      /// \param[in] _parent Parent widget
+      public: HelloPlugin();
+
+      /// \brief Destructor
+      public: virtual ~HelloPlugin();
+
+      /// \brief Callback trigged when the button is pressed.
+      protected slots: void OnButton();
+    };
+  }
+}
 
 #endif
