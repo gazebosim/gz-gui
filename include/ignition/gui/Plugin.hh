@@ -127,8 +127,14 @@ namespace ignition
   #endif  // ifdef __APPLE__
 
                 // TODO: Get paths from env variable
+
+                char *homePath = getenv("HOME");
+                std::string home;
+                if (homePath)
+                  home = homePath;
+
                 std::list<std::string> pluginPaths;
-                pluginPaths.push_back("/home/louise/.igngui/plugins");
+                pluginPaths.push_back(home + "/.ignition/gui/plugins");
 
                 struct stat st;
                 for (auto iter : pluginPaths)

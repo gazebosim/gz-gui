@@ -72,4 +72,44 @@ To run the code checker:
 
     # TODO
 
+## Examples
+
+### Using as a library
+
+Ignition GUI can be used as a C++ library by other applications.
+
+An example is provided in which an empty window can be opened
+programmatically.
+
+Build it as follows:
+
+    cd examples/standalone/window
+    mkdir build
+    cd build
+    cmake ..
+    make
+
+Then run it:
+
+    ./window
+
+### Standalone plugin
+
+It's possible to use the command line to load a custom plugin.
+
+First, build the example plugin:
+
+    cd examples/plugin/hello_plugin
+    mkdir build
+    cd build
+    cmake ..
+    make
+
+Then copy the generated library to a directory where Ignition GUI can find it:
+
+    cp libhello_plugin.so ~/.ignition/gui/plugins/
+
+Now you can use the command line to open it:
+
+    ign gui -s libhello_plugin.so
 
