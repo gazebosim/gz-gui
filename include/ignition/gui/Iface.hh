@@ -46,6 +46,10 @@ namespace ignition
     /// \brief
     IGNITION_GUI_VISIBLE
     bool standalonePlugin(const std::string &_filename);
+
+    /// \brief
+    IGNITION_GUI_VISIBLE
+    bool loadConfig(const std::string &_config);
   }
 }
 #endif

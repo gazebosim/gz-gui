@@ -113,3 +113,18 @@ Now you can use the command line to open it:
 
     ign gui -s libhello_plugin.so
 
+### Loading a configuration file
+
+It's possible to use the command line to load a configuration file specifying
+plugins to load.
+
+Example configuration files are provided in the `/examples/config` folder.
+
+To run the example `hello.config`:
+
+1. First, build the `hello_plugin` above.
+
+1. Then, load the GUI from the command line with the configuration file:
+
+    ign gui -c examples/config/hello.config
+

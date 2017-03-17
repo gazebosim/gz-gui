@@ -24,6 +24,12 @@
 #include "ignition/gui/System.hh"
 
 //////////////////////////////////////////////////
+extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
+{
+  return strdup("0.1.0");
+}
+
+//////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
   std::cout << "Here you see the list of available plugins" << std::endl;
@@ -36,7 +42,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
+extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
-  return strdup("0.1.0");
+  ignition::gui::loadConfig(std::string(_config));
 }

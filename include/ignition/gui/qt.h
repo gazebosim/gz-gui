@@ -43,6 +43,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDesktopWidget>
 #include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QDockWidget>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QFrame>

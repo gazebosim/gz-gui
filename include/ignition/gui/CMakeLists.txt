@@ -2,6 +2,7 @@ include (${project_cmake_dir}/Utils.cmake)
 
 include_directories(
   ${Qt5Core_INCLUDE_DIRS}
+  ${tinyxml_INCLUDE_DIRS}
 )
 
 set (CMAKE_AUTOMOC ON)
@@ -28,6 +29,7 @@ ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION} ${sources} ${heade
 target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
+  ${tinyxml2_LIBRARIES}
 )
 
 ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})

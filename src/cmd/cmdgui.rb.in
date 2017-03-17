@@ -43,6 +43,8 @@ COMMANDS = {  'gui' =>
                        "  -l [ --list ]      List all available plugins.\n"       +
                        "  -s [ --standalone ] arg Run a plugin as a standalone window." +
                                                  "Give the plugin filename as an argument\n"       +
+                       "  -c [ --config ] arg Open the main window with a configuration file." +
+                                                 "Give the configuration file path as an argument\n"       +
                        COMMON_OPTIONS,
             }
 
@@ -72,6 +74,10 @@ class Cmd
       opts.on('-s standalone', '--standalone', String,
           'Run a plugin standalone') do |s|
         options['standalone'] = s
+      end
+      opts.on('-c config', '--config', String,
+          'Load a configuration file') do |c|
+        options['config'] = c
       end
 
     end
@@ -138,6 +144,9 @@ class Cmd
         elsif options.key?('standalone')
           Importer.extern 'void cmdStandalone(const char *)'
           Importer.cmdStandalone(options['standalone'])
+        elsif options.key?('config')
+          Importer.extern 'void cmdConfig(const char *)'
+          Importer.cmdConfig(options['config'])
         else
           puts 'Command error: I do not have an implementation '\
                'for this command.'

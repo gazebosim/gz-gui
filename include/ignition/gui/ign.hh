@@ -20,14 +20,17 @@
 
 #include "ignition/gui/System.hh"
 
+/// \brief External hook to read the library version.
+/// \return C-string representing the version. Ex.: 0.1.2
+extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion();
+
 /// \brief External hook to execute 'ign gui -l' from the command line.
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList();
 
 /// \brief External hook to execute 'ign gui -s' from the command line.
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename);
 
-/// \brief External hook to read the library version.
-/// \return C-string representing the version. Ex.: 0.1.2
-extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion();
+/// \brief External hook to execute 'ign gui -c' from the command line.
+extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config);
 
 #endif
