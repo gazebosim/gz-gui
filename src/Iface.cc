@@ -39,50 +39,26 @@ MainWindow *g_main_win = nullptr;
 std::vector<std::shared_ptr<GUIPlugin>> g_plugins;
 
 /////////////////////////////////////////////////
-bool ignition::gui::load()
+// Check whether the app has been initialized
+bool checkApp()
 {
-  std::cout << "Load Iface" << std::endl;
-
-  // Create app
-  g_app = new QApplication(g_argc, g_argv);
-
-  // Create main window
-  g_main_win = new MainWindow();
-
-  // Install signal handler for graceful shutdown
-  installSignalHandler();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool ignition::gui::run(int /*_argc*/, char ** /*_argv*/)
-{
-  std::cout << "Run Iface" << std::endl;
-  if (!ignition::gui::load())
-    return false;
-
-  // Execute app
-  g_app->exec();
-
-  stop();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool ignition::gui::installSignalHandler()
-{
-#ifndef _WIN32
-  // Install a signal handler to allow for graceful shutdown on Ctrl-C.
-
   if (!g_app)
   {
-    std::cerr << "Please create an app before installing the signal handler"
+    std::cerr << "Application not initialized. Have you called initApp() yet?"
               << std::endl;
-    return false;
   }
 
+  return g_app;
+}
+
+/////////////////////////////////////////////////
+// Install a signal handler to allow graceful shutdown on Ctrl-C.
+bool installSignalHandler()
+{
+  if (!checkApp())
+    return false;
+
+#ifndef _WIN32
   auto handler = [](int)
       {
         stop();
@@ -109,18 +85,28 @@ bool ignition::gui::installSignalHandler()
 }
 
 /////////////////////////////////////////////////
-void ignition::gui::stop()
+bool ignition::gui::runConfig(const std::string &_config)
 {
-  std::cout << "Stop" << std::endl;
+  std::cout << "Loading config file [" << _config << "]" << std::endl;
 
-  g_plugins.clear();
-  g_app->quit();
+  if (_config.empty())
+  {
+    std::cerr << "Missing config filename" << std::endl;
+    return false;
+  }
+
+  initApp();
+  loadConfig(_config);
+  runMainWindow();
+  stop();
+
+  return true;
 }
 
 /////////////////////////////////////////////////
-bool ignition::gui::standalonePlugin(const std::string &_filename)
+bool ignition::gui::runStandalone(const std::string &_filename)
 {
-  std::cout << "Loading standalone plugin" << std::endl;
+  std::cout << "Loading standalone plugin [" << _filename << "]" << std::endl;
 
   if (_filename.empty())
   {
@@ -128,25 +114,35 @@ bool ignition::gui::standalonePlugin(const std::string &_filename)
     return false;
   }
 
+  initApp();
+  loadPlugin(_filename);
+  runDialogs();
+  stop();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::initApp()
+{
+  std::cout << "Init app" << std::endl;
+
+  // Create app
   g_app = new QApplication(g_argc, g_argv);
 
+  // Install signal handler for graceful shutdown
   installSignalHandler();
 
-  auto plugin = ignition::gui::GUIPlugin::Create(_filename, "hello_plugin");
+  return true;
+}
 
-  if (!plugin)
-  {
-    std::cerr << "Failed to load plugin [" << _filename << "]" << std::endl;
-    return false;
-  }
+/////////////////////////////////////////////////
+bool ignition::gui::stop()
+{
+  std::cout << "Stop" << std::endl;
 
-  auto layout = new QVBoxLayout();
-  layout->addWidget(plugin.get());
-
-  auto dialog = new QDialog();
-  dialog->setLayout(layout);
-
-  dialog->exec();
+  g_plugins.clear();
+  g_app->quit();
 
   return true;
 }
@@ -154,7 +150,8 @@ bool ignition::gui::standalonePlugin(const std::string &_filename)
 /////////////////////////////////////////////////
 bool ignition::gui::loadConfig(const std::string &_config)
 {
-  std::cout << "Loading config file [" << _config << "]" << std::endl;
+  if (!checkApp())
+    return false;
 
   if (_config.empty())
   {
@@ -162,17 +159,9 @@ bool ignition::gui::loadConfig(const std::string &_config)
     return false;
   }
 
-  // Open file
-  auto file = fopen(_config.c_str() , "r");
-  if (!file)
-  {
-    std::cout << "Failed to open file [" << _config << "]" << std::endl;
-    return false;
-  }
-
   // Use tinyxml to read config
   tinyxml2::XMLDocument doc;
-  auto success = !doc.LoadFile(file);
+  auto success = !doc.LoadFile(_config.c_str());
   if (!success)
   {
     std::cout << "Failed to load file [" << _config << "]: XMLError"
@@ -180,16 +169,13 @@ bool ignition::gui::loadConfig(const std::string &_config)
     return false;
   }
 
-  // Start application
-  load();
-
   // Process each plugin
   for(auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
-    // Load plugin
     auto filename = pluginElem->Attribute("filename");
 
+    // Load plugin
     auto plugin = ignition::gui::GUIPlugin::Create(filename, "hello_plugin");
     if (!plugin)
     {
@@ -197,22 +183,81 @@ bool ignition::gui::loadConfig(const std::string &_config)
       return false;
     }
 
-    // Create dock widget
-    auto name = pluginElem->Attribute("name");
-
-    auto dock = new QDockWidget(name, g_main_win);
-    dock->setAllowedAreas(Qt::LeftDockWidgetArea |
-                          Qt::RightDockWidgetArea);
-    dock->setWidget(&*plugin);
-    g_main_win->addDockWidget(Qt::LeftDockWidgetArea, dock);
+//    plugin->SetConfig(pluginElem);
 
     // Store plugin in list
     g_plugins.push_back(plugin);
   }
 
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::loadPlugin(const std::string &_filename)
+{
+  if (!checkApp())
+    return false;
+
+  auto plugin = ignition::gui::GUIPlugin::Create(_filename, "NAME?");
+
+  if (!plugin)
+  {
+    std::cerr << "Failed to load plugin [" << _filename << "]" << std::endl;
+    return false;
+  }
+
+  // Store plugin in list
+  g_plugins.push_back(plugin);
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::runMainWindow()
+{
+  if (!checkApp())
+    return false;
+
+  std::cout << "Run main window" << std::endl;
+
+  g_main_win = new MainWindow();
+
+  // Create a widget for each plugin
+  for (auto plugin : g_plugins)
+  {
+//    auto name = plugin->Get("name");
+
+    auto dock = new QDockWidget("nameeee", g_main_win);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea |
+                          Qt::RightDockWidgetArea);
+    dock->setWidget(&*plugin);
+    g_main_win->addDockWidget(Qt::LeftDockWidgetArea, dock);
+  }
+
+  // Execute app
   g_app->exec();
 
-  stop();
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::runDialogs()
+{
+  if (!checkApp())
+    return false;
+
+  std::cout << "Run dialogs" << std::endl;
+
+  for (auto plugin : g_plugins)
+  {
+    auto layout = new QVBoxLayout();
+    layout->addWidget(plugin.get());
+
+    auto dialog = new QDialog();
+    dialog->setLayout(layout);
+
+    dialog->exec();
+  }
 
   return true;
 }

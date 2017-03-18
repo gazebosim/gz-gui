@@ -28,11 +28,12 @@ using namespace gui;
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
-  int result = 0;
   std::cout << "Hello, GUI!" << std::endl;
+  int result = 0;
 
-  if (!run(_argc, _argv))
-    result = -1;
+  initApp();
+  runMainWindow();
+  stop();
 
   std::cout << "After run" << std::endl;
 

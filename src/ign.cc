@@ -38,11 +38,11 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
-  ignition::gui::standalonePlugin(std::string(_filename));
+  ignition::gui::runStandalone(std::string(_filename));
 }
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
-  ignition::gui::loadConfig(std::string(_config));
+  ignition::gui::runConfig(std::string(_config));
 }
