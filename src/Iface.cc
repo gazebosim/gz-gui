@@ -130,6 +130,12 @@ bool ignition::gui::initApp()
   // Create app
   g_app = new QApplication(g_argc, g_argv);
 
+  // Set style
+  QFile file(":/style.qss");
+  file.open(QFile::ReadOnly);
+  QString styleSheet = QLatin1String(file.readAll());
+  g_app->setStyleSheet(styleSheet);
+
   // Install signal handler for graceful shutdown
   installSignalHandler();
 

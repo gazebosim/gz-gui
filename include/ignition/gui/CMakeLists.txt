@@ -22,9 +22,16 @@ set (headers
   System.hh
 )
 
-QT5_WRAP_CPP(headers_MOC ${qt_headers})
+set (resources resources.qrc)
 
-ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION} ${sources} ${headers_MOC})
+QT5_WRAP_CPP(headers_MOC ${qt_headers})
+QT5_ADD_RESOURCES(resources_RCC ${resources})
+
+ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
+  ${sources}
+  ${headers_MOC}
+  ${resources_RCC}
+)
 
 target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${Qt5Core_LIBRARIES}
