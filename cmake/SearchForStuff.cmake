@@ -40,6 +40,32 @@ if (NOT Qt5Test_FOUND)
   BUILD_ERROR("Missing: Qt5Test")
 endif()
 
+find_package(Qt5Quick)
+if (NOT Qt5Quick_FOUND)
+  BUILD_ERROR("Missing: Qt5Quick")
+endif()
+
+find_package(Qt5QuickWidgets)
+if (NOT Qt5QuickQidgets_FOUND)
+  BUILD_ERROR("Missing: Qt5QuickWidgets")
+endif()
+
+find_package(Qt5QuickCompiler)
+if (NOT Qt5QuickCompiler_FOUND)
+  BUILD_ERROR("Missing: Qt5QuickCompiler")
+endif()
+
+find_package(Qt5Qml)
+if (NOT Qt5Qml_FOUND)
+  BUILD_ERROR("Missing: Qt5Qml")
+endif()
+
+find_package(Qt5Gui)
+if (NOT Qt5Gui_FOUND)
+  BUILD_ERROR("Missing: Qt5Gui")
+endif()
+
+
 #################################################
 # Find tinyxml2. Only debian distributions package tinyxml with a pkg-config
 # Use pkg_check_modules and fallback to manual detection

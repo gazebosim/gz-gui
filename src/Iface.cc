@@ -36,7 +36,7 @@ using namespace gui;
 
 QApplication *g_app;
 MainWindow *g_main_win = nullptr;
-std::vector<std::shared_ptr<GUIPlugin>> g_plugins;
+std::vector<QWidget *> g_plugins;
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -156,6 +156,8 @@ bool ignition::gui::stop()
 /////////////////////////////////////////////////
 bool ignition::gui::loadConfig(const std::string &_config)
 {
+  std::cout << "Load config file [" << _config << "]" << std::endl;
+
   if (!checkApp())
     return false;
 
@@ -179,20 +181,11 @@ bool ignition::gui::loadConfig(const std::string &_config)
   for(auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
-    auto filename = pluginElem->Attribute("filename");
+    auto filename = std::string(pluginElem->Attribute("filename"));
 
-    // Load plugin
-    auto plugin = ignition::gui::GUIPlugin::Create(filename, "hello_plugin");
-    if (!plugin)
-    {
-      std::cerr << "Failed to load plugin [" << filename << "]" << std::endl;
-      return false;
-    }
+    loadPlugin(filename);
 
 //    plugin->SetConfig(pluginElem);
-
-    // Store plugin in list
-    g_plugins.push_back(plugin);
   }
 
   return true;
@@ -201,10 +194,56 @@ bool ignition::gui::loadConfig(const std::string &_config)
 /////////////////////////////////////////////////
 bool ignition::gui::loadPlugin(const std::string &_filename)
 {
+  std::cout << "Load plugin [" << _filename << "]" << std::endl;
+
   if (!checkApp())
     return false;
 
-  auto plugin = ignition::gui::GUIPlugin::Create(_filename, "NAME?");
+  QWidget *plugin;
+
+  // QML
+  if (_filename.find("qml") != std::string::npos)
+  {
+    // TODO: Get paths from env variable
+
+    std::string filename(_filename);
+
+    char *homePath = getenv("HOME");
+    std::string home;
+    if (homePath)
+      home = homePath;
+
+    std::string pluginPath(home + "/.ignition/gui/plugins/");
+
+    struct stat st;
+    auto fullname = pluginPath + filename;
+    if (stat(fullname.c_str(), &st) == 0)
+    {
+      filename = fullname;
+    }
+
+    auto engine = new QQmlEngine;
+    QQmlComponent component(engine,
+        QUrl::fromLocalFile(QString::fromStdString(filename)));
+//    auto c = component.create();
+
+    if (component.isError())
+    {
+      std::cerr << "Failed to create component [" << _filename << "]" << std::endl;
+      return false;
+    }
+
+    auto view = new QQuickView();
+    auto c = QWidget::createWindowContainer(view, nullptr);
+    view->setSource(QUrl(QString::fromStdString(filename)));
+
+    plugin = qobject_cast<QWidget *>(c);
+  }
+  // C++
+  else
+  {
+    plugin = ignition::gui::GUIPlugin::Create(_filename, "hello_plugin").get();
+  }
 
   if (!plugin)
   {
@@ -215,16 +254,17 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
   // Store plugin in list
   g_plugins.push_back(plugin);
 
+  std::cout << "/Load plugin [" << _filename << "]" << std::endl;
   return true;
 }
 
 /////////////////////////////////////////////////
 bool ignition::gui::runMainWindow()
 {
+  std::cout << "Run main window" << std::endl;
+
   if (!checkApp())
     return false;
-
-  std::cout << "Run main window" << std::endl;
 
   g_main_win = new MainWindow();
 
@@ -249,19 +289,24 @@ bool ignition::gui::runMainWindow()
 /////////////////////////////////////////////////
 bool ignition::gui::runDialogs()
 {
+  std::cout << "Run dialogs" << std::endl;
+
   if (!checkApp())
     return false;
 
-  std::cout << "Run dialogs" << std::endl;
-
   for (auto plugin : g_plugins)
   {
+std::cout << "A" << std::endl;
     auto layout = new QVBoxLayout();
-    layout->addWidget(plugin.get());
+std::cout << "A" << std::endl;
+    layout->addWidget(plugin);
+std::cout << "A" << std::endl;
 
     auto dialog = new QDialog();
+std::cout << "A" << std::endl;
     dialog->setLayout(layout);
 
+std::cout << "B" << std::endl;
     dialog->exec();
   }
 

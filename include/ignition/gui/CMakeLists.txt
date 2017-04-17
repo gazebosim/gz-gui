@@ -2,6 +2,7 @@ include (${project_cmake_dir}/Utils.cmake)
 
 include_directories(
   ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Qml_INCLUDE_DIRS}
   ${tinyxml_INCLUDE_DIRS}
 )
 
@@ -26,6 +27,7 @@ set (resources resources.qrc)
 
 QT5_WRAP_CPP(headers_MOC ${qt_headers})
 QT5_ADD_RESOURCES(resources_RCC ${resources})
+qtquick_compiler_add_resources(RESOURCES ${resources})
 
 ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${sources}
@@ -35,6 +37,7 @@ ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
 
 target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${Qt5Core_LIBRARIES}
+  ${Qt5Qml_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
   ${tinyxml2_LIBRARIES}
 )

@@ -82,4 +82,13 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QWidgetAction>
 
+#include <QtQml/QQmlComponent>
+#include <QtQml/QQmlEngine>
+
+#include <QtQuick/QQuickItem>
+#include <QtQuick/QQuickView>
+#include <QtQuick/QQuickWindow>
+
+#include <QtQuickWidgets/QQuickWidget>
+
 #endif
