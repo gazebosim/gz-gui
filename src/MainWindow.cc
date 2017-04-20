@@ -31,7 +31,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-ignition::gui::MainWindow::MainWindow()
+MainWindow::MainWindow()
   : dataPtr(new MainWindowPrivate)
 {
   this->setObjectName("mainWindow");
@@ -53,12 +53,16 @@ ignition::gui::MainWindow::MainWindow()
   quitAct->setStatusTip(tr("Quit"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
-
-  this->show();
 }
 
 /////////////////////////////////////////////////
-ignition::gui::MainWindow::~MainWindow()
+MainWindow::~MainWindow()
 {
+}
+
+/////////////////////////////////////////////////
+void MainWindow::Show()
+{
+  this->show();
 }
 

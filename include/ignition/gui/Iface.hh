@@ -17,6 +17,7 @@
 #ifndef IGNITION_GUI_IFACE_HH_
 #define IGNITION_GUI_IFACE_HH_
 
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
 
 namespace ignition
@@ -62,7 +63,16 @@ namespace ignition
     bool runDialogs();
 
     /// \brief Run previously loaded plugins on a single main window.
-    /// An empty window will be loaded if no plugins have been loaded.
+    /// An empty window will be created if no plugins have been loaded.
+    IGNITION_GUI_VISIBLE
+    bool createMainWindow();
+
+    /// \brief Get the main window, if one has been generated. Use this to
+    /// customize the window before running it.
+    IGNITION_GUI_VISIBLE
+    ignition::gui::MainWindow *mainWindow();
+
+    /// \brief Run previously created window.
     IGNITION_GUI_VISIBLE
     bool runMainWindow();
 

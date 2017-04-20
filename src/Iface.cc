@@ -227,7 +227,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
 }
 
 /////////////////////////////////////////////////
-bool ignition::gui::runMainWindow()
+bool ignition::gui::createMainWindow()
 {
   if (!checkApp())
     return false;
@@ -246,6 +246,26 @@ bool ignition::gui::runMainWindow()
     dock->setWidget(&*plugin);
     g_main_win->addDockWidget(Qt::LeftDockWidgetArea, dock);
   }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+ignition::gui::MainWindow *ignition::gui::mainWindow()
+{
+  return g_main_win;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::runMainWindow()
+{
+  if (!checkApp())
+    return false;
+
+  if (!mainWindow())
+    return false;
+
+  g_main_win->show();
 
   // Execute app
   g_app->exec();

@@ -31,9 +31,23 @@ int main(int _argc, char **_argv)
   std::cout << "Hello, GUI!" << std::endl;
   int result = 0;
 
+  // Initialize app
   initApp();
+
+  // Load plugins and configurations
   loadPlugin("libhello_plugin.so");
+
+  // Create main window
+  createMainWindow();
+
+  // Customize main window
+  auto win = mainWindow();
+  win->setWindowTitle("Hello Window!");
+
+  // Run window
   runMainWindow();
+
+  // After window is closed
   stop();
 
   std::cout << "After run" << std::endl;
