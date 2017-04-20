@@ -23,14 +23,11 @@
   #include <ignition/gui/Plugin.hh>
 #endif
 
-using namespace ignition;
-using namespace gui;
-
 namespace ignition
 {
   namespace gui
   {
-    class IGNITION_GUI_VISIBLE HelloPlugin : public GUIPlugin
+    class HelloPlugin : public Plugin
     {
       Q_OBJECT
 

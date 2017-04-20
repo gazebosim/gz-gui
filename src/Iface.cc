@@ -20,6 +20,9 @@
 #include <stdio.h>
 #include <tinyxml2.h>
 
+#include <ignition/common/PluginLoader.hh>
+#include <ignition/common/SystemPaths.hh>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
@@ -36,7 +39,8 @@ using namespace gui;
 
 QApplication *g_app;
 MainWindow *g_main_win = nullptr;
-std::vector<std::shared_ptr<GUIPlugin>> g_plugins;
+std::vector<std::shared_ptr<Plugin>> g_plugins;
+std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -180,19 +184,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
     auto filename = pluginElem->Attribute("filename");
-
-    // Load plugin
-    auto plugin = ignition::gui::GUIPlugin::Create(filename, "hello_plugin");
-    if (!plugin)
-    {
-      std::cerr << "Failed to load plugin [" << filename << "]" << std::endl;
-      return false;
-    }
-
-//    plugin->SetConfig(pluginElem);
-
-    // Store plugin in list
-    g_plugins.push_back(plugin);
+    loadPlugin(filename);
   }
 
   return true;
@@ -204,7 +196,22 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
   if (!checkApp())
     return false;
 
-  auto plugin = ignition::gui::GUIPlugin::Create(_filename, "NAME?");
+  // Get full path
+  char *homePath = getenv("HOME");
+  std::string home;
+  if (homePath)
+    home = homePath;
+
+  ignition::common::SystemPaths systemPaths;
+  systemPaths.SetPluginPathEnv(g_pluginPathEnv);
+  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins");
+
+  auto pathToLib = systemPaths.FindSharedLibrary(_filename);
+
+  // Load plugin
+  ignition::common::PluginLoader pluginLoader;
+  auto pluginName = pluginLoader.LoadLibrary(pathToLib);
+  auto plugin = pluginLoader.Instantiate<ignition::gui::Plugin>(pluginName);
 
   if (!plugin)
   {
@@ -213,7 +220,8 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
   }
 
   // Store plugin in list
-  g_plugins.push_back(plugin);
+  std::shared_ptr<Plugin> p(std::move(plugin));
+  g_plugins.push_back(p);
 
   return true;
 }
@@ -231,9 +239,8 @@ bool ignition::gui::runMainWindow()
   // Create a widget for each plugin
   for (auto plugin : g_plugins)
   {
-//    auto name = plugin->Get("name");
-
-    auto dock = new QDockWidget("nameeee", g_main_win);
+    auto title = QString::fromStdString(plugin->Title());
+    auto dock = new QDockWidget(title, g_main_win);
     dock->setAllowedAreas(Qt::LeftDockWidgetArea |
                           Qt::RightDockWidgetArea);
     dock->setWidget(&*plugin);
@@ -266,5 +273,11 @@ bool ignition::gui::runDialogs()
   }
 
   return true;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::setPluginPathEnv(const std::string &_path)
+{
+  g_pluginPathEnv = _path;
 }
 

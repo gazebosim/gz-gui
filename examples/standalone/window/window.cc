@@ -32,6 +32,7 @@ int main(int _argc, char **_argv)
   int result = 0;
 
   initApp();
+  loadPlugin("libhello_plugin.so");
   runMainWindow();
   stop();
 

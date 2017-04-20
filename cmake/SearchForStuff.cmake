@@ -10,12 +10,25 @@ include (${project_cmake_dir}/Ronn2Man.cmake)
 add_manpage_target()
 
 #################################################
-# Find ign command line utility:
+# Ignition tools
 find_package(ignition-tools)
 if (IGNITION-TOOLS_BINARY_DIRS)
+  message (STATUS "Found Ignition Tools")
   set (HAVE_IGN_TOOLS TRUE)
 else()
   BUILD_WARNING ("ignition-tools not found, for command line utilities, please install ignition-tools.")
+endif()
+
+################################################################################
+# Ignition common
+find_package(ignition-common0 QUIET)
+if (NOT ignition-common0_FOUND)
+  BUILD_ERROR ("Missing: Ignition Common (libignition-common0-dev)")
+else()
+  message (STATUS "Found Ignition Common")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-COMMON_CXX_FLAGS}")
+  include_directories(${IGNITION-COMMON_INCLUDE_DIRS})
+  link_directories(${IGNITION-COMMON_LIBRARY_DIRS})
 endif()
 
 ########################################

@@ -44,7 +44,7 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool loadPlugin(const std::string &_filename);
 
-    /// \brief Run a main window using the given configuration file. This is 
+    /// \brief Run a main window using the given configuration file. This is
     /// the main entry point for the command line tool "ign gui -c".
     /// \param[in] _config Full path to configuration file.
     IGNITION_GUI_VISIBLE
@@ -65,6 +65,11 @@ namespace ignition
     /// An empty window will be loaded if no plugins have been loaded.
     IGNITION_GUI_VISIBLE
     bool runMainWindow();
+
+    /// \brief Set the environment variable which defines the paths to look for
+    /// plugins.
+    IGNITION_GUI_VISIBLE
+    void setPluginPathEnv(const std::string &_env);
   }
 }
 #endif
