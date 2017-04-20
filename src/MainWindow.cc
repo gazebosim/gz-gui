@@ -46,6 +46,14 @@ ignition::gui::MainWindow::MainWindow()
   mainWidget->show();
   this->setCentralWidget(mainWidget);
 
+  // Menu
+  auto fileMenu = this->menuBar()->addMenu(tr("&File"));
+
+  auto quitAct = new QAction(tr("&Quit"), this);
+  quitAct->setStatusTip(tr("Quit"));
+  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
+  fileMenu->addAction(quitAct);
+
   this->show();
 }
 
