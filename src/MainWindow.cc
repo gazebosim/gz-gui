@@ -60,9 +60,3 @@ MainWindow::~MainWindow()
 {
 }
 
-/////////////////////////////////////////////////
-void MainWindow::Show()
-{
-  this->show();
-}
-

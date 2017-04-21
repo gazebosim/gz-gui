@@ -65,7 +65,12 @@ bool installSignalHandler()
 #ifndef _WIN32
   auto handler = [](int)
       {
-        stop();
+        // Note: Don't call stop() for the main window, we close it and let the
+        // program pick it up from there
+        if (g_main_win)
+          g_main_win->close();
+        else
+          stop();
       };
 
   struct sigaction sigact;
@@ -152,6 +157,20 @@ bool ignition::gui::stop()
 {
   std::cout << "Stop" << std::endl;
 
+  if (g_main_win)
+  {
+    g_main_win->close();
+    delete g_main_win;
+    g_main_win = nullptr;
+  }
+
+  if (g_app)
+  {
+    g_app->quit();
+    delete g_app;
+    g_app = nullptr;
+  }
+
   g_plugins.clear();
   g_app->quit();
 
@@ -233,7 +252,7 @@ bool ignition::gui::createMainWindow()
   if (!checkApp())
     return false;
 
-  std::cout << "Run main window" << std::endl;
+  std::cout << "Create main window" << std::endl;
 
   g_main_win = new MainWindow();
 
@@ -265,6 +284,8 @@ bool ignition::gui::runMainWindow()
 
   if (!mainWindow())
     return false;
+
+  std::cout << "Run main window" << std::endl;
 
   g_main_win->show();
 

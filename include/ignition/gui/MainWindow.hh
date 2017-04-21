@@ -39,9 +39,6 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
-      /// \brief Show window
-      public: virtual void Show();
-
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;
