@@ -8,6 +8,8 @@ set (sources
 
 set (gtest_sources
   Example_TEST.cc
+  Iface_TEST.cc
+  MainWindow_TEST.cc
 )
 
 ign_build_tests(${gtest_sources})

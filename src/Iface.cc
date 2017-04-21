@@ -101,6 +101,7 @@ bool ignition::gui::runConfig(const std::string &_config)
 
   initApp();
   loadConfig(_config);
+  createMainWindow();
   runMainWindow();
   stop();
 

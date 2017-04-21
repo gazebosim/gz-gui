@@ -15,42 +15,19 @@
  *
 */
 
-#include <iostream>
+#include <gtest/gtest.h>
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Iface.hh>
-#endif
+#include "ignition/gui/Iface.hh"
+#include "ignition/gui/MainWindow.hh"
 
 using namespace ignition;
 using namespace gui;
 
-//////////////////////////////////////////////////
-int main(int _argc, char **_argv)
+/////////////////////////////////////////////////
+TEST(MainWindowTest, Constructor)
 {
-  std::cout << "Hello, GUI!" << std::endl;
+  EXPECT_TRUE(initApp());
 
-  // Initialize app
-  initApp();
-
-  // Load plugins and configurations
-  loadPlugin("libhello_plugin.so");
-
-  // Create main window
-  createMainWindow();
-
-  // Customize main window
-  auto win = mainWindow();
-  win->setWindowTitle("Hello Window!");
-
-  // Run window
-  runMainWindow();
-
-  // After window is closed
-  stop();
-
-  std::cout << "After run" << std::endl;
-
-  return 0;
+  auto mainWindow = new MainWindow;
+  EXPECT_TRUE(mainWindow);
 }
-
