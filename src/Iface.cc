@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <tinyxml2.h>
 
+#include <ignition/common/Console.hh>
 #include <ignition/common/PluginLoader.hh>
 #include <ignition/common/SystemPaths.hh>
 
@@ -48,8 +49,8 @@ bool checkApp()
 {
   if (!g_app)
   {
-    std::cerr <<
-        "[IGN GUI] Application not initialized. Have you called initApp() yet?"
+    ignerr <<
+        "Application not initialized. Have you called initApp() yet?"
         << std::endl;
   }
 
@@ -80,14 +81,14 @@ bool installSignalHandler()
 
   if (sigemptyset(&sigact.sa_mask) != 0)
   {
-    std::cerr << "[IGN GUI] sigemptyset failed while setting up for SIGINT"
+    ignerr << "sigemptyset failed while setting up for SIGINT"
               << std::endl;
     return false;
   }
 
   if (sigaction(SIGINT, &sigact, nullptr))
   {
-    std::cerr << "[IGN GUI] signal(2) failed while setting up for SIGINT"
+    ignerr << "signal(2) failed while setting up for SIGINT"
               << std::endl;
     return false;
   }
@@ -99,11 +100,11 @@ bool installSignalHandler()
 /////////////////////////////////////////////////
 bool ignition::gui::runConfig(const std::string &_config)
 {
-  std::cout << "[IGN GUI] Loading config file [" << _config << "]" << std::endl;
+  ignmsg << "Loading config file [" << _config << "]" << std::endl;
 
   if (_config.empty())
   {
-    std::cerr << "[IGN GUI] Missing config filename" << std::endl;
+    ignerr << "Missing config filename" << std::endl;
     return false;
   }
 
@@ -119,11 +120,11 @@ bool ignition::gui::runConfig(const std::string &_config)
 /////////////////////////////////////////////////
 bool ignition::gui::runStandalone(const std::string &_filename)
 {
-  std::cout << "[IGN GUI] Loading standalone plugin [" << _filename << "]" << std::endl;
+  ignmsg << "Loading standalone plugin [" << _filename << "]" << std::endl;
 
   if (_filename.empty())
   {
-    std::cerr << "[IGN GUI] Missing plugin filename" << std::endl;
+    ignerr << "Missing plugin filename" << std::endl;
     return false;
   }
 
@@ -138,7 +139,10 @@ bool ignition::gui::runStandalone(const std::string &_filename)
 /////////////////////////////////////////////////
 bool ignition::gui::initApp()
 {
-  std::cout << "[IGN GUI] Init app" << std::endl;
+  // Configure console
+  ignition::common::Console::SetPrefix("[GUI] ");
+
+  ignmsg << "Init app" << std::endl;
 
   // Create app
   g_app = new QApplication(g_argc, g_argv);
@@ -158,7 +162,7 @@ bool ignition::gui::initApp()
 /////////////////////////////////////////////////
 bool ignition::gui::stop()
 {
-  std::cout << "[IGN GUI] Stop" << std::endl;
+  ignmsg << "Stop" << std::endl;
 
   if (g_main_win)
   {
@@ -188,7 +192,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
 
   if (_config.empty())
   {
-    std::cerr << "[IGN GUI] Missing config file" << std::endl;
+    ignerr << "Missing config file" << std::endl;
     return false;
   }
 
@@ -197,7 +201,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
   auto success = !doc.LoadFile(_config.c_str());
   if (!success)
   {
-    std::cout << "[IGN GUI] Failed to load file [" << _config << "]: XMLError"
+    ignmsg << "Failed to load file [" << _config << "]: XMLError"
               << std::endl;
     return false;
   }
@@ -238,7 +242,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
 
   if (!plugin)
   {
-    std::cerr << "[IGN GUI] Failed to load plugin [" << _filename << "]" << std::endl;
+    ignerr << "Failed to load plugin [" << _filename << "]" << std::endl;
     return false;
   }
 
@@ -255,7 +259,7 @@ bool ignition::gui::createMainWindow()
   if (!checkApp())
     return false;
 
-  std::cout << "[IGN GUI] Create main window" << std::endl;
+  ignmsg << "Create main window" << std::endl;
 
   g_main_win = new MainWindow();
 
@@ -288,7 +292,7 @@ bool ignition::gui::runMainWindow()
   if (!mainWindow())
     return false;
 
-  std::cout << "[IGN GUI] Run main window" << std::endl;
+  ignmsg << "Run main window" << std::endl;
 
   g_main_win->show();
 
@@ -304,7 +308,7 @@ bool ignition::gui::runDialogs()
   if (!checkApp())
     return false;
 
-  std::cout << "[IGN GUI] Run dialogs" << std::endl;
+  ignmsg << "Run dialogs" << std::endl;
 
   for (auto plugin : g_plugins)
   {
@@ -324,5 +328,11 @@ bool ignition::gui::runDialogs()
 void ignition::gui::setPluginPathEnv(const std::string &_path)
 {
   g_pluginPathEnv = _path;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::setVerbosity(const unsigned int _verbosity)
+{
+  ignition::common::Console::SetVerbosity(_verbosity);
 }
 

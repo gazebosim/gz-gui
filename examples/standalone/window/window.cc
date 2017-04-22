@@ -30,6 +30,9 @@ int main(int _argc, char **_argv)
 {
   std::cout << "Hello, GUI!" << std::endl;
 
+  // Increase verboosity so we see all messages
+  setVerbosity(4);
+
   // Initialize app
   initApp();
 

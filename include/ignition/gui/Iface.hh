@@ -80,6 +80,9 @@ namespace ignition
     /// plugins.
     IGNITION_GUI_VISIBLE
     void setPluginPathEnv(const std::string &_env);
+
+    /// \brief Set the verbosity level (from 0 to 4).
+    void setVerbosity(const unsigned int _verbosity);
   }
 }
 #endif
