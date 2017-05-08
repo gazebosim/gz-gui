@@ -137,6 +137,27 @@ bool ignition::gui::runStandalone(const std::string &_filename)
 }
 
 /////////////////////////////////////////////////
+bool ignition::gui::pluginList()
+{
+  std::cout << "List plugins" << std::endl;
+
+  // Get full path
+  char *homePath = getenv("HOME");
+  std::string home;
+  if (homePath)
+    home = homePath;
+
+  ignition::common::SystemPaths systemPaths;
+  systemPaths.SetPluginPathEnv(g_pluginPathEnv);
+  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins");
+
+  ignition::common::PluginLoader pluginLoader;
+  igndbg << pluginLoader.PrettyStr();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
 bool ignition::gui::initApp()
 {
   // Configure console

@@ -32,7 +32,7 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
-  std::cout << "Here you see the list of available plugins" << std::endl;
+  ignition::gui::pluginList();
 }
 
 //////////////////////////////////////////////////
@@ -45,4 +45,10 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
   ignition::gui::runConfig(std::string(_config));
+}
+
+//////////////////////////////////////////////////
+extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
+{
+  ignition::gui::setVerbosity(std::atoi(_verbosity));
 }

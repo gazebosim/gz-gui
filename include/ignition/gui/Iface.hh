@@ -57,6 +57,10 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool runStandalone(const std::string &_filename);
 
+    /// \brief Print a list of all plugins currently registered.
+    IGNITION_GUI_VISIBLE
+    bool pluginList();
+
     /// \brief Run previously loaded plugins as individual dialogs.
     /// This has no effect if no plugins have been loaded.
     IGNITION_GUI_VISIBLE
