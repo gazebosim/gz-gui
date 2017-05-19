@@ -13,6 +13,7 @@ set (qt_headers
   Iface.hh
   MainWindow.hh
   Plugin.hh
+  widgets/Time.hh
 )
 
 set (headers
