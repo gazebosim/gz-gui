@@ -9,6 +9,7 @@ set (CMAKE_AUTOMOC ON)
 
 add_definitions(${Qt5Core_DEFINITIONS})
 
+set (qt_headers_plugins)
 set (qt_headers
   Iface.hh
   MainWindow.hh
@@ -25,7 +26,10 @@ set (headers
 
 set (resources resources.qrc)
 
-QT5_WRAP_CPP(headers_MOC ${qt_headers})
+add_subdirectory(interfaces)
+add_subdirectory(plugins)
+
+QT5_WRAP_CPP(headers_MOC ${qt_headers} ${qt_headers_plugins})
 QT5_ADD_RESOURCES(resources_RCC ${resources})
 
 ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
@@ -47,7 +51,7 @@ ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})
 ### Do not change the following
 
 set (ign_headers "" CACHE INTERNAL "Ignition headers" FORCE)
-foreach (hdr ${headers} ${qt_headers})
+foreach (hdr ${headers} ${qt_headers} ${qt_headers_plugins})
   APPEND_TO_CACHED_STRING(ign_headers
     "Ignition headers" "#include <ignition/${IGN_PROJECT_NAME}/${hdr}>\n")
 endforeach()
@@ -57,4 +61,5 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/ign_auto_headers.hh.in
 
 ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_PROJECT_NAME}.hh)
 ign_install_includes(${IGN_PROJECT_NAME} ${headers} ${qt_headers})
+ign_install_includes(${IGN_PROJECT_NAME}/plugins ${qt_headers_plugins})
 

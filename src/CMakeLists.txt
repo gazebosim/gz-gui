@@ -4,6 +4,9 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/widgets/Time.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/Publisher.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/ign/IgnPublisher.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TimePlugin.cc
   PARENT_SCOPE
 )
 
