@@ -179,7 +179,6 @@ bool ignition::gui::stop()
   }
 
   g_plugins.clear();
-  g_app->quit();
 
   return true;
 }
