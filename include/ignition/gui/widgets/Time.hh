@@ -102,6 +102,9 @@ namespace widgets
     /// \brief QT callback when the reset time button is pressed.
     public slots: void OnTimeReset();
 
+    /// \brief QT callback when the reset time button is pressed.
+    public slots: void OnPlay();
+
     /// \brief A signal used to set the sim time line edit.
     /// \param[in] _string String representation of sim time.
     signals: void SetSimTime(QString _string);

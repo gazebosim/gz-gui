@@ -31,3 +31,10 @@ IgnPublisher::~IgnPublisher()
 {
 }
 
+/////////////////////////////////////////////////
+bool IgnPublisher::Publish(ignition::msgs::Empty &_msg)
+{
+  igndbg << "PUB!" << std::endl;
+  return true;
+}
+

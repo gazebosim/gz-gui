@@ -19,6 +19,8 @@
 #define IGN_GUI_INTERFACES_PUBLISHER_HH_
 
 #include <memory>
+#include <ignition/common/Console.hh>
+#include <ignition/msgs.hh>
 
 #include "ignition/gui/System.hh"
 
@@ -28,19 +30,16 @@ namespace gui
 {
 namespace interfaces
 {
-  class PublisherPrivate;
-
   /// \brief Example class
   class IGNITION_GUI_VISIBLE Publisher
   {
     /// \brief Constructor
-    public: Publisher();
+    public: Publisher() = default;
 
     /// \brief Destructor
-    public: ~Publisher();
+    public: virtual ~Publisher() = default;
 
-    /// \brief Pointer to private data
-    private: std::unique_ptr<PublisherPrivate> dataPtr;
+    public: virtual bool Publish(msgs::Empty &_msg) = 0;
   };
 }
 }

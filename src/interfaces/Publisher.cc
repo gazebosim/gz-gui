@@ -14,34 +14,3 @@
  * limitations under the License.
  *
 */
-
-#include "ignition/gui/interfaces/Publisher.hh"
-
-namespace ignition
-{
-namespace gui
-{
-namespace interfaces
-{
-  class PublisherPrivate
-  {
-  };
-}
-}
-}
-
-using namespace ignition;
-using namespace gui;
-using namespace interfaces;
-
-/////////////////////////////////////////////////
-Publisher::Publisher()
-  : dataPtr(new PublisherPrivate)
-{
-}
-
-/////////////////////////////////////////////////
-Publisher::~Publisher()
-{
-}
-

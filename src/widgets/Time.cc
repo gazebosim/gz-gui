@@ -15,8 +15,11 @@
  *
  */
 
-#include <ignition/gui/qt.h>
-#include <ignition/gui/widgets/Time.hh>
+#include <ignition/msgs.hh>
+
+#include "ignition/gui/qt.h"
+#include "ignition/gui/interfaces/ign/IgnPublisher.hh"
+#include "ignition/gui/widgets/Time.hh"
 
 namespace ignition
 {
@@ -69,6 +72,8 @@ namespace widgets
 
     /// \brief Paused state of the simulation.
     public: bool paused;
+
+    public: interfaces::IgnPublisher *playPub;
   };
 }
 }
@@ -132,6 +137,11 @@ Time::Time(QWidget *_parent)
   QToolBar *playToolbar = new QToolBar;
   playToolbar->setObjectName("playToolBar");
   playToolbar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+  auto playButton = new QPushButton("Play");
+  playButton->setFocusPolicy(Qt::NoFocus);
+  connect(playButton, SIGNAL(clicked()), this, SLOT(OnPlay()));
+  playToolbar->addWidget(playButton);
 
 //  if (g_playAct)
 //    playToolbar->addAction(g_playAct);
@@ -242,6 +252,8 @@ Time::Time(QWidget *_parent)
   // This is used for thread safety.
   connect(this, SIGNAL(SetRealTime(QString)), this->dataPtr->realTimeEdit,
       SLOT(setText(QString)), Qt::QueuedConnection);
+
+  this->dataPtr->playPub = new interfaces::IgnPublisher();
 }
 
 /////////////////////////////////////////////////
@@ -313,6 +325,13 @@ void Time::ShowStepWidget(bool _show)
 /////////////////////////////////////////////////
 void Time::OnTimeReset()
 {
+}
+
+/////////////////////////////////////////////////
+void Time::OnPlay()
+{
+  ignition::msgs::Empty msg;
+  this->dataPtr->playPub->Publish(msg);
 }
 
 /////////////////////////////////////////////////
