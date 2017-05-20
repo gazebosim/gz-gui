@@ -1,3 +1,4 @@
+set (sources_plugins)
 set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Example.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc

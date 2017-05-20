@@ -28,9 +28,14 @@ using namespace gui;
 TimePlugin::TimePlugin()
   : Plugin()
 {
-//  auto widget = new widgets::Time();
+  auto widget = new widgets::Time();
 
-//  this->layout()->addWidget(widget);
+  // Create the layout to hold the widget
+  auto layout = new QHBoxLayout;
+  layout->addWidget(widget);
+
+  // Use the layout
+  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////
