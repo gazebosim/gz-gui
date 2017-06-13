@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef IGN_GUI_WIDGETS_TIME_HH_
-#define IGN_GUI_WIDGETS_TIME_HH_
+#ifndef IGNITION_GUI_WIDGETS_TIME_HH_
+#define IGNITION_GUI_WIDGETS_TIME_HH_
 
 #include <memory>
 

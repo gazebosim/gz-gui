@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGN_GUI_INTERFACES_PUBLISHER_HH_
-#define IGN_GUI_INTERFACES_PUBLISHER_HH_
+#ifndef IGNITION_GUI_INTERFACES_PUBLISHER_HH_
+#define IGNITION_GUI_INTERFACES_PUBLISHER_HH_
 
 #include <memory>
 #include <ignition/common/Console.hh>

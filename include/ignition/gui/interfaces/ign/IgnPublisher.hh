@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGN_GUI_INTERFACES_IGN_PUBLISHER_HH_
-#define IGN_GUI_INTERFACES_IGN_PUBLISHER_HH_
+#ifndef IGNITION_GUI_INTERFACES_IGN_PUBLISHER_HH_
+#define IGNITION_GUI_INTERFACES_IGN_PUBLISHER_HH_
 
 #include "ignition/gui/System.hh"
 #include "ignition/gui/interfaces/Publisher.hh"

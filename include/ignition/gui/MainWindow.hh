@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGN_GUI_MAINWINDOW_HH_
-#define IGN_GUI_MAINWINDOW_HH_
+#ifndef IGNITION_GUI_MAINWINDOW_HH_
+#define IGNITION_GUI_MAINWINDOW_HH_
 
 #include <memory>
 

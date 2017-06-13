@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGN_GUI_PLUGINS_TIMEPLUGIN_HH_
-#define IGN_GUI_PLUGINS_TIMEPLUGIN_HH_
+#ifndef IGNITION_GUI_PLUGINS_TIMEPLUGIN_HH_
+#define IGNITION_GUI_PLUGINS_TIMEPLUGIN_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
