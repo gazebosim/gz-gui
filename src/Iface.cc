@@ -40,7 +40,7 @@ using namespace gui;
 
 QApplication *g_app;
 MainWindow *g_main_win = nullptr;
-std::vector<std::shared_ptr<Plugin>> g_plugins;
+std::vector<std::unique_ptr<Plugin>> g_plugins;
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 
 /////////////////////////////////////////////////
@@ -246,8 +246,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
   }
 
   // Store plugin in list
-  std::shared_ptr<Plugin> p(std::move(plugin));
-  g_plugins.push_back(p);
+  g_plugins.push_back(std::move(plugin));
 
   return true;
 }
@@ -263,7 +262,7 @@ bool ignition::gui::createMainWindow()
   g_main_win = new MainWindow();
 
   // Create a widget for each plugin
-  for (auto plugin : g_plugins)
+  for (auto &plugin : g_plugins)
   {
     auto title = QString::fromStdString(plugin->Title());
     auto dock = new QDockWidget(title, g_main_win);
@@ -271,7 +270,12 @@ bool ignition::gui::createMainWindow()
                           Qt::RightDockWidgetArea);
     dock->setWidget(&*plugin);
     g_main_win->addDockWidget(Qt::LeftDockWidgetArea, dock);
+
+    // Qt steals the ownership of the plugin (QWidget)
+    // Remove it from the smart pointer without calling the destructor
+    plugin.release();
   }
+  g_plugins.clear();
 
   return true;
 }
@@ -309,16 +313,21 @@ bool ignition::gui::runDialogs()
 
   ignmsg << "Run dialogs" << std::endl;
 
-  for (auto plugin : g_plugins)
+  for (auto &plugin : g_plugins)
   {
     auto layout = new QVBoxLayout();
     layout->addWidget(plugin.get());
+
+    // Qt steals the ownership of the plugin (QWidget)
+    // Remove it from the smart pointer without calling the destructor
+    plugin.release();
 
     auto dialog = new QDialog();
     dialog->setLayout(layout);
 
     dialog->exec();
   }
+  g_plugins.clear();
 
   return true;
 }
