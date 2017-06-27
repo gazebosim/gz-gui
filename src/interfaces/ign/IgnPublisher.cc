@@ -32,7 +32,7 @@ IgnPublisher::~IgnPublisher()
 }
 
 /////////////////////////////////////////////////
-bool IgnPublisher::Publish(ignition::msgs::Empty &_msg)
+bool IgnPublisher::Publish(google::protobuf::Message &_msg)
 {
   igndbg << "PUB!" << std::endl;
   return true;

@@ -36,7 +36,7 @@ namespace interfaces
     /// \brief Destructor
     public: ~IgnPublisher();
 
-    public: bool Publish(ignition::msgs::Empty &_msg);
+    public: bool Publish(google::protobuf::Message &_msg);
   };
 }
 }

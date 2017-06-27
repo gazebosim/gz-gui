@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_TIMEPLUGIN_HH_
-#define IGNITION_GUI_PLUGINS_TIMEPLUGIN_HH_
+#ifndef IGNITION_GUI_PLUGINS_PLAYBUTTONPLUGIN_HH_
+#define IGNITION_GUI_PLUGINS_PLAYBUTTONPLUGIN_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
@@ -27,15 +27,15 @@ namespace ignition
 {
   namespace gui
   {
-    class IGNITION_GUI_VISIBLE TimePlugin : public Plugin
+    class IGNITION_GUI_VISIBLE PlayButtonPlugin : public Plugin
     {
       Q_OBJECT
 
       /// \brief Constructor
-      public: TimePlugin();
+      public: PlayButtonPlugin();
 
       /// \brief Destructor
-      public: virtual ~TimePlugin();
+      public: virtual ~PlayButtonPlugin();
     };
   }
 }

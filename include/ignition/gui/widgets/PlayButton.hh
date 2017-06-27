@@ -13,33 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
-#ifndef IGNITION_GUI_INTERFACES_PUBLISHER_HH_
-#define IGNITION_GUI_INTERFACES_PUBLISHER_HH_
+#ifndef IGNITION_GUI_WIDGETS_PLAYBUTTON_HH_
+#define IGNITION_GUI_WIDGETS_PLAYBUTTON_HH_
 
 #include <memory>
-#include <ignition/common/Console.hh>
-#include <ignition/msgs.hh>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
 
 namespace ignition
 {
 namespace gui
 {
-namespace interfaces
+namespace widgets
 {
-  /// \brief Example class
-  class IGNITION_GUI_VISIBLE Publisher
+  class PlayButtonPrivate;
+
+  class IGNITION_GUI_VISIBLE PlayButton : public QWidget
   {
+    Q_OBJECT
+
     /// \brief Constructor
-    public: Publisher() = default;
+    /// \param[in] _parent Parent widget, commonly a PlayButtonPanel.
+    public: PlayButton(QWidget *_parent = 0);
 
     /// \brief Destructor
-    public: virtual ~Publisher() = default;
+    public: virtual ~PlayButton();
 
-    public: virtual bool Publish(google::protobuf::Message &_msg) = 0;
+    /// \brief Callback when button is toggled.
+    /// \param[in] _checked True for play, false for pause.
+    public slots: void OnButtonToggled(const bool _checked);
+
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<PlayButtonPrivate> dataPtr;
   };
 }
 }

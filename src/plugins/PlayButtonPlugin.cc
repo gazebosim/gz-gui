@@ -18,17 +18,17 @@
 #include <iostream>
 #include <ignition/common/PluginMacros.hh>
 
-#include "ignition/gui/plugins/TimePlugin.hh"
-#include "ignition/gui/widgets/Time.hh"
+#include "ignition/gui/plugins/PlayButtonPlugin.hh"
+#include "ignition/gui/widgets/PlayButton.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TimePlugin::TimePlugin()
+PlayButtonPlugin::PlayButtonPlugin()
   : Plugin()
 {
-  auto widget = new widgets::Time();
+  auto widget = new widgets::PlayButton();
 
   // Create the layout to hold the widget
   auto layout = new QHBoxLayout;
@@ -39,10 +39,10 @@ TimePlugin::TimePlugin()
 }
 
 /////////////////////////////////////////////////
-TimePlugin::~TimePlugin()
+PlayButtonPlugin::~PlayButtonPlugin()
 {
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::TimePlugin,
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::PlayButtonPlugin,
                                   ignition::gui::Plugin)

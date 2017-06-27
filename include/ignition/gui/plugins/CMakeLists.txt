@@ -1,12 +1,12 @@
 include (${project_cmake_dir}/Utils.cmake)
 
 set (qt_headers_plugins ${qt_headers_plugins}
-  plugins/TimePlugin.hh
+  plugins/PlayButtonPlugin.hh
   PARENT_SCOPE
 )
 
 set (qt_headers_local
-  TimePlugin
+  PlayButtonPlugin
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
