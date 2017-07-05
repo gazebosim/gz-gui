@@ -233,15 +233,31 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins");
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
+  if (pathToLib.empty())
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't find shared library." << std::endl;
+    return false;
+  }
 
   // Load plugin
   ignition::common::PluginLoader pluginLoader;
-  auto pluginName = pluginLoader.LoadLibrary(pathToLib);
-  auto plugin = pluginLoader.Instantiate<ignition::gui::Plugin>(pluginName);
 
+  auto pluginName = pluginLoader.LoadLibrary(pathToLib);
+  if (pluginName.empty())
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't load library on path [" << pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  auto plugin = pluginLoader.Instantiate<ignition::gui::Plugin>(pluginName);
   if (!plugin)
   {
-    ignerr << "Failed to load plugin [" << _filename << "]" << std::endl;
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't instantiate plugin on path [" << pathToLib <<
+              "]." << std::endl;
     return false;
   }
 
