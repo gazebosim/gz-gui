@@ -72,6 +72,14 @@ To run the code checker:
 
     # TODO
 
+## Finding plugins
+
+Ignition GUI will look for plugins on the following places, in this order:
+
+1. all paths set on the `IGN_GUI_PLUGIN_PATH` environment variable
+1. `~/.ignition/gui/plugins`
+1. plugins which come built into Ignition GUI
+
 ## Examples
 
 ### Using as a library

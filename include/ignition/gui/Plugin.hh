@@ -51,7 +51,7 @@ namespace ignition
       }
 
       /// \brief Title to be displayed on top of plugin.
-      private: std::string title = "GUI plugin";
+      protected: std::string title = "GUI plugin";
     };
   }
 }

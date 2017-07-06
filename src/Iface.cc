@@ -25,6 +25,7 @@
 #include <ignition/common/SystemPaths.hh>
 
 #include "ignition/gui/qt.h"
+#include "ignition/gui/config.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
@@ -40,6 +41,7 @@ using namespace gui;
 
 QApplication *g_app;
 MainWindow *g_main_win = nullptr;
+std::vector<QDialog *> g_dialogs;
 std::vector<std::unique_ptr<Plugin>> g_plugins;
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 
@@ -171,6 +173,9 @@ bool ignition::gui::stop()
     g_main_win = nullptr;
   }
 
+  for (auto dialog : g_dialogs)
+    dialog->close();
+
   if (g_app)
   {
     g_app->quit();
@@ -230,7 +235,9 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
 
   ignition::common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(g_pluginPathEnv);
-  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins");
+  // Add default folder and install folder
+  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
+                             IGN_GUI_PLUGIN_INSTALL_PATH);
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -340,6 +347,8 @@ bool ignition::gui::runDialogs()
 
     auto dialog = new QDialog();
     dialog->setLayout(layout);
+
+    g_dialogs.push_back(dialog);
 
     dialog->exec();
   }
