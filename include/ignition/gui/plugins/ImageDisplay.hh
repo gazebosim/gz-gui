@@ -45,6 +45,9 @@ namespace plugins
     /// \brief Destructor
     public: virtual ~ImageDisplay();
 
+    // Documentation inherited
+    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
+
     /// \brief Callback in main thread when image changes
     public slots: void ProcessImage();
 

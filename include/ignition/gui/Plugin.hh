@@ -17,6 +17,8 @@
 #ifndef IGNITION_GUI_PLUGIN_HH_
 #define IGNITION_GUI_PLUGIN_HH_
 
+#include <tinyxml2.h>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
 
@@ -35,7 +37,8 @@ namespace ignition
       ///
       /// Called when a plugin is first created.
       /// This function should not be blocking.
-      public: virtual void Load() {}
+      public: virtual void LoadConfig(
+          const tinyxml2::XMLElement */*_pluginElem*/) {}
 
       /// \brief Get title
       /// \return Plugin title.

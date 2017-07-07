@@ -18,7 +18,6 @@
 #include <iostream>
 #include <signal.h>
 #include <stdio.h>
-#include <tinyxml2.h>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginLoader.hh>
@@ -215,14 +214,15 @@ bool ignition::gui::loadConfig(const std::string &_config)
       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
     auto filename = pluginElem->Attribute("filename");
-    loadPlugin(filename);
+    loadPlugin(filename, pluginElem);
   }
 
   return true;
 }
 
 /////////////////////////////////////////////////
-bool ignition::gui::loadPlugin(const std::string &_filename)
+bool ignition::gui::loadPlugin(const std::string &_filename,
+    const tinyxml2::XMLElement *_pluginElem)
 {
   if (!checkApp())
     return false;
@@ -267,6 +267,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename)
               "]." << std::endl;
     return false;
   }
+  plugin->LoadConfig(_pluginElem);
 
   // Store plugin in list
   g_plugins.push_back(std::move(plugin));

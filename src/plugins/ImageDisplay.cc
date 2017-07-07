@@ -54,38 +54,71 @@ using namespace plugins;
 ImageDisplay::ImageDisplay()
   : Plugin(), dataPtr(new ImageDisplayPrivate)
 {
-  this->title = "Image display";
-
-  // Dropdown to choose ign topic
-  this->dataPtr->topicsCombo = new QComboBox();
-  this->dataPtr->topicsCombo->setMinimumWidth(300);
-  this->connect(this->dataPtr->topicsCombo, SIGNAL(activated(const QString)), this,
-      SLOT(OnTopic(const QString)));
-
-  // Button to refresh topics
-  auto refreshButton = new QPushButton("Refresh");
-  refreshButton->setMaximumWidth(80);
-  this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(OnRefresh()));
-
-  // Label to hold the image
-  auto label = new QLabel("No image");
-
-  // Layout
-  auto topicLayout = new QHBoxLayout;
-  topicLayout->addWidget(this->dataPtr->topicsCombo);
-  topicLayout->addWidget(refreshButton);
-
-  auto layout = new QVBoxLayout;
-  layout->addLayout(topicLayout);
-  layout->addWidget(label);
-  this->setLayout(layout);
-
-  this->OnRefresh();
 }
 
 /////////////////////////////////////////////////
 ImageDisplay::~ImageDisplay()
 {
+}
+
+/////////////////////////////////////////////////
+void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+{
+  this->title = "Image display";
+
+  // Read configuration
+  if (auto titleElem = _pluginElem->FirstChildElement("title"))
+    this->title = titleElem->GetText();
+
+  std::string topic;
+  if (auto topicElem = _pluginElem->FirstChildElement("topic"))
+    topic = topicElem->GetText();
+
+  bool topicPicker = true;
+  if (auto pickerElem = _pluginElem->FirstChildElement("topic_picker"))
+    pickerElem->QueryBoolText(&topicPicker);
+
+  if (topic.empty() && !topicPicker)
+  {
+    ignwarn << "Can't hide topic picker without a default topic." << std::endl;
+    topicPicker = true;
+  }
+
+  // Main layout
+  auto layout = new QVBoxLayout;
+
+  // If should show topic picker
+  if (topicPicker)
+  {
+    // Dropdown to choose ign topic
+    this->dataPtr->topicsCombo = new QComboBox();
+    this->dataPtr->topicsCombo->setMinimumWidth(300);
+    this->connect(this->dataPtr->topicsCombo, SIGNAL(activated(const QString)),
+        this, SLOT(OnTopic(const QString)));
+
+    // Button to refresh topics
+    auto refreshButton = new QPushButton("Refresh");
+    refreshButton->setMaximumWidth(80);
+    this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(OnRefresh()));
+
+    // Layout
+    auto topicLayout = new QHBoxLayout;
+    topicLayout->addWidget(this->dataPtr->topicsCombo);
+    topicLayout->addWidget(refreshButton);
+
+    layout->addLayout(topicLayout);
+  }
+
+  // Label to hold the image
+  auto label = new QLabel("No image");
+
+  layout->addWidget(label);
+  this->setLayout(layout);
+
+  if (!topic.empty())
+    this->OnTopic(QString::fromStdString(topic));
+  else
+    this->OnRefresh();
 }
 
 /////////////////////////////////////////////////

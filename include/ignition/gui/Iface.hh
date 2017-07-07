@@ -17,6 +17,8 @@
 #ifndef IGNITION_GUI_IFACE_HH_
 #define IGNITION_GUI_IFACE_HH_
 
+#include <tinyxml2.h>
+
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
 
@@ -43,7 +45,8 @@ namespace ignition
     /// path.
     /// \param[in] _filename Plugin filename.
     IGNITION_GUI_VISIBLE
-    bool loadPlugin(const std::string &_filename);
+    bool loadPlugin(const std::string &_filename,
+        const tinyxml2::XMLElement *_pluginElem = nullptr);
 
     /// \brief Run a main window using the given configuration file. This is
     /// the main entry point for the command line tool "ign gui -c".
