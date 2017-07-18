@@ -43,6 +43,7 @@ MainWindow *g_main_win = nullptr;
 std::vector<QDialog *> g_dialogs;
 std::vector<std::unique_ptr<Plugin>> g_plugins;
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
+std::vector<std::string> g_pluginPaths;
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -235,6 +236,10 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
 
   ignition::common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(g_pluginPathEnv);
+
+  for (const auto &path : g_pluginPaths)
+    systemPaths.AddPluginPaths(path);
+
   // Add default folder and install folder
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
                              IGN_GUI_PLUGIN_INSTALL_PATH);
@@ -366,9 +371,15 @@ bool ignition::gui::runDialogs()
 }
 
 /////////////////////////////////////////////////
-void ignition::gui::setPluginPathEnv(const std::string &_path)
+void ignition::gui::setPluginPathEnv(const std::string &_env)
 {
-  g_pluginPathEnv = _path;
+  g_pluginPathEnv = _env;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::addPluginPath(const std::string &_path)
+{
+  g_pluginPaths.push_back(_path);
 }
 
 /////////////////////////////////////////////////

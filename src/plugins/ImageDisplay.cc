@@ -64,6 +64,9 @@ ImageDisplay::~ImageDisplay()
 /////////////////////////////////////////////////
 void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
+  if (!_pluginElem)
+    return;
+
   this->title = "Image display";
 
   // Read configuration

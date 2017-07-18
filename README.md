@@ -74,11 +74,18 @@ To run the code checker:
 
 ## Finding plugins
 
-Ignition GUI will look for plugins on the following places, in this order:
+Ignition GUI will look for plugins on the following paths, in this order:
 
 1. all paths set on the `IGN_GUI_PLUGIN_PATH` environment variable
+1. all paths added by calling `ignition::gui::addPluginPath`
 1. `~/.ignition/gui/plugins`
 1. plugins which come built into Ignition GUI
+
+## Built-in plugins
+
+* Image display: display images from an Ignition Transport topic.
+
+        ign gui -c examples/image.config
 
 ## Examples
 
@@ -134,5 +141,5 @@ To run the example `hello.config`:
 
 1. Then, load the GUI from the command line with the configuration file:
 
-    ign gui -c examples/config/hello.config
+        ign gui -c examples/config/hello.config
 

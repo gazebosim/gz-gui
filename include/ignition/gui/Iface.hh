@@ -81,8 +81,14 @@ namespace ignition
 
     /// \brief Set the environment variable which defines the paths to look for
     /// plugins.
+    /// \param[in] _env Name of environment variable.
     IGNITION_GUI_VISIBLE
     void setPluginPathEnv(const std::string &_env);
+
+    /// \brief Add an path to look for plugins.
+    /// \param[in] _path Full path.
+    IGNITION_GUI_VISIBLE
+    void addPluginPath(const std::string &_path);
 
     /// \brief Set the verbosity level (from 0 to 4).
     void setVerbosity(const unsigned int _verbosity);
