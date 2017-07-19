@@ -1,0 +1,11 @@
+image: ubuntu:xenial
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make
+          - make test
