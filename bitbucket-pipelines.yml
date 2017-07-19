@@ -3,7 +3,8 @@ image: ubuntu:xenial
 pipelines:
   default:
     - step:
-        script: # Modify the commands below to build your repository.
+        script:
+          - apt install cmake
           - mkdir build
           - cd build
           - cmake ..
