@@ -6,7 +6,6 @@ pipelines:
         script:
           - apt update
           - apt install -y build-essential cmake qtbase5-dev libtinyxml2-dev mercurial
-          - # Ignition common
           - hg clone http://bitbucket.org/ignitionrobotics/ign-common
           - cd ign-common
           - mkdir build
