@@ -11,7 +11,7 @@ add_manpage_target()
 
 #################################################
 # Ignition tools
-find_package(ignition-tools)
+find_package(ignition-tools QUIET)
 if (IGNITION-TOOLS_BINARY_DIRS)
   message (STATUS "Found Ignition Tools")
   set (HAVE_IGN_TOOLS TRUE)
@@ -35,7 +35,7 @@ endif()
 # Ignition transport
 find_package(ignition-transport3 QUIET)
 if (NOT ignition-transport3_FOUND)
-  BUILD_WARNING ("Missing: Ignition Transport libignition-transport3-dev. This interface won't be generated.")
+  BUILD_ERROR ("Missing: Ignition Transport libignition-transport3-dev.")
 else()
   message (STATUS "Found Ignition Transport")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-TRANSPORT_CXX_FLAGS}")
