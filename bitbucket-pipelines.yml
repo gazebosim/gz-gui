@@ -5,9 +5,17 @@ pipelines:
     - step:
         script:
           - apt update
-          - apt install -y build-essential cmake qtbase5-dev libtinyxml2-dev
+          - apt install -y build-essential cmake qtbase5-dev libtinyxml2-dev mercurial
+          - # Ignition common
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-common
+          - cd ign-common
           - mkdir build
           - cd build
           - cmake ..
-          - make
+          - make install
+          . cd ..
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make install
           - make test
