@@ -4,10 +4,12 @@ pipelines:
   default:
     - step:
         script:
+          - apt update
+          - apt install -y build-essential wget cmake qtbase5-dev libtinyxml2-dev mercurial
           - sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
           - wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
           - apt update
-          - apt install -y build-essential wget cmake qtbase5-dev libtinyxml2-dev libignition-transport3 mercurial
+          - apt install -y libignition-transport3
           - hg clone http://bitbucket.org/ignitionrobotics/ign-common
           - cd ign-common
           - mkdir build
