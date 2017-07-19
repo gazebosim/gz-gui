@@ -72,7 +72,9 @@ To run the code checker:
 
     # TODO
 
-## Finding plugins
+## Plugins
+
+### Finding plugins
 
 Ignition GUI will look for plugins on the following paths, in this order:
 
@@ -81,11 +83,15 @@ Ignition GUI will look for plugins on the following paths, in this order:
 1. `~/.ignition/gui/plugins`
 1. plugins which come built into Ignition GUI
 
-## Built-in plugins
+### Built-in plugins
 
 * Image display: display images from an Ignition Transport topic.
 
         ign gui -c examples/image.config
+
+    or
+
+        ign tui -s libImageDisplay.so
 
 ## Examples
 

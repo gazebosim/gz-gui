@@ -64,22 +64,22 @@ ImageDisplay::~ImageDisplay()
 /////////////////////////////////////////////////
 void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
-  if (!_pluginElem)
-    return;
-
   this->title = "Image display";
+  std::string topic;
+  bool topicPicker = true;
 
   // Read configuration
-  if (auto titleElem = _pluginElem->FirstChildElement("title"))
-    this->title = titleElem->GetText();
+  if (_pluginElem)
+  {
+    if (auto titleElem = _pluginElem->FirstChildElement("title"))
+      this->title = titleElem->GetText();
 
-  std::string topic;
-  if (auto topicElem = _pluginElem->FirstChildElement("topic"))
-    topic = topicElem->GetText();
+    if (auto topicElem = _pluginElem->FirstChildElement("topic"))
+      topic = topicElem->GetText();
 
-  bool topicPicker = true;
-  if (auto pickerElem = _pluginElem->FirstChildElement("topic_picker"))
-    pickerElem->QueryBoolText(&topicPicker);
+    if (auto pickerElem = _pluginElem->FirstChildElement("topic_picker"))
+      pickerElem->QueryBoolText(&topicPicker);
+  }
 
   if (topic.empty() && !topicPicker)
   {
@@ -101,6 +101,7 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     // Button to refresh topics
     auto refreshButton = new QPushButton("Refresh");
+    refreshButton->setToolTip("Refresh list of topics publishing images");
     refreshButton->setMaximumWidth(80);
     this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(OnRefresh()));
 

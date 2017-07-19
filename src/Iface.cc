@@ -351,6 +351,8 @@ bool ignition::gui::runDialogs()
 
   for (auto &plugin : g_plugins)
   {
+    auto title = QString::fromStdString(plugin->Title());
+
     auto layout = new QVBoxLayout();
     layout->addWidget(plugin.get());
 
@@ -360,6 +362,7 @@ bool ignition::gui::runDialogs()
 
     auto dialog = new QDialog();
     dialog->setLayout(layout);
+    dialog->setWindowTitle(title);
 
     g_dialogs.push_back(dialog);
 
