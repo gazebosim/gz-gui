@@ -4,6 +4,7 @@ pipelines:
   default:
     - step:
         script:
+          - apt update
           - apt install -y build-essential cmake qtbase5-dev libtinyxml2-dev
           - mkdir build
           - cd build
