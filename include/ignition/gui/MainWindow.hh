@@ -39,6 +39,10 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
+      /// \brief Add a plugin to the window.
+      /// \param [in] Plugin filename
+      private slots: void OnAddPlugin(QString _plugin);
+
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;

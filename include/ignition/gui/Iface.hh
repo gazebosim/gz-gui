@@ -45,9 +45,17 @@ namespace ignition
     /// \brief Load a plugin from a file name. The plugin file must be in the
     /// path.
     /// \param[in] _filename Plugin filename.
+    /// \param[in[ _pluginElem Element containing plugin configuration
     IGNITION_GUI_VISIBLE
     bool loadPlugin(const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
+
+    /// \brief Add previously loaded plugins to the main window.
+    /// * Make sure the window is created first
+    /// * Be sure to call loadPlugin() for each plugin first
+    /// * Plugins previously added must be loaded again
+    IGNITION_GUI_VISIBLE
+    bool addPluginsToWindow();
 
     /// \brief Run a main window using the given configuration file. This is
     /// the main entry point for the command line tool "ign gui -c".

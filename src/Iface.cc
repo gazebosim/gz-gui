@@ -303,6 +303,14 @@ bool ignition::gui::createMainWindow()
                              QMainWindow::AllowTabbedDocks |
                              QMainWindow::AllowNestedDocks);
 
+  return addPluginsToWindow();
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::addPluginsToWindow()
+{
+  ignmsg << "Add plugins to main window" << std::endl;
+
   // Create a widget for each plugin
   auto count = 0;
   for (auto &plugin : g_plugins)
