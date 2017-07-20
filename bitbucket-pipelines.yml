@@ -43,3 +43,4 @@ pipelines:
           - cd build
           - cmake ..
           - make install
+          - make test
