@@ -5,7 +5,7 @@ pipelines:
     - step:
         script:
           - apt update
-          - apt install -y build-essential wget cmake qtbase5-dev libtinyxml2-dev libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev libprotoc-dev libprotobuf-dev libzmq3-dev mercurial
+          - apt install -y build-essential wget cmake qtbase5-dev libtinyxml2-dev libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev libprotoc-dev libprotobuf-dev libzmq3-dev protobuf-compiler mercurial
           # Ignition math
           - hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math3
           - cd ign-math
