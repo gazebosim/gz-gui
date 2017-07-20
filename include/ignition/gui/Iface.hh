@@ -19,6 +19,8 @@
 
 #include <tinyxml2.h>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
@@ -116,7 +118,8 @@ namespace ignition
     /// \return A vector of pairs, where each pair contains:
     /// * A path
     /// * A vector of plugins in that path
-    std::vector<std::pair<std::string, std::vector<std::string>>> getPluginList();
+    std::vector<std::pair<std::string, std::vector<std::string>>>
+        getPluginList();
   }
 }
 #endif
