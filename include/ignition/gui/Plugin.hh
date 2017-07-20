@@ -18,6 +18,7 @@
 #define IGNITION_GUI_PLUGIN_HH_
 
 #include <tinyxml2.h>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
@@ -43,15 +44,6 @@ namespace ignition
       /// \brief Get title
       /// \return Plugin title.
       public: virtual std::string Title() {return this->title;}
-
-      // \brief must be defined to support style sheets
-      public: virtual void paintEvent(QPaintEvent *)
-      {
-        QStyleOption opt;
-        opt.init(this);
-        QPainter p(this);
-        style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-      }
 
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "GUI plugin";

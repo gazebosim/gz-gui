@@ -442,7 +442,7 @@ _error_suppressions = {}
 
 # The root directory used for deriving header guard CPP variable.
 # This is set by --root flag.
-_root = None
+_root = 'include'
 
 # The allowed line length of files.
 # This is set by --linelength flag.
@@ -4387,7 +4387,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
 
   # Make Windows paths like Unix.
   fullname = os.path.abspath(filename).replace('\\', '/')
-  
+
   # Perform other checks now that we are sure that this is not an include line
   CheckCasts(filename, clean_lines, linenum, error)
   CheckGlobalStatic(filename, clean_lines, linenum, error)
@@ -5334,7 +5334,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   # CheckDefaultLambdaCaptures(filename, clean_lines, line, error)
   for check_fn in extra_check_functions:
     check_fn(filename, clean_lines, line, error)
-	
+
 def FlagCxx11Features(filename, clean_lines, linenum, error):
   """Flag those c++11 features that we only allow in certain places.
 

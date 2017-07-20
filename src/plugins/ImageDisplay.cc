@@ -129,14 +129,14 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 void ImageDisplay::ProcessImage()
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->imageMutex);
-  switch(this->dataPtr->imageMsg.pixel_format())
+  switch (this->dataPtr->imageMsg.pixel_format())
   {
     case ignition::common::Image::RGB_INT8:
       this->UpdateFromRgbInt8();
       break;
     default:
-      std::cerr << "Unsupported image type: " << this->dataPtr->imageMsg.pixel_format()
-        << std::endl;
+      std::cerr << "Unsupported image type: " <<
+        this->dataPtr->imageMsg.pixel_format() << std::endl;
   }
 }
 
@@ -202,9 +202,11 @@ void ImageDisplay::UpdateFromRgbInt8()
       QImage::Format_RGB888);
 
   auto const &d = this->dataPtr->imageMsg.data();
-  for (unsigned int y_pixel = 0; y_pixel < this->dataPtr->imageMsg.height(); ++y_pixel)
+  for (unsigned int y_pixel = 0; y_pixel < this->dataPtr->imageMsg.height();
+      ++y_pixel)
   {
-    for (unsigned int x_pixel = 0; x_pixel < this->dataPtr->imageMsg.width(); ++x_pixel)
+    for (unsigned int x_pixel = 0; x_pixel < this->dataPtr->imageMsg.width();
+        ++x_pixel)
     {
       int idx = x_pixel + y_pixel * this->dataPtr->imageMsg.width();
       unsigned char red = d[3 * idx];
