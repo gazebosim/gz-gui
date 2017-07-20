@@ -93,6 +93,9 @@ namespace ignition
 
     /// \brief Set the verbosity level (from 0 to 4).
     void setVerbosity(const unsigned int _verbosity);
+
+    void listPlugins();
+    std::vector<std::pair<std::string, std::vector<std::string>>> getPluginList();
   }
 }
 #endif

@@ -21,6 +21,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginLoader.hh>
+#include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
 
 #include "ignition/gui/qt.h"
@@ -97,6 +98,18 @@ bool installSignalHandler()
 #endif
 
   return true;
+}
+
+/////////////////////////////////////////////////
+// Get home directory
+std::string homePath()
+{
+  char *homePath = getenv("HOME");
+  std::string home;
+  if (homePath)
+    home = homePath;
+
+  return home;
 }
 
 /////////////////////////////////////////////////
@@ -229,10 +242,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     return false;
 
   // Get full path
-  char *homePath = getenv("HOME");
-  std::string home;
-  if (homePath)
-    home = homePath;
+  auto home = homePath();
 
   ignition::common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(g_pluginPathEnv);
@@ -389,5 +399,64 @@ void ignition::gui::addPluginPath(const std::string &_path)
 void ignition::gui::setVerbosity(const unsigned int _verbosity)
 {
   ignition::common::Console::SetVerbosity(_verbosity);
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::listPlugins()
+{
+  auto pluginsList = getPluginList();
+
+  for (auto const &path : pluginsList)
+  {
+    std::cout << path.first << std::endl;
+
+    for (unsigned int i = 0; i < path.second.size(); ++i)
+    {
+      if (i == path.second.size() - 1)
+        std::cout << "└── " << path.second[i] << std::endl;
+      else
+        std::cout << "├── " << path.second[i] << std::endl;
+    }
+
+    if (path.second.empty())
+      std::cout << "└── No plugins" << std::endl;
+  }
+}
+
+/////////////////////////////////////////////////
+std::vector<std::pair<std::string, std::vector<std::string>>> ignition::gui::getPluginList()
+{
+  // 1. Paths from env variable
+  auto paths = ignition::common::SystemPaths::PathsFromEnv(g_pluginPathEnv);
+
+  // 2. Paths added by calling addPluginPath
+  for (auto const &path : g_pluginPaths)
+    paths.push_back(path);
+
+  // 3. ~/.ignition/gui/plugins
+  auto home = homePath();
+  paths.push_back(home + "/.ignition/gui/plugins");
+
+  // 4. Install path
+  paths.push_back(IGN_GUI_PLUGIN_INSTALL_PATH);
+
+  // Populate map
+  std::vector<std::pair<std::string, std::vector<std::string>>> plugins;
+
+  for (auto const &path : paths)
+  {
+    std::vector<std::string> ps;
+
+    ignition::common::DirIter endIter;
+    for (ignition::common::DirIter dirIter(path);
+        dirIter != endIter; ++dirIter)
+    {
+      ps.push_back(ignition::common::basename(*dirIter));
+    }
+
+    plugins.push_back(std::make_pair(path, ps));
+  }
+
+  return plugins;
 }
 

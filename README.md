@@ -87,11 +87,39 @@ Ignition GUI will look for plugins on the following paths, in this order:
 
 * Image display: display images from an Ignition Transport topic.
 
-        ign gui -c examples/image.config
+        ign gui -c examples/config/image.config
 
     or
 
         ign tui -s libImageDisplay.so
+
+## Command line
+
+If you have Ignition tools installed, you can use the `ign gui` command like tool:
+
+`ign gui -h`
+
+    Ignition GUI tool.
+
+      ign gui [options]
+
+    Options:
+
+      -l [ --list ]              List all available plugins.
+
+      -s [ --standalone ] arg    Run a plugin as a standalone window.
+                                 Give the plugin filename as an argument
+
+      -c [ --config ] arg        Open the main window with a configuration file.
+                                 Give the configuration file path as an argument
+
+      -v [ --verbose ] arg       Adjust the level of console output (0~4).
+
+      -h [ --help ]              Print this help message.
+
+      --force-version <VERSION>  Use a specific library version.
+
+      --versions                 Show the available versions.
 
 ## Examples
 
