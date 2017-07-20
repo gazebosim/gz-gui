@@ -94,7 +94,20 @@ namespace ignition
     /// \brief Set the verbosity level (from 0 to 4).
     void setVerbosity(const unsigned int _verbosity);
 
+    /// \brief Print the available plugins, organized by path.
     void listPlugins();
+
+    /// \brief Get the list of available plugins, organized by path. The paths
+    /// are given in the following order:
+    ///
+    /// 1. Paths given by the environment variable
+    /// 2. Paths added by calling addPluginPath
+    /// 3. Path ~/.ignition/gui/plugins
+    /// 4. The path where Ignition GUI plugins are installed
+    ///
+    /// \return A vector of pairs, where each pair contains:
+    /// * A path
+    /// * A vector of plugins in that path
     std::vector<std::pair<std::string, std::vector<std::string>>> getPluginList();
   }
 }

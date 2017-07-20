@@ -424,7 +424,8 @@ void ignition::gui::listPlugins()
 }
 
 /////////////////////////////////////////////////
-std::vector<std::pair<std::string, std::vector<std::string>>> ignition::gui::getPluginList()
+std::vector<std::pair<std::string, std::vector<std::string>>>
+    ignition::gui::getPluginList()
 {
   // 1. Paths from env variable
   auto paths = ignition::common::SystemPaths::PathsFromEnv(g_pluginPathEnv);
@@ -451,7 +452,13 @@ std::vector<std::pair<std::string, std::vector<std::string>>> ignition::gui::get
     for (ignition::common::DirIter dirIter(path);
         dirIter != endIter; ++dirIter)
     {
-      ps.push_back(ignition::common::basename(*dirIter));
+      auto plugin = ignition::common::basename(*dirIter);
+
+      // All we verify is that the file starts with "lib", any further
+      // checks would require loading the plugin.
+
+      if (plugin.find("lib") == 0)
+        ps.push_back(plugin);
     }
 
     plugins.push_back(std::make_pair(path, ps));
