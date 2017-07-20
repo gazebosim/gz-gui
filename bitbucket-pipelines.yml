@@ -6,18 +6,18 @@ pipelines:
         script:
           - apt update
           - apt install -y build-essential wget cmake qtbase5-dev libtinyxml2-dev libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev mercurial
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-math
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math3
           - cd ign-math
           - mkdir build
           - cd build
-          - cmake ..
+          - cmake .. -DENABLE_TESTS_COMPILATION=false
           - make install
           - cd ../..
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-common
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-common -b default
           - cd ign-common
           - mkdir build
           - cd build
-          - cmake ..
+          - cmake .. -DENABLE_TESTS_COMPILATION=false
           - make install
           - cd ../..
           - mkdir build
