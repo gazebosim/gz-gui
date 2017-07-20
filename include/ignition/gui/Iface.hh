@@ -18,6 +18,7 @@
 #define IGNITION_GUI_IFACE_HH_
 
 #include <tinyxml2.h>
+#include <string>
 
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"

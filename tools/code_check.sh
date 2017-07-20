@@ -62,10 +62,9 @@ SUPPRESS=/tmp/cpp_check.suppress
 # It's disable for now because checking for missing includes is very
 # time consuming. See CPPCHECK_CMD3.
 #echo "missingIncludeSystem" >> $SUPPRESS
-echo "*:include/ignition/transport/TransportTypes.hh:63" > $SUPPRESS
 
 #cppcheck
-CPPCHECK_BASE="cppcheck -q --suppressions-list=$SUPPRESS"
+CPPCHECK_BASE="cppcheck -q --inline-suppr --suppressions-list=$SUPPRESS"
 if [ $CPPCHECK_LT_157 -eq 0 ]; then
   # use --language argument if 1.57 or greater (issue #907)
   CPPCHECK_BASE="$CPPCHECK_BASE --language=c++"

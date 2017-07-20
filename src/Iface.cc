@@ -15,9 +15,9 @@
  *
 */
 
-#include <iostream>
 #include <signal.h>
 #include <stdio.h>
+#include <iostream>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginLoader.hh>
@@ -67,7 +67,7 @@ bool installSignalHandler()
     return false;
 
 #ifndef _WIN32
-  auto handler = [](int)
+  auto handler = [](int)  // NOLINT(readability/casting)
       {
         // Note: Don't call stop() for the main window, we close it and let the
         // program pick it up from there
@@ -211,7 +211,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
   }
 
   // Process each plugin
-  for(auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
+  for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
     auto filename = pluginElem->Attribute("filename");
@@ -302,7 +302,7 @@ bool ignition::gui::createMainWindow()
     dock->setAllowedAreas(Qt::AllDockWidgetAreas);
     dock->setWidget(&*plugin);
 
-    auto area = count % 2 ? Qt::RightDockWidgetArea : Qt::LeftDockWidgetArea;
+    auto area = (count % 2) ? Qt::RightDockWidgetArea : Qt::LeftDockWidgetArea;
     g_main_win->addDockWidget(area, dock);
 
     // Qt steals the ownership of the plugin (QWidget)

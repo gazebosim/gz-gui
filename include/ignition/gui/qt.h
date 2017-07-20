@@ -82,4 +82,4 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QWidgetAction>
 
-#endif
+#endif  // IGNITION_GUI_QT_H_

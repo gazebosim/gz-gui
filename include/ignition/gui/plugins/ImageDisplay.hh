@@ -18,13 +18,14 @@
 #ifndef IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
 #define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
+#ifndef Q_MOC_RUN
+  #include <ignition/gui/qt.h>
+#endif
+
 #include <ignition/msgs.hh>
 #include <ignition/transport/Node.hh>
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Plugin.hh>
-#endif
+#include "ignition/gui/Plugin.hh"
 
 namespace ignition
 {
