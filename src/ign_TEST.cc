@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include "test_config.h"
+#include "test_config.h"  // NOLINT(build/include)
 
 /////////////////////////////////////////////////
 std::string custom_exec_str(std::string _cmd)
