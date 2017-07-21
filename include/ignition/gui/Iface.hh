@@ -19,6 +19,7 @@
 
 #include <tinyxml2.h>
 #include <string>
+#include <vector>
 
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
