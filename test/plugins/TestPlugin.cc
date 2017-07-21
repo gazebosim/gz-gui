@@ -40,4 +40,4 @@ TestPlugin::~TestPlugin()
 
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::TestPlugin,
-                                  ignition::gui::Plugin);
+                                  ignition::gui::Plugin)
