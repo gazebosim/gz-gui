@@ -111,7 +111,10 @@ bool ignition::gui::runConfig(const std::string &_config)
   }
 
   initApp();
-  loadConfig(_config);
+
+  if (!loadConfig(_config))
+    return false;
+
   createMainWindow();
   runMainWindow();
   stop();
@@ -131,7 +134,10 @@ bool ignition::gui::runStandalone(const std::string &_filename)
   }
 
   initApp();
-  loadPlugin(_filename);
+
+  if (!loadPlugin(_filename))
+    return false;
+
   runDialogs();
   stop();
 
@@ -141,6 +147,9 @@ bool ignition::gui::runStandalone(const std::string &_filename)
 /////////////////////////////////////////////////
 bool ignition::gui::initApp()
 {
+  if (g_app)
+    return false;
+
   // Configure console
   ignition::common::Console::SetPrefix("[GUI] ");
 
