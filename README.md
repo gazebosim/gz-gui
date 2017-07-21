@@ -56,7 +56,7 @@ Run tests:
 
 Make coverage:
 
-    make coverage # FIXME: currently failing
+    make coverage
 
 See coverage report:
 

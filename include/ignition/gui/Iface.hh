@@ -76,6 +76,10 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     ignition::gui::MainWindow *mainWindow();
 
+    /// \brief Get the dialogs, if they have been generated.
+    IGNITION_GUI_VISIBLE
+    std::vector<QDialog *> dialogs();
+
     /// \brief Run previously created window.
     IGNITION_GUI_VISIBLE
     bool runMainWindow();

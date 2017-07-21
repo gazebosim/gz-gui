@@ -323,6 +323,12 @@ ignition::gui::MainWindow *ignition::gui::mainWindow()
 }
 
 /////////////////////////////////////////////////
+std::vector<QDialog *> ignition::gui::dialogs()
+{
+  return g_dialogs;
+}
+
+/////////////////////////////////////////////////
 bool ignition::gui::runMainWindow()
 {
   if (!checkApp())
@@ -366,7 +372,7 @@ bool ignition::gui::runDialogs()
 
     g_dialogs.push_back(dialog);
 
-    dialog->exec();
+    dialog->show();
   }
   g_plugins.clear();
 

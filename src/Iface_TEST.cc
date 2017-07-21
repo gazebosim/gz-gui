@@ -39,3 +39,16 @@ TEST(IfaceTest, MainWindowNoPlugins)
 
   EXPECT_TRUE(stop());
 }
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, Dialog)
+{
+  EXPECT_TRUE(initApp());
+  EXPECT_TRUE(loadPlugin("libImageDisplay.so"));
+  EXPECT_TRUE(runDialogs());
+
+  auto ds = dialogs();
+  EXPECT_EQ(ds.size(), 1u);
+
+  EXPECT_TRUE(stop());
+}

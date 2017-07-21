@@ -28,6 +28,13 @@ TEST(MainWindowTest, Constructor)
 {
   EXPECT_TRUE(initApp());
 
+  // Constructor
   auto mainWindow = new MainWindow;
   EXPECT_TRUE(mainWindow);
+
+  // Menu
+  EXPECT_EQ(mainWindow->menuBar()->findChildren<QMenu*>().size(), 1);
+
+  delete mainWindow;
+  EXPECT_TRUE(stop());
 }
