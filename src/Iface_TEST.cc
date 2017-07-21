@@ -16,16 +16,38 @@
 */
 
 #include <gtest/gtest.h>
+#include <ignition/common/Console.hh>
 
+#include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
+TEST(IfaceTest, initApp)
+{
+  setVerbosity(4);
+
+  // Works the first time
+  EXPECT_TRUE(initApp());
+
+  // Fails if tried again
+  EXPECT_FALSE(initApp());
+
+  // Stop
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
 TEST(IfaceTest, MainWindowNoPlugins)
 {
+  setVerbosity(4);
+
+  // Create app
   EXPECT_TRUE(initApp());
+
+  // Create main window
   EXPECT_TRUE(createMainWindow());
 
   auto win = mainWindow();
@@ -43,8 +65,19 @@ TEST(IfaceTest, MainWindowNoPlugins)
 /////////////////////////////////////////////////
 TEST(IfaceTest, Dialog)
 {
+  setVerbosity(4);
+
+  // Add test plugin to path
+  auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+  addPluginPath(testBuildPath + "plugins");
+
+  // Create app
   EXPECT_TRUE(initApp());
-  EXPECT_TRUE(loadPlugin("libImageDisplay.so"));
+
+  // Load test plugin
+  EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+
+  // Run dialogs
   EXPECT_TRUE(runDialogs());
 
   auto ds = dialogs();
@@ -52,3 +85,59 @@ TEST(IfaceTest, Dialog)
 
   EXPECT_TRUE(stop());
 }
+/////////////////////////////////////////////////
+TEST(IfaceTest, runStandalone)
+{
+  setVerbosity(4);
+
+  // Bad file
+  {
+    EXPECT_FALSE(runStandalone("badfile"));
+  }
+
+  // Good file
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Close dialog after 1 s
+    QTimer::singleShot(1000, [&] {
+      stop();
+    });
+
+    // Run test plugin
+    EXPECT_TRUE(runStandalone("libTestPlugin.so"));
+  }
+}
+
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, runConfig)
+{
+  setVerbosity(4);
+
+  // Bad file
+  {
+    EXPECT_FALSE(runConfig("badfile"));
+  }
+
+  // Good file
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Close window after 1 s
+    QTimer::singleShot(1000, [&] {
+      auto win = mainWindow();
+      EXPECT_TRUE(win != nullptr);
+      win->close();
+    });
+
+    // Run test config file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(runConfig(testSourcePath + "config/test.config"));
+  }
+}
+

@@ -1,3 +1,5 @@
+include_directories(${PROJECT_BINARY_DIR})
+
 set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Example.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
@@ -12,6 +14,12 @@ set (gtest_sources
   Iface_TEST.cc
   MainWindow_TEST.cc
 )
+
+if (HAVE_IGN_TOOLS)
+  set (gtest_sources ${gtest_sources}
+    ign_TEST.cc
+  )
+endif()
 
 ign_build_tests(${gtest_sources})
 
