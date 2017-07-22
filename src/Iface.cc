@@ -139,6 +139,26 @@ bool ignition::gui::runStandalone(const std::string &_filename)
     return false;
 
   runDialogs();
+
+  auto openDialogs = g_dialogs.size();
+  auto closedDialogs = 0u;
+
+  for (auto const &dialog : g_dialogs)
+  {
+    dialog->connect(dialog, &QDialog::finished, dialog, [&](){
+      ignmsg << "Dialog [" << dialog->windowTitle().toStdString() << "] closed."
+             << std::endl;
+      closedDialogs++;
+    });
+  }
+
+  // Wait until all dialogs are closed
+  while (closedDialogs < openDialogs)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    QCoreApplication::processEvents();
+  }
+
   stop();
 
   return true;
@@ -183,7 +203,11 @@ bool ignition::gui::stop()
   }
 
   for (auto dialog : g_dialogs)
+  {
     dialog->close();
+    dialog->deleteLater();
+  }
+  g_dialogs.clear();
 
   if (g_app)
   {
@@ -281,7 +305,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
               "]." << std::endl;
     return false;
   }
-  plugin->LoadConfig(_pluginElem);
+  plugin->Load(_pluginElem);
 
   // Store plugin in list
   g_plugins.push_back(std::move(plugin));
@@ -378,10 +402,13 @@ bool ignition::gui::runDialogs()
     auto dialog = new QDialog();
     dialog->setLayout(layout);
     dialog->setWindowTitle(title);
+    dialog->setWindowModality(Qt::NonModal);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
     g_dialogs.push_back(dialog);
 
     dialog->show();
+    ignmsg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
   }
   g_plugins.clear();
 

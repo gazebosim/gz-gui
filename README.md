@@ -42,6 +42,8 @@ To build without tests, on the cmake step, do this instead:
 
 ### Test coverage
 
+FIXME: bad coverage when doing `make test`
+
 To build test coverage, first install lcov:
 
     sudo apt-get install lcov
@@ -87,11 +89,11 @@ Ignition GUI will look for plugins on the following paths, in this order:
 
 * Image display: display images from an Ignition Transport topic.
 
-        ign gui -c examples/image.config
+        ign gui -c examples/config/image.config
 
     or
 
-        ign tui -s libImageDisplay.so
+        ign gui -s libImageDisplay.so
 
 ## Examples
 

@@ -77,11 +77,24 @@ TEST(IfaceTest, Dialog)
   // Load test plugin
   EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
 
-  // Run dialogs
+  // Run dialog
   EXPECT_TRUE(runDialogs());
 
+  // Check it was open
   auto ds = dialogs();
   EXPECT_EQ(ds.size(), 1u);
+
+  // Wait until it is closed
+  auto closed = false;
+  ds[0]->connect(ds[0], &QDialog::finished, ds[0], [&](){
+    closed = true;
+  });
+
+  // Close dialog after 1 second
+  QTimer::singleShot(1000, ds[0], SLOT(close()));
+
+  while (!closed)
+    QCoreApplication::processEvents();
 
   EXPECT_TRUE(stop());
 }
@@ -102,9 +115,20 @@ TEST(IfaceTest, runStandalone)
     addPluginPath(testBuildPath + "plugins");
 
     // Close dialog after 1 s
-    QTimer::singleShot(1000, [&] {
-      stop();
+    QTimer *timer = new QTimer();
+    timer->setSingleShot(true);
+    timer->moveToThread(QApplication::instance()->thread());
+    timer->setInterval(1000);
+    timer->connect(timer, &QTimer::timeout, [&] {
+      auto widgets = QApplication::topLevelWidgets();
+      EXPECT_EQ(widgets.size(), 1);
+
+      auto dialog = qobject_cast<QDialog *>(widgets[0]);
+      EXPECT_TRUE(dialog != nullptr);
+
+      dialog->close();
     });
+    timer->start();
 
     // Run test plugin
     EXPECT_TRUE(runStandalone("libTestPlugin.so"));

@@ -5,6 +5,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ImageDisplay.cc
   PARENT_SCOPE
 )
