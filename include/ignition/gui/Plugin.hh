@@ -34,11 +34,26 @@ namespace ignition
       /// \brief Constructor
       public: Plugin() {}
 
-      /// \brief Load function
+      /// \brief Load the plugin with a configuration file.
+      /// This loads the default parameters and then calls LoadConfig(), which
+      /// should be overridden to load custom parameters.
       ///
       /// Called when a plugin is first created.
       /// This function should not be blocking.
-      public: virtual void LoadConfig(
+      ///
+      /// \sa Load
+      /// \param[in] _pluginElem Element containing configuration
+      public: void Load(const tinyxml2::XMLElement *_pluginElem);
+
+      /// \brief Load the plugin with a configuration file. Override this
+      /// on custom plugins to handle custom configurations.
+      ///
+      /// Called when a plugin is first created.
+      /// This function should not be blocking.
+      ///
+      /// \sa Load
+      /// \param[in] _pluginElem Element containing configuration
+      protected: virtual void LoadConfig(
           const tinyxml2::XMLElement */*_pluginElem*/) {}
 
       /// \brief Get title

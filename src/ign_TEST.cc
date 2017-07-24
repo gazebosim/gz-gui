@@ -16,25 +16,40 @@
 */
 
 #include <gtest/gtest.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
+#include <string>
 
-using namespace ignition;
-using namespace gui;
+#include "test_config.h"  // NOLINT(build/include)
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, Constructor)
+std::string custom_exec_str(std::string _cmd)
 {
-  EXPECT_TRUE(initApp());
+  _cmd += " 2>&1";
+  FILE *pipe = popen(_cmd.c_str(), "r");
 
-  // Constructor
-  auto mainWindow = new MainWindow;
-  EXPECT_TRUE(mainWindow);
+  if (!pipe)
+    return "ERROR";
 
-  // Menu
-  EXPECT_EQ(mainWindow->menuBar()->findChildren<QMenu*>().size(), 1);
+  char buffer[128];
+  std::string result = "";
 
-  delete mainWindow;
-  EXPECT_TRUE(stop());
+  while (!feof(pipe))
+  {
+    if (fgets(buffer, 128, pipe) != NULL)
+      result += buffer;
+  }
+
+  pclose(pipe);
+  return result;
 }
+
+/////////////////////////////////////////////////
+TEST(CmdLine, list)
+{
+  std::string output = custom_exec_str("ign gui -l");
+  EXPECT_EQ(output,
+      "Here you see the list of available plugins\n\x1B[1;31m\x1B[0m");
+}
+

@@ -16,16 +16,38 @@
 */
 
 #include <gtest/gtest.h>
+#include <ignition/common/Console.hh>
 
+#include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
+TEST(IfaceTest, initApp)
+{
+  setVerbosity(4);
+
+  // Works the first time
+  EXPECT_TRUE(initApp());
+
+  // Fails if tried again
+  EXPECT_FALSE(initApp());
+
+  // Stop
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
 TEST(IfaceTest, MainWindowNoPlugins)
 {
+  setVerbosity(4);
+
+  // Create app
   EXPECT_TRUE(initApp());
+
+  // Create main window
   EXPECT_TRUE(createMainWindow());
 
   auto win = mainWindow();
@@ -39,3 +61,107 @@ TEST(IfaceTest, MainWindowNoPlugins)
 
   EXPECT_TRUE(stop());
 }
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, Dialog)
+{
+  setVerbosity(4);
+
+  // Add test plugin to path
+  auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+  addPluginPath(testBuildPath + "plugins");
+
+  // Create app
+  EXPECT_TRUE(initApp());
+
+  // Load test plugin
+  EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+
+  // Run dialog
+  EXPECT_TRUE(runDialogs());
+
+  // Check it was open
+  auto ds = dialogs();
+  EXPECT_EQ(ds.size(), 1u);
+
+  // Wait until it is closed
+  auto closed = false;
+  ds[0]->connect(ds[0], &QDialog::finished, ds[0], [&](){
+    closed = true;
+  });
+
+  // Close dialog after 1 second
+  QTimer::singleShot(1000, ds[0], SLOT(close()));
+
+  while (!closed)
+    QCoreApplication::processEvents();
+
+  EXPECT_TRUE(stop());
+}
+/////////////////////////////////////////////////
+TEST(IfaceTest, runStandalone)
+{
+  setVerbosity(4);
+
+  // Bad file
+  {
+    EXPECT_FALSE(runStandalone("badfile"));
+  }
+
+  // Good file
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Close dialog after 1 s
+    QTimer *timer = new QTimer();
+    timer->setSingleShot(true);
+    timer->moveToThread(QApplication::instance()->thread());
+    timer->setInterval(1000);
+    timer->connect(timer, &QTimer::timeout, [&] {
+      auto widgets = QApplication::topLevelWidgets();
+      EXPECT_EQ(widgets.size(), 1);
+
+      auto dialog = qobject_cast<QDialog *>(widgets[0]);
+      EXPECT_TRUE(dialog != nullptr);
+
+      dialog->close();
+    });
+    timer->start();
+
+    // Run test plugin
+    EXPECT_TRUE(runStandalone("libTestPlugin.so"));
+  }
+}
+
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, runConfig)
+{
+  setVerbosity(4);
+
+  // Bad file
+  {
+    EXPECT_FALSE(runConfig("badfile"));
+  }
+
+  // Good file
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Close window after 1 s
+    QTimer::singleShot(1000, [&] {
+      auto win = mainWindow();
+      EXPECT_TRUE(win != nullptr);
+      win->close();
+    });
+
+    // Run test config file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(runConfig(testSourcePath + "config/test.config"));
+  }
+}
+

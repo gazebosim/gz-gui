@@ -71,9 +71,6 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Read configuration
   if (_pluginElem)
   {
-    if (auto titleElem = _pluginElem->FirstChildElement("title"))
-      this->title = titleElem->GetText();
-
     if (auto topicElem = _pluginElem->FirstChildElement("topic"))
       topic = topicElem->GetText();
 

@@ -15,26 +15,30 @@
  *
 */
 
-#include <gtest/gtest.h>
+#ifndef IGNITION_GUI_TEST_TESTPLUGIN_HH_
+#define IGNITION_GUI_TEST_TESTPLUGIN_HH_
 
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
+#ifndef Q_MOC_RUN
+  #include <ignition/gui/qt.h>
+  #include <ignition/gui/Plugin.hh>
+#endif
 
-using namespace ignition;
-using namespace gui;
-
-/////////////////////////////////////////////////
-TEST(MainWindowTest, Constructor)
+namespace ignition
 {
-  EXPECT_TRUE(initApp());
+  namespace gui
+  {
+    class TestPlugin : public Plugin
+    {
+      Q_OBJECT
 
-  // Constructor
-  auto mainWindow = new MainWindow;
-  EXPECT_TRUE(mainWindow);
+      /// \brief Constructor
+      /// \param[in] _parent Parent widget
+      public: TestPlugin();
 
-  // Menu
-  EXPECT_EQ(mainWindow->menuBar()->findChildren<QMenu*>().size(), 1);
-
-  delete mainWindow;
-  EXPECT_TRUE(stop());
+      /// \brief Destructor
+      public: virtual ~TestPlugin();
+    };
+  }
 }
+
+#endif

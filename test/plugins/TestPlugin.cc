@@ -15,26 +15,29 @@
  *
 */
 
-#include <gtest/gtest.h>
+#include <ignition/common/Console.hh>
+#include <ignition/common/PluginMacros.hh>
 
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "TestPlugin.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, Constructor)
+TestPlugin::TestPlugin()
+  : Plugin()
 {
-  EXPECT_TRUE(initApp());
+  auto layout = new QHBoxLayout;
+  layout->addWidget(new QLabel("Test plugin"));
 
-  // Constructor
-  auto mainWindow = new MainWindow;
-  EXPECT_TRUE(mainWindow);
-
-  // Menu
-  EXPECT_EQ(mainWindow->menuBar()->findChildren<QMenu*>().size(), 1);
-
-  delete mainWindow;
-  EXPECT_TRUE(stop());
+  this->setLayout(layout);
 }
+
+/////////////////////////////////////////////////
+TestPlugin::~TestPlugin()
+{
+}
+
+// Register this plugin
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::TestPlugin,
+                                  ignition::gui::Plugin)

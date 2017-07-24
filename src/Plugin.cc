@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
-#include <gtest/gtest.h>
-
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/Plugin.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, Constructor)
+void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 {
-  EXPECT_TRUE(initApp());
+  // Read default params
+  if (_pluginElem)
+  {
+    if (auto titleElem = _pluginElem->FirstChildElement("title"))
+      this->title = titleElem->GetText();
+  }
 
-  // Constructor
-  auto mainWindow = new MainWindow;
-  EXPECT_TRUE(mainWindow);
-
-  // Menu
-  EXPECT_EQ(mainWindow->menuBar()->findChildren<QMenu*>().size(), 1);
-
-  delete mainWindow;
-  EXPECT_TRUE(stop());
+  this->LoadConfig(_pluginElem);
 }
+
