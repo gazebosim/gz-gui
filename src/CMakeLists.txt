@@ -6,7 +6,12 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
+  PARENT_SCOPE
+)
+
+set (plugin_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ImageDisplay.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TimePanel.cc
   PARENT_SCOPE
 )
 
@@ -22,6 +27,6 @@ if (HAVE_IGN_TOOLS)
   )
 endif()
 
-ign_build_tests(${gtest_sources})
-
 add_subdirectory(cmd)
+
+ign_build_tests(${gtest_sources})

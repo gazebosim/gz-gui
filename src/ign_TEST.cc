@@ -49,7 +49,8 @@ std::string custom_exec_str(std::string _cmd)
 TEST(CmdLine, list)
 {
   std::string output = custom_exec_str("ign gui -l");
-  EXPECT_EQ(output,
-      "Here you see the list of available plugins\n\x1B[1;31m\x1B[0m");
+  EXPECT_GT(output.find(".ignition/gui/plugins"), 0u);
+  EXPECT_GT(output.find("ImageDisplay"), 0u);
+  EXPECT_GT(output.find("TimePanel"), 0u);
 }
 
