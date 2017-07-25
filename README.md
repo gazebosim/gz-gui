@@ -97,7 +97,7 @@ Ignition GUI will look for plugins on the following paths, in this order:
 
 ## Command line
 
-If you have Ignition tools installed, you can use the `ign gui` command like tool:
+If you have Ignition Tools installed, you can use the `ign gui` command line tool:
 
 `ign gui -h`
 
