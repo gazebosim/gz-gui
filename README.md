@@ -87,13 +87,30 @@ Ignition GUI will look for plugins on the following paths, in this order:
 
 ### Built-in plugins
 
-* Image display: display images from an Ignition Transport topic.
+#### Image display
 
-        ign gui -c examples/config/image.config
+Display images from an Ignition Transport topic.
 
-    or
+    ign gui -c examples/config/image.config
 
-        ign gui -s libImageDisplay.so
+or
+
+    ign gui -s libImageDisplay.so
+
+#### Publisher
+
+Publish messages on an Ignition Transport topic.
+
+1. Listen to string messages on the `/echo` topic:
+
+    ign topic -e -t /echo
+
+1. On a new terminal, open the publisher GUI:
+
+    ign gui -s libPublisher.so
+
+1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
+   Click "Publish" to publish a message and see it on the terminal.
 
 ## Examples
 

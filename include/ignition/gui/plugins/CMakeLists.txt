@@ -1,12 +1,8 @@
 include (${project_cmake_dir}/Utils.cmake)
 
-set (qt_headers_plugins ${qt_headers_plugins}
-  plugins/ImageDisplay.hh
-  PARENT_SCOPE
-)
-
 set (qt_headers_local
   ImageDisplay
+  Publisher
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
@@ -18,7 +14,10 @@ foreach (src ${qt_headers_local})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
   add_library(${src} SHARED ${PROJECT_SOURCE_DIR}/src/plugins/${src}.cc ${${src}_MOC})
   target_link_libraries(${src}
+    ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}
+    ${IGNITION-MSGS_LIBRARIES}
+    ${IGNITION-TRANSPORT_LIBRARIES}
     ${Qt5Core_LIBRARIES}
     ${Qt5Widgets_LIBRARIES})
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
