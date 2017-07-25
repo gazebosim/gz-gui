@@ -33,6 +33,10 @@ namespace plugins
 {
   class TimePanelPrivate;
 
+  /// \brief This plugin provides a time panel which may:
+  /// * Display simulation time
+  /// * Display real time
+  /// * Have a play / pause button
   class TimePanel: public ignition::gui::Plugin
   {
     Q_OBJECT
@@ -42,6 +46,9 @@ namespace plugins
 
     /// \brief Destructor
     public: virtual ~TimePanel();
+
+    // Documentation inherited
+    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
@@ -58,8 +65,14 @@ namespace plugins
     /// \brief Notify that it's now paused.
     signals: void Paused();
 
-    /// \brief Subscriber callback when new diagnostics are received
-    private: void OnDiagnosticsMsg(const ignition::msgs::Diagnostics &_msg);
+    /// \brief Update simulation time.
+    signals: void SetSimTime(QString _time);
+
+    /// \brief Update real time.
+    signals: void SetRealTime(QString _time);
+
+    /// \brief Subscriber callback when new world statistics are received
+    private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
 
     // Private data
     private: std::unique_ptr<TimePanelPrivate> dataPtr;

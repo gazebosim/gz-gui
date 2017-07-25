@@ -64,7 +64,10 @@ ImageDisplay::~ImageDisplay()
 /////////////////////////////////////////////////
 void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
-  this->title = "Image display";
+  // Default name in case user didn't define one
+  if (this->title.empty())
+    this->title = "Image display";
+
   std::string topic;
   bool topicPicker = true;
 
