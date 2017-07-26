@@ -18,9 +18,9 @@
 #ifndef IGNITION_GUI_PLUGINS_GUIDIAGNOSTICS_HH_
 #define IGNITION_GUI_PLUGINS_GUIDIAGNOSTICS_HH_
 
+#include <ignition/gui/qt.h>
 #include <memory>
 
-#include <ignition/gui/qt.h>
 #include <ignition/gui/Plugin.hh>
 #include <ignition/transport.hh>
 #include <ignition/msgs.hh>
