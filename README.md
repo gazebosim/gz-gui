@@ -119,6 +119,12 @@ Publish messages on an Ignition Transport topic.
 
     ign gui -c examples/config/time.config
 
+#### Topic echo
+
+Echo messages from an Ignition Transport topic.
+
+    ign gui -c examples/config/pubsub.config
+
 ## Examples
 
 ### Using as a library
