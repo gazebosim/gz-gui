@@ -128,7 +128,7 @@ if (NOT DEFINED ENABLE_TESTS_COMPILATION)
   set (ENABLE_TESTS_COMPILATION True)
 endif()
 
-# Define testing macros as empty and redefine them if support is found and 
+# Define testing macros as empty and redefine them if support is found and
 # ENABLE_TESTS_COMPILATION is set to true
 macro (ign_build_tests)
 endmacro()
@@ -139,10 +139,10 @@ endif()
 
 #################################################
 # Macro to setup supported compiler warnings
-# Based on work of Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST. 
+# Based on work of Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST.
 include(CheckCXXCompilerFlag)
 
-macro(filter_valid_compiler_warnings) 
+macro(filter_valid_compiler_warnings)
   foreach(flag ${ARGN})
     CHECK_CXX_COMPILER_FLAG(${flag} R${flag})
     if(${R${flag}})
