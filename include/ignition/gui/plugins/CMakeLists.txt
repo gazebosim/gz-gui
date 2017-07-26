@@ -1,12 +1,8 @@
 include (${project_cmake_dir}/Utils.cmake)
 
-set (qt_headers_plugins ${qt_headers_plugins}
-  plugins/ImageDisplay.hh
-  PARENT_SCOPE
-)
-
 set (qt_headers_local
   ImageDisplay
+  Publisher
   TimePanel
 )
 
