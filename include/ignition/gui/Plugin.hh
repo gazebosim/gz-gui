@@ -61,7 +61,7 @@ namespace ignition
       public: virtual std::string Title() {return this->title;}
 
       /// \brief Title to be displayed on top of plugin.
-      protected: std::string title = "GUI plugin";
+      protected: std::string title;
     };
   }
 }

@@ -96,14 +96,14 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           // Play button
           auto playButton = new QPushButton("Play");
           this->connect(playButton, SIGNAL(clicked()), this, SLOT(OnPlay()));
-          this->connect(this, SIGNAL(Playing()), playButton, SLOT(show()));
-          this->connect(this, SIGNAL(Paused()), playButton, SLOT(hide()));
+          this->connect(this, SIGNAL(Playing()), playButton, SLOT(hide()));
+          this->connect(this, SIGNAL(Paused()), playButton, SLOT(show()));
 
           // Pause button
           auto pauseButton = new QPushButton("Pause");
           this->connect(pauseButton, SIGNAL(clicked()), this, SLOT(OnPause()));
-          this->connect(this, SIGNAL(Playing()), pauseButton, SLOT(hide()));
-          this->connect(this, SIGNAL(Paused()), pauseButton, SLOT(show()));
+          this->connect(this, SIGNAL(Playing()), pauseButton, SLOT(show()));
+          this->connect(this, SIGNAL(Paused()), pauseButton, SLOT(hide()));
 
           mainLayout->addWidget(playButton, 0, 0, 2, 1);
           mainLayout->addWidget(pauseButton, 0, 0, 2, 1);
@@ -113,9 +113,9 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
             auto startPaused = false;
             pausedElem->QueryBoolText(&startPaused);
             if (startPaused)
-              pauseButton->hide();
+              this->Paused();
             else
-              playButton->hide();
+              this->Playing();
           }
         }
       }
@@ -220,12 +220,12 @@ void TimePanel::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 void TimePanel::OnPlay()
 {
   std::function<void(const ignition::msgs::Empty &, const bool)> cb =
-      [this](const ignition::msgs::Empty &_rep, const bool _result)
+      [this](const ignition::msgs::Empty &/*_rep*/, const bool _result)
   {
     if (_result)
-      QMetaObject::invokeMethod(this, "Paused");
-    else
       QMetaObject::invokeMethod(this, "Playing");
+    else
+      QMetaObject::invokeMethod(this, "Paused");
   };
 
   ignition::msgs::WorldControl req;
@@ -236,13 +236,14 @@ void TimePanel::OnPlay()
 /////////////////////////////////////////////////
 void TimePanel::OnPause()
 {
+  // FIXME: The service goes through but the callback is not being called
   std::function<void(const ignition::msgs::Empty &, const bool)> cb =
-      [this](const ignition::msgs::Empty &_rep, const bool _result)
+      [this](const ignition::msgs::Empty &/*_rep*/, const bool _result)
   {
     if (_result)
-      QMetaObject::invokeMethod(this, "Playing");
-    else
       QMetaObject::invokeMethod(this, "Paused");
+    else
+      QMetaObject::invokeMethod(this, "Playing");
   };
 
   ignition::msgs::WorldControl req;
