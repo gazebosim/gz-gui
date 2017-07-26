@@ -112,6 +112,13 @@ Publish messages on an Ignition Transport topic.
 1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
 
+#### Time panel
+
+* Display sim / real time published on a topic
+* Buttons to make play / pause service requests
+
+    ign gui -c examples/config/time.config
+
 ## Command line
 
 If you have Ignition tools installed, you can use the `ign gui` command like tool:
