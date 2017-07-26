@@ -12,6 +12,7 @@ set (sources
 set (plugin_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ImageDisplay.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Publisher.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TimePanel.cc
   PARENT_SCOPE
 )
 

@@ -3,6 +3,7 @@ include (${project_cmake_dir}/Utils.cmake)
 set (qt_headers_local
   ImageDisplay
   Publisher
+  TimePanel
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
