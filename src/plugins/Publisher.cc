@@ -54,7 +54,7 @@ Publisher::~Publisher()
 }
 
 /////////////////////////////////////////////////
-void Publisher::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 {
   if (this->title.empty())
     this->title = "Publisher";
