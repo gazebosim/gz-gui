@@ -106,9 +106,11 @@ namespace ignition
     void addPluginPath(const std::string &_path);
 
     /// \brief Set the verbosity level (from 0 to 4).
+    IGNITION_GUI_VISIBLE
     void setVerbosity(const unsigned int _verbosity);
 
     /// \brief Print the available plugins, organized by path.
+    IGNITION_GUI_VISIBLE
     void listPlugins();
 
     /// \brief Get the list of available plugins, organized by path. The paths
@@ -122,6 +124,7 @@ namespace ignition
     /// \return A vector of pairs, where each pair contains:
     /// * A path
     /// * A vector of plugins in that path
+    IGNITION_GUI_VISIBLE
     std::vector<std::pair<std::string, std::vector<std::string>>>
         getPluginList();
   }
