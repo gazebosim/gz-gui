@@ -34,12 +34,12 @@ namespace plugins
 {
   class PublisherPrivate;
 
+  /// \brief Widget which publishes a custom Ignition transport message.
   class Publisher : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    /// \param[in] _parent Parent widget
     public: Publisher();
 
     /// \brief Destructor

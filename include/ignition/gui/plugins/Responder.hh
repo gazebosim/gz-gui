@@ -42,12 +42,12 @@ namespace plugins
 {
   class ResponderPrivate;
 
+  /// \brief Advertises a service which responds with a custom message.
   class Responder : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    /// \param[in] _parent Parent widget
     public: Responder();
 
     /// \brief Destructor

@@ -80,7 +80,7 @@ void Requester::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   if (this->title.empty())
     this->title = "Requester";
 
-  // Populate with default values.
+  // Request
   this->dataPtr->reqTypeEdit = new QLineEdit("ignition.msgs.StringMsg");
   this->dataPtr->resTypeEdit = new QLineEdit("ignition.msgs.Int32");
   this->dataPtr->reqEdit = new QTextEdit("data: \"Hello\"");
@@ -93,6 +93,7 @@ void Requester::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   auto requestButton = new QPushButton("Request");
   this->connect(requestButton, SIGNAL(clicked()), this, SLOT(OnRequest()));
 
+  // Response
   this->dataPtr->resEdit = new QTextEdit("N/A");
   this->dataPtr->resEdit->setEnabled(false);
 
@@ -100,6 +101,7 @@ void Requester::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   this->dataPtr->timeoutLabel = new QLabel("No");
 
+  // Layout
   auto layout = new QGridLayout();
   layout->addWidget(new QLabel("Request"), 0, 0, 1, 2);
   layout->addWidget(this->dataPtr->reqEdit, 1, 0, 1, 2);
@@ -131,7 +133,7 @@ void Requester::OnRequest()
   auto timeout = this->dataPtr->timeoutSpin->value();
   auto reqData = this->dataPtr->reqEdit->toPlainText().toStdString();
 
-  // Create the request, and populate the field with _reqData
+  // Create the request
   auto req = ignition::msgs::Factory::New(reqType, reqData.c_str());
   if (!req)
   {
@@ -148,17 +150,15 @@ void Requester::OnRequest()
     return;
   }
 
+  // Update GUI before we block
   this->dataPtr->successLabel->setText("N/A");
   this->dataPtr->resEdit->setPlainText("");
   this->dataPtr->timeoutLabel->setText("Waiting...");
-
   QApplication::processEvents();
 
-  // Create the node.
+  // Request the service, this will block
   ignition::transport::Node node;
   bool success;
-
-  // Request the service, this will block
   bool executed = node.Request(service, *req, timeout, *rep, success);
   if (executed)
   {

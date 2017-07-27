@@ -48,7 +48,7 @@ namespace plugins
     /// \brief Button to serve
     public: QPushButton *serveButton;
 
-    /// \brief Button to serve
+    /// \brief Button to stop
     public: QPushButton *stopButton;
 
     /// \brief Keep track of latest service advertised so it's possible to
@@ -83,8 +83,7 @@ void Responder::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   if (this->title.empty())
     this->title = "Responder";
 
-  // Populate with default values.
-  this->dataPtr->reqTypeEdit = new QLineEdit("ignition.msgs.StringMsg");
+  // Response
   this->dataPtr->resTypeEdit = new QLineEdit("ignition.msgs.Int32");
   this->dataPtr->resEdit = new QTextEdit("data: 123");
   this->dataPtr->serviceEdit = new QLineEdit("/request");
@@ -98,9 +97,13 @@ void Responder::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->connect(this->dataPtr->stopButton, SIGNAL(clicked()), this,
       SLOT(OnStop()));
 
+  // Request
+  this->dataPtr->reqTypeEdit = new QLineEdit("ignition.msgs.StringMsg");
+
   this->dataPtr->reqEdit = new QTextEdit("N/A");
   this->dataPtr->reqEdit->setEnabled(false);
 
+  // Layout
   auto layout = new QGridLayout();
   layout->addWidget(new QLabel("Response"), 0, 0, 1, 2);
   layout->addWidget(this->dataPtr->resEdit, 1, 0, 1, 2);
@@ -201,7 +204,8 @@ void Responder::OnServe()
 void Responder::OnStop()
 {
   // Unsubscribe
-  // Ign-transport issue, no API to retrieve list of services by this node
+  // Ign-transport issue: no API to retrieve whole list of services by this
+  // node?
   this->dataPtr->node.UnadvertiseSrv(this->dataPtr->lastService);
 
   this->dataPtr->serveButton->show();

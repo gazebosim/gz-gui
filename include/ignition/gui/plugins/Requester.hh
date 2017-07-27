@@ -34,12 +34,12 @@ namespace plugins
 {
   class RequesterPrivate;
 
+  /// \brief Widget which sends a custom Ignition transport service request.
   class Requester : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    /// \param[in] _parent Parent widget
     public: Requester();
 
     /// \brief Destructor
