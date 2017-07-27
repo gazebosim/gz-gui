@@ -152,7 +152,6 @@ void Responder::OnServe()
   if (reqType == "ignition.msgs.StringMsg" &&
       resType == "ignition.msgs.StringMsg")
   {
-
     advertised = this->dataPtr->node.Advertise(service,
         &Responder::Callback<ignition::msgs::StringMsg,
                              ignition::msgs::StringMsg>, this);
@@ -160,7 +159,6 @@ void Responder::OnServe()
   else if (reqType == "ignition.msgs.StringMsg" &&
            resType == "ignition.msgs.Int32")
   {
-
     advertised = this->dataPtr->node.Advertise(service,
         &Responder::Callback<ignition::msgs::StringMsg,
                              ignition::msgs::Int32>, this);
@@ -168,7 +166,6 @@ void Responder::OnServe()
   else if (reqType == "ignition.msgs.Int32" &&
            resType == "ignition.msgs.StringMsg")
   {
-
     advertised = this->dataPtr->node.Advertise(service,
         &Responder::Callback<ignition::msgs::Int32,
                              ignition::msgs::StringMsg>, this);
@@ -176,7 +173,6 @@ void Responder::OnServe()
   else if (reqType == "ignition.msgs.Int32" &&
            resType == "ignition.msgs.Int32")
   {
-
     advertised = this->dataPtr->node.Advertise(service,
         &Responder::Callback<ignition::msgs::Int32,
                              ignition::msgs::Int32>, this);
