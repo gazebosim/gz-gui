@@ -101,24 +101,25 @@ void Requester::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->timeoutLabel = new QLabel("No");
 
   auto layout = new QGridLayout();
-  layout->addWidget(new QLabel("Request type: "), 0, 0);
-  layout->addWidget(this->dataPtr->reqTypeEdit, 0, 1);
-  layout->addWidget(new QLabel("Request: "), 1, 0);
-  layout->addWidget(this->dataPtr->reqEdit, 1, 1);
-  layout->addWidget(new QLabel("Response type: "), 2, 0);
-  layout->addWidget(this->dataPtr->resTypeEdit, 2, 1);
-  layout->addWidget(new QLabel("Service: "), 3, 0);
-  layout->addWidget(this->dataPtr->serviceEdit, 3, 1);
-  layout->addWidget(new QLabel("Timeout: "), 4, 0);
-  layout->addWidget(this->dataPtr->timeoutSpin, 4, 1);
-  layout->addWidget(requestButton, 5, 0, 1, 2);
-  layout->addWidget(new QLabel("Response: "), 6, 0);
-  layout->addWidget(this->dataPtr->resEdit, 6, 1);
-  layout->addWidget(new QLabel("Success: "), 7, 0);
-  layout->addWidget(this->dataPtr->successLabel, 7, 1);
-  layout->addWidget(new QLabel("Timed out: "), 8, 0);
-  layout->addWidget(this->dataPtr->timeoutLabel, 8, 1);
+  layout->addWidget(new QLabel("Request"), 0, 0, 1, 2);
+  layout->addWidget(this->dataPtr->reqEdit, 1, 0, 1, 2);
+  layout->addWidget(new QLabel("Request type: "), 2, 0);
+  layout->addWidget(this->dataPtr->reqTypeEdit, 2, 1);
+  layout->addWidget(new QLabel("Response type: "), 3, 0);
+  layout->addWidget(this->dataPtr->resTypeEdit, 3, 1);
+  layout->addWidget(new QLabel("Service: "), 4, 0);
+  layout->addWidget(this->dataPtr->serviceEdit, 4, 1);
+  layout->addWidget(new QLabel("Timeout: "), 5, 0);
+  layout->addWidget(this->dataPtr->timeoutSpin, 5, 1);
+  layout->addWidget(requestButton, 6, 0, 1, 2);
+  layout->addWidget(new QLabel("Latest response "), 7, 0, 1, 2);
+  layout->addWidget(this->dataPtr->resEdit, 8, 0, 1, 2);
+  layout->addWidget(new QLabel("Success: "), 9, 0);
+  layout->addWidget(this->dataPtr->successLabel, 9, 1);
+  layout->addWidget(new QLabel("Timed out: "), 10, 0);
+  layout->addWidget(this->dataPtr->timeoutLabel, 10, 1);
   this->setLayout(layout);
+  this->setMinimumWidth(400);
 }
 
 /////////////////////////////////////////////////
@@ -147,14 +148,17 @@ void Requester::OnRequest()
     return;
   }
 
+  this->dataPtr->successLabel->setText("N/A");
+  this->dataPtr->resEdit->setPlainText("");
+  this->dataPtr->timeoutLabel->setText("Waiting...");
+
+  QApplication::processEvents();
+
   // Create the node.
   ignition::transport::Node node;
   bool success;
 
-  // Request the service.
-  this->dataPtr->successLabel->setText("N/A");
-  this->dataPtr->resEdit->setPlainText("");
-  this->dataPtr->timeoutLabel->setText("Waiting...");
+  // Request the service, this will block
   bool executed = node.Request(service, *req, timeout, *rep, success);
   if (executed)
   {

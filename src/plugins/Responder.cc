@@ -39,11 +39,21 @@ namespace plugins
     /// \brief Holds response
     public: QTextEdit *resEdit;
 
+    /// \brief Holds request
+    public: QTextEdit *reqEdit;
+
     /// \brief Holds service
     public: QLineEdit *serviceEdit;
 
     /// \brief Button to serve
     public: QPushButton *serveButton;
+
+    /// \brief Button to serve
+    public: QPushButton *stopButton;
+
+    /// \brief Keep track of latest service advertised so it's possible to
+    /// unadvertise later
+    public: std::string lastService;
 
     /// \brief Node for communication
     public: ignition::transport::Node node;
@@ -55,16 +65,6 @@ namespace plugins
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
-
-std::unique_ptr<google::protobuf::Message> g_res;
-
-/////////////////////////////////////////////////
-template<typename REQ, typename RES>
-void callback(const REQ &/*_req*/, RES &_res, bool &_success)
-{
-  _res.CopyFrom(*g_res);
-  _success = true;
-}
 
 /////////////////////////////////////////////////
 Responder::Responder()
@@ -93,17 +93,36 @@ void Responder::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->connect(this->dataPtr->serveButton, SIGNAL(clicked()), this,
       SLOT(OnServe()));
 
+  this->dataPtr->stopButton = new QPushButton("Stop serving response");
+  this->dataPtr->stopButton->hide();
+  this->connect(this->dataPtr->stopButton, SIGNAL(clicked()), this,
+      SLOT(OnStop()));
+
+  this->dataPtr->reqEdit = new QTextEdit("N/A");
+  this->dataPtr->reqEdit->setEnabled(false);
+
   auto layout = new QGridLayout();
-  layout->addWidget(new QLabel("Request type: "), 0, 0);
-  layout->addWidget(this->dataPtr->reqTypeEdit, 0, 1);
-  layout->addWidget(new QLabel("Response type: "), 1, 0);
-  layout->addWidget(this->dataPtr->resTypeEdit, 1, 1);
-  layout->addWidget(new QLabel("Response: "), 2, 0);
-  layout->addWidget(this->dataPtr->resEdit, 2, 1);
-  layout->addWidget(new QLabel("Service: "), 3, 0);
-  layout->addWidget(this->dataPtr->serviceEdit, 3, 1);
-  layout->addWidget(this->dataPtr->serveButton, 4, 0, 1, 2);
+  layout->addWidget(new QLabel("Response"), 0, 0, 1, 2);
+  layout->addWidget(this->dataPtr->resEdit, 1, 0, 1, 2);
+  layout->addWidget(new QLabel("Request type: "), 2, 0);
+  layout->addWidget(this->dataPtr->reqTypeEdit, 2, 1);
+  layout->addWidget(new QLabel("Response type: "), 3, 0);
+  layout->addWidget(this->dataPtr->resTypeEdit, 3, 1);
+  layout->addWidget(new QLabel("Service: "), 4, 0);
+  layout->addWidget(this->dataPtr->serviceEdit, 4, 1);
+  layout->addWidget(this->dataPtr->serveButton, 5, 0, 1, 2);
+  layout->addWidget(this->dataPtr->stopButton, 5, 0, 1, 2);
+  layout->addWidget(new QLabel("Latest request "), 6, 0, 1, 2);
+  layout->addWidget(this->dataPtr->reqEdit, 7, 0, 1, 2);
   this->setLayout(layout);
+  this->setMinimumWidth(400);
+}
+
+/////////////////////////////////////////////////
+void Responder::UpdateRequest(QString _req)
+{
+  // Thread danger?
+  this->dataPtr->reqEdit->setPlainText(_req);
 }
 
 /////////////////////////////////////////////////
@@ -113,9 +132,9 @@ void Responder::OnServe()
   auto reqType = this->dataPtr->reqTypeEdit->text().toStdString();
   auto resType = this->dataPtr->resTypeEdit->text().toStdString();
   auto resData = this->dataPtr->resEdit->toPlainText().toStdString();
-  g_res = ignition::msgs::Factory::New(resType, resData.c_str());
+  this->res = ignition::msgs::Factory::New(resType, resData.c_str());
 
-  if (!g_res)
+  if (!this->res)
   {
     ignerr << "Unable to create request of type[" << resType << "] "
            << "with data[" << resData << "].\n";
@@ -132,8 +151,8 @@ void Responder::OnServe()
   {
 
     advertised = this->dataPtr->node.Advertise(service,
-        callback<ignition::msgs::StringMsg,
-                 ignition::msgs::Int32>);
+        &Responder::Callback<ignition::msgs::StringMsg,
+                             ignition::msgs::Int32>, this);
   }
   else
   {
@@ -141,13 +160,33 @@ void Responder::OnServe()
            << resType << "]" << std::endl;
   }
 
-  QString text = advertised ? "Stop serving response" : "Serve response";
-  this->dataPtr->serveButton->setText(text);
+  if (advertised)
+  {
+    this->dataPtr->serveButton->hide();
+    this->dataPtr->stopButton->show();
+    this->dataPtr->lastService = service;
+  }
 
   this->dataPtr->resEdit->setEnabled(!advertised);
   this->dataPtr->reqTypeEdit->setEnabled(!advertised);
   this->dataPtr->resTypeEdit->setEnabled(!advertised);
   this->dataPtr->serviceEdit->setEnabled(!advertised);
+}
+
+/////////////////////////////////////////////////
+void Responder::OnStop()
+{
+  // Unsubscribe
+  // Ign-transport issue, no API to retrieve list of services by this node
+  this->dataPtr->node.UnadvertiseSrv(this->dataPtr->lastService);
+
+  this->dataPtr->serveButton->show();
+  this->dataPtr->stopButton->hide();
+
+  this->dataPtr->resEdit->setEnabled(true);
+  this->dataPtr->reqTypeEdit->setEnabled(true);
+  this->dataPtr->resTypeEdit->setEnabled(true);
+  this->dataPtr->serviceEdit->setEnabled(true);
 }
 
 // Register this plugin
