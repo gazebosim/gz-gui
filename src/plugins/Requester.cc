@@ -43,6 +43,15 @@ namespace plugins
     /// \brief Holds request
     public: QTextEdit *reqEdit;
 
+    /// \brief Holds response
+    public: QTextEdit *resEdit;
+
+    /// \brief Holds success status
+    public: QLabel *successLabel;
+
+    /// \brief Holds timeout status
+    public: QLabel *timeoutLabel;
+
     /// \brief Holds service
     public: QLineEdit *serviceEdit;
   };
@@ -84,6 +93,13 @@ void Requester::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   auto requestButton = new QPushButton("Request");
   this->connect(requestButton, SIGNAL(clicked()), this, SLOT(OnRequest()));
 
+  this->dataPtr->resEdit = new QTextEdit("N/A");
+  this->dataPtr->resEdit->setEnabled(false);
+
+  this->dataPtr->successLabel = new QLabel("N/A");
+
+  this->dataPtr->timeoutLabel = new QLabel("No");
+
   auto layout = new QGridLayout();
   layout->addWidget(new QLabel("Request type: "), 0, 0);
   layout->addWidget(this->dataPtr->reqTypeEdit, 0, 1);
@@ -96,6 +112,12 @@ void Requester::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   layout->addWidget(new QLabel("Timeout: "), 4, 0);
   layout->addWidget(this->dataPtr->timeoutSpin, 4, 1);
   layout->addWidget(requestButton, 5, 0, 1, 2);
+  layout->addWidget(new QLabel("Response: "), 6, 0);
+  layout->addWidget(this->dataPtr->resEdit, 6, 1);
+  layout->addWidget(new QLabel("Success: "), 7, 0);
+  layout->addWidget(this->dataPtr->successLabel, 7, 1);
+  layout->addWidget(new QLabel("Timed out: "), 8, 0);
+  layout->addWidget(this->dataPtr->timeoutLabel, 8, 1);
   this->setLayout(layout);
 }
 
@@ -127,19 +149,29 @@ void Requester::OnRequest()
 
   // Create the node.
   ignition::transport::Node node;
-  bool result;
+  bool success;
 
   // Request the service.
-  bool executed = node.Request(service, *req, timeout, *rep, result);
+  this->dataPtr->successLabel->setText("N/A");
+  this->dataPtr->resEdit->setPlainText("");
+  this->dataPtr->timeoutLabel->setText("Waiting...");
+  bool executed = node.Request(service, *req, timeout, *rep, success);
   if (executed)
   {
-    if (result)
-      std::cout << rep->DebugString() << std::endl;
-    else
-      std::cout << "Service call failed" << std::endl;
+    QString successStr = success ? "Yes" : "No";
+    this->dataPtr->successLabel->setText(successStr);
+    this->dataPtr->timeoutLabel->setText("No");
+
+    if (success)
+    {
+      this->dataPtr->resEdit->setPlainText(QString::fromStdString(
+          rep->DebugString()));
+    }
   }
   else
-    std::cerr << "Service call timed out" << std::endl;
+  {
+    this->dataPtr->timeoutLabel->setText("Yes");
+  }
 }
 
 // Register this plugin

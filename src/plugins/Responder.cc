@@ -45,8 +45,6 @@ namespace plugins
     /// \brief Button to serve
     public: QPushButton *serveButton;
 
-    public: std::unique_ptr<google::protobuf::Message> res;
-
     /// \brief Node for communication
     public: ignition::transport::Node node;
   };
@@ -57,6 +55,16 @@ namespace plugins
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
+
+std::unique_ptr<google::protobuf::Message> g_res;
+
+/////////////////////////////////////////////////
+template<typename REQ, typename RES>
+void callback(const REQ &/*_req*/, RES &_res, bool &_success)
+{
+  _res.CopyFrom(*g_res);
+  _success = true;
+}
 
 /////////////////////////////////////////////////
 Responder::Responder()
@@ -105,46 +113,41 @@ void Responder::OnServe()
   auto reqType = this->dataPtr->reqTypeEdit->text().toStdString();
   auto resType = this->dataPtr->resTypeEdit->text().toStdString();
   auto resData = this->dataPtr->resEdit->toPlainText().toStdString();
-  this->dataPtr->res = ignition::msgs::Factory::New(resType, resData.c_str());
-  if (!this->dataPtr->res)
+  g_res = ignition::msgs::Factory::New(resType, resData.c_str());
+
+  if (!g_res)
   {
     ignerr << "Unable to create request of type[" << resType << "] "
            << "with data[" << resData << "].\n";
     return;
   }
 
+  bool advertised = false;
+
+  // It would be really awesome to generate the template just passing the
+  // string, but ign-transport needs to know the callback types at compile
+  // time. Maybe there is a way...
   if (reqType == "ignition.msgs.StringMsg" &&
       resType == "ignition.msgs.Int32")
   {
 
-    std::function<void(const ignition::msgs::StringMsg &,
-                             ignition::msgs::Int32 &, bool &)> cb =
-                   [this](const ignition::msgs::StringMsg &/*_req*/,
-                             ignition::msgs::Int32 &_res,
-                   bool &_result)
-    {
-      _res.CopyFrom(*this->dataPtr->res);
-      _result = true;
-    };
-
-    if (!this->dataPtr->node.Advertise(service, cb))
-    {
-      ignerr << "Error advertising service [" << service << "]" << std::endl;
-    }
-    else
-    {
-      this->dataPtr->serveButton->setText("Serving response");
-      this->dataPtr->resEdit->setEnabled(false);
-      this->dataPtr->reqTypeEdit->setEnabled(false);
-      this->dataPtr->resTypeEdit->setEnabled(false);
-      this->dataPtr->serviceEdit->setEnabled(false);
-    }
+    advertised = this->dataPtr->node.Advertise(service,
+        callback<ignition::msgs::StringMsg,
+                 ignition::msgs::Int32>);
   }
   else
   {
     ignerr << "Unhandled combination: Request[" << reqType << "] Response ["
            << resType << "]" << std::endl;
   }
+
+  QString text = advertised ? "Stop serving response" : "Serve response";
+  this->dataPtr->serveButton->setText(text);
+
+  this->dataPtr->resEdit->setEnabled(!advertised);
+  this->dataPtr->reqTypeEdit->setEnabled(!advertised);
+  this->dataPtr->resTypeEdit->setEnabled(!advertised);
+  this->dataPtr->serviceEdit->setEnabled(!advertised);
 }
 
 // Register this plugin
