@@ -9,7 +9,6 @@ set (CMAKE_AUTOMOC ON)
 
 add_definitions(${Qt5Core_DEFINITIONS})
 
-set (qt_headers_plugins)
 set (qt_headers
   Iface.hh
   MainWindow.hh
@@ -25,9 +24,7 @@ set (headers
 
 set (resources resources.qrc)
 
-add_subdirectory(plugins)
-
-QT5_WRAP_CPP(headers_MOC ${qt_headers} ${qt_headers_plugins})
+QT5_WRAP_CPP(headers_MOC ${qt_headers})
 QT5_ADD_RESOURCES(resources_RCC ${resources})
 
 ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
@@ -38,14 +35,14 @@ ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
 
 target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${IGNITION-COMMON_LIBRARIES}
-  ${IGNITION-MSGS_LIBRARIES}
-  ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
   ${tinyxml2_LIBRARIES}
 )
 
 ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})
+
+add_subdirectory(plugins)
 
 #################################################
 ### Do not change the following

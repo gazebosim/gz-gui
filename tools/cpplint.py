@@ -4840,7 +4840,9 @@ def CheckCasts(filename, clean_lines, linenum, error):
             'Use static_cast<%s>(...) instead' %
             matched_type)
 
-  if not expecting_function:
+  # NOTE: Disabled because it's triggered all the time when connecting signals
+  # and slots
+  if not expecting_function and 0:
     CheckCStyleCast(filename, linenum, line, clean_lines.raw_lines[linenum],
                     'static_cast',
                     r'\((int|float|double|bool|char|u?int(16|32|64))\)', error)

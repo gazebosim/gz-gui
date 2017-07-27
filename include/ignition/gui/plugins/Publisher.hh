@@ -15,15 +15,14 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
-#define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#ifndef IGNITION_GUI_PLUGINS_PUBLISHER_HH_
+#define IGNITION_GUI_PLUGINS_PUBLISHER_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
 #endif
 
-#include <ignition/msgs.hh>
-#include <ignition/transport/Node.hh>
+#include <memory>
 
 #include "ignition/gui/Plugin.hh"
 
@@ -33,40 +32,28 @@ namespace gui
 {
 namespace plugins
 {
-  class ImageDisplayPrivate;
+  class PublisherPrivate;
 
-  class ImageDisplay : public Plugin
+  /// \brief Widget which publishes a custom Ignition transport message.
+  class Publisher : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: ImageDisplay();
+    public: Publisher();
 
     /// \brief Destructor
-    public: virtual ~ImageDisplay();
+    public: virtual ~Publisher();
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief Callback in main thread when image changes
-    public slots: void ProcessImage();
-
-    /// \brief Update from rx'd RGB_INT8
-    private: void UpdateFromRgbInt8();
-
-    /// \brief Subscriber callback when new image is received
-    /// \param[in] _msg New image
-    private: void OnImageMsg(const ignition::msgs::Image &_msg);
-
-    /// \brief
-    private slots: void OnRefresh();
-
-    /// \brief
-    private slots: void OnTopic(const QString _topic);
+    /// \brief Callback when publish button is pressed.
+    public slots: void OnPublish();
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<ImageDisplayPrivate> dataPtr;
+    private: std::unique_ptr<PublisherPrivate> dataPtr;
   };
 }
 }
