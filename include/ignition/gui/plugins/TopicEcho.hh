@@ -42,12 +42,12 @@ namespace plugins
 {
   class TopicEchoPrivate;
 
+  /// \brief Echo messages coming through an Ignition transport topic.
   class TopicEcho : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    /// \param[in] _parent Parent widget
     public: TopicEcho();
 
     /// \brief Destructor

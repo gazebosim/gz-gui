@@ -125,6 +125,13 @@ Echo messages from an Ignition Transport topic.
 
     ign gui -c examples/config/pubsub.config
 
+#### Requester and Responder
+
+Make custom service requests and serve custom services with these two
+plugins.
+
+    ign gui -c examples/config/reqres.config
+
 ## Examples
 
 ### Using as a library

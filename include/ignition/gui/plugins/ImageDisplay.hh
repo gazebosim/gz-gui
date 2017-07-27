@@ -40,7 +40,6 @@ namespace plugins
     Q_OBJECT
 
     /// \brief Constructor
-    /// \param[in] _parent Parent widget
     public: ImageDisplay();
 
     /// \brief Destructor
