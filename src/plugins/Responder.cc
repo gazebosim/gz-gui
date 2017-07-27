@@ -143,15 +143,39 @@ void Responder::OnServe()
 
   bool advertised = false;
 
-  // It would be really awesome to generate the template just passing the
-  // string, but ign-transport needs to know the callback types at compile
-  // time. Maybe there is a way...
+  // It would be really awesome to generate the template from the strings.
+  // Ign-transport needs to know the callback types at compile time, but maybe
+  // there is a way...
   if (reqType == "ignition.msgs.StringMsg" &&
-      resType == "ignition.msgs.Int32")
+      resType == "ignition.msgs.StringMsg")
   {
 
     advertised = this->dataPtr->node.Advertise(service,
         &Responder::Callback<ignition::msgs::StringMsg,
+                             ignition::msgs::StringMsg>, this);
+  }
+  else if (reqType == "ignition.msgs.StringMsg" &&
+           resType == "ignition.msgs.Int32")
+  {
+
+    advertised = this->dataPtr->node.Advertise(service,
+        &Responder::Callback<ignition::msgs::StringMsg,
+                             ignition::msgs::Int32>, this);
+  }
+  else if (reqType == "ignition.msgs.Int32" &&
+           resType == "ignition.msgs.StringMsg")
+  {
+
+    advertised = this->dataPtr->node.Advertise(service,
+        &Responder::Callback<ignition::msgs::Int32,
+                             ignition::msgs::StringMsg>, this);
+  }
+  else if (reqType == "ignition.msgs.Int32" &&
+           resType == "ignition.msgs.Int32")
+  {
+
+    advertised = this->dataPtr->node.Advertise(service,
+        &Responder::Callback<ignition::msgs::Int32,
                              ignition::msgs::Int32>, this);
   }
   else
