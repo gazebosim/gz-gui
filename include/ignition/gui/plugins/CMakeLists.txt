@@ -3,6 +3,8 @@ include (${project_cmake_dir}/Utils.cmake)
 set (qt_headers_local
   ImageDisplay
   Publisher
+  Requester
+  Responder
   TimePanel
   TopicEcho
 )

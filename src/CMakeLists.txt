@@ -12,6 +12,8 @@ set (sources
 set (plugin_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ImageDisplay.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Publisher.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Requester.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Responder.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TimePanel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TopicEcho.cc
   PARENT_SCOPE

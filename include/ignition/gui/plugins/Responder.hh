@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_PUBLISHER_HH_
-#define IGNITION_GUI_PLUGINS_PUBLISHER_HH_
+#ifndef IGNITION_GUI_PLUGINS_RESPONDER_HH_
+#define IGNITION_GUI_PLUGINS_RESPONDER_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
@@ -32,28 +32,28 @@ namespace gui
 {
 namespace plugins
 {
-  class PublisherPrivate;
+  class ResponderPrivate;
 
-  class Publisher : public Plugin
+  class Responder : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
     /// \param[in] _parent Parent widget
-    public: Publisher();
+    public: Responder();
 
     /// \brief Destructor
-    public: virtual ~Publisher();
+    public: virtual ~Responder();
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief Callback when publish button is pressed.
-    public slots: void OnPublish();
+    /// \brief Callback when serve button is pressed.
+    public slots: void OnServe();
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<PublisherPrivate> dataPtr;
+    private: std::unique_ptr<ResponderPrivate> dataPtr;
   };
 }
 }
