@@ -33,7 +33,7 @@ TEST(MainWindowTest, Constructor)
   EXPECT_TRUE(mainWindow);
 
   // Menu
-  EXPECT_EQ(mainWindow->menuBar()->findChildren<QMenu*>().size(), 1);
+  EXPECT_EQ(mainWindow->menuBar()->findChildren<QMenu*>().size(), 2);
 
   delete mainWindow;
   EXPECT_TRUE(stop());
