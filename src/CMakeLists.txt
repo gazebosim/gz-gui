@@ -1,7 +1,6 @@
 include_directories(${PROJECT_BINARY_DIR})
 
 set (sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/Example.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
@@ -20,7 +19,6 @@ set (plugin_sources
 )
 
 set (gtest_sources
-  Example_TEST.cc
   Iface_TEST.cc
   MainWindow_TEST.cc
 )

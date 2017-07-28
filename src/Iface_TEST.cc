@@ -15,6 +15,7 @@
  *
 */
 
+#include <stdlib.h>
 #include <gtest/gtest.h>
 #include <ignition/common/Console.hh>
 
@@ -40,26 +41,164 @@ TEST(IfaceTest, initApp)
 }
 
 /////////////////////////////////////////////////
+TEST(IfaceTest, stop)
+{
+  setVerbosity(4);
+
+  // Stop before anything else
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, loadPlugin)
+{
+  setVerbosity(4);
+
+  // Before init
+  {
+    EXPECT_FALSE(loadPlugin("libImageDisplay.so"));
+  }
+
+  // Official plugin
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_TRUE(loadPlugin("libPublisher.so"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Inexistent plugin
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(loadPlugin("lib_doesnt_exist.so"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Plugin path added programmatically
+  {
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+
+    EXPECT_TRUE(initApp());
+
+    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Plugin path added by env var
+  {
+    setenv("TEST_ENV_VAR",
+        (std::string(PROJECT_BINARY_PATH) + "/test/plugins").c_str(), 1);
+
+    setPluginPathEnv("TEST_ENV_VAR");
+
+    EXPECT_TRUE(initApp());
+
+    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Plugin which doesn't inherit from ignition::gui::Plugin
+  {
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(loadPlugin("libTestBadInheritancePlugin.so"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Plugin which is not registered
+  {
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(loadPlugin("libTestNotRegisteredPlugin.so"));
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, loadConfig)
+{
+  setVerbosity(4);
+
+  // Before init
+  {
+    EXPECT_FALSE(loadConfig("file.config"));
+  }
+
+  // Empty string
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(loadConfig(""));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Test config file
+  {
+    EXPECT_TRUE(initApp());
+
+    // Add test plugin to path (referenced in config)
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Load test config file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(loadConfig(testSourcePath + "config/test.config"));
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+/////////////////////////////////////////////////
 TEST(IfaceTest, MainWindowNoPlugins)
 {
   setVerbosity(4);
 
-  // Create app
-  EXPECT_TRUE(initApp());
+  // Try to create window before initializing app
+  {
+    EXPECT_FALSE(createMainWindow());
+    EXPECT_FALSE(runMainWindow());
+  }
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
+  // Init app, but don't create window
+  {
+    EXPECT_TRUE(initApp());
 
-  auto win = mainWindow();
-  EXPECT_TRUE(win != nullptr);
+    EXPECT_FALSE(runMainWindow());
 
-  // Close window after 1 second
-  QTimer::singleShot(1000, win, SLOT(close()));
+    EXPECT_TRUE(stop());
+  }
 
-  // Show window
-  EXPECT_TRUE(runMainWindow());
+  // Steps in order
+  {
+    // Create app
+    EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(stop());
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    // Close window after 1 second
+    QTimer::singleShot(1000, win, SLOT(close()));
+
+    // Show window
+    EXPECT_TRUE(runMainWindow());
+
+    EXPECT_TRUE(stop());
+  }
 }
 
 /////////////////////////////////////////////////
@@ -67,41 +206,54 @@ TEST(IfaceTest, Dialog)
 {
   setVerbosity(4);
 
-  // Add test plugin to path
-  auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
-  addPluginPath(testBuildPath + "plugins");
+  // Try to run dialogs before initializing app
+  {
+    EXPECT_FALSE(runDialogs());
+  }
 
-  // Create app
-  EXPECT_TRUE(initApp());
+  // Init app first
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
 
-  // Load test plugin
-  EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+    // Create app
+    EXPECT_TRUE(initApp());
 
-  // Run dialog
-  EXPECT_TRUE(runDialogs());
+    // Load test plugin
+    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
 
-  // Check it was open
-  auto ds = dialogs();
-  EXPECT_EQ(ds.size(), 1u);
+    // Run dialog
+    EXPECT_TRUE(runDialogs());
 
-  // Wait until it is closed
-  auto closed = false;
-  ds[0]->connect(ds[0], &QDialog::finished, ds[0], [&](){
-    closed = true;
-  });
+    // Check it was open
+    auto ds = dialogs();
+    EXPECT_EQ(ds.size(), 1u);
 
-  // Close dialog after 1 second
-  QTimer::singleShot(1000, ds[0], SLOT(close()));
+    // Wait until it is closed
+    auto closed = false;
+    ds[0]->connect(ds[0], &QDialog::finished, ds[0], [&](){
+      closed = true;
+    });
 
-  while (!closed)
-    QCoreApplication::processEvents();
+    // Close dialog after 1 second
+    QTimer::singleShot(1000, ds[0], SLOT(close()));
 
-  EXPECT_TRUE(stop());
+    while (!closed)
+      QCoreApplication::processEvents();
+
+    EXPECT_TRUE(stop());
+  }
 }
 /////////////////////////////////////////////////
 TEST(IfaceTest, runStandalone)
 {
   setVerbosity(4);
+
+  // Empty string
+  {
+    EXPECT_FALSE(runStandalone(""));
+  }
 
   // Bad file
   {
@@ -140,6 +292,11 @@ TEST(IfaceTest, runStandalone)
 TEST(IfaceTest, runConfig)
 {
   setVerbosity(4);
+
+  // Empty string
+  {
+    EXPECT_FALSE(runConfig(""));
+  }
 
   // Bad file
   {

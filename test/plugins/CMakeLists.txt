@@ -10,6 +10,8 @@ link_directories(
 )
 
 set (plugins
+  TestBadInheritancePlugin
+  TestNotRegisteredPlugin
   TestPlugin
 )
 
