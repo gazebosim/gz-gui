@@ -15,16 +15,29 @@
  *
 */
 
-#include <gtest/gtest.h>
+#include <ignition/common/Console.hh>
+#include <ignition/common/PluginMacros.hh>
 
-#include "ignition/gui/Example.hh"
+#include "TestBadInheritancePlugin.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(ExampleTest, Example)
+TestBadInheritancePlugin::TestBadInheritancePlugin()
+  : MainWindow()
 {
-  Example example;
-  EXPECT_TRUE(true);
+  auto layout = new QHBoxLayout;
+  layout->addWidget(new QLabel("Test plugin"));
+
+  this->setLayout(layout);
 }
+
+/////////////////////////////////////////////////
+TestBadInheritancePlugin::~TestBadInheritancePlugin()
+{
+}
+
+// Register this plugin
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::TestBadInheritancePlugin,
+                                  ignition::gui::MainWindow)

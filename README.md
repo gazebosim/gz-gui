@@ -42,7 +42,7 @@ To build without tests, on the cmake step, do this instead:
 
 ### Test coverage
 
-FIXME: bad coverage when doing `make test`
+FIXME: coverage not showing plugins
 
 To build test coverage, first install lcov:
 

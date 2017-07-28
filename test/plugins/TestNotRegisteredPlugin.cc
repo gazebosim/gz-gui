@@ -14,3 +14,27 @@
  * limitations under the License.
  *
 */
+
+#include <ignition/common/Console.hh>
+#include <ignition/common/PluginMacros.hh>
+
+#include "TestNotRegisteredPlugin.hh"
+
+using namespace ignition;
+using namespace gui;
+
+/////////////////////////////////////////////////
+TestNotRegisteredPlugin::TestNotRegisteredPlugin()
+  : Plugin()
+{
+  auto layout = new QHBoxLayout;
+  layout->addWidget(new QLabel("Test plugin"));
+
+  this->setLayout(layout);
+}
+
+/////////////////////////////////////////////////
+TestNotRegisteredPlugin::~TestNotRegisteredPlugin()
+{
+}
+

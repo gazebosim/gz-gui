@@ -16,7 +16,6 @@ set (qt_headers
 )
 
 set (headers
-  Example.hh
   ign.hh
   qt.h
   System.hh

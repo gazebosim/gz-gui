@@ -15,20 +15,28 @@
  *
 */
 
-#ifndef IGNITION_GUI_EXAMPLE_HH_
-#define IGNITION_GUI_EXAMPLE_HH_
+#ifndef IGNITION_GUI_TEST_TESTNOTREGISTEREDPLUGIN_HH_
+#define IGNITION_GUI_TEST_TESTNOTREGISTEREDPLUGIN_HH_
 
-#include "ignition/gui/System.hh"
+#ifndef Q_MOC_RUN
+  #include <ignition/gui/qt.h>
+  #include <ignition/gui/Plugin.hh>
+#endif
 
 namespace ignition
 {
   namespace gui
   {
-    /// \brief Example class
-    class IGNITION_GUI_VISIBLE Example
+    class TestNotRegisteredPlugin : public Plugin
     {
+      Q_OBJECT
+
       /// \brief Constructor
-      public: Example() = default;
+      /// \param[in] _parent Parent widget
+      public: TestNotRegisteredPlugin();
+
+      /// \brief Destructor
+      public: virtual ~TestNotRegisteredPlugin();
     };
   }
 }
