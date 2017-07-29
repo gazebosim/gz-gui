@@ -28,8 +28,31 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   {
     if (auto titleElem = _pluginElem->FirstChildElement("title"))
       this->title = titleElem->GetText();
+
+    if (auto hasTitleElem = _pluginElem->FirstChildElement("has_titlebar"))
+      hasTitleElem->QueryBoolText(&this->hasTitlebar);
   }
 
+  // Setup default context menu
+  this->setContextMenuPolicy(Qt::CustomContextMenu);
+  this->connect(this,
+      SIGNAL(customContextMenuRequested(const QPoint &)),
+      this, SLOT(ShowContextMenu(const QPoint &)));
+
   this->LoadConfig(_pluginElem);
+}
+
+/////////////////////////////////////////////////
+void Plugin::ShowContextMenu(const QPoint &_pos)
+{
+  // Close action
+  QAction closeAct(QString::fromStdString("Close [" + this->title + "]"),
+      this);
+  this->connect(&closeAct, SIGNAL(triggered()), this->parent(), SLOT(close()));
+
+  // Context menu
+  QMenu contextMenu(tr("Context menu"), this);
+  contextMenu.addAction(&closeAct);
+  contextMenu.exec(this->mapToGlobal(_pos));
 }
 

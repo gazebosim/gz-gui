@@ -334,6 +334,8 @@ bool ignition::gui::createMainWindow()
     auto dock = new QDockWidget(title, g_main_win);
     dock->setAllowedAreas(Qt::AllDockWidgetAreas);
     dock->setWidget(&*plugin);
+    if (!plugin->HasTitlebar())
+      dock->setTitleBarWidget(new QWidget());
 
     auto area = (count % 2) ? Qt::RightDockWidgetArea : Qt::LeftDockWidgetArea;
     g_main_win->addDockWidget(area, dock);
