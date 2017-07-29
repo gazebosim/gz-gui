@@ -30,7 +30,11 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
       this->title = titleElem->GetText();
 
     if (auto hasTitleElem = _pluginElem->FirstChildElement("has_titlebar"))
-      hasTitleElem->QueryBoolText(&this->hasTitlebar);
+    {
+      bool has = true;
+      hasTitleElem->QueryBoolText(&has);
+      this->hasTitlebar = has;
+    }
   }
 
   // Setup default context menu
