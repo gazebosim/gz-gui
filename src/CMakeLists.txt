@@ -15,6 +15,7 @@ set (plugin_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Responder.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TimePanel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TopicEcho.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TopicSpy.cc
   PARENT_SCOPE
 )
 

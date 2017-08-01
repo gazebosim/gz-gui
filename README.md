@@ -156,6 +156,12 @@ plugins.
 
     ign gui -c examples/config/reqres.config
 
+#### Topic spy
+
+Discover all Ignition Transport topics and introspect their type and value.
+
+    ign gui -c examples/config/spy.config
+
 ## Examples
 
 ### Using as a library

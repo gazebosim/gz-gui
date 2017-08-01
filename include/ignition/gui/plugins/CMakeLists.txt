@@ -7,6 +7,7 @@ set (qt_headers_local
   Responder
   TimePanel
   TopicEcho
+  TopicSpy
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
