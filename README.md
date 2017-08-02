@@ -42,8 +42,6 @@ To build without tests, on the cmake step, do this instead:
 
 ### Test coverage
 
-FIXME: coverage not showing plugins
-
 To build test coverage, first install lcov:
 
     sudo apt-get install lcov
@@ -51,6 +49,10 @@ To build test coverage, first install lcov:
 Configure coverage:
 
     cmake -DCMAKE_BUILD_TYPE=coverage ../; make
+
+Important: remember to install first
+
+    make install
 
 Run tests:
 
