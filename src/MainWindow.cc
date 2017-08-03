@@ -118,13 +118,21 @@ void MainWindow::OnSaveConfig()
 
   std::string config = "<?xml version=\"1.0\"?>";
   config += "<window>\n";
-  config += "<state>\n";
+  config += "  <state>\n";
   config += this->saveState().toBase64().toStdString();
-  config += "\n</state>\n";
-  config += "<position_x>10</position_x>\n";
-  config += "<position_y>321</position_y>\n";
-  config += "<width>800</width>\n";
-  config += "<height>400</height>\n";
+  config += "\n  </state>\n";
+  config += "  <position_x>";
+  config += std::to_string(this->pos().x());
+  config += "</position_x>\n";
+  config += "  <position_y>";
+  config += std::to_string(this->pos().y());
+  config += "</position_y>\n";
+  config += "  <width>";
+  config += std::to_string(this->width());
+  config += "</width>\n";
+  config += "  <height>";
+  config += std::to_string(this->height());
+  config += "</height>\n";
   config += "</window>\n";
   config += "<plugin filename=\"libhello_plugin.so\">\n";
   config += "  <title>1</title>\n";

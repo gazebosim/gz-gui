@@ -39,7 +39,10 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
+      /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
+
+      /// \brief Callback when save configuration is selected
       private slots: void OnSaveConfig();
 
       /// \internal
