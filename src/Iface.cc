@@ -322,9 +322,6 @@ bool ignition::gui::createMainWindow()
   ignmsg << "Create main window" << std::endl;
 
   g_main_win = new MainWindow();
-  g_main_win->setDockOptions(QMainWindow::AnimatedDocks |
-                             QMainWindow::AllowTabbedDocks |
-                             QMainWindow::AllowNestedDocks);
 
   // Create a widget for each plugin
   auto count = 0;
@@ -332,13 +329,16 @@ bool ignition::gui::createMainWindow()
   {
     auto title = QString::fromStdString(plugin->Title());
     auto dock = new QDockWidget(title, g_main_win);
-    dock->setAllowedAreas(Qt::AllDockWidgetAreas);
+    dock->setObjectName(title);
+    dock->setAllowedAreas(Qt::TopDockWidgetArea);
     dock->setWidget(&*plugin);
     if (!plugin->HasTitlebar())
       dock->setTitleBarWidget(new QWidget());
 
-    auto area = (count % 2) ? Qt::RightDockWidgetArea : Qt::LeftDockWidgetArea;
-    g_main_win->addDockWidget(area, dock);
+    if (count % 2 == 0)
+      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
+    else
+      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
 
     // Qt steals the ownership of the plugin (QWidget)
     // Remove it from the smart pointer without calling the destructor

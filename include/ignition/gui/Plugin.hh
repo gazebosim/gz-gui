@@ -60,7 +60,7 @@ namespace ignition
 
       /// \brief Get title
       /// \return Plugin title.
-      public: virtual std::string Title() {return this->title;}
+      public: virtual std::string Title() const {return this->title;}
 
       /// \brief Get whether the title bar is displayed
       /// \return True if it is displayed

@@ -15,6 +15,7 @@
  *
  */
 
+#include <ignition/common/Console.hh>
 #include "ignition/gui/Plugin.hh"
 
 using namespace ignition;
@@ -29,6 +30,8 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     if (auto titleElem = _pluginElem->FirstChildElement("title"))
       this->title = titleElem->GetText();
 
+    // Weird things happen if the bool is not initialized again here
+    this->hasTitlebar = true;
     if (auto hasTitleElem = _pluginElem->FirstChildElement("has_titlebar"))
     {
       bool has = true;

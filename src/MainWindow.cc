@@ -15,6 +15,7 @@
  *
  */
 
+#include <ignition/common/Console.hh>
 #include "ignition/gui/MainWindow.hh"
 
 namespace ignition
@@ -42,21 +43,78 @@ MainWindow::MainWindow()
   this->setWindowTitle(tr(title.c_str()));
 
   // Main widget
-  auto mainWidget = new QWidget;
-  mainWidget->show();
-  this->setCentralWidget(mainWidget);
 
   // Menu
   auto fileMenu = this->menuBar()->addMenu(tr("&File"));
 
-  auto quitAct = new QAction(tr("&Quit"), this);
-  quitAct->setStatusTip(tr("Quit"));
-  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
-  fileMenu->addAction(quitAct);
+  auto loadConfigAct = new QAction(tr("&Load configuration"), this);
+  loadConfigAct->setStatusTip(tr("Quit"));
+  this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
+  fileMenu->addAction(loadConfigAct);
+
+  auto saveConfigAct = new QAction(tr("&Save configuration"), this);
+  saveConfigAct->setStatusTip(tr("Quit"));
+  this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
+  fileMenu->addAction(saveConfigAct);
+
+  // Docking
+  this->setDockOptions(QMainWindow::AnimatedDocks |
+                       QMainWindow::AllowTabbedDocks |
+                       QMainWindow::AllowNestedDocks);
 }
 
 /////////////////////////////////////////////////
 MainWindow::~MainWindow()
 {
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnLoadConfig()
+{
+  QFileDialog fileDialog(this, tr("Load configuration"), QDir::homePath(),
+      tr("*.ini"));
+  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
+      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+
+  if (fileDialog.exec() != QDialog::Accepted)
+    return;
+
+  auto selected = fileDialog.selectedFiles();
+  if (selected.empty())
+    return;
+
+  auto settings = new QSettings(selected[0], QSettings::IniFormat);
+
+  auto state = settings->value("state", QByteArray()).toByteArray();
+  this->restoreState(state);
+
+  auto pos = settings->value("pos", QPoint(200, 200)).toPoint();
+  this->move(pos);
+
+  auto size = settings->value("size", QSize(400, 400)).toSize();
+  this->resize(size);
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnSaveConfig()
+{
+  QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
+      tr("*.ini"));
+  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
+      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+
+  if (fileDialog.exec() != QDialog::Accepted)
+    return;
+
+  auto selected = fileDialog.selectedFiles();
+  if (selected.empty())
+    return;
+
+  auto settings = new QSettings(selected[0], QSettings::IniFormat);
+  settings->setValue("state", this->saveState());
+  settings->setValue("pos", this->pos());
+  settings->setValue("size", this->size());
+  settings->sync();
 }
 

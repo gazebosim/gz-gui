@@ -39,6 +39,9 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
+      private slots: void OnLoadConfig();
+      private slots: void OnSaveConfig();
+
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;
