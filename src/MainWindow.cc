@@ -15,7 +15,10 @@
  *
  */
 
+#include <tinyxml2.h>
+
 #include <ignition/common/Console.hh>
+#include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 
 namespace ignition
@@ -83,6 +86,8 @@ void MainWindow::OnLoadConfig()
   if (selected.empty())
     return;
 
+  loadConfig(selected[0].toStdString());
+/*
   auto settings = new QSettings(selected[0], QSettings::IniFormat);
 
   auto state = settings->value("state", QByteArray()).toByteArray();
@@ -93,6 +98,7 @@ void MainWindow::OnLoadConfig()
 
   auto size = settings->value("size", QSize(400, 400)).toSize();
   this->resize(size);
+*/
 }
 
 /////////////////////////////////////////////////

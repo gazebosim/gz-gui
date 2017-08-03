@@ -38,12 +38,22 @@ char **g_argv;
 using namespace ignition;
 using namespace gui;
 
+struct WindowConfig
+{
+  int pos_x;
+  int pos_y;
+  int width;
+  int height;
+  QByteArray state;
+};
+
 QApplication *g_app;
 MainWindow *g_main_win = nullptr;
 std::vector<QDialog *> g_dialogs;
 std::vector<std::unique_ptr<Plugin>> g_plugins;
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 std::vector<std::string> g_pluginPaths;
+WindowConfig g_windowConfig;
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -251,6 +261,32 @@ bool ignition::gui::loadConfig(const std::string &_config)
     loadPlugin(filename, pluginElem);
   }
 
+  // Process window properties
+  if (auto winElem = doc.FirstChildElement("window"))
+  {
+    if (auto xElem = winElem->FirstChildElement("position_x"))
+      xElem->QueryIntText(&g_windowConfig.pos_x);
+
+    if (auto yElem = winElem->FirstChildElement("position_y"))
+      yElem->QueryIntText(&g_windowConfig.pos_y);
+
+    if (auto widthElem = winElem->FirstChildElement("width"))
+      widthElem->QueryIntText(&g_windowConfig.width);
+
+    if (auto heightElem = winElem->FirstChildElement("height"))
+      heightElem->QueryIntText(&g_windowConfig.height);
+
+    if (auto stateElem = winElem->FirstChildElement("state"))
+    {
+      auto text = std::string(stateElem->GetText());
+igndbg << text << std::endl;
+      g_windowConfig.state = QByteArray(text.c_str(), text.length());
+    }
+  }
+
+//  _config = g_windowConfig;
+//  _plugins = g_plugins;
+
   return true;
 }
 
@@ -347,6 +383,20 @@ bool ignition::gui::createMainWindow()
     count++;
   }
   g_plugins.clear();
+
+  if (g_windowConfig.pos_x != 0 && g_windowConfig.pos_y != 0)
+    g_main_win->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
+
+  if (g_windowConfig.width != 0 && g_windowConfig.height != 0)
+    g_main_win->resize(g_windowConfig.width, g_windowConfig.height);
+
+igndbg << "A" << std::endl;
+
+  if (!g_windowConfig.state.isEmpty())
+{
+igndbg << "B  " << g_windowConfig.state.toStdString() << std::endl;
+    g_main_win->restoreState(g_windowConfig.state);
+}
 
   return true;
 }
