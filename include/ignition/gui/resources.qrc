@@ -1,7 +1,19 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
   <file>style.qss</file>
+  <file>images/branch-end.png</file>
+  <file>images/branch-more.png</file>
   <file>images/close.svg</file>
+  <file>images/down_arrow.png</file>
+  <file>images/down_spin_arrow.png</file>
+  <file>images/down_spin_arrow_disabled.png</file>
+  <file>images/graph_line.svg</file>
+  <file>images/mainwindow_bg.png</file>
+  <file>images/right_arrow.png</file>
+  <file>images/search.svg</file>
   <file>images/undock.svg</file>
+  <file>images/up_spin_arrow.png</file>
+  <file>images/up_spin_arrow_disabled.png</file>
+  <file>images/vline.png</file>
 </qresource>
 </RCC>
