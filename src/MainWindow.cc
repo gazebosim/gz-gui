@@ -86,8 +86,8 @@ void MainWindow::OnLoadConfig()
   if (selected.empty())
     return;
 
-  loadConfig(selected[0].toStdString());
-/*
+//  loadConfig(selected[0].toStdString());
+
   auto settings = new QSettings(selected[0], QSettings::IniFormat);
 
   auto state = settings->value("state", QByteArray()).toByteArray();
@@ -98,7 +98,6 @@ void MainWindow::OnLoadConfig()
 
   auto size = settings->value("size", QSize(400, 400)).toSize();
   this->resize(size);
-*/
 }
 
 /////////////////////////////////////////////////
@@ -117,10 +116,54 @@ void MainWindow::OnSaveConfig()
   if (selected.empty())
     return;
 
-  auto settings = new QSettings(selected[0], QSettings::IniFormat);
+  std::string config = "<?xml version=\"1.0\"?>";
+  config += "<window>\n";
+  config += "<state>\n";
+  config += this->saveState().toBase64().toStdString();
+  config += "\n</state>\n";
+  config += "<position_x>10</position_x>\n";
+  config += "<position_y>321</position_y>\n";
+  config += "<width>800</width>\n";
+  config += "<height>400</height>\n";
+  config += "</window>\n";
+  config += "<plugin filename=\"libhello_plugin.so\">\n";
+  config += "  <title>1</title>\n";
+  config += "</plugin>\n";
+  config += "<plugin filename=\"libhello_plugin.so\">\n";
+  config += "  <title>2</title>\n";
+  config += "</plugin>\n";
+  config += "<plugin filename=\"libhello_plugin.so\">\n";
+  config += "  <title>3</title>\n";
+  config += "</plugin>\n";
+  config += "<plugin filename=\"libhello_plugin.so\">\n";
+  config += "  <title>4</title>\n";
+  config += "</plugin>\n";
+  config += "<plugin filename=\"libhello_plugin.so\">\n";
+  config += "  <title>5</title>\n";
+  config += "</plugin>";
+
+  auto ini = selected[0] + "_ini";
+
+  auto settings = new QSettings(ini, QSettings::IniFormat);
   settings->setValue("state", this->saveState());
   settings->setValue("pos", this->pos());
   settings->setValue("size", this->size());
   settings->sync();
+
+  // Open the file
+  std::ofstream out(selected[0].toStdString().c_str(), std::ios::out);
+
+  if (!out)
+  {
+    QMessageBox msgBox;
+    std::string str = "Unable to open file: " + selected[0].toStdString();
+    str += ".\nCheck file permissions.";
+    msgBox.setText(str.c_str());
+    msgBox.exec();
+  }
+  else
+    out << config;
+
+  out.close();
 }
 

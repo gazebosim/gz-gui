@@ -278,9 +278,8 @@ bool ignition::gui::loadConfig(const std::string &_config)
 
     if (auto stateElem = winElem->FirstChildElement("state"))
     {
-      auto text = std::string(stateElem->GetText());
-igndbg << text << std::endl;
-      g_windowConfig.state = QByteArray(text.c_str(), text.length());
+      auto text = stateElem->GetText();
+      g_windowConfig.state = QByteArray::fromBase64(text);
     }
   }
 
@@ -390,13 +389,8 @@ bool ignition::gui::createMainWindow()
   if (g_windowConfig.width != 0 && g_windowConfig.height != 0)
     g_main_win->resize(g_windowConfig.width, g_windowConfig.height);
 
-igndbg << "A" << std::endl;
-
   if (!g_windowConfig.state.isEmpty())
-{
-igndbg << "B  " << g_windowConfig.state.toStdString() << std::endl;
     g_main_win->restoreState(g_windowConfig.state);
-}
 
   return true;
 }
