@@ -31,6 +31,8 @@ namespace ignition
     class IGNITION_GUI_VISIBLE Plugin
         : public QWidget
     {
+      Q_OBJECT
+
       /// \brief Constructor
       public: Plugin() {}
 
@@ -60,8 +62,19 @@ namespace ignition
       /// \return Plugin title.
       public: virtual std::string Title() {return this->title;}
 
+      /// \brief Get whether the title bar is displayed
+      /// \return True if it is displayed
+      public: virtual bool HasTitlebar() {return this->hasTitlebar;}
+
+      /// \brief Show context menu
+      /// \param [in] _pos Click position
+      protected slots: void ShowContextMenu(const QPoint &_pos);
+
       /// \brief Title to be displayed on top of plugin.
-      protected: std::string title;
+      protected: std::string title = "";
+
+      /// \brief True if the plugin should have a title bar, false otherwise.
+      protected: bool hasTitlebar = true;
     };
   }
 }

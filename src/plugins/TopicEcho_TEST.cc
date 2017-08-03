@@ -18,25 +18,16 @@
 #include <gtest/gtest.h>
 
 #include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, Constructor)
+TEST(TopicEchoTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  // Constructor
-  auto mainWindow = new MainWindow;
-  EXPECT_TRUE(mainWindow);
+  EXPECT_TRUE(loadPlugin("libTopicEcho.so"));
 
-  // Menu
-  auto menus = mainWindow->menuBar()->findChildren<QMenu*>();
-  EXPECT_EQ(menus[0]->title(), QString("&File"));
-  EXPECT_EQ(menus[1]->title(), QString("&Plugins"));
-
-  delete mainWindow;
   EXPECT_TRUE(stop());
 }

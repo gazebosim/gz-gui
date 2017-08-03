@@ -42,8 +42,6 @@ To build without tests, on the cmake step, do this instead:
 
 ### Test coverage
 
-FIXME: coverage not showing plugins
-
 To build test coverage, first install lcov:
 
     sudo apt-get install lcov
@@ -51,6 +49,10 @@ To build test coverage, first install lcov:
 Configure coverage:
 
     cmake -DCMAKE_BUILD_TYPE=coverage ../; make
+
+Important: remember to install first
+
+    make install
 
 Run tests:
 
@@ -84,6 +86,30 @@ Ignition GUI will look for plugins on the following paths, in this order:
 1. all paths added by calling `ignition::gui::addPluginPath`
 1. `~/.ignition/gui/plugins`
 1. plugins which come built into Ignition GUI
+
+### Plugin configuration
+
+Ignition GUI supports loading configuration files (XML) which are passed to
+plugins and can be parsed using TinyXml2 (TODO: consider alternative to
+Tinyxml).
+
+For example (examples/config/image.config):
+
+    <plugin filename="libImageDisplay.so">
+      <title>Without picker</title>
+      <topic_picker>false</topic_picker>
+      <topic>/rendering/image</topic>
+    </plugin>
+
+* Developers can read custom plugin configurations overriding the
+  `Plugin::LoadConfig` function.
+
+* Ignition GUI processes a few default parameters before passing the config to
+  implemented plugins. These are the parameters handled:
+
+    * `<title>`: The title to be displayed on the plugin's title bar
+
+    * `<has_titlebar>`: Set this to false to remove the title bar
 
 ### Built-in plugins
 
@@ -185,7 +211,7 @@ Then run it:
 
 It's possible to use the command line to load a custom plugin.
 
-First, build the example plugin:
+First, build an example plugin:
 
     cd examples/plugin/hello_plugin
     mkdir build
@@ -200,6 +226,11 @@ Then copy the generated library to a directory where Ignition GUI can find it:
 Now you can use the command line to open it:
 
     ign gui -s libhello_plugin.so
+
+#### Example plugins
+
+* `hello_plugin`: A button that prints hello on click.
+* `custom_context_menu`: Overrides the default context menu.
 
 ### Loading a configuration file
 

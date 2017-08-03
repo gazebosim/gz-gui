@@ -15,28 +15,33 @@
  *
 */
 
-#include <gtest/gtest.h>
+#ifndef IGNITION_GUI_HELLOPLUGIN_HH_
+#define IGNITION_GUI_HELLOPLUGIN_HH_
 
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
+#ifndef Q_MOC_RUN
+  #include <ignition/gui/qt.h>
+  #include <ignition/gui/Plugin.hh>
+#endif
 
-using namespace ignition;
-using namespace gui;
-
-/////////////////////////////////////////////////
-TEST(MainWindowTest, Constructor)
+namespace ignition
 {
-  EXPECT_TRUE(initApp());
+  namespace gui
+  {
+    class CustomContext : public Plugin
+    {
+      Q_OBJECT
 
-  // Constructor
-  auto mainWindow = new MainWindow;
-  EXPECT_TRUE(mainWindow);
+      /// \brief Constructor
+      /// \param[in] _parent Parent widget
+      public: CustomContext();
 
-  // Menu
-  auto menus = mainWindow->menuBar()->findChildren<QMenu*>();
-  EXPECT_EQ(menus[0]->title(), QString("&File"));
-  EXPECT_EQ(menus[1]->title(), QString("&Plugins"));
+      /// \brief Destructor
+      public: virtual ~CustomContext();
 
-  delete mainWindow;
-  EXPECT_TRUE(stop());
+      // Documentation inherited
+      protected slots: void ShowContextMenu(const QPoint &_pos);
+    };
+  }
 }
+
+#endif
