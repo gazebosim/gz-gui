@@ -100,6 +100,18 @@ bool installSignalHandler()
 }
 
 /////////////////////////////////////////////////
+// Get home directory
+std::string homePath()
+{
+  char *homePath = getenv("HOME");
+  std::string home;
+  if (homePath)
+    home = homePath;
+
+  return home;
+}
+
+/////////////////////////////////////////////////
 bool ignition::gui::runConfig(const std::string &_config)
 {
   ignmsg << "Loading config file [" << _config << "]" << std::endl;
@@ -262,10 +274,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     return false;
 
   // Get full path
-  char *homePath = getenv("HOME");
-  std::string home;
-  if (homePath)
-    home = homePath;
+  auto home = homePath();
 
   ignition::common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(g_pluginPathEnv);
@@ -325,6 +334,14 @@ bool ignition::gui::createMainWindow()
   g_main_win->setDockOptions(QMainWindow::AnimatedDocks |
                              QMainWindow::AllowTabbedDocks |
                              QMainWindow::AllowNestedDocks);
+
+  return addPluginsToWindow();
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::addPluginsToWindow()
+{
+  ignmsg << "Add plugins to main window" << std::endl;
 
   // Create a widget for each plugin
   auto count = 0;
