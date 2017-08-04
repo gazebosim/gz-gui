@@ -154,6 +154,21 @@ bool ignition::gui::runConfig(const std::string &_config)
 }
 
 /////////////////////////////////////////////////
+bool ignition::gui::runEmptyWindow()
+{
+  ignmsg << "Loading empty window" << std::endl;
+
+  initApp();
+
+  createMainWindow();
+  runMainWindow();
+
+  stop();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
 bool ignition::gui::runStandalone(const std::string &_filename)
 {
   ignmsg << "Loading standalone plugin [" << _filename << "]" << std::endl;

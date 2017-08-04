@@ -84,6 +84,10 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool runDialogs();
 
+    /// \brief Run an empty window.
+    IGNITION_GUI_VISIBLE
+    bool runEmptyWindow();
+
     /// \brief Run previously loaded plugins on a single main window.
     /// An empty window will be created if no plugins have been loaded.
     IGNITION_GUI_VISIBLE
