@@ -245,6 +245,32 @@ TEST(IfaceTest, Dialog)
     EXPECT_TRUE(stop());
   }
 }
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, runEmptyWindow)
+{
+  setVerbosity(4);
+
+  // Must initialize app before so we can use the timer on its thread
+  EXPECT_TRUE(initApp());
+  ASSERT_TRUE(QApplication::instance() != nullptr);
+
+  // Close window after 1 s
+  bool closed = false;
+  QTimer::singleShot(1000, [&] {
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+    win->close();
+    closed = true;
+  });
+
+  // Run empty window
+  EXPECT_TRUE(runEmptyWindow());
+
+  // Make sure timer was triggered
+  EXPECT_TRUE(closed);
+}
+
 /////////////////////////////////////////////////
 TEST(IfaceTest, runStandalone)
 {
@@ -262,11 +288,16 @@ TEST(IfaceTest, runStandalone)
 
   // Good file
   {
+    // Must initialize app before so we can use the timer on its thread
+    EXPECT_TRUE(initApp());
+    ASSERT_TRUE(QApplication::instance() != nullptr);
+
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
     addPluginPath(testBuildPath + "plugins");
 
     // Close dialog after 1 s
+    bool closed = false;
     QTimer *timer = new QTimer();
     timer->setSingleShot(true);
     timer->moveToThread(QApplication::instance()->thread());
@@ -279,14 +310,17 @@ TEST(IfaceTest, runStandalone)
       EXPECT_TRUE(dialog != nullptr);
 
       dialog->close();
+      closed = true;
     });
     timer->start();
 
     // Run test plugin
     EXPECT_TRUE(runStandalone("libTestPlugin.so"));
+
+    // Make sure timer was triggered
+    EXPECT_TRUE(closed);
   }
 }
-
 
 /////////////////////////////////////////////////
 TEST(IfaceTest, runConfig)
@@ -305,20 +339,29 @@ TEST(IfaceTest, runConfig)
 
   // Good file
   {
+    // Must initialize app before so we can use the timer on its thread
+    EXPECT_TRUE(initApp());
+    ASSERT_TRUE(QApplication::instance() != nullptr);
+
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
     addPluginPath(testBuildPath + "plugins");
 
     // Close window after 1 s
+    bool closed = false;
     QTimer::singleShot(1000, [&] {
       auto win = mainWindow();
       EXPECT_TRUE(win != nullptr);
       win->close();
+      closed = true;
     });
 
     // Run test config file
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
     EXPECT_TRUE(runConfig(testSourcePath + "config/test.config"));
+
+    // Make sure timer was triggered
+    EXPECT_TRUE(closed);
   }
 }
 

@@ -144,7 +144,10 @@ bool ignition::gui::runConfig(const std::string &_config)
   initApp();
 
   if (!loadConfig(_config))
+  {
+    stop();
     return false;
+  }
 
   createMainWindow();
   runMainWindow();
@@ -182,7 +185,10 @@ bool ignition::gui::runStandalone(const std::string &_filename)
   initApp();
 
   if (!loadPlugin(_filename))
+  {
+    stop();
     return false;
+  }
 
   runDialogs();
 
