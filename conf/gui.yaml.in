@@ -4,5 +4,5 @@ library_name: @PROJECT_NAME_LOWER@
 library_version: @PROJECT_VERSION_FULL@
 library_path: @ign_library_path@
 commands:
-    - gui   : Launch guis.
+    - gui   : Launch graphical interfaces.
 ---

@@ -37,15 +37,19 @@ COMMON_OPTIONS =
                "                                                    \n"        +
                '  --versions                 Show the available versions.'
 COMMANDS = {  'gui' =>
-                       "Gui stuff.\n\n"                   +
-                       "  ign gui [options]\n\n"                             +
-                       "Options:\n\n"                                          +
-                       "  -l [ --list ]      List all available plugins.\n"       +
-                       "  -s [ --standalone ] arg Run a plugin as a standalone window." +
-                                                 "Give the plugin filename as an argument\n"       +
-                       "  -c [ --config ] arg Open the main window with a configuration file." +
-                                                 "Give the configuration file path as an argument\n"       +
-                       "  -v [ --verbose ] arg Adjust the level of console output (0~4).\n" +
+                       "Ignition GUI tool.\n\n" +
+                       "  ign gui [options]\n\n" +
+                       "Options:\n\n" +
+                       "  -l [ --list ]              List all available plugins.\n" +
+                       "\n" +
+                       "  -s [ --standalone ] arg    Run a plugin as a standalone window.\n" +
+                       "                             Give the plugin filename as an argument\n" +
+                       "\n" +
+                       "  -c [ --config ] arg        Open the main window with a configuration file.\n" +
+                       "                             Give the configuration file path as an argument\n" +
+                       "\n" +
+                       "  -v [ --verbose ] arg       Adjust the level of console output (0~4).\n" +
+                       "\n" +
                        COMMON_OPTIONS,
             }
 
