@@ -27,6 +27,12 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   // Read default params
   if (_pluginElem)
   {
+    // TODO: Too complicated to deep clone elements with tinyxml2, storing
+    // string for now and consider moving away from tinyxml
+    tinyxml2::XMLPrinter printer;
+    _pluginElem->Accept(&printer);
+    this->configStr = std::string(printer.CStr());
+
     if (auto titleElem = _pluginElem->FirstChildElement("title"))
       this->title = titleElem->GetText();
 
@@ -48,6 +54,12 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 
   // Load custom configuration
   this->LoadConfig(_pluginElem);
+}
+
+/////////////////////////////////////////////////
+std::string Plugin::ConfigStr() const
+{
+  return this->configStr;
 }
 
 /////////////////////////////////////////////////

@@ -47,6 +47,10 @@ namespace ignition
       /// \param[in] _pluginElem Element containing configuration
       public: void Load(const tinyxml2::XMLElement *_pluginElem);
 
+      /// \brief Get the configuration XML as a string
+      /// \return Config element
+      public: virtual std::string ConfigStr() const;
+
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.
       ///
@@ -75,6 +79,9 @@ namespace ignition
 
       /// \brief True if the plugin should have a title bar, false otherwise.
       protected: bool hasTitlebar = true;
+
+      /// \brief XML configuration
+      protected: std::string configStr;
     };
   }
 }

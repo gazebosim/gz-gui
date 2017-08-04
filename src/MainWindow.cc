@@ -20,6 +20,7 @@
 #include <ignition/common/Console.hh>
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/Plugin.hh"
 
 namespace ignition
 {
@@ -87,6 +88,8 @@ bool MainWindow::CloseAllDocks()
   for (auto dock : docks)
     dock->close();
 
+  QCoreApplication::processEvents();
+
   return true;
 }
 
@@ -131,11 +134,13 @@ void MainWindow::OnSaveConfig()
   if (selected.empty())
     return;
 
-  std::string config = "<?xml version=\"1.0\"?>";
+  std::string config = "<?xml version=\"1.0\"?>\n\n";
+
+  // Window settings
   config += "<window>\n";
-  config += "  <state>\n";
+  config += "  <state>";
   config += this->saveState().toBase64().toStdString();
-  config += "\n  </state>\n";
+  config += "</state>\n";
   config += "  <position_x>";
   config += std::to_string(this->pos().x());
   config += "</position_x>\n";
@@ -149,29 +154,11 @@ void MainWindow::OnSaveConfig()
   config += std::to_string(this->height());
   config += "</height>\n";
   config += "</window>\n";
-  config += "<plugin filename=\"libhello_plugin.so\">\n";
-  config += "  <title>1</title>\n";
-  config += "</plugin>\n";
-  config += "<plugin filename=\"libhello_plugin.so\">\n";
-  config += "  <title>2</title>\n";
-  config += "</plugin>\n";
-  config += "<plugin filename=\"libhello_plugin.so\">\n";
-  config += "  <title>3</title>\n";
-  config += "</plugin>\n";
-  config += "<plugin filename=\"libhello_plugin.so\">\n";
-  config += "  <title>4</title>\n";
-  config += "</plugin>\n";
-  config += "<plugin filename=\"libhello_plugin.so\">\n";
-  config += "  <title>5</title>\n";
-  config += "</plugin>";
 
-  auto ini = selected[0] + "_ini";
-
-  auto settings = new QSettings(ini, QSettings::IniFormat);
-  settings->setValue("state", this->saveState());
-  settings->setValue("pos", this->pos());
-  settings->setValue("size", this->size());
-  settings->sync();
+  // Plugins
+  auto plugins = this->findChildren<Plugin *>();
+  for (const auto plugin : plugins)
+    config += plugin->ConfigStr();
 
   // Open the file
   std::ofstream out(selected[0].toStdString().c_str(), std::ios::out);

@@ -40,10 +40,19 @@ using namespace gui;
 
 struct WindowConfig
 {
-  int pos_x;
-  int pos_y;
-  int width;
-  int height;
+  /// \brief Window X position in px
+  int pos_x = -1;
+
+  /// \brief Window Y position in px
+  int pos_y = -1;
+
+  /// \brief Window width in px
+  int width = -1;
+
+  /// \brief Window height in px
+  int height = -1;
+
+  /// \brief Window state (dock configuration)
   QByteArray state;
 };
 
@@ -278,6 +287,8 @@ bool ignition::gui::loadConfig(const std::string &_config)
   // Process window properties
   if (auto winElem = doc.FirstChildElement("window"))
   {
+    ignmsg << "Loading window config" << std::endl;
+
     if (auto xElem = winElem->FirstChildElement("position_x"))
       xElem->QueryIntText(&g_windowConfig.pos_x);
 
@@ -409,14 +420,18 @@ bool ignition::gui::addPluginsToWindow()
 /////////////////////////////////////////////////
 bool ignition::gui::applyConfig()
 {
-  if (g_windowConfig.pos_x != 0 && g_windowConfig.pos_y != 0)
+  ignmsg << "Applying config" << std::endl;
+
+  if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
     g_main_win->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
 
-  if (g_windowConfig.width != 0 && g_windowConfig.height != 0)
+  if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
     g_main_win->resize(g_windowConfig.width, g_windowConfig.height);
 
   if (!g_windowConfig.state.isEmpty())
     g_main_win->restoreState(g_windowConfig.state);
+
+  QCoreApplication::processEvents();
 
   return true;
 }
