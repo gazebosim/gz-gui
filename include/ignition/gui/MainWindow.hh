@@ -39,6 +39,10 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
+      /// \brief Close all docks
+      /// \return True if all docks have been closed
+      public: bool CloseAllDocks();
+
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
 

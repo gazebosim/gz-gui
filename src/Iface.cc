@@ -255,6 +255,8 @@ bool ignition::gui::loadConfig(const std::string &_config)
     return false;
   }
 
+  ignmsg << "Loading config [" << _config << "]" << std::endl;
+
   // Use tinyxml to read config
   tinyxml2::XMLDocument doc;
   auto success = !doc.LoadFile(_config.c_str());
@@ -295,9 +297,6 @@ bool ignition::gui::loadConfig(const std::string &_config)
     }
   }
 
-//  _config = g_windowConfig;
-//  _plugins = g_plugins;
-
   return true;
 }
 
@@ -307,6 +306,8 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
 {
   if (!checkApp())
     return false;
+
+  ignmsg << "Loading plugin [" << _filename << "]" << std::endl;
 
   // Get full path
   auto home = homePath();
@@ -367,14 +368,12 @@ bool ignition::gui::createMainWindow()
 
   g_main_win = new MainWindow();
 
-  return addPluginsToWindow();
+  return addPluginsToWindow() && applyConfig();
 }
 
 /////////////////////////////////////////////////
 bool ignition::gui::addPluginsToWindow()
 {
-  ignmsg << "Add plugins to main window" << std::endl;
-
   // Create a widget for each plugin
   auto count = 0;
   for (auto &plugin : g_plugins)
@@ -384,6 +383,7 @@ bool ignition::gui::addPluginsToWindow()
     dock->setObjectName(title);
     dock->setAllowedAreas(Qt::TopDockWidgetArea);
     dock->setWidget(&*plugin);
+    dock->setAttribute(Qt::WA_DeleteOnClose);
     if (!plugin->HasTitlebar())
       dock->setTitleBarWidget(new QWidget());
 
@@ -391,6 +391,9 @@ bool ignition::gui::addPluginsToWindow()
       g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
     else
       g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
+
+    ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
+        std::endl;
 
     // Qt steals the ownership of the plugin (QWidget)
     // Remove it from the smart pointer without calling the destructor
@@ -400,6 +403,12 @@ bool ignition::gui::addPluginsToWindow()
   }
   g_plugins.clear();
 
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::applyConfig()
+{
   if (g_windowConfig.pos_x != 0 && g_windowConfig.pos_y != 0)
     g_main_win->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
 

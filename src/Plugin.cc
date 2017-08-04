@@ -46,6 +46,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
       SIGNAL(customContextMenuRequested(const QPoint &)),
       this, SLOT(ShowContextMenu(const QPoint &)));
 
+  // Load custom configuration
   this->LoadConfig(_pluginElem);
 }
 

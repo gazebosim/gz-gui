@@ -60,6 +60,13 @@ MainWindow::MainWindow()
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
 
+  fileMenu->addSeparator();
+
+  auto quitAct = new QAction(tr("&Quit"), this);
+  quitAct->setStatusTip(tr("Quit"));
+  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
+  fileMenu->addAction(quitAct);
+
   // Docking
   this->setDockOptions(QMainWindow::AnimatedDocks |
                        QMainWindow::AllowTabbedDocks |
@@ -72,10 +79,22 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
+bool MainWindow::CloseAllDocks()
+{
+  ignmsg << "Closing all docks" << std::endl;
+
+  auto docks = this->findChildren<QDockWidget *>();
+  for (auto dock : docks)
+    dock->close();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
 void MainWindow::OnLoadConfig()
 {
   QFileDialog fileDialog(this, tr("Load configuration"), QDir::homePath(),
-      tr("*.ini"));
+      tr("*.config"));
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
 
@@ -86,25 +105,21 @@ void MainWindow::OnLoadConfig()
   if (selected.empty())
     return;
 
-//  loadConfig(selected[0].toStdString());
+  if (!loadConfig(selected[0].toStdString()))
+    return;
 
-  auto settings = new QSettings(selected[0], QSettings::IniFormat);
+  if (!this->CloseAllDocks())
+   return;
 
-  auto state = settings->value("state", QByteArray()).toByteArray();
-  this->restoreState(state);
-
-  auto pos = settings->value("pos", QPoint(200, 200)).toPoint();
-  this->move(pos);
-
-  auto size = settings->value("size", QSize(400, 400)).toSize();
-  this->resize(size);
+  addPluginsToWindow();
+  applyConfig();
 }
 
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfig()
 {
   QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
-      tr("*.ini"));
+      tr("*.config"));
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
   fileDialog.setAcceptMode(QFileDialog::AcceptSave);

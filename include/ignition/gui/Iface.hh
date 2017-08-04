@@ -56,8 +56,16 @@ namespace ignition
     /// * Make sure the window is created first
     /// * Be sure to call loadPlugin() for each plugin first
     /// * Plugins previously added must be loaded again
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool addPluginsToWindow();
+
+    /// \brief Apply previously loaded config to the main window.
+    /// * Make sure the window is created first
+    /// * Be sure to call loadConfig() for each plugin first
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool applyConfig();
 
     /// \brief Run a main window using the given configuration file. This is
     /// the main entry point for the command line tool "ign gui -c".
