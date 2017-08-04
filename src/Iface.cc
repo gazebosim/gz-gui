@@ -450,7 +450,10 @@ bool ignition::gui::applyConfig()
     g_main_win->resize(g_windowConfig.width, g_windowConfig.height);
 
   if (!g_windowConfig.state.isEmpty())
-    g_main_win->restoreState(g_windowConfig.state);
+  {
+    if (!g_main_win->restoreState(g_windowConfig.state))
+      ignwarn << "Failed to restore state" << std::endl;
+  }
 
   QCoreApplication::processEvents();
 

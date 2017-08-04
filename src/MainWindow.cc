@@ -86,7 +86,10 @@ bool MainWindow::CloseAllDocks()
 
   auto docks = this->findChildren<QDockWidget *>();
   for (auto dock : docks)
+  {
     dock->close();
+    dock->setParent(new QWidget());
+  }
 
   QCoreApplication::processEvents();
 
