@@ -112,7 +112,7 @@ void MainWindow::OnLoadConfig()
     return;
 
   if (!this->CloseAllDocks())
-   return;
+    return;
 
   addPluginsToWindow();
   applyConfig();
