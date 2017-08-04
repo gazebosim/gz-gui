@@ -99,7 +99,7 @@ Ignition GUI supports loading configuration files (XML) which are passed to
 plugins and can be parsed using TinyXml2 (TODO: consider alternative to
 Tinyxml).
 
-For example (examples/config/image.config):
+For example (`examples/config/image.config`):
 
     <plugin filename="libImageDisplay.so">
       <title>Without picker</title>
@@ -135,11 +135,11 @@ Publish messages on an Ignition Transport topic.
 
 1. Listen to string messages on the `/echo` topic:
 
-    ign topic -e -t /echo
+        ign topic -e -t /echo
 
 1. On a new terminal, open the publisher GUI:
 
-    ign gui -s libPublisher.so
+        ign gui -s libPublisher.so
 
 1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
@@ -149,7 +149,7 @@ Publish messages on an Ignition Transport topic.
 * Display sim / real time published on a topic
 * Buttons to make play / pause service requests
 
-    ign gui -c examples/config/time.config
+        ign gui -c examples/config/time.config
 
 #### Topic echo
 
