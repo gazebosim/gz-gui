@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
+
 # Ignition gui
 
 ** Igntion gui classes and functions for robot applications.**
@@ -65,6 +67,10 @@ Make coverage:
 See coverage report:
 
     firefox coverage/index.html
+
+Upload to [codecov.io](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default):
+
+    bash <(curl -s https://codecov.io/bash) -t <CODECOV_TOKEN>
 
 ## Code checker
 
