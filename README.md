@@ -159,7 +159,7 @@ Echo messages from an Ignition Transport topic.
 
 #### Topic viewer
 
-Discover all Ignition Transport topics and introspect its fields
+Discover all Ignition Transport topics and introspect its fields.
 
     ign gui -c examples/config/topicViewer.config
 
