@@ -14,23 +14,14 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PALETTE_HH_
-#define IGNITION_GUI_PLUGINS_PALETTE_HH_
+#ifndef IGNITION_GUI_PLUGINS_TOPICVIEWER_HH_
+#define IGNITION_GUI_PLUGINS_TOPICVIEWER_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
 #endif
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <google/protobuf/message.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <memory>
-#include <set>
 #include <string>
 
 #include "ignition/gui/Plugin.hh"
@@ -46,10 +37,6 @@ namespace google
 
 namespace ignition
 {
-namespace common
-{
-  class URI;
-}
 namespace gui
 {
 namespace plugins
@@ -79,29 +66,30 @@ namespace plugins
     /// \param[in] _srcParent Parent on the source model.
     /// \return True if row is accepted.
     public: bool filterAcceptsRow(const int _srcRow,
-        const QModelIndex &_srcParent) const;
+                                  const QModelIndex &_srcParent) const;
 
     /// \brief Check if row contains the word on itself.
     /// \param[in] _srcRow Row on the source model.
     /// \param[in] _srcParent Parent on the source model.
     /// \param[in] _word Word to be checked.
     /// \return True if row matches.
-    public: bool filterAcceptsRowItself(const int _srcRow, const
-        QModelIndex &_srcParent, QString _word) const;
+    public: bool filterAcceptsRowItself(const int _srcRow,
+                                        const QModelIndex &_srcParent,
+                                        const QString _word) const;
 
     /// \brief Check if any of the children is fully accepted.
     /// \param[in] _srcRow Row on the source model.
     /// \param[in] _srcParent Parent on the source model.
     /// \return True if any of the children match.
     public: bool hasAcceptedChildren(const int _srcRow,
-        const QModelIndex &_srcParent) const;
+                                     const QModelIndex &_srcParent) const;
 
     /// \brief Check if any of the children accepts a specific word.
     /// \param[in] _srcParent Parent on the source model.
     /// \param[in] _word Word to be checked.
     /// \return True if any of the children match.
     public: bool hasChildAcceptsItself(const QModelIndex &_srcParent,
-        const QString &_word) const;
+                                       const QString &_word) const;
 
     /// \brief Set a new search value.
     /// \param[in] _search Full search string.
@@ -112,34 +100,22 @@ namespace plugins
   };
 
   // Forward declare private data class
-  class PalettePrivate;
+  class TopicViewerPrivate;
 
-  /// \brief A palette for the plot window, where plottable items can be
+  /// \brief A TopicViewer for the plot window, where plottable items can be
   /// dragged from.
-  class Palette : public Plugin
+  class TopicViewer : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: Palette();
+    public: TopicViewer();
 
     /// \brief Destructor
-    public: ~Palette();
+    public: ~TopicViewer();
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
-
-    /// \brief Fill the models model.
-    //private: void FillModels();
-
-    /// \brief Fill the sim model.
-    //private: void FillSim();
-
-    /// \brief Create a human readable key, capitalizing the first letter
-    /// and removing characters like "_".
-    /// \param[in] _key Non-human-readable key.
-    /// \return Human-readable key.
-    private: static std::string HumanReadableKey(const std::string &_key);
 
     /// \brief Fill an item with properties from a protobuf message.
     /// Only plottable fields such as int, double and bool are displayed.
@@ -147,72 +123,20 @@ namespace plugins
     /// \param[in] _item Pointer to the item which will be filled.
     /// \param[in] _uri The current URI.
     private: void FillFromMsg(google::protobuf::Message *_msg,
-        QStandardItem *_item, const std::string &_uri);
-
-    /// \brief Insert a pose item under the given item.
-    /// \param[in] _item The parent item.
-    /// \param[in] _uri The URI of the original query.
-    /// \param[in] _query The part of the query relevant to this item.
-    //private: void InsertPoseItem(QStandardItem *_item,
-    //    const common::URI &_uri, const std::string &_query);
-
-    /// \brief Insert a Vector3d item under the given item. Intermediate items
-    /// are inserted if necessary. For example, if the _query is for
-    /// "linear_velocity", the Vector3d elements will be inserted under
-    /// Velocity -> Linear.
-    /// \param[in] _item The parent item.
-    /// \param[in] _uri The URI of the original query.
-    /// \param[in] _query The part of the query relevant to this item.
-    //private: void InsertVector3dItem(QStandardItem *_item,
-    //    const common::URI &_uri, const std::string &_query);
-
-    /// \brief Insert a Quaterniond item under the given item.
-    /// \param[in] _item The parent item.
-    /// \param[in] _uri The URI of the original query.
-    /// \param[in] _query The part of the query relevant to this item.
-    //private: void InsertQuaterniondItem(QStandardItem *_item,
-    //    const common::URI &_uri, const std::string &_query);
-
-    /// \brief Insert an axis item under the given item.
-    /// \param[in] _item The parent item.
-    /// \param[in] _uri The URI of the original query.
-    /// \param[in] _query The part of the query relevant to this item.
-    //private: void InsertAxisItem(QStandardItem *_item,
-    //    const common::URI &_uri, const std::string &_query);
-
-    /// \brief Callback when the user has modified the search.
-    /// \param[in] _search Latest search.
-    private slots: void UpdateSearch(const QString &_search);
+                              QStandardItem *_item,
+                              const std::string &_uri);
 
     /// \brief Expand items in the given tree view based on their model data.
     /// \param[in] _model Search model.
     /// \param[in] _tree Tree view.
     /// \param[in] _srcParent Model index of the parent to be checked.
     private: void ExpandChildren(QSortFilterProxyModel *_model,
-        QTreeView *_tree, const QModelIndex &_srcParent) const;
+                                 QTreeView *_tree,
+                                 const QModelIndex &_srcParent) const;
 
-    /// \brief Callback when the list of items registered for introspection
-    /// is updated.
-    /// \param[in] _items The list of items.
-    /// \param[in] _result Result of the request. If false, there was
-    /// a problem executing your request.
-    //private: void OnIntrospectionUpdate(const std::set<std::string> &_items,
-    //    const bool _result);
-
-    /// \brief Callback when the list of items registered for introspection
-    /// is updated.
-    /// \param[in] _msg Message containing list of items.
-    //private: void OnIntrospectionUpdate(const gazebo::msgs::Param_V &_msg);
-
-    /// \brief Signal to trigger IntrospectionUpdateSlot.
-    /// \param[in] _items The list of items.
-    Q_SIGNALS: void IntrospectionUpdateSignal(
-        const std::set<std::string> &_items);
-
-    /// \brief Slot to process introspection items in the Qt thread.
-    /// \param[in] _items The list of items.
-    private slots: void IntrospectionUpdateSlot(
-        const std::set<std::string> &_items);
+    /// \brief Callback when the user has modified the search.
+    /// \param[in] _search Latest search.
+    private slots: void UpdateSearch(const QString &_search);
 
     /// \brief Expand given items tree on single click.
     /// \param[in] _index Index of item within the tree.
@@ -223,7 +147,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<PalettePrivate> dataPtr;
+    private: std::unique_ptr<TopicViewerPrivate> dataPtr;
   };
 }
 }
