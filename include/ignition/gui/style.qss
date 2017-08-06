@@ -98,6 +98,8 @@ QMessageBox > QLabel
   color: #333333;
 }
 
+/* Main window */
+
 QMainWindow::separator {
   width: 5px; /* when vertical */
   height: 5px; /* when horizontal */
@@ -107,19 +109,8 @@ QMainWindow::separator:hover {
   background: #fbfbfb;
 }
 
-/* Main window */
-
 QMainWindow {
   background: #ededed;
-}
-
-QMainWindow#mainWindow
-{
-  margin: 0px;
-  padding: 0px;
-  background-color: #303030;
-  /*background-image: url(:/images/mainwindow_bg.png);*/
-  /*background-repeat: repeat-xy;*/
 }
 
 QMenuBar
