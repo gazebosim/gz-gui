@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
+
 # Ignition gui
 
 ** Igntion gui classes and functions for robot applications.**
@@ -42,8 +44,6 @@ To build without tests, on the cmake step, do this instead:
 
 ### Test coverage
 
-FIXME: coverage not showing plugins
-
 To build test coverage, first install lcov:
 
     sudo apt-get install lcov
@@ -51,6 +51,10 @@ To build test coverage, first install lcov:
 Configure coverage:
 
     cmake -DCMAKE_BUILD_TYPE=coverage ../; make
+
+Important: remember to install first
+
+    make install
 
 Run tests:
 
@@ -63,6 +67,10 @@ Make coverage:
 See coverage report:
 
     firefox coverage/index.html
+
+Upload to [codecov.io](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default):
+
+    bash <(curl -s https://codecov.io/bash) -t <CODECOV_TOKEN>
 
 ## Code checker
 
@@ -156,11 +164,33 @@ plugins.
 
     ign gui -c examples/config/reqres.config
 
-#### Topic spy
+## Command line
 
-Discover all Ignition Transport topics and introspect their type and value.
+If you have Ignition Tools installed, you can use the `ign gui` command line tool:
 
-    ign gui -c examples/config/spy.config
+`ign gui -h`
+
+    Ignition GUI tool.
+
+      ign gui [options]
+
+    Options:
+
+      -l [ --list ]              List all available plugins.
+
+      -s [ --standalone ] arg    Run a plugin as a standalone window.
+                                 Give the plugin filename as an argument
+
+      -c [ --config ] arg        Open the main window with a configuration file.
+                                 Give the configuration file path as an argument
+
+      -v [ --verbose ] arg       Adjust the level of console output (0~4).
+
+      -h [ --help ]              Print this help message.
+
+      --force-version <VERSION>  Use a specific library version.
+
+      --versions                 Show the available versions.
 
 ## Examples
 

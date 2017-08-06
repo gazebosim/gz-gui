@@ -8,17 +8,6 @@ set (sources
   PARENT_SCOPE
 )
 
-set (plugin_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ImageDisplay.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Publisher.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Requester.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Responder.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TimePanel.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TopicEcho.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/TopicViewer.cc
-  PARENT_SCOPE
-)
-
 set (gtest_sources
   Iface_TEST.cc
   MainWindow_TEST.cc
@@ -30,6 +19,7 @@ if (HAVE_IGN_TOOLS)
   )
 endif()
 
-add_subdirectory(cmd)
-
 ign_build_tests(${gtest_sources})
+
+add_subdirectory(cmd)
+add_subdirectory(plugins)

@@ -15,11 +15,11 @@
  *
 */
 
+#include <google/protobuf/message.h>
 #include <algorithm>
 #include <mutex>
 #include <string>
 #include <vector>
-#include <google/protobuf/message.h>
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
