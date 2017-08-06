@@ -157,6 +157,12 @@ Echo messages from an Ignition Transport topic.
 
     ign gui -c examples/config/pubsub.config
 
+#### Topic viewer
+
+Discover all Ignition Transport topics and introspect its fields
+
+    ign gui -c examples/config/topicViewer.config
+
 #### Requester and Responder
 
 Make custom service requests and serve custom services with these two
