@@ -46,9 +46,7 @@ MainWindow::MainWindow()
   this->setWindowIconText(tr(title.c_str()));
   this->setWindowTitle(tr(title.c_str()));
 
-  // Main widget
-
-  // Menu
+  // File menu
   auto fileMenu = this->menuBar()->addMenu(tr("&File"));
 
   auto loadConfigAct = new QAction(tr("&Load configuration"), this);
@@ -67,6 +65,27 @@ MainWindow::MainWindow()
   quitAct->setStatusTip(tr("Quit"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
+
+  // Plugins menu
+  auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
+
+  auto pluginMapper = new QSignalMapper(this);
+  this->connect(pluginMapper, SIGNAL(mapped(QString)),
+      this, SLOT(OnAddPlugin(QString)));
+
+  auto plugins = getPluginList();
+  for (auto const &path : plugins)
+  {
+    for (auto const &plugin : path.second)
+    {
+      auto pluginName = plugin.substr(3, plugin.find(".") - 3);
+
+      auto act = new QAction(QString::fromStdString(pluginName), this);
+      this->connect(act, SIGNAL(triggered()), pluginMapper, SLOT(map()));
+      pluginMapper->setMapping(act, QString::fromStdString(plugin));
+      pluginsMenu->addAction(act);
+    }
+  }
 
   // Docking
   this->setDockOptions(QMainWindow::AnimatedDocks |
@@ -178,5 +197,15 @@ void MainWindow::OnSaveConfig()
     out << config;
 
   out.close();
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnAddPlugin(QString _plugin)
+{
+  auto plugin = _plugin.toStdString();
+  ignlog << "Add [" << plugin << "] via menu" << std::endl;
+
+  loadPlugin(plugin);
+  addPluginsToWindow();
 }
 
