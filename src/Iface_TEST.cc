@@ -192,7 +192,7 @@ TEST(IfaceTest, MainWindowNoPlugins)
     EXPECT_TRUE(win != nullptr);
 
     // Close window after 1 second
-    QTimer::singleShot(1000, win, SLOT(close()));
+    QTimer::singleShot(300, win, SLOT(close()));
 
     // Show window
     EXPECT_TRUE(runMainWindow());
@@ -237,7 +237,7 @@ TEST(IfaceTest, Dialog)
     });
 
     // Close dialog after 1 second
-    QTimer::singleShot(1000, ds[0], SLOT(close()));
+    QTimer::singleShot(300, ds[0], SLOT(close()));
 
     while (!closed)
       QCoreApplication::processEvents();
@@ -257,7 +257,7 @@ TEST(IfaceTest, runEmptyWindow)
 
   // Close window after 1 s
   bool closed = false;
-  QTimer::singleShot(1000, [&] {
+  QTimer::singleShot(300, [&] {
     auto win = mainWindow();
     EXPECT_TRUE(win != nullptr);
     win->close();
@@ -301,7 +301,7 @@ TEST(IfaceTest, runStandalone)
     QTimer *timer = new QTimer();
     timer->setSingleShot(true);
     timer->moveToThread(QApplication::instance()->thread());
-    timer->setInterval(1000);
+    timer->setInterval(300);
     timer->connect(timer, &QTimer::timeout, [&] {
       auto widgets = QApplication::topLevelWidgets();
       EXPECT_EQ(widgets.size(), 1);
@@ -349,7 +349,7 @@ TEST(IfaceTest, runConfig)
 
     // Close window after 1 s
     bool closed = false;
-    QTimer::singleShot(1000, [&] {
+    QTimer::singleShot(300, [&] {
       auto win = mainWindow();
       EXPECT_TRUE(win != nullptr);
       win->close();

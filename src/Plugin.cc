@@ -33,8 +33,15 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   // TODO: Too complicated to deep clone elements with tinyxml2, storing
   // string for now and consider moving away from tinyxml
   tinyxml2::XMLPrinter printer;
-  _pluginElem->Accept(&printer);
-  this->configStr = std::string(printer.CStr());
+  if (!_pluginElem->Accept(&printer))
+  {
+    ignwarn << "There was an error parsing the plugin element for " <<
+        "[" << this->title << "]." << std::endl;
+  }
+  else
+  {
+    this->configStr = std::string(printer.CStr());
+  }
 
   // Read default params
   if (auto titleElem = _pluginElem->FirstChildElement("title"))
