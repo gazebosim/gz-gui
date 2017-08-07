@@ -15,11 +15,6 @@ QToolButton::disabled
   color: #303030;
 }
 
-QLabel
-{
-  color: #d0d0d0;
-}
-
 QFrame
 {
   background-color: transparent;
@@ -314,25 +309,6 @@ QToolButton#dataLoggerStopButton:hover
   background-color: #dddddd;
 }
 
-QListView
-{
-  color: #d0d0d0;
-  background: #808080;
-  alternate-background-color: #606060;
-
-  selection-background-color: transparent;
-  show-decoration-selected: 0;
-
-  border: 1px solid #737373;
-  border-radius: 4;
-}
-
-QListView::item
-{
-  color: #ffffff;
-  border-radius: 4px;
-}
-
 QTreeView
 {
   color: #d0d0d0;
@@ -427,53 +403,6 @@ QTreeView#plotTree::branch:open:has-children:has-siblings
   image: url(:/images/down_arrow.png);
 }
 
-QLineEdit
-{
-  color: #353535;
-  background: #737373;
-  border-radius: 4;
-}
-
-QLineEdit:disabled
-{
-  color: #909090;
-}
-
-QPushButton
-{
-  padding: 8px;
-  font-weight: 200;
-  color: #fefefe;
-  text-align: center;
-  border-radius: 2px;
-  border: 0px;
-  selection-color: transparent;
-  margin: 2px;
-  background: #505050;
-}
-
-QPushButton:hover
-{
-  color: #f58113;
-}
-
-QPushButton:checked
-{
-  color: #f58113;
-  border: 2px solid #f58113;
-}
-
-QPushButton:pressed
-{
-  border: 2px solid #f58113;
-}
-
-QPushButton:!enabled
-{
-  color: #7a7a7a;
-  background: #404040;
-}
-
 QScrollBar:vertical
 {
   border: 1px solid #808080;
@@ -562,176 +491,6 @@ QTextEdit#tipsTextEdit
   background-color: #808080;
 }
 
-QTabBar
-{
-  /*background-color: #808080;*/
-}
-
-QTabWidget#embeddedTab::pane
-{
-  border-top: 1px solid #101010;
-  border-left: 1px solid #101010;
-  border-bottom: 1px solid #101010;
-  border-right: 1px solid #101010;
-  top: -1px;
-
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-
-  background-color: #808080;
-  padding: 2px;
-
-  margin: 0px;
-  color: #f0f0f0;
-}
-
-QTabBar::tab
-{
-  color: #d0d0d0;
-  background-color: #808080;
-  border-top: 1px solid  #101010;
-  border-left: 1px solid  #101010;
-  border-right: 1px solid  #101010;
-  border-bottom: 1px solid  #101010;
-
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-
-  padding: 4px;
-  min-width: 8ex;
-}
-
-QTabBar::tab:selected
-{
-  background-color: #808080;
-  margin-left: -4px;
-  margin-right: -4px;
-  border-bottom-style: none;
-}
-
-QTabBar::tab:first:selected
-{
-  margin-left: 0;
-}
-
-QTabBar::tab:last:selected
-{
-  margin-right: 0;
-}
-
-QTabBar::tab::only-one
-{
-  margin-left: 0;
-  margin-right: 0;
-}
-
-QTabBar::tab:!selected
-{
-  background-color: #707070;
-  margin-top: 2px;
-}
-
-QTabWidget#mainTab::pane,
-QTabWidget#buildingEditorTab::pane,
-QTabWidget#modelEditorTab::pane,
-QTabWidget#terrainEditorTab::pane,
-QTabWidget#linkInspectorTab::pane
-{
-  border-left: 1px solid #101010;
-  border-bottom: 1px solid #101010;
-  border-top: 1px solid #101010;
-
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  top: -1px;
-
-  background-color: #808080;
-  padding: 2px;
-
-  margin: 0px;
-  color: #f0f0f0;
-}
-
-QTabWidget::tab
-{
-  border-top: 1px solid #101010;
-  background-color: #808080;
-}
-
-QTabWidget::tab-bar
-{
-  alignment: left;
-}
-
-QWidget#modelList,
-QWidget#jointControl,
-QWidget#toolsWidget
-{
-  background: #808080;
-  color: #d0d0d0;
-}
-
-QWidget#modelList > QFrame,
-QWidget#insertModel > QFrame,
-QWidget#jointControl > QFrame,
-QWidget#modelEditorPalette > QFrame,
-QWidget#toolsWidget > QFrame
-{
-  padding: 4px;
-  background-color: #808080;
-}
-
-QWidget#buildingEditorPaletteScroll
-{
-  background-color: #808080;
-}
-
-QWidget#renderWidget > QWidget
-{
-  padding: 0px;
-  margin: 0px;
-  border: 1px solid #101010;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-
-  background-color: #808080;
-  margin-right: 0px;
-}
-
-QWidget#buildingEditorWidget > QWidget,
-QWidget#modelEditorWidget > QWidget
-QWidget#terrainEditorWidget > QWidget
-{
-  padding: 2px;
-  background-color: #808080;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-QWidget#topToolbar
-{
-  border-bottom: 1px solid #101010;
-  background-color: #808080;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-QWidget#renderBottomFrame
-{
-  border-top: 1px solid #101010;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  background-color: #808080;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
 QScrollArea
 {
   background-color: #808080;
@@ -746,13 +505,9 @@ QFrame#pidControl
   padding: 2px;
 }
 
-QListWidget#topicTextList::item
+QListWidget
 {
-  border-bottom: 1px solid black;
-  border-radius: 4px;
-  color: #101010;
-  background-color: #808080;
-  margin: 4px;
+  background-color: #ffffff;
 }
 
 QTextBrowser#dataLoggerRecordingsList
@@ -829,68 +584,9 @@ QwtScaleWidget
   background-color: #808080;
 }
 
-QAbstractSpinBox
+QTextEdit
 {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  border: 0px;
-
-  background-color: #737373;
-  color: #353535;
-  selection-color: #ffffff;
-  selection-background-color: #434343;
-
-  border-radius: 3px;
-  min-width: 75px;
-}
-
-QAbstractSpinBox:up-button
-{
-  background-color: transparent;
-  subcontrol-origin: border;
-  subcontrol-position: top right;
-}
-QAbstractSpinBox:down-button
-{
-  background-color: transparent;
-  subcontrol-origin: border;
-  subcontrol-position: bottom right;
-}
-
-QAbstractSpinBox::up-arrow,
-QAbstractSpinBox::up-arrow:disabled,
-QAbstractSpinBox::up-arrow:off
-{
-  image: url(:/images/up_spin_arrow_disabled.png);
-  width: 10px;
-  height: 10px;
-}
-QAbstractSpinBox::up-arrow:hover
-{
-  image: url(:/images/up_spin_arrow.png);
-  width: 10px;
-  height: 10px;
-}
-
-QAbstractSpinBox::down-arrow,
-QAbstractSpinBox::down-arrow:disabled,
-QAbstractSpinBox::down-arrow:off
-{
-  image: url(:/images/down_spin_arrow_disabled.png);
-  width: 10px;
-  height: 10px;
-}
-QAbstractSpinBox::down-arrow:hover
-{
-  image: url(:/images/down_spin_arrow.png);
-  width: 10px;
-  height: 10px;
-}
-
-QTextEdit#splashVersionTextEdit
-{
-  color: #f58113;
-  font-size: 10px;
+  background: #ffffff;
 }
 
 /************************************************
@@ -1080,11 +776,6 @@ QFileDialog
   background-color: #ffffff;
 }
 
-QFileDialog QLabel
-{
-  color: #303030;
-}
-
 QFileDialog QComboBox
 {
   background-color: #fefefe;
@@ -1252,9 +943,4 @@ QTabBar#plottingTabBar::pane
   margin: 0px;
   border: 0px;
   color: #fafafa;
-}
-
-QFrame#plotPaletteFrame
-{
-  background-color: #e2e2e2;
 }
