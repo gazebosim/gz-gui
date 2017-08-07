@@ -38,12 +38,31 @@ char **g_argv;
 using namespace ignition;
 using namespace gui;
 
+struct WindowConfig
+{
+  /// \brief Window X position in px
+  int pos_x = -1;
+
+  /// \brief Window Y position in px
+  int pos_y = -1;
+
+  /// \brief Window width in px
+  int width = -1;
+
+  /// \brief Window height in px
+  int height = -1;
+
+  /// \brief Window state (dock configuration)
+  QByteArray state;
+};
+
 QApplication *g_app;
 MainWindow *g_main_win = nullptr;
 std::vector<QDialog *> g_dialogs;
 std::vector<std::unique_ptr<Plugin>> g_plugins;
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 std::vector<std::string> g_pluginPaths;
+WindowConfig g_windowConfig;
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -125,10 +144,28 @@ bool ignition::gui::runConfig(const std::string &_config)
   initApp();
 
   if (!loadConfig(_config))
+  {
+    stop();
     return false;
+  }
 
   createMainWindow();
   runMainWindow();
+  stop();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::runEmptyWindow()
+{
+  ignmsg << "Loading empty window" << std::endl;
+
+  initApp();
+
+  createMainWindow();
+  runMainWindow();
+
   stop();
 
   return true;
@@ -148,7 +185,10 @@ bool ignition::gui::runStandalone(const std::string &_filename)
   initApp();
 
   if (!loadPlugin(_filename))
+  {
+    stop();
     return false;
+  }
 
   runDialogs();
 
@@ -245,6 +285,8 @@ bool ignition::gui::loadConfig(const std::string &_config)
     return false;
   }
 
+  ignmsg << "Loading config [" << _config << "]" << std::endl;
+
   // Use tinyxml to read config
   tinyxml2::XMLDocument doc;
   auto success = !doc.LoadFile(_config.c_str());
@@ -263,6 +305,30 @@ bool ignition::gui::loadConfig(const std::string &_config)
     loadPlugin(filename, pluginElem);
   }
 
+  // Process window properties
+  if (auto winElem = doc.FirstChildElement("window"))
+  {
+    ignmsg << "Loading window config" << std::endl;
+
+    if (auto xElem = winElem->FirstChildElement("position_x"))
+      xElem->QueryIntText(&g_windowConfig.pos_x);
+
+    if (auto yElem = winElem->FirstChildElement("position_y"))
+      yElem->QueryIntText(&g_windowConfig.pos_y);
+
+    if (auto widthElem = winElem->FirstChildElement("width"))
+      widthElem->QueryIntText(&g_windowConfig.width);
+
+    if (auto heightElem = winElem->FirstChildElement("height"))
+      heightElem->QueryIntText(&g_windowConfig.height);
+
+    if (auto stateElem = winElem->FirstChildElement("state"))
+    {
+      auto text = stateElem->GetText();
+      g_windowConfig.state = QByteArray::fromBase64(text);
+    }
+  }
+
   return true;
 }
 
@@ -272,6 +338,8 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
 {
   if (!checkApp())
     return false;
+
+  ignmsg << "Loading plugin [" << _filename << "]" << std::endl;
 
   // Get full path
   auto home = homePath();
@@ -331,31 +399,33 @@ bool ignition::gui::createMainWindow()
   ignmsg << "Create main window" << std::endl;
 
   g_main_win = new MainWindow();
-  g_main_win->setDockOptions(QMainWindow::AnimatedDocks |
-                             QMainWindow::AllowTabbedDocks |
-                             QMainWindow::AllowNestedDocks);
 
-  return addPluginsToWindow();
+  return addPluginsToWindow() && applyConfig();
 }
 
 /////////////////////////////////////////////////
 bool ignition::gui::addPluginsToWindow()
 {
-  ignmsg << "Add plugins to main window" << std::endl;
-
   // Create a widget for each plugin
   auto count = 0;
   for (auto &plugin : g_plugins)
   {
     auto title = QString::fromStdString(plugin->Title());
     auto dock = new QDockWidget(title, g_main_win);
-    dock->setAllowedAreas(Qt::AllDockWidgetAreas);
+    dock->setObjectName(title);
+    dock->setAllowedAreas(Qt::TopDockWidgetArea);
     dock->setWidget(&*plugin);
+    dock->setAttribute(Qt::WA_DeleteOnClose);
     if (!plugin->HasTitlebar())
       dock->setTitleBarWidget(new QWidget());
 
-    auto area = (count % 2) ? Qt::RightDockWidgetArea : Qt::LeftDockWidgetArea;
-    g_main_win->addDockWidget(area, dock);
+    if (count % 2 == 0)
+      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
+    else
+      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
+
+    ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
+        std::endl;
 
     // Qt steals the ownership of the plugin (QWidget)
     // Remove it from the smart pointer without calling the destructor
@@ -364,6 +434,28 @@ bool ignition::gui::addPluginsToWindow()
     count++;
   }
   g_plugins.clear();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::applyConfig()
+{
+  ignmsg << "Applying config" << std::endl;
+
+  if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
+    g_main_win->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
+
+  if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
+    g_main_win->resize(g_windowConfig.width, g_windowConfig.height);
+
+  if (!g_windowConfig.state.isEmpty())
+  {
+    if (!g_main_win->restoreState(g_windowConfig.state))
+      ignwarn << "Failed to restore state" << std::endl;
+  }
+
+  QCoreApplication::processEvents();
 
   return true;
 }

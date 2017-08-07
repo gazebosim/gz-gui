@@ -39,6 +39,16 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
+      /// \brief Close all docks
+      /// \return True if all docks have been closed
+      public: bool CloseAllDocks();
+
+      /// \brief Callback when load configuration is selected
+      private slots: void OnLoadConfig();
+
+      /// \brief Callback when save configuration is selected
+      private slots: void OnSaveConfig();
+
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;
