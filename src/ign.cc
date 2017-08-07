@@ -52,3 +52,9 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 {
   ignition::gui::setVerbosity(std::atoi(_verbosity));
 }
+
+//////////////////////////////////////////////////
+extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
+{
+  ignition::gui::runEmptyWindow();
+}

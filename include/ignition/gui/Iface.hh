@@ -56,8 +56,16 @@ namespace ignition
     /// * Make sure the window is created first
     /// * Be sure to call loadPlugin() for each plugin first
     /// * Plugins previously added must be loaded again
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool addPluginsToWindow();
+
+    /// \brief Apply previously loaded config to the main window.
+    /// * Make sure the window is created first
+    /// * Be sure to call loadConfig() for each plugin first
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool applyConfig();
 
     /// \brief Run a main window using the given configuration file. This is
     /// the main entry point for the command line tool "ign gui -c".
@@ -75,6 +83,10 @@ namespace ignition
     /// This has no effect if no plugins have been loaded.
     IGNITION_GUI_VISIBLE
     bool runDialogs();
+
+    /// \brief Run an empty window.
+    IGNITION_GUI_VISIBLE
+    bool runEmptyWindow();
 
     /// \brief Run previously loaded plugins on a single main window.
     /// An empty window will be created if no plugins have been loaded.

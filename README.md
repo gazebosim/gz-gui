@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
+
 # Ignition gui
 
 ** Igntion gui classes and functions for robot applications.**
@@ -66,6 +68,10 @@ See coverage report:
 
     firefox coverage/index.html
 
+Upload to [codecov.io](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default):
+
+    bash <(curl -s https://codecov.io/bash) -t <CODECOV_TOKEN>
+
 ## Code checker
 
 To run the code checker:
@@ -93,7 +99,7 @@ Ignition GUI supports loading configuration files (XML) which are passed to
 plugins and can be parsed using TinyXml2 (TODO: consider alternative to
 Tinyxml).
 
-For example (examples/config/image.config):
+For example (`examples/config/image.config`):
 
     <plugin filename="libImageDisplay.so">
       <title>Without picker</title>
@@ -129,11 +135,11 @@ Publish messages on an Ignition Transport topic.
 
 1. Listen to string messages on the `/echo` topic:
 
-    ign topic -e -t /echo
+        ign topic -e -t /echo
 
 1. On a new terminal, open the publisher GUI:
 
-    ign gui -s libPublisher.so
+        ign gui -s libPublisher.so
 
 1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
@@ -143,7 +149,7 @@ Publish messages on an Ignition Transport topic.
 * Display sim / real time published on a topic
 * Buttons to make play / pause service requests
 
-    ign gui -c examples/config/time.config
+        ign gui -c examples/config/time.config
 
 #### Topic echo
 
@@ -157,6 +163,49 @@ Make custom service requests and serve custom services with these two
 plugins.
 
     ign gui -c examples/config/reqres.config
+
+## Layout
+
+It's possible to define the layout of various plugins loaded to the main window
+by adding a `<window>` element to the config file. The child elements are:
+
+* `<position_x>`: Horizontal position of window's top-left corner in pixels.
+* `<position_y>`: Vertical position of window's top-left corner in pixels.
+* `<width>`: Window's width in pixels
+* `<height>`: Window's height in pixels
+* `<state>`: The state of the widow's docks and tabs, described as a Base64
+             encoded `QByteArray`. More information
+             [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
+
+### Example layout
+
+Try an example layout:
+
+    ign gui -c examples/config/layout.config
+
+Compare it to the same plugins loaded without a layout:
+
+    ign gui -c examples/config/no_layout.config
+
+### Create a new layout
+
+You can start from an empty window and insert plugins, or from an existing
+config file. For example:
+
+1. Open a config file loading several plugins, but without window
+   configurations, for example:
+
+        ign gui -c examples/config/no_layout.config
+
+1. Drag the widgets as you wish.
+
+1. Click on `File->Save configuration` and save on a new file.
+
+1. Close the window, then load the new config file:
+
+        ign gui -c <path to saved file>
+
+You can also load the new config file from `File->Load configuration`.
 
 ## Command line
 
