@@ -23,9 +23,9 @@
 
 #include <memory>
 #include <string>
+#include <ignition/msgs.hh>
 
 #include "ignition/gui/Plugin.hh"
-#include "ignition/msgs.hh"
 
 namespace google
 {
