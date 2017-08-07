@@ -73,7 +73,6 @@
 #include <QtWidgets/QStackedLayout>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStyledItemDelegate>
-#include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QToolButton>
