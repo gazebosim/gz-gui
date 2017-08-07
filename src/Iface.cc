@@ -387,9 +387,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   // Basic config in case there is none
   if (!_pluginElem)
   {
-    std::string pluginStr =
-      "<plugin filename=\"" + _filename + "\">\
-      </plugin>";
+    std::string pluginStr = "<plugin filename=\"" + _filename + "\"></plugin>";
 
     tinyxml2::XMLDocument pluginDoc;
     pluginDoc.Parse(pluginStr.c_str());
