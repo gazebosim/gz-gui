@@ -71,17 +71,6 @@ QWidget#dataLogger
   background-color: #303030;
 }
 
-QWidget#cameraSensor > QFrame
-{
-  background-color: #808080;
-}
-
-QWidget#cameraSensor > QLabel
-{
-  color: #d0d0d0;
-  background-color: #303030;
-}
-
 QMessageBox
 {
   font-family: Roboto;
@@ -495,13 +484,6 @@ QScrollArea
 {
   background-color: #808080;
   border-radius: 10px;
-  padding: 2px;
-}
-
-QWidget#toolsWidget > QFrame,
-QFrame#pidControl
-{
-  background-color: #808080;
   padding: 2px;
 }
 

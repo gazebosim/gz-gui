@@ -276,7 +276,7 @@ class ItemDelegate : public QStyledItemDelegate
 /////////////////////////////////////////////////
 /// Customize the item model so that we can pass along the correct MIME
 /// information during a drag-drop.
-class PlotItemModel : public QStandardItemModel
+class ItemModel : public QStandardItemModel
 {
   /////////////////////////////////////////////////
   /// \brief Custom MIME data function.
@@ -442,7 +442,7 @@ void SearchModel::SetSearch(const QString &_search)
 class ignition::gui::plugins::TopicViewerPrivate
 {
   /// \brief Model to hold topics data.
-  public: PlotItemModel *topicsModel;
+  public: ItemModel *topicsModel;
 
   /// \brief Proxy model to filter topics data.
   public: SearchModel *searchTopicsModel;
@@ -482,8 +482,8 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   auto topicsItemDelegate = new ItemDelegate;
 
   // The model that will hold data to be displayed in the topic tree view.
-  this->dataPtr->topicsModel = new PlotItemModel;
-  this->dataPtr->topicsModel->setObjectName("plotTopicsModel");
+  this->dataPtr->topicsModel = new ItemModel;
+  this->dataPtr->topicsModel->setObjectName("topicsModel");
   this->dataPtr->topicsModel->setParent(this);
 
   // A proxy model to filter topic model.
@@ -497,7 +497,7 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   auto searchEdit = new QLineEdit();
   searchEdit->setPlaceholderText("Start typing to search...");
-  searchEdit->setObjectName("plotLineEdit");
+  searchEdit->setObjectName("topicLineEdit");
   this->connect(searchEdit, SIGNAL(textChanged(QString)), this,
       SLOT(UpdateSearch(QString)));
 
@@ -507,7 +507,7 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   // A tree to visualize topics search results.
   this->dataPtr->searchTopicsTree = new QTreeView;
-  this->dataPtr->searchTopicsTree->setObjectName("plotTree");
+  this->dataPtr->searchTopicsTree->setObjectName("topicsTree");
   this->dataPtr->searchTopicsTree->setAnimated(true);
   this->dataPtr->searchTopicsTree->setHeaderHidden(true);
   this->dataPtr->searchTopicsTree->setExpandsOnDoubleClick(true);
@@ -538,7 +538,7 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   mainFrameLayout->setContentsMargins(0, 0, 0, 0);
 
   auto mainFrame = new QFrame(this);
-  mainFrame->setObjectName("plotTopicViewerFrame");
+  mainFrame->setObjectName("topicViewerFrame");
   mainFrame->setLayout(mainFrameLayout);
 
   auto mainLayout = new QHBoxLayout;
@@ -694,7 +694,7 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
           std::string dataName = _uri + "/" + name;
 
           auto *childItem = new QStandardItem();
-          childItem->setData(humanName.c_str(),ItemDelegate::DISPLAY_NAME);
+          childItem->setData(humanName.c_str(), ItemDelegate::DISPLAY_NAME);
           childItem->setData(dataName.c_str(), ItemDelegate::URI_QUERY);
           childItem->setData("Double", ItemDelegate::TYPE);
           childItem->setDragEnabled(true);
