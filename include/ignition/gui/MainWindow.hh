@@ -50,7 +50,7 @@ namespace ignition
       private slots: void OnSaveConfig();
 
       /// \brief Add a plugin to the window.
-      /// \param [in] Plugin filename
+      /// \param [in] _plugin Plugin filename
       private slots: void OnAddPlugin(QString _plugin);
 
       /// \internal
