@@ -32,7 +32,7 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 /// \brief Delegate that handles drawing the topic tree
-class PlotItemDelegate : public QStyledItemDelegate
+class ItemDelegate : public QStyledItemDelegate
 {
   /// \brief The data roles
   public: enum DataRole
@@ -54,10 +54,10 @@ class PlotItemDelegate : public QStyledItemDelegate
   };
 
   /// \brief Constructor
-  public: PlotItemDelegate() = default;
+  public: ItemDelegate() = default;
 
   /// \brief Destructor
-  public: virtual ~PlotItemDelegate() = default;
+  public: virtual ~ItemDelegate() = default;
 
   /// \brief Custom paint function.
   /// \param[in] _painter Pointer to the QT painter.
@@ -290,8 +290,7 @@ class PlotItemModel : public QStandardItemModel
     {
       if (idx.isValid())
       {
-        QString text = this->data(idx,
-            PlotItemDelegate::URI_QUERY).toString();
+        QString text = this->data(idx, ItemDelegate::URI_QUERY).toString();
         curMimeData->setData("application/x-item", text.toLatin1().data());
 
         break;
@@ -319,7 +318,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
   auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
 
   // Ignore titles.
-  if (this->sourceModel()->data(id, PlotItemDelegate::TYPE).toString() ==
+  if (this->sourceModel()->data(id, ItemDelegate::TYPE).toString() ==
       "title")
   {
     return false;
@@ -327,7 +326,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
 
   // Collapsed by default.
   this->sourceModel()->blockSignals(true);
-  this->sourceModel()->setData(id, false, PlotItemDelegate::TO_EXPAND);
+  this->sourceModel()->setData(id, false, ItemDelegate::TO_EXPAND);
   this->sourceModel()->blockSignals(false);
 
   // Empty search matches everything.
@@ -347,7 +346,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
     if (this->hasChildAcceptsItself(id, word))
     {
       this->sourceModel()->blockSignals(true);
-      this->sourceModel()->setData(id, true, PlotItemDelegate::TO_EXPAND);
+      this->sourceModel()->setData(id, true, ItemDelegate::TO_EXPAND);
       this->sourceModel()->blockSignals(false);
     }
 
@@ -480,7 +479,7 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
     this->title = "Topic viewer";
 
   // Create a view delegate, to handle drawing items in the tree view.
-  auto plotItemDelegate = new PlotItemDelegate;
+  auto topicsItemDelegate = new ItemDelegate;
 
   // The model that will hold data to be displayed in the topic tree view.
   this->dataPtr->topicsModel = new PlotItemModel;
@@ -489,8 +488,7 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   // A proxy model to filter topic model.
   this->dataPtr->searchTopicsModel = new SearchModel;
-  this->dataPtr->searchTopicsModel->setFilterRole(
-      PlotItemDelegate::DISPLAY_NAME);
+  this->dataPtr->searchTopicsModel->setFilterRole(ItemDelegate::DISPLAY_NAME);
   this->dataPtr->searchTopicsModel->setSourceModel(this->dataPtr->topicsModel);
 
   // Search field.
@@ -514,7 +512,7 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->searchTopicsTree->setHeaderHidden(true);
   this->dataPtr->searchTopicsTree->setExpandsOnDoubleClick(true);
   this->dataPtr->searchTopicsTree->setModel(this->dataPtr->searchTopicsModel);
-  this->dataPtr->searchTopicsTree->setItemDelegate(plotItemDelegate);
+  this->dataPtr->searchTopicsTree->setItemDelegate(topicsItemDelegate);
   this->dataPtr->searchTopicsTree->setEditTriggers(
       QAbstractItemView::NoEditTriggers);
   this->dataPtr->searchTopicsTree->setDragEnabled(true);
@@ -587,7 +585,7 @@ void TopicViewer::FillTopics()
           this->dataPtr->prevTopics.end())
     {
       auto topicItem = new QStandardItem();
-      topicItem->setData(topic.c_str(), PlotItemDelegate::DISPLAY_NAME);
+      topicItem->setData(topic.c_str(), ItemDelegate::DISPLAY_NAME);
       this->dataPtr->topicsModel->insertRow(i, topicItem);
 
       // Create a message from this topic to find out its fields.
@@ -646,42 +644,41 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
         auto humanName = humanReadableKey(name);
 
         auto *childItem = new QStandardItem();
-        childItem->setData(humanName.c_str(),
-            PlotItemDelegate::DISPLAY_NAME);
+        childItem->setData(humanName.c_str(), ItemDelegate::DISPLAY_NAME);
 
         switch (field->type())
         {
           case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
-            childItem->setData("Double", PlotItemDelegate::TYPE);
+            childItem->setData("Double", ItemDelegate::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_FLOAT:
-            childItem->setData("Float", PlotItemDelegate::TYPE);
+            childItem->setData("Float", ItemDelegate::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_INT64:
-            childItem->setData("Int 64", PlotItemDelegate::TYPE);
+            childItem->setData("Int 64", ItemDelegate::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_UINT64:
-            childItem->setData("Uint 64", PlotItemDelegate::TYPE);
+            childItem->setData("Uint 64", ItemDelegate::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_INT32:
-            childItem->setData("Int 32", PlotItemDelegate::TYPE);
+            childItem->setData("Int 32", ItemDelegate::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_UINT32:
-            childItem->setData("Uint 32", PlotItemDelegate::TYPE);
+            childItem->setData("Uint 32", ItemDelegate::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_BOOL:
-            childItem->setData("Bool", PlotItemDelegate::TYPE);
+            childItem->setData("Bool", ItemDelegate::TYPE);
             break;
           default:
             continue;
         }
         childItem->setToolTip(
             "<font size=3><p><b>Type</b>: " + childItem->data(
-            PlotItemDelegate::TYPE).toString() +
+            ItemDelegate::TYPE).toString() +
             "</p></font>");
 
         std::string dataName = _uri + "/" + name;
-        childItem->setData(dataName.c_str(), PlotItemDelegate::URI_QUERY);
+        childItem->setData(dataName.c_str(), ItemDelegate::URI_QUERY);
         childItem->setDragEnabled(true);
 
         _item->appendRow(childItem);
@@ -697,14 +694,13 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
           std::string dataName = _uri + "/" + name;
 
           auto *childItem = new QStandardItem();
-          childItem->setData(humanName.c_str(),
-              PlotItemDelegate::DISPLAY_NAME);
-          childItem->setData(dataName.c_str(), PlotItemDelegate::URI_QUERY);
-          childItem->setData("Double", PlotItemDelegate::TYPE);
+          childItem->setData(humanName.c_str(),ItemDelegate::DISPLAY_NAME);
+          childItem->setData(dataName.c_str(), ItemDelegate::URI_QUERY);
+          childItem->setData("Double", ItemDelegate::TYPE);
           childItem->setDragEnabled(true);
           childItem->setToolTip(
               "<font size=3><p><b>Type</b>: " + childItem->data(
-              PlotItemDelegate::TYPE).toString() +
+              ItemDelegate::TYPE).toString() +
               "</p></font>");
 
           _item->appendRow(childItem);
@@ -713,7 +709,7 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
         else if (field->message_type()->name() == "Quaternion")
         {
           auto *quatItem = new QStandardItem();
-          quatItem->setData(name.c_str(), PlotItemDelegate::DISPLAY_NAME);
+          quatItem->setData(name.c_str(), ItemDelegate::DISPLAY_NAME);
           _item->appendRow(quatItem);
 
           std::vector<std::string> rpy = {"roll", "pitch", "yaw"};
@@ -724,12 +720,12 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
 
             auto *childItem = new QStandardItem();
             childItem->setData(QString::fromStdString(humanName),
-                PlotItemDelegate::DISPLAY_NAME);
-            childItem->setData(dataName.c_str(), PlotItemDelegate::URI_QUERY);
-            childItem->setData("Double", PlotItemDelegate::TYPE);
+                ItemDelegate::DISPLAY_NAME);
+            childItem->setData(dataName.c_str(), ItemDelegate::URI_QUERY);
+            childItem->setData("Double", ItemDelegate::TYPE);
             childItem->setToolTip(
                 "<font size=3><p><b>Type</b>: " + childItem->data(
-                PlotItemDelegate::TYPE).toString() +
+                ItemDelegate::TYPE).toString() +
                 "</p></font>");
             childItem->setDragEnabled(true);
 
@@ -741,7 +737,7 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
         {
           auto fieldMsg = (ref->MutableMessage(_msg, field));
           auto *childItem = new QStandardItem();
-          childItem->setData(name.c_str(), PlotItemDelegate::DISPLAY_NAME);
+          childItem->setData(name.c_str(), ItemDelegate::DISPLAY_NAME);
           _item->appendRow(childItem);
           this->FillFromMsg(fieldMsg, childItem, _uri + "/" + name);
         }
@@ -778,8 +774,7 @@ void TopicViewer::ExpandChildren(QSortFilterProxyModel *_model,
     if (!item.isValid())
       return;
 
-    bool expand = _model->data(item,
-        PlotItemDelegate::TO_EXPAND).toBool();
+    bool expand = _model->data(item, ItemDelegate::TO_EXPAND).toBool();
 
     _tree->setExpanded(item, expand);
 
