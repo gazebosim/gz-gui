@@ -213,6 +213,15 @@ config file. For example:
 
 You can also load the new config file from `File->Load configuration`.
 
+## Style
+
+Ignition GUI comes with a reference style based on [material design](https://material.io/).
+
+Take a look at the
+[custom styles example](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/examples/standalone/custom_style/)
+to see how projects which use Ignition GUI as a library can use their own style.
+
+
 ## Command line
 
 If you have Ignition Tools installed, you can use the `ign gui` command line tool:
