@@ -8,6 +8,7 @@ set (gtest_local_sources
   Responder_TEST.cc
   TimePanel_TEST.cc
   TopicEcho_TEST.cc
+  TopicViewer_TEST.cc
 )
 
 ign_build_tests(${gtest_local_sources})
