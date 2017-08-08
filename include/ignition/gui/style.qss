@@ -260,4 +260,3 @@ QTreeView::branch:open:has-children:has-siblings
   border-image: none;
   image: url(:/images/down_arrow.png);
 }
-
