@@ -33,4 +33,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename);
 /// \brief External hook to execute 'ign gui -c' from the command line.
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config);
 
+/// \brief External hook to execute 'ign gui' from the command line.
+extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow();
+
 #endif

@@ -56,8 +56,16 @@ namespace ignition
     /// * Make sure the window is created first
     /// * Be sure to call loadPlugin() for each plugin first
     /// * Plugins previously added must be loaded again
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool addPluginsToWindow();
+
+    /// \brief Apply previously loaded config to the main window.
+    /// * Make sure the window is created first
+    /// * Be sure to call loadConfig() for each plugin first
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool applyConfig();
 
     /// \brief Run a main window using the given configuration file. This is
     /// the main entry point for the command line tool "ign gui -c".
@@ -75,6 +83,10 @@ namespace ignition
     /// This has no effect if no plugins have been loaded.
     IGNITION_GUI_VISIBLE
     bool runDialogs();
+
+    /// \brief Run an empty window.
+    IGNITION_GUI_VISIBLE
+    bool runEmptyWindow();
 
     /// \brief Run previously loaded plugins on a single main window.
     /// An empty window will be created if no plugins have been loaded.
@@ -108,6 +120,25 @@ namespace ignition
     /// \brief Set the verbosity level (from 0 to 4).
     IGNITION_GUI_VISIBLE
     void setVerbosity(const unsigned int _verbosity);
+
+    /// \brief Print the available plugins, organized by path.
+    IGNITION_GUI_VISIBLE
+    void listPlugins();
+
+    /// \brief Get the list of available plugins, organized by path. The paths
+    /// are given in the following order:
+    ///
+    /// 1. Paths given by the environment variable
+    /// 2. Paths added by calling addPluginPath
+    /// 3. Path ~/.ignition/gui/plugins
+    /// 4. The path where Ignition GUI plugins are installed
+    ///
+    /// \return A vector of pairs, where each pair contains:
+    /// * A path
+    /// * A vector of plugins in that path
+    IGNITION_GUI_VISIBLE
+    std::vector<std::pair<std::string, std::vector<std::string>>>
+        getPluginList();
   }
 }
 #endif

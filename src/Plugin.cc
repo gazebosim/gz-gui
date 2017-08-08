@@ -15,6 +15,7 @@
  *
  */
 
+#include <ignition/common/Console.hh>
 #include "ignition/gui/Plugin.hh"
 
 using namespace ignition;
@@ -23,18 +24,36 @@ using namespace gui;
 /////////////////////////////////////////////////
 void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 {
-  // Read default params
-  if (_pluginElem)
+  if (!_pluginElem)
   {
-    if (auto titleElem = _pluginElem->FirstChildElement("title"))
-      this->title = titleElem->GetText();
+    ignerr << "Failed to load plugin with a NULL element." << std::endl;
+    return;
+  }
 
-    if (auto hasTitleElem = _pluginElem->FirstChildElement("has_titlebar"))
-    {
-      bool has = true;
-      hasTitleElem->QueryBoolText(&has);
-      this->hasTitlebar = has;
-    }
+  // TODO: Too complicated to deep clone elements with tinyxml2, storing
+  // string for now and consider moving away from tinyxml
+  tinyxml2::XMLPrinter printer;
+  if (!_pluginElem->Accept(&printer))
+  {
+    ignwarn << "There was an error parsing the plugin element for " <<
+        "[" << this->title << "]." << std::endl;
+  }
+  else
+  {
+    this->configStr = std::string(printer.CStr());
+  }
+
+  // Read default params
+  if (auto titleElem = _pluginElem->FirstChildElement("title"))
+    this->title = titleElem->GetText();
+
+  // Weird things happen if the bool is not initialized again here
+  this->hasTitlebar = true;
+  if (auto hasTitleElem = _pluginElem->FirstChildElement("has_titlebar"))
+  {
+    bool has = true;
+    hasTitleElem->QueryBoolText(&has);
+    this->hasTitlebar = has;
   }
 
   // Setup default context menu
@@ -43,7 +62,14 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
       SIGNAL(customContextMenuRequested(const QPoint &)),
       this, SLOT(ShowContextMenu(const QPoint &)));
 
+  // Load custom configuration
   this->LoadConfig(_pluginElem);
+}
+
+/////////////////////////////////////////////////
+std::string Plugin::ConfigStr() const
+{
+  return this->configStr;
 }
 
 /////////////////////////////////////////////////
