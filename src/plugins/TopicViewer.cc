@@ -105,22 +105,8 @@ class ItemDelegate : public QStyledItemDelegate
       _painter->drawRect(_opt.rect);
     }
 
-    // Paint the type icon.
-    if (typeName == "model" || typeName == "link" || typeName == "collision" ||
-        typeName == "visual" || typeName == "joint")
-    {
-      double iconSize = 15;
-
-      textRect.adjust(iconSize + 6, 5, 0, -5);
-      QRectF iconRect = _opt.rect;
-      iconRect.setTop(iconRect.top() + (_opt.rect.height()/2.0 - iconSize/2.0));
-
-      QIcon icon(":/images/" + typeName  + ".svg");
-      _painter->drawPixmap(iconRect.left(), iconRect.top(),
-          icon.pixmap(iconSize, iconSize));
-    }
     // Titles.
-    else if (typeName == "title")
+    if (typeName == "title")
     {
       textRect.adjust(-15, 5, 0, -5);
     }
@@ -517,8 +503,9 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
       QAbstractItemView::NoEditTriggers);
   this->dataPtr->searchTopicsTree->setDragEnabled(true);
   this->dataPtr->searchTopicsTree->setDragDropMode(QAbstractItemView::DragOnly);
-  connect(this->dataPtr->searchTopicsTree, SIGNAL(clicked(const QModelIndex &)),
-          this, SLOT(ExpandTree(const QModelIndex &)));
+  this->connect(this->dataPtr->searchTopicsTree,
+      SIGNAL(clicked(const QModelIndex &)),
+      this, SLOT(ExpandTree(const QModelIndex &)));
 
   auto splitter = new QSplitter(Qt::Vertical, this);
   splitter->addWidget(this->dataPtr->searchTopicsTree);
@@ -553,10 +540,9 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   // A periodic event to update the topic list.
   auto timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(FillTopics()));
+  this->connect(timer, SIGNAL(timeout()), this, SLOT(FillTopics()));
   timer->start(1000);
 }
-
 
 /////////////////////////////////////////////////
 void TopicViewer::FillTopics()
