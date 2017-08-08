@@ -110,6 +110,8 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   layout->addWidget(this->dataPtr->freqSpin, 3, 1);
   layout->addWidget(this->dataPtr->publishButton, 3, 2);
   this->setLayout(layout);
+
+  this->dataPtr->timer = new QTimer(this);
 }
 
 /////////////////////////////////////////////////
@@ -118,7 +120,7 @@ void Publisher::OnPublish(const bool _checked)
   if (!_checked)
   {
     this->dataPtr->publishButton->setText("Publish");
-    if (this->dataPtr->timer)
+    if (this->dataPtr->timer != nullptr)
       this->dataPtr->timer->stop();
     this->dataPtr->pub = ignition::transport::Node::Publisher();
     return;
@@ -157,7 +159,6 @@ void Publisher::OnPublish(const bool _checked)
   }
 
   this->dataPtr->publishButton->setText("Stop publishing");
-  this->dataPtr->timer = new QTimer(this);
   this->dataPtr->timer->setInterval(1000/freq);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
   {
