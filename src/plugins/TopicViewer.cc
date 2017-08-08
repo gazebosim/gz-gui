@@ -503,8 +503,9 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
       QAbstractItemView::NoEditTriggers);
   this->dataPtr->searchTopicsTree->setDragEnabled(true);
   this->dataPtr->searchTopicsTree->setDragDropMode(QAbstractItemView::DragOnly);
-  connect(this->dataPtr->searchTopicsTree, SIGNAL(clicked(const QModelIndex &)),
-          this, SLOT(ExpandTree(const QModelIndex &)));
+  this->connect(this->dataPtr->searchTopicsTree,
+      SIGNAL(clicked(const QModelIndex &)),
+      this, SLOT(ExpandTree(const QModelIndex &)));
 
   auto splitter = new QSplitter(Qt::Vertical, this);
   splitter->addWidget(this->dataPtr->searchTopicsTree);
@@ -542,7 +543,6 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->connect(timer, SIGNAL(timeout()), this, SLOT(FillTopics()));
   timer->start(1000);
 }
-
 
 /////////////////////////////////////////////////
 void TopicViewer::FillTopics()
