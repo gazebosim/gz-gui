@@ -1,31 +1,11 @@
-QGroupBox::title
-{
-  color: #f0f0f0;
-}
+/* ---------------------------- */
+/* GLOBAL MATERIAL DESIGN STYLE */
+/* ---------------------------- */
 
-QToolButton
-{
-  border: 0;
-  text-align: left;
-  color: #d0d0d0;
-}
 
-QToolButton::disabled
-{
-  color: #303030;
-}
-
-QFrame
-{
-  background-color: transparent;
-  padding: 0px;
-  margin: 0px;
-}
-
-QDialog
-{
-  background-color: #303030;
-}
+/* ---------------------------- */
+/*            Docks             */
+/* ---------------------------- */
 
 QDockWidget {
   font-family: Roboto;
@@ -63,26 +43,9 @@ QDockWidget::close-button:hover, QDockWidget::float-button:hover {
   border: none;
 }
 
-
-QWidget#topicSelector,
-QWidget#cameraSensor,
-QWidget#dataLogger
-{
-  background-color: #303030;
-}
-
-QMessageBox
-{
-  font-family: Roboto;
-  background-color: #f2f2f2;
-}
-
-QMessageBox > QLabel
-{
-  color: #333333;
-}
-
-/* Main window */
+/* ---------------------------- */
+/*          Main Window         */
+/* ---------------------------- */
 
 QMainWindow::separator {
   width: 5px; /* when vertical */
@@ -97,210 +60,116 @@ QMainWindow {
   background: #ededed;
 }
 
-QMenuBar
-{
-  background-color: #303030;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 10px;
-  border: 0px solid #404040;
+/* ---------------------------- */
+/*             Dialog           */
+/* ---------------------------- */
+
+QDialog {
+  background: #ededed;
 }
 
-QMenuBar::item
-{
-  color: #d0d0d0;
-  background-color: #303030;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  margin-left: 4px;
-  margin-right: 4px;
+/* ---------------------------- */
+/*          Line Edit           */
+/* ---------------------------- */
 
-  padding-top: 2px;
-  padding-left: 2px;
-  padding-right: 2px;
+QLineEdit
+{
+  background-color: rgba(0, 0, 0, 0);
+  color: #333333;
+  border-bottom: 2px solid #f58113;
   padding-bottom: 2px;
+  border-radius: 0px;
+  font-family: Roboto;
 }
 
-QMenuBar::item:selected
+/* ---------------------------- */
+/*          Text Edit           */
+/* ---------------------------- */
+
+QTextEdit
 {
-  color: #f58113;
+  background: #ffffff;
 }
 
-QMenuBar::item:disabled
+/* ---------------------------- */
+/*         Push Button          */
+/* ---------------------------- */
+
+QPushButton
 {
-  color: #5f5f5f;
+  padding: 8px;
+  font-weight: 300;
+  color: #393939;
+  text-align: center;
+  border-radius: 0px;
+  border: 0px;
+  selection-color: transparent;
+  min-width: 80px;
+  margin: 8px;
+  background-color: rgba(153, 153, 153, 20%);
 }
+
+QPushButton:hover
+{
+  color: #393939;
+  selection-color: transparent;
+  background-color: rgba(153, 153, 153, 40%);
+}
+QPushButton:pressed
+{
+  color: #393939;
+  background-color: rgba(153, 153, 153, 60%);
+  selection-color: transparent;
+}
+QPushButton:!enabled
+{
+  color: rgba(0, 0, 0, 26%);
+  selection-color: transparent;
+}
+
+QPushButton:checked
+{
+  selection-color: transparent;
+}
+
+/* ---------------------------- */
+/*             Menu             */
+/* ---------------------------- */
 
 QMenu
 {
-  color: #d0d0d0;
-  background-color: #303030;
-  border: 1px solid #424242;
+  color: rgba(0, 0, 0, 80%);
+  background-color: #fefefe;
+  border: 0px;
+}
+
+QMenu::item
+{
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 QMenu::item:selected
 {
-  color: #f58113;
+  color: rgba(0, 0, 0, 100%);
+  background-color: rgba(153, 153, 153, 20%);
 }
 
 QMenu::item:disabled
 {
-  color: #5f5f5f;
+  color: rgba(0, 0, 0, 26%);
 }
 
-QToolBar
-{
-  padding: 0px;
-  margin: 0px;
-  margin-left: 20px;
-  border: 0px solid #404040;
-  border-radius: 0px;
-}
-
-QToolButton#jointToolButton:pressed,
-QToolButton#jointToolButton:hover
-{
-  border: 0px;
-  background-color: #808080;
-}
-
-QToolBar#playToolBar
-{
-  max-height: 25px;
-}
-
-QToolButton
-{
-  padding: 2px;
-  margin: 2px;
-  width: 20px;
-  height: 24px;
-  border-radius: 8px;
-  border: 0px solid #808080;
-}
-
-QWidget#plotEditTitle > QLabel:hover
-{
-  border-bottom: 1px solid white;
-}
-
-QToolBar#plotToolbar > QToolButton:hover
-{
-  border: 0px;
-  background-color: transparent;
-}
-
-QToolButton:hover
-{
-  border: 1px outset #252525;
-  background-color: #454545;
-}
-
-QToolButton:hover#plotCanvasTitleTool
-{
-  border: 0px;
-  background-color: transparent;
-  color: #ffffff;
-}
-
-
-QToolButton:pressed
-{
-  border: 1px outset #252525;
-  background-color: #454545;
-}
-
-QToolButton:checked
-{
-  border: 1px outset #252525;
-  background-color: #454545;
-}
-
-QPushButton#plotPaletteCollapse
-{
-  padding: 4px;
-  font-weight: 300;
-  background-color: rgba(120,120,120,255);
-  color: #ffffff;
-  text-align: center;
-  border: 0px;
-  margin: 0px;
-  padding-bottom: 11px;
-}
-
-QPushButton#plotAddCanvas
-{
-  padding: 8px;
-  font-weight: 100;
-  font-size: 20px;
-  background-color: #f78e1e;
-  color: #ffffff;
-  text-align: center;
-  border-radius: 2px;
-  border: 0px;
-  width: 20px;
-  height: 20px;
-}
-
-QPushButton#plotExport
-{
-  padding: 8px;
-  background-color: #616161;
-  color: #ffffff;
-  text-align: center;
-  border-radius: 2px;
-  border: 0px;
-}
-
-QPushButton#expandButton
-{
-  margin: 0px;
-  padding: 0px;
-  border: 0px;
-  background-color: transparent;
-  selection-background-color: transparent;
-  selection-color: transparent;
-  width: 90px;
-  text-align: left;
-
-  background-image: url(:/images/right_arrow.png);
-  background-repeat: no-repeat;
-  background-position: center right;
-}
-
-QPushButton#expandButton:checked
-{
-  background-image: url(:/images/down_arrow.png);
-}
-
-QToolButton#dataLoggerRecordButton
-{
-  padding: 0px;
-  margin-left: 10px;
-  margin-top: 10px;
-  margin-right: 0px;
-  margin-bottom: 0px;
-
-  width: 37px;
-  height: 37px;
-
-  background-color: #999999;
-  border-radius: 19px;
-  border: 0px;
-}
-
-QToolButton#dataLoggerRecordButton:hover
-{
-  background-color: #dddddd;
-}
-
-QToolButton#dataLoggerStopButton:hover
-{
-  background-color: #dddddd;
-}
+/* ---------------------------- */
+/*          Tree View           */
+/* ---------------------------- */
 
 QTreeView
 {
   color: #d0d0d0;
+  background: #ededed;
   selection-background-color: transparent;
   alternate-background-color: #606060;
   border-radius: 4;
@@ -321,7 +190,7 @@ QTreeView::item:selected
 
 QTreeView::branch:selected
 {
-  background-color: #808080;
+  background-color: #ff8080;
 }
 
 QTreeView::branch:selected:active
@@ -353,576 +222,41 @@ QTreeView QHeaderView:section
   border: 0px;
 }
 
-QTreeView#plotTree::branch:selected:!active
+QTreeView::branch:selected:!active
 {
-  background-color: #dddddd;
+  background-color: #ededed;
 }
 
-QTreeView#plotTree::branch:selected:active
+QTreeView::branch:selected:active
 {
-  background-color: #dddddd;
+  background-color: #ededed;
 }
 
-QTreeView#plotTree::branch:has-siblings:!adjoins-item
+QTreeView::branch:has-siblings:!adjoins-item
 {
   border-image: url(:/images/vline.png) 0;
 }
 
-QTreeView#plotTree::branch:has-siblings:adjoins-item
+QTreeView::branch:has-siblings:adjoins-item
 {
   border-image: url(:/images/branch-more.png) 0;
 }
 
-QTreeView#plotTree::branch:!has-children:!has-siblings:adjoins-item
+QTreeView::branch:!has-children:!has-siblings:adjoins-item
 {
   border-image: url(:/images/branch-end.png) 0;
 }
 
-QTreeView#plotTree::branch:has-children:!has-siblings:closed,
-QTreeView#plotTree::branch:closed:has-children:has-siblings
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings
 {
   border-image: none;
   image: url(:/images/right_arrow.png);
 }
 
-QTreeView#plotTree::branch:open:has-children:!has-siblings,
-QTreeView#plotTree::branch:open:has-children:has-siblings
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings
 {
   border-image: none;
   image: url(:/images/down_arrow.png);
-}
-
-QScrollBar:vertical
-{
-  border: 1px solid #808080;
-  border-radius: 5px;
-  background: #808080;
-  width: 10px;
-  margin: 22px 0 22px 0;
-}
-
-QScrollBar:horizontal
-{
-  border: 1px solid #808080;
-  border-radius: 5px;
-  background: #808080;
-  height: 10px;
-  margin: 0 22px 0 22px;
-}
-
-QScrollBar::handle:vertical
-{
-  background: #505050;
-  min-height: 10px;
-  border-radius: 4px;
-}
-
-QScrollBar::handle:horizontal
-{
-  background: #505050;
-  min-width: 10px;
-  border-radius: 4px;
-}
-
-QScrollBar::add-line:vertical
-{
-  width: 0px;
-  height: 0px;
-  background: transparent;
-  subcontrol-position: bottom;
-  subcontrol-origin: margin;
-}
-
-QScrollBar::add-line:horizontal
-{
-  width: 0px;
-  height: 0px;
-  background: transparent;
-  subcontrol-position: right;
-  subcontrol-origin: margin;
-}
-
-QScrollBar::sub-line:vertical
-{
-  width: 0px;
-  height: 0px;
-  background: transparent;
-  subcontrol-position: top;
-  subcontrol-origin: margin;
-}
-
-QScrollBar::sub-line:horizontal
-{
-  width: 0px;
-  height: 0px;
-  background: transparent;
-  subcontrol-position: left;
-  subcontrol-origin: margin;
-}
-
-QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,
-QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal
-{
-  width: 0px;
-  height: 0px;
-  background: #f58113;
-}
-
-QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
-{
-  background: none;
-}
-
-QTextEdit#tipsTextEdit
-{
-  border: 1px solid #808080;
-  background-color: #808080;
-}
-
-QScrollArea
-{
-  background-color: #808080;
-  border-radius: 10px;
-  padding: 2px;
-}
-
-QListWidget
-{
-  background-color: #ffffff;
-}
-
-QTextBrowser#dataLoggerRecordingsList
-{
-  color: #101010;
-  font-size: 11px;
-  background-color: #808080;
-  border: 0px;
-}
-
-QComboBox
-{
-  border: 1px solid #101010;
-  background-color: #808080;
-  color: #d0d0d0;
-  border-radius: 4px;
-
-  selection-color: #f58113;
-  selection-background-color: #808080;
-  show-decoration-selected: 0;
-}
-
-QComboBox:on
-{
-  padding-top: -10px;
-  padding-left: 4px;
-}
-
-QComboBox::drop-down
-{
-   subcontrol-origin: padding;
-   subcontrol-position: top right;
-   width: 15px;
-
-   border-left-width: 0px;
-   border-left-color: #000000;
-   border-left-style: solid;
-   border-top-right-radius: 3px;
-   border-bottom-right-radius: 3px;
-}
-
-QComboBox::down-arrow
-{
-  image: url(:/images/down_arrow.png);
-}
-
-QFrame#blackBorderFrame
-{
-  border: 1px solid #000000;
-  padding: 0px;
-  margin: 0px;
-}
-
-QFrame#dataLoggerSettingFrame
-{
-  border-top: 1px solid #555555;
-  margin: 0px;
-  padding: 0px;
-}
-
-QwtTextLabel
-{
-  font-size: 10px;
-}
-
-QwtScaleWidget
-{
-  color: white;
-  font-size: 11px;
-}
-
-#configWidget
-{
-  background-color: #808080;
-}
-
-QTextEdit
-{
-  background: #ffffff;
-}
-
-/************************************************
- * Material Design Style Elements
- ***********************************************/
-
-/* --------------------------------------------- */
-/* Plotting specific elements */
-/* --------------------------------------------- */
-
-QDialog#plotWindow,
-QDialog#plotExport
-{
-  background-color: #f2f2f2;
-  font-family: Roboto;
-}
-
-QLineEdit#plotLineEdit
-{
-  background-color: rgba(0, 0, 0, 0);
-  color: #333333;
-  border-bottom: 2px solid #f58113;
-  padding-bottom: 2px;
-  border-radius: 0px;
-  font-family: Roboto;
-}
-
-QLabel#plottingSearchLabel
-{
-  color: #f58113;
-  font-weight: 400;
-  margin-top: 15px;
-}
-
-QListView#plotExportListView
-{
-  color: #d0d0d0;
-  background: transparent;
-  selection-background-color: transparent;
-  show-decoration-selected: 0;
-  border: 0px;
-  border-radius: 0px;
-}
-
-QWidget#plotCanvas
-{
-  min-height: 300px;
-  min-width: 534px;
-  padding: 0px;
-  margin: 0px;
-}
-
-QScrollArea#plotScrollArea
-{
-  border-radius: 0px;
-  border: 0px;
-  padding:0px;
-  margin: 0px;
-  background-color: transparent;
-}
-
-QFrame#variableContainerFrame
-{
-  background-color: #ffffff;
-  border-radius: 0px;
-  border-bottom: 1px solid #a9a9a9;
-  margin: 0px;
-}
-
-QFrame#variableContainerFrame > QLabel
-{
-  color: #a9a9a9;
-}
-
-QFrame#variablePillFrame > QLabel
-{
-  color: #ffffff;
-}
-
-QFrame#variablePillFrame
-{
-  border-radius: 10px;
-  background-color: #2196f3;
-}
-
-QFrame#plotCanvasPlotFrame
-{
-  border: 0px;
-  border-radius: 0px;
-  background-color: transparent;
-}
-
-QFrame#plotCanvasTitleFrame
-{
-  background-color: #424242;
-}
-
-QFrame#plotExportTitleFrame
-{
-  padding: 10px;
-  background-color: transparent;
-}
-
-QFrame#plotCanvasTitleFrame > QLabel
-{
-  margin-left: 4px;
-}
-
-QFrame#plotExportTitleFrame > QLabel
-{
-  font-size: 18px;
-  color: #303030;
-}
-
-QFrame#plotCanvasFrame
-{
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  background-color: #ffffff;
-  border-radius: 0px;
-  padding: 0px;
-}
-
-QwtPlot#incrementalPlot
-{
-  background-color: #ffffff;
-}
-
-QwtPlot#incrementalPlot> QwtScaleWidget
-{
-  color: #a9a9a9;
-}
-
-QwtPlot#incrementalPlot > QwtLegend
-{
-  border: 1px solid #a9a9a9;
-  border-radius: 2px
-}
-
-QwtPlot#incrementalPlot > QwtLegend > QScrollArea
-{
-  background-color: #ffffff;
-}
-
-QwtPlot#incrementalPlot > QwtLegend > QwtLegendLabel
-{
-  background-color: #ffffff;
-}
-
-/* --------------------------------------------- */
-/* QMenu */
-/* --------------------------------------------- */
-
-QMenu#material
-{
-  color: rgba(0, 0, 0, 80%);
-  background-color: #fefefe;
-  border: 0px;
-}
-
-QMenu#material::item
-{
-  padding-left: 24px;
-  padding-right: 24px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-QMenu#material::item:selected
-{
-  color: rgba(0, 0, 0, 100%);
-  background-color: rgba(153, 153, 153, 20%);
-}
-
-QMenu#material::item:disabled
-{
-  color: rgba(0, 0, 0, 26%);
-}
-
-/* --------------------------------------------- */
-/* QFileDialog  - material design*/
-/* --------------------------------------------- */
-
-QFileDialog
-{
-  color: #303030;
-  background-color: #ffffff;
-}
-
-QFileDialog QComboBox
-{
-  background-color: #fefefe;
-  border: 0px;
-  border-bottom: 1px solid black;
-  border-radius: 0px;
-
-  color: #303030;
-  selection-color: #000000;
-  selection-background-color: rgba(153, 153, 153, 20%);
-}
-
-QFileDialog QComboBox QAbstractItemView
-{
-  background-color: #fefefe;
-  color: #303030;
-}
-
-QFileDialog QListView
-{
-  color: #303030;
-  background-color: #fefefe;
-  border-radius: 0px;
-  border: 1px solid #656565;
-
-  selection-color: #000000;
-  selection-background-color: rgba(153, 153, 153, 20%);
-}
-
-QFileDialog QListView::item
-{
-  color: #303030;
-}
-
-QFileDialog QListView::item:hover
-{
-  color: #000000;
-  background-color: rgba(153, 153, 153, 20%);
-}
-
-QFileDialog QLineEdit
-{
-  background-color: #fefefe;
-  border-bottom: 1px solid black;
-  border-radius: 0px;
-}
-
-/* --------------------------------------------- */
-/* QPushButton */
-/* --------------------------------------------- */
-
-QPushButton#materialFlat
-{
-  padding: 8px;
-  font-weight: 300;
-  color: #393939;
-  text-align: center;
-  border-radius: 0px;
-  border: 0px;
-  selection-color: transparent;
-  min-width: 80px;
-  margin: 8px;
-  background-color: rgba(153, 153, 153, 20%);
-}
-
-QPushButton#materialFlat:hover
-{
-  color: #393939;
-  selection-color: transparent;
-  background-color: rgba(153, 153, 153, 40%);
-}
-QPushButton#materialFlat:pressed
-{
-  color: #393939;
-  background-color: rgba(153, 153, 153, 60%);
-  selection-color: transparent;
-}
-QPushButton#materialFlat:!enabled
-{
-  color: rgba(0, 0, 0, 26%);
-  selection-color: transparent;
-}
-
-QPushButton#materialFlat:checked
-{
-  selection-color: transparent;
-}
-
-QTabBar#plottingTabBar::tab
-{
-  border-radius: 0px;
-  border: 0px;
-}
-
-QTabBar#plottingTabBar::tab:focus
-{
-  outline: 0px;
-}
-
-QTabBar#plottingTabBar::tab
-{
-  min-width: 8ex;
-  background-color: rgba(120,120,120,255);
-
-  margin: 0px;
-  padding: 10px;
-}
-
-QTabBar#plottingTabBar::tab:!selected
-{
-  color: rgba(240,240,240,180);
-  background-color: rgba(120,120,120,255);
-  border-bottom: 2px solid rgba(0,0,0,0);
-  font-weight: 400;
-}
-
-QTabBar#plottingTabBar::tab:!hover
-{
-  color: rgba(240,240,240,180);
-  background-color: rgba(120,120,120,255);
-  border-bottom: 2px solid rgba(0,0,0,0);
-  font-weight: 400;
-}
-
-QTabBar#plottingTabBar::tab:selected
-{
-  color: #f78e1e;
-  background-color: rgba(120,120,120,255);
-  border-bottom: 2px solid #f78e1e;
-  font-weight: 600;
-}
-
-QTabBar#plottingTabBar::tab:hover
-{
-  color: #f58113;
-  background-color: rgba(120,120,120,255);
-}
-
-QTabBar#plottingTabBar::tab:first:selected
-{
-  margin-left: 0;
-}
-
-QTabBar#plottingTabBar::tab:last:selected
-{
-  margin-right: 0;
-}
-
-QTabBar#plottingTabBar::tab::only-one
-{
-  margin-left: 0;
-  margin-right: 0;
-}
-
-QTabBar#plottingTabBar
-{
-  background-color: rgba(120,120,120,255);
-  margin: 0px;
-  padding: 0px;
-}
-
-QTabBar#plottingTabBar::pane
-{
-  padding: 0px;
-  margin: 0px;
-  border: 0px;
-  color: #fafafa;
 }
