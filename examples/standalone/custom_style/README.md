@@ -2,12 +2,12 @@ This example shows how to use custom stylesheets with Ignition GUI.
 
 ## Quickstart
 
-cd <path to>/examples/standalone/custom_style/
-mkdir build
-cd build
-cmake ..
-make
-./custom_style
+    cd <path to>/examples/standalone/custom_style/
+    mkdir build
+    cd build
+    cmake ..
+    make
+    ./custom_style
 
 ## Some pointers
 
