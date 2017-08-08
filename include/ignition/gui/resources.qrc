@@ -2,6 +2,7 @@
 <qresource>
   <file>style.qss</file>
   <file>images/close.svg</file>
+  <file>images/file_upload.svg</file>
   <file>images/undock.svg</file>
 </qresource>
 </RCC>
