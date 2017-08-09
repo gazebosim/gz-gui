@@ -91,7 +91,7 @@ namespace plugins
     private slots: void OnRemoveCanvas();
 
     /// \brief Toggle simulation play/pause state.
-    private slots: void TogglePause();
+    //private slots: void TogglePause();
 
     /// \internal
     /// \brief Pointer to private data.

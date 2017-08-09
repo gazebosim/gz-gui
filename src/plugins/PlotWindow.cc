@@ -18,13 +18,13 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
 
-//#include "ignition/gui/plugins/MainWindow.hh"
-//#include "ignition/gui/plugins/plot/IncrementalPlot.hh"
-//#include "ignition/gui/plugins/plot/ExportDialog.hh"
-//#include "ignition/gui/plugins/plot/Palette.hh"
-//#include "ignition/gui/plugins/plot/PlotCanvas.hh"
-//#include "ignition/gui/plugins/plot/PlotCurve.hh"
-//#include "ignition/gui/plugins/plot/PlotManager.hh"
+//#include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/plugins/IncrementalPlot.hh"
+#include "ignition/gui/plugins/ExportDialog.hh"
+//#include "ignition/gui/plugins/Palette.hh"
+#include "ignition/gui/plugins/PlotCanvas.hh"
+#include "ignition/gui/plugins/PlotCurve.hh"
+#include "ignition/gui/plugins/PlotManager.hh"
 #include "ignition/gui/plugins/PlotWindow.hh"
 
 using namespace ignition;
@@ -90,8 +90,8 @@ PlotWindow::PlotWindow()
 /////////////////////////////////////////////////
 PlotWindow::~PlotWindow()
 {
-  //PlotManager::Instance()->RemoveWindow(this);
-  //this->Clear();
+  PlotManager::Instance()->RemoveWindow(this);
+  this->Clear();
 }
 
 /////////////////////////////////////////////////
@@ -107,7 +107,7 @@ void PlotWindow::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   // new empty canvas
   this->dataPtr->canvasSplitter = new QSplitter(Qt::Vertical);
-  //this->AddCanvas();
+  this->AddCanvas();
 
   // add button
   QPushButton *addCanvasButton = new QPushButton("+");
@@ -119,7 +119,7 @@ void PlotWindow::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   addCanvasShadow->setBlurRadius(8);
   addCanvasShadow->setOffset(0, 0);
   addCanvasButton->setGraphicsEffect(addCanvasShadow);
-  //connect(addCanvasButton, SIGNAL(clicked()), this, SLOT(OnAddCanvas()));
+  connect(addCanvasButton, SIGNAL(clicked()), this, SLOT(OnAddCanvas()));
 
   // export button
   QPushButton *exportPlotButton = new QPushButton("Export");
@@ -132,7 +132,7 @@ void PlotWindow::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   exportPlotShadow->setBlurRadius(8);
   exportPlotShadow->setOffset(0, 0);
   exportPlotButton->setGraphicsEffect(exportPlotShadow);
-  //connect(exportPlotButton, SIGNAL(clicked()), this, SLOT(OnExport()));
+  connect(exportPlotButton, SIGNAL(clicked()), this, SLOT(OnExport()));
 
   QHBoxLayout *addButtonLayout = new QHBoxLayout;
   addButtonLayout->addWidget(exportPlotButton);
@@ -171,19 +171,17 @@ void PlotWindow::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   this->setLayout(mainLayout);
 
-  QShortcut *space = new QShortcut(Qt::Key_Space, this);
+  //QShortcut *space = new QShortcut(Qt::Key_Space, this);
   //QObject::connect(space, SIGNAL(activated()), this, SLOT(TogglePause()));
 
   QTimer *displayTimer = new QTimer(this);
-  //connect(displayTimer, SIGNAL(timeout()), this, SLOT(Update()));
+  connect(displayTimer, SIGNAL(timeout()), this, SLOT(Update()));
   displayTimer->start(30);
 
-  //PlotManager::Instance()->AddWindow(this);
+  PlotManager::Instance()->AddWindow(this);
 
   this->setMinimumSize(640, 480);
 }
-
-/*
 
 /////////////////////////////////////////////////
 PlotCanvas *PlotWindow::AddCanvas()
@@ -300,17 +298,17 @@ void PlotWindow::Restart()
 }
 
 /////////////////////////////////////////////////
-void PlotWindow::TogglePause()
-{
-  MainWindow *mainWindow = gui::get_main_window();
-  if (!mainWindow)
-    return;
-
-  if (mainWindow->IsPaused())
-    mainWindow->Play();
-  else
-    mainWindow->Pause();
-}
+//void PlotWindow::TogglePause()
+//{
+//  MainWindow *mainWindow = gui::get_main_window();
+//  if (!mainWindow)
+//    return;
+//
+//  if (mainWindow->IsPaused())
+//    mainWindow->Play();
+//  else
+//    mainWindow->Pause();
+//}
 
 /////////////////////////////////////////////////
 void PlotWindow::OnExport()
@@ -381,8 +379,6 @@ std::list<PlotCanvas *> PlotWindow::Plots()
 
   return plots;
 }
-
-*/
 
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::PlotWindow,

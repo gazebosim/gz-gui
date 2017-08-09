@@ -23,7 +23,7 @@
 
 #include <ignition/math/Vector2.hh>
 
-//#include "ignition/gui/plugins/ExportDialog.hh"
+#include "ignition/gui/plugins/ExportDialog.hh"
 #include "ignition/gui/plugins/PlottingTypes.hh"
 
 namespace ignition
@@ -156,6 +156,16 @@ namespace plugins
     /// Currently used to determine which plot will display the x-axis label
     /// when plots are added/removed
     private: void UpdateAxisLabel();
+
+    /// \brief Generates a path for a file which doesn't collide with existing
+    /// files, by appending numbers to it (i.e. (0), (1), ...)
+    /// \param[in] _pathAndName Full absolute path and file name up to the
+    /// file extension.
+    /// \param[in] _extension File extension, such as "pdf".
+    /// \return Full path with name and extension, which doesn't collide with
+    /// existing files
+    private: std::string UniqueFilePath(const std::string &_pathAndName,
+                                        const std::string &_extension) const;
 
     /// \brief Qt signal to request self-deletion.
     Q_SIGNALS: void CanvasDeleted();

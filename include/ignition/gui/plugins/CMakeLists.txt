@@ -5,6 +5,7 @@ set (qt_headers_local
   ExportDialog
   ImageDisplay
   IncrementalPlot
+  PlotCanvas
   PlotCurve
   PlotTracker
   Publisher
