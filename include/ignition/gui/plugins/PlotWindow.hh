@@ -35,6 +35,8 @@ namespace plugins
   // Forward declare private data class.
   class PlotWindowPrivate;
 
+  class PlotCanvas;
+
   /// \brief ToDo.
   class PlotWindow : public Plugin
   {
@@ -48,8 +50,6 @@ namespace plugins
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
-
-    /*
 
     /// \brief Add a new canvas.
     public: PlotCanvas *AddCanvas();
@@ -92,8 +92,6 @@ namespace plugins
 
     /// \brief Toggle simulation play/pause state.
     private slots: void TogglePause();
-
-    */
 
     /// \internal
     /// \brief Pointer to private data.

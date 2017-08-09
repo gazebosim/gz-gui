@@ -2,7 +2,10 @@ include (${project_cmake_dir}/Utils.cmake)
 
 set (qt_headers_local
   EditableLabel
+  ExportDialog
   ImageDisplay
+  IncrementalPlot
+  PlotCurve
   PlotTracker
   Publisher
   Requester
@@ -11,6 +14,7 @@ set (qt_headers_local
   TopicCurveHandler
   TopicEcho
   TopicViewer
+  PlotManager
   PlotWindow
   VariablePill
   VariablePillContainer
