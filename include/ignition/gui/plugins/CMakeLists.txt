@@ -1,24 +1,30 @@
 include (${project_cmake_dir}/Utils.cmake)
 
 set (qt_headers_local
-  EditableLabel
-  ExportDialog
   ImageDisplay
-  IncrementalPlot
-  PlotCanvas
-  PlotCurve
-  PlotTracker
   Publisher
   Requester
   Responder
   TimePanel
-  TopicCurveHandler
   TopicEcho
   TopicViewer
+)
+
+set (plot_hdrs
+  EditableLabel
+  ExportDialog
+  IncrementalPlot
+  PlotCanvas
+  PlotCurve
   PlotManager
-  PlotWindow
+  PlotTracker
+  TopicCurveHandler
   VariablePill
   VariablePillContainer
+)
+
+set (plot_qt_header
+  PlotWindow
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
@@ -39,3 +45,50 @@ foreach (src ${qt_headers_local})
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})
 
+
+# Plot plugin shared library
+QT5_WRAP_CPP(${plot_qt_header}_MOC ${plot_qt_header}.hh)
+QT5_WRAP_CPP(EditableLabel_MOC EditableLabel.hh)
+QT5_WRAP_CPP(ExportDialog_MOC ExportDialog.hh)
+QT5_WRAP_CPP(IncrementalPlot_MOC IncrementalPlot.hh)
+QT5_WRAP_CPP(PlotCanvas_MOC PlotCanvas.hh)
+#QT5_WRAP_CPP(PlotCurve_MOC PlotCurve.hh)
+#QT5_WRAP_CPP(PlotManager_MOC PlotManager.hh)
+#QT5_WRAP_CPP(PlotTracker_MOC PlotTracker.hh)
+#QT5_WRAP_CPP(TopicCurveHandler_MOC TopicCurveHandler.hh)
+QT5_WRAP_CPP(VariablePill_MOC VariablePill.hh)
+QT5_WRAP_CPP(VariablePillContainer_MOC VariablePillContainer.hh)
+add_library(${plot_qt_header} SHARED
+  ${PROJECT_SOURCE_DIR}/src/plugins/${plot_qt_header}.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/EditableLabel.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/ExportDialog.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/IncrementalPlot.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/PlotCanvas.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/PlotCurve.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/PlotManager.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/PlotTracker.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/TopicCurveHandler.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/VariablePill.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/VariablePillContainer.cc
+  ${PlotWindow_MOC}
+  ${EditableLabel_MOC}
+  ${ExportDialog_MOC}
+  ${IncrementalPlot_MOC}
+  ${PlotCanvas_MOC}
+  ${PlotCurve_MOC}
+  ${PlotManager_MOC}
+  ${PlotTracker_MOC}
+  ${TopicCurveHandler_MOC}
+  ${VariablePill_MOC}
+  ${VariablePillContainer_MOC}
+)
+target_link_libraries(${plot_qt_header}
+  ${IGNITION-COMMON_LIBRARIES}
+  ${IGNITION-GUI_LIBRARIES}
+  ${IGNITION-MSGS_LIBRARIES}
+  ${IGNITION-TRANSPORT_LIBRARIES}
+  ${Qt5Core_LIBRARIES}
+  ${Qt5Widgets_LIBRARIES}
+  ${QWT_LIBRARY})
+install (TARGETS ${plot_qt_header} DESTINATION
+  ${IGNITION_GUI_PLUGIN_INSTALL_DIR})

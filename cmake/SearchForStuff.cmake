@@ -66,6 +66,52 @@ if (NOT Qt5Test_FOUND)
   BUILD_ERROR("Missing: Qt5Test")
 endif()
 
+########################################
+# Find QWT (QT graphing library)
+find_path(QWT_INCLUDE_DIR NAMES qwt.h PATHS
+  /usr/include
+  /usr/local/include
+  /usr/local/lib/qwt.framework/Headers
+  ${QWT_WIN_INCLUDE_DIR}
+
+  PATH_SUFFIXES qwt qwt5
+)
+
+find_library(QWT_LIBRARY NAMES qwt-qt5 qwt PATHS
+  /usr/lib
+  /usr/local/lib
+  /usr/local/lib/qwt.framework
+  ${QWT_WIN_LIBRARY_DIR}
+)
+
+# version
+set ( _VERSION_FILE ${QWT_INCLUDE_DIR}/qwt_global.h )
+file ( STRINGS ${_VERSION_FILE} _VERSION_LINE REGEX "define[ ]+QWT_VERSION_STR" )
+if ( _VERSION_LINE )
+  string ( REGEX REPLACE ".*define[ ]+QWT_VERSION_STR[ ]+\"(.*)\".*" "\\1"
+      QWT_VERSION_STRING "${_VERSION_LINE}" )
+  string ( REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+).*" "\\1"
+      QWT_MAJOR_VERSION "${QWT_VERSION_STRING}" )
+  string ( REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+).*" "\\2"
+      QWT_MINOR_VERSION "${QWT_VERSION_STRING}" )
+  string ( REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+).*" "\\3"
+      QWT_PATCH_VERSION "${QWT_VERSION_STRING}" )
+  set(QWT_VERSION
+    ${QWT_MAJOR_VERSION}.${QWT_MINOR_VERSION}.${QWT_PATCH_VERSION})
+endif ()
+
+# in Windows, the path need to point to the parent to get correct qwt/foo headers
+if (WIN32)
+  SET(QWT_INCLUDE_DIR "${QWT_INCLUDE_DIR}\\..")
+endif()
+
+if (QWT_INCLUDE_DIR AND QWT_LIBRARY AND (NOT ${QWT_VERSION} VERSION_LESS 6.1.0))
+  message (STATUS "Looking for qwt - found: version ${QWT_VERSION}")
+else()
+  message (STATUS "Looking for qwt >= 6.1.0 - not found")
+  BUILD_ERROR ("Missing: libqwt-dev. Required for plotting.")
+endif ()
+
 #################################################
 # Find tinyxml2. Only debian distributions package tinyxml with a pkg-config
 # Use pkg_check_modules and fallback to manual detection
