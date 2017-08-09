@@ -157,6 +157,12 @@ Echo messages from an Ignition Transport topic.
 
     ign gui -c examples/config/pubsub.config
 
+#### Topic viewer
+
+Discover all Ignition Transport topics and introspect its fields.
+
+    ign gui -c examples/config/topicViewer.config
+
 #### Requester and Responder
 
 Make custom service requests and serve custom services with these two
@@ -206,6 +212,15 @@ config file. For example:
         ign gui -c <path to saved file>
 
 You can also load the new config file from `File->Load configuration`.
+
+## Style
+
+Ignition GUI comes with a reference style based on [material design](https://material.io/).
+
+Take a look at the
+[custom styles example](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/examples/standalone/custom_style/)
+to see how projects which use Ignition GUI as a library can use their own style.
+
 
 ## Command line
 

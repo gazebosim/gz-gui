@@ -1,13 +1,19 @@
 include (${project_cmake_dir}/Utils.cmake)
 
 set (qt_headers_local
+  EditableLabel
   ImageDisplay
+  PlotTracker
   Publisher
   Requester
   Responder
   TimePanel
+  TopicCurveHandler
   TopicEcho
+  TopicViewer
   PlotWindow
+  VariablePill
+  VariablePillContainer
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR

@@ -49,6 +49,10 @@ namespace ignition
       /// \brief Callback when save configuration is selected
       private slots: void OnSaveConfig();
 
+      /// \brief Add a plugin to the window.
+      /// \param [in] _plugin Plugin filename
+      private slots: void OnAddPlugin(QString _plugin);
+
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;

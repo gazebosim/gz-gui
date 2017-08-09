@@ -1,0 +1,15 @@
+/* Custom icons */
+QDockWidget {
+  titlebar-close-icon: url(:/images/close.svg);
+  titlebar-normal-icon: url(:/images/undock.svg);
+}
+
+/* Green bg */
+QMainWindow {
+  background: #11ff11;
+}
+
+/* Yellow buttons */
+QPushButton {
+  background: #ebff00;
+}

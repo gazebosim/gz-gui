@@ -15,10 +15,10 @@
  *
 */
 
-#include "gazebo/common/Console.hh"
+#include <ignition/common/Console.hh>
 
-#include "ignition/gui/VariablePillContainer.hh"
-#include "ignition/gui/VariablePill.hh"
+#include "ignition/gui/plugins/VariablePillContainer.hh"
+#include "ignition/gui/plugins/VariablePill.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -405,7 +405,7 @@ void VariablePill::dropEvent(QDropEvent *_evt)
     VariablePill *variable = qobject_cast<VariablePill *>(_evt->source());
     if (!variable)
     {
-      gzerr << "Variable is nullptr" << std::endl;
+      ignerr << "Variable is nullptr" << std::endl;
       return;
     }
 

@@ -21,8 +21,8 @@
 #include <memory>
 #include <string>
 
-#include <ignition/math/Helpers.hh>
 #include <ignition/math/Vector2.hh>
+#include "ignition/gui/qt.h"
 
 namespace ignition
 {
@@ -36,7 +36,7 @@ namespace plugins
     class VariablePillContainer;
 
     /// \brief A variable pill
-    class GZ_GUI_VISIBLE VariablePill : public QWidget
+    class VariablePill : public QWidget
     {
       Q_OBJECT
 
