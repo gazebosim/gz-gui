@@ -48,8 +48,9 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief Callback when publish button is pressed.
-    public slots: void OnPublish();
+    /// \brief Callback when publish button is checked or unchecked.
+    /// \param[in] _checked True if button is checked.
+    private slots: void OnPublish(const bool _checked);
 
     /// \internal
     /// \brief Pointer to private data.

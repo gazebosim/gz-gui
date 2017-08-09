@@ -18,7 +18,8 @@
 #include <iostream>
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
-#include <ignition/transport/ign.hh>
+#include <ignition/msgs.hh>
+#include <ignition/transport/Node.hh>
 
 #include "ignition/gui/plugins/Publisher.hh"
 
@@ -30,9 +31,29 @@ namespace plugins
 {
   class PublisherPrivate
   {
+    /// \brief Holds message type
     public: QLineEdit *msgTypeEdit;
+
+    /// \brief Holds message contents
     public: QTextEdit *msgEdit;
+
+    /// \brief Holds topic
     public: QLineEdit *topicEdit;
+
+    /// \brief Holds frequency
+    public: QDoubleSpinBox *freqSpin;
+
+    /// \brief Timer to keep publishing
+    public: QTimer *timer;
+
+    /// \brief Button to publish
+    public: QPushButton *publishButton;
+
+    /// \brief Node for communication
+    public: ignition::transport::Node node;
+
+    /// \brief Publisher
+    public: ignition::transport::Node::Publisher pub;
   };
 }
 }
@@ -65,28 +86,86 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->msgEdit = new QTextEdit("data: \"Hello\"");
   this->dataPtr->topicEdit = new QLineEdit("/echo");
 
-  auto publishButton = new QPushButton("Publish");
-  this->connect(publishButton, SIGNAL(clicked()), this, SLOT(OnPublish()));
+  auto freqLabel = new QLabel("Frequency");
+  freqLabel->setToolTip("Set to zero to publish once");
+
+  this->dataPtr->freqSpin = new QDoubleSpinBox();
+  this->dataPtr->freqSpin->setMinimum(0);
+  this->dataPtr->freqSpin->setMaximum(1000);
+  this->dataPtr->freqSpin->setValue(1);
+
+  this->dataPtr->publishButton = new QPushButton("Publish");
+  this->dataPtr->publishButton->setCheckable(true);
+  this->connect(this->dataPtr->publishButton, SIGNAL(toggled(bool)), this,
+      SLOT(OnPublish(bool)));
 
   auto layout = new QGridLayout();
   layout->addWidget(new QLabel("Message type: "), 0, 0);
-  layout->addWidget(this->dataPtr->msgTypeEdit, 0, 1);
+  layout->addWidget(this->dataPtr->msgTypeEdit, 0, 1, 1, 2);
   layout->addWidget(new QLabel("Message: "), 1, 0);
-  layout->addWidget(this->dataPtr->msgEdit, 1, 1);
+  layout->addWidget(this->dataPtr->msgEdit, 1, 1, 1, 2);
   layout->addWidget(new QLabel("Topic: "), 2, 0);
-  layout->addWidget(this->dataPtr->topicEdit, 2, 1);
-  layout->addWidget(publishButton);
+  layout->addWidget(this->dataPtr->topicEdit, 2, 1, 1, 2);
+  layout->addWidget(freqLabel, 3, 0);
+  layout->addWidget(this->dataPtr->freqSpin, 3, 1);
+  layout->addWidget(this->dataPtr->publishButton, 3, 2);
   this->setLayout(layout);
+
+  this->dataPtr->timer = new QTimer(this);
 }
 
 /////////////////////////////////////////////////
-void Publisher::OnPublish()
+void Publisher::OnPublish(const bool _checked)
 {
+  if (!_checked)
+  {
+    this->dataPtr->publishButton->setText("Publish");
+    if (this->dataPtr->timer != nullptr)
+      this->dataPtr->timer->stop();
+    this->dataPtr->pub = ignition::transport::Node::Publisher();
+    return;
+  }
+
   auto topic = this->dataPtr->topicEdit->text().toStdString();
   auto msgType = this->dataPtr->msgTypeEdit->text().toStdString();
-  auto msg = this->dataPtr->msgEdit->toPlainText().toStdString();
+  auto msgData = this->dataPtr->msgEdit->toPlainText().toStdString();
+  auto freq = this->dataPtr->freqSpin->value();
 
-  cmdTopicPub(topic.c_str(), msgType.c_str(), msg.c_str());
+  // Check it's possible to create message
+  auto msg = ignition::msgs::Factory::New(msgType, msgData);
+  if (!msg)
+  {
+    ignerr << "Unable to create message of type[" << msgType << "] "
+      << "with data[" << msgData << "].\n";
+    return;
+  }
+
+  // Advertise the topic
+  this->dataPtr->pub = this->dataPtr->node.Advertise(topic, msgType);
+
+  if (!this->dataPtr->pub)
+  {
+    ignerr << "Unable to publish on topic[" << topic << "] "
+      << "with message type[" << msgType << "].\n";
+    return;
+  }
+
+  // Zero frequency, publish once
+  if (freq < 0.00001)
+  {
+    this->dataPtr->pub.Publish(*msg);
+    this->dataPtr->publishButton->setChecked(false);
+    return;
+  }
+
+  this->dataPtr->publishButton->setText("Stop publishing");
+  this->dataPtr->timer->setInterval(1000/freq);
+  this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
+  {
+    auto newMsg = ignition::msgs::Factory::New(msgType, msgData);
+    this->dataPtr->pub.Publish(*newMsg);
+  });
+  this->dataPtr->timer->start();
 }
 
 // Register this plugin
