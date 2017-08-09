@@ -26,15 +26,18 @@ using namespace gui;
 //////////////////////////////////////////////////
 QColor Conversions::Convert(const math::Color &_color)
 {
-  return QColor(_color.r*255.0, _color.g*255.0, _color.b*255.0, _color.a*255.0);
+  return QColor(_color.R() * 255.0,
+                _color.G() * 255.0,
+                _color.B() * 255.0,
+                _color.A() * 255.0);
 }
 
 //////////////////////////////////////////////////
 math::Color Conversions::Convert(const QColor &_color)
 {
-  return math::Color(_color.red() / 255.0,
+  return math::Color(_color.red()   / 255.0,
                      _color.green() / 255.0,
-                     _color.blue() / 255.0,
+                     _color.blue()  / 255.0,
                      _color.alpha() / 255.0);
 }
 

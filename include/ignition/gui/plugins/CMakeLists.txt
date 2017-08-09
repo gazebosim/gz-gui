@@ -70,6 +70,7 @@ add_library(${plot_qt_header} SHARED
   ${PROJECT_SOURCE_DIR}/src/plugins/TopicCurveHandler.cc
   ${PROJECT_SOURCE_DIR}/src/plugins/VariablePill.cc
   ${PROJECT_SOURCE_DIR}/src/plugins/VariablePillContainer.cc
+  ${PROJECT_SOURCE_DIR}/src/Conversions.cc
   ${PlotWindow_MOC}
   ${EditableLabel_MOC}
   ${ExportDialog_MOC}

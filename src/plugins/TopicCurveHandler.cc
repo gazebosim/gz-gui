@@ -28,7 +28,7 @@
 #include <ignition/transport.hh>
 
 #include "ignition/gui/plugins/PlottingTypes.hh"
-//#include "ignition/gui/plugins/PlotCurve.hh"
+#include "ignition/gui/plugins/PlotCurve.hh"
 #include "ignition/gui/plugins/TopicCurveHandler.hh"
 
 using namespace ignition;
@@ -321,10 +321,10 @@ void TopicCurve::OnTopicData(const google::protobuf::Message &_msg,
   double x = ignition::common::Time::SystemTime().Double();
 
   // collect updates
-  google::protobuf::Message *msg;
-  msg->CopyFrom(_msg);
+  //google::protobuf::Message *msg;
+  //msg->CopyFrom(_msg);
 
-  this->UpdateCurve(msg, 0, x, curvesUpdates);
+  this->UpdateCurve(const_cast<google::protobuf::Message *>(&_msg), 0, x, curvesUpdates);
 
   // update curves!
   for (auto &curveUpdate : curvesUpdates)
@@ -335,20 +335,20 @@ void TopicCurve::OnTopicData(const google::protobuf::Message &_msg,
       if (!curve)
         continue;
 
-      //curve->AddPoint(curveUpdate.second);
+      curve->AddPoint(curveUpdate.second);
     }
   }
 }
 
 /////////////////////////////////////////////////
-ignition::common::Time Convert(const ignition::msgs::Time &_t)
+ignition::common::Time TopicCurve::Convert(const ignition::msgs::Time &_t)
 {
   ignition::common::Time result(_t.sec(), _t.nsec());
   return result;
 }
 
 /////////////////////////////////////////////////
-ignition::msgs::Time Convert(const ignition::common::Time &_t)
+ignition::msgs::Time TopicCurve::Convert(const ignition::common::Time &_t)
 {
   ignition::msgs::Time result;
   result.set_sec(_t.sec);
