@@ -82,6 +82,10 @@ namespace plugins
     /// \param[in] _msg Message to add to the list.
     private slots: void OnAddMsg(QString _msg);
 
+    /// \brief ToDo.
+    private slots: void UpdateFrequency();
+
+
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<TopicEchoPrivate> dataPtr;

@@ -156,7 +156,7 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           this->connect(this, SIGNAL(SetSimTime(QString)), simTime,
               SLOT(setText(QString)));
 
-          mainLayout->addWidget(new QLabel("Sim time"), 0, 1);
+          mainLayout->addWidget(new QLabel("Time"), 0, 1);
           mainLayout->addWidget(simTime, 0, 2);
         }
       }

@@ -134,6 +134,9 @@ namespace plugins
     /// \brief Topic name
     private: std::string topic;
 
+    /// \brief ToDo.
+    private: double startTime;
+
     /// \brief Node for communications.
     private: transport::Node node;
 
@@ -196,6 +199,8 @@ TopicCurve::TopicCurve(const std::string &_topic)
   //this->node->Init();
 
   this->topic = _topic;
+
+  this->startTime = ignition::common::Time::SystemTime().Double();
 
   //this->msgType = transport::getTopicMsgType(this->topic);
   //if (this->msgType == "")
@@ -318,7 +323,7 @@ void TopicCurve::OnTopicData(const google::protobuf::Message &_msg,
 
   // nearest sim time - use this x value if the message is not timestamped
   //double x = TopicTime::Instance()->LastSimTime().Double();
-  double x = ignition::common::Time::SystemTime().Double();
+  double x = ignition::common::Time::SystemTime().Double() - this->startTime;
 
   // collect updates
   //google::protobuf::Message *msg;

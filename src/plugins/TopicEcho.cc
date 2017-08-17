@@ -39,6 +39,42 @@ namespace plugins
     /// \brief A scolling list of text data.
     public: QListWidget *msgList;
 
+    /// \brief ToDo.
+    public: QLabel *counterLabel;
+
+    /// \brief ToDo.
+    public: QLineEdit *counterEdit;
+
+    /// \brief ToDo.
+    public: QLabel *counterLabelUnits;
+
+    /// \brief ToDo.
+    public: QLabel *frequencyLabel;
+
+    /// \brief ToDo.
+    public: QLineEdit *frequencyEdit;
+
+    /// \brief ToDo.
+    public: QLabel *frequencyLabelUnits;
+
+    /// \brief ToDo.
+    public: QLabel *bandwidthLabel;
+
+    /// \brief ToDo.
+    public: QLineEdit *bandwidthEdit;
+
+    /// \brief ToDo.
+    public: QLabel *bandwidthLabelUnits;
+
+
+    /// \brief ToDo.
+    public: long msgCounter = 0;
+
+    public: long msgCounterLastSec = 0;
+
+    /// \brief ToDo.
+    public: long payloadSizePerSec = 0;
+
     /// \brief Size of the text buffer. The size is the number of
     /// messages.
     public: int bufferSize = 10;
@@ -90,6 +126,27 @@ void TopicEcho::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
         this->dataPtr->echoButton->setText("Echo");
       });
 
+  this->dataPtr->counterLabel = new QLabel("Num messages: ");
+  this->dataPtr->counterEdit = new QLineEdit("0");
+  this->dataPtr->counterEdit->setObjectName("topicWidgetNumMessages");
+  this->dataPtr->counterEdit->setReadOnly(true);
+  this->dataPtr->counterEdit->setFixedWidth(90);
+  this->dataPtr->counterLabelUnits = new QLabel("messages");
+
+  this->dataPtr->frequencyLabel = new QLabel("Frequency: ");
+  this->dataPtr->frequencyEdit = new QLineEdit("0");
+  this->dataPtr->frequencyEdit->setObjectName("topicWidgetFrequency");
+  this->dataPtr->frequencyEdit->setReadOnly(true);
+  this->dataPtr->frequencyEdit->setFixedWidth(90);
+  this->dataPtr->frequencyLabelUnits = new QLabel("Hz");
+
+  this->dataPtr->bandwidthLabel = new QLabel("Bandwidth: ");
+  this->dataPtr->bandwidthEdit = new QLineEdit("0.0");
+  this->dataPtr->bandwidthEdit->setObjectName("topicWidgetBandwidth");
+  this->dataPtr->bandwidthEdit->setReadOnly(true);
+  this->dataPtr->bandwidthEdit->setFixedWidth(90);
+  this->dataPtr->bandwidthLabelUnits = new QLabel("B/s");
+
   this->dataPtr->msgList = new QListWidget();
   this->dataPtr->msgList->setVerticalScrollMode(
       QAbstractItemView::ScrollPerPixel);
@@ -108,15 +165,30 @@ void TopicEcho::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   layout->addWidget(new QLabel("Topic: "), 0, 0);
   layout->addWidget(this->dataPtr->topicEdit, 0, 1, 1, 2);
   layout->addWidget(this->dataPtr->echoButton, 0, 3);
-  layout->addWidget(this->dataPtr->msgList, 1, 0, 1, 4);
-  layout->addWidget(new QLabel("Buffer: "), 2, 0);
-  layout->addWidget(bufferSpin, 2, 1);
-  layout->addWidget(new QLabel("Pause: "), 2, 2);
-  layout->addWidget(pauseCheck, 2, 3);
+  layout->addWidget(this->dataPtr->counterLabel, 1, 0);
+  layout->addWidget(this->dataPtr->counterEdit, 1, 1);
+  layout->addWidget(this->dataPtr->counterLabelUnits, 1, 2);
+  layout->addWidget(this->dataPtr->frequencyLabel, 2, 0);
+  layout->addWidget(this->dataPtr->frequencyEdit, 2, 1);
+  layout->addWidget(this->dataPtr->frequencyLabelUnits, 2, 2);
+  layout->addWidget(this->dataPtr->bandwidthLabel, 3, 0);
+  layout->addWidget(this->dataPtr->bandwidthEdit, 3, 1);
+  layout->addWidget(this->dataPtr->bandwidthLabelUnits, 3, 2);
+  layout->addWidget(this->dataPtr->msgList, 4, 0, 1, 4);
+
+  layout->addWidget(new QLabel("Buffer: "), 5, 0);
+  layout->addWidget(bufferSpin, 5, 1);
+  layout->addWidget(new QLabel("Pause: "), 5, 2);
+  layout->addWidget(pauseCheck, 5, 3);
   this->setLayout(layout);
 
   this->connect(this, SIGNAL(AddMsg(QString)), this, SLOT(OnAddMsg(QString)),
           Qt::QueuedConnection);
+
+  // A periodic event to update the topic bandwidth.
+  auto timer = new QTimer(this);
+  this->connect(timer, SIGNAL(timeout()), this, SLOT(UpdateFrequency()));
+  timer->start(1000);
 }
 
 /////////////////////////////////////////////////
@@ -160,7 +232,15 @@ void TopicEcho::OnMessage(const google::protobuf::Message &_msg)
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
+  this->dataPtr->msgCounter++;
+  this->dataPtr->msgCounterLastSec++;
+  this->dataPtr->counterEdit->setText(
+    QString::number(this->dataPtr->msgCounter));
+
   this->AddMsg(QString::fromStdString(_msg.DebugString()));
+
+  // Save the payload size for statistics.
+  this->dataPtr->payloadSizePerSec += _msg.ByteSize();
 }
 
 /////////////////////////////////////////////////
@@ -193,6 +273,35 @@ void TopicEcho::OnBuffer(int _value)
   // Remove and item if the list is too long.
   while (this->dataPtr->msgList->count() > this->dataPtr->bufferSize)
     delete this->dataPtr->msgList->takeItem(0);
+}
+
+/////////////////////////////////////////////////
+void TopicEcho::UpdateFrequency()
+{
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+
+  this->dataPtr->frequencyEdit->setText(
+    QString::number(this->dataPtr->msgCounterLastSec));
+
+  double bandwidth = this->dataPtr->payloadSizePerSec;
+
+  if (this->dataPtr->payloadSizePerSec < 1000)
+    this->dataPtr->bandwidthLabelUnits->setText("B/s");
+  else if (this->dataPtr->payloadSizePerSec < 1000000)
+  {
+    bandwidth /= 1000.0;
+    this->dataPtr->bandwidthLabelUnits->setText("KB/s");
+  }
+  else
+  {
+    bandwidth /= 1000000.0;
+    this->dataPtr->bandwidthLabelUnits->setText("MB/s");
+  }
+
+  this->dataPtr->bandwidthEdit->setText(QString::number(bandwidth));
+
+  this->dataPtr->msgCounterLastSec = 0;
+  this->dataPtr->payloadSizePerSec = 0;
 }
 
 // Register this plugin

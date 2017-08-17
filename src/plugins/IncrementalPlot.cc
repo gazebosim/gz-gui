@@ -475,7 +475,7 @@ void IncrementalPlot::ShowAxisLabel(const PlotAxis _axis, const bool _show)
     case X_BOTTOM_AXIS:
     {
       if (_show)
-        axisLabel = "Sim Time (seconds)";
+        axisLabel = "Time (seconds)";
       QwtText xtitle(QString::fromStdString(axisLabel));
       xtitle.setFont(axisLabelFont);
       this->setAxisTitle(QwtPlot::xBottom, xtitle);
