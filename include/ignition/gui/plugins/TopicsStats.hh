@@ -64,13 +64,10 @@ namespace plugins
                                         const QModelIndex &_srcParent,
                                         const QString _word) const;
 
-    // Documentation inherited
+    // Documentation inherited.
     public: QVariant headerData(int _section,
                                 Qt::Orientation _orientation,
                                 int _role) const;
-
-    // Documentation inherited
-    public: int columnCount(const QModelIndex & /*_parent*/) const;
 
     /// \brief Set a new search value.
     /// \param[in] _search Full search string.

@@ -374,12 +374,6 @@ QVariant SearchModel::headerData(int _section, Qt::Orientation _orientation,
 }
 
 /////////////////////////////////////////////////
-int SearchModel::columnCount(const QModelIndex & /*_parent*/) const
-{
-  return 4;
-}
-
-/////////////////////////////////////////////////
 void SearchModel::SetSearch(const QString &_search)
 {
   this->search = _search;
