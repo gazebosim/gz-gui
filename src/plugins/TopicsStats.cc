@@ -299,17 +299,14 @@ std::string humanReadableKey(const std::string &_key)
 
 /////////////////////////////////////////////////
 bool SearchModel::filterAcceptsRow(const int _srcRow,
-      const QModelIndex &_srcParent) const
+    const QModelIndex &_srcParent) const
 {
   // Item index in search model.
   auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
 
   // Ignore titles.
-  if (this->sourceModel()->data(id, ItemDelegate::TYPE).toString() ==
-      "title")
-  {
+  if (this->sourceModel()->data(id, ItemDelegate::TYPE).toString() == "title")
     return false;
-  }
 
   // Collapsed by default.
   this->sourceModel()->blockSignals(true);
@@ -320,7 +317,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
   if (this->search.isEmpty())
     return true;
 
-  // Each word must match at least once, either self, parent or child.
+  // Each word must match at least once.
   auto words = this->search.split(" ");
   for (auto word : words)
   {
@@ -331,25 +328,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
     if (this->filterAcceptsRowItself(_srcRow, _srcParent, word))
       continue;
 
-    // One of the ancestors contains this word.
-    QModelIndex parentIndex = _srcParent;
-    bool parentAccepted = false;
-    while (parentIndex.isValid())
-    {
-      if (this->filterAcceptsRowItself(parentIndex.row(),
-          parentIndex.parent(), word))
-      {
-        parentAccepted = true;
-        break;
-      }
-      parentIndex = parentIndex.parent();
-    }
-
-    if (parentAccepted)
-      continue;
-
-    // This word can't be found on the row or a parent, and no child is fully
-    // accepted.
+    // This word can't be found on the row .
     return false;
   }
 
@@ -367,60 +346,66 @@ bool SearchModel::filterAcceptsRowItself(const int _srcRow,
 }
 
 /////////////////////////////////////////////////
+QVariant SearchModel::headerData(int _section, Qt::Orientation _orientation,
+  int _role) const
+{
+  if (_role == Qt::DisplayRole)
+  {
+    if (_orientation == Qt::Horizontal)
+    {
+      switch (_section)
+      {
+        case 0:
+          return QString("Topic");
+        case 1:
+          return QString("Num messages");
+        case 2:
+          return QString("Frequency");
+        case 3:
+          return QString("Bandwidth");
+        default:
+          std::cerr << "Something went wrong parsing headers" << std::endl;
+          return QString("");
+      }
+    }
+  }
+  return QVariant();
+}
+
+/////////////////////////////////////////////////
+int SearchModel::columnCount(const QModelIndex & /*_parent*/) const
+{
+  return 4;
+}
+
+/////////////////////////////////////////////////
 void SearchModel::SetSearch(const QString &_search)
 {
   this->search = _search;
   this->filterChanged();
 }
 
-/////////////////////////////////////////////////
-QVariant SearchModel::headerData(int section, Qt::Orientation orientation,
-  int role) const
-{
-    if (role == Qt::DisplayRole)
-    {
-        if (orientation == Qt::Horizontal) {
-            switch (section)
-            {
-            case 0:
-              return QString("Topic");
-            case 1:
-              return QString("Num messages");
-            case 2:
-              return QString("Frequency");
-            case 3:
-              return QString("Bandwidth");
-            default:
-              std::cerr << "Something went wrong" << std::endl;
-              return QString("");
-            }
-        }
-    }
-    return QVariant();
-}
-
-/////////////////////////////////////////////////
-int SearchModel::columnCount(const QModelIndex & /*parent*/) const
-{
-  return 4;
-}
-
-/// \brief Private data for the TopicsStats class
+/// \brief Private data for the TopicsStats class.
 class BasicStats
 {
-  /// \brief ToDo.
+  /// \brief Total number of messages received.
   public: long numMessages = 0;
 
-  /// \brief ToDo.
+  /// \brief Number of messages received during the last second.
   public: long numMessagesLastSec = 0;
 
-  /// \brief ToDo.
+  /// \brief Number of bytes received during the last second.
   public: long numBytesLastSec = 0;
 
+  /// \brief A pointer to the QT item storing the total number of messages.
   public: QStandardItem *numMessagesItem = nullptr;
 
+  /// \brief A pointer to the QT item storing the number of messages received
+  /// during the last second.
   public: QStandardItem *numMessagesLastSecItem = nullptr;
 
+  /// \brief A pointer to the QT item storing the number of bytes received
+  /// during the last second.
   public: QStandardItem *numBytesLastSecItem = nullptr;
 };
 
@@ -442,7 +427,8 @@ class ignition::gui::plugins::TopicsStatsPrivate
   /// \brief Topics displayed in the last update.
   public: std::vector<std::string> prevTopics;
 
-  /// \brief ToDo.
+  /// \brief Stores the stats per topic. The key is the topic name and the value
+  /// an object that stores the stats.
   public: std::map<std::string, BasicStats> stats;
 
   /// \brief Mutex to protect the models model update.
@@ -504,7 +490,7 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->searchTopicsTable->setModel(this->dataPtr->searchTopicsModel);
   this->dataPtr->searchTopicsTable->setItemDelegate(topicsItemDelegate);
   this->dataPtr->searchTopicsTable->setEditTriggers(
-      QAbstractItemView::NoEditTriggers);
+    QAbstractItemView::NoEditTriggers);
   this->dataPtr->searchTopicsTable->setDragEnabled(true);
   this->dataPtr->searchTopicsTable->setDragDropMode(QAbstractItemView::DragOnly);
 
@@ -512,7 +498,6 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->searchTopicsTable->setColumnWidth(1, 120);
   this->dataPtr->searchTopicsTable->setColumnWidth(2, 120);
   this->dataPtr->searchTopicsTable->setColumnWidth(3, 120);
-
 
   auto splitter = new QSplitter(Qt::Vertical, this);
   splitter->addWidget(this->dataPtr->searchTopicsTable);
@@ -613,6 +598,14 @@ void TopicsStats::FillTopics()
     }
   }
 
+  this->UpdateGUIStats();
+  this->ResetStats();
+  this->dataPtr->prevTopics = topics;
+}
+
+/////////////////////////////////////////////////
+void TopicsStats::UpdateGUIStats()
+{
   // Update stats.
   for (auto &statsPair : this->dataPtr->stats)
   {
@@ -620,11 +613,13 @@ void TopicsStats::FillTopics()
     statsPair.second.numMessagesItem->setData(
         QString::number(statsPair.second.numMessages),
         ItemDelegate::DISPLAY_NAME);
+
     // Number of messages received during the last second.
     std::string f = std::to_string(statsPair.second.numMessagesLastSec) + " Hz";
     statsPair.second.numMessagesLastSecItem->setData(
         QString::fromStdString(f),
         ItemDelegate::DISPLAY_NAME);
+
     // Number of bytes received during the last second.
     double bandwidth = statsPair.second.numBytesLastSec;
 
@@ -647,9 +642,6 @@ void TopicsStats::FillTopics()
         QString::fromStdString(b),
         ItemDelegate::DISPLAY_NAME);
   }
-
-  this->ResetStats();
-  this->dataPtr->prevTopics = topics;
 }
 
 /////////////////////////////////////////////////

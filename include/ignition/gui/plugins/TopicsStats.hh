@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_TopicsStats_HH_
-#define IGNITION_GUI_PLUGINS_TopicsStats_HH_
+#ifndef IGNITION_GUI_PLUGINS_TOPICSSTATS_HH_
+#define IGNITION_GUI_PLUGINS_TOPICSSTATS_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
@@ -25,6 +25,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
+// Forward declarations.
 namespace google
 {
   namespace protobuf
@@ -46,23 +47,7 @@ namespace plugins
   /// \brief Customize the proxy model to display search results.
   class SearchModel : public QSortFilterProxyModel
   {
-    /// \brief Customize so we accept rows where:
-    /// 1. Each of the words can be found in its ancestors or itself, but not
-    /// necessarily all words on the same row, or
-    /// 2. One of its descendants matches rule 1, or
-    /// 3. One of its ancestors matches rule 1.
-    ///
-    /// For example this structure:
-    /// - a
-    /// -- b
-    /// -- c
-    /// --- d
-    ///
-    /// * A search of "a" will display all rows.
-    /// * A search of "b" or "a b" will display "a" and "b".
-    /// * A search of "c", "d", "a c", "a d", "a c d" or "c d" will display
-    /// "a", "c" and "d".
-    /// * A search of "a b c d", "b c" or "b d" will display nothing.
+    /// \brief Accept a row if the words can be found in itself.
     ///
     /// \param[in] _srcRow Row on the source model.
     /// \param[in] _srcParent Parent on the source model.
@@ -79,11 +64,13 @@ namespace plugins
                                         const QModelIndex &_srcParent,
                                         const QString _word) const;
 
-    public: QVariant headerData(int section,
-                                Qt::Orientation orientation,
-                                int role) const;
+    // Documentation inherited
+    public: QVariant headerData(int _section,
+                                Qt::Orientation _orientation,
+                                int _role) const;
 
-    public: int columnCount(const QModelIndex & /*parent*/) const;
+    // Documentation inherited
+    public: int columnCount(const QModelIndex & /*_parent*/) const;
 
     /// \brief Set a new search value.
     /// \param[in] _search Full search string.
@@ -102,23 +89,28 @@ namespace plugins
   {
     Q_OBJECT
 
-    /// \brief Constructor
+    /// \brief Default constructor.
     public: TopicsStats();
 
-    /// \brief Destructor
+    /// \brief Default destructor.
     public: ~TopicsStats();
 
-    // Documentation inherited
+    // Documentation inherited.
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
     /// \brief Function called each time a topic update is received.
     /// Note that this callback uses the generic signature, hence it may receive
     /// messages with different types.
+    /// \param[in] _msg The new message received.
+    /// \param[in] _info Meta-information about the message received.
     private: void OnMessage(const google::protobuf::Message &_msg,
                             const ignition::transport::MessageInfo &_info);
 
-    /// \brief ToDo.
+    /// \brief Reset all the stats.
     private: void ResetStats();
+
+    /// \brief Update the GUI with the new stats.
+    private: void UpdateGUIStats();
 
     /// \brief Callback when the user has modified the search.
     /// \param[in] _search Latest search.
