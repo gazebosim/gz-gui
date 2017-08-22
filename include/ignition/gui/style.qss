@@ -19,7 +19,7 @@ QDockWidget {
 
 QDockWidget::title {
   text-align: left;
-  background: #f7b664;
+  background: #ef5350;
   padding: 10px;
 }
 
@@ -39,7 +39,7 @@ QDockWidget::float-button {
 }
 
 QDockWidget::close-button:hover, QDockWidget::float-button:hover {
-  background: #f7b664;
+  background: #ef5350;
   border: none;
 }
 
@@ -76,7 +76,7 @@ QLineEdit
 {
   background-color: rgba(0, 0, 0, 0);
   color: #333333;
-  border-bottom: 2px solid #f58113;
+  border-bottom: 2px solid #e57373;
   padding-bottom: 2px;
   border-radius: 0px;
   font-family: Roboto;
@@ -184,7 +184,7 @@ QTreeView::item:hover
 
 QTreeView::item:selected
 {
-  color: #f58113;
+  color: #e57373;
   background: #808080;
 }
 
