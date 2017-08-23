@@ -50,9 +50,6 @@ class ItemDelegate : public QStyledItemDelegate
     /// information to the user. Or something like "model", "link", used to
     /// choose icons.
     TYPE,
-
-    /// \brief Flag indicating whether to expand the item or not.
-    TO_EXPAND
   };
 
   /// \brief Constructor
@@ -87,33 +84,16 @@ class ItemDelegate : public QStyledItemDelegate
     fontRegular.setWeight(QFont::Normal);
     QFontMetrics fmRegular(fontRegular);
 
-    if (typeName == "title")
-    {
-      // Erase the branch image for titles.
-      QRectF titleRect = _opt.rect;
-      titleRect.setLeft(titleRect.left() - 13);
-      // FIXME: Find a non-hardcoded way to get the bg color.
-      QBrush brush(QColor("#e2e2e2"));
-      _painter->save();
-      _painter->fillRect(titleRect, brush);
-      _painter->restore();
-    }
-
     // Handle hover style.
-    if (typeName != "title" && _opt.state & QStyle::State_MouseOver)
+    if (_opt.state & QStyle::State_MouseOver)
     {
       _painter->setPen(QPen(QColor(200, 200, 200, 0), 0));
       _painter->setBrush(QColor(200, 200, 200));
       _painter->drawRect(_opt.rect);
     }
 
-    // Titles.
-    if (typeName == "title")
-    {
-      textRect.adjust(-15, 5, 0, -5);
-    }
     // Plottable items.
-    else if (!typeName.isEmpty())
+    if (!typeName.isEmpty())
     {
       // Paint icon.
       double iconSize = 20;
@@ -237,7 +217,7 @@ class ItemDelegate : public QStyledItemDelegate
     }
     else
     {
-      _painter->setFont(typeName == "title" ? fontBold : fontRegular);
+      _painter->setFont(fontBold);
       _painter->drawText(textRect, topicName);
     }
   }
@@ -290,30 +270,9 @@ class ItemModel : public QStandardItemModel
 };
 
 /////////////////////////////////////////////////
-std::string humanReadableKey(const std::string &_key)
-{
-  std::string humanKey = _key;
-  humanKey[0] = std::toupper(humanKey[0]);
-  std::replace(humanKey.begin(), humanKey.end(), '_', ' ');
-  return humanKey;
-}
-
-/////////////////////////////////////////////////
 bool SearchModel::filterAcceptsRow(const int _srcRow,
     const QModelIndex &_srcParent) const
 {
-  // Item index in search model.
-  auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
-
-  // Ignore titles.
-  if (this->sourceModel()->data(id, ItemDelegate::TYPE).toString() == "title")
-    return false;
-
-  // Collapsed by default.
-  this->sourceModel()->blockSignals(true);
-  this->sourceModel()->setData(id, false, ItemDelegate::TO_EXPAND);
-  this->sourceModel()->blockSignals(false);
-
   // Empty search matches everything.
   if (this->search.isEmpty())
     return true;

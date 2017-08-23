@@ -90,7 +90,7 @@ namespace plugins
     public: TopicsStats();
 
     /// \brief Default destructor.
-    public: ~TopicsStats();
+    public: virtual ~TopicsStats();
 
     // Documentation inherited.
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
