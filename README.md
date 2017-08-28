@@ -163,6 +163,12 @@ Discover all Ignition Transport topics and introspect its fields.
 
     ign gui -c examples/config/topicViewer.config
 
+#### Topics stats
+
+Show basic stats of all Ignition Transport topics at the same time.
+
+    ign gui -c examples/config/topicsStats.config
+
 #### Requester and Responder
 
 Make custom service requests and serve custom services with these two
