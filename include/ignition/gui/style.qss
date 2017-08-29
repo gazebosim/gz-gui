@@ -260,3 +260,29 @@ QTreeView::branch:open:has-children:has-siblings
   border-image: none;
   image: url(:/images/down_arrow.png);
 }
+
+/* ---------------------------- */
+/*          Table View          */
+/* ---------------------------- */
+
+QTableView
+{
+  gridline-color: #eeeeee;
+  background-color: #ffffff;
+}
+
+QHeaderView::section
+{
+  font-family: Roboto;
+  font-weight: 500;
+  border-style: none;
+  border-bottom: 1px solid #eeeeee;
+  background-color: #ffffff;
+  color: #7b7b7b;
+  padding-bottom: 15px;
+  padding-top: 15px;
+}
+
+/* QTableView::item styled by delegate */
+
+

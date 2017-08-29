@@ -240,6 +240,14 @@ bool ignition::gui::initApp()
   // Install signal handler for graceful shutdown
   installSignalHandler();
 
+  // Install translator
+  // Must install for every language we wish to support at runtime?
+  // Load custom translations vs Qt-provided translations
+  QTranslator translator;
+  translator.load("qt_" + QLocale::system().name(),
+      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  g_app->installTranslator(&translator);
+
   return true;
 }
 

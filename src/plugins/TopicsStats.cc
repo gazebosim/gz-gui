@@ -23,6 +23,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
@@ -33,7 +34,119 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-/// \brief Delegate that handles drawing the topic tree
+void paintSearchResult(const std::string &_text,
+    const SearchModel *_searchModel, QPainter *_painter,
+    const QStyleOptionViewItem &_opt)
+{
+  auto textRect = _opt.rect;
+  textRect.adjust(10, 12, 10, 12);
+
+  // Create a bold font.
+  QFont fontBold, fontRegular;
+  fontBold.setFamily("Roboto Bold");
+  fontBold.setWeight(QFont::Bold);
+  QFontMetrics fmBold(fontBold);
+
+  // Create a regular font.
+  fontRegular.setFamily("Roboto Regular");
+  fontRegular.setWeight(QFont::Normal);
+  QFontMetrics fmRegular(fontRegular);
+
+  // Case insensitive search.
+  std::string upperText(_text);
+  std::transform(upperText.begin(), upperText.end(),
+      upperText.begin(), ::toupper);
+
+  // Split search into words.
+  QStringList wordsStringList = _searchModel->search.toUpper().split(" ");
+
+  std::vector<std::string> wordsUpper;
+  for (auto word : wordsStringList)
+  {
+    if (word.isEmpty())
+      continue;
+    wordsUpper.push_back(word.toStdString());
+  }
+
+  // Find the portions of text that match the search words, and should
+  // therefore be bold.
+  //
+  // Bold map: key = position of bold text start, value = bold text length.
+  std::map<size_t, size_t> bold;
+  std::for_each(wordsUpper.begin(), wordsUpper.end(),
+      [upperText, &bold](const std::string &_word)
+      {
+        size_t pos = upperText.find(_word);
+        // Find all occurences of _word .
+        while (pos != std::string::npos)
+        {
+          // Use longest word starting at a given position.
+          bold[pos] = std::max(bold[pos], _word.size());
+          pos = upperText.find(_word, pos + 1);
+        }
+      });
+
+  // Paint the text from left to right.
+  size_t renderPos = 0;
+  for (std::map<size_t, size_t>::iterator iter = bold.begin();
+       iter != bold.end(); ++iter)
+  {
+    // Start of bold text.
+    size_t start = iter->first;
+
+    // Length of bold text.
+    size_t len = iter->second;
+
+    // Check if start is before the current render position.
+    if (renderPos > start)
+    {
+      // It's possible that the bold text goes beyond the current render
+      // position. If so, adjust the start and length appropriately.
+      if (start + len > renderPos)
+      {
+        len = (start + len) - renderPos;
+        start = renderPos;
+      }
+      // Otherwise this bold text has already been rendered, so skip.
+      else
+      {
+        continue;
+      }
+    }
+
+    // First paint text that is not bold.
+    auto textStr = QString::fromStdString(
+        _text.substr(renderPos, start - renderPos));
+    renderPos += (start - renderPos);
+
+    _painter->setFont(fontRegular);
+    _painter->drawText(textRect, textStr);
+
+    // Move rect to the right.
+    textRect.adjust(fmRegular.width(textStr), 0, 0, 0);
+
+    // Next, paint text that is bold.
+    textStr = QString::fromStdString(_text.substr(renderPos, len));
+    renderPos += len;
+
+    _painter->setFont(fontBold);
+    _painter->drawText(textRect, textStr);
+
+    // Move rect to the right.
+    textRect.adjust(fmBold.width(textStr), 0, 0, 0);
+  }
+
+  // Render any remaining text.
+  if (renderPos < _text.size())
+  {
+    auto textStr = QString::fromStdString(_text.substr(renderPos));
+    _painter->setFont(fontRegular);
+    _painter->drawText(textRect, textStr);
+  }
+}
+
+/////////////////////////////////////////////////
+/// \brief Delegate that handles drawing the topic table
 class ItemDelegate : public QStyledItemDelegate
 {
   /// \brief The data roles
@@ -45,11 +158,6 @@ class ItemDelegate : public QStyledItemDelegate
     /// \brief URI including detailed query about a single plot value. This is
     /// the information carried during a drag-drop operation.
     URI_QUERY,
-
-    /// \brief Data type name, such as "Double" or "Bool", used to display type
-    /// information to the user. Or something like "model", "link", used to
-    /// choose icons.
-    TYPE,
   };
 
   /// \brief Constructor
@@ -65,161 +173,29 @@ class ItemDelegate : public QStyledItemDelegate
   public: void paint(QPainter *_painter, const QStyleOptionViewItem &_opt,
       const QModelIndex &_index) const
   {
-    auto textRect = _opt.rect;
-
     // Custom options.
     QString topicName = qvariant_cast<QString>(_index.data(DISPLAY_NAME));
-    QString typeName = qvariant_cast<QString>(_index.data(TYPE));
 
-    // TODO: Change to QApplication::font() once Roboto is used everywhere.
-    QFont fontBold, fontRegular;
-
-    // Create a bold font.
-    fontBold.setFamily("Roboto Bold");
-    fontBold.setWeight(QFont::Bold);
-    QFontMetrics fmBold(fontBold);
-
-    // Create a regular font.
-    fontRegular.setFamily("Roboto Regular");
-    fontRegular.setWeight(QFont::Normal);
-    QFontMetrics fmRegular(fontRegular);
-
-    // Handle hover style.
-    if (_opt.state & QStyle::State_MouseOver)
+    if (topicName.isEmpty())
     {
-      _painter->setPen(QPen(QColor(200, 200, 200, 0), 0));
-      _painter->setBrush(QColor(200, 200, 200));
-      _painter->drawRect(_opt.rect);
+      ignerr << "Empty topic name, something went wrong." << std::endl;
+      return;
     }
 
-    // Plottable items.
-    if (!typeName.isEmpty())
-    {
-      // Paint icon.
-      double iconSize = 20;
+    // Draw text
+    QColor textColor(30, 30, 30);
+    _painter->setPen(textColor);
 
-      QRectF iconRect = _opt.rect;
-      iconRect.setTop(iconRect.top() + (_opt.rect.height()/2.0 - iconSize/2.0));
+    auto _searchModel = dynamic_cast<const SearchModel *>(_index.model());
+    paintSearchResult(topicName.toStdString(), _searchModel, _painter, _opt);
 
-      QIcon icon(":/images/graph_line.svg");
-      _painter->drawPixmap(iconRect.left(), iconRect.top(),
-          icon.pixmap(iconSize, iconSize));
+    // Draw grid
+    QColor gridColor(238, 238, 238);
+    _painter->setPen(gridColor);
 
-      // Move text.
-      textRect.adjust(iconSize + 5, 5, 0, -5);
-    }
-    // Normal expandable items.
-    else
-    {
-      // Otherwise use a rectangle that is sized for the just the topic name.
-      textRect.adjust(0, 5, 0, -5);
-    }
-
-    _painter->setPen(QColor(30, 30, 30));
-
-    // If this is a search result.
-    auto searchModel = dynamic_cast<const SearchModel *>(_index.model());
-    if (searchModel && !topicName.isEmpty())
-    {
-      std::string text(topicName.toStdString());
-
-      // Case insensitive search.
-      std::string upperText(text);
-      std::transform(upperText.begin(), upperText.end(),
-          upperText.begin(), ::toupper);
-
-      // Split search into words.
-      QStringList wordsStringList = searchModel->search.toUpper().split(" ");
-
-      std::vector<std::string> wordsUpper;
-      for (auto word : wordsStringList)
-      {
-        if (word.isEmpty())
-          continue;
-        wordsUpper.push_back(word.toStdString());
-      }
-
-      // Find the portions of text that match the search words, and should
-      // therefore be bold.
-      //
-      // Bold map: key = position of bold text start, value = bold text length.
-      std::map<size_t, size_t> bold;
-      std::for_each(wordsUpper.begin(), wordsUpper.end(),
-          [upperText, &bold](const std::string &_word)
-          {
-            size_t pos = upperText.find(_word);
-            // Find all occurences of _word .
-            while (pos != std::string::npos)
-            {
-              // Use longest word starting at a given position.
-              bold[pos] = std::max(bold[pos], _word.size());
-              pos = upperText.find(_word, pos + 1);
-            }
-          });
-
-      // Paint the text from left to right.
-      size_t renderPos = 0;
-      for (std::map<size_t, size_t>::iterator iter = bold.begin();
-           iter != bold.end(); ++iter)
-      {
-        // Start of bold text.
-        size_t start = iter->first;
-
-        // Length of bold text.
-        size_t len = iter->second;
-
-        // Check if start is before the current render position.
-        if (renderPos > start)
-        {
-          // It's possible that the bold text goes beyond the current render
-          // position. If so, adjust the start and length appropriately.
-          if (start + len > renderPos)
-          {
-            len = (start + len) - renderPos;
-            start = renderPos;
-          }
-          // Otherwise this bold text has already been rendered, so skip.
-          else
-          {
-            continue;
-          }
-        }
-
-        // First paint text that is not bold.
-        auto textStr = QString::fromStdString(
-            text.substr(renderPos, start - renderPos));
-        renderPos += (start - renderPos);
-
-        _painter->setFont(fontRegular);
-        _painter->drawText(textRect, textStr);
-
-        // Move rect to the right.
-        textRect.adjust(fmRegular.width(textStr), 0, 0, 0);
-
-        // Next, paint text that is bold.
-        textStr = QString::fromStdString(text.substr(renderPos, len));
-        renderPos += len;
-
-        _painter->setFont(fontBold);
-        _painter->drawText(textRect, textStr);
-
-        // Move rect to the right.
-        textRect.adjust(fmBold.width(textStr), 0, 0, 0);
-      }
-
-      // Render any remaining text.
-      if (renderPos < text.size())
-      {
-        auto textStr = QString::fromStdString(text.substr(renderPos));
-        _painter->setFont(fontRegular);
-        _painter->drawText(textRect, textStr);
-      }
-    }
-    else
-    {
-      _painter->setFont(fontBold);
-      _painter->drawText(textRect, topicName);
-    }
+    QPoint p1 = QPoint(_opt.rect.bottomLeft().x()-1, _opt.rect.bottomLeft().y());
+    QPoint p2 = QPoint(_opt.rect.bottomRight().x()+1, _opt.rect.bottomRight().y());
+    _painter->drawLine(p1, p2);
   }
 
   /// \brief Size hint tells QT how big an item is.
@@ -318,7 +294,7 @@ QVariant SearchModel::headerData(int _section, Qt::Orientation _orientation,
         case 0:
           return QString("Topic");
         case 1:
-          return QString("Num messages");
+          return QString("# messages");
         case 2:
           return QString("Frequency");
         case 3:
@@ -336,7 +312,9 @@ QVariant SearchModel::headerData(int _section, Qt::Orientation _orientation,
 void SearchModel::SetSearch(const QString &_search)
 {
   this->search = _search;
-  this->filterChanged();
+
+  // Trigger repaint on the whole model
+  this->layoutChanged();
 }
 
 /// \brief Private data for the TopicsStats class.
@@ -439,7 +417,14 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->searchTopicsTable = new QTableView;
   this->dataPtr->searchTopicsTable->setObjectName("topicsTable");
   this->dataPtr->searchTopicsTable->verticalHeader()->setVisible(false);
-  this->dataPtr->searchTopicsTable->setAlternatingRowColors(true);
+  this->dataPtr->searchTopicsTable->verticalHeader()->setDefaultSectionSize(42);
+  this->dataPtr->searchTopicsTable->setShowGrid(false);
+  this->dataPtr->searchTopicsTable->setSelectionBehavior(
+      QAbstractItemView::SelectRows);
+  this->dataPtr->searchTopicsTable->horizontalHeader()->setHighlightSections(
+      true);
+  this->dataPtr->searchTopicsTable->horizontalHeader()->setStretchLastSection(
+      true);
 
   this->dataPtr->searchTopicsTable->setModel(this->dataPtr->searchTopicsModel);
   this->dataPtr->searchTopicsTable->setItemDelegate(topicsItemDelegate);
