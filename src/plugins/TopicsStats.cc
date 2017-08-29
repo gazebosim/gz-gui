@@ -193,8 +193,10 @@ class ItemDelegate : public QStyledItemDelegate
     QColor gridColor(238, 238, 238);
     _painter->setPen(gridColor);
 
-    QPoint p1 = QPoint(_opt.rect.bottomLeft().x()-1, _opt.rect.bottomLeft().y());
-    QPoint p2 = QPoint(_opt.rect.bottomRight().x()+1, _opt.rect.bottomRight().y());
+    QPoint p1 = QPoint(_opt.rect.bottomLeft().x()-1,
+                       _opt.rect.bottomLeft().y());
+    QPoint p2 = QPoint(_opt.rect.bottomRight().x()+1,
+                       _opt.rect.bottomRight().y());
     _painter->drawLine(p1, p2);
   }
 
