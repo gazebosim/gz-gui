@@ -35,13 +35,13 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 /// \brief Delegate that handles drawing the topic tree
-class VItemDelegate : public QStyledItemDelegate
+class TreeItemDelegate : public QStyledItemDelegate
 {
   /// \brief Constructor
-  public: VItemDelegate() = default;
+  public: TreeItemDelegate() = default;
 
   /// \brief Destructor
-  public: virtual ~VItemDelegate() = default;
+  public: virtual ~TreeItemDelegate() = default;
 
   /// \brief Custom paint function.
   /// \param[in] _painter Pointer to the QT painter.
@@ -322,7 +322,7 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
     this->title = "Topic viewer";
 
   // Create a view delegate, to handle drawing items in the tree view.
-  auto topicsItemDelegate = new VItemDelegate;
+  auto topicsItemDelegate = new TreeItemDelegate;
 
   // The model that will hold data to be displayed in the topic tree view.
   this->dataPtr->topicsModel = new ItemModel;

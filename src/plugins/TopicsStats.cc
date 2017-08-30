@@ -37,13 +37,13 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 /// \brief Delegate that handles drawing the topic table
-class ItemDelegate : public QStyledItemDelegate
+class TableItemDelegate : public QStyledItemDelegate
 {
   /// \brief Constructor
-  public: ItemDelegate() = default;
+  public: TableItemDelegate() = default;
 
   /// \brief Destructor
-  public: virtual ~ItemDelegate() = default;
+  public: virtual ~TableItemDelegate() = default;
 
   /// \brief Custom paint function.
   /// \param[in] _painter Pointer to the QT painter.
@@ -299,7 +299,7 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
     this->title = "Topics stats";
 
   // Create a view delegate, to handle drawing items in the tree view.
-  auto topicsItemDelegate = new ItemDelegate;
+  auto topicsItemDelegate = new TableItemDelegate;
 
   // The model that will hold data to be displayed in the topic tree view.
   this->dataPtr->topicsModel = new ItemModel;
