@@ -21,7 +21,6 @@
   #include <ignition/gui/qt.h>
 #endif
 
-
 namespace ignition
 {
 namespace gui
@@ -31,10 +30,10 @@ namespace gui
   /// Features:
   ///
   /// * This has been tested with QTreeView and QTableView.
-  /// * Manages expansion od nested items through DataRole::TO_EXPAND when
+  /// * Manages expansion of nested items through DataRole::TO_EXPAND when
   ///   applicable
   /// * Items with DataRole::TYPE == "title" are ignored
-  /// *
+  ///
   class SearchModel : public QSortFilterProxyModel
   {
     /// \brief Customize so we accept rows where:

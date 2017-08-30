@@ -27,6 +27,7 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
+#include "ignition/gui/DragDropModel.hh"
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/SearchModel.hh"
 #include "ignition/gui/plugins/TopicsStats.hh"
@@ -202,34 +203,6 @@ class TableItemDelegate : public QStyledItemDelegate
   }
 };
 
-/////////////////////////////////////////////////
-/// Customize the item model so that we can pass along the correct MIME
-/// information during a drag-drop.
-class ItemModel : public QStandardItemModel
-{
-  /////////////////////////////////////////////////
-  /// \brief Custom MIME data function.
-  /// \param[in] _indexes List of selected items.
-  /// \return Mime data for the selected items.
-  public: QMimeData *mimeData(const QModelIndexList &_indexes) const
-  {
-    QMimeData *curMimeData = new QMimeData();
-
-    for (auto const &idx : _indexes)
-    {
-      if (idx.isValid())
-      {
-        QString text = this->data(idx, DataRole::URI_QUERY).toString();
-        curMimeData->setData("application/x-item", text.toLatin1().data());
-
-        break;
-      }
-    }
-
-    return curMimeData;
-  }
-};
-
 /// \brief Private data for the TopicsStats class.
 class BasicStats
 {
@@ -258,7 +231,7 @@ class BasicStats
 class ignition::gui::plugins::TopicsStatsPrivate
 {
   /// \brief Model to hold topics data.
-  public: ItemModel *topicsModel;
+  public: DragDropModel *topicsModel;
 
   /// \brief Proxy model to filter topics data.
   public: SearchModel *searchTopicsModel;
@@ -302,7 +275,7 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   auto topicsItemDelegate = new TableItemDelegate;
 
   // The model that will hold data to be displayed in the topic tree view.
-  this->dataPtr->topicsModel = new ItemModel;
+  this->dataPtr->topicsModel = new DragDropModel;
   this->dataPtr->topicsModel->setObjectName("topicsModel");
   this->dataPtr->topicsModel->setParent(this);
   this->dataPtr->topicsModel->setColumnCount(4);
