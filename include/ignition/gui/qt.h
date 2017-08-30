@@ -26,7 +26,6 @@
 #include <QtCore/QPoint>
 #include <QtCore/QPointF>
 #include <QtCore/QSignalMapper>
-#include <QtCore/QTranslator>
 
 #include <QtGui/QBitmap>
 #include <QtGui/QDrag>

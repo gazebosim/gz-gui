@@ -34,118 +34,6 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-void paintSearchResult(const std::string &_text,
-    const SearchModel *_searchModel, QPainter *_painter,
-    const QStyleOptionViewItem &_opt)
-{
-  auto textRect = _opt.rect;
-  textRect.adjust(10, 12, 10, 12);
-
-  // Create a bold font.
-  QFont fontBold, fontRegular;
-  fontBold.setFamily("Roboto Bold");
-  fontBold.setWeight(QFont::Bold);
-  QFontMetrics fmBold(fontBold);
-
-  // Create a regular font.
-  fontRegular.setFamily("Roboto Regular");
-  fontRegular.setWeight(QFont::Normal);
-  QFontMetrics fmRegular(fontRegular);
-
-  // Case insensitive search.
-  std::string upperText(_text);
-  std::transform(upperText.begin(), upperText.end(),
-      upperText.begin(), ::toupper);
-
-  // Split search into words.
-  QStringList wordsStringList = _searchModel->search.toUpper().split(" ");
-
-  std::vector<std::string> wordsUpper;
-  for (auto word : wordsStringList)
-  {
-    if (word.isEmpty())
-      continue;
-    wordsUpper.push_back(word.toStdString());
-  }
-
-  // Find the portions of text that match the search words, and should
-  // therefore be bold.
-  //
-  // Bold map: key = position of bold text start, value = bold text length.
-  std::map<size_t, size_t> bold;
-  std::for_each(wordsUpper.begin(), wordsUpper.end(),
-      [upperText, &bold](const std::string &_word)
-      {
-        size_t pos = upperText.find(_word);
-        // Find all occurences of _word .
-        while (pos != std::string::npos)
-        {
-          // Use longest word starting at a given position.
-          bold[pos] = std::max(bold[pos], _word.size());
-          pos = upperText.find(_word, pos + 1);
-        }
-      });
-
-  // Paint the text from left to right.
-  size_t renderPos = 0;
-  for (std::map<size_t, size_t>::iterator iter = bold.begin();
-       iter != bold.end(); ++iter)
-  {
-    // Start of bold text.
-    size_t start = iter->first;
-
-    // Length of bold text.
-    size_t len = iter->second;
-
-    // Check if start is before the current render position.
-    if (renderPos > start)
-    {
-      // It's possible that the bold text goes beyond the current render
-      // position. If so, adjust the start and length appropriately.
-      if (start + len > renderPos)
-      {
-        len = (start + len) - renderPos;
-        start = renderPos;
-      }
-      // Otherwise this bold text has already been rendered, so skip.
-      else
-      {
-        continue;
-      }
-    }
-
-    // First paint text that is not bold.
-    auto textStr = QString::fromStdString(
-        _text.substr(renderPos, start - renderPos));
-    renderPos += (start - renderPos);
-
-    _painter->setFont(fontRegular);
-    _painter->drawText(textRect, textStr);
-
-    // Move rect to the right.
-    textRect.adjust(fmRegular.width(textStr), 0, 0, 0);
-
-    // Next, paint text that is bold.
-    textStr = QString::fromStdString(_text.substr(renderPos, len));
-    renderPos += len;
-
-    _painter->setFont(fontBold);
-    _painter->drawText(textRect, textStr);
-
-    // Move rect to the right.
-    textRect.adjust(fmBold.width(textStr), 0, 0, 0);
-  }
-
-  // Render any remaining text.
-  if (renderPos < _text.size())
-  {
-    auto textStr = QString::fromStdString(_text.substr(renderPos));
-    _painter->setFont(fontRegular);
-    _painter->drawText(textRect, textStr);
-  }
-}
-
-/////////////////////////////////////////////////
 /// \brief Delegate that handles drawing the topic table
 class ItemDelegate : public QStyledItemDelegate
 {
@@ -173,6 +61,9 @@ class ItemDelegate : public QStyledItemDelegate
   public: void paint(QPainter *_painter, const QStyleOptionViewItem &_opt,
       const QModelIndex &_index) const
   {
+    auto textRect = _opt.rect;
+    textRect.adjust(10, 12, 10, 12);
+
     // Custom options.
     QString topicName = qvariant_cast<QString>(_index.data(DISPLAY_NAME));
 
@@ -187,7 +78,110 @@ class ItemDelegate : public QStyledItemDelegate
     _painter->setPen(textColor);
 
     auto _searchModel = dynamic_cast<const SearchModel *>(_index.model());
-    paintSearchResult(topicName.toStdString(), _searchModel, _painter, _opt);
+
+    // Create a bold font.
+    QFont fontBold, fontRegular;
+    fontBold.setFamily("Roboto Bold");
+    fontBold.setWeight(QFont::Bold);
+    QFontMetrics fmBold(fontBold);
+
+    // Create a regular font.
+    fontRegular.setFamily("Roboto Regular");
+    fontRegular.setWeight(QFont::Normal);
+    QFontMetrics fmRegular(fontRegular);
+
+    // Case insensitive search.
+    std::string text(topicName.toStdString());
+    std::string upperText(text);
+    std::transform(upperText.begin(), upperText.end(),
+        upperText.begin(), ::toupper);
+
+    // Split search into words.
+    QStringList wordsStringList = _searchModel->search.toUpper().split(" ");
+
+    std::vector<std::string> wordsUpper;
+    for (auto word : wordsStringList)
+    {
+      if (word.isEmpty())
+        continue;
+      wordsUpper.push_back(word.toStdString());
+    }
+
+    // Find the portions of text that match the search words, and should
+    // therefore be bold.
+    //
+    // Bold map: key = position of bold text start, value = bold text length.
+    std::map<size_t, size_t> bold;
+    std::for_each(wordsUpper.begin(), wordsUpper.end(),
+        [upperText, &bold](const std::string &_word)
+        {
+          size_t pos = upperText.find(_word);
+          // Find all occurences of _word .
+          while (pos != std::string::npos)
+          {
+            // Use longest word starting at a given position.
+            bold[pos] = std::max(bold[pos], _word.size());
+            pos = upperText.find(_word, pos + 1);
+          }
+        });
+
+    // Paint the text from left to right.
+    size_t renderPos = 0;
+    for (std::map<size_t, size_t>::iterator iter = bold.begin();
+         iter != bold.end(); ++iter)
+    {
+      // Start of bold text.
+      size_t start = iter->first;
+
+      // Length of bold text.
+      size_t len = iter->second;
+
+      // Check if start is before the current render position.
+      if (renderPos > start)
+      {
+        // It's possible that the bold text goes beyond the current render
+        // position. If so, adjust the start and length appropriately.
+        if (start + len > renderPos)
+        {
+          len = (start + len) - renderPos;
+          start = renderPos;
+        }
+        // Otherwise this bold text has already been rendered, so skip.
+        else
+        {
+          continue;
+        }
+      }
+
+      // First paint text that is not bold.
+      auto textStr = QString::fromStdString(
+          text.substr(renderPos, start - renderPos));
+      renderPos += (start - renderPos);
+
+      _painter->setFont(fontRegular);
+      _painter->drawText(textRect, textStr);
+
+      // Move rect to the right.
+      textRect.adjust(fmRegular.width(textStr), 0, 0, 0);
+
+      // Next, paint text that is bold.
+      textStr = QString::fromStdString(text.substr(renderPos, len));
+      renderPos += len;
+
+      _painter->setFont(fontBold);
+      _painter->drawText(textRect, textStr);
+
+      // Move rect to the right.
+      textRect.adjust(fmBold.width(textStr), 0, 0, 0);
+    }
+
+    // Render any remaining text.
+    if (renderPos < text.size())
+    {
+      auto textStr = QString::fromStdString(text.substr(renderPos));
+      _painter->setFont(fontRegular);
+      _painter->drawText(textRect, textStr);
+    }
 
     // Draw grid
     QColor gridColor(238, 238, 238);
@@ -207,10 +201,7 @@ class ItemDelegate : public QStyledItemDelegate
                          const QModelIndex &_index) const
   {
     QSize size = QStyledItemDelegate::sizeHint(_option, _index);
-
-    // TODO: Change to QApplication::font() once Roboto is used everywhere.
-    QFont font("Roboto Regular");
-    QFontMetrics fm(font);
+    QFontMetrics fm(QApplication::font());
 
     // Make it slightly larger.
     size.setHeight(fm.height() + 10);
