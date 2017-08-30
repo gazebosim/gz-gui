@@ -343,7 +343,7 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->searchTopicsTable->setSelectionBehavior(
       QAbstractItemView::SelectRows);
   this->dataPtr->searchTopicsTable->horizontalHeader()->setHighlightSections(
-      true);
+      false);
   this->dataPtr->searchTopicsTable->horizontalHeader()->setStretchLastSection(
       true);
 
