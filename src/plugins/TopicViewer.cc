@@ -20,10 +20,12 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
 #include "ignition/common/URI.hh"
+#include "ignition/gui/Enums.hh"
 #include "ignition/gui/plugins/TopicViewer.hh"
 
 using namespace ignition;
@@ -32,32 +34,13 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 /// \brief Delegate that handles drawing the topic tree
-class ItemDelegate : public QStyledItemDelegate
+class VItemDelegate : public QStyledItemDelegate
 {
-  /// \brief The data roles
-  public: enum DataRole
-  {
-    /// \brief Text which will be displayed for the user.
-    DISPLAY_NAME = Qt::UserRole + 100,
-
-    /// \brief URI including detailed query about a single plot value. This is
-    /// the information carried during a drag-drop operation.
-    URI_QUERY,
-
-    /// \brief Data type name, such as "Double" or "Bool", used to display type
-    /// information to the user. Or something like "model", "link", used to
-    /// choose icons.
-    TYPE,
-
-    /// \brief Flag indicating whether to expand the item or not.
-    TO_EXPAND
-  };
-
   /// \brief Constructor
-  public: ItemDelegate() = default;
+  public: VItemDelegate() = default;
 
   /// \brief Destructor
-  public: virtual ~ItemDelegate() = default;
+  public: virtual ~VItemDelegate() = default;
 
   /// \brief Custom paint function.
   /// \param[in] _painter Pointer to the QT painter.
@@ -66,6 +49,7 @@ class ItemDelegate : public QStyledItemDelegate
   public: void paint(QPainter *_painter, const QStyleOptionViewItem &_opt,
       const QModelIndex &_index) const
   {
+igndbg << "paint" << std::endl;
     auto textRect = _opt.rect;
 
     // Custom options.
@@ -105,6 +89,8 @@ class ItemDelegate : public QStyledItemDelegate
       _painter->drawRect(_opt.rect);
     }
 
+igndbg << typeName.toStdString() << std::endl;
+
     // Titles.
     if (typeName == "title")
     {
@@ -136,7 +122,7 @@ class ItemDelegate : public QStyledItemDelegate
     _painter->setPen(QColor(30, 30, 30));
 
     // If this is a search result.
-    auto searchModel = dynamic_cast<const SearchModel *>(_index.model());
+    auto searchModel = dynamic_cast<const VSearchModel *>(_index.model());
     if (searchModel && !topicName.isEmpty())
     {
       std::string text(topicName.toStdString());
@@ -276,7 +262,7 @@ class ItemModel : public QStandardItemModel
     {
       if (idx.isValid())
       {
-        QString text = this->data(idx, ItemDelegate::URI_QUERY).toString();
+        QString text = this->data(idx, DataRole::URI_QUERY).toString();
         curMimeData->setData("application/x-item", text.toLatin1().data());
 
         break;
@@ -297,14 +283,14 @@ std::string humanReadableKey(const std::string &_key)
 }
 
 /////////////////////////////////////////////////
-bool SearchModel::filterAcceptsRow(const int _srcRow,
+bool VSearchModel::filterAcceptsRow(const int _srcRow,
       const QModelIndex &_srcParent) const
 {
   // Item index in search model.
   auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
 
   // Ignore titles.
-  if (this->sourceModel()->data(id, ItemDelegate::TYPE).toString() ==
+  if (this->sourceModel()->data(id, DataRole::TYPE).toString() ==
       "title")
   {
     return false;
@@ -312,7 +298,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
 
   // Collapsed by default.
   this->sourceModel()->blockSignals(true);
-  this->sourceModel()->setData(id, false, ItemDelegate::TO_EXPAND);
+  this->sourceModel()->setData(id, false, DataRole::TO_EXPAND);
   this->sourceModel()->blockSignals(false);
 
   // Empty search matches everything.
@@ -332,7 +318,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
     if (this->hasChildAcceptsItself(id, word))
     {
       this->sourceModel()->blockSignals(true);
-      this->sourceModel()->setData(id, true, ItemDelegate::TO_EXPAND);
+      this->sourceModel()->setData(id, true, DataRole::TO_EXPAND);
       this->sourceModel()->blockSignals(false);
     }
 
@@ -370,7 +356,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
 }
 
 /////////////////////////////////////////////////
-bool SearchModel::filterAcceptsRowItself(const int _srcRow,
+bool VSearchModel::filterAcceptsRowItself(const int _srcRow,
     const QModelIndex &_srcParent, const QString _word) const
 {
   auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
@@ -380,7 +366,7 @@ bool SearchModel::filterAcceptsRowItself(const int _srcRow,
 }
 
 /////////////////////////////////////////////////
-bool SearchModel::hasAcceptedChildren(const int _srcRow,
+bool VSearchModel::hasAcceptedChildren(const int _srcRow,
       const QModelIndex &_srcParent) const
 {
   auto item = sourceModel()->index(_srcRow, 0, _srcParent);
@@ -398,7 +384,7 @@ bool SearchModel::hasAcceptedChildren(const int _srcRow,
 }
 
 /////////////////////////////////////////////////
-bool SearchModel::hasChildAcceptsItself(const QModelIndex &_srcParent,
+bool VSearchModel::hasChildAcceptsItself(const QModelIndex &_srcParent,
       const QString &_word) const
 {
   for (int i = 0; i < this->sourceModel()->rowCount(_srcParent); ++i)
@@ -417,8 +403,9 @@ bool SearchModel::hasChildAcceptsItself(const QModelIndex &_srcParent,
 }
 
 /////////////////////////////////////////////////
-void SearchModel::SetSearch(const QString &_search)
+void VSearchModel::SetSearch(const QString &_search)
 {
+igndbg << "search" << std::endl;
   this->search = _search;
   this->filterChanged();
 }
@@ -431,7 +418,7 @@ class ignition::gui::plugins::TopicViewerPrivate
   public: ItemModel *topicsModel;
 
   /// \brief Proxy model to filter topics data.
-  public: SearchModel *searchTopicsModel;
+  public: VSearchModel *searchTopicsModel;
 
   /// \brief View holding the search topics tree.
   public: QTreeView *searchTopicsTree;
@@ -461,11 +448,12 @@ TopicViewer::~TopicViewer()
 /////////////////////////////////////////////////
 void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 {
+igndbg << "topic viewer" << std::endl;
   if (this->title.empty())
     this->title = "Topic viewer";
 
   // Create a view delegate, to handle drawing items in the tree view.
-  auto topicsItemDelegate = new ItemDelegate;
+  auto topicsItemDelegate = new VItemDelegate;
 
   // The model that will hold data to be displayed in the topic tree view.
   this->dataPtr->topicsModel = new ItemModel;
@@ -473,8 +461,8 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->topicsModel->setParent(this);
 
   // A proxy model to filter topic model.
-  this->dataPtr->searchTopicsModel = new SearchModel;
-  this->dataPtr->searchTopicsModel->setFilterRole(ItemDelegate::DISPLAY_NAME);
+  this->dataPtr->searchTopicsModel = new VSearchModel;
+  this->dataPtr->searchTopicsModel->setFilterRole(DataRole::DISPLAY_NAME);
   this->dataPtr->searchTopicsModel->setSourceModel(this->dataPtr->topicsModel);
 
   // Search field.
@@ -571,7 +559,7 @@ void TopicViewer::FillTopics()
           this->dataPtr->prevTopics.end())
     {
       auto topicItem = new QStandardItem();
-      topicItem->setData(topic.c_str(), ItemDelegate::DISPLAY_NAME);
+      topicItem->setData(topic.c_str(), DataRole::DISPLAY_NAME);
       this->dataPtr->topicsModel->insertRow(i, topicItem);
 
       // Create a message from this topic to find out its fields.
@@ -630,41 +618,41 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
         auto humanName = humanReadableKey(name);
 
         auto *childItem = new QStandardItem();
-        childItem->setData(humanName.c_str(), ItemDelegate::DISPLAY_NAME);
+        childItem->setData(humanName.c_str(), DataRole::DISPLAY_NAME);
 
         switch (field->type())
         {
           case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
-            childItem->setData("Double", ItemDelegate::TYPE);
+            childItem->setData("Double", DataRole::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_FLOAT:
-            childItem->setData("Float", ItemDelegate::TYPE);
+            childItem->setData("Float", DataRole::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_INT64:
-            childItem->setData("Int 64", ItemDelegate::TYPE);
+            childItem->setData("Int 64", DataRole::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_UINT64:
-            childItem->setData("Uint 64", ItemDelegate::TYPE);
+            childItem->setData("Uint 64", DataRole::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_INT32:
-            childItem->setData("Int 32", ItemDelegate::TYPE);
+            childItem->setData("Int 32", DataRole::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_UINT32:
-            childItem->setData("Uint 32", ItemDelegate::TYPE);
+            childItem->setData("Uint 32", DataRole::TYPE);
             break;
           case google::protobuf::FieldDescriptor::TYPE_BOOL:
-            childItem->setData("Bool", ItemDelegate::TYPE);
+            childItem->setData("Bool", DataRole::TYPE);
             break;
           default:
             continue;
         }
         childItem->setToolTip(
             "<font size=3><p><b>Type</b>: " + childItem->data(
-            ItemDelegate::TYPE).toString() +
+            DataRole::TYPE).toString() +
             "</p></font>");
 
         std::string dataName = _uri + "/" + name;
-        childItem->setData(dataName.c_str(), ItemDelegate::URI_QUERY);
+        childItem->setData(dataName.c_str(), DataRole::URI_QUERY);
         childItem->setDragEnabled(true);
 
         _item->appendRow(childItem);
@@ -680,13 +668,13 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
           std::string dataName = _uri + "/" + name;
 
           auto *childItem = new QStandardItem();
-          childItem->setData(humanName.c_str(), ItemDelegate::DISPLAY_NAME);
-          childItem->setData(dataName.c_str(), ItemDelegate::URI_QUERY);
-          childItem->setData("Double", ItemDelegate::TYPE);
+          childItem->setData(humanName.c_str(), DataRole::DISPLAY_NAME);
+          childItem->setData(dataName.c_str(), DataRole::URI_QUERY);
+          childItem->setData("Double", DataRole::TYPE);
           childItem->setDragEnabled(true);
           childItem->setToolTip(
               "<font size=3><p><b>Type</b>: " + childItem->data(
-              ItemDelegate::TYPE).toString() +
+              DataRole::TYPE).toString() +
               "</p></font>");
 
           _item->appendRow(childItem);
@@ -695,7 +683,7 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
         else if (field->message_type()->name() == "Quaternion")
         {
           auto *quatItem = new QStandardItem();
-          quatItem->setData(name.c_str(), ItemDelegate::DISPLAY_NAME);
+          quatItem->setData(name.c_str(), DataRole::DISPLAY_NAME);
           _item->appendRow(quatItem);
 
           std::vector<std::string> rpy = {"roll", "pitch", "yaw"};
@@ -706,12 +694,12 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
 
             auto *childItem = new QStandardItem();
             childItem->setData(QString::fromStdString(humanName),
-                ItemDelegate::DISPLAY_NAME);
-            childItem->setData(dataName.c_str(), ItemDelegate::URI_QUERY);
-            childItem->setData("Double", ItemDelegate::TYPE);
+                DataRole::DISPLAY_NAME);
+            childItem->setData(dataName.c_str(), DataRole::URI_QUERY);
+            childItem->setData("Double", DataRole::TYPE);
             childItem->setToolTip(
                 "<font size=3><p><b>Type</b>: " + childItem->data(
-                ItemDelegate::TYPE).toString() +
+                DataRole::TYPE).toString() +
                 "</p></font>");
             childItem->setDragEnabled(true);
 
@@ -723,7 +711,7 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
         {
           auto fieldMsg = (ref->MutableMessage(_msg, field));
           auto *childItem = new QStandardItem();
-          childItem->setData(name.c_str(), ItemDelegate::DISPLAY_NAME);
+          childItem->setData(name.c_str(), DataRole::DISPLAY_NAME);
           _item->appendRow(childItem);
           this->FillFromMsg(fieldMsg, childItem, _uri + "/" + name);
         }
@@ -760,7 +748,7 @@ void TopicViewer::ExpandChildren(QSortFilterProxyModel *_model,
     if (!item.isValid())
       return;
 
-    bool expand = _model->data(item, ItemDelegate::TO_EXPAND).toBool();
+    bool expand = _model->data(item, DataRole::TO_EXPAND).toBool();
 
     _tree->setExpanded(item, expand);
 

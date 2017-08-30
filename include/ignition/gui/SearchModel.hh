@@ -14,35 +14,20 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_TOPICVIEWER_HH_
-#define IGNITION_GUI_PLUGINS_TOPICVIEWER_HH_
+#ifndef IGNITION_GUI_SEARCHMODEL_HH_
+#define IGNITION_GUI_SEARCHMODEL_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
 #endif
 
-#include <memory>
-#include <string>
-#include <ignition/msgs.hh>
-
-#include "ignition/gui/Plugin.hh"
-
-namespace google
-{
-  namespace protobuf
-  {
-    class Message;
-  }
-}
 
 namespace ignition
 {
 namespace gui
 {
-namespace plugins
-{
   /// \brief Customize the proxy model to display search results.
-  class VSearchModel : public QSortFilterProxyModel
+  class SearchModel : public QSortFilterProxyModel
   {
     /// \brief Customize so we accept rows where:
     /// 1. Each of the words can be found in its ancestors or itself, but not
@@ -98,58 +83,6 @@ namespace plugins
     /// \brief Full search string.
     public: QString search;
   };
-
-  // Forward declare private data class
-  class TopicViewerPrivate;
-
-  /// \brief A TopicViewer for the plot window, where plottable items can be
-  /// dragged from.
-  class TopicViewer : public Plugin
-  {
-    Q_OBJECT
-
-    /// \brief Constructor
-    public: TopicViewer();
-
-    /// \brief Destructor
-    public: ~TopicViewer();
-
-    // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
-
-    /// \brief Fill an item with properties from a protobuf message.
-    /// Only plottable fields such as int, double and bool are displayed.
-    /// \param[in] _msg A basic message from the topic's message type.
-    /// \param[in] _item Pointer to the item which will be filled.
-    /// \param[in] _uri The current URI.
-    private: void FillFromMsg(google::protobuf::Message *_msg,
-                              QStandardItem *_item,
-                              const std::string &_uri);
-
-    /// \brief Expand items in the given tree view based on their model data.
-    /// \param[in] _model Search model.
-    /// \param[in] _tree Tree view.
-    /// \param[in] _srcParent Model index of the parent to be checked.
-    private: void ExpandChildren(QSortFilterProxyModel *_model,
-                                 QTreeView *_tree,
-                                 const QModelIndex &_srcParent) const;
-
-    /// \brief Callback when the user has modified the search.
-    /// \param[in] _search Latest search.
-    private slots: void UpdateSearch(const QString &_search);
-
-    /// \brief Expand given items tree on single click.
-    /// \param[in] _index Index of item within the tree.
-    private slots: void ExpandTree(const QModelIndex &_index);
-
-    /// \brief Fill the topics model.
-    private slots: void FillTopics();
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<TopicViewerPrivate> dataPtr;
-  };
-}
 }
 }
 #endif

@@ -27,6 +27,7 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
+#include "ignition/gui/Enums.hh"
 #include "ignition/gui/plugins/TopicsStats.hh"
 
 using namespace ignition;
@@ -37,17 +38,6 @@ using namespace plugins;
 /// \brief Delegate that handles drawing the topic table
 class ItemDelegate : public QStyledItemDelegate
 {
-  /// \brief The data roles
-  public: enum DataRole
-  {
-    /// \brief Text which will be displayed for the user.
-    DISPLAY_NAME = Qt::UserRole + 100,
-
-    /// \brief URI including detailed query about a single plot value. This is
-    /// the information carried during a drag-drop operation.
-    URI_QUERY,
-  };
-
   /// \brief Constructor
   public: ItemDelegate() = default;
 
@@ -65,7 +55,7 @@ class ItemDelegate : public QStyledItemDelegate
     textRect.adjust(10, 12, 10, 12);
 
     // Custom options.
-    QString topicName = qvariant_cast<QString>(_index.data(DISPLAY_NAME));
+    QString topicName = qvariant_cast<QString>(_index.data(DataRole::DISPLAY_NAME));
 
     if (topicName.isEmpty())
     {
@@ -227,7 +217,7 @@ class ItemModel : public QStandardItemModel
     {
       if (idx.isValid())
       {
-        QString text = this->data(idx, ItemDelegate::URI_QUERY).toString();
+        QString text = this->data(idx, DataRole::URI_QUERY).toString();
         curMimeData->setData("application/x-item", text.toLatin1().data());
 
         break;
@@ -389,7 +379,7 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   // A proxy model to filter topic model.
   this->dataPtr->searchTopicsModel = new SearchModel;
-  this->dataPtr->searchTopicsModel->setFilterRole(ItemDelegate::DISPLAY_NAME);
+  this->dataPtr->searchTopicsModel->setFilterRole(DataRole::DISPLAY_NAME);
   this->dataPtr->searchTopicsModel->setSourceModel(this->dataPtr->topicsModel);
 
   // Search field.
@@ -514,7 +504,7 @@ void TopicsStats::FillTopics()
       this->dataPtr->stats[topic] = BasicStats();
 
       auto topicItem = new QStandardItem();
-      topicItem->setData(topic.c_str(), ItemDelegate::DISPLAY_NAME);
+      topicItem->setData(topic.c_str(), DataRole::DISPLAY_NAME);
       this->dataPtr->topicsModel->insertRow(i, topicItem);
 
       this->dataPtr->stats[topic].numMessagesItem = new QStandardItem();
@@ -545,13 +535,13 @@ void TopicsStats::UpdateGUIStats()
     // Total number of messages received.
     statsPair.second.numMessagesItem->setData(
         QString::number(statsPair.second.numMessages),
-        ItemDelegate::DISPLAY_NAME);
+        DataRole::DISPLAY_NAME);
 
     // Number of messages received during the last second.
     std::string f = std::to_string(statsPair.second.numMessagesLastSec) + " Hz";
     statsPair.second.numMessagesLastSecItem->setData(
         QString::fromStdString(f),
-        ItemDelegate::DISPLAY_NAME);
+        DataRole::DISPLAY_NAME);
 
     // Number of bytes received during the last second.
     double bandwidth = statsPair.second.numBytesLastSec;
@@ -573,7 +563,7 @@ void TopicsStats::UpdateGUIStats()
     std::string b = std::to_string(bandwidth) + " " + units;
     statsPair.second.numBytesLastSecItem->setData(
         QString::fromStdString(b),
-        ItemDelegate::DISPLAY_NAME);
+        DataRole::DISPLAY_NAME);
   }
 }
 
