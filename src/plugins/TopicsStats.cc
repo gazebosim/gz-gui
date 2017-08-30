@@ -287,7 +287,7 @@ QVariant SearchModel::headerData(int _section, Qt::Orientation _orientation,
         case 0:
           return QString("Topic");
         case 1:
-          return QString("# messages");
+          return QString("Num messages");
         case 2:
           return QString("Frequency");
         case 3:
