@@ -44,39 +44,6 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Customize the proxy model to display search results.
-  class SearchModel : public QSortFilterProxyModel
-  {
-    /// \brief Accept a row if the words can be found in itself.
-    ///
-    /// \param[in] _srcRow Row on the source model.
-    /// \param[in] _srcParent Parent on the source model.
-    /// \return True if row is accepted.
-    public: bool filterAcceptsRow(const int _srcRow,
-                                  const QModelIndex &_srcParent) const;
-
-    /// \brief Check if row contains the word on itself.
-    /// \param[in] _srcRow Row on the source model.
-    /// \param[in] _srcParent Parent on the source model.
-    /// \param[in] _word Word to be checked.
-    /// \return True if row matches.
-    public: bool filterAcceptsRowItself(const int _srcRow,
-                                        const QModelIndex &_srcParent,
-                                        const QString _word) const;
-
-    // Documentation inherited.
-    public: QVariant headerData(int _section,
-                                Qt::Orientation _orientation,
-                                int _role) const;
-
-    /// \brief Set a new search value.
-    /// \param[in] _search Full search string.
-    public: void SetSearch(const QString &_search);
-
-    /// \brief Full search string.
-    public: QString search;
-  };
-
   // Forward declare private data class.
   class TopicsStatsPrivate;
 

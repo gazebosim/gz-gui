@@ -26,6 +26,7 @@
 
 #include "ignition/common/URI.hh"
 #include "ignition/gui/Enums.hh"
+#include "ignition/gui/SearchModel.hh"
 #include "ignition/gui/plugins/TopicViewer.hh"
 
 using namespace ignition;
@@ -49,7 +50,6 @@ class VItemDelegate : public QStyledItemDelegate
   public: void paint(QPainter *_painter, const QStyleOptionViewItem &_opt,
       const QModelIndex &_index) const
   {
-igndbg << "paint" << std::endl;
     auto textRect = _opt.rect;
 
     // Custom options.
@@ -89,8 +89,6 @@ igndbg << "paint" << std::endl;
       _painter->drawRect(_opt.rect);
     }
 
-igndbg << typeName.toStdString() << std::endl;
-
     // Titles.
     if (typeName == "title")
     {
@@ -122,7 +120,7 @@ igndbg << typeName.toStdString() << std::endl;
     _painter->setPen(QColor(30, 30, 30));
 
     // If this is a search result.
-    auto searchModel = dynamic_cast<const VSearchModel *>(_index.model());
+    auto searchModel = dynamic_cast<const SearchModel *>(_index.model());
     if (searchModel && !topicName.isEmpty())
     {
       std::string text(topicName.toStdString());
@@ -283,134 +281,6 @@ std::string humanReadableKey(const std::string &_key)
 }
 
 /////////////////////////////////////////////////
-bool VSearchModel::filterAcceptsRow(const int _srcRow,
-      const QModelIndex &_srcParent) const
-{
-  // Item index in search model.
-  auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
-
-  // Ignore titles.
-  if (this->sourceModel()->data(id, DataRole::TYPE).toString() ==
-      "title")
-  {
-    return false;
-  }
-
-  // Collapsed by default.
-  this->sourceModel()->blockSignals(true);
-  this->sourceModel()->setData(id, false, DataRole::TO_EXPAND);
-  this->sourceModel()->blockSignals(false);
-
-  // Empty search matches everything.
-  if (this->search.isEmpty())
-    return true;
-
-  // Each word must match at least once, either self, parent or child.
-  auto words = this->search.split(" ");
-  for (auto word : words)
-  {
-    if (word.isEmpty())
-      continue;
-
-    // Expand this if at least one child contains the word.
-    // Note that this is not enough for this to be accepted, we need to match
-    // all words.
-    if (this->hasChildAcceptsItself(id, word))
-    {
-      this->sourceModel()->blockSignals(true);
-      this->sourceModel()->setData(id, true, DataRole::TO_EXPAND);
-      this->sourceModel()->blockSignals(false);
-    }
-
-    // At least one of the children fits rule 1.
-    if (this->hasAcceptedChildren(_srcRow, _srcParent))
-      continue;
-
-    // Row itself contains this word.
-    if (this->filterAcceptsRowItself(_srcRow, _srcParent, word))
-      continue;
-
-    // One of the ancestors contains this word.
-    QModelIndex parentIndex = _srcParent;
-    bool parentAccepted = false;
-    while (parentIndex.isValid())
-    {
-      if (this->filterAcceptsRowItself(parentIndex.row(),
-          parentIndex.parent(), word))
-      {
-        parentAccepted = true;
-        break;
-      }
-      parentIndex = parentIndex.parent();
-    }
-
-    if (parentAccepted)
-      continue;
-
-    // This word can't be found on the row or a parent, and no child is fully
-    // accepted.
-    return false;
-  }
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool VSearchModel::filterAcceptsRowItself(const int _srcRow,
-    const QModelIndex &_srcParent, const QString _word) const
-{
-  auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
-
-  return (this->sourceModel()->data(id,
-      this->filterRole()).toString().contains(_word, Qt::CaseInsensitive));
-}
-
-/////////////////////////////////////////////////
-bool VSearchModel::hasAcceptedChildren(const int _srcRow,
-      const QModelIndex &_srcParent) const
-{
-  auto item = sourceModel()->index(_srcRow, 0, _srcParent);
-
-  if (!item.isValid())
-    return false;
-
-  for (int i = 0; i < item.model()->rowCount(item); ++i)
-  {
-    if (this->filterAcceptsRow(i, item))
-      return true;
-  }
-
-  return false;
-}
-
-/////////////////////////////////////////////////
-bool VSearchModel::hasChildAcceptsItself(const QModelIndex &_srcParent,
-      const QString &_word) const
-{
-  for (int i = 0; i < this->sourceModel()->rowCount(_srcParent); ++i)
-  {
-    // Check immediate children.
-    if (this->filterAcceptsRowItself(i, _srcParent, _word))
-      return true;
-
-    // Check grandchildren.
-    auto item = this->sourceModel()->index(i, 0, _srcParent);
-    if (this->hasChildAcceptsItself(item, _word))
-      return true;
-  }
-
-  return false;
-}
-
-/////////////////////////////////////////////////
-void VSearchModel::SetSearch(const QString &_search)
-{
-igndbg << "search" << std::endl;
-  this->search = _search;
-  this->filterChanged();
-}
-
-/////////////////////////////////////////////////
 /// \brief Private data for the TopicViewer class
 class ignition::gui::plugins::TopicViewerPrivate
 {
@@ -418,7 +288,7 @@ class ignition::gui::plugins::TopicViewerPrivate
   public: ItemModel *topicsModel;
 
   /// \brief Proxy model to filter topics data.
-  public: VSearchModel *searchTopicsModel;
+  public: SearchModel *searchTopicsModel;
 
   /// \brief View holding the search topics tree.
   public: QTreeView *searchTopicsTree;
@@ -448,7 +318,6 @@ TopicViewer::~TopicViewer()
 /////////////////////////////////////////////////
 void TopicViewer::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 {
-igndbg << "topic viewer" << std::endl;
   if (this->title.empty())
     this->title = "Topic viewer";
 
@@ -461,7 +330,7 @@ igndbg << "topic viewer" << std::endl;
   this->dataPtr->topicsModel->setParent(this);
 
   // A proxy model to filter topic model.
-  this->dataPtr->searchTopicsModel = new VSearchModel;
+  this->dataPtr->searchTopicsModel = new SearchModel;
   this->dataPtr->searchTopicsModel->setFilterRole(DataRole::DISPLAY_NAME);
   this->dataPtr->searchTopicsModel->setSourceModel(this->dataPtr->topicsModel);
 

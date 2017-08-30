@@ -28,6 +28,7 @@
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Enums.hh"
+#include "ignition/gui/SearchModel.hh"
 #include "ignition/gui/plugins/TopicsStats.hh"
 
 using namespace ignition;
@@ -67,7 +68,7 @@ class ItemDelegate : public QStyledItemDelegate
     QColor textColor(30, 30, 30);
     _painter->setPen(textColor);
 
-    auto _searchModel = dynamic_cast<const SearchModel *>(_index.model());
+    auto searchModel = dynamic_cast<const SearchModel *>(_index.model());
 
     // Create a bold font.
     QFont fontBold, fontRegular;
@@ -87,7 +88,7 @@ class ItemDelegate : public QStyledItemDelegate
         upperText.begin(), ::toupper);
 
     // Split search into words.
-    QStringList wordsStringList = _searchModel->search.toUpper().split(" ");
+    QStringList wordsStringList = searchModel->search.toUpper().split(" ");
 
     std::vector<std::string> wordsUpper;
     for (auto word : wordsStringList)
@@ -228,78 +229,6 @@ class ItemModel : public QStandardItemModel
   }
 };
 
-/////////////////////////////////////////////////
-bool SearchModel::filterAcceptsRow(const int _srcRow,
-    const QModelIndex &_srcParent) const
-{
-  // Empty search matches everything.
-  if (this->search.isEmpty())
-    return true;
-
-  // Each word must match at least once.
-  auto words = this->search.split(" ");
-  for (auto word : words)
-  {
-    if (word.isEmpty())
-      continue;
-
-    // Row itself contains this word.
-    if (this->filterAcceptsRowItself(_srcRow, _srcParent, word))
-      continue;
-
-    // This word can't be found on the row .
-    return false;
-  }
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool SearchModel::filterAcceptsRowItself(const int _srcRow,
-    const QModelIndex &_srcParent, const QString _word) const
-{
-  auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
-
-  return (this->sourceModel()->data(id,
-      this->filterRole()).toString().contains(_word, Qt::CaseInsensitive));
-}
-
-/////////////////////////////////////////////////
-QVariant SearchModel::headerData(int _section, Qt::Orientation _orientation,
-  int _role) const
-{
-  if (_role == Qt::DisplayRole)
-  {
-    if (_orientation == Qt::Horizontal)
-    {
-      switch (_section)
-      {
-        case 0:
-          return QString("Topic");
-        case 1:
-          return QString("Num messages");
-        case 2:
-          return QString("Frequency");
-        case 3:
-          return QString("Bandwidth");
-        default:
-          std::cerr << "Something went wrong parsing headers" << std::endl;
-          return QString("");
-      }
-    }
-  }
-  return QVariant();
-}
-
-/////////////////////////////////////////////////
-void SearchModel::SetSearch(const QString &_search)
-{
-  this->search = _search;
-
-  // Trigger repaint on the whole model
-  this->layoutChanged();
-}
-
 /// \brief Private data for the TopicsStats class.
 class BasicStats
 {
@@ -381,6 +310,15 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->searchTopicsModel = new SearchModel;
   this->dataPtr->searchTopicsModel->setFilterRole(DataRole::DISPLAY_NAME);
   this->dataPtr->searchTopicsModel->setSourceModel(this->dataPtr->topicsModel);
+
+  this->dataPtr->searchTopicsModel->setHeaderData(0, Qt::Horizontal,
+      QString("Topic"), Qt::DisplayRole);
+  this->dataPtr->searchTopicsModel->setHeaderData(1, Qt::Horizontal,
+      QString("Num messages"), Qt::DisplayRole);
+  this->dataPtr->searchTopicsModel->setHeaderData(2, Qt::Horizontal,
+      QString("Frequency"), Qt::DisplayRole);
+  this->dataPtr->searchTopicsModel->setHeaderData(3, Qt::Horizontal,
+      QString("Bandwidth"), Qt::DisplayRole);
 
   // Search field.
   auto searchIcon = new QLabel();
