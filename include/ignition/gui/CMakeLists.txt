@@ -15,6 +15,7 @@ set (qt_headers
   Iface.hh
   MainWindow.hh
   Plugin.hh
+  SearchModel.hh
 )
 
 set (headers

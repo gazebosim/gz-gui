@@ -28,14 +28,14 @@ using namespace gui;
 
 /////////////////////////////////////////////////
 /// Helper function to count the rows of a nested model
-int countRowsOfIndex(const QModelIndex &index = QModelIndex())
+int countRowsOfIndex(const QModelIndex &_index = QModelIndex())
 {
   int count = 0;
-  auto model = index.model();
-  int rowCount = model->rowCount(index);
+  auto model = _index.model();
+  int rowCount = model->rowCount(_index);
   count += rowCount;
-  for(int r = 0; r < rowCount; ++r)
-    count += countRowsOfIndex(model->index(r,0,index));
+  for (int r = 0; r < rowCount; ++r)
+    count += countRowsOfIndex(model->index(r, 0, _index));
   return count;
 }
 
@@ -64,7 +64,7 @@ TEST(SearchModelTest, FlatStructure)
     sourceModel->insertRow(items.size(), it);
   }
 
-  EXPECT_EQ(sourceModel->rowCount(), int(items.size() + 1));
+  EXPECT_EQ(sourceModel->rowCount(), static_cast<int>(items.size() + 1));
 
   // A search model
   auto searchModel = new SearchModel();
