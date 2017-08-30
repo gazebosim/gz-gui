@@ -27,6 +27,14 @@ namespace ignition
 namespace gui
 {
   /// \brief Customize the proxy model to display search results.
+  ///
+  /// Features:
+  ///
+  /// * This has been tested with QTreeView and QTableView.
+  /// * Manages expansion od nested items through DataRole::TO_EXPAND when
+  ///   applicable
+  /// * Items with DataRole::TYPE == "title" are ignored
+  /// *
   class SearchModel : public QSortFilterProxyModel
   {
     /// \brief Customize so we accept rows where:

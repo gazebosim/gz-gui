@@ -56,7 +56,8 @@ class ItemDelegate : public QStyledItemDelegate
     textRect.adjust(10, 12, 10, 12);
 
     // Custom options.
-    QString topicName = qvariant_cast<QString>(_index.data(DataRole::DISPLAY_NAME));
+    QString topicName = qvariant_cast<QString>(_index.data(
+        DataRole::DISPLAY_NAME));
 
     if (topicName.isEmpty())
     {
