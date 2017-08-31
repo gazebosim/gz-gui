@@ -29,7 +29,7 @@ namespace gui
   /// MIME information during a drag-drop.
   class DragDropModel : public QStandardItemModel
   {
-    /// \brief Custom MIME data function.
+    /// \brief Overloaded from Qt. Custom MIME data function.
     /// \param[in] _indexes List of selected items.
     /// \return Mime data for the selected items.
     public: QMimeData *mimeData(const QModelIndexList &_indexes) const;

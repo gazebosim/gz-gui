@@ -36,7 +36,7 @@ namespace gui
   ///
   class SearchModel : public QSortFilterProxyModel
   {
-    /// \brief Customize so we accept rows where:
+    /// \brief Overloaded Qt method. Customize so we accept rows where:
     /// 1. Each of the words can be found in its ancestors or itself, but not
     /// necessarily all words on the same row, or
     /// 2. One of its descendants matches rule 1, or
@@ -65,22 +65,22 @@ namespace gui
     /// \param[in] _srcParent Parent on the source model.
     /// \param[in] _word Word to be checked.
     /// \return True if row matches.
-    public: bool filterAcceptsRowItself(const int _srcRow,
+    public: bool FilterAcceptsRowItself(const int _srcRow,
                                         const QModelIndex &_srcParent,
-                                        const QString _word) const;
+                                        const QString &_word) const;
 
     /// \brief Check if any of the children is fully accepted.
     /// \param[in] _srcRow Row on the source model.
     /// \param[in] _srcParent Parent on the source model.
     /// \return True if any of the children match.
-    public: bool hasAcceptedChildren(const int _srcRow,
+    public: bool HasAcceptedChildren(const int _srcRow,
                                      const QModelIndex &_srcParent) const;
 
     /// \brief Check if any of the children accepts a specific word.
     /// \param[in] _srcParent Parent on the source model.
     /// \param[in] _word Word to be checked.
     /// \return True if any of the children match.
-    public: bool hasChildAcceptsItself(const QModelIndex &_srcParent,
+    public: bool HasChildAcceptsItself(const QModelIndex &_srcParent,
                                        const QString &_word) const;
 
     /// \brief Set a new search value.

@@ -56,7 +56,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
     // Expand this if at least one child contains the word.
     // Note that this is not enough for this to be accepted, we need to match
     // all words.
-    if (this->hasChildAcceptsItself(id, word))
+    if (this->HasChildAcceptsItself(id, word))
     {
       this->sourceModel()->blockSignals(true);
       this->sourceModel()->setData(id, true, DataRole::TO_EXPAND);
@@ -64,11 +64,11 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
     }
 
     // At least one of the children fits rule 1.
-    if (this->hasAcceptedChildren(_srcRow, _srcParent))
+    if (this->HasAcceptedChildren(_srcRow, _srcParent))
       continue;
 
     // Row itself contains this word.
-    if (this->filterAcceptsRowItself(_srcRow, _srcParent, word))
+    if (this->FilterAcceptsRowItself(_srcRow, _srcParent, word))
       continue;
 
     // One of the ancestors contains this word.
@@ -76,7 +76,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
     bool parentAccepted = false;
     while (parentIndex.isValid())
     {
-      if (this->filterAcceptsRowItself(parentIndex.row(),
+      if (this->FilterAcceptsRowItself(parentIndex.row(),
           parentIndex.parent(), word))
       {
         parentAccepted = true;
@@ -97,8 +97,8 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
 }
 
 /////////////////////////////////////////////////
-bool SearchModel::filterAcceptsRowItself(const int _srcRow,
-    const QModelIndex &_srcParent, const QString _word) const
+bool SearchModel::FilterAcceptsRowItself(const int _srcRow,
+    const QModelIndex &_srcParent, const QString &_word) const
 {
   auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
 
@@ -107,7 +107,7 @@ bool SearchModel::filterAcceptsRowItself(const int _srcRow,
 }
 
 /////////////////////////////////////////////////
-bool SearchModel::hasAcceptedChildren(const int _srcRow,
+bool SearchModel::HasAcceptedChildren(const int _srcRow,
       const QModelIndex &_srcParent) const
 {
   auto item = sourceModel()->index(_srcRow, 0, _srcParent);
@@ -125,18 +125,18 @@ bool SearchModel::hasAcceptedChildren(const int _srcRow,
 }
 
 /////////////////////////////////////////////////
-bool SearchModel::hasChildAcceptsItself(const QModelIndex &_srcParent,
+bool SearchModel::HasChildAcceptsItself(const QModelIndex &_srcParent,
       const QString &_word) const
 {
   for (int i = 0; i < this->sourceModel()->rowCount(_srcParent); ++i)
   {
     // Check immediate children.
-    if (this->filterAcceptsRowItself(i, _srcParent, _word))
+    if (this->FilterAcceptsRowItself(i, _srcParent, _word))
       return true;
 
     // Check grandchildren.
     auto item = this->sourceModel()->index(i, 0, _srcParent);
-    if (this->hasChildAcceptsItself(item, _word))
+    if (this->HasChildAcceptsItself(item, _word))
       return true;
   }
 
