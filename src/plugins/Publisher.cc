@@ -121,7 +121,10 @@ void Publisher::OnPublish(const bool _checked)
   {
     this->dataPtr->publishButton->setText("Publish");
     if (this->dataPtr->timer != nullptr)
+    {
       this->dataPtr->timer->stop();
+      this->disconnect(this->dataPtr->timer, 0, 0, 0);
+    }
     this->dataPtr->pub = ignition::transport::Node::Publisher();
     return;
   }
