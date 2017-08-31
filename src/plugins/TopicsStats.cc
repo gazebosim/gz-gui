@@ -27,6 +27,9 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
+#include "ignition/gui/DragDropModel.hh"
+#include "ignition/gui/Enums.hh"
+#include "ignition/gui/SearchModel.hh"
 #include "ignition/gui/plugins/TopicsStats.hh"
 
 using namespace ignition;
@@ -35,24 +38,13 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 /// \brief Delegate that handles drawing the topic table
-class ItemDelegate : public QStyledItemDelegate
+class TableItemDelegate : public QStyledItemDelegate
 {
-  /// \brief The data roles
-  public: enum DataRole
-  {
-    /// \brief Text which will be displayed for the user.
-    DISPLAY_NAME = Qt::UserRole + 100,
-
-    /// \brief URI including detailed query about a single plot value. This is
-    /// the information carried during a drag-drop operation.
-    URI_QUERY,
-  };
-
   /// \brief Constructor
-  public: ItemDelegate() = default;
+  public: TableItemDelegate() = default;
 
   /// \brief Destructor
-  public: virtual ~ItemDelegate() = default;
+  public: virtual ~TableItemDelegate() = default;
 
   /// \brief Custom paint function.
   /// \param[in] _painter Pointer to the QT painter.
@@ -65,7 +57,8 @@ class ItemDelegate : public QStyledItemDelegate
     textRect.adjust(10, 12, 10, 12);
 
     // Custom options.
-    QString topicName = qvariant_cast<QString>(_index.data(DISPLAY_NAME));
+    QString topicName = qvariant_cast<QString>(_index.data(
+        DataRole::DISPLAY_NAME));
 
     if (topicName.isEmpty())
     {
@@ -77,7 +70,7 @@ class ItemDelegate : public QStyledItemDelegate
     QColor textColor(30, 30, 30);
     _painter->setPen(textColor);
 
-    auto _searchModel = dynamic_cast<const SearchModel *>(_index.model());
+    auto searchModel = dynamic_cast<const SearchModel *>(_index.model());
 
     // Create a bold font.
     QFont fontBold, fontRegular;
@@ -97,7 +90,7 @@ class ItemDelegate : public QStyledItemDelegate
         upperText.begin(), ::toupper);
 
     // Split search into words.
-    QStringList wordsStringList = _searchModel->search.toUpper().split(" ");
+    QStringList wordsStringList = searchModel->search.toUpper().split(" ");
 
     std::vector<std::string> wordsUpper;
     for (auto word : wordsStringList)
@@ -210,106 +203,6 @@ class ItemDelegate : public QStyledItemDelegate
   }
 };
 
-/////////////////////////////////////////////////
-/// Customize the item model so that we can pass along the correct MIME
-/// information during a drag-drop.
-class ItemModel : public QStandardItemModel
-{
-  /////////////////////////////////////////////////
-  /// \brief Custom MIME data function.
-  /// \param[in] _indexes List of selected items.
-  /// \return Mime data for the selected items.
-  public: QMimeData *mimeData(const QModelIndexList &_indexes) const
-  {
-    QMimeData *curMimeData = new QMimeData();
-
-    for (auto const &idx : _indexes)
-    {
-      if (idx.isValid())
-      {
-        QString text = this->data(idx, ItemDelegate::URI_QUERY).toString();
-        curMimeData->setData("application/x-item", text.toLatin1().data());
-
-        break;
-      }
-    }
-
-    return curMimeData;
-  }
-};
-
-/////////////////////////////////////////////////
-bool SearchModel::filterAcceptsRow(const int _srcRow,
-    const QModelIndex &_srcParent) const
-{
-  // Empty search matches everything.
-  if (this->search.isEmpty())
-    return true;
-
-  // Each word must match at least once.
-  auto words = this->search.split(" ");
-  for (auto word : words)
-  {
-    if (word.isEmpty())
-      continue;
-
-    // Row itself contains this word.
-    if (this->filterAcceptsRowItself(_srcRow, _srcParent, word))
-      continue;
-
-    // This word can't be found on the row .
-    return false;
-  }
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool SearchModel::filterAcceptsRowItself(const int _srcRow,
-    const QModelIndex &_srcParent, const QString _word) const
-{
-  auto id = this->sourceModel()->index(_srcRow, 0, _srcParent);
-
-  return (this->sourceModel()->data(id,
-      this->filterRole()).toString().contains(_word, Qt::CaseInsensitive));
-}
-
-/////////////////////////////////////////////////
-QVariant SearchModel::headerData(int _section, Qt::Orientation _orientation,
-  int _role) const
-{
-  if (_role == Qt::DisplayRole)
-  {
-    if (_orientation == Qt::Horizontal)
-    {
-      switch (_section)
-      {
-        case 0:
-          return QString("Topic");
-        case 1:
-          return QString("Num messages");
-        case 2:
-          return QString("Frequency");
-        case 3:
-          return QString("Bandwidth");
-        default:
-          std::cerr << "Something went wrong parsing headers" << std::endl;
-          return QString("");
-      }
-    }
-  }
-  return QVariant();
-}
-
-/////////////////////////////////////////////////
-void SearchModel::SetSearch(const QString &_search)
-{
-  this->search = _search;
-
-  // Trigger repaint on the whole model
-  this->layoutChanged();
-}
-
 /// \brief Private data for the TopicsStats class.
 class BasicStats
 {
@@ -338,7 +231,7 @@ class BasicStats
 class ignition::gui::plugins::TopicsStatsPrivate
 {
   /// \brief Model to hold topics data.
-  public: ItemModel *topicsModel;
+  public: DragDropModel *topicsModel;
 
   /// \brief Proxy model to filter topics data.
   public: SearchModel *searchTopicsModel;
@@ -379,18 +272,27 @@ void TopicsStats::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
     this->title = "Topics stats";
 
   // Create a view delegate, to handle drawing items in the tree view.
-  auto topicsItemDelegate = new ItemDelegate;
+  auto topicsItemDelegate = new TableItemDelegate;
 
   // The model that will hold data to be displayed in the topic tree view.
-  this->dataPtr->topicsModel = new ItemModel;
+  this->dataPtr->topicsModel = new DragDropModel;
   this->dataPtr->topicsModel->setObjectName("topicsModel");
   this->dataPtr->topicsModel->setParent(this);
   this->dataPtr->topicsModel->setColumnCount(4);
 
   // A proxy model to filter topic model.
   this->dataPtr->searchTopicsModel = new SearchModel;
-  this->dataPtr->searchTopicsModel->setFilterRole(ItemDelegate::DISPLAY_NAME);
+  this->dataPtr->searchTopicsModel->setFilterRole(DataRole::DISPLAY_NAME);
   this->dataPtr->searchTopicsModel->setSourceModel(this->dataPtr->topicsModel);
+
+  this->dataPtr->searchTopicsModel->setHeaderData(0, Qt::Horizontal,
+      QString("Topic"), Qt::DisplayRole);
+  this->dataPtr->searchTopicsModel->setHeaderData(1, Qt::Horizontal,
+      QString("Num messages"), Qt::DisplayRole);
+  this->dataPtr->searchTopicsModel->setHeaderData(2, Qt::Horizontal,
+      QString("Frequency"), Qt::DisplayRole);
+  this->dataPtr->searchTopicsModel->setHeaderData(3, Qt::Horizontal,
+      QString("Bandwidth"), Qt::DisplayRole);
 
   // Search field.
   auto searchIcon = new QLabel();
@@ -514,7 +416,7 @@ void TopicsStats::FillTopics()
       this->dataPtr->stats[topic] = BasicStats();
 
       auto topicItem = new QStandardItem();
-      topicItem->setData(topic.c_str(), ItemDelegate::DISPLAY_NAME);
+      topicItem->setData(topic.c_str(), DataRole::DISPLAY_NAME);
       this->dataPtr->topicsModel->insertRow(i, topicItem);
 
       this->dataPtr->stats[topic].numMessagesItem = new QStandardItem();
@@ -545,13 +447,13 @@ void TopicsStats::UpdateGUIStats()
     // Total number of messages received.
     statsPair.second.numMessagesItem->setData(
         QString::number(statsPair.second.numMessages),
-        ItemDelegate::DISPLAY_NAME);
+        DataRole::DISPLAY_NAME);
 
     // Number of messages received during the last second.
     std::string f = std::to_string(statsPair.second.numMessagesLastSec) + " Hz";
     statsPair.second.numMessagesLastSecItem->setData(
         QString::fromStdString(f),
-        ItemDelegate::DISPLAY_NAME);
+        DataRole::DISPLAY_NAME);
 
     // Number of bytes received during the last second.
     double bandwidth = statsPair.second.numBytesLastSec;
@@ -573,7 +475,7 @@ void TopicsStats::UpdateGUIStats()
     std::string b = std::to_string(bandwidth) + " " + units;
     statsPair.second.numBytesLastSecItem->setData(
         QString::fromStdString(b),
-        ItemDelegate::DISPLAY_NAME);
+        DataRole::DISPLAY_NAME);
   }
 }
 

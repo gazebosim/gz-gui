@@ -10,9 +10,12 @@ set (CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Core_DEFINITIONS})
 
 set (qt_headers
+  DragDropModel.hh
+  Enums.hh
   Iface.hh
   MainWindow.hh
   Plugin.hh
+  SearchModel.hh
 )
 
 set (headers
