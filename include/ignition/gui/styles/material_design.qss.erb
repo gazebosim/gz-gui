@@ -1,5 +1,20 @@
+<%
+  palette = 'Red-Yellow'
+  background_color='#eceff1'
 
-/* GLOBAL MATERIAL DESIGN STYLE (Red-Yellow) */
+  # red
+  primary_color_500 = '#f44336'
+  primary_color_300 = '#e57373'
+
+  # yellow
+  secondary_color_500 = '#ffeb3b'
+
+  # research text
+  text_500 = '#212121'
+  text_300 = 'rgba(33, 33, 33, 0.38)'
+  text_50 = '#fafafa'
+%>
+/* GLOBAL MATERIAL DESIGN STYLE (<%=palette%>) */
 
 /* ---------------------------- */
 /*            Docks             */
@@ -11,13 +26,13 @@ QDockWidget {
   font-size: 18px;
   titlebar-close-icon: url(:/images/close.svg);
   titlebar-normal-icon: url(:/images/undock.svg);
-  color: #fafafa;
+  color: <%=text_50%>;
   border: none;
 }
 
 QDockWidget::title {
   text-align: left;
-  background: #e57373;
+  background: <%= primary_color_300 %>;
   padding: 10px;
 }
 
@@ -37,7 +52,7 @@ QDockWidget::float-button {
 }
 
 QDockWidget::close-button:hover, QDockWidget::float-button:hover {
-  background: #e57373;
+  background: <%= primary_color_300 %>;
   border: none;
 }
 
@@ -51,7 +66,7 @@ QMainWindow::separator {
 }
 
 QMainWindow {
-  background: #eceff1;
+  background: <%=background_color%>;
 }
 
 /* ---------------------------- */
@@ -59,7 +74,7 @@ QMainWindow {
 /* ---------------------------- */
 
 QDialog {
-  background: #eceff1;
+  background: <%=background_color%>;
 }
 
 /* ---------------------------- */
@@ -69,8 +84,8 @@ QDialog {
 QLineEdit
 {
   background-color: rgba(0, 0, 0, 0);
-  color: #212121;
-  border-bottom: 2px solid #f44336;
+  color: <%=text_500%>;
+  border-bottom: 2px solid <%=primary_color_500%>;
   padding-bottom: 2px;
   border-radius: 0px;
   font-family: Roboto;
@@ -93,14 +108,14 @@ QPushButton
 {
   padding: 8px;
   font-weight: 300;
-  color: #212121;
+  color: <%=text_500%>;
   text-align: center;
   border-radius: 0px;
   border: 0px;
   selection-color: transparent;
   min-width: 80px;
   margin: 8px;
-  background-color: #ffeb3b;
+  background-color: <%=secondary_color_500%>;
 }
 
 QPushButton:hover
