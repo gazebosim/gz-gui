@@ -1,6 +1,12 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+
+  <!-- Styles -->
   <file>style.qss</file>
+  <file>styles/red.txt</file>
+  <file>styles/template.qss</file>
+
+  <!-- Images -->
   <file>images/branch-end.png</file>
   <file>images/branch-more.png</file>
   <file>images/close.svg</file>

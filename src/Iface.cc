@@ -55,14 +55,33 @@ struct WindowConfig
 
   /// \brief Window state (dock configuration)
   QByteArray state;
+
+  /// \brief Primary color
+  std::string primaryColor;
+
+  /// \brief Secondary color
+  std::string secondaryColor;
 };
 
+/// \brief Pointer to application
 QApplication *g_app;
+
+/// \brief Pointer to main window
 MainWindow *g_main_win = nullptr;
+
+/// \brief Vector of pointers to dialogs
 std::vector<QDialog *> g_dialogs;
+
+/// \brief Vector of pointers to plugins
 std::vector<std::unique_ptr<Plugin>> g_plugins;
+
+/// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
+
+/// \brief Vector of paths to look for plugins
 std::vector<std::string> g_pluginPaths;
+
+/// \brief Window configuration
 WindowConfig g_windowConfig;
 
 /////////////////////////////////////////////////
@@ -621,5 +640,73 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   }
 
   return plugins;
+}
+
+/////////////////////////////////////////////////
+std::string ignition::gui::primaryColor()
+{
+  return g_windowConfig.primaryColor;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::setPrimaryColor(const std::string &_color)
+{
+  // Check if color is supported
+  if (_color != "red")
+  {
+    ignerr << "Color [" << _color << "] is not supported." << std::endl;
+    return;
+  }
+  g_windowConfig.primaryColor = _color;
+
+  // Substitution map
+  std::map<QString, QString> substitutionMap;
+
+  // Primary colors
+  QFile primaryFile(QString(":/styles/" + QString::fromStdString(g_windowConfig.primaryColor) + ".txt"));
+  if (primaryFile.open(QIODevice::ReadOnly))
+  {
+     QTextStream in(&primaryFile);
+     while (!in.atEnd())
+     {
+        auto parts = in.readLine().split(" ");;
+
+        if (parts.size() != 2)
+        {
+          ignerr << "Failed to parse color file [" + g_windowConfig.primaryColor
+                 << ".txt]" << std::endl;
+          return;
+        }
+
+       substitutionMap["$primary-color-" + parts[0]] = parts[1];
+     }
+     primaryFile.close();
+  }
+
+  // Style template
+  QFile tempFile(":/styles/template.qss");
+  tempFile.open(QFile::ReadOnly);
+  QString styleSheet = QLatin1String(tempFile.readAll());
+
+  // Generate style from template
+  for (auto sub : substitutionMap)
+  {
+    styleSheet.replace(sub.first, sub.second);
+  }
+
+  // Set the stylesheet
+  g_app->setStyleSheet(styleSheet);
+}
+
+/////////////////////////////////////////////////
+std::string ignition::gui::secondaryColor()
+{
+  return g_windowConfig.secondaryColor;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::setSecondaryColor(const std::string &_color)
+{
+  g_windowConfig.secondaryColor = _color;
 }
 

@@ -125,6 +125,22 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     void listPlugins();
 
+    /// \brief Get the current primary color
+    IGNITION_GUI_VISIBLE
+    std::string primaryColor();
+
+    /// \brief Set the current primary color
+    IGNITION_GUI_VISIBLE
+    void setPrimaryColor(const std::string &_color);
+
+    /// \brief Get the current secondary color
+    IGNITION_GUI_VISIBLE
+    std::string secondaryColor();
+
+    /// \brief Set the current secondary color
+    IGNITION_GUI_VISIBLE
+    void setSecondaryColor(const std::string &_color);
+
     /// \brief Get the list of available plugins, organized by path. The paths
     /// are given in the following order:
     ///

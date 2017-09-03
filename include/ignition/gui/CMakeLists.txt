@@ -10,6 +10,7 @@ set (CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Core_DEFINITIONS})
 
 set (qt_headers
+  ColorDialog.hh
   DragDropModel.hh
   Enums.hh
   Iface.hh

@@ -18,6 +18,7 @@
 #include <tinyxml2.h>
 
 #include <ignition/common/Console.hh>
+#include "ignition/gui/ColorDialog.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
@@ -58,6 +59,13 @@ MainWindow::MainWindow()
   saveConfigAct->setStatusTip(tr("Quit"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
+
+  fileMenu->addSeparator();
+
+  auto changeThemeAct = new QAction(tr("&Change palette"), this);
+  changeThemeAct->setStatusTip(tr("Change the color theme"));
+  this->connect(changeThemeAct, SIGNAL(triggered()), this, SLOT(OnChangeTheme()));
+  fileMenu->addAction(changeThemeAct);
 
   fileMenu->addSeparator();
 
@@ -197,6 +205,13 @@ void MainWindow::OnSaveConfig()
     out << config;
 
   out.close();
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnChangeTheme()
+{
+  auto colorDialog = new ColorDialog();
+  colorDialog->exec();
 }
 
 /////////////////////////////////////////////////

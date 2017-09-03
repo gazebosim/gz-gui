@@ -1,6 +1,7 @@
 include_directories(${PROJECT_BINARY_DIR})
 
 set (sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/ColorDialog.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc

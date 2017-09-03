@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_MAINWINDOW_HH_
-#define IGNITION_GUI_MAINWINDOW_HH_
+#ifndef IGNITION_GUI_COLORDIALOG_HH_
+#define IGNITION_GUI_COLORDIALOG_HH_
 
 #include <memory>
 
@@ -27,38 +27,21 @@ namespace ignition
   namespace gui
   {
     // Forward declare private data
-    class MainWindowPrivate;
+    class ColorDialogPrivate;
 
-    class IGNITION_GUI_VISIBLE MainWindow : public QMainWindow
+    class IGNITION_GUI_VISIBLE ColorDialog : public QDialog
     {
       Q_OBJECT
 
       /// \brief Constructor
-      public: MainWindow();
+      public: ColorDialog();
 
       /// \brief Destructor
-      public: virtual ~MainWindow();
-
-      /// \brief Close all docks
-      /// \return True if all docks have been closed
-      public: bool CloseAllDocks();
-
-      /// \brief Callback when load configuration is selected
-      private slots: void OnLoadConfig();
-
-      /// \brief Callback when save configuration is selected
-      private slots: void OnSaveConfig();
-
-      /// \brief Callback when change theme is selected
-      private slots: void OnChangeTheme();
-
-      /// \brief Add a plugin to the window.
-      /// \param [in] _plugin Plugin filename
-      private slots: void OnAddPlugin(QString _plugin);
+      public: virtual ~ColorDialog();
 
       /// \internal
       /// \brief Private data pointer
-      private: std::unique_ptr<MainWindowPrivate> dataPtr;
+      private: std::unique_ptr<ColorDialogPrivate> dataPtr;
     };
   }
 }
