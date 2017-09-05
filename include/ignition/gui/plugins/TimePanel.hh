@@ -46,7 +46,7 @@ namespace plugins
   /// * <service> : Service for world control, required.
   /// <world_stats> : Configuration for displaying stats, optional.
   /// * <sim_time> : Set to true to display a sim time widget, false by default.
-  /// * <real_time> : Set to true to display a real time widget, false by default.
+  /// * <real_time> : True to display a real time widget, false by default.
   /// * <topic> : Topic to receive world statistics, required.
   class TimePanel: public ignition::gui::Plugin
   {

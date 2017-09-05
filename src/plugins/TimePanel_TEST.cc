@@ -72,14 +72,14 @@ TEST(TimePanelTest, WorldControl)
   EXPECT_TRUE(initApp());
 
   // Load plugin
-  static const char* pluginStr =
-    "<plugin filename=\"libTimePanel.so\">\
-      <title>World Control!</title>\
-      <world_control>\
-        <play_pause>true</play_pause>\
-        <service>/world_control_test</service>\
-      </world_control>\
-    </plugin>";
+  const char *pluginStr =
+    "<plugin filename=\"libTimePanel.so\">"
+      "<title>World Control!</title>"
+      "<world_control>"
+        "<play_pause>true</play_pause>"
+        "<service>/world_control_test</service>"
+      "</world_control>"
+    "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
@@ -147,19 +147,19 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_TRUE(initApp());
 
   // Load plugin
-  static const char* pluginStr =
-    "<plugin filename=\"libTimePanel.so\">\
-      <world_stats>\
-        <sim_time>true</sim_time>\
-        <real_time>true</real_time>\
-        <topic>/world_stats_test</topic>\
-      </world_stats>\
-      <world_control>\
-        <play_pause>true</play_pause>\
-        <start_paused>true</start_paused>\
-        <service>/world_control_test</service>\
-      </world_control>\
-    </plugin>";
+  const char *pluginStr =
+    "<plugin filename=\"libTimePanel.so\">"
+      "<world_stats>"
+        "<sim_time>true</sim_time>"
+        "<real_time>true</real_time>"
+        "<topic>/world_stats_test</topic>"
+      "</world_stats>"
+      "<world_control>"
+        "<play_pause>true</play_pause>"
+        "<start_paused>true</start_paused>"
+        "<service>/world_control_test</service>"
+      "</world_control>"
+    "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
@@ -259,11 +259,11 @@ TEST(TimePanelTest, ControlWithoutService)
   EXPECT_TRUE(initApp());
 
   // Load plugin
-  static const char* pluginStr =
-    "<plugin filename=\"libTimePanel.so\">\
-      <world_control>\
-      </world_control>\
-    </plugin>";
+  const char* pluginStr =
+    "<plugin filename=\"libTimePanel.so\">"
+      "<world_control>"
+      "</world_control>"
+    "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
@@ -296,11 +296,11 @@ TEST(TimePanelTest, StatsWithoutTopic)
   EXPECT_TRUE(initApp());
 
   // Load plugin
-  static const char* pluginStr =
-    "<plugin filename=\"libTimePanel.so\">\
-      <world_stats>\
-      </world_stats>\
-    </plugin>";
+  const char *pluginStr =
+    "<plugin filename=\"libTimePanel.so\">"
+      "<world_stats>"
+      "</world_stats>"
+    "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
