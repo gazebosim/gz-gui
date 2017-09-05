@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_GUIDIAGNOSTICS_HH_
-#define IGNITION_GUI_PLUGINS_GUIDIAGNOSTICS_HH_
+#ifndef IGNITION_GUI_PLUGINS_TIMEPANEL_HH_
+#define IGNITION_GUI_PLUGINS_TIMEPANEL_HH_
 
 #include <ignition/gui/qt.h>
 #include <memory>
@@ -37,6 +37,17 @@ namespace plugins
   /// * Display simulation time
   /// * Display real time
   /// * Have a play / pause button
+  ///
+  /// ## Configuration
+  ///
+  /// <world_control> : Configuration for controlling the world, optional.
+  /// * <play_pause> : Set to true to see a play/pause button, false by default.
+  /// * <start_paused> : Set to false to start playing, false by default.
+  /// * <service> : Service for world control, required.
+  /// <world_stats> : Configuration for displaying stats, optional.
+  /// * <sim_time> : Set to true to display a sim time widget, false by default.
+  /// * <real_time> : Set to true to display a real time widget, false by default.
+  /// * <topic> : Topic to receive world statistics, required.
   class TimePanel: public ignition::gui::Plugin
   {
     Q_OBJECT

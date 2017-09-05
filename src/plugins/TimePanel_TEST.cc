@@ -17,7 +17,11 @@
 
 #include <gtest/gtest.h>
 
+#include <ignition/common/Console.hh>
+#include <ignition/transport/Node.hh>
+
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/Plugin.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -29,5 +33,295 @@ TEST(TimePanelTest, Load)
 
   EXPECT_TRUE(loadPlugin("libTimePanel.so"));
 
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(TimePanelTest, DefaultConfig)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load plugin
+  EXPECT_TRUE(loadPlugin("libTimePanel.so"));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  EXPECT_TRUE(win != nullptr);
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "Time panel");
+
+  // Empty
+  auto children = plugin->findChildren<QWidget *>();
+  EXPECT_EQ(children.size(), 0);
+
+  // Cleanup
+  plugins.clear();
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(TimePanelTest, WorldControl)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load plugin
+  static const char* pluginStr =
+    "<plugin filename=\"libTimePanel.so\">\
+      <title>World Control!</title>\
+      <world_control>\
+        <play_pause>true</play_pause>\
+        <service>/world_control_test</service>\
+      </world_control>\
+    </plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  EXPECT_TRUE(win != nullptr);
+
+  // Show, but don't exec, so we don't block
+  win->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "World Control!");
+
+  // Buttons
+  auto playButton = plugin->findChild<QPushButton *>("playButton");
+  EXPECT_TRUE(playButton != nullptr);
+  EXPECT_FALSE(playButton->isVisible());
+  auto pauseButton = plugin->findChild<QPushButton *>("pauseButton");
+  EXPECT_TRUE(pauseButton != nullptr);
+  EXPECT_TRUE(pauseButton->isVisible());
+
+  // World control service
+  bool playCalled = false;
+  bool pauseCalled = false;
+  std::function<void(const msgs::WorldControl &, msgs::Empty &, bool &)> cb =
+      [&](const msgs::WorldControl &_req, msgs::Empty &, bool &)
+  {
+    EXPECT_TRUE(_req.has_pause());
+    if (_req.pause())
+      pauseCalled = true;
+    else
+      playCalled = true;
+  };
+  transport::Node node;
+  node.Advertise("/world_control_test", cb);
+
+  // Pause
+  pauseButton->click();
+  EXPECT_TRUE(pauseCalled);
+  EXPECT_TRUE(playButton->isVisible());
+  EXPECT_FALSE(pauseButton->isVisible());
+
+  // Play
+  playButton->click();
+  EXPECT_TRUE(playCalled);
+  EXPECT_FALSE(playButton->isVisible());
+  EXPECT_TRUE(pauseButton->isVisible());
+
+  // Cleanup
+  plugins.clear();
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(TimePanelTest, WorldStats)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load plugin
+  static const char* pluginStr =
+    "<plugin filename=\"libTimePanel.so\">\
+      <world_stats>\
+        <sim_time>true</sim_time>\
+        <real_time>true</real_time>\
+        <topic>/world_stats_test</topic>\
+      </world_stats>\
+      <world_control>\
+        <play_pause>true</play_pause>\
+        <start_paused>true</start_paused>\
+        <service>/world_control_test</service>\
+      </world_control>\
+    </plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  EXPECT_TRUE(win != nullptr);
+
+  // Show, but don't exec, so we don't block
+  win->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+
+  // Labels
+  auto simTime = plugin->findChild<QLabel *>("simTimeLabel");
+  EXPECT_TRUE(simTime != nullptr);
+  EXPECT_EQ(simTime->text(), "N/A");
+  auto realTime = plugin->findChild<QLabel *>("realTimeLabel");
+  EXPECT_TRUE(realTime != nullptr);
+  EXPECT_EQ(realTime->text(), "N/A");
+
+  // Buttons
+  auto playButton = plugin->findChild<QPushButton *>("playButton");
+  EXPECT_TRUE(playButton != nullptr);
+  EXPECT_TRUE(playButton->isVisible());
+  auto pauseButton = plugin->findChild<QPushButton *>("pauseButton");
+  EXPECT_TRUE(pauseButton != nullptr);
+  EXPECT_FALSE(pauseButton->isVisible());
+
+  // Publish stats
+  transport::Node node;
+  auto pub = node.Advertise<msgs::WorldStatistics>("/world_stats_test");
+
+  {
+    msgs::WorldStatistics msg;
+    auto simTimeMsg = msg.mutable_sim_time();
+    simTimeMsg->set_sec(3600);
+    simTimeMsg->set_nsec(123456789);
+    pub.Publish(msg);
+  }
+
+  EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
+  EXPECT_EQ(realTime->text().toStdString(), "N/A");
+  EXPECT_TRUE(playButton->isVisible());
+  EXPECT_FALSE(pauseButton->isVisible());
+
+  {
+    msgs::WorldStatistics msg;
+    auto realTimeMsg = msg.mutable_real_time();
+    realTimeMsg->set_sec(86400);
+    realTimeMsg->set_nsec(1000000);
+    pub.Publish(msg);
+  }
+
+  EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
+  EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_TRUE(playButton->isVisible());
+  EXPECT_FALSE(pauseButton->isVisible());
+
+  {
+    msgs::WorldStatistics msg;
+    msg.set_paused(true);
+    pub.Publish(msg);
+  }
+
+  EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
+  EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_TRUE(playButton->isVisible());
+  EXPECT_FALSE(pauseButton->isVisible());
+
+  {
+    msgs::WorldStatistics msg;
+    msg.set_paused(false);
+    pub.Publish(msg);
+  }
+
+  EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
+  EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_FALSE(playButton->isVisible());
+  EXPECT_TRUE(pauseButton->isVisible());
+
+  // Cleanup
+  plugins.clear();
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(TimePanelTest, ControlWithoutService)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load plugin
+  static const char* pluginStr =
+    "<plugin filename=\"libTimePanel.so\">\
+      <world_control>\
+      </world_control>\
+    </plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  EXPECT_TRUE(win != nullptr);
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+
+  // Empty
+  auto children = plugin->findChildren<QWidget *>();
+  EXPECT_EQ(children.size(), 0);
+
+  // Cleanup
+  plugins.clear();
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(TimePanelTest, StatsWithoutTopic)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load plugin
+  static const char* pluginStr =
+    "<plugin filename=\"libTimePanel.so\">\
+      <world_stats>\
+      </world_stats>\
+    </plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  EXPECT_TRUE(win != nullptr);
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+
+  // Empty
+  auto children = plugin->findChildren<QWidget *>();
+  EXPECT_EQ(children.size(), 0);
+
+  // Cleanup
+  plugins.clear();
   EXPECT_TRUE(stop());
 }

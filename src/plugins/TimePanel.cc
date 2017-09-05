@@ -36,7 +36,7 @@ namespace plugins
     public: std::string controlService;
 
     /// \brief Mutex to protect msg
-    public: std::mutex mutex;
+    public: std::recursive_mutex mutex;
 
     /// \brief Communication node
     public: ignition::transport::Node node;
@@ -81,12 +81,11 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
       if (this->dataPtr->controlService.empty())
       {
-        ignerr << "Must specify a service issue world control requests."
+        ignerr << "Must specify a service for world control requests."
                << std::endl;
       }
-
       // Play / pause buttons
-      if (auto playElem = controlElem->FirstChildElement("play_pause"))
+      else if (auto playElem = controlElem->FirstChildElement("play_pause"))
       {
         auto hasPlay = false;
         playElem->QueryBoolText(&hasPlay);
@@ -95,12 +94,14 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         {
           // Play button
           auto playButton = new QPushButton("Play");
+          playButton->setObjectName("playButton");
           this->connect(playButton, SIGNAL(clicked()), this, SLOT(OnPlay()));
           this->connect(this, SIGNAL(Playing()), playButton, SLOT(hide()));
           this->connect(this, SIGNAL(Paused()), playButton, SLOT(show()));
 
           // Pause button
           auto pauseButton = new QPushButton("Pause");
+          pauseButton->setObjectName("pauseButton");
           this->connect(pauseButton, SIGNAL(clicked()), this, SLOT(OnPause()));
           this->connect(this, SIGNAL(Playing()), pauseButton, SLOT(show()));
           this->connect(this, SIGNAL(Paused()), pauseButton, SLOT(hide()));
@@ -108,15 +109,15 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           mainLayout->addWidget(playButton, 0, 0, 2, 1);
           mainLayout->addWidget(pauseButton, 0, 0, 2, 1);
 
-          if (auto pausedElem = playElem->FirstChildElement("start_paused"))
+          auto startPaused = false;
+          if (auto pausedElem = controlElem->FirstChildElement("start_paused"))
           {
-            auto startPaused = false;
             pausedElem->QueryBoolText(&startPaused);
-            if (startPaused)
-              this->Paused();
-            else
-              this->Playing();
           }
+          if (startPaused)
+            this->Paused();
+          else
+            this->Playing();
         }
       }
     }
@@ -142,39 +143,43 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         {
           ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
         }
-      }
-
-      // Sim time
-      if (auto simTimeElem = statsElem->FirstChildElement("sim_time"))
-      {
-        auto hasSim = false;
-        simTimeElem->QueryBoolText(&hasSim);
-
-        if (hasSim)
+        else
         {
-          auto simTime = new QLabel("N/A");
-          this->connect(this, SIGNAL(SetSimTime(QString)), simTime,
-              SLOT(setText(QString)));
+          // Sim time
+          if (auto simTimeElem = statsElem->FirstChildElement("sim_time"))
+          {
+            auto hasSim = false;
+            simTimeElem->QueryBoolText(&hasSim);
 
-          mainLayout->addWidget(new QLabel("Sim time"), 0, 1);
-          mainLayout->addWidget(simTime, 0, 2);
-        }
-      }
+            if (hasSim)
+            {
+              auto simTime = new QLabel("N/A");
+              simTime->setObjectName("simTimeLabel");
+              this->connect(this, SIGNAL(SetSimTime(QString)), simTime,
+                  SLOT(setText(QString)));
 
-      // Real time
-      if (auto realTimeElem = statsElem->FirstChildElement("real_time"))
-      {
-        auto hasReal = false;
-        realTimeElem->QueryBoolText(&hasReal);
+              mainLayout->addWidget(new QLabel("Sim time"), 0, 1);
+              mainLayout->addWidget(simTime, 0, 2);
+            }
+          }
 
-        if (hasReal)
-        {
-          auto realTime = new QLabel("N/A");
-          this->connect(this, SIGNAL(SetRealTime(QString)), realTime,
-              SLOT(setText(QString)));
+          // Real time
+          if (auto realTimeElem = statsElem->FirstChildElement("real_time"))
+          {
+            auto hasReal = false;
+            realTimeElem->QueryBoolText(&hasReal);
 
-          mainLayout->addWidget(new QLabel("Real time"), 1, 1);
-          mainLayout->addWidget(realTime, 1, 2);
+            if (hasReal)
+            {
+              auto realTime = new QLabel("N/A");
+              realTime->setObjectName("realTimeLabel");
+              this->connect(this, SIGNAL(SetRealTime(QString)), realTime,
+                  SLOT(setText(QString)));
+
+              mainLayout->addWidget(new QLabel("Real time"), 1, 1);
+              mainLayout->addWidget(realTime, 1, 2);
+            }
+          }
         }
       }
     }
@@ -187,30 +192,39 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void TimePanel::ProcessMsg()
 {
-  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
   ignition::common::Time time;
 
-  time.sec = this->dataPtr->msg.sim_time().sec();
-  time.nsec = this->dataPtr->msg.sim_time().nsec();
+  if (this->dataPtr->msg.has_sim_time())
+  {
+    time.sec = this->dataPtr->msg.sim_time().sec();
+    time.nsec = this->dataPtr->msg.sim_time().nsec();
 
-  this->SetSimTime(QString::fromStdString(time.FormattedString()));
+    this->SetSimTime(QString::fromStdString(time.FormattedString()));
+  }
 
-  time.sec = this->dataPtr->msg.real_time().sec();
-  time.nsec = this->dataPtr->msg.real_time().nsec();
+  if (this->dataPtr->msg.has_real_time())
+  {
+    time.sec = this->dataPtr->msg.real_time().sec();
+    time.nsec = this->dataPtr->msg.real_time().nsec();
 
-  this->SetRealTime(QString::fromStdString(time.FormattedString()));
+    this->SetRealTime(QString::fromStdString(time.FormattedString()));
+  }
 
-  if (this->dataPtr->msg.paused())
-    this->Paused();
-  else
-    this->Playing();
+  if (this->dataPtr->msg.has_paused())
+  {
+    if (this->dataPtr->msg.paused())
+      this->Paused();
+    else
+      this->Playing();
+  }
 }
 
 /////////////////////////////////////////////////
 void TimePanel::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 {
-  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
   this->dataPtr->msg.CopyFrom(_msg);
   QMetaObject::invokeMethod(this, "ProcessMsg");
@@ -224,8 +238,6 @@ void TimePanel::OnPlay()
   {
     if (_result)
       QMetaObject::invokeMethod(this, "Playing");
-    else
-      QMetaObject::invokeMethod(this, "Paused");
   };
 
   ignition::msgs::WorldControl req;
@@ -242,8 +254,6 @@ void TimePanel::OnPause()
   {
     if (_result)
       QMetaObject::invokeMethod(this, "Paused");
-    else
-      QMetaObject::invokeMethod(this, "Playing");
   };
 
   ignition::msgs::WorldControl req;
