@@ -289,9 +289,11 @@ choose a QSS file on the fly.
 ### Config files
 
 You can embed your stylesheet inside the `<window><stylesheet>` tag inside your
-configuration file.
+configuration file. See an example:
 
-When saving the configuration file through the GUI, the current stylesheet will
+    ign gui -c examples/config/stylesheet.config
+
+>Note: When saving the configuration file through the GUI, the current stylesheet will
 be added.
 
 ## Command line

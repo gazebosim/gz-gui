@@ -8,6 +8,9 @@ QDockWidget {
 QMainWindow {
   background: #11ff11;
 }
+QDialog {
+  background: #11ff11;
+}
 
 /* Yellow buttons */
 QPushButton {
