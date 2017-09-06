@@ -63,7 +63,8 @@ MainWindow::MainWindow()
 
   auto loadStylesheetAct = new QAction(tr("&Load stylesheet"), this);
   loadStylesheetAct->setStatusTip(tr("Choose a QSS file to load"));
-  this->connect(loadStylesheetAct, SIGNAL(triggered()), this, SLOT(OnLoadStylesheet()));
+  this->connect(loadStylesheetAct, SIGNAL(triggered()), this,
+      SLOT(OnLoadStylesheet()));
   fileMenu->addAction(loadStylesheetAct);
 
   fileMenu->addSeparator();
