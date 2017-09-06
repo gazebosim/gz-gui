@@ -43,10 +43,13 @@ COMMANDS = {  'gui' =>
                        "  -l [ --list ]              List all available plugins.\n" +
                        "\n" +
                        "  -s [ --standalone ] arg    Run a plugin as a standalone window.\n" +
-                       "                             Give the plugin filename as an argument\n" +
+                       "                             Give the plugin filename as an argument.\n" +
                        "\n" +
                        "  -c [ --config ] arg        Open the main window with a configuration file.\n" +
-                       "                             Give the configuration file path as an argument\n" +
+                       "                             Give the configuration file path as an argument.\n" +
+                       "\n" +
+                       "  -t [ --style ] arg         Apply a stylesheet to the whole application.\n" +
+                       "                             Give a QSS file path as an argument.\n" +
                        "\n" +
                        "  -v [ --verbose ] arg       Adjust the level of console output (0~4).\n" +
                        "\n" +
@@ -83,6 +86,10 @@ class Cmd
       opts.on('-c config', '--config', String,
           'Load a configuration file') do |c|
         options['config'] = c
+      end
+      opts.on('-t style', '--style', String,
+          'Load a stylesheet') do |t|
+        options['style'] = t
       end
       opts.on('-v verbose', '--verbose', String,
           'Adjust level of console output') do |v|
@@ -158,6 +165,13 @@ class Cmd
           verbose = true
         end
 
+        style = false
+        if options.key?('style')
+          Importer.extern 'void cmdStyleSheet(const char *)'
+          Importer.cmdStyleSheet(options['style'])
+          style = true
+        end
+
         if options.key?('list')
           Importer.extern 'void cmdPluginList()'
           Importer.cmdPluginList
@@ -172,6 +186,8 @@ class Cmd
           Importer.cmdEmptyWindow()
         elsif verbose
           puts 'Please use another command in conjunction with verbose.'
+        elsif style
+          puts 'Please use another command in conjunction with style.'
         else
           puts 'Command error: I do not have an implementation '\
                'for this command.'

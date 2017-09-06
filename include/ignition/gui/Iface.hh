@@ -36,11 +36,13 @@ namespace ignition
     bool initApp();
 
     /// \brief Stop the graphical interface.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool stop();
 
     /// \brief Load plugins from a configuration file.
     /// \param[in] _config Path to configuration file.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool loadConfig(const std::string &_config);
 
@@ -48,9 +50,21 @@ namespace ignition
     /// path.
     /// \param[in] _filename Plugin filename.
     /// \param[in[ _pluginElem Element containing plugin configuration
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool loadPlugin(const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
+
+    /// \brief Set a file to be the global stylesheet.
+    /// \param[in] _qssFile Path to QSS file.
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool setQssFile(const std::string &_qssFile);
+
+    /// \brief Apply a stylesheet previously loaded.
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool applyStyleSheet();
 
     /// \brief Add previously loaded plugins to the main window.
     /// * Make sure the window is created first
@@ -70,26 +84,31 @@ namespace ignition
     /// \brief Run a main window using the given configuration file. This is
     /// the main entry point for the command line tool "ign gui -c".
     /// \param[in] _config Full path to configuration file.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool runConfig(const std::string &_config);
 
     /// \brief Run a given plugin as a standalone window. This is the main
     /// entry point for the command line tool "ign gui -s".
     /// \param[in] _filename Plugin file name. The file must be in the path.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool runStandalone(const std::string &_filename);
 
     /// \brief Run previously loaded plugins as individual dialogs.
     /// This has no effect if no plugins have been loaded.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool runDialogs();
 
     /// \brief Run an empty window.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool runEmptyWindow();
 
     /// \brief Run previously loaded plugins on a single main window.
     /// An empty window will be created if no plugins have been loaded.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool createMainWindow();
 
@@ -103,6 +122,7 @@ namespace ignition
     std::vector<QDialog *> dialogs();
 
     /// \brief Run previously created window.
+    /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool runMainWindow();
 

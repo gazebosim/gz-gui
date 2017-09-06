@@ -55,14 +55,30 @@ struct WindowConfig
 
   /// \brief Window state (dock configuration)
   QByteArray state;
+
+  /// \brief String holding the global style sheet in QSS format.
+  QString styleSheet;
 };
 
+/// \brief Pointer to application
 QApplication *g_app;
+
+/// \brief Pointer to main window
 MainWindow *g_main_win = nullptr;
+
+/// \brief Vector of pointers to dialogs
 std::vector<QDialog *> g_dialogs;
+
+/// \brief Vector of pointers to plugins
 std::vector<std::unique_ptr<Plugin>> g_plugins;
+
+/// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
+
+/// \brief Vector of paths to look for plugins
 std::vector<std::string> g_pluginPaths;
+
+/// \brief Window configuration
 WindowConfig g_windowConfig;
 
 /////////////////////////////////////////////////
@@ -231,12 +247,6 @@ bool ignition::gui::initApp()
   // Create app
   g_app = new QApplication(g_argc, g_argv);
 
-  // Set style
-  QFile file(":/style.qss");
-  file.open(QFile::ReadOnly);
-  QString styleSheet = QLatin1String(file.readAll());
-  g_app->setStyleSheet(styleSheet);
-
   // Install signal handler for graceful shutdown
   installSignalHandler();
 
@@ -328,7 +338,43 @@ bool ignition::gui::loadConfig(const std::string &_config)
       auto text = stateElem->GetText();
       g_windowConfig.state = QByteArray::fromBase64(text);
     }
+
+    if (auto styleElem = winElem->FirstChildElement("stylesheet"))
+      g_windowConfig.styleSheet = styleElem->GetText();
   }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::setQssFile(const std::string &_qssFile)
+{
+  ignmsg << "Setting QSS file [" << _qssFile << "]" << std::endl;
+
+  QFile file(QString::fromStdString(_qssFile));
+  if (!file.open(QFile::ReadOnly))
+  {
+    ignerr << "Failed to open [" << _qssFile << "]." << std::endl;
+    return false;
+  }
+
+  g_windowConfig.styleSheet = QLatin1String(file.readAll());
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::applyStyleSheet()
+{
+  if (!checkApp())
+    return false;
+
+  if (g_windowConfig.styleSheet.isNull())
+    setQssFile(":/style.qss");
+
+  ignmsg << "Applying stylesheet" << std::endl;
+
+  g_app->setStyleSheet(g_windowConfig.styleSheet);
 
   return true;
 }
@@ -468,6 +514,8 @@ bool ignition::gui::applyConfig()
       ignwarn << "Failed to restore state" << std::endl;
   }
 
+  applyStyleSheet();
+
   QCoreApplication::processEvents();
 
   return true;
@@ -496,6 +544,8 @@ bool ignition::gui::runMainWindow()
 
   ignmsg << "Run main window" << std::endl;
 
+  applyStyleSheet();
+
   g_main_win->show();
 
   // Execute app
@@ -511,6 +561,8 @@ bool ignition::gui::runDialogs()
     return false;
 
   ignmsg << "Run dialogs" << std::endl;
+
+  applyStyleSheet();
 
   for (auto &plugin : g_plugins)
   {

@@ -49,6 +49,9 @@ namespace ignition
       /// \brief Callback when save configuration is selected
       private slots: void OnSaveConfig();
 
+      /// \brief Callback when load stylesheet is selected
+      private slots: void OnLoadStylesheet();
+
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename
       private slots: void OnAddPlugin(QString _plugin);
