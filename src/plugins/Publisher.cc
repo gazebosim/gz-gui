@@ -80,35 +80,41 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   if (this->title.empty())
     this->title = "Publisher";
 
-  // Populate with default values. These can be checked with:
-  // ign topic -e -t /echo
+  // Populate with default values.
   this->dataPtr->msgTypeEdit = new QLineEdit("ignition.msgs.StringMsg");
+  this->dataPtr->msgTypeEdit->setObjectName("msgTypeEdit");
   this->dataPtr->msgEdit = new QTextEdit("data: \"Hello\"");
+  this->dataPtr->msgEdit->setObjectName("msgEdit");
   this->dataPtr->topicEdit = new QLineEdit("/echo");
+  this->dataPtr->topicEdit->setObjectName("topicEdit");
 
   auto freqLabel = new QLabel("Frequency");
   freqLabel->setToolTip("Set to zero to publish once");
 
   this->dataPtr->freqSpin = new QDoubleSpinBox();
+  this->dataPtr->freqSpin->setObjectName("frequencySpinBox");
   this->dataPtr->freqSpin->setMinimum(0);
   this->dataPtr->freqSpin->setMaximum(1000);
   this->dataPtr->freqSpin->setValue(1);
 
   this->dataPtr->publishButton = new QPushButton("Publish");
+  this->dataPtr->publishButton->setObjectName("publishButton");
   this->dataPtr->publishButton->setCheckable(true);
+  this->dataPtr->publishButton->setMinimumWidth(200);
   this->connect(this->dataPtr->publishButton, SIGNAL(toggled(bool)), this,
       SLOT(OnPublish(bool)));
 
   auto layout = new QGridLayout();
   layout->addWidget(new QLabel("Message type: "), 0, 0);
-  layout->addWidget(this->dataPtr->msgTypeEdit, 0, 1, 1, 2);
+  layout->addWidget(this->dataPtr->msgTypeEdit, 0, 1, 1, 3);
   layout->addWidget(new QLabel("Message: "), 1, 0);
-  layout->addWidget(this->dataPtr->msgEdit, 1, 1, 1, 2);
+  layout->addWidget(this->dataPtr->msgEdit, 1, 1, 1, 3);
   layout->addWidget(new QLabel("Topic: "), 2, 0);
-  layout->addWidget(this->dataPtr->topicEdit, 2, 1, 1, 2);
+  layout->addWidget(this->dataPtr->topicEdit, 2, 1, 1, 3);
   layout->addWidget(freqLabel, 3, 0);
   layout->addWidget(this->dataPtr->freqSpin, 3, 1);
-  layout->addWidget(this->dataPtr->publishButton, 3, 2);
+  layout->addWidget(new QLabel("Hz"), 3, 2);
+  layout->addWidget(this->dataPtr->publishButton, 3, 3);
   this->setLayout(layout);
 
   this->dataPtr->timer = new QTimer(this);
@@ -136,10 +142,11 @@ void Publisher::OnPublish(const bool _checked)
 
   // Check it's possible to create message
   auto msg = ignition::msgs::Factory::New(msgType, msgData);
-  if (!msg)
+  if (!msg || (msg->DebugString() == "" && msgData != ""))
   {
     ignerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";
+    this->dataPtr->publishButton->setChecked(false);
     return;
   }
 
@@ -150,6 +157,7 @@ void Publisher::OnPublish(const bool _checked)
   {
     ignerr << "Unable to publish on topic[" << topic << "] "
       << "with message type[" << msgType << "].\n";
+    this->dataPtr->publishButton->setChecked(false);
     return;
   }
 
