@@ -23,7 +23,6 @@
 #endif
 
 #include <ignition/msgs.hh>
-#include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Plugin.hh"
 
@@ -35,6 +34,13 @@ namespace plugins
 {
   class ImageDisplayPrivate;
 
+  /// \brief Display images coming through an Ignition transport topic.
+  ///
+  /// ## Configuration
+  ///
+  /// <topic> : Set the topic to receive image messages.
+  /// <topic_picker> : Whether to show the topic picker, true by default. If
+  ///                  this is false, a <topic> must be specified.
   class ImageDisplay : public Plugin
   {
     Q_OBJECT
@@ -58,10 +64,10 @@ namespace plugins
     /// \param[in] _msg New image
     private: void OnImageMsg(const ignition::msgs::Image &_msg);
 
-    /// \brief
+    /// \brief Callback when refresh button is pressed.
     private slots: void OnRefresh();
 
-    /// \brief
+    /// \brief Callback when a new topic is chosen on the combo box.
     private slots: void OnTopic(const QString _topic);
 
     /// \internal
