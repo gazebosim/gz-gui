@@ -9,6 +9,48 @@ of libraries designed to rapidly develop robot applications.
 
   [http://ignitionrobotics.org](http://ignitionrobotics.org)
 
+## Dependencies
+
+### External
+
+    sudo apt install -y build-essential wget cmake qtbase5-dev libtinyxml2-dev libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev libprotoc-dev libprotobuf-dev libzmq3-dev protobuf-compiler cppcheck mercurial
+
+
+### Ignition
+
+    # Ignition math
+    hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math3
+    cd ign-math
+    mkdir build
+    cd build
+    cmake .. -DENABLE_TESTS_COMPILATION=false
+    make install
+    cd ../..
+    # Ignition common
+    hg clone http://bitbucket.org/ignitionrobotics/ign-common -b default
+    cd ign-common
+    mkdir build
+    cd build
+    cmake .. -DENABLE_TESTS_COMPILATION=false
+    make install
+    cd ../..
+    # Ignition msgs
+    hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
+    cd ign-msgs
+    mkdir build
+    cd build
+    cmake .. -DENABLE_TESTS_COMPILATION=false
+    make install
+    cd ../..
+    # Ignition transport
+    hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
+    cd ign-transport
+    mkdir build
+    cd build
+    cmake .. -DENABLE_TESTS_COMPILATION=false
+    make install
+    cd ../..
+
 ## Installation
 
 Standard installation can be performed in UNIX systems using the following

@@ -161,6 +161,58 @@ TEST(IfaceTest, loadConfig)
 }
 
 /////////////////////////////////////////////////
+TEST(IfaceTest, StyleSheet)
+{
+  setVerbosity(4);
+
+  // Before init
+  {
+    EXPECT_FALSE(applyStyleSheet());
+  }
+
+  // Test qss file
+  {
+    EXPECT_TRUE(initApp());
+
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    // Default QSS
+    auto bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed");
+
+    // Load test qss file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(setQssFile(testSourcePath + "styles/red_bg.qss"));
+
+    // Check style hasn't been applied yet
+    bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed");
+
+    // Apply style
+    EXPECT_TRUE(applyStyleSheet());
+
+    // Check new style
+    bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ff0000");
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Empty string
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(setQssFile(""));
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+/////////////////////////////////////////////////
 TEST(IfaceTest, MainWindowNoPlugins)
 {
   setVerbosity(4);
