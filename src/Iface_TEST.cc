@@ -191,7 +191,7 @@ TEST(IfaceTest, MainWindowNoPlugins)
     auto win = mainWindow();
     EXPECT_TRUE(win != nullptr);
 
-    // Close window after 1 second
+    // Close window after some time
     QTimer::singleShot(300, win, SLOT(close()));
 
     // Show window
@@ -236,7 +236,7 @@ TEST(IfaceTest, Dialog)
       closed = true;
     });
 
-    // Close dialog after 1 second
+    // Close dialog after some time
     QTimer::singleShot(300, ds[0], SLOT(close()));
 
     while (!closed)
