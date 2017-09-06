@@ -104,8 +104,15 @@ class Cmd
       exit(-1)
     end
 
-    # Handle empty window case (no arguments, perhaps only verbose)
-    if options.empty? || (options.key?('verbose') && options.length == 1)
+    # Handle empty window case
+    # * no options or
+    # * none of the following:
+    #   - standalone
+    #   - config
+    #   - list
+    if options.empty? || (!options.key?('standalone') &&
+                          !options.key?('config') &&
+                          !options.key?('list'))
       options['emptywindow'] = ''
     end
 
@@ -184,10 +191,6 @@ class Cmd
         elsif options.key?('emptywindow')
           Importer.extern 'void cmdEmptyWindow()'
           Importer.cmdEmptyWindow()
-        elsif verbose
-          puts 'Please use another command in conjunction with verbose.'
-        elsif style
-          puts 'Please use another command in conjunction with style.'
         else
           puts 'Command error: I do not have an implementation '\
                'for this command.'

@@ -28,7 +28,7 @@ using namespace gui;
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
-  // Increase verboosity so we see all messages
+  // Increase verbosity so we see all messages
   setVerbosity(4);
 
   // Initialize app

@@ -49,7 +49,6 @@ of libraries designed to rapidly develop robot applications.
     cd build
     cmake .. -DENABLE_TESTS_COMPILATION=false
     make install
-    cd ../..
 
 ## Installation
 
@@ -265,10 +264,35 @@ You can also load the new config file from `File->Load configuration`.
 
 Ignition GUI comes with a reference style based on [material design](https://material.io/).
 
-Take a look at the
-[custom styles example](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/examples/standalone/custom_style/)
-to see how projects which use Ignition GUI as a library can use their own style.
+There are different ways to use custom [QSS](http://doc.qt.io/qt-5/stylesheet-syntax.html) stylesheets:
 
+### Using cmake
+
+Take a look at the
+[style_cmake example](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/examples/standalone/style_cmake/)
+to see how downstream projects can load their own style by setting it in cmake.
+
+### Command line
+
+You can pass a stylesheet file on the command line with the `-t` option. Try:
+
+    ign gui -s libPublisher.so -t examples/standalone/style_cmake/style.qss
+
+> Note: when loading a config file which has a stylesheet, this option will not
+  override it.
+
+### Through the GUI
+
+At any time from the main window, you can choose `File -> Load stylesheet` and
+choose a QSS file on the fly.
+
+### Config files
+
+You can embed your stylesheet inside the `<window><stylesheet>` tag inside your
+configuration file.
+
+When saving the configuration file through the GUI, the current stylesheet will
+be added.
 
 ## Command line
 
@@ -289,6 +313,9 @@ If you have Ignition Tools installed, you can use the `ign gui` command line too
 
       -c [ --config ] arg        Open the main window with a configuration file.
                                  Give the configuration file path as an argument
+
+      -t [ --style ] arg         Apply a stylesheet to the whole application.
+                                 Give a QSS file path as an argument.
 
       -v [ --verbose ] arg       Adjust the level of console output (0~4).
 
