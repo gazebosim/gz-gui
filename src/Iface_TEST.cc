@@ -170,7 +170,7 @@ TEST(IfaceTest, StyleSheet)
     EXPECT_FALSE(applyStyleSheet());
   }
 
-  // Test qss file
+  // Qss file with window
   {
     EXPECT_TRUE(initApp());
 
@@ -198,6 +198,61 @@ TEST(IfaceTest, StyleSheet)
     // Check new style
     bg = win->palette().window().color();
     EXPECT_EQ(bg.name(), "#ff0000");
+
+    // Cleanup
+    EXPECT_TRUE(setQssFile(":/style.qss"));
+    EXPECT_TRUE(stop());
+  }
+
+  // Qss file with dialog
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Create app
+    EXPECT_TRUE(initApp());
+
+    // Load test plugin
+    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+
+    // Run dialog
+    EXPECT_TRUE(runDialogs());
+
+    // Check it was open
+    auto ds = dialogs();
+    EXPECT_EQ(ds.size(), 1u);
+
+    // Default QSS
+    auto bg = ds[0]->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed");
+
+    // Load test qss file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(setQssFile(testSourcePath + "styles/red_bg.qss"));
+
+    // Check style hasn't been applied yet
+    bg = ds[0]->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed");
+
+    // Apply style
+    EXPECT_TRUE(applyStyleSheet());
+
+    // Check new style
+    bg = ds[0]->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ff0000");
+
+    // Wait until it is closed
+    auto closed = false;
+    ds[0]->connect(ds[0], &QDialog::finished, ds[0], [&](){
+      closed = true;
+    });
+
+    // Close dialog after some time
+    QTimer::singleShot(300, ds[0], SLOT(close()));
+
+    while (!closed)
+      QCoreApplication::processEvents();
 
     EXPECT_TRUE(stop());
   }

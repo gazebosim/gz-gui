@@ -28,12 +28,19 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion();
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList();
 
 /// \brief External hook to execute 'ign gui -s' from the command line.
+/// \param[in] _filename Name of a plugin file.
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename);
 
 /// \brief External hook to execute 'ign gui -c' from the command line.
+/// \param[in] _config Path to a config file.
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config);
 
 /// \brief External hook to execute 'ign gui' from the command line.
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow();
+
+/// \brief External hook when executing 'ign gui -t' from the command line.
+/// Sets the global QSS file.
+/// \param[in] _filename Path to a QSS file.
+extern "C" IGNITION_GUI_VISIBLE void cmdSetQssFile(const char *_filename);
 
 #endif

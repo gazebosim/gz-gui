@@ -167,8 +167,8 @@ class Cmd
 
         style = false
         if options.key?('style')
-          Importer.extern 'void cmdStyleSheet(const char *)'
-          Importer.cmdStyleSheet(options['style'])
+          Importer.extern 'void cmdSetQssFile(const char *)'
+          Importer.cmdSetQssFile(options['style'])
           style = true
         end
 

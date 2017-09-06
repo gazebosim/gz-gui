@@ -60,7 +60,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdStyleSheet(const char *_filename)
+extern "C" IGNITION_GUI_VISIBLE void cmdSetQssFile(const char *_filename)
 {
   ignition::gui::setQssFile(std::string(_filename));
 }
