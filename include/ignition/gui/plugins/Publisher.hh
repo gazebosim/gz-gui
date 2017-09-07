@@ -35,6 +35,9 @@ namespace plugins
   class PublisherPrivate;
 
   /// \brief Widget which publishes a custom Ignition transport message.
+  ///
+  /// ## Configuration
+  /// This plugin doesn't accept any custom configuration.
   class Publisher : public Plugin
   {
     Q_OBJECT

@@ -19,6 +19,7 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
 #include <ignition/common/PluginMacros.hh>
+#include <ignition/transport/Node.hh>
 
 #include "ignition/gui/plugins/ImageDisplay.hh"
 
@@ -33,14 +34,14 @@ namespace plugins
     /// \brief Topic dropdown
     public: QComboBox *topicsCombo;
 
-    /// \brief holds data to set as the next image
-    public: ignition::msgs::Image imageMsg;
+    /// \brief Holds data to set as the next image
+    public: msgs::Image imageMsg;
 
-    /// \brief tools for setting up a subscriber
-    public: ignition::transport::Node node;
+    /// \brief Node for communication.
+    public: transport::Node node;
 
-    /// \brief mutex for accessing image data
-    public: std::mutex imageMutex;
+    /// \brief Mutex for accessing image data
+    public: std::recursive_mutex imageMutex;
   };
 }
 }
@@ -95,12 +96,17 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     // Dropdown to choose ign topic
     this->dataPtr->topicsCombo = new QComboBox();
+    this->dataPtr->topicsCombo->setObjectName("topicsCombo");
     this->dataPtr->topicsCombo->setMinimumWidth(300);
-    this->connect(this->dataPtr->topicsCombo, SIGNAL(activated(const QString)),
-        this, SLOT(OnTopic(const QString)));
+    this->dataPtr->topicsCombo->setToolTip(
+        "Ignition transport topics publishing Image messages.");
+    this->connect(this->dataPtr->topicsCombo,
+        SIGNAL(currentIndexChanged(const QString)), this,
+        SLOT(OnTopic(const QString)));
 
     // Button to refresh topics
     auto refreshButton = new QPushButton("Refresh");
+    refreshButton->setObjectName("refreshButton");
     refreshButton->setToolTip("Refresh list of topics publishing images");
     refreshButton->setMaximumWidth(80);
     this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(OnRefresh()));
@@ -128,22 +134,22 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void ImageDisplay::ProcessImage()
 {
-  std::lock_guard<std::mutex> lock(this->dataPtr->imageMutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->imageMutex);
   switch (this->dataPtr->imageMsg.pixel_format())
   {
-    case ignition::common::Image::RGB_INT8:
+    case common::Image::RGB_INT8:
       this->UpdateFromRgbInt8();
       break;
     default:
-      std::cerr << "Unsupported image type: " <<
-        this->dataPtr->imageMsg.pixel_format() << std::endl;
+      ignerr << "Unsupported image type: " <<
+          this->dataPtr->imageMsg.pixel_format() << std::endl;
   }
 }
 
 /////////////////////////////////////////////////
-void ImageDisplay::OnImageMsg(const ignition::msgs::Image &_msg)
+void ImageDisplay::OnImageMsg(const msgs::Image &_msg)
 {
-  std::lock_guard<std::mutex> lock(this->dataPtr->imageMutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->imageMutex);
   this->dataPtr->imageMsg = _msg;
 
   // Signal to main thread that the image changed
