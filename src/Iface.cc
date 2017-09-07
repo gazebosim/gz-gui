@@ -150,7 +150,7 @@ std::string homePath()
 /////////////////////////////////////////////////
 bool ignition::gui::runConfig(const std::string &_config)
 {
-  ignmsg << "Loading config file [" << _config << "]" << std::endl;
+  igndbg << "Loading config file [" << _config << "]" << std::endl;
 
   if (_config.empty())
   {
@@ -191,7 +191,7 @@ bool ignition::gui::runEmptyWindow()
 /////////////////////////////////////////////////
 bool ignition::gui::runStandalone(const std::string &_filename)
 {
-  ignmsg << "Loading standalone plugin [" << _filename << "]" << std::endl;
+  igndbg << "Loading standalone plugin [" << _filename << "]" << std::endl;
 
   if (_filename.empty())
   {
