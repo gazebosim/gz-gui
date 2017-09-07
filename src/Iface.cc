@@ -354,7 +354,19 @@ bool ignition::gui::setQssFile(const std::string &_qssFile)
   QFile file(QString::fromStdString(_qssFile));
   if (!file.open(QFile::ReadOnly))
   {
-    ignerr << "Failed to open [" << _qssFile << "]." << std::endl;
+    ignerr << "Failed to open [" << _qssFile << "]: ";
+    if (_qssFile.empty())
+    {
+      std::cout << "file path is empty." << std::endl;
+    }
+    else if (!file.exists())
+    {
+      std::cout << "file doesn't exist." << std::endl;
+    }
+    else
+    {
+      std::cout << "potentially invalid permissions." << std::endl;
+    }
     return false;
   }
 

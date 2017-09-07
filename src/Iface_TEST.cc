@@ -182,7 +182,7 @@ TEST(IfaceTest, StyleSheet)
 
     // Default QSS
     auto bg = win->palette().window().color();
-    EXPECT_EQ(bg.name(), "#ededed");
+    EXPECT_EQ(bg.name(), "#ededed") << bg.name().toStdString();
 
     // Load test qss file
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
@@ -262,6 +262,15 @@ TEST(IfaceTest, StyleSheet)
     EXPECT_TRUE(initApp());
 
     EXPECT_FALSE(setQssFile(""));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Inexistent file
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(setQssFile("banana"));
 
     EXPECT_TRUE(stop());
   }
