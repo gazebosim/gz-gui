@@ -167,7 +167,8 @@ TEST(IfaceTest, StyleSheet)
 
   // Before init
   {
-    EXPECT_FALSE(applyStyleSheet());
+    EXPECT_FALSE(setStyleFromFile(""));
+    EXPECT_FALSE(setStyleFromString(""));
   }
 
   // Qss file with window
@@ -180,27 +181,19 @@ TEST(IfaceTest, StyleSheet)
     auto win = mainWindow();
     EXPECT_TRUE(win != nullptr);
 
-    // Default QSS
+    // Ignition GUI's QSS
     auto bg = win->palette().window().color();
     EXPECT_EQ(bg.name(), "#ededed") << bg.name().toStdString();
 
     // Load test qss file
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(setQssFile(testSourcePath + "styles/red_bg.qss"));
-
-    // Check style hasn't been applied yet
-    bg = win->palette().window().color();
-    EXPECT_EQ(bg.name(), "#ededed");
-
-    // Apply style
-    EXPECT_TRUE(applyStyleSheet());
+    EXPECT_TRUE(setStyleFromFile(testSourcePath + "styles/red_bg.qss"));
 
     // Check new style
     bg = win->palette().window().color();
     EXPECT_EQ(bg.name(), "#ff0000");
 
     // Cleanup
-    EXPECT_TRUE(setQssFile(":/style.qss"));
     EXPECT_TRUE(stop());
   }
 
@@ -223,20 +216,13 @@ TEST(IfaceTest, StyleSheet)
     auto ds = dialogs();
     EXPECT_EQ(ds.size(), 1u);
 
-    // Default QSS
+    // Ignition GUI's QSS
     auto bg = ds[0]->palette().window().color();
     EXPECT_EQ(bg.name(), "#ededed");
 
     // Load test qss file
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(setQssFile(testSourcePath + "styles/red_bg.qss"));
-
-    // Check style hasn't been applied yet
-    bg = ds[0]->palette().window().color();
-    EXPECT_EQ(bg.name(), "#ededed");
-
-    // Apply style
-    EXPECT_TRUE(applyStyleSheet());
+    EXPECT_TRUE(setStyleFromFile(testSourcePath + "styles/red_bg.qss"));
 
     // Check new style
     bg = ds[0]->palette().window().color();
@@ -257,11 +243,36 @@ TEST(IfaceTest, StyleSheet)
     EXPECT_TRUE(stop());
   }
 
-  // Empty string
+  // Qt's default style (empty string for sheet)
   {
     EXPECT_TRUE(initApp());
 
-    EXPECT_FALSE(setQssFile(""));
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    // Ignition GUI's QSS
+    auto bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed") << bg.name().toStdString();
+
+    // Set style to empty string
+    EXPECT_TRUE(setStyleFromString(""));
+
+    // Check new style
+    bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#f2f1f0") << bg.name().toStdString();
+
+    // Cleanup
+    EXPECT_TRUE(stop());
+  }
+
+  // Empty string for file
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(setStyleFromFile(""));
 
     EXPECT_TRUE(stop());
   }
@@ -270,7 +281,7 @@ TEST(IfaceTest, StyleSheet)
   {
     EXPECT_TRUE(initApp());
 
-    EXPECT_FALSE(setQssFile("banana"));
+    EXPECT_FALSE(setStyleFromFile("banana"));
 
     EXPECT_TRUE(stop());
   }

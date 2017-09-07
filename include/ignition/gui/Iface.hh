@@ -55,16 +55,20 @@ namespace ignition
     bool loadPlugin(const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
 
-    /// \brief Set a file to be the global stylesheet.
-    /// \param[in] _qssFile Path to QSS file.
-    /// \return True if successful
+    /// \brief Set the global style sheet from a file.
+    /// \param[in] _qssFile Path to QSS file. Use `:/style.qss` for Ignition
+    /// GUI's default style sheet.
+    /// \sa setStyleFromString
     IGNITION_GUI_VISIBLE
-    bool setQssFile(const std::string &_qssFile);
+    bool setStyleFromFile(const std::string &_qssFile);
 
-    /// \brief Apply a stylesheet previously loaded.
-    /// \return True if successful
+    /// \brief Set the global style sheet from a string.
+    /// \param[in] _styleSheet Style sheet in QSS format. Pass an empty string
+    /// to use Qt's default style.
+    /// \return True if successful.
+    /// \sa setStyleFromFile
     IGNITION_GUI_VISIBLE
-    bool applyStyleSheet();
+    bool setStyleFromString(const std::string &_styleSheet);
 
     /// \brief Add previously loaded plugins to the main window.
     /// * Make sure the window is created first

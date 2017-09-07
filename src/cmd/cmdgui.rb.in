@@ -165,28 +165,43 @@ class Cmd
       case options['command']
       when 'gui'
 
-        if options.key?('verbose')
-          Importer.extern 'void cmdVerbose(const char *)'
-          Importer.cmdVerbose(options['verbose'])
-        end
-
-        if options.key?('style')
-          Importer.extern 'void cmdSetQssFile(const char *)'
-          Importer.cmdSetQssFile(options['style'])
-        end
-
+        # Options which don't open windows
         if options.key?('list')
           Importer.extern 'void cmdPluginList()'
           Importer.cmdPluginList
-        elsif options.key?('standalone')
-          Importer.extern 'void cmdStandalone(const char *)'
-          Importer.cmdStandalone(options['standalone'])
-        elsif options.key?('config')
-          Importer.extern 'void cmdConfig(const char *)'
-          Importer.cmdConfig(options['config'])
-        elsif options.key?('emptywindow')
-          Importer.extern 'void cmdEmptyWindow()'
-          Importer.cmdEmptyWindow()
+        # Options which open windows
+        elsif options.key?('standalone') or
+              options.key?('config') or
+              options.key?('emptywindow')
+
+          # Initialize app
+          Importer.extern 'void cmdInitApp()'
+          Importer.cmdInitApp()
+
+          # Global configurations
+          if options.key?('verbose')
+            Importer.extern 'void cmdVerbose(const char *)'
+            Importer.cmdVerbose(options['verbose'])
+          end
+
+          if options.key?('style')
+            Importer.extern 'void cmdSetStyleFromFile(const char *)'
+            Importer.cmdSetStyleFromFile(options['style'])
+          end
+
+          # Open specific window
+          if options.key?('standalone')
+            Importer.extern 'void cmdStandalone(const char *)'
+            Importer.cmdStandalone(options['standalone'])
+          elsif options.key?('config')
+            Importer.extern 'void cmdConfig(const char *)'
+            Importer.cmdConfig(options['config'])
+          elsif options.key?('emptywindow')
+            Importer.extern 'void cmdEmptyWindow()'
+            Importer.cmdEmptyWindow()
+          end
+
+        # Unknown command
         else
           puts 'Command error: I do not have an implementation '\
                'for this command.'

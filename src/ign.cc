@@ -30,6 +30,12 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 }
 
 //////////////////////////////////////////////////
+extern "C" IGNITION_GUI_VISIBLE void cmdInitApp()
+{
+  ignition::gui::initApp();
+}
+
+//////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
   ignition::gui::listPlugins();
@@ -60,7 +66,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdSetQssFile(const char *_filename)
+extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(const char *_filename)
 {
-  ignition::gui::setQssFile(std::string(_filename));
+  ignition::gui::setStyleFromFile(std::string(_filename));
 }

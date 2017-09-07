@@ -229,8 +229,7 @@ void MainWindow::OnLoadStylesheet()
   if (selected.empty())
     return;
 
-  setQssFile(selected[0].toStdString());
-  applyStyleSheet();
+  setStyleFromFile(selected[0].toStdString());
 }
 
 /////////////////////////////////////////////////

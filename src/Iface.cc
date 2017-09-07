@@ -57,7 +57,7 @@ struct WindowConfig
   QByteArray state;
 
   /// \brief String holding the global style sheet in QSS format.
-  QString styleSheet;
+  std::string styleSheet;
 };
 
 /// \brief Pointer to application
@@ -247,6 +247,9 @@ bool ignition::gui::initApp()
   // Create app
   g_app = new QApplication(g_argc, g_argv);
 
+  // Apply Ignition GUI's default stylesheet
+  setStyleFromFile(":/style.qss");
+
   // Install signal handler for graceful shutdown
   installSignalHandler();
 
@@ -340,16 +343,17 @@ bool ignition::gui::loadConfig(const std::string &_config)
     }
 
     if (auto styleElem = winElem->FirstChildElement("stylesheet"))
-      g_windowConfig.styleSheet = styleElem->GetText();
+      setStyleFromString(styleElem->GetText());
   }
 
   return true;
 }
 
 /////////////////////////////////////////////////
-bool ignition::gui::setQssFile(const std::string &_qssFile)
+bool ignition::gui::setStyleFromFile(const std::string &_qssFile)
 {
-  ignmsg << "Setting QSS file [" << _qssFile << "]" << std::endl;
+  if (!checkApp())
+    return false;
 
   QFile file(QString::fromStdString(_qssFile));
   if (!file.open(QFile::ReadOnly))
@@ -370,24 +374,22 @@ bool ignition::gui::setQssFile(const std::string &_qssFile)
     return false;
   }
 
-  g_windowConfig.styleSheet = QLatin1String(file.readAll());
+  ignmsg << "Applying stylesheet [" << _qssFile << "]" << std::endl;
 
-  return true;
+  QString styleStr = QLatin1String(file.readAll());
+  return setStyleFromString(styleStr.toStdString());
 }
 
 /////////////////////////////////////////////////
-bool ignition::gui::applyStyleSheet()
+bool ignition::gui::setStyleFromString(const std::string &_style)
 {
   if (!checkApp())
     return false;
 
-  if (g_windowConfig.styleSheet.isNull())
-    setQssFile(":/style.qss");
+  g_windowConfig.styleSheet = _style;
+  g_app->setStyleSheet(QString::fromStdString(g_windowConfig.styleSheet));
 
-  igndbg << "Applying stylesheet" << std::endl;
-
-  g_app->setStyleSheet(g_windowConfig.styleSheet);
-
+  // \todo Return false if sheet is can't be correctly parsed.
   return true;
 }
 
@@ -526,7 +528,7 @@ bool ignition::gui::applyConfig()
       ignwarn << "Failed to restore state" << std::endl;
   }
 
-  applyStyleSheet();
+  setStyleFromString(g_windowConfig.styleSheet);
 
   QCoreApplication::processEvents();
 
@@ -556,8 +558,6 @@ bool ignition::gui::runMainWindow()
 
   igndbg << "Run main window" << std::endl;
 
-  applyStyleSheet();
-
   g_mainWin->show();
 
   // Execute app
@@ -573,8 +573,6 @@ bool ignition::gui::runDialogs()
     return false;
 
   igndbg << "Run dialogs" << std::endl;
-
-  applyStyleSheet();
 
   for (auto &plugin : g_plugins)
   {

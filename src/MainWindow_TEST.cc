@@ -272,7 +272,6 @@ TEST(MainWindowTest, OnLoadConfig)
     EXPECT_EQ(bg.name(), "#0000ff");
   }
 
-  EXPECT_TRUE(setQssFile(":/style.qss"));
   EXPECT_TRUE(stop());
 }
 
