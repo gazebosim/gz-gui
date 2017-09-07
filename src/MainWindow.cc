@@ -109,7 +109,7 @@ MainWindow::~MainWindow()
 /////////////////////////////////////////////////
 bool MainWindow::CloseAllDocks()
 {
-  ignmsg << "Closing all docks" << std::endl;
+  igndbg << "Closing all docks" << std::endl;
 
   auto docks = this->findChildren<QDockWidget *>();
   for (auto dock : docks)
