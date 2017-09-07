@@ -22,35 +22,32 @@
   #include <ignition/gui/Iface.hh>
 #endif
 
-using namespace ignition;
-using namespace gui;
-
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
   std::cout << "Hello, GUI!" << std::endl;
 
   // Increase verboosity so we see all messages
-  setVerbosity(4);
+  ignition::gui::setVerbosity(4);
 
   // Initialize app
-  initApp();
+  ignition::gui::initApp();
 
   // Load plugins and configurations
-  loadPlugin("libhello_plugin.so");
+  ignition::gui::loadPlugin("libhello_plugin.so");
 
   // Create main window
-  createMainWindow();
+  ignition::gui::createMainWindow();
 
   // Customize main window
-  auto win = mainWindow();
+  auto win = ignition::gui::mainWindow();
   win->setWindowTitle("Hello Window!");
 
   // Run window
-  runMainWindow();
+  ignition::gui::runMainWindow();
 
   // After window is closed
-  stop();
+  ignition::gui::stop();
 
   std::cout << "After run" << std::endl;
 

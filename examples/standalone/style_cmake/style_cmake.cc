@@ -22,33 +22,30 @@
   #include <ignition/gui/Iface.hh>
 #endif
 
-using namespace ignition;
-using namespace gui;
-
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
   // Increase verbosity so we see all messages
-  setVerbosity(4);
+  ignition::gui::setVerbosity(4);
 
   // Initialize app
-  initApp();
+  ignition::gui::initApp();
 
   // Load plugins and configurations
-  loadPlugin("libPublisher.so");
+  ignition::gui::loadPlugin("libPublisher.so");
 
   // Create main window
-  createMainWindow();
+  ignition::gui::createMainWindow();
 
   // Customize main window
-  auto win = mainWindow();
+  auto win = ignition::gui::mainWindow();
   win->setWindowTitle("Custom styles!");
 
   // Run window
-  runMainWindow();
+  ignition::gui::runMainWindow();
 
   // After window is closed
-  stop();
+  ignition::gui::stop();
 
   return 0;
 }

@@ -64,7 +64,7 @@ struct WindowConfig
 QApplication *g_app;
 
 /// \brief Pointer to main window
-MainWindow *g_main_win = nullptr;
+MainWindow *g_mainWin = nullptr;
 
 /// \brief Vector of pointers to dialogs
 std::vector<QDialog *> g_dialogs;
@@ -107,8 +107,8 @@ bool installSignalHandler()
       {
         // Note: Don't call stop() for the main window, we close it and let the
         // program pick it up from there
-        if (g_main_win)
-          g_main_win->close();
+        if (g_mainWin)
+          g_mainWin->close();
         else
           stop();
       };
@@ -258,11 +258,11 @@ bool ignition::gui::stop()
 {
   ignmsg << "Stop" << std::endl;
 
-  if (g_main_win)
+  if (g_mainWin)
   {
-    g_main_win->close();
-    delete g_main_win;
-    g_main_win = nullptr;
+    g_mainWin->close();
+    delete g_mainWin;
+    g_mainWin = nullptr;
   }
 
   for (auto dialog : g_dialogs)
@@ -457,7 +457,7 @@ bool ignition::gui::createMainWindow()
 
   ignmsg << "Create main window" << std::endl;
 
-  g_main_win = new MainWindow();
+  g_mainWin = new MainWindow();
 
   return addPluginsToWindow() && applyConfig();
 }
@@ -470,7 +470,7 @@ bool ignition::gui::addPluginsToWindow()
   for (auto &plugin : g_plugins)
   {
     auto title = QString::fromStdString(plugin->Title());
-    auto dock = new QDockWidget(title, g_main_win);
+    auto dock = new QDockWidget(title, g_mainWin);
     dock->setObjectName(title);
     dock->setAllowedAreas(Qt::TopDockWidgetArea);
     dock->setWidget(&*plugin);
@@ -479,9 +479,9 @@ bool ignition::gui::addPluginsToWindow()
       dock->setTitleBarWidget(new QWidget());
 
     if (count % 2 == 0)
-      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
+      g_mainWin->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
     else
-      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
+      g_mainWin->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
@@ -503,14 +503,14 @@ bool ignition::gui::applyConfig()
   ignmsg << "Applying config" << std::endl;
 
   if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
-    g_main_win->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
+    g_mainWin->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
 
   if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
-    g_main_win->resize(g_windowConfig.width, g_windowConfig.height);
+    g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
 
   if (!g_windowConfig.state.isEmpty())
   {
-    if (!g_main_win->restoreState(g_windowConfig.state))
+    if (!g_mainWin->restoreState(g_windowConfig.state))
       ignwarn << "Failed to restore state" << std::endl;
   }
 
@@ -524,7 +524,7 @@ bool ignition::gui::applyConfig()
 /////////////////////////////////////////////////
 ignition::gui::MainWindow *ignition::gui::mainWindow()
 {
-  return g_main_win;
+  return g_mainWin;
 }
 
 /////////////////////////////////////////////////
@@ -546,7 +546,7 @@ bool ignition::gui::runMainWindow()
 
   applyStyleSheet();
 
-  g_main_win->show();
+  g_mainWin->show();
 
   // Execute app
   g_app->exec();
