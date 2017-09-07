@@ -36,7 +36,7 @@ TEST(ImageDisplayTest, Load)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, DefaultConfig)
+TEST(ImageDisplayTest, DefaultConfig)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -74,7 +74,7 @@ TEST(TimePanelTest, DefaultConfig)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, NoPickerNeedsTopic)
+TEST(ImageDisplayTest, NoPickerNeedsTopic)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -120,7 +120,7 @@ TEST(TimePanelTest, NoPickerNeedsTopic)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, ReceiveImage)
+TEST(ImageDisplayTest, ReceiveImage)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -196,7 +196,7 @@ TEST(TimePanelTest, ReceiveImage)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, TopicPicker)
+TEST(ImageDisplayTest, TopicPicker)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
