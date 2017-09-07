@@ -165,18 +165,14 @@ class Cmd
       case options['command']
       when 'gui'
 
-        verbose = false
         if options.key?('verbose')
           Importer.extern 'void cmdVerbose(const char *)'
           Importer.cmdVerbose(options['verbose'])
-          verbose = true
         end
 
-        style = false
         if options.key?('style')
           Importer.extern 'void cmdSetQssFile(const char *)'
           Importer.cmdSetQssFile(options['style'])
-          style = true
         end
 
         if options.key?('list')
