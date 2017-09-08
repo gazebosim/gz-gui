@@ -245,6 +245,20 @@ TEST(IfaceTest, StyleSheet)
 
   // Qt's default style (empty string for sheet)
   {
+    // App with native settings (OS-dependant)
+    QColor defaultBg;
+    {
+      int argc = 1;
+      char **argv = nullptr;
+      auto app = new QApplication(argc, argv);
+      auto win = new MainWindow();
+      defaultBg = win->palette().window().color();
+      igndbg << "Default bg: " << defaultBg.name().toStdString() << std::endl;
+      delete win;
+      app->quit();
+      delete app;
+    }
+
     EXPECT_TRUE(initApp());
 
     // Create main window
@@ -262,7 +276,7 @@ TEST(IfaceTest, StyleSheet)
 
     // Check new style
     bg = win->palette().window().color();
-    EXPECT_EQ(bg.name(), "#f2f1f0") << bg.name().toStdString();
+    EXPECT_EQ(bg.name(), defaultBg.name()) << bg.name().toStdString();
 
     // Cleanup
     EXPECT_TRUE(stop());
