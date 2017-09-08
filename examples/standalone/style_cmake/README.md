@@ -1,23 +1,23 @@
-This example shows how to use custom stylesheets with Ignition GUI.
+This example shows how to use a custom stylesheet with Ignition GUI by configuring Cmake.
 
 ## Quickstart
 
-    cd <path to>/examples/standalone/custom_style/
+    cd <path to>/examples/standalone/style_cmake/
     mkdir build
     cd build
     cmake ..
     make
-    ./custom_style
+    ./style_cmake
 
 ## Some pointers
 
-1. Create a `qss` file such as `style.qss`
+1. Create a file named `style.qss`
 
 1. Create a `qrc` file such as `resources.qrc`
 
 1. Inside the `qrc` file, reference:
 
-    * The stylesheet
+    * The qss stylesheet
 
     * Any images you may need
 

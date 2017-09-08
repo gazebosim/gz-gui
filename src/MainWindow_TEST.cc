@@ -103,6 +103,22 @@ TEST(MainWindowTest, OnSaveConfig)
 
     // Trigger save
     saveAct->trigger();
+
+    // Check saved file
+    QFile saved("/tmp/ign-gui-test.config");
+    ASSERT_TRUE(saved.open(QFile::ReadOnly));
+
+    QString savedStr = QLatin1String(saved.readAll());
+    EXPECT_FALSE(savedStr.isNull());
+    EXPECT_TRUE(savedStr.contains("<window>"));
+    EXPECT_TRUE(savedStr.contains("<height>"));
+    EXPECT_TRUE(savedStr.contains("<width>"));
+    EXPECT_TRUE(savedStr.contains("<position_x>"));
+    EXPECT_TRUE(savedStr.contains("<position_y>"));
+    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
+    EXPECT_TRUE(savedStr.contains("<state>"));
+
+    // Delete file
     std::remove("/tmp/ign-gui-test.config");
 
     EXPECT_TRUE(closed);
@@ -218,6 +234,118 @@ TEST(MainWindowTest, OnLoadConfig)
     // Check window has 2 plugins
     plugins = mainWindow->findChildren<Plugin *>();
     EXPECT_EQ(plugins.size(), 2);
+  }
+
+  // Load file with stylesheet
+  {
+    // Check window style
+    auto bg = mainWindow->palette().window().color();
+    EXPECT_NE(bg.name(), "#0000ff");
+
+    // Close window after 1 s
+    closed = false;
+    QTimer::singleShot(300, [&]
+    {
+      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
+      ASSERT_EQ(fileDialogs.size(), 1);
+
+      // Select file
+      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
+      ASSERT_GT(edits.size(), 0);
+      edits[0]->setText(QString::fromStdString(
+          std::string(PROJECT_SOURCE_PATH) + "/test/config/stylesheet.config"));
+
+      // Accept
+      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
+      EXPECT_GT(buttons.size(), 0);
+      buttons[0]->click();
+      closed = true;
+    });
+
+    // Trigger load
+    loadAct->trigger();
+
+    EXPECT_TRUE(closed);
+
+    // Check window style
+    bg = mainWindow->palette().window().color();
+    EXPECT_EQ(bg.name(), "#0000ff");
+  }
+
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest, OnLoadStyleSheet)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Create main window
+  createMainWindow();
+  auto mainWindow = ignition::gui::mainWindow();
+  EXPECT_TRUE(mainWindow);
+
+  // Check window has Ignition GUI's default style
+  auto bg = mainWindow->palette().window().color();
+  EXPECT_EQ(bg.name(), "#ededed");
+
+  // Get load action on menu
+  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
+  ASSERT_GT(menus.size(), 0);
+  ASSERT_GT(menus[0]->actions().size(), 3);
+  auto loadAct = menus[0]->actions()[3];
+  EXPECT_EQ(loadAct->text(), QString("&Load stylesheet"));
+
+  bool closed = false;
+
+  // Close dialog without choosing file
+  {
+    // Close window after 1 s
+    QTimer::singleShot(300, [&]
+    {
+      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
+      ASSERT_EQ(fileDialogs.size(), 1);
+      fileDialogs[0]->close();
+      closed = true;
+    });
+
+    // Trigger load
+    loadAct->trigger();
+
+    EXPECT_TRUE(closed);
+  }
+
+  // Load test stylesheet
+  {
+    // Close window after 1 s
+    closed = false;
+    QTimer::singleShot(300, [&]
+    {
+      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
+      ASSERT_EQ(fileDialogs.size(), 1);
+
+      // Select file
+      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
+      ASSERT_GT(edits.size(), 0);
+      edits[0]->setText(QString::fromStdString(
+          std::string(PROJECT_SOURCE_PATH) + "/test/styles/red_bg.qss"));
+
+      // Accept
+      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
+      EXPECT_GT(buttons.size(), 0);
+      buttons[0]->click();
+      closed = true;
+    });
+
+    // Trigger load
+    loadAct->trigger();
+
+    EXPECT_TRUE(closed);
+
+    // Check style was applied
+    bg = mainWindow->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ff0000");
   }
 
   EXPECT_TRUE(stop());
