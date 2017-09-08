@@ -94,7 +94,7 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->freqSpin->setMaximum(1000);
   this->dataPtr->freqSpin->setValue(1);
 
-  this->dataPtr->publishButton = new QPushButton("Publish");
+  this->dataPtr->publishButton = new QPushButton(Plugin::tr("Publish"));
   this->dataPtr->publishButton->setCheckable(true);
   this->connect(this->dataPtr->publishButton, SIGNAL(toggled(bool)), this,
       SLOT(OnPublish(bool)));

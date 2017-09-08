@@ -65,6 +65,8 @@ std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 std::vector<std::string> g_pluginPaths;
 WindowConfig g_windowConfig;
 
+QTranslator g_translator;
+
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
 bool checkApp()
@@ -239,6 +241,17 @@ bool ignition::gui::initApp()
 
   // Install signal handler for graceful shutdown
   installSignalHandler();
+
+  // Install translator
+//  translator.load("qt_" + QLocale::system().name(),
+//      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+//  if (translator.load("/usr/share/qt5/translations/qt_pt"))
+//    g_app->installTranslator(&translator);
+//  else
+
+  if(!g_translator.load("/home/louise/code/ign-gui/build/include/ignition/gui/languages/translation_pt"))
+    ignerr << "FAIL" << std::endl;
+  g_app->installTranslator(&g_translator);
 
   return true;
 }
@@ -621,5 +634,20 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   }
 
   return plugins;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::switchTranslator(const std::string &_filename)
+{
+  // remove the old translator
+  g_app->removeTranslator(&g_translator);
+
+  // load the new translator
+  if (g_translator.load(QString::fromStdString(_filename)))
+    g_app->installTranslator(&g_translator);
+  else
+  {
+    ignerr << "Failed to load translator [" << _filename << "]" << std::endl;
+  }
 }
 

@@ -46,6 +46,7 @@ target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
 ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})
 
 add_subdirectory(plugins)
+add_subdirectory(languages)
 
 #################################################
 ### Do not change the following

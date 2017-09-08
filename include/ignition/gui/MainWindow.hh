@@ -43,6 +43,12 @@ namespace ignition
       /// \return True if all docks have been closed
       public: bool CloseAllDocks();
 
+      /// \brief this event is called, when a new translator is loaded or the system language is changed
+      private: void changeEvent(QEvent *_event);
+
+      // this slot is called by the language menu actions
+      private slots: void OnLanguage(QAction *_action);
+
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
 
@@ -52,6 +58,8 @@ namespace ignition
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename
       private slots: void OnAddPlugin(QString _plugin);
+
+      private: QString language;
 
       /// \internal
       /// \brief Private data pointer

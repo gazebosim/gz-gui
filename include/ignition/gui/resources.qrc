@@ -1,6 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+
+  <!-- style sheets -->
   <file>style.qss</file>
+
+  <!-- images -->
   <file>images/branch-end.png</file>
   <file>images/branch-more.png</file>
   <file>images/close.svg</file>
@@ -10,5 +14,8 @@
   <file>images/search.svg</file>
   <file>images/undock.svg</file>
   <file>images/vline.png</file>
+
+  <!-- languages -->
+
 </qresource>
 </RCC>

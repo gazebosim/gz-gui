@@ -47,9 +47,9 @@ MainWindow::MainWindow()
   this->setWindowTitle(tr(title.c_str()));
 
   // File menu
-  auto fileMenu = this->menuBar()->addMenu(tr("&File"));
+  auto fileMenu = this->menuBar()->addMenu(tr("File"));
 
-  auto loadConfigAct = new QAction(tr("&Load configuration"), this);
+  auto loadConfigAct = new QAction(tr("Load configuration"), this);
   loadConfigAct->setStatusTip(tr("Quit"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
   fileMenu->addAction(loadConfigAct);
@@ -65,6 +65,56 @@ MainWindow::MainWindow()
   quitAct->setStatusTip(tr("Quit"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
+
+
+
+
+
+
+
+
+
+  auto langGroup = new QActionGroup(this);
+  langGroup->setExclusive(true);
+
+  this->connect(langGroup, SIGNAL(triggered(QAction *)), this, SLOT(OnLanguage(QAction *)));
+
+  // System locale
+  auto defaultLocale = QLocale::system().name();
+  defaultLocale.truncate(defaultLocale.lastIndexOf('_'));
+
+  QDir dir("/home/louise/code/ign-gui/include/ignition/gui/languages");
+  QStringList fileNames = dir.entryList(QStringList("translation_*.qm"));
+
+  for (int i = 0; i < fileNames.size(); ++i)
+  {
+    // Locale (en) from filename (translation_en.qm)
+    QString locale;
+    locale = fileNames[i];
+    locale.truncate(locale.lastIndexOf('.'));
+    locale.remove(0, locale.indexOf('_') + 1);
+
+    auto lang = QLocale::languageToString(QLocale(locale).language());
+
+    auto action = new QAction(lang, this);
+    action->setCheckable(true);
+    action->setData(locale);
+
+    fileMenu->addAction(action);
+    langGroup->addAction(action);
+
+    // set default translators and language checked
+    if (defaultLocale == locale)
+      action->setChecked(true);
+  }
+
+
+
+
+
+
+
+
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
@@ -91,6 +141,8 @@ MainWindow::MainWindow()
   this->setDockOptions(QMainWindow::AnimatedDocks |
                        QMainWindow::AllowTabbedDocks |
                        QMainWindow::AllowNestedDocks);
+
+  this->setCentralWidget(new QPushButton(QMainWindow::tr("Publish")));
 }
 
 /////////////////////////////////////////////////
@@ -207,5 +259,55 @@ void MainWindow::OnAddPlugin(QString _plugin)
 
   loadPlugin(plugin);
   addPluginsToWindow();
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnLanguage(QAction *_action)
+{
+  if (!_action)
+    return;
+
+  auto newLanguage = _action->data().toString();
+
+  if (this->language == newLanguage)
+    return;
+
+  this->language = newLanguage;
+
+  auto locale = QLocale(this->language);
+  QLocale::setDefault(locale);
+
+  auto languageName = QLocale::languageToString(locale.language());
+
+  switchTranslator(QString("/home/louise/code/ign-gui/include/ignition/gui/languages/translation_%1.qm").arg(this->language).toStdString());
+ // switchTranslator(this->translatorQt, QString("qt_%1.qm").arg(this->language));
+}
+
+/////////////////////////////////////////////////
+void MainWindow::changeEvent(QEvent *_event)
+{
+  if (!_event)
+    return;
+
+  switch(_event->type())
+  {
+    // this event is sent if a translator is loaded
+    case QEvent::LanguageChange:
+igndbg << "A" << std::endl;
+    break;
+
+    // this event is sent if the system language changes
+    case QEvent::LocaleChange:
+    {
+igndbg << "A" << std::endl;
+      auto locale = QLocale::system().name();
+      locale.truncate(locale.lastIndexOf('_'));
+    }
+    break;
+    default:
+    break;
+  }
+
+  QMainWindow::changeEvent(_event);
 }
 

@@ -66,6 +66,11 @@ if (NOT Qt5Test_FOUND)
   BUILD_ERROR("Missing: Qt5Test")
 endif()
 
+find_package(Qt5LinguistTools)
+if (NOT Qt5LinguistTools_FOUND)
+  BUILD_ERROR("Missing: Qt5LinguistTools")
+endif()
+
 #################################################
 # Find tinyxml2. Only debian distributions package tinyxml with a pkg-config
 # Use pkg_check_modules and fallback to manual detection

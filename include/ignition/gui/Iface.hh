@@ -125,6 +125,10 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     void listPlugins();
 
+    /// \brief
+    IGNITION_GUI_VISIBLE
+    void switchTranslator(const std::string &_filename);
+
     /// \brief Get the list of available plugins, organized by path. The paths
     /// are given in the following order:
     ///
