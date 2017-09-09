@@ -43,10 +43,13 @@ COMMANDS = {  'gui' =>
                        "  -l [ --list ]              List all available plugins.\n" +
                        "\n" +
                        "  -s [ --standalone ] arg    Run a plugin as a standalone window.\n" +
-                       "                             Give the plugin filename as an argument\n" +
+                       "                             Give the plugin filename as an argument.\n" +
                        "\n" +
                        "  -c [ --config ] arg        Open the main window with a configuration file.\n" +
-                       "                             Give the configuration file path as an argument\n" +
+                       "                             Give the configuration file path as an argument.\n" +
+                       "\n" +
+                       "  -t [ --style ] arg         Apply a stylesheet to the whole application.\n" +
+                       "                             Give a QSS file path as an argument.\n" +
                        "\n" +
                        "  -v [ --verbose ] arg       Adjust the level of console output (0~4).\n" +
                        "\n" +
@@ -84,6 +87,10 @@ class Cmd
           'Load a configuration file') do |c|
         options['config'] = c
       end
+      opts.on('-t style', '--style', String,
+          'Load a stylesheet') do |t|
+        options['style'] = t
+      end
       opts.on('-v verbose', '--verbose', String,
           'Adjust level of console output') do |v|
         options['verbose'] = v
@@ -97,8 +104,15 @@ class Cmd
       exit(-1)
     end
 
-    # Handle empty window case (no arguments, perhaps only verbose)
-    if options.empty? || (options.key?('verbose') && options.length == 1)
+    # Handle empty window case
+    # * no options or
+    # * none of the following:
+    #   - standalone
+    #   - config
+    #   - list
+    if options.empty? || (!options.key?('standalone') &&
+                          !options.key?('config') &&
+                          !options.key?('list'))
       options['emptywindow'] = ''
     end
 
@@ -151,27 +165,43 @@ class Cmd
       case options['command']
       when 'gui'
 
-        verbose = false
-        if options.key?('verbose')
-          Importer.extern 'void cmdVerbose(const char *)'
-          Importer.cmdVerbose(options['verbose'])
-          verbose = true
-        end
-
+        # Options which don't open windows
         if options.key?('list')
           Importer.extern 'void cmdPluginList()'
           Importer.cmdPluginList
-        elsif options.key?('standalone')
-          Importer.extern 'void cmdStandalone(const char *)'
-          Importer.cmdStandalone(options['standalone'])
-        elsif options.key?('config')
-          Importer.extern 'void cmdConfig(const char *)'
-          Importer.cmdConfig(options['config'])
-        elsif options.key?('emptywindow')
-          Importer.extern 'void cmdEmptyWindow()'
-          Importer.cmdEmptyWindow()
-        elsif verbose
-          puts 'Please use another command in conjunction with verbose.'
+        # Options which open windows
+        elsif options.key?('standalone') or
+              options.key?('config') or
+              options.key?('emptywindow')
+
+          # Initialize app
+          Importer.extern 'void cmdInitApp()'
+          Importer.cmdInitApp()
+
+          # Global configurations
+          if options.key?('verbose')
+            Importer.extern 'void cmdVerbose(const char *)'
+            Importer.cmdVerbose(options['verbose'])
+          end
+
+          if options.key?('style')
+            Importer.extern 'void cmdSetStyleFromFile(const char *)'
+            Importer.cmdSetStyleFromFile(options['style'])
+          end
+
+          # Open specific window
+          if options.key?('standalone')
+            Importer.extern 'void cmdStandalone(const char *)'
+            Importer.cmdStandalone(options['standalone'])
+          elsif options.key?('config')
+            Importer.extern 'void cmdConfig(const char *)'
+            Importer.cmdConfig(options['config'])
+          elsif options.key?('emptywindow')
+            Importer.extern 'void cmdEmptyWindow()'
+            Importer.cmdEmptyWindow()
+          end
+
+        # Unknown command
         else
           puts 'Command error: I do not have an implementation '\
                'for this command.'

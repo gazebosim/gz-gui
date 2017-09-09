@@ -30,6 +30,12 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 }
 
 //////////////////////////////////////////////////
+extern "C" IGNITION_GUI_VISIBLE void cmdInitApp()
+{
+  ignition::gui::initApp();
+}
+
+//////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
   ignition::gui::listPlugins();
@@ -57,4 +63,10 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
   ignition::gui::runEmptyWindow();
+}
+
+//////////////////////////////////////////////////
+extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(const char *_filename)
+{
+  ignition::gui::setStyleFromFile(std::string(_filename));
 }

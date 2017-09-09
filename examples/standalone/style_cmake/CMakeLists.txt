@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 set (CMAKE_AUTOMOC ON)
 
@@ -21,12 +21,12 @@ include_directories(SYSTEM
 link_directories(${IGNITION-GUI_LIBRARY_DIRS})
 
 # Generate examples
-if (EXISTS "${CMAKE_SOURCE_DIR}/custom_style.cc")
-  add_executable(custom_style
-    custom_style.cc
+if (EXISTS "${CMAKE_SOURCE_DIR}/style_cmake.cc")
+  add_executable(style_cmake
+    style_cmake.cc
     ${resources_RCC}
   )
-  target_link_libraries(custom_style
+  target_link_libraries(style_cmake
     ${IGNITION-GUI_LIBRARIES}
     ${Qt5Core_LIBRARIES}
     ${Qt5Widgets_LIBRARIES})

@@ -55,14 +55,30 @@ struct WindowConfig
 
   /// \brief Window state (dock configuration)
   QByteArray state;
+
+  /// \brief String holding the global style sheet in QSS format.
+  std::string styleSheet;
 };
 
+/// \brief Pointer to application
 QApplication *g_app;
-MainWindow *g_main_win = nullptr;
+
+/// \brief Pointer to main window
+MainWindow *g_mainWin = nullptr;
+
+/// \brief Vector of pointers to dialogs
 std::vector<QDialog *> g_dialogs;
+
+/// \brief Vector of pointers to plugins
 std::vector<std::unique_ptr<Plugin>> g_plugins;
+
+/// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
+
+/// \brief Vector of paths to look for plugins
 std::vector<std::string> g_pluginPaths;
+
+/// \brief Window configuration
 WindowConfig g_windowConfig;
 
 QTranslator g_translator;
@@ -93,8 +109,8 @@ bool installSignalHandler()
       {
         // Note: Don't call stop() for the main window, we close it and let the
         // program pick it up from there
-        if (g_main_win)
-          g_main_win->close();
+        if (g_mainWin)
+          g_mainWin->close();
         else
           stop();
       };
@@ -136,7 +152,7 @@ std::string homePath()
 /////////////////////////////////////////////////
 bool ignition::gui::runConfig(const std::string &_config)
 {
-  ignmsg << "Loading config file [" << _config << "]" << std::endl;
+  igndbg << "Loading config file [" << _config << "]" << std::endl;
 
   if (_config.empty())
   {
@@ -162,7 +178,7 @@ bool ignition::gui::runConfig(const std::string &_config)
 /////////////////////////////////////////////////
 bool ignition::gui::runEmptyWindow()
 {
-  ignmsg << "Loading empty window" << std::endl;
+  igndbg << "Loading empty window" << std::endl;
 
   initApp();
 
@@ -177,7 +193,7 @@ bool ignition::gui::runEmptyWindow()
 /////////////////////////////////////////////////
 bool ignition::gui::runStandalone(const std::string &_filename)
 {
-  ignmsg << "Loading standalone plugin [" << _filename << "]" << std::endl;
+  igndbg << "Loading standalone plugin [" << _filename << "]" << std::endl;
 
   if (_filename.empty())
   {
@@ -201,7 +217,7 @@ bool ignition::gui::runStandalone(const std::string &_filename)
   for (auto const &dialog : g_dialogs)
   {
     dialog->connect(dialog, &QDialog::finished, dialog, [&](){
-      ignmsg << "Dialog [" << dialog->windowTitle().toStdString() << "] closed."
+      igndbg << "Dialog [" << dialog->windowTitle().toStdString() << "] closed."
              << std::endl;
       closedDialogs++;
     });
@@ -228,16 +244,13 @@ bool ignition::gui::initApp()
   // Configure console
   ignition::common::Console::SetPrefix("[GUI] ");
 
-  ignmsg << "Init app" << std::endl;
+  igndbg << "Init app" << std::endl;
 
   // Create app
   g_app = new QApplication(g_argc, g_argv);
 
-  // Set style
-  QFile file(":/style.qss");
-  file.open(QFile::ReadOnly);
-  QString styleSheet = QLatin1String(file.readAll());
-  g_app->setStyleSheet(styleSheet);
+  // Apply Ignition GUI's default stylesheet
+  setStyleFromFile(":/style.qss");
 
   // Install signal handler for graceful shutdown
   installSignalHandler();
@@ -259,13 +272,13 @@ bool ignition::gui::initApp()
 /////////////////////////////////////////////////
 bool ignition::gui::stop()
 {
-  ignmsg << "Stop" << std::endl;
+  igndbg << "Stop" << std::endl;
 
-  if (g_main_win)
+  if (g_mainWin)
   {
-    g_main_win->close();
-    delete g_main_win;
-    g_main_win = nullptr;
+    g_mainWin->close();
+    delete g_mainWin;
+    g_mainWin = nullptr;
   }
 
   for (auto dialog : g_dialogs)
@@ -306,7 +319,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
   auto success = !doc.LoadFile(_config.c_str());
   if (!success)
   {
-    ignmsg << "Failed to load file [" << _config << "]: XMLError"
+    ignerr << "Failed to load file [" << _config << "]: XMLError"
               << std::endl;
     return false;
   }
@@ -322,7 +335,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
   // Process window properties
   if (auto winElem = doc.FirstChildElement("window"))
   {
-    ignmsg << "Loading window config" << std::endl;
+    igndbg << "Loading window config" << std::endl;
 
     if (auto xElem = winElem->FirstChildElement("position_x"))
       xElem->QueryIntText(&g_windowConfig.pos_x);
@@ -341,8 +354,55 @@ bool ignition::gui::loadConfig(const std::string &_config)
       auto text = stateElem->GetText();
       g_windowConfig.state = QByteArray::fromBase64(text);
     }
+
+    if (auto styleElem = winElem->FirstChildElement("stylesheet"))
+      setStyleFromString(styleElem->GetText());
   }
 
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::setStyleFromFile(const std::string &_qssFile)
+{
+  if (!checkApp())
+    return false;
+
+  QFile file(QString::fromStdString(_qssFile));
+  if (!file.open(QFile::ReadOnly))
+  {
+    ignerr << "Failed to open [" << _qssFile << "]: ";
+    if (_qssFile.empty())
+    {
+      std::cout << "file path is empty." << std::endl;
+    }
+    else if (!file.exists())
+    {
+      std::cout << "file doesn't exist." << std::endl;
+    }
+    else
+    {
+      std::cout << "potentially invalid permissions." << std::endl;
+    }
+    return false;
+  }
+
+  ignmsg << "Applying stylesheet [" << _qssFile << "]" << std::endl;
+
+  QString styleStr = QLatin1String(file.readAll());
+  return setStyleFromString(styleStr.toStdString());
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::setStyleFromString(const std::string &_style)
+{
+  if (!checkApp())
+    return false;
+
+  g_windowConfig.styleSheet = _style;
+  g_app->setStyleSheet(QString::fromStdString(g_windowConfig.styleSheet));
+
+  // \todo Return false if sheet is can't be correctly parsed.
   return true;
 }
 
@@ -422,9 +482,9 @@ bool ignition::gui::createMainWindow()
   if (!checkApp())
     return false;
 
-  ignmsg << "Create main window" << std::endl;
+  igndbg << "Create main window" << std::endl;
 
-  g_main_win = new MainWindow();
+  g_mainWin = new MainWindow();
 
   return addPluginsToWindow() && applyConfig();
 }
@@ -437,7 +497,7 @@ bool ignition::gui::addPluginsToWindow()
   for (auto &plugin : g_plugins)
   {
     auto title = QString::fromStdString(plugin->Title());
-    auto dock = new QDockWidget(title, g_main_win);
+    auto dock = new QDockWidget(title, g_mainWin);
     dock->setObjectName(title);
     dock->setAllowedAreas(Qt::TopDockWidgetArea);
     dock->setWidget(&*plugin);
@@ -446,9 +506,9 @@ bool ignition::gui::addPluginsToWindow()
       dock->setTitleBarWidget(new QWidget());
 
     if (count % 2 == 0)
-      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
+      g_mainWin->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
     else
-      g_main_win->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
+      g_mainWin->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
@@ -467,19 +527,21 @@ bool ignition::gui::addPluginsToWindow()
 /////////////////////////////////////////////////
 bool ignition::gui::applyConfig()
 {
-  ignmsg << "Applying config" << std::endl;
+  igndbg << "Applying config" << std::endl;
 
   if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
-    g_main_win->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
+    g_mainWin->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
 
   if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
-    g_main_win->resize(g_windowConfig.width, g_windowConfig.height);
+    g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
 
   if (!g_windowConfig.state.isEmpty())
   {
-    if (!g_main_win->restoreState(g_windowConfig.state))
+    if (!g_mainWin->restoreState(g_windowConfig.state))
       ignwarn << "Failed to restore state" << std::endl;
   }
+
+  setStyleFromString(g_windowConfig.styleSheet);
 
   QCoreApplication::processEvents();
 
@@ -489,7 +551,7 @@ bool ignition::gui::applyConfig()
 /////////////////////////////////////////////////
 ignition::gui::MainWindow *ignition::gui::mainWindow()
 {
-  return g_main_win;
+  return g_mainWin;
 }
 
 /////////////////////////////////////////////////
@@ -507,9 +569,9 @@ bool ignition::gui::runMainWindow()
   if (!mainWindow())
     return false;
 
-  ignmsg << "Run main window" << std::endl;
+  igndbg << "Run main window" << std::endl;
 
-  g_main_win->show();
+  g_mainWin->show();
 
   // Execute app
   g_app->exec();
@@ -523,7 +585,7 @@ bool ignition::gui::runDialogs()
   if (!checkApp())
     return false;
 
-  ignmsg << "Run dialogs" << std::endl;
+  igndbg << "Run dialogs" << std::endl;
 
   for (auto &plugin : g_plugins)
   {
@@ -545,7 +607,7 @@ bool ignition::gui::runDialogs()
     g_dialogs.push_back(dialog);
 
     dialog->show();
-    ignmsg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
+    igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
   }
   g_plugins.clear();
 

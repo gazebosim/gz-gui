@@ -161,6 +161,147 @@ TEST(IfaceTest, loadConfig)
 }
 
 /////////////////////////////////////////////////
+TEST(IfaceTest, StyleSheet)
+{
+  setVerbosity(4);
+
+  // Before init
+  {
+    EXPECT_FALSE(setStyleFromFile(""));
+    EXPECT_FALSE(setStyleFromString(""));
+  }
+
+  // Qss file with window
+  {
+    EXPECT_TRUE(initApp());
+
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    // Ignition GUI's QSS
+    auto bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed") << bg.name().toStdString();
+
+    // Load test qss file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(setStyleFromFile(testSourcePath + "styles/red_bg.qss"));
+
+    // Check new style
+    bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ff0000");
+
+    // Cleanup
+    EXPECT_TRUE(stop());
+  }
+
+  // Qss file with dialog
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Create app
+    EXPECT_TRUE(initApp());
+
+    // Load test plugin
+    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+
+    // Run dialog
+    EXPECT_TRUE(runDialogs());
+
+    // Check it was open
+    auto ds = dialogs();
+    EXPECT_EQ(ds.size(), 1u);
+
+    // Ignition GUI's QSS
+    auto bg = ds[0]->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed");
+
+    // Load test qss file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(setStyleFromFile(testSourcePath + "styles/red_bg.qss"));
+
+    // Check new style
+    bg = ds[0]->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ff0000");
+
+    // Wait until it is closed
+    auto closed = false;
+    ds[0]->connect(ds[0], &QDialog::finished, ds[0], [&](){
+      closed = true;
+    });
+
+    // Close dialog after some time
+    QTimer::singleShot(300, ds[0], SLOT(close()));
+
+    while (!closed)
+      QCoreApplication::processEvents();
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Qt's default style (empty string for sheet)
+  {
+    // App with native settings (OS-dependant)
+    QColor defaultBg;
+    {
+      int argc = 1;
+      char **argv = nullptr;
+      auto app = new QApplication(argc, argv);
+      auto win = new MainWindow();
+      defaultBg = win->palette().window().color();
+      igndbg << "Default bg: " << defaultBg.name().toStdString() << std::endl;
+      delete win;
+      app->quit();
+      delete app;
+    }
+
+    EXPECT_TRUE(initApp());
+
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    // Ignition GUI's QSS
+    auto bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), "#ededed") << bg.name().toStdString();
+
+    // Set style to empty string
+    EXPECT_TRUE(setStyleFromString(""));
+
+    // Check new style
+    bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), defaultBg.name()) << bg.name().toStdString();
+
+    // Cleanup
+    EXPECT_TRUE(stop());
+  }
+
+  // Empty string for file
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(setStyleFromFile(""));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Inexistent file
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(setStyleFromFile("banana"));
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+/////////////////////////////////////////////////
 TEST(IfaceTest, MainWindowNoPlugins)
 {
   setVerbosity(4);

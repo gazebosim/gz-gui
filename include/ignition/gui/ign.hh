@@ -24,16 +24,25 @@
 /// \return C-string representing the version. Ex.: 0.1.2
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion();
 
+/// \brief External hook to initialize the application.
+extern "C" IGNITION_GUI_VISIBLE void cmdInitApp();
+
 /// \brief External hook to execute 'ign gui -l' from the command line.
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList();
 
 /// \brief External hook to execute 'ign gui -s' from the command line.
+/// \param[in] _filename Name of a plugin file.
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename);
 
 /// \brief External hook to execute 'ign gui -c' from the command line.
+/// \param[in] _config Path to a config file.
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config);
 
 /// \brief External hook to execute 'ign gui' from the command line.
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow();
+
+/// \brief External hook when executing 'ign gui -t' from the command line.
+/// \param[in] _filename Path to a QSS file.
+extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(const char *_filename);
 
 #endif

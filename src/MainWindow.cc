@@ -61,6 +61,14 @@ MainWindow::MainWindow()
 
   fileMenu->addSeparator();
 
+  auto loadStylesheetAct = new QAction(tr("&Load stylesheet"), this);
+  loadStylesheetAct->setStatusTip(tr("Choose a QSS file to load"));
+  this->connect(loadStylesheetAct, SIGNAL(triggered()), this,
+      SLOT(OnLoadStylesheet()));
+  fileMenu->addAction(loadStylesheetAct);
+
+  fileMenu->addSeparator();
+
   auto quitAct = new QAction(tr("&Quit"), this);
   quitAct->setStatusTip(tr("Quit"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
@@ -153,7 +161,7 @@ MainWindow::~MainWindow()
 /////////////////////////////////////////////////
 bool MainWindow::CloseAllDocks()
 {
-  ignmsg << "Closing all docks" << std::endl;
+  igndbg << "Closing all docks" << std::endl;
 
   auto docks = this->findChildren<QDockWidget *>();
   for (auto dock : docks)
@@ -227,6 +235,10 @@ void MainWindow::OnSaveConfig()
   config += "  <height>";
   config += std::to_string(this->height());
   config += "</height>\n";
+  config += "  <stylesheet>\n";
+  config += static_cast<QApplication *>(
+      QApplication::instance())->styleSheet().toStdString();
+  config += "  </stylesheet>\n";
   config += "</window>\n";
 
   // Plugins
@@ -249,6 +261,27 @@ void MainWindow::OnSaveConfig()
     out << config;
 
   out.close();
+
+  ignmsg << "Saved configuration [" << selected[0].toStdString() << "]"
+         << std::endl;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnLoadStylesheet()
+{
+  QFileDialog fileDialog(this, tr("Load stylesheet"), QDir::homePath(),
+      tr("*.qss"));
+  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
+      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+
+  if (fileDialog.exec() != QDialog::Accepted)
+    return;
+
+  auto selected = fileDialog.selectedFiles();
+  if (selected.empty())
+    return;
+
+  setStyleFromFile(selected[0].toStdString());
 }
 
 /////////////////////////////////////////////////
