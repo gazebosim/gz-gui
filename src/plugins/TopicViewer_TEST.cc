@@ -27,7 +27,7 @@ TEST(TopicViewerTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libTopicViewer.so"));
+  EXPECT_TRUE(loadPlugin("TopicViewer"));
 
   EXPECT_TRUE(stop());
 }

@@ -27,7 +27,7 @@ TEST(ResponderTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libResponder.so"));
+  EXPECT_TRUE(loadPlugin("Responder"));
 
   EXPECT_TRUE(stop());
 }
