@@ -506,3 +506,18 @@ TEST(IfaceTest, runConfig)
   }
 }
 
+/////////////////////////////////////////////////
+TEST(IfaceTest, messageHandler)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // \todo Verify output, see ignition::commmon::Console_TEST for example
+  qDebug("This came from qDebug");
+  qInfo("This came from qInfo");
+  qWarning("This came from qWarning");
+  qCritical("This came from qCritical");
+
+  EXPECT_TRUE(stop());
+}
+
