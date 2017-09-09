@@ -30,7 +30,7 @@ TEST(ImageDisplayTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libImageDisplay.so"));
+  EXPECT_TRUE(loadPlugin("ImageDisplay"));
 
   EXPECT_TRUE(stop());
 }
@@ -42,7 +42,7 @@ TEST(ImageDisplayTest, DefaultConfig)
   EXPECT_TRUE(initApp());
 
   // Load plugin
-  EXPECT_TRUE(loadPlugin("libImageDisplay.so"));
+  EXPECT_TRUE(loadPlugin("ImageDisplay"));
 
   // Create main window
   EXPECT_TRUE(createMainWindow());
@@ -81,7 +81,7 @@ TEST(ImageDisplayTest, NoPickerNeedsTopic)
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"libImageDisplay.so\">"
+    "<plugin filename=\"ImageDisplay\">"
       "<topic_picker>false</topic_picker>"
     "</plugin>";
 
@@ -127,7 +127,7 @@ TEST(ImageDisplayTest, ReceiveImage)
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"libImageDisplay.so\">"
+    "<plugin filename=\"ImageDisplay\">"
       "<topic>/image_test</topic>"
       "<topic_picker>false</topic_picker>"
     "</plugin>";

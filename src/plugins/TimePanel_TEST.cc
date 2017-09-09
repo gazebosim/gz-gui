@@ -31,7 +31,7 @@ TEST(TimePanelTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libTimePanel.so"));
+  EXPECT_TRUE(loadPlugin("TimePanel"));
 
   EXPECT_TRUE(stop());
 }
@@ -43,7 +43,7 @@ TEST(TimePanelTest, DefaultConfig)
   EXPECT_TRUE(initApp());
 
   // Load plugin
-  EXPECT_TRUE(loadPlugin("libTimePanel.so"));
+  EXPECT_TRUE(loadPlugin("TimePanel"));
 
   // Create main window
   EXPECT_TRUE(createMainWindow());
@@ -73,7 +73,7 @@ TEST(TimePanelTest, WorldControl)
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"libTimePanel.so\">"
+    "<plugin filename=\"TimePanel\">"
       "<title>World Control!</title>"
       "<world_control>"
         "<play_pause>true</play_pause>"
@@ -148,7 +148,7 @@ TEST(TimePanelTest, WorldStats)
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"libTimePanel.so\">"
+    "<plugin filename=\"TimePanel\">"
       "<world_stats>"
         "<sim_time>true</sim_time>"
         "<real_time>true</real_time>"
@@ -260,7 +260,7 @@ TEST(TimePanelTest, ControlWithoutService)
 
   // Load plugin
   const char* pluginStr =
-    "<plugin filename=\"libTimePanel.so\">"
+    "<plugin filename=\"TimePanel\">"
       "<world_control>"
       "</world_control>"
     "</plugin>";
@@ -297,7 +297,7 @@ TEST(TimePanelTest, StatsWithoutTopic)
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"libTimePanel.so\">"
+    "<plugin filename=\"TimePanel\">"
       "<world_stats>"
       "</world_stats>"
     "</plugin>";

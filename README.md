@@ -142,7 +142,7 @@ Tinyxml).
 
 For example (`examples/config/image.config`):
 
-    <plugin filename="libImageDisplay.so">
+    <plugin filename="ImageDisplay">
       <title>Without picker</title>
       <topic_picker>false</topic_picker>
       <topic>/rendering/image</topic>
@@ -168,7 +168,7 @@ Display images from an Ignition Transport topic.
 
 or
 
-    ign gui -s libImageDisplay.so
+    ign gui -s ImageDisplay
 
 #### Publisher
 
@@ -180,7 +180,7 @@ Publish messages on an Ignition Transport topic.
 
 1. On a new terminal, open the publisher GUI:
 
-        ign gui -s libPublisher.so
+        ign gui -s Publisher
 
 1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
@@ -276,7 +276,7 @@ to see how downstream projects can load their own style by setting it in cmake.
 
 You can pass a stylesheet file on the command line with the `-t` option. Try:
 
-    ign gui -s libPublisher.so -t examples/standalone/style_cmake/style.qss
+    ign gui -s Publisher -t examples/standalone/style_cmake/style.qss
 
 > Note: when loading a config file which has a stylesheet, this option will not
   override it.
@@ -366,7 +366,7 @@ Then copy the generated library to a directory where Ignition GUI can find it:
 
 Now you can use the command line to open it:
 
-    ign gui -s libhello_plugin.so
+    ign gui -s hello_plugin
 
 #### Example plugins
 

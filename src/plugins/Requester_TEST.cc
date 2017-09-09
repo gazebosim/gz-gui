@@ -27,7 +27,7 @@ TEST(RequesterTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libRequester.so"));
+  EXPECT_TRUE(loadPlugin("Requester"));
 
   EXPECT_TRUE(stop());
 }

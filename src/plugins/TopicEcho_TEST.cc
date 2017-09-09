@@ -27,7 +27,7 @@ TEST(TopicEchoTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libTopicEcho.so"));
+  EXPECT_TRUE(loadPlugin("TopicEcho"));
 
   EXPECT_TRUE(stop());
 }
