@@ -126,20 +126,20 @@ TEST(IfaceTest, loadPlugin)
 }
 
 /////////////////////////////////////////////////
-TEST(IfaceTest, loadConfig)
+TEST(IfaceTest, loadConfigFromFile)
 {
   setVerbosity(4);
 
   // Before init
   {
-    EXPECT_FALSE(loadConfig("file.config"));
+    EXPECT_FALSE(loadConfigFromFile("file.config"));
   }
 
   // Empty string
   {
     EXPECT_TRUE(initApp());
 
-    EXPECT_FALSE(loadConfig(""));
+    EXPECT_FALSE(loadConfigFromFile(""));
 
     EXPECT_TRUE(stop());
   }
@@ -154,7 +154,7 @@ TEST(IfaceTest, loadConfig)
 
     // Load test config file
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(loadConfig(testSourcePath + "config/test.config"));
+    EXPECT_TRUE(loadConfigFromFile(testSourcePath + "config/test.config"));
 
     EXPECT_TRUE(stop());
   }

@@ -40,11 +40,23 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool stop();
 
-    /// \brief Load plugins from a configuration file.
-    /// \param[in] _config Path to configuration file.
+    /// \brief Load configuration from a file.
+    /// \param[in] _filename Path to configuration file.
     /// \return True if successful
     IGNITION_GUI_VISIBLE
-    bool loadConfig(const std::string &_config);
+    bool loadConfigFromFile(const std::string &_filename);
+
+    /// \brief Load configuration from a string.
+    /// \param[in] _configStr Configuration XML as a string
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool loadConfigFromString(const std::string &_configStr);
+
+    /// \brief Load configuration from an XMLDocument.
+    /// \param[in] _doc Pointer to document
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool loadConfigFromXMLDocument(const tinyxml2::XMLDocument *_doc);
 
     /// \brief Load a plugin from a file name. The plugin file must be in the
     /// path.
@@ -80,7 +92,7 @@ namespace ignition
 
     /// \brief Apply previously loaded config to the main window.
     /// * Make sure the window is created first
-    /// * Be sure to call loadConfig() for each plugin first
+    /// * Be sure to call some loadConfig* function first
     /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool applyConfig();

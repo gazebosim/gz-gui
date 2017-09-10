@@ -49,6 +49,7 @@ MainWindow::MainWindow()
   // File menu
   auto fileMenu = this->menuBar()->addMenu(tr("File"));
 
+  // Configuration
   auto loadConfigAct = new QAction(tr("Load configuration"), this);
   loadConfigAct->setStatusTip(tr("Quit"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
@@ -61,37 +62,27 @@ MainWindow::MainWindow()
 
   fileMenu->addSeparator();
 
+  // Stylesheet
   auto loadStylesheetAct = new QAction(tr("&Load stylesheet"), this);
   loadStylesheetAct->setStatusTip(tr("Choose a QSS file to load"));
   this->connect(loadStylesheetAct, SIGNAL(triggered()), this,
       SLOT(OnLoadStylesheet()));
   fileMenu->addAction(loadStylesheetAct);
 
-  fileMenu->addSeparator();
-
-  auto quitAct = new QAction(tr("&Quit"), this);
-  quitAct->setStatusTip(tr("Quit"));
-  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
-  fileMenu->addAction(quitAct);
-
-
-
-
-
-
-
-
+  // Language
+  auto languageMenu = fileMenu->addMenu(tr("Change language"));
 
   auto langGroup = new QActionGroup(this);
   langGroup->setExclusive(true);
 
-  this->connect(langGroup, SIGNAL(triggered(QAction *)), this, SLOT(OnLanguage(QAction *)));
+  this->connect(langGroup, SIGNAL(triggered(QAction *)), this,
+      SLOT(OnLanguage(QAction *)));
 
   // System locale
   auto defaultLocale = QLocale::system().name();
   defaultLocale.truncate(defaultLocale.lastIndexOf('_'));
 
-  QDir dir("/home/louise/code/ign-gui/include/ignition/gui/languages");
+  QDir dir("/home/louise/code/ign-gui/build/include/ignition/gui/languages");
   QStringList fileNames = dir.entryList(QStringList("translation_*.qm"));
 
   for (int i = 0; i < fileNames.size(); ++i)
@@ -108,7 +99,7 @@ MainWindow::MainWindow()
     action->setCheckable(true);
     action->setData(locale);
 
-    fileMenu->addAction(action);
+    languageMenu->addAction(action);
     langGroup->addAction(action);
 
     // set default translators and language checked
@@ -116,13 +107,13 @@ MainWindow::MainWindow()
       action->setChecked(true);
   }
 
+  fileMenu->addSeparator();
 
-
-
-
-
-
-
+  // Quit
+  auto quitAct = new QAction(tr("&Quit"), this);
+  quitAct->setStatusTip(tr("Quit"));
+  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
+  fileMenu->addAction(quitAct);
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
@@ -149,8 +140,6 @@ MainWindow::MainWindow()
   this->setDockOptions(QMainWindow::AnimatedDocks |
                        QMainWindow::AllowTabbedDocks |
                        QMainWindow::AllowNestedDocks);
-
-  this->setCentralWidget(new QPushButton(QMainWindow::tr("Publish")));
 }
 
 /////////////////////////////////////////////////
@@ -190,7 +179,7 @@ void MainWindow::OnLoadConfig()
   if (selected.empty())
     return;
 
-  if (!loadConfig(selected[0].toStdString()))
+  if (!loadConfigFromFile(selected[0].toStdString()))
     return;
 
   if (!this->CloseAllDocks())
@@ -201,21 +190,8 @@ void MainWindow::OnLoadConfig()
 }
 
 /////////////////////////////////////////////////
-void MainWindow::OnSaveConfig()
+std::string MainWindow::CurrentConfig() const
 {
-  QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
-      tr("*.config"));
-  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
-      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
-
-  if (fileDialog.exec() != QDialog::Accepted)
-    return;
-
-  auto selected = fileDialog.selectedFiles();
-  if (selected.empty())
-    return;
-
   std::string config = "<?xml version=\"1.0\"?>\n\n";
 
   // Window settings
@@ -245,6 +221,27 @@ void MainWindow::OnSaveConfig()
   auto plugins = this->findChildren<Plugin *>();
   for (const auto plugin : plugins)
     config += plugin->ConfigStr();
+
+  return config;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnSaveConfig()
+{
+  QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
+      tr("*.config"));
+  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
+      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+
+  if (fileDialog.exec() != QDialog::Accepted)
+    return;
+
+  auto selected = fileDialog.selectedFiles();
+  if (selected.empty())
+    return;
+
+  auto config = this->CurrentConfig();
 
   // Open the file
   std::ofstream out(selected[0].toStdString().c_str(), std::ios::out);
@@ -300,6 +297,22 @@ void MainWindow::OnLanguage(QAction *_action)
   if (!_action)
     return;
 
+  // Ask for confirmation
+  std::string msg =
+      "All plugins will be reloaded if the language is changed, \n"
+      "would you like to continue?\n";
+
+  QMessageBox msgBox(QMessageBox::Warning, QString("Change language"),
+                     QString(msg.c_str()));
+
+  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::RejectRole);
+  auto continueButton = msgBox.addButton("Continue", QMessageBox::AcceptRole);
+  msgBox.setDefaultButton(continueButton);
+  msgBox.setEscapeButton(cancelButton);
+  msgBox.exec();
+  if (msgBox.clickedButton() != continueButton)
+    return;
+
   auto newLanguage = _action->data().toString();
 
   if (this->language == newLanguage)
@@ -312,35 +325,14 @@ void MainWindow::OnLanguage(QAction *_action)
 
   auto languageName = QLocale::languageToString(locale.language());
 
-  switchTranslator(QString("/home/louise/code/ign-gui/include/ignition/gui/languages/translation_%1.qm").arg(this->language).toStdString());
- // switchTranslator(this->translatorQt, QString("qt_%1.qm").arg(this->language));
-}
+  switchTranslator(QString("/home/louise/code/ign-gui/build/include/ignition/gui/languages/translation_%1.qm").arg(this->language).toStdString());
 
-/////////////////////////////////////////////////
-void MainWindow::changeEvent(QEvent *_event)
-{
-  if (!_event)
+  loadConfigFromString(this->CurrentConfig());
+
+  if (!this->CloseAllDocks())
     return;
 
-  switch(_event->type())
-  {
-    // this event is sent if a translator is loaded
-    case QEvent::LanguageChange:
-igndbg << "A" << std::endl;
-    break;
-
-    // this event is sent if the system language changes
-    case QEvent::LocaleChange:
-    {
-igndbg << "A" << std::endl;
-      auto locale = QLocale::system().name();
-      locale.truncate(locale.lastIndexOf('_'));
-    }
-    break;
-    default:
-    break;
-  }
-
-  QMainWindow::changeEvent(_event);
+  addPluginsToWindow();
+  applyConfig();
 }
 

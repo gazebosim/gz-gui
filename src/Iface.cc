@@ -162,7 +162,7 @@ bool ignition::gui::runConfig(const std::string &_config)
 
   initApp();
 
-  if (!loadConfig(_config))
+  if (!loadConfigFromFile(_config))
   {
     stop();
     return false;
@@ -301,31 +301,61 @@ bool ignition::gui::stop()
 }
 
 /////////////////////////////////////////////////
-bool ignition::gui::loadConfig(const std::string &_config)
+bool ignition::gui::loadConfigFromFile(const std::string &_filename)
 {
   if (!checkApp())
     return false;
 
-  if (_config.empty())
+  if (_filename.empty())
   {
     ignerr << "Missing config file" << std::endl;
     return false;
   }
 
-  ignmsg << "Loading config [" << _config << "]" << std::endl;
+  ignmsg << "Loading config [" << _filename << "]" << std::endl;
 
   // Use tinyxml to read config
-  tinyxml2::XMLDocument doc;
-  auto success = !doc.LoadFile(_config.c_str());
-  if (!success)
+  auto doc = new tinyxml2::XMLDocument();
+  if (doc->LoadFile(_filename.c_str()))
   {
-    ignerr << "Failed to load file [" << _config << "]: XMLError"
+    ignerr << "Failed to load file [" << _filename << "]: XMLError"
               << std::endl;
     return false;
   }
 
+  return loadConfigFromXMLDocument(doc);
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::loadConfigFromString(const std::string &_configStr)
+{
+  if (!checkApp())
+    return false;
+
+  if (_configStr.empty())
+  {
+    ignerr << "Missing config string" << std::endl;
+    return false;
+  }
+
+  igndbg << "Loading config from string" << std::endl;
+
+  // Use tinyxml to read config
+  auto doc = new tinyxml2::XMLDocument();
+  if (doc->Parse(_configStr.c_str()))
+  {
+    ignerr << "Failed to parse configuration string" << std::endl;
+    return false;
+  }
+
+  return loadConfigFromXMLDocument(doc);
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::loadConfigFromXMLDocument(const tinyxml2::XMLDocument *_doc)
+{
   // Process each plugin
-  for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
+  for (auto pluginElem = _doc->FirstChildElement("plugin"); pluginElem != nullptr;
       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
     auto filename = pluginElem->Attribute("filename");
@@ -333,7 +363,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
   }
 
   // Process window properties
-  if (auto winElem = doc.FirstChildElement("window"))
+  if (auto winElem = _doc->FirstChildElement("window"))
   {
     igndbg << "Loading window config" << std::endl;
 

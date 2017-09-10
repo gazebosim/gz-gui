@@ -38,8 +38,8 @@ TEST(MainWindowTest, Constructor)
 
   // Menu
   auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-  EXPECT_EQ(menus[0]->title(), QString("&File"));
-  EXPECT_EQ(menus[1]->title(), QString("&Plugins"));
+  EXPECT_EQ(menus[0]->title(), QString(MainWindow::tr("File")));
+  EXPECT_EQ(menus[1]->title(), QString(MainWindow::tr("&Plugins")));
 
   delete mainWindow;
   EXPECT_TRUE(stop());
@@ -151,7 +151,7 @@ TEST(MainWindowTest, OnLoadConfig)
   ASSERT_GT(menus.size(), 0);
   ASSERT_GT(menus[0]->actions().size(), 1);
   auto loadAct = menus[0]->actions()[0];
-  EXPECT_EQ(loadAct->text(), QString("&Load configuration"));
+  EXPECT_EQ(loadAct->text(), QString("Load configuration"));
 
   bool closed = false;
 
