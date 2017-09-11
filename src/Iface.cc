@@ -135,6 +135,37 @@ bool installSignalHandler()
   return true;
 }
 
+//////////////////////////////////////////////////
+// QT message handler that pipes qt messages into our console system.
+void messageHandler(QtMsgType _type, const QMessageLogContext &_context,
+    const QString &_msg)
+{
+  std::string msg = "[QT] " + _msg.toStdString();
+  if (_context.function)
+    msg += std::string("(") + _context.function + ")";
+
+  switch (_type)
+  {
+    case QtDebugMsg:
+      igndbg << msg << std::endl;
+      break;
+    case QtInfoMsg:
+      ignmsg << msg << std::endl;
+      break;
+    case QtWarningMsg:
+      ignwarn << msg << std::endl;
+      break;
+    case QtFatalMsg:
+    case QtCriticalMsg:
+      ignerr << msg << std::endl;
+      break;
+    default:
+      ignwarn << "Unknown QT Message type[" << _type << "]: "
+        << msg << std::endl;
+      break;
+  }
+}
+
 /////////////////////////////////////////////////
 // Get home directory
 std::string homePath()
@@ -252,6 +283,9 @@ bool ignition::gui::initApp()
 
   // Install signal handler for graceful shutdown
   installSignalHandler();
+
+  // Handle qt console messages
+  qInstallMessageHandler(messageHandler);
 
   return true;
 }
