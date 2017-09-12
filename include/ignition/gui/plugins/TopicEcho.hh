@@ -43,6 +43,9 @@ namespace plugins
   class TopicEchoPrivate;
 
   /// \brief Echo messages coming through an Ignition transport topic.
+  ///
+  /// ## Configuration
+  /// This plugin doesn't accept any custom configuration.
   class TopicEcho : public Plugin
   {
     Q_OBJECT
@@ -68,7 +71,7 @@ namespace plugins
     private: void Stop();
 
     /// \brief Callback when echo button is pressed
-    private slots: void OnEcho();
+    private slots: void OnEcho(const bool _checked);
 
     /// \brief QT callback when the buffer spin box has been changed.
     /// \param[in] _value New value of the spin box.
