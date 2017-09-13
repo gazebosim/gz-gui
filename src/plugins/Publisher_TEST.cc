@@ -30,7 +30,7 @@ TEST(PublisherTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libPublisher.so"));
+  EXPECT_TRUE(loadPlugin("Publisher"));
 
   EXPECT_TRUE(stop());
 }

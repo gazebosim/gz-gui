@@ -27,7 +27,7 @@ TEST(TopicsStatsTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("libTopicsStats.so"));
+  EXPECT_TRUE(loadPlugin("TopicsStats"));
 
   EXPECT_TRUE(stop());
 }

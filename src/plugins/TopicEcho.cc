@@ -78,41 +78,51 @@ void TopicEcho::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
     this->title = "Topic echo";
 
   this->dataPtr->echoButton = new QPushButton("Echo");
-  this->connect(this->dataPtr->echoButton, SIGNAL(clicked()), this,
-      SLOT(OnEcho()));
+  this->dataPtr->echoButton->setObjectName("echoButton");
+  this->dataPtr->echoButton->setCheckable(true);
+  this->dataPtr->echoButton->setMinimumWidth(200);
+  this->connect(this->dataPtr->echoButton, SIGNAL(toggled(bool)), this,
+      SLOT(OnEcho(bool)));
 
   this->dataPtr->topicEdit = new QLineEdit("/echo");
+  this->dataPtr->topicEdit->setObjectName("topicEdit");
   this->connect(this->dataPtr->topicEdit, &QLineEdit::textChanged,
       [=](const QString &)
       {
         this->Stop();
-        this->dataPtr->echoButton->setEnabled(true);
         this->dataPtr->echoButton->setText("Echo");
       });
 
   this->dataPtr->msgList = new QListWidget();
+  this->dataPtr->msgList->setObjectName("msgList");
   this->dataPtr->msgList->setVerticalScrollMode(
       QAbstractItemView::ScrollPerPixel);
 
   auto bufferSpin = new QSpinBox();
+  bufferSpin->setObjectName("bufferSpin");
   bufferSpin->setMinimum(1);
   bufferSpin->setValue(this->dataPtr->bufferSize);
   this->connect(bufferSpin, SIGNAL(valueChanged(int)), this,
       SLOT(OnBuffer(int)));
 
   auto pauseCheck = new QCheckBox();
+  pauseCheck->setObjectName("pauseCheck");
   pauseCheck->setChecked(this->dataPtr->paused);
-  this->connect(pauseCheck, SIGNAL(clicked(bool)), this, SLOT(OnPause(bool)));
+  this->connect(pauseCheck, SIGNAL(toggled(bool)), this, SLOT(OnPause(bool)));
+
+  auto spacer = new QWidget();
+  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   auto layout = new QGridLayout();
   layout->addWidget(new QLabel("Topic: "), 0, 0);
-  layout->addWidget(this->dataPtr->topicEdit, 0, 1, 1, 2);
-  layout->addWidget(this->dataPtr->echoButton, 0, 3);
-  layout->addWidget(this->dataPtr->msgList, 1, 0, 1, 4);
+  layout->addWidget(this->dataPtr->topicEdit, 0, 1, 1, 3);
+  layout->addWidget(this->dataPtr->echoButton, 0, 4);
+  layout->addWidget(this->dataPtr->msgList, 1, 0, 1, 5);
   layout->addWidget(new QLabel("Buffer: "), 2, 0);
   layout->addWidget(bufferSpin, 2, 1);
-  layout->addWidget(new QLabel("Pause: "), 2, 2);
+  layout->addWidget(spacer, 2, 2);
   layout->addWidget(pauseCheck, 2, 3);
+  layout->addWidget(new QLabel("Pause"), 2, 4);
   this->setLayout(layout);
 
   this->connect(this, SIGNAL(AddMsg(QString)), this, SLOT(OnAddMsg(QString)),
@@ -133,9 +143,15 @@ void TopicEcho::Stop()
 }
 
 /////////////////////////////////////////////////
-void TopicEcho::OnEcho()
+void TopicEcho::OnEcho(const bool _checked)
 {
   this->Stop();
+
+  if (!_checked)
+  {
+    this->dataPtr->echoButton->setText("Echo");
+    return;
+  }
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
@@ -147,8 +163,7 @@ void TopicEcho::OnEcho()
   }
   else
   {
-    this->dataPtr->echoButton->setText("Echoing");
-    this->dataPtr->echoButton->setEnabled(false);
+    this->dataPtr->echoButton->setText("Stop echoing");
   }
 }
 

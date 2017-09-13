@@ -56,14 +56,14 @@ TEST(IfaceTest, loadPlugin)
 
   // Before init
   {
-    EXPECT_FALSE(loadPlugin("libImageDisplay.so"));
+    EXPECT_FALSE(loadPlugin("ImageDisplay"));
   }
 
   // Official plugin
   {
     EXPECT_TRUE(initApp());
 
-    EXPECT_TRUE(loadPlugin("libPublisher.so"));
+    EXPECT_TRUE(loadPlugin("Publisher"));
 
     EXPECT_TRUE(stop());
   }
@@ -72,7 +72,7 @@ TEST(IfaceTest, loadPlugin)
   {
     EXPECT_TRUE(initApp());
 
-    EXPECT_FALSE(loadPlugin("lib_doesnt_exist.so"));
+    EXPECT_FALSE(loadPlugin("_doesnt_exist"));
 
     EXPECT_TRUE(stop());
   }
@@ -83,7 +83,7 @@ TEST(IfaceTest, loadPlugin)
 
     EXPECT_TRUE(initApp());
 
-    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
 
     EXPECT_TRUE(stop());
   }
@@ -97,7 +97,7 @@ TEST(IfaceTest, loadPlugin)
 
     EXPECT_TRUE(initApp());
 
-    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
 
     EXPECT_TRUE(stop());
   }
@@ -108,7 +108,7 @@ TEST(IfaceTest, loadPlugin)
 
     EXPECT_TRUE(initApp());
 
-    EXPECT_FALSE(loadPlugin("libTestBadInheritancePlugin.so"));
+    EXPECT_FALSE(loadPlugin("TestBadInheritancePlugin"));
 
     EXPECT_TRUE(stop());
   }
@@ -119,7 +119,7 @@ TEST(IfaceTest, loadPlugin)
 
     EXPECT_TRUE(initApp());
 
-    EXPECT_FALSE(loadPlugin("libTestNotRegisteredPlugin.so"));
+    EXPECT_FALSE(loadPlugin("TestNotRegisteredPlugin"));
 
     EXPECT_TRUE(stop());
   }
@@ -207,7 +207,7 @@ TEST(IfaceTest, StyleSheet)
     EXPECT_TRUE(initApp());
 
     // Load test plugin
-    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
 
     // Run dialog
     EXPECT_TRUE(runDialogs());
@@ -362,7 +362,7 @@ TEST(IfaceTest, Dialog)
     EXPECT_TRUE(initApp());
 
     // Load test plugin
-    EXPECT_TRUE(loadPlugin("libTestPlugin.so"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
 
     // Run dialog
     EXPECT_TRUE(runDialogs());
@@ -456,7 +456,7 @@ TEST(IfaceTest, runStandalone)
     timer->start();
 
     // Run test plugin
-    EXPECT_TRUE(runStandalone("libTestPlugin.so"));
+    EXPECT_TRUE(runStandalone("TestPlugin"));
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
@@ -504,5 +504,20 @@ TEST(IfaceTest, runConfig)
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
   }
+}
+
+/////////////////////////////////////////////////
+TEST(IfaceTest, messageHandler)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // \todo Verify output, see ignition::commmon::Console_TEST for example
+  qDebug("This came from qDebug");
+  qInfo("This came from qInfo");
+  qWarning("This came from qWarning");
+  qCritical("This came from qCritical");
+
+  EXPECT_TRUE(stop());
 }
 
