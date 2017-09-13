@@ -262,7 +262,7 @@ bool ignition::gui::initApp()
 //    g_app->installTranslator(&translator);
 //  else
 
-  if(!g_translator.load("/home/louise/code/ign-gui/build/include/ignition/gui/languages/translation_pt"))
+  if(!g_translator.load(":/languages/translation_pt.qm"))
     ignerr << "FAIL" << std::endl;
   g_app->installTranslator(&g_translator);
 

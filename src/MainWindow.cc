@@ -82,7 +82,7 @@ MainWindow::MainWindow()
   auto defaultLocale = QLocale::system().name();
   defaultLocale.truncate(defaultLocale.lastIndexOf('_'));
 
-  QDir dir("/home/louise/code/ign-gui/build/include/ignition/gui/languages");
+  QDir dir(":/languages");
   QStringList fileNames = dir.entryList(QStringList("translation_*.qm"));
 
   for (int i = 0; i < fileNames.size(); ++i)
@@ -325,7 +325,7 @@ void MainWindow::OnLanguage(QAction *_action)
 
   auto languageName = QLocale::languageToString(locale.language());
 
-  switchTranslator(QString("/home/louise/code/ign-gui/build/include/ignition/gui/languages/translation_%1.qm").arg(this->language).toStdString());
+  switchTranslator(QString(":/languages/translation_%1.qm").arg(this->language).toStdString());
 
   loadConfigFromString(this->CurrentConfig());
 

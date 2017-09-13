@@ -24,7 +24,11 @@ set (headers
   System.hh
 )
 
-set (resources resources.qrc)
+add_subdirectory(languages)
+set (resources
+  resources.qrc
+  ${CMAKE_BINARY_DIR}/include/ignition/gui/languages/${lang_qrc}
+)
 
 QT5_WRAP_CPP(headers_MOC ${qt_headers})
 QT5_ADD_RESOURCES(resources_RCC ${resources})
@@ -46,7 +50,6 @@ target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
 ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})
 
 add_subdirectory(plugins)
-add_subdirectory(languages)
 
 #################################################
 ### Do not change the following
