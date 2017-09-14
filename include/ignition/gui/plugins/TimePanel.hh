@@ -18,12 +18,12 @@
 #ifndef IGNITION_GUI_PLUGINS_TIMEPANEL_HH_
 #define IGNITION_GUI_PLUGINS_TIMEPANEL_HH_
 
-#include <ignition/gui/qt.h>
 #include <memory>
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/transport.hh>
 #include <ignition/msgs.hh>
+#include <ignition/transport.hh>
+
+#include "ignition/gui/Plugin.hh"
 
 namespace ignition
 {

@@ -15,6 +15,7 @@ set (qt_headers
 )
 
 set (headers
+  Conversions.hh
   DragDropModel.hh
   Enums.hh
   Iface.hh

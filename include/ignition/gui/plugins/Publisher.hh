@@ -18,9 +18,7 @@
 #ifndef IGNITION_GUI_PLUGINS_PUBLISHER_HH_
 #define IGNITION_GUI_PLUGINS_PUBLISHER_HH_
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-#endif
+#include "ignition/gui/qt.h"
 
 #include <memory>
 

@@ -284,7 +284,7 @@ else (build_errors)
     "${CMAKE_CURRENT_BINARY_DIR}/${cmake_conf_file}" @ONLY)
 
   # Use write_basic_package_version_file to generate a ConfigVersion file that
-  # allow users of gazebo to specify the API or version to depend on
+  # allow users of ignition to specify the API or version to depend on
   # TODO: keep this instruction until deprecate Ubuntu/Precise and update with
   # https://github.com/Kitware/CMake/blob/v2.8.8/Modules/CMakePackageConfigHelpers.cmake
   include(WriteBasicConfigVersionFile)
