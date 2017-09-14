@@ -17,10 +17,9 @@
 #ifndef IGNITION_GUI_PLUGINS_TOPICSSTATS_HH_
 #define IGNITION_GUI_PLUGINS_TOPICSSTATS_HH_
 
-#include "ignition/gui/qt.h"
-
 #include <memory>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 // Forward declarations.
