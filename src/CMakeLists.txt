@@ -1,6 +1,7 @@
 include_directories(${PROJECT_BINARY_DIR})
 
 set (sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/ConfigWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
