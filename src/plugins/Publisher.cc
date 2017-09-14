@@ -88,7 +88,7 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->topicEdit = new QLineEdit("/echo");
   this->dataPtr->topicEdit->setObjectName("topicEdit");
 
-  auto freqLabel = new QLabel("Frequency");
+  auto freqLabel = new QLabel(ign::tr("Frequency"));
   freqLabel->setToolTip("Set to zero to publish once");
 
   this->dataPtr->freqSpin = new QDoubleSpinBox();
@@ -97,7 +97,7 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->freqSpin->setMaximum(1000);
   this->dataPtr->freqSpin->setValue(1);
 
-  this->dataPtr->publishButton = new QPushButton(Plugin::tr("Publish"));
+  this->dataPtr->publishButton = new QPushButton(ign::tr("Publish"));
   this->dataPtr->publishButton->setObjectName("publishButton");
   this->dataPtr->publishButton->setCheckable(true);
   this->dataPtr->publishButton->setMinimumWidth(200);
@@ -105,11 +105,11 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
       SLOT(OnPublish(bool)));
 
   auto layout = new QGridLayout();
-  layout->addWidget(new QLabel("Message type: "), 0, 0);
+  layout->addWidget(new QLabel(ign::tr("Message type: ")), 0, 0);
   layout->addWidget(this->dataPtr->msgTypeEdit, 0, 1, 1, 3);
-  layout->addWidget(new QLabel("Message: "), 1, 0);
+  layout->addWidget(new QLabel(ign::tr("Message: ")), 1, 0);
   layout->addWidget(this->dataPtr->msgEdit, 1, 1, 1, 3);
-  layout->addWidget(new QLabel("Topic: "), 2, 0);
+  layout->addWidget(new QLabel(ign::tr("Topic: ")), 2, 0);
   layout->addWidget(this->dataPtr->topicEdit, 2, 1, 1, 3);
   layout->addWidget(freqLabel, 3, 0);
   layout->addWidget(this->dataPtr->freqSpin, 3, 1);
@@ -125,7 +125,7 @@ void Publisher::OnPublish(const bool _checked)
 {
   if (!_checked)
   {
-    this->dataPtr->publishButton->setText("Publish");
+    this->dataPtr->publishButton->setText(ign::tr("Publish"));
     if (this->dataPtr->timer != nullptr)
     {
       this->dataPtr->timer->stop();
@@ -169,7 +169,7 @@ void Publisher::OnPublish(const bool _checked)
     return;
   }
 
-  this->dataPtr->publishButton->setText("Stop publishing");
+  this->dataPtr->publishButton->setText(ign::tr("Stop publishing"));
   this->dataPtr->timer->setInterval(1000/freq);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
   {

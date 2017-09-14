@@ -81,7 +81,7 @@ void Plugin::ShowContextMenu(const QPoint &_pos)
   this->connect(&closeAct, SIGNAL(triggered()), this->parent(), SLOT(close()));
 
   // Context menu
-  QMenu contextMenu(tr("Context menu"), this);
+  QMenu contextMenu("", this);
   contextMenu.addAction(&closeAct);
   contextMenu.exec(this->mapToGlobal(_pos));
 }

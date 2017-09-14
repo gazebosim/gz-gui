@@ -290,14 +290,15 @@ bool ignition::gui::initApp()
   qInstallMessageHandler(messageHandler);
 
   // Install translator
-//  translator.load("qt_" + QLocale::system().name(),
-//      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-//  if (translator.load("/usr/share/qt5/translations/qt_pt"))
-//    g_app->installTranslator(&translator);
-//  else
+  auto locale = QLocale::system().name();
+  locale.truncate(locale.lastIndexOf('_'));
 
-  if(!g_translator.load(":/languages/translation_pt.qm"))
-    ignerr << "FAIL" << std::endl;
+  if(!g_translator.load(QString(":/languages/translation_%1.qm").arg(locale)))
+  {
+    ignwarn << "No translation for [" <<
+        QLocale::languageToString(QLocale(locale).language()).toStdString() <<
+        "] found. Using English." << std::endl;
+  }
   g_app->installTranslator(&g_translator);
 
   return true;

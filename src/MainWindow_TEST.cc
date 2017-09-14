@@ -38,8 +38,8 @@ TEST(MainWindowTest, Constructor)
 
   // Menu
   auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-  EXPECT_EQ(menus[0]->title(), QString(MainWindow::tr("File")));
-  EXPECT_EQ(menus[1]->title(), QString(MainWindow::tr("&Plugins")));
+  EXPECT_EQ(menus[0]->title(), QString(ign::tr("File")));
+  EXPECT_EQ(menus[1]->title(), QString(ign::tr("Plugins")));
 
   delete mainWindow;
   EXPECT_TRUE(stop());

@@ -83,6 +83,14 @@ namespace ignition
       /// \brief XML configuration
       protected: std::string configStr;
     };
+
+    /// \brief Dummy widget to aid in translation. All translations are put in
+    /// the `ignition::gui::ign` context, so using a translation when already
+    /// using the ignition::gui namespace is as simple as calling `ign::tr`.
+    class IGNITION_GUI_VISIBLE ign : public QWidget
+    {
+      Q_OBJECT
+    };
   }
 }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE TS><TS>
 <context>
-    <name>QPushButton</name>
+    <name>ignition::gui::ign</name>
     <message>
         <source>Publish</source>
         <translation>Publish</translation>

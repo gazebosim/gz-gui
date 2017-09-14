@@ -43,7 +43,8 @@ namespace ignition
       /// \return True if all docks have been closed
       public: bool CloseAllDocks();
 
-      // this slot is called by the language menu actions
+      /// \brief Callback when a language is selected
+      /// \param[in] _action Language action
       private slots: void OnLanguage(QAction *_action);
 
       /// \brief Callback when load configuration is selected
@@ -60,6 +61,7 @@ namespace ignition
       private slots: void OnAddPlugin(QString _plugin);
 
       /// \brief Get the current window configuration XML as a string.
+      /// \return The current configuration
       private: std::string CurrentConfig() const;
 
       /// \brief Current language.

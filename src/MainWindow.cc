@@ -43,34 +43,34 @@ MainWindow::MainWindow()
 
   // Title
   std::string title = "Ignition GUI";
-  this->setWindowIconText(tr(title.c_str()));
-  this->setWindowTitle(tr(title.c_str()));
+  this->setWindowIconText(title.c_str());
+  this->setWindowTitle(title.c_str());
 
   // File menu
-  auto fileMenu = this->menuBar()->addMenu(tr("File"));
+  auto fileMenu = this->menuBar()->addMenu(ign::tr("File"));
 
   // Configuration
-  auto loadConfigAct = new QAction(tr("Load configuration"), this);
-  loadConfigAct->setStatusTip(tr("Quit"));
+  auto loadConfigAct = new QAction(ign::tr("Load configuration"), this);
+  loadConfigAct->setToolTip(ign::tr("Load a configuration file"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
   fileMenu->addAction(loadConfigAct);
 
-  auto saveConfigAct = new QAction(tr("&Save configuration"), this);
-  saveConfigAct->setStatusTip(tr("Quit"));
+  auto saveConfigAct = new QAction(ign::tr("Save configuration"), this);
+  loadConfigAct->setToolTip(ign::tr("Save the current configuration"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
 
   fileMenu->addSeparator();
 
   // Stylesheet
-  auto loadStylesheetAct = new QAction(tr("&Load stylesheet"), this);
-  loadStylesheetAct->setStatusTip(tr("Choose a QSS file to load"));
+  auto loadStylesheetAct = new QAction(ign::tr("Load stylesheet"), this);
+  loadStylesheetAct->setStatusTip(ign::tr("Choose a QSS file to load"));
   this->connect(loadStylesheetAct, SIGNAL(triggered()), this,
       SLOT(OnLoadStylesheet()));
   fileMenu->addAction(loadStylesheetAct);
 
   // Language
-  auto languageMenu = fileMenu->addMenu(tr("Change language"));
+  auto languageMenu = fileMenu->addMenu(ign::tr("Change language"));
 
   auto langGroup = new QActionGroup(this);
   langGroup->setExclusive(true);
@@ -110,13 +110,13 @@ MainWindow::MainWindow()
   fileMenu->addSeparator();
 
   // Quit
-  auto quitAct = new QAction(tr("&Quit"), this);
-  quitAct->setStatusTip(tr("Quit"));
+  auto quitAct = new QAction(ign::tr("Quit"), this);
+  quitAct->setToolTip(ign::tr("Close window"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
 
   // Plugins menu
-  auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
+  auto pluginsMenu = this->menuBar()->addMenu(ign::tr("Plugins"));
 
   auto pluginMapper = new QSignalMapper(this);
   this->connect(pluginMapper, SIGNAL(mapped(QString)),
@@ -167,8 +167,8 @@ bool MainWindow::CloseAllDocks()
 /////////////////////////////////////////////////
 void MainWindow::OnLoadConfig()
 {
-  QFileDialog fileDialog(this, tr("Load configuration"), QDir::homePath(),
-      tr("*.config"));
+  QFileDialog fileDialog(this, ign::tr("Load configuration"), QDir::homePath(),
+      "*.config");
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
 
@@ -228,8 +228,8 @@ std::string MainWindow::CurrentConfig() const
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfig()
 {
-  QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
-      tr("*.config"));
+  QFileDialog fileDialog(this, ign::tr("Save configuration"), QDir::homePath(),
+      "*.config");
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
   fileDialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -266,8 +266,8 @@ void MainWindow::OnSaveConfig()
 /////////////////////////////////////////////////
 void MainWindow::OnLoadStylesheet()
 {
-  QFileDialog fileDialog(this, tr("Load stylesheet"), QDir::homePath(),
-      tr("*.qss"));
+  QFileDialog fileDialog(this, ign::tr("Load stylesheet"), QDir::homePath(),
+      "*.qss");
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
 
@@ -323,9 +323,13 @@ void MainWindow::OnLanguage(QAction *_action)
   auto locale = QLocale(this->language);
   QLocale::setDefault(locale);
 
-  auto languageName = QLocale::languageToString(locale.language());
+  auto languageName =
+      QLocale::languageToString(locale.language()).toStdString();
 
-  switchTranslator(QString(":/languages/translation_%1.qm").arg(this->language).toStdString());
+  ignmsg << "Changing laguage to [" << languageName << "]" << std::endl;
+
+  switchTranslator(QString(":/languages/translation_%1.qm").arg(this->language)
+      .toStdString());
 
   loadConfigFromString(this->CurrentConfig());
 

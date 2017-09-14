@@ -161,7 +161,8 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     void listPlugins();
 
-    /// \brief
+    /// \brief Switch the current language translator
+    /// \param[in] _filename Path to qm file with new translation
     IGNITION_GUI_VISIBLE
     void switchTranslator(const std::string &_filename);
 
