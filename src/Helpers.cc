@@ -16,7 +16,6 @@
 */
 
 #include <algorithm>
-#include <ignition/common/Console.hh>
 #include <ignition/math/Helpers.hh>
 
 #include "ignition/gui/Helpers.hh"
