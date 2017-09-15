@@ -185,7 +185,7 @@ namespace ignition
 
       /// \brief Callback that collapses or expands the child widget.
       /// _param[in] _checked Whether it is checked or not.
-      private slots: void Toggle(bool _checked);
+      public slots: void Toggle(bool _checked);
     };
 
     /// \class ConfigWidget ConfigWidget.hh

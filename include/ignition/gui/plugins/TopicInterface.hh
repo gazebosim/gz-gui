@@ -39,10 +39,12 @@ namespace plugins
 {
   class TopicInterfacePrivate;
 
-  /// \brief Interface messages coming through an Ignition transport topic.
+  /// \brief
   ///
   /// ## Configuration
-  /// This plugin doesn't accept any custom configuration.
+  /// <topic>: If not specified, subscribe to /echo
+  /// <message_type>: If not specified widget will be constructed according to
+  ///                 the first message received on <topic>
   class TopicInterface : public Plugin
   {
     Q_OBJECT

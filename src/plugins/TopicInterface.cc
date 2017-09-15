@@ -63,26 +63,53 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "Topic interface";
 
-  this->dataPtr->config = new ConfigWidget();
-
-  auto layout = new QVBoxLayout();
-  layout->addWidget(this->dataPtr->config);
-  this->setLayout(layout);
-
-  // Subscribe
+  // Parameters from SDF
   std::string topic;
   if (auto topicElem = _pluginElem->FirstChildElement("topic"))
     topic = topicElem->GetText();
-
   if (topic.empty())
   {
     ignwarn << "Topic not specified, subscribing to [/echo]." << std::endl;
     topic = "/echo";
   }
 
+  std::string msgType;
+  if (auto typeElem = _pluginElem->FirstChildElement("message_type"))
+    msgType = typeElem->GetText();
+  if (msgType.empty())
+  {
+    ignwarn << "Message type not specified, widget will be constructed "
+            << "according to the first message received on topic ["
+            << topic << "]." << std::endl;
+  }
+
+  // Config widget
+  this->dataPtr->config = new ConfigWidget();
+
+  if (!msgType.empty())
+  {
+    auto msg = ignition::msgs::Factory::New(msgType, "");
+    if (!msg)
+    {
+      ignerr << "Unable to create message of type[" << msgType << "] "
+        << "widget will be initialized when a message is received."
+        << std::endl;
+    }
+    else
+    {
+      this->dataPtr->config->Load(&*msg);
+    }
+  }
+
+  // Layout
+  auto layout = new QVBoxLayout();
+  layout->addWidget(this->dataPtr->config);
+  this->setLayout(layout);
+
+  // Subscribe
   if (!this->dataPtr->node.Subscribe(topic, &TopicInterface::OnMessage, this))
   {
-    ignerr << "Invalid topic [" << topic << "]" << std::endl;
+    ignerr << "Failed to subscribe to topic [" << topic << "]" << std::endl;
   }
 }
 
@@ -91,7 +118,10 @@ void TopicInterface::OnMessage(const google::protobuf::Message &_msg)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->dataPtr->config->Load(&_msg);
+  if (this->dataPtr->config->ConfigChildWidgetCount() == 0)
+    this->dataPtr->config->Load(&_msg);
+  else
+    this->dataPtr->config->UpdateFromMsg(&_msg);
 }
 
 // Register this plugin

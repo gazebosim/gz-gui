@@ -49,10 +49,7 @@ using namespace ignition;
 using namespace gui;
 
 const std::vector<QString> ConfigWidget::bgColors(
-      {"#999999", "#777777", "#555555", "#333333"});
-
-const std::vector<QString> ConfigWidget::widgetColors(
-      {"#eeeeee", "#cccccc", "#aaaaaa", "#888888"});
+      {"#FFFFFF", "#DDDDDD", "#BBBBBB", "#999999"});
 
 const QString ConfigWidget::redColor = "#d42b2b";
 const QString ConfigWidget::greenColor = "#3bc43b";
@@ -1047,10 +1044,6 @@ QWidget *ConfigWidget::Parse(google::protobuf::Message *_msg,
             "QWidget\
             {\
               background-color: " + this->bgColors[0] +
-            "}\
-            QDoubleSpinBox, QSpinBox, QLineEdit, QComboBox, QPlainTextEdit\
-            {\
-              background-color: " + this->widgetColors[0] +
             "}");
       }
 
@@ -1164,10 +1157,6 @@ GroupWidget *ConfigWidget::CreateGroupWidget(const std::string &_name,
         "QWidget\
         {\
           background-color: " + this->bgColors[1] +
-        "}\
-        QDoubleSpinBox, QSpinBox, QLineEdit, QComboBox, QPlainTextEdit\
-        {\
-          background-color: " + this->widgetColors[1] +
         "}");
   }
   else if (_level == 1)
@@ -1176,10 +1165,6 @@ GroupWidget *ConfigWidget::CreateGroupWidget(const std::string &_name,
         "QWidget\
         {\
           background-color: " + this->bgColors[2] +
-        "}\
-        QDoubleSpinBox, QSpinBox, QLineEdit, QComboBox, QPlainTextEdit\
-        {\
-          background-color: " + this->widgetColors[2] +
         "}");
   }
   else if (_level == 2)
@@ -1188,10 +1173,6 @@ GroupWidget *ConfigWidget::CreateGroupWidget(const std::string &_name,
         "QWidget\
         {\
           background-color: " + this->bgColors[3] +
-        "}\
-        QDoubleSpinBox, QSpinBox, QLineEdit, QComboBox, QPlainTextEdit\
-        {\
-          background-color: " + this->widgetColors[3] +
         "}");
   }
 
@@ -1202,6 +1183,9 @@ GroupWidget *ConfigWidget::CreateGroupWidget(const std::string &_name,
   configGroupLayout->addWidget(buttonFrame, 0, 0);
   configGroupLayout->addWidget(_childWidget, 1, 0);
   groupWidget->setLayout(configGroupLayout);
+
+  // Start collapsed
+  groupWidget->Toggle(false);
 
   return groupWidget;
 }
@@ -3616,11 +3600,7 @@ QString ConfigWidget::StyleSheet(const std::string &_type, const int _level)
         QLabel\
         {\
           color: #d0d0d0;\
-        }\
-        QDoubleSpinBox, QSpinBox, QLineEdit, QComboBox\
-        {\
-          background-color: " + ConfigWidget::widgetColors[_level] +
-        "}";
+        }";
   }
   else if (_type == "warning")
   {
@@ -3628,11 +3608,7 @@ QString ConfigWidget::StyleSheet(const std::string &_type, const int _level)
       {\
         background-color: " + ConfigWidget::bgColors[_level] + ";\
         color: " + ConfigWidget::redColor + ";\
-      }\
-      QDoubleSpinBox, QSpinBox, QLineEdit, QComboBox\
-      {\
-        background-color: " + ConfigWidget::widgetColors[_level] +
-      "}";
+      }";
   }
   else if (_type == "active")
   {
@@ -3640,11 +3616,7 @@ QString ConfigWidget::StyleSheet(const std::string &_type, const int _level)
       {\
         background-color: " + ConfigWidget::bgColors[_level] + ";\
         color: " + ConfigWidget::greenColor + ";\
-      }\
-      QDoubleSpinBox, QSpinBox, QLineEdit, QComboBox\
-      {\
-        background-color: " + ConfigWidget::widgetColors[_level] +
-      "}";
+      }";
   }
   ignwarn << "Requested unknown style sheet type [" << _type << "]" << std::endl;
   return "";
