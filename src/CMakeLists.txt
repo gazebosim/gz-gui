@@ -4,6 +4,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/MessageWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
@@ -15,6 +16,7 @@ set (sources
 set (gtest_sources
   Conversions_TEST.cc
   DragDropModel_TEST.cc
+  Helpers_TEST.cc
   Iface_TEST.cc
   MainWindow_TEST.cc
   SearchModel_TEST.cc

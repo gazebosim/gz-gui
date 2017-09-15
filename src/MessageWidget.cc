@@ -24,6 +24,7 @@
 #include <ignition/common/MaterialDensity.hh>
 
 #include "ignition/gui/Conversions.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MessageWidget.hh"
 
 namespace ignition
@@ -112,119 +113,6 @@ google::protobuf::Message *MessageWidget::Msg()
 {
   this->UpdateMsg(this->dataPtr->configMsg);
   return this->dataPtr->configMsg;
-}
-
-/////////////////////////////////////////////////
-std::string MessageWidget::HumanReadableKey(const std::string &_key)
-{
-  std::string humanKey = _key;
-  humanKey[0] = std::toupper(humanKey[0]);
-  std::replace(humanKey.begin(), humanKey.end(), '_', ' ');
-  return humanKey;
-}
-
-/////////////////////////////////////////////////
-std::string MessageWidget::UnitFromKey(const std::string &_key,
-    const std::string &_jointType) const
-{
-  if (_key == "pos" || _key == "length" || _key == "min_depth")
-  {
-    return "m";
-  }
-
-  if (_key == "rot")
-    return "rad";
-
-  if (_key == "kp" || _key == "kd")
-    return "N/m";
-
-  if (_key == "max_vel")
-    return "m/s";
-
-  if (_key == "mass")
-    return "kg";
-
-  if (_key == "ixx" || _key == "ixy" || _key == "ixz" ||
-      _key == "iyy" || _key == "iyz" || _key == "izz")
-  {
-    return "kg&middot;m<sup>2</sup>";
-  }
-
-  if (_key == "limit_lower" || _key == "limit_upper")
-  {
-    if (_jointType == "PRISMATIC")
-      return "m";
-    else if (_jointType != "")
-      return "rad";
-  }
-
-  if (_key == "limit_effort")
-  {
-    if (_jointType == "PRISMATIC")
-      return "N";
-    else if (_jointType != "")
-      return "Nm";
-  }
-
-  if (_key == "limit_velocity" || _key == "velocity")
-  {
-    if (_jointType == "PRISMATIC")
-      return "m/s";
-    else if (_jointType != "")
-      return "rad/s";
-  }
-
-  if (_key == "damping")
-  {
-    if (_jointType == "PRISMATIC")
-      return "Ns/m";
-    else if (_jointType != "")
-      return "Ns";
-  }
-
-  if (_key == "friction")
-  {
-    if (_jointType == "PRISMATIC")
-      return "N";
-    else if (_jointType != "")
-      return "Nm";
-  }
-
-  if (_key == "density")
-  {
-    return "kg/m<sup>3</sup>";
-  }
-
-  return "";
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::RangeFromKey(const std::string &_key, double &_min,
-    double &_max) const
-{
-  // Maximum range by default
-  _min = -math::MAX_D;
-  _max = math::MAX_D;
-
-  if (_key == "mass" || _key == "ixx" || _key == "ixy" || _key == "ixz" ||
-      _key == "iyy" || _key == "iyz" || _key == "izz" || _key == "length" ||
-      _key == "min_depth" || _key == "density")
-  {
-    _min = 0;
-  }
-  else if (_key == "bounce" || _key == "transparency" ||
-      _key == "laser_retro" || _key == "ambient" || _key == "diffuse" ||
-      _key == "specular" || _key == "emissive" ||
-      _key == "restitution_coefficient")
-  {
-    _min = 0;
-    _max = 1;
-  }
-  else if (_key == "fdir1" || _key == "xyz")
-  {
-    _min = -1;
-    _max = +1;
-  }
 }
 
 /////////////////////////////////////////////////
@@ -1096,7 +984,7 @@ GroupWidget *MessageWidget::CreateGroupWidget(const std::string &_name,
 {
   // Button label
   QLabel *buttonLabel = new QLabel(
-      tr(this->HumanReadableKey(_name).c_str()));
+      tr(humanReadable(_name).c_str()));
   buttonLabel->setToolTip(tr(_name.c_str()));
 
   // Button icon
@@ -1217,7 +1105,7 @@ PropertyWidget *MessageWidget::CreateUIntWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(this->HumanReadableKey(_key).c_str()));
+  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // SpinBox
@@ -1254,7 +1142,7 @@ PropertyWidget *MessageWidget::CreateIntWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(this->HumanReadableKey(_key).c_str()));
+  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // SpinBox
@@ -1291,13 +1179,13 @@ PropertyWidget *MessageWidget::CreateDoubleWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(this->HumanReadableKey(_key).c_str()));
+  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // SpinBox
   double min = 0;
   double max = 0;
-  this->RangeFromKey(_key, min, max);
+  rangeFromKey(_key, min, max);
 
   QDoubleSpinBox *valueSpinBox = new QDoubleSpinBox(widget);
   valueSpinBox->setRange(min, max);
@@ -1309,7 +1197,7 @@ PropertyWidget *MessageWidget::CreateDoubleWidget(const std::string &_key,
 
   // Unit
   std::string jointType = this->EnumWidgetValue("type");
-  std::string unit = this->UnitFromKey(_key, jointType);
+  std::string unit = unitFromKey(_key, jointType);
 
   QLabel *unitLabel = new QLabel();
   unitLabel->setMaximumWidth(40);
@@ -1346,7 +1234,7 @@ PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(this->HumanReadableKey(_key).c_str()));
+  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // Line or Text Edit based on key
@@ -1397,7 +1285,7 @@ PropertyWidget *MessageWidget::CreateBoolWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(this->HumanReadableKey(_key).c_str()));
+  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // Buttons
@@ -1471,7 +1359,7 @@ PropertyWidget *MessageWidget::CreateVector3dWidget(
   // SpinBoxes
   double min = 0;
   double max = 0;
-  this->RangeFromKey(_key, min, max);
+  rangeFromKey(_key, min, max);
 
   QDoubleSpinBox *vecXSpinBox = new QDoubleSpinBox(widget);
   vecXSpinBox->setRange(min, max);
@@ -1551,7 +1439,7 @@ PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
   // SpinBoxes
   double min = 0;
   double max = 0;
-  this->RangeFromKey(_key, min, max);
+  rangeFromKey(_key, min, max);
 
   QDoubleSpinBox *colorRSpinBox = new QDoubleSpinBox(widget);
   colorRSpinBox->setRange(0, 1.0);
@@ -1687,7 +1575,7 @@ PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
   // ChildWidget
   double min = 0;
   double max = 0;
-  this->RangeFromKey("", min, max);
+  rangeFromKey("", min, max);
 
   PropertyWidget *widget = new PropertyWidget();
   widget->setLayout(widgetLayout);
@@ -1706,7 +1594,7 @@ PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
     spin->setAlignment(Qt::AlignRight);
     spin->setMaximumWidth(100);
 
-    QLabel *label = new QLabel(this->HumanReadableKey(elements[i]).c_str());
+    QLabel *label = new QLabel(humanReadable(elements[i]).c_str());
     label->setToolTip(tr(elements[i].c_str()));
     if (i == 0)
       label->setStyleSheet("QLabel{color: " + this->redColor + ";}");
@@ -1719,9 +1607,9 @@ PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
     unitLabel->setMaximumWidth(40);
     unitLabel->setMinimumWidth(40);
     if (i < 3)
-      unitLabel->setText(QString::fromStdString(this->UnitFromKey("pos")));
+      unitLabel->setText(QString::fromStdString(unitFromKey("pos")));
     else
-      unitLabel->setText(QString::fromStdString(this->UnitFromKey("rot")));
+      unitLabel->setText(QString::fromStdString(unitFromKey("rot")));
 
     widgetLayout->addWidget(label, i%3, std::floor(i/3)*3+1);
     widgetLayout->addWidget(spin, i%3, std::floor(i/3)*3+2);
@@ -1757,7 +1645,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   // Size XYZ
   double min = 0;
   double max = 0;
-  this->RangeFromKey("length", min, max);
+  rangeFromKey("length", min, max);
 
   QDoubleSpinBox *geomSizeXSpinBox = new QDoubleSpinBox(widget);
   geomSizeXSpinBox->setRange(min, max);
@@ -1799,7 +1687,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   geomSizeYLabel->setToolTip(tr("y"));
   geomSizeZLabel->setToolTip(tr("z"));
 
-  std::string unit = this->UnitFromKey("length");
+  std::string unit = unitFromKey("length");
   QLabel *geomSizeXUnitLabel = new QLabel(QString::fromStdString(unit));
   QLabel *geomSizeYUnitLabel = new QLabel(QString::fromStdString(unit));
   QLabel *geomSizeZUnitLabel = new QLabel(QString::fromStdString(unit));
@@ -1959,7 +1847,7 @@ PropertyWidget *MessageWidget::CreateEnumWidget(
     const int _level)
 {
   // Label
-  QLabel *enumLabel = new QLabel(this->HumanReadableKey(_key).c_str());
+  QLabel *enumLabel = new QLabel(humanReadable(_key).c_str());
   enumLabel->setToolTip(tr(_key.c_str()));
 
   // ComboBox
@@ -2022,7 +1910,7 @@ PropertyWidget *MessageWidget::CreateDensityWidget(
 
   double min = 0;
   double max = 0;
-  this->RangeFromKey("density", min, max);
+  rangeFromKey("density", min, max);
 
   QDoubleSpinBox *spinBox = new QDoubleSpinBox;
   spinBox->setRange(min, max);
@@ -2032,7 +1920,7 @@ PropertyWidget *MessageWidget::CreateDensityWidget(
   spinBox->setAlignment(Qt::AlignRight);
   spinBox->setMaximumWidth(100);
 
-  std::string unit = this->UnitFromKey("density");
+  std::string unit = unitFromKey("density");
   QLabel *unitLabel = new QLabel(QString::fromStdString(unit));
 
   QHBoxLayout *widgetLayout = new QHBoxLayout;
@@ -2496,7 +2384,7 @@ bool MessageWidget::UpdateDoubleWidget(PropertyWidget *_widget, double _value)
 
     // Unit label
     std::string jointType = this->EnumWidgetValue("type");
-    std::string unit = this->UnitFromKey(_widget->key, jointType);
+    std::string unit = unitFromKey(_widget->key, jointType);
     qobject_cast<QLabel *>(
         _widget->mapWidgetToUnit[spin])->setText(QString::fromStdString(unit));
 

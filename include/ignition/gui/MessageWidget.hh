@@ -202,29 +202,6 @@ namespace ignition
       /// \return Updated message.
       public: google::protobuf::Message *Msg();
 
-      /// \brief Create a human readable key, capitalizing the first letter
-      /// and removing characters like "_".
-      /// \param[in] _key Non-human-readable key.
-      /// \return Human-readable key.
-      public: static std::string HumanReadableKey(const std::string &_key);
-
-      /// \brief Returns the unit for a given key. For example, the key "mass"
-      /// returns "kg".
-      /// \param[in] _key The key.
-      /// \param[in] _jointType In case the field belongs to a joint, the
-      /// joint's type.
-      /// \return The unit.
-      public: std::string UnitFromKey(const std::string &_key,
-          const std::string &_jointType = "") const;
-
-      /// \brief Returns the range for a given key. For example, the key
-      /// "transparency" returns min == 0, max == 1.
-      /// \param[in] _key The key.
-      /// \param[out] _min The minimum value.
-      /// \param[out] _max The maximum value.
-      public: void RangeFromKey(const std::string &_key,
-          double &_min, double &_max) const;
-
       /// \brief Set whether a child widget should be visible.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _visible True to set the widget to be visible.

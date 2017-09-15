@@ -19,6 +19,7 @@ set (headers
   Conversions.hh
   DragDropModel.hh
   Enums.hh
+  Helpers.hh
   Iface.hh
   ign.hh
   qt.h
