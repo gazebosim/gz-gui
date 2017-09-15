@@ -44,42 +44,40 @@ namespace ignition
 {
   namespace gui
   {
-    class ConfigWidgetPrivate;
+    class MessageWidgetPrivate;
     class GroupWidget;
 
     /// \addtogroup ignition_gui
     /// \{
 
-    /// \class ConfigChildWidget ConfigWidget.hh
-    /// \brief A convenience widget that also holds pointers to a list of its
-    /// child widgets
-    class IGNITION_GUI_VISIBLE ConfigChildWidget : public QFrame
+    /// \brief Widget which holds a property.
+    class IGNITION_GUI_VISIBLE PropertyWidget : public QFrame
     {
       Q_OBJECT
 
       /// \brief Constructor;
-      public: ConfigChildWidget() : groupWidget(NULL) {}
+      public: PropertyWidget() : groupWidget(nullptr) {}
 
-      /// \brief Widget's key value.
+      /// \brief Widget's key value, such as "mass" or "color".
       public: std::string key;
 
-      /// \brief Widget's scoped name within parent config widget.
+      /// \brief Widget's scoped name based on its parents.
       public: std::string scopedName;
 
-      /// \brief List of widgets holding values, such as Spins and LineEdits.
+      /// \brief List of internal widgets holding values, such as Spins and
+      /// LineEdits.
       public: std::vector<QWidget *> widgets;
 
       /// \brief Map a widget to the label holding its unit value.
       public: std::map<QWidget *, QLabel *> mapWidgetToUnit;
 
-      /// \brief Pointer to group widget.
-      /// NULL if this widget is not contained inside a group widget.
+      /// \brief Pointer to parent group widget.
+      /// Null if this widget is not contained inside a group widget.
       public: GroupWidget *groupWidget;
     };
 
-    /// \class GeometryConfigWidget ConfigWidget.hh
-    /// \brief A widget for configuring geometry properties.
-    class IGNITION_GUI_VISIBLE GeometryConfigWidget : public ConfigChildWidget
+    /// \brief A widget for geometry properties.
+    class IGNITION_GUI_VISIBLE GeometryWidget : public PropertyWidget
     {
       Q_OBJECT
 
@@ -87,7 +85,7 @@ namespace ignition
       /// geometry dimensions.
       public: QStackedWidget *geomDimensionWidget;
 
-      /// \brief A spin box for configuring the length of the geometry.
+      /// \brief A spin box for the length of the geometry.
       public: QWidget *geomLengthSpinBox;
 
       /// \brief A label for the length widget.
@@ -96,13 +94,13 @@ namespace ignition
       /// \brief A label for the unit of the length widget.
       public: QWidget *geomLengthUnitLabel;
 
-      /// \brief A line edit for editing the mesh filename.
+      /// \brief A line edit for the mesh filename.
       public: QWidget *geomFilenameLineEdit;
 
       /// \brief A label for the mesh filename widget.
       public: QWidget *geomFilenameLabel;
 
-      /// \brief A button for selecting the mesh filename.
+      /// \brief A button for selecting the mesh file.
       public: QWidget *geomFilenameButton;
 
       /// \brief Callback when the geometry type is changed.
@@ -120,21 +118,20 @@ namespace ignition
       Q_SIGNALS: void GeometryChanged();
     };
 
-    /// \class DensityConfigWidget ConfigWidget.hh
-    /// \brief A widget for configuring density properties.
-    class IGNITION_GUI_VISIBLE DensityConfigWidget : public ConfigChildWidget
+    /// \brief A widget for density properties.
+    class IGNITION_GUI_VISIBLE DensityWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      public: DensityConfigWidget();
+      public: DensityWidget();
 
       /// \brief Updates the widget's density value.
       /// \param[in] _density New density value.
       public: void SetDensity(const double _density);
 
       /// \brief Accessor for the widget's density value.
-      /// \return The density.
+      /// \return The density value.
       public: double Density() const;
 
       /// \brief Callback when the density combo box is changed.
@@ -149,19 +146,18 @@ namespace ignition
       /// \param[in] _value Density value.
       Q_SIGNALS: void DensityValueChanged(const double &_value);
 
-      /// \brief A combo box for selecting a material density.
+      /// \brief A combo box for density according to material.
       public: QComboBox *comboBox;
 
-      /// \brief A spin box for entering a density value.
+      /// \brief A spin box for density value.
       public: QDoubleSpinBox *spinBox;
 
       /// \brief Current density value.
       private: double density;
     };
 
-    /// \class EnumConfigWidget ConfigWidget.hh
     /// \brief A widget for configuring enum values.
-    class IGNITION_GUI_VISIBLE EnumConfigWidget : public ConfigChildWidget
+    class IGNITION_GUI_VISIBLE EnumWidget : public PropertyWidget
     {
       Q_OBJECT
 
@@ -174,8 +170,7 @@ namespace ignition
       private slots: void EnumChanged(const QString &_value);
     };
 
-    /// \class GroupWidget ConfigWidget.hh
-    /// \brief A collapsible widget that holds child widgets.
+    /// \brief A collapsible widget that holds a child widget.
     class IGNITION_GUI_VISIBLE GroupWidget : public QWidget
     {
       Q_OBJECT
@@ -184,21 +179,20 @@ namespace ignition
       public: QWidget *childWidget;
 
       /// \brief Callback that collapses or expands the child widget.
-      /// _param[in] _checked Whether it is checked or not.
+      /// _param[in] _checked True for expanded.
       public slots: void Toggle(bool _checked);
     };
 
-    /// \class ConfigWidget ConfigWidget.hh
     /// \brief A widget generated from a google protobuf message.
-    class IGNITION_GUI_VISIBLE ConfigWidget : public QWidget
+    class IGNITION_GUI_VISIBLE MessageWidget : public QWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      public: ConfigWidget();
+      public: MessageWidget();
 
       /// \brief Destructor
-      public: ~ConfigWidget();
+      public: ~MessageWidget();
 
       /// \brief Load from a google protobuf message.
       /// \param[in] _msg Message to load from.
@@ -418,27 +412,27 @@ namespace ignition
       /// \param[in] _level Level of the widget in the tree.
       /// \return The group widget.
       public: GroupWidget *CreateGroupWidget(const std::string &_name,
-          ConfigChildWidget *_childWidget, const int _level = 0);
+          PropertyWidget *_childWidget, const int _level = 0);
 
       /// \brief Create a widget for configuring an unsigned integer value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateUIntWidget(const std::string &_key,
+      public: PropertyWidget *CreateUIntWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring an integer value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateIntWidget(const std::string &_key,
+      public: PropertyWidget *CreateIntWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a double value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateDoubleWidget(const std::string &_key,
+      public: PropertyWidget *CreateDoubleWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a string value.
@@ -446,42 +440,42 @@ namespace ignition
       /// \param[in] _level Level of the widget in the tree.
       /// \param[in] _type Type of string widget, such as "line" or "plain".
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateStringWidget(const std::string &_key,
+      public: PropertyWidget *CreateStringWidget(const std::string &_key,
           const int _level = 0, const std::string &_type = "line");
 
       /// \brief Create a widget for configuring a bool value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateBoolWidget(const std::string &_key,
+      public: PropertyWidget *CreateBoolWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a vector3 value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateVector3dWidget(const std::string &_key,
+      public: PropertyWidget *CreateVector3dWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a color value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateColorWidget(const std::string &_key,
+      public: PropertyWidget *CreateColorWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a pose value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreatePoseWidget(const std::string &_key,
+      public: PropertyWidget *CreatePoseWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a geometry value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateGeometryWidget(const std::string &_key,
+      public: PropertyWidget *CreateGeometryWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring an enum value.
@@ -489,14 +483,14 @@ namespace ignition
       /// \param[in] _values A list of enum values in string.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateEnumWidget(const std::string &_key,
+      public: PropertyWidget *CreateEnumWidget(const std::string &_key,
           const std::vector<std::string> &_values, const int _level = 0);
 
       /// \brief Create a widget for setting a density value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
-      public: ConfigChildWidget *CreateDensityWidget(const std::string &_key,
+      public: PropertyWidget *CreateDensityWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Register a child widget as a child of this widget, so it can
@@ -504,10 +498,10 @@ namespace ignition
       /// layout.
       /// \param[in] _name Unique name to indentify the child within this widget
       /// \param[in] _child Child widget to be added. It doesn't need to be a
-      /// ConfigChildWidget.
+      /// PropertyWidget.
       /// \return True if child successfully added.
-      public: bool AddConfigChildWidget(const std::string &_name,
-          ConfigChildWidget *_child);
+      public: bool AddPropertyWidget(const std::string &_name,
+          PropertyWidget *_child);
 
       /// \brief Insert a layout into the config widget's layout at a specific
       /// position.
@@ -517,14 +511,14 @@ namespace ignition
 
       /// \brief Get a config child widget by its name.
       /// \param[in] _name Scoped name of the child widget.
-      /// \return The child widget with the given name or NULL if it wasn't
+      /// \return The child widget with the given name or nullptr if it wasn't
       /// found.
-      public: ConfigChildWidget *ConfigChildWidgetByName(
+      public: PropertyWidget *PropertyWidgetByName(
           const std::string &_name) const;
 
       /// \brief Get the number of child widgets.
       /// \return The number of child widgets.
-      public: unsigned int ConfigChildWidgetCount() const;
+      public: unsigned int PropertyWidgetCount() const;
 
       /// \brief Get a style sheet in string format, to be applied to a child
       /// config widget with setStyleSheet.
@@ -588,56 +582,56 @@ namespace ignition
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateUIntWidget(ConfigChildWidget *_widget,
+      private: bool UpdateUIntWidget(PropertyWidget *_widget,
           const unsigned int _value);
 
       /// \brief Update a child widget with an integer value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateIntWidget(ConfigChildWidget *_widget,
+      private: bool UpdateIntWidget(PropertyWidget *_widget,
            const int _value);
 
       /// \brief Update a child widget with a double value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateDoubleWidget(ConfigChildWidget *_widget,
+      private: bool UpdateDoubleWidget(PropertyWidget *_widget,
           const double _value);
 
       /// \brief Update a child widget with a string value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateStringWidget(ConfigChildWidget *_widget,
+      private: bool UpdateStringWidget(PropertyWidget *_widget,
           const std::string &_value);
 
       /// \brief Update a child widget with a bool value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateBoolWidget(ConfigChildWidget *_widget,
+      private: bool UpdateBoolWidget(PropertyWidget *_widget,
           const bool _value);
 
       /// \brief Update a child widget with a vector3 value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateVector3dWidget(ConfigChildWidget *_widget,
+      private: bool UpdateVector3dWidget(PropertyWidget *_widget,
           const math::Vector3d &_value);
 
       /// \brief Update a child widget with a color value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateColorWidget(ConfigChildWidget *_widget,
+      private: bool UpdateColorWidget(PropertyWidget *_widget,
           const math::Color &_value);
 
       /// \brief Update a child widget with a pose value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdatePoseWidget(ConfigChildWidget *_widget,
+      private: bool UpdatePoseWidget(PropertyWidget *_widget,
           const math::Pose3d &_value);
 
       /// \brief Update a child widget with a geometry type and dimensions.
@@ -646,7 +640,7 @@ namespace ignition
       /// \param[in] _dimensions Dimensions of the geometry.
       /// \param[in] _uri URI of the geometry mesh, if any.
       /// \return True if the update completed successfully.
-      private: bool UpdateGeometryWidget(ConfigChildWidget *_widget,
+      private: bool UpdateGeometryWidget(PropertyWidget *_widget,
           const std::string &_value,
           const math::Vector3d &_dimensions,
           const std::string &_uri = "");
@@ -655,70 +649,70 @@ namespace ignition
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      private: bool UpdateEnumWidget(ConfigChildWidget *_widget,
+      private: bool UpdateEnumWidget(PropertyWidget *_widget,
           const std::string &_value);
 
       /// \brief Update a child widget with a density value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Density value.
       /// \return True if the update completed successfully.
-      private: bool UpdateDensityWidget(ConfigChildWidget *_widget,
+      private: bool UpdateDensityWidget(PropertyWidget *_widget,
           const double _value);
 
       /// \brief Get an integer value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
-      private: int IntWidgetValue(ConfigChildWidget *_widget) const;
+      private: int IntWidgetValue(PropertyWidget *_widget) const;
 
       /// \brief Get an unsigned integer value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
-      private: unsigned int UIntWidgetValue(ConfigChildWidget *_widget) const;
+      private: unsigned int UIntWidgetValue(PropertyWidget *_widget) const;
 
       /// \brief Get a double value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
-      private: double DoubleWidgetValue(ConfigChildWidget *_widget) const;
+      private: double DoubleWidgetValue(PropertyWidget *_widget) const;
 
       /// \brief Get a bool value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
-      private: bool BoolWidgetValue(ConfigChildWidget *_widget) const;
+      private: bool BoolWidgetValue(PropertyWidget *_widget) const;
 
       /// \brief Get a string value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
-      private: std::string StringWidgetValue(ConfigChildWidget *_widget) const;
+      private: std::string StringWidgetValue(PropertyWidget *_widget) const;
 
       /// \brief Get a vector3 value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
       private: math::Vector3d Vector3dWidgetValue(
-          ConfigChildWidget *_widget) const;
+          PropertyWidget *_widget) const;
 
       /// \brief Get a color value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
-      private: math::Color ColorWidgetValue(ConfigChildWidget *_widget) const;
+      private: math::Color ColorWidgetValue(PropertyWidget *_widget) const;
 
       /// \brief Get a pose value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
       private: math::Pose3d PoseWidgetValue(
-          ConfigChildWidget *_widget) const;
+          PropertyWidget *_widget) const;
 
       /// \brief Get a geometry value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[out] _dimensions Dimensions of geometry.
       /// \param[out] _uri URI of the geometry mesh, if any.
       /// \return Type of geometry.
-      private: std::string GeometryWidgetValue(ConfigChildWidget *_widget,
+      private: std::string GeometryWidgetValue(PropertyWidget *_widget,
           math::Vector3d &_dimensions, std::string &_uri) const;
 
       /// \brief Get an enum value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
-      private: std::string EnumWidgetValue(ConfigChildWidget *_widget) const;
+      private: std::string EnumWidgetValue(PropertyWidget *_widget) const;
 
       /// \brief Received item selection user input.
       /// \param[in] _item Item selected.
@@ -726,78 +720,78 @@ namespace ignition
       private slots: void OnItemSelection(QTreeWidgetItem *_item,
           const int _column);
 
-      /// \brief Callback when a uint config widget's value has changed.
+      /// \brief Callback when a uint widget's value has changed.
       private slots: void OnUIntValueChanged();
 
-      /// \brief Callback when an int config widget's value has changed.
+      /// \brief Callback when an int widget's value has changed.
       private slots: void OnIntValueChanged();
 
-      /// \brief Callback when a double config widget's value has changed.
+      /// \brief Callback when a double widget's value has changed.
       private slots: void OnDoubleValueChanged();
 
-      /// \brief Callback when a bool config widget's value has changed.
+      /// \brief Callback when a bool widget's value has changed.
       private slots: void OnBoolValueChanged();
 
-      /// \brief Callback when a string config widget's value has changed.
+      /// \brief Callback when a string widget's value has changed.
       private slots: void OnStringValueChanged();
 
-      /// \brief Callback when a vector3 config widget's value has changed.
+      /// \brief Callback when a vector3 widget's value has changed.
       private slots: void OnVector3dValueChanged();
 
-      /// \brief Callback when a vector3 config widget's preset has changed.
+      /// \brief Callback when a vector3 widget's preset has changed.
       /// \param[in] _index Index of the chosen preset.
       private slots: void OnVector3dPresetChanged(const int _index);
 
-      /// \brief Callback when a color config widget's value has changed.
+      /// \brief Callback when a color widget's value has changed.
       private slots: void OnColorValueChanged();
 
-      /// \brief Callback when a color config widget's value has changed from
+      /// \brief Callback when a color widget's value has changed from
       /// the color picker.
       /// \param[in] _value New color value
       private slots: void OnColorValueChanged(const QColor _value);
 
-      /// \brief Callback when a pose config widget's value has changed.
+      /// \brief Callback when a pose widget's value has changed.
       private slots: void OnPoseValueChanged();
 
-      /// \brief Callback when a geometry config widget's value has changed.
+      /// \brief Callback when a geometry widget's value has changed.
       private slots: void OnGeometryValueChanged();
 
-      /// \brief Callback when a geometry config widget's value has changed.
+      /// \brief Callback when a geometry widget's value has changed.
       /// \param[in] _value Value which the QComboBox changed to.
       private slots: void OnGeometryValueChanged(const int _value);
 
-      /// \brief Callback when an enum config widget's enum value has changed.
+      /// \brief Callback when an enum widget's enum value has changed.
       /// \param[in] _value New enum value in string.
       private slots: void OnEnumValueChanged(const QString &_value);
 
-      /// \brief Callback when an enum config widget's enum value has changed.
+      /// \brief Callback when an enum widget's enum value has changed.
       /// \param[in] _value New enum value in string.
       private slots: void OnCustomColorDialog();
 
-      /// \brief Signal that a uint config widget's value has changed.
+      /// \brief Signal that a uint widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New uint.
       Q_SIGNALS: void UIntValueChanged(const QString &_name,
           const unsigned int _value);
 
-      /// \brief Signal that an int config widget's value has changed.
+      /// \brief Signal that an int widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New int.
       Q_SIGNALS: void IntValueChanged(const QString &_name, const int _value);
 
-      /// \brief Signal that a double config widget's value has changed.
+      /// \brief Signal that a double widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New double.
       Q_SIGNALS: void DoubleValueChanged(const QString &_name,
           const double _value);
 
-      /// \brief Signal that a bool config widget's value has changed.
+      /// \brief Signal that a bool widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New bool.
       Q_SIGNALS: void BoolValueChanged(const QString &_name,
           const bool _value);
 
-      /// \brief Signal that a string config widget's value has changed.
+      /// \brief Signal that a string widget's value has changed.
       /// Note that only single line widgets will emit signals, so plain
       /// text widgets don't emit signals.
       /// \param[in] _name Scoped name of widget.
@@ -805,25 +799,25 @@ namespace ignition
       Q_SIGNALS: void StringValueChanged(const QString &_name,
           const std::string &_value);
 
-      /// \brief Signal that a vector3 config widget's value has changed.
+      /// \brief Signal that a vector3 widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New vector3.
       Q_SIGNALS: void Vector3dValueChanged(const QString &_name,
           const math::Vector3d &_value);
 
-      /// \brief Signal that a color config widget's value has changed.
+      /// \brief Signal that a color widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New color.
       Q_SIGNALS: void ColorValueChanged(const QString &_name,
           const math::Color &_value);
 
-      /// \brief Signal that a pose config widget's value has changed.
+      /// \brief Signal that a pose widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _pose New pose.
       Q_SIGNALS: void PoseValueChanged(const QString &_name,
           const math::Pose3d &_pose);
 
-      /// \brief Signal that a geometry config widget's value has changed.
+      /// \brief Signal that a geometry widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New geometry name, such as "box".
       /// \param[in] _dimensions New dimensions.
@@ -833,7 +827,7 @@ namespace ignition
           const math::Vector3d &_dimensions,
           const std::string &_uri);
 
-      /// \brief Signal that an enum config widget's enum value has changed.
+      /// \brief Signal that an enum widget's enum value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New enum value string.
       Q_SIGNALS: void EnumValueChanged(const QString &_name,
@@ -869,7 +863,7 @@ namespace ignition
 
       /// \internal
       /// \brief Pointer to private data.
-      private: std::unique_ptr<ConfigWidgetPrivate> dataPtr;
+      private: std::unique_ptr<MessageWidgetPrivate> dataPtr;
     };
   }
 }

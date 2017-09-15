@@ -20,7 +20,7 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
-#include "ignition/gui/ConfigWidget.hh"
+#include "ignition/gui/MessageWidget.hh"
 #include "ignition/gui/plugins/TopicInterface.hh"
 
 namespace ignition
@@ -31,7 +31,7 @@ namespace plugins
 {
   class TopicInterfacePrivate
   {
-    public: ConfigWidget *config;
+    public: MessageWidget *config;
     /// \brief Mutex to protect message buffer.
     public: std::mutex mutex;
 
@@ -84,7 +84,7 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Config widget
-  this->dataPtr->config = new ConfigWidget();
+  this->dataPtr->config = new MessageWidget();
 
   if (!msgType.empty())
   {
@@ -118,7 +118,7 @@ void TopicInterface::OnMessage(const google::protobuf::Message &_msg)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  if (this->dataPtr->config->ConfigChildWidgetCount() == 0)
+  if (this->dataPtr->config->PropertyWidgetCount() == 0)
     this->dataPtr->config->Load(&_msg);
   else
     this->dataPtr->config->UpdateFromMsg(&_msg);

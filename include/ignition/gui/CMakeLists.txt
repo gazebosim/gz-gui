@@ -10,7 +10,7 @@ set (CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Core_DEFINITIONS})
 
 set (qt_headers
-  ConfigWidget.hh
+  MessageWidget.hh
   MainWindow.hh
   Plugin.hh
 )
