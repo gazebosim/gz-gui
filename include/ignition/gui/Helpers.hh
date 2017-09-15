@@ -39,6 +39,7 @@ namespace ignition
     /// must be given too. For example, a prismatic joint will have different
     /// units from a revolute joint.
     /// \return The unit.
+    IGNITION_GUI_VISIBLE
     std::string unitFromKey(const std::string &_key,
                             const std::string &_type = "");
 
@@ -47,6 +48,7 @@ namespace ignition
     /// \param[in] _key The key.
     /// \param[out] _min The minimum value.
     /// \param[out] _max The maximum value.
+    IGNITION_GUI_VISIBLE
     void rangeFromKey(const std::string &_key, double &_min, double &_max);
   }
 }
