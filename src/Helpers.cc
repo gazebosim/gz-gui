@@ -102,8 +102,6 @@ std::string ignition::gui::unitFromKey(const std::string &_key,
       return "Nm";
   }
 
-  ignerr << "Failed to get unit for key [" << _key << "] type ["
-         << _type << "]" << std::endl;
   return "";
 }
 
