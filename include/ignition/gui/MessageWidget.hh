@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_CONFIGWIDGET_HH_
-#define IGNITION_GUI_CONFIGWIDGET_HH_
+#ifndef IGNITION_GUI_MESSAGEWIDGET_HH_
+#define IGNITION_GUI_MESSAGEWIDGET_HH_
 
 #include <map>
 #include <memory>
@@ -47,9 +47,6 @@ namespace ignition
     class MessageWidgetPrivate;
     class GroupWidget;
 
-    /// \addtogroup ignition_gui
-    /// \{
-
     /// \brief Widget which holds a property.
     class IGNITION_GUI_VISIBLE PropertyWidget : public QFrame
     {
@@ -74,6 +71,9 @@ namespace ignition
       /// \brief Pointer to parent group widget.
       /// Null if this widget is not contained inside a group widget.
       public: GroupWidget *groupWidget;
+
+      /// \brief Level of how nested the widget is.
+      public: unsigned int level;
     };
 
     /// \brief A widget for geometry properties.
@@ -420,13 +420,6 @@ namespace ignition
       public: PropertyWidget *CreateStringWidget(const std::string &_key,
           const int _level = 0, const std::string &_type = "line");
 
-      /// \brief Create a widget for configuring a bool value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateBoolWidget(const std::string &_key,
-          const int _level = 0);
-
       /// \brief Create a widget for configuring a vector3 value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
@@ -583,13 +576,6 @@ namespace ignition
       private: bool UpdateStringWidget(PropertyWidget *_widget,
           const std::string &_value);
 
-      /// \brief Update a child widget with a bool value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateBoolWidget(PropertyWidget *_widget,
-          const bool _value);
-
       /// \brief Update a child widget with a vector3 value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
@@ -651,11 +637,6 @@ namespace ignition
       /// \return Value of the widget.
       private: double DoubleWidgetValue(PropertyWidget *_widget) const;
 
-      /// \brief Get a bool value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: bool BoolWidgetValue(PropertyWidget *_widget) const;
-
       /// \brief Get a string value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
@@ -705,9 +686,6 @@ namespace ignition
 
       /// \brief Callback when a double widget's value has changed.
       private slots: void OnDoubleValueChanged();
-
-      /// \brief Callback when a bool widget's value has changed.
-      private slots: void OnBoolValueChanged();
 
       /// \brief Callback when a string widget's value has changed.
       private slots: void OnStringValueChanged();
@@ -765,7 +743,7 @@ namespace ignition
       /// \brief Signal that a bool widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New bool.
-      Q_SIGNALS: void BoolValueChanged(const QString &_name,
+      Q_SIGNALS: void BoolValueChanged(const std::string &_name,
           const bool _value);
 
       /// \brief Signal that a string widget's value has changed.

@@ -23,6 +23,7 @@
 #include <ignition/common/EnumIface.hh>
 #include <ignition/common/MaterialDensity.hh>
 
+#include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MessageWidget.hh"
@@ -33,7 +34,6 @@ namespace ignition
   {
     class PropertyWidget;
 
-    /// \class MessageWidgetPrivate MessageWidgetPrivate.hh
     /// \brief Private data for the MessageWidget class.
     class MessageWidgetPrivate
     {
@@ -41,7 +41,7 @@ namespace ignition
       public: std::map <std::string, PropertyWidget *> configWidgets;
 
       /// \brief A copy of the message with fields to be configured by widgets.
-      public: google::protobuf::Message *configMsg;
+      public: google::protobuf::Message *msg;
     };
   }
 }
@@ -60,23 +60,23 @@ const QString MessageWidget::blueColor = "#0d0df2";
 MessageWidget::MessageWidget()
   : dataPtr(new MessageWidgetPrivate())
 {
-  this->dataPtr->configMsg = nullptr;
+  this->dataPtr->msg = nullptr;
   this->setObjectName("configWidget");
 }
 
 /////////////////////////////////////////////////
 MessageWidget::~MessageWidget()
 {
-  delete this->dataPtr->configMsg;
+  delete this->dataPtr->msg;
 }
 
 /////////////////////////////////////////////////
 void MessageWidget::Load(const google::protobuf::Message *_msg)
 {
-  this->dataPtr->configMsg = _msg->New();
-  this->dataPtr->configMsg->CopyFrom(*_msg);
+  this->dataPtr->msg = _msg->New();
+  this->dataPtr->msg->CopyFrom(*_msg);
 
-  QWidget *widget = this->Parse(this->dataPtr->configMsg, 0);
+  QWidget *widget = this->Parse(this->dataPtr->msg, 0);
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignTop);
   mainLayout->addWidget(widget);
@@ -104,15 +104,15 @@ void MessageWidget::Load(const google::protobuf::Message *_msg)
 /////////////////////////////////////////////////
 void MessageWidget::UpdateFromMsg(const google::protobuf::Message *_msg)
 {
-  this->dataPtr->configMsg->CopyFrom(*_msg);
-  this->Parse(this->dataPtr->configMsg, true);
+  this->dataPtr->msg->CopyFrom(*_msg);
+  this->Parse(this->dataPtr->msg, true);
 }
 
 /////////////////////////////////////////////////
 google::protobuf::Message *MessageWidget::Msg()
 {
-  this->UpdateMsg(this->dataPtr->configMsg);
-  return this->dataPtr->configMsg;
+  this->UpdateMsg(this->dataPtr->msg);
+  return this->dataPtr->msg;
 }
 
 /////////////////////////////////////////////////
@@ -243,11 +243,14 @@ bool MessageWidget::SetBoolWidgetValue(const std::string &_name,
     bool _value)
 {
   auto iter = this->dataPtr->configWidgets.find(_name);
+  if (iter == this->dataPtr->configWidgets.end())
+    return false;
 
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateBoolWidget(iter->second, _value);
+  auto boolWidget = qobject_cast<BoolWidget *>(iter->second);
+  if (!boolWidget)
+    return false;
 
-  return false;
+  return boolWidget->SetValue(_value);
 }
 
 /////////////////////////////////////////////////
@@ -378,9 +381,14 @@ bool MessageWidget::BoolWidgetValue(const std::string &_name) const
   std::map <std::string, PropertyWidget *>::const_iterator iter =
       this->dataPtr->configWidgets.find(_name);
 
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->BoolWidgetValue(iter->second);
-  return value;
+  if (iter == this->dataPtr->configWidgets.end())
+    return value;
+
+  auto boolWidget = qobject_cast<BoolWidget *>(iter->second);
+  if (!boolWidget)
+    return value;
+
+  return boolWidget->Value();
 }
 
 /////////////////////////////////////////////////
@@ -482,7 +490,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 
   const google::protobuf::Descriptor *d = _msg->GetDescriptor();
   if (!d)
-    return NULL;
+    return nullptr;
   unsigned int count = d->field_count();
 
   for (unsigned int i = 0; i < count ; ++i)
@@ -490,12 +498,12 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
     const google::protobuf::FieldDescriptor *field = d->field(i);
 
     if (!field)
-      return NULL;
+      return nullptr;
 
     const google::protobuf::Reflection *ref = _msg->GetReflection();
 
     if (!ref)
-      return NULL;
+      return nullptr;
 
     std::string name = field->name();
 
@@ -506,8 +514,8 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
       if (_update && !ref->HasField(*_msg, field))
         continue;
 
-      QWidget *newFieldWidget = NULL;
-      PropertyWidget *configChildWidget = NULL;
+      QWidget *newFieldWidget = nullptr;
+      PropertyWidget *configChildWidget = nullptr;
 
       bool newWidget = true;
       std::string scopedName = _name.empty() ? name : _name + "::" + name;
@@ -605,10 +613,18 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           bool value = ref->GetBool(*_msg, field);
           if (newWidget)
           {
-            configChildWidget = this->CreateBoolWidget(name, _level);
+            auto boolWidget = new BoolWidget(name, _level);
+            this->connect(boolWidget, &BoolWidget::ValueChanged,
+                [this, scopedName](const bool _value)
+                {this->BoolValueChanged(scopedName, _value);});
+
+            configChildWidget = boolWidget;
             newFieldWidget = configChildWidget;
           }
-          this->UpdateBoolWidget(configChildWidget, value);
+
+          auto boolWidget = qobject_cast<BoolWidget *>(configChildWidget);
+          if (boolWidget)
+            boolWidget->SetValue(value);
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_STRING:
@@ -975,7 +991,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
     return widget;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 /////////////////////////////////////////////////
@@ -1255,7 +1271,7 @@ PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
   {
     ignerr << "Unknown type [" << _type << "]. Not creating string widget" <<
         std::endl;
-    return NULL;
+    return nullptr;
   }
 
   // Layout
@@ -1273,57 +1289,6 @@ PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
   widget->setFrameStyle(QFrame::Box);
 
   widget->widgets.push_back(valueEdit);
-
-  return widget;
-}
-
-/////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateBoolWidget(const std::string &_key,
-    const int _level)
-{
-  // ChildWidget
-  PropertyWidget *widget = new PropertyWidget();
-
-  // Label
-  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
-  keyLabel->setToolTip(tr(_key.c_str()));
-
-  // Buttons
-  QRadioButton *valueTrueRadioButton = new QRadioButton(widget);
-  valueTrueRadioButton->setText(tr("True"));
-  this->connect(valueTrueRadioButton, SIGNAL(toggled(bool)), this,
-      SLOT(OnBoolValueChanged()));
-
-  QRadioButton *valueFalseRadioButton = new QRadioButton(widget);
-  valueFalseRadioButton->setText(tr("False"));
-  this->connect(valueFalseRadioButton, SIGNAL(toggled(bool)), this,
-      SLOT(OnBoolValueChanged()));
-
-  QButtonGroup *boolButtonGroup = new QButtonGroup;
-  boolButtonGroup->addButton(valueTrueRadioButton);
-  boolButtonGroup->addButton(valueFalseRadioButton);
-  boolButtonGroup->setExclusive(true);
-
-  QHBoxLayout *buttonLayout = new QHBoxLayout;
-  buttonLayout->addWidget(valueTrueRadioButton);
-  buttonLayout->addWidget(valueFalseRadioButton);
-
-  // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
-  if (_level != 0)
-  {
-    widgetLayout->addItem(new QSpacerItem(20*_level, 1,
-        QSizePolicy::Fixed, QSizePolicy::Fixed));
-  }
-  widgetLayout->addWidget(keyLabel);
-  widgetLayout->addLayout(buttonLayout);
-
-  // ChildWidget
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-
-  widget->widgets.push_back(valueTrueRadioButton);
-  widget->widgets.push_back(valueFalseRadioButton);
 
   return widget;
 }
@@ -2351,7 +2316,7 @@ bool MessageWidget::UpdateIntWidget(PropertyWidget *_widget,  int _value)
   }
   else
   {
-    ignerr << "Error updating Int Config widget" << std::endl;
+    ignerr << "Error updating Int widget" << std::endl;
   }
   return false;
 }
@@ -2367,7 +2332,7 @@ bool MessageWidget::UpdateUIntWidget(PropertyWidget *_widget,
   }
   else
   {
-    ignerr << "Error updating UInt Config widget" << std::endl;
+    ignerr << "Error updating UInt widget" << std::endl;
   }
   return false;
 }
@@ -2392,7 +2357,7 @@ bool MessageWidget::UpdateDoubleWidget(PropertyWidget *_widget, double _value)
   }
   else
   {
-    ignerr << "Error updating Double Config widget" << std::endl;
+    ignerr << "Error updating Double widget" << std::endl;
   }
   return false;
 }
@@ -2419,22 +2384,6 @@ bool MessageWidget::UpdateStringWidget(PropertyWidget *_widget,
   else
   {
     ignerr << "Error updating String Config Widget" << std::endl;
-  }
-  return false;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::UpdateBoolWidget(PropertyWidget *_widget, bool _value)
-{
-  if (_widget->widgets.size() == 2u)
-  {
-    qobject_cast<QRadioButton *>(_widget->widgets[0])->setChecked(_value);
-    qobject_cast<QRadioButton *>(_widget->widgets[1])->setChecked(!_value);
-    return true;
-  }
-  else
-  {
-    ignerr << "Error updating Bool Config widget" << std::endl;
   }
   return false;
 }
@@ -2470,7 +2419,7 @@ bool MessageWidget::UpdateVector3dWidget(PropertyWidget *_widget,
   }
   else
   {
-    ignerr << "Error updating Vector3d Config widget" << std::endl;
+    ignerr << "Error updating Vector3d widget" << std::endl;
   }
   return false;
 }
@@ -2489,7 +2438,7 @@ bool MessageWidget::UpdateColorWidget(PropertyWidget *_widget,
   }
   else
   {
-    ignerr << "Error updating Color Config widget" << std::endl;
+    ignerr << "Error updating Color widget" << std::endl;
   }
   return false;
 }
@@ -2515,7 +2464,7 @@ bool MessageWidget::UpdatePoseWidget(PropertyWidget *_widget,
   }
   else
   {
-    ignerr << "Error updating Pose Config widget" << std::endl;
+    ignerr << "Error updating Pose widget" << std::endl;
   }
   return false;
 }
@@ -2527,7 +2476,7 @@ bool MessageWidget::UpdateGeometryWidget(PropertyWidget *_widget,
 {
   if (_widget->widgets.size() != 8u)
   {
-    ignerr << "Error updating Geometry Config widget " << std::endl;
+    ignerr << "Error updating Geometry widget " << std::endl;
     return false;
   }
 
@@ -2536,7 +2485,7 @@ bool MessageWidget::UpdateGeometryWidget(PropertyWidget *_widget,
 
   if (index < 0)
   {
-    ignerr << "Error updating Geometry Config widget: '" << _value <<
+    ignerr << "Error updating Geometry widget: '" << _value <<
       "' not found" << std::endl;
     return false;
   }
@@ -2583,14 +2532,14 @@ bool MessageWidget::UpdateEnumWidget(PropertyWidget *_widget,
 {
   if (_widget->widgets.size() != 1u)
   {
-    ignerr << "Error updating Enum Config widget" << std::endl;
+    ignerr << "Error updating Enum widget" << std::endl;
     return false;
   }
 
   QComboBox *valueComboBox = qobject_cast<QComboBox *>(_widget->widgets[0]);
   if (!valueComboBox)
   {
-    ignerr << "Error updating Enum Config widget" << std::endl;
+    ignerr << "Error updating Enum widget" << std::endl;
     return false;
   }
 
@@ -2598,7 +2547,7 @@ bool MessageWidget::UpdateEnumWidget(PropertyWidget *_widget,
 
   if (index < 0)
   {
-    ignerr << "Error updating Enum Config widget: '" << _value <<
+    ignerr << "Error updating Enum widget: '" << _value <<
       "' not found" << std::endl;
     return false;
   }
@@ -2633,7 +2582,7 @@ int MessageWidget::IntWidgetValue(PropertyWidget *_widget) const
   }
   else
   {
-    ignerr << "Error getting value from Int Config widget" << std::endl;
+    ignerr << "Error getting value from Int widget" << std::endl;
   }
   return value;
 }
@@ -2648,7 +2597,7 @@ unsigned int MessageWidget::UIntWidgetValue(PropertyWidget *_widget) const
   }
   else
   {
-    ignerr << "Error getting value from UInt Config widget" << std::endl;
+    ignerr << "Error getting value from UInt widget" << std::endl;
   }
   return value;
 }
@@ -2663,7 +2612,7 @@ double MessageWidget::DoubleWidgetValue(PropertyWidget *_widget) const
   }
   else
   {
-    ignerr << "Error getting value from Double Config widget" << std::endl;
+    ignerr << "Error getting value from Double widget" << std::endl;
   }
   return value;
 }
@@ -2693,21 +2642,6 @@ std::string MessageWidget::StringWidgetValue(PropertyWidget *_widget) const
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::BoolWidgetValue(PropertyWidget *_widget) const
-{
-  bool value = false;
-  if (_widget->widgets.size() == 2u)
-  {
-    value = qobject_cast<QRadioButton *>(_widget->widgets[0])->isChecked();
-  }
-  else
-  {
-    ignerr << "Error getting value from Bool Config widget" << std::endl;
-  }
-  return value;
-}
-
-/////////////////////////////////////////////////
 math::Vector3d MessageWidget::Vector3dWidgetValue(
     PropertyWidget *_widget) const
 {
@@ -2720,7 +2654,7 @@ math::Vector3d MessageWidget::Vector3dWidgetValue(
   }
   else
   {
-    ignerr << "Error getting value from Vector3d Config widget" << std::endl;
+    ignerr << "Error getting value from Vector3d widget" << std::endl;
   }
   return value;
 }
@@ -2739,7 +2673,7 @@ math::Color MessageWidget::ColorWidgetValue(PropertyWidget *_widget)
   }
   else
   {
-    ignerr << "Error getting value from Color Config widget" << std::endl;
+    ignerr << "Error getting value from Color widget" << std::endl;
   }
   return value;
 }
@@ -2763,7 +2697,7 @@ math::Pose3d MessageWidget::PoseWidgetValue(PropertyWidget *_widget)
   }
   else
   {
-    ignerr << "Error getting value from Pose Config widget" << std::endl;
+    ignerr << "Error getting value from Pose widget" << std::endl;
   }
   return value;
 }
@@ -2775,7 +2709,7 @@ std::string MessageWidget::GeometryWidgetValue(PropertyWidget *_widget,
   std::string value;
   if (_widget->widgets.size() != 8u)
   {
-    ignerr << "Error getting value from Geometry Config widget " << std::endl;
+    ignerr << "Error getting value from Geometry widget " << std::endl;
     return value;
   }
 
@@ -2825,7 +2759,7 @@ std::string MessageWidget::EnumWidgetValue(PropertyWidget *_widget) const
   std::string value;
   if (_widget->widgets.size() != 1u)
   {
-    ignerr << "Error getting value from Enum Config widget " << std::endl;
+    ignerr << "Error getting value from Enum widget " << std::endl;
     return value;
   }
 
@@ -2898,25 +2832,6 @@ void MessageWidget::OnDoubleValueChanged()
 
   emit DoubleValueChanged(widget->scopedName.c_str(),
       this->DoubleWidgetValue(widget));
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnBoolValueChanged()
-{
-  QRadioButton *radio =
-      qobject_cast<QRadioButton *>(QObject::sender());
-
-  if (!radio)
-    return;
-
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(radio->parent());
-
-  if (!widget)
-    return;
-
-  emit BoolValueChanged(widget->scopedName.c_str(),
-      this->BoolWidgetValue(widget));
 }
 
 /////////////////////////////////////////////////
@@ -3070,7 +2985,7 @@ void MessageWidget::OnGeometryValueChanged()
     return;
 
   PropertyWidget *widget;
-  while (senderWidget->parent() != NULL)
+  while (senderWidget->parent() != nullptr)
   {
     senderWidget = qobject_cast<QWidget *>(senderWidget->parent());
     widget = qobject_cast<PropertyWidget *>(senderWidget);
@@ -3127,7 +3042,7 @@ void MessageWidget::OnEnumValueChanged(const QString &_value)
 bool MessageWidget::AddPropertyWidget(const std::string &_name,
     PropertyWidget *_child)
 {
-  if (_name.empty() || _child == NULL)
+  if (_name.empty() || _child == nullptr)
   {
     ignerr << "Given name or child is invalid. Not adding child widget."
           << std::endl;
@@ -3472,7 +3387,7 @@ PropertyWidget *MessageWidget::PropertyWidgetByName(
   if (iter != this->dataPtr->configWidgets.end())
     return iter->second;
   else
-    return NULL;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////

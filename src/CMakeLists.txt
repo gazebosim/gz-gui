@@ -1,13 +1,14 @@
 include_directories(${PROJECT_BINARY_DIR})
 
 set (sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/MessageWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/BoolWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/MessageWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/SearchModel.cc
   PARENT_SCOPE
