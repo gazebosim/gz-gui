@@ -26,12 +26,9 @@
 #pragma warning(pop)
 #endif
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-#endif
-
 #include <memory>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition

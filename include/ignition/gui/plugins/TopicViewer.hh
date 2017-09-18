@@ -17,14 +17,11 @@
 #ifndef IGNITION_GUI_PLUGINS_TOPICVIEWER_HH_
 #define IGNITION_GUI_PLUGINS_TOPICVIEWER_HH_
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-#endif
-
 #include <memory>
 #include <string>
 #include <ignition/msgs.hh>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace google

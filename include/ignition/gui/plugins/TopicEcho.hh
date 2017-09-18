@@ -18,10 +18,6 @@
 #ifndef IGNITION_GUI_PLUGINS_TOPICECHO_HH_
 #define IGNITION_GUI_PLUGINS_TOPICECHO_HH_
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-#endif
-
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
@@ -32,6 +28,7 @@
 
 #include <memory>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
