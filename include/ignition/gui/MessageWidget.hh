@@ -405,13 +405,6 @@ namespace ignition
       public: PropertyWidget *CreateIntWidget(const std::string &_key,
           const int _level = 0);
 
-      /// \brief Create a widget for configuring a double value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateDoubleWidget(const std::string &_key,
-          const int _level = 0);
-
       /// \brief Create a widget for configuring a string value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
@@ -562,13 +555,6 @@ namespace ignition
       private: bool UpdateIntWidget(PropertyWidget *_widget,
            const int _value);
 
-      /// \brief Update a child widget with a double value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateDoubleWidget(PropertyWidget *_widget,
-          const double _value);
-
       /// \brief Update a child widget with a string value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
@@ -632,11 +618,6 @@ namespace ignition
       /// \return Value of the widget.
       private: unsigned int UIntWidgetValue(PropertyWidget *_widget) const;
 
-      /// \brief Get a double value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: double DoubleWidgetValue(PropertyWidget *_widget) const;
-
       /// \brief Get a string value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
@@ -683,9 +664,6 @@ namespace ignition
 
       /// \brief Callback when an int widget's value has changed.
       private slots: void OnIntValueChanged();
-
-      /// \brief Callback when a double widget's value has changed.
-      private slots: void OnDoubleValueChanged();
 
       /// \brief Callback when a string widget's value has changed.
       private slots: void OnStringValueChanged();
@@ -737,7 +715,7 @@ namespace ignition
       /// \brief Signal that a double widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New double.
-      Q_SIGNALS: void DoubleValueChanged(const QString &_name,
+      Q_SIGNALS: void DoubleValueChanged(const std::string &_name,
           const double _value);
 
       /// \brief Signal that a bool widget's value has changed.

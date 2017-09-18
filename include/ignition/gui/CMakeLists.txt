@@ -11,6 +11,7 @@ add_definitions(${Qt5Core_DEFINITIONS})
 
 set (qt_headers
   BoolWidget.hh
+  DoubleWidget.hh
   MainWindow.hh
   MessageWidget.hh
   Plugin.hh

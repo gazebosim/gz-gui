@@ -25,6 +25,7 @@
 
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/Conversions.hh"
+#include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MessageWidget.hh"
 
@@ -231,11 +232,14 @@ bool MessageWidget::SetDoubleWidgetValue(const std::string &_name,
     double _value)
 {
   auto iter = this->dataPtr->configWidgets.find(_name);
+  if (iter == this->dataPtr->configWidgets.end())
+    return false;
 
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateDoubleWidget(iter->second, _value);
+  auto doubleWidget = qobject_cast<DoubleWidget *>(iter->second);
+  if (!doubleWidget)
+    return false;
 
-  return false;
+  return doubleWidget->SetValue(_value);
 }
 
 /////////////////////////////////////////////////
@@ -369,9 +373,14 @@ double MessageWidget::DoubleWidgetValue(const std::string &_name) const
   std::map <std::string, PropertyWidget *>::const_iterator iter =
       this->dataPtr->configWidgets.find(_name);
 
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->DoubleWidgetValue(iter->second);
-  return value;
+  if (iter == this->dataPtr->configWidgets.end())
+    return value;
+
+  auto doubleWidget = qobject_cast<DoubleWidget *>(iter->second);
+  if (!doubleWidget)
+    return value;
+
+  return doubleWidget->Value();
 }
 
 /////////////////////////////////////////////////
@@ -535,10 +544,17 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             value = 0;
           if (newWidget)
           {
-            configChildWidget = this->CreateDoubleWidget(name, _level);
+            auto doubleWidget = new DoubleWidget(name, _level);
+            this->connect(doubleWidget, &DoubleWidget::ValueChanged,
+                [this, scopedName](const double _value)
+                {this->DoubleValueChanged(scopedName, _value);});
+
+            configChildWidget = doubleWidget;
+
+            // TODO: handle this better
             if (name == "mass")
             {
-              QDoubleSpinBox *valueSpinBox = qobject_cast<QDoubleSpinBox *>(
+              auto valueSpinBox = qobject_cast<QDoubleSpinBox *>(
                   configChildWidget->widgets[0]);
               if (valueSpinBox)
               {
@@ -548,7 +564,9 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             }
             newFieldWidget = configChildWidget;
           }
-          this->UpdateDoubleWidget(configChildWidget, value);
+          auto doubleWidget = qobject_cast<DoubleWidget *>(configChildWidget);
+          if (doubleWidget)
+            doubleWidget->SetValue(value);
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_FLOAT:
@@ -558,10 +576,17 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             value = 0;
           if (newWidget)
           {
-            configChildWidget = this->CreateDoubleWidget(name, _level);
+            auto doubleWidget = new DoubleWidget(name, _level);
+            this->connect(doubleWidget, &DoubleWidget::ValueChanged,
+                [this, scopedName](const double _value)
+                {this->DoubleValueChanged(scopedName, _value);});
+
+            configChildWidget = doubleWidget;
             newFieldWidget = configChildWidget;
           }
-          this->UpdateDoubleWidget(configChildWidget, value);
+          auto doubleWidget = qobject_cast<DoubleWidget *>(configChildWidget);
+          if (doubleWidget)
+            doubleWidget->SetValue(value);
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_INT64:
@@ -1188,61 +1213,6 @@ PropertyWidget *MessageWidget::CreateIntWidget(const std::string &_key,
 }
 
 /////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateDoubleWidget(const std::string &_key,
-    const int _level)
-{
-  // ChildWidget
-  PropertyWidget *widget = new PropertyWidget();
-
-  // Label
-  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
-  keyLabel->setToolTip(tr(_key.c_str()));
-
-  // SpinBox
-  double min = 0;
-  double max = 0;
-  rangeFromKey(_key, min, max);
-
-  QDoubleSpinBox *valueSpinBox = new QDoubleSpinBox(widget);
-  valueSpinBox->setRange(min, max);
-  valueSpinBox->setSingleStep(0.01);
-  valueSpinBox->setDecimals(8);
-  valueSpinBox->setAlignment(Qt::AlignRight);
-  this->connect(valueSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnDoubleValueChanged()));
-
-  // Unit
-  std::string jointType = this->EnumWidgetValue("type");
-  std::string unit = unitFromKey(_key, jointType);
-
-  QLabel *unitLabel = new QLabel();
-  unitLabel->setMaximumWidth(40);
-  unitLabel->setText(QString::fromStdString(unit));
-
-  // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
-  if (_level != 0)
-  {
-    widgetLayout->addItem(new QSpacerItem(20*_level, 1,
-        QSizePolicy::Fixed, QSizePolicy::Fixed));
-  }
-  widgetLayout->addWidget(keyLabel);
-  widgetLayout->addWidget(valueSpinBox);
-  if (unitLabel->text() != "")
-    widgetLayout->addWidget(unitLabel);
-
-  // ChildWidget
-  widget->key = _key;
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-
-  widget->widgets.push_back(valueSpinBox);
-  widget->mapWidgetToUnit[valueSpinBox] = unitLabel;
-
-  return widget;
-}
-
-/////////////////////////////////////////////////
 PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
     const int _level, const std::string &_type)
 {
@@ -1862,10 +1832,12 @@ PropertyWidget *MessageWidget::CreateDensityWidget(
 //  for (const auto &it : common::MaterialDensity::Materials())
 //  {
 //    minLen = std::max(minLen,
-//        common::EnumIface<common::MaterialDensity::Type>::Str(it.first).length());
+//        common::EnumIface<common::MaterialDensity::Type>::Str(
+//        it.first).length());
 //
 //    comboBox->addItem(tr(
-//          common::EnumIface<common::MaterialDensity::Type>::Str(it.first).c_str()),
+//          common::EnumIface<common::MaterialDensity::Type>::Str(
+//          it.first).c_str()),
 //        QVariant::fromValue(it.second));
 //  }
 
@@ -2338,31 +2310,6 @@ bool MessageWidget::UpdateUIntWidget(PropertyWidget *_widget,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::UpdateDoubleWidget(PropertyWidget *_widget, double _value)
-{
-  if (_widget->widgets.size() == 1u)
-  {
-    // Spin value
-    QDoubleSpinBox *spin =
-        qobject_cast<QDoubleSpinBox *>(_widget->widgets[0]);
-    spin->setValue(_value);
-
-    // Unit label
-    std::string jointType = this->EnumWidgetValue("type");
-    std::string unit = unitFromKey(_widget->key, jointType);
-    qobject_cast<QLabel *>(
-        _widget->mapWidgetToUnit[spin])->setText(QString::fromStdString(unit));
-
-    return true;
-  }
-  else
-  {
-    ignerr << "Error updating Double widget" << std::endl;
-  }
-  return false;
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::UpdateStringWidget(PropertyWidget *_widget,
     const std::string &_value)
 {
@@ -2603,21 +2550,6 @@ unsigned int MessageWidget::UIntWidgetValue(PropertyWidget *_widget) const
 }
 
 /////////////////////////////////////////////////
-double MessageWidget::DoubleWidgetValue(PropertyWidget *_widget) const
-{
-  double value = 0.0;
-  if (_widget->widgets.size() == 1u)
-  {
-    value = qobject_cast<QDoubleSpinBox *>(_widget->widgets[0])->value();
-  }
-  else
-  {
-    ignerr << "Error getting value from Double widget" << std::endl;
-  }
-  return value;
-}
-
-/////////////////////////////////////////////////
 std::string MessageWidget::StringWidgetValue(PropertyWidget *_widget) const
 {
   std::string value;
@@ -2813,25 +2745,6 @@ void MessageWidget::OnIntValueChanged()
 
   emit IntValueChanged(widget->scopedName.c_str(),
       this->IntWidgetValue(widget));
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnDoubleValueChanged()
-{
-  QDoubleSpinBox *spin =
-      qobject_cast<QDoubleSpinBox *>(QObject::sender());
-
-  if (!spin)
-    return;
-
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(spin->parent());
-
-  if (!widget)
-    return;
-
-  emit DoubleValueChanged(widget->scopedName.c_str(),
-      this->DoubleWidgetValue(widget));
 }
 
 /////////////////////////////////////////////////
@@ -3230,9 +3143,10 @@ void DensityWidget::SetDensity(const double _density)
 
     if (matDensity >= 0)
     {
-//      this->comboBox->setCurrentIndex(
-//          this->comboBox->findText(tr(
-//              common::EnumIface<common::MaterialDensity::Type>::Str(type).c_str())));
+//    this->comboBox->setCurrentIndex(
+//        this->comboBox->findText(tr(
+//            common::EnumIface<common::MaterialDensity::Type>::Str(
+//            type).c_str())));
     }
     else
     {
