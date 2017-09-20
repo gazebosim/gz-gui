@@ -21,7 +21,7 @@
 #include <memory>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/MessageWidget.hh"
+#include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
 namespace ignition

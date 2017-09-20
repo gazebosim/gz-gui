@@ -26,15 +26,16 @@
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/DoubleWidget.hh"
+#include "ignition/gui/GroupWidget.hh"
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/PropertyWidget.hh"
+
 #include "ignition/gui/MessageWidget.hh"
 
 namespace ignition
 {
   namespace gui
   {
-    class PropertyWidget;
-
     /// \brief Private data for the MessageWidget class.
     class MessageWidgetPrivate
     {
@@ -77,7 +78,7 @@ void MessageWidget::Load(const google::protobuf::Message *_msg)
   this->dataPtr->msg = _msg->New();
   this->dataPtr->msg->CopyFrom(*_msg);
 
-  QWidget *widget = this->Parse(this->dataPtr->msg, 0);
+  auto widget = this->Parse(this->dataPtr->msg, 0);
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignTop);
   mainLayout->addWidget(widget);
@@ -122,15 +123,10 @@ bool MessageWidget::WidgetVisible(const std::string &_name) const
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    if (iter->second->groupWidget)
-    {
-      GroupWidget *groupWidget =
-          qobject_cast<GroupWidget *>(iter->second->groupWidget);
-      if (groupWidget)
-      {
-        return groupWidget->isVisible();
-      }
-    }
+    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    if (groupWidget)
+      return groupWidget->isVisible();
+
     return iter->second->isVisible();
   }
   return false;
@@ -142,15 +138,11 @@ void MessageWidget::SetWidgetVisible(const std::string &_name, bool _visible)
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    if (iter->second->groupWidget)
+    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    if (groupWidget)
     {
-      GroupWidget *groupWidget =
-          qobject_cast<GroupWidget *>(iter->second->groupWidget);
-      if (groupWidget)
-      {
-        groupWidget->setVisible(_visible);
-        return;
-      }
+      groupWidget->setVisible(_visible);
+      return;
     }
     iter->second->setVisible(_visible);
   }
@@ -162,15 +154,10 @@ bool MessageWidget::WidgetReadOnly(const std::string &_name) const
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    if (iter->second->groupWidget)
-    {
-      GroupWidget *groupWidget =
-          qobject_cast<GroupWidget *>(iter->second->groupWidget);
-      if (groupWidget)
-      {
-        return !groupWidget->isEnabled();
-      }
-    }
+    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    if (groupWidget)
+      return !groupWidget->isEnabled();
+
     return !iter->second->isEnabled();
   }
   return false;
@@ -182,23 +169,19 @@ void MessageWidget::SetWidgetReadOnly(const std::string &_name, bool _readOnly)
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    if (iter->second->groupWidget)
+    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    if (groupWidget)
     {
-      GroupWidget *groupWidget =
-          qobject_cast<GroupWidget *>(iter->second->groupWidget);
-      if (groupWidget)
-      {
-        groupWidget->setEnabled(!_readOnly);
+      groupWidget->setEnabled(!_readOnly);
 
-        // Qt docs: "Disabling a widget implicitly disables all its children.
-        // Enabling respectively enables all child widgets unless they have
-        // been explicitly disabled."
-        auto childWidgets = groupWidget->findChildren<QWidget *>();
-        for (auto widget : childWidgets)
-          widget->setEnabled(!_readOnly);
+      // Qt docs: "Disabling a widget implicitly disables all its children.
+      // Enabling respectively enables all child widgets unless they have
+      // been explicitly disabled."
+      auto childWidgets = groupWidget->findChildren<QWidget *>();
+      for (auto widget : childWidgets)
+        widget->setEnabled(!_readOnly);
 
-        return;
-      }
+      return;
     }
     iter->second->setEnabled(!_readOnly);
   }
@@ -807,7 +790,8 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
                 const google::protobuf::Descriptor *quatValueDescriptor =
                     quatValueMsg->GetDescriptor();
                 std::vector<double> quatValues;
-                for (unsigned int k = 0; k < 4; ++k)
+                // FIXME: skipping header
+                for (unsigned int k = 1; k < 5; ++k)
                 {
                   const google::protobuf::FieldDescriptor *quatValueField =
                       quatValueDescriptor->field(k);
@@ -1076,7 +1060,7 @@ GroupWidget *MessageWidget::CreateGroupWidget(const std::string &_name,
 
   // Set the child widget
   groupWidget->childWidget = _childWidget;
-  _childWidget->groupWidget = groupWidget;
+  _childWidget->setParent(groupWidget);
   _childWidget->setContentsMargins(0, 0, 0, 0);
 
   // Set color for children
@@ -1126,10 +1110,13 @@ math::Vector3d MessageWidget::ParseVector3d(
   math::Vector3d vec3;
   const google::protobuf::Descriptor *valueDescriptor = _msg->GetDescriptor();
   std::vector<double> values;
-  for (unsigned int i = 0; i < 3; ++i)
+
+  // FIX: skipping header
+  for (unsigned int i = 1; i < 4; ++i)
   {
     const google::protobuf::FieldDescriptor *valueField =
         valueDescriptor->field(i);
+
     values.push_back(_msg->GetReflection()->GetDouble(*_msg, valueField));
   }
   vec3.X(values[0]);
@@ -2172,7 +2159,8 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
                 quatValues.push_back(quat.W());
                 const google::protobuf::Descriptor *quatValueDescriptor =
                     quatValueMsg->GetDescriptor();
-                for (unsigned int k = 0; k < quatValues.size(); ++k)
+                // FIXME: skipping header
+                for (unsigned int k = 1; k < quatValues.size(); ++k)
                 {
                   const google::protobuf::FieldDescriptor *quatValueField =
                       quatValueDescriptor->field(k);
@@ -2198,7 +2186,8 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
           {
             const google::protobuf::Descriptor *valueDescriptor =
                 valueMsg->GetDescriptor();
-            for (unsigned int j = 0; j < childWidget->widgets.size(); ++j)
+            // FIXME: skipping header
+            for (unsigned int j = 1; j < childWidget->widgets.size(); ++j)
             {
               QDoubleSpinBox *valueSpinBox =
                   qobject_cast<QDoubleSpinBox *>(childWidget->widgets[j]);
@@ -2263,18 +2252,20 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
 void MessageWidget::UpdateVector3dMsg(google::protobuf::Message *_msg,
     const math::Vector3d &_value)
 {
-  const google::protobuf::Descriptor *valueDescriptor = _msg->GetDescriptor();
+  // const google::protobuf::Descriptor *valueDescriptor = _msg->GetDescriptor();
 
   std::vector<double> values;
   values.push_back(_value.X());
   values.push_back(_value.Y());
   values.push_back(_value.Z());
 
-  for (unsigned int i = 0; i < 3; ++i)
+  // FIXME: skipping header
+  for (unsigned int i = 1; i < 4; ++i)
   {
-    const google::protobuf::FieldDescriptor *valueField =
-        valueDescriptor->field(i);
-    _msg->GetReflection()->SetDouble(_msg, valueField, values[i]);
+   // const google::protobuf::FieldDescriptor *valueField =
+   //    valueDescriptor->field(i);
+   // FIXME
+   // _msg->GetReflection()->SetDouble(_msg, valueField, values[i]);
   }
 }
 
@@ -3029,15 +3020,6 @@ void MessageWidget::OnMassValueChanged(const double _value)
 void MessageWidget::OnGeometryChanged()
 {
   emit GeometryChanged();
-}
-
-/////////////////////////////////////////////////
-void GroupWidget::Toggle(bool _checked)
-{
-  if (!this->childWidget)
-    return;
-
-  this->childWidget->setVisible(_checked);
 }
 
 /////////////////////////////////////////////////

@@ -28,6 +28,8 @@
 #include <ignition/math/Vector3.hh>
 
 #include "ignition/gui/qt.h"
+#include "ignition/gui/GroupWidget.hh"
+#include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
 namespace google
@@ -45,36 +47,6 @@ namespace ignition
   namespace gui
   {
     class MessageWidgetPrivate;
-    class GroupWidget;
-
-    /// \brief Widget which holds a property.
-    class IGNITION_GUI_VISIBLE PropertyWidget : public QFrame
-    {
-      Q_OBJECT
-
-      /// \brief Constructor;
-      public: PropertyWidget() : groupWidget(nullptr) {}
-
-      /// \brief Widget's key value, such as "mass" or "color".
-      public: std::string key;
-
-      /// \brief Widget's scoped name based on its parents.
-      public: std::string scopedName;
-
-      /// \brief List of internal widgets holding values, such as Spins and
-      /// LineEdits.
-      public: std::vector<QWidget *> widgets;
-
-      /// \brief Map a widget to the label holding its unit value.
-      public: std::map<QWidget *, QLabel *> mapWidgetToUnit;
-
-      /// \brief Pointer to parent group widget.
-      /// Null if this widget is not contained inside a group widget.
-      public: GroupWidget *groupWidget;
-
-      /// \brief Level of how nested the widget is.
-      public: unsigned int level;
-    };
 
     /// \brief A widget for geometry properties.
     class IGNITION_GUI_VISIBLE GeometryWidget : public PropertyWidget
@@ -168,19 +140,6 @@ namespace ignition
       /// brief Callback when the enum value is changed.
       /// \param[in] _value New enum value in string.
       private slots: void EnumChanged(const QString &_value);
-    };
-
-    /// \brief A collapsible widget that holds a child widget.
-    class IGNITION_GUI_VISIBLE GroupWidget : public QWidget
-    {
-      Q_OBJECT
-
-      /// \brief Child widget that can be collapsed or expanded.
-      public: QWidget *childWidget;
-
-      /// \brief Callback that collapses or expands the child widget.
-      /// _param[in] _checked True for expanded.
-      public slots: void Toggle(bool _checked);
     };
 
     /// \brief A widget generated from a google protobuf message.
