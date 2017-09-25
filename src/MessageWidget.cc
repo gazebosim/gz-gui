@@ -24,10 +24,11 @@
 #include <ignition/common/MaterialDensity.hh>
 
 #include "ignition/gui/BoolWidget.hh"
+#include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/DoubleWidget.hh"
-#include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/Iface.hh"
 #include "ignition/gui/PropertyWidget.hh"
 
 #include "ignition/gui/MessageWidget.hh"
@@ -363,7 +364,7 @@ double MessageWidget::DoubleWidgetValue(const std::string &_name) const
   if (!doubleWidget)
     return value;
 
-  return doubleWidget->Value();
+  return doubleWidget->Value().toDouble();
 }
 
 /////////////////////////////////////////////////
@@ -380,7 +381,7 @@ bool MessageWidget::BoolWidgetValue(const std::string &_name) const
   if (!boolWidget)
     return value;
 
-  return boolWidget->Value();
+  return boolWidget->Value().toBool();
 }
 
 /////////////////////////////////////////////////
@@ -528,9 +529,6 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           if (newWidget)
           {
             auto doubleWidget = new DoubleWidget(name, _level);
-            this->connect(doubleWidget, &DoubleWidget::ValueChanged,
-                [this, scopedName](const double _value)
-                {this->DoubleValueChanged(scopedName, _value);});
 
             configChildWidget = doubleWidget;
 
@@ -560,9 +558,6 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           if (newWidget)
           {
             auto doubleWidget = new DoubleWidget(name, _level);
-            this->connect(doubleWidget, &DoubleWidget::ValueChanged,
-                [this, scopedName](const double _value)
-                {this->DoubleValueChanged(scopedName, _value);});
 
             configChildWidget = doubleWidget;
             newFieldWidget = configChildWidget;
@@ -622,9 +617,6 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           if (newWidget)
           {
             auto boolWidget = new BoolWidget(name, _level);
-            this->connect(boolWidget, &BoolWidget::ValueChanged,
-                [this, scopedName](const bool _value)
-                {this->BoolValueChanged(scopedName, _value);});
 
             configChildWidget = boolWidget;
             newFieldWidget = configChildWidget;
@@ -876,12 +868,12 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           else
           {
             // parse the message fields recursively
-            QWidget *groupBoxWidget =
+            auto groupBoxWidget =
                 this->Parse(valueMsg, _update, scopedName, _level+1);
             if (groupBoxWidget)
             {
               newFieldWidget = new PropertyWidget();
-              QVBoxLayout *groupBoxLayout = new QVBoxLayout;
+              auto groupBoxLayout = new QVBoxLayout;
               groupBoxLayout->setContentsMargins(0, 0, 0, 0);
               groupBoxLayout->addWidget(groupBoxWidget);
               newFieldWidget->setLayout(groupBoxLayout);
@@ -2064,12 +2056,13 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
               google::protobuf::Message *geomValueMsg =
                   geomReflection->MutableMessage(valueMsg, geomFieldDescriptor);
 
+              // FIXME: skipping header
               const google::protobuf::FieldDescriptor *geomRadiusField =
-                  geomValueMsg->GetDescriptor()->field(0);
+                  geomValueMsg->GetDescriptor()->field(1);
               geomValueMsg->GetReflection()->SetDouble(geomValueMsg,
                   geomRadiusField, radius);
               const google::protobuf::FieldDescriptor *geomLengthField =
-                  geomValueMsg->GetDescriptor()->field(1);
+                  geomValueMsg->GetDescriptor()->field(2);
               geomValueMsg->GetReflection()->SetDouble(geomValueMsg,
                   geomLengthField, length);
             }
@@ -2703,19 +2696,17 @@ void MessageWidget::OnItemSelection(QTreeWidgetItem *_item,
 /////////////////////////////////////////////////
 void MessageWidget::OnUIntValueChanged()
 {
-  QSpinBox *spin =
-      qobject_cast<QSpinBox *>(QObject::sender());
+  auto spin = qobject_cast<QSpinBox *>(QObject::sender());
 
   if (!spin)
     return;
 
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(spin->parent());
+  auto widget = qobject_cast<PropertyWidget *>(spin->parent());
 
   if (!widget)
     return;
 
-  emit UIntValueChanged(widget->scopedName.c_str(),
+  this->ValueChanged(widget->scopedName.c_str(),
       this->UIntWidgetValue(widget));
 }
 
@@ -2734,7 +2725,7 @@ void MessageWidget::OnIntValueChanged()
   if (!widget)
     return;
 
-  emit IntValueChanged(widget->scopedName.c_str(),
+  this->ValueChanged(widget->scopedName.c_str(),
       this->IntWidgetValue(widget));
 }
 
@@ -2759,8 +2750,10 @@ void MessageWidget::OnStringValueChanged()
   if (!widget)
     return;
 
-  emit StringValueChanged(widget->scopedName.c_str(),
-      this->StringWidgetValue(widget));
+  QVariant v;
+  v.setValue(this->StringWidgetValue(widget));
+
+  this->ValueChanged(widget->scopedName.c_str(), v);
 }
 
 /////////////////////////////////////////////////
@@ -2962,6 +2955,12 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
 
   _child->scopedName = _name;
   this->dataPtr->configWidgets[_name] = _child;
+
+  // Forward widget's ValueChanged signal
+  this->connect(_child, &PropertyWidget::ValueChanged,
+      [this, _name](const QVariant _value)
+      {this->ValueChanged(_name, _value);});
+
   return true;
 }
 

@@ -25,6 +25,9 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
 
+// Make it possible to use non-Qt types in QVariant
+Q_DECLARE_METATYPE(std::string)
+
 namespace ignition
 {
   namespace gui

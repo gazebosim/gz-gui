@@ -112,7 +112,7 @@ bool DoubleWidget::SetValue(const double _value)
 }
 
 /////////////////////////////////////////////////
-double DoubleWidget::Value() const
+QVariant DoubleWidget::Value() const
 {
   double value = 0.0;
   if (this->widgets.size() == 1u)
@@ -125,10 +125,4 @@ double DoubleWidget::Value() const
            << "widgets: [" << this->widgets.size() << std::endl;
   }
   return value;
-}
-
-/////////////////////////////////////////////////
-void DoubleWidget::OnValueChanged()
-{
-  this->ValueChanged(this->Value());
 }

@@ -19,3 +19,15 @@
 
 using namespace ignition;
 using namespace gui;
+
+/////////////////////////////////////////////////
+void PropertyWidget::OnValueChanged()
+{
+  this->ValueChanged(this->Value());
+}
+
+/////////////////////////////////////////////////
+QVariant PropertyWidget::Value() const
+{
+  return QVariant();
+}

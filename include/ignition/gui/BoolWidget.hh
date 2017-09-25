@@ -49,16 +49,8 @@ namespace ignition
       /// \return True if the update completed successfully.
       public: bool SetValue(const bool _value);
 
-      /// \brief Get bool value from widget.
-      /// \return Value of the widget.
-      public: bool Value() const;
-
-      /// \brief Signal that the value has changed.
-      /// \param[in] _value New bool value.
-      signals: void ValueChanged(const bool _value);
-
-      /// \brief Callback when an internal widget's value has changed.
-      private slots: void OnValueChanged();
+      // Documentation inherited
+      public: QVariant Value() const;
 
       /// \internal
       /// \brief Pointer to private data.

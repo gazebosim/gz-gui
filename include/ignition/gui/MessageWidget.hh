@@ -161,6 +161,11 @@ namespace ignition
       /// \return Updated message.
       public: google::protobuf::Message *Msg();
 
+      /// \brief Signal that a property widget's value has changed.
+      /// \param[in] _name Scoped name of widget.
+      /// \param[in] _value New value.
+      signals: void ValueChanged(const std::string &_name, const QVariant _value);
+
       /// \brief Set whether a child widget should be visible.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _visible True to set the widget to be visible.
@@ -659,37 +664,6 @@ namespace ignition
       /// \brief Callback when an enum widget's enum value has changed.
       /// \param[in] _value New enum value in string.
       private slots: void OnCustomColorDialog();
-
-      /// \brief Signal that a uint widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New uint.
-      Q_SIGNALS: void UIntValueChanged(const QString &_name,
-          const unsigned int _value);
-
-      /// \brief Signal that an int widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New int.
-      Q_SIGNALS: void IntValueChanged(const QString &_name, const int _value);
-
-      /// \brief Signal that a double widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New double.
-      Q_SIGNALS: void DoubleValueChanged(const std::string &_name,
-          const double _value);
-
-      /// \brief Signal that a bool widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New bool.
-      Q_SIGNALS: void BoolValueChanged(const std::string &_name,
-          const bool _value);
-
-      /// \brief Signal that a string widget's value has changed.
-      /// Note that only single line widgets will emit signals, so plain
-      /// text widgets don't emit signals.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New string.
-      Q_SIGNALS: void StringValueChanged(const QString &_name,
-          const std::string &_value);
 
       /// \brief Signal that a vector3 widget's value has changed.
       /// \param[in] _name Scoped name of widget.

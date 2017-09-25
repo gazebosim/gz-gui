@@ -100,7 +100,7 @@ bool BoolWidget::SetValue(const bool _value)
 }
 
 /////////////////////////////////////////////////
-bool BoolWidget::Value() const
+QVariant BoolWidget::Value() const
 {
   bool value = false;
   if (this->widgets.size() == 2u)
@@ -114,10 +114,3 @@ bool BoolWidget::Value() const
   }
   return value;
 }
-
-/////////////////////////////////////////////////
-void BoolWidget::OnValueChanged()
-{
-  this->ValueChanged(this->Value());
-}
-
