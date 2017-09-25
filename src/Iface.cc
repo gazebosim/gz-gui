@@ -377,7 +377,17 @@ bool ignition::gui::loadConfig(const std::string &_config)
     }
 
     if (auto styleElem = winElem->FirstChildElement("stylesheet"))
-      setStyleFromString(styleElem->GetText());
+    {
+      if (auto txt = styleElem->GetText())
+      {
+        setStyleFromString(txt);
+      }
+      // empty string
+      else
+      {
+        setStyleFromString("");
+      }
+    }
   }
 
   return true;
