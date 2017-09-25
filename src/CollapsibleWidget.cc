@@ -15,13 +15,13 @@
  *
 */
 
-#include "ignition/gui/GroupWidget.hh"
+#include "ignition/gui/CollapsibleWidget.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-void GroupWidget::Toggle(bool _checked)
+void CollapsibleWidget::Toggle(bool _checked)
 {
   if (!this->childWidget)
     return;

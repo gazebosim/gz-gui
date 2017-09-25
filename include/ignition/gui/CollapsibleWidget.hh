@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_GROUPWIDGET_HH_
-#define IGNITION_GUI_GROUPWIDGET_HH_
+#ifndef IGNITION_GUI_COLLAPSIBLEWIDGET_HH_
+#define IGNITION_GUI_COLLAPSIBLEWIDGET_HH_
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
@@ -26,7 +26,7 @@ namespace ignition
   namespace gui
   {
     /// \brief A collapsible widget that holds a child widget.
-    class IGNITION_GUI_VISIBLE GroupWidget : public QWidget
+    class IGNITION_GUI_VISIBLE CollapsibleWidget : public QWidget
     {
       Q_OBJECT
 

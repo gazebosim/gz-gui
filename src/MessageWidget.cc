@@ -26,7 +26,7 @@
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/DoubleWidget.hh"
-#include "ignition/gui/GroupWidget.hh"
+#include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/PropertyWidget.hh"
 
@@ -123,7 +123,7 @@ bool MessageWidget::WidgetVisible(const std::string &_name) const
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    auto groupWidget = qobject_cast<CollapsibleWidget *>(iter->second->parent());
     if (groupWidget)
       return groupWidget->isVisible();
 
@@ -138,7 +138,7 @@ void MessageWidget::SetWidgetVisible(const std::string &_name, bool _visible)
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    auto groupWidget = qobject_cast<CollapsibleWidget *>(iter->second->parent());
     if (groupWidget)
     {
       groupWidget->setVisible(_visible);
@@ -154,7 +154,7 @@ bool MessageWidget::WidgetReadOnly(const std::string &_name) const
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    auto groupWidget = qobject_cast<CollapsibleWidget *>(iter->second->parent());
     if (groupWidget)
       return !groupWidget->isEnabled();
 
@@ -169,7 +169,7 @@ void MessageWidget::SetWidgetReadOnly(const std::string &_name, bool _readOnly)
   auto iter = this->dataPtr->configWidgets.find(_name);
   if (iter != this->dataPtr->configWidgets.end())
   {
-    auto groupWidget = qobject_cast<GroupWidget *>(iter->second->parent());
+    auto groupWidget = qobject_cast<CollapsibleWidget *>(iter->second->parent());
     if (groupWidget)
     {
       groupWidget->setEnabled(!_readOnly);
@@ -897,7 +897,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
                 qobject_cast<PropertyWidget *>(newFieldWidget);
             if (childWidget)
             {
-              newFieldWidget = this->CreateGroupWidget(name, childWidget,
+              newFieldWidget = this->CreateCollapsibleWidget(name, childWidget,
                   _level);
             }
           }
@@ -951,7 +951,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 
       // Style widgets without parent (level 0)
       if (newFieldWidget && _level == 0 &&
-          !qobject_cast<GroupWidget *>(newFieldWidget))
+          !qobject_cast<CollapsibleWidget *>(newFieldWidget))
       {
         newFieldWidget->setStyleSheet(
             "QWidget\
@@ -965,10 +965,10 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         newWidgets.push_back(newFieldWidget);
 
         // store the newly created widget in a map with a unique scoped name.
-        if (qobject_cast<GroupWidget *>(newFieldWidget))
+        if (qobject_cast<CollapsibleWidget *>(newFieldWidget))
         {
-          GroupWidget *groupWidget =
-              qobject_cast<GroupWidget *>(newFieldWidget);
+          CollapsibleWidget *groupWidget =
+              qobject_cast<CollapsibleWidget *>(newFieldWidget);
           PropertyWidget *childWidget = qobject_cast<PropertyWidget *>(
               groupWidget->childWidget);
           this->AddPropertyWidget(scopedName, childWidget);
@@ -1004,7 +1004,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 }
 
 /////////////////////////////////////////////////
-GroupWidget *MessageWidget::CreateGroupWidget(const std::string &_name,
+CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_name,
     PropertyWidget *_childWidget, const int _level)
 {
   // Button label
@@ -1047,7 +1047,7 @@ GroupWidget *MessageWidget::CreateGroupWidget(const std::string &_name,
   }
 
   // Child widgets are contained in a group box which can be collapsed
-  GroupWidget *groupWidget = new GroupWidget;
+  CollapsibleWidget *groupWidget = new CollapsibleWidget;
   groupWidget->setStyleSheet(
       "QGroupBox {\
         border : 0;\
@@ -1089,13 +1089,13 @@ GroupWidget *MessageWidget::CreateGroupWidget(const std::string &_name,
         "}");
   }
 
-  // Group Layout
-  QGridLayout *configGroupLayout = new QGridLayout;
-  configGroupLayout->setContentsMargins(0, 0, 0, 0);
-  configGroupLayout->setSpacing(0);
-  configGroupLayout->addWidget(buttonFrame, 0, 0);
-  configGroupLayout->addWidget(_childWidget, 1, 0);
-  groupWidget->setLayout(configGroupLayout);
+  // Collapsible Layout
+  QGridLayout *configCollapsibleLayout = new QGridLayout;
+  configCollapsibleLayout->setContentsMargins(0, 0, 0, 0);
+  configCollapsibleLayout->setSpacing(0);
+  configCollapsibleLayout->addWidget(buttonFrame, 0, 0);
+  configCollapsibleLayout->addWidget(_childWidget, 1, 0);
+  groupWidget->setLayout(configCollapsibleLayout);
 
   // Start collapsed
   groupWidget->Toggle(false);

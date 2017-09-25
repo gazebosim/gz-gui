@@ -11,8 +11,8 @@ add_definitions(${Qt5Core_DEFINITIONS})
 
 set (qt_headers
   BoolWidget.hh
+  CollapsibleWidget.hh
   DoubleWidget.hh
-  GroupWidget.hh
   MainWindow.hh
   MessageWidget.hh
   PropertyWidget.hh
