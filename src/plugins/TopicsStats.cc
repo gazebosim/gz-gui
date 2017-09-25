@@ -18,9 +18,11 @@
 #include <google/protobuf/message.h>
 #include <algorithm>
 #include <cstdint>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <ignition/common/Console.hh>
@@ -472,9 +474,10 @@ void TopicsStats::UpdateGUIStats()
       units = "MB/s";
     }
 
-    std::string b = std::to_string(bandwidth) + " " + units;
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(2) << bandwidth << " " << units;
     statsPair.second.numBytesLastSecItem->setData(
-        QString::fromStdString(b),
+        QString::fromStdString(stream.str()),
         DataRole::DISPLAY_NAME);
   }
 }
