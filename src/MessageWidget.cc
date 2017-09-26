@@ -190,6 +190,17 @@ void MessageWidget::SetWidgetReadOnly(const std::string &_name, bool _readOnly)
 }
 
 /////////////////////////////////////////////////
+bool MessageWidget::SetPropertyValue(const std::string &_name,
+    const QVariant _value)
+{
+  auto iter = this->dataPtr->configWidgets.find(_name);
+  if (iter == this->dataPtr->configWidgets.end())
+    return false;
+
+  return iter->second->SetValue(_value);
+}
+
+/////////////////////////////////////////////////
 bool MessageWidget::SetIntWidgetValue(const std::string &_name, int _value)
 {
   auto iter = this->dataPtr->configWidgets.find(_name);
@@ -213,36 +224,6 @@ bool MessageWidget::SetUIntWidgetValue(const std::string &_name,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::SetDoubleWidgetValue(const std::string &_name,
-    double _value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-  if (iter == this->dataPtr->configWidgets.end())
-    return false;
-
-  auto doubleWidget = qobject_cast<DoubleWidget *>(iter->second);
-  if (!doubleWidget)
-    return false;
-
-  return doubleWidget->SetValue(_value);
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::SetBoolWidgetValue(const std::string &_name,
-    bool _value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-  if (iter == this->dataPtr->configWidgets.end())
-    return false;
-
-  auto boolWidget = qobject_cast<BoolWidget *>(iter->second);
-  if (!boolWidget)
-    return false;
-
-  return boolWidget->SetValue(_value);
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::SetStringWidgetValue(const std::string &_name,
     const std::string &_value)
 {
@@ -252,21 +233,6 @@ bool MessageWidget::SetStringWidgetValue(const std::string &_name,
     return this->UpdateStringWidget(iter->second, _value);
 
   return false;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::SetVector3dWidgetValue(const std::string &_name,
-    const math::Vector3d &_value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-  if (iter == this->dataPtr->configWidgets.end())
-    return false;
-
-  auto w = qobject_cast<Vector3dWidget *>(iter->second);
-  if (!w)
-    return false;
-
-  return w->SetValue(_value);
 }
 
 /////////////////////////////////////////////////
@@ -331,6 +297,18 @@ bool MessageWidget::SetEnumWidgetValue(const std::string &_name,
 }
 
 /////////////////////////////////////////////////
+QVariant MessageWidget::PropertyValue(const std::string &_name) const
+{
+  std::map <std::string, PropertyWidget *>::const_iterator iter =
+      this->dataPtr->configWidgets.find(_name);
+
+  if (iter == this->dataPtr->configWidgets.end())
+    return QVariant();
+
+  return iter->second->Value();
+}
+
+/////////////////////////////////////////////////
 int MessageWidget::IntWidgetValue(const std::string &_name) const
 {
   int value = 0;
@@ -355,40 +333,6 @@ unsigned int MessageWidget::UIntWidgetValue(const std::string &_name) const
 }
 
 /////////////////////////////////////////////////
-double MessageWidget::DoubleWidgetValue(const std::string &_name) const
-{
-  double value = 0.0;
-  std::map <std::string, PropertyWidget *>::const_iterator iter =
-      this->dataPtr->configWidgets.find(_name);
-
-  if (iter == this->dataPtr->configWidgets.end())
-    return value;
-
-  auto doubleWidget = qobject_cast<DoubleWidget *>(iter->second);
-  if (!doubleWidget)
-    return value;
-
-  return doubleWidget->Value().toDouble();
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::BoolWidgetValue(const std::string &_name) const
-{
-  bool value = false;
-  std::map <std::string, PropertyWidget *>::const_iterator iter =
-      this->dataPtr->configWidgets.find(_name);
-
-  if (iter == this->dataPtr->configWidgets.end())
-    return value;
-
-  auto boolWidget = qobject_cast<BoolWidget *>(iter->second);
-  if (!boolWidget)
-    return value;
-
-  return boolWidget->Value().toBool();
-}
-
-/////////////////////////////////////////////////
 std::string MessageWidget::StringWidgetValue(const std::string &_name) const
 {
   std::string value;
@@ -398,24 +342,6 @@ std::string MessageWidget::StringWidgetValue(const std::string &_name) const
   if (iter != this->dataPtr->configWidgets.end())
     value = this->StringWidgetValue(iter->second);
   return value;
-}
-
-/////////////////////////////////////////////////
-math::Vector3d MessageWidget::Vector3dWidgetValue(
-    const std::string &_name) const
-{
-  math::Vector3d value;
-  std::map <std::string, PropertyWidget *>::const_iterator iter =
-      this->dataPtr->configWidgets.find(_name);
-
-  if (iter == this->dataPtr->configWidgets.end())
-    return value;
-
-  auto w = qobject_cast<Vector3dWidget *>(iter->second);
-  if (!w)
-    return value;
-
-  return w->Value().value<math::Vector3d>();
 }
 
 /////////////////////////////////////////////////
@@ -814,7 +740,12 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             auto vector3dWidget =
                 qobject_cast<Vector3dWidget *>(configChildWidget);
             if (vector3dWidget)
-              vector3dWidget->SetValue(vec3);
+            {
+              QVariant v;
+              v.setValue(vec3);
+
+              vector3dWidget->SetValue(v);
+            }
           }
           // parse and create custom color widgets
           else if (field->message_type()->name() == "Color")

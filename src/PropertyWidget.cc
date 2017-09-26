@@ -15,6 +15,8 @@
  *
 */
 
+#include <ignition/common/Console.hh>
+
 #include "ignition/gui/PropertyWidget.hh"
 
 using namespace ignition;
@@ -29,5 +31,13 @@ void PropertyWidget::OnValueChanged()
 /////////////////////////////////////////////////
 QVariant PropertyWidget::Value() const
 {
+  ignerr << "Should never get here" << std::endl;
   return QVariant();
+}
+
+/////////////////////////////////////////////////
+bool PropertyWidget::SetValue(const QVariant)
+{
+  ignerr << "Should never get here" << std::endl;
+  return false;
 }

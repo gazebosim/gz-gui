@@ -198,36 +198,37 @@ TEST(MessageWidgetTest, JointMsgWidget)
         math::Pose3d(pos, quat));
 
     // axis1
-    jointMessageWidget->SetVector3dWidgetValue("axis1::xyz",
-        math::Vector3d::UnitY);
-    jointMessageWidget->SetBoolWidgetValue("axis1::use_parent_model_frame",
+    QVariant variant;
+    variant.setValue(math::Vector3d::UnitY);
+    jointMessageWidget->SetPropertyValue("axis1::xyz", variant);
+    jointMessageWidget->SetPropertyValue("axis1::use_parent_model_frame",
         true);
-    jointMessageWidget->SetDoubleWidgetValue("axis1::limit_lower", -1.2);
-    jointMessageWidget->SetDoubleWidgetValue("axis1::limit_upper", -1.0);
-    jointMessageWidget->SetDoubleWidgetValue("axis1::limit_effort", 1.0);
-    jointMessageWidget->SetDoubleWidgetValue("axis1::limit_velocity", 100.0);
-    jointMessageWidget->SetDoubleWidgetValue("axis1::damping", 0.9);
+    jointMessageWidget->SetPropertyValue("axis1::limit_lower", -1.2);
+    jointMessageWidget->SetPropertyValue("axis1::limit_upper", -1.0);
+    jointMessageWidget->SetPropertyValue("axis1::limit_effort", 1.0);
+    jointMessageWidget->SetPropertyValue("axis1::limit_velocity", 100.0);
+    jointMessageWidget->SetPropertyValue("axis1::damping", 0.9);
 
     // axis2
-    jointMessageWidget->SetVector3dWidgetValue("axis2::xyz",
-        math::Vector3d::UnitZ);
-    jointMessageWidget->SetBoolWidgetValue("axis2::use_parent_model_frame",
+    variant.setValue(math::Vector3d::UnitZ);
+    jointMessageWidget->SetPropertyValue("axis2::xyz", variant);
+    jointMessageWidget->SetPropertyValue("axis2::use_parent_model_frame",
         true);
-    jointMessageWidget->SetDoubleWidgetValue("axis2::limit_lower", -3.2);
-    jointMessageWidget->SetDoubleWidgetValue("axis2::limit_upper", -3.0);
-    jointMessageWidget->SetDoubleWidgetValue("axis2::limit_effort", 3.0);
-    jointMessageWidget->SetDoubleWidgetValue("axis2::limit_velocity", 300.0);
-    jointMessageWidget->SetDoubleWidgetValue("axis2::damping", 3.9);
+    jointMessageWidget->SetPropertyValue("axis2::limit_lower", -3.2);
+    jointMessageWidget->SetPropertyValue("axis2::limit_upper", -3.0);
+    jointMessageWidget->SetPropertyValue("axis2::limit_effort", 3.0);
+    jointMessageWidget->SetPropertyValue("axis2::limit_velocity", 300.0);
+    jointMessageWidget->SetPropertyValue("axis2::damping", 3.9);
 
     // other joint physics properties
-    jointMessageWidget->SetDoubleWidgetValue("cfm", 0.9);
-    jointMessageWidget->SetDoubleWidgetValue("bounce", 0.8);
-    jointMessageWidget->SetDoubleWidgetValue("velocity", 0.7);
-    jointMessageWidget->SetDoubleWidgetValue("fudge_factor", 0.6);
-    jointMessageWidget->SetDoubleWidgetValue("limit_cfm", 0.5);
-    jointMessageWidget->SetDoubleWidgetValue("limit_erp", 0.4);
-    jointMessageWidget->SetDoubleWidgetValue("suspension_cfm", 0.3);
-    jointMessageWidget->SetDoubleWidgetValue("suspension_erp", 0.2);
+    jointMessageWidget->SetPropertyValue("cfm", 0.9);
+    jointMessageWidget->SetPropertyValue("bounce", 0.8);
+    jointMessageWidget->SetPropertyValue("velocity", 0.7);
+    jointMessageWidget->SetPropertyValue("fudge_factor", 0.6);
+    jointMessageWidget->SetPropertyValue("limit_cfm", 0.5);
+    jointMessageWidget->SetPropertyValue("limit_erp", 0.4);
+    jointMessageWidget->SetPropertyValue("suspension_cfm", 0.3);
+    jointMessageWidget->SetPropertyValue("suspension_erp", 0.2);
   }
 
   // verify widget values
@@ -253,38 +254,38 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_EQ(jointMessageWidget->PoseWidgetValue("pose"), math::Pose3d(pos, quat));
 
     // axis1
-    EXPECT_EQ(jointMessageWidget->Vector3dWidgetValue("axis1::xyz"),
+    EXPECT_EQ(jointMessageWidget->PropertyValue("axis1::xyz").value<math::Vector3d>(),
         math::Vector3d::UnitY);
-    EXPECT_EQ(jointMessageWidget->BoolWidgetValue(
-        "axis1::use_parent_model_frame"), true);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis1::limit_lower"), -1.2);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis1::limit_upper"), -1.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis1::limit_effort"), 1.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis1::limit_velocity"),
+    EXPECT_EQ(jointMessageWidget->PropertyValue(
+        "axis1::use_parent_model_frame").toBool(), true);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_lower").toDouble(), -1.2);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_upper").toDouble(), -1.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_effort").toDouble(), 1.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_velocity").toDouble(),
         100.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis1::damping"), 0.9);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::damping").toDouble(), 0.9);
 
     // axis2
-    EXPECT_EQ(jointMessageWidget->Vector3dWidgetValue("axis2::xyz"),
+    EXPECT_EQ(jointMessageWidget->PropertyValue("axis2::xyz").value<math::Vector3d>(),
         math::Vector3d::UnitZ);
-    EXPECT_EQ(jointMessageWidget->BoolWidgetValue(
-        "axis1::use_parent_model_frame"), true);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis2::limit_lower"), -3.2);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis2::limit_upper"), -3.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis2::limit_effort"), 3.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis2::limit_velocity"),
+    EXPECT_EQ(jointMessageWidget->PropertyValue(
+        "axis1::use_parent_model_frame").toBool(), true);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_lower").toDouble(), -3.2);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_upper").toDouble(), -3.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_effort").toDouble(), 3.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_velocity").toDouble(),
         300.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("axis2::damping"), 3.9);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::damping").toDouble(), 3.9);
 
     // other joint physics properties
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("cfm"), 0.9);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("bounce"), 0.8);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("velocity"), 0.7);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("fudge_factor"), 0.6);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("limit_cfm"), 0.5);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("limit_erp"), 0.4);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("suspension_cfm"), 0.3);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("suspension_erp"), 0.2);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("cfm").toDouble(), 0.9);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("bounce").toDouble(), 0.8);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("velocity").toDouble(), 0.7);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("fudge_factor").toDouble(), 0.6);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_cfm").toDouble(), 0.5);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_erp").toDouble(), 0.4);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_cfm").toDouble(), 0.3);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_erp").toDouble(), 0.2);
   }
 
   // verify updates in new msg
@@ -378,14 +379,14 @@ TEST(MessageWidgetTest, JointMsgWidget)
         math::Pose3d(pos, quat));
 
     // other joint physics properties
-    jointMessageWidget->SetDoubleWidgetValue("cfm", 0.19);
-    jointMessageWidget->SetDoubleWidgetValue("bounce", 0.18);
-    jointMessageWidget->SetDoubleWidgetValue("velocity", 2.7);
-    jointMessageWidget->SetDoubleWidgetValue("fudge_factor", 0.26);
-    jointMessageWidget->SetDoubleWidgetValue("limit_cfm", 0.15);
-    jointMessageWidget->SetDoubleWidgetValue("limit_erp", 0.24);
-    jointMessageWidget->SetDoubleWidgetValue("suspension_cfm", 0.13);
-    jointMessageWidget->SetDoubleWidgetValue("suspension_erp", 0.12);
+    jointMessageWidget->SetPropertyValue("cfm", 0.19);
+    jointMessageWidget->SetPropertyValue("bounce", 0.18);
+    jointMessageWidget->SetPropertyValue("velocity", 2.7);
+    jointMessageWidget->SetPropertyValue("fudge_factor", 0.26);
+    jointMessageWidget->SetPropertyValue("limit_cfm", 0.15);
+    jointMessageWidget->SetPropertyValue("limit_erp", 0.24);
+    jointMessageWidget->SetPropertyValue("suspension_cfm", 0.13);
+    jointMessageWidget->SetPropertyValue("suspension_erp", 0.12);
   }
 
   // verify widget values
@@ -413,14 +414,14 @@ TEST(MessageWidgetTest, JointMsgWidget)
         math::Pose3d(pos, quat));
 
     // other joint physics properties
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("cfm"), 0.19);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("bounce"), 0.18);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("velocity"), 2.7);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("fudge_factor"), 0.26);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("limit_cfm"), 0.15);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("limit_erp"), 0.24);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("suspension_cfm"), 0.13);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->DoubleWidgetValue("suspension_erp"), 0.12);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("cfm").toDouble(), 0.19);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("bounce").toDouble(), 0.18);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("velocity").toDouble(), 2.7);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("fudge_factor").toDouble(), 0.26);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_cfm").toDouble(), 0.15);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_erp").toDouble(), 0.24);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_cfm").toDouble(), 0.13);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_erp").toDouble(), 0.12);
   }
 
   // verify updates in new msg
@@ -606,19 +607,19 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     visualMessageWidget->SetStringWidgetValue("parent_name",
         "test_visual_parent_updated");
     visualMessageWidget->SetUIntWidgetValue("parent_id", 55555u);
-    visualMessageWidget->SetBoolWidgetValue("cast_shadows", false);
-    visualMessageWidget->SetDoubleWidgetValue("transparency", 1.0);
-    visualMessageWidget->SetBoolWidgetValue("visible", false);
-    visualMessageWidget->SetBoolWidgetValue("delete_me", true);
-    visualMessageWidget->SetBoolWidgetValue("is_static", true);
-    visualMessageWidget->SetVector3dWidgetValue("scale",
-        math::Vector3d(2.0, 1.5, 0.5));
+    visualMessageWidget->SetPropertyValue("cast_shadows", false);
+    visualMessageWidget->SetPropertyValue("transparency", 1.0);
+    visualMessageWidget->SetPropertyValue("visible", false);
+    visualMessageWidget->SetPropertyValue("delete_me", true);
+    visualMessageWidget->SetPropertyValue("is_static", true);
+    QVariant variant;
+    variant.setValue(math::Vector3d(2.0, 1.5, 0.5));
+    visualMessageWidget->SetPropertyValue("scale", variant);
 
     // pose
     math::Vector3d pos(-2.0, -3.0, -4.0);
     math::Quaterniond quat(0.0, 1.57, 0.0);
-    visualMessageWidget->SetPoseWidgetValue("pose",
-        math::Pose3d(pos, quat));
+    visualMessageWidget->SetPoseWidgetValue("pose", math::Pose3d(pos, quat));
 
     // geometry
     visualMessageWidget->SetGeometryWidgetValue("geometry", "box",
@@ -635,7 +636,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
         math::Color(0.5, 0.4, 0.3, 0.2));
     visualMessageWidget->SetColorWidgetValue("material::emissive",
         math::Color(0.4, 0.6, 0.8, 0.1));
-    visualMessageWidget->SetBoolWidgetValue("material::lighting", false);
+    visualMessageWidget->SetPropertyValue("material::lighting", false);
     // material::script
     visualMessageWidget->SetStringWidgetValue("material::script::name",
         "test_script_name_updated");
@@ -649,12 +650,12 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_TRUE(visualMessageWidget->StringWidgetValue("parent_name") ==
         "test_visual_parent_updated");
     EXPECT_EQ(visualMessageWidget->UIntWidgetValue("parent_id"), 55555u);
-    EXPECT_EQ(visualMessageWidget->BoolWidgetValue("cast_shadows"), false);
-    EXPECT_DOUBLE_EQ(visualMessageWidget->DoubleWidgetValue("transparency"), 1.0);
-    EXPECT_EQ(visualMessageWidget->BoolWidgetValue("visible"), false);
-    EXPECT_EQ(visualMessageWidget->BoolWidgetValue("delete_me"), true);
-    EXPECT_EQ(visualMessageWidget->BoolWidgetValue("is_static"), true);
-    EXPECT_EQ(visualMessageWidget->Vector3dWidgetValue("scale"),
+    EXPECT_EQ(visualMessageWidget->PropertyValue("cast_shadows").toBool(), false);
+    EXPECT_DOUBLE_EQ(visualMessageWidget->PropertyValue("transparency").toDouble(), 1.0);
+    EXPECT_EQ(visualMessageWidget->PropertyValue("visible").toBool(), false);
+    EXPECT_EQ(visualMessageWidget->PropertyValue("delete_me").toBool(), true);
+    EXPECT_EQ(visualMessageWidget->PropertyValue("is_static").toBool(), true);
+    EXPECT_EQ(visualMessageWidget->PropertyValue("scale").value<math::Vector3d>(),
         math::Vector3d(2.0, 1.5, 0.5));
 
     // pose
@@ -681,7 +682,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
         math::Color(0.5, 0.4, 0.3, 0.2));
     EXPECT_EQ(visualMessageWidget->ColorWidgetValue("material::emissive"),
         math::Color(0.4, 0.6, 0.8, 0.1));
-    EXPECT_EQ(visualMessageWidget->BoolWidgetValue("material::lighting"),
+    EXPECT_EQ(visualMessageWidget->PropertyValue("material::lighting").toBool(),
         false);
     // material::script
     EXPECT_TRUE(visualMessageWidget->StringWidgetValue("material::script::name")
@@ -1207,19 +1208,20 @@ TEST(MessageWidgetTest, CreatedExternally)
   double doubleValue = 123.456;
   std::string stringValue("123");
   bool boolValue = true;
-  math::Vector3d vector3dValue(1, 2, 3);
   math::Color colorValue(0.1, 0.2, 0.3, 0.4);
   math::Pose3d poseValue(1, 2, 3, 0.1, 0.2, 0.3);
   std::string enumValue("value2");
   std::string customValue("123456789");
 
+  QVariant vector3dValue;
+  vector3dValue.setValue(math::Vector3d(1, 2, 3));
+
   EXPECT_TRUE(messageWidget->SetUIntWidgetValue("uint", uintValue));
   EXPECT_TRUE(messageWidget->SetIntWidgetValue("int", intValue));
-  EXPECT_TRUE(messageWidget->SetDoubleWidgetValue("double", doubleValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("double", doubleValue));
   EXPECT_TRUE(messageWidget->SetStringWidgetValue("string", stringValue));
-  EXPECT_TRUE(messageWidget->SetBoolWidgetValue("bool", boolValue));
-  EXPECT_TRUE(messageWidget->SetVector3dWidgetValue("vector3d",
-      math::Vector3d(vector3dValue)));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("bool", boolValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("vector3d", vector3dValue));
   EXPECT_TRUE(messageWidget->SetColorWidgetValue("color", colorValue));
   EXPECT_TRUE(messageWidget->SetPoseWidgetValue("pose", poseValue));
   EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enum", enumValue));
@@ -1228,11 +1230,10 @@ TEST(MessageWidgetTest, CreatedExternally)
   // Get widgets values
   EXPECT_EQ(messageWidget->UIntWidgetValue("uint"), uintValue);
   EXPECT_EQ(messageWidget->IntWidgetValue("int"), intValue);
-  EXPECT_DOUBLE_EQ(messageWidget->DoubleWidgetValue("double"), doubleValue);
+  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("double").toDouble(), doubleValue);
   EXPECT_EQ(messageWidget->StringWidgetValue("string"), stringValue);
-  EXPECT_EQ(messageWidget->BoolWidgetValue("bool"), boolValue);
-  EXPECT_EQ(messageWidget->Vector3dWidgetValue("vector3d"),
-      math::Vector3d(vector3dValue));
+  EXPECT_EQ(messageWidget->PropertyValue("bool").toBool(), boolValue);
+  EXPECT_EQ(messageWidget->PropertyValue("vector3d"), vector3dValue);
   EXPECT_EQ(messageWidget->ColorWidgetValue("color"), colorValue);
   EXPECT_EQ(messageWidget->PoseWidgetValue("pose"),
       math::Pose3d(poseValue));
@@ -1444,7 +1445,7 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
     });
 
   // Check default double
-  EXPECT_DOUBLE_EQ(messageWidget->DoubleWidgetValue("double"), 0.0);
+  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("double").toDouble(), 0.0);
 
   // Get signal emitting widgets
   auto spins = doubleWidget->findChildren<QDoubleSpinBox *>();
@@ -1488,7 +1489,7 @@ TEST(MessageWidgetTest, ChildBoolSignal)
     });
 
   // Check default bool
-  EXPECT_EQ(messageWidget->BoolWidgetValue("bool"), false);
+  EXPECT_EQ(messageWidget->PropertyValue("bool"), false);
 
   // Get signal emitting widgets
   auto radios = boolWidget->findChildren<QRadioButton *>();
@@ -1588,7 +1589,7 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
     });
 
   // Check default vector3
-  EXPECT_TRUE(messageWidget->Vector3dWidgetValue("vector3") ==
+  EXPECT_EQ(messageWidget->PropertyValue("vector3").value<math::Vector3d>(),
       math::Vector3d());
 
   // Get axes spins

@@ -45,10 +45,8 @@ namespace ignition
       /// \brief Destructor
       public: ~Vector3dWidget();
 
-      /// \brief Update widget with new value.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      public: bool SetValue(const ignition::math::Vector3d &_value);
+      // Documentation inherited
+      public: bool SetValue(const QVariant _value);
 
       // Documentation inherited
       public: QVariant Value() const;

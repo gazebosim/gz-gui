@@ -85,12 +85,14 @@ BoolWidget::~BoolWidget()
 }
 
 /////////////////////////////////////////////////
-bool BoolWidget::SetValue(const bool _value)
+bool BoolWidget::SetValue(const QVariant _value)
 {
+  bool value = _value.toBool();
+
   if (this->widgets.size() == 2u)
   {
-    qobject_cast<QRadioButton *>(this->widgets[0])->setChecked(_value);
-    qobject_cast<QRadioButton *>(this->widgets[1])->setChecked(!_value);
+    qobject_cast<QRadioButton *>(this->widgets[0])->setChecked(value);
+    qobject_cast<QRadioButton *>(this->widgets[1])->setChecked(!value);
     return true;
   }
 

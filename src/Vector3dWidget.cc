@@ -127,27 +127,29 @@ Vector3dWidget::~Vector3dWidget()
 }
 
 /////////////////////////////////////////////////
-bool Vector3dWidget::SetValue(const ignition::math::Vector3d &_value)
+bool Vector3dWidget::SetValue(const QVariant _value)
 {
+  auto value = _value.value<ignition::math::Vector3d>();
+
   if (this->widgets.size() == 4u)
   {
-    qobject_cast<QDoubleSpinBox *>(this->widgets[0])->setValue(_value.X());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[1])->setValue(_value.Y());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[2])->setValue(_value.Z());
+    qobject_cast<QDoubleSpinBox *>(this->widgets[0])->setValue(value.X());
+    qobject_cast<QDoubleSpinBox *>(this->widgets[1])->setValue(value.Y());
+    qobject_cast<QDoubleSpinBox *>(this->widgets[2])->setValue(value.Z());
 
     // Update preset
     int preset = 0;
-    if (_value == math::Vector3d::UnitX)
+    if (value == math::Vector3d::UnitX)
       preset = 1;
-    else if (_value == -math::Vector3d::UnitX)
+    else if (value == -math::Vector3d::UnitX)
       preset = 2;
-    else if (_value == math::Vector3d::UnitY)
+    else if (value == math::Vector3d::UnitY)
       preset = 3;
-    else if (_value == -math::Vector3d::UnitY)
+    else if (value == -math::Vector3d::UnitY)
       preset = 4;
-    else if (_value == math::Vector3d::UnitZ)
+    else if (value == math::Vector3d::UnitZ)
       preset = 5;
-    else if (_value == -math::Vector3d::UnitZ)
+    else if (value == -math::Vector3d::UnitZ)
       preset = 6;
 
     qobject_cast<QComboBox *>(this->widgets[3])->setCurrentIndex(preset);
@@ -208,11 +210,10 @@ void Vector3dWidget::OnPresetChanged(const int _index)
   else
     return;
 
-  this->SetValue(vec);
-
   // Signal
   QVariant v;
   v.setValue(vec);
 
+  this->SetValue(v);
   this->ValueChanged(v);
 }

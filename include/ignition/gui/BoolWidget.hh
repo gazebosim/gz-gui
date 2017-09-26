@@ -44,10 +44,8 @@ namespace ignition
       /// \brief Destructor
       public: ~BoolWidget();
 
-      /// \brief Update widget with new bool value.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      public: bool SetValue(const bool _value);
+      // Documentation inherited
+      public: bool SetValue(const QVariant _value);
 
       // Documentation inherited
       public: QVariant Value() const;

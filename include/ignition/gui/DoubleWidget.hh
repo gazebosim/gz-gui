@@ -44,10 +44,8 @@ namespace ignition
       /// \brief Destructor
       public: ~DoubleWidget();
 
-      /// \brief Update widget with new double value.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      public: bool SetValue(const double _value);
+      // Documentation inherited
+      public: bool SetValue(const QVariant _value);
 
       // Documentation inherited
       public: QVariant Value() const;

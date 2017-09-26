@@ -190,6 +190,13 @@ namespace ignition
       /// \param[in] _msg Message used for updating the widgets.
       public: void UpdateFromMsg(const google::protobuf::Message *_msg);
 
+      /// \brief Set a value of a property widget.
+      /// \param[in] _name Name of the property widget.
+      /// \param[in] _value Value to set to.
+      /// \return True if the value is set successfully.
+      public: bool SetPropertyValue(const std::string &_name,
+                                    const QVariant _value);
+
       /// \brief Set an integer value to a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _value Value to set to.
@@ -203,31 +210,11 @@ namespace ignition
       public: bool SetUIntWidgetValue(const std::string &_name, unsigned int
           _value);
 
-      /// \brief Set a double value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetDoubleWidgetValue(const std::string &_name,
-          double _value);
-
-      /// \brief Set a bool value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetBoolWidgetValue(const std::string &_name, bool _value);
-
       /// \brief Set a string value to a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _value Value to set to.
       public: bool SetStringWidgetValue(const std::string &_name,
           const std::string &_value);
-
-      /// \brief Set a vector3 value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetVector3dWidgetValue(const std::string &_name,
-          const math::Vector3d &_value);
 
       /// \brief Set a color value to a child widget.
       /// \param[in] _name Name of the child widget.
@@ -286,6 +273,11 @@ namespace ignition
       /// \return True if successful.
       public: bool ClearEnumWidget(const std::string &_name);
 
+      /// \brief Get value from a property widget.
+      /// \param[in] _name Name of the property widget.
+      /// \return Value as QVariant.
+      public: QVariant PropertyValue(const std::string &_name) const;
+
       /// \brief Get an integer value from a child widget.
       /// \param[in] _name Name of the child widget.
       /// \return Integer value.
@@ -296,26 +288,10 @@ namespace ignition
       /// \return Unsigned integer value.
       public: unsigned int UIntWidgetValue(const std::string &_name) const;
 
-      /// \brief Get a double value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return Double value.
-      public: double DoubleWidgetValue(const std::string &_name) const;
-
-      /// \brief Get a bool value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return Bool value.
-      public: bool BoolWidgetValue(const std::string &_name) const;
-
       /// \brief Get a string value from a child widget.
       /// \param[in] _name Name of the child widget.
       /// \return String value.
       public: std::string StringWidgetValue(const std::string &_name) const;
-
-      /// \brief Get a vector3 value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return ignition math Vector3d value.
-      public: math::Vector3d Vector3dWidgetValue(
-          const std::string &_name) const;
 
       /// \brief Get a color value from a child widget.
       /// \param[in] _name Name of the child widget.

@@ -37,6 +37,22 @@ namespace ignition
       /// \brief Constructor;
       public: PropertyWidget() {}
 
+      /// \brief Get value from widget.
+      /// \return Value of the widget as a QVariant.
+      public: virtual QVariant Value() const;
+
+      /// \brief Update widget with new value.
+      /// \param[in] _value Value to set to.
+      /// \return True if the update completed successfully.
+      public: virtual bool SetValue(const QVariant _value);
+
+      /// \brief Signal that the value has changed.
+      /// \param[in] _value New value.
+      signals: void ValueChanged(QVariant _value);
+
+      /// \brief Callback when an internal widget's value has changed.
+      private slots: void OnValueChanged();
+
       /// \brief Widget's key value, such as "mass" or "color".
       public: std::string key;
 
@@ -49,17 +65,6 @@ namespace ignition
 
       /// \brief Map a widget to the label holding its unit value.
       public: std::map<QWidget *, QLabel *> mapWidgetToUnit;
-
-      /// \brief Get value from widget.
-      /// \return Value of the widget as a QVariant.
-      public: virtual QVariant Value() const;
-
-      /// \brief Signal that the value has changed.
-      /// \param[in] _value New value.
-      signals: void ValueChanged(QVariant _value);
-
-      /// \brief Callback when an internal widget's value has changed.
-      private slots: void OnValueChanged();
 
       /// \brief Level of how nested the widget is.
       public: unsigned int level;

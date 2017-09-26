@@ -89,13 +89,15 @@ DoubleWidget::~DoubleWidget()
 }
 
 /////////////////////////////////////////////////
-bool DoubleWidget::SetValue(const double _value)
+bool DoubleWidget::SetValue(const QVariant _value)
 {
+  double value = _value.toDouble();
+
   if (this->widgets.size() == 1u)
   {
     // Spin value
     auto spin = qobject_cast<QDoubleSpinBox *>(this->widgets[0]);
-    spin->setValue(_value);
+    spin->setValue(value);
 
     // Unit label
 //    std::string jointType = this->EnumWidgetValue("type");
