@@ -24,11 +24,14 @@
 #include <ignition/msgs.hh>
 
 #include "test_config.h"
-#include "ignition/gui/Iface.hh"
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/Iface.hh"
 #include "ignition/gui/PropertyWidget.hh"
+#include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/Vector3dWidget.hh"
+
 #include "ignition/gui/MessageWidget.hh"
 
 using namespace ignition;
@@ -928,7 +931,7 @@ TEST(MessageWidgetTest, CustomMessageWidgetReadOnly)
 
   // Create a child widget
   {
-    auto vecWidget = messageWidget->CreateVector3dWidget("vector3d", 0);
+    auto vecWidget = new Vector3dWidget("vector3d", 0);
     auto stringWidget = messageWidget->CreateStringWidget("string", 0);
 
     EXPECT_TRUE(messageWidget->AddPropertyWidget("vector3d", vecWidget));
@@ -1131,7 +1134,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   auto doubleWidget = new DoubleWidget("double", 1);
   auto stringWidget = messageWidget->CreateStringWidget("string", 1);
   auto boolWidget = new BoolWidget("bool", 2);
-  auto vector3dWidget = messageWidget->CreateVector3dWidget("vector3d", 2);
+  auto vector3dWidget = new Vector3dWidget("vector3d", 2);
   auto colorWidget = messageWidget->CreateColorWidget("color", 3);
   auto poseWidget = messageWidget->CreatePoseWidget("pose", 3);
 
@@ -1546,33 +1549,50 @@ TEST(MessageWidgetTest, ChildStringSignal)
   EXPECT_TRUE(stop());
 }
 
-/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildVector3dSignal)
 {
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
   auto messageWidget = new MessageWidget();
 
   // Create child vector3 widget
-  auto vector3Widget =
-      messageWidget->CreateVector3dWidget("vector3");
+  auto vector3Widget = new Vector3dWidget("vector3");
   EXPECT_TRUE(vector3Widget != nullptr);
 
   // Add to message widget
   EXPECT_TRUE(messageWidget->AddPropertyWidget("vector3", vector3Widget));
 
   // Connect signals
-  connect(messageWidget,
-      SIGNAL(Vector3dValueChanged(const QString, math::Vector3d)),
-      this,
-      SLOT(OnVector3dValueChanged(const QString, math::Vector3d)));
+  int vector3SignalCount = 0;
+  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+    [&vector3SignalCount](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<ignition::math::Vector3d>();
+
+      EXPECT_TRUE(_name == "vector3");
+
+      // From spins
+      if (vector3SignalCount == 0)
+      {
+        EXPECT_EQ(v, math::Vector3d(2.5, 0, 0));
+        vector3SignalCount++;
+      }
+      // From preset combo
+      else if (vector3SignalCount == 1)
+      {
+        EXPECT_EQ(v, math::Vector3d(0, -1, 0));
+        vector3SignalCount++;
+      }
+    });
 
   // Check default vector3
   EXPECT_TRUE(messageWidget->Vector3dWidgetValue("vector3") ==
       math::Vector3d());
 
   // Get axes spins
-  QList<QDoubleSpinBox *> spins =
-      vector3Widget->findChildren<QDoubleSpinBox *>();
+  auto spins = vector3Widget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 3);
 
   // Get preset combo
@@ -1580,43 +1600,27 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
   EXPECT_EQ(combos.size(), 1);
 
   // Change the X value and check new value at callback
-  EXPECT_TRUE(g_vector3SignalCount == 0);
+  EXPECT_EQ(vector3SignalCount, 0);
   spins[0]->setValue(2.5);
-  QTest::keyClick(spins[0], Qt::Key_Enter);
-  EXPECT_TRUE(g_vector3SignalCount == 1);
+  spins[0]->editingFinished();
+  EXPECT_EQ(vector3SignalCount, 1);
 
   // Change the preset value and check new value at callback
   combos[0]->setCurrentIndex(4);
-  QTest::keyClick(combos[0], Qt::Key_Enter);
-  EXPECT_TRUE(g_vector3SignalCount == 2);
+//  combos[0]->editingFinished();
+  EXPECT_EQ(vector3SignalCount, 2);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
 
-/////////////////////////////////////////////////
-//TEST(MessageWidgetTest, OnVector3dValueChanged(const QString &_name,
-//    const math::Vector3d &_vector3)
-//{
-//  EXPECT_TRUE(_name == "vector3");
-//
-//  // From spins
-//  if (g_vector3SignalCount == 0)
-//  {
-//    EXPECT_TRUE(_vector3 == math::Vector3d(2.5, 0, 0));
-//    g_vector3SignalCount++;
-//  }
-//  // From preset combo
-//  else if (g_vector3SignalCount == 1)
-//  {
-//    EXPECT_TRUE(_vector3 == math::Vector3d(0, -1, 0));
-//    g_vector3SignalCount++;
-//  }
-//}
-
+/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildColorSignal)
 {
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
   auto messageWidget = new MessageWidget();
 
   // Create child color widget
@@ -1665,6 +1669,9 @@ TEST(MessageWidgetTest, ChildColorSignal)
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildPoseSignal)
 {
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
   auto messageWidget = new MessageWidget();
 
   // Create child pose widget
@@ -1710,6 +1717,9 @@ TEST(MessageWidgetTest, ChildPoseSignal)
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildGeometrySignal)
 {
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
   auto messageWidget = new MessageWidget();
 
   // Create child widget
@@ -1767,6 +1777,9 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildEnumSignal)
 {
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
   auto messageWidget = new MessageWidget();
 
   // Create child pose widget
@@ -1816,6 +1829,9 @@ TEST(MessageWidgetTest, ChildEnumSignal)
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, GetChildWidgetByName)
 {
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
   // Create message widget and check it has no children
   auto messageWidget = new MessageWidget();
   EXPECT_TRUE(messageWidget != nullptr);

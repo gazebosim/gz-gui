@@ -17,6 +17,7 @@ set (qt_headers
   MessageWidget.hh
   PropertyWidget.hh
   Plugin.hh
+  Vector3dWidget.hh
 )
 
 set (headers
@@ -27,6 +28,7 @@ set (headers
   Iface.hh
   ign.hh
   qt.h
+  QtMetatypes.hh
   SearchModel.hh
   System.hh
 )

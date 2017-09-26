@@ -28,8 +28,9 @@
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/Helpers.hh"
-#include "ignition/gui/Iface.hh"
 #include "ignition/gui/PropertyWidget.hh"
+#include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/Vector3dWidget.hh"
 
 #include "ignition/gui/MessageWidget.hh"
 
@@ -80,7 +81,7 @@ void MessageWidget::Load(const google::protobuf::Message *_msg)
   this->dataPtr->msg->CopyFrom(*_msg);
 
   auto widget = this->Parse(this->dataPtr->msg, 0);
-  QVBoxLayout *mainLayout = new QVBoxLayout;
+  auto mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignTop);
   mainLayout->addWidget(widget);
 
@@ -258,11 +259,14 @@ bool MessageWidget::SetVector3dWidgetValue(const std::string &_name,
     const math::Vector3d &_value)
 {
   auto iter = this->dataPtr->configWidgets.find(_name);
+  if (iter == this->dataPtr->configWidgets.end())
+    return false;
 
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateVector3dWidget(iter->second, _value);
+  auto w = qobject_cast<Vector3dWidget *>(iter->second);
+  if (!w)
+    return false;
 
-  return false;
+  return w->SetValue(_value);
 }
 
 /////////////////////////////////////////////////
@@ -404,9 +408,14 @@ math::Vector3d MessageWidget::Vector3dWidgetValue(
   std::map <std::string, PropertyWidget *>::const_iterator iter =
       this->dataPtr->configWidgets.find(_name);
 
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->Vector3dWidgetValue(iter->second);
-  return value;
+  if (iter == this->dataPtr->configWidgets.end())
+    return value;
+
+  auto w = qobject_cast<Vector3dWidget *>(iter->second);
+  if (!w)
+    return value;
+
+  return w->Value().value<math::Vector3d>();
 }
 
 /////////////////////////////////////////////////
@@ -528,9 +537,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             value = 0;
           if (newWidget)
           {
-            auto doubleWidget = new DoubleWidget(name, _level);
-
-            configChildWidget = doubleWidget;
+            configChildWidget = new DoubleWidget(name, _level);
 
             // TODO: handle this better
             if (name == "mass")
@@ -557,9 +564,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             value = 0;
           if (newWidget)
           {
-            auto doubleWidget = new DoubleWidget(name, _level);
-
-            configChildWidget = doubleWidget;
+            configChildWidget = new DoubleWidget(name, _level);
             newFieldWidget = configChildWidget;
           }
           auto doubleWidget = qobject_cast<DoubleWidget *>(configChildWidget);
@@ -616,9 +621,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           bool value = ref->GetBool(*_msg, field);
           if (newWidget)
           {
-            auto boolWidget = new BoolWidget(name, _level);
-
-            configChildWidget = boolWidget;
+            configChildWidget = new BoolWidget(name, _level);
             newFieldWidget = configChildWidget;
           }
 
@@ -802,12 +805,16 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           {
             if (newWidget)
             {
-              configChildWidget = this->CreateVector3dWidget(name, _level);
+              configChildWidget = new Vector3dWidget(name, _level);
               newFieldWidget = configChildWidget;
             }
 
             math::Vector3d vec3 = this->ParseVector3d(valueMsg);
-            this->UpdateVector3dWidget(configChildWidget, vec3);
+
+            auto vector3dWidget =
+                qobject_cast<Vector3dWidget *>(configChildWidget);
+            if (vector3dWidget)
+              vector3dWidget->SetValue(vec3);
           }
           // parse and create custom color widgets
           else if (field->message_type()->name() == "Color")
@@ -977,8 +984,8 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
   if (!newWidgets.empty())
   {
     // create a group box to hold child widgets.
-    QGroupBox *widget = new QGroupBox();
-    QVBoxLayout *widgetLayout = new QVBoxLayout;
+    auto widget = new QGroupBox();
+    auto widgetLayout = new QVBoxLayout;
 
     for (unsigned int i = 0; i < newWidgets.size(); ++i)
     {
@@ -1000,12 +1007,12 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
     PropertyWidget *_childWidget, const int _level)
 {
   // Button label
-  QLabel *buttonLabel = new QLabel(
+  auto buttonLabel = new QLabel(
       tr(humanReadable(_name).c_str()));
   buttonLabel->setToolTip(tr(_name.c_str()));
 
   // Button icon
-  QCheckBox *buttonIcon = new QCheckBox();
+  auto buttonIcon = new QCheckBox();
   buttonIcon->setChecked(true);
   buttonIcon->setStyleSheet(
       "QCheckBox::indicator::unchecked {\
@@ -1016,7 +1023,7 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
       }");
 
   // Button layout
-  QHBoxLayout *buttonLayout = new QHBoxLayout();
+  auto buttonLayout = new QHBoxLayout();
   buttonLayout->addItem(new QSpacerItem(20*_level, 1,
       QSizePolicy::Fixed, QSizePolicy::Fixed));
   buttonLayout->addWidget(buttonLabel);
@@ -1024,7 +1031,7 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
   buttonLayout->setAlignment(buttonIcon, Qt::AlignRight);
 
   // Button frame
-  QFrame *buttonFrame = new QFrame();
+  auto buttonFrame = new QFrame();
   buttonFrame->setFrameStyle(QFrame::Box);
   buttonFrame->setLayout(buttonLayout);
 
@@ -1082,7 +1089,7 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
   }
 
   // Collapsible Layout
-  QGridLayout *configCollapsibleLayout = new QGridLayout;
+  auto configCollapsibleLayout = new QGridLayout;
   configCollapsibleLayout->setContentsMargins(0, 0, 0, 0);
   configCollapsibleLayout->setSpacing(0);
   configCollapsibleLayout->addWidget(buttonFrame, 0, 0);
@@ -1125,18 +1132,18 @@ PropertyWidget *MessageWidget::CreateUIntWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
+  auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // SpinBox
-  QSpinBox *valueSpinBox = new QSpinBox(widget);
+  auto valueSpinBox = new QSpinBox(widget);
   valueSpinBox->setRange(0, 1e8);
   valueSpinBox->setAlignment(Qt::AlignRight);
   this->connect(valueSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnUIntValueChanged()));
 
   // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
+  auto widgetLayout = new QHBoxLayout;
   if (_level != 0)
   {
     widgetLayout->addItem(new QSpacerItem(20*_level, 1,
@@ -1162,18 +1169,18 @@ PropertyWidget *MessageWidget::CreateIntWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
+  auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // SpinBox
-  QSpinBox *valueSpinBox = new QSpinBox(widget);
+  auto valueSpinBox = new QSpinBox(widget);
   valueSpinBox->setRange(-1e8, 1e8);
   valueSpinBox->setAlignment(Qt::AlignRight);
   this->connect(valueSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnIntValueChanged()));
 
   // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
+  auto widgetLayout = new QHBoxLayout;
   if (_level != 0)
   {
     widgetLayout->addItem(new QSpacerItem(20*_level, 1,
@@ -1199,7 +1206,7 @@ PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Label
-  QLabel *keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
+  auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // Line or Text Edit based on key
@@ -1224,7 +1231,7 @@ PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
   }
 
   // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
+  auto widgetLayout = new QHBoxLayout;
   if (_level != 0)
   {
     widgetLayout->addItem(new QSpacerItem(20*_level, 1,
@@ -1243,97 +1250,6 @@ PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
 }
 
 /////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateVector3dWidget(
-    const std::string &_key, const int _level)
-{
-  // ChildWidget
-  PropertyWidget *widget = new PropertyWidget();
-
-  // Presets
-  auto presetsCombo = new QComboBox(widget);
-  presetsCombo->addItem("Custom", 0);
-  presetsCombo->addItem(" X", 1);
-  presetsCombo->addItem("-X", 2);
-  presetsCombo->addItem(" Y", 3);
-  presetsCombo->addItem("-Y", 4);
-  presetsCombo->addItem(" Z", 5);
-  presetsCombo->addItem("-Z", 6);
-  presetsCombo->setMinimumWidth(80);
-  this->connect(presetsCombo, SIGNAL(currentIndexChanged(const int)), this,
-      SLOT(OnVector3dPresetChanged(const int)));
-
-  // Labels
-  QLabel *vecXLabel = new QLabel(tr("X"));
-  QLabel *vecYLabel = new QLabel(tr("Y"));
-  QLabel *vecZLabel = new QLabel(tr("Z"));
-  vecXLabel->setToolTip(tr("x"));
-  vecYLabel->setToolTip(tr("y"));
-  vecZLabel->setToolTip(tr("z"));
-
-  // SpinBoxes
-  double min = 0;
-  double max = 0;
-  rangeFromKey(_key, min, max);
-
-  QDoubleSpinBox *vecXSpinBox = new QDoubleSpinBox(widget);
-  vecXSpinBox->setRange(min, max);
-  vecXSpinBox->setSingleStep(0.01);
-  vecXSpinBox->setDecimals(6);
-  vecXSpinBox->setAlignment(Qt::AlignRight);
-  vecXSpinBox->setMaximumWidth(100);
-  this->connect(vecXSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnVector3dValueChanged()));
-
-  QDoubleSpinBox *vecYSpinBox = new QDoubleSpinBox(widget);
-  vecYSpinBox->setRange(min, max);
-  vecYSpinBox->setSingleStep(0.01);
-  vecYSpinBox->setDecimals(6);
-  vecYSpinBox->setAlignment(Qt::AlignRight);
-  vecYSpinBox->setMaximumWidth(100);
-  this->connect(vecYSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnVector3dValueChanged()));
-
-  QDoubleSpinBox *vecZSpinBox = new QDoubleSpinBox(widget);
-  vecZSpinBox->setRange(min, max);
-  vecZSpinBox->setSingleStep(0.01);
-  vecZSpinBox->setDecimals(6);
-  vecZSpinBox->setAlignment(Qt::AlignRight);
-  vecZSpinBox->setMaximumWidth(100);
-  this->connect(vecZSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnVector3dValueChanged()));
-
-  // This is inside a group
-  int level = _level + 1;
-
-  // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
-  widgetLayout->addItem(new QSpacerItem(20*level, 1,
-      QSizePolicy::Fixed, QSizePolicy::Fixed));
-  widgetLayout->addWidget(presetsCombo);
-  widgetLayout->addWidget(vecXLabel);
-  widgetLayout->addWidget(vecXSpinBox);
-  widgetLayout->addWidget(vecYLabel);
-  widgetLayout->addWidget(vecYSpinBox);
-  widgetLayout->addWidget(vecZLabel);
-  widgetLayout->addWidget(vecZSpinBox);
-
-  widgetLayout->setAlignment(vecXLabel, Qt::AlignRight);
-  widgetLayout->setAlignment(vecYLabel, Qt::AlignRight);
-  widgetLayout->setAlignment(vecZLabel, Qt::AlignRight);
-
-  // ChildWidget
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-
-  widget->widgets.push_back(vecXSpinBox);
-  widget->widgets.push_back(vecYSpinBox);
-  widget->widgets.push_back(vecZSpinBox);
-  widget->widgets.push_back(presetsCombo);
-
-  return widget;
-}
-
-/////////////////////////////////////////////////
 PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
     const int _level)
 {
@@ -1341,10 +1257,10 @@ PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
   PropertyWidget *widget = new PropertyWidget();
 
   // Labels
-  QLabel *colorRLabel = new QLabel(tr("R"));
-  QLabel *colorGLabel = new QLabel(tr("G"));
-  QLabel *colorBLabel = new QLabel(tr("B"));
-  QLabel *colorALabel = new QLabel(tr("A"));
+  auto colorRLabel = new QLabel(tr("R"));
+  auto colorGLabel = new QLabel(tr("G"));
+  auto colorBLabel = new QLabel(tr("B"));
+  auto colorALabel = new QLabel(tr("A"));
   colorRLabel->setToolTip(tr("r"));
   colorGLabel->setToolTip(tr("g"));
   colorBLabel->setToolTip(tr("b"));
@@ -1355,7 +1271,7 @@ PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
   double max = 0;
   rangeFromKey(_key, min, max);
 
-  QDoubleSpinBox *colorRSpinBox = new QDoubleSpinBox(widget);
+  auto colorRSpinBox = new QDoubleSpinBox(widget);
   colorRSpinBox->setRange(0, 1.0);
   colorRSpinBox->setSingleStep(0.1);
   colorRSpinBox->setDecimals(3);
@@ -1364,7 +1280,7 @@ PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
   this->connect(colorRSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnColorValueChanged()));
 
-  QDoubleSpinBox *colorGSpinBox = new QDoubleSpinBox(widget);
+  auto colorGSpinBox = new QDoubleSpinBox(widget);
   colorGSpinBox->setRange(0, 1.0);
   colorGSpinBox->setSingleStep(0.1);
   colorGSpinBox->setDecimals(3);
@@ -1373,7 +1289,7 @@ PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
   this->connect(colorGSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnColorValueChanged()));
 
-  QDoubleSpinBox *colorBSpinBox = new QDoubleSpinBox(widget);
+  auto colorBSpinBox = new QDoubleSpinBox(widget);
   colorBSpinBox->setRange(0, 1.0);
   colorBSpinBox->setSingleStep(0.1);
   colorBSpinBox->setDecimals(3);
@@ -1382,7 +1298,7 @@ PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
   this->connect(colorBSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnColorValueChanged()));
 
-  QDoubleSpinBox *colorASpinBox = new QDoubleSpinBox(widget);
+  auto colorASpinBox = new QDoubleSpinBox(widget);
   colorASpinBox->setRange(0, 1.0);
   colorASpinBox->setSingleStep(0.1);
   colorASpinBox->setDecimals(3);
@@ -1400,7 +1316,7 @@ PropertyWidget *MessageWidget::CreateColorWidget(const std::string &_key,
   int level = _level + 1;
 
   // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
+  auto widgetLayout = new QHBoxLayout;
   widgetLayout->addItem(new QSpacerItem(20*level, 1,
       QSizePolicy::Fixed, QSizePolicy::Fixed));
   widgetLayout->addWidget(colorRLabel);
@@ -1481,7 +1397,7 @@ PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
   int level = _level+1;
 
   // Layout
-  QGridLayout *widgetLayout = new QGridLayout;
+  auto widgetLayout = new QGridLayout;
   widgetLayout->setColumnStretch(3, 1);
   widgetLayout->addItem(new QSpacerItem(20*level, 1, QSizePolicy::Fixed,
       QSizePolicy::Fixed), 0, 0);
@@ -1497,7 +1413,7 @@ PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
 
   for (unsigned int i = 0; i < elements.size(); ++i)
   {
-    QDoubleSpinBox *spin = new QDoubleSpinBox(widget);
+    auto spin = new QDoubleSpinBox(widget);
     this->connect(spin, SIGNAL(editingFinished()), this,
         SLOT(OnPoseValueChanged()));
     widget->widgets.push_back(spin);
@@ -1508,7 +1424,7 @@ PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
     spin->setAlignment(Qt::AlignRight);
     spin->setMaximumWidth(100);
 
-    QLabel *label = new QLabel(humanReadable(elements[i]).c_str());
+    auto label = new QLabel(humanReadable(elements[i]).c_str());
     label->setToolTip(tr(elements[i].c_str()));
     if (i == 0)
       label->setStyleSheet("QLabel{color: " + this->redColor + ";}");
@@ -1517,7 +1433,7 @@ PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
     else if (i == 2)
       label->setStyleSheet("QLabel{color:" + this->blueColor + ";}");
 
-    QLabel *unitLabel = new QLabel();
+    auto unitLabel = new QLabel();
     unitLabel->setMaximumWidth(40);
     unitLabel->setMinimumWidth(40);
     if (i < 3)
@@ -1545,9 +1461,9 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   GeometryWidget *widget = new GeometryWidget;
 
   // Geometry ComboBox
-  QLabel *geometryLabel = new QLabel(tr("Geometry"));
+  auto geometryLabel = new QLabel(tr("Geometry"));
   geometryLabel->setToolTip(tr("geometry"));
-  QComboBox *geometryComboBox = new QComboBox(widget);
+  auto geometryComboBox = new QComboBox(widget);
   geometryComboBox->addItem(tr("box"));
   geometryComboBox->addItem(tr("cylinder"));
   geometryComboBox->addItem(tr("sphere"));
@@ -1561,7 +1477,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   double max = 0;
   rangeFromKey("length", min, max);
 
-  QDoubleSpinBox *geomSizeXSpinBox = new QDoubleSpinBox(widget);
+  auto geomSizeXSpinBox = new QDoubleSpinBox(widget);
   geomSizeXSpinBox->setRange(min, max);
   geomSizeXSpinBox->setSingleStep(0.01);
   geomSizeXSpinBox->setDecimals(6);
@@ -1571,7 +1487,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   this->connect(geomSizeXSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
 
-  QDoubleSpinBox *geomSizeYSpinBox = new QDoubleSpinBox(widget);
+  auto geomSizeYSpinBox = new QDoubleSpinBox(widget);
   geomSizeYSpinBox->setRange(min, max);
   geomSizeYSpinBox->setSingleStep(0.01);
   geomSizeYSpinBox->setDecimals(6);
@@ -1581,7 +1497,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   this->connect(geomSizeYSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
 
-  QDoubleSpinBox *geomSizeZSpinBox = new QDoubleSpinBox(widget);
+  auto geomSizeZSpinBox = new QDoubleSpinBox(widget);
   geomSizeZSpinBox->setRange(min, max);
   geomSizeZSpinBox->setSingleStep(0.01);
   geomSizeZSpinBox->setDecimals(6);
@@ -1591,9 +1507,9 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   this->connect(geomSizeZSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
 
-  QLabel *geomSizeXLabel = new QLabel(tr("X"));
-  QLabel *geomSizeYLabel = new QLabel(tr("Y"));
-  QLabel *geomSizeZLabel = new QLabel(tr("Z"));
+  auto geomSizeXLabel = new QLabel(tr("X"));
+  auto geomSizeYLabel = new QLabel(tr("Y"));
+  auto geomSizeZLabel = new QLabel(tr("Z"));
   geomSizeXLabel->setStyleSheet("QLabel{color: " + this->redColor + ";}");
   geomSizeYLabel->setStyleSheet("QLabel{color: " + this->greenColor + ";}");
   geomSizeZLabel->setStyleSheet("QLabel{color: " + this->blueColor + ";}");
@@ -1602,11 +1518,11 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   geomSizeZLabel->setToolTip(tr("z"));
 
   std::string unit = unitFromKey("length");
-  QLabel *geomSizeXUnitLabel = new QLabel(QString::fromStdString(unit));
-  QLabel *geomSizeYUnitLabel = new QLabel(QString::fromStdString(unit));
-  QLabel *geomSizeZUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto geomSizeXUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto geomSizeYUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto geomSizeZUnitLabel = new QLabel(QString::fromStdString(unit));
 
-  QHBoxLayout *geomSizeLayout = new QHBoxLayout;
+  auto geomSizeLayout = new QHBoxLayout;
   geomSizeLayout->addWidget(geomSizeXLabel);
   geomSizeLayout->addWidget(geomSizeXSpinBox);
   geomSizeLayout->addWidget(geomSizeXUnitLabel);
@@ -1622,35 +1538,35 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   geomSizeLayout->setAlignment(geomSizeZLabel, Qt::AlignRight);
 
   // Uri
-  QLabel *geomFilenameLabel = new QLabel(tr("Uri"));
+  auto geomFilenameLabel = new QLabel(tr("Uri"));
   geomFilenameLabel->setToolTip(tr("uri"));
-  QLineEdit *geomFilenameLineEdit = new QLineEdit(widget);
+  auto geomFilenameLineEdit = new QLineEdit(widget);
   this->connect(geomFilenameLineEdit, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
-  QPushButton *geomFilenameButton = new QPushButton(tr("..."));
+  auto geomFilenameButton = new QPushButton(tr("..."));
   geomFilenameButton->setMaximumWidth(30);
 
-  QHBoxLayout *geomFilenameLayout = new QHBoxLayout;
+  auto geomFilenameLayout = new QHBoxLayout;
   geomFilenameLayout->addWidget(geomFilenameLabel);
   geomFilenameLayout->addWidget(geomFilenameLineEdit);
   geomFilenameLayout->addWidget(geomFilenameButton);
 
-  QVBoxLayout *geomSizeFilenameLayout = new QVBoxLayout;
+  auto geomSizeFilenameLayout = new QVBoxLayout;
   geomSizeFilenameLayout->addLayout(geomSizeLayout);
   geomSizeFilenameLayout->addLayout(geomFilenameLayout);
 
-  QWidget *geomSizeWidget = new QWidget(widget);
+  auto geomSizeWidget = new QWidget(widget);
   geomSizeWidget->setLayout(geomSizeFilenameLayout);
 
   // Radius / Length
-  QLabel *geomRadiusLabel = new QLabel(tr("Radius"));
-  QLabel *geomLengthLabel = new QLabel(tr("Length"));
-  QLabel *geomRadiusUnitLabel = new QLabel(QString::fromStdString(unit));
-  QLabel *geomLengthUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto geomRadiusLabel = new QLabel(tr("Radius"));
+  auto geomLengthLabel = new QLabel(tr("Length"));
+  auto geomRadiusUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto geomLengthUnitLabel = new QLabel(QString::fromStdString(unit));
   geomRadiusLabel->setToolTip(tr("radius"));
   geomLengthLabel->setToolTip(tr("length"));
 
-  QDoubleSpinBox *geomRadiusSpinBox = new QDoubleSpinBox(widget);
+  auto geomRadiusSpinBox = new QDoubleSpinBox(widget);
   geomRadiusSpinBox->setRange(min, max);
   geomRadiusSpinBox->setSingleStep(0.01);
   geomRadiusSpinBox->setDecimals(6);
@@ -1660,7 +1576,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   this->connect(geomRadiusSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
 
-  QDoubleSpinBox *geomLengthSpinBox = new QDoubleSpinBox(widget);
+  auto geomLengthSpinBox = new QDoubleSpinBox(widget);
   geomLengthSpinBox->setRange(min, max);
   geomLengthSpinBox->setSingleStep(0.01);
   geomLengthSpinBox->setDecimals(6);
@@ -1670,7 +1586,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   this->connect(geomLengthSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
 
-  QHBoxLayout *geomRLLayout = new QHBoxLayout;
+  auto geomRLLayout = new QHBoxLayout;
   geomRLLayout->addWidget(geomRadiusLabel);
   geomRLLayout->addWidget(geomRadiusSpinBox);
   geomRLLayout->addWidget(geomRadiusUnitLabel);
@@ -1681,11 +1597,11 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   geomRLLayout->setAlignment(geomRadiusLabel, Qt::AlignRight);
   geomRLLayout->setAlignment(geomLengthLabel, Qt::AlignRight);
 
-  QWidget *geomRLWidget = new QWidget;
+  auto geomRLWidget = new QWidget;
   geomRLWidget->setLayout(geomRLLayout);
 
   // Dimensions
-  QStackedWidget *geomDimensionWidget = new QStackedWidget(widget);
+  auto geomDimensionWidget = new QStackedWidget(widget);
   geomDimensionWidget->insertWidget(0, geomSizeWidget);
 
   geomDimensionWidget->insertWidget(1, geomRLWidget);
@@ -1697,7 +1613,7 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   int level = _level + 1;
 
   // Layout
-  QGridLayout *widgetLayout = new QGridLayout;
+  auto widgetLayout = new QGridLayout;
   widgetLayout->addItem(new QSpacerItem(20*level, 1,
       QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 0);
   widgetLayout->addWidget(geometryLabel, 0, 1);
@@ -1761,17 +1677,17 @@ PropertyWidget *MessageWidget::CreateEnumWidget(
     const int _level)
 {
   // Label
-  QLabel *enumLabel = new QLabel(humanReadable(_key).c_str());
+  auto enumLabel = new QLabel(humanReadable(_key).c_str());
   enumLabel->setToolTip(tr(_key.c_str()));
 
   // ComboBox
-  QComboBox *enumComboBox = new QComboBox;
+  auto enumComboBox = new QComboBox;
 
   for (unsigned int i = 0; i < _values.size(); ++i)
     enumComboBox->addItem(tr(_values[i].c_str()));
 
   // Layout
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
+  auto widgetLayout = new QHBoxLayout;
   if (_level != 0)
   {
     widgetLayout->addItem(new QSpacerItem(20*_level, 1,
@@ -1802,10 +1718,10 @@ PropertyWidget *MessageWidget::CreateEnumWidget(
 PropertyWidget *MessageWidget::CreateDensityWidget(
     const std::string &/*_key*/, const int _level)
 {
-  QLabel *densityLabel = new QLabel(tr("Density"));
+  auto densityLabel = new QLabel(tr("Density"));
   densityLabel->setToolTip(tr("density"));
 
-  QComboBox *comboBox = new QComboBox;
+  auto comboBox = new QComboBox;
   size_t minLen = 0;
 
 //  for (const auto &it : common::MaterialDensity::Materials())
@@ -1828,7 +1744,7 @@ PropertyWidget *MessageWidget::CreateDensityWidget(
   double max = 0;
   rangeFromKey("density", min, max);
 
-  QDoubleSpinBox *spinBox = new QDoubleSpinBox;
+  auto spinBox = new QDoubleSpinBox;
   spinBox->setRange(min, max);
   spinBox->setSingleStep(0.1);
   spinBox->setDecimals(1);
@@ -1837,9 +1753,9 @@ PropertyWidget *MessageWidget::CreateDensityWidget(
   spinBox->setMaximumWidth(100);
 
   std::string unit = unitFromKey("density");
-  QLabel *unitLabel = new QLabel(QString::fromStdString(unit));
+  auto unitLabel = new QLabel(QString::fromStdString(unit));
 
-  QHBoxLayout *widgetLayout = new QHBoxLayout;
+  auto widgetLayout = new QHBoxLayout;
 
   widgetLayout->addSpacing((_level+1)*20);
   widgetLayout->addWidget(densityLabel);
@@ -1912,49 +1828,49 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
       {
         case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
         {
-          QDoubleSpinBox *valueSpinBox =
+          auto valueSpinBox =
               qobject_cast<QDoubleSpinBox *>(childWidget->widgets[0]);
           ref->SetDouble(_msg, field, valueSpinBox->value());
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_FLOAT:
         {
-          QDoubleSpinBox *valueSpinBox =
+          auto valueSpinBox =
               qobject_cast<QDoubleSpinBox *>(childWidget->widgets[0]);
           ref->SetFloat(_msg, field, valueSpinBox->value());
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_INT64:
         {
-          QSpinBox *valueSpinBox =
+          auto valueSpinBox =
               qobject_cast<QSpinBox *>(childWidget->widgets[0]);
           ref->SetInt64(_msg, field, valueSpinBox->value());
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_UINT64:
         {
-          QSpinBox *valueSpinBox =
+          auto valueSpinBox =
               qobject_cast<QSpinBox *>(childWidget->widgets[0]);
           ref->SetUInt64(_msg, field, valueSpinBox->value());
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_INT32:
         {
-          QSpinBox *valueSpinBox =
+          auto valueSpinBox =
               qobject_cast<QSpinBox *>(childWidget->widgets[0]);
           ref->SetInt32(_msg, field, valueSpinBox->value());
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_UINT32:
         {
-          QSpinBox *valueSpinBox =
+          auto valueSpinBox =
               qobject_cast<QSpinBox *>(childWidget->widgets[0]);
           ref->SetUInt32(_msg, field, valueSpinBox->value());
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_BOOL:
         {
-          QRadioButton *valueRadioButton =
+          auto valueRadioButton =
               qobject_cast<QRadioButton *>(childWidget->widgets[0]);
           ref->SetBool(_msg, field, valueRadioButton->isChecked());
           break;
@@ -1963,13 +1879,13 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
         {
           if (qobject_cast<QLineEdit *>(childWidget->widgets[0]))
           {
-            QLineEdit *valueLineEdit =
+            auto valueLineEdit =
               qobject_cast<QLineEdit *>(childWidget->widgets[0]);
             ref->SetString(_msg, field, valueLineEdit->text().toStdString());
           }
           else if (qobject_cast<QPlainTextEdit *>(childWidget->widgets[0]))
           {
-            QPlainTextEdit *valueTextEdit =
+            auto valueTextEdit =
                 qobject_cast<QPlainTextEdit *>(childWidget->widgets[0]);
             ref->SetString(_msg, field,
                 valueTextEdit->toPlainText().toStdString());
@@ -1986,7 +1902,7 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
           {
             // manually retrieve values from widgets in order to update
             // the message fields.
-            QComboBox *valueComboBox =
+            auto valueComboBox =
                 qobject_cast<QComboBox *>(childWidget->widgets[0]);
             std::string geomType = valueComboBox->currentText().toStdString();
 
@@ -2122,7 +2038,7 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
                 std::vector<double> values;
                 for (unsigned int k = 0; k < 3; ++k)
                 {
-                  QDoubleSpinBox *valueSpinBox =
+                  auto valueSpinBox =
                       qobject_cast<QDoubleSpinBox *>(childWidget->widgets[k]);
                   values.push_back(valueSpinBox->value());
                 }
@@ -2138,7 +2054,7 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
                 std::vector<double> rotValues;
                 for (unsigned int k = 3; k < 6; ++k)
                 {
-                  QDoubleSpinBox *valueSpinBox =
+                  auto valueSpinBox =
                       qobject_cast<QDoubleSpinBox *>(childWidget->widgets[k]);
                   rotValues.push_back(valueSpinBox->value());
                 }
@@ -2168,7 +2084,7 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
             std::vector<double> values;
             for (unsigned int j = 0; j < 3; ++j)
             {
-              QDoubleSpinBox *valueSpinBox =
+              auto valueSpinBox =
                   qobject_cast<QDoubleSpinBox *>(childWidget->widgets[j]);
               values.push_back(valueSpinBox->value());
             }
@@ -2182,7 +2098,7 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
             // FIXME: skipping header
             for (unsigned int j = 1; j < childWidget->widgets.size(); ++j)
             {
-              QDoubleSpinBox *valueSpinBox =
+              auto valueSpinBox =
                   qobject_cast<QDoubleSpinBox *>(childWidget->widgets[j]);
               const google::protobuf::FieldDescriptor *valueField =
                   valueDescriptor->field(j);
@@ -2214,7 +2130,7 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
         }
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
         {
-          QComboBox *valueComboBox =
+          auto valueComboBox =
               qobject_cast<QComboBox *>(childWidget->widgets[0]);
           if (valueComboBox)
           {
@@ -2315,42 +2231,6 @@ bool MessageWidget::UpdateStringWidget(PropertyWidget *_widget,
   else
   {
     ignerr << "Error updating String Config Widget" << std::endl;
-  }
-  return false;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::UpdateVector3dWidget(PropertyWidget *_widget,
-    const math::Vector3d &_vec)
-{
-  if (_widget->widgets.size() == 4u)
-  {
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[0])->setValue(_vec.X());
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[1])->setValue(_vec.Y());
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[2])->setValue(_vec.Z());
-
-    // Update preset
-    int preset = 0;
-    if (_vec == math::Vector3d::UnitX)
-      preset = 1;
-    else if (_vec == -math::Vector3d::UnitX)
-      preset = 2;
-    else if (_vec == math::Vector3d::UnitY)
-      preset = 3;
-    else if (_vec == -math::Vector3d::UnitY)
-      preset = 4;
-    else if (_vec == math::Vector3d::UnitZ)
-      preset = 5;
-    else if (_vec == -math::Vector3d::UnitZ)
-      preset = 6;
-
-    qobject_cast<QComboBox *>(_widget->widgets[3])->setCurrentIndex(preset);
-
-    return true;
-  }
-  else
-  {
-    ignerr << "Error updating Vector3d widget" << std::endl;
   }
   return false;
 }
@@ -2558,24 +2438,6 @@ std::string MessageWidget::StringWidgetValue(PropertyWidget *_widget) const
 }
 
 /////////////////////////////////////////////////
-math::Vector3d MessageWidget::Vector3dWidgetValue(
-    PropertyWidget *_widget) const
-{
-  math::Vector3d value;
-  if (_widget->widgets.size() == 4u)
-  {
-    value.X(qobject_cast<QDoubleSpinBox *>(_widget->widgets[0])->value());
-    value.Y(qobject_cast<QDoubleSpinBox *>(_widget->widgets[1])->value());
-    value.Z(qobject_cast<QDoubleSpinBox *>(_widget->widgets[2])->value());
-  }
-  else
-  {
-    ignerr << "Error getting value from Vector3d widget" << std::endl;
-  }
-  return value;
-}
-
-/////////////////////////////////////////////////
 math::Color MessageWidget::ColorWidgetValue(PropertyWidget *_widget)
     const
 {
@@ -2713,7 +2575,7 @@ void MessageWidget::OnUIntValueChanged()
 /////////////////////////////////////////////////
 void MessageWidget::OnIntValueChanged()
 {
-  QSpinBox *spin =
+  auto spin =
       qobject_cast<QSpinBox *>(QObject::sender());
 
   if (!spin)
@@ -2733,7 +2595,7 @@ void MessageWidget::OnIntValueChanged()
 void MessageWidget::OnStringValueChanged()
 {
   QLineEdit *lineEdit = qobject_cast<QLineEdit *>(QObject::sender());
-  QPlainTextEdit *plainTextEdit =
+  auto plainTextEdit =
       qobject_cast<QPlainTextEdit *>(QObject::sender());
 
   QWidget *valueEdit;
@@ -2754,66 +2616,6 @@ void MessageWidget::OnStringValueChanged()
   v.setValue(this->StringWidgetValue(widget));
 
   this->ValueChanged(widget->scopedName.c_str(), v);
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnVector3dValueChanged()
-{
-  QDoubleSpinBox *spin =
-      qobject_cast<QDoubleSpinBox *>(QObject::sender());
-
-  if (!spin)
-    return;
-
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(spin->parent());
-
-  if (!widget)
-    return;
-
-  auto value = this->Vector3dWidgetValue(widget);
-
-  // Update preset
-  this->UpdateVector3dWidget(widget, value);
-
-  // Signal
-  emit Vector3dValueChanged(widget->scopedName.c_str(), value);
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnVector3dPresetChanged(const int _index)
-{
-  auto combo = qobject_cast<QComboBox *>(QObject::sender());
-
-  if (!combo)
-    return;
-
-  auto widget = qobject_cast<PropertyWidget *>(combo->parent());
-
-  if (!widget)
-    return;
-
-  // Update spins
-  math::Vector3d vec;
-  if (_index == 1)
-    vec = math::Vector3d::UnitX;
-  else if (_index == 2)
-    vec = -math::Vector3d::UnitX;
-  else if (_index == 3)
-    vec = math::Vector3d::UnitY;
-  else if (_index == 4)
-    vec = -math::Vector3d::UnitY;
-  else if (_index == 5)
-    vec = math::Vector3d::UnitZ;
-  else if (_index == 6)
-    vec = -math::Vector3d::UnitZ;
-  else
-    return;
-
-  this->UpdateVector3dWidget(widget, vec);
-
-  // Signal
-  emit Vector3dValueChanged(widget->scopedName.c_str(), vec);
 }
 
 /////////////////////////////////////////////////
@@ -2838,7 +2640,7 @@ void MessageWidget::OnColorValueChanged(const QColor _value)
 /////////////////////////////////////////////////
 void MessageWidget::OnColorValueChanged()
 {
-  QDoubleSpinBox *spin =
+  auto spin =
       qobject_cast<QDoubleSpinBox *>(QObject::sender());
 
   if (!spin)
@@ -2857,7 +2659,7 @@ void MessageWidget::OnColorValueChanged()
 /////////////////////////////////////////////////
 void MessageWidget::OnPoseValueChanged()
 {
-  QDoubleSpinBox *spin =
+  auto spin =
       qobject_cast<QDoubleSpinBox *>(QObject::sender());
 
   if (!spin)
@@ -2904,7 +2706,7 @@ void MessageWidget::OnGeometryValueChanged()
 /////////////////////////////////////////////////
 void MessageWidget::OnGeometryValueChanged(const int /*_value*/)
 {
-  QComboBox *combo =
+  auto combo =
       qobject_cast<QComboBox *>(QObject::sender());
 
   if (!combo)

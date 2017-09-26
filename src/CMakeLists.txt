@@ -14,6 +14,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/PropertyWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/SearchModel.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Vector3dWidget.cc
   PARENT_SCOPE
 )
 

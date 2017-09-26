@@ -377,13 +377,6 @@ namespace ignition
       public: PropertyWidget *CreateStringWidget(const std::string &_key,
           const int _level = 0, const std::string &_type = "line");
 
-      /// \brief Create a widget for configuring a vector3 value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateVector3dWidget(const std::string &_key,
-          const int _level = 0);
-
       /// \brief Create a widget for configuring a color value.
       /// \param[in] _key A key that is used as a label for the widget.
       /// \param[in] _level Level of the widget in the tree.
@@ -526,13 +519,6 @@ namespace ignition
       private: bool UpdateStringWidget(PropertyWidget *_widget,
           const std::string &_value);
 
-      /// \brief Update a child widget with a vector3 value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateVector3dWidget(PropertyWidget *_widget,
-          const math::Vector3d &_value);
-
       /// \brief Update a child widget with a color value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
@@ -587,12 +573,6 @@ namespace ignition
       /// \return Value of the widget.
       private: std::string StringWidgetValue(PropertyWidget *_widget) const;
 
-      /// \brief Get a vector3 value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: math::Vector3d Vector3dWidgetValue(
-          PropertyWidget *_widget) const;
-
       /// \brief Get a color value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
@@ -632,13 +612,6 @@ namespace ignition
       /// \brief Callback when a string widget's value has changed.
       private slots: void OnStringValueChanged();
 
-      /// \brief Callback when a vector3 widget's value has changed.
-      private slots: void OnVector3dValueChanged();
-
-      /// \brief Callback when a vector3 widget's preset has changed.
-      /// \param[in] _index Index of the chosen preset.
-      private slots: void OnVector3dPresetChanged(const int _index);
-
       /// \brief Callback when a color widget's value has changed.
       private slots: void OnColorValueChanged();
 
@@ -664,12 +637,6 @@ namespace ignition
       /// \brief Callback when an enum widget's enum value has changed.
       /// \param[in] _value New enum value in string.
       private slots: void OnCustomColorDialog();
-
-      /// \brief Signal that a vector3 widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New vector3.
-      Q_SIGNALS: void Vector3dValueChanged(const QString &_name,
-          const math::Vector3d &_value);
 
       /// \brief Signal that a color widget's value has changed.
       /// \param[in] _name Scoped name of widget.
