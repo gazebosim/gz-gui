@@ -398,6 +398,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
     return nullptr;
   unsigned int count = d->field_count();
 
+  // FIXME: Does not handle top-level special messages like Vector3d
   for (unsigned int i = 0; i < count ; ++i)
   {
     const google::protobuf::FieldDescriptor *field = d->field(i);
@@ -414,471 +415,470 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 
     // Parse each field in the message
     // TODO parse repeated fields
-    if (!field->is_repeated())
+    if (field->is_repeated())
+      continue;
+
+    if (_update && !ref->HasField(*_msg, field))
+      continue;
+
+    QWidget *newFieldWidget = nullptr;
+    PropertyWidget *configChildWidget = nullptr;
+
+    bool newWidget = true;
+    std::string scopedName = _name.empty() ? name : _name + "::" + name;
+    if (this->dataPtr->configWidgets.find(scopedName) !=
+        this->dataPtr->configWidgets.end())
     {
-      if (_update && !ref->HasField(*_msg, field))
-        continue;
+      newWidget = false;
+      configChildWidget = this->dataPtr->configWidgets[scopedName];
+    }
 
-      QWidget *newFieldWidget = nullptr;
-      PropertyWidget *configChildWidget = nullptr;
-
-      bool newWidget = true;
-      std::string scopedName = _name.empty() ? name : _name + "::" + name;
-      if (this->dataPtr->configWidgets.find(scopedName) !=
-          this->dataPtr->configWidgets.end())
+    switch (field->type())
+    {
+      case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
       {
-        newWidget = false;
-        configChildWidget = this->dataPtr->configWidgets[scopedName];
+        double value = ref->GetDouble(*_msg, field);
+        if (!math::equal(value, value))
+          value = 0;
+        if (newWidget)
+        {
+          configChildWidget = new DoubleWidget(name, _level);
+
+          // TODO: handle this better
+          if (name == "mass")
+          {
+            auto valueSpinBox = qobject_cast<QDoubleSpinBox *>(
+                configChildWidget->widgets[0]);
+            if (valueSpinBox)
+            {
+              this->connect(valueSpinBox, SIGNAL(valueChanged(double)),
+                  this, SLOT(OnMassValueChanged(double)));
+            }
+          }
+          newFieldWidget = configChildWidget;
+        }
+
+        configChildWidget->SetValue(value);
+        break;
       }
-
-      switch (field->type())
+      case google::protobuf::FieldDescriptor::TYPE_FLOAT:
       {
-        case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
+        float value = ref->GetFloat(*_msg, field);
+        if (!math::equal(value, value))
+          value = 0;
+        if (newWidget)
         {
-          double value = ref->GetDouble(*_msg, field);
-          if (!math::equal(value, value))
-            value = 0;
+          configChildWidget = new DoubleWidget(name, _level);
+          newFieldWidget = configChildWidget;
+        }
+
+        configChildWidget->SetValue(value);
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_INT64:
+      {
+        int64_t value = ref->GetInt64(*_msg, field);
+        if (newWidget)
+        {
+          configChildWidget = this->CreateIntWidget(name, _level);
+          newFieldWidget = configChildWidget;
+        }
+        this->UpdateIntWidget(configChildWidget, value);
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_UINT64:
+      {
+        uint64_t value = ref->GetUInt64(*_msg, field);
+        if (newWidget)
+        {
+          configChildWidget = this->CreateUIntWidget(name, _level);
+          newFieldWidget = configChildWidget;
+        }
+        this->UpdateUIntWidget(configChildWidget, value);
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_INT32:
+      {
+        int32_t value = ref->GetInt32(*_msg, field);
+        if (newWidget)
+        {
+          configChildWidget = this->CreateIntWidget(name, _level);
+          newFieldWidget = configChildWidget;
+        }
+        this->UpdateIntWidget(configChildWidget, value);
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_UINT32:
+      {
+        uint32_t value = ref->GetUInt32(*_msg, field);
+        if (newWidget)
+        {
+          configChildWidget = this->CreateUIntWidget(name, _level);
+          newFieldWidget = configChildWidget;
+        }
+        this->UpdateUIntWidget(configChildWidget, value);
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_BOOL:
+      {
+        bool value = ref->GetBool(*_msg, field);
+        if (newWidget)
+        {
+          configChildWidget = new BoolWidget(name, _level);
+          newFieldWidget = configChildWidget;
+        }
+
+        configChildWidget->SetValue(value);
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_STRING:
+      {
+        std::string value = ref->GetString(*_msg, field);
+        if (newWidget)
+        {
+          // Choose either a one-line or a multi-line widget according to name
+          std::string type = "line";
+          if (name == "innerxml")
+            type = "plain";
+
+          configChildWidget = new StringWidget(name, _level, type);
+          newFieldWidget = configChildWidget;
+        }
+
+        QVariant v;
+        v.setValue(value);
+        configChildWidget->SetValue(v);
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
+      {
+        auto valueMsg = ref->MutableMessage(_msg, field);
+
+        // parse and create custom geometry widgets
+        if (field->message_type()->name() == "Geometry")
+        {
           if (newWidget)
           {
-            configChildWidget = new DoubleWidget(name, _level);
+            configChildWidget = this->CreateGeometryWidget(name, _level);
+            newFieldWidget = configChildWidget;
+          }
 
-            // TODO: handle this better
-            if (name == "mass")
+          // type
+          const google::protobuf::Descriptor *valueDescriptor =
+              valueMsg->GetDescriptor();
+          const google::protobuf::FieldDescriptor *typeField =
+              valueDescriptor->FindFieldByName("type");
+
+          if (valueMsg->GetReflection()->HasField(*valueMsg, typeField))
+          {
+            const google::protobuf::EnumValueDescriptor *typeValueDescriptor =
+                valueMsg->GetReflection()->GetEnum(*valueMsg, typeField);
+
+            std::string geometryTypeStr;
+            if (typeValueDescriptor)
             {
-              auto valueSpinBox = qobject_cast<QDoubleSpinBox *>(
-                  configChildWidget->widgets[0]);
-              if (valueSpinBox)
-              {
-                this->connect(valueSpinBox, SIGNAL(valueChanged(double)),
-                    this, SLOT(OnMassValueChanged(double)));
-              }
-            }
-            newFieldWidget = configChildWidget;
-          }
-
-          configChildWidget->SetValue(value);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_FLOAT:
-        {
-          float value = ref->GetFloat(*_msg, field);
-          if (!math::equal(value, value))
-            value = 0;
-          if (newWidget)
-          {
-            configChildWidget = new DoubleWidget(name, _level);
-            newFieldWidget = configChildWidget;
-          }
-
-          configChildWidget->SetValue(value);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_INT64:
-        {
-          int64_t value = ref->GetInt64(*_msg, field);
-          if (newWidget)
-          {
-            configChildWidget = this->CreateIntWidget(name, _level);
-            newFieldWidget = configChildWidget;
-          }
-          this->UpdateIntWidget(configChildWidget, value);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_UINT64:
-        {
-          uint64_t value = ref->GetUInt64(*_msg, field);
-          if (newWidget)
-          {
-            configChildWidget = this->CreateUIntWidget(name, _level);
-            newFieldWidget = configChildWidget;
-          }
-          this->UpdateUIntWidget(configChildWidget, value);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_INT32:
-        {
-          int32_t value = ref->GetInt32(*_msg, field);
-          if (newWidget)
-          {
-            configChildWidget = this->CreateIntWidget(name, _level);
-            newFieldWidget = configChildWidget;
-          }
-          this->UpdateIntWidget(configChildWidget, value);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_UINT32:
-        {
-          uint32_t value = ref->GetUInt32(*_msg, field);
-          if (newWidget)
-          {
-            configChildWidget = this->CreateUIntWidget(name, _level);
-            newFieldWidget = configChildWidget;
-          }
-          this->UpdateUIntWidget(configChildWidget, value);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_BOOL:
-        {
-          bool value = ref->GetBool(*_msg, field);
-          if (newWidget)
-          {
-            configChildWidget = new BoolWidget(name, _level);
-            newFieldWidget = configChildWidget;
-          }
-
-          configChildWidget->SetValue(value);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_STRING:
-        {
-          std::string value = ref->GetString(*_msg, field);
-          if (newWidget)
-          {
-            // Choose either a one-line or a multi-line widget according to name
-            std::string type = "line";
-            if (name == "innerxml")
-              type = "plain";
-
-            configChildWidget = new StringWidget(name, _level, type);
-            newFieldWidget = configChildWidget;
-          }
-
-          QVariant v;
-          v.setValue(value);
-          configChildWidget->SetValue(v);
-          break;
-        }
-        case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
-        {
-          google::protobuf::Message *valueMsg =
-              ref->MutableMessage(_msg, field);
-
-          // parse and create custom geometry widgets
-          if (field->message_type()->name() == "Geometry")
-          {
-            if (newWidget)
-            {
-              configChildWidget = this->CreateGeometryWidget(name, _level);
-              newFieldWidget = configChildWidget;
+              geometryTypeStr =
+                  QString(typeValueDescriptor->name().c_str()).toLower().
+                  toStdString();
             }
 
-            // type
-            const google::protobuf::Descriptor *valueDescriptor =
-                valueMsg->GetDescriptor();
-            const google::protobuf::FieldDescriptor *typeField =
-                valueDescriptor->FindFieldByName("type");
-
-            if (valueMsg->GetReflection()->HasField(*valueMsg, typeField))
+            math::Vector3d dimensions;
+            // dimensions
+            for (int k = 0; k < valueDescriptor->field_count() ; ++k)
             {
-              const google::protobuf::EnumValueDescriptor *typeValueDescriptor =
-                  valueMsg->GetReflection()->GetEnum(*valueMsg, typeField);
+              const google::protobuf::FieldDescriptor *geomField =
+                  valueDescriptor->field(k);
 
-              std::string geometryTypeStr;
-              if (typeValueDescriptor)
-              {
-                geometryTypeStr =
-                    QString(typeValueDescriptor->name().c_str()).toLower().
-                    toStdString();
-              }
-
-              math::Vector3d dimensions;
-              // dimensions
-              for (int k = 0; k < valueDescriptor->field_count() ; ++k)
-              {
-                const google::protobuf::FieldDescriptor *geomField =
-                    valueDescriptor->field(k);
-
-                if (geomField->is_repeated())
-                    continue;
-
-                if (geomField->type() !=
-                    google::protobuf::FieldDescriptor::TYPE_MESSAGE ||
-                    !valueMsg->GetReflection()->HasField(*valueMsg, geomField))
+              if (geomField->is_repeated())
                   continue;
 
-                google::protobuf::Message *geomValueMsg =
-                    valueMsg->GetReflection()->MutableMessage(
-                    valueMsg, geomField);
-                const google::protobuf::Descriptor *geomValueDescriptor =
-                    geomValueMsg->GetDescriptor();
-
-                std::string geomMsgName = geomField->message_type()->name();
-                if (geomMsgName == "BoxGeom" || geomMsgName == "MeshGeom")
-                {
-                  int fieldIdx = (geomMsgName == "BoxGeom") ? 0 : 1;
-                  google::protobuf::Message *geomDimMsg =
-                      geomValueMsg->GetReflection()->MutableMessage(
-                      geomValueMsg, geomValueDescriptor->field(fieldIdx));
-                  dimensions = this->ParseVector3d(geomDimMsg);
-                  break;
-                }
-                else if (geomMsgName == "CylinderGeom")
-                {
-                  const google::protobuf::FieldDescriptor *geomRadiusField =
-                      geomValueDescriptor->FindFieldByName("radius");
-                  double radius = geomValueMsg->GetReflection()->GetDouble(
-                      *geomValueMsg, geomRadiusField);
-                  const google::protobuf::FieldDescriptor *geomLengthField =
-                      geomValueDescriptor->FindFieldByName("length");
-                  double length = geomValueMsg->GetReflection()->GetDouble(
-                      *geomValueMsg, geomLengthField);
-                  dimensions.X(radius * 2.0);
-                  dimensions.Y(dimensions.X());
-                  dimensions.Z(length);
-                  break;
-                }
-                else if (geomMsgName == "SphereGeom")
-                {
-                  const google::protobuf::FieldDescriptor *geomRadiusField =
-                      geomValueDescriptor->FindFieldByName("radius");
-                  double radius = geomValueMsg->GetReflection()->GetDouble(
-                      *geomValueMsg, geomRadiusField);
-                  dimensions.X(radius * 2.0);
-                  dimensions.Y(dimensions.X());
-                  dimensions.Z(dimensions.X());
-                  break;
-                }
-                else if (geomMsgName == "PolylineGeom")
-                {
-                  continue;
-                }
-              }
-              this->UpdateGeometryWidget(configChildWidget,
-                  geometryTypeStr, dimensions);
-            }
-          }
-          // parse and create custom pose widgets
-          else if (field->message_type()->name() == "Pose")
-          {
-            if (newWidget)
-            {
-              configChildWidget = this->CreatePoseWidget(name, _level);
-              newFieldWidget = configChildWidget;
-            }
-
-            math::Pose3d value;
-            const google::protobuf::Descriptor *valueDescriptor =
-                valueMsg->GetDescriptor();
-            int valueMsgFieldCount = valueDescriptor->field_count();
-            for (int j = 0; j < valueMsgFieldCount ; ++j)
-            {
-              const google::protobuf::FieldDescriptor *valueField =
-                  valueDescriptor->field(j);
-
-              if (valueField->type() !=
-                  google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+              if (geomField->type() !=
+                  google::protobuf::FieldDescriptor::TYPE_MESSAGE ||
+                  !valueMsg->GetReflection()->HasField(*valueMsg, geomField))
                 continue;
 
-              if (valueField->message_type()->name() == "Vector3d")
+              google::protobuf::Message *geomValueMsg =
+                  valueMsg->GetReflection()->MutableMessage(
+                  valueMsg, geomField);
+              const google::protobuf::Descriptor *geomValueDescriptor =
+                  geomValueMsg->GetDescriptor();
+
+              std::string geomMsgName = geomField->message_type()->name();
+              if (geomMsgName == "BoxGeom" || geomMsgName == "MeshGeom")
               {
-                // pos
-                google::protobuf::Message *posValueMsg =
-                    valueMsg->GetReflection()->MutableMessage(
-                    valueMsg, valueField);
-                auto vec3 = this->ParseVector3d(posValueMsg);
-                value.Pos() = vec3;
+                int fieldIdx = (geomMsgName == "BoxGeom") ? 0 : 1;
+                google::protobuf::Message *geomDimMsg =
+                    geomValueMsg->GetReflection()->MutableMessage(
+                    geomValueMsg, geomValueDescriptor->field(fieldIdx));
+                dimensions = this->ParseVector3d(geomDimMsg);
+                break;
               }
-              else if (valueField->message_type()->name() == "Quaternion")
+              else if (geomMsgName == "CylinderGeom")
               {
-                // rot
-                google::protobuf::Message *quatValueMsg =
-                    valueMsg->GetReflection()->MutableMessage(
-                    valueMsg, valueField);
-                const google::protobuf::Descriptor *quatValueDescriptor =
-                    quatValueMsg->GetDescriptor();
-                std::vector<double> quatValues;
-                // FIXME: skipping header
-                for (unsigned int k = 1; k < 5; ++k)
-                {
-                  const google::protobuf::FieldDescriptor *quatValueField =
-                      quatValueDescriptor->field(k);
-                  quatValues.push_back(quatValueMsg->GetReflection()->GetDouble(
-                      *quatValueMsg, quatValueField));
-                }
-                math::Quaterniond quat(quatValues[3], quatValues[0],
-                    quatValues[1], quatValues[2]);
-                value.Rot() = quat;
+                const google::protobuf::FieldDescriptor *geomRadiusField =
+                    geomValueDescriptor->FindFieldByName("radius");
+                double radius = geomValueMsg->GetReflection()->GetDouble(
+                    *geomValueMsg, geomRadiusField);
+                const google::protobuf::FieldDescriptor *geomLengthField =
+                    geomValueDescriptor->FindFieldByName("length");
+                double length = geomValueMsg->GetReflection()->GetDouble(
+                    *geomValueMsg, geomLengthField);
+                dimensions.X(radius * 2.0);
+                dimensions.Y(dimensions.X());
+                dimensions.Z(length);
+                break;
               }
-            }
-            this->UpdatePoseWidget(configChildWidget, value);
-          }
-          // parse and create custom vector3 widgets
-          else if (field->message_type()->name() == "Vector3d")
-          {
-            if (newWidget)
-            {
-              configChildWidget = new Vector3dWidget(name, _level);
-              newFieldWidget = configChildWidget;
-            }
-
-            math::Vector3d vec3 = this->ParseVector3d(valueMsg);
-
-            QVariant v;
-            v.setValue(vec3);
-
-            configChildWidget->SetValue(v);
-          }
-          // parse and create custom color widgets
-          else if (field->message_type()->name() == "Color")
-          {
-            if (newWidget)
-            {
-              configChildWidget = this->CreateColorWidget(name, _level);
-              newFieldWidget = configChildWidget;
-            }
-
-            math::Color color;
-            const google::protobuf::Descriptor *valueDescriptor =
-                valueMsg->GetDescriptor();
-            std::vector<double> values;
-            for (unsigned int j = 0; j < configChildWidget->widgets.size(); ++j)
-            {
-              const google::protobuf::FieldDescriptor *valueField =
-                  valueDescriptor->field(j);
-              if (valueMsg->GetReflection()->HasField(*valueMsg, valueField))
+              else if (geomMsgName == "SphereGeom")
               {
-                values.push_back(valueMsg->GetReflection()->GetFloat(
-                    *valueMsg, valueField));
+                const google::protobuf::FieldDescriptor *geomRadiusField =
+                    geomValueDescriptor->FindFieldByName("radius");
+                double radius = geomValueMsg->GetReflection()->GetDouble(
+                    *geomValueMsg, geomRadiusField);
+                dimensions.X(radius * 2.0);
+                dimensions.Y(dimensions.X());
+                dimensions.Z(dimensions.X());
+                break;
               }
-              else
-                values.push_back(0);
+              else if (geomMsgName == "PolylineGeom")
+              {
+                continue;
+              }
             }
-            color.R(values[0]);
-            color.G(values[1]);
-            color.B(values[2]);
-            color.A(values[3]);
-            this->UpdateColorWidget(configChildWidget, color);
+            this->UpdateGeometryWidget(configChildWidget,
+                geometryTypeStr, dimensions);
           }
-          // parse and create custom density widgets
-          else if (field->message_type()->name() == "Density")
-          {
-            if (newWidget)
-            {
-              configChildWidget = this->CreateDensityWidget(name, _level);
-              newFieldWidget = configChildWidget;
-            }
-            const google::protobuf::Descriptor *valueDescriptor =
-                valueMsg->GetDescriptor();
-
-            double density = 1.0;
-
-            int valueMsgFieldCount = valueDescriptor->field_count();
-            for (int j = 0; j < valueMsgFieldCount ; ++j)
-            {
-              const google::protobuf::FieldDescriptor *valueField =
-                  valueDescriptor->field(j);
-
-              if (valueField && valueField->name() == "density")
-                density = valueMsg->GetReflection()->GetDouble(
-                    *valueMsg, valueField);
-            }
-            this->UpdateDensityWidget(configChildWidget, density);
-          }
-          else
-          {
-            // parse the message fields recursively
-            auto groupBoxWidget =
-                this->Parse(valueMsg, _update, scopedName, _level+1);
-            if (groupBoxWidget)
-            {
-              newFieldWidget = new PropertyWidget();
-              auto groupBoxLayout = new QVBoxLayout;
-              groupBoxLayout->setContentsMargins(0, 0, 0, 0);
-              groupBoxLayout->addWidget(groupBoxWidget);
-              newFieldWidget->setLayout(groupBoxLayout);
-              qobject_cast<PropertyWidget *>(newFieldWidget)->
-                  widgets.push_back(groupBoxWidget);
-            }
-          }
-
+        }
+        // parse and create custom pose widgets
+        else if (field->message_type()->name() == "Pose")
+        {
           if (newWidget)
           {
-            // Make it into a group widget
-            PropertyWidget *childWidget =
-                qobject_cast<PropertyWidget *>(newFieldWidget);
-            if (childWidget)
-            {
-              newFieldWidget = this->CreateCollapsibleWidget(name, childWidget,
-                  _level);
-            }
+            configChildWidget = this->CreatePoseWidget(name, _level);
+            newFieldWidget = configChildWidget;
           }
 
+          math::Pose3d value;
+          const google::protobuf::Descriptor *valueDescriptor =
+              valueMsg->GetDescriptor();
+          int valueMsgFieldCount = valueDescriptor->field_count();
+          for (int j = 0; j < valueMsgFieldCount ; ++j)
+          {
+            const google::protobuf::FieldDescriptor *valueField =
+                valueDescriptor->field(j);
+
+            if (valueField->type() !=
+                google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+              continue;
+
+            if (valueField->message_type()->name() == "Vector3d")
+            {
+              // pos
+              google::protobuf::Message *posValueMsg =
+                  valueMsg->GetReflection()->MutableMessage(
+                  valueMsg, valueField);
+              auto vec3 = this->ParseVector3d(posValueMsg);
+              value.Pos() = vec3;
+            }
+            else if (valueField->message_type()->name() == "Quaternion")
+            {
+              // rot
+              google::protobuf::Message *quatValueMsg =
+                  valueMsg->GetReflection()->MutableMessage(
+                  valueMsg, valueField);
+              const google::protobuf::Descriptor *quatValueDescriptor =
+                  quatValueMsg->GetDescriptor();
+              std::vector<double> quatValues;
+              // FIXME: skipping header
+              for (unsigned int k = 1; k < 5; ++k)
+              {
+                const google::protobuf::FieldDescriptor *quatValueField =
+                    quatValueDescriptor->field(k);
+                quatValues.push_back(quatValueMsg->GetReflection()->GetDouble(
+                    *quatValueMsg, quatValueField));
+              }
+              math::Quaterniond quat(quatValues[3], quatValues[0],
+                  quatValues[1], quatValues[2]);
+              value.Rot() = quat;
+            }
+          }
+          this->UpdatePoseWidget(configChildWidget, value);
+        }
+        // parse and create custom vector3 widgets
+        else if (field->message_type()->name() == "Vector3d")
+        {
+          if (newWidget)
+          {
+            configChildWidget = new Vector3dWidget(name, _level);
+            newFieldWidget = configChildWidget;
+          }
+
+          math::Vector3d vec3 = this->ParseVector3d(valueMsg);
+
+          QVariant v;
+          v.setValue(vec3);
+
+          configChildWidget->SetValue(v);
+        }
+        // parse and create custom color widgets
+        else if (field->message_type()->name() == "Color")
+        {
+          if (newWidget)
+          {
+            configChildWidget = this->CreateColorWidget(name, _level);
+            newFieldWidget = configChildWidget;
+          }
+
+          math::Color color;
+          const google::protobuf::Descriptor *valueDescriptor =
+              valueMsg->GetDescriptor();
+          std::vector<double> values;
+          for (unsigned int j = 0; j < configChildWidget->widgets.size(); ++j)
+          {
+            const google::protobuf::FieldDescriptor *valueField =
+                valueDescriptor->field(j);
+            if (valueMsg->GetReflection()->HasField(*valueMsg, valueField))
+            {
+              values.push_back(valueMsg->GetReflection()->GetFloat(
+                  *valueMsg, valueField));
+            }
+            else
+              values.push_back(0);
+          }
+          color.R(values[0]);
+          color.G(values[1]);
+          color.B(values[2]);
+          color.A(values[3]);
+          this->UpdateColorWidget(configChildWidget, color);
+        }
+        // parse and create custom density widgets
+        else if (field->message_type()->name() == "Density")
+        {
+          if (newWidget)
+          {
+            configChildWidget = this->CreateDensityWidget(name, _level);
+            newFieldWidget = configChildWidget;
+          }
+          const google::protobuf::Descriptor *valueDescriptor =
+              valueMsg->GetDescriptor();
+
+          double density = 1.0;
+
+          int valueMsgFieldCount = valueDescriptor->field_count();
+          for (int j = 0; j < valueMsgFieldCount ; ++j)
+          {
+            const google::protobuf::FieldDescriptor *valueField =
+                valueDescriptor->field(j);
+
+            if (valueField && valueField->name() == "density")
+              density = valueMsg->GetReflection()->GetDouble(
+                  *valueMsg, valueField);
+          }
+          this->UpdateDensityWidget(configChildWidget, density);
+        }
+        else
+        {
+          // parse the message fields recursively
+          auto groupBoxWidget =
+              this->Parse(valueMsg, _update, scopedName, _level+1);
+          if (groupBoxWidget)
+          {
+            newFieldWidget = new PropertyWidget();
+            auto groupBoxLayout = new QVBoxLayout;
+            groupBoxLayout->setContentsMargins(0, 0, 0, 0);
+            groupBoxLayout->addWidget(groupBoxWidget);
+            newFieldWidget->setLayout(groupBoxLayout);
+            qobject_cast<PropertyWidget *>(newFieldWidget)->
+                widgets.push_back(groupBoxWidget);
+          }
+        }
+
+        if (newWidget)
+        {
+          // Make it into a group widget
+          PropertyWidget *childWidget =
+              qobject_cast<PropertyWidget *>(newFieldWidget);
+          if (childWidget)
+          {
+            newFieldWidget = this->CreateCollapsibleWidget(name, childWidget,
+                _level);
+          }
+        }
+
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_ENUM:
+      {
+        const google::protobuf::EnumValueDescriptor *value =
+            ref->GetEnum(*_msg, field);
+
+        if (!value)
+        {
+          ignerr << "Error retrieving enum value for '" << name << "'"
+              << std::endl;
           break;
         }
-        case google::protobuf::FieldDescriptor::TYPE_ENUM:
-        {
-          const google::protobuf::EnumValueDescriptor *value =
-              ref->GetEnum(*_msg, field);
 
-          if (!value)
+        if (newWidget)
+        {
+          std::vector<std::string> enumValues;
+          const google::protobuf::EnumDescriptor *descriptor = value->type();
+          if (!descriptor)
+            break;
+
+          for (int j = 0; j < descriptor->value_count(); ++j)
           {
-            ignerr << "Error retrieving enum value for '" << name << "'"
+            const google::protobuf::EnumValueDescriptor *valueDescriptor =
+                descriptor->value(j);
+            if (valueDescriptor)
+              enumValues.push_back(valueDescriptor->name());
+          }
+          configChildWidget =
+              this->CreateEnumWidget(name, enumValues, _level);
+
+          if (!configChildWidget)
+          {
+            ignerr << "Error creating an enum widget for '" << name << "'"
                 << std::endl;
             break;
           }
 
-          if (newWidget)
-          {
-            std::vector<std::string> enumValues;
-            const google::protobuf::EnumDescriptor *descriptor = value->type();
-            if (!descriptor)
-              break;
-
-            for (int j = 0; j < descriptor->value_count(); ++j)
-            {
-              const google::protobuf::EnumValueDescriptor *valueDescriptor =
-                  descriptor->value(j);
-              if (valueDescriptor)
-                enumValues.push_back(valueDescriptor->name());
-            }
-            configChildWidget =
-                this->CreateEnumWidget(name, enumValues, _level);
-
-            if (!configChildWidget)
-            {
-              ignerr << "Error creating an enum widget for '" << name << "'"
-                  << std::endl;
-              break;
-            }
-
-            newFieldWidget = configChildWidget;
-          }
-          this->UpdateEnumWidget(configChildWidget, value->name());
-          break;
+          newFieldWidget = configChildWidget;
         }
-        default:
-          break;
+        this->UpdateEnumWidget(configChildWidget, value->name());
+        break;
       }
+      default:
+        break;
+    }
 
-      // Style widgets without parent (level 0)
-      if (newFieldWidget && _level == 0 &&
-          !qobject_cast<CollapsibleWidget *>(newFieldWidget))
+    // Style widgets without parent (level 0)
+    if (newFieldWidget && _level == 0 &&
+        !qobject_cast<CollapsibleWidget *>(newFieldWidget))
+    {
+      newFieldWidget->setStyleSheet(
+          "QWidget\
+          {\
+            background-color: " + this->bgColors[0] +
+          "}");
+    }
+
+    if (newWidget && newFieldWidget)
+    {
+      newWidgets.push_back(newFieldWidget);
+
+      // store the newly created widget in a map with a unique scoped name.
+      if (qobject_cast<CollapsibleWidget *>(newFieldWidget))
       {
-        newFieldWidget->setStyleSheet(
-            "QWidget\
-            {\
-              background-color: " + this->bgColors[0] +
-            "}");
+        CollapsibleWidget *groupWidget =
+            qobject_cast<CollapsibleWidget *>(newFieldWidget);
+        PropertyWidget *childWidget = qobject_cast<PropertyWidget *>(
+            groupWidget->childWidget);
+        this->AddPropertyWidget(scopedName, childWidget);
       }
-
-      if (newWidget && newFieldWidget)
+      else if (qobject_cast<PropertyWidget *>(newFieldWidget))
       {
-        newWidgets.push_back(newFieldWidget);
-
-        // store the newly created widget in a map with a unique scoped name.
-        if (qobject_cast<CollapsibleWidget *>(newFieldWidget))
-        {
-          CollapsibleWidget *groupWidget =
-              qobject_cast<CollapsibleWidget *>(newFieldWidget);
-          PropertyWidget *childWidget = qobject_cast<PropertyWidget *>(
-              groupWidget->childWidget);
-          this->AddPropertyWidget(scopedName, childWidget);
-        }
-        else if (qobject_cast<PropertyWidget *>(newFieldWidget))
-        {
-          this->AddPropertyWidget(scopedName,
-              qobject_cast<PropertyWidget *>(newFieldWidget));
-        }
+        this->AddPropertyWidget(scopedName,
+            qobject_cast<PropertyWidget *>(newFieldWidget));
       }
     }
   }
