@@ -30,6 +30,7 @@
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/StringWidget.hh"
 #include "ignition/gui/Vector3dWidget.hh"
 
 #include "ignition/gui/MessageWidget.hh"
@@ -224,18 +225,6 @@ bool MessageWidget::SetUIntWidgetValue(const std::string &_name,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::SetStringWidgetValue(const std::string &_name,
-    const std::string &_value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateStringWidget(iter->second, _value);
-
-  return false;
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::SetColorWidgetValue(const std::string &_name,
     const math::Color &_value)
 {
@@ -329,18 +318,6 @@ unsigned int MessageWidget::UIntWidgetValue(const std::string &_name) const
 
   if (iter != this->dataPtr->configWidgets.end())
     value = this->UIntWidgetValue(iter->second);
-  return value;
-}
-
-/////////////////////////////////////////////////
-std::string MessageWidget::StringWidgetValue(const std::string &_name) const
-{
-  std::string value;
-  std::map <std::string, PropertyWidget *>::const_iterator iter =
-      this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->StringWidgetValue(iter->second);
   return value;
 }
 
@@ -478,9 +455,8 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             }
             newFieldWidget = configChildWidget;
           }
-          auto doubleWidget = qobject_cast<DoubleWidget *>(configChildWidget);
-          if (doubleWidget)
-            doubleWidget->SetValue(value);
+
+          configChildWidget->SetValue(value);
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_FLOAT:
@@ -493,9 +469,8 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             configChildWidget = new DoubleWidget(name, _level);
             newFieldWidget = configChildWidget;
           }
-          auto doubleWidget = qobject_cast<DoubleWidget *>(configChildWidget);
-          if (doubleWidget)
-            doubleWidget->SetValue(value);
+
+          configChildWidget->SetValue(value);
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_INT64:
@@ -551,9 +526,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             newFieldWidget = configChildWidget;
           }
 
-          auto boolWidget = qobject_cast<BoolWidget *>(configChildWidget);
-          if (boolWidget)
-            boolWidget->SetValue(value);
+          configChildWidget->SetValue(value);
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_STRING:
@@ -566,10 +539,13 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             if (name == "innerxml")
               type = "plain";
 
-            configChildWidget = this->CreateStringWidget(name, _level, type);
+            configChildWidget = new StringWidget(name, _level, type);
             newFieldWidget = configChildWidget;
           }
-          this->UpdateStringWidget(configChildWidget, value);
+
+          QVariant v;
+          v.setValue(value);
+          configChildWidget->SetValue(v);
           break;
         }
         case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
@@ -737,15 +713,10 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 
             math::Vector3d vec3 = this->ParseVector3d(valueMsg);
 
-            auto vector3dWidget =
-                qobject_cast<Vector3dWidget *>(configChildWidget);
-            if (vector3dWidget)
-            {
-              QVariant v;
-              v.setValue(vec3);
+            QVariant v;
+            v.setValue(vec3);
 
-              vector3dWidget->SetValue(v);
-            }
+            configChildWidget->SetValue(v);
           }
           // parse and create custom color widgets
           else if (field->message_type()->name() == "Color")
@@ -1125,57 +1096,6 @@ PropertyWidget *MessageWidget::CreateIntWidget(const std::string &_key,
   widget->setFrameStyle(QFrame::Box);
 
   widget->widgets.push_back(valueSpinBox);
-
-  return widget;
-}
-
-/////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateStringWidget(const std::string &_key,
-    const int _level, const std::string &_type)
-{
-  // ChildWidget
-  PropertyWidget *widget = new PropertyWidget();
-
-  // Label
-  auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
-  keyLabel->setToolTip(tr(_key.c_str()));
-
-  // Line or Text Edit based on key
-  QWidget *valueEdit;
-  if (_type == "plain")
-  {
-    valueEdit = new QPlainTextEdit(widget);
-    valueEdit->setMinimumHeight(50);
-    // QPlainTextEdit's don't have editingFinished signals
-  }
-  else if (_type == "line")
-  {
-    valueEdit = new QLineEdit(widget);
-    this->connect(valueEdit, SIGNAL(editingFinished()), this,
-        SLOT(OnStringValueChanged()));
-  }
-  else
-  {
-    ignerr << "Unknown type [" << _type << "]. Not creating string widget" <<
-        std::endl;
-    return nullptr;
-  }
-
-  // Layout
-  auto widgetLayout = new QHBoxLayout;
-  if (_level != 0)
-  {
-    widgetLayout->addItem(new QSpacerItem(20*_level, 1,
-        QSizePolicy::Fixed, QSizePolicy::Fixed));
-  }
-  widgetLayout->addWidget(keyLabel);
-  widgetLayout->addWidget(valueEdit);
-
-  // ChildWidget
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-
-  widget->widgets.push_back(valueEdit);
 
   return widget;
 }
@@ -2141,32 +2061,6 @@ bool MessageWidget::UpdateUIntWidget(PropertyWidget *_widget,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::UpdateStringWidget(PropertyWidget *_widget,
-    const std::string &_value)
-{
-  if (_widget->widgets.size() == 1u)
-  {
-    if (qobject_cast<QLineEdit *>(_widget->widgets[0]))
-    {
-      qobject_cast<QLineEdit *>(_widget->widgets[0])
-          ->setText(tr(_value.c_str()));
-      return true;
-    }
-    else if (qobject_cast<QPlainTextEdit *>(_widget->widgets[0]))
-    {
-      qobject_cast<QPlainTextEdit *>(_widget->widgets[0])
-          ->setPlainText(tr(_value.c_str()));
-      return true;
-    }
-  }
-  else
-  {
-    ignerr << "Error updating String Config Widget" << std::endl;
-  }
-  return false;
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::UpdateColorWidget(PropertyWidget *_widget,
     const math::Color &_color)
 {
@@ -2345,30 +2239,6 @@ unsigned int MessageWidget::UIntWidgetValue(PropertyWidget *_widget) const
 }
 
 /////////////////////////////////////////////////
-std::string MessageWidget::StringWidgetValue(PropertyWidget *_widget) const
-{
-  std::string value;
-  if (_widget->widgets.size() == 1u)
-  {
-    if (qobject_cast<QLineEdit *>(_widget->widgets[0]))
-    {
-      value =
-          qobject_cast<QLineEdit *>(_widget->widgets[0])->text().toStdString();
-    }
-    else if (qobject_cast<QPlainTextEdit *>(_widget->widgets[0]))
-    {
-      value = qobject_cast<QPlainTextEdit *>(_widget->widgets[0])
-          ->toPlainText().toStdString();
-    }
-  }
-  else
-  {
-    ignerr << "Error getting value from String Config Widget" << std::endl;
-  }
-  return value;
-}
-
-/////////////////////////////////////////////////
 math::Color MessageWidget::ColorWidgetValue(PropertyWidget *_widget)
     const
 {
@@ -2520,33 +2390,6 @@ void MessageWidget::OnIntValueChanged()
 
   this->ValueChanged(widget->scopedName.c_str(),
       this->IntWidgetValue(widget));
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnStringValueChanged()
-{
-  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(QObject::sender());
-  auto plainTextEdit =
-      qobject_cast<QPlainTextEdit *>(QObject::sender());
-
-  QWidget *valueEdit;
-  if (!lineEdit && !plainTextEdit)
-    return;
-  else if (lineEdit)
-    valueEdit = lineEdit;
-  else
-    valueEdit = plainTextEdit;
-
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(valueEdit->parent());
-
-  if (!widget)
-    return;
-
-  QVariant v;
-  v.setValue(this->StringWidgetValue(widget));
-
-  this->ValueChanged(widget->scopedName.c_str(), v);
 }
 
 /////////////////////////////////////////////////

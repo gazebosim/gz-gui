@@ -210,12 +210,6 @@ namespace ignition
       public: bool SetUIntWidgetValue(const std::string &_name, unsigned int
           _value);
 
-      /// \brief Set a string value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      public: bool SetStringWidgetValue(const std::string &_name,
-          const std::string &_value);
-
       /// \brief Set a color value to a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _value Value to set to.
@@ -288,11 +282,6 @@ namespace ignition
       /// \return Unsigned integer value.
       public: unsigned int UIntWidgetValue(const std::string &_name) const;
 
-      /// \brief Get a string value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return String value.
-      public: std::string StringWidgetValue(const std::string &_name) const;
-
       /// \brief Get a color value from a child widget.
       /// \param[in] _name Name of the child widget.
       /// \return Color value.
@@ -344,14 +333,6 @@ namespace ignition
       /// \return The newly created widget.
       public: PropertyWidget *CreateIntWidget(const std::string &_key,
           const int _level = 0);
-
-      /// \brief Create a widget for configuring a string value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \param[in] _type Type of string widget, such as "line" or "plain".
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateStringWidget(const std::string &_key,
-          const int _level = 0, const std::string &_type = "line");
 
       /// \brief Create a widget for configuring a color value.
       /// \param[in] _key A key that is used as a label for the widget.
@@ -488,13 +469,6 @@ namespace ignition
       private: bool UpdateIntWidget(PropertyWidget *_widget,
            const int _value);
 
-      /// \brief Update a child widget with a string value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateStringWidget(PropertyWidget *_widget,
-          const std::string &_value);
-
       /// \brief Update a child widget with a color value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
@@ -544,11 +518,6 @@ namespace ignition
       /// \return Value of the widget.
       private: unsigned int UIntWidgetValue(PropertyWidget *_widget) const;
 
-      /// \brief Get a string value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: std::string StringWidgetValue(PropertyWidget *_widget) const;
-
       /// \brief Get a color value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
@@ -584,9 +553,6 @@ namespace ignition
 
       /// \brief Callback when an int widget's value has changed.
       private slots: void OnIntValueChanged();
-
-      /// \brief Callback when a string widget's value has changed.
-      private slots: void OnStringValueChanged();
 
       /// \brief Callback when a color widget's value has changed.
       private slots: void OnColorValueChanged();

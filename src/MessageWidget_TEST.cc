@@ -30,6 +30,7 @@
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/StringWidget.hh"
 #include "ignition/gui/Vector3dWidget.hh"
 
 #include "ignition/gui/MessageWidget.hh"
@@ -176,14 +177,17 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // verify that the new message contains the updated values.
   // Joint type revolute -> universal
   {
+    QVariant variant;
+
     // joint
-    jointMessageWidget->SetStringWidgetValue("name", "test_joint_updated");
+    variant.setValue(std::string("test_joint_updated"));
+    jointMessageWidget->SetPropertyValue("name", variant);
     jointMessageWidget->SetUIntWidgetValue("id", 9999999u);
-    jointMessageWidget->SetStringWidgetValue("parent",
-        "test_joint_parent_updated");
+    variant.setValue(std::string("test_joint_parent_updated"));
+    jointMessageWidget->SetPropertyValue("parent", variant);
     jointMessageWidget->SetUIntWidgetValue("parent_id", 1u);
-    jointMessageWidget->SetStringWidgetValue("child",
-        "test_joint_child_updated");
+    variant.setValue(std::string("test_joint_child_updated"));
+    jointMessageWidget->SetPropertyValue("child", variant);
     jointMessageWidget->SetUIntWidgetValue("child_id", 2u);
 
     // type
@@ -198,7 +202,6 @@ TEST(MessageWidgetTest, JointMsgWidget)
         math::Pose3d(pos, quat));
 
     // axis1
-    QVariant variant;
     variant.setValue(math::Vector3d::UnitY);
     jointMessageWidget->SetPropertyValue("axis1::xyz", variant);
     jointMessageWidget->SetPropertyValue("axis1::use_parent_model_frame",
@@ -234,13 +237,13 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // verify widget values
   {
     // joint
-    EXPECT_TRUE(jointMessageWidget->StringWidgetValue("name") ==
+    EXPECT_EQ(jointMessageWidget->PropertyValue("name").value<std::string>(),
         "test_joint_updated");
     EXPECT_EQ(jointMessageWidget->UIntWidgetValue("id"), 9999999u);
-    EXPECT_TRUE(jointMessageWidget->StringWidgetValue("parent") ==
+    EXPECT_EQ(jointMessageWidget->PropertyValue("parent").value<std::string>(),
         "test_joint_parent_updated");
     EXPECT_EQ(jointMessageWidget->UIntWidgetValue("parent_id"), 1u);
-    EXPECT_TRUE(jointMessageWidget->StringWidgetValue("child") ==
+    EXPECT_EQ(jointMessageWidget->PropertyValue("child").value<std::string>(),
         "test_joint_child_updated");
     EXPECT_EQ(jointMessageWidget->UIntWidgetValue("child_id"), 2u);
 
@@ -357,14 +360,17 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // verify that the new message contains the updated values.
   // Joint type universal -> ball
   {
+    QVariant variant;
+
     // joint
-    jointMessageWidget->SetStringWidgetValue("name", "test_joint_updated2");
+    variant.setValue(std::string("test_joint_updated2"));
+    jointMessageWidget->SetPropertyValue("name", variant);
     jointMessageWidget->SetUIntWidgetValue("id", 2222222u);
-    jointMessageWidget->SetStringWidgetValue("parent",
-        "test_joint_parent_updated2");
+    variant.setValue(std::string("test_joint_parent_updated2"));
+    jointMessageWidget->SetPropertyValue("parent", variant);
     jointMessageWidget->SetUIntWidgetValue("parent_id", 10u);
-    jointMessageWidget->SetStringWidgetValue("child",
-        "test_joint_child_updated2");
+    variant.setValue(std::string("test_joint_child_updated2"));
+    jointMessageWidget->SetPropertyValue("child", variant);
     jointMessageWidget->SetUIntWidgetValue("child_id", 20u);
 
     // type
@@ -392,13 +398,13 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // verify widget values
   {
     // joint
-    EXPECT_TRUE(jointMessageWidget->StringWidgetValue("name") ==
+    EXPECT_EQ(jointMessageWidget->PropertyValue("name").value<std::string>(),
         "test_joint_updated2");
     EXPECT_EQ(jointMessageWidget->UIntWidgetValue("id"), 2222222u);
-    EXPECT_TRUE(jointMessageWidget->StringWidgetValue("parent") ==
+    EXPECT_EQ(jointMessageWidget->PropertyValue("parent").value<std::string>(),
         "test_joint_parent_updated2");
     EXPECT_EQ(jointMessageWidget->UIntWidgetValue("parent_id"), 10u);
-    EXPECT_TRUE(jointMessageWidget->StringWidgetValue("child") ==
+    EXPECT_EQ(jointMessageWidget->PropertyValue("child").value<std::string>(),
         "test_joint_child_updated2");
     EXPECT_EQ(jointMessageWidget->UIntWidgetValue("child_id"), 20u);
 
@@ -601,18 +607,20 @@ TEST(MessageWidgetTest, VisualMsgWidget)
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   {
+    QVariant variant;
+
     // visual
-    visualMessageWidget->SetStringWidgetValue("name", "test_visual_updated");
+    variant.setValue(std::string("test_visual_updated"));
+    visualMessageWidget->SetPropertyValue("name", variant);
     visualMessageWidget->SetUIntWidgetValue("id", 11111u);
-    visualMessageWidget->SetStringWidgetValue("parent_name",
-        "test_visual_parent_updated");
+    variant.setValue(std::string("test_visual_parent_updated"));
+    visualMessageWidget->SetPropertyValue("parent_name", variant);
     visualMessageWidget->SetUIntWidgetValue("parent_id", 55555u);
     visualMessageWidget->SetPropertyValue("cast_shadows", false);
     visualMessageWidget->SetPropertyValue("transparency", 1.0);
     visualMessageWidget->SetPropertyValue("visible", false);
     visualMessageWidget->SetPropertyValue("delete_me", true);
     visualMessageWidget->SetPropertyValue("is_static", true);
-    QVariant variant;
     variant.setValue(math::Vector3d(2.0, 1.5, 0.5));
     visualMessageWidget->SetPropertyValue("scale", variant);
 
@@ -626,8 +634,8 @@ TEST(MessageWidgetTest, VisualMsgWidget)
         math::Vector3d(5.0, 3.0, 4.0));
 
     // material
-    visualMessageWidget->SetStringWidgetValue("material::normal_map",
-        "test_normal_map_updated");
+    variant.setValue(std::string("test_normal_map_updated"));
+    visualMessageWidget->SetPropertyValue("material::normal_map", variant);
     visualMessageWidget->SetColorWidgetValue("material::ambient",
         math::Color(0.2, 0.3, 0.4, 0.5));
     visualMessageWidget->SetColorWidgetValue("material::diffuse",
@@ -638,16 +646,16 @@ TEST(MessageWidgetTest, VisualMsgWidget)
         math::Color(0.4, 0.6, 0.8, 0.1));
     visualMessageWidget->SetPropertyValue("material::lighting", false);
     // material::script
-    visualMessageWidget->SetStringWidgetValue("material::script::name",
-        "test_script_name_updated");
+    variant.setValue(std::string("test_script_name_updated"));
+    visualMessageWidget->SetPropertyValue("material::script::name", variant);
   }
 
   // verify widget values
   {
-    EXPECT_TRUE(visualMessageWidget->StringWidgetValue("name") ==
+    EXPECT_EQ(visualMessageWidget->PropertyValue("name").value<std::string>(),
         "test_visual_updated");
     EXPECT_EQ(visualMessageWidget->UIntWidgetValue("id"), 11111u);
-    EXPECT_TRUE(visualMessageWidget->StringWidgetValue("parent_name") ==
+    EXPECT_EQ(visualMessageWidget->PropertyValue("parent_name").value<std::string>(),
         "test_visual_parent_updated");
     EXPECT_EQ(visualMessageWidget->UIntWidgetValue("parent_id"), 55555u);
     EXPECT_EQ(visualMessageWidget->PropertyValue("cast_shadows").toBool(), false);
@@ -672,7 +680,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(dimensions, math::Vector3d(5.0, 3.0, 4.0));
 
     // material
-    EXPECT_TRUE(visualMessageWidget->StringWidgetValue("material::normal_map") ==
+    EXPECT_EQ(visualMessageWidget->PropertyValue("material::normal_map").value<std::string>(),
         "test_normal_map_updated");
     EXPECT_EQ(visualMessageWidget->ColorWidgetValue("material::ambient"),
         math::Color(0.2, 0.3, 0.4, 0.5));
@@ -685,8 +693,8 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(visualMessageWidget->PropertyValue("material::lighting").toBool(),
         false);
     // material::script
-    EXPECT_TRUE(visualMessageWidget->StringWidgetValue("material::script::name")
-        == "test_script_name_updated");
+    EXPECT_EQ(visualMessageWidget->PropertyValue("material::script::name").value<std::string>(),
+        "test_script_name_updated");
   }
 
   // verify updates in new msg
@@ -803,21 +811,24 @@ TEST(MessageWidgetTest, PluginMsgWidget)
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   {
+    QVariant variant;
+
     // plugin
-    pluginMessageWidget->SetStringWidgetValue("name", "test_plugin_updated");
-    pluginMessageWidget->SetStringWidgetValue("filename",
-        "test_plugin_filename_updated");
-    pluginMessageWidget->SetStringWidgetValue("innerxml",
-        "<param2>new_param</param2>\n");
+    variant.setValue(std::string("test_plugin_updated"));
+    pluginMessageWidget->SetPropertyValue("name", variant);
+    variant.setValue(std::string("test_plugin_filename_updated"));
+    pluginMessageWidget->SetPropertyValue("filename", variant);
+    variant.setValue(std::string("<param2>new_param</param2>\n"));
+    pluginMessageWidget->SetPropertyValue("innerxml", variant);
   }
 
   // verify widget values
   {
-    EXPECT_TRUE(pluginMessageWidget->StringWidgetValue("name") ==
+    EXPECT_EQ(pluginMessageWidget->PropertyValue("name").value<std::string>(),
         "test_plugin_updated");
-    EXPECT_TRUE(pluginMessageWidget->StringWidgetValue("filename") ==
+    EXPECT_EQ(pluginMessageWidget->PropertyValue("filename").value<std::string>(),
         "test_plugin_filename_updated");
-    EXPECT_TRUE(pluginMessageWidget->StringWidgetValue("innerxml") ==
+    EXPECT_EQ(pluginMessageWidget->PropertyValue("innerxml").value<std::string>(),
         "<param2>new_param</param2>\n");
   }
 
@@ -933,7 +944,7 @@ TEST(MessageWidgetTest, CustomMessageWidgetReadOnly)
   // Create a child widget
   {
     auto vecWidget = new Vector3dWidget("vector3d", 0);
-    auto stringWidget = messageWidget->CreateStringWidget("string", 0);
+    auto stringWidget = new StringWidget("string", 0);
 
     EXPECT_TRUE(messageWidget->AddPropertyWidget("vector3d", vecWidget));
     EXPECT_TRUE(messageWidget->AddPropertyWidget("string", stringWidget));
@@ -1133,7 +1144,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   auto uintWidget = messageWidget->CreateUIntWidget("uint", 0);
   auto intWidget = messageWidget->CreateIntWidget("int", 0);
   auto doubleWidget = new DoubleWidget("double", 1);
-  auto stringWidget = messageWidget->CreateStringWidget("string", 1);
+  auto stringWidget = new StringWidget("string", 1);
   auto boolWidget = new BoolWidget("bool", 2);
   auto vector3dWidget = new Vector3dWidget("vector3d", 2);
   auto colorWidget = messageWidget->CreateColorWidget("color", 3);
@@ -1206,12 +1217,13 @@ TEST(MessageWidgetTest, CreatedExternally)
   unsigned int uintValue = 123;
   int intValue = -456;
   double doubleValue = 123.456;
-  std::string stringValue("123");
+  QVariant stringValue;
+  stringValue.setValue(std::string("123"));
   bool boolValue = true;
   math::Color colorValue(0.1, 0.2, 0.3, 0.4);
   math::Pose3d poseValue(1, 2, 3, 0.1, 0.2, 0.3);
   std::string enumValue("value2");
-  std::string customValue("123456789");
+//  std::string customValue("123456789");
 
   QVariant vector3dValue;
   vector3dValue.setValue(math::Vector3d(1, 2, 3));
@@ -1219,26 +1231,27 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_TRUE(messageWidget->SetUIntWidgetValue("uint", uintValue));
   EXPECT_TRUE(messageWidget->SetIntWidgetValue("int", intValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("double", doubleValue));
-  EXPECT_TRUE(messageWidget->SetStringWidgetValue("string", stringValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("string", stringValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("bool", boolValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("vector3d", vector3dValue));
   EXPECT_TRUE(messageWidget->SetColorWidgetValue("color", colorValue));
   EXPECT_TRUE(messageWidget->SetPoseWidgetValue("pose", poseValue));
   EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enum", enumValue));
-  EXPECT_TRUE(messageWidget->SetStringWidgetValue("custom", customValue));
+//  EXPECT_TRUE(messageWidget->SetPropertyValue("custom", customValue));
 
   // Get widgets values
   EXPECT_EQ(messageWidget->UIntWidgetValue("uint"), uintValue);
   EXPECT_EQ(messageWidget->IntWidgetValue("int"), intValue);
   EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("double").toDouble(), doubleValue);
-  EXPECT_EQ(messageWidget->StringWidgetValue("string"), stringValue);
+  EXPECT_EQ(messageWidget->PropertyValue("string").value<std::string>(),
+      stringValue.value<std::string>());
   EXPECT_EQ(messageWidget->PropertyValue("bool").toBool(), boolValue);
   EXPECT_EQ(messageWidget->PropertyValue("vector3d"), vector3dValue);
   EXPECT_EQ(messageWidget->ColorWidgetValue("color"), colorValue);
   EXPECT_EQ(messageWidget->PoseWidgetValue("pose"),
       math::Pose3d(poseValue));
   EXPECT_EQ(messageWidget->EnumWidgetValue("enum"), enumValue);
-  EXPECT_EQ(messageWidget->StringWidgetValue("custom"), customValue);
+//  EXPECT_EQ(messageWidget->PropertyValue("custom"), customValue);
 
   // Collapsible some widgets
   auto groupLayout = new QVBoxLayout();
@@ -1515,7 +1528,7 @@ TEST(MessageWidgetTest, ChildStringSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child string widget
-  auto stringWidget = messageWidget->CreateStringWidget("string");
+  auto stringWidget = new StringWidget("string");
   EXPECT_TRUE(stringWidget != nullptr);
 
   // Add to message widget
@@ -1533,7 +1546,7 @@ TEST(MessageWidgetTest, ChildStringSignal)
     });
 
   // Check default string
-  EXPECT_TRUE(messageWidget->StringWidgetValue("string") == "");
+  EXPECT_EQ(messageWidget->PropertyValue("string").value<std::string>(), "");
 
   // Get signal emitting widgets
   auto lineEdits = stringWidget->findChildren<QLineEdit *>();

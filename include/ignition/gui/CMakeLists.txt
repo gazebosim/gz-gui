@@ -17,6 +17,7 @@ set (qt_headers
   MessageWidget.hh
   PropertyWidget.hh
   Plugin.hh
+  StringWidget.hh
   Vector3dWidget.hh
 )
 
