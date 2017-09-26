@@ -25,6 +25,7 @@
 
 #include "test_config.h"
 #include "ignition/gui/BoolWidget.hh"
+#include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Iface.hh"
@@ -480,6 +481,8 @@ TEST(MessageWidgetTest, VisualMsgWidget)
   auto visualMessageWidget = new MessageWidget();
   msgs::Visual visualMsg;
 
+  QVariant variant;
+
   {
     // visual
     visualMsg.set_name("test_visual");
@@ -510,17 +513,12 @@ TEST(MessageWidgetTest, VisualMsgWidget)
 
     // material
     auto materialMsg = visualMsg.mutable_material();
-    materialMsg->set_shader_type(
-        msgs::Material::Material::VERTEX);
+    materialMsg->set_shader_type(msgs::Material::Material::VERTEX);
     materialMsg->set_normal_map("test_normal_map");
-    msgs::Set(materialMsg->mutable_ambient(),
-        math::Color(0.0, 1.0, 0.0, 1.0));
-    msgs::Set(materialMsg->mutable_diffuse(),
-        math::Color(0.0, 1.0, 1.0, 0.4));
-    msgs::Set(materialMsg->mutable_specular(),
-        math::Color(1.0, 1.0, 1.0, 0.6));
-    msgs::Set(materialMsg->mutable_emissive(),
-        math::Color(0.0, 0.5, 0.2, 1.0));
+    msgs::Set(materialMsg->mutable_ambient(), math::Color(0.0, 1.0, 0.0, 1.0));
+    msgs::Set(materialMsg->mutable_diffuse(), math::Color(0.0, 1.0, 1.0, 0.4));
+    msgs::Set(materialMsg->mutable_specular(), math::Color(1.0, 1.0, 1.0, 0.6));
+    msgs::Set(materialMsg->mutable_emissive(), math::Color(0.0, 0.5, 0.2, 1.0));
     materialMsg->set_lighting(true);
     // material::script
     auto scriptMsg = materialMsg->mutable_script();
@@ -607,8 +605,6 @@ TEST(MessageWidgetTest, VisualMsgWidget)
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   {
-    QVariant variant;
-
     // visual
     variant.setValue(std::string("test_visual_updated"));
     visualMessageWidget->SetPropertyValue("name", variant);
@@ -636,14 +632,14 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // material
     variant.setValue(std::string("test_normal_map_updated"));
     visualMessageWidget->SetPropertyValue("material::normal_map", variant);
-    visualMessageWidget->SetColorWidgetValue("material::ambient",
-        math::Color(0.2, 0.3, 0.4, 0.5));
-    visualMessageWidget->SetColorWidgetValue("material::diffuse",
-        math::Color(0.1, 0.8, 0.6, 0.4));
-    visualMessageWidget->SetColorWidgetValue("material::specular",
-        math::Color(0.5, 0.4, 0.3, 0.2));
-    visualMessageWidget->SetColorWidgetValue("material::emissive",
-        math::Color(0.4, 0.6, 0.8, 0.1));
+    variant.setValue(math::Color(0.2, 0.3, 0.4, 0.5));
+    visualMessageWidget->SetPropertyValue("material::ambient", variant);
+    variant.setValue(math::Color(0.1, 0.8, 0.6, 0.4));
+    visualMessageWidget->SetPropertyValue("material::diffuse", variant);
+    variant.setValue(math::Color(0.5, 0.4, 0.3, 0.2));
+    visualMessageWidget->SetPropertyValue("material::specular", variant);
+    variant.setValue(math::Color(0.4, 0.6, 0.8, 0.1));
+    visualMessageWidget->SetPropertyValue("material::emissive", variant);
     visualMessageWidget->SetPropertyValue("material::lighting", false);
     // material::script
     variant.setValue(std::string("test_script_name_updated"));
@@ -682,14 +678,14 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // material
     EXPECT_EQ(visualMessageWidget->PropertyValue("material::normal_map").value<std::string>(),
         "test_normal_map_updated");
-    EXPECT_EQ(visualMessageWidget->ColorWidgetValue("material::ambient"),
-        math::Color(0.2, 0.3, 0.4, 0.5));
-    EXPECT_EQ(visualMessageWidget->ColorWidgetValue("material::diffuse"),
-        math::Color(0.1, 0.8, 0.6, 0.4));
-    EXPECT_EQ(visualMessageWidget->ColorWidgetValue("material::specular"),
-        math::Color(0.5, 0.4, 0.3, 0.2));
-    EXPECT_EQ(visualMessageWidget->ColorWidgetValue("material::emissive"),
-        math::Color(0.4, 0.6, 0.8, 0.1));
+    variant.setValue(math::Color(0.2, 0.3, 0.4, 0.5));
+    EXPECT_EQ(visualMessageWidget->PropertyValue("material::ambient"), variant);
+    variant.setValue(math::Color(0.1, 0.8, 0.6, 0.4));
+    EXPECT_EQ(visualMessageWidget->PropertyValue("material::diffuse"), variant);
+    variant.setValue(math::Color(0.5, 0.4, 0.3, 0.2));
+    EXPECT_EQ(visualMessageWidget->PropertyValue("material::specular"), variant);
+    variant.setValue(math::Color(0.4, 0.6, 0.8, 0.1));
+    EXPECT_EQ(visualMessageWidget->PropertyValue("material::emissive"), variant);
     EXPECT_EQ(visualMessageWidget->PropertyValue("material::lighting").toBool(),
         false);
     // material::script
@@ -1147,7 +1143,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   auto stringWidget = new StringWidget("string", 1);
   auto boolWidget = new BoolWidget("bool", 2);
   auto vector3dWidget = new Vector3dWidget("vector3d", 2);
-  auto colorWidget = messageWidget->CreateColorWidget("color", 3);
+  auto colorWidget = new ColorWidget("color", 3);
   auto poseWidget = messageWidget->CreatePoseWidget("pose", 3);
 
   std::vector<std::string> enumValues;
@@ -1220,7 +1216,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   QVariant stringValue;
   stringValue.setValue(std::string("123"));
   bool boolValue = true;
-  math::Color colorValue(0.1, 0.2, 0.3, 0.4);
+  QVariant colorValue;
+  colorValue.setValue(math::Color(0.1, 0.2, 0.3, 0.4));
   math::Pose3d poseValue(1, 2, 3, 0.1, 0.2, 0.3);
   std::string enumValue("value2");
 //  std::string customValue("123456789");
@@ -1234,7 +1231,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_TRUE(messageWidget->SetPropertyValue("string", stringValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("bool", boolValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("vector3d", vector3dValue));
-  EXPECT_TRUE(messageWidget->SetColorWidgetValue("color", colorValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("color", colorValue));
   EXPECT_TRUE(messageWidget->SetPoseWidgetValue("pose", poseValue));
   EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enum", enumValue));
 //  EXPECT_TRUE(messageWidget->SetPropertyValue("custom", customValue));
@@ -1247,7 +1244,7 @@ TEST(MessageWidgetTest, CreatedExternally)
       stringValue.value<std::string>());
   EXPECT_EQ(messageWidget->PropertyValue("bool").toBool(), boolValue);
   EXPECT_EQ(messageWidget->PropertyValue("vector3d"), vector3dValue);
-  EXPECT_EQ(messageWidget->ColorWidgetValue("color"), colorValue);
+  EXPECT_EQ(messageWidget->PropertyValue("color"), colorValue);
   EXPECT_EQ(messageWidget->PoseWidgetValue("pose"),
       math::Pose3d(poseValue));
   EXPECT_EQ(messageWidget->EnumWidgetValue("enum"), enumValue);
@@ -1382,7 +1379,7 @@ TEST(MessageWidgetTest, ChildUIntSignal)
   spins[0]->editingFinished();
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
@@ -1425,7 +1422,7 @@ TEST(MessageWidgetTest, ChildIntSignal)
   spins[0]->editingFinished();
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
@@ -1469,7 +1466,7 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
   spins[0]->editingFinished();
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
@@ -1513,7 +1510,7 @@ TEST(MessageWidgetTest, ChildBoolSignal)
   radios[1]->setChecked(false);
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
@@ -1621,14 +1618,12 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
 
   // Change the preset value and check new value at callback
   combos[0]->setCurrentIndex(4);
-//  combos[0]->editingFinished();
   EXPECT_EQ(vector3SignalCount, 2);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
 
-/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildColorSignal)
 {
@@ -1638,48 +1633,43 @@ TEST(MessageWidgetTest, ChildColorSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child color widget
-  auto colorWidget =
-      messageWidget->CreateColorWidget("color");
+  auto colorWidget = new ColorWidget("color");
   EXPECT_TRUE(colorWidget != nullptr);
 
   // Add to message widget
   EXPECT_TRUE(messageWidget->AddPropertyWidget("color", colorWidget));
 
   // Connect signals
-  connect(messageWidget,
-      SIGNAL(ColorValueChanged(const QString, const math::Color)),
-      this,
-      SLOT(OnColorValueChanged(const QString, const math::Color)));
+  bool signalReceived = false;
+  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<math::Color>();
+      EXPECT_TRUE(_name == "color");
+      EXPECT_EQ(v, math::Color(0.5, 0.0, 0.0, 1.0));
+      signalReceived = true;
+    });
 
-  // Check default color
-  EXPECT_TRUE(messageWidget->ColorWidgetValue("color") ==
+  // Check default color (opaque white)
+  EXPECT_EQ(messageWidget->PropertyValue("color").value<math::Color>(),
       math::Color());
 
   // Get signal emitting widgets
-  QList<QDoubleSpinBox *> spins =
-      colorWidget->findChildren<QDoubleSpinBox *>();
+  auto spins = colorWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 4);
 
   // Change the X value and check new value at callback
   spins[0]->setValue(0.5);
-  QTest::keyClick(spins[0], Qt::Key_Enter);
+  spins[0]->editingFinished();
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
 
-/////////////////////////////////////////////////
-//TEST(MessageWidgetTest, OnColorValueChanged(const QString &_name,
-//    const math::Color &_color)
-//{
-//  EXPECT_TRUE(_name == "color");
-//  EXPECT_TRUE(_color == math::Color(0.5, 0.0, 0.0, 0.0));
-//  g_colorSignalReceived = true;
-//}
-
+/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildPoseSignal)
 {

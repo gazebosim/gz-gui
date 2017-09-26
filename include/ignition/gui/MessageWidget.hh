@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 
@@ -210,13 +209,6 @@ namespace ignition
       public: bool SetUIntWidgetValue(const std::string &_name, unsigned int
           _value);
 
-      /// \brief Set a color value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetColorWidgetValue(const std::string &_name,
-          const math::Color &_value);
-
       /// \brief Set a pose value to a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _value Value to set to.
@@ -282,11 +274,6 @@ namespace ignition
       /// \return Unsigned integer value.
       public: unsigned int UIntWidgetValue(const std::string &_name) const;
 
-      /// \brief Get a color value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return Color value.
-      public: math::Color ColorWidgetValue(const std::string &_name) const;
-
       /// \brief Get a pose value from a child widget.
       /// \param[in] _name Name of the child widget.
       /// \return Pose value.
@@ -332,13 +319,6 @@ namespace ignition
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
       public: PropertyWidget *CreateIntWidget(const std::string &_key,
-          const int _level = 0);
-
-      /// \brief Create a widget for configuring a color value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateColorWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a pose value.
@@ -469,13 +449,6 @@ namespace ignition
       private: bool UpdateIntWidget(PropertyWidget *_widget,
            const int _value);
 
-      /// \brief Update a child widget with a color value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateColorWidget(PropertyWidget *_widget,
-          const math::Color &_value);
-
       /// \brief Update a child widget with a pose value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
@@ -518,11 +491,6 @@ namespace ignition
       /// \return Value of the widget.
       private: unsigned int UIntWidgetValue(PropertyWidget *_widget) const;
 
-      /// \brief Get a color value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: math::Color ColorWidgetValue(PropertyWidget *_widget) const;
-
       /// \brief Get a pose value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
@@ -554,14 +522,6 @@ namespace ignition
       /// \brief Callback when an int widget's value has changed.
       private slots: void OnIntValueChanged();
 
-      /// \brief Callback when a color widget's value has changed.
-      private slots: void OnColorValueChanged();
-
-      /// \brief Callback when a color widget's value has changed from
-      /// the color picker.
-      /// \param[in] _value New color value
-      private slots: void OnColorValueChanged(const QColor _value);
-
       /// \brief Callback when a pose widget's value has changed.
       private slots: void OnPoseValueChanged();
 
@@ -575,16 +535,6 @@ namespace ignition
       /// \brief Callback when an enum widget's enum value has changed.
       /// \param[in] _value New enum value in string.
       private slots: void OnEnumValueChanged(const QString &_value);
-
-      /// \brief Callback when an enum widget's enum value has changed.
-      /// \param[in] _value New enum value in string.
-      private slots: void OnCustomColorDialog();
-
-      /// \brief Signal that a color widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New color.
-      Q_SIGNALS: void ColorValueChanged(const QString &_name,
-          const math::Color &_value);
 
       /// \brief Signal that a pose widget's value has changed.
       /// \param[in] _name Scoped name of widget.
