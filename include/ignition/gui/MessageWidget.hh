@@ -194,19 +194,6 @@ namespace ignition
       public: bool SetPropertyValue(const std::string &_name,
                                     const QVariant _value);
 
-      /// \brief Set an integer value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetIntWidgetValue(const std::string &_name, int _value);
-
-      /// \brief Set an unsigned integer value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetUIntWidgetValue(const std::string &_name, unsigned int
-          _value);
-
       /// \brief Set a geometry value to a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _value Type of geometry.
@@ -255,16 +242,6 @@ namespace ignition
       /// \return Value as QVariant.
       public: QVariant PropertyValue(const std::string &_name) const;
 
-      /// \brief Get an integer value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return Integer value.
-      public: int IntWidgetValue(const std::string &_name) const;
-
-      /// \brief Get an unsigned integer value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return Unsigned integer value.
-      public: unsigned int UIntWidgetValue(const std::string &_name) const;
-
       /// \brief Get a geometry value from a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[out] _dimensions Dimensions of geometry.
@@ -282,20 +259,6 @@ namespace ignition
       /// \param[in] _name Name of the child widget.
       /// \return Enum value.
       public: std::string EnumWidgetValue(const std::string &_name) const;
-
-      /// \brief Create a widget for configuring an unsigned integer value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateUIntWidget(const std::string &_key,
-          const int _level = 0);
-
-      /// \brief Create a widget for configuring an integer value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateIntWidget(const std::string &_key,
-          const int _level = 0);
 
       /// \brief Create a widget for configuring a geometry value.
       /// \param[in] _key A key that is used as a label for the widget.
@@ -388,20 +351,6 @@ namespace ignition
       private: void UpdateVector3dMsg(google::protobuf::Message *_msg,
           const math::Vector3d &_value);
 
-      /// \brief Update a child widget with an unsigned integer value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateUIntWidget(PropertyWidget *_widget,
-          const unsigned int _value);
-
-      /// \brief Update a child widget with an integer value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateIntWidget(PropertyWidget *_widget,
-           const int _value);
-
       /// \brief Update a child widget with a geometry type and dimensions.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Type of geometry.
@@ -427,16 +376,6 @@ namespace ignition
       private: bool UpdateDensityWidget(PropertyWidget *_widget,
           const double _value);
 
-      /// \brief Get an integer value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: int IntWidgetValue(PropertyWidget *_widget) const;
-
-      /// \brief Get an unsigned integer value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: unsigned int UIntWidgetValue(PropertyWidget *_widget) const;
-
       /// \brief Get a geometry value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[out] _dimensions Dimensions of geometry.
@@ -455,12 +394,6 @@ namespace ignition
       /// \param[in] _column Column index.
       private slots: void OnItemSelection(QTreeWidgetItem *_item,
           const int _column);
-
-      /// \brief Callback when a uint widget's value has changed.
-      private slots: void OnUIntValueChanged();
-
-      /// \brief Callback when an int widget's value has changed.
-      private slots: void OnIntValueChanged();
 
       /// \brief Callback when a geometry widget's value has changed.
       private slots: void OnGeometryValueChanged();

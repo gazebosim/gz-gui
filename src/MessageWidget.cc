@@ -197,29 +197,6 @@ bool MessageWidget::SetPropertyValue(const std::string &_name,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::SetIntWidgetValue(const std::string &_name, int _value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateIntWidget(iter->second, _value);
-
-  return false;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::SetUIntWidgetValue(const std::string &_name,
-    unsigned int _value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateUIntWidget(iter->second, _value);
-
-  return false;
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::SetGeometryWidgetValue(const std::string &_name,
     const std::string &_value, const math::Vector3d &_dimensions,
     const std::string &_uri)
@@ -266,30 +243,6 @@ QVariant MessageWidget::PropertyValue(const std::string &_name) const
     return QVariant();
 
   return iter->second->Value();
-}
-
-/////////////////////////////////////////////////
-int MessageWidget::IntWidgetValue(const std::string &_name) const
-{
-  int value = 0;
-  std::map <std::string, PropertyWidget *>::const_iterator iter =
-      this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->IntWidgetValue(iter->second);
-  return value;
-}
-
-/////////////////////////////////////////////////
-unsigned int MessageWidget::UIntWidgetValue(const std::string &_name) const
-{
-  unsigned int value = 0;
-  std::map <std::string, PropertyWidget *>::const_iterator iter =
-      this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->UIntWidgetValue(iter->second);
-  return value;
 }
 
 /////////////////////////////////////////////////
@@ -388,7 +341,8 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           value = 0;
         if (newWidget)
         {
-          configChildWidget = new NumberWidget(name, _level);
+          configChildWidget =
+              new NumberWidget(name, _level, NumberWidget::DOUBLE);
 
           // TODO: handle this better
           if (name == "mass")
@@ -414,7 +368,8 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           value = 0;
         if (newWidget)
         {
-          configChildWidget = new NumberWidget(name, _level);
+          configChildWidget =
+              new NumberWidget(name, _level, NumberWidget::DOUBLE);
           newFieldWidget = configChildWidget;
         }
 
@@ -423,46 +378,49 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
       }
       case google::protobuf::FieldDescriptor::TYPE_INT64:
       {
-        int64_t value = ref->GetInt64(*_msg, field);
+        int value = ref->GetInt64(*_msg, field);
         if (newWidget)
         {
-          configChildWidget = this->CreateIntWidget(name, _level);
+          configChildWidget = new NumberWidget(name, _level, NumberWidget::INT);
           newFieldWidget = configChildWidget;
         }
-        this->UpdateIntWidget(configChildWidget, value);
+        configChildWidget->SetValue(value);
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT64:
       {
-        uint64_t value = ref->GetUInt64(*_msg, field);
+        unsigned int value = ref->GetUInt64(*_msg, field);
         if (newWidget)
         {
-          configChildWidget = this->CreateUIntWidget(name, _level);
+          configChildWidget =
+              new NumberWidget(name, _level, NumberWidget::UINT);
           newFieldWidget = configChildWidget;
         }
-        this->UpdateUIntWidget(configChildWidget, value);
+        configChildWidget->SetValue(value);
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_INT32:
       {
-        int32_t value = ref->GetInt32(*_msg, field);
+        int value = ref->GetInt32(*_msg, field);
         if (newWidget)
         {
-          configChildWidget = this->CreateIntWidget(name, _level);
+          configChildWidget =
+              new NumberWidget(name, _level, NumberWidget::INT);
           newFieldWidget = configChildWidget;
         }
-        this->UpdateIntWidget(configChildWidget, value);
+        configChildWidget->SetValue(value);
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT32:
       {
-        uint32_t value = ref->GetUInt32(*_msg, field);
+        unsigned int value = ref->GetUInt32(*_msg, field);
         if (newWidget)
         {
-          configChildWidget = this->CreateUIntWidget(name, _level);
+          configChildWidget =
+              new NumberWidget(name, _level, NumberWidget::UINT);
           newFieldWidget = configChildWidget;
         }
-        this->UpdateUIntWidget(configChildWidget, value);
+        configChildWidget->SetValue(value);
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_BOOL:
@@ -872,80 +830,6 @@ math::Vector3d MessageWidget::ParseVector3d(
 }
 
 /////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateUIntWidget(const std::string &_key,
-    const int _level)
-{
-  // ChildWidget
-  PropertyWidget *widget = new PropertyWidget();
-
-  // Label
-  auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
-  keyLabel->setToolTip(tr(_key.c_str()));
-
-  // SpinBox
-  auto valueSpinBox = new QSpinBox(widget);
-  valueSpinBox->setRange(0, 1e8);
-  valueSpinBox->setAlignment(Qt::AlignRight);
-  this->connect(valueSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnUIntValueChanged()));
-
-  // Layout
-  auto widgetLayout = new QHBoxLayout;
-  if (_level != 0)
-  {
-    widgetLayout->addItem(new QSpacerItem(20*_level, 1,
-        QSizePolicy::Fixed, QSizePolicy::Fixed));
-  }
-  widgetLayout->addWidget(keyLabel);
-  widgetLayout->addWidget(valueSpinBox);
-
-  // ChildWidget
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-
-  widget->widgets.push_back(valueSpinBox);
-
-  return widget;
-}
-
-/////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateIntWidget(const std::string &_key,
-    const int _level)
-{
-  // ChildWidget
-  PropertyWidget *widget = new PropertyWidget();
-
-  // Label
-  auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
-  keyLabel->setToolTip(tr(_key.c_str()));
-
-  // SpinBox
-  auto valueSpinBox = new QSpinBox(widget);
-  valueSpinBox->setRange(-1e8, 1e8);
-  valueSpinBox->setAlignment(Qt::AlignRight);
-  this->connect(valueSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnIntValueChanged()));
-
-  // Layout
-  auto widgetLayout = new QHBoxLayout;
-  if (_level != 0)
-  {
-    widgetLayout->addItem(new QSpacerItem(20*_level, 1,
-        QSizePolicy::Fixed, QSizePolicy::Fixed));
-  }
-  widgetLayout->addWidget(keyLabel);
-  widgetLayout->addWidget(valueSpinBox);
-
-  // ChildWidget
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-
-  widget->widgets.push_back(valueSpinBox);
-
-  return widget;
-}
-
-/////////////////////////////////////////////////
 PropertyWidget *MessageWidget::CreateGeometryWidget(
     const std::string &/*_key*/, const int _level)
 {
@@ -1321,51 +1205,44 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
     {
       case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
       {
-        auto valueSpinBox =
-            qobject_cast<QDoubleSpinBox *>(childWidget->widgets[0]);
-        ref->SetDouble(_msg, field, valueSpinBox->value());
+        auto v = childWidget->Value();
+        ref->SetDouble(_msg, field, v.toDouble());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_FLOAT:
       {
-        auto valueSpinBox =
-            qobject_cast<QDoubleSpinBox *>(childWidget->widgets[0]);
-        ref->SetFloat(_msg, field, valueSpinBox->value());
+        auto v = childWidget->Value();
+        ref->SetFloat(_msg, field, v.toDouble());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_INT64:
       {
-        auto valueSpinBox =
-            qobject_cast<QSpinBox *>(childWidget->widgets[0]);
-        ref->SetInt64(_msg, field, valueSpinBox->value());
+        auto v = childWidget->Value();
+        ref->SetInt64(_msg, field, v.toInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT64:
       {
-        auto valueSpinBox =
-            qobject_cast<QSpinBox *>(childWidget->widgets[0]);
-        ref->SetUInt64(_msg, field, valueSpinBox->value());
+        auto v = childWidget->Value();
+        ref->SetUInt64(_msg, field, v.toUInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_INT32:
       {
-        auto valueSpinBox =
-            qobject_cast<QSpinBox *>(childWidget->widgets[0]);
-        ref->SetInt32(_msg, field, valueSpinBox->value());
+        auto v = childWidget->Value();
+        ref->SetInt32(_msg, field, v.toInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT32:
       {
-        auto valueSpinBox =
-            qobject_cast<QSpinBox *>(childWidget->widgets[0]);
-        ref->SetUInt32(_msg, field, valueSpinBox->value());
+        auto v = childWidget->Value();
+        ref->SetUInt32(_msg, field, v.toUInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_BOOL:
       {
-        auto valueRadioButton =
-            qobject_cast<QRadioButton *>(childWidget->widgets[0]);
-        ref->SetBool(_msg, field, valueRadioButton->isChecked());
+        auto v = childWidget->Value();
+        ref->SetBool(_msg, field, v.toBool());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_STRING:
@@ -1662,37 +1539,6 @@ void MessageWidget::UpdateVector3dMsg(google::protobuf::Message *_msg,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::UpdateIntWidget(PropertyWidget *_widget,  int _value)
-{
-  if (_widget->widgets.size() == 1u)
-  {
-    qobject_cast<QSpinBox *>(_widget->widgets[0])->setValue(_value);
-    return true;
-  }
-  else
-  {
-    ignerr << "Error updating Int widget" << std::endl;
-  }
-  return false;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::UpdateUIntWidget(PropertyWidget *_widget,
-    unsigned int _value)
-{
-  if (_widget->widgets.size() == 1u)
-  {
-    qobject_cast<QSpinBox *>(_widget->widgets[0])->setValue(_value);
-    return true;
-  }
-  else
-  {
-    ignerr << "Error updating UInt widget" << std::endl;
-  }
-  return false;
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::UpdateGeometryWidget(PropertyWidget *_widget,
     const std::string &_value, const math::Vector3d &_dimensions,
     const std::string &_uri)
@@ -1796,36 +1642,6 @@ bool MessageWidget::UpdateDensityWidget(PropertyWidget *_widget,
 }
 
 /////////////////////////////////////////////////
-int MessageWidget::IntWidgetValue(PropertyWidget *_widget) const
-{
-  int value = 0;
-  if (_widget->widgets.size() == 1u)
-  {
-    value = qobject_cast<QSpinBox *>(_widget->widgets[0])->value();
-  }
-  else
-  {
-    ignerr << "Error getting value from Int widget" << std::endl;
-  }
-  return value;
-}
-
-/////////////////////////////////////////////////
-unsigned int MessageWidget::UIntWidgetValue(PropertyWidget *_widget) const
-{
-  unsigned int value = 0;
-  if (_widget->widgets.size() == 1u)
-  {
-    value = qobject_cast<QSpinBox *>(_widget->widgets[0])->value();
-  }
-  else
-  {
-    ignerr << "Error getting value from UInt widget" << std::endl;
-  }
-  return value;
-}
-
-/////////////////////////////////////////////////
 std::string MessageWidget::GeometryWidgetValue(PropertyWidget *_widget,
     math::Vector3d &_dimensions, std::string &_uri) const
 {
@@ -1898,42 +1714,6 @@ void MessageWidget::OnItemSelection(QTreeWidgetItem *_item,
 {
   if (_item && _item->childCount() > 0)
     _item->setExpanded(!_item->isExpanded());
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnUIntValueChanged()
-{
-  auto spin = qobject_cast<QSpinBox *>(QObject::sender());
-
-  if (!spin)
-    return;
-
-  auto widget = qobject_cast<PropertyWidget *>(spin->parent());
-
-  if (!widget)
-    return;
-
-  this->ValueChanged(widget->scopedName.c_str(),
-      this->UIntWidgetValue(widget));
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnIntValueChanged()
-{
-  auto spin =
-      qobject_cast<QSpinBox *>(QObject::sender());
-
-  if (!spin)
-    return;
-
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(spin->parent());
-
-  if (!widget)
-    return;
-
-  this->ValueChanged(widget->scopedName.c_str(),
-      this->IntWidgetValue(widget));
 }
 
 /////////////////////////////////////////////////

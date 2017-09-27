@@ -16,6 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
+#include <ignition/math/Helpers.hh>
 
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/NumberWidget.hh"
@@ -24,11 +25,10 @@ namespace ignition
 {
   namespace gui
   {
-    class PropertyWidget;
-
     /// \brief Private data for the NumberWidget class.
     class NumberWidgetPrivate
     {
+      public: NumberWidget::NumberType type;
     };
   }
 }
@@ -37,29 +37,38 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level)
-    : dataPtr(new NumberWidgetPrivate())
+NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level,
+    const NumberType _type) : dataPtr(new NumberWidgetPrivate())
 {
   this->level = _level;
+  this->dataPtr->type = _type;
+
+  auto widgetLayout = new QHBoxLayout;
 
   // Label
   auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
+  widgetLayout->addWidget(keyLabel);
 
-  // SpinBox
+  // Range
   double min = 0;
   double max = 0;
   rangeFromKey(_key, min, max);
 
-  auto valueSpinBox = new QDoubleSpinBox(this);
-  valueSpinBox->setRange(min, max);
-  valueSpinBox->setSingleStep(0.01);
-  valueSpinBox->setDecimals(8);
-  valueSpinBox->setAlignment(Qt::AlignRight);
-  this->connect(valueSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnValueChanged()));
+  // Make sure it fits QSpinBox
+  if (this->dataPtr->type == UINT)
+  {
+    min = std::max((unsigned int)min, 0u);
+    max = math::equal(max, math::MAX_D) ? math::MAX_I32 : (unsigned int)max;
+  }
+  else if (this->dataPtr->type == INT)
+  {
+    min = math::equal(min, math::MIN_D) ? math::MIN_I32 : (int)max;
+    max = math::equal(max, math::MAX_D) ? math::MAX_I32 : (int)max;
+  }
 
   // Unit
+  // FIXME: handle this
   // std::string jointType = this->EnumWidgetValue("type");
   std::string unit = unitFromKey(_key);
 
@@ -67,10 +76,34 @@ NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level)
   unitLabel->setMaximumWidth(40);
   unitLabel->setText(QString::fromStdString(unit));
 
-  // Layout
-  auto widgetLayout = new QHBoxLayout;
-  widgetLayout->addWidget(keyLabel);
-  widgetLayout->addWidget(valueSpinBox);
+  // Spin
+  if (this->dataPtr->type == DOUBLE)
+  {
+    auto spin = new QDoubleSpinBox(this);
+    spin->setSingleStep(0.01);
+    spin->setDecimals(8);
+    spin->setRange(min, max);
+    spin->setAlignment(Qt::AlignRight);
+    this->connect(spin, SIGNAL(editingFinished()), this,
+      SLOT(OnValueChanged()));
+    widgetLayout->addWidget(spin);
+
+    this->widgets.push_back(spin);
+    this->mapWidgetToUnit[spin] = unitLabel;
+  }
+  else
+  {
+    auto spin = new QSpinBox(this);
+    spin->setRange((int)min, (int)max);
+    spin->setAlignment(Qt::AlignRight);
+    this->connect(spin, SIGNAL(editingFinished()), this,
+      SLOT(OnValueChanged()));
+    widgetLayout->addWidget(spin);
+
+    this->widgets.push_back(spin);
+    this->mapWidgetToUnit[spin] = unitLabel;
+  }
+
   if (unitLabel->text() != "")
     widgetLayout->addWidget(unitLabel);
 
@@ -78,9 +111,6 @@ NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level)
   this->key = _key;
   this->setLayout(widgetLayout);
   this->setFrameStyle(QFrame::Box);
-
-  this->widgets.push_back(valueSpinBox);
-  this->mapWidgetToUnit[valueSpinBox] = unitLabel;
 }
 
 /////////////////////////////////////////////////
@@ -91,13 +121,32 @@ NumberWidget::~NumberWidget()
 /////////////////////////////////////////////////
 bool NumberWidget::SetValue(const QVariant _value)
 {
-  double value = _value.toDouble();
-
-  if (this->widgets.size() == 1u)
+  if (this->dataPtr->type == DOUBLE)
   {
-    // Spin value
-    auto spin = qobject_cast<QDoubleSpinBox *>(this->widgets[0]);
+    double value = _value.toDouble();
+
+    auto spin = this->findChild<QDoubleSpinBox *>();
+    if (!spin)
+    {
+      ignerr << "This should never happen." << std::endl;
+      return false;
+    }
     spin->setValue(value);
+  }
+  else
+  {
+    auto spin = this->findChild<QSpinBox *>();
+    if (!spin)
+    {
+      ignerr << "This should never happen." << std::endl;
+      return false;
+    }
+
+    if (this->dataPtr->type == INT)
+      spin->setValue(_value.toInt());
+    else
+      spin->setValue(_value.toUInt());
+  }
 
     // Unit label
 //    std::string jointType = this->EnumWidgetValue("type");
@@ -105,26 +154,24 @@ bool NumberWidget::SetValue(const QVariant _value)
 //    qobject_cast<QLabel *>(
 //        this->mapWidgetToUnit[spin])->setText(QString::fromStdString(unit));
 
-    return true;
-  }
-
-  ignerr << "Error updating double widget, wrong number of child widgets: ["
-         << this->widgets.size() << std::endl;
-  return false;
+  return true;
 }
 
 /////////////////////////////////////////////////
 QVariant NumberWidget::Value() const
 {
-  double value = 0.0;
-  if (this->widgets.size() == 1u)
   {
-    value = qobject_cast<QDoubleSpinBox *>(this->widgets[0])->value();
+    auto spin = this->findChild<QDoubleSpinBox *>();
+    if (spin)
+      return spin->value();
   }
-  else
+
   {
-    ignerr << "Error getting value from double widget, wrong number of child "
-           << "widgets: [" << this->widgets.size() << std::endl;
+    auto spin = this->findChild<QSpinBox *>();
+    if (spin)
+      return QVariant(spin->value());
   }
-  return value;
+
+  ignerr << "This should never happen." << std::endl;
+  return QVariant();
 }

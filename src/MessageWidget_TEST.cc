@@ -52,6 +52,8 @@ TEST(MessageWidgetTest, EmptyMsgWidget)
     auto visualMessageWidget = new MessageWidget();
     visualMessageWidget->Load(&visualMsg);
 
+    QCoreApplication::processEvents();
+
     auto retVisualMsg =
         dynamic_cast<msgs::Visual *>(visualMessageWidget->Msg());
     EXPECT_TRUE(retVisualMsg != nullptr);
@@ -183,13 +185,13 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // joint
     variant.setValue(std::string("test_joint_updated"));
     jointMessageWidget->SetPropertyValue("name", variant);
-    jointMessageWidget->SetUIntWidgetValue("id", 9999999u);
+    jointMessageWidget->SetPropertyValue("id", 9999999u);
     variant.setValue(std::string("test_joint_parent_updated"));
     jointMessageWidget->SetPropertyValue("parent", variant);
-    jointMessageWidget->SetUIntWidgetValue("parent_id", 1u);
+    jointMessageWidget->SetPropertyValue("parent_id", 1u);
     variant.setValue(std::string("test_joint_child_updated"));
     jointMessageWidget->SetPropertyValue("child", variant);
-    jointMessageWidget->SetUIntWidgetValue("child_id", 2u);
+    jointMessageWidget->SetPropertyValue("child_id", 2u);
 
     // type
     jointMessageWidget->SetEnumWidgetValue("type",
@@ -240,13 +242,13 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // joint
     EXPECT_EQ(jointMessageWidget->PropertyValue("name").value<std::string>(),
         "test_joint_updated");
-    EXPECT_EQ(jointMessageWidget->UIntWidgetValue("id"), 9999999u);
+    EXPECT_EQ(jointMessageWidget->PropertyValue("id"), 9999999u);
     EXPECT_EQ(jointMessageWidget->PropertyValue("parent").value<std::string>(),
         "test_joint_parent_updated");
-    EXPECT_EQ(jointMessageWidget->UIntWidgetValue("parent_id"), 1u);
+    EXPECT_EQ(jointMessageWidget->PropertyValue("parent_id"), 1u);
     EXPECT_EQ(jointMessageWidget->PropertyValue("child").value<std::string>(),
         "test_joint_child_updated");
-    EXPECT_EQ(jointMessageWidget->UIntWidgetValue("child_id"), 2u);
+    EXPECT_EQ(jointMessageWidget->PropertyValue("child_id"), 2u);
 
     // type
     EXPECT_EQ(jointMessageWidget->EnumWidgetValue("type"),
@@ -362,13 +364,13 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // joint
     variant.setValue(std::string("test_joint_updated2"));
     jointMessageWidget->SetPropertyValue("name", variant);
-    jointMessageWidget->SetUIntWidgetValue("id", 2222222u);
+    jointMessageWidget->SetPropertyValue("id", 2222222u);
     variant.setValue(std::string("test_joint_parent_updated2"));
     jointMessageWidget->SetPropertyValue("parent", variant);
-    jointMessageWidget->SetUIntWidgetValue("parent_id", 10u);
+    jointMessageWidget->SetPropertyValue("parent_id", 10u);
     variant.setValue(std::string("test_joint_child_updated2"));
     jointMessageWidget->SetPropertyValue("child", variant);
-    jointMessageWidget->SetUIntWidgetValue("child_id", 20u);
+    jointMessageWidget->SetPropertyValue("child_id", 20u);
 
     // type
     jointMessageWidget->SetEnumWidgetValue("type",
@@ -397,13 +399,13 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // joint
     EXPECT_EQ(jointMessageWidget->PropertyValue("name").value<std::string>(),
         "test_joint_updated2");
-    EXPECT_EQ(jointMessageWidget->UIntWidgetValue("id"), 2222222u);
+    EXPECT_EQ(jointMessageWidget->PropertyValue("id"), 2222222u);
     EXPECT_EQ(jointMessageWidget->PropertyValue("parent").value<std::string>(),
         "test_joint_parent_updated2");
-    EXPECT_EQ(jointMessageWidget->UIntWidgetValue("parent_id"), 10u);
+    EXPECT_EQ(jointMessageWidget->PropertyValue("parent_id"), 10u);
     EXPECT_EQ(jointMessageWidget->PropertyValue("child").value<std::string>(),
         "test_joint_child_updated2");
-    EXPECT_EQ(jointMessageWidget->UIntWidgetValue("child_id"), 20u);
+    EXPECT_EQ(jointMessageWidget->PropertyValue("child_id"), 20u);
 
     // type
     EXPECT_EQ(jointMessageWidget->EnumWidgetValue("type"),
@@ -601,10 +603,10 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // visual
     variant.setValue(std::string("test_visual_updated"));
     visualMessageWidget->SetPropertyValue("name", variant);
-    visualMessageWidget->SetUIntWidgetValue("id", 11111u);
+    visualMessageWidget->SetPropertyValue("id", 11111u);
     variant.setValue(std::string("test_visual_parent_updated"));
     visualMessageWidget->SetPropertyValue("parent_name", variant);
-    visualMessageWidget->SetUIntWidgetValue("parent_id", 55555u);
+    visualMessageWidget->SetPropertyValue("parent_id", 55555u);
     visualMessageWidget->SetPropertyValue("cast_shadows", false);
     visualMessageWidget->SetPropertyValue("transparency", 1.0);
     visualMessageWidget->SetPropertyValue("visible", false);
@@ -644,10 +646,10 @@ TEST(MessageWidgetTest, VisualMsgWidget)
   {
     EXPECT_EQ(visualMessageWidget->PropertyValue("name").value<std::string>(),
         "test_visual_updated");
-    EXPECT_EQ(visualMessageWidget->UIntWidgetValue("id"), 11111u);
+    EXPECT_EQ(visualMessageWidget->PropertyValue("id"), 11111u);
     EXPECT_EQ(visualMessageWidget->PropertyValue("parent_name").value<std::string>(),
         "test_visual_parent_updated");
-    EXPECT_EQ(visualMessageWidget->UIntWidgetValue("parent_id"), 55555u);
+    EXPECT_EQ(visualMessageWidget->PropertyValue("parent_id"), 55555u);
     EXPECT_EQ(visualMessageWidget->PropertyValue("cast_shadows").toBool(), false);
     EXPECT_DOUBLE_EQ(visualMessageWidget->PropertyValue("transparency").toDouble(), 1.0);
     EXPECT_EQ(visualMessageWidget->PropertyValue("visible").toBool(), false);
@@ -1126,9 +1128,9 @@ TEST(MessageWidgetTest, CreatedExternally)
   auto messageWidget = new MessageWidget();
 
   // Create predefined child widgets
-  auto uintWidget = messageWidget->CreateUIntWidget("uint", 0);
-  auto intWidget = messageWidget->CreateIntWidget("int", 0);
-  auto doubleWidget = new NumberWidget("double", 1);
+  auto uintWidget = new NumberWidget("uint", 0, NumberWidget::UINT);
+  auto intWidget = new NumberWidget("int", 0, NumberWidget::INT);
+  auto doubleWidget = new NumberWidget("double", 1, NumberWidget::DOUBLE);
   auto stringWidget = new StringWidget("string", 1);
   auto boolWidget = new BoolWidget("bool", 2);
   auto vector3dWidget = new Vector3dWidget("vector3d", 2);
@@ -1215,8 +1217,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   QVariant vector3dValue;
   vector3dValue.setValue(math::Vector3d(1, 2, 3));
 
-  EXPECT_TRUE(messageWidget->SetUIntWidgetValue("uint", uintValue));
-  EXPECT_TRUE(messageWidget->SetIntWidgetValue("int", intValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("uint", uintValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("int", intValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("double", doubleValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("string", stringValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("bool", boolValue));
@@ -1227,8 +1229,8 @@ TEST(MessageWidgetTest, CreatedExternally)
 //  EXPECT_TRUE(messageWidget->SetPropertyValue("custom", customValue));
 
   // Get widgets values
-  EXPECT_EQ(messageWidget->UIntWidgetValue("uint"), uintValue);
-  EXPECT_EQ(messageWidget->IntWidgetValue("int"), intValue);
+  EXPECT_EQ(messageWidget->PropertyValue("uint"), uintValue);
+  EXPECT_EQ(messageWidget->PropertyValue("int").toInt(), intValue);
   EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("double").toDouble(), doubleValue);
   EXPECT_EQ(messageWidget->PropertyValue("string").value<std::string>(),
       stringValue.value<std::string>());
@@ -1341,7 +1343,7 @@ TEST(MessageWidgetTest, ChildUIntSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child uint widget
-  auto uintWidget = messageWidget->CreateUIntWidget("uint");
+  auto uintWidget = new NumberWidget("uint", 0, NumberWidget::UINT);
   EXPECT_TRUE(uintWidget != nullptr);
 
   // Add to message widget
@@ -1358,7 +1360,7 @@ TEST(MessageWidgetTest, ChildUIntSignal)
     });
 
   // Check default uint
-  EXPECT_TRUE(messageWidget->UIntWidgetValue("uint") == 0u);
+  EXPECT_TRUE(messageWidget->PropertyValue("uint") == 0u);
 
   // Get signal emitting widgets
   auto spins = uintWidget->findChildren<QSpinBox *>();
@@ -1384,7 +1386,7 @@ TEST(MessageWidgetTest, ChildIntSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child int widget
-  auto intWidget = messageWidget->CreateIntWidget("int");
+  auto intWidget = new NumberWidget("int", 0, NumberWidget::INT);
   EXPECT_TRUE(intWidget != nullptr);
 
   // Add to message widget
@@ -1401,7 +1403,7 @@ TEST(MessageWidgetTest, ChildIntSignal)
     });
 
   // Check default int
-  EXPECT_EQ(messageWidget->IntWidgetValue("int"), 0);
+  EXPECT_EQ(messageWidget->PropertyValue("int"), 0);
 
   // Get signal emitting widgets
   QList<QSpinBox *> spins = intWidget->findChildren<QSpinBox *>();
@@ -1427,7 +1429,7 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child double widget
-  auto doubleWidget = new NumberWidget("double");
+  auto doubleWidget = new NumberWidget("double", 0, NumberWidget::DOUBLE);
   EXPECT_TRUE(doubleWidget != nullptr);
 
   // Add to message widget
@@ -1701,6 +1703,7 @@ TEST(MessageWidgetTest, ChildPoseSignal)
   EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
+  EXPECT_TRUE(stop());
 }
 
 /*
@@ -1750,6 +1753,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   EXPECT_TRUE(signalReceived == true);
 
   delete messageWidget;
+  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
@@ -1805,6 +1809,7 @@ TEST(MessageWidgetTest, ChildEnumSignal)
   EXPECT_TRUE(signalReceived == true);
 
   delete messageWidget;
+  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
@@ -1815,9 +1820,10 @@ TEST(MessageWidgetTest, ChildEnumSignal)
 //  EXPECT_TRUE(_value == "value3");
 //  g_enumSignalReceived = true;
 //}
+*/
 
 /////////////////////////////////////////////////
-TEST(MessageWidgetTest, GetChildWidgetByName)
+TEST(MessageWidgetTest, GetPropertyByName)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -1828,16 +1834,14 @@ TEST(MessageWidgetTest, GetChildWidgetByName)
   EXPECT_EQ(messageWidget->PropertyWidgetCount(), 0u);
 
   // Try to get a child widget by name
-  auto widget =
-      messageWidget->PropertyWidgetByName("child_widget");
+  auto widget = messageWidget->PropertyWidgetByName("child_widget");
   EXPECT_TRUE(widget == nullptr);
 
   widget = messageWidget->PropertyWidgetByName("");
   EXPECT_TRUE(widget == nullptr);
 
   // Create child widget
-  auto childWidget =
-      messageWidget->CreateBoolWidget("child_widget");
+  auto childWidget = new BoolWidget("child_widget");
   EXPECT_TRUE(childWidget != nullptr);
 
   // Add to message widget
@@ -1853,5 +1857,6 @@ TEST(MessageWidgetTest, GetChildWidgetByName)
   EXPECT_TRUE(widget == nullptr);
 
   delete messageWidget;
+  EXPECT_TRUE(stop());
 }
-*/
+

@@ -35,11 +35,25 @@ namespace ignition
     {
       Q_OBJECT
 
+      /// \brief Number types
+      public: enum NumberType
+      {
+        /// \brief
+        DOUBLE,
+
+        /// \brief
+        INT,
+
+        /// \brief
+        UINT
+      };
+
       /// \brief Constructor
       /// \param[in] _key Property key.
       /// \param[in] _level Depth level, in case nested.
       public: NumberWidget(const std::string &_key,
-                           const unsigned int _level = 0);
+                           const unsigned int _level = 0,
+                           const NumberType _type = DOUBLE);
 
       /// \brief Destructor
       public: ~NumberWidget();
