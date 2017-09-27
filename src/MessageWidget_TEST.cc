@@ -943,10 +943,8 @@ TEST(MessageWidgetTest, CustomMessageWidgetReadOnly)
     auto childWidget = new PropertyWidget();
     childWidget->setLayout(childLayout);
 
-    auto groupWidget = messageWidget->CreateCollapsibleWidget("group",
-        childWidget, 0);
-
-    messageLayout->addWidget(groupWidget);
+    auto collapsibleWidget = new CollapsibleWidget("group", childWidget, 0);
+    messageLayout->addWidget(collapsibleWidget);
   }
 
   // Create a custom child widget
@@ -971,7 +969,7 @@ TEST(MessageWidgetTest, CustomMessageWidgetReadOnly)
 
     EXPECT_TRUE(messageWidget->AddPropertyWidget("custom", customWidget));
 
-    auto customCollapsibleWidget = messageWidget->CreateCollapsibleWidget("custom group",
+    auto customCollapsibleWidget = new CollapsibleWidget("custom group",
         customWidget, 0);
 
     messageLayout->addWidget(customCollapsibleWidget);
@@ -1258,10 +1256,10 @@ TEST(MessageWidgetTest, CreatedExternally)
   groupChildWidget->setLayout(groupChildWidgetLayout);
   groupChildWidget->widgets.push_back(groupBox);
 
-  auto groupWidget =
-      messageWidget->CreateCollapsibleWidget("groupWidget", groupChildWidget, 0);
-  EXPECT_TRUE(groupWidget != nullptr);
-  EXPECT_TRUE(groupWidget->childWidget != nullptr);
+  auto collapsibleWidget =
+      new CollapsibleWidget("collapsibleWidget", groupChildWidget, 0);
+  EXPECT_TRUE(collapsibleWidget != nullptr);
+  EXPECT_TRUE(collapsibleWidget->childWidget != nullptr);
 
   EXPECT_TRUE(stop());
 }

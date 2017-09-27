@@ -19,6 +19,7 @@
 #define IGNITION_GUI_COLLAPSIBLEWIDGET_HH_
 
 #include "ignition/gui/qt.h"
+#include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
 namespace ignition
@@ -30,12 +31,19 @@ namespace ignition
     {
       Q_OBJECT
 
-      /// \brief Child widget that can be collapsed or expanded.
-      public: QWidget *childWidget;
+      /// \brief Constructor
+      /// \param[in] _key
+      /// \param[in] _childWidget
+      /// \param[in] _level
+      public: CollapsibleWidget(const std::string &_key,
+          PropertyWidget *_childWidget, const int _level);
 
       /// \brief Callback that collapses or expands the child widget.
       /// _param[in] _checked True for expanded.
       public slots: void Toggle(bool _checked);
+
+      /// \brief Child widget that can be collapsed or expanded.
+      public: QWidget *childWidget;
     };
   }
 }

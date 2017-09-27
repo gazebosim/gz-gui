@@ -747,8 +747,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
               qobject_cast<PropertyWidget *>(newFieldWidget);
           if (childWidget)
           {
-            newFieldWidget = this->CreateCollapsibleWidget(name, childWidget,
-                _level);
+            newFieldWidget = new CollapsibleWidget(name, childWidget, _level);
           }
         }
 
@@ -817,8 +816,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
       // store the newly created widget in a map with a unique scoped name.
       if (qobject_cast<CollapsibleWidget *>(newFieldWidget))
       {
-        CollapsibleWidget *groupWidget =
-            qobject_cast<CollapsibleWidget *>(newFieldWidget);
+        auto groupWidget = qobject_cast<CollapsibleWidget *>(newFieldWidget);
         PropertyWidget *childWidget = qobject_cast<PropertyWidget *>(
             groupWidget->childWidget);
         this->AddPropertyWidget(scopedName, childWidget);
@@ -850,106 +848,6 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
   }
 
   return nullptr;
-}
-
-/////////////////////////////////////////////////
-CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_name,
-    PropertyWidget *_childWidget, const int _level)
-{
-  // Button label
-  auto buttonLabel = new QLabel(
-      tr(humanReadable(_name).c_str()));
-  buttonLabel->setToolTip(tr(_name.c_str()));
-
-  // Button icon
-  auto buttonIcon = new QCheckBox();
-  buttonIcon->setChecked(true);
-  buttonIcon->setStyleSheet(
-      "QCheckBox::indicator::unchecked {\
-        image: url(:/images/right_arrow.png);\
-      }\
-      QCheckBox::indicator::checked {\
-        image: url(:/images/down_arrow.png);\
-      }");
-
-  // Button layout
-  auto buttonLayout = new QHBoxLayout();
-  buttonLayout->addItem(new QSpacerItem(20*_level, 1,
-      QSizePolicy::Fixed, QSizePolicy::Fixed));
-  buttonLayout->addWidget(buttonLabel);
-  buttonLayout->addWidget(buttonIcon);
-  buttonLayout->setAlignment(buttonIcon, Qt::AlignRight);
-
-  // Button frame
-  auto buttonFrame = new QFrame();
-  buttonFrame->setFrameStyle(QFrame::Box);
-  buttonFrame->setLayout(buttonLayout);
-
-  // Set color for top level button
-  if (_level == 0)
-  {
-    buttonFrame->setStyleSheet(
-        "QWidget\
-        {\
-          background-color: " + kBgColors[0] +
-        "}");
-  }
-
-  // Child widgets are contained in a group box which can be collapsed
-  CollapsibleWidget *groupWidget = new CollapsibleWidget;
-  groupWidget->setStyleSheet(
-      "QGroupBox {\
-        border : 0;\
-        margin : 0;\
-        padding : 0;\
-      }");
-
-  this->connect(buttonIcon, SIGNAL(toggled(bool)),
-      groupWidget, SLOT(Toggle(bool)));
-
-  // Set the child widget
-  groupWidget->childWidget = _childWidget;
-  _childWidget->setParent(groupWidget);
-  _childWidget->setContentsMargins(0, 0, 0, 0);
-
-  // Set color for children
-  if (_level == 0)
-  {
-    _childWidget->setStyleSheet(
-        "QWidget\
-        {\
-          background-color: " + kBgColors[1] +
-        "}");
-  }
-  else if (_level == 1)
-  {
-    _childWidget->setStyleSheet(
-        "QWidget\
-        {\
-          background-color: " + kBgColors[2] +
-        "}");
-  }
-  else if (_level == 2)
-  {
-    _childWidget->setStyleSheet(
-        "QWidget\
-        {\
-          background-color: " + kBgColors[3] +
-        "}");
-  }
-
-  // Collapsible Layout
-  auto configCollapsibleLayout = new QGridLayout;
-  configCollapsibleLayout->setContentsMargins(0, 0, 0, 0);
-  configCollapsibleLayout->setSpacing(0);
-  configCollapsibleLayout->addWidget(buttonFrame, 0, 0);
-  configCollapsibleLayout->addWidget(_childWidget, 1, 0);
-  groupWidget->setLayout(configCollapsibleLayout);
-
-  // Start collapsed
-  groupWidget->Toggle(false);
-
-  return groupWidget;
 }
 
 /////////////////////////////////////////////////

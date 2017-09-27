@@ -26,7 +26,6 @@
 #include <ignition/math/Vector3.hh>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
@@ -283,15 +282,6 @@ namespace ignition
       /// \param[in] _name Name of the child widget.
       /// \return Enum value.
       public: std::string EnumWidgetValue(const std::string &_name) const;
-
-      /// \brief Create a widget which has a button header which collapses
-      /// the field widget.
-      /// \param[in] _name Header name.
-      /// \param[out] _childWidget Widget which will be collapsed.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The group widget.
-      public: CollapsibleWidget *CreateCollapsibleWidget(const std::string &_name,
-          PropertyWidget *_childWidget, const int _level = 0);
 
       /// \brief Create a widget for configuring an unsigned integer value.
       /// \param[in] _key A key that is used as a label for the widget.
