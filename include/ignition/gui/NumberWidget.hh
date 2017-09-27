@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_DOUBLEWIDGET_HH_
-#define IGNITION_GUI_DOUBLEWIDGET_HH_
+#ifndef IGNITION_GUI_NUMBERWIDGET_HH_
+#define IGNITION_GUI_NUMBERWIDGET_HH_
 
 #include <memory>
 
@@ -28,21 +28,21 @@ namespace ignition
 {
   namespace gui
   {
-    class DoubleWidgetPrivate;
+    class NumberWidgetPrivate;
 
     /// \brief A widget which holds a double property.
-    class IGNITION_GUI_VISIBLE DoubleWidget : public PropertyWidget
+    class IGNITION_GUI_VISIBLE NumberWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
       /// \param[in] _key Property key.
       /// \param[in] _level Depth level, in case nested.
-      public: DoubleWidget(const std::string &_key,
+      public: NumberWidget(const std::string &_key,
                            const unsigned int _level = 0);
 
       /// \brief Destructor
-      public: ~DoubleWidget();
+      public: ~NumberWidget();
 
       // Documentation inherited
       public: bool SetValue(const QVariant _value);
@@ -52,7 +52,7 @@ namespace ignition
 
       /// \internal
       /// \brief Pointer to private data.
-      private: std::unique_ptr<DoubleWidgetPrivate> dataPtr;
+      private: std::unique_ptr<NumberWidgetPrivate> dataPtr;
     };
   }
 }

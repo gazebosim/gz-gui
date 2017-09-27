@@ -18,7 +18,7 @@
 #include <ignition/common/Console.hh>
 
 #include "ignition/gui/Helpers.hh"
-#include "ignition/gui/DoubleWidget.hh"
+#include "ignition/gui/NumberWidget.hh"
 
 namespace ignition
 {
@@ -26,8 +26,8 @@ namespace ignition
   {
     class PropertyWidget;
 
-    /// \brief Private data for the DoubleWidget class.
-    class DoubleWidgetPrivate
+    /// \brief Private data for the NumberWidget class.
+    class NumberWidgetPrivate
     {
     };
   }
@@ -37,8 +37,8 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-DoubleWidget::DoubleWidget(const std::string &_key, const unsigned int _level)
-    : dataPtr(new DoubleWidgetPrivate())
+NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level)
+    : dataPtr(new NumberWidgetPrivate())
 {
   this->level = _level;
 
@@ -84,12 +84,12 @@ DoubleWidget::DoubleWidget(const std::string &_key, const unsigned int _level)
 }
 
 /////////////////////////////////////////////////
-DoubleWidget::~DoubleWidget()
+NumberWidget::~NumberWidget()
 {
 }
 
 /////////////////////////////////////////////////
-bool DoubleWidget::SetValue(const QVariant _value)
+bool NumberWidget::SetValue(const QVariant _value)
 {
   double value = _value.toDouble();
 
@@ -114,7 +114,7 @@ bool DoubleWidget::SetValue(const QVariant _value)
 }
 
 /////////////////////////////////////////////////
-QVariant DoubleWidget::Value() const
+QVariant NumberWidget::Value() const
 {
   double value = 0.0;
   if (this->widgets.size() == 1u)

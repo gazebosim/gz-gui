@@ -13,9 +13,9 @@ set (qt_headers
   BoolWidget.hh
   CollapsibleWidget.hh
   ColorWidget.hh
-  DoubleWidget.hh
   MainWindow.hh
   MessageWidget.hh
+  NumberWidget.hh
   PropertyWidget.hh
   Plugin.hh
   Pose3dWidget.hh

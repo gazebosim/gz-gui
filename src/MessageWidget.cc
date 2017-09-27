@@ -27,8 +27,8 @@
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
-#include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
@@ -388,7 +388,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           value = 0;
         if (newWidget)
         {
-          configChildWidget = new DoubleWidget(name, _level);
+          configChildWidget = new NumberWidget(name, _level);
 
           // TODO: handle this better
           if (name == "mass")
@@ -414,7 +414,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           value = 0;
         if (newWidget)
         {
-          configChildWidget = new DoubleWidget(name, _level);
+          configChildWidget = new NumberWidget(name, _level);
           newFieldWidget = configChildWidget;
         }
 

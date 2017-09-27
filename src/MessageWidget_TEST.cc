@@ -26,9 +26,9 @@
 #include "test_config.h"
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
-#include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
@@ -1128,7 +1128,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   // Create predefined child widgets
   auto uintWidget = messageWidget->CreateUIntWidget("uint", 0);
   auto intWidget = messageWidget->CreateIntWidget("int", 0);
-  auto doubleWidget = new DoubleWidget("double", 1);
+  auto doubleWidget = new NumberWidget("double", 1);
   auto stringWidget = new StringWidget("string", 1);
   auto boolWidget = new BoolWidget("bool", 2);
   auto vector3dWidget = new Vector3dWidget("vector3d", 2);
@@ -1427,7 +1427,7 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child double widget
-  auto doubleWidget = new DoubleWidget("double");
+  auto doubleWidget = new NumberWidget("double");
   EXPECT_TRUE(doubleWidget != nullptr);
 
   // Add to message widget
