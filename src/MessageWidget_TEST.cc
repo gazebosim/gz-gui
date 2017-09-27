@@ -29,6 +29,7 @@
 #include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
@@ -82,6 +83,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
 
   auto jointMessageWidget = new MessageWidget();
   msgs::Joint jointMsg;
+
+  QVariant variant;
 
   {
     // joint
@@ -146,10 +149,9 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_DOUBLE_EQ(posMsg.y(), -1.0);
     EXPECT_DOUBLE_EQ(posMsg.z(), 3.5);
     auto quat = msgs::Convert(poseMsg.orientation());
-    // FIXME: investigate failure
-    //EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
-    //EXPECT_DOUBLE_EQ(quat.Euler().Y(), 1.57);
-    //EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_LT(fabs(quat.Euler().Y() - 1.57), 0.0001);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
 
     // axis1
     auto axisMsg = jointMsg.mutable_axis1();
@@ -178,8 +180,6 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // verify that the new message contains the updated values.
   // Joint type revolute -> universal
   {
-    QVariant variant;
-
     // joint
     variant.setValue(std::string("test_joint_updated"));
     jointMessageWidget->SetPropertyValue("name", variant);
@@ -199,8 +199,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
     math::Quaterniond quat(0.0, 0.0, 1.57);
-    jointMessageWidget->SetPoseWidgetValue("pose",
-        math::Pose3d(pos, quat));
+    variant.setValue(math::Pose3d(pos, quat));
+    jointMessageWidget->SetPropertyValue("pose", variant);
 
     // axis1
     variant.setValue(math::Vector3d::UnitY);
@@ -255,7 +255,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
     math::Quaterniond quat(0.0, 0.0, 1.57);
-    EXPECT_EQ(jointMessageWidget->PoseWidgetValue("pose"), math::Pose3d(pos, quat));
+    EXPECT_EQ(jointMessageWidget->PropertyValue("pose").value<math::Pose3d>(),
+        math::Pose3d(pos, quat));
 
     // axis1
     EXPECT_EQ(jointMessageWidget->PropertyValue("axis1::xyz").value<math::Vector3d>(),
@@ -311,21 +312,19 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // pose
     auto poseMsg = retJointMsg->pose();
     auto posMsg = poseMsg.position();
-    // FIXME: Pose broken, possibly due to header
-    // EXPECT_DOUBLE_EQ(posMsg.x(), 2.0);
-    // EXPECT_DOUBLE_EQ(posMsg.y(), 9.0);
-    // EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
+    EXPECT_DOUBLE_EQ(posMsg.x(), 2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), 9.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
     auto quat = msgs::Convert(poseMsg.orientation());
-    // EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
-    // EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
-    // EXPECT_DOUBLE_EQ(quat.Euler().Z(), 1.57);
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 1.57);
 
     // axis1
     auto axisMsg = retJointMsg->mutable_axis1();
-    // FIXME: Axis broken
-    // EXPECT_DOUBLE_EQ(axisMsg->xyz().x(), 0.0);
-    // EXPECT_DOUBLE_EQ(axisMsg->xyz().y(), 1.0);
-    // EXPECT_DOUBLE_EQ(axisMsg->xyz().z(), 0.0);
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().x(), 0.0);
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().y(), 1.0);
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().z(), 0.0);
     EXPECT_EQ(axisMsg->use_parent_model_frame(), true);
     EXPECT_DOUBLE_EQ(axisMsg->limit_lower(), -1.2);
     EXPECT_DOUBLE_EQ(axisMsg->limit_upper(), -1.0);
@@ -337,8 +336,7 @@ TEST(MessageWidgetTest, JointMsgWidget)
     auto axis2Msg = retJointMsg->mutable_axis2();
     EXPECT_DOUBLE_EQ(axis2Msg->xyz().x(), 0.0);
     EXPECT_DOUBLE_EQ(axis2Msg->xyz().y(), 0.0);
-    // FIXME: Axis broken
-    // EXPECT_DOUBLE_EQ(axis2Msg->xyz().z(), 1.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->xyz().z(), 1.0);
     EXPECT_EQ(axis2Msg->use_parent_model_frame(), true);
     EXPECT_DOUBLE_EQ(axis2Msg->limit_lower(), -3.2);
     EXPECT_DOUBLE_EQ(axis2Msg->limit_upper(), -3.0);
@@ -361,8 +359,6 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // verify that the new message contains the updated values.
   // Joint type universal -> ball
   {
-    QVariant variant;
-
     // joint
     variant.setValue(std::string("test_joint_updated2"));
     jointMessageWidget->SetPropertyValue("name", variant);
@@ -382,8 +378,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
     math::Quaterniond quat(0.0, 0.0, 0.0);
-    jointMessageWidget->SetPoseWidgetValue("pose",
-        math::Pose3d(pos, quat));
+    variant.setValue(math::Pose3d(pos, quat));
+    jointMessageWidget->SetPropertyValue("pose", variant);
 
     // other joint physics properties
     jointMessageWidget->SetPropertyValue("cfm", 0.19);
@@ -417,8 +413,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
     math::Quaterniond quat(0.0, 0.0, 0.0);
-    EXPECT_EQ(jointMessageWidget->PoseWidgetValue("pose"),
-        math::Pose3d(pos, quat));
+    variant.setValue(math::Pose3d(pos, quat));
+    EXPECT_EQ(jointMessageWidget->PropertyValue("pose"), variant);
 
     // other joint physics properties
     EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("cfm").toDouble(), 0.19);
@@ -450,14 +446,13 @@ TEST(MessageWidgetTest, JointMsgWidget)
     // pose
     auto poseMsg = retJointMsg->pose();
     auto posMsg = poseMsg.position();
-    // FIXME: Pose broken. Header?
-    // EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
-    // EXPECT_DOUBLE_EQ(posMsg.y(), 1.0);
-    // EXPECT_DOUBLE_EQ(posMsg.z(), 2.0);
+    EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), 1.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), 2.0);
     auto quat = msgs::Convert(poseMsg.orientation());
-    // EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
-    // EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
-    // EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
 
     // other joint physics properties
     EXPECT_DOUBLE_EQ(retJointMsg->cfm(), 0.19);
@@ -557,10 +552,9 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_DOUBLE_EQ(posMsg.y(), 3.0);
     EXPECT_DOUBLE_EQ(posMsg.z(), 4.0);
     auto quat = msgs::Convert(poseMsg.orientation());
-    // FIXME: investigate failure
-    //EXPECT_DOUBLE_EQ(quat.Euler().X(), 1.57);
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 1.57);
     EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
-    //EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
 
     // geometry
     auto geometryMsg = retVisualMsg->geometry();
@@ -571,8 +565,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
 
     // material
     auto materialMsg = retVisualMsg->material();
-    EXPECT_EQ(materialMsg.shader_type(),
-        msgs::Material::Material::VERTEX);
+    EXPECT_EQ(materialMsg.shader_type(), msgs::Material::Material::VERTEX);
     EXPECT_TRUE(materialMsg.normal_map() == "test_normal_map");
     auto ambientMsg = materialMsg.ambient();
     EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.0f);
@@ -623,7 +616,8 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // pose
     math::Vector3d pos(-2.0, -3.0, -4.0);
     math::Quaterniond quat(0.0, 1.57, 0.0);
-    visualMessageWidget->SetPoseWidgetValue("pose", math::Pose3d(pos, quat));
+    variant.setValue(math::Pose3d(pos, quat));
+    visualMessageWidget->SetPropertyValue("pose", variant);
 
     // geometry
     visualMessageWidget->SetGeometryWidgetValue("geometry", "box",
@@ -665,8 +659,8 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // pose
     math::Vector3d pos(-2.0, -3.0, -4.0);
     math::Quaterniond quat(0.0, 1.57, 0.0);
-    EXPECT_EQ(visualMessageWidget->PoseWidgetValue("pose"),
-        math::Pose3d(pos, quat));
+    variant.setValue(math::Pose3d(pos, quat));
+    EXPECT_EQ(visualMessageWidget->PropertyValue("pose"), variant);
 
     // geometry
     math::Vector3d dimensions;
@@ -710,22 +704,20 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(retVisualMsg->delete_me(), true);
     EXPECT_EQ(retVisualMsg->is_static(), true);
     auto scaleMsg = retVisualMsg->scale();
-    // FIXME: investigate failure
-    //EXPECT_DOUBLE_EQ(scaleMsg.x(), 2.0);
-    //EXPECT_DOUBLE_EQ(scaleMsg.y(), 1.5);
-    //EXPECT_DOUBLE_EQ(scaleMsg.z(), 0.5);
+    EXPECT_DOUBLE_EQ(scaleMsg.x(), 2.0);
+    EXPECT_DOUBLE_EQ(scaleMsg.y(), 1.5);
+    EXPECT_DOUBLE_EQ(scaleMsg.z(), 0.5);
 
     // pose
     auto poseMsg = retVisualMsg->pose();
     auto posMsg = poseMsg.position();
-    // FIXME: investigate failure
-    //EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
-    //EXPECT_DOUBLE_EQ(posMsg.y(), -3.0);
-    //EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
+    EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), -3.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
     auto quat = msgs::Convert(poseMsg.orientation());
-    //EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
-    //EXPECT_DOUBLE_EQ(quat.Euler().Y(), 1.57);
-    //EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_LT(fabs(quat.Euler().Y() - 1.57), 0.0001);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
 
     // geometry
     auto geometryMsg = retVisualMsg->geometry();
@@ -741,28 +733,27 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     auto materialMsg = retVisualMsg->material();
     EXPECT_EQ(materialMsg.shader_type(), msgs::Material::Material::VERTEX);
     EXPECT_TRUE(materialMsg.normal_map() == "test_normal_map_updated");
-    // FIXME: investigate failure
-    //auto ambientMsg = materialMsg.ambient();
-    //EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.2f);
-    //EXPECT_DOUBLE_EQ(ambientMsg.g(), 0.3f);
-    //EXPECT_DOUBLE_EQ(ambientMsg.b(), 0.4f);
-    //EXPECT_DOUBLE_EQ(ambientMsg.a(), 0.5f);
-    //auto diffuseMsg = materialMsg.diffuse();
-    //EXPECT_DOUBLE_EQ(diffuseMsg.r(), 0.1f);
-    //EXPECT_DOUBLE_EQ(diffuseMsg.g(), 0.8f);
-    //EXPECT_DOUBLE_EQ(diffuseMsg.b(), 0.6f);
-    //EXPECT_DOUBLE_EQ(diffuseMsg.a(), 0.4f);
-    //auto specularMsg = materialMsg.specular();
-    //EXPECT_DOUBLE_EQ(specularMsg.r(), 0.5f);
-    //EXPECT_DOUBLE_EQ(specularMsg.g(), 0.4f);
-    //EXPECT_DOUBLE_EQ(specularMsg.b(), 0.3f);
-    //EXPECT_DOUBLE_EQ(specularMsg.a(), 0.2f);
-    //auto emissiveMsg = materialMsg.emissive();
-    //EXPECT_DOUBLE_EQ(emissiveMsg.r(), 0.4f);
-    //EXPECT_DOUBLE_EQ(emissiveMsg.g(), 0.6f);
-    //EXPECT_DOUBLE_EQ(emissiveMsg.b(), 0.8f);
-    //EXPECT_DOUBLE_EQ(emissiveMsg.a(), 0.1f);
-    //EXPECT_EQ(materialMsg.lighting(), false);
+    auto ambientMsg = materialMsg.ambient();
+    EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.2f);
+    EXPECT_DOUBLE_EQ(ambientMsg.g(), 0.3f);
+    EXPECT_DOUBLE_EQ(ambientMsg.b(), 0.4f);
+    EXPECT_DOUBLE_EQ(ambientMsg.a(), 0.5f);
+    auto diffuseMsg = materialMsg.diffuse();
+    EXPECT_DOUBLE_EQ(diffuseMsg.r(), 0.1f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.g(), 0.8f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.b(), 0.6f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.a(), 0.4f);
+    auto specularMsg = materialMsg.specular();
+    EXPECT_DOUBLE_EQ(specularMsg.r(), 0.5f);
+    EXPECT_DOUBLE_EQ(specularMsg.g(), 0.4f);
+    EXPECT_DOUBLE_EQ(specularMsg.b(), 0.3f);
+    EXPECT_DOUBLE_EQ(specularMsg.a(), 0.2f);
+    auto emissiveMsg = materialMsg.emissive();
+    EXPECT_DOUBLE_EQ(emissiveMsg.r(), 0.4f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.g(), 0.6f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.b(), 0.8f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.a(), 0.1f);
+    EXPECT_EQ(materialMsg.lighting(), false);
     // material::script
     auto scriptMsg = materialMsg.script();
     EXPECT_TRUE(scriptMsg.uri(0) == "test_script_uri_0");
@@ -1144,7 +1135,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   auto boolWidget = new BoolWidget("bool", 2);
   auto vector3dWidget = new Vector3dWidget("vector3d", 2);
   auto colorWidget = new ColorWidget("color", 3);
-  auto poseWidget = messageWidget->CreatePoseWidget("pose", 3);
+  auto poseWidget = new Pose3dWidget("pose", 3);
 
   std::vector<std::string> enumValues;
   enumValues.push_back("value1");
@@ -1218,7 +1209,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   bool boolValue = true;
   QVariant colorValue;
   colorValue.setValue(math::Color(0.1, 0.2, 0.3, 0.4));
-  math::Pose3d poseValue(1, 2, 3, 0.1, 0.2, 0.3);
+  QVariant poseValue;
+  poseValue.setValue(math::Pose3d(1, 2, 3, 0.1, 0.2, 0.3));
   std::string enumValue("value2");
 //  std::string customValue("123456789");
 
@@ -1232,7 +1224,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_TRUE(messageWidget->SetPropertyValue("bool", boolValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("vector3d", vector3dValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("color", colorValue));
-  EXPECT_TRUE(messageWidget->SetPoseWidgetValue("pose", poseValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("pose", poseValue));
   EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enum", enumValue));
 //  EXPECT_TRUE(messageWidget->SetPropertyValue("custom", customValue));
 
@@ -1245,8 +1237,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_EQ(messageWidget->PropertyValue("bool").toBool(), boolValue);
   EXPECT_EQ(messageWidget->PropertyValue("vector3d"), vector3dValue);
   EXPECT_EQ(messageWidget->PropertyValue("color"), colorValue);
-  EXPECT_EQ(messageWidget->PoseWidgetValue("pose"),
-      math::Pose3d(poseValue));
+  EXPECT_EQ(messageWidget->PropertyValue("pose").value<math::Pose3d>(),
+      poseValue.value<math::Pose3d>());
   EXPECT_EQ(messageWidget->EnumWidgetValue("enum"), enumValue);
 //  EXPECT_EQ(messageWidget->PropertyValue("custom"), customValue);
 
@@ -1669,7 +1661,6 @@ TEST(MessageWidgetTest, ChildColorSignal)
   EXPECT_TRUE(stop());
 }
 
-/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildPoseSignal)
 {
@@ -1679,45 +1670,42 @@ TEST(MessageWidgetTest, ChildPoseSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child pose widget
-  auto poseWidget =
-      messageWidget->CreatePoseWidget("pose");
+  auto poseWidget = new Pose3dWidget("pose");
   EXPECT_TRUE(poseWidget != nullptr);
 
   // Add to message widget
   EXPECT_TRUE(messageWidget->AddPropertyWidget("pose", poseWidget));
 
   // Connect signals
-  connect(messageWidget,
-      SIGNAL(PoseValueChanged(const QString, const math::Pose3d)),
-      this,
-      SLOT(OnPoseValueChanged(const QString, const math::Pose3d)));
+  bool signalReceived = false;
+  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<math::Pose3d>();
+      EXPECT_TRUE(_name == "pose");
+      EXPECT_TRUE(v == math::Pose3d(1, 0, 0, 0, 0, 0));
+      signalReceived = true;
+    });
 
   // Check default pose
-  EXPECT_TRUE(messageWidget->PoseWidgetValue("pose") == math::Pose3d());
+  EXPECT_EQ(messageWidget->PropertyValue("pose").value<math::Pose3d>(),
+      math::Pose3d());
 
   // Get signal emitting widgets
-  QList<QDoubleSpinBox *> spins = poseWidget->findChildren<QDoubleSpinBox *>();
+  auto spins = poseWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 6);
 
   // Change the X value and check new value at callback
   spins[0]->setValue(1.0);
-  QTest::keyClick(spins[0], Qt::Key_Enter);
+  spins[0]->editingFinished();
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
 }
 
-/////////////////////////////////////////////////
-//TEST(MessageWidgetTest, OnPoseValueChanged(const QString &_name,
-//    const math::Pose3d &_value)
-//{
-//  EXPECT_TRUE(_name == "pose");
-//  EXPECT_TRUE(_value == math::Pose3d(1, 0, 0, 0, 0, 0));
-//  g_poseSignalReceived = true;
-//}
-
+/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildGeometrySignal)
 {

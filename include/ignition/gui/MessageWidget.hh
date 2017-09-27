@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 
 #include "ignition/gui/qt.h"
@@ -209,13 +208,6 @@ namespace ignition
       public: bool SetUIntWidgetValue(const std::string &_name, unsigned int
           _value);
 
-      /// \brief Set a pose value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetPoseWidgetValue(const std::string &_name,
-          const math::Pose3d &_value);
-
       /// \brief Set a geometry value to a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _value Type of geometry.
@@ -274,12 +266,6 @@ namespace ignition
       /// \return Unsigned integer value.
       public: unsigned int UIntWidgetValue(const std::string &_name) const;
 
-      /// \brief Get a pose value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return Pose value.
-      public: math::Pose3d PoseWidgetValue(
-          const std::string &_name) const;
-
       /// \brief Get a geometry value from a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[out] _dimensions Dimensions of geometry.
@@ -319,13 +305,6 @@ namespace ignition
       /// \param[in] _level Level of the widget in the tree.
       /// \return The newly created widget.
       public: PropertyWidget *CreateIntWidget(const std::string &_key,
-          const int _level = 0);
-
-      /// \brief Create a widget for configuring a pose value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreatePoseWidget(const std::string &_key,
           const int _level = 0);
 
       /// \brief Create a widget for configuring a geometry value.
@@ -387,22 +366,6 @@ namespace ignition
       public: static QString StyleSheet(const std::string &_type,
           const int _level = 0);
 
-      /// \brief List of colors used for the background of widgets according to
-      /// their level.
-      public: static const std::vector<QString> bgColors;
-
-      /// \brief List of colors used for widget areas according to their level.
-      public: static const std::vector<QString> widgetColors;
-
-      /// \brief Red color used for "red" or "x" fields.
-      public: static const QString redColor;
-
-      /// \brief Green color used for "green" or "y" fields.
-      public: static const QString greenColor;
-
-      /// \brief Blue color used for "blue" or "z" fields.
-      public: static const QString blueColor;
-
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update the widgets with values
       /// from the message.
@@ -449,13 +412,6 @@ namespace ignition
       private: bool UpdateIntWidget(PropertyWidget *_widget,
            const int _value);
 
-      /// \brief Update a child widget with a pose value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdatePoseWidget(PropertyWidget *_widget,
-          const math::Pose3d &_value);
-
       /// \brief Update a child widget with a geometry type and dimensions.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Type of geometry.
@@ -491,12 +447,6 @@ namespace ignition
       /// \return Value of the widget.
       private: unsigned int UIntWidgetValue(PropertyWidget *_widget) const;
 
-      /// \brief Get a pose value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: math::Pose3d PoseWidgetValue(
-          PropertyWidget *_widget) const;
-
       /// \brief Get a geometry value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[out] _dimensions Dimensions of geometry.
@@ -522,9 +472,6 @@ namespace ignition
       /// \brief Callback when an int widget's value has changed.
       private slots: void OnIntValueChanged();
 
-      /// \brief Callback when a pose widget's value has changed.
-      private slots: void OnPoseValueChanged();
-
       /// \brief Callback when a geometry widget's value has changed.
       private slots: void OnGeometryValueChanged();
 
@@ -535,12 +482,6 @@ namespace ignition
       /// \brief Callback when an enum widget's enum value has changed.
       /// \param[in] _value New enum value in string.
       private slots: void OnEnumValueChanged(const QString &_value);
-
-      /// \brief Signal that a pose widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _pose New pose.
-      Q_SIGNALS: void PoseValueChanged(const QString &_name,
-          const math::Pose3d &_pose);
 
       /// \brief Signal that a geometry widget's value has changed.
       /// \param[in] _name Scoped name of widget.

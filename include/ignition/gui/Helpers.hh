@@ -18,7 +18,9 @@
 #define IGNITION_GUI_HELPERS_HH_
 
 #include <string>
+#include <vector>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
 
 namespace ignition
@@ -50,6 +52,20 @@ namespace ignition
     /// \param[out] _max The maximum value.
     IGNITION_GUI_VISIBLE
     void rangeFromKey(const std::string &_key, double &_min, double &_max);
+
+    /// \brief List of colors used for the background of widgets according to
+    /// their level.
+    const std::vector<QString> kBgColors(
+      {"#FFFFFF", "#DDDDDD", "#BBBBBB", "#999999"});
+
+    /// \brief Red color used for "red" or "x" fields.
+    const QString kRedColor = "#d42b2b";
+
+    /// \brief Green color used for "green" or "y" fields.
+    const QString kGreenColor = "#3bc43b";
+
+    /// \brief Blue color used for "blue" or "z" fields.
+    const QString kBlueColor = "#0d0df2";
   }
 }
 #endif

@@ -30,6 +30,7 @@
 #include "ignition/gui/DoubleWidget.hh"
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/PropertyWidget.hh"
+#include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
 #include "ignition/gui/Vector3dWidget.hh"
@@ -54,13 +55,6 @@ namespace ignition
 
 using namespace ignition;
 using namespace gui;
-
-const std::vector<QString> MessageWidget::bgColors(
-      {"#FFFFFF", "#DDDDDD", "#BBBBBB", "#999999"});
-
-const QString MessageWidget::redColor = "#d42b2b";
-const QString MessageWidget::greenColor = "#3bc43b";
-const QString MessageWidget::blueColor = "#0d0df2";
 
 /////////////////////////////////////////////////
 MessageWidget::MessageWidget()
@@ -226,18 +220,6 @@ bool MessageWidget::SetUIntWidgetValue(const std::string &_name,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::SetPoseWidgetValue(const std::string &_name,
-    const math::Pose3d &_value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdatePoseWidget(iter->second, _value);
-
-  return false;
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::SetGeometryWidgetValue(const std::string &_name,
     const std::string &_value, const math::Vector3d &_dimensions,
     const std::string &_uri)
@@ -311,19 +293,6 @@ unsigned int MessageWidget::UIntWidgetValue(const std::string &_name) const
 }
 
 /////////////////////////////////////////////////
-math::Pose3d MessageWidget::PoseWidgetValue(const std::string &_name)
-    const
-{
-  math::Pose3d value;
-  std::map <std::string, PropertyWidget *>::const_iterator iter =
-      this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->PoseWidgetValue(iter->second);
-  return value;
-}
-
-/////////////////////////////////////////////////
 double MessageWidget::DensityWidgetValue(const std::string &_name) const
 {
   double value = 0.0;
@@ -370,7 +339,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 {
   std::vector<QWidget *> newWidgets;
 
-  const google::protobuf::Descriptor *d = _msg->GetDescriptor();
+  auto d = _msg->GetDescriptor();
   if (!d)
     return nullptr;
   unsigned int count = d->field_count();
@@ -378,7 +347,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
   // FIXME: Does not handle top-level special messages like Vector3d
   for (unsigned int i = 0; i < count ; ++i)
   {
-    const google::protobuf::FieldDescriptor *field = d->field(i);
+    auto field = d->field(i);
 
     if (!field)
       return nullptr;
@@ -541,9 +510,9 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           }
 
           // type
-          const google::protobuf::Descriptor *valueDescriptor =
+          auto valueDescriptor =
               valueMsg->GetDescriptor();
-          const google::protobuf::FieldDescriptor *typeField =
+          auto typeField =
               valueDescriptor->FindFieldByName("type");
 
           if (valueMsg->GetReflection()->HasField(*valueMsg, typeField))
@@ -563,7 +532,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             // dimensions
             for (int k = 0; k < valueDescriptor->field_count() ; ++k)
             {
-              const google::protobuf::FieldDescriptor *geomField =
+              auto geomField =
                   valueDescriptor->field(k);
 
               if (geomField->is_repeated())
@@ -574,17 +543,17 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
                   !valueMsg->GetReflection()->HasField(*valueMsg, geomField))
                 continue;
 
-              google::protobuf::Message *geomValueMsg =
+              auto geomValueMsg =
                   valueMsg->GetReflection()->MutableMessage(
                   valueMsg, geomField);
-              const google::protobuf::Descriptor *geomValueDescriptor =
+              auto geomValueDescriptor =
                   geomValueMsg->GetDescriptor();
 
               std::string geomMsgName = geomField->message_type()->name();
               if (geomMsgName == "BoxGeom" || geomMsgName == "MeshGeom")
               {
                 int fieldIdx = (geomMsgName == "BoxGeom") ? 0 : 1;
-                google::protobuf::Message *geomDimMsg =
+                auto geomDimMsg =
                     geomValueMsg->GetReflection()->MutableMessage(
                     geomValueMsg, geomValueDescriptor->field(fieldIdx));
                 dimensions = this->ParseVector3d(geomDimMsg);
@@ -592,11 +561,11 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
               }
               else if (geomMsgName == "CylinderGeom")
               {
-                const google::protobuf::FieldDescriptor *geomRadiusField =
+                auto geomRadiusField =
                     geomValueDescriptor->FindFieldByName("radius");
                 double radius = geomValueMsg->GetReflection()->GetDouble(
                     *geomValueMsg, geomRadiusField);
-                const google::protobuf::FieldDescriptor *geomLengthField =
+                auto geomLengthField =
                     geomValueDescriptor->FindFieldByName("length");
                 double length = geomValueMsg->GetReflection()->GetDouble(
                     *geomValueMsg, geomLengthField);
@@ -607,7 +576,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
               }
               else if (geomMsgName == "SphereGeom")
               {
-                const google::protobuf::FieldDescriptor *geomRadiusField =
+                auto geomRadiusField =
                     geomValueDescriptor->FindFieldByName("radius");
                 double radius = geomValueMsg->GetReflection()->GetDouble(
                     *geomValueMsg, geomRadiusField);
@@ -630,18 +599,16 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         {
           if (newWidget)
           {
-            configChildWidget = this->CreatePoseWidget(name, _level);
+            configChildWidget = new Pose3dWidget(name, _level);
             newFieldWidget = configChildWidget;
           }
 
           math::Pose3d value;
-          const google::protobuf::Descriptor *valueDescriptor =
-              valueMsg->GetDescriptor();
+          auto valueDescriptor = valueMsg->GetDescriptor();
           int valueMsgFieldCount = valueDescriptor->field_count();
-          for (int j = 0; j < valueMsgFieldCount ; ++j)
+          for (int j = 0; j < valueMsgFieldCount; ++j)
           {
-            const google::protobuf::FieldDescriptor *valueField =
-                valueDescriptor->field(j);
+            auto valueField = valueDescriptor->field(j);
 
             if (valueField->type() !=
                 google::protobuf::FieldDescriptor::TYPE_MESSAGE)
@@ -650,8 +617,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             if (valueField->message_type()->name() == "Vector3d")
             {
               // pos
-              google::protobuf::Message *posValueMsg =
-                  valueMsg->GetReflection()->MutableMessage(
+              auto posValueMsg = valueMsg->GetReflection()->MutableMessage(
                   valueMsg, valueField);
               auto vec3 = this->ParseVector3d(posValueMsg);
               value.Pos() = vec3;
@@ -659,17 +625,14 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             else if (valueField->message_type()->name() == "Quaternion")
             {
               // rot
-              google::protobuf::Message *quatValueMsg =
-                  valueMsg->GetReflection()->MutableMessage(
+              auto quatValueMsg = valueMsg->GetReflection()->MutableMessage(
                   valueMsg, valueField);
-              const google::protobuf::Descriptor *quatValueDescriptor =
-                  quatValueMsg->GetDescriptor();
+              auto quatValueDescriptor = quatValueMsg->GetDescriptor();
               std::vector<double> quatValues;
               // FIXME: skipping header
               for (unsigned int k = 1; k < 5; ++k)
               {
-                const google::protobuf::FieldDescriptor *quatValueField =
-                    quatValueDescriptor->field(k);
+                auto quatValueField = quatValueDescriptor->field(k);
                 quatValues.push_back(quatValueMsg->GetReflection()->GetDouble(
                     *quatValueMsg, quatValueField));
               }
@@ -677,8 +640,15 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
                   quatValues[1], quatValues[2]);
               value.Rot() = quat;
             }
+            else
+            {
+              // FIXME: header
+            }
           }
-          this->UpdatePoseWidget(configChildWidget, value);
+
+          QVariant v;
+          v.setValue(value);
+          configChildWidget->SetValue(v);
         }
         // parse and create custom vector3 widgets
         else if (field->message_type()->name() == "Vector3d")
@@ -738,16 +708,14 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
             configChildWidget = this->CreateDensityWidget(name, _level);
             newFieldWidget = configChildWidget;
           }
-          const google::protobuf::Descriptor *valueDescriptor =
-              valueMsg->GetDescriptor();
+          auto valueDescriptor = valueMsg->GetDescriptor();
 
           double density = 1.0;
 
           int valueMsgFieldCount = valueDescriptor->field_count();
           for (int j = 0; j < valueMsgFieldCount ; ++j)
           {
-            const google::protobuf::FieldDescriptor *valueField =
-                valueDescriptor->field(j);
+            auto valueField = valueDescriptor->field(j);
 
             if (valueField && valueField->name() == "density")
               density = valueMsg->GetReflection()->GetDouble(
@@ -838,7 +806,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
       newFieldWidget->setStyleSheet(
           "QWidget\
           {\
-            background-color: " + this->bgColors[0] +
+            background-color: " + kBgColors[0] +
           "}");
     }
 
@@ -923,7 +891,7 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
     buttonFrame->setStyleSheet(
         "QWidget\
         {\
-          background-color: " + this->bgColors[0] +
+          background-color: " + kBgColors[0] +
         "}");
   }
 
@@ -950,7 +918,7 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
     _childWidget->setStyleSheet(
         "QWidget\
         {\
-          background-color: " + this->bgColors[1] +
+          background-color: " + kBgColors[1] +
         "}");
   }
   else if (_level == 1)
@@ -958,7 +926,7 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
     _childWidget->setStyleSheet(
         "QWidget\
         {\
-          background-color: " + this->bgColors[2] +
+          background-color: " + kBgColors[2] +
         "}");
   }
   else if (_level == 2)
@@ -966,7 +934,7 @@ CollapsibleWidget *MessageWidget::CreateCollapsibleWidget(const std::string &_na
     _childWidget->setStyleSheet(
         "QWidget\
         {\
-          background-color: " + this->bgColors[3] +
+          background-color: " + kBgColors[3] +
         "}");
   }
 
@@ -989,14 +957,13 @@ math::Vector3d MessageWidget::ParseVector3d(
     const google::protobuf::Message *_msg) const
 {
   math::Vector3d vec3;
-  const google::protobuf::Descriptor *valueDescriptor = _msg->GetDescriptor();
+  auto valueDescriptor = _msg->GetDescriptor();
   std::vector<double> values;
 
   // FIX: skipping header
   for (unsigned int i = 1; i < 4; ++i)
   {
-    const google::protobuf::FieldDescriptor *valueField =
-        valueDescriptor->field(i);
+    auto valueField = valueDescriptor->field(i);
 
     values.push_back(_msg->GetReflection()->GetDouble(*_msg, valueField));
   }
@@ -1081,79 +1048,6 @@ PropertyWidget *MessageWidget::CreateIntWidget(const std::string &_key,
 }
 
 /////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreatePoseWidget(const std::string &/*_key*/,
-    const int _level)
-{
-  // Labels
-  std::vector<std::string> elements;
-  elements.push_back("x");
-  elements.push_back("y");
-  elements.push_back("z");
-  elements.push_back("roll");
-  elements.push_back("pitch");
-  elements.push_back("yaw");
-
-  // This is inside a group
-  int level = _level+1;
-
-  // Layout
-  auto widgetLayout = new QGridLayout;
-  widgetLayout->setColumnStretch(3, 1);
-  widgetLayout->addItem(new QSpacerItem(20*level, 1, QSizePolicy::Fixed,
-      QSizePolicy::Fixed), 0, 0);
-
-  // ChildWidget
-  double min = 0;
-  double max = 0;
-  rangeFromKey("", min, max);
-
-  PropertyWidget *widget = new PropertyWidget();
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-
-  for (unsigned int i = 0; i < elements.size(); ++i)
-  {
-    auto spin = new QDoubleSpinBox(widget);
-    this->connect(spin, SIGNAL(editingFinished()), this,
-        SLOT(OnPoseValueChanged()));
-    widget->widgets.push_back(spin);
-
-    spin->setRange(min, max);
-    spin->setSingleStep(0.01);
-    spin->setDecimals(6);
-    spin->setAlignment(Qt::AlignRight);
-    spin->setMaximumWidth(100);
-
-    auto label = new QLabel(humanReadable(elements[i]).c_str());
-    label->setToolTip(tr(elements[i].c_str()));
-    if (i == 0)
-      label->setStyleSheet("QLabel{color: " + this->redColor + ";}");
-    else if (i == 1)
-      label->setStyleSheet("QLabel{color: " + this->greenColor + ";}");
-    else if (i == 2)
-      label->setStyleSheet("QLabel{color:" + this->blueColor + ";}");
-
-    auto unitLabel = new QLabel();
-    unitLabel->setMaximumWidth(40);
-    unitLabel->setMinimumWidth(40);
-    if (i < 3)
-      unitLabel->setText(QString::fromStdString(unitFromKey("pos")));
-    else
-      unitLabel->setText(QString::fromStdString(unitFromKey("rot")));
-
-    widgetLayout->addWidget(label, i%3, std::floor(i/3)*3+1);
-    widgetLayout->addWidget(spin, i%3, std::floor(i/3)*3+2);
-    widgetLayout->addWidget(unitLabel, i%3, std::floor(i/3)*3+3);
-
-    widgetLayout->setAlignment(label, Qt::AlignLeft);
-    widgetLayout->setAlignment(spin, Qt::AlignLeft);
-    widgetLayout->setAlignment(unitLabel, Qt::AlignLeft);
-  }
-
-  return widget;
-}
-
-/////////////////////////////////////////////////
 PropertyWidget *MessageWidget::CreateGeometryWidget(
     const std::string &/*_key*/, const int _level)
 {
@@ -1210,9 +1104,9 @@ PropertyWidget *MessageWidget::CreateGeometryWidget(
   auto geomSizeXLabel = new QLabel(tr("X"));
   auto geomSizeYLabel = new QLabel(tr("Y"));
   auto geomSizeZLabel = new QLabel(tr("Z"));
-  geomSizeXLabel->setStyleSheet("QLabel{color: " + this->redColor + ";}");
-  geomSizeYLabel->setStyleSheet("QLabel{color: " + this->greenColor + ";}");
-  geomSizeZLabel->setStyleSheet("QLabel{color: " + this->blueColor + ";}");
+  geomSizeXLabel->setStyleSheet("QLabel{color: " + kRedColor + ";}");
+  geomSizeYLabel->setStyleSheet("QLabel{color: " + kGreenColor + ";}");
+  geomSizeZLabel->setStyleSheet("QLabel{color: " + kBlueColor + ";}");
   geomSizeXLabel->setToolTip(tr("x"));
   geomSizeYLabel->setToolTip(tr("y"));
   geomSizeZLabel->setToolTip(tr("z"));
@@ -1495,7 +1389,7 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
     return;
   auto count = d->field_count();
 
-  for (unsigned int i = 0; i < count ; ++i)
+  for (int i = 0; i < count ; ++i)
   {
     auto field = d->field(i);
 
@@ -1606,12 +1500,10 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
               qobject_cast<QComboBox *>(childWidget->widgets[0]);
           std::string geomType = valueComboBox->currentText().toStdString();
 
-          const google::protobuf::Descriptor *valueDescriptor =
-              valueMsg->GetDescriptor();
+          auto valueDescriptor = valueMsg->GetDescriptor();
           const google::protobuf::Reflection *geomReflection =
               valueMsg->GetReflection();
-          const google::protobuf::FieldDescriptor *typeField =
-              valueDescriptor->FindFieldByName("type");
+          auto typeField = valueDescriptor->FindFieldByName("type");
           const google::protobuf::EnumDescriptor *typeEnumDescriptor =
               typeField->enum_type();
 
@@ -1633,22 +1525,23 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
             geomReflection->SetEnum(valueMsg, typeField, geometryType);
 
             // set dimensions
-            const google::protobuf::FieldDescriptor *geomFieldDescriptor =
+            auto geomFieldDescriptor =
               valueDescriptor->FindFieldByName(geomType);
-            google::protobuf::Message *geomValueMsg =
+            auto geomValueMsg =
                 geomReflection->MutableMessage(valueMsg, geomFieldDescriptor);
 
             int fieldIdx = (geomType == "box") ? 0 : 1;
-            google::protobuf::Message *geomDimensionMsg =
+            auto geomDimensionMsg =
                 geomValueMsg->GetReflection()->MutableMessage(geomValueMsg,
                 geomValueMsg->GetDescriptor()->field(fieldIdx));
-            this->UpdateVector3dMsg(geomDimensionMsg, geomSize);
+            // FIXME: fix header
+            // this->UpdateVector3dMsg(geomDimensionMsg, geomSize);
 
             if (geomType == "mesh")
             {
               std::string uri = qobject_cast<QLineEdit *>(
                    childWidget->widgets[6])->text().toStdString();
-              const google::protobuf::FieldDescriptor *uriFieldDescriptor =
+              auto uriFieldDescriptor =
                   geomValueMsg->GetDescriptor()->field(0);
               geomValueMsg->GetReflection()->SetString(geomValueMsg,
                   uriFieldDescriptor, uri);
@@ -1667,17 +1560,17 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
             geomReflection->SetEnum(valueMsg, typeField, geometryType);
 
             // set radius and length
-            const google::protobuf::FieldDescriptor *geomFieldDescriptor =
+            auto geomFieldDescriptor =
               valueDescriptor->FindFieldByName(geomType);
-            google::protobuf::Message *geomValueMsg =
+            auto geomValueMsg =
                 geomReflection->MutableMessage(valueMsg, geomFieldDescriptor);
 
             // FIXME: skipping header
-            const google::protobuf::FieldDescriptor *geomRadiusField =
+            auto geomRadiusField =
                 geomValueMsg->GetDescriptor()->field(1);
             geomValueMsg->GetReflection()->SetDouble(geomValueMsg,
                 geomRadiusField, radius);
-            const google::protobuf::FieldDescriptor *geomLengthField =
+            auto geomLengthField =
                 geomValueMsg->GetDescriptor()->field(2);
             geomValueMsg->GetReflection()->SetDouble(geomValueMsg,
                 geomLengthField, length);
@@ -1693,12 +1586,12 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
             geomReflection->SetEnum(valueMsg, typeField, geometryType);
 
             // set radius
-            const google::protobuf::FieldDescriptor *geomFieldDescriptor =
+            auto geomFieldDescriptor =
               valueDescriptor->FindFieldByName(geomType);
-            google::protobuf::Message *geomValueMsg =
+            auto geomValueMsg =
                 geomReflection->MutableMessage(valueMsg, geomFieldDescriptor);
 
-            const google::protobuf::FieldDescriptor *geomRadiusField =
+            auto geomRadiusField =
                 geomValueMsg->GetDescriptor()->field(0);
             geomValueMsg->GetReflection()->SetDouble(geomValueMsg,
                 geomRadiusField, radius);
@@ -1713,69 +1606,61 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
         // update pose msg field
         else if (field->message_type()->name() == "Pose")
         {
-          const google::protobuf::Descriptor *valueDescriptor =
-              valueMsg->GetDescriptor();
+          auto valueDescriptor = valueMsg->GetDescriptor();
           int valueMsgFieldCount = valueDescriptor->field_count();
 
           // loop through the message fields to update:
           // a vector3d field (position)
           // and quaternion field (orientation)
-          for (int j = 0; j < valueMsgFieldCount ; ++j)
+          // FIXME: skipping header
+          for (int j = 0; j < valueMsgFieldCount; ++j)
           {
-            const google::protobuf::FieldDescriptor *valueField =
-                valueDescriptor->field(j);
+            auto valueField = valueDescriptor->field(j);
 
             if (valueField->type() !=
                 google::protobuf::FieldDescriptor::TYPE_MESSAGE)
               continue;
 
+            // Take values from all 6 widgets
+            std::vector<double> values;
+            for (auto widget : childWidget->widgets)
+            {
+              auto valueSpinBox = qobject_cast<QDoubleSpinBox *>(widget);
+              values.push_back(valueSpinBox->value());
+            }
+
+            // Position
             if (valueField->message_type()->name() == "Vector3d")
             {
-              // pos
-              google::protobuf::Message *posValueMsg =
-                  valueMsg->GetReflection()->MutableMessage(
+              auto posValueMsg = valueMsg->GetReflection()->MutableMessage(
                   valueMsg, valueField);
-              std::vector<double> values;
-              for (unsigned int k = 0; k < 3; ++k)
-              {
-                auto valueSpinBox =
-                    qobject_cast<QDoubleSpinBox *>(childWidget->widgets[k]);
-                values.push_back(valueSpinBox->value());
-              }
               math::Vector3d vec3(values[0], values[1], values[2]);
               this->UpdateVector3dMsg(posValueMsg, vec3);
             }
+            // Orientation
             else if (valueField->message_type()->name() == "Quaternion")
             {
-              // rot
-              google::protobuf::Message *quatValueMsg =
-                  valueMsg->GetReflection()->MutableMessage(
+              auto quatValueMsg = valueMsg->GetReflection()->MutableMessage(
                   valueMsg, valueField);
-              std::vector<double> rotValues;
-              for (unsigned int k = 3; k < 6; ++k)
-              {
-                auto valueSpinBox =
-                    qobject_cast<QDoubleSpinBox *>(childWidget->widgets[k]);
-                rotValues.push_back(valueSpinBox->value());
-              }
-              math::Quaterniond quat(rotValues[0], rotValues[1],
-                  rotValues[2]);
+              math::Quaterniond quat(values[3], values[4], values[5]);
 
               std::vector<double> quatValues;
               quatValues.push_back(quat.X());
               quatValues.push_back(quat.Y());
               quatValues.push_back(quat.Z());
               quatValues.push_back(quat.W());
-              const google::protobuf::Descriptor *quatValueDescriptor =
-                  quatValueMsg->GetDescriptor();
-              // FIXME: skipping header
-              for (unsigned int k = 1; k < quatValues.size(); ++k)
+              auto quatValueDescriptor = quatValueMsg->GetDescriptor();
+              for (unsigned int k = 0; k < quatValues.size(); ++k)
               {
-                const google::protobuf::FieldDescriptor *quatValueField =
-                    quatValueDescriptor->field(k);
+                // FIXME: skipping header
+                auto quatValueField = quatValueDescriptor->field(k+1);
                 quatValueMsg->GetReflection()->SetDouble(quatValueMsg,
                     quatValueField, quatValues[k]);
               }
+            }
+            else
+            {
+              // FIXME: skipping header
             }
           }
         }
@@ -1809,10 +1694,10 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
           DensityWidget *densityWidget =
               qobject_cast<DensityWidget *>(childWidget);
 
-          const google::protobuf::Descriptor *valueDescriptor =
+          auto valueDescriptor =
               valueMsg->GetDescriptor();
 
-          const google::protobuf::FieldDescriptor *densityField =
+          auto densityField =
                           valueDescriptor->FindFieldByName("density");
 
           valueMsg->GetReflection()->SetDouble(valueMsg, densityField,
@@ -1858,20 +1743,23 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
 void MessageWidget::UpdateVector3dMsg(google::protobuf::Message *_msg,
     const math::Vector3d &_value)
 {
-  // const google::protobuf::Descriptor *valueDescriptor = _msg->GetDescriptor();
+  auto valueDescriptor = _msg->GetDescriptor();
 
   std::vector<double> values;
   values.push_back(_value.X());
   values.push_back(_value.Y());
   values.push_back(_value.Z());
 
-  // FIXME: skipping header
-  for (unsigned int i = 1; i < 4; ++i)
+  for (unsigned int i = 0; i < 3; ++i)
   {
-   // const google::protobuf::FieldDescriptor *valueField =
-   //    valueDescriptor->field(i);
-   // FIXME
-   // _msg->GetReflection()->SetDouble(_msg, valueField, values[i]);
+    // FIXME: skipping header
+    auto valueField = valueDescriptor->field(i+1);
+    if (valueField->type() != google::protobuf::FieldDescriptor::TYPE_DOUBLE)
+    {
+      ignerr << "Bad field [" << i+1 << "]!" << std::endl;
+      continue;
+    }
+    _msg->GetReflection()->SetDouble(_msg, valueField, values[i]);
   }
 }
 
@@ -1902,32 +1790,6 @@ bool MessageWidget::UpdateUIntWidget(PropertyWidget *_widget,
   else
   {
     ignerr << "Error updating UInt widget" << std::endl;
-  }
-  return false;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::UpdatePoseWidget(PropertyWidget *_widget,
-    const math::Pose3d &_pose)
-{
-  if (_widget->widgets.size() == 6u)
-  {
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[0])->setValue(
-        _pose.Pos().X());
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[1])->setValue(
-        _pose.Pos().Y());
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[2])->setValue(
-        _pose.Pos().Z());
-
-    math::Vector3d rot = _pose.Rot().Euler();
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[3])->setValue(rot.X());
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[4])->setValue(rot.Y());
-    qobject_cast<QDoubleSpinBox *>(_widget->widgets[5])->setValue(rot.Z());
-    return true;
-  }
-  else
-  {
-    ignerr << "Error updating Pose widget" << std::endl;
   }
   return false;
 }
@@ -2066,30 +1928,6 @@ unsigned int MessageWidget::UIntWidgetValue(PropertyWidget *_widget) const
 }
 
 /////////////////////////////////////////////////
-math::Pose3d MessageWidget::PoseWidgetValue(PropertyWidget *_widget)
-    const
-{
-  math::Pose3d value;
-  if (_widget->widgets.size() == 6u)
-  {
-    value.Pos().X(qobject_cast<QDoubleSpinBox *>(_widget->widgets[0])->value());
-    value.Pos().Y(qobject_cast<QDoubleSpinBox *>(_widget->widgets[1])->value());
-    value.Pos().Z(qobject_cast<QDoubleSpinBox *>(_widget->widgets[2])->value());
-
-    math::Vector3d rot;
-    rot.X(qobject_cast<QDoubleSpinBox *>(_widget->widgets[3])->value());
-    rot.Y(qobject_cast<QDoubleSpinBox *>(_widget->widgets[4])->value());
-    rot.Z(qobject_cast<QDoubleSpinBox *>(_widget->widgets[5])->value());
-    value.Rot().Euler(rot);
-  }
-  else
-  {
-    ignerr << "Error getting value from Pose widget" << std::endl;
-  }
-  return value;
-}
-
-/////////////////////////////////////////////////
 std::string MessageWidget::GeometryWidgetValue(PropertyWidget *_widget,
     math::Vector3d &_dimensions, std::string &_uri) const
 {
@@ -2198,25 +2036,6 @@ void MessageWidget::OnIntValueChanged()
 
   this->ValueChanged(widget->scopedName.c_str(),
       this->IntWidgetValue(widget));
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnPoseValueChanged()
-{
-  auto spin =
-      qobject_cast<QDoubleSpinBox *>(QObject::sender());
-
-  if (!spin)
-    return;
-
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(spin->parent());
-
-  if (!widget)
-    return;
-
-  emit PoseValueChanged(widget->scopedName.c_str(),
-      this->PoseWidgetValue(widget));
 }
 
 /////////////////////////////////////////////////
@@ -2638,7 +2457,7 @@ QString MessageWidget::StyleSheet(const std::string &_type, const int _level)
   {
     return "QWidget\
         {\
-          background-color: " + MessageWidget::bgColors[_level] + ";\
+          background-color: " + kBgColors[_level] + ";\
           color: #4c4c4c;\
         }\
         QLabel\
@@ -2650,16 +2469,16 @@ QString MessageWidget::StyleSheet(const std::string &_type, const int _level)
   {
     return "QWidget\
       {\
-        background-color: " + MessageWidget::bgColors[_level] + ";\
-        color: " + MessageWidget::redColor + ";\
+        background-color: " + kBgColors[_level] + ";\
+        color: " + kRedColor + ";\
       }";
   }
   else if (_type == "active")
   {
     return "QWidget\
       {\
-        background-color: " + MessageWidget::bgColors[_level] + ";\
-        color: " + MessageWidget::greenColor + ";\
+        background-color: " + kBgColors[_level] + ";\
+        color: " + kGreenColor + ";\
       }";
   }
   ignwarn << "Requested unknown style sheet type [" << _type << "]" << std::endl;
