@@ -51,7 +51,7 @@ namespace ignition
       signals: void ValueChanged(QVariant _value);
 
       /// \brief Callback when an internal widget's value has changed.
-      private slots: void OnValueChanged();
+      protected slots: void OnValueChanged();
 
       /// \brief Widget's key value, such as "mass" or "color".
       public: std::string key;

@@ -27,6 +27,7 @@
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
@@ -503,8 +504,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // geometry
     auto geometryMsg = visualMsg.mutable_geometry();
     geometryMsg->set_type(msgs::Geometry::CYLINDER);
-    auto cylinderGeomMsg =
-        geometryMsg->mutable_cylinder();
+    auto cylinderGeomMsg = geometryMsg->mutable_cylinder();
     cylinderGeomMsg->set_radius(3.0);
     cylinderGeomMsg->set_length(0.2);
 
@@ -622,8 +622,12 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     visualMessageWidget->SetPropertyValue("pose", variant);
 
     // geometry
-    visualMessageWidget->SetGeometryWidgetValue("geometry", "box",
-        math::Vector3d(5.0, 3.0, 4.0));
+    msgs::Geometry newGeom;
+    newGeom.set_type(msgs::Geometry::BOX);
+    msgs::Set(newGeom.mutable_box()->mutable_size(),
+              math::Vector3d(5.0, 3.0, 4.0));
+    variant.setValue(newGeom);
+    visualMessageWidget->SetPropertyValue("geometry", variant);
 
     // material
     variant.setValue(std::string("test_normal_map_updated"));
@@ -665,14 +669,15 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(visualMessageWidget->PropertyValue("pose"), variant);
 
     // geometry
-    math::Vector3d dimensions;
-    std::string uri;
-    EXPECT_TRUE(visualMessageWidget->GeometryWidgetValue("geometry", dimensions,
-        uri) == "box");
-    EXPECT_EQ(dimensions, math::Vector3d(5.0, 3.0, 4.0));
+    auto geomValue =
+        visualMessageWidget->PropertyValue("geometry").value<msgs::Geometry>();
+    EXPECT_EQ(msgs::ConvertGeometryType(geomValue.type()), "box");
+    EXPECT_EQ(msgs::Convert(geomValue.box().size()),
+              math::Vector3d(5.0, 3.0, 4.0));
 
     // material
-    EXPECT_EQ(visualMessageWidget->PropertyValue("material::normal_map").value<std::string>(),
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "material::normal_map").value<std::string>(),
         "test_normal_map_updated");
     variant.setValue(math::Color(0.2, 0.3, 0.4, 0.5));
     EXPECT_EQ(visualMessageWidget->PropertyValue("material::ambient"), variant);
@@ -726,10 +731,9 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(geometryMsg.type(), msgs::Geometry::BOX);
     auto boxGeomMsg = geometryMsg.box();
     auto boxGeomSizeMsg = boxGeomMsg.size();
-    // FIXME: investigate failure
-    //EXPECT_DOUBLE_EQ(boxGeomSizeMsg.x(), 5.0);
-    //EXPECT_DOUBLE_EQ(boxGeomSizeMsg.y(), 3.0);
-    //EXPECT_DOUBLE_EQ(boxGeomSizeMsg.z(), 4.0);
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.x(), 5.0);
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.y(), 3.0);
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.z(), 4.0);
 
     // material
     auto materialMsg = retVisualMsg->material();
@@ -1706,7 +1710,6 @@ TEST(MessageWidgetTest, ChildPoseSignal)
   EXPECT_TRUE(stop());
 }
 
-/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildGeometrySignal)
 {
@@ -1716,38 +1719,36 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   auto messageWidget = new MessageWidget();
 
   // Create child widget
-  auto geometryWidget =
-      messageWidget->CreateGeometryWidget("geometry");
+  auto geometryWidget = new GeometryWidget("geometry");
   EXPECT_TRUE(geometryWidget != nullptr);
 
   // Add to message widget
   EXPECT_TRUE(messageWidget->AddPropertyWidget("geometry", geometryWidget));
 
   // Connect signals
-  connect(messageWidget,
-      SIGNAL(GeometryValueChanged(const std::string &, const std::string &,
-      const math::Vector3d &, const std::string &)),
-      this,
-      SLOT(OnGeometryValueChanged(const std::string &, const std::string &,
-      const math::Vector3d &, const std::string &)));
+  bool signalReceived = false;
+  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<msgs::Geometry>();
+      EXPECT_EQ(_name, "geometry");
+      EXPECT_EQ(v.type(), msgs::Geometry::BOX);
+      EXPECT_EQ(msgs::Convert(v.box().size()), math::Vector3d(2, 1, 1));
+      signalReceived = true;
+    });
 
   // Check default
-  math::Vector3d dimensions;
-  std::string uri;
-  std::string value = messageWidget->GeometryWidgetValue("geometry",
-      dimensions, uri);
-  EXPECT_TRUE(value == "box");
-  EXPECT_TRUE(dimensions == math::Vector3d(1, 1, 1));
-  EXPECT_TRUE(uri == "");
+  auto value = messageWidget->PropertyValue("geometry").value<msgs::Geometry>();
+  EXPECT_EQ(value.type(), msgs::Geometry::BOX);
+  EXPECT_EQ(msgs::Convert(value.box().size()), math::Vector3d::One);
 
   // Get signal emitting widgets
-  QList<QDoubleSpinBox *> spins =
-      geometryWidget->findChildren<QDoubleSpinBox *>();
+  auto spins = geometryWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 5);
 
   // Change the value and check new value at callback
   spins[2]->setValue(2.0);
-  QTest::keyClick(spins[2], Qt::Key_Enter);
+  spins[2]->editingFinished();
 
   // Check callback was called
   EXPECT_TRUE(signalReceived == true);
@@ -1756,18 +1757,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   EXPECT_TRUE(stop());
 }
 
-/////////////////////////////////////////////////
-//TEST(MessageWidgetTest, OnGeometryValueChanged(const std::string &_name,
-//    const std::string &_value, const math::Vector3d &_dimensions,
-//    const std::string &_uri)
-//{
-//  EXPECT_TRUE(_name == "geometry");
-//  EXPECT_TRUE(_value == "box");
-//  EXPECT_TRUE(_dimensions == math::Vector3d(2, 1, 1));
-//  EXPECT_TRUE(_uri == "");
-//  g_geometrySignalReceived = true;
-//}
-
+/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildEnumSignal)
 {

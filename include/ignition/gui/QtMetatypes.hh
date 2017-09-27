@@ -19,14 +19,19 @@
 
 #include <string>
 #include <QMetaType>
+
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
+
+#include <ignition/msgs/geometry.pb.h>
 
 // Make it possible to use non-Qt types in QVariant
 Q_DECLARE_METATYPE(std::string)
 Q_DECLARE_METATYPE(ignition::math::Color)
 Q_DECLARE_METATYPE(ignition::math::Pose3d)
 Q_DECLARE_METATYPE(ignition::math::Vector3d)
+
+Q_DECLARE_METATYPE(ignition::msgs::Geometry)
 
 #endif

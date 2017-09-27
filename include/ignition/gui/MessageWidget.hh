@@ -45,48 +45,6 @@ namespace ignition
   {
     class MessageWidgetPrivate;
 
-    /// \brief A widget for geometry properties.
-    class IGNITION_GUI_VISIBLE GeometryWidget : public PropertyWidget
-    {
-      Q_OBJECT
-
-      /// \brief A stacked widget containing widgets for configuring
-      /// geometry dimensions.
-      public: QStackedWidget *geomDimensionWidget;
-
-      /// \brief A spin box for the length of the geometry.
-      public: QWidget *geomLengthSpinBox;
-
-      /// \brief A label for the length widget.
-      public: QWidget *geomLengthLabel;
-
-      /// \brief A label for the unit of the length widget.
-      public: QWidget *geomLengthUnitLabel;
-
-      /// \brief A line edit for the mesh filename.
-      public: QWidget *geomFilenameLineEdit;
-
-      /// \brief A label for the mesh filename widget.
-      public: QWidget *geomFilenameLabel;
-
-      /// \brief A button for selecting the mesh file.
-      public: QWidget *geomFilenameButton;
-
-      /// \brief Callback when the geometry type is changed.
-      /// \param[in] _text New geometry type in string.
-      private slots: void OnGeometryTypeChanged(const QString &_text);
-
-      /// \brief Callback when geometry size changes.
-      /// \param[in] _value Size value that changed.
-      private slots: void OnGeometrySizeChanged(const double _value);
-
-      /// \brief Callback when the file button is clicked.
-      private slots: void OnSelectFile();
-
-      /// \brief Signal emitted when geometry changes.
-      Q_SIGNALS: void GeometryChanged();
-    };
-
     /// \brief A widget for density properties.
     class IGNITION_GUI_VISIBLE DensityWidget : public PropertyWidget
     {
@@ -194,16 +152,6 @@ namespace ignition
       public: bool SetPropertyValue(const std::string &_name,
                                     const QVariant _value);
 
-      /// \brief Set a geometry value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Type of geometry.
-      /// \param[in] _dimensions Dimensions of geometry.
-      /// \return True if the value is set successfully.
-      public: bool SetGeometryWidgetValue(const std::string &_name,
-          const std::string &_value,
-          const math::Vector3d &_dimensions,
-          const std::string &_uri = "");
-
       /// \brief Set a density value to a child widget.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _value Density value to set to.
@@ -242,14 +190,6 @@ namespace ignition
       /// \return Value as QVariant.
       public: QVariant PropertyValue(const std::string &_name) const;
 
-      /// \brief Get a geometry value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[out] _dimensions Dimensions of geometry.
-      /// \param[out] _uri URI of the geometry mesh, if any.
-      /// \return Type of geometry.
-      public: std::string GeometryWidgetValue(const std::string &_name,
-          math::Vector3d &_dimensions, std::string &_uri) const;
-
       /// \brief Get a density value from a child widget.
       /// \param[in] _name Name of the child widget.
       /// \return Density value.
@@ -259,13 +199,6 @@ namespace ignition
       /// \param[in] _name Name of the child widget.
       /// \return Enum value.
       public: std::string EnumWidgetValue(const std::string &_name) const;
-
-      /// \brief Create a widget for configuring a geometry value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateGeometryWidget(const std::string &_key,
-          const int _level = 0);
 
       /// \brief Create a widget for configuring an enum value.
       /// \param[in] _key A key that is used as a label for the widget.
@@ -351,17 +284,6 @@ namespace ignition
       private: void UpdateVector3dMsg(google::protobuf::Message *_msg,
           const math::Vector3d &_value);
 
-      /// \brief Update a child widget with a geometry type and dimensions.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Type of geometry.
-      /// \param[in] _dimensions Dimensions of the geometry.
-      /// \param[in] _uri URI of the geometry mesh, if any.
-      /// \return True if the update completed successfully.
-      private: bool UpdateGeometryWidget(PropertyWidget *_widget,
-          const std::string &_value,
-          const math::Vector3d &_dimensions,
-          const std::string &_uri = "");
-
       /// \brief Update a child widget with an enum value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Value to set to.
@@ -376,14 +298,6 @@ namespace ignition
       private: bool UpdateDensityWidget(PropertyWidget *_widget,
           const double _value);
 
-      /// \brief Get a geometry value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[out] _dimensions Dimensions of geometry.
-      /// \param[out] _uri URI of the geometry mesh, if any.
-      /// \return Type of geometry.
-      private: std::string GeometryWidgetValue(PropertyWidget *_widget,
-          math::Vector3d &_dimensions, std::string &_uri) const;
-
       /// \brief Get an enum value from a child widget.
       /// \param[in] _widget Pointer to the child widget.
       /// \return Value of the widget.
@@ -395,26 +309,9 @@ namespace ignition
       private slots: void OnItemSelection(QTreeWidgetItem *_item,
           const int _column);
 
-      /// \brief Callback when a geometry widget's value has changed.
-      private slots: void OnGeometryValueChanged();
-
-      /// \brief Callback when a geometry widget's value has changed.
-      /// \param[in] _value Value which the QComboBox changed to.
-      private slots: void OnGeometryValueChanged(const int _value);
-
       /// \brief Callback when an enum widget's enum value has changed.
       /// \param[in] _value New enum value in string.
       private slots: void OnEnumValueChanged(const QString &_value);
-
-      /// \brief Signal that a geometry widget's value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New geometry name, such as "box".
-      /// \param[in] _dimensions New dimensions.
-      /// \param[in] _uri New uri, for meshes.
-      Q_SIGNALS: void GeometryValueChanged(const std::string &_name,
-          const std::string &_value,
-          const math::Vector3d &_dimensions,
-          const std::string &_uri);
 
       /// \brief Signal that an enum widget's enum value has changed.
       /// \param[in] _name Scoped name of widget.
@@ -437,12 +334,6 @@ namespace ignition
       /// \brief Callback when mass value changes in child widget.
       /// \param[in] _value Mass value.
       private slots: void OnMassValueChanged(const double _value);
-
-      /// \brief Callback when geometry changes.
-      private slots: void OnGeometryChanged();
-
-      /// \brief Signal emitted when geometry changes.
-      Q_SIGNALS: void GeometryChanged();
 
       /// \brief Qt event filter currently used to filter mouse wheel events.
       /// \param[in] _obj Object that is watched by the event filter.
