@@ -28,7 +28,6 @@
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
-#include "ignition/gui/DensityWidget.hh"
 #include "ignition/gui/EnumWidget.hh"
 #include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Helpers.hh"
@@ -80,11 +79,13 @@ void MessageWidget::Load(const google::protobuf::Message *_msg)
   this->dataPtr->msg = _msg->New();
   this->dataPtr->msg->CopyFrom(*_msg);
 
+  // Generate a widget from the message
   auto widget = this->Parse(this->dataPtr->msg, 0);
+
+  // Layout
   auto mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignTop);
   mainLayout->addWidget(widget);
-
   this->setLayout(mainLayout);
 
   // set up event filter for scrollable widgets to make sure they don't steal
@@ -113,7 +114,9 @@ void MessageWidget::UpdateFromMsg(const google::protobuf::Message *_msg)
 /////////////////////////////////////////////////
 google::protobuf::Message *MessageWidget::Msg()
 {
+  // Update message with current widget state
   this->FillMsg(this->dataPtr->msg);
+
   return this->dataPtr->msg;
 }
 
@@ -132,7 +135,8 @@ bool MessageWidget::WidgetVisible(const std::string &_name) const
 }
 
 /////////////////////////////////////////////////
-void MessageWidget::SetWidgetVisible(const std::string &_name, bool _visible)
+void MessageWidget::SetWidgetVisible(const std::string &_name,
+    const bool _visible)
 {
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
@@ -160,7 +164,8 @@ bool MessageWidget::WidgetReadOnly(const std::string &_name) const
 }
 
 /////////////////////////////////////////////////
-void MessageWidget::SetWidgetReadOnly(const std::string &_name, bool _readOnly)
+void MessageWidget::SetWidgetReadOnly(const std::string &_name,
+    const bool _readOnly)
 {
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
@@ -212,12 +217,17 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 
   auto d = _msg->GetDescriptor();
   if (!d)
+  {
+    ignerr << "Failed to get message descriptor" << std::endl;
     return nullptr;
+  }
 
   auto ref = _msg->GetReflection();
-
   if (!ref)
+  {
+    ignerr << "Failed to get message reflection" << std::endl;
     return nullptr;
+  }
 
   // FIXME: Does not handle top-level special messages like Vector3d
   for (int i = 0; i < d->field_count() ; ++i)
@@ -239,6 +249,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
     QWidget *newFieldWidget = nullptr;
     PropertyWidget *propertyWidget = nullptr;
 
+    // If updating an existing widget
     bool newWidget = true;
     auto scopedName = _name.empty() ? name : _name + "::" + name;
     if (this->dataPtr->properties.find(scopedName) !=
@@ -248,6 +259,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
       propertyWidget = this->dataPtr->properties[scopedName];
     }
 
+    // Handle each field type
     switch (field->type())
     {
       // Numbers
@@ -259,18 +271,6 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         if (newWidget)
         {
           propertyWidget = new NumberWidget(name, _level, NumberWidget::DOUBLE);
-
-          // TODO: handle this better
-//          if (name == "mass")
-//          {
-//            auto valueSpinBox = qobject_cast<QDoubleSpinBox *>(
-//                propertyWidget->widgets[0]);
-//            if (valueSpinBox)
-//            {
-//              this->connect(valueSpinBox, SIGNAL(valueChanged(double)),
-//                  this, SLOT(OnMassValueChanged(double)));
-//            }
-//          }
           newFieldWidget = propertyWidget;
         }
 
@@ -472,30 +472,6 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           v.setValue(value);
           propertyWidget->SetValue(v);
         }
-        // Density
-        // TODO: How do we get here?
-        else if (field->message_type()->name() == "Density")
-        {
-          if (newWidget)
-          {
-            propertyWidget = new DensityWidget(name, _level);
-            newFieldWidget = propertyWidget;
-          }
-          auto valueDescriptor = valueMsg->GetDescriptor();
-
-          double density = 1.0;
-
-          int valueMsgFieldCount = valueDescriptor->field_count();
-          for (int j = 0; j < valueMsgFieldCount ; ++j)
-          {
-            auto valueField = valueDescriptor->field(j);
-
-            if (valueField && valueField->name() == "density")
-              density = valueMsg->GetReflection()->GetDouble(
-                  *valueMsg, valueField);
-          }
-          propertyWidget->SetValue(density);
-        }
         // Parse other message types recursively
         else
         {
@@ -531,17 +507,6 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
                 << "]" << std::endl;
       }
         break;
-    }
-
-    // Style widgets without parent (level 0)
-    if (newFieldWidget && _level == 0 &&
-        !qobject_cast<CollapsibleWidget *>(newFieldWidget))
-    {
-      newFieldWidget->setStyleSheet(
-          "QWidget\
-          {\
-            background-color: " + kBgColors[0] +
-          "}");
     }
 
     if (newWidget && newFieldWidget)
@@ -712,15 +677,6 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         {
           mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Color>()));
         }
-        // TODO: density?!
-        else if (field->message_type()->name() == "Density")
-        {
-//          auto densityWidget = qobject_cast<DensityWidget *>(childWidget);
-//          auto valueDescriptor = valueMsg->GetDescriptor();
-//          auto densityField = valueDescriptor->FindFieldByName("density");
-//          valueMsg->GetReflection()->SetDouble(valueMsg, densityField,
-//              densityWidget->Value().toDouble());
-        }
         // Recursively fill other types
         else
         {
@@ -778,31 +734,32 @@ bool MessageWidget::eventFilter(QObject *_obj, QEvent *_event)
   // Only handle spins and combos
   auto spinBox = qobject_cast<QAbstractSpinBox *>(_obj);
   auto comboBox = qobject_cast<QComboBox *>(_obj);
-  if (!(spinBox || comboBox))
-    return QObject::eventFilter(_obj, _event);
-
-  auto widget = qobject_cast<QWidget *>(_obj);
-  if (_event->type() == QEvent::Wheel)
+  if (spinBox || comboBox)
   {
-    if (widget->focusPolicy() == Qt::WheelFocus)
+    QWidget *widget = qobject_cast<QWidget *>(_obj);
+    if (_event->type() == QEvent::Wheel)
     {
-      _event->accept();
-      return false;
+      if (widget->focusPolicy() == Qt::WheelFocus)
+      {
+        _event->accept();
+        return false;
+      }
+      else
+      {
+        _event->ignore();
+        return true;
+      }
     }
-    else
+    else if (_event->type() == QEvent::FocusIn)
     {
-      _event->ignore();
-      return true;
+      widget->setFocusPolicy(Qt::WheelFocus);
+    }
+    else if (_event->type() == QEvent::FocusOut)
+    {
+      widget->setFocusPolicy(Qt::StrongFocus);
     }
   }
-  else if (_event->type() == QEvent::FocusIn)
-  {
-    widget->setFocusPolicy(Qt::WheelFocus);
-  }
-  else if (_event->type() == QEvent::FocusOut)
-  {
-    widget->setFocusPolicy(Qt::StrongFocus);
-  }
+  return QObject::eventFilter(_obj, _event);
 }
 
 /////////////////////////////////////////////////

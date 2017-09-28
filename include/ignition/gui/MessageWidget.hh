@@ -72,7 +72,8 @@ namespace ignition
       /// \brief Set whether a child widget should be visible.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _visible True to set the widget to be visible.
-      public: void SetWidgetVisible(const std::string &_name, bool _visible);
+      public: void SetWidgetVisible(const std::string &_name,
+                                    const bool _visible);
 
       /// \brief Get whether a child widget is visible.
       /// \param[in] _name Name of the child widget.
@@ -82,7 +83,8 @@ namespace ignition
       /// \brief Set whether a child widget should be read-only.
       /// \param[in] _name Name of the child widget.
       /// \param[in] _visible True to set the widget to be read-only.
-      public: void SetWidgetReadOnly(const std::string &_name, bool _readOnly);
+      public: void SetWidgetReadOnly(const std::string &_name,
+                                     const bool _readOnly);
 
       /// \brief Get whether a child widget is read-only.
       /// \param[in] _name Name of the child widget.
@@ -146,15 +148,6 @@ namespace ignition
       /// \return True if successful
       private: bool FillMsg(google::protobuf::Message *_msg,
           const std::string &_name = "");
-
-      /// \brief Signal emitted when mass value changes.
-      /// \param[in] _value Mass value.
-// TODO: handle this
-//      Q_SIGNALS: void MassValueChanged(const double &_value);
-
-      /// \brief Callback when mass value changes in child widget.
-      /// \param[in] _value Mass value.
-//      private slots: void OnMassValueChanged(const double _value);
 
       /// \brief Qt event filter currently used to filter mouse wheel events.
       /// \param[in] _obj Object that is watched by the event filter.
