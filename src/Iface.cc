@@ -82,7 +82,7 @@ std::vector<std::string> g_pluginPaths;
 WindowConfig g_windowConfig;
 
 /// \brief ToDo.
-std::string g_defaultConfigFile = "";
+std::string g_defaultConfigPath = "";
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -343,8 +343,6 @@ bool ignition::gui::loadConfig(const std::string &_config)
   auto success = !doc.LoadFile(_config.c_str());
   if (!success)
   {
-    ignerr << "Failed to load file [" << _config << "]: XMLError"
-              << std::endl;
     return false;
   }
 
@@ -399,7 +397,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
 /////////////////////////////////////////////////
 bool ignition::gui::loadDefaultConfig()
 {
-  return loadConfig(g_defaultConfigFile);
+  return loadConfig(g_defaultConfigPath);
 }
 
 /////////////////////////////////////////////////
@@ -447,9 +445,15 @@ bool ignition::gui::setStyleFromString(const std::string &_style)
 }
 
 /////////////////////////////////////////////////
-void ignition::gui::setDefaultConfigFile(const std::string &_config)
+void ignition::gui::setDefaultConfigPath(const std::string &_path)
 {
-  g_defaultConfigFile = _config;
+  g_defaultConfigPath = _path;
+}
+
+/////////////////////////////////////////////////
+std::string ignition::gui::defaultConfigPath()
+{
+  return g_defaultConfigPath;
 }
 
 /////////////////////////////////////////////////

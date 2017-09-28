@@ -18,6 +18,7 @@
 #include <tinyxml2.h>
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/Filesystem.hh>
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
@@ -55,9 +56,14 @@ MainWindow::MainWindow()
   fileMenu->addAction(loadConfigAct);
 
   auto saveConfigAct = new QAction(tr("&Save configuration"), this);
-  saveConfigAct->setStatusTip(tr("Quit"));
+  saveConfigAct->setStatusTip(tr("Save configuration"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
+
+  auto saveConfigAsAct = new QAction(tr("&Save configuration as"), this);
+  saveConfigAsAct->setStatusTip(tr("Save configuration as"));
+  this->connect(saveConfigAsAct, SIGNAL(triggered()), this, SLOT(OnSaveConfigAs()));
+  fileMenu->addAction(saveConfigAsAct);
 
   fileMenu->addSeparator();
 
@@ -151,6 +157,12 @@ void MainWindow::OnLoadConfig()
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfig()
 {
+  this->SaveImpl(defaultConfigPath());
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnSaveConfigAs()
+{
   QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
       tr("*.config"));
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
@@ -164,6 +176,12 @@ void MainWindow::OnSaveConfig()
   if (selected.empty())
     return;
 
+  this->SaveImpl(selected[0].toStdString());
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SaveImpl(const std::string &_path)
+{
   std::string config = "<?xml version=\"1.0\"?>\n\n";
 
   // Window settings
@@ -194,24 +212,23 @@ void MainWindow::OnSaveConfig()
   for (const auto plugin : plugins)
     config += plugin->ConfigStr();
 
-  // Open the file
-  std::ofstream out(selected[0].toStdString().c_str(), std::ios::out);
+    // Open the file
+  std::ofstream out(_path.c_str(), std::ios::out);
 
-  if (!out)
-  {
-    QMessageBox msgBox;
-    std::string str = "Unable to open file: " + selected[0].toStdString();
-    str += ".\nCheck file permissions.";
-    msgBox.setText(str.c_str());
-    msgBox.exec();
-  }
-  else
+  // if (!out)
+  // {
+  //   QMessageBox msgBox;
+  //   std::string str = "Unable to open file: " + _path;
+  //   str += ".\nCheck file permissions.";
+  //   msgBox.setText(str.c_str());
+  //   msgBox.exec();
+  // }
+  // else
     out << config;
 
   out.close();
 
-  ignmsg << "Saved configuration [" << selected[0].toStdString() << "]"
-         << std::endl;
+  ignmsg << "Saved configuration [" << _path << "]" << std::endl;
 }
 
 /////////////////////////////////////////////////

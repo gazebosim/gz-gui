@@ -76,7 +76,11 @@ namespace ignition
 
     /// \brief ToDo.
     IGNITION_GUI_VISIBLE
-    void setDefaultConfigFile(const std::string &_config);
+    void setDefaultConfigPath(const std::string &_path);
+
+    /// \brief ToDo.
+    IGNITION_GUI_VISIBLE
+    std::string defaultConfigPath();
 
     /// \brief Add previously loaded plugins to the main window.
     /// * Make sure the window is created first

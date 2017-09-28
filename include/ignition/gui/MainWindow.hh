@@ -46,8 +46,11 @@ namespace ignition
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
 
-      /// \brief Callback when save configuration is selected
+      /// \brief Callback when "save configuration" is selected
       private slots: void OnSaveConfig();
+
+      /// \brief Callback when "save configuration as" is selected
+      private slots: void OnSaveConfigAs();
 
       /// \brief Callback when load stylesheet is selected
       private slots: void OnLoadStylesheet();
@@ -55,6 +58,9 @@ namespace ignition
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename
       private slots: void OnAddPlugin(QString _plugin);
+
+      /// \brief ToDo.
+      private: void SaveImpl(const std::string &_path);
 
       /// \internal
       /// \brief Private data pointer
