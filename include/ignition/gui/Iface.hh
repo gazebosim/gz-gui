@@ -46,6 +46,10 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool loadConfig(const std::string &_config);
 
+    /// \brief ToDO.
+    IGNITION_GUI_VISIBLE
+    bool loadDefaultConfig();
+
     /// \brief Load a plugin from a file name. The plugin file must be in the
     /// path.
     /// \param[in] _filename Plugin filename.
@@ -69,6 +73,10 @@ namespace ignition
     /// \sa setStyleFromFile
     IGNITION_GUI_VISIBLE
     bool setStyleFromString(const std::string &_styleSheet);
+
+    /// \brief ToDo.
+    IGNITION_GUI_VISIBLE
+    void setDefaultConfigFile(const std::string &_config);
 
     /// \brief Add previously loaded plugins to the main window.
     /// * Make sure the window is created first

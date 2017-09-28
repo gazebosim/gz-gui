@@ -81,6 +81,9 @@ std::vector<std::string> g_pluginPaths;
 /// \brief Window configuration
 WindowConfig g_windowConfig;
 
+/// \brief ToDo.
+std::string g_defaultConfigFile = "";
+
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
 bool checkApp()
@@ -394,6 +397,12 @@ bool ignition::gui::loadConfig(const std::string &_config)
 }
 
 /////////////////////////////////////////////////
+bool ignition::gui::loadDefaultConfig()
+{
+  return loadConfig(g_defaultConfigFile);
+}
+
+/////////////////////////////////////////////////
 bool ignition::gui::setStyleFromFile(const std::string &_qssFile)
 {
   if (!checkApp())
@@ -435,6 +444,12 @@ bool ignition::gui::setStyleFromString(const std::string &_style)
 
   // \todo Return false if sheet is can't be correctly parsed.
   return true;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::setDefaultConfigFile(const std::string &_config)
+{
+  g_defaultConfigFile = _config;
 }
 
 /////////////////////////////////////////////////
