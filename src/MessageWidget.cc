@@ -113,7 +113,7 @@ void MessageWidget::UpdateFromMsg(const google::protobuf::Message *_msg)
 /////////////////////////////////////////////////
 google::protobuf::Message *MessageWidget::Msg()
 {
-  this->UpdateMsg(this->dataPtr->msg);
+  this->FillMsg(this->dataPtr->msg);
   return this->dataPtr->msg;
 }
 
@@ -250,6 +250,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 
     switch (field->type())
     {
+      // Numbers
       case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
       {
         double value = ref->GetDouble(*_msg, field);
@@ -335,6 +336,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         propertyWidget->SetValue(value);
         break;
       }
+      // Boolean
       case google::protobuf::FieldDescriptor::TYPE_BOOL:
       {
         bool value = ref->GetBool(*_msg, field);
@@ -347,6 +349,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         propertyWidget->SetValue(value);
         break;
       }
+      // String
       case google::protobuf::FieldDescriptor::TYPE_STRING:
       {
         std::string value = ref->GetString(*_msg, field);
@@ -366,125 +369,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         propertyWidget->SetValue(v);
         break;
       }
-      case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
-      {
-        auto valueMsg = ref->MutableMessage(_msg, field);
-
-        // parse and create custom geometry widgets
-        if (field->message_type()->name() == "Geometry")
-        {
-          if (newWidget)
-          {
-            propertyWidget = new GeometryWidget(name, _level);
-            newFieldWidget = propertyWidget;
-          }
-
-          auto value = dynamic_cast<msgs::Geometry *>(valueMsg);
-          QVariant v;
-          v.setValue(*value);
-          propertyWidget->SetValue(v);
-        }
-        // parse and create custom pose widgets
-        else if (field->message_type()->name() == "Pose")
-        {
-          if (newWidget)
-          {
-            propertyWidget = new Pose3dWidget(name, _level);
-            newFieldWidget = propertyWidget;
-          }
-
-          auto poseMsg = dynamic_cast<msgs::Pose *>(valueMsg);
-          auto value = msgs::Convert(*poseMsg);
-
-          QVariant v;
-          v.setValue(value);
-          propertyWidget->SetValue(v);
-        }
-        // parse and create custom vector3 widgets
-        else if (field->message_type()->name() == "Vector3d")
-        {
-          if (newWidget)
-          {
-            propertyWidget = new Vector3dWidget(name, _level);
-            newFieldWidget = propertyWidget;
-          }
-
-          auto vector3dMsg = dynamic_cast<msgs::Vector3d *>(valueMsg);
-          auto value = msgs::Convert(*vector3dMsg);
-
-          QVariant v;
-          v.setValue(value);
-          propertyWidget->SetValue(v);
-        }
-        // parse and create custom color widgets
-        else if (field->message_type()->name() == "Color")
-        {
-          if (newWidget)
-          {
-            propertyWidget = new ColorWidget(name, _level);
-            newFieldWidget = propertyWidget;
-          }
-
-          auto colorMsg = dynamic_cast<msgs::Color *>(valueMsg);
-          auto value = msgs::Convert(*colorMsg);
-
-          QVariant v;
-          v.setValue(value);
-          propertyWidget->SetValue(v);
-        }
-        // parse and create custom density widgets
-        // TODO: How do we get here?
-        else if (field->message_type()->name() == "Density")
-        {
-          if (newWidget)
-          {
-            propertyWidget = new DensityWidget(name, _level);
-            newFieldWidget = propertyWidget;
-          }
-          auto valueDescriptor = valueMsg->GetDescriptor();
-
-          double density = 1.0;
-
-          int valueMsgFieldCount = valueDescriptor->field_count();
-          for (int j = 0; j < valueMsgFieldCount ; ++j)
-          {
-            auto valueField = valueDescriptor->field(j);
-
-            if (valueField && valueField->name() == "density")
-              density = valueMsg->GetReflection()->GetDouble(
-                  *valueMsg, valueField);
-          }
-          propertyWidget->SetValue(density);
-        }
-        else
-        {
-          // parse the message fields recursively
-          auto groupBoxWidget =
-              this->Parse(valueMsg, _update, scopedName, _level+1);
-          if (groupBoxWidget)
-          {
-            newFieldWidget = new PropertyWidget();
-            auto groupBoxLayout = new QVBoxLayout;
-            groupBoxLayout->setContentsMargins(0, 0, 0, 0);
-            groupBoxLayout->addWidget(groupBoxWidget);
-            newFieldWidget->setLayout(groupBoxLayout);
-            qobject_cast<PropertyWidget *>(newFieldWidget)->
-                widgets.push_back(groupBoxWidget);
-          }
-        }
-
-        if (newWidget)
-        {
-          // Make it into a group widget
-          auto childWidget = qobject_cast<PropertyWidget *>(newFieldWidget);
-          if (childWidget)
-          {
-            newFieldWidget = new CollapsibleWidget(name, childWidget, _level);
-          }
-        }
-
-        break;
-      }
+      // Enum
       case google::protobuf::FieldDescriptor::TYPE_ENUM:
       {
         auto value = ref->GetEnum(*_msg, field);
@@ -492,7 +377,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         if (!value)
         {
           ignerr << "Error retrieving enum value for '" << name << "'"
-              << std::endl;
+                 << std::endl;
           break;
         }
 
@@ -520,9 +405,130 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         propertyWidget->SetValue(v);
         break;
       }
+      // Nested messages
+      case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
+      {
+        auto valueMsg = ref->MutableMessage(_msg, field);
+
+        // Geometry
+        if (field->message_type()->name() == "Geometry")
+        {
+          if (newWidget)
+          {
+            propertyWidget = new GeometryWidget(name, _level);
+            newFieldWidget = propertyWidget;
+          }
+
+          auto value = dynamic_cast<msgs::Geometry *>(valueMsg);
+          QVariant v;
+          v.setValue(*value);
+          propertyWidget->SetValue(v);
+        }
+        // Pose
+        else if (field->message_type()->name() == "Pose")
+        {
+          if (newWidget)
+          {
+            propertyWidget = new Pose3dWidget(name, _level);
+            newFieldWidget = propertyWidget;
+          }
+
+          auto poseMsg = dynamic_cast<msgs::Pose *>(valueMsg);
+          auto value = msgs::Convert(*poseMsg);
+
+          QVariant v;
+          v.setValue(value);
+          propertyWidget->SetValue(v);
+        }
+        // Vector3d
+        else if (field->message_type()->name() == "Vector3d")
+        {
+          if (newWidget)
+          {
+            propertyWidget = new Vector3dWidget(name, _level);
+            newFieldWidget = propertyWidget;
+          }
+
+          auto vector3dMsg = dynamic_cast<msgs::Vector3d *>(valueMsg);
+          auto value = msgs::Convert(*vector3dMsg);
+
+          QVariant v;
+          v.setValue(value);
+          propertyWidget->SetValue(v);
+        }
+        // Color
+        else if (field->message_type()->name() == "Color")
+        {
+          if (newWidget)
+          {
+            propertyWidget = new ColorWidget(name, _level);
+            newFieldWidget = propertyWidget;
+          }
+
+          auto colorMsg = dynamic_cast<msgs::Color *>(valueMsg);
+          auto value = msgs::Convert(*colorMsg);
+
+          QVariant v;
+          v.setValue(value);
+          propertyWidget->SetValue(v);
+        }
+        // Density
+        // TODO: How do we get here?
+        else if (field->message_type()->name() == "Density")
+        {
+          if (newWidget)
+          {
+            propertyWidget = new DensityWidget(name, _level);
+            newFieldWidget = propertyWidget;
+          }
+          auto valueDescriptor = valueMsg->GetDescriptor();
+
+          double density = 1.0;
+
+          int valueMsgFieldCount = valueDescriptor->field_count();
+          for (int j = 0; j < valueMsgFieldCount ; ++j)
+          {
+            auto valueField = valueDescriptor->field(j);
+
+            if (valueField && valueField->name() == "density")
+              density = valueMsg->GetReflection()->GetDouble(
+                  *valueMsg, valueField);
+          }
+          propertyWidget->SetValue(density);
+        }
+        // Parse other message types recursively
+        else
+        {
+          auto groupBoxWidget =
+              this->Parse(valueMsg, _update, scopedName, _level+1);
+          if (groupBoxWidget)
+          {
+            newFieldWidget = new PropertyWidget();
+            auto groupBoxLayout = new QVBoxLayout;
+            groupBoxLayout->setContentsMargins(0, 0, 0, 0);
+            groupBoxLayout->addWidget(groupBoxWidget);
+            newFieldWidget->setLayout(groupBoxLayout);
+            qobject_cast<PropertyWidget *>(newFieldWidget)->
+                widgets.push_back(groupBoxWidget);
+          }
+        }
+
+        // When creating a new widget, make it collapsible
+        if (newWidget)
+        {
+          auto childWidget = qobject_cast<PropertyWidget *>(newFieldWidget);
+          if (childWidget)
+          {
+            newFieldWidget = new CollapsibleWidget(name, childWidget, _level);
+          }
+        }
+
+        break;
+      }
       default:
       {
-        ignwarn << "Skipping field type [" << field->type() << "]" << std::endl;
+        ignwarn << "Skipping field type [" << field->message_type()->name()
+                << "]" << std::endl;
       }
         break;
     }
@@ -579,25 +585,25 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 }
 
 /////////////////////////////////////////////////
-void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
+bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     const std::string &_name)
 {
+  // Get descriptor of given message
   auto d = _msg->GetDescriptor();
   if (!d)
-    return;
-  auto count = d->field_count();
+    return false;
 
+  // Iterate over its fields
+  auto count = d->field_count();
   for (int i = 0; i < count ; ++i)
   {
     auto field = d->field(i);
-
     if (!field)
-      return;
+      continue;
 
     auto ref = _msg->GetReflection();
-
     if (!ref)
-      return;
+      continue;
 
     std::string name = field->name();
 
@@ -616,136 +622,119 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
       continue;
 
     auto childWidget = this->dataPtr->properties[scopedName];
+    auto variant = childWidget->Value();
 
     switch (field->type())
     {
+      // Numbers
       case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
       {
-        auto v = childWidget->Value();
-        ref->SetDouble(_msg, field, v.toDouble());
+        ref->SetDouble(_msg, field, variant.toDouble());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_FLOAT:
       {
-        auto v = childWidget->Value();
-        ref->SetFloat(_msg, field, v.toDouble());
+        ref->SetFloat(_msg, field, variant.toDouble());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_INT64:
       {
-        auto v = childWidget->Value();
-        ref->SetInt64(_msg, field, v.toInt());
+        ref->SetInt64(_msg, field, variant.toInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT64:
       {
-        auto v = childWidget->Value();
-        ref->SetUInt64(_msg, field, v.toUInt());
+        ref->SetUInt64(_msg, field, variant.toUInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_INT32:
       {
-        auto v = childWidget->Value();
-        ref->SetInt32(_msg, field, v.toInt());
+        ref->SetInt32(_msg, field, variant.toInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT32:
       {
-        auto v = childWidget->Value();
-        ref->SetUInt32(_msg, field, v.toUInt());
+        ref->SetUInt32(_msg, field, variant.toUInt());
         break;
       }
+      // Boolean
       case google::protobuf::FieldDescriptor::TYPE_BOOL:
       {
-        auto v = childWidget->Value();
-        ref->SetBool(_msg, field, v.toBool());
+        ref->SetBool(_msg, field, variant.toBool());
         break;
       }
+      // String
       case google::protobuf::FieldDescriptor::TYPE_STRING:
       {
-        if (qobject_cast<QLineEdit *>(childWidget->widgets[0]))
-        {
-          auto valueLineEdit =
-            qobject_cast<QLineEdit *>(childWidget->widgets[0]);
-          ref->SetString(_msg, field, valueLineEdit->text().toStdString());
-        }
-        else if (qobject_cast<QPlainTextEdit *>(childWidget->widgets[0]))
-        {
-          auto valueTextEdit =
-              qobject_cast<QPlainTextEdit *>(childWidget->widgets[0]);
-          ref->SetString(_msg, field,
-              valueTextEdit->toPlainText().toStdString());
-        }
+        ref->SetString(_msg, field, variant.value<std::string>());
         break;
       }
+      // Enum
+      case google::protobuf::FieldDescriptor::TYPE_ENUM:
+      {
+        auto str = variant.value<std::string>();
+
+        // Convert string into protobuf enum
+        auto enumDescriptor = field->enum_type();
+        if (!enumDescriptor)
+          continue;
+
+        auto enumValue = enumDescriptor->FindValueByName(str);
+        if (enumValue)
+          ref->SetEnum(_msg, field, enumValue);
+        else
+          ignerr << "Unable to find enum value [" << str << "]" << std::endl;
+
+        break;
+      }
+      // Nested messages
       case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
       {
-        auto valueMsg = (ref->MutableMessage(_msg, field));
+        auto mutableMsg = ref->MutableMessage(_msg, field);
 
-        // update geometry msg field
+        // Geometry
         if (field->message_type()->name() == "Geometry")
         {
-          auto v = childWidget->Value();
-          auto geomMsg = ref->MutableMessage(_msg, field);
-          geomMsg->CopyFrom(v.value<msgs::Geometry>());
+          mutableMsg->CopyFrom(variant.value<msgs::Geometry>());
         }
-        // update pose msg field
+        // Pose
         else if (field->message_type()->name() == "Pose")
         {
-          auto v = childWidget->Value();
-          auto poseMsg = ref->MutableMessage(_msg, field);
-          poseMsg->CopyFrom(msgs::Convert(v.value<math::Pose3d>()));
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Pose3d>()));
         }
+        // Vector3d
         else if (field->message_type()->name() == "Vector3d")
         {
-          auto v = childWidget->Value();
-          auto vector3dMsg = ref->MutableMessage(_msg, field);
-          vector3dMsg->CopyFrom(msgs::Convert(v.value<math::Vector3d>()));
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Vector3d>()));
         }
+        // Color
         else if (field->message_type()->name() == "Color")
         {
-          auto v = childWidget->Value();
-          auto colorMsg = ref->MutableMessage(_msg, field);
-          colorMsg->CopyFrom(msgs::Convert(v.value<math::Color>()));
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Color>()));
         }
         // TODO: density?!
         else if (field->message_type()->name() == "Density")
         {
-          auto densityWidget = qobject_cast<DensityWidget *>(childWidget);
-          auto valueDescriptor = valueMsg->GetDescriptor();
-          auto densityField = valueDescriptor->FindFieldByName("density");
-          valueMsg->GetReflection()->SetDouble(valueMsg, densityField,
-              densityWidget->Value().toDouble());
+//          auto densityWidget = qobject_cast<DensityWidget *>(childWidget);
+//          auto valueDescriptor = valueMsg->GetDescriptor();
+//          auto densityField = valueDescriptor->FindFieldByName("density");
+//          valueMsg->GetReflection()->SetDouble(valueMsg, densityField,
+//              densityWidget->Value().toDouble());
         }
+        // Recursively fill other types
         else
         {
-          // update the message fields recursively
-          this->UpdateMsg(valueMsg, scopedName);
+          auto valueMsg = (ref->MutableMessage(_msg, field));
+          this->FillMsg(valueMsg, scopedName);
         }
 
-        break;
-      }
-      case google::protobuf::FieldDescriptor::TYPE_ENUM:
-      {
-        auto value = childWidget->Value().value<std::string>();
-
-        // Convert string into protobuf enum
-        auto enumDescriptor = field->enum_type();
-        if (enumDescriptor)
-        {
-          auto enumValue = enumDescriptor->FindValueByName(value);
-          if (enumValue)
-            ref->SetEnum(_msg, field, enumValue);
-          else
-            ignerr << "Unable to find enum value: '" << value << "'"
-                << std::endl;
-        }
         break;
       }
       default:
         break;
     }
   }
+  return true;
 }
 
 /////////////////////////////////////////////////
@@ -786,34 +775,34 @@ unsigned int MessageWidget::PropertyWidgetCount() const
 /////////////////////////////////////////////////
 bool MessageWidget::eventFilter(QObject *_obj, QEvent *_event)
 {
-  QAbstractSpinBox *spinBox = qobject_cast<QAbstractSpinBox *>(_obj);
-  QComboBox *comboBox = qobject_cast<QComboBox *>(_obj);
-  if (spinBox || comboBox)
+  // Only handle spins and combos
+  auto spinBox = qobject_cast<QAbstractSpinBox *>(_obj);
+  auto comboBox = qobject_cast<QComboBox *>(_obj);
+  if (!(spinBox || comboBox))
+    return QObject::eventFilter(_obj, _event);
+
+  auto widget = qobject_cast<QWidget *>(_obj);
+  if (_event->type() == QEvent::Wheel)
   {
-    QWidget *widget = qobject_cast<QWidget *>(_obj);
-    if (_event->type() == QEvent::Wheel)
+    if (widget->focusPolicy() == Qt::WheelFocus)
     {
-      if (widget->focusPolicy() == Qt::WheelFocus)
-      {
-        _event->accept();
-        return false;
-      }
-      else
-      {
-        _event->ignore();
-        return true;
-      }
+      _event->accept();
+      return false;
     }
-    else if (_event->type() == QEvent::FocusIn)
+    else
     {
-      widget->setFocusPolicy(Qt::WheelFocus);
-    }
-    else if (_event->type() == QEvent::FocusOut)
-    {
-      widget->setFocusPolicy(Qt::StrongFocus);
+      _event->ignore();
+      return true;
     }
   }
-  return QObject::eventFilter(_obj, _event);
+  else if (_event->type() == QEvent::FocusIn)
+  {
+    widget->setFocusPolicy(Qt::WheelFocus);
+  }
+  else if (_event->type() == QEvent::FocusOut)
+  {
+    widget->setFocusPolicy(Qt::StrongFocus);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -821,14 +810,10 @@ PropertyWidget *MessageWidget::PropertyWidgetByName(
     const std::string &_name) const
 {
   auto iter = this->dataPtr->properties.find(_name);
-
   if (iter != this->dataPtr->properties.end())
     return iter->second;
-  else
-  {
-    ignwarn << "Widget [" << _name << "] not found" << std::endl;
-    return nullptr;
-  }
-}
 
+  ignerr << "Widget [" << _name << "] not found" << std::endl;
+  return nullptr;
+}
 

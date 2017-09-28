@@ -141,8 +141,10 @@ namespace ignition
 
       /// \brief Update the message field using values from the widgets.
       /// \param[in] _msg Message to be updated.
-      /// \param[in] _name Name of parent widget.
-      private: void UpdateMsg(google::protobuf::Message *_msg,
+      /// \param[in] _name Optional name of a property field. By default, takes
+      /// the whole message.
+      /// \return True if successful
+      private: bool FillMsg(google::protobuf::Message *_msg,
           const std::string &_name = "");
 
       /// \brief Signal emitted when mass value changes.
