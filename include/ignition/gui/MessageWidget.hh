@@ -83,20 +83,6 @@ namespace ignition
       private: double density;
     };
 
-    /// \brief A widget for configuring enum values.
-    class IGNITION_GUI_VISIBLE EnumWidget : public PropertyWidget
-    {
-      Q_OBJECT
-
-      /// brief Signal an enum value change event.
-      /// \param[in] _value New enum value in string.
-      Q_SIGNALS: void EnumValueChanged(const QString &_value);
-
-      /// brief Callback when the enum value is changed.
-      /// \param[in] _value New enum value in string.
-      private slots: void EnumChanged(const QString &_value);
-    };
-
     /// \brief A widget generated from a google protobuf message.
     class IGNITION_GUI_VISIBLE MessageWidget : public QWidget
     {
@@ -159,32 +145,6 @@ namespace ignition
       public: bool SetDensityWidgetValue(const std::string &_name,
           const double _value);
 
-      /// \brief Set an enum value to a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
-      public: bool SetEnumWidgetValue(const std::string &_name,
-          const std::string &_value);
-
-      /// \brief Add an item to a child enum widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _itemText Enum text value.
-      /// \return True if the item is added successfully.
-      public: bool AddItemEnumWidget(const std::string &_name,
-          const std::string &_itemText);
-
-      /// \brief Remove an item from a child enum widget.
-      /// \param[in] _name Name of the child widget.
-      /// \param[in] _itemText Text of the enum value.
-      /// \return True if the item is removed successfully.
-      public: bool RemoveItemEnumWidget(const std::string &_name,
-          const std::string &_itemText);
-
-      /// \brief Remove all items from a child enum widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return True if successful.
-      public: bool ClearEnumWidget(const std::string &_name);
-
       /// \brief Get value from a property widget.
       /// \param[in] _name Name of the property widget.
       /// \return Value as QVariant.
@@ -194,19 +154,6 @@ namespace ignition
       /// \param[in] _name Name of the child widget.
       /// \return Density value.
       public: double DensityWidgetValue(const std::string &_name) const;
-
-      /// \brief Get an enum value from a child widget.
-      /// \param[in] _name Name of the child widget.
-      /// \return Enum value.
-      public: std::string EnumWidgetValue(const std::string &_name) const;
-
-      /// \brief Create a widget for configuring an enum value.
-      /// \param[in] _key A key that is used as a label for the widget.
-      /// \param[in] _values A list of enum values in string.
-      /// \param[in] _level Level of the widget in the tree.
-      /// \return The newly created widget.
-      public: PropertyWidget *CreateEnumWidget(const std::string &_key,
-          const std::vector<std::string> &_values, const int _level = 0);
 
       /// \brief Create a widget for setting a density value.
       /// \param[in] _key A key that is used as a label for the widget.
@@ -284,13 +231,6 @@ namespace ignition
       private: void UpdateVector3dMsg(google::protobuf::Message *_msg,
           const math::Vector3d &_value);
 
-      /// \brief Update a child widget with an enum value.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
-      private: bool UpdateEnumWidget(PropertyWidget *_widget,
-          const std::string &_value);
-
       /// \brief Update a child widget with a density value.
       /// \param[in] _widget Pointer to the child widget.
       /// \param[in] _value Density value.
@@ -298,26 +238,11 @@ namespace ignition
       private: bool UpdateDensityWidget(PropertyWidget *_widget,
           const double _value);
 
-      /// \brief Get an enum value from a child widget.
-      /// \param[in] _widget Pointer to the child widget.
-      /// \return Value of the widget.
-      private: std::string EnumWidgetValue(PropertyWidget *_widget) const;
-
       /// \brief Received item selection user input.
       /// \param[in] _item Item selected.
       /// \param[in] _column Column index.
       private slots: void OnItemSelection(QTreeWidgetItem *_item,
           const int _column);
-
-      /// \brief Callback when an enum widget's enum value has changed.
-      /// \param[in] _value New enum value in string.
-      private slots: void OnEnumValueChanged(const QString &_value);
-
-      /// \brief Signal that an enum widget's enum value has changed.
-      /// \param[in] _name Scoped name of widget.
-      /// \param[in] _value New enum value string.
-      Q_SIGNALS: void EnumValueChanged(const QString &_name,
-          const QString &_value);
 
       /// \brief Signal emitted when density value changes.
       /// \param[in] _value Density value.

@@ -27,6 +27,7 @@
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/EnumWidget.hh"
 #include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/NumberWidget.hh"
@@ -195,9 +196,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     jointMessageWidget->SetPropertyValue("child_id", 2u);
 
     // type
-    jointMessageWidget->SetEnumWidgetValue("type",
-        msgs::Joint_Type_Name(
-        msgs::Joint_Type_UNIVERSAL));
+    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL));
+    jointMessageWidget->SetPropertyValue("type", variant);
 
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
@@ -252,8 +252,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_EQ(jointMessageWidget->PropertyValue("child_id"), 2u);
 
     // type
-    EXPECT_EQ(jointMessageWidget->EnumWidgetValue("type"),
-        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL));
+    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL));
+    jointMessageWidget->SetPropertyValue("type", variant);
 
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
@@ -374,9 +374,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     jointMessageWidget->SetPropertyValue("child_id", 20u);
 
     // type
-    jointMessageWidget->SetEnumWidgetValue("type",
-        msgs::Joint_Type_Name(
-        msgs::Joint_Type_BALL));
+    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_BALL));
+    jointMessageWidget->SetPropertyValue("type", variant);
 
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
@@ -409,9 +408,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_EQ(jointMessageWidget->PropertyValue("child_id"), 20u);
 
     // type
-    EXPECT_EQ(jointMessageWidget->EnumWidgetValue("type"),
-        msgs::Joint_Type_Name(
-        msgs::Joint_Type_BALL));
+    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_BALL));
+    jointMessageWidget->SetPropertyValue("type", variant);
 
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
@@ -1145,7 +1143,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   enumValues.push_back("value1");
   enumValues.push_back("value2");
   enumValues.push_back("value3");
-  auto enumWidget = messageWidget->CreateEnumWidget("enum", enumValues, 4);
+  auto enumWidget = new EnumWidget("enum", enumValues, 4);
 
   EXPECT_TRUE(uintWidget != nullptr);
   EXPECT_TRUE(intWidget != nullptr);
@@ -1215,8 +1213,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   colorValue.setValue(math::Color(0.1, 0.2, 0.3, 0.4));
   QVariant poseValue;
   poseValue.setValue(math::Pose3d(1, 2, 3, 0.1, 0.2, 0.3));
-  std::string enumValue("value2");
-//  std::string customValue("123456789");
+  QVariant enumValue;
+  enumValue.setValue(std::string("value2"));
 
   QVariant vector3dValue;
   vector3dValue.setValue(math::Vector3d(1, 2, 3));
@@ -1229,8 +1227,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_TRUE(messageWidget->SetPropertyValue("vector3d", vector3dValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("color", colorValue));
   EXPECT_TRUE(messageWidget->SetPropertyValue("pose", poseValue));
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enum", enumValue));
-//  EXPECT_TRUE(messageWidget->SetPropertyValue("custom", customValue));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("enum", enumValue));
 
   // Get widgets values
   EXPECT_EQ(messageWidget->PropertyValue("uint"), uintValue);
@@ -1243,8 +1240,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_EQ(messageWidget->PropertyValue("color"), colorValue);
   EXPECT_EQ(messageWidget->PropertyValue("pose").value<math::Pose3d>(),
       poseValue.value<math::Pose3d>());
-  EXPECT_EQ(messageWidget->EnumWidgetValue("enum"), enumValue);
-//  EXPECT_EQ(messageWidget->PropertyValue("custom"), customValue);
+  EXPECT_EQ(messageWidget->PropertyValue("enum").value<std::string>(),
+      enumValue.value<std::string>());
 
   // Collapsible some widgets
   auto groupLayout = new QVBoxLayout();
@@ -1285,7 +1282,7 @@ TEST(MessageWidgetTest, EnumMessageWidget)
   enumValues.push_back("value1");
   enumValues.push_back("value2");
   enumValues.push_back("value3");
-  auto enumWidget = messageWidget->CreateEnumWidget("Enum Label", enumValues);
+  auto enumWidget = new EnumWidget("Enum Label", enumValues);
 
   EXPECT_TRUE(enumWidget != nullptr);
 
@@ -1293,13 +1290,17 @@ TEST(MessageWidgetTest, EnumMessageWidget)
   EXPECT_TRUE(messageWidget->AddPropertyWidget("enumWidgetName", enumWidget));
 
   // Check that all items can be selected
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value1"));
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value2"));
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value3"));
+  QVariant variant;
+  variant.setValue(std::string("value1"));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
+  variant.setValue(std::string("value2"));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
+  variant.setValue(std::string("value3"));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
 
   // Check that an inexistent item cannot be selected
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value4")
-      == false);
+  variant.setValue(std::string("value4"));
+  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
 
   // Check the number of items
   auto comboBox = enumWidget->findChild<QComboBox *>();
@@ -1307,33 +1308,33 @@ TEST(MessageWidgetTest, EnumMessageWidget)
   EXPECT_EQ(comboBox->count(), 3);
 
   // Add an item and check count
-  EXPECT_TRUE(messageWidget->AddItemEnumWidget("enumWidgetName", "value4"));
+  EXPECT_TRUE(enumWidget->AddItem("value4"));
   EXPECT_EQ(comboBox->count(), 4);
 
   // Check that the new item can be selected
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value4"));
+  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
 
   // Remove an item and check count
-  EXPECT_TRUE(messageWidget->RemoveItemEnumWidget("enumWidgetName", "value2"));
+  EXPECT_TRUE(enumWidget->RemoveItem("value2"));
   EXPECT_EQ(comboBox->count(), 3);
 
   // Check that the removed item cannot be selected
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value2")
-      == false);
+  variant.setValue(std::string("value2"));
+  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
 
   // Clear all items and check count
-  EXPECT_TRUE(messageWidget->ClearEnumWidget("enumWidgetName"));
+  EXPECT_TRUE(enumWidget->Clear());
   EXPECT_EQ(comboBox->count(), 0);
 
   // Check that none of the previous items can be selected
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value1")
-      == false);
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value2")
-      == false);
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value3")
-      == false);
-  EXPECT_TRUE(messageWidget->SetEnumWidgetValue("enumWidgetName", "value4")
-      == false);
+  variant.setValue(std::string("value1"));
+  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
+  variant.setValue(std::string("value2"));
+  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
+  variant.setValue(std::string("value3"));
+  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
+  variant.setValue(std::string("value4"));
+  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
 
   EXPECT_TRUE(stop());
 }
@@ -1757,7 +1758,6 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   EXPECT_TRUE(stop());
 }
 
-/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildEnumSignal)
 {
@@ -1771,46 +1771,40 @@ TEST(MessageWidgetTest, ChildEnumSignal)
   enumValues.push_back("value1");
   enumValues.push_back("value2");
   enumValues.push_back("value3");
-  auto enumWidget =
-      messageWidget->CreateEnumWidget("enum", enumValues);
+  auto enumWidget = new EnumWidget("enum", enumValues);
   EXPECT_TRUE(enumWidget != nullptr);
 
   // Add to message widget
   EXPECT_TRUE(messageWidget->AddPropertyWidget("enum", enumWidget));
 
   // Connect signals
-  connect(messageWidget,
-      SIGNAL(EnumValueChanged(const QString, const QString)),
-      this,
-      SLOT(OnEnumValueChanged(const QString, const QString)));
+  bool signalReceived = false;
+  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<std::string>();
+      EXPECT_EQ(_name, "enum");
+      EXPECT_EQ(v, "value3");
+      signalReceived = true;
+    });
 
-  // Check default pose
-  EXPECT_TRUE(messageWidget->EnumWidgetValue("enum") == "value1");
+  // Check default value
+  EXPECT_EQ(messageWidget->PropertyValue("enum").value<std::string>(),
+      std::string("value1"));
 
   // Get signal emitting widgets
-  QList<QComboBox *> comboBoxes = enumWidget->findChildren<QComboBox *>();
+  auto comboBoxes = enumWidget->findChildren<QComboBox *>();
   EXPECT_EQ(comboBoxes.size(), 1);
 
   // Change the value and check new value at callback
   comboBoxes[0]->setCurrentIndex(2);
-  QTest::keyClick(comboBoxes[0], Qt::Key_Enter);
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-
-/////////////////////////////////////////////////
-//TEST(MessageWidgetTest, OnEnumValueChanged(const QString &_name,
-//    const QString &_value)
-//{
-//  EXPECT_TRUE(_name == "enum");
-//  EXPECT_TRUE(_value == "value3");
-//  g_enumSignalReceived = true;
-//}
-*/
 
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, GetPropertyByName)

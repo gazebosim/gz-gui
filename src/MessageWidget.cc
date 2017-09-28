@@ -27,6 +27,7 @@
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
+#include "ignition/gui/EnumWidget.hh"
 #include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/NumberWidget.hh"
@@ -210,18 +211,6 @@ bool MessageWidget::SetDensityWidgetValue(const std::string &_name,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::SetEnumWidgetValue(const std::string &_name,
-    const std::string &_value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateEnumWidget(iter->second, _value);
-
-  return false;
-}
-
-/////////////////////////////////////////////////
 QVariant MessageWidget::PropertyValue(const std::string &_name) const
 {
   std::map <std::string, PropertyWidget *>::const_iterator iter =
@@ -247,17 +236,6 @@ double MessageWidget::DensityWidgetValue(const std::string &_name) const
     if (widget)
       value = widget->Density();
   }
-  return value;
-}
-
-/////////////////////////////////////////////////
-std::string MessageWidget::EnumWidgetValue(const std::string &_name) const
-{
-  std::string value;
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    value = this->EnumWidgetValue(iter->second);
   return value;
 }
 
@@ -608,8 +586,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
       }
       case google::protobuf::FieldDescriptor::TYPE_ENUM:
       {
-        const google::protobuf::EnumValueDescriptor *value =
-            ref->GetEnum(*_msg, field);
+        auto value = ref->GetEnum(*_msg, field);
 
         if (!value)
         {
@@ -621,19 +598,17 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
         if (newWidget)
         {
           std::vector<std::string> enumValues;
-          const google::protobuf::EnumDescriptor *descriptor = value->type();
+          auto descriptor = value->type();
           if (!descriptor)
             break;
 
           for (int j = 0; j < descriptor->value_count(); ++j)
           {
-            const google::protobuf::EnumValueDescriptor *valueDescriptor =
-                descriptor->value(j);
+            auto valueDescriptor = descriptor->value(j);
             if (valueDescriptor)
               enumValues.push_back(valueDescriptor->name());
           }
-          configChildWidget =
-              this->CreateEnumWidget(name, enumValues, _level);
+          configChildWidget = new EnumWidget(name, enumValues, _level);
 
           if (!configChildWidget)
           {
@@ -644,7 +619,9 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
 
           newFieldWidget = configChildWidget;
         }
-        this->UpdateEnumWidget(configChildWidget, value->name());
+        QVariant v;
+        v.setValue(value->name());
+        configChildWidget->SetValue(v);
         break;
       }
       default:
@@ -722,49 +699,6 @@ math::Vector3d MessageWidget::ParseVector3d(
   vec3.Y(values[1]);
   vec3.Z(values[2]);
   return vec3;
-}
-
-/////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateEnumWidget(
-    const std::string &_key, const std::vector<std::string> &_values,
-    const int _level)
-{
-  // Label
-  auto enumLabel = new QLabel(humanReadable(_key).c_str());
-  enumLabel->setToolTip(tr(_key.c_str()));
-
-  // ComboBox
-  auto enumComboBox = new QComboBox;
-
-  for (unsigned int i = 0; i < _values.size(); ++i)
-    enumComboBox->addItem(tr(_values[i].c_str()));
-
-  // Layout
-  auto widgetLayout = new QHBoxLayout;
-  if (_level != 0)
-  {
-    widgetLayout->addItem(new QSpacerItem(20*_level, 1,
-        QSizePolicy::Fixed, QSizePolicy::Fixed));
-  }
-  widgetLayout->addWidget(enumLabel);
-  widgetLayout->addWidget(enumComboBox);
-
-  // ChildWidget
-  EnumWidget *widget = new EnumWidget();
-  widget->setLayout(widgetLayout);
-  widget->setFrameStyle(QFrame::Box);
-  this->connect(enumComboBox, SIGNAL(currentIndexChanged(const QString &)),
-      widget, SLOT(EnumChanged(const QString &)));
-
-  widget->widgets.push_back(enumComboBox);
-
-  // connect enum config widget event so that we can fire another
-  // event from MessageWidget that has the name of this field
-  this->connect(widget,
-      SIGNAL(EnumValueChanged(const QString &)), this,
-      SLOT(OnEnumValueChanged(const QString &)));
-
-  return widget;
 }
 
 /////////////////////////////////////////////////
@@ -1060,23 +994,18 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
       }
       case google::protobuf::FieldDescriptor::TYPE_ENUM:
       {
-        auto valueComboBox =
-            qobject_cast<QComboBox *>(childWidget->widgets[0]);
-        if (valueComboBox)
+        auto value = childWidget->Value().value<std::string>();
+
+        // Convert string into protobuf enum
+        auto enumDescriptor = field->enum_type();
+        if (enumDescriptor)
         {
-          std::string valueStr = valueComboBox->currentText().toStdString();
-          const google::protobuf::EnumDescriptor *enumDescriptor =
-              field->enum_type();
-          if (enumDescriptor)
-          {
-            const google::protobuf::EnumValueDescriptor *enumValue =
-                enumDescriptor->FindValueByName(valueStr);
-            if (enumValue)
-              ref->SetEnum(_msg, field, enumValue);
-            else
-              ignerr << "Unable to find enum value: '" << valueStr << "'"
-                  << std::endl;
-          }
+          auto enumValue = enumDescriptor->FindValueByName(value);
+          if (enumValue)
+            ref->SetEnum(_msg, field, enumValue);
+          else
+            ignerr << "Unable to find enum value: '" << value << "'"
+                << std::endl;
         }
         break;
       }
@@ -1111,37 +1040,6 @@ void MessageWidget::UpdateVector3dMsg(google::protobuf::Message *_msg,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::UpdateEnumWidget(PropertyWidget *_widget,
-    const std::string &_value)
-{
-  if (_widget->widgets.size() != 1u)
-  {
-    ignerr << "Error updating Enum widget" << std::endl;
-    return false;
-  }
-
-  QComboBox *valueComboBox = qobject_cast<QComboBox *>(_widget->widgets[0]);
-  if (!valueComboBox)
-  {
-    ignerr << "Error updating Enum widget" << std::endl;
-    return false;
-  }
-
-  int index = valueComboBox->findText(tr(_value.c_str()));
-
-  if (index < 0)
-  {
-    ignerr << "Error updating Enum widget: '" << _value <<
-      "' not found" << std::endl;
-    return false;
-  }
-
-  qobject_cast<QComboBox *>(_widget->widgets[0])->setCurrentIndex(index);
-
-  return true;
-}
-
-/////////////////////////////////////////////////
 bool MessageWidget::UpdateDensityWidget(PropertyWidget *_widget,
           const double _value)
 {
@@ -1157,39 +1055,11 @@ bool MessageWidget::UpdateDensityWidget(PropertyWidget *_widget,
 }
 
 /////////////////////////////////////////////////
-std::string MessageWidget::EnumWidgetValue(PropertyWidget *_widget) const
-{
-  std::string value;
-  if (_widget->widgets.size() != 1u)
-  {
-    ignerr << "Error getting value from Enum widget " << std::endl;
-    return value;
-  }
-
-  QComboBox *valueComboBox = qobject_cast<QComboBox *>(_widget->widgets[0]);
-  value = valueComboBox->currentText().toStdString();
-
-  return value;
-}
-
-/////////////////////////////////////////////////
 void MessageWidget::OnItemSelection(QTreeWidgetItem *_item,
                                    const int /*_column*/)
 {
   if (_item && _item->childCount() > 0)
     _item->setExpanded(!_item->isExpanded());
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnEnumValueChanged(const QString &_value)
-{
-  PropertyWidget *widget =
-      qobject_cast<PropertyWidget *>(QObject::sender());
-
-  if (!widget)
-    return;
-
-  emit EnumValueChanged(widget->scopedName.c_str(), _value);
 }
 
 /////////////////////////////////////////////////
@@ -1324,114 +1194,6 @@ void DensityWidget::SetDensity(const double _density)
 double DensityWidget::Density() const
 {
   return this->density;
-}
-
-/////////////////////////////////////////////////
-void EnumWidget::EnumChanged(const QString &_value)
-{
-  emit EnumValueChanged(_value);
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::ClearEnumWidget(const std::string &_name)
-{
-  // Find widget
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter == this->dataPtr->configWidgets.end())
-    return false;
-
-  EnumWidget *enumWidget = dynamic_cast<EnumWidget *>(iter->second);
-
-  if (enumWidget->widgets.size() != 1u)
-  {
-    ignerr << "Enum config widget has wrong number of widgets." << std::endl;
-    return false;
-  }
-
-  QComboBox *valueComboBox = qobject_cast<QComboBox *>(enumWidget->widgets[0]);
-  if (!valueComboBox)
-  {
-    ignerr << "Enum config widget doesn't have a QComboBox." << std::endl;
-    return false;
-  }
-
-  // Clear
-  valueComboBox->blockSignals(true);
-  valueComboBox->clear();
-  valueComboBox->blockSignals(false);
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::AddItemEnumWidget(const std::string &_name,
-    const std::string &_itemText)
-{
-  // Find widget
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter == this->dataPtr->configWidgets.end())
-    return false;
-
-  EnumWidget *enumWidget = dynamic_cast<EnumWidget *>(iter->second);
-
-  if (enumWidget->widgets.size() != 1u)
-  {
-    ignerr << "Enum config widget has wrong number of widgets." << std::endl;
-    return false;
-  }
-
-  QComboBox *valueComboBox = qobject_cast<QComboBox *>(enumWidget->widgets[0]);
-  if (!valueComboBox)
-  {
-    ignerr << "Enum config widget doesn't have a QComboBox." << std::endl;
-    return false;
-  }
-
-  // Add item
-  valueComboBox->blockSignals(true);
-  valueComboBox->addItem(QString::fromStdString(_itemText));
-  valueComboBox->blockSignals(false);
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::RemoveItemEnumWidget(const std::string &_name,
-    const std::string &_itemText)
-{
-  // Find widget
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter == this->dataPtr->configWidgets.end())
-    return false;
-
-  EnumWidget *enumWidget = dynamic_cast<EnumWidget *>(iter->second);
-
-  if (enumWidget->widgets.size() != 1u)
-  {
-    ignerr << "Enum config widget has wrong number of widgets." << std::endl;
-    return false;
-  }
-
-  QComboBox *valueComboBox = qobject_cast<QComboBox *>(enumWidget->widgets[0]);
-  if (!valueComboBox)
-  {
-    ignerr << "Enum config widget doesn't have a QComboBox." << std::endl;
-    return false;
-  }
-
-  // Remove item if exists, otherwise return false
-  int index = valueComboBox->findText(QString::fromStdString(
-      _itemText));
-  if (index < 0)
-    return false;
-
-  valueComboBox->blockSignals(true);
-  valueComboBox->removeItem(index);
-  valueComboBox->blockSignals(false);
-
-  return true;
 }
 
 /////////////////////////////////////////////////
