@@ -18,6 +18,7 @@
 #define IGNITION_GUI_MAINWINDOW_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
@@ -59,7 +60,8 @@ namespace ignition
       /// \param [in] _plugin Plugin filename
       private slots: void OnAddPlugin(QString _plugin);
 
-      /// \brief ToDo.
+      /// \brief Save configuration on disk.
+      /// \param[in] _path The destination path.
       private: void SaveImpl(const std::string &_path);
 
       /// \internal

@@ -81,7 +81,7 @@ std::vector<std::string> g_pluginPaths;
 /// \brief Window configuration
 WindowConfig g_windowConfig;
 
-/// \brief ToDo.
+/// \brief The path containing the default configuration file.
 std::string g_defaultConfigPath = "";
 
 /////////////////////////////////////////////////

@@ -60,9 +60,10 @@ MainWindow::MainWindow()
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
 
-  auto saveConfigAsAct = new QAction(tr("&Save configuration as"), this);
+  auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
   saveConfigAsAct->setStatusTip(tr("Save configuration as"));
-  this->connect(saveConfigAsAct, SIGNAL(triggered()), this, SLOT(OnSaveConfigAs()));
+  this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
+    SLOT(OnSaveConfigAs()));
   fileMenu->addAction(saveConfigAsAct);
 
   fileMenu->addSeparator();
@@ -214,19 +215,7 @@ void MainWindow::SaveImpl(const std::string &_path)
 
     // Open the file
   std::ofstream out(_path.c_str(), std::ios::out);
-
-  // if (!out)
-  // {
-  //   QMessageBox msgBox;
-  //   std::string str = "Unable to open file: " + _path;
-  //   str += ".\nCheck file permissions.";
-  //   msgBox.setText(str.c_str());
-  //   msgBox.exec();
-  // }
-  // else
-    out << config;
-
-  out.close();
+  out << config;
 
   ignmsg << "Saved configuration [" << _path << "]" << std::endl;
 }
