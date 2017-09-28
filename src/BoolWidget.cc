@@ -89,30 +89,16 @@ bool BoolWidget::SetValue(const QVariant _value)
 {
   bool value = _value.toBool();
 
-  if (this->widgets.size() == 2u)
-  {
-    qobject_cast<QRadioButton *>(this->widgets[0])->setChecked(value);
-    qobject_cast<QRadioButton *>(this->widgets[1])->setChecked(!value);
-    return true;
-  }
+  auto radios = this->findChildren<QRadioButton *>();
+  radios[0]->setChecked(value);
+  radios[1]->setChecked(!value);
 
-  ignerr << "Error updating bool widget, wrong number of child widgets: ["
-         << this->widgets.size() << std::endl;
-  return false;
+  return true;
 }
 
 /////////////////////////////////////////////////
 QVariant BoolWidget::Value() const
 {
-  bool value = false;
-  if (this->widgets.size() == 2u)
-  {
-    value = qobject_cast<QRadioButton *>(this->widgets[0])->isChecked();
-  }
-  else
-  {
-    ignerr << "Error getting value from bool widget, wrong number of child "
-           << "widgets: [" << this->widgets.size() << std::endl;
-  }
-  return value;
+  auto radios = this->findChildren<QRadioButton *>();
+  return radios[0]->isChecked();
 }

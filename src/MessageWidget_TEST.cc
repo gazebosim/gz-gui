@@ -16,7 +16,6 @@
 */
 
 #include <gtest/gtest.h>
-#include <QtTest/QtTest>
 
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>

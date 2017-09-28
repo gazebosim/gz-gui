@@ -115,12 +115,6 @@ namespace ignition
       public: bool AddPropertyWidget(const std::string &_name,
           PropertyWidget *_child);
 
-      /// \brief Insert a layout into the config widget's layout at a specific
-      /// position.
-      /// \param[in] _layout The layout to be inserted.
-      /// \param[in] _pos The position to insert at, 0 being the top.
-      public: void InsertLayout(QLayout *_layout, int _pos);
-
       /// \brief Get a config child widget by its name.
       /// \param[in] _name Scoped name of the child widget.
       /// \return The child widget with the given name or nullptr if it wasn't
@@ -131,16 +125,6 @@ namespace ignition
       /// \brief Get the number of child widgets.
       /// \return The number of child widgets.
       public: unsigned int PropertyWidgetCount() const;
-
-      /// \brief Get a style sheet in string format, to be applied to a child
-      /// config widget with setStyleSheet.
-      /// \param[in] _type Type of style sheet, such as "warning", "active",
-      /// "normal".
-      /// \param[in] _level Level of widget in the tree.
-      /// \return Style sheet as string. Returns an empty string if _type is
-      /// unknown.
-      public: static QString StyleSheet(const std::string &_type,
-          const int _level = 0);
 
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update the widgets with values
@@ -155,30 +139,11 @@ namespace ignition
           bool _update = false, const std::string &_name = "",
           const int _level = 0);
 
-      /// \brief Parse a vector3 message.
-      /// param[in] _msg Input vector3d message.
-      /// return Parsed vector.
-      private: math::Vector3d ParseVector3d(
-          const google::protobuf::Message *_msg) const;
-
       /// \brief Update the message field using values from the widgets.
       /// \param[in] _msg Message to be updated.
       /// \param[in] _name Name of parent widget.
       private: void UpdateMsg(google::protobuf::Message *_msg,
           const std::string &_name = "");
-
-      /// \brief Update a vector3d message.
-      /// \param[in] _msg Vector3d message to be updated.
-      /// \param[in] _value ignition math Vector3d used for updating the
-      /// message.
-      private: void UpdateVector3dMsg(google::protobuf::Message *_msg,
-          const math::Vector3d &_value);
-
-      /// \brief Received item selection user input.
-      /// \param[in] _item Item selected.
-      /// \param[in] _column Column index.
-      private slots: void OnItemSelection(QTreeWidgetItem *_item,
-          const int _column);
 
       /// \brief Signal emitted when mass value changes.
       /// \param[in] _value Mass value.
