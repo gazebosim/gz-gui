@@ -21,12 +21,12 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/EnumIface.hh>
-#include <ignition/common/MaterialDensity.hh>
 
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
+#include "ignition/gui/DensityWidget.hh"
 #include "ignition/gui/EnumWidget.hh"
 #include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Helpers.hh"
@@ -199,18 +199,6 @@ bool MessageWidget::SetPropertyValue(const std::string &_name,
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::SetDensityWidgetValue(const std::string &_name,
-    const double _value)
-{
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-    return this->UpdateDensityWidget(iter->second, _value);
-
-  return false;
-}
-
-/////////////////////////////////////////////////
 QVariant MessageWidget::PropertyValue(const std::string &_name) const
 {
   std::map <std::string, PropertyWidget *>::const_iterator iter =
@@ -220,23 +208,6 @@ QVariant MessageWidget::PropertyValue(const std::string &_name) const
     return QVariant();
 
   return iter->second->Value();
-}
-
-/////////////////////////////////////////////////
-double MessageWidget::DensityWidgetValue(const std::string &_name) const
-{
-  double value = 0.0;
-  auto iter = this->dataPtr->configWidgets.find(_name);
-
-  if (iter != this->dataPtr->configWidgets.end())
-  {
-    DensityWidget *widget =
-        qobject_cast<DensityWidget *>(iter->second);
-
-    if (widget)
-      value = widget->Density();
-  }
-  return value;
 }
 
 /////////////////////////////////////////////////
@@ -298,16 +269,16 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
               new NumberWidget(name, _level, NumberWidget::DOUBLE);
 
           // TODO: handle this better
-          if (name == "mass")
-          {
-            auto valueSpinBox = qobject_cast<QDoubleSpinBox *>(
-                configChildWidget->widgets[0]);
-            if (valueSpinBox)
-            {
-              this->connect(valueSpinBox, SIGNAL(valueChanged(double)),
-                  this, SLOT(OnMassValueChanged(double)));
-            }
-          }
+//          if (name == "mass")
+//          {
+//            auto valueSpinBox = qobject_cast<QDoubleSpinBox *>(
+//                configChildWidget->widgets[0]);
+//            if (valueSpinBox)
+//            {
+//              this->connect(valueSpinBox, SIGNAL(valueChanged(double)),
+//                  this, SLOT(OnMassValueChanged(double)));
+//            }
+//          }
           newFieldWidget = configChildWidget;
         }
 
@@ -532,11 +503,12 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
           configChildWidget->SetValue(v);
         }
         // parse and create custom density widgets
+        // TODO: How do we get here?
         else if (field->message_type()->name() == "Density")
         {
           if (newWidget)
           {
-            configChildWidget = this->CreateDensityWidget(name, _level);
+            configChildWidget = new DensityWidget(name, _level);
             newFieldWidget = configChildWidget;
           }
           auto valueDescriptor = valueMsg->GetDescriptor();
@@ -552,7 +524,7 @@ QWidget *MessageWidget::Parse(google::protobuf::Message *_msg,
               density = valueMsg->GetReflection()->GetDouble(
                   *valueMsg, valueField);
           }
-          this->UpdateDensityWidget(configChildWidget, density);
+          configChildWidget->SetValue(density);
         }
         else
         {
@@ -699,78 +671,6 @@ math::Vector3d MessageWidget::ParseVector3d(
   vec3.Y(values[1]);
   vec3.Z(values[2]);
   return vec3;
-}
-
-/////////////////////////////////////////////////
-PropertyWidget *MessageWidget::CreateDensityWidget(
-    const std::string &/*_key*/, const int _level)
-{
-  auto densityLabel = new QLabel(tr("Density"));
-  densityLabel->setToolTip(tr("density"));
-
-  auto comboBox = new QComboBox;
-  size_t minLen = 0;
-
-//  for (const auto &it : common::MaterialDensity::Materials())
-//  {
-//    minLen = std::max(minLen,
-//        common::EnumIface<common::MaterialDensity::Type>::Str(
-//        it.first).length());
-//
-//    comboBox->addItem(tr(
-//          common::EnumIface<common::MaterialDensity::Type>::Str(
-//          it.first).c_str()),
-//        QVariant::fromValue(it.second));
-//  }
-
-  comboBox->addItem(tr("Custom..."));
-  // Longest entry plus check box and space
-  comboBox->setMinimumContentsLength(minLen+2);
-
-  double min = 0;
-  double max = 0;
-  rangeFromKey("density", min, max);
-
-  auto spinBox = new QDoubleSpinBox;
-  spinBox->setRange(min, max);
-  spinBox->setSingleStep(0.1);
-  spinBox->setDecimals(1);
-  spinBox->setValue(1.0);
-  spinBox->setAlignment(Qt::AlignRight);
-  spinBox->setMaximumWidth(100);
-
-  std::string unit = unitFromKey("density");
-  auto unitLabel = new QLabel(QString::fromStdString(unit));
-
-  auto widgetLayout = new QHBoxLayout;
-
-  widgetLayout->addSpacing((_level+1)*20);
-  widgetLayout->addWidget(densityLabel);
-  widgetLayout->addStretch();
-  widgetLayout->addWidget(comboBox);
-  widgetLayout->addWidget(spinBox);
-  widgetLayout->addWidget(unitLabel);
-
-  DensityWidget *widget = new DensityWidget;
-  widget->setFrameStyle(QFrame::Box);
-  widget->setLayout(widgetLayout);
-
-  widget->comboBox = comboBox;
-  widget->spinBox = spinBox;
-
-  this->connect(comboBox, SIGNAL(currentIndexChanged(const QString &)),
-      widget, SLOT(OnComboBoxChanged(const QString &)));
-
-  this->connect(spinBox, SIGNAL(valueChanged(const QString &)),
-      widget, SLOT(OnSpinBoxChanged(const QString &)));
-
-  this->connect(widget, SIGNAL(DensityValueChanged(const double)),
-      this, SLOT(OnDensityValueChanged(const double)));
-
-  widget->widgets.push_back(comboBox);
-  widget->widgets.push_back(spinBox);
-
-  return widget;
 }
 
 /////////////////////////////////////////////////
@@ -970,19 +870,14 @@ void MessageWidget::UpdateMsg(google::protobuf::Message *_msg,
                 valueSpinBox->value());
           }
         }
+        // TODO: density?!
         else if (field->message_type()->name() == "Density")
         {
-          DensityWidget *densityWidget =
-              qobject_cast<DensityWidget *>(childWidget);
-
-          auto valueDescriptor =
-              valueMsg->GetDescriptor();
-
-          auto densityField =
-                          valueDescriptor->FindFieldByName("density");
-
+          auto densityWidget = qobject_cast<DensityWidget *>(childWidget);
+          auto valueDescriptor = valueMsg->GetDescriptor();
+          auto densityField = valueDescriptor->FindFieldByName("density");
           valueMsg->GetReflection()->SetDouble(valueMsg, densityField,
-              densityWidget->Density());
+              densityWidget->Value().toDouble());
         }
         else
         {
@@ -1037,21 +932,6 @@ void MessageWidget::UpdateVector3dMsg(google::protobuf::Message *_msg,
     }
     _msg->GetReflection()->SetDouble(_msg, valueField, values[i]);
   }
-}
-
-/////////////////////////////////////////////////
-bool MessageWidget::UpdateDensityWidget(PropertyWidget *_widget,
-          const double _value)
-{
-  DensityWidget *densityWidget =
-      qobject_cast<DensityWidget *>(_widget);
-
-  if (densityWidget)
-  {
-    densityWidget->SetDensity(_value);
-    return true;
-  }
-  return false;
 }
 
 /////////////////////////////////////////////////
@@ -1131,72 +1011,6 @@ bool MessageWidget::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 /////////////////////////////////////////////////
-void MessageWidget::OnDensityValueChanged(const double _value)
-{
-  emit DensityValueChanged(_value);
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::OnMassValueChanged(const double _value)
-{
-  emit MassValueChanged(_value);
-}
-
-/////////////////////////////////////////////////
-void DensityWidget::OnComboBoxChanged(const QString &/*_text*/)
-{
-  QVariant variant = this->comboBox->itemData(this->comboBox->currentIndex());
-  this->SetDensity(variant.toDouble());
-}
-
-/////////////////////////////////////////////////
-void DensityWidget::OnSpinBoxChanged(const QString &/*_text*/)
-{
-  this->SetDensity(this->spinBox->value());
-}
-
-/////////////////////////////////////////////////
-void DensityWidget::SetDensity(const double _density)
-{
-  bool comboSigState = this->comboBox->blockSignals(true);
-  bool spinSigState = this->spinBox->blockSignals(true);
-  {
-    common::MaterialDensity::Type type;
-    double matDensity;
-
-    // Get the material closest to _density
-    std::tie(type, matDensity) = common::MaterialDensity::Nearest(
-        _density, 1.0);
-
-    if (matDensity >= 0)
-    {
-//    this->comboBox->setCurrentIndex(
-//        this->comboBox->findText(tr(
-//            common::EnumIface<common::MaterialDensity::Type>::Str(
-//            type).c_str())));
-    }
-    else
-    {
-      this->comboBox->setCurrentIndex(
-          this->comboBox->count()-1);
-    }
-
-    this->spinBox->setValue(_density);
-    this->density = _density;
-  }
-  this->comboBox->blockSignals(comboSigState);
-  this->spinBox->blockSignals(spinSigState);
-
-  emit DensityValueChanged(this->density);
-}
-
-/////////////////////////////////////////////////
-double DensityWidget::Density() const
-{
-  return this->density;
-}
-
-/////////////////////////////////////////////////
 void MessageWidget::InsertLayout(QLayout *_layout, int _pos)
 {
   QGroupBox *box = qobject_cast<QGroupBox *>(
@@ -1258,7 +1072,3 @@ QString MessageWidget::StyleSheet(const std::string &_type, const int _level)
   return "";
 }
 
-/////////////////////////////////////////////////
-DensityWidget::DensityWidget()
-{
-}

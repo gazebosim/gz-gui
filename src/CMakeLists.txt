@@ -5,6 +5,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/CollapsibleWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ColorWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/DensityWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/EnumWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/GeometryWidget.cc
