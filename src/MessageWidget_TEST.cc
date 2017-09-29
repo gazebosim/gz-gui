@@ -1034,41 +1034,47 @@ TEST(MessageWidgetTest, MessageWidgetReadOnly)
   delete visualMessageWidget;
   EXPECT_TRUE(stop());
 }
-/*
+
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildUIntSignal)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::UInt32();
+  msg->set_data(42);
 
-  // Create child uint widget
-  auto uintWidget = new NumberWidget("uint", 0, NumberWidget::UINT);
-  EXPECT_TRUE(uintWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("uint", uintWidget));
+  // Check we got a uint widget
+  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto uintWidget = qobject_cast<NumberWidget *>(propWidget);
+  EXPECT_NE(uintWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
   messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
     [&signalReceived](const std::string &_name, const QVariant _uint)
     {
-      EXPECT_EQ(_name, "uint");
-      EXPECT_EQ(_uint, 3);
+      EXPECT_EQ(_name, "data");
+      EXPECT_EQ(_uint, 88888);
       signalReceived = true;
     });
 
   // Check default uint
-  EXPECT_EQ(messageWidget->PropertyValue("uint"), 0u);
+  EXPECT_EQ(messageWidget->PropertyValue("data"), 42u);
 
   // Get signal emitting widgets
   auto spins = uintWidget->findChildren<QSpinBox *>();
   EXPECT_EQ(spins.size(), 1);
 
   // Change the value and check new value at callback
-  spins[0]->setValue(3);
+  spins[0]->setValue(88888);
   spins[0]->editingFinished();
 
   // Check callback was called
@@ -1084,34 +1090,40 @@ TEST(MessageWidgetTest, ChildIntSignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Int32();
+  msg->set_data(-989);
 
-  // Create child int widget
-  auto intWidget = new NumberWidget("int", 0, NumberWidget::INT);
-  EXPECT_TRUE(intWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("int", intWidget));
+  // Check we got a uint widget
+  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto intWidget = qobject_cast<NumberWidget *>(propWidget);
+  EXPECT_NE(intWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
   messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
-    [&signalReceived](const std::string &_name, const QVariant _int)
+    [&signalReceived](const std::string &_name, const QVariant _v)
     {
-      EXPECT_EQ(_name, "int");
-      EXPECT_EQ(_int, -2);
+      EXPECT_EQ(_name, "data");
+      EXPECT_EQ(_v, 2000);
       signalReceived = true;
     });
 
   // Check default int
-  EXPECT_EQ(messageWidget->PropertyValue("int"), 0);
+  EXPECT_EQ(messageWidget->PropertyValue("data"), -989);
 
   // Get signal emitting widgets
-  QList<QSpinBox *> spins = intWidget->findChildren<QSpinBox *>();
+  auto spins = intWidget->findChildren<QSpinBox *>();
   EXPECT_EQ(spins.size(), 1);
 
   // Change the value and check new value at callback
-  spins[0]->setValue(-2);
+  spins[0]->setValue(2000);
   spins[0]->editingFinished();
 
   // Check callback was called
@@ -1127,14 +1139,20 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Double();
+  msg->set_data(-0.123);
 
-  // Create child double widget
-  auto doubleWidget = new NumberWidget("double", 0, NumberWidget::DOUBLE);
-  EXPECT_TRUE(doubleWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("double", doubleWidget));
+  // Check we got a double widget
+  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto doubleWidget = qobject_cast<NumberWidget *>(propWidget);
+  EXPECT_NE(doubleWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -1142,13 +1160,13 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       double d = _var.toDouble();
-      EXPECT_EQ(_name, "double");
+      EXPECT_EQ(_name, "data");
       EXPECT_TRUE(fabs(d - 1.5) < 0.00001);
       signalReceived = true;
     });
 
   // Check default double
-  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("double").toDouble(), 0.0);
+  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("data").toDouble(), -0.123);
 
   // Get signal emitting widgets
   auto spins = doubleWidget->findChildren<QDoubleSpinBox *>();
@@ -1164,7 +1182,6 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-*/
 
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildBoolSignal)
@@ -1215,21 +1232,27 @@ TEST(MessageWidgetTest, ChildBoolSignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-/*
+
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildStringSignal)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::StringMsg();
+  msg->set_data("banana");
 
-  // Create child string widget
-  auto stringWidget = new StringWidget("string");
-  EXPECT_TRUE(stringWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("string", stringWidget));
+  // Check we got a string widget
+  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto stringWidget = qobject_cast<StringWidget *>(propWidget);
+  EXPECT_NE(stringWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -1237,8 +1260,8 @@ TEST(MessageWidgetTest, ChildStringSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<std::string>();
-      EXPECT_EQ(_name, "string");
-      EXPECT_EQ(v, "new text");
+      EXPECT_EQ(_name, "data");
+      EXPECT_EQ(v, "orange");
       signalReceived = true;
     });
 
@@ -1250,7 +1273,7 @@ TEST(MessageWidgetTest, ChildStringSignal)
   EXPECT_EQ(lineEdits.size(), 1);
 
   // Change the value and check new value at callback
-  lineEdits[0]->setText("new text");
+  lineEdits[0]->setText("orange");
   lineEdits[0]->editingFinished();
 
   // Check callback was called
@@ -1266,14 +1289,22 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Vector3d();
+  msg->set_x(1);
+  msg->set_y(-2);
+  msg->set_z(3);
 
-  // Create child vector3 widget
-  auto vector3Widget = new Vector3dWidget("vector3");
-  EXPECT_TRUE(vector3Widget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("vector3", vector3Widget));
+  // Check we got a vector 3d widget
+  auto propWidget = messageWidget->PropertyWidgetByName("");
+  ASSERT_NE(propWidget, nullptr);
+
+  auto vector3Widget = qobject_cast<Vector3dWidget *>(propWidget);
+  ASSERT_NE(vector3Widget, nullptr);
 
   // Connect signals
   int vector3SignalCount = 0;
@@ -1282,12 +1313,12 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
     {
       auto v = _var.value<ignition::math::Vector3d>();
 
-      EXPECT_EQ(_name, "vector3");
+      EXPECT_EQ(_name, "");
 
       // From spins
       if (vector3SignalCount == 0)
       {
-        EXPECT_EQ(v, math::Vector3d(2.5, 0, 0));
+        EXPECT_EQ(v, math::Vector3d(2.5, -2, 3));
         vector3SignalCount++;
       }
       // From preset combo
@@ -1299,8 +1330,8 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
     });
 
   // Check default vector3
-  EXPECT_EQ(messageWidget->PropertyValue("vector3").value<math::Vector3d>(),
-      math::Vector3d());
+  EXPECT_EQ(messageWidget->PropertyValue("").value<math::Vector3d>(),
+      math::Vector3d(1, -2, 3));
 
   // Get axes spins
   auto spins = vector3Widget->findChildren<QDoubleSpinBox *>();
@@ -1330,14 +1361,23 @@ TEST(MessageWidgetTest, ChildColorSignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Color();
+  msg->set_r(0.1);
+  msg->set_g(0.2);
+  msg->set_b(0.3);
+  msg->set_a(0.4);
 
-  // Create child color widget
-  auto colorWidget = new ColorWidget();
-  EXPECT_TRUE(colorWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("color", colorWidget));
+  // Check we got a color widget
+  auto propWidget = messageWidget->PropertyWidgetByName("");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto colorWidget = qobject_cast<ColorWidget *>(propWidget);
+  EXPECT_NE(colorWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -1345,21 +1385,21 @@ TEST(MessageWidgetTest, ChildColorSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<math::Color>();
-      EXPECT_EQ(_name, "color");
-      EXPECT_EQ(v, math::Color(0.5, 0.0, 0.0, 1.0));
+      EXPECT_EQ(_name, "");
+      EXPECT_EQ(v, math::Color(1.0, 0.2, 0.3, 0.4));
       signalReceived = true;
     });
 
   // Check default color (opaque white)
-  EXPECT_EQ(messageWidget->PropertyValue("color").value<math::Color>(),
-      math::Color());
+  EXPECT_EQ(messageWidget->PropertyValue("").value<math::Color>(),
+      math::Color(0.1, 0.2, 0.3, 0.4));
 
   // Get signal emitting widgets
   auto spins = colorWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 4);
 
   // Change the X value and check new value at callback
-  spins[0]->setValue(0.5);
+  spins[0]->setValue(1.0);
   spins[0]->editingFinished();
 
   // Check callback was called
@@ -1375,14 +1415,24 @@ TEST(MessageWidgetTest, ChildPoseSignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Pose();
+  msg->mutable_position()->set_x(0.1);
+  msg->mutable_position()->set_y(0.2);
+  msg->mutable_position()->set_z(0.3);
+  msgs::Set(msg->mutable_orientation(),
+            math::Quaterniond(-0.4, -0.5, -0.6));
 
-  // Create child pose widget
-  auto poseWidget = new Pose3dWidget();
-  EXPECT_TRUE(poseWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("pose", poseWidget));
+  // Check we got a pose widget
+  auto propWidget = messageWidget->PropertyWidgetByName("");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto poseWidget = qobject_cast<Pose3dWidget *>(propWidget);
+  EXPECT_NE(poseWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -1390,14 +1440,14 @@ TEST(MessageWidgetTest, ChildPoseSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<math::Pose3d>();
-      EXPECT_EQ(_name, "pose");
-      EXPECT_EQ(v, math::Pose3d(1, 0, 0, 0, 0, 0));
+      EXPECT_EQ(_name, "");
+      EXPECT_EQ(v, math::Pose3d(1.0, 0.2, 0.3, -0.4, -0.5, -0.6));
       signalReceived = true;
     });
 
   // Check default pose
-  EXPECT_EQ(messageWidget->PropertyValue("pose").value<math::Pose3d>(),
-      math::Pose3d());
+  EXPECT_EQ(messageWidget->PropertyValue("").value<math::Pose3d>(),
+      math::Pose3d(0.1, 0.2, 0.3, -0.4, -0.5, -0.6));
 
   // Get signal emitting widgets
   auto spins = poseWidget->findChildren<QDoubleSpinBox *>();
@@ -1420,14 +1470,23 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Geometry();
+  msg->set_type(msgs::Geometry::CYLINDER);
+  auto cylinder = msg->mutable_cylinder();
+  cylinder->set_length(10.0);
+  cylinder->set_radius(0.5);
 
-  // Create child widget
-  auto geometryWidget = new GeometryWidget();
-  EXPECT_TRUE(geometryWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("geometry", geometryWidget));
+  // Check we got a geometry widget
+  auto propWidget = messageWidget->PropertyWidgetByName("");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto geometryWidget = qobject_cast<GeometryWidget *>(propWidget);
+  EXPECT_NE(geometryWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -1435,24 +1494,25 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<msgs::Geometry>();
-      EXPECT_EQ(_name, "geometry");
-      EXPECT_EQ(v.type(), msgs::Geometry::BOX);
-      EXPECT_EQ(msgs::Convert(v.box().size()), math::Vector3d(2, 1, 1));
+      EXPECT_EQ(_name, "");
+      EXPECT_EQ(v.type(), msgs::Geometry::CYLINDER);
+      EXPECT_DOUBLE_EQ(v.cylinder().radius(), 2.0);
       signalReceived = true;
     });
 
-  // Check default
-  auto value = messageWidget->PropertyValue("geometry").value<msgs::Geometry>();
-  EXPECT_EQ(value.type(), msgs::Geometry::BOX);
-  EXPECT_EQ(msgs::Convert(value.box().size()), math::Vector3d::One);
+  // Check value
+  auto value = messageWidget->PropertyValue("").value<msgs::Geometry>();
+  EXPECT_EQ(value.type(), msgs::Geometry::CYLINDER);
+  EXPECT_DOUBLE_EQ(value.cylinder().length(), 10.0);
+  EXPECT_DOUBLE_EQ(value.cylinder().radius(), 0.5);
 
   // Get signal emitting widgets
   auto spins = geometryWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 5);
 
   // Change the value and check new value at callback
-  spins[2]->setValue(2.0);
-  spins[2]->editingFinished();
+  spins[3]->setValue(2.0);
+  spins[3]->editingFinished();
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);
@@ -1460,7 +1520,6 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-*/
 
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildEnumSignal)
@@ -1517,43 +1576,35 @@ TEST(MessageWidgetTest, ChildEnumSignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-/*
+
 /////////////////////////////////////////////////
-TEST(MessageWidgetTest, GetPropertyByName)
+TEST(MessageWidgetTest, PropertyByName)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  // Create message widget and check it has no children
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Boolean();
+  msg->set_data(false);
+
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
   EXPECT_TRUE(messageWidget != nullptr);
-  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 0u);
 
-  // Try to get a child widget by name
-  auto widget = messageWidget->PropertyWidgetByName("child_widget");
-  EXPECT_EQ(widget, nullptr);
+  // Get generated widgets by name
+  for (auto name : {"header", "header::stamp", "header::stamp::sec",
+      "header::stamp::nsec", "data"})
+  {
+    EXPECT_NE(messageWidget->PropertyWidgetByName(name), nullptr);
+  }
 
-  widget = messageWidget->PropertyWidgetByName("");
-  EXPECT_EQ(widget, nullptr);
-
-  // Create child widget
-  auto childWidget = new BoolWidget("child_widget");
-  EXPECT_TRUE(childWidget != nullptr);
-
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("child_widget", childWidget));
-  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 1u);
-
-  // Get the widget by name
-  widget = messageWidget->PropertyWidgetByName("child_widget");
-  EXPECT_TRUE(widget != nullptr);
-
-  // Check that a bad name returns nullptr
-  widget = messageWidget->PropertyWidgetByName("bad_name");
-  EXPECT_EQ(widget, nullptr);
+  // Fail with invalid names
+  for (auto name : {"", "banana"})
+  {
+    EXPECT_EQ(messageWidget->PropertyWidgetByName(name), nullptr);
+  }
 
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
 
-*/

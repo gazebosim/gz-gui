@@ -766,10 +766,9 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 bool MessageWidget::AddPropertyWidget(const std::string &_name,
     PropertyWidget *_child)
 {
-  if (_name.empty() || _child == nullptr)
+  if (_child == nullptr)
   {
-    ignerr << "Given name [" << _name <<
-        "] or child is invalid. Not adding child widget." << std::endl;
+    ignerr << "Null child, not adding widget." << std::endl;
     return false;
   }
   if (this->dataPtr->properties.find(_name) !=
