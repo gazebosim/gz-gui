@@ -80,7 +80,7 @@ namespace ignition
     /// \brief Specifies the location of the default configuration file.
     /// This is the file that stores the user settings when pressing
     /// "Save configuration".
-    /// \param[in] _path The default configuration path.
+    /// \param[in] _path The default configuration full path including filename.
     /// \sa loadDefaultConfig
     /// \sa defaultConfigPath
     IGNITION_GUI_VISIBLE

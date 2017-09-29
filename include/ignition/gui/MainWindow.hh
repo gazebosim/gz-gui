@@ -61,7 +61,7 @@ namespace ignition
       private slots: void OnAddPlugin(QString _plugin);
 
       /// \brief Save configuration on disk.
-      /// \param[in] _path The destination path.
+      /// \param[in] _path The full destination path including filename.
       private: void SaveImpl(const std::string &_path);
 
       /// \internal
