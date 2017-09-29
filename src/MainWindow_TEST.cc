@@ -17,13 +17,13 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/Plugin.hh"
 
 #include "ignition/gui/MainWindow.hh"
+
+std::string kTestConfigFile = "/tmp/ign-gui-test.config";
 
 using namespace ignition;
 using namespace gui;
@@ -54,7 +54,7 @@ TEST(MainWindowTest, OnSaveConfig)
   EXPECT_TRUE(initApp());
 
   // Change default config path
-  setDefaultConfigPath("/tmp/ign-gui-test.config");
+  setDefaultConfigPath(kTestConfigFile);
 
   // Create window
   auto mainWindow = new MainWindow;
@@ -73,7 +73,7 @@ TEST(MainWindowTest, OnSaveConfig)
     saveAct->trigger();
 
     // Check saved file
-    QFile saved("/tmp/ign-gui-test.config");
+    QFile saved(QString::fromStdString(kTestConfigFile));
     ASSERT_TRUE(saved.open(QFile::ReadOnly));
 
     QString savedStr = QLatin1String(saved.readAll());
@@ -87,7 +87,7 @@ TEST(MainWindowTest, OnSaveConfig)
     EXPECT_TRUE(savedStr.contains("<state>"));
 
     // Delete file
-    std::remove("/tmp/ign-gui-test.config");
+    std::remove(kTestConfigFile.c_str());
   }
 
   delete mainWindow;
@@ -141,7 +141,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
       // Select file
       auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
       ASSERT_GT(edits.size(), 0);
-      edits[0]->setText(QString("/tmp/ign-gui-test.config"));
+      edits[0]->setText(QString::fromStdString(kTestConfigFile));
 
       // Accept
       auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
@@ -154,7 +154,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
     saveAct->trigger();
 
     // Check saved file
-    QFile saved("/tmp/ign-gui-test.config");
+    QFile saved(QString::fromStdString(kTestConfigFile));
     ASSERT_TRUE(saved.open(QFile::ReadOnly));
 
     QString savedStr = QLatin1String(saved.readAll());
@@ -168,7 +168,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
     EXPECT_TRUE(savedStr.contains("<state>"));
 
     // Delete file
-    std::remove("/tmp/ign-gui-test.config");
+    std::remove(kTestConfigFile.c_str());
 
     EXPECT_TRUE(closed);
   }
