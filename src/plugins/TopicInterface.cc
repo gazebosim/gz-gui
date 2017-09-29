@@ -31,7 +31,8 @@ namespace plugins
 {
   class TopicInterfacePrivate
   {
-    public: MessageWidget *config;
+    public: MessageWidget *msgWidget;
+
     /// \brief Mutex to protect message buffer.
     public: std::mutex mutex;
 
@@ -83,8 +84,22 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
             << topic << "]." << std::endl;
   }
 
+  // Global read-only
+  bool readOnly = false;
+  if (auto readElem = _pluginElem->FirstChildElement("read_only"))
+    readElem->QueryBoolText(&readOnly);
+
+  // Visibility per widget
+  std::vector<std::string> hideWidgets;
+  for (auto hideWidgetElem = _pluginElem->FirstChildElement("hide_widget");
+      hideWidgetElem != nullptr;
+      hideWidgetElem = hideWidgetElem->NextSiblingElement("hide_widget"))
+  {
+    hideWidgets.push_back(hideWidgetElem->GetText());
+  }
+
   // Config widget
-  this->dataPtr->config = new MessageWidget();
+  this->dataPtr->msgWidget = new MessageWidget();
 
   if (!msgType.empty())
   {
@@ -97,13 +112,16 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
     else
     {
-      this->dataPtr->config->Load(&*msg);
+      this->dataPtr->msgWidget->Load(&*msg);
+      this->dataPtr->msgWidget->SetReadOnly(readOnly);
+      for (auto w : hideWidgets)
+        this->dataPtr->msgWidget->SetWidgetVisible(w, false);
     }
   }
 
   // Layout
   auto layout = new QVBoxLayout();
-  layout->addWidget(this->dataPtr->config);
+  layout->addWidget(this->dataPtr->msgWidget);
   this->setLayout(layout);
 
   // Subscribe
@@ -118,10 +136,10 @@ void TopicInterface::OnMessage(const google::protobuf::Message &_msg)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  if (this->dataPtr->config->PropertyWidgetCount() == 0)
-    this->dataPtr->config->Load(&_msg);
+  if (this->dataPtr->msgWidget->PropertyWidgetCount() == 0)
+    this->dataPtr->msgWidget->Load(&_msg);
   else
-    this->dataPtr->config->UpdateFromMsg(&_msg);
+    this->dataPtr->msgWidget->UpdateFromMsg(&_msg);
 }
 
 // Register this plugin

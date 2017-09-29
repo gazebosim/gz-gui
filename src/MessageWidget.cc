@@ -17,6 +17,7 @@
 
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
+
 #include <ignition/math/Helpers.hh>
 
 #include <ignition/msgs.hh>
@@ -51,7 +52,7 @@ namespace ignition
       public: std::map <std::string, PropertyWidget *> properties;
 
       /// \brief A copy of the message with fields to be configured by widgets.
-      public: google::protobuf::Message *msg;
+      public: google::protobuf::Message *msg = nullptr;
     };
   }
 }
@@ -63,8 +64,6 @@ using namespace gui;
 MessageWidget::MessageWidget()
   : dataPtr(new MessageWidgetPrivate())
 {
-  this->dataPtr->msg = nullptr;
-  this->setObjectName("configWidget");
 }
 
 /////////////////////////////////////////////////
@@ -151,9 +150,9 @@ bool MessageWidget::WidgetVisible(const std::string &_name) const
   if (!w)
     return false;
 
-  auto groupWidget = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (groupWidget)
-    return groupWidget->isVisible();
+  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsbleParent)
+    return collapsbleParent->isVisible();
 
   return w->isVisible();
 }
@@ -166,11 +165,36 @@ void MessageWidget::SetWidgetVisible(const std::string &_name,
   if (!w)
     return;
 
-  auto groupWidget = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (groupWidget)
-    groupWidget->setVisible(_visible);
+  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsbleParent)
+    collapsbleParent->setVisible(_visible);
   else
     w->setVisible(_visible);
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::ReadOnly() const
+{
+  // Not read-only if there's at least one enabled widget
+  for (auto p : this->dataPtr->properties)
+  {
+    auto collapsible = qobject_cast<CollapsibleWidget *>(p.second);
+    if (!collapsible && p.second->isEnabled())
+      return false;
+  }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+void MessageWidget::SetReadOnly(const bool _readOnly)
+{
+  for (auto p : this->dataPtr->properties)
+  {
+    auto collapsible = qobject_cast<CollapsibleWidget *>(p.second);
+    if (!collapsible)
+      p.second->setEnabled(!_readOnly);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -180,9 +204,9 @@ bool MessageWidget::WidgetReadOnly(const std::string &_name) const
   if (!w)
     return false;
 
-  auto groupWidget = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (groupWidget)
-    return !groupWidget->isEnabled();
+  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsbleParent)
+    return !collapsbleParent->isEnabled();
 
   return !w->isEnabled();
 }
@@ -195,15 +219,15 @@ void MessageWidget::SetWidgetReadOnly(const std::string &_name,
   if (!w)
     return;
 
-  auto groupWidget = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (groupWidget)
+  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsbleParent)
   {
-    groupWidget->setEnabled(!_readOnly);
+    collapsbleParent->setEnabled(!_readOnly);
 
     // Qt docs: "Disabling a widget implicitly disables all its children.
     // Enabling respectively enables all child widgets unless they have
     // been explicitly disabled."
-    auto childWidgets = groupWidget->findChildren<QWidget *>();
+    auto childWidgets = collapsbleParent->findChildren<QWidget *>();
     for (auto widget : childWidgets)
       widget->setEnabled(!_readOnly);
 

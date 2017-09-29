@@ -81,9 +81,17 @@ namespace ignition
       /// \return True if the widget is visible.
       public: bool WidgetVisible(const std::string &_name) const;
 
+      /// \brief Set whether all child widgets should be read-only.
+      /// \param[in] _readOnly True for read-only.
+      public: void SetReadOnly(const bool _readOnly);
+
+      /// \brief Get whether all child widgets are read-only.
+      /// \param[in] _readOnly True for read-only.
+      public: bool ReadOnly() const;
+
       /// \brief Set whether a child widget should be read-only.
       /// \param[in] _name Name of the child widget.
-      /// \param[in] _visible True to set the widget to be read-only.
+      /// \param[in] _readOnly True to set the widget to be read-only.
       public: void SetWidgetReadOnly(const std::string &_name,
                                      const bool _readOnly);
 

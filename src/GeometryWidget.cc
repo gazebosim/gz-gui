@@ -151,7 +151,7 @@ GeometryWidget::GeometryWidget()
   filenameLabel->setToolTip(tr("uri"));
   auto filenameLineEdit = new QLineEdit(this);
   this->connect(filenameLineEdit, SIGNAL(editingFinished()), this,
-      SLOT(OnGeometryValueChanged()));
+      SLOT(OnValueChanged()));
   auto filenameButton = new QPushButton(tr("..."));
   filenameButton->setMaximumWidth(30);
 
@@ -184,7 +184,7 @@ GeometryWidget::GeometryWidget()
   radiusSpinBox->setAlignment(Qt::AlignRight);
   radiusSpinBox->setMaximumWidth(100);
   this->connect(radiusSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnGeometryValueChanged()));
+      SLOT(OnValueChanged()));
 
   auto lengthSpinBox = new QDoubleSpinBox(this);
   lengthSpinBox->setObjectName("length");
@@ -195,7 +195,7 @@ GeometryWidget::GeometryWidget()
   lengthSpinBox->setAlignment(Qt::AlignRight);
   lengthSpinBox->setMaximumWidth(100);
   this->connect(lengthSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnGeometryValueChanged()));
+      SLOT(OnValueChanged()));
 
   auto rLLayout = new QHBoxLayout;
   rLLayout->addWidget(radiusLabel);
@@ -240,24 +240,6 @@ GeometryWidget::GeometryWidget()
   filenameButton->setVisible(false);
 
   this->connect(filenameButton, SIGNAL(clicked()), this, SLOT(OnSelectFile()));
-
-  this->connect(this, SIGNAL(GeometryChanged()),
-      this, SLOT(OnGeometryChanged()));
-
-  this->connect(sizeXSpinBox, SIGNAL(valueChanged(double)),
-      this, SLOT(OnValueChanged()));
-
-  this->connect(sizeYSpinBox, SIGNAL(valueChanged(double)),
-      this, SLOT(OnValueChanged()));
-
-  this->connect(sizeZSpinBox, SIGNAL(valueChanged(double)),
-      this, SLOT(OnValueChanged()));
-
-  this->connect(radiusSpinBox, SIGNAL(valueChanged(double)),
-      this, SLOT(OnValueChanged()));
-
-  this->connect(lengthSpinBox, SIGNAL(valueChanged(double)),
-      this, SLOT(OnValueChanged()));
 
   this->setLayout(widgetLayout);
 }
