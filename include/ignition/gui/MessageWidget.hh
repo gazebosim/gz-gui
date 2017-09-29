@@ -57,17 +57,21 @@ namespace ignition
       /// as long as the same message type is passed.
       ///
       /// \param[in] _msg Message to load from.
+      /// \sa UpdateFromMsg
       public: MessageWidget(const google::protobuf::Message *_msg);
 
       /// \brief Destructor
       public: ~MessageWidget();
 
-      /// \brief Get the updated message.
+      /// \brief Get a message with the widget's current contents. The message
+      /// will be of the same type as the one used on the constructor.
       /// \return Updated message.
       public: google::protobuf::Message *Msg();
 
       /// \brief Update the widgets from a message.
       /// \param[in] _msg Message used for updating the widgets.
+      /// \return True if succesfull. This may fail for example, if a message
+      /// type differs from the message used to construct the widget.
       public: bool UpdateFromMsg(const google::protobuf::Message *_msg);
 
       /// \brief Signal that a property widget's value has changed.
@@ -76,33 +80,33 @@ namespace ignition
       signals: void ValueChanged(const std::string &_name,
                                  const QVariant _value);
 
-      /// \brief Set whether a child widget should be visible.
-      /// \param[in] _name Name of the child widget.
+      /// \brief Set whether a property widget should be visible.
+      /// \param[in] _name Name of the property widget.
       /// \param[in] _visible True to set the widget to be visible.
       public: void SetWidgetVisible(const std::string &_name,
                                     const bool _visible);
 
-      /// \brief Get whether a child widget is visible.
-      /// \param[in] _name Name of the child widget.
+      /// \brief Get whether a property widget is visible.
+      /// \param[in] _name Name of the property widget.
       /// \return True if the widget is visible.
       public: bool WidgetVisible(const std::string &_name) const;
 
-      /// \brief Set whether all child widgets should be read-only.
+      /// \brief Set whether all property widgets should be read-only.
       /// \param[in] _readOnly True for read-only.
       public: void SetReadOnly(const bool _readOnly);
 
-      /// \brief Get whether all child widgets are read-only.
-      /// \param[in] _readOnly True for read-only.
+      /// \brief Get whether all property widgets are read-only.
+      /// \return false if at least one widget is not read-only.
       public: bool ReadOnly() const;
 
-      /// \brief Set whether a child widget should be read-only.
-      /// \param[in] _name Name of the child widget.
+      /// \brief Set whether a property widget should be read-only.
+      /// \param[in] _name Name of the property widget.
       /// \param[in] _readOnly True to set the widget to be read-only.
       public: void SetWidgetReadOnly(const std::string &_name,
                                      const bool _readOnly);
 
-      /// \brief Get whether a child widget is read-only.
-      /// \param[in] _name Name of the child widget.
+      /// \brief Get whether a property widget is read-only.
+      /// \param[in] _name Name of the property widget.
       /// \return True if the widget is read-only.
       public: bool WidgetReadOnly(const std::string &_name) const;
 
@@ -118,26 +122,26 @@ namespace ignition
       /// \return Value as QVariant.
       public: QVariant PropertyValue(const std::string &_name) const;
 
-      /// \brief Get a config child widget by its name.
-      /// \param[in] _name Scoped name of the child widget.
-      /// \return The child widget with the given name or nullptr if it wasn't
-      /// found.
+      /// \brief Get a config property widget by its name.
+      /// \param[in] _name Scoped name of the property widget.
+      /// \return The widget with the given name or nullptr if it wasn't found.
       public: PropertyWidget *PropertyWidgetByName(
           const std::string &_name) const;
 
-      /// \brief Get the number of child widgets.
-      /// \return The number of child widgets.
+      /// \brief Get the number of property widgets.
+      /// \return The number of property widgets.
       public: unsigned int PropertyWidgetCount() const;
 
-      /// \brief Register a child widget as a child of this widget, so it can
-      /// be updated. Note that the widget is not automatically added to a
+      /// \brief Register a property widget as a property of this widget, so it
+      /// can be updated. Note that the widget is not automatically added to a
       /// layout.
-      /// \param[in] _name Unique name to indentify the child within this widget
-      /// \param[in] _child Child widget to be added. It doesn't need to be a
+      /// \param[in] _name Unique name to indentify the property within this
+      /// widget
+      /// \param[in] _property Child widget to be added. It doesn't need to be a
       /// PropertyWidget.
-      /// \return True if child successfully added.
+      /// \return True if property successfully added.
       private: bool AddPropertyWidget(const std::string &_name,
-          PropertyWidget *_child);
+          PropertyWidget *_property);
 
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update the widgets with values

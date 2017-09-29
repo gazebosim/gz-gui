@@ -398,7 +398,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        propertyWidget = new NumberWidget(fieldName, 0, NumberWidget::DOUBLE);
+        propertyWidget = new NumberWidget(fieldName, NumberWidget::DOUBLE);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }
@@ -419,7 +419,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        propertyWidget = new NumberWidget(fieldName, 0, NumberWidget::DOUBLE);
+        propertyWidget = new NumberWidget(fieldName, NumberWidget::DOUBLE);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }
@@ -438,7 +438,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        propertyWidget = new NumberWidget(fieldName, 0, NumberWidget::INT);
+        propertyWidget = new NumberWidget(fieldName, NumberWidget::INT);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }
@@ -457,7 +457,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        propertyWidget = new NumberWidget(fieldName, 0, NumberWidget::UINT);
+        propertyWidget = new NumberWidget(fieldName, NumberWidget::UINT);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }
@@ -476,7 +476,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        propertyWidget = new NumberWidget(fieldName, 0, NumberWidget::INT);
+        propertyWidget = new NumberWidget(fieldName, NumberWidget::INT);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }
@@ -495,7 +495,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        propertyWidget = new NumberWidget(fieldName, 0, NumberWidget::UINT);
+        propertyWidget = new NumberWidget(fieldName, NumberWidget::UINT);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }

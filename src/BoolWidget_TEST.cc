@@ -35,7 +35,7 @@ TEST(BoolWidgetTest, Signal)
   EXPECT_TRUE(initApp());
 
   // Create widget
-  auto widget = new BoolWidget("enum");
+  auto widget = new BoolWidget("a bool");
   EXPECT_TRUE(widget != nullptr);
 
   // Connect signals
@@ -50,6 +50,11 @@ TEST(BoolWidgetTest, Signal)
 
   // Check default value
   EXPECT_FALSE(widget->Value().value<bool>());
+
+  // Check key label
+  auto label = widget->findChild<QLabel *>();
+  ASSERT_NE(label, nullptr);
+  EXPECT_EQ(label->text().toStdString(), "A bool");
 
   // Get signal emitting widgets
   auto radios = widget->findChildren<QRadioButton *>();

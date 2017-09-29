@@ -37,10 +37,9 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level,
-    const NumberType _type) : dataPtr(new NumberWidgetPrivate())
+NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
+    : dataPtr(new NumberWidgetPrivate())
 {
-  this->level = _level;
   this->dataPtr->type = _type;
 
   auto widgetLayout = new QHBoxLayout;

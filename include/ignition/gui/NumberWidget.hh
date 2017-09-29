@@ -31,7 +31,8 @@ namespace ignition
   {
     class NumberWidgetPrivate;
 
-    /// \brief A widget which holds a double property.
+    /// \brief A widget which holds a number property such as a double, int or
+    /// uint.
     class IGNITION_GUI_VISIBLE NumberWidget : public PropertyWidget
     {
       Q_OBJECT
@@ -39,30 +40,38 @@ namespace ignition
       /// \brief Number types
       public: enum NumberType
       {
-        /// \brief
+        /// \brief Double
         DOUBLE,
 
-        /// \brief
+        /// \brief Integer
         INT,
 
-        /// \brief
+        /// \brief Unsigned integer
         UINT
       };
 
       /// \brief Constructor
-      /// \param[in] _key Property key.
-      /// \param[in] _level Depth level, in case nested.
+      /// \param[in] _key Property key value, such as "length", which will be
+      /// displayed next to the spin box which holds the value.
+      /// \param[in] _type The value type, which will determine characteristics
+      /// of the spin box, such as decimal places and range.
       public: NumberWidget(const std::string &_key,
-                           const unsigned int _level = 0,
                            const NumberType _type = DOUBLE);
 
       /// \brief Destructor
       public: ~NumberWidget();
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      /// Value will be handled if its
+      /// type matches the widget's type (double, int or uint).
+      /// \param[in] _value New value.
+      /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      /// Returns a variant containing the widget's current value. Its type will
+      /// be either double, int or uint depending on the widget's type.
+      /// \return Widget's current number value.
       public: QVariant Value() const;
 
       /// \internal

@@ -33,6 +33,7 @@ set (gtest_sources
   Iface_TEST.cc
   MainWindow_TEST.cc
   MessageWidget_TEST.cc
+  NumberWidget_TEST.cc
   SearchModel_TEST.cc
 )
 
