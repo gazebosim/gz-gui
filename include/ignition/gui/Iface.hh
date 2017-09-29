@@ -49,6 +49,7 @@ namespace ignition
     /// \brief Load the configuration from the default config file.
     /// \return True if successful
     /// \sa setDefaultConfigPath
+    /// \sa DefaultConfigPath
     IGNITION_GUI_VISIBLE
     bool loadDefaultConfig();
 
