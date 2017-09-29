@@ -61,19 +61,8 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-MessageWidget::MessageWidget()
+MessageWidget::MessageWidget(const google::protobuf::Message *_msg)
   : dataPtr(new MessageWidgetPrivate())
-{
-}
-
-/////////////////////////////////////////////////
-MessageWidget::~MessageWidget()
-{
-  delete this->dataPtr->msg;
-}
-
-/////////////////////////////////////////////////
-void MessageWidget::Load(const google::protobuf::Message *_msg)
 {
   this->dataPtr->msg = _msg->New();
   this->dataPtr->msg->CopyFrom(*_msg);
@@ -101,6 +90,12 @@ void MessageWidget::Load(const google::protobuf::Message *_msg)
     comboBoxes[i]->installEventFilter(this);
     comboBoxes[i]->setFocusPolicy(Qt::StrongFocus);
   }
+}
+
+/////////////////////////////////////////////////
+MessageWidget::~MessageWidget()
+{
+  delete this->dataPtr->msg;
 }
 
 /////////////////////////////////////////////////

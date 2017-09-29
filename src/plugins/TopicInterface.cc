@@ -98,9 +98,7 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     hideWidgets.push_back(hideWidgetElem->GetText());
   }
 
-  // Config widget
-  this->dataPtr->msgWidget = new MessageWidget();
-
+  // Message widget
   if (!msgType.empty())
   {
     auto msg = ignition::msgs::Factory::New(msgType, "");
@@ -112,7 +110,7 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
     else
     {
-      this->dataPtr->msgWidget->Load(&*msg);
+      this->dataPtr->msgWidget = new MessageWidget(&*msg);
       this->dataPtr->msgWidget->SetReadOnly(readOnly);
       for (auto w : hideWidgets)
         this->dataPtr->msgWidget->SetWidgetVisible(w, false);
@@ -136,8 +134,11 @@ void TopicInterface::OnMessage(const google::protobuf::Message &_msg)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  if (this->dataPtr->msgWidget->PropertyWidgetCount() == 0)
-    this->dataPtr->msgWidget->Load(&_msg);
+  if (!this->dataPtr->msgWidget)
+  {
+    this->dataPtr->msgWidget = new MessageWidget(&_msg);
+    // TODO: readonly and visible
+  }
   else
     this->dataPtr->msgWidget->UpdateFromMsg(&_msg);
 }

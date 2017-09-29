@@ -17,6 +17,8 @@
 
 #include <gtest/gtest.h>
 
+#include <ignition/common/Console.hh>
+
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 
@@ -50,8 +52,7 @@ TEST(MessageWidgetTest, EmptyMsgWidget)
   {
     msgs::Visual visualMsg;
 
-    auto visualMessageWidget = new MessageWidget();
-    visualMessageWidget->Load(&visualMsg);
+    auto visualMessageWidget = new MessageWidget(&visualMsg);
 
     QCoreApplication::processEvents();
 
@@ -65,8 +66,7 @@ TEST(MessageWidgetTest, EmptyMsgWidget)
   {
     msgs::Collision collisionMsg;
 
-    auto collisionMessageWidget = new MessageWidget();
-    collisionMessageWidget->Load(&collisionMsg);
+    auto collisionMessageWidget = new MessageWidget(&collisionMsg);
 
     auto retCollisionMsg =
         dynamic_cast<msgs::Collision *>(collisionMessageWidget->Msg());
@@ -84,7 +84,6 @@ TEST(MessageWidgetTest, JointMsgWidget)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto jointMessageWidget = new MessageWidget();
   msgs::Joint jointMsg;
 
   QVariant variant;
@@ -126,7 +125,7 @@ TEST(MessageWidgetTest, JointMsgWidget)
     jointMsg.set_suspension_cfm(0.8);
     jointMsg.set_suspension_erp(0.9);
   }
-  jointMessageWidget->Load(&jointMsg);
+  auto jointMessageWidget = new MessageWidget(&jointMsg);
 
   // retrieve the message from the message widget and
   // verify that all values have not been changed.
@@ -497,7 +496,6 @@ TEST(MessageWidgetTest, VisualMsgWidget)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto visualMessageWidget = new MessageWidget();
   msgs::Visual visualMsg;
 
   QVariant variant;
@@ -544,7 +542,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     scriptMsg->add_uri("test_script_uri_1");
     scriptMsg->set_name("test_script_name");
   }
-  visualMessageWidget->Load(&visualMsg);
+  auto visualMessageWidget = new MessageWidget(&visualMsg);
 
   // retrieve the message from the message widget and
   // verify that all values have not been changed.
@@ -811,7 +809,6 @@ TEST(MessageWidgetTest, PluginMsgWidget)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto pluginMessageWidget = new MessageWidget();
   msgs::Plugin pluginMsg;
 
   {
@@ -820,7 +817,7 @@ TEST(MessageWidgetTest, PluginMsgWidget)
     pluginMsg.set_filename("test_plugin_filename");
     pluginMsg.set_innerxml("<param>1</param>\n");
   }
-  pluginMessageWidget->Load(&pluginMsg);
+  auto pluginMessageWidget = new MessageWidget(&pluginMsg);
 
   // retrieve the message from the message widget and
   // verify that all values have not been changed.
@@ -881,7 +878,6 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto visualMessageWidget = new MessageWidget();
   msgs::Visual visualMsg;
 
   {
@@ -909,7 +905,7 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
     auto scriptMsg = materialMsg->mutable_script();
     scriptMsg->set_name("test_script_name");
   }
-  visualMessageWidget->Load(&visualMsg);
+  auto visualMessageWidget = new MessageWidget(&visualMsg);
   visualMessageWidget->show();
 
   // set different types of widgets to be not visibile
@@ -964,7 +960,6 @@ TEST(MessageWidgetTest, MessageWidgetReadOnly)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto visualMessageWidget = new MessageWidget();
   msgs::Visual visualMsg;
 
   {
@@ -992,7 +987,7 @@ TEST(MessageWidgetTest, MessageWidgetReadOnly)
     auto scriptMsg = materialMsg->mutable_script();
     scriptMsg->set_name("test_script_name");
   }
-  visualMessageWidget->Load(&visualMsg);
+  auto visualMessageWidget = new MessageWidget(&visualMsg);
 
   // set different types of widgets to be read-only
   {
@@ -1039,207 +1034,7 @@ TEST(MessageWidgetTest, MessageWidgetReadOnly)
   delete visualMessageWidget;
   EXPECT_TRUE(stop());
 }
-
-/////////////////////////////////////////////////
-TEST(MessageWidgetTest, CreatedExternally)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  auto messageWidget = new MessageWidget();
-
-  // Create predefined child widgets
-  auto uintWidget = new NumberWidget("uint", 0, NumberWidget::UINT);
-  auto intWidget = new NumberWidget("int", 0, NumberWidget::INT);
-  auto doubleWidget = new NumberWidget("double", 1, NumberWidget::DOUBLE);
-  auto stringWidget = new StringWidget("string", 1);
-  auto boolWidget = new BoolWidget("bool", 2);
-  auto vector3dWidget = new Vector3dWidget("vector3d");
-  auto colorWidget = new ColorWidget();
-  auto poseWidget = new Pose3dWidget();
-
-  std::vector<std::string> enumValues;
-  enumValues.push_back("value1");
-  enumValues.push_back("value2");
-  enumValues.push_back("value3");
-  auto enumWidget = new EnumWidget("enum", enumValues, 4);
-
-  EXPECT_TRUE(uintWidget != nullptr);
-  EXPECT_TRUE(intWidget != nullptr);
-  EXPECT_TRUE(doubleWidget != nullptr);
-  EXPECT_TRUE(stringWidget != nullptr);
-  EXPECT_TRUE(boolWidget != nullptr);
-  EXPECT_TRUE(vector3dWidget != nullptr);
-  EXPECT_TRUE(colorWidget != nullptr);
-  EXPECT_TRUE(poseWidget != nullptr);
-  EXPECT_TRUE(enumWidget != nullptr);
-
-  // Add child widgets to message widget
-  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 0u);
-
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("uint", uintWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("int", intWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("double", doubleWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("string", stringWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("bool", boolWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("vector3d", vector3dWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("color", colorWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("pose", poseWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("enum", enumWidget));
-
-  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 9u);
-
-  // Fail to add invalid children
-  EXPECT_EQ(messageWidget->AddPropertyWidget("", uintWidget), false);
-  EXPECT_EQ(messageWidget->AddPropertyWidget("validName", nullptr), false);
-  EXPECT_EQ(messageWidget->AddPropertyWidget("uint", intWidget), false);
-
-  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 9u);
-
-  // Check that checking visibility works
-  EXPECT_EQ(messageWidget->WidgetVisible("uint"), uintWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("int"), intWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("double"), doubleWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("string"), stringWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("bool"), boolWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("vector3d"),
-      vector3dWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("color"), colorWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("pose"), poseWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("enum"), enumWidget->isVisible());
-
-  // Set widgets values
-  unsigned int uintValue = 123;
-  int intValue = -456;
-  double doubleValue = 123.456;
-  QVariant stringValue;
-  stringValue.setValue(std::string("123"));
-  bool boolValue = true;
-  QVariant colorValue;
-  colorValue.setValue(math::Color(0.1, 0.2, 0.3, 0.4));
-  QVariant poseValue;
-  poseValue.setValue(math::Pose3d(1, 2, 3, 0.1, 0.2, 0.3));
-  QVariant enumValue;
-  enumValue.setValue(std::string("value2"));
-
-  QVariant vector3dValue;
-  vector3dValue.setValue(math::Vector3d(1, 2, 3));
-
-  EXPECT_TRUE(messageWidget->SetPropertyValue("uint", uintValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("int", intValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("double", doubleValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("string", stringValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("bool", boolValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("vector3d", vector3dValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("color", colorValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("pose", poseValue));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("enum", enumValue));
-
-  // Get widgets values
-  EXPECT_EQ(messageWidget->PropertyValue("uint"), uintValue);
-  EXPECT_EQ(messageWidget->PropertyValue("int").toInt(), intValue);
-  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue(
-      "double").toDouble(), doubleValue);
-  EXPECT_EQ(messageWidget->PropertyValue("string").value<std::string>(),
-      stringValue.value<std::string>());
-  EXPECT_EQ(messageWidget->PropertyValue("bool").toBool(), boolValue);
-  EXPECT_EQ(messageWidget->PropertyValue("vector3d"), vector3dValue);
-  EXPECT_EQ(messageWidget->PropertyValue("color"), colorValue);
-  EXPECT_EQ(messageWidget->PropertyValue("pose").value<math::Pose3d>(),
-      poseValue.value<math::Pose3d>());
-  EXPECT_EQ(messageWidget->PropertyValue("enum").value<std::string>(),
-      enumValue.value<std::string>());
-
-  // Collapsible some widgets
-  auto groupLayout = new QVBoxLayout();
-  groupLayout->addWidget(uintWidget);
-  groupLayout->addWidget(intWidget);
-  groupLayout->addWidget(doubleWidget);
-
-  auto groupBox = new QGroupBox();
-  groupBox->setLayout(groupLayout);
-
-  auto groupChildWidgetLayout = new QVBoxLayout();
-  groupChildWidgetLayout->addWidget(groupBox);
-
-  auto collapsibleWidget = new CollapsibleWidget("collapsibleWidget");
-  EXPECT_TRUE(collapsibleWidget != nullptr);
-
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
-TEST(MessageWidgetTest, EnumMessageWidget)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Create a parent widget
-  auto messageWidget = new MessageWidget();
-  EXPECT_TRUE(messageWidget != nullptr);
-
-  // Create an enum child widget
-  std::vector<std::string> enumValues;
-  enumValues.push_back("value1");
-  enumValues.push_back("value2");
-  enumValues.push_back("value3");
-  auto enumWidget = new EnumWidget("Enum Label", enumValues);
-
-  EXPECT_TRUE(enumWidget != nullptr);
-
-  // Add it to parent
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("enumWidgetName", enumWidget));
-
-  // Check that all items can be selected
-  QVariant variant;
-  variant.setValue(std::string("value1"));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-  variant.setValue(std::string("value2"));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-  variant.setValue(std::string("value3"));
-  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-
-  // Check that an inexistent item cannot be selected
-  variant.setValue(std::string("value4"));
-  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-
-  // Check the number of items
-  auto comboBox = enumWidget->findChild<QComboBox *>();
-  EXPECT_TRUE(comboBox != nullptr);
-  EXPECT_EQ(comboBox->count(), 3);
-
-  // Add an item and check count
-  EXPECT_TRUE(enumWidget->AddItem("value4"));
-  EXPECT_EQ(comboBox->count(), 4);
-
-  // Check that the new item can be selected
-  EXPECT_TRUE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-
-  // Remove an item and check count
-  EXPECT_TRUE(enumWidget->RemoveItem("value2"));
-  EXPECT_EQ(comboBox->count(), 3);
-
-  // Check that the removed item cannot be selected
-  variant.setValue(std::string("value2"));
-  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-
-  // Clear all items and check count
-  EXPECT_TRUE(enumWidget->Clear());
-  EXPECT_EQ(comboBox->count(), 0);
-
-  // Check that none of the previous items can be selected
-  variant.setValue(std::string("value1"));
-  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-  variant.setValue(std::string("value2"));
-  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-  variant.setValue(std::string("value3"));
-  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-  variant.setValue(std::string("value4"));
-  EXPECT_FALSE(messageWidget->SetPropertyValue("enumWidgetName", variant));
-
-  EXPECT_TRUE(stop());
-}
-
+/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildUIntSignal)
 {
@@ -1369,6 +1164,7 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
+*/
 
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildBoolSignal)
@@ -1376,14 +1172,20 @@ TEST(MessageWidgetTest, ChildBoolSignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Boolean();
+  msg->set_data(false);
 
-  // Create child bool widget
-  auto boolWidget = new BoolWidget("bool");
-  EXPECT_TRUE(boolWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("bool", boolWidget));
+  // Check we got a bool widget
+  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto boolWidget = qobject_cast<BoolWidget *>(propWidget);
+  EXPECT_NE(boolWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -1391,13 +1193,13 @@ TEST(MessageWidgetTest, ChildBoolSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       bool b = _var.toBool();
-      EXPECT_EQ(_name, "bool");
+      EXPECT_EQ(_name, "data");
       EXPECT_EQ(b, true);
       signalReceived = true;
     });
 
   // Check default bool
-  EXPECT_EQ(messageWidget->PropertyValue("bool"), false);
+  EXPECT_EQ(messageWidget->PropertyValue("data"), false);
 
   // Get signal emitting widgets
   auto radios = boolWidget->findChildren<QRadioButton *>();
@@ -1413,7 +1215,7 @@ TEST(MessageWidgetTest, ChildBoolSignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-
+/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildStringSignal)
 {
@@ -1658,6 +1460,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
+*/
 
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildEnumSignal)
@@ -1665,18 +1468,20 @@ TEST(MessageWidgetTest, ChildEnumSignal)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  auto messageWidget = new MessageWidget();
+  // Message
+  auto msg = new msgs::Visual();
+  msg->set_type(msgs::Visual::LINK);
 
-  // Create child pose widget
-  std::vector<std::string> enumValues;
-  enumValues.push_back("value1");
-  enumValues.push_back("value2");
-  enumValues.push_back("value3");
-  auto enumWidget = new EnumWidget("enum", enumValues);
-  EXPECT_TRUE(enumWidget != nullptr);
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  EXPECT_TRUE(messageWidget != nullptr);
 
-  // Add to message widget
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("enum", enumWidget));
+  // Check we got an enum widget
+  auto propWidget = messageWidget->PropertyWidgetByName("type");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto enumWidget = qobject_cast<EnumWidget *>(propWidget);
+  EXPECT_NE(enumWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -1684,21 +1489,27 @@ TEST(MessageWidgetTest, ChildEnumSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<std::string>();
-      EXPECT_EQ(_name, "enum");
-      EXPECT_EQ(v, "value3");
+      EXPECT_EQ(_name, "type");
+      EXPECT_EQ(v, "GUI");
       signalReceived = true;
     });
 
   // Check default value
-  EXPECT_EQ(messageWidget->PropertyValue("enum").value<std::string>(),
-      std::string("value1"));
+  EXPECT_EQ(messageWidget->PropertyValue("type").value<std::string>(),
+      std::string("LINK"));
+
+  auto label = enumWidget->findChild<QLabel *>();
+  EXPECT_NE(label, nullptr);
+  EXPECT_EQ(label->text(), "Type");
 
   // Get signal emitting widgets
   auto comboBoxes = enumWidget->findChildren<QComboBox *>();
   EXPECT_EQ(comboBoxes.size(), 1);
+  EXPECT_EQ(comboBoxes[0]->count(), 8);
 
   // Change the value and check new value at callback
-  comboBoxes[0]->setCurrentIndex(2);
+  comboBoxes[0]->setCurrentIndex(6);
+  comboBoxes[0]->currentIndexChanged(6);
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);
@@ -1706,7 +1517,7 @@ TEST(MessageWidgetTest, ChildEnumSignal)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-
+/*
 /////////////////////////////////////////////////
 TEST(MessageWidgetTest, GetPropertyByName)
 {
@@ -1745,3 +1556,4 @@ TEST(MessageWidgetTest, GetPropertyByName)
   EXPECT_TRUE(stop());
 }
 
+*/

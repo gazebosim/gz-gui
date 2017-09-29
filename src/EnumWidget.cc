@@ -63,6 +63,7 @@ EnumWidget::EnumWidget(const std::string &_key,
 
   this->setLayout(widgetLayout);
   this->setFrameStyle(QFrame::Box);
+
   this->connect(comboBox, SIGNAL(currentIndexChanged(const QString &)),
       this, SLOT(OnValueChanged()));
 }
@@ -76,11 +77,6 @@ EnumWidget::~EnumWidget()
 bool EnumWidget::SetValue(const QVariant _value)
 {
   auto combo = this->findChild<QComboBox *>();
-  if (!combo)
-  {
-    ignerr << "Error updating Enum widget" << std::endl;
-    return false;
-  }
 
   auto value = _value.value<std::string>();
 
@@ -114,11 +110,6 @@ QVariant EnumWidget::Value() const
 bool EnumWidget::Clear()
 {
   auto combo = this->findChild<QComboBox *>();
-  if (!combo)
-  {
-    ignerr << "Enum config widget doesn't have a QComboBox." << std::endl;
-    return false;
-  }
 
   combo->blockSignals(true);
   combo->clear();
@@ -131,11 +122,6 @@ bool EnumWidget::Clear()
 bool EnumWidget::AddItem(const std::string &_itemText)
 {
   auto combo = this->findChild<QComboBox *>();
-  if (!combo)
-  {
-    ignerr << "Enum config widget doesn't have a QComboBox." << std::endl;
-    return false;
-  }
 
   combo->blockSignals(true);
   combo->addItem(QString::fromStdString(_itemText));
@@ -148,11 +134,6 @@ bool EnumWidget::AddItem(const std::string &_itemText)
 bool EnumWidget::RemoveItem(const std::string &_itemText)
 {
   auto combo = this->findChild<QComboBox *>();
-  if (!combo)
-  {
-    ignerr << "Enum config widget doesn't have a QComboBox." << std::endl;
-    return false;
-  }
 
   // Remove item if exists, otherwise return false
   int index = combo->findText(QString::fromStdString(

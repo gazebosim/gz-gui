@@ -25,8 +25,10 @@ set (sources
 )
 
 set (gtest_sources
+  BoolWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc
+  EnumWidget_TEST.cc
   Helpers_TEST.cc
   Iface_TEST.cc
   MainWindow_TEST.cc

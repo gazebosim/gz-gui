@@ -50,19 +50,25 @@ namespace ignition
     {
       Q_OBJECT
 
-      /// \brief Constructor
-      public: MessageWidget();
+      /// \brief Generate a widget with property fields based on a google
+      /// protobuf message.
+      ///
+      /// Updates to the widget's fields can be done by calling `UpdateFromMsg`
+      /// as long as the same message type is passed.
+      ///
+      /// \param[in] _msg Message to load from.
+      public: MessageWidget(const google::protobuf::Message *_msg);
 
       /// \brief Destructor
       public: ~MessageWidget();
 
-      /// \brief Load from a google protobuf message.
-      /// \param[in] _msg Message to load from.
-      public: void Load(const google::protobuf::Message *_msg);
-
       /// \brief Get the updated message.
       /// \return Updated message.
       public: google::protobuf::Message *Msg();
+
+      /// \brief Update the widgets from a message.
+      /// \param[in] _msg Message used for updating the widgets.
+      public: bool UpdateFromMsg(const google::protobuf::Message *_msg);
 
       /// \brief Signal that a property widget's value has changed.
       /// \param[in] _name Scoped name of widget.
@@ -100,10 +106,6 @@ namespace ignition
       /// \return True if the widget is read-only.
       public: bool WidgetReadOnly(const std::string &_name) const;
 
-      /// \brief Update the widgets from a message.
-      /// \param[in] _msg Message used for updating the widgets.
-      public: bool UpdateFromMsg(const google::protobuf::Message *_msg);
-
       /// \brief Set a value of a property widget.
       /// \param[in] _name Name of the property widget.
       /// \param[in] _value Value to set to.
@@ -116,16 +118,6 @@ namespace ignition
       /// \return Value as QVariant.
       public: QVariant PropertyValue(const std::string &_name) const;
 
-      /// \brief Register a child widget as a child of this widget, so it can
-      /// be updated. Note that the widget is not automatically added to a
-      /// layout.
-      /// \param[in] _name Unique name to indentify the child within this widget
-      /// \param[in] _child Child widget to be added. It doesn't need to be a
-      /// PropertyWidget.
-      /// \return True if child successfully added.
-      public: bool AddPropertyWidget(const std::string &_name,
-          PropertyWidget *_child);
-
       /// \brief Get a config child widget by its name.
       /// \param[in] _name Scoped name of the child widget.
       /// \return The child widget with the given name or nullptr if it wasn't
@@ -136,6 +128,16 @@ namespace ignition
       /// \brief Get the number of child widgets.
       /// \return The number of child widgets.
       public: unsigned int PropertyWidgetCount() const;
+
+      /// \brief Register a child widget as a child of this widget, so it can
+      /// be updated. Note that the widget is not automatically added to a
+      /// layout.
+      /// \param[in] _name Unique name to indentify the child within this widget
+      /// \param[in] _child Child widget to be added. It doesn't need to be a
+      /// PropertyWidget.
+      /// \return True if child successfully added.
+      private: bool AddPropertyWidget(const std::string &_name,
+          PropertyWidget *_child);
 
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update the widgets with values
