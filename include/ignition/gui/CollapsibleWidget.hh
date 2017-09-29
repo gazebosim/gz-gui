@@ -37,6 +37,12 @@ namespace ignition
       /// \param[in] _level
       public: CollapsibleWidget(const std::string &_key);
 
+      // Documentation inherited
+      public: bool SetValue(const QVariant) {return false;};
+
+      // Documentation inherited
+      public: QVariant Value() const {return QVariant();};
+
       /// \brief Callback that collapses or expands the child widget.
       /// _param[in] _checked True for expanded.
       public slots: void Toggle(bool _checked);

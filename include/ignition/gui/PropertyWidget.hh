@@ -39,12 +39,12 @@ namespace ignition
 
       /// \brief Get value from widget.
       /// \return Value of the widget as a QVariant.
-      public: virtual QVariant Value() const;
+      public: virtual QVariant Value() const = 0;
 
       /// \brief Update widget with new value.
       /// \param[in] _value Value to set to.
       /// \return True if the update completed successfully.
-      public: virtual bool SetValue(const QVariant _value);
+      public: virtual bool SetValue(const QVariant _value) = 0;
 
       /// \brief Signal that the value has changed.
       /// \param[in] _value New value.

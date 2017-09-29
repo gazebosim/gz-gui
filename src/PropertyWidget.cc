@@ -28,16 +28,3 @@ void PropertyWidget::OnValueChanged()
   this->ValueChanged(this->Value());
 }
 
-/////////////////////////////////////////////////
-QVariant PropertyWidget::Value() const
-{
-  ignerr << "Should never get here" << std::endl;
-  return QVariant();
-}
-
-/////////////////////////////////////////////////
-bool PropertyWidget::SetValue(const QVariant)
-{
-  ignerr << "Should never get here" << std::endl;
-  return false;
-}

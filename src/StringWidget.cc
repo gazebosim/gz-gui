@@ -88,9 +88,9 @@ bool StringWidget::SetValue(const QVariant _value)
     return true;
   }
 
-  if (auto edit = this->findChild<QPlainTextEdit *>())
+  if (auto plain = this->findChild<QPlainTextEdit *>())
   {
-    edit->setPlainText(tr(value.c_str()));
+    plain->setPlainText(tr(value.c_str()));
     return true;
   }
 
@@ -107,9 +107,9 @@ QVariant StringWidget::Value() const
   {
     value = edit->text().toStdString();
   }
-  else if (auto edit = this->findChild<QPlainTextEdit *>())
+  else if (auto plain = this->findChild<QPlainTextEdit *>())
   {
-    value = edit->toPlainText().toStdString();
+    value = plain->toPlainText().toStdString();
   }
 
   QVariant v;

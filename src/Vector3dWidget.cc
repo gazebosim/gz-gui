@@ -173,8 +173,6 @@ QVariant Vector3dWidget::Value() const
 /////////////////////////////////////////////////
 void Vector3dWidget::OnPresetChanged(const int _index)
 {
-  auto combo = qobject_cast<QComboBox *>(QObject::sender());
-
   // Update spins
   math::Vector3d vec;
   if (_index == 1)
