@@ -17,6 +17,8 @@
 
 #include <gtest/gtest.h>
 
+#include <ignition/common/Console.hh>
+
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/Plugin.hh"
@@ -51,6 +53,10 @@ TEST(MainWindowTest, OnSaveConfig)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
+  // Change default config path
+  setDefaultConfigPath("/tmp/ign-gui-test.config");
+
+  // Create window
   auto mainWindow = new MainWindow;
   EXPECT_TRUE(mainWindow);
 
@@ -59,13 +65,56 @@ TEST(MainWindowTest, OnSaveConfig)
   ASSERT_GT(menus.size(), 0);
   ASSERT_GT(menus[0]->actions().size(), 2);
   auto saveAct = menus[0]->actions()[1];
-  EXPECT_EQ(saveAct->text(), QString("&Save configuration"));
+  EXPECT_EQ(saveAct->text().toStdString(), "&Save configuration");
+
+  // Save to default location
+  {
+    // Trigger save
+    saveAct->trigger();
+
+    // Check saved file
+    QFile saved("/tmp/ign-gui-test.config");
+    ASSERT_TRUE(saved.open(QFile::ReadOnly));
+
+    QString savedStr = QLatin1String(saved.readAll());
+    EXPECT_FALSE(savedStr.isNull());
+    EXPECT_TRUE(savedStr.contains("<window>"));
+    EXPECT_TRUE(savedStr.contains("<height>"));
+    EXPECT_TRUE(savedStr.contains("<width>"));
+    EXPECT_TRUE(savedStr.contains("<position_x>"));
+    EXPECT_TRUE(savedStr.contains("<position_y>"));
+    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
+    EXPECT_TRUE(savedStr.contains("<state>"));
+
+    // Delete file
+    std::remove("/tmp/ign-gui-test.config");
+  }
+
+  delete mainWindow;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest, OnSaveConfigAs)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  auto mainWindow = new MainWindow;
+  EXPECT_TRUE(mainWindow);
+
+  // Get save action on menu
+  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
+  ASSERT_GT(menus.size(), 0);
+  ASSERT_GT(menus[0]->actions().size(), 2);
+  auto saveAct = menus[0]->actions()[2];
+  EXPECT_EQ(saveAct->text().toStdString(), "Save configuration as");
 
   bool closed = false;
 
   // Close dialog without choosing file
   {
-    // Close window after 1 s
+    // Close window after a while
     QTimer::singleShot(300, [&]
     {
       auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
@@ -294,7 +343,7 @@ TEST(MainWindowTest, OnLoadStyleSheet)
   auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
   ASSERT_GT(menus.size(), 0);
   ASSERT_GT(menus[0]->actions().size(), 3);
-  auto loadAct = menus[0]->actions()[3];
+  auto loadAct = menus[0]->actions()[4];
   EXPECT_EQ(loadAct->text(), QString("&Load stylesheet"));
 
   bool closed = false;
