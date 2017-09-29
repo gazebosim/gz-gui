@@ -213,9 +213,18 @@ void MainWindow::SaveImpl(const std::string &_path)
   for (const auto plugin : plugins)
     config += plugin->ConfigStr();
 
-    // Open the file
+  // Open the file
   std::ofstream out(_path.c_str(), std::ios::out);
-  out << config;
+  if (!out)
+  {
+    QMessageBox msgBox;
+    std::string str = "Unable to open file: " + _path;
+    str += ".\nCheck file permissions.";
+    msgBox.setText(str.c_str());
+    msgBox.exec();
+  }
+  else
+    out << config;
 
   ignmsg << "Saved configuration [" << _path << "]" << std::endl;
 }
