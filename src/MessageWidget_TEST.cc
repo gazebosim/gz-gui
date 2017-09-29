@@ -1134,7 +1134,7 @@ TEST(MessageWidgetTest, CreatedExternally)
   auto stringWidget = new StringWidget("string", 1);
   auto boolWidget = new BoolWidget("bool", 2);
   auto vector3dWidget = new Vector3dWidget("vector3d");
-  auto colorWidget = new ColorWidget("color");
+  auto colorWidget = new ColorWidget();
   auto poseWidget = new Pose3dWidget();
 
   std::vector<std::string> enumValues;
@@ -1609,7 +1609,7 @@ TEST(MessageWidgetTest, ChildColorSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child color widget
-  auto colorWidget = new ColorWidget("color");
+  auto colorWidget = new ColorWidget();
   EXPECT_TRUE(colorWidget != nullptr);
 
   // Add to message widget

@@ -40,8 +40,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-ColorWidget::ColorWidget(const std::string &_key)
-    : dataPtr(new ColorWidgetPrivate())
+ColorWidget::ColorWidget() : dataPtr(new ColorWidgetPrivate())
 {
   // Labels
   auto colorRLabel = new QLabel(tr("R"));
@@ -54,9 +53,8 @@ ColorWidget::ColorWidget(const std::string &_key)
   colorALabel->setToolTip(tr("a"));
 
   // SpinBoxes
-  double min = 0;
-  double max = 0;
-  rangeFromKey(_key, min, max);
+  double min = 0.0;
+  double max = 1.0;
 
   auto colorRSpinBox = new QDoubleSpinBox(this);
   colorRSpinBox->setRange(min, max);

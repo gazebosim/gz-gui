@@ -302,7 +302,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     // If creating new widget
     if (!propertyWidget)
     {
-      propertyWidget = new Vector3dWidget("NAME");
+      propertyWidget = new Vector3dWidget(descriptor->name());
       _parent->layout()->addWidget(propertyWidget);
       this->AddPropertyWidget(_scopedName, propertyWidget);
     }
@@ -324,7 +324,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     // If creating new widget
     if (!propertyWidget)
     {
-      propertyWidget = new ColorWidget("NAME");
+      propertyWidget = new ColorWidget();
       _parent->layout()->addWidget(propertyWidget);
       this->AddPropertyWidget(_scopedName, propertyWidget);
     }
