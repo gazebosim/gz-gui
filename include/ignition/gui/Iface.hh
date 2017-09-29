@@ -34,9 +34,6 @@ namespace ignition
 {
   namespace gui
   {
-    // Forward declarations.
-    class MainWindow;
-
     /// \brief Initialize the application. This must be run before everything
     /// else.
     /// \return True on success.
