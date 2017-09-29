@@ -22,7 +22,7 @@
 
 #include <ignition/msgs.hh>
 
-#include "test_config.h"
+#include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
