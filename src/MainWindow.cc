@@ -16,11 +16,14 @@
  */
 
 #include <tinyxml2.h>
+#include <string>
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/Filesystem.hh>
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
+#include "ignition/gui/qt.h"
 
 namespace ignition
 {
@@ -34,6 +37,15 @@ namespace ignition
 
 using namespace ignition;
 using namespace gui;
+
+/// \brief Strip last component from a path.
+/// \return Original path without its last component.
+/// \ToDo: Move this function to ignition::common::Filesystem
+std::string dirName(const std::string &_path)
+{
+  std::size_t found = _path.find_last_of("/\\");
+  return _path.substr(0, found);
+}
 
 /////////////////////////////////////////////////
 MainWindow::MainWindow()
@@ -55,9 +67,15 @@ MainWindow::MainWindow()
   fileMenu->addAction(loadConfigAct);
 
   auto saveConfigAct = new QAction(tr("&Save configuration"), this);
-  saveConfigAct->setStatusTip(tr("Quit"));
+  saveConfigAct->setStatusTip(tr("Save configuration"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
+
+  auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
+  saveConfigAsAct->setStatusTip(tr("Save configuration as"));
+  this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
+    SLOT(OnSaveConfigAs()));
+  fileMenu->addAction(saveConfigAsAct);
 
   fileMenu->addSeparator();
 
@@ -151,6 +169,12 @@ void MainWindow::OnLoadConfig()
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfig()
 {
+  this->SaveImpl(defaultConfigPath());
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnSaveConfigAs()
+{
   QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
       tr("*.config"));
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
@@ -164,6 +188,12 @@ void MainWindow::OnSaveConfig()
   if (selected.empty())
     return;
 
+  this->SaveImpl(selected[0].toStdString());
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SaveImpl(const std::string &_path)
+{
   std::string config = "<?xml version=\"1.0\"?>\n\n";
 
   // Window settings
@@ -194,13 +224,17 @@ void MainWindow::OnSaveConfig()
   for (const auto plugin : plugins)
     config += plugin->ConfigStr();
 
-  // Open the file
-  std::ofstream out(selected[0].toStdString().c_str(), std::ios::out);
+  // Create the intermediate directories if needed.
+  // We check for errors when we try to open the file.
+  auto dirname = dirName(_path);
+  ignition::common::createDirectories(dirname);
 
+  // Open the file
+  std::ofstream out(_path.c_str(), std::ios::out);
   if (!out)
   {
     QMessageBox msgBox;
-    std::string str = "Unable to open file: " + selected[0].toStdString();
+    std::string str = "Unable to open file: " + _path;
     str += ".\nCheck file permissions.";
     msgBox.setText(str.c_str());
     msgBox.exec();
@@ -208,10 +242,7 @@ void MainWindow::OnSaveConfig()
   else
     out << config;
 
-  out.close();
-
-  ignmsg << "Saved configuration [" << selected[0].toStdString() << "]"
-         << std::endl;
+  ignmsg << "Saved configuration [" << _path << "]" << std::endl;
 }
 
 /////////////////////////////////////////////////

@@ -161,6 +161,33 @@ TEST(IfaceTest, loadConfig)
 }
 
 /////////////////////////////////////////////////
+TEST(IfaceTest, loadDefaultConfig)
+{
+  setVerbosity(4);
+
+  EXPECT_FALSE(defaultConfigPath().empty());
+
+  // Test config file
+  {
+    EXPECT_TRUE(initApp());
+
+    // Add test plugin to path (referenced in config)
+    auto testBuildPath = ignition::common::joinPaths(
+      std::string(PROJECT_BINARY_PATH), "test", "plugins");
+    addPluginPath(testBuildPath + "plugins");
+
+    // Set default config file
+    auto configPath = ignition::common::joinPaths(
+      std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
+    setDefaultConfigPath(configPath);
+    EXPECT_TRUE(loadDefaultConfig());
+    EXPECT_EQ(defaultConfigPath(), configPath);
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+/////////////////////////////////////////////////
 TEST(IfaceTest, StyleSheet)
 {
   setVerbosity(4);
@@ -243,22 +270,22 @@ TEST(IfaceTest, StyleSheet)
     EXPECT_TRUE(stop());
   }
 
+  // App with native settings (OS-dependant)
+  QColor defaultBg;
+  {
+    int argc = 1;
+    char **argv = nullptr;
+    auto app = new QApplication(argc, argv);
+    auto win = new MainWindow();
+    defaultBg = win->palette().window().color();
+    igndbg << "Default bg: " << defaultBg.name().toStdString() << std::endl;
+    delete win;
+    app->quit();
+    delete app;
+  }
+
   // Qt's default style (empty string for sheet)
   {
-    // App with native settings (OS-dependant)
-    QColor defaultBg;
-    {
-      int argc = 1;
-      char **argv = nullptr;
-      auto app = new QApplication(argc, argv);
-      auto win = new MainWindow();
-      defaultBg = win->palette().window().color();
-      igndbg << "Default bg: " << defaultBg.name().toStdString() << std::endl;
-      delete win;
-      app->quit();
-      delete app;
-    }
-
     EXPECT_TRUE(initApp());
 
     // Create main window
@@ -276,6 +303,27 @@ TEST(IfaceTest, StyleSheet)
 
     // Check new style
     bg = win->palette().window().color();
+    EXPECT_EQ(bg.name(), defaultBg.name()) << bg.name().toStdString();
+
+    // Cleanup
+    EXPECT_TRUE(stop());
+  }
+
+  // Qt's default style (empty <stylesheet> on config)
+  {
+    EXPECT_TRUE(initApp());
+
+    // Load test config file
+    EXPECT_TRUE(loadConfig(std::string(PROJECT_SOURCE_PATH) +
+        "/test/config/empty_stylesheet.config"));
+
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    // Check style
+    auto bg = win->palette().window().color();
     EXPECT_EQ(bg.name(), defaultBg.name()) << bg.name().toStdString();
 
     // Cleanup

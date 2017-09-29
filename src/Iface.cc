@@ -17,12 +17,17 @@
 
 #include <signal.h>
 #include <stdio.h>
+#include <tinyxml2.h>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/Filesystem.hh>
 #include <ignition/common/PluginLoader.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
+#include <ignition/common/Util.hh>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/config.hh"
@@ -38,6 +43,9 @@ char **g_argv;
 
 using namespace ignition;
 using namespace gui;
+
+// Forward declarations.
+std::string homePath();
 
 struct WindowConfig
 {
@@ -80,6 +88,10 @@ std::vector<std::string> g_pluginPaths;
 
 /// \brief Window configuration
 WindowConfig g_windowConfig;
+
+/// \brief The path containing the default configuration file.
+std::string g_defaultConfigPath = ignition::common::joinPaths(
+  homePath(), ".ignition", "gui", "default.config");
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -167,15 +179,19 @@ void messageHandler(QtMsgType _type, const QMessageLogContext &_context,
 }
 
 /////////////////////////////////////////////////
-// Get home directory
+/// \brief Get home directory.
+/// \return Home directory or empty string if home wasn't found.
+/// \ToDo: Move this function to ignition::common::Filesystem
 std::string homePath()
 {
-  char *homePath = getenv("HOME");
-  std::string home;
-  if (homePath)
-    home = homePath;
+  std::string homePath;
+#ifndef _WIN32
+  ignition::common::env("HOME", homePath);
+#else
+  ignition::common::env("HOMEPATH", homePath);
+#endif
 
-  return home;
+  return homePath;
 }
 
 /////////////////////////////////////////////////
@@ -207,9 +223,11 @@ bool ignition::gui::runConfig(const std::string &_config)
 /////////////////////////////////////////////////
 bool ignition::gui::runEmptyWindow()
 {
-  igndbg << "Loading empty window" << std::endl;
+  igndbg << "Loading default window" << std::endl;
 
   initApp();
+
+  loadDefaultConfig();
 
   createMainWindow();
   runMainWindow();
@@ -333,17 +351,24 @@ bool ignition::gui::loadConfig(const std::string &_config)
     return false;
   }
 
-  ignmsg << "Loading config [" << _config << "]" << std::endl;
-
   // Use tinyxml to read config
   tinyxml2::XMLDocument doc;
   auto success = !doc.LoadFile(_config.c_str());
   if (!success)
   {
-    ignerr << "Failed to load file [" << _config << "]: XMLError"
-              << std::endl;
+    // We do not show an error message if the default config path doesn't exist
+    // yet. It's expected behavior and will be created the first time the user
+    // press "Save configuration".
+    if (_config != defaultConfigPath())
+    {
+      ignerr << "Failed to load file [" << _config << "]: XMLError"
+             << std::endl;
+    }
+
     return false;
   }
+
+  ignmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Process each plugin
   for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
@@ -377,10 +402,26 @@ bool ignition::gui::loadConfig(const std::string &_config)
     }
 
     if (auto styleElem = winElem->FirstChildElement("stylesheet"))
-      setStyleFromString(styleElem->GetText());
+    {
+      if (auto txt = styleElem->GetText())
+      {
+        setStyleFromString(txt);
+      }
+      // empty string
+      else
+      {
+        setStyleFromString("");
+      }
+    }
   }
 
   return true;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::loadDefaultConfig()
+{
+  return loadConfig(g_defaultConfigPath);
 }
 
 /////////////////////////////////////////////////
@@ -425,6 +466,18 @@ bool ignition::gui::setStyleFromString(const std::string &_style)
 
   // \todo Return false if sheet is can't be correctly parsed.
   return true;
+}
+
+/////////////////////////////////////////////////
+void ignition::gui::setDefaultConfigPath(const std::string &_path)
+{
+  g_defaultConfigPath = _path;
+}
+
+/////////////////////////////////////////////////
+std::string ignition::gui::defaultConfigPath()
+{
+  return g_defaultConfigPath;
 }
 
 /////////////////////////////////////////////////

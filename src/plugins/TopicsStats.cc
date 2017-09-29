@@ -18,9 +18,11 @@
 #include <google/protobuf/message.h>
 #include <algorithm>
 #include <cstdint>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <ignition/common/Console.hh>
@@ -67,8 +69,7 @@ class TableItemDelegate : public QStyledItemDelegate
     }
 
     // Draw text
-    QColor textColor(30, 30, 30);
-    _painter->setPen(textColor);
+    _painter->setPen(QApplication::palette().text().color());
 
     auto searchModel = dynamic_cast<const SearchModel *>(_index.model());
 
@@ -176,8 +177,14 @@ class TableItemDelegate : public QStyledItemDelegate
       _painter->drawText(textRect, textStr);
     }
 
+    QColor gridColor = _opt.widget->palette().color(
+        _opt.widget->backgroundRole()).toHsv();
+
     // Draw grid
-    QColor gridColor(238, 238, 238);
+    gridColor.setHsv(gridColor.hue(), gridColor.saturation(),
+        gridColor.value() > 127 ? gridColor.value() - 20 :
+                                  gridColor.value() + 20);
+
     _painter->setPen(gridColor);
 
     QPoint p1 = QPoint(_opt.rect.bottomLeft().x()-1,
@@ -472,9 +479,10 @@ void TopicsStats::UpdateGUIStats()
       units = "MB/s";
     }
 
-    std::string b = std::to_string(bandwidth) + " " + units;
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(2) << bandwidth << " " << units;
     statsPair.second.numBytesLastSecItem->setData(
-        QString::fromStdString(b),
+        QString::fromStdString(stream.str()),
         DataRole::DISPLAY_NAME);
   }
 }

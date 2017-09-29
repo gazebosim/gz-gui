@@ -75,8 +75,8 @@ class TreeItemDelegate : public QStyledItemDelegate
       // Erase the branch image for titles.
       QRectF titleRect = _opt.rect;
       titleRect.setLeft(titleRect.left() - 13);
-      // FIXME: Find a non-hardcoded way to get the bg color.
-      QBrush brush(QColor("#e2e2e2"));
+      QBrush brush(_opt.widget->palette().color(
+            _opt.widget->backgroundRole()));
       _painter->save();
       _painter->fillRect(titleRect, brush);
       _painter->restore();
@@ -118,7 +118,7 @@ class TreeItemDelegate : public QStyledItemDelegate
       textRect.adjust(0, 5, 0, -5);
     }
 
-    _painter->setPen(QColor(30, 30, 30));
+    _painter->setPen(QApplication::palette().text().color());
 
     // If this is a search result.
     auto searchModel = dynamic_cast<const SearchModel *>(_index.model());
