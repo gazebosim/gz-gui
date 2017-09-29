@@ -223,9 +223,11 @@ bool ignition::gui::runConfig(const std::string &_config)
 /////////////////////////////////////////////////
 bool ignition::gui::runEmptyWindow()
 {
-  igndbg << "Loading empty window" << std::endl;
+  igndbg << "Loading default window" << std::endl;
 
   initApp();
+
+  loadDefaultConfig();
 
   createMainWindow();
   runMainWindow();
