@@ -351,8 +351,6 @@ bool ignition::gui::loadConfig(const std::string &_config)
     return false;
   }
 
-  ignmsg << "Loading config [" << _config << "]" << std::endl;
-
   // Use tinyxml to read config
   tinyxml2::XMLDocument doc;
   auto success = !doc.LoadFile(_config.c_str());
@@ -369,6 +367,8 @@ bool ignition::gui::loadConfig(const std::string &_config)
 
     return false;
   }
+
+  ignmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Process each plugin
   for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
