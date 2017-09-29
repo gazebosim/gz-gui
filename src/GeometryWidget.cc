@@ -63,12 +63,9 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-GeometryWidget::GeometryWidget(const std::string &/*_key*/,
-    const unsigned int _level)
+GeometryWidget::GeometryWidget()
     : dataPtr(new GeometryWidgetPrivate())
 {
-  this->level = _level;
-
   // Geometry ComboBox
   auto geometryLabel = new QLabel(tr("Type"));
   geometryLabel->setToolTip(tr("type"));

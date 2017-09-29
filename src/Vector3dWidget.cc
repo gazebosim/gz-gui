@@ -39,11 +39,9 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-Vector3dWidget::Vector3dWidget(const std::string &_key, const unsigned int _level)
+Vector3dWidget::Vector3dWidget(const std::string &_key)
     : dataPtr(new Vector3dWidgetPrivate())
 {
-  this->level = _level;
-
   // Presets
   auto presetsCombo = new QComboBox(this);
   presetsCombo->addItem("Custom", 0);

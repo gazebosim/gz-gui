@@ -933,7 +933,7 @@ TEST(MessageWidgetTest, CustomMessageWidgetReadOnly)
 
   // Create a child widget
   {
-    auto vecWidget = new Vector3dWidget("vector3d", 0);
+    auto vecWidget = new Vector3dWidget("vector3d");
     auto stringWidget = new StringWidget("string", 0);
 
     EXPECT_TRUE(messageWidget->AddPropertyWidget("vector3d", vecWidget));
@@ -946,7 +946,7 @@ TEST(MessageWidgetTest, CustomMessageWidgetReadOnly)
     auto childWidget = new PropertyWidget();
     childWidget->setLayout(childLayout);
 
-    auto collapsibleWidget = new CollapsibleWidget("group", childWidget, 0);
+    auto collapsibleWidget = new CollapsibleWidget("group");
     messageLayout->addWidget(collapsibleWidget);
   }
 
@@ -972,8 +972,7 @@ TEST(MessageWidgetTest, CustomMessageWidgetReadOnly)
 
     EXPECT_TRUE(messageWidget->AddPropertyWidget("custom", customWidget));
 
-    auto customCollapsibleWidget = new CollapsibleWidget("custom group",
-        customWidget, 0);
+    auto customCollapsibleWidget = new CollapsibleWidget("custom group");
 
     messageLayout->addWidget(customCollapsibleWidget);
   }
@@ -1134,9 +1133,9 @@ TEST(MessageWidgetTest, CreatedExternally)
   auto doubleWidget = new NumberWidget("double", 1, NumberWidget::DOUBLE);
   auto stringWidget = new StringWidget("string", 1);
   auto boolWidget = new BoolWidget("bool", 2);
-  auto vector3dWidget = new Vector3dWidget("vector3d", 2);
-  auto colorWidget = new ColorWidget("color", 3);
-  auto poseWidget = new Pose3dWidget("pose", 3);
+  auto vector3dWidget = new Vector3dWidget("vector3d");
+  auto colorWidget = new ColorWidget("color");
+  auto poseWidget = new Pose3dWidget();
 
   std::vector<std::string> enumValues;
   enumValues.push_back("value1");
@@ -1258,10 +1257,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   groupChildWidget->setLayout(groupChildWidgetLayout);
   groupChildWidget->widgets.push_back(groupBox);
 
-  auto collapsibleWidget =
-      new CollapsibleWidget("collapsibleWidget", groupChildWidget, 0);
+  auto collapsibleWidget = new CollapsibleWidget("collapsibleWidget");
   EXPECT_TRUE(collapsibleWidget != nullptr);
-  EXPECT_TRUE(collapsibleWidget->childWidget != nullptr);
 
   EXPECT_TRUE(stop());
 }
@@ -1674,7 +1671,7 @@ TEST(MessageWidgetTest, ChildPoseSignal)
   auto messageWidget = new MessageWidget();
 
   // Create child pose widget
-  auto poseWidget = new Pose3dWidget("pose");
+  auto poseWidget = new Pose3dWidget();
   EXPECT_TRUE(poseWidget != nullptr);
 
   // Add to message widget
@@ -1719,7 +1716,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   auto messageWidget = new MessageWidget();
 
   // Create child widget
-  auto geometryWidget = new GeometryWidget("geometry");
+  auto geometryWidget = new GeometryWidget();
   EXPECT_TRUE(geometryWidget != nullptr);
 
   // Add to message widget

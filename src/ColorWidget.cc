@@ -40,11 +40,9 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-ColorWidget::ColorWidget(const std::string &_key, const unsigned int _level)
+ColorWidget::ColorWidget(const std::string &_key)
     : dataPtr(new ColorWidgetPrivate())
 {
-  this->level = _level;
-
   // Labels
   auto colorRLabel = new QLabel(tr("R"));
   auto colorGLabel = new QLabel(tr("G"));

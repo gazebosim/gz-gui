@@ -36,10 +36,7 @@ namespace ignition
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _key Property key.
-      /// \param[in] _level Depth level, in case nested.
-      public: Pose3dWidget(const std::string &_key,
-                         const unsigned int _level = 0);
+      public: Pose3dWidget();
 
       /// \brief Destructor
       public: ~Pose3dWidget();

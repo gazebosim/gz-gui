@@ -40,11 +40,8 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-Pose3dWidget::Pose3dWidget(const std::string &/*_key*/, const unsigned int _level)
-    : dataPtr(new Pose3dWidgetPrivate())
+Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
 {
-  this->level = _level;
-
   // Labels
   std::vector<std::string> elements;
   elements.push_back("x");

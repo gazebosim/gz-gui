@@ -27,7 +27,7 @@ namespace ignition
   namespace gui
   {
     /// \brief A collapsible widget that holds a child widget.
-    class IGNITION_GUI_VISIBLE CollapsibleWidget : public QWidget
+    class IGNITION_GUI_VISIBLE CollapsibleWidget : public PropertyWidget
     {
       Q_OBJECT
 
@@ -35,15 +35,11 @@ namespace ignition
       /// \param[in] _key
       /// \param[in] _childWidget
       /// \param[in] _level
-      public: CollapsibleWidget(const std::string &_key,
-          PropertyWidget *_childWidget, const int _level);
+      public: CollapsibleWidget(const std::string &_key);
 
       /// \brief Callback that collapses or expands the child widget.
       /// _param[in] _checked True for expanded.
       public slots: void Toggle(bool _checked);
-
-      /// \brief Child widget that can be collapsed or expanded.
-      public: QWidget *childWidget;
     };
   }
 }

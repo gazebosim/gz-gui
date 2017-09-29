@@ -24,8 +24,6 @@ namespace ignition
 {
   namespace gui
   {
-    class PropertyWidget;
-
     /// \brief Private data for the BoolWidget class.
     class BoolWidgetPrivate
     {

@@ -93,7 +93,7 @@ namespace ignition
 
       /// \brief Update the widgets from a message.
       /// \param[in] _msg Message used for updating the widgets.
-      public: void UpdateFromMsg(const google::protobuf::Message *_msg);
+      public: bool UpdateFromMsg(const google::protobuf::Message *_msg);
 
       /// \brief Set a value of a property widget.
       /// \param[in] _name Name of the property widget.
@@ -130,16 +130,13 @@ namespace ignition
 
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update the widgets with values
-      /// from the message.
+      /// from the message. This is called recursively to parse nested messages.
       /// \param[in] _msg Message.
-      /// \param[in] _update True to parse only fields that are specified in
-      /// the message rather than all the available fields in the message
-      /// \param[in] _name Name used when creating new widgets.
-      /// \param[in] _level Level of the widget in the tree.
-      /// return Updated widget.
-      private: QWidget *Parse(google::protobuf::Message *_msg,
-          bool _update = false, const std::string &_name = "",
-          const int _level = 0);
+      /// \param[in] _scopedName Scoped name for new widgets.
+      /// \param[in] _parent Pointer to parent of generated widgets.
+      /// return True if successful.
+      private: bool Parse(google::protobuf::Message *_msg,
+          const std::string &_name, QWidget *_parent);
 
       /// \brief Update the message field using values from the widgets.
       /// \param[in] _msg Message to be updated.

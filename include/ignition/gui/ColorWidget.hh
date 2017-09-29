@@ -38,8 +38,7 @@ namespace ignition
       /// \brief Constructor
       /// \param[in] _key Property key.
       /// \param[in] _level Depth level, in case nested.
-      public: ColorWidget(const std::string &_key,
-                          const unsigned int _level = 0);
+      public: ColorWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~ColorWidget();
