@@ -252,7 +252,11 @@ config file. For example:
 
 1. Drag the widgets as you wish.
 
-1. Click on `File->Save configuration` and save on a new file.
+1. Click on `File->Save configuration as` and save on a new file.
+
+    > You can also click on `File -> Save configuration` to save that as the
+      default configuration which is loaded whenever Ignition GUI is opened
+      without a config file.
 
 1. Close the window, then load the new config file:
 

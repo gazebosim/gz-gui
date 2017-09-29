@@ -17,13 +17,18 @@
 #ifndef IGNITION_GUI_IFACE_HH_
 #define IGNITION_GUI_IFACE_HH_
 
-#include <tinyxml2.h>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
+
+// Forward declarations.
+namespace tinyxml2
+{
+  class XMLElement;
+}
 
 namespace ignition
 {
@@ -45,6 +50,13 @@ namespace ignition
     /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool loadConfig(const std::string &_config);
+
+    /// \brief Load the configuration from the default config file.
+    /// \return True if successful
+    /// \sa setDefaultConfigPath
+    /// \sa defaultConfigPath
+    IGNITION_GUI_VISIBLE
+    bool loadDefaultConfig();
 
     /// \brief Load a plugin from a file name. The plugin file must be in the
     /// path.
@@ -69,6 +81,22 @@ namespace ignition
     /// \sa setStyleFromFile
     IGNITION_GUI_VISIBLE
     bool setStyleFromString(const std::string &_styleSheet);
+
+    /// \brief Specifies the location of the default configuration file.
+    /// This is the file that stores the user settings when pressing
+    /// "Save configuration".
+    /// \param[in] _path The default configuration full path including filename.
+    /// \sa loadDefaultConfig
+    /// \sa defaultConfigPath
+    IGNITION_GUI_VISIBLE
+    void setDefaultConfigPath(const std::string &_path);
+
+    /// \brief Get the location of the default configuration file.
+    /// \return The default configuration path.
+    /// \sa loadDefaultConfig
+    /// \sa setDefaultConfigPath
+    IGNITION_GUI_VISIBLE
+    std::string defaultConfigPath();
 
     /// \brief Add previously loaded plugins to the main window.
     /// * Make sure the window is created first
