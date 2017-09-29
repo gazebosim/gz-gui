@@ -49,7 +49,7 @@ namespace ignition
     /// \brief Load the configuration from the default config file.
     /// \return True if successful
     /// \sa setDefaultConfigPath
-    /// \sa DefaultConfigPath
+    /// \sa defaultConfigPath
     IGNITION_GUI_VISIBLE
     bool loadDefaultConfig();
 
@@ -81,11 +81,15 @@ namespace ignition
     /// This is the file that stores the user settings when pressing
     /// "Save configuration".
     /// \param[in] _path The default configuration path.
+    /// \sa loadDefaultConfig
+    /// \sa defaultConfigPath
     IGNITION_GUI_VISIBLE
     void setDefaultConfigPath(const std::string &_path);
 
     /// \brief Get the location of the default configuration file.
     /// \return The default configuration path.
+    /// \sa loadDefaultConfig
+    /// \sa setDefaultConfigPath
     IGNITION_GUI_VISIBLE
     std::string defaultConfigPath();
 
