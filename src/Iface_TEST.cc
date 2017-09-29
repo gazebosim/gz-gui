@@ -161,6 +161,46 @@ TEST(IfaceTest, loadConfig)
 }
 
 /////////////////////////////////////////////////
+TEST(IfaceTest, loadDefaultConfig)
+{
+  setVerbosity(4);
+
+  // Before init
+  {
+    EXPECT_TRUE(defaultConfigPath().empty());
+    EXPECT_FALSE(loadDefaultConfig());
+  }
+
+  // Before setDefaultConfig()
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(loadDefaultConfig());
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Test config file
+  {
+    EXPECT_TRUE(initApp());
+
+    // Add test plugin to path (referenced in config)
+    auto testBuildPath = ignition::common::joinPaths(
+      std::string(PROJECT_BINARY_PATH), "test", "plugins");
+    addPluginPath(testBuildPath + "plugins");
+
+    // Set default config file
+    auto configPath = ignition::common::joinPaths(
+      std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
+    setDefaultConfigPath(configPath);
+    EXPECT_TRUE(loadDefaultConfig());
+    EXPECT_EQ(defaultConfigPath(), configPath);
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+/////////////////////////////////////////////////
 TEST(IfaceTest, StyleSheet)
 {
   setVerbosity(4);
