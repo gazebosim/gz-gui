@@ -165,20 +165,7 @@ TEST(IfaceTest, loadDefaultConfig)
 {
   setVerbosity(4);
 
-  // Before init
-  {
-    EXPECT_TRUE(defaultConfigPath().empty());
-    EXPECT_FALSE(loadDefaultConfig());
-  }
-
-  // Before setDefaultConfig()
-  {
-    EXPECT_TRUE(initApp());
-
-    EXPECT_FALSE(loadDefaultConfig());
-
-    EXPECT_TRUE(stop());
-  }
+  EXPECT_FALSE(defaultConfigPath().empty());
 
   // Test config file
   {

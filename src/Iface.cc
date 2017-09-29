@@ -17,12 +17,17 @@
 
 #include <signal.h>
 #include <stdio.h>
+#include <tinyxml2.h>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/Filesystem.hh>
 #include <ignition/common/PluginLoader.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
+#include <ignition/common/Util.hh>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/config.hh"
@@ -38,6 +43,9 @@ char **g_argv;
 
 using namespace ignition;
 using namespace gui;
+
+// Forward declarations.
+std::string homePath();
 
 struct WindowConfig
 {
@@ -82,7 +90,8 @@ std::vector<std::string> g_pluginPaths;
 WindowConfig g_windowConfig;
 
 /// \brief The path containing the default configuration file.
-std::string g_defaultConfigPath = "";
+std::string g_defaultConfigPath = ignition::common::joinPaths(
+  homePath(), ".ignition", "gui", "default.config");
 
 /////////////////////////////////////////////////
 // Check whether the app has been initialized
@@ -170,15 +179,19 @@ void messageHandler(QtMsgType _type, const QMessageLogContext &_context,
 }
 
 /////////////////////////////////////////////////
-// Get home directory
+/// \brief Get home directory.
+/// \return Home directory or empty string if home wasn't found.
+/// \ToDo: Move this function to ignition::common::Filesystem
 std::string homePath()
 {
-  char *homePath = getenv("HOME");
-  std::string home;
-  if (homePath)
-    home = homePath;
+  std::string homePath;
+#ifndef _WIN32
+  ignition::common::env("HOME", homePath);
+#else
+  ignition::common::env("HOMEPATH", homePath);
+#endif
 
-  return home;
+  return homePath;
 }
 
 /////////////////////////////////////////////////

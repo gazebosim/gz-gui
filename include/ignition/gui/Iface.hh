@@ -17,7 +17,6 @@
 #ifndef IGNITION_GUI_IFACE_HH_
 #define IGNITION_GUI_IFACE_HH_
 
-#include <tinyxml2.h>
 #include <string>
 #include <utility>
 #include <vector>
@@ -25,10 +24,19 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
 
+// Forward declarations.
+namespace tinyxml2
+{
+  class XMLElement;
+}
+
 namespace ignition
 {
   namespace gui
   {
+    // Forward declarations.
+    class MainWindow;
+
     /// \brief Initialize the application. This must be run before everything
     /// else.
     /// \return True on success.

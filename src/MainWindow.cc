@@ -16,12 +16,14 @@
  */
 
 #include <tinyxml2.h>
+#include <string>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
+#include "ignition/gui/qt.h"
 
 namespace ignition
 {
@@ -35,6 +37,15 @@ namespace ignition
 
 using namespace ignition;
 using namespace gui;
+
+/// \brief Strip last component from a path.
+/// \return Original path without its last component.
+/// \ToDo: Move this function to ignition::common::Filesystem
+std::string dirName(const std::string &_path)
+{
+  std::size_t found = _path.find_last_of("/\\");
+  return _path.substr(0, found);
+}
 
 /////////////////////////////////////////////////
 MainWindow::MainWindow()
@@ -212,6 +223,11 @@ void MainWindow::SaveImpl(const std::string &_path)
   auto plugins = this->findChildren<Plugin *>();
   for (const auto plugin : plugins)
     config += plugin->ConfigStr();
+
+  // Create the intermediate directories if needed.
+  // We check for errors when we try to open the file.
+  auto dirname = dirName(_path);
+  ignition::common::createDirectories(dirname);
 
   // Open the file
   std::ofstream out(_path.c_str(), std::ios::out);
