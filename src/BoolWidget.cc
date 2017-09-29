@@ -72,9 +72,6 @@ BoolWidget::BoolWidget(const std::string &_key, const unsigned int _level)
   // ChildWidget
   this->setLayout(widgetLayout);
   this->setFrameStyle(QFrame::Box);
-
-  this->widgets.push_back(valueTrueRadioButton);
-  this->widgets.push_back(valueFalseRadioButton);
 }
 
 /////////////////////////////////////////////////

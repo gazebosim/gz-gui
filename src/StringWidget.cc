@@ -70,9 +70,6 @@ StringWidget::StringWidget(const std::string &_key, const unsigned int _level,
 
   this->setLayout(widgetLayout);
   this->setFrameStyle(QFrame::Box);
-
-  // Internal widgets
-  this->widgets.push_back(valueEdit);
 }
 
 /////////////////////////////////////////////////
@@ -85,24 +82,19 @@ bool StringWidget::SetValue(const QVariant _value)
 {
   auto value = _value.value<std::string>();
 
-  if (this->widgets.size() == 1u)
+  if (auto edit = this->findChild<QLineEdit *>())
   {
-    if (qobject_cast<QLineEdit *>(this->widgets[0]))
-    {
-      qobject_cast<QLineEdit *>(this->widgets[0])
-          ->setText(tr(value.c_str()));
-      return true;
-    }
-    else if (qobject_cast<QPlainTextEdit *>(this->widgets[0]))
-    {
-      qobject_cast<QPlainTextEdit *>(this->widgets[0])
-          ->setPlainText(tr(value.c_str()));
-      return true;
-    }
+    edit->setText(tr(value.c_str()));
+    return true;
   }
 
-  ignerr << "Error updating bool widget, wrong number of child widgets: ["
-         << this->widgets.size() << std::endl;
+  if (auto edit = this->findChild<QPlainTextEdit *>())
+  {
+    edit->setPlainText(tr(value.c_str()));
+    return true;
+  }
+
+  ignerr << "Error updating widget" << std::endl;
   return false;
 }
 
@@ -110,23 +102,14 @@ bool StringWidget::SetValue(const QVariant _value)
 QVariant StringWidget::Value() const
 {
   std::string value;
-  if (this->widgets.size() == 1u)
+
+  if (auto edit = this->findChild<QLineEdit *>())
   {
-    if (qobject_cast<QLineEdit *>(this->widgets[0]))
-    {
-      value =
-          qobject_cast<QLineEdit *>(this->widgets[0])->text().toStdString();
-    }
-    else if (qobject_cast<QPlainTextEdit *>(this->widgets[0]))
-    {
-      value = qobject_cast<QPlainTextEdit *>(this->widgets[0])
-          ->toPlainText().toStdString();
-    }
+    value = edit->text().toStdString();
   }
-  else
+  else if (auto edit = this->findChild<QPlainTextEdit *>())
   {
-    ignerr << "Error getting value from bool widget, wrong number of child "
-           << "widgets: [" << this->widgets.size() << std::endl;
+    value = edit->toPlainText().toStdString();
   }
 
   QVariant v;

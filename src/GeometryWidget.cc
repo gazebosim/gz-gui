@@ -67,15 +67,15 @@ GeometryWidget::GeometryWidget()
     : dataPtr(new GeometryWidgetPrivate())
 {
   // Geometry ComboBox
-  auto geometryLabel = new QLabel(tr("Type"));
-  geometryLabel->setToolTip(tr("type"));
-  auto geometryComboBox = new QComboBox(this);
-  geometryComboBox->addItem(tr("box"));
-  geometryComboBox->addItem(tr("cylinder"));
-  geometryComboBox->addItem(tr("sphere"));
-  geometryComboBox->addItem(tr("mesh"));
-  geometryComboBox->addItem(tr("polyline"));
-  this->connect(geometryComboBox, SIGNAL(currentIndexChanged(const QString)),
+  auto label = new QLabel(tr("Type"));
+  label->setToolTip(tr("type"));
+  auto comboBox = new QComboBox(this);
+  comboBox->addItem(tr("box"));
+  comboBox->addItem(tr("cylinder"));
+  comboBox->addItem(tr("sphere"));
+  comboBox->addItem(tr("mesh"));
+  comboBox->addItem(tr("polyline"));
+  this->connect(comboBox, SIGNAL(currentIndexChanged(const QString)),
       this, SLOT(OnTypeChanged(const QString)));
 
   // Size XYZ
@@ -83,65 +83,68 @@ GeometryWidget::GeometryWidget()
   double max = 0;
   rangeFromKey("length", min, max);
 
-  auto geomSizeXSpinBox = new QDoubleSpinBox(this);
-  geomSizeXSpinBox->setRange(min, max);
-  geomSizeXSpinBox->setSingleStep(0.01);
-  geomSizeXSpinBox->setDecimals(6);
-  geomSizeXSpinBox->setValue(1.000);
-  geomSizeXSpinBox->setAlignment(Qt::AlignRight);
-  geomSizeXSpinBox->setMaximumWidth(100);
-  this->connect(geomSizeXSpinBox, SIGNAL(editingFinished()), this,
+  auto sizeXSpinBox = new QDoubleSpinBox(this);
+  sizeXSpinBox->setObjectName("size");
+  sizeXSpinBox->setRange(min, max);
+  sizeXSpinBox->setSingleStep(0.01);
+  sizeXSpinBox->setDecimals(6);
+  sizeXSpinBox->setValue(1.000);
+  sizeXSpinBox->setAlignment(Qt::AlignRight);
+  sizeXSpinBox->setMaximumWidth(100);
+  this->connect(sizeXSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
 
-  auto geomSizeYSpinBox = new QDoubleSpinBox(this);
-  geomSizeYSpinBox->setRange(min, max);
-  geomSizeYSpinBox->setSingleStep(0.01);
-  geomSizeYSpinBox->setDecimals(6);
-  geomSizeYSpinBox->setValue(1.000);
-  geomSizeYSpinBox->setAlignment(Qt::AlignRight);
-  geomSizeYSpinBox->setMaximumWidth(100);
-  this->connect(geomSizeYSpinBox, SIGNAL(editingFinished()), this,
+  auto sizeYSpinBox = new QDoubleSpinBox(this);
+  sizeYSpinBox->setObjectName("size");
+  sizeYSpinBox->setRange(min, max);
+  sizeYSpinBox->setSingleStep(0.01);
+  sizeYSpinBox->setDecimals(6);
+  sizeYSpinBox->setValue(1.000);
+  sizeYSpinBox->setAlignment(Qt::AlignRight);
+  sizeYSpinBox->setMaximumWidth(100);
+  this->connect(sizeYSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
 
-  auto geomSizeZSpinBox = new QDoubleSpinBox(this);
-  geomSizeZSpinBox->setRange(min, max);
-  geomSizeZSpinBox->setSingleStep(0.01);
-  geomSizeZSpinBox->setDecimals(6);
-  geomSizeZSpinBox->setValue(1.000);
-  geomSizeZSpinBox->setAlignment(Qt::AlignRight);
-  geomSizeZSpinBox->setMaximumWidth(100);
-  this->connect(geomSizeZSpinBox, SIGNAL(editingFinished()), this,
+  auto sizeZSpinBox = new QDoubleSpinBox(this);
+  sizeZSpinBox->setObjectName("size");
+  sizeZSpinBox->setRange(min, max);
+  sizeZSpinBox->setSingleStep(0.01);
+  sizeZSpinBox->setDecimals(6);
+  sizeZSpinBox->setValue(1.000);
+  sizeZSpinBox->setAlignment(Qt::AlignRight);
+  sizeZSpinBox->setMaximumWidth(100);
+  this->connect(sizeZSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
 
-  auto geomSizeXLabel = new QLabel(tr("X"));
-  auto geomSizeYLabel = new QLabel(tr("Y"));
-  auto geomSizeZLabel = new QLabel(tr("Z"));
-  geomSizeXLabel->setStyleSheet("QLabel{color: " + kRedColor + ";}");
-  geomSizeYLabel->setStyleSheet("QLabel{color: " + kGreenColor + ";}");
-  geomSizeZLabel->setStyleSheet("QLabel{color: " + kBlueColor + ";}");
-  geomSizeXLabel->setToolTip(tr("x"));
-  geomSizeYLabel->setToolTip(tr("y"));
-  geomSizeZLabel->setToolTip(tr("z"));
+  auto sizeXLabel = new QLabel(tr("X"));
+  auto sizeYLabel = new QLabel(tr("Y"));
+  auto sizeZLabel = new QLabel(tr("Z"));
+  sizeXLabel->setStyleSheet("QLabel{color: " + kRedColor + ";}");
+  sizeYLabel->setStyleSheet("QLabel{color: " + kGreenColor + ";}");
+  sizeZLabel->setStyleSheet("QLabel{color: " + kBlueColor + ";}");
+  sizeXLabel->setToolTip(tr("x"));
+  sizeYLabel->setToolTip(tr("y"));
+  sizeZLabel->setToolTip(tr("z"));
 
   auto unit = unitFromKey("length");
-  auto geomSizeXUnitLabel = new QLabel(QString::fromStdString(unit));
-  auto geomSizeYUnitLabel = new QLabel(QString::fromStdString(unit));
-  auto geomSizeZUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto sizeXUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto sizeYUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto sizeZUnitLabel = new QLabel(QString::fromStdString(unit));
 
-  auto geomSizeLayout = new QHBoxLayout;
-  geomSizeLayout->addWidget(geomSizeXLabel);
-  geomSizeLayout->addWidget(geomSizeXSpinBox);
-  geomSizeLayout->addWidget(geomSizeXUnitLabel);
-  geomSizeLayout->addWidget(geomSizeYLabel);
-  geomSizeLayout->addWidget(geomSizeYSpinBox);
-  geomSizeLayout->addWidget(geomSizeYUnitLabel);
-  geomSizeLayout->addWidget(geomSizeZLabel);
-  geomSizeLayout->addWidget(geomSizeZSpinBox);
-  geomSizeLayout->addWidget(geomSizeZUnitLabel);
+  auto sizeLayout = new QHBoxLayout;
+  sizeLayout->addWidget(sizeXLabel);
+  sizeLayout->addWidget(sizeXSpinBox);
+  sizeLayout->addWidget(sizeXUnitLabel);
+  sizeLayout->addWidget(sizeYLabel);
+  sizeLayout->addWidget(sizeYSpinBox);
+  sizeLayout->addWidget(sizeYUnitLabel);
+  sizeLayout->addWidget(sizeZLabel);
+  sizeLayout->addWidget(sizeZSpinBox);
+  sizeLayout->addWidget(sizeZUnitLabel);
 
-  geomSizeLayout->setAlignment(geomSizeXLabel, Qt::AlignRight);
-  geomSizeLayout->setAlignment(geomSizeYLabel, Qt::AlignRight);
-  geomSizeLayout->setAlignment(geomSizeZLabel, Qt::AlignRight);
+  sizeLayout->setAlignment(sizeXLabel, Qt::AlignRight);
+  sizeLayout->setAlignment(sizeYLabel, Qt::AlignRight);
+  sizeLayout->setAlignment(sizeZLabel, Qt::AlignRight);
 
   // Uri
   auto filenameLabel = new QLabel(tr("Uri"));
@@ -157,32 +160,34 @@ GeometryWidget::GeometryWidget()
   filenameLayout->addWidget(filenameLineEdit);
   filenameLayout->addWidget(filenameButton);
 
-  auto geomSizeFilenameLayout = new QVBoxLayout;
-  geomSizeFilenameLayout->addLayout(geomSizeLayout);
-  geomSizeFilenameLayout->addLayout(filenameLayout);
+  auto sizeFilenameLayout = new QVBoxLayout;
+  sizeFilenameLayout->addLayout(sizeLayout);
+  sizeFilenameLayout->addLayout(filenameLayout);
 
-  auto geomSizeWidget = new QWidget(this);
-  geomSizeWidget->setLayout(geomSizeFilenameLayout);
+  auto sizeWidget = new QWidget(this);
+  sizeWidget->setLayout(sizeFilenameLayout);
 
   // Radius / Length
-  auto geomRadiusLabel = new QLabel(tr("Radius"));
+  auto radiusLabel = new QLabel(tr("Radius"));
   auto lengthLabel = new QLabel(tr("Length"));
-  auto geomRadiusUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto radiusUnitLabel = new QLabel(QString::fromStdString(unit));
   auto lengthUnitLabel = new QLabel(QString::fromStdString(unit));
-  geomRadiusLabel->setToolTip(tr("radius"));
+  radiusLabel->setToolTip(tr("radius"));
   lengthLabel->setToolTip(tr("length"));
 
-  auto geomRadiusSpinBox = new QDoubleSpinBox(this);
-  geomRadiusSpinBox->setRange(min, max);
-  geomRadiusSpinBox->setSingleStep(0.01);
-  geomRadiusSpinBox->setDecimals(6);
-  geomRadiusSpinBox->setValue(0.500);
-  geomRadiusSpinBox->setAlignment(Qt::AlignRight);
-  geomRadiusSpinBox->setMaximumWidth(100);
-  this->connect(geomRadiusSpinBox, SIGNAL(editingFinished()), this,
+  auto radiusSpinBox = new QDoubleSpinBox(this);
+  radiusSpinBox->setObjectName("radius");
+  radiusSpinBox->setRange(min, max);
+  radiusSpinBox->setSingleStep(0.01);
+  radiusSpinBox->setDecimals(6);
+  radiusSpinBox->setValue(0.500);
+  radiusSpinBox->setAlignment(Qt::AlignRight);
+  radiusSpinBox->setMaximumWidth(100);
+  this->connect(radiusSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
 
   auto lengthSpinBox = new QDoubleSpinBox(this);
+  lengthSpinBox->setObjectName("length");
   lengthSpinBox->setRange(min, max);
   lengthSpinBox->setSingleStep(0.01);
   lengthSpinBox->setDecimals(6);
@@ -192,33 +197,32 @@ GeometryWidget::GeometryWidget()
   this->connect(lengthSpinBox, SIGNAL(editingFinished()), this,
       SLOT(OnGeometryValueChanged()));
 
-  auto geomRLLayout = new QHBoxLayout;
-  geomRLLayout->addWidget(geomRadiusLabel);
-  geomRLLayout->addWidget(geomRadiusSpinBox);
-  geomRLLayout->addWidget(geomRadiusUnitLabel);
-  geomRLLayout->addWidget(lengthLabel);
-  geomRLLayout->addWidget(lengthSpinBox);
-  geomRLLayout->addWidget(lengthUnitLabel);
+  auto rLLayout = new QHBoxLayout;
+  rLLayout->addWidget(radiusLabel);
+  rLLayout->addWidget(radiusSpinBox);
+  rLLayout->addWidget(radiusUnitLabel);
+  rLLayout->addWidget(lengthLabel);
+  rLLayout->addWidget(lengthSpinBox);
+  rLLayout->addWidget(lengthUnitLabel);
 
-  geomRLLayout->setAlignment(geomRadiusLabel, Qt::AlignRight);
-  geomRLLayout->setAlignment(lengthLabel, Qt::AlignRight);
+  rLLayout->setAlignment(radiusLabel, Qt::AlignRight);
+  rLLayout->setAlignment(lengthLabel, Qt::AlignRight);
 
-  auto geomRLWidget = new QWidget;
-  geomRLWidget->setLayout(geomRLLayout);
+  auto rLWidget = new QWidget;
+  rLWidget->setLayout(rLLayout);
 
   // Dimensions
   auto dimensionWidget = new QStackedWidget(this);
-  dimensionWidget->insertWidget(0, geomSizeWidget);
+  dimensionWidget->insertWidget(0, sizeWidget);
 
-  dimensionWidget->insertWidget(1, geomRLWidget);
+  dimensionWidget->insertWidget(1, rLWidget);
   dimensionWidget->setCurrentIndex(0);
-  dimensionWidget->setSizePolicy(
-      QSizePolicy::Minimum, QSizePolicy::Minimum);
+  dimensionWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
   // Layout
   auto widgetLayout = new QGridLayout;
-  widgetLayout->addWidget(geometryLabel, 0, 1);
-  widgetLayout->addWidget(geometryComboBox, 0, 2, 1, 2);
+  widgetLayout->addWidget(label, 0, 1);
+  widgetLayout->addWidget(comboBox, 0, 2, 1, 2);
   widgetLayout->addWidget(dimensionWidget, 2, 1, 1, 3);
 
   // ChildWidget
@@ -240,30 +244,22 @@ GeometryWidget::GeometryWidget()
   this->connect(this, SIGNAL(GeometryChanged()),
       this, SLOT(OnGeometryChanged()));
 
-  this->connect(geomSizeXSpinBox, SIGNAL(valueChanged(double)),
+  this->connect(sizeXSpinBox, SIGNAL(valueChanged(double)),
       this, SLOT(OnValueChanged()));
 
-  this->connect(geomSizeYSpinBox, SIGNAL(valueChanged(double)),
+  this->connect(sizeYSpinBox, SIGNAL(valueChanged(double)),
       this, SLOT(OnValueChanged()));
 
-  this->connect(geomSizeZSpinBox, SIGNAL(valueChanged(double)),
+  this->connect(sizeZSpinBox, SIGNAL(valueChanged(double)),
       this, SLOT(OnValueChanged()));
 
-  this->connect(geomRadiusSpinBox, SIGNAL(valueChanged(double)),
+  this->connect(radiusSpinBox, SIGNAL(valueChanged(double)),
       this, SLOT(OnValueChanged()));
 
   this->connect(lengthSpinBox, SIGNAL(valueChanged(double)),
       this, SLOT(OnValueChanged()));
 
   this->setLayout(widgetLayout);
-  this->widgets.push_back(geometryComboBox);
-  this->widgets.push_back(geomSizeXSpinBox);
-  this->widgets.push_back(geomSizeYSpinBox);
-  this->widgets.push_back(geomSizeZSpinBox);
-  this->widgets.push_back(geomRadiusSpinBox);
-  this->widgets.push_back(lengthSpinBox);
-  this->widgets.push_back(filenameLineEdit);
-  this->widgets.push_back(filenameButton);
 }
 
 /////////////////////////////////////////////////
@@ -276,16 +272,14 @@ bool GeometryWidget::SetValue(const QVariant _value)
 {
   auto value = _value.value<msgs::Geometry>();
 
-  if (this->widgets.size() != 8u)
-  {
-    ignerr << "Error updating Geometry widget " << std::endl;
-    return false;
-  }
+  auto combo = this->findChild<QComboBox *>();
+  auto sizeSpins = this->findChildren<QDoubleSpinBox *>("size");
+  auto radiusSpin = this->findChild<QDoubleSpinBox *>("radius");
+  auto lengthSpin = this->findChild<QDoubleSpinBox *>("length");
+  auto edit = this->findChild<QLineEdit *>();
 
   auto type = msgs::ConvertGeometryType(value.type());
-
-  auto valueComboBox = qobject_cast<QComboBox *>(this->widgets[0]);
-  int index = valueComboBox->findText(tr(type.c_str()));
+  int index = combo->findText(tr(type.c_str()));
 
   if (index < 0)
   {
@@ -294,33 +288,29 @@ bool GeometryWidget::SetValue(const QVariant _value)
     return false;
   }
 
-  qobject_cast<QComboBox *>(this->widgets[0])->setCurrentIndex(index);
+  combo->setCurrentIndex(index);
 
   if (type == "box")
   {
-    qobject_cast<QDoubleSpinBox *>(this->widgets[1])->setValue(
-        value.box().size().x());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[2])->setValue(
-        value.box().size().y());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[3])->setValue(
-        value.box().size().z());
+    sizeSpins[0]->setValue(value.box().size().x());
+    sizeSpins[1]->setValue(value.box().size().y());
+    sizeSpins[2]->setValue(value.box().size().z());
   }
   else if (type == "cylinder")
   {
-    qobject_cast<QDoubleSpinBox *>(this->widgets[4])->setValue(
-        value.cylinder().radius());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[5])->setValue(
-        value.cylinder().length());
+    radiusSpin->setValue(value.cylinder().radius());
+    lengthSpin->setValue(value.cylinder().length());
   }
   else if (type == "sphere")
   {
-    qobject_cast<QDoubleSpinBox *>(this->widgets[4])->setValue(
-        value.sphere().radius());
+    radiusSpin->setValue(value.sphere().radius());
   }
   else if (type == "mesh")
   {
-    qobject_cast<QLineEdit *>(this->widgets[6])->setText(tr(
-      value.mesh().filename().c_str()));
+    sizeSpins[0]->setValue(value.mesh().scale().x());
+    sizeSpins[1]->setValue(value.mesh().scale().y());
+    sizeSpins[2]->setValue(value.mesh().scale().z());
+    edit->setText(tr(value.mesh().filename().c_str()));
   }
   else if (type == "polyline")
   {
@@ -339,36 +329,32 @@ QVariant GeometryWidget::Value() const
 {
   msgs::Geometry value;
 
-  if (this->widgets.size() != 8u)
-  {
-    ignerr << "Error getting value from Geometry widget " << std::endl;
-    return QVariant();
-  }
+  auto combo = this->findChild<QComboBox *>();
+  auto sizeSpins = this->findChildren<QDoubleSpinBox *>("size");
+  auto radiusSpin = this->findChild<QDoubleSpinBox *>("radius");
+  auto lengthSpin = this->findChild<QDoubleSpinBox *>("length");
+  auto edit = this->findChild<QLineEdit *>();
 
-  auto valueComboBox = qobject_cast<QComboBox *>(this->widgets[0]);
-  auto type = valueComboBox->currentText().toStdString();
+  auto type = combo->currentText().toStdString();
 
   if (type == "box")
   {
     value.set_type(msgs::Geometry::BOX);
     auto size = value.mutable_box()->mutable_size();
-    size->set_x(qobject_cast<QDoubleSpinBox *>(this->widgets[1])->value());
-    size->set_y(qobject_cast<QDoubleSpinBox *>(this->widgets[2])->value());
-    size->set_z(qobject_cast<QDoubleSpinBox *>(this->widgets[3])->value());
+    size->set_x(sizeSpins[0]->value());
+    size->set_y(sizeSpins[1]->value());
+    size->set_z(sizeSpins[2]->value());
   }
   else if (type == "cylinder")
   {
     value.set_type(msgs::Geometry::CYLINDER);
-    value.mutable_cylinder()->set_radius(
-        qobject_cast<QDoubleSpinBox *>(this->widgets[4])->value());
-    value.mutable_cylinder()->set_length(qobject_cast<QDoubleSpinBox *>(
-        this->widgets[5])->value());
+    value.mutable_cylinder()->set_radius(radiusSpin->value());
+    value.mutable_cylinder()->set_length(lengthSpin->value());
   }
   else if (type == "sphere")
   {
     value.set_type(msgs::Geometry::SPHERE);
-    value.mutable_sphere()->set_radius(
-        qobject_cast<QDoubleSpinBox *>(this->widgets[4])->value());
+    value.mutable_sphere()->set_radius(radiusSpin->value());
   }
   else if (type == "polyline")
   {
@@ -378,16 +364,15 @@ QVariant GeometryWidget::Value() const
   {
     value.set_type(msgs::Geometry::MESH);
     auto scale = value.mutable_mesh()->mutable_scale();
-    scale->set_x(qobject_cast<QDoubleSpinBox *>(this->widgets[1])->value());
-    scale->set_y(qobject_cast<QDoubleSpinBox *>(this->widgets[2])->value());
-    scale->set_z(qobject_cast<QDoubleSpinBox *>(this->widgets[3])->value());
-    value.mutable_mesh()->set_filename(
-        qobject_cast<QLineEdit *>(this->widgets[6])->text().toStdString());
+    scale->set_x(sizeSpins[0]->value());
+    scale->set_y(sizeSpins[1]->value());
+    scale->set_z(sizeSpins[2]->value());
+    value.mutable_mesh()->set_filename(edit->text().toStdString());
   }
   else
   {
     ignerr << "Error getting geometry dimensions for type: '" << type << "'"
-        << std::endl;
+           << std::endl;
   }
 
   QVariant v;
@@ -400,7 +385,6 @@ QVariant GeometryWidget::Value() const
 void GeometryWidget::OnTypeChanged(const QString &_text)
 {
   auto textStr = _text.toStdString();
-igndbg << "OnType " << textStr << std::endl;
   bool isMesh = (textStr == "mesh");
   if (textStr == "box" || isMesh)
   {

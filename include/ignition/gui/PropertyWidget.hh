@@ -59,10 +59,6 @@ namespace ignition
       /// \brief Widget's scoped name based on its parents.
       public: std::string scopedName;
 
-      /// \brief List of internal widgets holding values, such as Spins and
-      /// LineEdits.
-      public: std::vector<QWidget *> widgets;
-
       /// \brief Map a widget to the label holding its unit value.
       public: std::map<QWidget *, QLabel *> mapWidgetToUnit;
 

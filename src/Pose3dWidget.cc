@@ -68,7 +68,6 @@ Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
     auto spin = new QDoubleSpinBox(this);
     this->connect(spin, SIGNAL(editingFinished()), this,
         SLOT(OnValueChanged()));
-    this->widgets.push_back(spin);
 
     spin->setRange(min, max);
     spin->setSingleStep(0.01);
@@ -113,48 +112,36 @@ bool Pose3dWidget::SetValue(const QVariant _value)
 {
   auto value = _value.value<math::Pose3d>();
 
-  if (this->widgets.size() == 6u)
-  {
-    qobject_cast<QDoubleSpinBox *>(this->widgets[0])->setValue(
-        value.Pos().X());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[1])->setValue(
-        value.Pos().Y());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[2])->setValue(
-        value.Pos().Z());
+  auto spins = this->findChildren<QDoubleSpinBox *>();
 
-    auto rot = value.Rot().Euler();
-    qobject_cast<QDoubleSpinBox *>(this->widgets[3])->setValue(rot.X());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[4])->setValue(rot.Y());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[5])->setValue(rot.Z());
-    return true;
-  }
+  spins[0]->setValue(value.Pos().X());
+  spins[1]->setValue(value.Pos().Y());
+  spins[2]->setValue(value.Pos().Z());
 
-  ignerr << "Error updating pose widget, wrong number of child widgets: ["
-         << this->widgets.size() << std::endl;
-  return false;
+  auto rot = value.Rot().Euler();
+  spins[3]->setValue(rot.X());
+  spins[4]->setValue(rot.Y());
+  spins[5]->setValue(rot.Z());
+
+  return true;
 }
 
 /////////////////////////////////////////////////
 QVariant Pose3dWidget::Value() const
 {
   math::Pose3d value;
-  if (this->widgets.size() == 6u)
-  {
-    value.Pos().X(qobject_cast<QDoubleSpinBox *>(this->widgets[0])->value());
-    value.Pos().Y(qobject_cast<QDoubleSpinBox *>(this->widgets[1])->value());
-    value.Pos().Z(qobject_cast<QDoubleSpinBox *>(this->widgets[2])->value());
 
-    math::Vector3d rot;
-    rot.X(qobject_cast<QDoubleSpinBox *>(this->widgets[3])->value());
-    rot.Y(qobject_cast<QDoubleSpinBox *>(this->widgets[4])->value());
-    rot.Z(qobject_cast<QDoubleSpinBox *>(this->widgets[5])->value());
-    value.Rot().Euler(rot);
-  }
-  else
-  {
-    ignerr << "Error getting value from bool widget, wrong number of child "
-           << "widgets: [" << this->widgets.size() << std::endl;
-  }
+  auto spins = this->findChildren<QDoubleSpinBox *>();
+
+  value.Pos().X(spins[0]->value());
+  value.Pos().Y(spins[1]->value());
+  value.Pos().Z(spins[2]->value());
+
+  math::Vector3d rot;
+  rot.X(spins[3]->value());
+  rot.Y(spins[4]->value());
+  rot.Z(spins[5]->value());
+  value.Rot().Euler(rot);
 
   QVariant v;
   v.setValue(value);

@@ -111,9 +111,6 @@ DensityWidget::DensityWidget(const std::string &/*_key*/, const unsigned int _le
 
   this->connect(this, SIGNAL(DensityValueChanged(const double)),
       this, SLOT(OnValueChanged()));
-
-  this->widgets.push_back(comboBox);
-  this->widgets.push_back(spinBox);
 }
 
 /////////////////////////////////////////////////

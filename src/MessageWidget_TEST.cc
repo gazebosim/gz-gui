@@ -1153,17 +1153,6 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_TRUE(poseWidget != nullptr);
   EXPECT_TRUE(enumWidget != nullptr);
 
-  // Create a custom child widget
-  auto customLabel = new QLabel("custom label");
-  auto customLineEdit = new QLineEdit();
-  auto customLayout = new QHBoxLayout();
-  customLayout->addWidget(customLabel);
-  customLayout->addWidget(customLineEdit);
-
-  auto customWidget = new PropertyWidget();
-  customWidget->setLayout(customLayout);
-  customWidget->widgets.push_back(customLineEdit);
-
   // Add child widgets to message widget
   EXPECT_EQ(messageWidget->PropertyWidgetCount(), 0u);
 
@@ -1176,16 +1165,15 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_TRUE(messageWidget->AddPropertyWidget("color", colorWidget));
   EXPECT_TRUE(messageWidget->AddPropertyWidget("pose", poseWidget));
   EXPECT_TRUE(messageWidget->AddPropertyWidget("enum", enumWidget));
-  EXPECT_TRUE(messageWidget->AddPropertyWidget("custom", customWidget));
 
-  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 10u);
+  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 9u);
 
   // Fail to add invalid children
   EXPECT_EQ(messageWidget->AddPropertyWidget("", uintWidget), false);
   EXPECT_EQ(messageWidget->AddPropertyWidget("validName", nullptr), false);
   EXPECT_EQ(messageWidget->AddPropertyWidget("uint", intWidget), false);
 
-  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 10u);
+  EXPECT_EQ(messageWidget->PropertyWidgetCount(), 9u);
 
   // Check that checking visibility works
   EXPECT_EQ(messageWidget->WidgetVisible("uint"), uintWidget->isVisible());
@@ -1198,7 +1186,6 @@ TEST(MessageWidgetTest, CreatedExternally)
   EXPECT_EQ(messageWidget->WidgetVisible("color"), colorWidget->isVisible());
   EXPECT_EQ(messageWidget->WidgetVisible("pose"), poseWidget->isVisible());
   EXPECT_EQ(messageWidget->WidgetVisible("enum"), enumWidget->isVisible());
-  EXPECT_EQ(messageWidget->WidgetVisible("custom"), customWidget->isVisible());
 
   // Set widgets values
   unsigned int uintValue = 123;
@@ -1252,10 +1239,6 @@ TEST(MessageWidgetTest, CreatedExternally)
 
   auto groupChildWidgetLayout = new QVBoxLayout();
   groupChildWidgetLayout->addWidget(groupBox);
-
-  auto groupChildWidget = new PropertyWidget();
-  groupChildWidget->setLayout(groupChildWidgetLayout);
-  groupChildWidget->widgets.push_back(groupBox);
 
   auto collapsibleWidget = new CollapsibleWidget("collapsibleWidget");
   EXPECT_TRUE(collapsibleWidget != nullptr);

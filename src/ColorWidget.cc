@@ -119,12 +119,6 @@ ColorWidget::ColorWidget(const std::string &_key)
 
   this->setLayout(widgetLayout);
   this->setFrameStyle(QFrame::Box);
-
-  // Internal widgets
-  this->widgets.push_back(colorRSpinBox);
-  this->widgets.push_back(colorGSpinBox);
-  this->widgets.push_back(colorBSpinBox);
-  this->widgets.push_back(colorASpinBox);
 }
 
 /////////////////////////////////////////////////
@@ -137,36 +131,26 @@ bool ColorWidget::SetValue(const QVariant _value)
 {
   auto value = _value.value<math::Color>();
 
-  if (this->widgets.size() == 4u)
-  {
-    qobject_cast<QDoubleSpinBox *>(this->widgets[0])->setValue(value.R());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[1])->setValue(value.G());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[2])->setValue(value.B());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[3])->setValue(value.A());
-    return true;
-  }
+  auto spins = this->findChildren<QDoubleSpinBox *>();
 
-  ignerr << "Error updating widget, wrong number of child widgets: ["
-         << this->widgets.size() << std::endl;
-  return false;
+  spins[0]->setValue(value.R());
+  spins[1]->setValue(value.G());
+  spins[2]->setValue(value.B());
+  spins[3]->setValue(value.A());
+  return true;
 }
 
 /////////////////////////////////////////////////
 QVariant ColorWidget::Value() const
 {
   math::Color value;
-  if (this->widgets.size() == 4u)
-  {
-    value.R(qobject_cast<QDoubleSpinBox *>(this->widgets[0])->value());
-    value.G(qobject_cast<QDoubleSpinBox *>(this->widgets[1])->value());
-    value.B(qobject_cast<QDoubleSpinBox *>(this->widgets[2])->value());
-    value.A(qobject_cast<QDoubleSpinBox *>(this->widgets[3])->value());
-  }
-  else
-  {
-    ignerr << "Error getting value from color widget, wrong number of child "
-           << "widgets: [" << this->widgets.size() << std::endl;
-  }
+
+  auto spins = this->findChildren<QDoubleSpinBox *>();
+
+  value.R(spins[0]->value());
+  value.G(spins[1]->value());
+  value.B(spins[2]->value());
+  value.A(spins[3]->value());
 
   QVariant v;
   v.setValue(value);

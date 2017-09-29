@@ -111,12 +111,6 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
 
   this->setLayout(widgetLayout);
   this->setFrameStyle(QFrame::Box);
-
-  // Child widgets
-  this->widgets.push_back(vecXSpinBox);
-  this->widgets.push_back(vecYSpinBox);
-  this->widgets.push_back(vecZSpinBox);
-  this->widgets.push_back(presetsCombo);
 }
 
 /////////////////////////////////////////////////
@@ -129,53 +123,46 @@ bool Vector3dWidget::SetValue(const QVariant _value)
 {
   auto value = _value.value<ignition::math::Vector3d>();
 
-  if (this->widgets.size() == 4u)
-  {
-    qobject_cast<QDoubleSpinBox *>(this->widgets[0])->setValue(value.X());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[1])->setValue(value.Y());
-    qobject_cast<QDoubleSpinBox *>(this->widgets[2])->setValue(value.Z());
+  auto spins = this->findChildren<QDoubleSpinBox *>();
 
-    // Update preset
-    int preset = 0;
-    if (value == math::Vector3d::UnitX)
-      preset = 1;
-    else if (value == -math::Vector3d::UnitX)
-      preset = 2;
-    else if (value == math::Vector3d::UnitY)
-      preset = 3;
-    else if (value == -math::Vector3d::UnitY)
-      preset = 4;
-    else if (value == math::Vector3d::UnitZ)
-      preset = 5;
-    else if (value == -math::Vector3d::UnitZ)
-      preset = 6;
+  spins[0]->setValue(value.X());
+  spins[1]->setValue(value.Y());
+  spins[2]->setValue(value.Z());
 
-    qobject_cast<QComboBox *>(this->widgets[3])->setCurrentIndex(preset);
+  // Update preset
+  int preset = 0;
+  if (value == math::Vector3d::UnitX)
+    preset = 1;
+  else if (value == -math::Vector3d::UnitX)
+    preset = 2;
+  else if (value == math::Vector3d::UnitY)
+    preset = 3;
+  else if (value == -math::Vector3d::UnitY)
+    preset = 4;
+  else if (value == math::Vector3d::UnitZ)
+    preset = 5;
+  else if (value == -math::Vector3d::UnitZ)
+    preset = 6;
 
-    return true;
-  }
-  else
-  {
-    ignerr << "Error updating Vector3d widget" << std::endl;
-  }
-  return false;
+  auto combo = this->findChild<QComboBox *>();
+
+  combo->blockSignals(true);
+  combo->setCurrentIndex(preset);
+  combo->blockSignals(false);
+
+  return true;
 }
 
 /////////////////////////////////////////////////
 QVariant Vector3dWidget::Value() const
 {
   math::Vector3d value;
-  if (this->widgets.size() == 4u)
-  {
-    value.X(qobject_cast<QDoubleSpinBox *>(this->widgets[0])->value());
-    value.Y(qobject_cast<QDoubleSpinBox *>(this->widgets[1])->value());
-    value.Z(qobject_cast<QDoubleSpinBox *>(this->widgets[2])->value());
-  }
-  else
-  {
-    ignerr << "Error getting value from bool widget, wrong number of child "
-           << "widgets: [" << this->widgets.size() << std::endl;
-  }
+
+  auto spins = this->findChildren<QDoubleSpinBox *>();
+
+  value.X(spins[0]->value());
+  value.Y(spins[1]->value());
+  value.Z(spins[2]->value());
 
   QVariant v;
   v.setValue(value);
@@ -187,9 +174,6 @@ QVariant Vector3dWidget::Value() const
 void Vector3dWidget::OnPresetChanged(const int _index)
 {
   auto combo = qobject_cast<QComboBox *>(QObject::sender());
-
-  if (!combo)
-    return;
 
   // Update spins
   math::Vector3d vec;

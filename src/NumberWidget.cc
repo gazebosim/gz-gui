@@ -88,7 +88,6 @@ NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level,
       SLOT(OnValueChanged()));
     widgetLayout->addWidget(spin);
 
-    this->widgets.push_back(spin);
     this->mapWidgetToUnit[spin] = unitLabel;
   }
   else
@@ -100,7 +99,6 @@ NumberWidget::NumberWidget(const std::string &_key, const unsigned int _level,
       SLOT(OnValueChanged()));
     widgetLayout->addWidget(spin);
 
-    this->widgets.push_back(spin);
     this->mapWidgetToUnit[spin] = unitLabel;
   }
 
