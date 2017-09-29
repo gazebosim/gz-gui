@@ -17,14 +17,14 @@
 #ifndef IGNITION_GUI_QTMETATYPES_HH_
 #define IGNITION_GUI_QTMETATYPES_HH_
 
-#include <string>
 #include <QMetaType>
+#include <ignition/msgs/geometry.pb.h>
+
+#include <string>
 
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
-
-#include <ignition/msgs/geometry.pb.h>
 
 // Make it possible to use non-Qt types in QVariant
 Q_DECLARE_METATYPE(std::string)

@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_COLLAPSIBLEWIDGET_HH_
 #define IGNITION_GUI_COLLAPSIBLEWIDGET_HH_
 
+#include <string>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
@@ -38,10 +40,10 @@ namespace ignition
       public: CollapsibleWidget(const std::string &_key);
 
       // Documentation inherited
-      public: bool SetValue(const QVariant) {return false;};
+      public: bool SetValue(const QVariant) {return false;}
 
       // Documentation inherited
-      public: QVariant Value() const {return QVariant();};
+      public: QVariant Value() const {return QVariant();}
 
       /// \brief Callback that collapses or expands the child widget.
       /// _param[in] _checked True for expanded.

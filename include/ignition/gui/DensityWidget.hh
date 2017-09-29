@@ -19,6 +19,7 @@
 #define IGNITION_GUI_DENSITYWIDGET_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"
@@ -37,9 +38,7 @@ namespace ignition
 
       /// \brief Constructor
       /// \param[in] _key Property key.
-      /// \param[in] _level Depth level, in case nested.
-      public: DensityWidget(const std::string &_key,
-                         const unsigned int _level = 0);
+      public: DensityWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~DensityWidget();

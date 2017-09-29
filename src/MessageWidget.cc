@@ -623,7 +623,7 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 
     // Update each field in the message
     // TODO update repeated fields
-    if (fieldDescriptor->is_repeated() /*|| !reflection->HasField(*_msg, fieldDescriptor)*/)
+    if (fieldDescriptor->is_repeated())
       continue;
 
     std::string scopedName = _name.empty() ? name : _name + "::" + name;
@@ -680,7 +680,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
       // String
       case google::protobuf::FieldDescriptor::TYPE_STRING:
       {
-        reflection->SetString(_msg, fieldDescriptor, variant.value<std::string>());
+        reflection->SetString(_msg, fieldDescriptor,
+            variant.value<std::string>());
         break;
       }
       // Enum

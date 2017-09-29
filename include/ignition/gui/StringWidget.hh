@@ -19,6 +19,7 @@
 #define IGNITION_GUI_STRINGWIDGET_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"

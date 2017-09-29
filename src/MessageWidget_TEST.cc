@@ -135,11 +135,11 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_TRUE(retJointMsg != nullptr);
 
     // joint
-    EXPECT_TRUE(retJointMsg->name() == "test_joint");
+    EXPECT_EQ(retJointMsg->name(), "test_joint");
     EXPECT_EQ(retJointMsg->id(), 1122u);
-    EXPECT_TRUE(retJointMsg->parent() == "test_joint_parent");
+    EXPECT_EQ(retJointMsg->parent(), "test_joint_parent");
     EXPECT_EQ(retJointMsg->parent_id(), 212121u);
-    EXPECT_TRUE(retJointMsg->child() == "test_joint_child");
+    EXPECT_EQ(retJointMsg->child(), "test_joint_child");
     EXPECT_EQ(retJointMsg->child_id(), 454545u);
 
     // type
@@ -261,38 +261,54 @@ TEST(MessageWidgetTest, JointMsgWidget)
         math::Pose3d(pos, quat));
 
     // axis1
-    EXPECT_EQ(jointMessageWidget->PropertyValue("axis1::xyz").value<math::Vector3d>(),
-        math::Vector3d::UnitY);
+    EXPECT_EQ(jointMessageWidget->PropertyValue(
+        "axis1::xyz").value<math::Vector3d>(), math::Vector3d::UnitY);
     EXPECT_EQ(jointMessageWidget->PropertyValue(
         "axis1::use_parent_model_frame").toBool(), true);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_lower").toDouble(), -1.2);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_upper").toDouble(), -1.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_effort").toDouble(), 1.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::limit_velocity").toDouble(),
-        100.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis1::damping").toDouble(), 0.9);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis1::limit_lower").toDouble(), -1.2);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis1::limit_upper").toDouble(), -1.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis1::limit_effort").toDouble(), 1.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis1::limit_velocity").toDouble(), 100.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis1::damping").toDouble(), 0.9);
 
     // axis2
-    EXPECT_EQ(jointMessageWidget->PropertyValue("axis2::xyz").value<math::Vector3d>(),
-        math::Vector3d::UnitZ);
+    EXPECT_EQ(jointMessageWidget->PropertyValue(
+        "axis2::xyz").value<math::Vector3d>(), math::Vector3d::UnitZ);
     EXPECT_EQ(jointMessageWidget->PropertyValue(
         "axis1::use_parent_model_frame").toBool(), true);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_lower").toDouble(), -3.2);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_upper").toDouble(), -3.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_effort").toDouble(), 3.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::limit_velocity").toDouble(),
-        300.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("axis2::damping").toDouble(), 3.9);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis2::limit_lower").toDouble(), -3.2);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis2::limit_upper").toDouble(), -3.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis2::limit_effort").toDouble(), 3.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis2::limit_velocity").toDouble(), 300.0);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "axis2::damping").toDouble(), 3.9);
 
     // other joint physics properties
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("cfm").toDouble(), 0.9);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("bounce").toDouble(), 0.8);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("velocity").toDouble(), 0.7);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("fudge_factor").toDouble(), 0.6);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_cfm").toDouble(), 0.5);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_erp").toDouble(), 0.4);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_cfm").toDouble(), 0.3);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_erp").toDouble(), 0.2);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "cfm").toDouble(), 0.9);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "bounce").toDouble(), 0.8);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "velocity").toDouble(), 0.7);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "fudge_factor").toDouble(), 0.6);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "limit_cfm").toDouble(), 0.5);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "limit_erp").toDouble(), 0.4);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "suspension_cfm").toDouble(), 0.3);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "suspension_erp").toDouble(), 0.2);
   }
 
   // verify updates in new msg
@@ -301,11 +317,11 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_TRUE(retJointMsg != nullptr);
 
     // joint
-    EXPECT_TRUE(retJointMsg->name() == "test_joint_updated");
+    EXPECT_EQ(retJointMsg->name(), "test_joint_updated");
     EXPECT_EQ(retJointMsg->id(), 9999999u);
-    EXPECT_TRUE(retJointMsg->parent() == "test_joint_parent_updated");
+    EXPECT_EQ(retJointMsg->parent(), "test_joint_parent_updated");
     EXPECT_EQ(retJointMsg->parent_id(), 1u);
-    EXPECT_TRUE(retJointMsg->child() == "test_joint_child_updated");
+    EXPECT_EQ(retJointMsg->child(), "test_joint_child_updated");
     EXPECT_EQ(retJointMsg->child_id(), 2u);
 
     // type
@@ -417,14 +433,22 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_EQ(jointMessageWidget->PropertyValue("pose"), variant);
 
     // other joint physics properties
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("cfm").toDouble(), 0.19);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("bounce").toDouble(), 0.18);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("velocity").toDouble(), 2.7);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("fudge_factor").toDouble(), 0.26);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_cfm").toDouble(), 0.15);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("limit_erp").toDouble(), 0.24);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_cfm").toDouble(), 0.13);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue("suspension_erp").toDouble(), 0.12);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "cfm").toDouble(), 0.19);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "bounce").toDouble(), 0.18);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "velocity").toDouble(), 2.7);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "fudge_factor").toDouble(), 0.26);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "limit_cfm").toDouble(), 0.15);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "limit_erp").toDouble(), 0.24);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "suspension_cfm").toDouble(), 0.13);
+    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+        "suspension_erp").toDouble(), 0.12);
   }
 
   // verify updates in new msg
@@ -433,11 +457,11 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_TRUE(retJointMsg != nullptr);
 
     // joint
-    EXPECT_TRUE(retJointMsg->name() == "test_joint_updated2");
+    EXPECT_EQ(retJointMsg->name(), "test_joint_updated2");
     EXPECT_EQ(retJointMsg->id(), 2222222u);
-    EXPECT_TRUE(retJointMsg->parent() == "test_joint_parent_updated2");
+    EXPECT_EQ(retJointMsg->parent(), "test_joint_parent_updated2");
     EXPECT_EQ(retJointMsg->parent_id(), 10u);
-    EXPECT_TRUE(retJointMsg->child() == "test_joint_child_updated2");
+    EXPECT_EQ(retJointMsg->child(), "test_joint_child_updated2");
     EXPECT_EQ(retJointMsg->child_id(), 20u);
 
     // type
@@ -530,9 +554,9 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_TRUE(retVisualMsg != nullptr);
 
     // visual
-    EXPECT_TRUE(retVisualMsg->name() == "test_visual");
+    EXPECT_EQ(retVisualMsg->name(), "test_visual");
     EXPECT_EQ(retVisualMsg->id(), 12345u);
-    EXPECT_TRUE(retVisualMsg->parent_name() == "test_visual_parent");
+    EXPECT_EQ(retVisualMsg->parent_name(), "test_visual_parent");
     EXPECT_EQ(retVisualMsg->parent_id(), 54321u);
     EXPECT_EQ(retVisualMsg->cast_shadows(), true);
     EXPECT_DOUBLE_EQ(retVisualMsg->transparency(), 0.0);
@@ -565,7 +589,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // material
     auto materialMsg = retVisualMsg->material();
     EXPECT_EQ(materialMsg.shader_type(), msgs::Material::Material::VERTEX);
-    EXPECT_TRUE(materialMsg.normal_map() == "test_normal_map");
+    EXPECT_EQ(materialMsg.normal_map(), "test_normal_map");
     auto ambientMsg = materialMsg.ambient();
     EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.0f);
     EXPECT_DOUBLE_EQ(ambientMsg.g(), 1.0f);
@@ -589,9 +613,9 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(materialMsg.lighting(), true);
     // material::script
     auto scriptMsg = materialMsg.script();
-    EXPECT_TRUE(scriptMsg.uri(0) == "test_script_uri_0");
-    EXPECT_TRUE(scriptMsg.uri(1) == "test_script_uri_1");
-    EXPECT_TRUE(scriptMsg.name() == "test_script_name");
+    EXPECT_EQ(scriptMsg.uri(0), "test_script_uri_0");
+    EXPECT_EQ(scriptMsg.uri(1), "test_script_uri_1");
+    EXPECT_EQ(scriptMsg.name(), "test_script_name");
   }
 
   // update fields in the message widget and
@@ -640,24 +664,32 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     visualMessageWidget->SetPropertyValue("material::lighting", false);
     // material::script
     variant.setValue(std::string("test_script_name_updated"));
-    visualMessageWidget->SetPropertyValue("material::script::name", variant);
+    visualMessageWidget->SetPropertyValue(
+        "material::script::name", variant);
   }
 
   // verify widget values
   {
-    EXPECT_EQ(visualMessageWidget->PropertyValue("name").value<std::string>(),
-        "test_visual_updated");
-    EXPECT_EQ(visualMessageWidget->PropertyValue("id"), 11111u);
-    EXPECT_EQ(visualMessageWidget->PropertyValue("parent_name").value<std::string>(),
-        "test_visual_parent_updated");
-    EXPECT_EQ(visualMessageWidget->PropertyValue("parent_id"), 55555u);
-    EXPECT_EQ(visualMessageWidget->PropertyValue("cast_shadows").toBool(), false);
-    EXPECT_DOUBLE_EQ(visualMessageWidget->PropertyValue("transparency").toDouble(), 1.0);
-    EXPECT_EQ(visualMessageWidget->PropertyValue("visible").toBool(), false);
-    EXPECT_EQ(visualMessageWidget->PropertyValue("delete_me").toBool(), true);
-    EXPECT_EQ(visualMessageWidget->PropertyValue("is_static").toBool(), true);
-    EXPECT_EQ(visualMessageWidget->PropertyValue("scale").value<math::Vector3d>(),
-        math::Vector3d(2.0, 1.5, 0.5));
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "name").value<std::string>(), "test_visual_updated");
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "id"), 11111u);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "parent_name").value<std::string>(), "test_visual_parent_updated");
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "parent_id"), 55555u);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "cast_shadows").toBool(), false);
+    EXPECT_DOUBLE_EQ(visualMessageWidget->PropertyValue(
+        "transparency").toDouble(), 1.0);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "visible").toBool(), false);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "delete_me").toBool(), true);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "is_static").toBool(), true);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "scale").value<math::Vector3d>(), math::Vector3d(2.0, 1.5, 0.5));
 
     // pose
     math::Vector3d pos(-2.0, -3.0, -4.0);
@@ -677,17 +709,22 @@ TEST(MessageWidgetTest, VisualMsgWidget)
         "material::normal_map").value<std::string>(),
         "test_normal_map_updated");
     variant.setValue(math::Color(0.2, 0.3, 0.4, 0.5));
-    EXPECT_EQ(visualMessageWidget->PropertyValue("material::ambient"), variant);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "material::ambient"), variant);
     variant.setValue(math::Color(0.1, 0.8, 0.6, 0.4));
-    EXPECT_EQ(visualMessageWidget->PropertyValue("material::diffuse"), variant);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "material::diffuse"), variant);
     variant.setValue(math::Color(0.5, 0.4, 0.3, 0.2));
-    EXPECT_EQ(visualMessageWidget->PropertyValue("material::specular"), variant);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "material::specular"), variant);
     variant.setValue(math::Color(0.4, 0.6, 0.8, 0.1));
-    EXPECT_EQ(visualMessageWidget->PropertyValue("material::emissive"), variant);
-    EXPECT_EQ(visualMessageWidget->PropertyValue("material::lighting").toBool(),
-        false);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "material::emissive"), variant);
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "material::lighting").toBool(), false);
     // material::script
-    EXPECT_EQ(visualMessageWidget->PropertyValue("material::script::name").value<std::string>(),
+    EXPECT_EQ(visualMessageWidget->PropertyValue(
+        "material::script::name").value<std::string>(),
         "test_script_name_updated");
   }
 
@@ -698,9 +735,9 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_TRUE(retVisualMsg != nullptr);
 
     // visual
-    EXPECT_TRUE(retVisualMsg->name() == "test_visual_updated");
+    EXPECT_EQ(retVisualMsg->name(), "test_visual_updated");
     EXPECT_EQ(retVisualMsg->id(), 11111u);
-    EXPECT_TRUE(retVisualMsg->parent_name() == "test_visual_parent_updated");
+    EXPECT_EQ(retVisualMsg->parent_name(), "test_visual_parent_updated");
     EXPECT_EQ(retVisualMsg->parent_id(), 55555u);
     EXPECT_EQ(retVisualMsg->cast_shadows(), false);
     EXPECT_DOUBLE_EQ(retVisualMsg->transparency(), 1.0);
@@ -735,7 +772,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     // material
     auto materialMsg = retVisualMsg->material();
     EXPECT_EQ(materialMsg.shader_type(), msgs::Material::Material::VERTEX);
-    EXPECT_TRUE(materialMsg.normal_map() == "test_normal_map_updated");
+    EXPECT_EQ(materialMsg.normal_map(), "test_normal_map_updated");
     auto ambientMsg = materialMsg.ambient();
     EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.2f);
     EXPECT_DOUBLE_EQ(ambientMsg.g(), 0.3f);
@@ -759,9 +796,9 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(materialMsg.lighting(), false);
     // material::script
     auto scriptMsg = materialMsg.script();
-    EXPECT_TRUE(scriptMsg.uri(0) == "test_script_uri_0");
-    EXPECT_TRUE(scriptMsg.uri(1) == "test_script_uri_1");
-    EXPECT_TRUE(scriptMsg.name() == "test_script_name_updated");
+    EXPECT_EQ(scriptMsg.uri(0), "test_script_uri_0");
+    EXPECT_EQ(scriptMsg.uri(1), "test_script_uri_1");
+    EXPECT_EQ(scriptMsg.name(), "test_script_name_updated");
   }
 
   delete visualMessageWidget;
@@ -793,9 +830,9 @@ TEST(MessageWidgetTest, PluginMsgWidget)
     EXPECT_TRUE(retPluginMsg != nullptr);
 
     // plugin
-    EXPECT_TRUE(retPluginMsg->name() == "test_plugin");
-    EXPECT_TRUE(retPluginMsg->filename() == "test_plugin_filename");
-    EXPECT_TRUE(retPluginMsg->innerxml() == "<param>1</param>\n");
+    EXPECT_EQ(retPluginMsg->name(), "test_plugin");
+    EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename");
+    EXPECT_EQ(retPluginMsg->innerxml(), "<param>1</param>\n");
   }
 
   // update fields in the message widget and
@@ -814,12 +851,12 @@ TEST(MessageWidgetTest, PluginMsgWidget)
 
   // verify widget values
   {
-    EXPECT_EQ(pluginMessageWidget->PropertyValue("name").value<std::string>(),
-        "test_plugin_updated");
-    EXPECT_EQ(pluginMessageWidget->PropertyValue("filename").value<std::string>(),
-        "test_plugin_filename_updated");
-    EXPECT_EQ(pluginMessageWidget->PropertyValue("innerxml").value<std::string>(),
-        "<param2>new_param</param2>\n");
+    EXPECT_EQ(pluginMessageWidget->PropertyValue(
+        "name").value<std::string>(), "test_plugin_updated");
+    EXPECT_EQ(pluginMessageWidget->PropertyValue(
+        "filename").value<std::string>(), "test_plugin_filename_updated");
+    EXPECT_EQ(pluginMessageWidget->PropertyValue(
+        "innerxml").value<std::string>(), "<param2>new_param</param2>\n");
   }
 
   // verify updates in new msg
@@ -829,9 +866,9 @@ TEST(MessageWidgetTest, PluginMsgWidget)
     EXPECT_TRUE(retPluginMsg != nullptr);
 
     // plugin
-    EXPECT_TRUE(retPluginMsg->name() == "test_plugin_updated");
-    EXPECT_TRUE(retPluginMsg->filename() == "test_plugin_filename_updated");
-    EXPECT_TRUE(retPluginMsg->innerxml() == "<param2>new_param</param2>\n");
+    EXPECT_EQ(retPluginMsg->name(), "test_plugin_updated");
+    EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename_updated");
+    EXPECT_EQ(retPluginMsg->innerxml(), "<param2>new_param</param2>\n");
   }
 
   delete pluginMessageWidget;
@@ -911,10 +948,9 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
     EXPECT_EQ(visualMessageWidget->WidgetVisible("id"), true);
     EXPECT_EQ(visualMessageWidget->WidgetVisible("pose"), true);
     EXPECT_EQ(visualMessageWidget->WidgetVisible("geometry"), true);
-    // FIXME: investigate failure
-    //EXPECT_EQ(visualMessageWidget->WidgetVisible("material::diffuse"), true);
-    //EXPECT_EQ(visualMessageWidget->WidgetVisible("material::script::name"),
-    //    true);
+    EXPECT_EQ(visualMessageWidget->WidgetVisible("material::diffuse"), true);
+    EXPECT_EQ(visualMessageWidget->WidgetVisible("material::script::name"),
+        true);
     EXPECT_EQ(visualMessageWidget->WidgetVisible("material"), true);
   }
 
@@ -1102,7 +1138,8 @@ TEST(MessageWidgetTest, CreatedExternally)
   // Get widgets values
   EXPECT_EQ(messageWidget->PropertyValue("uint"), uintValue);
   EXPECT_EQ(messageWidget->PropertyValue("int").toInt(), intValue);
-  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("double").toDouble(), doubleValue);
+  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue(
+      "double").toDouble(), doubleValue);
   EXPECT_EQ(messageWidget->PropertyValue("string").value<std::string>(),
       stringValue.value<std::string>());
   EXPECT_EQ(messageWidget->PropertyValue("bool").toBool(), boolValue);
@@ -1223,13 +1260,13 @@ TEST(MessageWidgetTest, ChildUIntSignal)
   messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
     [&signalReceived](const std::string &_name, const QVariant _uint)
     {
-      EXPECT_TRUE(_name == "uint");
-      EXPECT_TRUE(_uint == 3);
+      EXPECT_EQ(_name, "uint");
+      EXPECT_EQ(_uint, 3);
       signalReceived = true;
     });
 
   // Check default uint
-  EXPECT_TRUE(messageWidget->PropertyValue("uint") == 0u);
+  EXPECT_EQ(messageWidget->PropertyValue("uint"), 0u);
 
   // Get signal emitting widgets
   auto spins = uintWidget->findChildren<QSpinBox *>();
@@ -1266,8 +1303,8 @@ TEST(MessageWidgetTest, ChildIntSignal)
   messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
     [&signalReceived](const std::string &_name, const QVariant _int)
     {
-      EXPECT_TRUE(_name == "int");
-      EXPECT_TRUE(_int == -2);
+      EXPECT_EQ(_name, "int");
+      EXPECT_EQ(_int, -2);
       signalReceived = true;
     });
 
@@ -1310,7 +1347,7 @@ TEST(MessageWidgetTest, ChildDoubleSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       double d = _var.toDouble();
-      EXPECT_TRUE(_name == "double");
+      EXPECT_EQ(_name, "double");
       EXPECT_TRUE(fabs(d - 1.5) < 0.00001);
       signalReceived = true;
     });
@@ -1354,8 +1391,8 @@ TEST(MessageWidgetTest, ChildBoolSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       bool b = _var.toBool();
-      EXPECT_TRUE(_name == "bool");
-      EXPECT_TRUE(b == true);
+      EXPECT_EQ(_name, "bool");
+      EXPECT_EQ(b, true);
       signalReceived = true;
     });
 
@@ -1398,8 +1435,8 @@ TEST(MessageWidgetTest, ChildStringSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<std::string>();
-      EXPECT_TRUE(_name == "string");
-      EXPECT_TRUE(v == "new text");
+      EXPECT_EQ(_name, "string");
+      EXPECT_EQ(v, "new text");
       signalReceived = true;
     });
 
@@ -1415,7 +1452,7 @@ TEST(MessageWidgetTest, ChildStringSignal)
   lineEdits[0]->editingFinished();
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
@@ -1443,7 +1480,7 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
     {
       auto v = _var.value<ignition::math::Vector3d>();
 
-      EXPECT_TRUE(_name == "vector3");
+      EXPECT_EQ(_name, "vector3");
 
       // From spins
       if (vector3SignalCount == 0)
@@ -1506,7 +1543,7 @@ TEST(MessageWidgetTest, ChildColorSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<math::Color>();
-      EXPECT_TRUE(_name == "color");
+      EXPECT_EQ(_name, "color");
       EXPECT_EQ(v, math::Color(0.5, 0.0, 0.0, 1.0));
       signalReceived = true;
     });
@@ -1551,8 +1588,8 @@ TEST(MessageWidgetTest, ChildPoseSignal)
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<math::Pose3d>();
-      EXPECT_TRUE(_name == "pose");
-      EXPECT_TRUE(v == math::Pose3d(1, 0, 0, 0, 0, 0));
+      EXPECT_EQ(_name, "pose");
+      EXPECT_EQ(v, math::Pose3d(1, 0, 0, 0, 0, 0));
       signalReceived = true;
     });
 
@@ -1616,7 +1653,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   spins[2]->editingFinished();
 
   // Check callback was called
-  EXPECT_TRUE(signalReceived == true);
+  EXPECT_TRUE(signalReceived);
 
   delete messageWidget;
   EXPECT_TRUE(stop());
@@ -1683,10 +1720,10 @@ TEST(MessageWidgetTest, GetPropertyByName)
 
   // Try to get a child widget by name
   auto widget = messageWidget->PropertyWidgetByName("child_widget");
-  EXPECT_TRUE(widget == nullptr);
+  EXPECT_EQ(widget, nullptr);
 
   widget = messageWidget->PropertyWidgetByName("");
-  EXPECT_TRUE(widget == nullptr);
+  EXPECT_EQ(widget, nullptr);
 
   // Create child widget
   auto childWidget = new BoolWidget("child_widget");
@@ -1702,7 +1739,7 @@ TEST(MessageWidgetTest, GetPropertyByName)
 
   // Check that a bad name returns nullptr
   widget = messageWidget->PropertyWidgetByName("bad_name");
-  EXPECT_TRUE(widget == nullptr);
+  EXPECT_EQ(widget, nullptr);
 
   delete messageWidget;
   EXPECT_TRUE(stop());

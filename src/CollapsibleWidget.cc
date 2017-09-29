@@ -30,13 +30,13 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_name)
 
   // Button icon
   auto buttonIcon = new QCheckBox(this);
-  buttonIcon->setStyleSheet(
-      "QCheckBox::indicator::unchecked {\
-        image: url(:/images/right_arrow.png);\
-      }\
-      QCheckBox::indicator::checked {\
-        image: url(:/images/down_arrow.png);\
-      }");
+  buttonIcon->setStyleSheet(QString::fromStdString(
+      "QCheckBox::indicator::unchecked {"
+      "  image: url(:/images/right_arrow.png);"
+      "}"
+      "QCheckBox::indicator::checked {"
+      "  image: url(:/images/down_arrow.png);"
+      "}"));
 
   // Button layout
   auto buttonLayout = new QHBoxLayout();

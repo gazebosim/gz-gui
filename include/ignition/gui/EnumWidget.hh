@@ -19,6 +19,8 @@
 #define IGNITION_GUI_ENUMWIDGET_HH_
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"

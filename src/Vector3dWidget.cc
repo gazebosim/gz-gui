@@ -16,6 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
+#include <ignition/math/Vector3.hh>
 
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/QtMetatypes.hh"

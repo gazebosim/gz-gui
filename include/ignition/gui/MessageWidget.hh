@@ -67,7 +67,8 @@ namespace ignition
       /// \brief Signal that a property widget's value has changed.
       /// \param[in] _name Scoped name of widget.
       /// \param[in] _value New value.
-      signals: void ValueChanged(const std::string &_name, const QVariant _value);
+      signals: void ValueChanged(const std::string &_name,
+                                 const QVariant _value);
 
       /// \brief Set whether a child widget should be visible.
       /// \param[in] _name Name of the child widget.

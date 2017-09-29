@@ -19,7 +19,7 @@
 #define IGNITION_GUI_VECTOR3DWIDGET_HH_
 
 #include <memory>
-#include <ignition/math/Vector3.hh>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"

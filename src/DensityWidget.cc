@@ -43,11 +43,9 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-DensityWidget::DensityWidget(const std::string &/*_key*/, const unsigned int _level)
+DensityWidget::DensityWidget(const std::string &/*_key*/)
     : dataPtr(new DensityWidgetPrivate())
 {
-  this->level = _level;
-
   // Label
   auto densityLabel = new QLabel(tr("Density"));
   densityLabel->setToolTip(tr("density"));
@@ -89,8 +87,6 @@ DensityWidget::DensityWidget(const std::string &/*_key*/, const unsigned int _le
   auto unitLabel = new QLabel(QString::fromStdString(unit));
 
   auto widgetLayout = new QHBoxLayout;
-
-  widgetLayout->addSpacing((_level+1)*20);
   widgetLayout->addWidget(densityLabel);
   widgetLayout->addStretch();
   widgetLayout->addWidget(comboBox);
@@ -163,7 +159,8 @@ QVariant DensityWidget::Value() const
 /////////////////////////////////////////////////
 void DensityWidget::OnComboBoxChanged()
 {
-  QVariant variant = this->dataPtr->comboBox->itemData(this->dataPtr->comboBox->currentIndex());
+  auto variant = this->dataPtr->comboBox->itemData(
+      this->dataPtr->comboBox->currentIndex());
   this->SetValue(variant.toDouble());
   this->OnValueChanged();
 }

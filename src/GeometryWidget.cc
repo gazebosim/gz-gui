@@ -15,10 +15,10 @@
  *
 */
 
-#include <ignition/common/Console.hh>
-
 #include <ignition/msgs/geometry.pb.h>
 #include <ignition/msgs/Utility.hh>
+
+#include <ignition/common/Console.hh>
 
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/QtMetatypes.hh"
@@ -42,19 +42,19 @@ namespace ignition
       public: QWidget *lengthSpinBox;
 
       /// \brief A label for the length widget.
-      public: QWidget *lengthLabel;
+      public: QLabel *lengthLabel;
 
       /// \brief A label for the unit of the length widget.
-      public: QWidget *lengthUnitLabel;
+      public: QLabel *lengthUnitLabel;
 
       /// \brief A line edit for the mesh filename.
-      public: QWidget *filenameLineEdit;
+      public: QLineEdit *filenameLineEdit;
 
       /// \brief A label for the mesh filename widget.
-      public: QWidget *filenameLabel;
+      public: QLabel *filenameLabel;
 
       /// \brief A button for selecting the mesh file.
-      public: QWidget *filenameButton;
+      public: QPushButton *filenameButton;
     };
   }
 }
@@ -434,7 +434,7 @@ void GeometryWidget::OnSelectFile()
       auto file = fd.selectedFiles().at(0);
       if (!file.isEmpty())
       {
-        dynamic_cast<QLineEdit *>(this->dataPtr->filenameLineEdit)->setText(file);
+        this->dataPtr->filenameLineEdit->setText(file);
       }
     }
   }
