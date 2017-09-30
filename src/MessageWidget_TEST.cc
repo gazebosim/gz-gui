@@ -137,7 +137,7 @@ TEST(MessageWidgetTest, PropertyByName)
 
   // Get generated widgets by name
   // TODO: add double fields once NumberWidget is integrated
-  for (auto name : {"header", "header::stamp", /*"header::stamp::sec"*/,
+  for (auto name : {"header", "header::stamp", /*"header::stamp::sec", */
       /*"header::stamp::nsec", */ "data"})
   {
     EXPECT_NE(messageWidget->PropertyWidgetByName(name), nullptr) << name;
