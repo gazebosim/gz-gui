@@ -29,7 +29,29 @@ namespace ignition
 {
   namespace gui
   {
-    /// \brief Widget which holds a property.
+    /// \brief Abstract base class for widgets which hold properties, such as
+    /// numbers and strings. Each derived class specializes in a property type.
+    /// The value of any derived widget can be retrieved as a QVariant.
+    ///
+    /// # Usage example
+    ///
+    /// Let's say we have a derived class to handle type T called TWidget.
+    ///
+    /// First we must make sure the type is available to QVariant, this is done
+    /// by calling Q_DECLARE_METATYPE(T). For convenience, types used by
+    /// widgets built into Ignition GUI are added in the QtMetatypes.hh header.
+    ///
+    /// The value which the widget currently holds can be retrieved as follows:
+    ///
+    /// T value = tWidget->Value().value<T>();
+    ///
+    /// The value of the widget can be set as follows:
+    ///
+    /// tWidget->SetValue(QVariant::fromValue(value));
+    ///
+    /// You can also listen to the ValueChanged signal, which is emitted when
+    /// the widget's value changes.
+    ///
     class IGNITION_GUI_VISIBLE PropertyWidget : public QFrame
     {
       Q_OBJECT
@@ -41,14 +63,14 @@ namespace ignition
       /// \return Value of the widget as a QVariant.
       public: virtual QVariant Value() const = 0;
 
-      /// \brief Update widget with new value.
+      /// \brief Update widget with a new value.
       /// \param[in] _value Value to set to.
-      /// \return True if the update completed successfully.
+      /// \return True if successful.
       public: virtual bool SetValue(const QVariant _value) = 0;
 
       /// \brief Signal that the value has changed.
       /// \param[in] _value New value.
-      signals: void ValueChanged(QVariant _value);
+      signals: void ValueChanged(const QVariant _value);
 
       /// \brief Callback when an internal widget's value has changed.
       protected slots: void OnValueChanged();

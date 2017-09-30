@@ -799,64 +799,64 @@ TEST(MessageWidgetTest, PluginMsgWidget)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
+  // Message
   msgs::Plugin pluginMsg;
+  pluginMsg.set_name("test_plugin");
+  pluginMsg.set_filename("test_plugin_filename");
+  pluginMsg.set_innerxml("<param>1</param>\n");
 
-  {
-    // plugin
-    pluginMsg.set_name("test_plugin");
-    pluginMsg.set_filename("test_plugin_filename");
-    pluginMsg.set_innerxml("<param>1</param>\n");
-  }
-  auto pluginMessageWidget = new MessageWidget(&pluginMsg);
+  // Create widget
+  auto msgWidget = new MessageWidget(&pluginMsg);
+  EXPECT_NE(msgWidget, nullptr);
 
-  // retrieve the message from the message widget and
-  // verify that all values have not been changed.
-  {
-    auto retPluginMsg =
-        dynamic_cast<msgs::Plugin *>(pluginMessageWidget->Msg());
-    EXPECT_TRUE(retPluginMsg != nullptr);
+  // Retrieve message
+  auto retPluginMsg = dynamic_cast<msgs::Plugin *>(msgWidget->Msg());
+  EXPECT_NE(retPluginMsg, nullptr);
 
-    // plugin
-    EXPECT_EQ(retPluginMsg->name(), "test_plugin");
-    EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename");
-    EXPECT_EQ(retPluginMsg->innerxml(), "<param>1</param>\n");
-  }
+  EXPECT_EQ(retPluginMsg->name(), "test_plugin");
+  EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename");
+  EXPECT_EQ(retPluginMsg->innerxml(), "<param>1</param>\n");
 
-  // update fields in the message widget and
-  // verify that the new message contains the updated values.
-  {
-    // plugin
-    pluginMessageWidget->SetPropertyValue("name", QVariant::fromValue(
-        std::string("test_plugin_updated")));
-    pluginMessageWidget->SetPropertyValue("filename", QVariant::fromValue(
-        std::string("test_plugin_filename_updated")));
-    pluginMessageWidget->SetPropertyValue("innerxml", QVariant::fromValue(
-        std::string("<param2>new_param</param2>\n")));
-  }
+  // Update from message
+  pluginMsg.set_name("test_plugin_new");
+  pluginMsg.set_filename("test_plugin_filename_new");
+  pluginMsg.set_innerxml("<param>2</param>\n");
 
-  // verify widget values
-  {
-    EXPECT_EQ(pluginMessageWidget->PropertyValue(
-        "name").value<std::string>(), "test_plugin_updated");
-    EXPECT_EQ(pluginMessageWidget->PropertyValue(
-        "filename").value<std::string>(), "test_plugin_filename_updated");
-    EXPECT_EQ(pluginMessageWidget->PropertyValue(
-        "innerxml").value<std::string>(), "<param2>new_param</param2>\n");
-  }
+  msgWidget->UpdateFromMsg(&pluginMsg);
 
-  // verify updates in new msg
-  {
-    auto retPluginMsg =
-        dynamic_cast<msgs::Plugin *>(pluginMessageWidget->Msg());
-    EXPECT_TRUE(retPluginMsg != nullptr);
+  // Check new message
+  retPluginMsg = dynamic_cast<msgs::Plugin *>(msgWidget->Msg());
+  EXPECT_NE(retPluginMsg, nullptr);
 
-    // plugin
-    EXPECT_EQ(retPluginMsg->name(), "test_plugin_updated");
-    EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename_updated");
-    EXPECT_EQ(retPluginMsg->innerxml(), "<param2>new_param</param2>\n");
-  }
+  EXPECT_EQ(retPluginMsg->name(), "test_plugin_new");
+  EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename_new");
+  EXPECT_EQ(retPluginMsg->innerxml(), "<param>2</param>\n");
 
-  delete pluginMessageWidget;
+  // Update fields
+  msgWidget->SetPropertyValue("name", QVariant::fromValue(
+      std::string("test_plugin_updated")));
+  msgWidget->SetPropertyValue("filename", QVariant::fromValue(
+      std::string("test_plugin_filename_updated")));
+  msgWidget->SetPropertyValue("innerxml", QVariant::fromValue(
+      std::string("<param2>new_param</param2>\n")));
+
+  // Check fields
+  EXPECT_EQ(msgWidget->PropertyValue(
+      "name").value<std::string>(), "test_plugin_updated");
+  EXPECT_EQ(msgWidget->PropertyValue(
+      "filename").value<std::string>(), "test_plugin_filename_updated");
+  EXPECT_EQ(msgWidget->PropertyValue(
+      "innerxml").value<std::string>(), "<param2>new_param</param2>\n");
+
+  // Check new message
+  retPluginMsg = dynamic_cast<msgs::Plugin *>(msgWidget->Msg());
+  EXPECT_NE(retPluginMsg, nullptr);
+
+  EXPECT_EQ(retPluginMsg->name(), "test_plugin_updated");
+  EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename_updated");
+  EXPECT_EQ(retPluginMsg->innerxml(), "<param2>new_param</param2>\n");
+
+  delete msgWidget;
   EXPECT_TRUE(stop());
 }
 
@@ -939,285 +939,6 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
   }
 
   delete msgWidget;
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
-TEST(MessageWidgetTest, MessageWidgetReadOnly)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  msgs::Visual visualMsg;
-
-  {
-    // visual
-    visualMsg.set_id(12345u);
-
-    // pose
-    math::Vector3d pos(2.0, 3.0, 4.0);
-    math::Quaterniond quat(1.57, 0.0, 0.0);
-    msgs::Set(visualMsg.mutable_pose(), math::Pose3d(pos, quat));
-
-    // geometry
-    auto geometryMsg = visualMsg.mutable_geometry();
-    geometryMsg->set_type(msgs::Geometry::CYLINDER);
-    auto cylinderGeomMsg = geometryMsg->mutable_cylinder();
-    cylinderGeomMsg->set_radius(3.0);
-    cylinderGeomMsg->set_length(0.2);
-
-    // material
-    auto materialMsg = visualMsg.mutable_material();
-    msgs::Set(materialMsg->mutable_ambient(), math::Color(0.0, 1.0, 0.0, 1.0));
-    msgs::Set(materialMsg->mutable_diffuse(), math::Color(0.0, 1.0, 1.0, 0.4));
-
-    // material::script
-    auto scriptMsg = materialMsg->mutable_script();
-    scriptMsg->set_name("test_script_name");
-  }
-  auto msgWidget = new MessageWidget(&visualMsg);
-
-  // set different types of widgets to be read-only
-  {
-    // primitive widget
-    msgWidget->SetWidgetReadOnly("id", true);
-    // custom pose message widget
-    msgWidget->SetWidgetReadOnly("pose", true);
-    // custom geometry message widget
-    msgWidget->SetWidgetReadOnly("geometry", true);
-    // widget inside a group widget
-    msgWidget->SetWidgetReadOnly("material::diffuse", true);
-    // widget two levels deep
-    msgWidget->SetWidgetReadOnly("material::script::name", true);
-    // group widget
-    msgWidget->SetWidgetReadOnly("material", true);
-
-    EXPECT_EQ(msgWidget->WidgetReadOnly("id"), true);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("pose"), true);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("geometry"), true);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("material::diffuse"), true);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("material::script::name"),
-        true);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("material"), true);
-  }
-
-  // set read-only back to false
-  {
-    msgWidget->SetWidgetReadOnly("id", false);
-    msgWidget->SetWidgetReadOnly("pose", false);
-    msgWidget->SetWidgetReadOnly("geometry", false);
-    msgWidget->SetWidgetReadOnly("material::diffuse", false);
-    msgWidget->SetWidgetReadOnly("material::script::name", false);
-    msgWidget->SetWidgetReadOnly("material", false);
-
-    EXPECT_EQ(msgWidget->WidgetReadOnly("id"), false);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("pose"), false);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("geometry"), false);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("material::diffuse"), false);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("material::script::name"),
-        false);
-    EXPECT_EQ(msgWidget->WidgetReadOnly("material"), false);
-  }
-
-  delete msgWidget;
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
-TEST(MessageWidgetTest, ChildUIntSignal)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Message
-  auto msg = new msgs::UInt32();
-  msg->set_data(42);
-
-  // Create widget from message
-  auto messageWidget = new MessageWidget(msg);
-  EXPECT_TRUE(messageWidget != nullptr);
-
-  // Check we got a uint widget
-  auto propWidget = messageWidget->PropertyWidgetByName("data");
-  EXPECT_NE(propWidget, nullptr);
-
-  auto uintWidget = qobject_cast<NumberWidget *>(propWidget);
-  EXPECT_NE(uintWidget, nullptr);
-
-  // Connect signals
-  bool signalReceived = false;
-  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
-    [&signalReceived](const std::string &_name, const QVariant _uint)
-    {
-      EXPECT_EQ(_name, "data");
-      EXPECT_EQ(_uint, 88888);
-      signalReceived = true;
-    });
-
-  // Check default uint
-  EXPECT_EQ(messageWidget->PropertyValue("data"), 42u);
-
-  // Get signal emitting widgets
-  auto spins = uintWidget->findChildren<QSpinBox *>();
-  EXPECT_EQ(spins.size(), 1);
-
-  // Change the value and check new value at callback
-  spins[0]->setValue(88888);
-  spins[0]->editingFinished();
-
-  // Check callback was called
-  EXPECT_TRUE(signalReceived);
-
-  delete messageWidget;
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
-TEST(MessageWidgetTest, ChildIntSignal)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Message
-  auto msg = new msgs::Int32();
-  msg->set_data(-989);
-
-  // Create widget from message
-  auto messageWidget = new MessageWidget(msg);
-  EXPECT_TRUE(messageWidget != nullptr);
-
-  // Check we got a uint widget
-  auto propWidget = messageWidget->PropertyWidgetByName("data");
-  EXPECT_NE(propWidget, nullptr);
-
-  auto intWidget = qobject_cast<NumberWidget *>(propWidget);
-  EXPECT_NE(intWidget, nullptr);
-
-  // Connect signals
-  bool signalReceived = false;
-  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
-    [&signalReceived](const std::string &_name, const QVariant _v)
-    {
-      EXPECT_EQ(_name, "data");
-      EXPECT_EQ(_v, 2000);
-      signalReceived = true;
-    });
-
-  // Check default int
-  EXPECT_EQ(messageWidget->PropertyValue("data"), -989);
-
-  // Get signal emitting widgets
-  auto spins = intWidget->findChildren<QSpinBox *>();
-  EXPECT_EQ(spins.size(), 1);
-
-  // Change the value and check new value at callback
-  spins[0]->setValue(2000);
-  spins[0]->editingFinished();
-
-  // Check callback was called
-  EXPECT_TRUE(signalReceived);
-
-  delete messageWidget;
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
-TEST(MessageWidgetTest, ChildDoubleSignal)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Message
-  auto msg = new msgs::Double();
-  msg->set_data(-0.123);
-
-  // Create widget from message
-  auto messageWidget = new MessageWidget(msg);
-  EXPECT_TRUE(messageWidget != nullptr);
-
-  // Check we got a double widget
-  auto propWidget = messageWidget->PropertyWidgetByName("data");
-  EXPECT_NE(propWidget, nullptr);
-
-  auto doubleWidget = qobject_cast<NumberWidget *>(propWidget);
-  EXPECT_NE(doubleWidget, nullptr);
-
-  // Connect signals
-  bool signalReceived = false;
-  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
-    [&signalReceived](const std::string &_name, QVariant _var)
-    {
-      double d = _var.toDouble();
-      EXPECT_EQ(_name, "data");
-      EXPECT_TRUE(fabs(d - 1.5) < 0.00001);
-      signalReceived = true;
-    });
-
-  // Check default double
-  EXPECT_DOUBLE_EQ(messageWidget->PropertyValue("data").toDouble(), -0.123);
-
-  // Get signal emitting widgets
-  auto spins = doubleWidget->findChildren<QDoubleSpinBox *>();
-  EXPECT_EQ(spins.size(), 1);
-
-  // Change the value and check new value at callback
-  spins[0]->setValue(1.5);
-  spins[0]->editingFinished();
-
-  // Check callback was called
-  EXPECT_TRUE(signalReceived);
-
-  delete messageWidget;
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
-TEST(MessageWidgetTest, ChildBoolSignal)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Message
-  auto msg = new msgs::Boolean();
-  msg->set_data(false);
-
-  // Create widget from message
-  auto messageWidget = new MessageWidget(msg);
-  EXPECT_TRUE(messageWidget != nullptr);
-
-  // Check we got a bool widget
-  auto propWidget = messageWidget->PropertyWidgetByName("data");
-  EXPECT_NE(propWidget, nullptr);
-
-  auto boolWidget = qobject_cast<BoolWidget *>(propWidget);
-  EXPECT_NE(boolWidget, nullptr);
-
-  // Connect signals
-  bool signalReceived = false;
-  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
-    [&signalReceived](const std::string &_name, QVariant _var)
-    {
-      bool b = _var.toBool();
-      EXPECT_EQ(_name, "data");
-      EXPECT_EQ(b, true);
-      signalReceived = true;
-    });
-
-  // Check default bool
-  EXPECT_EQ(messageWidget->PropertyValue("data"), false);
-
-  // Get signal emitting widgets
-  auto radios = boolWidget->findChildren<QRadioButton *>();
-  EXPECT_EQ(radios.size(), 2);
-
-  // Change the value and check new value at callback
-  radios[0]->setChecked(true);
-  radios[1]->setChecked(false);
-
-  // Check callback was called
-  EXPECT_TRUE(signalReceived);
-
-  delete messageWidget;
   EXPECT_TRUE(stop());
 }
 
@@ -1572,8 +1293,7 @@ TEST(MessageWidgetTest, PropertyByName)
   EXPECT_TRUE(initApp());
 
   // Message
-  auto msg = new msgs::Boolean();
-  msg->set_data(false);
+  auto msg = new msgs::StringMsg();
 
   // Create widget from message
   auto messageWidget = new MessageWidget(msg);
@@ -1583,13 +1303,13 @@ TEST(MessageWidgetTest, PropertyByName)
   for (auto name : {"header", "header::stamp", "header::stamp::sec",
       "header::stamp::nsec", "data"})
   {
-    EXPECT_NE(messageWidget->PropertyWidgetByName(name), nullptr);
+    EXPECT_NE(messageWidget->PropertyWidgetByName(name), nullptr) << name;
   }
 
   // Fail with invalid names
   for (auto name : {"", "banana"})
   {
-    EXPECT_EQ(messageWidget->PropertyWidgetByName(name), nullptr);
+    EXPECT_EQ(messageWidget->PropertyWidgetByName(name), nullptr) << name;
   }
 
   delete messageWidget;

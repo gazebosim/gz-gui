@@ -28,15 +28,15 @@ namespace ignition
 {
   namespace gui
   {
-    /// \brief A collapsible widget that holds a child widget.
+    /// \brief A widget consisting of a button and some content. The
+    /// content is hidden or shown as the button is toggled.
+    /// It inherits from property widget, but it doesn't hold a property value.
     class IGNITION_GUI_VISIBLE CollapsibleWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _key
-      /// \param[in] _childWidget
-      /// \param[in] _level
+      /// \param[in] _key Title to be displayed on the button.
       public: CollapsibleWidget(const std::string &_key);
 
       // Documentation inherited
@@ -45,9 +45,9 @@ namespace ignition
       // Documentation inherited
       public: QVariant Value() const {return QVariant();}
 
-      /// \brief Callback that collapses or expands the child widget.
+      /// \brief Callback that collapses or expands the contents.
       /// _param[in] _checked True for expanded.
-      public slots: void Toggle(bool _checked);
+      public slots: void Toggle(const bool _checked);
     };
   }
 }

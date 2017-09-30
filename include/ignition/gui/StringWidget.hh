@@ -31,24 +31,42 @@ namespace ignition
   {
     class StringWidgetPrivate;
 
-    /// \brief A widget which holds a boolean property.
+    /// \brief A widget which holds a string property (std::string).
     class IGNITION_GUI_VISIBLE StringWidget : public PropertyWidget
     {
       Q_OBJECT
 
+      /// \brief String types
+      public: enum StringType
+      {
+        /// \brief Use line for short strings which usually fit in a single
+        /// line.
+        LINE,
+
+        /// \brief Use text for longer strings which span multiple lines.
+        TEXT
+      };
+
       /// \brief Constructor
-      /// \param[in] _key Property key.
-      /// \param[in] _type "line" or "plain"
+      /// \param[in] _key Property key value, such as "name", which will be
+      /// displayed next to the field which holds the string content.
+      /// \param[in] _type The value type, which will determine characteristics
+      /// of the line field, such as how large the widget is. Defaults to LINE.
       public: StringWidget(const std::string &_key,
-                           const std::string &_type = "line");
+                           const StringType _type = LINE);
 
       /// \brief Destructor
       public: ~StringWidget();
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      /// Value will be handled if the variant contains an std::string.
+      /// \param[in] _value New value.
+      /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      /// Returns a variant containing the widget's current std::string value.
+      /// \return Widget's current value.
       public: QVariant Value() const;
 
       /// \internal

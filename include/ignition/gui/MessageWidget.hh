@@ -45,19 +45,23 @@ namespace ignition
   {
     class MessageWidgetPrivate;
 
-    /// \brief A widget with fields generated from a Google Protobuf message.
-    /// Its fields can be updated by new messages and it can alsoe generate a
-    /// message based on the latest values input by the user.
+    /// \brief Generate a widget with property fields based on a Google
+    /// Protobuf message.
+    ///
+    /// The fields are generated based on a message which is passed in the
+    /// constructor.
+    ///
+    /// Updates to the widget's fields can be done by calling `UpdateFromMsg`
+    /// as long as the same message type is passed.
+    ///
+    /// The widget can also fill a message according to the current values of
+    /// its widgets input by the user.
+    ///
     class IGNITION_GUI_VISIBLE MessageWidget : public QWidget
     {
       Q_OBJECT
 
-      /// \brief Generate a widget with property fields based on a google
-      /// protobuf message.
-      ///
-      /// Updates to the widget's fields can be done by calling `UpdateFromMsg`
-      /// as long as the same message type is passed.
-      ///
+      /// \brief Constructor.
       /// \param[in] _msg Message to load from.
       /// \sa UpdateFromMsg
       public: MessageWidget(const google::protobuf::Message *_msg);
@@ -68,12 +72,14 @@ namespace ignition
       /// \brief Get a message with the widget's current contents. The message
       /// will be of the same type as the one used on the constructor.
       /// \return Updated message.
+      /// \sa UpdateFromMsg
       public: google::protobuf::Message *Msg();
 
-      /// \brief Update the widgets from a message.
+      /// \brief Update the widgets with values from a message.
       /// \param[in] _msg Message used for updating the widgets.
-      /// \return True if succesfull. This may fail for example, if a message
+      /// \return True if successful. This may fail for example, if a message
       /// type differs from the message used to construct the widget.
+      /// \sa Msg
       public: bool UpdateFromMsg(const google::protobuf::Message *_msg);
 
       /// \brief Signal that a property widget's value has changed.
@@ -124,7 +130,7 @@ namespace ignition
       /// \return Value as QVariant.
       public: QVariant PropertyValue(const std::string &_name) const;
 
-      /// \brief Get a config property widget by its name.
+      /// \brief Get a property widget by its scoped name.
       /// \param[in] _name Scoped name of the property widget.
       /// \return The widget with the given name or nullptr if it wasn't found.
       public: PropertyWidget *PropertyWidgetByName(
@@ -134,34 +140,39 @@ namespace ignition
       /// \return The number of property widgets.
       public: unsigned int PropertyWidgetCount() const;
 
-      /// \brief Register a property widget as a property of this widget, so it
-      /// can be updated. Note that the widget is not automatically added to a
-      /// layout.
-      /// \param[in] _name Unique name to indentify the property within this
-      /// widget
-      /// \param[in] _property Child widget to be added. It doesn't need to be a
-      /// PropertyWidget.
+      /// \brief Register a property widget with this widget, so that:
+      /// * It can be found by its scoped name
+      /// * Its signals can be forwarded to the message widget.
+      /// Note that the widget is not automatically added to a layout.
+      /// \param[in] _scopedName Unique name to indentify the property within
+      /// this widget. Nested message names are scoped using `::`, for example:
+      /// `pose::position::x`.
+      /// \param[in] _property Widget to be added.
       /// \return True if property successfully added.
-      private: bool AddPropertyWidget(const std::string &_name,
+      private: bool AddPropertyWidget(const std::string &_scopedName,
           PropertyWidget *_property);
 
       /// \brief Parse the input message and either create widgets for
-      /// configuring fields of the message, or update the widgets with values
-      /// from the message. This is called recursively to parse nested messages.
+      /// configuring fields of the message, or update existing widgets with
+      /// values from the message. This is called recursively to parse nested
+      /// messages.
       /// \param[in] _msg Message.
-      /// \param[in] _scopedName Scoped name for new widgets.
-      /// \param[in] _parent Pointer to parent of generated widgets.
+      /// \param[in] _scopedName Scoped name for new widgets, if this is the
+      /// top-level message, the scoped name is an empty string.
+      /// \param[in] _parent Pointer to parent of generated widgets, this is
+      /// either the message widget or a collapsible widget.
       /// return True if successful.
       private: bool Parse(google::protobuf::Message *_msg,
-          const std::string &_name, QWidget *_parent);
+          const std::string &_scopedName, QWidget *_parent);
 
-      /// \brief Update the message field using values from the widgets.
+      /// \brief Update the given message using values from the widgets. This is
+      /// called recursively to update nested messages.
       /// \param[in] _msg Message to be updated.
-      /// \param[in] _name Optional name of a property field. By default, takes
-      /// the whole message.
+      /// \param[in] _parentScopedName Scoped name of parent widget, empty if
+      /// this is the top level message.
       /// \return True if successful
       private: bool FillMsg(google::protobuf::Message *_msg,
-          const std::string &_name = "");
+          const std::string &_parentScopedName = "");
 
       /// \brief Qt event filter currently used to filter mouse wheel events.
       /// \param[in] _obj Object that is watched by the event filter.

@@ -133,9 +133,7 @@ bool MessageWidget::UpdateFromMsg(const google::protobuf::Message *_msg)
 /////////////////////////////////////////////////
 google::protobuf::Message *MessageWidget::Msg()
 {
-  // Update message with current widget state
   this->FillMsg(this->dataPtr->msg);
-
   return this->dataPtr->msg;
 }
 
@@ -428,23 +426,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       continue;
     }
 
-    if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
-    {
-      // If creating new widget
-      if (!propertyWidget)
-      {
-        propertyWidget = new NumberWidget(fieldName, NumberWidget::UINT);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
-      }
-
-      // Set value
-      unsigned int value = reflection->GetUInt64(*_msg, fieldDescriptor);
-      propertyWidget->SetValue(value);
-
-      continue;
-    }
-
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
     {
       // If creating new widget
@@ -457,6 +438,23 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
       // Set value
       int value = reflection->GetInt32(*_msg, fieldDescriptor);
+      propertyWidget->SetValue(value);
+
+      continue;
+    }
+
+    if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
+    {
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new NumberWidget(fieldName, NumberWidget::UINT);
+        _parent->layout()->addWidget(propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget);
+      }
+
+      // Set value
+      unsigned int value = reflection->GetUInt64(*_msg, fieldDescriptor);
       propertyWidget->SetValue(value);
 
       continue;
@@ -504,9 +502,9 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         // Choose either a one-line or a multi-line widget according to name
-        std::string type = "line";
+        auto type = StringWidget::StringType::LINE;
         if (fieldName == "innerxml")
-          type = "plain";
+          type = StringWidget::StringType::TEXT;
 
         propertyWidget = new StringWidget(fieldName, type);
         _parent->layout()->addWidget(propertyWidget);
@@ -584,7 +582,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
 /////////////////////////////////////////////////
 bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
-    const std::string &_name)
+    const std::string &_parentScopedName)
 {
   // Get descriptor of given message
   auto descriptor = _msg->GetDescriptor();
@@ -610,10 +608,15 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     if (fieldDescriptor->is_repeated())
       continue;
 
-    std::string scopedName = _name.empty() ? name : _name + "::" + name;
+    auto scopedName = _parentScopedName.empty() ? name
+        : _parentScopedName + "::" + name;
+
+    // Skip if we don't have a widget with this name
     if (this->dataPtr->properties.find(scopedName) ==
         this->dataPtr->properties.end())
+    {
       continue;
+    }
 
     // don't update msgs field that are associated with read-only widgets
     if (this->WidgetReadOnly(scopedName))
@@ -640,14 +643,14 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         reflection->SetInt64(_msg, fieldDescriptor, variant.toInt());
         break;
       }
-      case google::protobuf::FieldDescriptor::TYPE_UINT64:
-      {
-        reflection->SetUInt64(_msg, fieldDescriptor, variant.toUInt());
-        break;
-      }
       case google::protobuf::FieldDescriptor::TYPE_INT32:
       {
         reflection->SetInt32(_msg, fieldDescriptor, variant.toInt());
+        break;
+      }
+      case google::protobuf::FieldDescriptor::TYPE_UINT64:
+      {
+        reflection->SetUInt64(_msg, fieldDescriptor, variant.toUInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT32:
@@ -736,8 +739,8 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     ignerr << "Null child, not adding widget." << std::endl;
     return false;
   }
-  if (this->dataPtr->properties.find(_name) !=
-      this->dataPtr->properties.end())
+
+  if (this->dataPtr->properties.find(_name) != this->dataPtr->properties.end())
   {
     ignerr << "This config widget already has a child named [" << _name << "]. "
        << "Names must be unique. Not adding child." << std::endl;

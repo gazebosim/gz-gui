@@ -39,7 +39,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-StringWidget::StringWidget(const std::string &_key, const std::string &_type)
+StringWidget::StringWidget(const std::string &_key, const StringType _type)
     : dataPtr(new StringWidgetPrivate())
 {
   // Label
@@ -48,7 +48,7 @@ StringWidget::StringWidget(const std::string &_key, const std::string &_type)
 
   // Line or Text Edit based on key
   QWidget *valueEdit;
-  if (_type == "plain")
+  if (_type == TEXT)
   {
     valueEdit = new QPlainTextEdit(this);
     valueEdit->setMinimumHeight(50);

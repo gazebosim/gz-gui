@@ -22,11 +22,11 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-CollapsibleWidget::CollapsibleWidget(const std::string &_name)
+CollapsibleWidget::CollapsibleWidget(const std::string &_key)
 {
   // Button label
-  auto buttonLabel = new QLabel(tr(humanReadable(_name).c_str()));
-  buttonLabel->setToolTip(tr(_name.c_str()));
+  auto buttonLabel = new QLabel(tr(humanReadable(_key).c_str()));
+  buttonLabel->setToolTip(tr(_key.c_str()));
 
   // Button icon
   auto buttonIcon = new QLabel(QString::fromUtf8("\u25b8"));
@@ -38,13 +38,13 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_name)
   buttonLayout->addWidget(buttonIcon);
   buttonLayout->setAlignment(buttonIcon, Qt::AlignRight);
 
-  // Button frame
+  // Button
   auto button = new QPushButton();
   button->setLayout(buttonLayout);
   button->setCheckable(true);
   this->connect(button, SIGNAL(toggled(bool)), this, SLOT(Toggle(bool)));
 
-  // Collapsible Layout
+  // Layout
   auto mainLayout = new QVBoxLayout;
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
@@ -53,7 +53,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_name)
 }
 
 /////////////////////////////////////////////////
-void CollapsibleWidget::Toggle(bool _checked)
+void CollapsibleWidget::Toggle(const bool _checked)
 {
   // Toggle all items below the button
   for (auto i = 1; i < this->layout()->count(); ++i)
