@@ -270,11 +270,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
   auto messageType = descriptor->full_name();
   if (messageType == "ignition.msgs.Geometry")
   {
-    // Value from msg
-    auto msg = dynamic_cast<msgs::Geometry *>(_msg);
-    QVariant variant;
-    variant.setValue(*msg);
-
     // If creating new widget
     if (!propertyWidget)
     {
@@ -284,7 +279,8 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    propertyWidget->SetValue(variant);
+    auto msg = dynamic_cast<msgs::Geometry *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(*msg));
 
     return true;
   }
@@ -292,11 +288,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
   // Pose3d
   if (messageType == "ignition.msgs.Pose")
   {
-    // Value from msg
-    auto msg = dynamic_cast<msgs::Pose *>(_msg);
-    QVariant v;
-    v.setValue(msgs::Convert(*msg));
-
     // If creating new widget
     if (!propertyWidget)
     {
@@ -306,7 +297,8 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    propertyWidget->SetValue(v);
+    auto msg = dynamic_cast<msgs::Pose *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
 
     return true;
   }
@@ -314,11 +306,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
   // Vector3d
   if (messageType == "ignition.msgs.Vector3d")
   {
-    // Value from msg
-    auto msg = dynamic_cast<msgs::Vector3d *>(_msg);
-    QVariant v;
-    v.setValue(msgs::Convert(*msg));
-
     // If creating new widget
     if (!propertyWidget)
     {
@@ -328,7 +315,8 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    propertyWidget->SetValue(v);
+    auto msg = dynamic_cast<msgs::Vector3d *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
 
     return true;
   }
@@ -336,11 +324,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
   // Color
   if (messageType == "ignition.msgs.Color")
   {
-    // Value from msg
-    auto msg = dynamic_cast<msgs::Color *>(_msg);
-    QVariant v;
-    v.setValue(msgs::Convert(*msg));
-
     // If creating new widget
     if (!propertyWidget)
     {
@@ -350,7 +333,8 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    propertyWidget->SetValue(v);
+    auto msg = dynamic_cast<msgs::Color *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
 
     return true;
   }
@@ -391,11 +375,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     // Numbers
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
     {
-      // Value from field
-      double value = reflection->GetDouble(*_msg, fieldDescriptor);
-      if (!math::equal(value, value))
-        value = 0;
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -405,6 +384,9 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
+      double value = reflection->GetDouble(*_msg, fieldDescriptor);
+      if (!math::equal(value, value))
+        value = 0;
       propertyWidget->SetValue(value);
 
       continue;
@@ -412,11 +394,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
     {
-      // Value from field
-      float value = reflection->GetFloat(*_msg, fieldDescriptor);
-      if (!math::equal(value, value))
-        value = 0;
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -426,6 +403,9 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
+      float value = reflection->GetFloat(*_msg, fieldDescriptor);
+      if (!math::equal(value, value))
+        value = 0;
       propertyWidget->SetValue(value);
 
       continue;
@@ -433,9 +413,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
     {
-      // Value from field
-      int value = reflection->GetInt64(*_msg, fieldDescriptor);
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -445,6 +422,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
+      int value = reflection->GetInt64(*_msg, fieldDescriptor);
       propertyWidget->SetValue(value);
 
       continue;
@@ -452,9 +430,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
     {
-      // Value from field
-      unsigned int value = reflection->GetUInt64(*_msg, fieldDescriptor);
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -464,6 +439,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
+      unsigned int value = reflection->GetUInt64(*_msg, fieldDescriptor);
       propertyWidget->SetValue(value);
 
       continue;
@@ -471,9 +447,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
     {
-      // Value from field
-      int value = reflection->GetInt32(*_msg, fieldDescriptor);
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -483,6 +456,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
+      int value = reflection->GetInt32(*_msg, fieldDescriptor);
       propertyWidget->SetValue(value);
 
       continue;
@@ -490,9 +464,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
     {
-      // Value from field
-      unsigned int value = reflection->GetUInt32(*_msg, fieldDescriptor);
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -502,6 +473,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
+      unsigned int value = reflection->GetUInt32(*_msg, fieldDescriptor);
       propertyWidget->SetValue(value);
 
       continue;
@@ -510,9 +482,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     // Boolean
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_BOOL)
     {
-      // Value from field
-      bool value = reflection->GetBool(*_msg, fieldDescriptor);
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -522,6 +491,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
+      bool value = reflection->GetBool(*_msg, fieldDescriptor);
       propertyWidget->SetValue(value);
 
       continue;
@@ -530,11 +500,6 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     // String
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_STRING)
     {
-      // Value from field
-      std::string value = reflection->GetString(*_msg, fieldDescriptor);
-      QVariant v;
-      v.setValue(value);
-
       // If creating new widget
       if (!propertyWidget)
       {
@@ -549,7 +514,8 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
-      propertyWidget->SetValue(v);
+      std::string value = reflection->GetString(*_msg, fieldDescriptor);
+      propertyWidget->SetValue(QVariant::fromValue(value));
 
       continue;
     }
@@ -580,9 +546,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Set value
-      QVariant v;
-      v.setValue(value->name());
-      propertyWidget->SetValue(v);
+      propertyWidget->SetValue(QVariant::fromValue(value->name()));
 
       continue;
     }

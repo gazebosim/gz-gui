@@ -37,13 +37,21 @@ namespace ignition
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _key Property key.
+      /// \param[in] _key Property key value, such as "enable", which will be
+      /// displayed next to the checkboxes representing the value.
       public: BoolWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~BoolWidget();
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      /// Value will be handled if it holds a boolean value.
+      ///
+      /// An input can be constructed as follows:
+      /// QVariant value(true);
+      ///
+      /// \param[in] _value New value.
+      /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
       // Documentation inherited

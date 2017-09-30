@@ -52,15 +52,15 @@ TEST(MessageWidgetTest, EmptyMsgWidget)
   {
     msgs::Visual visualMsg;
 
-    auto visualMessageWidget = new MessageWidget(&visualMsg);
+    auto msgWidget = new MessageWidget(&visualMsg);
 
     QCoreApplication::processEvents();
 
     auto retVisualMsg =
-        dynamic_cast<msgs::Visual *>(visualMessageWidget->Msg());
+        dynamic_cast<msgs::Visual *>(msgWidget->Msg());
     EXPECT_TRUE(retVisualMsg != nullptr);
 
-    delete visualMessageWidget;
+    delete msgWidget;
   }
 
   {
@@ -85,8 +85,6 @@ TEST(MessageWidgetTest, JointMsgWidget)
   EXPECT_TRUE(initApp());
 
   msgs::Joint jointMsg;
-
-  QVariant variant;
 
   {
     // joint
@@ -125,12 +123,12 @@ TEST(MessageWidgetTest, JointMsgWidget)
     jointMsg.set_suspension_cfm(0.8);
     jointMsg.set_suspension_erp(0.9);
   }
-  auto jointMessageWidget = new MessageWidget(&jointMsg);
+  auto msgWidget = new MessageWidget(&jointMsg);
 
   // retrieve the message from the message widget and
   // verify that all values have not been changed.
   {
-    auto retJointMsg = dynamic_cast<msgs::Joint *>(jointMessageWidget->Msg());
+    auto retJointMsg = dynamic_cast<msgs::Joint *>(msgWidget->Msg());
     EXPECT_TRUE(retJointMsg != nullptr);
 
     // joint
@@ -183,136 +181,136 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // Joint type revolute -> universal
   {
     // joint
-    variant.setValue(std::string("test_joint_updated"));
-    jointMessageWidget->SetPropertyValue("name", variant);
-    jointMessageWidget->SetPropertyValue("id", 9999999u);
-    variant.setValue(std::string("test_joint_parent_updated"));
-    jointMessageWidget->SetPropertyValue("parent", variant);
-    jointMessageWidget->SetPropertyValue("parent_id", 1u);
-    variant.setValue(std::string("test_joint_child_updated"));
-    jointMessageWidget->SetPropertyValue("child", variant);
-    jointMessageWidget->SetPropertyValue("child_id", 2u);
+    msgWidget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated")));
+    msgWidget->SetPropertyValue("id", 9999999u);
+    msgWidget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated")));
+    msgWidget->SetPropertyValue("parent_id", 1u);
+    msgWidget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated")));
+    msgWidget->SetPropertyValue("child_id", 2u);
 
     // type
-    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL));
-    jointMessageWidget->SetPropertyValue("type", variant);
+    msgWidget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
 
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
     math::Quaterniond quat(0.0, 0.0, 1.57);
-    variant.setValue(math::Pose3d(pos, quat));
-    jointMessageWidget->SetPropertyValue("pose", variant);
+    msgWidget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
 
     // axis1
-    variant.setValue(math::Vector3d::UnitY);
-    jointMessageWidget->SetPropertyValue("axis1::xyz", variant);
-    jointMessageWidget->SetPropertyValue("axis1::use_parent_model_frame",
+    msgWidget->SetPropertyValue("axis1::xyz", QVariant::fromValue(
+        math::Vector3d::UnitY));
+    msgWidget->SetPropertyValue("axis1::use_parent_model_frame",
         true);
-    jointMessageWidget->SetPropertyValue("axis1::limit_lower", -1.2);
-    jointMessageWidget->SetPropertyValue("axis1::limit_upper", -1.0);
-    jointMessageWidget->SetPropertyValue("axis1::limit_effort", 1.0);
-    jointMessageWidget->SetPropertyValue("axis1::limit_velocity", 100.0);
-    jointMessageWidget->SetPropertyValue("axis1::damping", 0.9);
+    msgWidget->SetPropertyValue("axis1::limit_lower", -1.2);
+    msgWidget->SetPropertyValue("axis1::limit_upper", -1.0);
+    msgWidget->SetPropertyValue("axis1::limit_effort", 1.0);
+    msgWidget->SetPropertyValue("axis1::limit_velocity", 100.0);
+    msgWidget->SetPropertyValue("axis1::damping", 0.9);
 
     // axis2
-    variant.setValue(math::Vector3d::UnitZ);
-    jointMessageWidget->SetPropertyValue("axis2::xyz", variant);
-    jointMessageWidget->SetPropertyValue("axis2::use_parent_model_frame",
+    msgWidget->SetPropertyValue("axis2::xyz", QVariant::fromValue(
+        math::Vector3d::UnitZ));
+    msgWidget->SetPropertyValue("axis2::use_parent_model_frame",
         true);
-    jointMessageWidget->SetPropertyValue("axis2::limit_lower", -3.2);
-    jointMessageWidget->SetPropertyValue("axis2::limit_upper", -3.0);
-    jointMessageWidget->SetPropertyValue("axis2::limit_effort", 3.0);
-    jointMessageWidget->SetPropertyValue("axis2::limit_velocity", 300.0);
-    jointMessageWidget->SetPropertyValue("axis2::damping", 3.9);
+    msgWidget->SetPropertyValue("axis2::limit_lower", -3.2);
+    msgWidget->SetPropertyValue("axis2::limit_upper", -3.0);
+    msgWidget->SetPropertyValue("axis2::limit_effort", 3.0);
+    msgWidget->SetPropertyValue("axis2::limit_velocity", 300.0);
+    msgWidget->SetPropertyValue("axis2::damping", 3.9);
 
     // other joint physics properties
-    jointMessageWidget->SetPropertyValue("cfm", 0.9);
-    jointMessageWidget->SetPropertyValue("bounce", 0.8);
-    jointMessageWidget->SetPropertyValue("velocity", 0.7);
-    jointMessageWidget->SetPropertyValue("fudge_factor", 0.6);
-    jointMessageWidget->SetPropertyValue("limit_cfm", 0.5);
-    jointMessageWidget->SetPropertyValue("limit_erp", 0.4);
-    jointMessageWidget->SetPropertyValue("suspension_cfm", 0.3);
-    jointMessageWidget->SetPropertyValue("suspension_erp", 0.2);
+    msgWidget->SetPropertyValue("cfm", 0.9);
+    msgWidget->SetPropertyValue("bounce", 0.8);
+    msgWidget->SetPropertyValue("velocity", 0.7);
+    msgWidget->SetPropertyValue("fudge_factor", 0.6);
+    msgWidget->SetPropertyValue("limit_cfm", 0.5);
+    msgWidget->SetPropertyValue("limit_erp", 0.4);
+    msgWidget->SetPropertyValue("suspension_cfm", 0.3);
+    msgWidget->SetPropertyValue("suspension_erp", 0.2);
   }
 
   // verify widget values
   {
     // joint
-    EXPECT_EQ(jointMessageWidget->PropertyValue("name").value<std::string>(),
+    EXPECT_EQ(msgWidget->PropertyValue("name").value<std::string>(),
         "test_joint_updated");
-    EXPECT_EQ(jointMessageWidget->PropertyValue("id"), 9999999u);
-    EXPECT_EQ(jointMessageWidget->PropertyValue("parent").value<std::string>(),
+    EXPECT_EQ(msgWidget->PropertyValue("id"), 9999999u);
+    EXPECT_EQ(msgWidget->PropertyValue("parent").value<std::string>(),
         "test_joint_parent_updated");
-    EXPECT_EQ(jointMessageWidget->PropertyValue("parent_id"), 1u);
-    EXPECT_EQ(jointMessageWidget->PropertyValue("child").value<std::string>(),
+    EXPECT_EQ(msgWidget->PropertyValue("parent_id"), 1u);
+    EXPECT_EQ(msgWidget->PropertyValue("child").value<std::string>(),
         "test_joint_child_updated");
-    EXPECT_EQ(jointMessageWidget->PropertyValue("child_id"), 2u);
+    EXPECT_EQ(msgWidget->PropertyValue("child_id"), 2u);
 
     // type
-    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL));
-    jointMessageWidget->SetPropertyValue("type", variant);
+    msgWidget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
 
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
     math::Quaterniond quat(0.0, 0.0, 1.57);
-    EXPECT_EQ(jointMessageWidget->PropertyValue("pose").value<math::Pose3d>(),
+    EXPECT_EQ(msgWidget->PropertyValue("pose").value<math::Pose3d>(),
         math::Pose3d(pos, quat));
 
     // axis1
-    EXPECT_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "axis1::xyz").value<math::Vector3d>(), math::Vector3d::UnitY);
-    EXPECT_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "axis1::use_parent_model_frame").toBool(), true);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis1::limit_lower").toDouble(), -1.2);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis1::limit_upper").toDouble(), -1.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis1::limit_effort").toDouble(), 1.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis1::limit_velocity").toDouble(), 100.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis1::damping").toDouble(), 0.9);
 
     // axis2
-    EXPECT_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "axis2::xyz").value<math::Vector3d>(), math::Vector3d::UnitZ);
-    EXPECT_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "axis1::use_parent_model_frame").toBool(), true);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis2::limit_lower").toDouble(), -3.2);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis2::limit_upper").toDouble(), -3.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis2::limit_effort").toDouble(), 3.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis2::limit_velocity").toDouble(), 300.0);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "axis2::damping").toDouble(), 3.9);
 
     // other joint physics properties
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "cfm").toDouble(), 0.9);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "bounce").toDouble(), 0.8);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "velocity").toDouble(), 0.7);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "fudge_factor").toDouble(), 0.6);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "limit_cfm").toDouble(), 0.5);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "limit_erp").toDouble(), 0.4);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "suspension_cfm").toDouble(), 0.3);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "suspension_erp").toDouble(), 0.2);
   }
 
   // verify updates in new msg
   {
-    auto retJointMsg = dynamic_cast<msgs::Joint *>(jointMessageWidget->Msg());
+    auto retJointMsg = dynamic_cast<msgs::Joint *>(msgWidget->Msg());
     EXPECT_TRUE(retJointMsg != nullptr);
 
     // joint
@@ -377,82 +375,82 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // Joint type universal -> ball
   {
     // joint
-    variant.setValue(std::string("test_joint_updated2"));
-    jointMessageWidget->SetPropertyValue("name", variant);
-    jointMessageWidget->SetPropertyValue("id", 2222222u);
-    variant.setValue(std::string("test_joint_parent_updated2"));
-    jointMessageWidget->SetPropertyValue("parent", variant);
-    jointMessageWidget->SetPropertyValue("parent_id", 10u);
-    variant.setValue(std::string("test_joint_child_updated2"));
-    jointMessageWidget->SetPropertyValue("child", variant);
-    jointMessageWidget->SetPropertyValue("child_id", 20u);
+    msgWidget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated2")));
+    msgWidget->SetPropertyValue("id", 2222222u);
+    msgWidget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated2")));
+    msgWidget->SetPropertyValue("parent_id", 10u);
+    msgWidget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated2")));
+    msgWidget->SetPropertyValue("child_id", 20u);
 
     // type
-    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_BALL));
-    jointMessageWidget->SetPropertyValue("type", variant);
+    msgWidget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
 
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
     math::Quaterniond quat(0.0, 0.0, 0.0);
-    variant.setValue(math::Pose3d(pos, quat));
-    jointMessageWidget->SetPropertyValue("pose", variant);
+    msgWidget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
 
     // other joint physics properties
-    jointMessageWidget->SetPropertyValue("cfm", 0.19);
-    jointMessageWidget->SetPropertyValue("bounce", 0.18);
-    jointMessageWidget->SetPropertyValue("velocity", 2.7);
-    jointMessageWidget->SetPropertyValue("fudge_factor", 0.26);
-    jointMessageWidget->SetPropertyValue("limit_cfm", 0.15);
-    jointMessageWidget->SetPropertyValue("limit_erp", 0.24);
-    jointMessageWidget->SetPropertyValue("suspension_cfm", 0.13);
-    jointMessageWidget->SetPropertyValue("suspension_erp", 0.12);
+    msgWidget->SetPropertyValue("cfm", 0.19);
+    msgWidget->SetPropertyValue("bounce", 0.18);
+    msgWidget->SetPropertyValue("velocity", 2.7);
+    msgWidget->SetPropertyValue("fudge_factor", 0.26);
+    msgWidget->SetPropertyValue("limit_cfm", 0.15);
+    msgWidget->SetPropertyValue("limit_erp", 0.24);
+    msgWidget->SetPropertyValue("suspension_cfm", 0.13);
+    msgWidget->SetPropertyValue("suspension_erp", 0.12);
   }
 
   // verify widget values
   {
     // joint
-    EXPECT_EQ(jointMessageWidget->PropertyValue("name").value<std::string>(),
+    EXPECT_EQ(msgWidget->PropertyValue("name").value<std::string>(),
         "test_joint_updated2");
-    EXPECT_EQ(jointMessageWidget->PropertyValue("id"), 2222222u);
-    EXPECT_EQ(jointMessageWidget->PropertyValue("parent").value<std::string>(),
+    EXPECT_EQ(msgWidget->PropertyValue("id"), 2222222u);
+    EXPECT_EQ(msgWidget->PropertyValue("parent").value<std::string>(),
         "test_joint_parent_updated2");
-    EXPECT_EQ(jointMessageWidget->PropertyValue("parent_id"), 10u);
-    EXPECT_EQ(jointMessageWidget->PropertyValue("child").value<std::string>(),
+    EXPECT_EQ(msgWidget->PropertyValue("parent_id"), 10u);
+    EXPECT_EQ(msgWidget->PropertyValue("child").value<std::string>(),
         "test_joint_child_updated2");
-    EXPECT_EQ(jointMessageWidget->PropertyValue("child_id"), 20u);
+    EXPECT_EQ(msgWidget->PropertyValue("child_id"), 20u);
 
     // type
-    variant.setValue(msgs::Joint_Type_Name(msgs::Joint_Type_BALL));
-    jointMessageWidget->SetPropertyValue("type", variant);
+    msgWidget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
 
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
     math::Quaterniond quat(0.0, 0.0, 0.0);
-    variant.setValue(math::Pose3d(pos, quat));
-    EXPECT_EQ(jointMessageWidget->PropertyValue("pose"), variant);
+    EXPECT_EQ(msgWidget->PropertyValue("pose"), QVariant::fromValue(
+        math::Pose3d(pos, quat)));
 
     // other joint physics properties
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "cfm").toDouble(), 0.19);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "bounce").toDouble(), 0.18);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "velocity").toDouble(), 2.7);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "fudge_factor").toDouble(), 0.26);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "limit_cfm").toDouble(), 0.15);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "limit_erp").toDouble(), 0.24);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "suspension_cfm").toDouble(), 0.13);
-    EXPECT_DOUBLE_EQ(jointMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "suspension_erp").toDouble(), 0.12);
   }
 
   // verify updates in new msg
   {
-    auto retJointMsg = dynamic_cast<msgs::Joint *>(jointMessageWidget->Msg());
+    auto retJointMsg = dynamic_cast<msgs::Joint *>(msgWidget->Msg());
     EXPECT_TRUE(retJointMsg != nullptr);
 
     // joint
@@ -498,8 +496,6 @@ TEST(MessageWidgetTest, VisualMsgWidget)
 
   msgs::Visual visualMsg;
 
-  QVariant variant;
-
   {
     // visual
     visualMsg.set_name("test_visual");
@@ -542,13 +538,13 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     scriptMsg->add_uri("test_script_uri_1");
     scriptMsg->set_name("test_script_name");
   }
-  auto visualMessageWidget = new MessageWidget(&visualMsg);
+  auto msgWidget = new MessageWidget(&visualMsg);
 
   // retrieve the message from the message widget and
   // verify that all values have not been changed.
   {
     auto retVisualMsg =
-        dynamic_cast<msgs::Visual *>(visualMessageWidget->Msg());
+        dynamic_cast<msgs::Visual *>(msgWidget->Msg());
     EXPECT_TRUE(retVisualMsg != nullptr);
 
     // visual
@@ -620,108 +616,102 @@ TEST(MessageWidgetTest, VisualMsgWidget)
   // verify that the new message contains the updated values.
   {
     // visual
-    variant.setValue(std::string("test_visual_updated"));
-    visualMessageWidget->SetPropertyValue("name", variant);
-    visualMessageWidget->SetPropertyValue("id", 11111u);
-    variant.setValue(std::string("test_visual_parent_updated"));
-    visualMessageWidget->SetPropertyValue("parent_name", variant);
-    visualMessageWidget->SetPropertyValue("parent_id", 55555u);
-    visualMessageWidget->SetPropertyValue("cast_shadows", false);
-    visualMessageWidget->SetPropertyValue("transparency", 1.0);
-    visualMessageWidget->SetPropertyValue("visible", false);
-    visualMessageWidget->SetPropertyValue("delete_me", true);
-    visualMessageWidget->SetPropertyValue("is_static", true);
-    variant.setValue(math::Vector3d(2.0, 1.5, 0.5));
-    visualMessageWidget->SetPropertyValue("scale", variant);
+    msgWidget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_visual_updated")));
+    msgWidget->SetPropertyValue("id", 11111u);
+    msgWidget->SetPropertyValue("parent_name", QVariant::fromValue(
+        std::string("test_visual_parent_updated")));
+    msgWidget->SetPropertyValue("parent_id", 55555u);
+    msgWidget->SetPropertyValue("cast_shadows", false);
+    msgWidget->SetPropertyValue("transparency", 1.0);
+    msgWidget->SetPropertyValue("visible", false);
+    msgWidget->SetPropertyValue("delete_me", true);
+    msgWidget->SetPropertyValue("is_static", true);
+    msgWidget->SetPropertyValue("scale", QVariant::fromValue(
+        math::Vector3d(2.0, 1.5, 0.5)));
 
     // pose
     math::Vector3d pos(-2.0, -3.0, -4.0);
     math::Quaterniond quat(0.0, 1.57, 0.0);
-    variant.setValue(math::Pose3d(pos, quat));
-    visualMessageWidget->SetPropertyValue("pose", variant);
+    msgWidget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
 
     // geometry
     msgs::Geometry newGeom;
     newGeom.set_type(msgs::Geometry::BOX);
     msgs::Set(newGeom.mutable_box()->mutable_size(),
               math::Vector3d(5.0, 3.0, 4.0));
-    variant.setValue(newGeom);
-    visualMessageWidget->SetPropertyValue("geometry", variant);
+    msgWidget->SetPropertyValue("geometry", QVariant::fromValue(
+        newGeom));
 
     // material
-    variant.setValue(std::string("test_normal_map_updated"));
-    visualMessageWidget->SetPropertyValue("material::normal_map", variant);
-    variant.setValue(math::Color(0.2, 0.3, 0.4, 0.5));
-    visualMessageWidget->SetPropertyValue("material::ambient", variant);
-    variant.setValue(math::Color(0.1, 0.8, 0.6, 0.4));
-    visualMessageWidget->SetPropertyValue("material::diffuse", variant);
-    variant.setValue(math::Color(0.5, 0.4, 0.3, 0.2));
-    visualMessageWidget->SetPropertyValue("material::specular", variant);
-    variant.setValue(math::Color(0.4, 0.6, 0.8, 0.1));
-    visualMessageWidget->SetPropertyValue("material::emissive", variant);
-    visualMessageWidget->SetPropertyValue("material::lighting", false);
+    msgWidget->SetPropertyValue("material::normal_map", QVariant::fromValue(
+        std::string("test_normal_map_updated")));
+    msgWidget->SetPropertyValue("material::ambient", QVariant::fromValue(
+        math::Color(0.2, 0.3, 0.4, 0.5)));
+    msgWidget->SetPropertyValue("material::diffuse", QVariant::fromValue(
+        math::Color(0.1, 0.8, 0.6, 0.4)));
+    msgWidget->SetPropertyValue("material::specular", QVariant::fromValue(
+        math::Color(0.5, 0.4, 0.3, 0.2)));
+    msgWidget->SetPropertyValue("material::emissive", QVariant::fromValue(
+        math::Color(0.4, 0.6, 0.8, 0.1)));
+    msgWidget->SetPropertyValue("material::lighting", false);
     // material::script
-    variant.setValue(std::string("test_script_name_updated"));
-    visualMessageWidget->SetPropertyValue(
-        "material::script::name", variant);
+    msgWidget->SetPropertyValue("material::script::name", QVariant::fromValue(
+        std::string("test_script_name_updated")));
   }
 
   // verify widget values
   {
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "name").value<std::string>(), "test_visual_updated");
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "id"), 11111u);
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "parent_name").value<std::string>(), "test_visual_parent_updated");
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "parent_id"), 55555u);
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "cast_shadows").toBool(), false);
-    EXPECT_DOUBLE_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_DOUBLE_EQ(msgWidget->PropertyValue(
         "transparency").toDouble(), 1.0);
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "visible").toBool(), false);
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "delete_me").toBool(), true);
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "is_static").toBool(), true);
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "scale").value<math::Vector3d>(), math::Vector3d(2.0, 1.5, 0.5));
 
     // pose
     math::Vector3d pos(-2.0, -3.0, -4.0);
     math::Quaterniond quat(0.0, 1.57, 0.0);
-    variant.setValue(math::Pose3d(pos, quat));
-    EXPECT_EQ(visualMessageWidget->PropertyValue("pose"), variant);
+    EXPECT_EQ(msgWidget->PropertyValue("pose"), QVariant::fromValue(
+        math::Pose3d(pos, quat)));
 
     // geometry
     auto geomValue =
-        visualMessageWidget->PropertyValue("geometry").value<msgs::Geometry>();
+        msgWidget->PropertyValue("geometry").value<msgs::Geometry>();
     EXPECT_EQ(msgs::ConvertGeometryType(geomValue.type()), "box");
     EXPECT_EQ(msgs::Convert(geomValue.box().size()),
               math::Vector3d(5.0, 3.0, 4.0));
 
     // material
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "material::normal_map").value<std::string>(),
         "test_normal_map_updated");
-    variant.setValue(math::Color(0.2, 0.3, 0.4, 0.5));
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
-        "material::ambient"), variant);
-    variant.setValue(math::Color(0.1, 0.8, 0.6, 0.4));
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
-        "material::diffuse"), variant);
-    variant.setValue(math::Color(0.5, 0.4, 0.3, 0.2));
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
-        "material::specular"), variant);
-    variant.setValue(math::Color(0.4, 0.6, 0.8, 0.1));
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
-        "material::emissive"), variant);
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
-        "material::lighting").toBool(), false);
+    EXPECT_EQ(msgWidget->PropertyValue("material::ambient"), QVariant::fromValue(
+        math::Color(0.2, 0.3, 0.4, 0.5)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::diffuse"), QVariant::fromValue(
+        math::Color(0.1, 0.8, 0.6, 0.4)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::specular"), QVariant::fromValue(
+        math::Color(0.5, 0.4, 0.3, 0.2)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::emissive"), QVariant::fromValue(
+        math::Color(0.4, 0.6, 0.8, 0.1)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::lighting").toBool(), false);
     // material::script
-    EXPECT_EQ(visualMessageWidget->PropertyValue(
+    EXPECT_EQ(msgWidget->PropertyValue(
         "material::script::name").value<std::string>(),
         "test_script_name_updated");
   }
@@ -729,7 +719,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
   // verify updates in new msg
   {
     auto retVisualMsg =
-        dynamic_cast<msgs::Visual *>(visualMessageWidget->Msg());
+        dynamic_cast<msgs::Visual *>(msgWidget->Msg());
     EXPECT_TRUE(retVisualMsg != nullptr);
 
     // visual
@@ -799,7 +789,7 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(scriptMsg.name(), "test_script_name_updated");
   }
 
-  delete visualMessageWidget;
+  delete msgWidget;
   EXPECT_TRUE(stop());
 }
 
@@ -835,15 +825,13 @@ TEST(MessageWidgetTest, PluginMsgWidget)
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   {
-    QVariant variant;
-
     // plugin
-    variant.setValue(std::string("test_plugin_updated"));
-    pluginMessageWidget->SetPropertyValue("name", variant);
-    variant.setValue(std::string("test_plugin_filename_updated"));
-    pluginMessageWidget->SetPropertyValue("filename", variant);
-    variant.setValue(std::string("<param2>new_param</param2>\n"));
-    pluginMessageWidget->SetPropertyValue("innerxml", variant);
+    pluginMessageWidget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_plugin_updated")));
+    pluginMessageWidget->SetPropertyValue("filename", QVariant::fromValue(
+        std::string("test_plugin_filename_updated")));
+    pluginMessageWidget->SetPropertyValue("innerxml", QVariant::fromValue(
+        std::string("<param2>new_param</param2>\n")));
   }
 
   // verify widget values
@@ -905,52 +893,52 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
     auto scriptMsg = materialMsg->mutable_script();
     scriptMsg->set_name("test_script_name");
   }
-  auto visualMessageWidget = new MessageWidget(&visualMsg);
-  visualMessageWidget->show();
+  auto msgWidget = new MessageWidget(&visualMsg);
+  msgWidget->show();
 
   // set different types of widgets to be not visibile
   {
     // primitive widget
-    visualMessageWidget->SetWidgetVisible("id", false);
+    msgWidget->SetWidgetVisible("id", false);
     // custom pose message widget
-    visualMessageWidget->SetWidgetVisible("pose", false);
+    msgWidget->SetWidgetVisible("pose", false);
     // custom geometry message widget
-    visualMessageWidget->SetWidgetVisible("geometry", false);
+    msgWidget->SetWidgetVisible("geometry", false);
     // widget inside a group widget
-    visualMessageWidget->SetWidgetVisible("material::diffuse", false);
+    msgWidget->SetWidgetVisible("material::diffuse", false);
     // widget two levels deep
-    visualMessageWidget->SetWidgetVisible("material::script::name", false);
+    msgWidget->SetWidgetVisible("material::script::name", false);
     // group widget
-    visualMessageWidget->SetWidgetVisible("material", false);
+    msgWidget->SetWidgetVisible("material", false);
 
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("id"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("pose"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("geometry"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("material::diffuse"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("material::script::name"),
+    EXPECT_EQ(msgWidget->WidgetVisible("id"), false);
+    EXPECT_EQ(msgWidget->WidgetVisible("pose"), false);
+    EXPECT_EQ(msgWidget->WidgetVisible("geometry"), false);
+    EXPECT_EQ(msgWidget->WidgetVisible("material::diffuse"), false);
+    EXPECT_EQ(msgWidget->WidgetVisible("material::script::name"),
         false);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("material"), false);
+    EXPECT_EQ(msgWidget->WidgetVisible("material"), false);
   }
 
   // set visible back to true
   {
-    visualMessageWidget->SetWidgetVisible("id", true);
-    visualMessageWidget->SetWidgetVisible("pose", true);
-    visualMessageWidget->SetWidgetVisible("geometry", true);
-    visualMessageWidget->SetWidgetVisible("material::diffuse", true);
-    visualMessageWidget->SetWidgetVisible("material::script::name", true);
-    visualMessageWidget->SetWidgetVisible("material", true);
+    msgWidget->SetWidgetVisible("id", true);
+    msgWidget->SetWidgetVisible("pose", true);
+    msgWidget->SetWidgetVisible("geometry", true);
+    msgWidget->SetWidgetVisible("material::diffuse", true);
+    msgWidget->SetWidgetVisible("material::script::name", true);
+    msgWidget->SetWidgetVisible("material", true);
 
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("id"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("pose"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("geometry"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("material::diffuse"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("material::script::name"),
+    EXPECT_EQ(msgWidget->WidgetVisible("id"), true);
+    EXPECT_EQ(msgWidget->WidgetVisible("pose"), true);
+    EXPECT_EQ(msgWidget->WidgetVisible("geometry"), true);
+    EXPECT_EQ(msgWidget->WidgetVisible("material::diffuse"), true);
+    EXPECT_EQ(msgWidget->WidgetVisible("material::script::name"),
         true);
-    EXPECT_EQ(visualMessageWidget->WidgetVisible("material"), true);
+    EXPECT_EQ(msgWidget->WidgetVisible("material"), true);
   }
 
-  delete visualMessageWidget;
+  delete msgWidget;
   EXPECT_TRUE(stop());
 }
 
@@ -987,51 +975,51 @@ TEST(MessageWidgetTest, MessageWidgetReadOnly)
     auto scriptMsg = materialMsg->mutable_script();
     scriptMsg->set_name("test_script_name");
   }
-  auto visualMessageWidget = new MessageWidget(&visualMsg);
+  auto msgWidget = new MessageWidget(&visualMsg);
 
   // set different types of widgets to be read-only
   {
     // primitive widget
-    visualMessageWidget->SetWidgetReadOnly("id", true);
+    msgWidget->SetWidgetReadOnly("id", true);
     // custom pose message widget
-    visualMessageWidget->SetWidgetReadOnly("pose", true);
+    msgWidget->SetWidgetReadOnly("pose", true);
     // custom geometry message widget
-    visualMessageWidget->SetWidgetReadOnly("geometry", true);
+    msgWidget->SetWidgetReadOnly("geometry", true);
     // widget inside a group widget
-    visualMessageWidget->SetWidgetReadOnly("material::diffuse", true);
+    msgWidget->SetWidgetReadOnly("material::diffuse", true);
     // widget two levels deep
-    visualMessageWidget->SetWidgetReadOnly("material::script::name", true);
+    msgWidget->SetWidgetReadOnly("material::script::name", true);
     // group widget
-    visualMessageWidget->SetWidgetReadOnly("material", true);
+    msgWidget->SetWidgetReadOnly("material", true);
 
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("id"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("pose"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("geometry"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("material::diffuse"), true);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("material::script::name"),
+    EXPECT_EQ(msgWidget->WidgetReadOnly("id"), true);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("pose"), true);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("geometry"), true);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("material::diffuse"), true);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("material::script::name"),
         true);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("material"), true);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("material"), true);
   }
 
   // set read-only back to false
   {
-    visualMessageWidget->SetWidgetReadOnly("id", false);
-    visualMessageWidget->SetWidgetReadOnly("pose", false);
-    visualMessageWidget->SetWidgetReadOnly("geometry", false);
-    visualMessageWidget->SetWidgetReadOnly("material::diffuse", false);
-    visualMessageWidget->SetWidgetReadOnly("material::script::name", false);
-    visualMessageWidget->SetWidgetReadOnly("material", false);
+    msgWidget->SetWidgetReadOnly("id", false);
+    msgWidget->SetWidgetReadOnly("pose", false);
+    msgWidget->SetWidgetReadOnly("geometry", false);
+    msgWidget->SetWidgetReadOnly("material::diffuse", false);
+    msgWidget->SetWidgetReadOnly("material::script::name", false);
+    msgWidget->SetWidgetReadOnly("material", false);
 
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("id"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("pose"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("geometry"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("material::diffuse"), false);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("material::script::name"),
+    EXPECT_EQ(msgWidget->WidgetReadOnly("id"), false);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("pose"), false);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("geometry"), false);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("material::diffuse"), false);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("material::script::name"),
         false);
-    EXPECT_EQ(visualMessageWidget->WidgetReadOnly("material"), false);
+    EXPECT_EQ(msgWidget->WidgetReadOnly("material"), false);
   }
 
-  delete visualMessageWidget;
+  delete msgWidget;
   EXPECT_TRUE(stop());
 }
 

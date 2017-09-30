@@ -45,7 +45,9 @@ namespace ignition
   {
     class MessageWidgetPrivate;
 
-    /// \brief A widget generated from a google protobuf message.
+    /// \brief A widget with fields generated from a Google Protobuf message.
+    /// Its fields can be updated by new messages and it can alsoe generate a
+    /// message based on the latest values input by the user.
     class IGNITION_GUI_VISIBLE MessageWidget : public QWidget
     {
       Q_OBJECT
