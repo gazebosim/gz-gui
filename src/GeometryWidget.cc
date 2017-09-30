@@ -225,8 +225,6 @@ GeometryWidget::GeometryWidget()
   widgetLayout->addWidget(comboBox, 0, 2, 1, 2);
   widgetLayout->addWidget(dimensionWidget, 2, 1, 1, 3);
 
-  // ChildWidget
-  this->setFrameStyle(QFrame::Box);
   this->dataPtr->dimensionWidget = dimensionWidget;
   this->dataPtr->lengthSpinBox = lengthSpinBox;
   this->dataPtr->lengthLabel = lengthLabel;

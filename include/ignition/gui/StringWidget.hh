@@ -38,10 +38,8 @@ namespace ignition
 
       /// \brief Constructor
       /// \param[in] _key Property key.
-      /// \param[in] _level Depth level, in case nested.
       /// \param[in] _type "line" or "plain"
       public: StringWidget(const std::string &_key,
-                           const unsigned int _level = 0,
                            const std::string &_type = "line");
 
       /// \brief Destructor

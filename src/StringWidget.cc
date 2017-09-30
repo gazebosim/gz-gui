@@ -39,11 +39,9 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-StringWidget::StringWidget(const std::string &_key, const unsigned int _level,
-    const std::string &_type) : dataPtr(new StringWidgetPrivate())
+StringWidget::StringWidget(const std::string &_key, const std::string &_type)
+    : dataPtr(new StringWidgetPrivate())
 {
-  this->level = _level;
-
   // Label
   auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
@@ -69,7 +67,6 @@ StringWidget::StringWidget(const std::string &_key, const unsigned int _level,
   widgetLayout->addWidget(valueEdit);
 
   this->setLayout(widgetLayout);
-  this->setFrameStyle(QFrame::Box);
 }
 
 /////////////////////////////////////////////////

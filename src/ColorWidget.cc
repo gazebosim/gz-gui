@@ -116,7 +116,6 @@ ColorWidget::ColorWidget() : dataPtr(new ColorWidgetPrivate())
   widgetLayout->setAlignment(colorALabel, Qt::AlignRight);
 
   this->setLayout(widgetLayout);
-  this->setFrameStyle(QFrame::Box);
 }
 
 /////////////////////////////////////////////////

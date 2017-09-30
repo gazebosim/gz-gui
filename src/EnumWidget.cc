@@ -40,12 +40,9 @@ using namespace gui;
 
 /////////////////////////////////////////////////
 EnumWidget::EnumWidget(const std::string &_key,
-                       const std::vector<std::string> &_values,
-                       const unsigned int _level)
+                       const std::vector<std::string> &_values)
     : dataPtr(new EnumWidgetPrivate())
 {
-  this->level = _level;
-
   // Label
   auto label = new QLabel(humanReadable(_key).c_str());
   label->setToolTip(tr(_key.c_str()));
@@ -62,7 +59,6 @@ EnumWidget::EnumWidget(const std::string &_key,
   widgetLayout->addWidget(comboBox);
 
   this->setLayout(widgetLayout);
-  this->setFrameStyle(QFrame::Box);
 
   this->connect(comboBox, SIGNAL(currentIndexChanged(const QString &)),
       this, SLOT(OnValueChanged()));

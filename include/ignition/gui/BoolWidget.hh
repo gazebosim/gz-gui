@@ -38,9 +38,7 @@ namespace ignition
 
       /// \brief Constructor
       /// \param[in] _key Property key.
-      /// \param[in] _level Depth level, in case nested.
-      public: BoolWidget(const std::string &_key,
-                         const unsigned int _level = 0);
+      public: BoolWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~BoolWidget();

@@ -130,12 +130,12 @@ TEST(NumberWidgetTest, UIntSignal)
     [&signalReceived](QVariant _var)
     {
       auto v = _var.value<unsigned int>();
-      EXPECT_EQ(v, 66);
+      EXPECT_EQ(v, 66u);
       signalReceived = true;
     });
 
   // Check default value
-  EXPECT_EQ(widget->Value().value<unsigned int>(), 0);
+  EXPECT_EQ(widget->Value().value<unsigned int>(), 0u);
 
   // Check key label
   auto label = widget->findChild<QLabel *>();

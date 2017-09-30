@@ -111,7 +111,6 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   widgetLayout->setAlignment(vecZLabel, Qt::AlignRight);
 
   this->setLayout(widgetLayout);
-  this->setFrameStyle(QFrame::Box);
 }
 
 /////////////////////////////////////////////////

@@ -61,9 +61,6 @@ namespace ignition
 
       /// \brief Map a widget to the label holding its unit value.
       public: std::map<QWidget *, QLabel *> mapWidgetToUnit;
-
-      /// \brief Level of how nested the widget is.
-      public: unsigned int level;
     };
   }
 }

@@ -104,10 +104,8 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
   if (unitLabel->text() != "")
     widgetLayout->addWidget(unitLabel);
 
-  // ChildWidget
   this->key = _key;
   this->setLayout(widgetLayout);
-  this->setFrameStyle(QFrame::Box);
 }
 
 /////////////////////////////////////////////////

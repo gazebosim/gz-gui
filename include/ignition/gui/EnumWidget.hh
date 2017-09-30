@@ -39,10 +39,9 @@ namespace ignition
 
       /// \brief Constructor
       /// \param[in] _key Property key.
-      /// \param[in] _level Depth level, in case nested.
+      /// \param[in] _values
       public: EnumWidget(const std::string &_key,
-                         const std::vector<std::string> &_values,
-                         const unsigned int _level = 0);
+                         const std::vector<std::string> &_values);
 
       /// \brief Destructor
       public: ~EnumWidget();

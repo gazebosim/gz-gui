@@ -93,7 +93,6 @@ DensityWidget::DensityWidget(const std::string &/*_key*/)
   widgetLayout->addWidget(spinBox);
   widgetLayout->addWidget(unitLabel);
 
-  this->setFrameStyle(QFrame::Box);
   this->setLayout(widgetLayout);
 
   this->dataPtr->comboBox = comboBox;

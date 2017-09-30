@@ -71,6 +71,7 @@ MessageWidget::MessageWidget(const google::protobuf::Message *_msg)
   auto mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignTop);
   mainLayout->setSpacing(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   this->setLayout(mainLayout);
 
   // Generate widgets from the message and add to the layout
@@ -515,7 +516,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        propertyWidget = new BoolWidget(fieldName, 0);
+        propertyWidget = new BoolWidget(fieldName);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }
@@ -542,7 +543,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
         if (fieldName == "innerxml")
           type = "plain";
 
-        propertyWidget = new StringWidget(fieldName, 0, type);
+        propertyWidget = new StringWidget(fieldName, type);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }
@@ -573,7 +574,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
         }
 
         // Create enum widget
-        propertyWidget = new EnumWidget(fieldName, enumValues, 0);
+        propertyWidget = new EnumWidget(fieldName, enumValues);
         _parent->layout()->addWidget(propertyWidget);
         this->AddPropertyWidget(scopedName, propertyWidget);
       }

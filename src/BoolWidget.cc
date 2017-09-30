@@ -35,11 +35,9 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-BoolWidget::BoolWidget(const std::string &_key, const unsigned int _level)
+BoolWidget::BoolWidget(const std::string &_key)
     : dataPtr(new BoolWidgetPrivate())
 {
-  this->level = _level;
-
   // Label
   auto keyLabel = new QLabel(tr(humanReadable(_key).c_str()));
   keyLabel->setToolTip(tr(_key.c_str()));
@@ -69,9 +67,7 @@ BoolWidget::BoolWidget(const std::string &_key, const unsigned int _level)
   widgetLayout->addWidget(keyLabel);
   widgetLayout->addLayout(buttonLayout);
 
-  // ChildWidget
   this->setLayout(widgetLayout);
-  this->setFrameStyle(QFrame::Box);
 }
 
 /////////////////////////////////////////////////

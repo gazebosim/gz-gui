@@ -29,14 +29,8 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_name)
   buttonLabel->setToolTip(tr(_name.c_str()));
 
   // Button icon
-  auto buttonIcon = new QCheckBox(this);
-  buttonIcon->setStyleSheet(QString::fromStdString(
-      "QCheckBox::indicator::unchecked {"
-      "  image: url(:/images/right_arrow.png);"
-      "}"
-      "QCheckBox::indicator::checked {"
-      "  image: url(:/images/down_arrow.png);"
-      "}"));
+  auto buttonIcon = new QLabel(QString::fromUtf8("\u25b8"));
+  buttonIcon->setObjectName("buttonIcon");
 
   // Button layout
   auto buttonLayout = new QHBoxLayout();
@@ -45,17 +39,16 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_name)
   buttonLayout->setAlignment(buttonIcon, Qt::AlignRight);
 
   // Button frame
-  auto buttonFrame = new QFrame();
-  buttonFrame->setFrameStyle(QFrame::Box);
-  buttonFrame->setLayout(buttonLayout);
-
-  this->connect(buttonIcon, SIGNAL(toggled(bool)), this, SLOT(Toggle(bool)));
+  auto button = new QPushButton();
+  button->setLayout(buttonLayout);
+  button->setCheckable(true);
+  this->connect(button, SIGNAL(toggled(bool)), this, SLOT(Toggle(bool)));
 
   // Collapsible Layout
   auto mainLayout = new QVBoxLayout;
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
-  mainLayout->addWidget(buttonFrame);
+  mainLayout->addWidget(button);
   this->setLayout(mainLayout);
 }
 
@@ -67,9 +60,11 @@ void CollapsibleWidget::Toggle(bool _checked)
   {
     this->layout()->itemAt(i)->widget()->setVisible(_checked);
   }
-  auto button = this->findChild<QCheckBox *>();
-  this->blockSignals(true);
-  button->setChecked(_checked);
-  this->blockSignals(false);
+
+  auto icon = this->findChild<QLabel *>("buttonIcon");
+  if (_checked)
+    icon->setText(QString::fromUtf8("\u25be"));
+  else
+    icon->setText(QString::fromUtf8("\u25b8"));
 }
 

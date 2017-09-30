@@ -61,7 +61,6 @@ Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
   rangeFromKey("", min, max);
 
   this->setLayout(widgetLayout);
-  this->setFrameStyle(QFrame::Box);
 
   for (unsigned int i = 0; i < elements.size(); ++i)
   {
