@@ -52,15 +52,6 @@ namespace ignition
 
       /// \brief Callback when an internal widget's value has changed.
       protected slots: void OnValueChanged();
-
-      /// \brief Widget's key value, such as "mass" or "color".
-      public: std::string key;
-
-      /// \brief Widget's scoped name based on its parents.
-      public: std::string scopedName;
-
-      /// \brief Map a widget to the label holding its unit value.
-      public: std::map<QWidget *, QLabel *> mapWidgetToUnit;
     };
   }
 }

@@ -744,7 +744,6 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     return false;
   }
 
-  _child->scopedName = _name;
   this->dataPtr->properties[_name] = _child;
 
   // Forward widget's ValueChanged signal

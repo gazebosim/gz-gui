@@ -67,8 +67,6 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
   }
 
   // Unit
-  // FIXME: handle this
-  // std::string jointType = this->EnumWidgetValue("type");
   std::string unit = unitFromKey(_key);
 
   auto unitLabel = new QLabel();
@@ -86,8 +84,6 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
     this->connect(spin, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
     widgetLayout->addWidget(spin);
-
-    this->mapWidgetToUnit[spin] = unitLabel;
   }
   else
   {
@@ -97,14 +93,11 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
     this->connect(spin, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
     widgetLayout->addWidget(spin);
-
-    this->mapWidgetToUnit[spin] = unitLabel;
   }
 
   if (unitLabel->text() != "")
     widgetLayout->addWidget(unitLabel);
 
-  this->key = _key;
   this->setLayout(widgetLayout);
 }
 
@@ -142,12 +135,6 @@ bool NumberWidget::SetValue(const QVariant _value)
     else
       spin->setValue(_value.toUInt());
   }
-
-    // Unit label
-//    std::string jointType = this->EnumWidgetValue("type");
-//    std::string unit = unitFromKey(this->key, jointType);
-//    qobject_cast<QLabel *>(
-//        this->mapWidgetToUnit[spin])->setText(QString::fromStdString(unit));
 
   return true;
 }
