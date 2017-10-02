@@ -18,12 +18,8 @@
 #ifndef IGNITION_GUI_MESSAGEWIDGET_HH_
 #define IGNITION_GUI_MESSAGEWIDGET_HH_
 
-#include <map>
 #include <memory>
 #include <string>
-#include <vector>
-
-#include <ignition/math/Vector3.hh>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"

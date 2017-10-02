@@ -68,6 +68,10 @@ namespace plugins
     /// \param[in] _msg New message.
     private: void OnMessage(const google::protobuf::Message &_msg);
 
+    /// \brief Create message widget and add it to layout.
+    /// \param[in] _msg Message.
+    private: void CreateWidget(const google::protobuf::Message &_msg);
+
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<TopicInterfacePrivate> dataPtr;
