@@ -25,19 +25,12 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/EnumIface.hh>
 
-#include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
-#include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
-#include "ignition/gui/EnumWidget.hh"
-#include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Helpers.hh"
-#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
-#include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
-#include "ignition/gui/Vector3dWidget.hh"
 
 #include "ignition/gui/MessageWidget.hh"
 
