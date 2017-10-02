@@ -17,6 +17,7 @@ set (sources
 )
 
 set (gtest_sources
+  CollapsibleWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc
   Helpers_TEST.cc
@@ -24,6 +25,7 @@ set (gtest_sources
   MainWindow_TEST.cc
   MessageWidget_TEST.cc
   SearchModel_TEST.cc
+  StringWidget_TEST.cc
 )
 
 if (HAVE_IGN_TOOLS)

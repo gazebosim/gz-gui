@@ -77,6 +77,12 @@ StringWidget::~StringWidget()
 /////////////////////////////////////////////////
 bool StringWidget::SetValue(const QVariant _value)
 {
+  if (!_value.canConvert<std::string>())
+  {
+    ignerr << "Wrong variant type, expected [std::string]" << std::endl;
+    return false;
+  }
+
   auto value = _value.value<std::string>();
 
   if (auto edit = this->findChild<QLineEdit *>())
