@@ -52,8 +52,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
      "}"
      "QPushButton:hover {"
      "  background-color: rgba(100, 100, 100, 50);"
-     "}"
-  );
+     "}");
   this->connect(button, SIGNAL(toggled(bool)), this, SLOT(Toggle(bool)));
 
   // Layout

@@ -701,14 +701,14 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(msgWidget->PropertyValue(
         "material::normal_map").value<std::string>(),
         "test_normal_map_updated");
-    EXPECT_EQ(msgWidget->PropertyValue("material::ambient"), QVariant::fromValue(
-        math::Color(0.2, 0.3, 0.4, 0.5)));
-    EXPECT_EQ(msgWidget->PropertyValue("material::diffuse"), QVariant::fromValue(
-        math::Color(0.1, 0.8, 0.6, 0.4)));
-    EXPECT_EQ(msgWidget->PropertyValue("material::specular"), QVariant::fromValue(
-        math::Color(0.5, 0.4, 0.3, 0.2)));
-    EXPECT_EQ(msgWidget->PropertyValue("material::emissive"), QVariant::fromValue(
-        math::Color(0.4, 0.6, 0.8, 0.1)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::ambient"),
+        QVariant::fromValue(math::Color(0.2, 0.3, 0.4, 0.5)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::diffuse"),
+        QVariant::fromValue(math::Color(0.1, 0.8, 0.6, 0.4)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::specular"),
+        QVariant::fromValue(math::Color(0.5, 0.4, 0.3, 0.2)));
+    EXPECT_EQ(msgWidget->PropertyValue("material::emissive"),
+        QVariant::fromValue(math::Color(0.4, 0.6, 0.8, 0.1)));
     EXPECT_EQ(msgWidget->PropertyValue("material::lighting").toBool(), false);
     // material::script
     EXPECT_EQ(msgWidget->PropertyValue(
