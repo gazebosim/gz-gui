@@ -16,6 +16,7 @@
 */
 
 #include <iostream>
+#include <mutex>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
@@ -33,7 +34,7 @@ namespace plugins
   class TopicInterfacePrivate
   {
     /// \brief Pointer to message widget.
-    public: MessageWidget *msgWidget;
+    public: MessageWidget *msgWidget = nullptr;
 
     /// \brief Mutex to protect message buffer.
     public: std::mutex mutex;

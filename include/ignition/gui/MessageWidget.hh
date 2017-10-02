@@ -90,13 +90,9 @@ namespace ignition
       public: PropertyWidget *PropertyWidgetByName(
           const std::string &_name) const;
 
-      /// \brief Get the number of property widgets.
-      /// \return The number of property widgets.
-      public: unsigned int PropertyWidgetCount() const;
-
       /// \brief Performs the following:
       /// * Register the widget so that it can be referred by its scoped name
-      /// * Forwards it signals to the message widget
+      /// * Forwards its signals to the message widget
       /// * Places the widget in the layout with the correct indentation
       /// \param[in] _scopedName Unique name to indentify the property within
       /// this widget. Nested message names are scoped using `::`, for example:
