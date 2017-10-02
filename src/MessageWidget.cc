@@ -57,6 +57,13 @@ using namespace gui;
 MessageWidget::MessageWidget(const google::protobuf::Message *_msg)
   : dataPtr(new MessageWidgetPrivate())
 {
+  if (!_msg)
+  {
+    ignerr << "Null message passed, widget wasn't properly constructed"
+           << std::endl;
+    return;
+  }
+
   this->dataPtr->msg = _msg->New();
   this->dataPtr->msg->CopyFrom(*_msg);
 
@@ -82,19 +89,19 @@ bool MessageWidget::UpdateFromMsg(const google::protobuf::Message *_msg)
 {
   if (!this->dataPtr->msg)
   {
-    ignerr << "You need to load a message before being able to update"
+    ignerr << "The widget's message is null, this widget is invalid."
            << std::endl;
     return false;
   }
 
   if (!_msg)
   {
-    ignwarn << "Null message" << std::endl;
+    ignwarn << "Null message, not updating widget" << std::endl;
     return false;
   }
 
   auto currentType = this->dataPtr->msg->GetDescriptor()->full_name();
-  auto newType = this->dataPtr->msg->GetDescriptor()->full_name();
+  auto newType = _msg->GetDescriptor()->full_name();
 
   if (currentType != newType)
   {
@@ -289,7 +296,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
   }
 
-  return false;
+  return true;
 }
 
 /////////////////////////////////////////////////
