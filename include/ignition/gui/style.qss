@@ -141,7 +141,7 @@ QPushButton:focus
 QPushButton#collapsibleButton
 {
   background-color: transparent;
-  margin: 0px;"
+  margin: 0px;
 }
 
 QPushButton#collapsibleButton:checked
