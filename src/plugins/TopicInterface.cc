@@ -117,9 +117,15 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
+  // Scroll area
+  auto scrollArea = new QScrollArea();
+  scrollArea->setWidget(this->dataPtr->msgWidget);
+  scrollArea->setWidgetResizable(true);
+  scrollArea->setStyleSheet("QScrollArea{background-color: transparent; border: none}");
+
   // Layout
   auto layout = new QVBoxLayout();
-  layout->addWidget(this->dataPtr->msgWidget);
+  layout->addWidget(scrollArea);
   this->setLayout(layout);
 
   // Subscribe

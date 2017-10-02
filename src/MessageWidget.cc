@@ -144,9 +144,13 @@ bool MessageWidget::WidgetVisible(const std::string &_name) const
   if (!w)
     return false;
 
-  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (collapsbleParent)
-    return collapsbleParent->isVisible();
+  // If it's the only property inside a collapsible, check the collapsible
+  auto collapsible = qobject_cast<CollapsibleWidget *>(w->parent()->parent());
+  if (collapsible &&
+      collapsible->findChildren<PropertyWidget *>().size() == 1)
+  {
+    return collapsible->isVisible();
+  }
 
   return w->isVisible();
 }
@@ -159,9 +163,13 @@ void MessageWidget::SetWidgetVisible(const std::string &_name,
   if (!w)
     return;
 
-  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (collapsbleParent)
-    collapsbleParent->setVisible(_visible);
+  // If it's the only property inside a collapsible, hide the collapsible too
+  auto collapsible = qobject_cast<CollapsibleWidget *>(w->parent()->parent());
+  if (collapsible &&
+      collapsible->findChildren<PropertyWidget *>().size() == 1)
+  {
+    collapsible->setVisible(_visible);
+  }
   else
     w->setVisible(_visible);
 }
@@ -198,9 +206,9 @@ bool MessageWidget::WidgetReadOnly(const std::string &_name) const
   if (!w)
     return false;
 
-  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (collapsbleParent)
-    return !collapsbleParent->isEnabled();
+  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsibleParent)
+    return !collapsibleParent->isEnabled();
 
   return !w->isEnabled();
 }
@@ -213,15 +221,15 @@ void MessageWidget::SetWidgetReadOnly(const std::string &_name,
   if (!w)
     return;
 
-  auto collapsbleParent = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (collapsbleParent)
+  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsibleParent)
   {
-    collapsbleParent->setEnabled(!_readOnly);
+    collapsibleParent->setEnabled(!_readOnly);
 
     // Qt docs: "Disabling a widget implicitly disables all its children.
     // Enabling respectively enables all child widgets unless they have
     // been explicitly disabled."
-    auto childWidgets = collapsbleParent->findChildren<QWidget *>();
+    auto childWidgets = collapsibleParent->findChildren<QWidget *>();
     for (auto widget : childWidgets)
       widget->setEnabled(!_readOnly);
 
@@ -272,8 +280,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     if (!propertyWidget)
     {
       propertyWidget = new GeometryWidget();
-      _parent->layout()->addWidget(propertyWidget);
-      this->AddPropertyWidget(_scopedName, propertyWidget);
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
 
     // Set value
@@ -290,8 +297,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     if (!propertyWidget)
     {
       propertyWidget = new Pose3dWidget();
-      _parent->layout()->addWidget(propertyWidget);
-      this->AddPropertyWidget(_scopedName, propertyWidget);
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
 
     // Set value
@@ -308,8 +314,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     if (!propertyWidget)
     {
       propertyWidget = new Vector3dWidget(descriptor->name());
-      _parent->layout()->addWidget(propertyWidget);
-      this->AddPropertyWidget(_scopedName, propertyWidget);
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
 
     // Set value
@@ -326,8 +331,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     if (!propertyWidget)
     {
       propertyWidget = new ColorWidget();
-      _parent->layout()->addWidget(propertyWidget);
-      this->AddPropertyWidget(_scopedName, propertyWidget);
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
 
     // Set value
@@ -377,8 +381,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         propertyWidget = new NumberWidget(fieldName, NumberWidget::DOUBLE);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -396,8 +399,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         propertyWidget = new NumberWidget(fieldName, NumberWidget::DOUBLE);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -415,8 +417,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         propertyWidget = new NumberWidget(fieldName, NumberWidget::INT);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -432,8 +433,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         propertyWidget = new NumberWidget(fieldName, NumberWidget::INT);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -449,8 +449,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         propertyWidget = new NumberWidget(fieldName, NumberWidget::UINT);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -466,8 +465,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         propertyWidget = new NumberWidget(fieldName, NumberWidget::UINT);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -484,8 +482,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         propertyWidget = new BoolWidget(fieldName);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -507,8 +504,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
           type = StringWidget::StringType::TEXT;
 
         propertyWidget = new StringWidget(fieldName, type);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -539,8 +535,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
         // Create enum widget
         propertyWidget = new EnumWidget(fieldName, enumValues);
-        _parent->layout()->addWidget(propertyWidget);
-        this->AddPropertyWidget(scopedName, propertyWidget);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 
       // Set value
@@ -555,10 +550,10 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // Get nested message
       auto valueMsg = reflection->MutableMessage(_msg, fieldDescriptor);
 
+      // Create collapsible
       auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget);
       if (!collapsible)
       {
-        // Create collapsible
         collapsible = new CollapsibleWidget(fieldName);
         _parent->layout()->addWidget(collapsible);
       }
@@ -570,9 +565,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       if (!propertyWidget)
       {
         collapsible->Toggle(false);
-        // Special messages added themselves
-        if (!this->PropertyWidgetByName(scopedName))
-          this->AddPropertyWidget(scopedName, collapsible);
+        this->AddPropertyWidget(scopedName, collapsible, _parent);
       }
     }
   }
@@ -732,27 +725,50 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 
 /////////////////////////////////////////////////
 bool MessageWidget::AddPropertyWidget(const std::string &_name,
-    PropertyWidget *_child)
+    PropertyWidget *_property, QWidget *_parent)
 {
-  if (_child == nullptr)
+  if (_property == nullptr)
   {
-    ignerr << "Null child, not adding widget." << std::endl;
+    ignerr << "Null property, not adding widget." << std::endl;
     return false;
   }
 
-  if (this->dataPtr->properties.find(_name) != this->dataPtr->properties.end())
+  // Add to map if not there yet (nested special messages are added first to a
+  // collapsible and then the collapsible is added to the parent collapsible)
+  if (this->dataPtr->properties.find(_name) == this->dataPtr->properties.end())
   {
-    ignerr << "This config widget already has a child named [" << _name << "]. "
-       << "Names must be unique. Not adding child." << std::endl;
-    return false;
+    this->dataPtr->properties[_name] = _property;
   }
-
-  this->dataPtr->properties[_name] = _child;
 
   // Forward widget's ValueChanged signal
-  this->connect(_child, &PropertyWidget::ValueChanged,
-      [this, _name](const QVariant _value)
-      {this->ValueChanged(_name, _value);});
+  auto collapsibleSelf = qobject_cast<CollapsibleWidget *>(_property);
+  if (!collapsibleSelf)
+  {
+    this->connect(_property, &PropertyWidget::ValueChanged,
+        [this, _name](const QVariant _value)
+        {this->ValueChanged(_name, _value);});
+  }
+
+  // If inside a collapsible, add indentation
+  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(_parent);
+  if (collapsibleParent)
+  {
+    auto hLayout = new QHBoxLayout();
+    hLayout->addItem(new QSpacerItem(20, 1, QSizePolicy::Fixed,
+        QSizePolicy::Fixed));
+    hLayout->setContentsMargins(0, 0, 0, 0);
+    hLayout->setSpacing(0);
+    hLayout->addWidget(_property);
+
+    auto w = new QWidget();
+    w->setLayout(hLayout);
+
+    _parent->layout()->addWidget(w);
+  }
+  else
+  {
+    _parent->layout()->addWidget(_property);
+  }
 
   return true;
 }

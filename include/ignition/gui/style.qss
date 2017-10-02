@@ -132,6 +132,12 @@ QPushButton:checked
   selection-color: transparent;
 }
 
+QPushButton:focus
+{
+  border: none;
+  outline: none;
+}
+
 /* ---------------------------- */
 /*             Menu             */
 /* ---------------------------- */

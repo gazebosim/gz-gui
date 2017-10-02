@@ -896,6 +896,31 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
   auto msgWidget = new MessageWidget(&visualMsg);
   msgWidget->show();
 
+  // Check that only top-level widgets are visible by default
+  {
+    EXPECT_TRUE(msgWidget->WidgetVisible("id"));
+    EXPECT_TRUE(msgWidget->WidgetVisible("pose"));
+    EXPECT_TRUE(msgWidget->WidgetVisible("geometry"));
+    EXPECT_TRUE(msgWidget->WidgetVisible("material"));
+    EXPECT_FALSE(msgWidget->WidgetVisible("material::diffuse"));
+    EXPECT_FALSE(msgWidget->WidgetVisible("material::script::name"));
+  }
+
+  // Expand nested collapsible widgets and check they become visible
+  {
+    auto material = msgWidget->PropertyWidgetByName("material");
+    ASSERT_NE(material, nullptr);
+
+    auto button = material->findChild<QPushButton *>();
+    ASSERT_NE(button, nullptr);
+
+    button->click();
+
+    EXPECT_TRUE(msgWidget->WidgetVisible("material::diffuse"));
+    // Checking that `script` is visible, since `name` is an only child
+    EXPECT_TRUE(msgWidget->WidgetVisible("material::script::name"));
+  }
+
   // set different types of widgets to be not visibile
   {
     // primitive widget
@@ -915,8 +940,7 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
     EXPECT_EQ(msgWidget->WidgetVisible("pose"), false);
     EXPECT_EQ(msgWidget->WidgetVisible("geometry"), false);
     EXPECT_EQ(msgWidget->WidgetVisible("material::diffuse"), false);
-    EXPECT_EQ(msgWidget->WidgetVisible("material::script::name"),
-        false);
+    EXPECT_EQ(msgWidget->WidgetVisible("material::script::name"), false);
     EXPECT_EQ(msgWidget->WidgetVisible("material"), false);
   }
 
@@ -933,8 +957,7 @@ TEST(MessageWidgetTest, MessageWidgetVisible)
     EXPECT_EQ(msgWidget->WidgetVisible("pose"), true);
     EXPECT_EQ(msgWidget->WidgetVisible("geometry"), true);
     EXPECT_EQ(msgWidget->WidgetVisible("material::diffuse"), true);
-    EXPECT_EQ(msgWidget->WidgetVisible("material::script::name"),
-        true);
+    EXPECT_EQ(msgWidget->WidgetVisible("material::script::name"), true);
     EXPECT_EQ(msgWidget->WidgetVisible("material"), true);
   }
 
