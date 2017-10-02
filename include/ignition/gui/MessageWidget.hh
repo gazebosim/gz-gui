@@ -94,17 +94,22 @@ namespace ignition
       public: PropertyWidget *PropertyWidgetByName(
           const std::string &_name) const;
 
-      /// \brief Register a property widget with this widget, so that:
-      /// * It can be found by its scoped name
-      /// * Its signals can be forwarded to the message widget.
-      /// Note that the widget is not automatically added to a layout.
+      /// \brief Get the number of property widgets.
+      /// \return The number of property widgets.
+      public: unsigned int PropertyWidgetCount() const;
+
+      /// \brief Performs the following:
+      /// * Register the widget so that it can be referred by its scoped name
+      /// * Forwards it signals to the message widget
+      /// * Places the widget in the layout with the correct indentation
       /// \param[in] _scopedName Unique name to indentify the property within
       /// this widget. Nested message names are scoped using `::`, for example:
       /// `pose::position::x`.
       /// \param[in] _property Widget to be added.
+      /// \param[in] _parent Parent widget to add the property to.
       /// \return True if property successfully added.
       private: bool AddPropertyWidget(const std::string &_scopedName,
-          PropertyWidget *_property);
+          PropertyWidget *_property, QWidget *_parent);
 
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update existing widgets with

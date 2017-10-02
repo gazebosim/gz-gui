@@ -65,7 +65,7 @@ namespace ignition
 
       /// \brief Update widget with a new value.
       /// \param[in] _value Value to set to.
-      /// \return True successful.
+      /// \return True if successful.
       public: virtual bool SetValue(const QVariant _value) = 0;
 
       /// \brief Signal that the value has changed.
