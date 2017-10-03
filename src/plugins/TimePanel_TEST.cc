@@ -125,12 +125,16 @@ TEST(TimePanelTest, WorldControl)
 
   // Pause
   pauseButton->click();
+  QCoreApplication::processEvents();
+
   EXPECT_TRUE(pauseCalled);
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
 
   // Play
   playButton->click();
+  QCoreApplication::processEvents();
+
   EXPECT_TRUE(playCalled);
   EXPECT_FALSE(playButton->isVisible());
   EXPECT_TRUE(pauseButton->isVisible());
