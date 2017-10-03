@@ -30,7 +30,7 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief ToDo.
+  /// \brief Widget that allow plotting of Ignition Transport topics.
   class PlotWindow : public Plugin
   {
     Q_OBJECT
@@ -41,7 +41,7 @@ namespace plugins
     /// \brief Destructor.
     public: virtual ~PlotWindow();
 
-    // Documentation inherited
+    // Documentation inherited.
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
   };
 }
