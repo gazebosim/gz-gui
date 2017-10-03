@@ -247,12 +247,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       // If creating new widget
       if (!propertyWidget)
       {
-        // Choose either a one-line or a multi-line widget according to name
-        auto type = StringWidget::StringType::LINE;
-        if (fieldName == "innerxml")
-          type = StringWidget::StringType::TEXT;
-
-        propertyWidget = new StringWidget(fieldName, type);
+        propertyWidget = new StringWidget(fieldName);
         this->AddPropertyWidget(scopedName, propertyWidget, _parent);
       }
 

@@ -47,8 +47,12 @@ StringWidget::StringWidget(const std::string &_key, const StringType _type)
   keyLabel->setToolTip(tr(_key.c_str()));
 
   // Line or Text Edit based on key
+  auto type = _type;
+  if (type == StringType::NONE)
+    type = stringTypeFromKey(_key);
+
   QWidget *valueEdit;
-  if (_type == TEXT)
+  if (_type == StringType::PLAIN_TEXT)
   {
     valueEdit = new QPlainTextEdit(this);
     valueEdit->setMinimumHeight(50);
