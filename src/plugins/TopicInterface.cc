@@ -16,6 +16,8 @@
 */
 
 #include <iostream>
+#include <mutex>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
@@ -31,12 +33,13 @@ namespace plugins
 {
   class TopicInterfacePrivate
   {
-    public: MessageWidget *msgWidget;
+    /// \brief Pointer to message widget.
+    public: MessageWidget *msgWidget = nullptr;
 
     /// \brief Mutex to protect message buffer.
     public: std::mutex mutex;
 
-    /// \brief Node for communication
+    /// \brief Node for communication.
     public: ignition::transport::Node node;
   };
 }
@@ -64,70 +67,61 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "Topic interface";
 
-  // Parameters from SDF
-  std::string topic;
-  if (auto topicElem = _pluginElem->FirstChildElement("topic"))
-    topic = topicElem->GetText();
-  if (topic.empty())
-  {
-    ignwarn << "Topic not specified, subscribing to [/echo]." << std::endl;
-    topic = "/echo";
-  }
-
-  std::string msgType;
-  if (auto typeElem = _pluginElem->FirstChildElement("message_type"))
-    msgType = typeElem->GetText();
-  if (msgType.empty())
-  {
-    ignwarn << "Message type not specified, widget will be constructed "
-            << "according to the first message received on topic ["
-            << topic << "]." << std::endl;
-  }
-
-  // Global read-only
-  bool readOnly = false;
-  if (auto readElem = _pluginElem->FirstChildElement("read_only"))
-    readElem->QueryBoolText(&readOnly);
-
-  // Visibility per widget
-  std::vector<std::string> hideWidgets;
-  for (auto hideWidgetElem = _pluginElem->FirstChildElement("hide_widget");
-      hideWidgetElem != nullptr;
-      hideWidgetElem = hideWidgetElem->NextSiblingElement("hide_widget"))
-  {
-    hideWidgets.push_back(hideWidgetElem->GetText());
-  }
-
-  // Message widget
-  if (!msgType.empty())
-  {
-    auto msg = ignition::msgs::Factory::New(msgType, "");
-    if (!msg)
-    {
-      ignerr << "Unable to create message of type[" << msgType << "] "
-        << "widget will be initialized when a message is received."
-        << std::endl;
-    }
-    else
-    {
-      this->dataPtr->msgWidget = new MessageWidget(&*msg);
-      this->dataPtr->msgWidget->SetReadOnly(readOnly);
-      for (auto w : hideWidgets)
-        this->dataPtr->msgWidget->SetWidgetVisible(w, false);
-    }
-  }
-
-  // Scroll area
-  auto scrollArea = new QScrollArea();
-  scrollArea->setWidget(this->dataPtr->msgWidget);
-  scrollArea->setWidgetResizable(true);
-  scrollArea->setStyleSheet(
-      "QScrollArea{background-color: transparent; border: none}");
-
   // Layout
   auto layout = new QVBoxLayout();
-  layout->addWidget(scrollArea);
   this->setLayout(layout);
+
+  // Parameters from SDF
+  std::string topic("/echo");
+  if (_pluginElem)
+  {
+    if (auto topicElem = _pluginElem->FirstChildElement("topic"))
+      topic = topicElem->GetText();
+    if (topic.empty())
+    {
+      ignwarn << "Topic not specified, subscribing to [/echo]." << std::endl;
+    }
+
+    std::string msgType;
+    if (auto typeElem = _pluginElem->FirstChildElement("message_type"))
+      msgType = typeElem->GetText();
+    if (msgType.empty())
+    {
+      ignwarn << "Message type not specified, widget will be constructed "
+              << "according to the first message received on topic ["
+              << topic << "]." << std::endl;
+    }
+
+    // Global read-only
+    bool readOnly = false;
+    if (auto readElem = _pluginElem->FirstChildElement("read_only"))
+      readElem->QueryBoolText(&readOnly);
+
+    // Visibility per widget
+    std::vector<std::string> hideWidgets;
+    for (auto hideWidgetElem = _pluginElem->FirstChildElement("hide_widget");
+        hideWidgetElem != nullptr;
+        hideWidgetElem = hideWidgetElem->NextSiblingElement("hide_widget"))
+    {
+      hideWidgets.push_back(hideWidgetElem->GetText());
+    }
+
+    // Message widget
+    if (!msgType.empty())
+    {
+      auto msg = ignition::msgs::Factory::New(msgType, "");
+      if (!msg)
+      {
+        ignerr << "Unable to create message of type[" << msgType << "] "
+          << "widget will be initialized when a message is received."
+          << std::endl;
+      }
+      else
+      {
+        this->CreateWidget(*msg);
+      }
+    }
+  }
 
   // Subscribe
   if (!this->dataPtr->node.Subscribe(topic, &TopicInterface::OnMessage, this))
@@ -142,12 +136,24 @@ void TopicInterface::OnMessage(const google::protobuf::Message &_msg)
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
   if (!this->dataPtr->msgWidget)
-  {
-    this->dataPtr->msgWidget = new MessageWidget(&_msg);
-    // TODO: readonly and visible
-  }
+    this->CreateWidget(_msg);
   else
     this->dataPtr->msgWidget->UpdateFromMsg(&_msg);
+}
+
+/////////////////////////////////////////////////
+void TopicInterface::CreateWidget(const google::protobuf::Message &_msg)
+{
+  this->dataPtr->msgWidget = new MessageWidget(&_msg);
+
+  // Scroll area
+  auto scrollArea = new QScrollArea();
+  scrollArea->setWidget(this->dataPtr->msgWidget);
+  scrollArea->setWidgetResizable(true);
+  scrollArea->setStyleSheet(
+      "QScrollArea{background-color: transparent; border: none}");
+
+  this->layout()->addWidget(scrollArea);
 }
 
 // Register this plugin

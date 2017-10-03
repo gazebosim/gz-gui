@@ -19,9 +19,9 @@ set (qt_headers
   MainWindow.hh
   MessageWidget.hh
   NumberWidget.hh
-  PropertyWidget.hh
   Plugin.hh
   Pose3dWidget.hh
+  PropertyWidget.hh
   StringWidget.hh
   Vector3dWidget.hh
 )

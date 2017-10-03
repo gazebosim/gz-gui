@@ -44,6 +44,47 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
+TEST(MessageWidgetTest, ConstructAndUpdate)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Invalid constructor
+  {
+    auto msgWidget = new MessageWidget(nullptr);
+    ASSERT_NE(msgWidget, nullptr);
+
+    EXPECT_FALSE(msgWidget->UpdateFromMsg(new msgs::StringMsg()));
+  }
+
+  // Valid constructor, invalid update
+  {
+    auto msgWidget = new MessageWidget(new msgs::StringMsg());
+    ASSERT_NE(msgWidget, nullptr);
+
+    EXPECT_FALSE(msgWidget->UpdateFromMsg(nullptr));
+  }
+
+  // Update type different from constructor
+  {
+    auto msgWidget = new MessageWidget(new msgs::StringMsg());
+    ASSERT_NE(msgWidget, nullptr);
+
+    EXPECT_FALSE(msgWidget->UpdateFromMsg(new msgs::Int32()));
+  }
+
+  // Same type as constructor
+  {
+    auto msgWidget = new MessageWidget(new msgs::StringMsg());
+    ASSERT_NE(msgWidget, nullptr);
+
+    EXPECT_TRUE(msgWidget->UpdateFromMsg(new msgs::StringMsg()));
+  }
+
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
 TEST(MessageWidgetTest, EmptyMsgWidget)
 {
   setVerbosity(4);

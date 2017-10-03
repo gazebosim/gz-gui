@@ -134,4 +134,15 @@ void ignition::gui::rangeFromKey(const std::string &_key, double &_min,
   }
 }
 
+/////////////////////////////////////////////////
+ignition::gui::StringType ignition::gui::stringTypeFromKey(
+    const std::string &_key)
+{
+  if (_key == "innerxml")
+  {
+    return ignition::gui::StringType::PLAIN_TEXT;
+  }
+
+  return StringType::LINE;
+}
 

@@ -21,7 +21,7 @@
 #include <memory>
 #include <string>
 
-#include "ignition/gui/qt.h"
+#include "ignition/gui/Enums.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
@@ -36,24 +36,13 @@ namespace ignition
     {
       Q_OBJECT
 
-      /// \brief String types
-      public: enum StringType
-      {
-        /// \brief Use line for short strings which usually fit in a single
-        /// line.
-        LINE,
-
-        /// \brief Use text for longer strings which span multiple lines.
-        TEXT
-      };
-
       /// \brief Constructor
       /// \param[in] _key Property key value, such as "name", which will be
       /// displayed next to the field which holds the string content.
       /// \param[in] _type The value type, which will determine characteristics
       /// of the line field, such as how large the widget is. Defaults to LINE.
       public: StringWidget(const std::string &_key,
-                           const StringType _type = LINE);
+                           const StringType _type = NONE);
 
       /// \brief Destructor
       public: ~StringWidget();

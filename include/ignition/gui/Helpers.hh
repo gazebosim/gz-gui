@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "ignition/gui/qt.h"
+#include "ignition/gui/Enums.hh"
 #include "ignition/gui/System.hh"
 
 namespace ignition
@@ -52,6 +53,13 @@ namespace ignition
     /// \param[out] _max The maximum value.
     IGNITION_GUI_VISIBLE
     void rangeFromKey(const std::string &_key, double &_min, double &_max);
+
+    /// \brief Returns the string type for a given key. For example, the key
+    /// "innerxml" has a PLAIN_TEXT type while "name" is a LINE.
+    /// \param[in] _key The key.
+    /// \return The string type.
+    IGNITION_GUI_VISIBLE
+    StringType stringTypeFromKey(const std::string &_key);
 
     /// \brief List of colors used for the background of widgets according to
     /// their level.

@@ -28,7 +28,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   auto buttonLabel = new QLabel(tr(humanReadable(_key).c_str()));
   buttonLabel->setToolTip(tr(_key.c_str()));
 
-  // Button icon
+  // Button icon initialized to ▲
   auto buttonIcon = new QLabel(QString::fromUtf8("\u25b2"));
   buttonIcon->setObjectName("buttonIcon");
 
@@ -42,17 +42,8 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   auto button = new QPushButton();
   button->setLayout(buttonLayout);
   button->setCheckable(true);
-  button->setStyleSheet(
-     "QPushButton {"
-     "  background-color: transparent;"
-     "  margin: 0px;"
-     "}"
-     "QPushButton:checked {"
-     "  background-color: rgba(100, 100, 100, 70);"
-     "}"
-     "QPushButton:hover {"
-     "  background-color: rgba(100, 100, 100, 50);"
-     "}");
+  button->setObjectName("collapsibleButton");
+
   this->connect(button, SIGNAL(toggled(bool)), this, SLOT(Toggle(bool)));
 
   // Layout
@@ -73,8 +64,10 @@ void CollapsibleWidget::Toggle(const bool _checked)
   }
 
   auto icon = this->findChild<QLabel *>("buttonIcon");
+  // Change to ▼
   if (_checked)
     icon->setText(QString::fromUtf8("\u25bc"));
+  // Change to ▲
   else
     icon->setText(QString::fromUtf8("\u25b2"));
 }

@@ -18,9 +18,7 @@
 #ifndef IGNITION_GUI_PROPERTYWIDGET_HH_
 #define IGNITION_GUI_PROPERTYWIDGET_HH_
 
-#include <map>
 #include <string>
-#include <vector>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"

@@ -39,12 +39,18 @@ namespace plugins
 {
   class TopicInterfacePrivate;
 
-  /// \brief
+  /// \brief This plugin provides a graphical interface for messages coming
+  /// through an Ignition Transport topic.
   ///
   /// ## Configuration
-  /// <topic>: If not specified, subscribe to /echo
-  /// <message_type>: If not specified widget will be constructed according to
-  ///                 the first message received on <topic>
+  /// <topic>: Topic to subscribe to. This is defined the moment the plugin is
+  ///          created and can't be changed afterwards. If no topic is
+  ///          specified, the plugin subscribes to `/echo`.
+  /// <message_type>: Fully qualified name of the message type expected on the
+  ///                 topic above. Widgets will be generated according to this.
+  ///                 If not specified, widget will be constructed according to
+  ///                 the first message received on <topic>. Once widgets have
+  ///                 been generated, the message type can't be changed.
   class TopicInterface : public Plugin
   {
     Q_OBJECT
@@ -58,9 +64,13 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief Receives incoming text messages.
-    /// \param[in] _msg New text message.
+    /// \brief Callback when a message is received.
+    /// \param[in] _msg New message.
     private: void OnMessage(const google::protobuf::Message &_msg);
+
+    /// \brief Create message widget and add it to layout.
+    /// \param[in] _msg Message.
+    private: void CreateWidget(const google::protobuf::Message &_msg);
 
     /// \internal
     /// \brief Pointer to private data.
