@@ -22,7 +22,6 @@
 #include <string>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
 namespace google
@@ -40,6 +39,7 @@ namespace ignition
   namespace gui
   {
     class MessageWidgetPrivate;
+    class PropertyWidget;
 
     /// \brief Generate a widget with property fields based on a Google
     /// Protobuf message.
