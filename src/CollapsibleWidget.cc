@@ -15,8 +15,10 @@
  *
 */
 
-#include "ignition/gui/Helpers.hh"
+#include <string>
+
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/Helpers.hh"
 
 using namespace ignition;
 using namespace gui;

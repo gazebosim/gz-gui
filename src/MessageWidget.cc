@@ -15,15 +15,18 @@
  *
 */
 
+#include <map>
+#include <string>
+
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
+
+#include <ignition/common/Console.hh>
+#include <ignition/common/EnumIface.hh>
 
 #include <ignition/math/Helpers.hh>
 
 #include <ignition/msgs.hh>
-
-#include <ignition/common/Console.hh>
-#include <ignition/common/EnumIface.hh>
 
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Conversions.hh"
@@ -486,4 +489,3 @@ PropertyWidget *MessageWidget::PropertyWidgetByName(
 
   return nullptr;
 }
-

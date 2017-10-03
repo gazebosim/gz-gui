@@ -25,4 +25,3 @@ void PropertyWidget::OnValueChanged()
 {
   this->ValueChanged(this->Value());
 }
-
