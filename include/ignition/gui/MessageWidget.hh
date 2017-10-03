@@ -60,7 +60,7 @@ namespace ignition
       /// \brief Constructor.
       /// \param[in] _msg Message to load from.
       /// \sa UpdateFromMsg
-      public: MessageWidget(const google::protobuf::Message *_msg);
+      public: explicit MessageWidget(const google::protobuf::Message *_msg);
 
       /// \brief Destructor
       public: ~MessageWidget();

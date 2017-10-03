@@ -37,7 +37,7 @@ namespace ignition
 
       /// \brief Constructor
       /// \param[in] _key Title to be displayed on the button.
-      public: CollapsibleWidget(const std::string &_key);
+      public: explicit CollapsibleWidget(const std::string &_key);
 
       // Documentation inherited
       public: bool SetValue(const QVariant) {return false;}
