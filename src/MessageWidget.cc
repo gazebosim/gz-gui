@@ -299,7 +299,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
 /////////////////////////////////////////////////
 bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
-    const std::string &_parentScopedName)
+    const std::string &_parentScopedName) const
 {
   // Get descriptor of given message
   auto descriptor = _msg->GetDescriptor();

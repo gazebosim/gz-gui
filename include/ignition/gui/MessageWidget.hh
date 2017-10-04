@@ -123,7 +123,7 @@ namespace ignition
       /// this is the top level message.
       /// \return True if successful
       private: bool FillMsg(google::protobuf::Message *_msg,
-          const std::string &_parentScopedName = "");
+          const std::string &_parentScopedName = "") const;
 
       /// \internal
       /// \brief Pointer to private data.

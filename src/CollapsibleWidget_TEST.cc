@@ -17,11 +17,8 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/msgs.hh>
-
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
-#include "ignition/gui/QtMetatypes.hh"
 
 #include "ignition/gui/CollapsibleWidget.hh"
 
@@ -29,7 +26,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(CollapsibleWidgetTest, Signal)
+TEST(CollapsibleWidgetTest, Toggle)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -75,6 +72,27 @@ TEST(CollapsibleWidgetTest, Signal)
   {
     EXPECT_TRUE(layout->itemAt(i)->widget()->isVisible());
   }
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(CollapsibleWidgetTest, Value)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Create widget
+  auto widget = new CollapsibleWidget("collapse_me");
+  ASSERT_NE(widget, nullptr);
+
+  // Set value
+  EXPECT_FALSE(widget->SetValue(QVariant()));
+
+  // Get value
+  auto v = widget->Value();
+  EXPECT_EQ(v, QVariant());
 
   delete widget;
   EXPECT_TRUE(stop());

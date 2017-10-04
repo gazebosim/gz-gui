@@ -87,11 +87,11 @@ TEST(MessageWidgetTest, PluginMsgWidget)
 
   // Create widget
   auto msgWidget = new MessageWidget(&pluginMsg);
-  EXPECT_NE(msgWidget, nullptr);
+  ASSERT_NE(msgWidget, nullptr);
 
   // Retrieve message
   auto retPluginMsg = dynamic_cast<msgs::Plugin *>(msgWidget->Msg());
-  EXPECT_NE(retPluginMsg, nullptr);
+  ASSERT_NE(retPluginMsg, nullptr);
 
   EXPECT_EQ(retPluginMsg->name(), "test_plugin");
   EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename");
@@ -106,7 +106,7 @@ TEST(MessageWidgetTest, PluginMsgWidget)
 
   // Check new message
   retPluginMsg = dynamic_cast<msgs::Plugin *>(msgWidget->Msg());
-  EXPECT_NE(retPluginMsg, nullptr);
+  ASSERT_NE(retPluginMsg, nullptr);
 
   EXPECT_EQ(retPluginMsg->name(), "test_plugin_new");
   EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename_new");
@@ -128,14 +128,14 @@ TEST(MessageWidgetTest, ChildStringSignal)
 
   // Create widget from message
   auto messageWidget = new MessageWidget(msg);
-  EXPECT_TRUE(messageWidget != nullptr);
+  ASSERT_NE(messageWidget, nullptr);
 
   // Check we got a string widget
   auto propWidget = messageWidget->PropertyWidgetByName("data");
-  EXPECT_NE(propWidget, nullptr);
+  ASSERT_NE(propWidget, nullptr);
 
   auto stringWidget = qobject_cast<StringWidget *>(propWidget);
-  EXPECT_NE(stringWidget, nullptr);
+  ASSERT_NE(stringWidget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -174,7 +174,7 @@ TEST(MessageWidgetTest, PropertyByName)
 
   // Create widget from message
   auto messageWidget = new MessageWidget(msg);
-  EXPECT_TRUE(messageWidget != nullptr);
+  ASSERT_NE(messageWidget, nullptr);
 
   // Get generated widgets by name
   // TODO: add double fields once NumberWidget is integrated

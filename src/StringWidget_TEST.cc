@@ -36,7 +36,7 @@ TEST(StringWidgetTest, Signal)
 
   // Create widget
   auto widget = new StringWidget("a_string");
-  EXPECT_TRUE(widget != nullptr);
+  ASSERT_NE(widget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -79,7 +79,7 @@ TEST(StringWidgetTest, SetValue)
 
   // Create widget
   auto widget = new StringWidget("a_string");
-  EXPECT_TRUE(widget != nullptr);
+  ASSERT_NE(widget, nullptr);
 
   // Set good value
   EXPECT_TRUE(widget->SetValue(
