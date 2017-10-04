@@ -69,7 +69,7 @@ namespace ignition
       /// will be of the same type as the one used on the constructor.
       /// \return Updated message.
       /// \sa UpdateFromMsg
-      public: google::protobuf::Message *Msg();
+      public: google::protobuf::Message *Msg() const;
 
       /// \brief Update the widgets with values from a message.
       /// \param[in] _msg Message used for updating the widgets.
@@ -113,7 +113,7 @@ namespace ignition
       /// \param[in] _parent Pointer to parent of generated widgets, this is
       /// either the message widget or a collapsible widget.
       /// return True if successful.
-      private: bool Parse(google::protobuf::Message *_msg,
+      private: bool Parse(const google::protobuf::Message *_msg,
           const std::string &_scopedName, QWidget *_parent);
 
       /// \brief Update the given message using values from the widgets. This is
