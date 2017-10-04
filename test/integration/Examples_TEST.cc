@@ -34,11 +34,11 @@ TEST(ExampleTest, Configs)
 
   // Load each config file
   ignition::common::DirIter endIter;
-  for (common::DirIter dirIter(exampleConfigPath); dirIter != endIter; ++dirIter)
+  for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
   {
     EXPECT_TRUE(initApp());
 
-    EXPECT_TRUE(loadConfig(*dirIter));
+    EXPECT_TRUE(loadConfig(*file));
 
     EXPECT_TRUE(stop());
   }
