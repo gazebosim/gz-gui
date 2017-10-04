@@ -60,6 +60,7 @@ MainWindow::MainWindow()
 
   // File menu
   auto fileMenu = this->menuBar()->addMenu(tr("&File"));
+  fileMenu->setObjectName("fileMenu");
 
   auto loadConfigAct = new QAction(tr("&Load configuration"), this);
   loadConfigAct->setStatusTip(tr("Quit"));
@@ -94,6 +95,7 @@ MainWindow::MainWindow()
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
+  pluginsMenu->setObjectName("pluginsMenu");
 
   auto pluginMapper = new QSignalMapper(this);
   this->connect(pluginMapper, SIGNAL(mapped(QString)),

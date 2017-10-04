@@ -66,6 +66,17 @@ struct WindowConfig
 
   /// \brief String holding the global style sheet in QSS format.
   std::string styleSheet;
+
+  /// \brief Map menu name to whether it should be hidden, all menus are shown
+  /// by default.
+  std::map<std::string, bool> hideMenuMap;
+
+  /// \brief True if plugins found in plugin paths should be listed under the
+  /// Plugins menu. True by default.
+  bool pluginsFromPaths = true;
+
+  /// \brief List of plugins which should be shown on the list
+  std::vector<std::string> showPlugins;
 };
 
 /// \brief Pointer to application
@@ -413,6 +424,51 @@ bool ignition::gui::loadConfig(const std::string &_config)
         setStyleFromString("");
       }
     }
+
+    // Menus
+    if (auto menusElem = winElem->FirstChildElement("menus"))
+    {
+      // File
+      if (auto fileElem = menusElem->FirstChildElement("file"))
+      {
+        // Hide
+        if (fileElem->Attribute("hide"))
+        {
+          bool hide = false;
+          fileElem->QueryBoolAttribute("hide", &hide);
+          g_windowConfig.hideMenuMap["fileMenu"] = hide;
+        }
+      }
+
+      // Plugins
+      if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
+      {
+        // Hide
+        if (pluginsElem->Attribute("hide"))
+        {
+          bool hide = false;
+          pluginsElem->QueryBoolAttribute("hide", &hide);
+          g_windowConfig.hideMenuMap["pluginsMenu"] = hide;
+        }
+
+        // From paths
+        if (pluginsElem->Attribute("from_paths"))
+        {
+          bool fromPaths = false;
+          pluginsElem->QueryBoolAttribute("hide", &fromPaths);
+          g_windowConfig.pluginsFromPaths = fromPaths;
+        }
+
+        // Show individual plugins
+        for (auto showElem = pluginsElem->FirstChildElement("show");
+            showElem != nullptr;
+            showElem = showElem->NextSiblingElement("show"))
+        {
+          if (auto pluginName = showElem->GetText())
+            g_windowConfig.showPlugins.push_back(pluginName);
+        }
+      }
+    }
   }
 
   return true;
@@ -603,19 +659,46 @@ bool ignition::gui::applyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
+  // Window position
   if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
     g_mainWin->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
 
+  // Window size
   if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
     g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
 
+  // Docks state
   if (!g_windowConfig.state.isEmpty())
   {
     if (!g_mainWin->restoreState(g_windowConfig.state))
       ignwarn << "Failed to restore state" << std::endl;
   }
 
+  // Stylesheet
   setStyleFromString(g_windowConfig.styleSheet);
+
+  // Hide menus
+  for (auto hideMenu : g_windowConfig.hideMenuMap)
+  {
+    if (auto menu =
+        g_mainWin->findChild<QMenu *>(QString::fromStdString(hideMenu.first)))
+    {
+      menu->menuAction()->setVisible(!hideMenu.second);
+    }
+  }
+
+  // Plugins menu
+  if (auto menu = g_mainWin->findChild<QMenu *>("pluginsMenu"))
+  {
+    for (auto action : menu->actions())
+    {
+      action->setVisible(g_windowConfig.pluginsFromPaths ||
+          std::find(g_windowConfig.showPlugins.begin(),
+                    g_windowConfig.showPlugins.end(),
+                    action->text().toStdString()) !=
+                    g_windowConfig.showPlugins.end());
+    }
+  }
 
   QCoreApplication::processEvents();
 
