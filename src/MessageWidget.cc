@@ -18,12 +18,15 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 
-#include <ignition/math/Helpers.hh>
-
-#include <ignition/msgs.hh>
+#include <map>
+#include <string>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/EnumIface.hh>
+
+#include <ignition/math/Helpers.hh>
+
+#include <ignition/msgs.hh>
 
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
@@ -51,7 +54,8 @@ namespace ignition
       /// \brief A map of unique scoped names to correpsonding widgets.
       public: std::map <std::string, PropertyWidget *> properties;
 
-      /// \brief A copy of the message with fields to be configured by widgets.
+      /// \brief A copy of the message used to build the widget. Helps
+      /// creating new messages.
       public: google::protobuf::Message *msg = nullptr;
     };
   }
@@ -133,12 +137,11 @@ bool MessageWidget::UpdateFromMsg(const google::protobuf::Message *_msg)
     return false;
   }
 
-  this->dataPtr->msg->CopyFrom(*_msg);
-  return this->Parse(this->dataPtr->msg, "", this);
+  return this->Parse(_msg, "", this);
 }
 
 /////////////////////////////////////////////////
-google::protobuf::Message *MessageWidget::Msg()
+google::protobuf::Message *MessageWidget::Msg() const
 {
   this->FillMsg(this->dataPtr->msg);
   return this->dataPtr->msg;
@@ -267,7 +270,7 @@ QVariant MessageWidget::PropertyValue(const std::string &_name) const
 }
 
 /////////////////////////////////////////////////
-bool MessageWidget::Parse(google::protobuf::Message *_msg,
+bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     const std::string &_scopedName, QWidget *_parent)
 {
   auto descriptor = _msg->GetDescriptor();
@@ -291,7 +294,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    auto msg = dynamic_cast<msgs::Geometry *>(_msg);
+    auto msg = dynamic_cast<const msgs::Geometry *>(_msg);
     propertyWidget->SetValue(QVariant::fromValue(*msg));
 
     return true;
@@ -308,7 +311,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    auto msg = dynamic_cast<msgs::Pose *>(_msg);
+    auto msg = dynamic_cast<const msgs::Pose *>(_msg);
     propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
 
     return true;
@@ -325,7 +328,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    auto msg = dynamic_cast<msgs::Vector3d *>(_msg);
+    auto msg = dynamic_cast<const msgs::Vector3d *>(_msg);
     propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
 
     return true;
@@ -342,7 +345,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     }
 
     // Set value
-    auto msg = dynamic_cast<msgs::Color *>(_msg);
+    auto msg = dynamic_cast<const msgs::Color *>(_msg);
     propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
 
     return true;
@@ -550,7 +553,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
     {
       // Get nested message
-      auto valueMsg = reflection->MutableMessage(_msg, fieldDescriptor);
+      auto &valueMsg = reflection->GetMessage(*_msg, fieldDescriptor);
 
       // Create collapsible
       auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget);
@@ -561,7 +564,7 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
       }
 
       // Generate / update widget
-      this->Parse(valueMsg, scopedName, collapsible);
+      this->Parse(&valueMsg, scopedName, collapsible);
 
       // Collapse the first time it was created
       if (!propertyWidget)
@@ -577,8 +580,11 @@ bool MessageWidget::Parse(google::protobuf::Message *_msg,
 
 /////////////////////////////////////////////////
 bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
-    const std::string &_parentScopedName)
+    const std::string &_parentScopedName) const
 {
+  if (!_msg)
+    return false;
+
   // Get descriptor of given message
   auto descriptor = _msg->GetDescriptor();
   if (!descriptor)

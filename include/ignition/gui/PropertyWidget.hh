@@ -18,8 +18,6 @@
 #ifndef IGNITION_GUI_PROPERTYWIDGET_HH_
 #define IGNITION_GUI_PROPERTYWIDGET_HH_
 
-#include <string>
-
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
 

@@ -15,11 +15,12 @@
  *
 */
 
+#include <string>
+
 #include <ignition/common/Console.hh>
 
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/QtMetatypes.hh"
-
 #include "ignition/gui/StringWidget.hh"
 
 namespace ignition

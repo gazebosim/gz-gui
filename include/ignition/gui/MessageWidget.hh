@@ -26,7 +26,6 @@
 #include <ignition/math/Vector3.hh>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
 namespace google
@@ -44,6 +43,7 @@ namespace ignition
   namespace gui
   {
     class MessageWidgetPrivate;
+    class PropertyWidget;
 
     /// \brief Generate a widget with property fields based on a Google
     /// Protobuf message.
@@ -64,7 +64,7 @@ namespace ignition
       /// \brief Constructor.
       /// \param[in] _msg Message to load from.
       /// \sa UpdateFromMsg
-      public: MessageWidget(const google::protobuf::Message *_msg);
+      public: explicit MessageWidget(const google::protobuf::Message *_msg);
 
       /// \brief Destructor
       public: ~MessageWidget();
@@ -73,7 +73,7 @@ namespace ignition
       /// will be of the same type as the one used on the constructor.
       /// \return Updated message.
       /// \sa UpdateFromMsg
-      public: google::protobuf::Message *Msg();
+      public: google::protobuf::Message *Msg() const;
 
       /// \brief Update the widgets with values from a message.
       /// \param[in] _msg Message used for updating the widgets.
@@ -163,7 +163,7 @@ namespace ignition
       /// \param[in] _parent Pointer to parent of generated widgets, this is
       /// either the message widget or a collapsible widget.
       /// return True if successful.
-      private: bool Parse(google::protobuf::Message *_msg,
+      private: bool Parse(const google::protobuf::Message *_msg,
           const std::string &_scopedName, QWidget *_parent);
 
       /// \brief Update the given message using values from the widgets. This is
@@ -173,7 +173,7 @@ namespace ignition
       /// this is the top level message.
       /// \return True if successful
       private: bool FillMsg(google::protobuf::Message *_msg,
-          const std::string &_parentScopedName = "");
+          const std::string &_parentScopedName = "") const;
 
       /// \brief Qt event filter currently used to filter mouse wheel events.
       /// \param[in] _obj Object that is watched by the event filter.

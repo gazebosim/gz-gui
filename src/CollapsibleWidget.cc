@@ -15,8 +15,10 @@
  *
 */
 
-#include "ignition/gui/Helpers.hh"
+#include <string>
+
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/Helpers.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -57,7 +59,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
 /////////////////////////////////////////////////
 void CollapsibleWidget::Toggle(const bool _checked)
 {
-  // Toggle all items below the button
+  // Toggle all items below the button in the main layout
   for (auto i = 1; i < this->layout()->count(); ++i)
   {
     this->layout()->itemAt(i)->widget()->setVisible(_checked);

@@ -16,8 +16,10 @@
 */
 
 #include <algorithm>
+#include <string>
 #include <ignition/math/Helpers.hh>
 
+#include "ignition/gui/Enums.hh"
 #include "ignition/gui/Helpers.hh"
 
 /////////////////////////////////////////////////

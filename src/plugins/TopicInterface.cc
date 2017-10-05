@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <string>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>

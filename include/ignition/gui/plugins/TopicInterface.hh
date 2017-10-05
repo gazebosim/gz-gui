@@ -18,18 +18,18 @@
 #ifndef IGNITION_GUI_PLUGINS_TOPICINTERFACE_HH_
 #define IGNITION_GUI_PLUGINS_TOPICINTERFACE_HH_
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <google/protobuf/message.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <memory>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
+
+namespace google
+{
+  namespace protobuf
+  {
+    class Message;
+  }
+}
 
 namespace ignition
 {

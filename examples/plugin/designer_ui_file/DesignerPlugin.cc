@@ -15,13 +15,33 @@
  *
 */
 
-#include "ignition/gui/PropertyWidget.hh"
+#include <iostream>
+#include <ignition/common/PluginMacros.hh>
+
+#include "DesignerPlugin.hh"
+#include "ui_DesignerPlugin.h"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-void PropertyWidget::OnValueChanged()
+DesignerPlugin::DesignerPlugin() : Plugin(), ui(new Ui::DesignerPlugin)
 {
-  this->ValueChanged(this->Value());
+  ui->setupUi(this);
 }
+
+/////////////////////////////////////////////////
+DesignerPlugin::~DesignerPlugin()
+{
+  delete ui;
+}
+
+/////////////////////////////////////////////////
+void DesignerPlugin::on_helloButton_clicked()
+{
+  std::cout << "Hello, UI!" << std::endl;
+}
+
+// Register this plugin
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::DesignerPlugin,
+                                  ignition::gui::Plugin);
