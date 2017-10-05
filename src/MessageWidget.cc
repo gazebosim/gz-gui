@@ -30,7 +30,9 @@
 
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Conversions.hh"
+#include "ignition/gui/Enums.hh"
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
@@ -203,37 +205,101 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     // Numbers
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
     {
-      // Coming soon
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new NumberWidget(fieldName, NumberType::DOUBLE);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      double value = reflection->GetDouble(*_msg, fieldDescriptor);
+      if (!math::equal(value, value))
+        value = 0;
+      propertyWidget->SetValue(value);
+
       continue;
     }
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
     {
-      // Coming soon
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new NumberWidget(fieldName, NumberType::DOUBLE);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      float value = reflection->GetFloat(*_msg, fieldDescriptor);
+      if (!math::equal(value, value))
+        value = 0;
+      propertyWidget->SetValue(value);
+
       continue;
     }
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
     {
-      // Coming soon
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new NumberWidget(fieldName, NumberType::INT);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      int value = reflection->GetInt64(*_msg, fieldDescriptor);
+      propertyWidget->SetValue(value);
+
       continue;
     }
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
     {
-      // Coming soon
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new NumberWidget(fieldName, NumberType::INT);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      int value = reflection->GetInt32(*_msg, fieldDescriptor);
+      propertyWidget->SetValue(value);
+
       continue;
     }
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
     {
-      // Coming soon
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new NumberWidget(fieldName, NumberType::UINT);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      unsigned int value = reflection->GetUInt64(*_msg, fieldDescriptor);
+      propertyWidget->SetValue(value);
+
       continue;
     }
 
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
     {
-      // Coming soon
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new NumberWidget(fieldName, NumberType::UINT);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      unsigned int value = reflection->GetUInt32(*_msg, fieldDescriptor);
+      propertyWidget->SetValue(value);
+
       continue;
     }
 
@@ -346,32 +412,32 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
       // Numbers
       case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
       {
-        // Coming soon
+        reflection->SetDouble(_msg, fieldDescriptor, variant.toDouble());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_FLOAT:
       {
-        // Coming soon
+        reflection->SetFloat(_msg, fieldDescriptor, variant.toDouble());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_INT64:
       {
-        // Coming soon
+        reflection->SetInt64(_msg, fieldDescriptor, variant.toInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_INT32:
       {
-        // Coming soon
+        reflection->SetInt32(_msg, fieldDescriptor, variant.toInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT64:
       {
-        // Coming soon
+        reflection->SetUInt64(_msg, fieldDescriptor, variant.toUInt());
         break;
       }
       case google::protobuf::FieldDescriptor::TYPE_UINT32:
       {
-        // Coming soon
+        reflection->SetUInt32(_msg, fieldDescriptor, variant.toUInt());
         break;
       }
       // Boolean

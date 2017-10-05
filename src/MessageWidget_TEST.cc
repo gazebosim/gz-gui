@@ -23,6 +23,7 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
@@ -40,79 +41,192 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
 
   // Invalid constructor
   {
-    auto msgWidget = new MessageWidget(nullptr);
-    ASSERT_NE(msgWidget, nullptr);
+    auto widget = new MessageWidget(nullptr);
+    ASSERT_NE(widget, nullptr);
 
-    EXPECT_FALSE(msgWidget->UpdateFromMsg(new msgs::StringMsg()));
+    EXPECT_FALSE(widget->UpdateFromMsg(new msgs::StringMsg()));
   }
 
   // Valid constructor, invalid update
   {
-    auto msgWidget = new MessageWidget(new msgs::StringMsg());
-    ASSERT_NE(msgWidget, nullptr);
+    auto widget = new MessageWidget(new msgs::StringMsg());
+    ASSERT_NE(widget, nullptr);
 
-    EXPECT_FALSE(msgWidget->UpdateFromMsg(nullptr));
+    EXPECT_FALSE(widget->UpdateFromMsg(nullptr));
   }
 
   // Update type different from constructor
   {
-    auto msgWidget = new MessageWidget(new msgs::StringMsg());
-    ASSERT_NE(msgWidget, nullptr);
+    auto widget = new MessageWidget(new msgs::StringMsg());
+    ASSERT_NE(widget, nullptr);
 
-    EXPECT_FALSE(msgWidget->UpdateFromMsg(new msgs::Int32()));
+    EXPECT_FALSE(widget->UpdateFromMsg(new msgs::Int32()));
   }
 
   // Same type as constructor
   {
-    auto msgWidget = new MessageWidget(new msgs::StringMsg());
-    ASSERT_NE(msgWidget, nullptr);
+    auto widget = new MessageWidget(new msgs::StringMsg());
+    ASSERT_NE(widget, nullptr);
 
-    EXPECT_TRUE(msgWidget->UpdateFromMsg(new msgs::StringMsg()));
+    EXPECT_TRUE(widget->UpdateFromMsg(new msgs::StringMsg()));
   }
 
   EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
+// Test LINE and PLAIN_TEXT string fields
 TEST(MessageWidgetTest, PluginMsgWidget)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Message
-  msgs::Plugin pluginMsg;
-  pluginMsg.set_name("test_plugin");
-  pluginMsg.set_filename("test_plugin_filename");
-  pluginMsg.set_innerxml("<param>1</param>\n");
+  msgs::Plugin msg;
+  msg.set_name("test_plugin");
+  msg.set_filename("test_plugin_filename");
+  msg.set_innerxml("<param>1</param>\n");
 
   // Create widget
-  auto msgWidget = new MessageWidget(&pluginMsg);
-  ASSERT_NE(msgWidget, nullptr);
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
 
   // Retrieve message
-  auto retPluginMsg = dynamic_cast<msgs::Plugin *>(msgWidget->Msg());
-  ASSERT_NE(retPluginMsg, nullptr);
+  auto retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
 
-  EXPECT_EQ(retPluginMsg->name(), "test_plugin");
-  EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename");
-  EXPECT_EQ(retPluginMsg->innerxml(), "<param>1</param>\n");
+  EXPECT_EQ(retMsg->name(), "test_plugin");
+  EXPECT_EQ(retMsg->filename(), "test_plugin_filename");
+  EXPECT_EQ(retMsg->innerxml(), "<param>1</param>\n");
 
   // Update from message
-  pluginMsg.set_name("test_plugin_new");
-  pluginMsg.set_filename("test_plugin_filename_new");
-  pluginMsg.set_innerxml("<param>2</param>\n");
+  msg.set_name("test_plugin_new");
+  msg.set_filename("test_plugin_filename_new");
+  msg.set_innerxml("<param>2</param>\n");
 
-  msgWidget->UpdateFromMsg(&pluginMsg);
+  widget->UpdateFromMsg(&msg);
 
   // Check new message
-  retPluginMsg = dynamic_cast<msgs::Plugin *>(msgWidget->Msg());
-  ASSERT_NE(retPluginMsg, nullptr);
+  retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
 
-  EXPECT_EQ(retPluginMsg->name(), "test_plugin_new");
-  EXPECT_EQ(retPluginMsg->filename(), "test_plugin_filename_new");
-  EXPECT_EQ(retPluginMsg->innerxml(), "<param>2</param>\n");
+  EXPECT_EQ(retMsg->name(), "test_plugin_new");
+  EXPECT_EQ(retMsg->filename(), "test_plugin_filename_new");
+  EXPECT_EQ(retMsg->innerxml(), "<param>2</param>\n");
 
-  delete msgWidget;
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test double and uint32 fields
+TEST(MessageWidgetTest, SurfaceMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  msgs::Surface msg;
+  msg.set_kp(100.5);
+  msg.set_collide_bitmask(1);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Surface *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  EXPECT_DOUBLE_EQ(retMsg->kp(), 100.5);
+  EXPECT_EQ(retMsg->collide_bitmask(), 1u);
+
+  // Update from message
+  msg.set_kp(888.44);
+  msg.set_collide_bitmask(444);
+
+  widget->UpdateFromMsg(&msg);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Surface *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  EXPECT_DOUBLE_EQ(retMsg->kp(), 888.44);
+  EXPECT_EQ(retMsg->collide_bitmask(), 444u);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test float fields
+TEST(MessageWidgetTest, LightMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  msgs::Light msg;
+  msg.set_spot_falloff(0.5);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Light *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  EXPECT_LT(fabs(retMsg->spot_falloff()- 0.5), 0.000001);
+
+  // Update from message
+  msg.set_spot_falloff(0.001);
+
+  widget->UpdateFromMsg(&msg);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Light *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  EXPECT_LT(fabs(retMsg->spot_falloff()- 0.001), 0.000001);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test uint64 fields
+TEST(MessageWidgetTest, WorldStatsMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  msgs::WorldStatistics msg;
+  msg.set_iterations(555);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::WorldStatistics *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  EXPECT_EQ(retMsg->iterations(), 555u);
+
+  // Update from message
+  msg.set_iterations(99999999);
+
+  widget->UpdateFromMsg(&msg);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::WorldStatistics *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  EXPECT_EQ(retMsg->iterations(), 99999999u);
+
+  delete widget;
   EXPECT_TRUE(stop());
 }
 
@@ -164,6 +278,53 @@ TEST(MessageWidgetTest, ChildStringSignal)
 }
 
 /////////////////////////////////////////////////
+TEST(MessageWidgetTest, ChildNumberSignal)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  auto msg = new msgs::Double();
+  msg->set_data(-1.5);
+
+  // Create widget from message
+  auto messageWidget = new MessageWidget(msg);
+  ASSERT_NE(messageWidget, nullptr);
+
+  // Check we got a number widget
+  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  ASSERT_NE(propWidget, nullptr);
+
+  auto numberWidget = qobject_cast<NumberWidget *>(propWidget);
+  ASSERT_NE(numberWidget, nullptr);
+
+  // Connect signals
+  bool signalReceived = false;
+  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<double>();
+      EXPECT_EQ(_name, "data");
+      EXPECT_DOUBLE_EQ(v, 0.999);
+      signalReceived = true;
+    });
+
+  // Get signal emitting widgets
+  auto spins = messageWidget->findChildren<QDoubleSpinBox *>();
+  ASSERT_EQ(spins.size(), 1);
+
+  // Change the value and check new value at callback
+  spins[0]->setValue(0.999);
+  spins[0]->editingFinished();
+
+  // Check callback was called
+  EXPECT_TRUE(signalReceived);
+
+  delete messageWidget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
 TEST(MessageWidgetTest, PropertyByName)
 {
   setVerbosity(4);
@@ -177,9 +338,8 @@ TEST(MessageWidgetTest, PropertyByName)
   ASSERT_NE(messageWidget, nullptr);
 
   // Get generated widgets by name
-  // TODO: add double fields once NumberWidget is integrated
-  for (auto name : {"header", "header::stamp", /*"header::stamp::sec", */
-      /*"header::stamp::nsec", */ "data"})
+  for (auto name : {"header", "header::stamp", "header::stamp::sec",
+      "header::stamp::nsec",  "data"})
   {
     EXPECT_NE(messageWidget->PropertyWidgetByName(name), nullptr) << name;
   }
@@ -193,4 +353,3 @@ TEST(MessageWidgetTest, PropertyByName)
   delete messageWidget;
   EXPECT_TRUE(stop());
 }
-

@@ -13,6 +13,7 @@ set (qt_headers
   CollapsibleWidget.hh
   MainWindow.hh
   MessageWidget.hh
+  NumberWidget.hh
   Plugin.hh
   PropertyWidget.hh
   StringWidget.hh

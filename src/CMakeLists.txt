@@ -9,6 +9,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MessageWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/NumberWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/PropertyWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/SearchModel.cc
@@ -24,6 +25,7 @@ set (gtest_sources
   Iface_TEST.cc
   MainWindow_TEST.cc
   MessageWidget_TEST.cc
+  NumberWidget_TEST.cc
   SearchModel_TEST.cc
   StringWidget_TEST.cc
 )
