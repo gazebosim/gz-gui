@@ -357,8 +357,8 @@ bool ignition::gui::loadConfig(const std::string &_config)
   if (!success)
   {
     // We do not show an error message if the default config path doesn't exist
-    // yet. It's expected behavior and will be created the first time the user
-    // press "Save configuration".
+    // yet. It's expected behavior, it will be created the first time the user
+    // presses "Save configuration".
     if (_config != defaultConfigPath())
     {
       ignerr << "Failed to load file [" << _config << "]: XMLError"
