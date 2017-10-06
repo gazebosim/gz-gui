@@ -28,6 +28,7 @@
 
 #include <ignition/msgs.hh>
 
+#include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/Enums.hh"
@@ -306,7 +307,17 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     // Boolean
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_BOOL)
     {
-      // Coming soon
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        propertyWidget = new BoolWidget(fieldName);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      bool value = reflection->GetBool(*_msg, fieldDescriptor);
+      propertyWidget->SetValue(value);
+
       continue;
     }
 
@@ -443,7 +454,7 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
       // Boolean
       case google::protobuf::FieldDescriptor::TYPE_BOOL:
       {
-        // Coming soon
+        reflection->SetBool(_msg, fieldDescriptor, variant.toBool());
         break;
       }
       // String

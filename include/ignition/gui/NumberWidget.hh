@@ -50,15 +50,25 @@ namespace ignition
       public: ~NumberWidget();
 
       /// \brief Inherited from PropertyWidget.
-      /// Value will be handled if its
-      /// type matches the widget's type (double, int or uint).
+      ///
+      /// Value will be handled if its type matches the widget's type (double,
+      /// int or uint).
+      ///
+      /// A double input can be constructed as follows:
+      /// QVariant value(0.5);
+      ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
       /// \brief Inherited from PropertyWidget.
+      ///
       /// Returns a variant containing the widget's current value. Its type will
       /// be either double, int or uint depending on the widget's type.
+      ///
+      /// An int value can be retrieved as follows:
+      /// int value = this->Value().toInt();
+      ///
       /// \return Widget's current number value.
       public: QVariant Value() const;
 

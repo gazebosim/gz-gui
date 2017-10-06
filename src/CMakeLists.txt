@@ -1,6 +1,7 @@
 include_directories(${PROJECT_BINARY_DIR})
 
 set (sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/BoolWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/CollapsibleWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
@@ -18,6 +19,7 @@ set (sources
 )
 
 set (gtest_sources
+  BoolWidget_TEST.cc
   CollapsibleWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc

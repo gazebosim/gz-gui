@@ -22,6 +22,7 @@
 #include <ignition/msgs.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
+#include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
@@ -119,7 +120,7 @@ TEST(MessageWidgetTest, PluginMsgWidget)
 }
 
 /////////////////////////////////////////////////
-// Test double and uint32 fields
+// Test double, uint32 and bool fields
 TEST(MessageWidgetTest, SurfaceMsgWidget)
 {
   setVerbosity(4);
@@ -129,6 +130,7 @@ TEST(MessageWidgetTest, SurfaceMsgWidget)
   msgs::Surface msg;
   msg.set_kp(100.5);
   msg.set_collide_bitmask(1);
+  msg.set_collide_without_contact(true);
 
   // Create widget
   auto widget = new MessageWidget(&msg);
@@ -140,10 +142,12 @@ TEST(MessageWidgetTest, SurfaceMsgWidget)
 
   EXPECT_DOUBLE_EQ(retMsg->kp(), 100.5);
   EXPECT_EQ(retMsg->collide_bitmask(), 1u);
+  EXPECT_TRUE(retMsg->collide_without_contact());
 
   // Update from message
   msg.set_kp(888.44);
   msg.set_collide_bitmask(444);
+  msg.set_collide_without_contact(false);
 
   widget->UpdateFromMsg(&msg);
 
@@ -153,6 +157,7 @@ TEST(MessageWidgetTest, SurfaceMsgWidget)
 
   EXPECT_DOUBLE_EQ(retMsg->kp(), 888.44);
   EXPECT_EQ(retMsg->collide_bitmask(), 444u);
+  EXPECT_FALSE(retMsg->collide_without_contact());
 
   delete widget;
   EXPECT_TRUE(stop());
@@ -241,11 +246,11 @@ TEST(MessageWidgetTest, ChildStringSignal)
   msg->set_data("banana");
 
   // Create widget from message
-  auto messageWidget = new MessageWidget(msg);
-  ASSERT_NE(messageWidget, nullptr);
+  auto widget = new MessageWidget(msg);
+  ASSERT_NE(widget, nullptr);
 
   // Check we got a string widget
-  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  auto propWidget = widget->PropertyWidgetByName("data");
   ASSERT_NE(propWidget, nullptr);
 
   auto stringWidget = qobject_cast<StringWidget *>(propWidget);
@@ -253,7 +258,7 @@ TEST(MessageWidgetTest, ChildStringSignal)
 
   // Connect signals
   bool signalReceived = false;
-  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+  widget->connect(widget, &MessageWidget::ValueChanged,
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<std::string>();
@@ -273,7 +278,7 @@ TEST(MessageWidgetTest, ChildStringSignal)
   // Check callback was called
   EXPECT_TRUE(signalReceived);
 
-  delete messageWidget;
+  delete widget;
   EXPECT_TRUE(stop());
 }
 
@@ -288,11 +293,11 @@ TEST(MessageWidgetTest, ChildNumberSignal)
   msg->set_data(-1.5);
 
   // Create widget from message
-  auto messageWidget = new MessageWidget(msg);
-  ASSERT_NE(messageWidget, nullptr);
+  auto widget = new MessageWidget(msg);
+  ASSERT_NE(widget, nullptr);
 
   // Check we got a number widget
-  auto propWidget = messageWidget->PropertyWidgetByName("data");
+  auto propWidget = widget->PropertyWidgetByName("data");
   ASSERT_NE(propWidget, nullptr);
 
   auto numberWidget = qobject_cast<NumberWidget *>(propWidget);
@@ -300,7 +305,7 @@ TEST(MessageWidgetTest, ChildNumberSignal)
 
   // Connect signals
   bool signalReceived = false;
-  messageWidget->connect(messageWidget, &MessageWidget::ValueChanged,
+  widget->connect(widget, &MessageWidget::ValueChanged,
     [&signalReceived](const std::string &_name, QVariant _var)
     {
       auto v = _var.value<double>();
@@ -310,7 +315,7 @@ TEST(MessageWidgetTest, ChildNumberSignal)
     });
 
   // Get signal emitting widgets
-  auto spins = messageWidget->findChildren<QDoubleSpinBox *>();
+  auto spins = widget->findChildren<QDoubleSpinBox *>();
   ASSERT_EQ(spins.size(), 1);
 
   // Change the value and check new value at callback
@@ -320,7 +325,54 @@ TEST(MessageWidgetTest, ChildNumberSignal)
   // Check callback was called
   EXPECT_TRUE(signalReceived);
 
-  delete messageWidget;
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ChildBoolSignal)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  auto msg = new msgs::Boolean();
+  msg->set_data(true);
+
+  // Create widget from message
+  auto widget = new MessageWidget(msg);
+  ASSERT_NE(widget, nullptr);
+
+  // Check we got a bool widget
+  auto propWidget = widget->PropertyWidgetByName("data");
+  ASSERT_NE(propWidget, nullptr);
+
+  auto boolWidget = qobject_cast<BoolWidget *>(propWidget);
+  ASSERT_NE(boolWidget, nullptr);
+
+  // Connect signals
+  bool signalReceived = false;
+  widget->connect(widget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<bool>();
+      EXPECT_EQ(_name, "data");
+      EXPECT_FALSE(v);
+      signalReceived = true;
+    });
+
+  // Get signal emitting widgets
+  auto radios = widget->findChildren<QRadioButton *>();
+  EXPECT_EQ(radios.size(), 2);
+
+  // Change the value and check new value at callback
+  radios[0]->setChecked(false);
+  radios[1]->setChecked(true);
+
+  // Check callback was called
+  EXPECT_TRUE(signalReceived);
+
+  delete widget;
   EXPECT_TRUE(stop());
 }
 
@@ -334,22 +386,22 @@ TEST(MessageWidgetTest, PropertyByName)
   auto msg = new msgs::StringMsg();
 
   // Create widget from message
-  auto messageWidget = new MessageWidget(msg);
-  ASSERT_NE(messageWidget, nullptr);
+  auto widget = new MessageWidget(msg);
+  ASSERT_NE(widget, nullptr);
 
   // Get generated widgets by name
   for (auto name : {"header", "header::stamp", "header::stamp::sec",
       "header::stamp::nsec",  "data"})
   {
-    EXPECT_NE(messageWidget->PropertyWidgetByName(name), nullptr) << name;
+    EXPECT_NE(widget->PropertyWidgetByName(name), nullptr) << name;
   }
 
   // Fail with invalid names
   for (auto name : {"", "banana"})
   {
-    EXPECT_EQ(messageWidget->PropertyWidgetByName(name), nullptr) << name;
+    EXPECT_EQ(widget->PropertyWidgetByName(name), nullptr) << name;
   }
 
-  delete messageWidget;
+  delete widget;
   EXPECT_TRUE(stop());
 }
