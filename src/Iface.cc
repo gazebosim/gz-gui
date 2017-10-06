@@ -67,9 +67,9 @@ struct WindowConfig
   /// \brief String holding the global style sheet in QSS format.
   std::string styleSheet;
 
-  /// \brief Map menu name to whether it should be hidden, all menus are shown
+  /// \brief Map menu name to whether it should be visible, all menus are shown
   /// by default.
-  std::map<std::string, bool> hideMenuMap;
+  std::map<std::string, bool> menuVisibilityMap;
 
   /// \brief True if plugins found in plugin paths should be listed under the
   /// Plugins menu. True by default.
@@ -431,31 +431,31 @@ bool ignition::gui::loadConfig(const std::string &_config)
       // File
       if (auto fileElem = menusElem->FirstChildElement("file"))
       {
-        // Hide
-        if (fileElem->Attribute("hide"))
+        // Visible
+        if (fileElem->Attribute("visible"))
         {
-          bool hide = false;
-          fileElem->QueryBoolAttribute("hide", &hide);
-          g_windowConfig.hideMenuMap["fileMenu"] = hide;
+          bool visible = true;
+          fileElem->QueryBoolAttribute("visible", &visible);
+          g_windowConfig.menuVisibilityMap["fileMenu"] = visible;
         }
       }
 
       // Plugins
       if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
       {
-        // Hide
-        if (pluginsElem->Attribute("hide"))
+        // Visible
+        if (pluginsElem->Attribute("visible"))
         {
-          bool hide = false;
-          pluginsElem->QueryBoolAttribute("hide", &hide);
-          g_windowConfig.hideMenuMap["pluginsMenu"] = hide;
+          bool visible = true;
+          pluginsElem->QueryBoolAttribute("visible", &visible);
+          g_windowConfig.menuVisibilityMap["pluginsMenu"] = visible;
         }
 
         // From paths
         if (pluginsElem->Attribute("from_paths"))
         {
           bool fromPaths = false;
-          pluginsElem->QueryBoolAttribute("hide", &fromPaths);
+          pluginsElem->QueryBoolAttribute("from_paths", &fromPaths);
           g_windowConfig.pluginsFromPaths = fromPaths;
         }
 
@@ -678,12 +678,12 @@ bool ignition::gui::applyConfig()
   setStyleFromString(g_windowConfig.styleSheet);
 
   // Hide menus
-  for (auto hideMenu : g_windowConfig.hideMenuMap)
+  for (auto visible : g_windowConfig.menuVisibilityMap)
   {
     if (auto menu =
-        g_mainWin->findChild<QMenu *>(QString::fromStdString(hideMenu.first)))
+        g_mainWin->findChild<QMenu *>(QString::fromStdString(visible.first)))
     {
-      menu->menuAction()->setVisible(!hideMenu.second);
+      menu->menuAction()->setVisible(visible.second);
     }
   }
 

@@ -231,9 +231,9 @@ by adding a `<window>` element to the config file. The child elements are:
              [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
 * `<menus>`: Configure menu options
     * `<file>`: File menu configuration.
-        * `hide`: Set to true to hide the whole File menu.
+        * `visible`: Set to false to hide the whole File menu.
     * `<plugins>`: Plugins menu configuration.
-        * `hide`: Set to true to hide the whole Plugins menu.
+        * `visible`: Set to false to hide the whole Plugins menu.
         * `from_paths`: Set to false to prevent filling the menu with all
                         plugins found on the paths. In that case, if no plugins
                         are given with `<show>` elements, the plugins menu will
