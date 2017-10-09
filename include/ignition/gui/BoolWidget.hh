@@ -39,7 +39,7 @@ namespace ignition
       /// \brief Constructor
       /// \param[in] _key Property key value, such as "enable", which will be
       /// displayed next to the checkboxes representing the value.
-      public: BoolWidget(const std::string &_key);
+      public: explicit BoolWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~BoolWidget();
