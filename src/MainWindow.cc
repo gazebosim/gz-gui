@@ -61,8 +61,8 @@ MainWindow::MainWindow()
   // File menu
   auto fileMenu = this->menuBar()->addMenu(tr("&File"));
 
-  auto loadConfigAct = new QAction(tr("&Open configuration"), this);
-  loadConfigAct->setStatusTip(tr("Open configuration"));
+  auto loadConfigAct = new QAction(tr("&Load configuration"), this);
+  loadConfigAct->setStatusTip(tr("Load configuration"));
   loadConfigAct->setShortcut(tr("Ctrl+O"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
   fileMenu->addAction(loadConfigAct);
