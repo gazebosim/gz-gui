@@ -61,18 +61,21 @@ MainWindow::MainWindow()
   // File menu
   auto fileMenu = this->menuBar()->addMenu(tr("&File"));
 
-  auto loadConfigAct = new QAction(tr("&Load configuration"), this);
-  loadConfigAct->setStatusTip(tr("Quit"));
+  auto loadConfigAct = new QAction(tr("&Open configuration"), this);
+  loadConfigAct->setStatusTip(tr("Open configuration"));
+  loadConfigAct->setShortcut(tr("Ctrl+O"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
   fileMenu->addAction(loadConfigAct);
 
   auto saveConfigAct = new QAction(tr("&Save configuration"), this);
   saveConfigAct->setStatusTip(tr("Save configuration"));
+  saveConfigAct->setShortcut(tr("Ctrl+S"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
 
   auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
   saveConfigAsAct->setStatusTip(tr("Save configuration as"));
+  saveConfigAsAct->setShortcut(tr("Ctrl+Shift+S"));
   this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
     SLOT(OnSaveConfigAs()));
   fileMenu->addAction(saveConfigAsAct);
@@ -89,6 +92,7 @@ MainWindow::MainWindow()
 
   auto quitAct = new QAction(tr("&Quit"), this);
   quitAct->setStatusTip(tr("Quit"));
+  quitAct->setShortcut(tr("Ctrl+Q"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
 
