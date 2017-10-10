@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
+#include <ignition/common/Filesystem.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
