@@ -3,6 +3,7 @@ include_directories(${PROJECT_BINARY_DIR})
 set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/BoolWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/CollapsibleWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/ColorWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
@@ -16,11 +17,13 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/PropertyWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/SearchModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/StringWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Vector3dWidget.cc
   PARENT_SCOPE
 )
 
 set (gtest_sources
   BoolWidget_TEST.cc
+  ColorWidget_TEST.cc
   CollapsibleWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc
@@ -32,6 +35,7 @@ set (gtest_sources
   Pose3dWidget_TEST.cc
   SearchModel_TEST.cc
   StringWidget_TEST.cc
+  Vector3dWidget_TEST.cc
 )
 
 if (HAVE_IGN_TOOLS)

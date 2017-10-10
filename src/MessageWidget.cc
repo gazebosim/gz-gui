@@ -30,6 +30,7 @@
 
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/Helpers.hh"
@@ -38,6 +39,7 @@
 #include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
+#include "ignition/gui/Vector3dWidget.hh"
 
 #include "ignition/gui/MessageWidget.hh"
 
@@ -170,14 +172,34 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   // Vector3d
   if (messageType == "ignition.msgs.Vector3d")
   {
-    // Coming soon
+    // If creating new widget
+    if (!propertyWidget)
+    {
+      propertyWidget = new Vector3dWidget(descriptor->name());
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
+    }
+
+    // Set value
+    auto msg = dynamic_cast<const msgs::Vector3d *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
+
     return true;
   }
 
   // Color
   if (messageType == "ignition.msgs.Color")
   {
-    // Coming soon
+    // If creating new widget
+    if (!propertyWidget)
+    {
+      propertyWidget = new ColorWidget();
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
+    }
+
+    // Set value
+    auto msg = dynamic_cast<const msgs::Color *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
+
     return true;
   }
 
@@ -499,12 +521,12 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         // Vector3d
         else if (fieldDescriptor->message_type()->name() == "Vector3d")
         {
-          // Coming soon
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Vector3d>()));
         }
         // Color
         else if (fieldDescriptor->message_type()->name() == "Color")
         {
-          // Coming soon
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Color>()));
         }
         // Recursively fill other types
         else
@@ -582,3 +604,4 @@ PropertyWidget *MessageWidget::PropertyWidgetByName(
 
   return nullptr;
 }
+

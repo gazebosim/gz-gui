@@ -12,6 +12,7 @@ add_definitions(${Qt5Core_DEFINITIONS})
 set (qt_headers
   BoolWidget.hh
   CollapsibleWidget.hh
+  ColorWidget.hh
   MainWindow.hh
   MessageWidget.hh
   NumberWidget.hh
@@ -19,6 +20,7 @@ set (qt_headers
   Pose3dWidget.hh
   PropertyWidget.hh
   StringWidget.hh
+  Vector3dWidget.hh
 )
 
 set (headers
