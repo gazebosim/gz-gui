@@ -53,6 +53,10 @@ MainWindow::MainWindow()
 {
   this->setObjectName("mainWindow");
 
+  // Ubuntu Xenial + Unity: the native menubar is not registering shortcuts,
+  // so we register the shortcuts independently of actions
+  std::vector<QShortcut *> shortcuts;
+
   // Title
   std::string title = "Ignition GUI";
   this->setWindowIconText(tr(title.c_str()));
@@ -65,23 +69,23 @@ MainWindow::MainWindow()
   loadConfigAct->setStatusTip(tr("Load configuration"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
   fileMenu->addAction(loadConfigAct);
-  // Ubuntu Xenial + Unity: the native menubar is not registering shortcuts,
-  // so we register the shortcuts independently of actions
-  (void) new QShortcut(Qt::CTRL + Qt::Key_O, this, SLOT(OnLoadConfig()));
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_O, this,
+      SLOT(OnLoadConfig())));
 
   auto saveConfigAct = new QAction(tr("&Save configuration"), this);
   saveConfigAct->setStatusTip(tr("Save configuration"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
-  (void) new QShortcut(Qt::CTRL + Qt::Key_S, this, SLOT(OnSaveConfig()));
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_S, this,
+      SLOT(OnSaveConfig())));
 
   auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
   saveConfigAsAct->setStatusTip(tr("Save configuration as"));
   this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
     SLOT(OnSaveConfigAs()));
   fileMenu->addAction(saveConfigAsAct);
-  (void) new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S, this,
-      SLOT(OnSaveConfigAs()));
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S, this,
+      SLOT(OnSaveConfigAs())));
 
   fileMenu->addSeparator();
 
@@ -97,7 +101,7 @@ MainWindow::MainWindow()
   quitAct->setStatusTip(tr("Quit"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
-  (void) new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close())));
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
