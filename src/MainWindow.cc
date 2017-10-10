@@ -182,7 +182,7 @@ void MainWindow::OnLoadConfig()
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfig()
 {
-  this->SaveImpl(defaultConfigPath());
+  this->SaveConfig(defaultConfigPath());
 }
 
 /////////////////////////////////////////////////
@@ -201,11 +201,11 @@ void MainWindow::OnSaveConfigAs()
   if (selected.empty())
     return;
 
-  this->SaveImpl(selected[0].toStdString());
+  this->SaveConfig(selected[0].toStdString());
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SaveImpl(const std::string &_path)
+void MainWindow::SaveConfig(const std::string &_path)
 {
   std::string config = "<?xml version=\"1.0\"?>\n\n";
 

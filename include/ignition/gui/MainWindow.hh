@@ -44,6 +44,12 @@ namespace ignition
       /// \return True if all docks have been closed
       public: bool CloseAllDocks();
 
+      /// \brief Save current window and plugin configuration to a file on disk.
+      /// Will open an error dialog in case it's not possible to write to the
+      /// path.
+      /// \param[in] _path The full destination path including filename.
+      public: void SaveConfig(const std::string &_path);
+
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
 
@@ -59,10 +65,6 @@ namespace ignition
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename
       private slots: void OnAddPlugin(QString _plugin);
-
-      /// \brief Save configuration on disk.
-      /// \param[in] _path The full destination path including filename.
-      private: void SaveImpl(const std::string &_path);
 
       /// \internal
       /// \brief Private data pointer
