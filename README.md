@@ -229,6 +229,19 @@ by adding a `<window>` element to the config file. The child elements are:
 * `<state>`: The state of the widow's docks and tabs, described as a Base64
              encoded `QByteArray`. More information
              [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
+* `<menus>`: Configure menu options
+    * `<file>`: File menu configuration.
+        * `visible`: Set to false to hide the whole File menu.
+    * `<plugins>`: Plugins menu configuration.
+        * `visible`: Set to false to hide the whole Plugins menu.
+        * `from_paths`: Set to false to prevent filling the menu with all
+                        plugins found on the paths. In that case, if no plugins
+                        are given with `<show>` elements, the plugins menu will
+                        be empty.
+        * `<show>`: Add a show element for each plugin which should be shown on
+                    the menu. If `from_paths` is true, all plugins will be shown
+                    anyway, so adding `<show>` has no effect. For the plugin to
+                    be shown, it must be on the path.
 
 ### Example layout
 
