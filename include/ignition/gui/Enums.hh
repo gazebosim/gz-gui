@@ -43,7 +43,7 @@ namespace gui
   };
 
   /// \brief String types
-  enum StringType
+  enum class StringType
   {
     /// \brief Undefined type
     NONE,
@@ -54,6 +54,22 @@ namespace gui
 
     /// \brief Use text for longer strings which span multiple lines.
     PLAIN_TEXT
+  };
+
+  /// \brief Number types
+  enum class NumberType
+  {
+    /// \brief Undefined type
+    NONE,
+
+    /// \brief Double
+    DOUBLE,
+
+    /// \brief Integer
+    INT,
+
+    /// \brief Unsigned integer
+    UINT
   };
 }
 }

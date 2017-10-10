@@ -1,6 +1,7 @@
 include_directories(${PROJECT_BINARY_DIR})
 
 set (sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/BoolWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/CollapsibleWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
@@ -9,6 +10,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MessageWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/NumberWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/PropertyWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/SearchModel.cc
@@ -17,6 +19,7 @@ set (sources
 )
 
 set (gtest_sources
+  BoolWidget_TEST.cc
   CollapsibleWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc
@@ -24,6 +27,7 @@ set (gtest_sources
   Iface_TEST.cc
   MainWindow_TEST.cc
   MessageWidget_TEST.cc
+  NumberWidget_TEST.cc
   SearchModel_TEST.cc
   StringWidget_TEST.cc
 )

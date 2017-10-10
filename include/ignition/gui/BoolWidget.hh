@@ -15,13 +15,13 @@
  *
 */
 
-#ifndef IGNITION_GUI_STRINGWIDGET_HH_
-#define IGNITION_GUI_STRINGWIDGET_HH_
+#ifndef IGNITION_GUI_BOOLWIDGET_HH_
+#define IGNITION_GUI_BOOLWIDGET_HH_
 
 #include <memory>
 #include <string>
 
-#include "ignition/gui/Enums.hh"
+#include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
@@ -29,30 +29,27 @@ namespace ignition
 {
   namespace gui
   {
-    class StringWidgetPrivate;
+    class BoolWidgetPrivate;
 
-    /// \brief A widget which holds a string property (std::string).
-    class IGNITION_GUI_VISIBLE StringWidget : public PropertyWidget
+    /// \brief A widget which holds a boolean property.
+    class IGNITION_GUI_VISIBLE BoolWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _key Property key value, such as "name", which will be
-      /// displayed next to the field which holds the string content.
-      /// \param[in] _type The value type, which will determine characteristics
-      /// of the line field, such as how large the widget is. Defaults to LINE.
-      public: StringWidget(const std::string &_key,
-                           const StringType _type = StringType::NONE);
+      /// \param[in] _key Property key value, such as "enable", which will be
+      /// displayed next to the checkboxes representing the value.
+      public: explicit BoolWidget(const std::string &_key);
 
       /// \brief Destructor
-      public: ~StringWidget();
+      public: ~BoolWidget();
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Value will be handled if the variant contains an std::string.
+      /// Value will be handled if it holds a boolean value.
       ///
       /// An input can be constructed as follows:
-      /// QVariant value = QVariant::fromValue(std::string("a string"));
+      /// QVariant value(true);
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
@@ -60,17 +57,17 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Returns a variant containing the widget's current std::string value.
+      /// Returns a variant containing the widget's current bool value.
       ///
-      /// A string value can be retrieved as follows:
-      /// std::string value = this->Value().value<std::string>();
+      /// The value can be retrieved as follows:
+      /// bool value = this->Value().toBool();
       ///
       /// \return Widget's current value.
       public: QVariant Value() const;
 
       /// \internal
       /// \brief Pointer to private data.
-      private: std::unique_ptr<StringWidgetPrivate> dataPtr;
+      private: std::unique_ptr<BoolWidgetPrivate> dataPtr;
     };
   }
 }

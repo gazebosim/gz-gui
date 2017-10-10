@@ -10,9 +10,11 @@ set (CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Core_DEFINITIONS})
 
 set (qt_headers
+  BoolWidget.hh
   CollapsibleWidget.hh
   MainWindow.hh
   MessageWidget.hh
+  NumberWidget.hh
   Plugin.hh
   PropertyWidget.hh
   StringWidget.hh
