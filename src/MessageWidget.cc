@@ -369,10 +369,6 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       continue;
     }
 
-    // TODO parse repeated fields
-    if (fieldDescriptor->is_repeated())
-      continue;
-
     // Scoped name
     auto fieldName = fieldDescriptor->name();
     auto scopedName = _scopedName.empty() ?
@@ -383,6 +379,77 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
 
     // Handle each field type
     auto fieldType = fieldDescriptor->type();
+
+    // Repeated fields
+    if (fieldDescriptor->is_repeated())
+    {
+      // Create collapsible
+      auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget);
+      if (!collapsible)
+      {
+        collapsible = new CollapsibleWidget(fieldName);
+        _parent->layout()->addWidget(collapsible);
+      }
+
+      // Parse all fields in the message
+      int count = 0;
+      for (; count < reflection->FieldSize(*_msg, fieldDescriptor); ++count)
+      {
+        // Append number to name
+        auto name = scopedName + "::" + std::to_string(count);
+
+        // Get widget
+        auto repProp = this->PropertyWidgetByName(name);
+
+        // Create a collapsible
+        auto repCollapsible = qobject_cast<CollapsibleWidget *>(repProp);
+        if (!repCollapsible)
+        {
+          repCollapsible = new CollapsibleWidget(std::to_string(count));
+          collapsible->layout()->addWidget(repCollapsible);
+        }
+
+        // Parse message
+        auto &valueMsg = reflection->GetRepeatedMessage(*_msg, fieldDescriptor,
+            count);
+        this->Parse(&valueMsg, name, repCollapsible);
+
+        // Collapse the first time it was created
+        if (!repProp)
+        {
+          repCollapsible->Toggle(false);
+          this->AddPropertyWidget(name, repCollapsible, collapsible);
+        }
+      }
+
+      // Drop repetitions which disappeared
+      auto colLayout = collapsible->layout();
+      for (; count < colLayout->count() - 1; ++count)
+      {
+        auto name = scopedName + "::" + std::to_string(count);
+        this->RemovePropertyWidget(name);
+      }
+/*
+// This properly removes the widgets, but MessageWidget still thinks it is there
+
+      auto colLayout = collapsible->layout();
+      QLayoutItem *item;
+      count++;
+      while ((item = colLayout->takeAt(count)) != nullptr)
+      {
+        delete item;
+      }
+*/
+
+      // Collapse the first time it was created
+      if (!propertyWidget)
+      {
+        collapsible->Toggle(false);
+        this->AddPropertyWidget(scopedName, collapsible, _parent);
+      }
+
+      continue;
+    }
 
     // Numbers
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
@@ -552,9 +619,6 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     // Nested messages
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
     {
-      // Get nested message
-      auto &valueMsg = reflection->GetMessage(*_msg, fieldDescriptor);
-
       // Create collapsible
       auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget);
       if (!collapsible)
@@ -563,7 +627,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         _parent->layout()->addWidget(collapsible);
       }
 
-      // Generate / update widget
+      // Generate / update widget from message
+      auto &valueMsg = reflection->GetMessage(*_msg, fieldDescriptor);
       this->Parse(&valueMsg, scopedName, collapsible);
 
       // Collapse the first time it was created
@@ -775,6 +840,35 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   }
 
   return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::RemovePropertyWidget(const std::string &_name)
+{
+  auto widget = this->PropertyWidgetByName(_name);
+
+  if (!widget)
+    return false;
+
+  // Remove from property list
+  this->dataPtr->properties.erase(_name);
+
+  auto collapsible = qobject_cast<CollapsibleWidget *>(widget);
+  if (collapsible)
+  {
+    auto parentWidget = qobject_cast<QWidget *>(collapsible->parent());
+    auto grandParentWidget = qobject_cast<QWidget *>(parentWidget->parent());
+
+    auto layout = grandParentWidget->layout();
+    auto id = layout->indexOf(grandParentWidget);
+
+    auto item = layout->takeAt(id);
+    delete item;
+
+    return true;
+  }
+
+  return false;
 }
 
 /////////////////////////////////////////////////
