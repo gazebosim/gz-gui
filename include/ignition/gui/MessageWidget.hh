@@ -153,6 +153,18 @@ namespace ignition
       private: bool AddPropertyWidget(const std::string &_scopedName,
           PropertyWidget *_property, QWidget *_parent);
 
+      /// \brief Performs the following:
+      /// * Register the widget so that it can be referred by its scoped name
+      /// * Forwards its signals to the message widget
+      /// * Places the widget in the layout with the correct indentation
+      /// \param[in] _scopedName Unique name to indentify the property within
+      /// this widget. Nested message names are scoped using `::`, for example:
+      /// `pose::position::x`.
+      /// \param[in] _property Widget to be added.
+      /// \param[in] _parent Parent widget to add the property to.
+      /// \return True if property successfully added.
+      private: bool RemovePropertyWidget(const std::string &_scopedName);
+
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update existing widgets with
       /// values from the message. This is called recursively to parse nested
