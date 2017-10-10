@@ -71,6 +71,12 @@ namespace ignition
       /// \param[in] _index Index of the chosen preset.
       private slots: void OnPresetChanged(const int _index);
 
+      /// \brief Callback when a spin has changed.
+      private slots: void OnSpinChanged();
+
+      /// \brief Update the preset based on the current spin values.
+      private: void UpdatePreset();
+
       /// \internal
       /// \brief Pointer to private data.
       private: std::unique_ptr<Vector3dWidgetPrivate> dataPtr;
