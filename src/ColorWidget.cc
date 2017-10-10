@@ -126,6 +126,13 @@ ColorWidget::~ColorWidget()
 /////////////////////////////////////////////////
 bool ColorWidget::SetValue(const QVariant _value)
 {
+  if (!_value.canConvert<math::Color>())
+  {
+    ignerr << "Wrong variant type, expected [ignition::math::Color]"
+           << std::endl;
+    return false;
+  }
+
   auto value = _value.value<math::Color>();
 
   auto spins = this->findChildren<QDoubleSpinBox *>();
@@ -134,6 +141,7 @@ bool ColorWidget::SetValue(const QVariant _value)
   spins[1]->setValue(value.G());
   spins[2]->setValue(value.B());
   spins[3]->setValue(value.A());
+
   return true;
 }
 
@@ -149,10 +157,7 @@ QVariant ColorWidget::Value() const
   value.B(spins[2]->value());
   value.A(spins[3]->value());
 
-  QVariant v;
-  v.setValue(value);
-
-  return v;
+  return QVariant::fromValue(value);
 }
 
 /////////////////////////////////////////////////
@@ -171,11 +176,9 @@ void ColorWidget::OnCustomColorDialog()
     this->connect(dialog, &QColorDialog::currentColorChanged,
       [this](const QColor _value)
       {
-        QVariant v;
-        v.setValue(convert(_value));
+        auto v = QVariant::fromValue(convert(_value));
 
         this->SetValue(v);
-
         this->ValueChanged(v);
       });
   }

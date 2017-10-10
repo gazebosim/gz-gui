@@ -76,12 +76,6 @@ Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
 
     auto label = new QLabel(humanReadable(elements[i]).c_str());
     label->setToolTip(tr(elements[i].c_str()));
-    if (i == 0)
-      label->setStyleSheet("QLabel{color: " + kRedColor + ";}");
-    else if (i == 1)
-      label->setStyleSheet("QLabel{color: " + kGreenColor + ";}");
-    else if (i == 2)
-      label->setStyleSheet("QLabel{color:" + kBlueColor + ";}");
 
     auto unitLabel = new QLabel();
     unitLabel->setMaximumWidth(40);
@@ -109,6 +103,13 @@ Pose3dWidget::~Pose3dWidget()
 /////////////////////////////////////////////////
 bool Pose3dWidget::SetValue(const QVariant _value)
 {
+  if (!_value.canConvert<math::Pose3d>())
+  {
+    ignerr << "Wrong variant type, expected [ignition::math::Pose3d]"
+           << std::endl;
+    return false;
+  }
+
   auto value = _value.value<math::Pose3d>();
 
   auto spins = this->findChildren<QDoubleSpinBox *>();
@@ -142,7 +143,5 @@ QVariant Pose3dWidget::Value() const
   rot.Z(spins[5]->value());
   value.Rot().Euler(rot);
 
-  QVariant v;
-  v.setValue(value);
-  return v;
+  return QVariant::fromValue(value);
 }

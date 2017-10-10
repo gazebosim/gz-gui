@@ -31,27 +31,51 @@ namespace ignition
   {
     class Vector3dWidgetPrivate;
 
-    /// \brief A widget which holds a Vector3d property.
+    /// \brief A widget which holds a vector 3d property.
     class IGNITION_GUI_VISIBLE Vector3dWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _key Property key.
+      /// \param[in] _key Property key value, such as "axis". Unlike other
+      /// widgets, the key is not displayed in this widget, it is only used to
+      /// set a range.
       public: Vector3dWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~Vector3dWidget();
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      ///
+      /// Value will be handled if it holds a math::Vector3d value.
+      ///
+      /// An input can be constructed as follows:
+      /// QVariant value = QVariant::fromValue(ignition::math::Vector3d::Zero);
+      ///
+      /// \param[in] _value New value.
+      /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      ///
+      /// Returns a variant containing the widget's current math::Vector3d
+      /// value.
+      ///
+      /// A pose value can be retrieved as follows:
+      /// auto value = this->Value().value<ignition::math::Vector3d>();
+      ///
+      /// \return Widget's current value.
       public: QVariant Value() const;
 
-      /// \brief Callback when a the preset has changed.
+      /// \brief Callback when the preset has changed.
       /// \param[in] _index Index of the chosen preset.
       private slots: void OnPresetChanged(const int _index);
+
+      /// \brief Callback when a spin has changed.
+      private slots: void OnSpinChanged();
+
+      /// \brief Update the preset based on the current spin values.
+      private: void UpdatePreset();
 
       /// \internal
       /// \brief Pointer to private data.

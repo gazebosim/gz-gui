@@ -74,3 +74,27 @@ void CollapsibleWidget::Toggle(const bool _checked)
     icon->setText(QString::fromUtf8("\u25b2"));
 }
 
+/////////////////////////////////////////////////
+bool CollapsibleWidget::SetValue(const QVariant _value)
+{
+  // Set value of first property
+  auto prop = this->findChild<PropertyWidget *>();
+
+  if (!prop)
+    return false;
+
+  return prop->SetValue(_value);
+}
+
+/////////////////////////////////////////////////
+QVariant CollapsibleWidget::Value() const
+{
+  // Get value of first property
+  auto prop = this->findChild<PropertyWidget *>();
+
+  if (!prop)
+    return QVariant();
+
+  return prop->Value();
+}
+

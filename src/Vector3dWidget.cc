@@ -64,6 +64,21 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   vecYLabel->setToolTip(tr("y"));
   vecZLabel->setToolTip(tr("z"));
 
+  // Units
+  auto unit = unitFromKey(_key);
+
+  auto unitXLabel = new QLabel();
+  unitXLabel->setMaximumWidth(40);
+  unitXLabel->setText(QString::fromStdString(unit));
+
+  auto unitYLabel = new QLabel();
+  unitYLabel->setMaximumWidth(40);
+  unitYLabel->setText(QString::fromStdString(unit));
+
+  auto unitZLabel = new QLabel();
+  unitZLabel->setMaximumWidth(40);
+  unitZLabel->setText(QString::fromStdString(unit));
+
   // SpinBoxes
   double min = 0;
   double max = 0;
@@ -76,7 +91,7 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   vecXSpinBox->setAlignment(Qt::AlignRight);
   vecXSpinBox->setMaximumWidth(100);
   this->connect(vecXSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnValueChanged()));
+      SLOT(OnSpinChanged()));
 
   auto vecYSpinBox = new QDoubleSpinBox(this);
   vecYSpinBox->setRange(min, max);
@@ -85,7 +100,7 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   vecYSpinBox->setAlignment(Qt::AlignRight);
   vecYSpinBox->setMaximumWidth(100);
   this->connect(vecYSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnValueChanged()));
+      SLOT(OnSpinChanged()));
 
   auto vecZSpinBox = new QDoubleSpinBox(this);
   vecZSpinBox->setRange(min, max);
@@ -94,17 +109,20 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   vecZSpinBox->setAlignment(Qt::AlignRight);
   vecZSpinBox->setMaximumWidth(100);
   this->connect(vecZSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnValueChanged()));
+      SLOT(OnSpinChanged()));
 
   // Layout
   auto widgetLayout = new QHBoxLayout();
   widgetLayout->addWidget(presetsCombo);
   widgetLayout->addWidget(vecXLabel);
   widgetLayout->addWidget(vecXSpinBox);
+  widgetLayout->addWidget(unitXLabel);
   widgetLayout->addWidget(vecYLabel);
   widgetLayout->addWidget(vecYSpinBox);
+  widgetLayout->addWidget(unitYLabel);
   widgetLayout->addWidget(vecZLabel);
   widgetLayout->addWidget(vecZSpinBox);
+  widgetLayout->addWidget(unitZLabel);
 
   widgetLayout->setAlignment(vecXLabel, Qt::AlignRight);
   widgetLayout->setAlignment(vecYLabel, Qt::AlignRight);
@@ -121,6 +139,13 @@ Vector3dWidget::~Vector3dWidget()
 /////////////////////////////////////////////////
 bool Vector3dWidget::SetValue(const QVariant _value)
 {
+  if (!_value.canConvert<math::Vector3d>())
+  {
+    ignerr << "Wrong variant type, expected [ignition::math::Vector3d]"
+           << std::endl;
+    return false;
+  }
+
   auto value = _value.value<ignition::math::Vector3d>();
 
   auto spins = this->findChildren<QDoubleSpinBox *>();
@@ -129,26 +154,7 @@ bool Vector3dWidget::SetValue(const QVariant _value)
   spins[1]->setValue(value.Y());
   spins[2]->setValue(value.Z());
 
-  // Update preset
-  int preset = 0;
-  if (value == math::Vector3d::UnitX)
-    preset = 1;
-  else if (value == -math::Vector3d::UnitX)
-    preset = 2;
-  else if (value == math::Vector3d::UnitY)
-    preset = 3;
-  else if (value == -math::Vector3d::UnitY)
-    preset = 4;
-  else if (value == math::Vector3d::UnitZ)
-    preset = 5;
-  else if (value == -math::Vector3d::UnitZ)
-    preset = 6;
-
-  auto combo = this->findChild<QComboBox *>();
-
-  combo->blockSignals(true);
-  combo->setCurrentIndex(preset);
-  combo->blockSignals(false);
+  this->UpdatePreset();
 
   return true;
 }
@@ -168,6 +174,39 @@ QVariant Vector3dWidget::Value() const
   v.setValue(value);
 
   return v;
+}
+
+/////////////////////////////////////////////////
+void Vector3dWidget::OnSpinChanged()
+{
+  this->UpdatePreset();
+  this->OnValueChanged();
+}
+
+/////////////////////////////////////////////////
+void Vector3dWidget::UpdatePreset()
+{
+  auto value = this->Value().value<math::Vector3d>();
+
+  int preset{0};
+  if (value == math::Vector3d::UnitX)
+    preset = 1;
+  else if (value == -math::Vector3d::UnitX)
+    preset = 2;
+  else if (value == math::Vector3d::UnitY)
+    preset = 3;
+  else if (value == -math::Vector3d::UnitY)
+    preset = 4;
+  else if (value == math::Vector3d::UnitZ)
+    preset = 5;
+  else if (value == -math::Vector3d::UnitZ)
+    preset = 6;
+
+  auto combo = this->findChild<QComboBox *>();
+
+  combo->blockSignals(true);
+  combo->setCurrentIndex(preset);
+  combo->blockSignals(false);
 }
 
 /////////////////////////////////////////////////
@@ -191,8 +230,7 @@ void Vector3dWidget::OnPresetChanged(const int _index)
     return;
 
   // Signal
-  QVariant v;
-  v.setValue(vec);
+  auto v = QVariant::fromValue(vec);
 
   this->SetValue(v);
   this->ValueChanged(v);
