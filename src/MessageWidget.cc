@@ -565,7 +565,8 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
 
   // If there's already an entry on the map, it will be overriden. This
   // is expected in the case of nested special messages, which are added first
-  // to a collapsible and then the collapsible is added to the parent collapsible
+  // to a collapsible and then the collapsible is added to the parent
+  // collapsible
   this->dataPtr->properties[_name] = _property;
 
   // Forward widget's ValueChanged signal
