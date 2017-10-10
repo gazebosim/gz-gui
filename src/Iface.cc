@@ -698,6 +698,25 @@ bool ignition::gui::applyConfig()
                     action->text().toStdString()) !=
                     g_windowConfig.showPlugins.end());
     }
+
+    for (auto plugin : g_windowConfig.showPlugins)
+    {
+      bool exists = false;
+      for (auto action : menu->actions())
+      {
+        if (action->text().toStdString() == plugin)
+        {
+          exists = true;
+          break;
+        }
+      }
+
+      if (!exists)
+      {
+        ignwarn << "Requested to show plugin [" << plugin <<
+            "] but it doesn't exist." << std::endl;
+      }
+    }
   }
 
   QCoreApplication::processEvents();
