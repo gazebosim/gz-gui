@@ -22,6 +22,7 @@
 #include <string>
 
 #include "ignition/gui/qt.h"
+#include "ignition/gui/Enums.hh"
 #include "ignition/gui/PropertyWidget.hh"
 #include "ignition/gui/System.hh"
 
@@ -37,40 +38,37 @@ namespace ignition
     {
       Q_OBJECT
 
-      /// \brief Number types
-      public: enum NumberType
-      {
-        /// \brief Double
-        DOUBLE,
-
-        /// \brief Integer
-        INT,
-
-        /// \brief Unsigned integer
-        UINT
-      };
-
       /// \brief Constructor
       /// \param[in] _key Property key value, such as "length", which will be
       /// displayed next to the spin box which holds the value.
       /// \param[in] _type The value type, which will determine characteristics
-      /// of the spin box, such as decimal places and range.
+      /// of the spin box, such as decimal places and range. Defaults to DOUBLE.
       public: NumberWidget(const std::string &_key,
-                           const NumberType _type = DOUBLE);
+                           const NumberType _type = NumberType::NONE);
 
       /// \brief Destructor
       public: ~NumberWidget();
 
       /// \brief Inherited from PropertyWidget.
-      /// Value will be handled if its
-      /// type matches the widget's type (double, int or uint).
+      ///
+      /// Value will be handled if its type matches the widget's type (double,
+      /// int or uint).
+      ///
+      /// A double input can be constructed as follows:
+      /// QVariant value(0.5);
+      ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
       /// \brief Inherited from PropertyWidget.
+      ///
       /// Returns a variant containing the widget's current value. Its type will
       /// be either double, int or uint depending on the widget's type.
+      ///
+      /// An int value can be retrieved as follows:
+      /// int value = this->Value().toInt();
+      ///
       /// \return Widget's current number value.
       public: QVariant Value() const;
 

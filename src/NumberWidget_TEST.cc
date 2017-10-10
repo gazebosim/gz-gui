@@ -21,8 +21,8 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
-#include "ignition/gui/QtMetatypes.hh"
 
+#include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/NumberWidget.hh"
 
 using namespace ignition;
@@ -36,7 +36,7 @@ TEST(NumberWidgetTest, DoubleSignal)
 
   // Create widget
   auto widget = new NumberWidget("a double number");
-  EXPECT_TRUE(widget != nullptr);
+  ASSERT_NE(widget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -78,8 +78,8 @@ TEST(NumberWidgetTest, IntSignal)
   EXPECT_TRUE(initApp());
 
   // Create widget
-  auto widget = new NumberWidget("a int number", NumberWidget::INT);
-  EXPECT_TRUE(widget != nullptr);
+  auto widget = new NumberWidget("a int number", NumberType::INT);
+  ASSERT_NE(widget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -121,8 +121,8 @@ TEST(NumberWidgetTest, UIntSignal)
   EXPECT_TRUE(initApp());
 
   // Create widget
-  auto widget = new NumberWidget("an unsigned int number", NumberWidget::UINT);
-  EXPECT_TRUE(widget != nullptr);
+  auto widget = new NumberWidget("an unsigned int number", NumberType::UINT);
+  ASSERT_NE(widget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -154,6 +154,60 @@ TEST(NumberWidgetTest, UIntSignal)
   EXPECT_TRUE(signalReceived);
 
   delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(NumberWidgetTest, SetValue)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Default widget (double)
+  {
+    auto widget = new NumberWidget("a_number");
+    ASSERT_NE(widget, nullptr);
+
+    // Set good value
+    EXPECT_TRUE(widget->SetValue(0.5));
+
+    // Set bad value
+    EXPECT_FALSE(widget->SetValue(
+      QVariant::fromValue(std::string("not a number"))));
+
+    delete widget;
+  }
+
+  // Int widget
+  {
+    auto widget = new NumberWidget("an_int", NumberType::INT);
+    ASSERT_NE(widget, nullptr);
+
+    // Set good value
+    EXPECT_TRUE(widget->SetValue(1));
+
+    // Set bad value
+    EXPECT_FALSE(widget->SetValue(
+      QVariant::fromValue(std::string("not a number"))));
+
+    delete widget;
+  }
+
+  // UInt widget
+  {
+    auto widget = new NumberWidget("an_uint", NumberType::UINT);
+    ASSERT_NE(widget, nullptr);
+
+    // Set good value
+    EXPECT_TRUE(widget->SetValue(5u));
+
+    // Set bad value
+    EXPECT_FALSE(widget->SetValue(
+      QVariant::fromValue(std::string("not a number"))));
+
+    delete widget;
+  }
+
   EXPECT_TRUE(stop());
 }
 

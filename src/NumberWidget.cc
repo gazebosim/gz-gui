@@ -28,7 +28,7 @@ namespace ignition
     /// \brief Private data for the NumberWidget class.
     class NumberWidgetPrivate
     {
-      public: NumberWidget::NumberType type;
+      public: NumberType type;
     };
   }
 }
@@ -41,6 +41,8 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
     : dataPtr(new NumberWidgetPrivate())
 {
   this->dataPtr->type = _type;
+  if (this->dataPtr->type == NumberType::NONE)
+    this->dataPtr->type = NumberType::DOUBLE;
 
   auto widgetLayout = new QHBoxLayout;
 
@@ -55,12 +57,12 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
   rangeFromKey(_key, min, max);
 
   // Make sure it fits QSpinBox
-  if (this->dataPtr->type == UINT)
+  if (this->dataPtr->type == NumberType::UINT)
   {
     min = std::max((unsigned int)min, 0u);
     max = math::equal(max, math::MAX_D) ? math::MAX_I32 : (unsigned int)max;
   }
-  else if (this->dataPtr->type == INT)
+  else if (this->dataPtr->type == NumberType::INT)
   {
     min = math::equal(min, math::MIN_D) ? math::MIN_I32 : (int)max;
     max = math::equal(max, math::MAX_D) ? math::MAX_I32 : (int)max;
@@ -74,12 +76,11 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
   unitLabel->setText(QString::fromStdString(unit));
 
   // Spin
-  if (this->dataPtr->type == DOUBLE)
+  if (this->dataPtr->type == NumberType::UINT ||
+      this->dataPtr->type == NumberType::INT)
   {
-    auto spin = new QDoubleSpinBox(this);
-    spin->setSingleStep(0.01);
-    spin->setDecimals(8);
-    spin->setRange(min, max);
+    auto spin = new QSpinBox(this);
+    spin->setRange((int)min, (int)max);
     spin->setAlignment(Qt::AlignRight);
     this->connect(spin, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
@@ -87,8 +88,10 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
   }
   else
   {
-    auto spin = new QSpinBox(this);
-    spin->setRange((int)min, (int)max);
+    auto spin = new QDoubleSpinBox(this);
+    spin->setSingleStep(0.01);
+    spin->setDecimals(8);
+    spin->setRange(min, max);
     spin->setAlignment(Qt::AlignRight);
     this->connect(spin, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
@@ -109,8 +112,14 @@ NumberWidget::~NumberWidget()
 /////////////////////////////////////////////////
 bool NumberWidget::SetValue(const QVariant _value)
 {
-  if (this->dataPtr->type == DOUBLE)
+  if (this->dataPtr->type == NumberType::DOUBLE)
   {
+    if (!_value.canConvert<double>())
+    {
+      ignerr << "Wrong variant type, expected [double]" << std::endl;
+      return false;
+    }
+
     double value = _value.toDouble();
 
     auto spin = this->findChild<QDoubleSpinBox *>();
@@ -130,10 +139,26 @@ bool NumberWidget::SetValue(const QVariant _value)
       return false;
     }
 
-    if (this->dataPtr->type == INT)
+    if (this->dataPtr->type == NumberType::INT)
+    {
+      if (!_value.canConvert<int>())
+      {
+        ignerr << "Wrong variant type, expected [int]" << std::endl;
+        return false;
+      }
+
       spin->setValue(_value.toInt());
+    }
     else
+    {
+      if (!_value.canConvert<unsigned int>())
+      {
+        ignerr << "Wrong variant type, expected [unsigned int]" << std::endl;
+        return false;
+      }
+
       spin->setValue(_value.toUInt());
+    }
   }
 
   return true;

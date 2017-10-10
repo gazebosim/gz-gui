@@ -39,12 +39,13 @@ namespace ignition
       /// \brief Constructor
       /// \param[in] _key Property key value, such as "enable", which will be
       /// displayed next to the checkboxes representing the value.
-      public: BoolWidget(const std::string &_key);
+      public: explicit BoolWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~BoolWidget();
 
       /// \brief Inherited from PropertyWidget.
+      ///
       /// Value will be handled if it holds a boolean value.
       ///
       /// An input can be constructed as follows:
@@ -54,7 +55,14 @@ namespace ignition
       /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
-      // Documentation inherited
+      /// \brief Inherited from PropertyWidget.
+      ///
+      /// Returns a variant containing the widget's current bool value.
+      ///
+      /// The value can be retrieved as follows:
+      /// bool value = this->Value().toBool();
+      ///
+      /// \return Widget's current value.
       public: QVariant Value() const;
 
       /// \internal

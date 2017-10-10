@@ -78,6 +78,12 @@ BoolWidget::~BoolWidget()
 /////////////////////////////////////////////////
 bool BoolWidget::SetValue(const QVariant _value)
 {
+  if (!_value.canConvert<bool>())
+  {
+    ignerr << "Wrong variant type, expected [bool]" << std::endl;
+    return false;
+  }
+
   bool value = _value.toBool();
 
   auto radios = this->findChildren<QRadioButton *>();

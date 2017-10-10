@@ -71,3 +71,23 @@ TEST(BoolWidgetTest, Signal)
   EXPECT_TRUE(stop());
 }
 
+/////////////////////////////////////////////////
+TEST(BoolWidgetTest, SetValue)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Create widget
+  auto widget = new BoolWidget("a_string");
+  ASSERT_NE(widget, nullptr);
+
+  // Set good value
+  EXPECT_TRUE(widget->SetValue(true));
+
+  // Set bad value
+  EXPECT_FALSE(widget->SetValue(QVariant()));
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+

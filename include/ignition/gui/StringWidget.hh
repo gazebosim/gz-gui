@@ -42,19 +42,29 @@ namespace ignition
       /// \param[in] _type The value type, which will determine characteristics
       /// of the line field, such as how large the widget is. Defaults to LINE.
       public: StringWidget(const std::string &_key,
-                           const StringType _type = NONE);
+                           const StringType _type = StringType::NONE);
 
       /// \brief Destructor
       public: ~StringWidget();
 
       /// \brief Inherited from PropertyWidget.
+      ///
       /// Value will be handled if the variant contains an std::string.
+      ///
+      /// An input can be constructed as follows:
+      /// QVariant value = QVariant::fromValue(std::string("a string"));
+      ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
       public: bool SetValue(const QVariant _value);
 
       /// \brief Inherited from PropertyWidget.
+      ///
       /// Returns a variant containing the widget's current std::string value.
+      ///
+      /// A string value can be retrieved as follows:
+      /// std::string value = this->Value().value<std::string>();
+      ///
       /// \return Widget's current value.
       public: QVariant Value() const;
 
