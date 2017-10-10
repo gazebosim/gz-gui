@@ -162,6 +162,9 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
 
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
     // Set value
     auto msg = dynamic_cast<const msgs::Pose *>(_msg);
     propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
@@ -179,6 +182,9 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
 
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
     // Set value
     auto msg = dynamic_cast<const msgs::Vector3d *>(_msg);
     propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
@@ -195,6 +201,9 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       propertyWidget = new ColorWidget();
       this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
+
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
 
     // Set value
     auto msg = dynamic_cast<const msgs::Color *>(_msg);
@@ -554,12 +563,10 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     return false;
   }
 
-  // Add to map if not there yet (nested special messages are added first to a
-  // collapsible and then the collapsible is added to the parent collapsible)
-  if (this->dataPtr->properties.find(_name) == this->dataPtr->properties.end())
-  {
-    this->dataPtr->properties[_name] = _property;
-  }
+  // If there's already an entry on the map, it will be overriden. This
+  // is expected in the case of nested special messages, which are added first
+  // to a collapsible and then the collapsible is added to the parent collapsible
+  this->dataPtr->properties[_name] = _property;
 
   // Forward widget's ValueChanged signal
   auto collapsibleSelf = qobject_cast<CollapsibleWidget *>(_property);

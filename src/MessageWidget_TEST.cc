@@ -299,6 +299,104 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(scriptMsg.name(), "test_script_name");
   }
 
+  // Update from message
+  {
+    // visual
+    msg.set_name("test_visual_2");
+    msg.set_id(123452u);
+    msg.set_parent_name("test_visual_parent_2");
+    msg.set_parent_id(543212u);
+    msg.set_cast_shadows(false);
+    msg.set_transparency(0.2);
+    msg.set_visible(false);
+    msg.set_delete_me(true);
+    msg.set_is_static(true);
+    msgs::Set(msg.mutable_scale(), math::Vector3d(1.0, 1.0, 2.0));
+
+    // pose
+    math::Vector3d pos(2.0, 3.0, 2.0);
+    math::Quaterniond quat(0.0, 0.0, 0.0);
+    msgs::Set(msg.mutable_pose(), math::Pose3d(pos, quat));
+
+    // material
+    auto materialMsg = msg.mutable_material();
+    materialMsg->set_shader_type(msgs::Material::Material::VERTEX);
+    materialMsg->set_normal_map("test_normal_map_2");
+    msgs::Set(materialMsg->mutable_ambient(), math::Color(0.0, 1.0, 0.0, 0.2));
+    msgs::Set(materialMsg->mutable_diffuse(), math::Color(0.0, 1.0, 1.0, 0.2));
+    msgs::Set(materialMsg->mutable_specular(), math::Color(1.0, 1.0, 1.0, 0.2));
+    msgs::Set(materialMsg->mutable_emissive(), math::Color(0.0, 0.5, 0.2, 0.2));
+    materialMsg->set_lighting(false);
+
+    // material::script
+    auto scriptMsg = materialMsg->mutable_script();
+    scriptMsg->set_name("test_script_name_2");
+  }
+  widget->UpdateFromMsg(&msg);
+
+  // Retrieve message
+  {
+    auto retMsg = dynamic_cast<msgs::Visual *>(widget->Msg());
+    ASSERT_NE(retMsg, nullptr);
+
+    // visual
+    EXPECT_EQ(retMsg->name(), "test_visual_2");
+    EXPECT_EQ(retMsg->id(), 123452u);
+    EXPECT_EQ(retMsg->parent_name(), "test_visual_parent_2");
+    EXPECT_EQ(retMsg->parent_id(), 543212u);
+    EXPECT_EQ(retMsg->cast_shadows(), false);
+    EXPECT_DOUBLE_EQ(retMsg->transparency(), 0.2);
+    EXPECT_EQ(retMsg->visible(), false);
+    EXPECT_EQ(retMsg->delete_me(), true);
+    EXPECT_EQ(retMsg->is_static(), true);
+
+    auto scaleMsg = retMsg->scale();
+    EXPECT_DOUBLE_EQ(scaleMsg.x(), 1.0);
+    EXPECT_DOUBLE_EQ(scaleMsg.y(), 1.0);
+    EXPECT_DOUBLE_EQ(scaleMsg.z(), 2.0);
+
+    // pose
+    auto poseMsg = retMsg->pose();
+    auto posMsg = poseMsg.position();
+    EXPECT_DOUBLE_EQ(posMsg.x(), 2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), 3.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), 2.0);
+    auto quat = msgs::Convert(poseMsg.orientation());
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+
+    // material
+    auto materialMsg = retMsg->material();
+    EXPECT_EQ(materialMsg.shader_type(), msgs::Material::Material::VERTEX);
+    EXPECT_EQ(materialMsg.normal_map(), "test_normal_map_2");
+    auto ambientMsg = materialMsg.ambient();
+    EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.0f);
+    EXPECT_DOUBLE_EQ(ambientMsg.g(), 1.0f);
+    EXPECT_DOUBLE_EQ(ambientMsg.b(), 0.0f);
+    EXPECT_DOUBLE_EQ(ambientMsg.a(), 0.2f);
+    auto diffuseMsg = materialMsg.diffuse();
+    EXPECT_DOUBLE_EQ(diffuseMsg.r(), 0.0f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.g(), 1.0f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.b(), 1.0f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.a(), 0.2f);
+    auto specularMsg = materialMsg.specular();
+    EXPECT_DOUBLE_EQ(specularMsg.r(), 1.0f);
+    EXPECT_DOUBLE_EQ(specularMsg.g(), 1.0f);
+    EXPECT_DOUBLE_EQ(specularMsg.b(), 1.0f);
+    EXPECT_DOUBLE_EQ(specularMsg.a(), 0.2f);
+    auto emissiveMsg = materialMsg.emissive();
+    EXPECT_DOUBLE_EQ(emissiveMsg.r(), 0.0f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.g(), 0.5f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.b(), 0.2f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.a(), 0.2f);
+    EXPECT_EQ(materialMsg.lighting(), false);
+
+    // material::script
+    auto scriptMsg = materialMsg.script();
+    EXPECT_EQ(scriptMsg.name(), "test_script_name_2");
+  }
+
   delete widget;
   EXPECT_TRUE(stop());
 }
