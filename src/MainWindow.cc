@@ -63,22 +63,25 @@ MainWindow::MainWindow()
 
   auto loadConfigAct = new QAction(tr("&Load configuration"), this);
   loadConfigAct->setStatusTip(tr("Load configuration"));
-  loadConfigAct->setShortcut(tr("Ctrl+O"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
   fileMenu->addAction(loadConfigAct);
+  // Ubuntu Xenial + Unity: the native menubar is not registering shortcuts,
+  // so we register the shortcuts independently of actions
+  (void) new QShortcut(Qt::CTRL + Qt::Key_O, this, SLOT(OnLoadConfig()));
 
   auto saveConfigAct = new QAction(tr("&Save configuration"), this);
   saveConfigAct->setStatusTip(tr("Save configuration"));
-  saveConfigAct->setShortcut(tr("Ctrl+S"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
+  (void) new QShortcut(Qt::CTRL + Qt::Key_S, this, SLOT(OnSaveConfig()));
 
   auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
   saveConfigAsAct->setStatusTip(tr("Save configuration as"));
-  saveConfigAsAct->setShortcut(tr("Ctrl+Shift+S"));
   this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
     SLOT(OnSaveConfigAs()));
   fileMenu->addAction(saveConfigAsAct);
+  (void) new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S, this,
+      SLOT(OnSaveConfigAs()));
 
   fileMenu->addSeparator();
 
@@ -92,9 +95,9 @@ MainWindow::MainWindow()
 
   auto quitAct = new QAction(tr("&Quit"), this);
   quitAct->setStatusTip(tr("Quit"));
-  quitAct->setShortcut(tr("Ctrl+Q"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
+  (void) new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
