@@ -21,7 +21,10 @@
 
 #include <string>
 
+#include <ignition/math/Pose3.hh>
+
 // Make it possible to use non-Qt types in QVariant
 Q_DECLARE_METATYPE(std::string)
+Q_DECLARE_METATYPE(ignition::math::Pose3d)
 
 #endif

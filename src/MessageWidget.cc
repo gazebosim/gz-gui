@@ -35,6 +35,7 @@
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
+#include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
 
@@ -152,7 +153,17 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   // Pose3d
   if (messageType == "ignition.msgs.Pose")
   {
-    // Coming soon
+    // If creating new widget
+    if (!propertyWidget)
+    {
+      propertyWidget = new Pose3dWidget();
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
+    }
+
+    // Set value
+    auto msg = dynamic_cast<const msgs::Pose *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
+
     return true;
   }
 
@@ -473,6 +484,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
       // Nested messages
       case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
       {
+        auto mutableMsg = reflection->MutableMessage(_msg, fieldDescriptor);
+
         // Geometry
         if (fieldDescriptor->message_type()->name() == "Geometry")
         {
@@ -481,7 +494,7 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         // Pose
         else if (fieldDescriptor->message_type()->name() == "Pose")
         {
-          // Coming soon
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Pose3d>()));
         }
         // Vector3d
         else if (fieldDescriptor->message_type()->name() == "Vector3d")
