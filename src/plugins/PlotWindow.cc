@@ -17,7 +17,7 @@
 
 #include <ignition/common/PluginMacros.hh>
 
-#include "ignition/gui/plugins/PlotWindow.hh"
+#include "ignition/gui/plugins/plot/PlotWindow.hh"
 
 using namespace ignition;
 using namespace gui;
