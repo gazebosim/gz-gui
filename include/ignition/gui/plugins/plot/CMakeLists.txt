@@ -5,8 +5,10 @@ set (widget
 )
 
 # Generate _MOC files.
-QT5_WRAP_CPP(${widget}_MOC ${widget}.hh)
-QT5_WRAP_CPP(EditableLabel_MOC ../EditableLabel.hh)
+QT5_WRAP_CPP(${widget}_MOC
+  ${widget}.hh
+  ../EditableLabel.hh
+)
 
 # Create the plugin.
 add_library(${widget} SHARED
