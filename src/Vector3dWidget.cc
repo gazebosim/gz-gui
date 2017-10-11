@@ -46,13 +46,14 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   // Presets
   auto presetsCombo = new QComboBox(this);
   presetsCombo->addItem("Custom", 0);
-  presetsCombo->addItem(" X", 1);
-  presetsCombo->addItem("-X", 2);
-  presetsCombo->addItem(" Y", 3);
-  presetsCombo->addItem("-Y", 4);
-  presetsCombo->addItem(" Z", 5);
-  presetsCombo->addItem("-Z", 6);
+  presetsCombo->addItem("Unit  X", 1);
+  presetsCombo->addItem("Unit -X", 2);
+  presetsCombo->addItem("Unit  Y", 3);
+  presetsCombo->addItem("Unit -Y", 4);
+  presetsCombo->addItem("Unit  Z", 5);
+  presetsCombo->addItem("Unit -Z", 6);
   presetsCombo->setMinimumWidth(80);
+  presetsCombo->setToolTip("Unit vector presets");
   this->connect(presetsCombo, SIGNAL(currentIndexChanged(const int)), this,
       SLOT(OnPresetChanged(const int)));
 
@@ -90,8 +91,10 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   vecXSpinBox->setDecimals(6);
   vecXSpinBox->setAlignment(Qt::AlignRight);
   vecXSpinBox->setMaximumWidth(100);
-  this->connect(vecXSpinBox, SIGNAL(editingFinished()), this,
+  this->connect(vecXSpinBox, SIGNAL(valueChanged(double)), this,
       SLOT(OnSpinChanged()));
+  this->connect(vecXSpinBox, SIGNAL(editingFinished()), this,
+      SLOT(OnSpinFinished()));
 
   auto vecYSpinBox = new QDoubleSpinBox(this);
   vecYSpinBox->setRange(min, max);
@@ -99,8 +102,10 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   vecYSpinBox->setDecimals(6);
   vecYSpinBox->setAlignment(Qt::AlignRight);
   vecYSpinBox->setMaximumWidth(100);
-  this->connect(vecYSpinBox, SIGNAL(editingFinished()), this,
+  this->connect(vecYSpinBox, SIGNAL(valueChanged(double)), this,
       SLOT(OnSpinChanged()));
+  this->connect(vecYSpinBox, SIGNAL(editingFinished()), this,
+      SLOT(OnSpinFinished()));
 
   auto vecZSpinBox = new QDoubleSpinBox(this);
   vecZSpinBox->setRange(min, max);
@@ -108,8 +113,10 @@ Vector3dWidget::Vector3dWidget(const std::string &_key)
   vecZSpinBox->setDecimals(6);
   vecZSpinBox->setAlignment(Qt::AlignRight);
   vecZSpinBox->setMaximumWidth(100);
-  this->connect(vecZSpinBox, SIGNAL(editingFinished()), this,
+  this->connect(vecZSpinBox, SIGNAL(valueChanged(double)), this,
       SLOT(OnSpinChanged()));
+  this->connect(vecZSpinBox, SIGNAL(editingFinished()), this,
+      SLOT(OnSpinFinished()));
 
   // Layout
   auto widgetLayout = new QHBoxLayout();
@@ -177,10 +184,17 @@ QVariant Vector3dWidget::Value() const
 }
 
 /////////////////////////////////////////////////
-void Vector3dWidget::OnSpinChanged()
+void Vector3dWidget::OnSpinFinished()
 {
   this->UpdatePreset();
   this->OnValueChanged();
+}
+
+/////////////////////////////////////////////////
+void Vector3dWidget::OnSpinChanged()
+{
+  this->UpdatePreset();
+  // Only emit a value changed signal on edit finish
 }
 
 /////////////////////////////////////////////////

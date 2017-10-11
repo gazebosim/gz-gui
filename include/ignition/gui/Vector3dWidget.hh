@@ -71,8 +71,13 @@ namespace ignition
       /// \param[in] _index Index of the chosen preset.
       private slots: void OnPresetChanged(const int _index);
 
-      /// \brief Callback when a spin has changed.
+      /// \brief Callback when a spin's value has changed, this updates the
+      /// preset.
       private slots: void OnSpinChanged();
+
+      /// \brief Callback when a user has finished editing a spin (it loses
+      /// focus). This updates the preset and emits a ValueChanged signal.
+      private slots: void OnSpinFinished();
 
       /// \brief Update the preset based on the current spin values.
       private: void UpdatePreset();
