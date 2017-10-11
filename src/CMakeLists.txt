@@ -28,6 +28,7 @@ set (gtest_sources
   CollapsibleWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc
+  EditableLabel_TEST.cc
   Helpers_TEST.cc
   Iface_TEST.cc
   MainWindow_TEST.cc
