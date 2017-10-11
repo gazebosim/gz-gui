@@ -7,6 +7,7 @@ set (qt_headers_local
   Responder
   TimePanel
   TopicEcho
+  TopicInterface
   TopicsStats
   TopicViewer
 )

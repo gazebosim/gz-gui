@@ -105,3 +105,10 @@ TEST(HelpersTest, rangeFromKey)
   EXPECT_DOUBLE_EQ(max, 1);
 }
 
+/////////////////////////////////////////////////
+TEST(HelpersTest, stringTypeFromKey)
+{
+  EXPECT_EQ(stringTypeFromKey("name"), StringType::LINE);
+  EXPECT_EQ(stringTypeFromKey("innerxml"), StringType::PLAIN_TEXT);
+}
+

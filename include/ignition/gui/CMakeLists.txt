@@ -10,9 +10,18 @@ set (CMAKE_AUTOMOC ON)
 add_definitions(${Qt5Core_DEFINITIONS})
 
 set (qt_headers
+  BoolWidget.hh
+  CollapsibleWidget.hh
+  ColorWidget.hh
   EditableLabel.hh
   MainWindow.hh
+  MessageWidget.hh
+  NumberWidget.hh
   Plugin.hh
+  Pose3dWidget.hh
+  PropertyWidget.hh
+  StringWidget.hh
+  Vector3dWidget.hh
 )
 
 set (headers
@@ -23,6 +32,7 @@ set (headers
   Iface.hh
   ign.hh
   qt.h
+  QtMetatypes.hh
   SearchModel.hh
   System.hh
 )

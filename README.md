@@ -229,6 +229,19 @@ by adding a `<window>` element to the config file. The child elements are:
 * `<state>`: The state of the widow's docks and tabs, described as a Base64
              encoded `QByteArray`. More information
              [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
+* `<menus>`: Configure menu options
+    * `<file>`: File menu configuration.
+        * `visible`: Set to false to hide the whole File menu.
+    * `<plugins>`: Plugins menu configuration.
+        * `visible`: Set to false to hide the whole Plugins menu.
+        * `from_paths`: Set to false to prevent filling the menu with all
+                        plugins found on the paths. In that case, if no plugins
+                        are given with `<show>` elements, the plugins menu will
+                        be empty.
+        * `<show>`: Add a show element for each plugin which should be shown on
+                    the menu. If `from_paths` is true, all plugins will be shown
+                    anyway, so adding `<show>` has no effect. For the plugin to
+                    be shown, it must be on the path.
 
 ### Example layout
 
@@ -333,14 +346,18 @@ If you have Ignition Tools installed, you can use the `ign gui` command line too
 
 ## Examples
 
-### Using as a library
+Ignition GUI comes with several examples of plugins and other files
+under the `examples` folder.
+
+### Standalone applications
 
 Ignition GUI can be used as a C++ library by other applications.
 
-An example is provided in which an empty window can be opened
-programmatically.
+Examples provided under `examples/standalone` can be compiled and run without
+the `ign gui` command line tool.
 
-Build it as follows:
+For example, build an example in which an empty window can be opened
+programmatically as follows:
 
     cd examples/standalone/window
     mkdir build
@@ -352,11 +369,13 @@ Then run it:
 
     ./window
 
-### Standalone plugin
+### Custom plugins
 
-It's possible to use the command line to load a custom plugin.
+Ignition GUI comes with several plugins, but its true power is loading custom
+plugins developed by others. Under `examples/plugins`, there are several
+examples on how to build different types of plugins.
 
-First, build an example plugin:
+For example, we can build the `hello_plugin` example plugin:
 
     cd examples/plugin/hello_plugin
     mkdir build
@@ -372,23 +391,23 @@ Now you can use the command line to open it:
 
     ign gui -s hello_plugin
 
-#### Example plugins
+#### All example plugins
 
 * `hello_plugin`: A button that prints hello on click.
 * `custom_context_menu`: Overrides the default context menu.
+* `designer_ui_file`: Use a Qt Designer UI file for a plugin's appearance.
 
-### Loading a configuration file
+### Configuration files
 
-It's possible to use the command line to load a configuration file specifying
-plugins to load.
+Configuration files are used to load an Ignition GUI window with several
+plugins and custom window configurations.
 
 Example configuration files are provided in the `/examples/config` folder.
 
-To run the example `hello.config`:
+Unlike example plugins and standalone programs, these files don't require
+any extra installation step and can be run directly from the command line.
 
-1. First, build the `hello_plugin` above.
+For example, you can run the example `pubsub.config` from the command line:
 
-1. Then, load the GUI from the command line with the configuration file:
-
-        ign gui -c examples/config/hello.config
+    ign gui -c examples/config/pubsub.config
 

@@ -41,6 +41,36 @@ namespace gui
     /// \brief Flag indicating whether an item should be expanded or not.
     TO_EXPAND
   };
+
+  /// \brief String types
+  enum class StringType
+  {
+    /// \brief Undefined type
+    NONE,
+
+    /// \brief Use line for short strings which usually fit in a single
+    /// line.
+    LINE,
+
+    /// \brief Use text for longer strings which span multiple lines.
+    PLAIN_TEXT
+  };
+
+  /// \brief Number types
+  enum class NumberType
+  {
+    /// \brief Undefined type
+    NONE,
+
+    /// \brief Double
+    DOUBLE,
+
+    /// \brief Integer
+    INT,
+
+    /// \brief Unsigned integer
+    UINT
+  };
 }
 }
 #endif

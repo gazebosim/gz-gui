@@ -9,6 +9,7 @@ set (gtest_local_sources
   Responder_TEST.cc
   TimePanel_TEST.cc
   TopicEcho_TEST.cc
+  TopicInterface_TEST.cc
   TopicsStats_TEST.cc
   TopicViewer_TEST.cc
 )

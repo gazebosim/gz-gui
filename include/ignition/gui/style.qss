@@ -132,6 +132,28 @@ QPushButton:checked
   selection-color: transparent;
 }
 
+QPushButton:focus
+{
+  border: none;
+  outline: none;
+}
+
+QPushButton#collapsibleButton
+{
+  background-color: transparent;
+  margin: 0px;
+}
+
+QPushButton#collapsibleButton:checked
+{
+  background-color: rgba(100, 100, 100, 70);
+}
+
+QPushButton#collapsibleButton:hover
+{
+  background-color: rgba(100, 100, 100, 50);
+}
+
 /* ---------------------------- */
 /*             Menu             */
 /* ---------------------------- */
