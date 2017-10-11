@@ -28,6 +28,8 @@
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/EnumWidget.hh"
+#include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
@@ -182,7 +184,6 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_DOUBLE_EQ(retMsg->suspension_erp(), 0.9);
   }
 
-  delete widget;
   EXPECT_TRUE(stop());
 }
 
@@ -212,6 +213,13 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     math::Vector3d pos(2.0, 3.0, 4.0);
     math::Quaterniond quat(1.57, 0.0, 0.0);
     msgs::Set(msg.mutable_pose(), math::Pose3d(pos, quat));
+
+    // geometry
+    auto geometryMsg = msg.mutable_geometry();
+    geometryMsg->set_type(msgs::Geometry::CYLINDER);
+    auto cylinderGeomMsg = geometryMsg->mutable_cylinder();
+    cylinderGeomMsg->set_radius(3.0);
+    cylinderGeomMsg->set_length(0.2);
 
     // material
     auto materialMsg = msg.mutable_material();
@@ -265,6 +273,13 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_DOUBLE_EQ(quat.Euler().X(), 1.57);
     EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
     EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+
+    // geometry
+    auto geometryMsg = retMsg->geometry();
+    EXPECT_EQ(geometryMsg.type(), msgs::Geometry::CYLINDER);
+    auto cylinderGeomMsg = geometryMsg.cylinder();
+    EXPECT_DOUBLE_EQ(cylinderGeomMsg.radius(), 3.0);
+    EXPECT_DOUBLE_EQ(cylinderGeomMsg.length(), 0.2);
 
     // material
     auto materialMsg = retMsg->material();
@@ -863,6 +878,108 @@ TEST(MessageWidgetTest, ChildPoseSignal)
   // Change the X value and check new value at callback
   spins[0]->setValue(1.0);
   spins[0]->editingFinished();
+
+  // Check callback was called
+  EXPECT_TRUE(signalReceived);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ChildGeometrySignal)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  auto msg = new msgs::Geometry();
+  msg->set_type(msgs::Geometry::CYLINDER);
+  auto cylinder = msg->mutable_cylinder();
+  cylinder->set_length(10.0);
+  cylinder->set_radius(0.5);
+
+  // Create widget from message
+  auto widget = new MessageWidget(msg);
+  EXPECT_TRUE(widget != nullptr);
+
+  // Check we got a geometry widget
+  auto propWidget = widget->PropertyWidgetByName("");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto geometryWidget = qobject_cast<GeometryWidget *>(propWidget);
+  EXPECT_NE(geometryWidget, nullptr);
+  // Connect signals
+  bool signalReceived = false;
+  widget->connect(widget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<msgs::Geometry>();
+      EXPECT_EQ(_name, "");
+      EXPECT_EQ(v.type(), msgs::Geometry::CYLINDER);
+      EXPECT_DOUBLE_EQ(v.cylinder().radius(), 2.0);
+      signalReceived = true;
+    });
+
+  // Get signal emitting widgets
+  auto spins = geometryWidget->findChildren<QDoubleSpinBox *>();
+  EXPECT_EQ(spins.size(), 5);
+
+  // Change the value and check new value at callback
+  spins[3]->setValue(2.0);
+  spins[3]->editingFinished();
+
+  // Check callback was called
+  EXPECT_TRUE(signalReceived);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ChildEnumSignal)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  auto msg = new msgs::Visual();
+  msg->set_type(msgs::Visual::LINK);
+
+  // Create widget from message
+  auto widget = new MessageWidget(msg);
+  EXPECT_TRUE(widget != nullptr);
+
+  // Check we got an enum widget
+  auto propWidget = widget->PropertyWidgetByName("type");
+  EXPECT_NE(propWidget, nullptr);
+
+  auto enumWidget = qobject_cast<EnumWidget *>(propWidget);
+  EXPECT_NE(enumWidget, nullptr);
+
+  // Connect signals
+  bool signalReceived = false;
+  widget->connect(widget, &MessageWidget::ValueChanged,
+    [&signalReceived](const std::string &_name, QVariant _var)
+    {
+      auto v = _var.value<std::string>();
+      EXPECT_EQ(_name, "type");
+      EXPECT_EQ(v, "GUI");
+      signalReceived = true;
+    });
+
+  auto label = enumWidget->findChild<QLabel *>();
+  EXPECT_NE(label, nullptr);
+  EXPECT_EQ(label->text(), "Type");
+
+  // Get signal emitting widgets
+  auto comboBoxes = enumWidget->findChildren<QComboBox *>();
+  EXPECT_EQ(comboBoxes.size(), 1);
+  EXPECT_EQ(comboBoxes[0]->count(), 8);
+
+  // Change the value and check new value at callback
+  comboBoxes[0]->setCurrentIndex(6);
+  comboBoxes[0]->currentIndexChanged(6);
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);

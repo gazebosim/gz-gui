@@ -6,6 +6,8 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/ColorWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/EnumWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/GeometryWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
@@ -27,6 +29,8 @@ set (gtest_sources
   CollapsibleWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc
+  EnumWidget_TEST.cc
+  GeometryWidget_TEST.cc
   Helpers_TEST.cc
   Iface_TEST.cc
   MainWindow_TEST.cc

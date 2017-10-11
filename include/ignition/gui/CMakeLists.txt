@@ -13,6 +13,8 @@ set (qt_headers
   BoolWidget.hh
   CollapsibleWidget.hh
   ColorWidget.hh
+  GeometryWidget.hh
+  EnumWidget.hh
   MainWindow.hh
   MessageWidget.hh
   NumberWidget.hh

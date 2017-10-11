@@ -120,8 +120,5 @@ QVariant StringWidget::Value() const
     value = plain->toPlainText().toStdString();
   }
 
-  QVariant v;
-  v.setValue(value);
-
-  return v;
+  return QVariant::fromValue(value);
 }

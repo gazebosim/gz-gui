@@ -17,50 +17,44 @@
 
 #include <gtest/gtest.h>
 
+#include <ignition/msgs.hh>
+
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
-#include "ignition/gui/QtMetatypes.hh"
 
-#include "ignition/gui/StringWidget.hh"
+#include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/GeometryWidget.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(StringWidgetTest, Signal)
+TEST(GeometryWidgetTest, Signal)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  // Create widget
-  auto widget = new StringWidget("a_string");
+  auto widget = new GeometryWidget();
   ASSERT_NE(widget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
-  widget->connect(widget, &StringWidget::ValueChanged,
+  widget->connect(widget, &GeometryWidget::ValueChanged,
     [&signalReceived](QVariant _var)
     {
-      auto v = _var.value<std::string>();
-      EXPECT_EQ(v, "banana");
+      auto v = _var.value<msgs::Geometry>();
+      EXPECT_EQ(v.type(), msgs::Geometry::BOX);
+      EXPECT_DOUBLE_EQ(v.box().size().y(), 2.0);
       signalReceived = true;
     });
 
-  // Check default value
-  EXPECT_EQ(widget->Value().value<std::string>(), std::string());
-
-  // Check key label
-  auto label = widget->findChild<QLabel *>();
-  ASSERT_NE(label, nullptr);
-  EXPECT_EQ(label->text().toStdString(), "A string");
-
   // Get signal emitting widgets
-  auto lineEdits = widget->findChildren<QLineEdit *>();
-  EXPECT_EQ(lineEdits.size(), 1);
+  auto sizeSpins = widget->findChildren<QDoubleSpinBox *>("size");
+  EXPECT_EQ(sizeSpins.size(), 3);
 
   // Change the value and check new value at callback
-  lineEdits[0]->setText("banana");
-  lineEdits[0]->editingFinished();
+  sizeSpins[1]->setValue(2.0);
+  sizeSpins[1]->editingFinished();
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);
@@ -70,21 +64,33 @@ TEST(StringWidgetTest, Signal)
 }
 
 /////////////////////////////////////////////////
-TEST(StringWidgetTest, SetValue)
+TEST(GeometryWidgetTest, SetValue)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  // Create widget
-  auto widget = new StringWidget("a_string");
+  auto widget = new GeometryWidget();
   ASSERT_NE(widget, nullptr);
 
-  // Set good value
-  EXPECT_TRUE(widget->SetValue(
-      QVariant::fromValue(std::string("string value"))));
-
   // Set bad value
-  EXPECT_FALSE(widget->SetValue(QVariant(1)));
+  EXPECT_FALSE(widget->SetValue(true));
+
+  // Set message without type
+  auto msg = msgs::Geometry();
+  msg.set_type(msgs::Geometry::EMPTY);
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(msg)));
+
+  // Set message with supported type
+  for (const auto &type : {msgs::Geometry::BOX,
+                           msgs::Geometry::CYLINDER,
+                           msgs::Geometry::SPHERE,
+                           msgs::Geometry::MESH,
+                           msgs::Geometry::POLYLINE})
+  {
+    msg.set_type(type);
+    EXPECT_TRUE(widget->SetValue(QVariant::fromValue(msg)));
+    EXPECT_EQ(widget->Value().value<msgs::Geometry>().type(), type);
+  }
 
   delete widget;
   EXPECT_TRUE(stop());
