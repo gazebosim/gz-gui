@@ -5,16 +5,12 @@ set (plotWidget
 )
 
 # Generate _MOC files.
-QT5_WRAP_CPP(${plotWidget}_MOC
-  ${plotWidget}.hh
-  ../EditableLabel.hh
-)
+QT5_WRAP_CPP(plotWidget_MOC ${plotWidget}.hh)
 
 # Create the plugin.
 add_library(${plotWidget} SHARED
   ${PROJECT_SOURCE_DIR}/src/plugins/plot/${plotWidget}.cc
-  ${PROJECT_SOURCE_DIR}/src/plugins/EditableLabel.cc
-  ${Plot_MOC}
+  ${plotWidget_MOC}
 
 )
 target_link_libraries(${plotWidget}

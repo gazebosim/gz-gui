@@ -14,15 +14,15 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PLOTWINDOW_HH_
-#define IGNITION_GUI_PLUGINS_PLOTWINDOW_HH_
+#ifndef IGNITION_GUI_PLUGINS_PLOT_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
 #endif
 
 #include "ignition/gui/Plugin.hh"
-#include "ignition/gui/plugins/EditableLabel.hh"
+#include "ignition/gui/EditableLabel.hh"
 
 namespace ignition
 {
@@ -31,15 +31,15 @@ namespace gui
 namespace plugins
 {
   /// \brief Widget that allow plotting of Ignition Transport topics.
-  class PlotWindow : public Plugin
+  class Plot : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor.
-    public: PlotWindow();
+    public: Plot();
 
     /// \brief Destructor.
-    public: virtual ~PlotWindow();
+    public: virtual ~Plot();
 
     // Documentation inherited.
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);

@@ -17,16 +17,15 @@
 
 #include <string>
 
-#include "ignition/gui/plugins/EditableLabel.hh"
+#include "ignition/gui/EditableLabel.hh"
 #include "ignition/gui/qt.h"
 
 using namespace ignition;
 using namespace gui;
-using namespace plugins;
 
 /// \internal
 /// \brief EditableLabel private data.
-class ignition::gui::plugins::EditableLabelPrivate
+class ignition::gui::EditableLabelPrivate
 {
   /// \brief Widget for editing the label.
   public: QLineEdit *lineEdit;

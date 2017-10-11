@@ -17,35 +17,35 @@
 
 #include <ignition/common/PluginMacros.hh>
 
-#include "ignition/gui/plugins/plot/PlotWindow.hh"
+#include "ignition/gui/plugins/plot/Plot.hh"
 
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-PlotWindow::PlotWindow()
+Plot::Plot()
   : Plugin()
 {
 }
 
 /////////////////////////////////////////////////
-PlotWindow::~PlotWindow()
+Plot::~Plot()
 {
 }
 
 /////////////////////////////////////////////////
-void PlotWindow::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
+void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 {
   if (this->title.empty())
     this->title = "Plotting Utility";
 
-  this->setObjectName("plotWindow");
+  this->setObjectName("Plot");
   this->setWindowFlags(Qt::Window | Qt::WindowTitleHint |
       Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint |
       Qt::CustomizeWindowHint);
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::PlotWindow,
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Plot,
                                   ignition::gui::Plugin)

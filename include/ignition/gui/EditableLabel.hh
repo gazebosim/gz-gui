@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PLOT_EDITABLELABEL_HH_
-#define IGNITION_GUI_PLUGINS_PLOT_EDITABLELABEL_HH_
+#ifndef IGNITION_GUI_EDITABLELABEL_HH_
+#define IGNITION_GUI_EDITABLELABEL_HH_
 
 #include <memory>
 #include <string>
@@ -25,8 +25,6 @@
 namespace ignition
 {
 namespace gui
-{
-namespace plugins
 {
   // Forward declare private data class
   class EditableLabelPrivate;
@@ -65,7 +63,6 @@ namespace plugins
     /// \brief Private data pointer
     private: std::unique_ptr<EditableLabelPrivate> dataPtr;
   };
-}
 }
 }
 #endif
