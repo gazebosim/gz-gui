@@ -12,10 +12,6 @@ set (qt_headers_local
   TopicViewer
 )
 
-set(non_plugin_files
-  EditableLabel
-)
-
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
   ${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/ign-gui-${PROJECT_MAJOR_VERSION}/plugins/
 )
