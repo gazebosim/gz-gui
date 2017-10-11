@@ -1,31 +1,26 @@
 include (${project_cmake_dir}/Utils.cmake)
 
-set (widget
-  PlotWindow
+set (plotWidget
+  Plot
 )
 
 # Generate _MOC files.
-QT5_WRAP_CPP(${widget}_MOC
-  ${widget}.hh
+QT5_WRAP_CPP(${plotWidget}_MOC
+  ${plotWidget}.hh
   ../EditableLabel.hh
 )
 
 # Create the plugin.
-add_library(${widget} SHARED
-  ${PROJECT_SOURCE_DIR}/src/plugins/plot/${widget}.cc
-  ${PROJECT_SOURCE_DIR}/src/Conversions.cc
-  ${EditableLabel_MOC}
+add_library(${plotWidget} SHARED
+  ${PROJECT_SOURCE_DIR}/src/plugins/plot/${plotWidget}.cc
   ${PROJECT_SOURCE_DIR}/src/plugins/EditableLabel.cc
-  ${PlotWindow_MOC}
+  ${Plot_MOC}
 
 )
-target_link_libraries(${widget}
-  ${IGNITION-COMMON_LIBRARIES}
+target_link_libraries(${plotWidget}
   ${IGNITION-GUI_LIBRARIES}
-  ${IGNITION-MSGS_LIBRARIES}
-  ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
   ${QWT_LIBRARY})
-install (TARGETS ${widget} DESTINATION
+install (TARGETS ${plotWidget} DESTINATION
   ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
