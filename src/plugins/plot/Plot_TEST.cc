@@ -23,11 +23,11 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(TopicViewerTest, Load)
+TEST(PlotTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("PlotWindow"));
+  EXPECT_TRUE(loadPlugin("Plot"));
 
   EXPECT_TRUE(stop());
 }

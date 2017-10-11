@@ -3,7 +3,6 @@
 
 set (gtest_local_sources
   ImageDisplay_TEST.cc
-  PlotWindow_TEST.cc
   Publisher_TEST.cc
   Requester_TEST.cc
   Responder_TEST.cc
@@ -15,3 +14,5 @@ set (gtest_local_sources
 )
 
 ign_build_tests(${gtest_local_sources})
+
+add_subdirectory(plot)
