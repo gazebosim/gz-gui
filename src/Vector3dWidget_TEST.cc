@@ -55,12 +55,24 @@ TEST(Vector3dWidgetTest, Signal)
   auto spins = widget->findChildren<QDoubleSpinBox *>();
   ASSERT_EQ(spins.size(), 3);
 
-  // Change the value and check new value at callback
+  // Get preset combo
+  auto combos = widget->findChildren<QComboBox *>();
+  EXPECT_EQ(combos.size(), 1);
+  EXPECT_EQ(combos[0]->currentIndex(), 0);
+
+  // Change the value, finish edit, and check new value at callback
   spins[1]->setValue(-4.5);
   spins[1]->editingFinished();
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);
+
+  // Change values without finishing editi and check preset
+  spins[0]->setValue(0.0);
+  spins[1]->setValue(0.0);
+  spins[2]->setValue(-1.0);
+  spins[2]->valueChanged(-1.0);
+  EXPECT_EQ(combos[0]->currentIndex(), 6);
 
   delete widget;
   EXPECT_TRUE(stop());

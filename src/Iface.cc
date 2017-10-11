@@ -66,6 +66,17 @@ struct WindowConfig
 
   /// \brief String holding the global style sheet in QSS format.
   std::string styleSheet;
+
+  /// \brief Map menu name to whether it should be visible, all menus are shown
+  /// by default.
+  std::map<std::string, bool> menuVisibilityMap;
+
+  /// \brief True if plugins found in plugin paths should be listed under the
+  /// Plugins menu. True by default.
+  bool pluginsFromPaths = true;
+
+  /// \brief List of plugins which should be shown on the list
+  std::vector<std::string> showPlugins;
 };
 
 /// \brief Pointer to application
@@ -357,8 +368,8 @@ bool ignition::gui::loadConfig(const std::string &_config)
   if (!success)
   {
     // We do not show an error message if the default config path doesn't exist
-    // yet. It's expected behavior and will be created the first time the user
-    // press "Save configuration".
+    // yet. It's expected behavior, it will be created the first time the user
+    // presses "Save configuration".
     if (_config != defaultConfigPath())
     {
       ignerr << "Failed to load file [" << _config << "]: XMLError"
@@ -411,6 +422,51 @@ bool ignition::gui::loadConfig(const std::string &_config)
       else
       {
         setStyleFromString("");
+      }
+    }
+
+    // Menus
+    if (auto menusElem = winElem->FirstChildElement("menus"))
+    {
+      // File
+      if (auto fileElem = menusElem->FirstChildElement("file"))
+      {
+        // Visible
+        if (fileElem->Attribute("visible"))
+        {
+          bool visible = true;
+          fileElem->QueryBoolAttribute("visible", &visible);
+          g_windowConfig.menuVisibilityMap["fileMenu"] = visible;
+        }
+      }
+
+      // Plugins
+      if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
+      {
+        // Visible
+        if (pluginsElem->Attribute("visible"))
+        {
+          bool visible = true;
+          pluginsElem->QueryBoolAttribute("visible", &visible);
+          g_windowConfig.menuVisibilityMap["pluginsMenu"] = visible;
+        }
+
+        // From paths
+        if (pluginsElem->Attribute("from_paths"))
+        {
+          bool fromPaths = false;
+          pluginsElem->QueryBoolAttribute("from_paths", &fromPaths);
+          g_windowConfig.pluginsFromPaths = fromPaths;
+        }
+
+        // Show individual plugins
+        for (auto showElem = pluginsElem->FirstChildElement("show");
+            showElem != nullptr;
+            showElem = showElem->NextSiblingElement("show"))
+        {
+          if (auto pluginName = showElem->GetText())
+            g_windowConfig.showPlugins.push_back(pluginName);
+        }
       }
     }
   }
@@ -603,19 +659,65 @@ bool ignition::gui::applyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
+  // Window position
   if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
     g_mainWin->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
 
+  // Window size
   if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
     g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
 
+  // Docks state
   if (!g_windowConfig.state.isEmpty())
   {
     if (!g_mainWin->restoreState(g_windowConfig.state))
       ignwarn << "Failed to restore state" << std::endl;
   }
 
+  // Stylesheet
   setStyleFromString(g_windowConfig.styleSheet);
+
+  // Hide menus
+  for (auto visible : g_windowConfig.menuVisibilityMap)
+  {
+    if (auto menu =
+        g_mainWin->findChild<QMenu *>(QString::fromStdString(visible.first)))
+    {
+      menu->menuAction()->setVisible(visible.second);
+    }
+  }
+
+  // Plugins menu
+  if (auto menu = g_mainWin->findChild<QMenu *>("pluginsMenu"))
+  {
+    for (auto action : menu->actions())
+    {
+      action->setVisible(g_windowConfig.pluginsFromPaths ||
+          std::find(g_windowConfig.showPlugins.begin(),
+                    g_windowConfig.showPlugins.end(),
+                    action->text().toStdString()) !=
+                    g_windowConfig.showPlugins.end());
+    }
+
+    for (auto plugin : g_windowConfig.showPlugins)
+    {
+      bool exists = false;
+      for (auto action : menu->actions())
+      {
+        if (action->text().toStdString() == plugin)
+        {
+          exists = true;
+          break;
+        }
+      }
+
+      if (!exists)
+      {
+        ignwarn << "Requested to show plugin [" << plugin <<
+            "] but it doesn't exist." << std::endl;
+      }
+    }
+  }
 
   QCoreApplication::processEvents();
 

@@ -47,10 +47,10 @@ ColorWidget::ColorWidget() : dataPtr(new ColorWidgetPrivate())
   auto colorGLabel = new QLabel(tr("G"));
   auto colorBLabel = new QLabel(tr("B"));
   auto colorALabel = new QLabel(tr("A"));
-  colorRLabel->setToolTip(tr("r"));
-  colorGLabel->setToolTip(tr("g"));
-  colorBLabel->setToolTip(tr("b"));
-  colorALabel->setToolTip(tr("a"));
+  colorRLabel->setToolTip(tr("Red"));
+  colorGLabel->setToolTip(tr("Green"));
+  colorBLabel->setToolTip(tr("Blue"));
+  colorALabel->setToolTip(tr("Alpha"));
 
   // SpinBoxes
   double min = 0.0;

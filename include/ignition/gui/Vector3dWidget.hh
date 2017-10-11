@@ -39,7 +39,7 @@ namespace ignition
       /// \brief Constructor
       /// \param[in] _key Property key value, such as "axis". Unlike other
       /// widgets, the key is not displayed in this widget, it is only used to
-      /// set a range.
+      /// set range and unit.
       public: Vector3dWidget(const std::string &_key);
 
       /// \brief Destructor
@@ -47,32 +47,37 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Value will be handled if it holds a math::Vector3d value.
+      /// Value will be handled if it holds a ignition::math::Vector3d value.
       ///
       /// An input can be constructed as follows:
       /// QVariant value = QVariant::fromValue(ignition::math::Vector3d::Zero);
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
-      public: bool SetValue(const QVariant _value);
+      public: bool SetValue(const QVariant _value) override;
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Returns a variant containing the widget's current math::Vector3d
-      /// value.
+      /// Returns a variant containing the widget's current
+      /// ignition::math::Vector3d value.
       ///
       /// A pose value can be retrieved as follows:
       /// auto value = this->Value().value<ignition::math::Vector3d>();
       ///
       /// \return Widget's current value.
-      public: QVariant Value() const;
+      public: QVariant Value() const override;
 
       /// \brief Callback when the preset has changed.
       /// \param[in] _index Index of the chosen preset.
       private slots: void OnPresetChanged(const int _index);
 
-      /// \brief Callback when a spin has changed.
+      /// \brief Callback when a spin's value has changed, this updates the
+      /// preset.
       private slots: void OnSpinChanged();
+
+      /// \brief Callback when a user has finished editing a spin (it loses
+      /// focus). This updates the preset and emits a ValueChanged signal.
+      private slots: void OnSpinFinished();
 
       /// \brief Update the preset based on the current spin values.
       private: void UpdatePreset();

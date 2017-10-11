@@ -53,6 +53,10 @@ MainWindow::MainWindow()
 {
   this->setObjectName("mainWindow");
 
+  // Ubuntu Xenial + Unity: the native menubar is not registering shortcuts,
+  // so we register the shortcuts independently of actions
+  std::vector<QShortcut *> shortcuts;
+
   // Title
   std::string title = "Ignition GUI";
   this->setWindowIconText(tr(title.c_str()));
@@ -60,22 +64,29 @@ MainWindow::MainWindow()
 
   // File menu
   auto fileMenu = this->menuBar()->addMenu(tr("&File"));
+  fileMenu->setObjectName("fileMenu");
 
   auto loadConfigAct = new QAction(tr("&Load configuration"), this);
-  loadConfigAct->setStatusTip(tr("Quit"));
+  loadConfigAct->setStatusTip(tr("Load configuration"));
   this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
   fileMenu->addAction(loadConfigAct);
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_O, this,
+      SLOT(OnLoadConfig())));
 
   auto saveConfigAct = new QAction(tr("&Save configuration"), this);
   saveConfigAct->setStatusTip(tr("Save configuration"));
   this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
   fileMenu->addAction(saveConfigAct);
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_S, this,
+      SLOT(OnSaveConfig())));
 
   auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
   saveConfigAsAct->setStatusTip(tr("Save configuration as"));
   this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
     SLOT(OnSaveConfigAs()));
   fileMenu->addAction(saveConfigAsAct);
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S, this,
+      SLOT(OnSaveConfigAs())));
 
   fileMenu->addSeparator();
 
@@ -91,9 +102,11 @@ MainWindow::MainWindow()
   quitAct->setStatusTip(tr("Quit"));
   this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close())));
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
+  pluginsMenu->setObjectName("pluginsMenu");
 
   auto pluginMapper = new QSignalMapper(this);
   this->connect(pluginMapper, SIGNAL(mapped(QString)),
@@ -169,7 +182,7 @@ void MainWindow::OnLoadConfig()
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfig()
 {
-  this->SaveImpl(defaultConfigPath());
+  this->SaveConfig(defaultConfigPath());
 }
 
 /////////////////////////////////////////////////
@@ -188,11 +201,11 @@ void MainWindow::OnSaveConfigAs()
   if (selected.empty())
     return;
 
-  this->SaveImpl(selected[0].toStdString());
+  this->SaveConfig(selected[0].toStdString());
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SaveImpl(const std::string &_path)
+void MainWindow::SaveConfig(const std::string &_path)
 {
   std::string config = "<?xml version=\"1.0\"?>\n\n";
 

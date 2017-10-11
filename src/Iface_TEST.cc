@@ -569,3 +569,70 @@ TEST(IfaceTest, messageHandler)
   EXPECT_TRUE(stop());
 }
 
+/////////////////////////////////////////////////
+TEST(IfaceTest, menuConfig)
+{
+  setVerbosity(4);
+
+  // No menus
+  {
+    EXPECT_TRUE(initApp());
+
+    // Load config file
+    EXPECT_TRUE(loadConfig(common::joinPaths(std::string(PROJECT_SOURCE_PATH),
+        "test", "config", "no_menus.config")));
+
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    QCoreApplication::processEvents();
+
+    // Check there are actions
+    auto actions = win->menuBar()->actions();
+    EXPECT_GT(actions.size(), 0);
+
+    // Check there are no visible menus
+    for (auto action : actions)
+    {
+      EXPECT_FALSE(action->isVisible()) << action->text().toStdString();
+    }
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Selected plugins are visible on menu
+  {
+    EXPECT_TRUE(initApp());
+
+    // Load config file
+    EXPECT_TRUE(loadConfig(common::joinPaths(std::string(PROJECT_SOURCE_PATH),
+        "test", "config", "plugins_menu.config")));
+
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+    auto win = mainWindow();
+    EXPECT_TRUE(win != nullptr);
+
+    QCoreApplication::processEvents();
+
+    // Get plugins menu
+    auto pluginsMenu = win->menuBar()->findChild<QMenu *>("pluginsMenu");
+    ASSERT_NE(pluginsMenu, nullptr);
+
+    // Check it has only 2 visible plugins
+    EXPECT_GT(pluginsMenu->actions().size(), 2);
+
+    auto count = 0;
+    for (auto action : pluginsMenu->actions())
+    {
+      if (action->isVisible())
+        count++;
+    }
+    EXPECT_EQ(count, 2);
+
+    EXPECT_TRUE(stop());
+  }
+}
+

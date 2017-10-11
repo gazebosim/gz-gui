@@ -46,24 +46,25 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Value will be handled if it holds a math::Pose3d value.
+      /// Value will be handled if it holds a ignition::math::Pose3d value.
       ///
       /// An input can be constructed as follows:
       /// QVariant value = QVariant::fromValue(ignition::math::Pose3d::Zero);
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
-      public: bool SetValue(const QVariant _value);
+      public: bool SetValue(const QVariant _value) override;
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Returns a variant containing the widget's current math::Pose3d value.
+      /// Returns a variant containing the widget's current
+      /// ignition::math::Pose3d value.
       ///
       /// A pose value can be retrieved as follows:
       /// auto value = this->Value().value<ignition::math::Pose3d>();
       ///
       /// \return Widget's current value.
-      public: QVariant Value() const;
+      public: QVariant Value() const override;
 
       /// \internal
       /// \brief Pointer to private data.

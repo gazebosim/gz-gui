@@ -46,7 +46,7 @@ namespace ignition
       /// \param[in] _value New value.
       /// \return True if succesfull, will fail if there are no child
       /// property widgets.
-      public: bool SetValue(const QVariant _value);
+      public: bool SetValue(const QVariant _value) override;
 
       /// \brief Inherited from PropertyWidget.
       ///
@@ -55,7 +55,7 @@ namespace ignition
       ///
       /// \return The current value of the first child property widget, or an
       /// invalid variant if there are no children.
-      public: QVariant Value() const;
+      public: QVariant Value() const override;
 
       /// \brief Callback that collapses or expands the contents.
       /// _param[in] _checked True for expanded.
