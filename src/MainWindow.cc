@@ -31,6 +31,8 @@ namespace ignition
   {
     class MainWindowPrivate
     {
+       /// \brief Configuration for this window.
+       public: WindowConfig windowConfig;
     };
   }
 }
@@ -210,27 +212,8 @@ void MainWindow::SaveConfig(const std::string &_path)
   std::string config = "<?xml version=\"1.0\"?>\n\n";
 
   // Window settings
-  config += "<window>\n";
-  config += "  <state>";
-  config += this->saveState().toBase64().toStdString();
-  config += "</state>\n";
-  config += "  <position_x>";
-  config += std::to_string(this->pos().x());
-  config += "</position_x>\n";
-  config += "  <position_y>";
-  config += std::to_string(this->pos().y());
-  config += "</position_y>\n";
-  config += "  <width>";
-  config += std::to_string(this->width());
-  config += "</width>\n";
-  config += "  <height>";
-  config += std::to_string(this->height());
-  config += "</height>\n";
-  config += "  <stylesheet>\n";
-  config += static_cast<QApplication *>(
-      QApplication::instance())->styleSheet().toStdString();
-  config += "  </stylesheet>\n";
-  config += "</window>\n";
+  this->UpdateWindowConfig();
+  config += this->dataPtr->windowConfig.XMLString();
 
   // Plugins
   auto plugins = this->findChildren<Plugin *>();
@@ -284,5 +267,280 @@ void MainWindow::OnAddPlugin(QString _plugin)
 
   loadPlugin(plugin);
   addPluginsToWindow();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ApplyConfig(const WindowConfig &_config)
+{
+  // Window position
+  if (_config.posX >= 0 && _config.posY >= 0)
+    this->move(_config.posX, _config.posY);
+
+  // Window size
+  if (_config.width >= 0 && _config.height >= 0)
+    this->resize(_config.width, _config.height);
+
+  // Docks state
+  if (!_config.state.isEmpty())
+  {
+    if (!this->restoreState(_config.state))
+      ignwarn << "Failed to restore state" << std::endl;
+  }
+
+  // Stylesheet
+  setStyleFromString(_config.styleSheet);
+
+  // Hide menus
+  for (auto visible : _config.menuVisibilityMap)
+  {
+    if (auto menu = this->findChild<QMenu *>(
+        QString::fromStdString(visible.first + "Menu")))
+    {
+      menu->menuAction()->setVisible(visible.second);
+    }
+  }
+
+  // Plugins menu
+  if (auto menu = this->findChild<QMenu *>("pluginsMenu"))
+  {
+    for (auto action : menu->actions())
+    {
+      action->setVisible(_config.pluginsFromPaths ||
+          std::find(_config.showPlugins.begin(),
+                    _config.showPlugins.end(),
+                    action->text().toStdString()) !=
+                    _config.showPlugins.end());
+    }
+
+    for (auto plugin : _config.showPlugins)
+    {
+      bool exists = false;
+      for (auto action : menu->actions())
+      {
+        if (action->text().toStdString() == plugin)
+        {
+          exists = true;
+          break;
+        }
+      }
+
+      if (!exists)
+      {
+        ignwarn << "Requested to show plugin [" << plugin <<
+            "] but it doesn't exist." << std::endl;
+      }
+    }
+  }
+
+  // Keep a copy
+  this->dataPtr->windowConfig = _config;
+
+  QCoreApplication::processEvents();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::UpdateWindowConfig()
+{
+  // Position
+  this->dataPtr->windowConfig.posX = this->pos().x();
+  this->dataPtr->windowConfig.posY = this->pos().y();
+
+  // Size
+  this->dataPtr->windowConfig.width = this->width();
+  this->dataPtr->windowConfig.height = this->height();
+
+  // Docks state
+  this->dataPtr->windowConfig.state = this->saveState();
+
+  // Stylesheet
+  this->dataPtr->windowConfig.styleSheet = static_cast<QApplication *>(
+      QApplication::instance())->styleSheet().toStdString();
+
+  // Menus configuration is kept the same as the initial one. The menus might
+  // have been changed programatically but we don't guarantee that will be
+  // saved.
+}
+
+/////////////////////////////////////////////////
+bool WindowConfig::MergeFromXML(const std::string &_windowXml)
+{
+  // TinyXml element from string
+  tinyxml2::XMLDocument doc;
+  doc.Parse(_windowXml.c_str());
+  auto winElem = doc.FirstChildElement("window");
+
+  if (!winElem)
+    return false;
+
+  // Position
+  if (auto xElem = winElem->FirstChildElement("position_x"))
+    xElem->QueryIntText(&this->posX);
+
+  if (auto yElem = winElem->FirstChildElement("position_y"))
+    yElem->QueryIntText(&this->posY);
+
+  // Size
+  if (auto widthElem = winElem->FirstChildElement("width"))
+    widthElem->QueryIntText(&this->width);
+
+  if (auto heightElem = winElem->FirstChildElement("height"))
+    heightElem->QueryIntText(&this->height);
+
+  // Docks state
+  if (auto stateElem = winElem->FirstChildElement("state"))
+  {
+    auto text = stateElem->GetText();
+    this->state = QByteArray::fromBase64(text);
+  }
+
+  // Stylesheet
+  if (auto styleElem = winElem->FirstChildElement("stylesheet"))
+  {
+    if (auto txt = styleElem->GetText())
+    {
+      setStyleFromString(txt);
+    }
+    // empty string
+    else
+    {
+      setStyleFromString("");
+    }
+  }
+
+  // Menus
+  if (auto menusElem = winElem->FirstChildElement("menus"))
+  {
+    // File
+    if (auto fileElem = menusElem->FirstChildElement("file"))
+    {
+      // Visible
+      if (fileElem->Attribute("visible"))
+      {
+        bool visible = true;
+        fileElem->QueryBoolAttribute("visible", &visible);
+        this->menuVisibilityMap["file"] = visible;
+      }
+    }
+
+    // Plugins
+    if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
+    {
+      // Visible
+      if (pluginsElem->Attribute("visible"))
+      {
+        bool visible = true;
+        pluginsElem->QueryBoolAttribute("visible", &visible);
+        this->menuVisibilityMap["plugins"] = visible;
+      }
+
+      // From paths
+      if (pluginsElem->Attribute("from_paths"))
+      {
+        bool fromPaths = false;
+        pluginsElem->QueryBoolAttribute("from_paths", &fromPaths);
+        this->pluginsFromPaths = fromPaths;
+      }
+
+      // Show individual plugins
+      for (auto showElem = pluginsElem->FirstChildElement("show");
+          showElem != nullptr;
+          showElem = showElem->NextSiblingElement("show"))
+      {
+        if (auto pluginName = showElem->GetText())
+          this->showPlugins.push_back(pluginName);
+      }
+    }
+  }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+std::string WindowConfig::XMLString() const
+{
+  std::string str;
+
+  str += "<window>\n";
+
+  // Position
+  str += "  <position_x>";
+  str += std::to_string(this->posX);
+  str += "</position_x>\n";
+  str += "  <position_y>";
+  str += std::to_string(this->posY);
+  str += "</position_y>\n";
+
+  // Docks state
+  str += "  <state>";
+  str += this->state.toBase64().toStdString();
+  str += "</state>\n";
+
+  // Size
+  str += "  <width>";
+  str += std::to_string(this->width);
+  str += "</width>\n";
+  str += "  <height>";
+  str += std::to_string(this->height);
+  str += "</height>\n";
+
+  // Stylesheet
+  str += "  <stylesheet>\n";
+  str += this->styleSheet;
+  str += "  </stylesheet>\n";
+
+  // Menus
+  str += "  <menus>\n";
+
+  // File menu
+  {
+    str += "    <file";
+
+    // Visible
+    auto m = this->menuVisibilityMap.find("file");
+    if (m != this->menuVisibilityMap.end())
+    {
+      str += " visible=\"";
+      str += (m->second ? "true" : "false");
+      str += "\"";
+    }
+    str += ">\n";
+
+    str += "    </file>\n";
+  }
+
+  // Plugins menu
+  {
+    str += "    <plugins";
+
+    // Visible
+    auto m = this->menuVisibilityMap.find("plugins");
+    if (m != this->menuVisibilityMap.end())
+    {
+      str += " visible=\"";
+      str += (m->second ? "true" : "false");
+      str += "\"";
+    }
+
+    // From paths
+    str += " from_paths=\"";
+    str += (this->pluginsFromPaths ? "true" : "false");
+    str += "\">\n";
+
+    // Show
+    for (const auto &show : this->showPlugins)
+    {
+      str += "      <show>" + show + "</show>\n";
+    }
+
+    str += "    </plugins>\n";
+  }
+
+  str += "  </menus>\n";
+
+  str += "</window>\n";
+
+  return str;
 }
 

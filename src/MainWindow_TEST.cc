@@ -166,6 +166,9 @@ TEST(MainWindowTest, OnSaveConfigAs)
     EXPECT_TRUE(savedStr.contains("<position_y>"));
     EXPECT_TRUE(savedStr.contains("<stylesheet>"));
     EXPECT_TRUE(savedStr.contains("<state>"));
+    EXPECT_TRUE(savedStr.contains("<menus>"));
+    EXPECT_TRUE(savedStr.contains("<file>"));
+    EXPECT_TRUE(savedStr.contains("<plugins"));
 
     // Delete file
     std::remove(kTestConfigFile.c_str());
@@ -443,5 +446,62 @@ TEST(MainWindowTest, OnAddPlugin)
 
   // Clean up
   EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(WindowConfigTest, defaultValues)
+{
+  setVerbosity(4);
+
+  WindowConfig c;
+
+  EXPECT_EQ(c.posX, -1);
+  EXPECT_EQ(c.posY, -1);
+  EXPECT_EQ(c.width, -1);
+  EXPECT_EQ(c.height, -1);
+  EXPECT_TRUE(c.state.isEmpty());
+  EXPECT_TRUE(c.styleSheet.empty());
+  EXPECT_TRUE(c.menuVisibilityMap.empty());
+  EXPECT_TRUE(c.pluginsFromPaths);
+  EXPECT_TRUE(c.showPlugins.empty());
+
+  auto xml = c.XMLString();
+  EXPECT_NE(xml.find("<window>"), std::string::npos);
+  EXPECT_NE(xml.find("<position_x>"), std::string::npos);
+  EXPECT_NE(xml.find("<position_y>"), std::string::npos);
+  EXPECT_NE(xml.find("<width>"), std::string::npos);
+  EXPECT_NE(xml.find("<height>"), std::string::npos);
+  EXPECT_NE(xml.find("<menus>"), std::string::npos);
+  EXPECT_NE(xml.find("<file>"), std::string::npos);
+  EXPECT_NE(xml.find("<plugins"), std::string::npos);
+}
+
+/////////////////////////////////////////////////
+TEST(WindowConfigTest, mergeFromXML)
+{
+  setVerbosity(4);
+
+  WindowConfig c;
+
+  // Set some values
+  c.posX = 500;
+  c.posY = 400;
+  c.width = 1000;
+  c.height = 600;
+
+  // Merge from XML
+  c.MergeFromXML(std::string("<window><position_x>5000</position_x>")+
+    "<menus><plugins from_paths=\"false\"/></menus></window>");
+
+  // Check values
+  EXPECT_EQ(c.posX, 5000);
+  EXPECT_EQ(c.posY, 400);
+  EXPECT_EQ(c.width, 1000);
+  EXPECT_EQ(c.height, 600);
+  EXPECT_TRUE(c.state.isEmpty());
+  EXPECT_TRUE(c.styleSheet.empty());
+  EXPECT_TRUE(c.menuVisibilityMap.empty());
+  EXPECT_FALSE(c.pluginsFromPaths);
+  EXPECT_TRUE(c.showPlugins.empty());
 }
 
