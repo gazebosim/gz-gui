@@ -36,7 +36,7 @@ namespace ignition
       Q_OBJECT
 
       /// \brief Constructor
-      /// Note that unlike other similar widgets, a pose 3d widget doesn't hold
+      /// Note that unlike other similar widgets, a color widget doesn't hold
       /// its own key value. Instead, it can be placed within another widget,
       /// such as a CollapsibleWidget, which will display a key value.
       public: ColorWidget();
@@ -46,10 +46,10 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Value will be handled if it holds a math::Color value.
+      /// Value will be handled if it holds a ignition::math::Color value.
       ///
       /// An input can be constructed as follows:
-      /// QVariant value = QVariant::fromValue(ignition::math::Color::Zero);
+      /// QVariant value = QVariant::fromValue(ignition::math::Color::Blue);
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
@@ -57,9 +57,10 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Returns a variant containing the widget's current math::Color value.
+      /// Returns a variant containing the widget's current
+      /// ignition::math::Color value.
       ///
-      /// A pose value can be retrieved as follows:
+      /// A color value can be retrieved as follows:
       /// auto value = this->Value().value<ignition::math::Color>();
       ///
       /// \return Widget's current value.

@@ -39,7 +39,7 @@ namespace ignition
       /// \brief Constructor
       /// \param[in] _key Property key value, such as "axis". Unlike other
       /// widgets, the key is not displayed in this widget, it is only used to
-      /// set a range.
+      /// set range and unit.
       public: Vector3dWidget(const std::string &_key);
 
       /// \brief Destructor
@@ -47,7 +47,7 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Value will be handled if it holds a math::Vector3d value.
+      /// Value will be handled if it holds a ignition::math::Vector3d value.
       ///
       /// An input can be constructed as follows:
       /// QVariant value = QVariant::fromValue(ignition::math::Vector3d::Zero);
@@ -58,8 +58,8 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Returns a variant containing the widget's current math::Vector3d
-      /// value.
+      /// Returns a variant containing the widget's current
+      /// ignition::math::Vector3d value.
       ///
       /// A pose value can be retrieved as follows:
       /// auto value = this->Value().value<ignition::math::Vector3d>();
