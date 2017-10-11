@@ -422,10 +422,19 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
           collapsible->layout()->addWidget(repCollapsible);
         }
 
-        // Parse message
-        auto &valueMsg = reflection->GetRepeatedMessage(*_msg, fieldDescriptor,
-            count);
-        this->Parse(&valueMsg, name, repCollapsible);
+        // If it's a repeated message
+        if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+        {
+          // Parse message
+          auto &valueMsg = reflection->GetRepeatedMessage(*_msg, fieldDescriptor,
+              count);
+          this->Parse(&valueMsg, name, repCollapsible);
+        }
+
+        // If it's a repeated field
+        {
+          // TODO
+        }
 
         // Collapse the first time it was created
         if (!repProp)
@@ -442,17 +451,6 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         auto name = scopedName + "::" + std::to_string(count);
         this->RemovePropertyWidget(name);
       }
-/*
-// This properly removes the widgets, but MessageWidget still thinks it is there
-
-      auto colLayout = collapsible->layout();
-      QLayoutItem *item;
-      count++;
-      while ((item = colLayout->takeAt(count)) != nullptr)
-      {
-        delete item;
-      }
-*/
 
       // Collapse the first time it was created
       if (!propertyWidget)
@@ -862,23 +860,21 @@ bool MessageWidget::RemovePropertyWidget(const std::string &_name)
   if (!widget)
     return false;
 
-  // Remove from property list
-  this->dataPtr->properties.erase(_name);
-
-  auto collapsible = qobject_cast<CollapsibleWidget *>(widget);
-  if (collapsible)
+  // Remove all its children from property list
+  for (const auto &prop : this->dataPtr->properties)
   {
-    auto parentWidget = qobject_cast<QWidget *>(collapsible->parent());
-    auto grandParentWidget = qobject_cast<QWidget *>(parentWidget->parent());
-
-    auto layout = grandParentWidget->layout();
-    auto id = layout->indexOf(grandParentWidget);
-
-    auto item = layout->takeAt(id);
-    delete item;
-
-    return true;
+    if (prop.first.find(_name) == 0)
+      this->dataPtr->properties.erase(prop.first);
   }
+
+  QWidget *toDelete = widget;
+
+  if (!qobject_cast<PropertyWidget *>(widget->parent()))
+    toDelete = qobject_cast<QWidget *>(widget->parent());
+
+  // Give its ownership to a new widget, and when it goes out of scope, it will
+  //delete it
+  toDelete->setParent(new QWidget());
 
   return false;
 }
