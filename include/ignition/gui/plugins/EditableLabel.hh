@@ -28,8 +28,6 @@ namespace gui
 {
 namespace plugins
 {
-namespace plot
-{
   // Forward declare private data class
   class EditableLabelPrivate;
 
@@ -67,7 +65,6 @@ namespace plot
     /// \brief Private data pointer
     private: std::unique_ptr<EditableLabelPrivate> dataPtr;
   };
-}
 }
 }
 }

@@ -22,7 +22,7 @@
 #endif
 
 #include "ignition/gui/Plugin.hh"
-#include "ignition/gui/plugins/plot/EditableLabel.hh"
+#include "ignition/gui/plugins/EditableLabel.hh"
 
 namespace ignition
 {

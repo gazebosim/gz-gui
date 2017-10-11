@@ -17,43 +17,30 @@
 
 #include <string>
 
-#include "ignition/gui/plugins/plot/EditableLabel.hh"
+#include "ignition/gui/plugins/EditableLabel.hh"
 #include "ignition/gui/qt.h"
 
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
-using namespace plot;
 
-namespace ignition
+/// \internal
+/// \brief EditableLabel private data.
+class ignition::gui::plugins::EditableLabelPrivate
 {
-namespace gui
-{
-namespace plugins
-{
-namespace plot
-{
-  /// \internal
-  /// \brief EditableLabel private data.
-  class EditableLabelPrivate
-  {
-    /// \brief Widget for editing the label.
-    public: QLineEdit *lineEdit;
+  /// \brief Widget for editing the label.
+  public: QLineEdit *lineEdit;
 
-    /// \brief Label to be displayed.
-    public: QLabel *label;
-  };
-}
-}
-}
-}
+  /// \brief Label to be displayed.
+  public: QLabel *label;
+};
 
 /////////////////////////////////////////////////
 EditableLabel::EditableLabel(const std::string &_label, QWidget *_parent)
   : QWidget(_parent),
     dataPtr(new EditableLabelPrivate())
 {
-  this->setObjectName("plotEditTitle");
+  this->setObjectName("editTitle");
   this->dataPtr->lineEdit = new QLineEdit(this);
   this->connect(this->dataPtr->lineEdit, SIGNAL(editingFinished()),
     this, SLOT(OnEditingFinished()));

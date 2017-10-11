@@ -1,0 +1,51 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+#include <ignition/common/PluginMacros.hh>
+
+#include "ignition/gui/plugins/plot/PlotWindow.hh"
+
+using namespace ignition;
+using namespace gui;
+using namespace plugins;
+
+/////////////////////////////////////////////////
+PlotWindow::PlotWindow()
+  : Plugin()
+{
+}
+
+/////////////////////////////////////////////////
+PlotWindow::~PlotWindow()
+{
+}
+
+/////////////////////////////////////////////////
+void PlotWindow::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
+{
+  if (this->title.empty())
+    this->title = "Plotting Utility";
+
+  this->setObjectName("plotWindow");
+  this->setWindowFlags(Qt::Window | Qt::WindowTitleHint |
+      Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint |
+      Qt::CustomizeWindowHint);
+}
+
+// Register this plugin
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::PlotWindow,
+                                  ignition::gui::Plugin)
