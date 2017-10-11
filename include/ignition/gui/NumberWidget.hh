@@ -59,7 +59,7 @@ namespace ignition
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
-      public: bool SetValue(const QVariant _value);
+      public: bool SetValue(const QVariant _value) override;
 
       /// \brief Inherited from PropertyWidget.
       ///
@@ -70,7 +70,7 @@ namespace ignition
       /// int value = this->Value().toInt();
       ///
       /// \return Widget's current number value.
-      public: QVariant Value() const;
+      public: QVariant Value() const override;
 
       /// \internal
       /// \brief Pointer to private data.

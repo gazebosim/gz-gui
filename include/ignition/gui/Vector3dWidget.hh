@@ -54,7 +54,7 @@ namespace ignition
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
-      public: bool SetValue(const QVariant _value);
+      public: bool SetValue(const QVariant _value) override;
 
       /// \brief Inherited from PropertyWidget.
       ///
@@ -65,7 +65,7 @@ namespace ignition
       /// auto value = this->Value().value<ignition::math::Vector3d>();
       ///
       /// \return Widget's current value.
-      public: QVariant Value() const;
+      public: QVariant Value() const override;
 
       /// \brief Callback when the preset has changed.
       /// \param[in] _index Index of the chosen preset.

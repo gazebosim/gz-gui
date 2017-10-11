@@ -53,7 +53,7 @@ namespace ignition
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
-      public: bool SetValue(const QVariant _value);
+      public: bool SetValue(const QVariant _value) override;
 
       /// \brief Inherited from PropertyWidget.
       ///
@@ -63,7 +63,7 @@ namespace ignition
       /// auto value = this->Value().value<ignition::math::Pose3d>();
       ///
       /// \return Widget's current value.
-      public: QVariant Value() const;
+      public: QVariant Value() const override;
 
       /// \internal
       /// \brief Pointer to private data.
