@@ -20,6 +20,7 @@
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
 
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
 
 using namespace ignition;
@@ -87,12 +88,22 @@ TEST(CollapsibleWidgetTest, Value)
   auto widget = new CollapsibleWidget("collapse_me");
   ASSERT_NE(widget, nullptr);
 
-  // Set value
+  // Fail to set value if it has no children
   EXPECT_FALSE(widget->SetValue(QVariant()));
 
-  // Get value
-  auto v = widget->Value();
-  EXPECT_EQ(v, QVariant());
+  // Invalid value if it has no children
+  EXPECT_EQ(widget->Value(), QVariant());
+
+  // Add a property
+  auto numberProp = new NumberWidget("a_double");
+  widget->layout()->addWidget(numberProp);
+
+  // Set invalid value to first widget
+  EXPECT_FALSE(widget->SetValue(QVariant()));
+
+  // Set valid value to first widget
+  EXPECT_TRUE(widget->SetValue(-0.5));
+  EXPECT_DOUBLE_EQ(widget->Value().toDouble(), -0.5);
 
   delete widget;
   EXPECT_TRUE(stop());

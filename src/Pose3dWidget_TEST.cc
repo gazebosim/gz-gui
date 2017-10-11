@@ -21,48 +21,43 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
-#include "ignition/gui/QtMetatypes.hh"
 
-#include "ignition/gui/BoolWidget.hh"
+#include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/Pose3dWidget.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(BoolWidgetTest, Signal)
+TEST(Pose3dWidgetTest, Signal)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Create widget
-  auto widget = new BoolWidget("a bool");
-  EXPECT_TRUE(widget != nullptr);
+  auto widget = new Pose3dWidget();
+  ASSERT_NE(widget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
-  widget->connect(widget, &BoolWidget::ValueChanged,
+  widget->connect(widget, &Pose3dWidget::ValueChanged,
     [&signalReceived](QVariant _var)
     {
-      auto v = _var.value<bool>();
-      EXPECT_TRUE(v);
+      auto v = _var.value<math::Pose3d>();
+      EXPECT_EQ(v, math::Pose3d(0, 0, -0.1, 0, 0, 0));
       signalReceived = true;
     });
 
   // Check default value
-  EXPECT_FALSE(widget->Value().value<bool>());
-
-  // Check key label
-  auto label = widget->findChild<QLabel *>();
-  ASSERT_NE(label, nullptr);
-  EXPECT_EQ(label->text().toStdString(), "A bool");
+  EXPECT_EQ(widget->Value().value<math::Pose3d>(), math::Pose3d::Zero);
 
   // Get signal emitting widgets
-  auto radios = widget->findChildren<QRadioButton *>();
-  EXPECT_EQ(radios.size(), 2);
+  auto spins = widget->findChildren<QDoubleSpinBox *>();
+  ASSERT_EQ(spins.size(), 6);
 
   // Change the value and check new value at callback
-  radios[0]->setChecked(true);
-  radios[1]->setChecked(false);
+  spins[2]->setValue(-0.1);
+  spins[2]->editingFinished();
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);
@@ -72,22 +67,23 @@ TEST(BoolWidgetTest, Signal)
 }
 
 /////////////////////////////////////////////////
-TEST(BoolWidgetTest, SetValue)
+TEST(Pose3dWidgetTest, SetValue)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  // Create widget
-  auto widget = new BoolWidget("a_string");
+  auto widget = new Pose3dWidget();
   ASSERT_NE(widget, nullptr);
 
   // Set good value
-  EXPECT_TRUE(widget->SetValue(true));
+  EXPECT_TRUE(widget->SetValue(QVariant::fromValue(
+      math::Pose3d(0, 1, 2, 0, 1, 0))));
 
   // Set bad value
-  EXPECT_FALSE(widget->SetValue(QVariant()));
+  EXPECT_FALSE(widget->SetValue(true));
 
   delete widget;
   EXPECT_TRUE(stop());
 }
+
 

@@ -39,11 +39,23 @@ namespace ignition
       /// \param[in] _key Title to be displayed on the button.
       public: explicit CollapsibleWidget(const std::string &_key);
 
-      // Documentation inherited
-      public: bool SetValue(const QVariant) {return false;}
+      /// \brief Inherited from PropertyWidget.
+      ///
+      /// Sets the given value to the first child property widget.
+      ///
+      /// \param[in] _value New value.
+      /// \return True if succesfull, will fail if there are no child
+      /// property widgets.
+      public: bool SetValue(const QVariant _value) override;
 
-      // Documentation inherited
-      public: QVariant Value() const {return QVariant();}
+      /// \brief Inherited from PropertyWidget.
+      ///
+      /// Returns a variant containing the value of the first child property
+      /// widget.
+      ///
+      /// \return The current value of the first child property widget, or an
+      /// invalid variant if there are no children.
+      public: QVariant Value() const override;
 
       /// \brief Callback that collapses or expands the contents.
       /// _param[in] _checked True for expanded.

@@ -15,11 +15,10 @@
  *
 */
 
-#ifndef IGNITION_GUI_BOOLWIDGET_HH_
-#define IGNITION_GUI_BOOLWIDGET_HH_
+#ifndef IGNITION_GUI_POSE3DWIDGET_HH_
+#define IGNITION_GUI_POSE3DWIDGET_HH_
 
 #include <memory>
-#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"
@@ -29,27 +28,28 @@ namespace ignition
 {
   namespace gui
   {
-    class BoolWidgetPrivate;
+    class Pose3dWidgetPrivate;
 
-    /// \brief A widget which holds a boolean property.
-    class IGNITION_GUI_VISIBLE BoolWidget : public PropertyWidget
+    /// \brief A widget which holds a pose 3d property.
+    class IGNITION_GUI_VISIBLE Pose3dWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _key Property key value, such as "enable", which will be
-      /// displayed next to the checkboxes representing the value.
-      public: explicit BoolWidget(const std::string &_key);
+      /// Note that unlike other similar widgets, a pose 3d widget doesn't hold
+      /// its own key value. Instead, it can be placed within another widget,
+      /// such as a CollapsibleWidget, which will display a key value.
+      public: Pose3dWidget();
 
       /// \brief Destructor
-      public: ~BoolWidget();
+      public: ~Pose3dWidget();
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Value will be handled if it holds a boolean value.
+      /// Value will be handled if it holds a ignition::math::Pose3d value.
       ///
       /// An input can be constructed as follows:
-      /// QVariant value(true);
+      /// QVariant value = QVariant::fromValue(ignition::math::Pose3d::Zero);
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
@@ -57,17 +57,18 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Returns a variant containing the widget's current bool value.
+      /// Returns a variant containing the widget's current
+      /// ignition::math::Pose3d value.
       ///
-      /// The value can be retrieved as follows:
-      /// bool value = this->Value().toBool();
+      /// A pose value can be retrieved as follows:
+      /// auto value = this->Value().value<ignition::math::Pose3d>();
       ///
       /// \return Widget's current value.
       public: QVariant Value() const override;
 
       /// \internal
       /// \brief Pointer to private data.
-      private: std::unique_ptr<BoolWidgetPrivate> dataPtr;
+      private: std::unique_ptr<Pose3dWidgetPrivate> dataPtr;
     };
   }
 }
