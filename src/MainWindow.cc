@@ -31,8 +31,8 @@ namespace ignition
   {
     class MainWindowPrivate
     {
-       /// \brief Configuration for this window.
-       public: WindowConfig windowConfig;
+      /// \brief Configuration for this window.
+      public: WindowConfig windowConfig;
     };
   }
 }

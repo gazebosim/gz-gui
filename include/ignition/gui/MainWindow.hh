@@ -17,8 +17,10 @@
 #ifndef IGNITION_GUI_MAINWINDOW_HH_
 #define IGNITION_GUI_MAINWINDOW_HH_
 
+#include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
@@ -112,12 +114,12 @@ namespace ignition
       /// \brief String holding the global style sheet in QSS format.
       std::string styleSheet;
 
-      /// \brief Map menu name to whether it should be visible, all menus are shown
-      /// by default.
+      /// \brief Map menu name to whether it should be visible, all menus are
+      /// shown by default.
       std::map<std::string, bool> menuVisibilityMap;
 
-      /// \brief True if plugins found in plugin paths should be listed under the
-      /// Plugins menu. True by default.
+      /// \brief True if plugins found in plugin paths should be listed under
+      /// the Plugins menu. True by default.
       bool pluginsFromPaths = true;
 
       /// \brief List of plugins which should be shown on the list
