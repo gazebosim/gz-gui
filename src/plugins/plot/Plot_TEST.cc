@@ -14,21 +14,20 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_QTMETATYPES_HH_
-#define IGNITION_GUI_QTMETATYPES_HH_
 
-#include <QMetaType>
+#include <gtest/gtest.h>
 
-#include <string>
+#include "ignition/gui/Iface.hh"
 
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
+using namespace ignition;
+using namespace gui;
 
-// Make it possible to use non-Qt types in QVariant
-Q_DECLARE_METATYPE(std::string)
-Q_DECLARE_METATYPE(ignition::math::Color)
-Q_DECLARE_METATYPE(ignition::math::Pose3d)
-Q_DECLARE_METATYPE(ignition::math::Vector3d)
+/////////////////////////////////////////////////
+TEST(PlotTest, Load)
+{
+  EXPECT_TRUE(initApp());
 
-#endif
+  EXPECT_TRUE(loadPlugin("Plot"));
+
+  EXPECT_TRUE(stop());
+}

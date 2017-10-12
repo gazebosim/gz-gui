@@ -15,11 +15,10 @@
  *
 */
 
-#ifndef IGNITION_GUI_BOOLWIDGET_HH_
-#define IGNITION_GUI_BOOLWIDGET_HH_
+#ifndef IGNITION_GUI_COLORWIDGET_HH_
+#define IGNITION_GUI_COLORWIDGET_HH_
 
 #include <memory>
-#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"
@@ -29,27 +28,28 @@ namespace ignition
 {
   namespace gui
   {
-    class BoolWidgetPrivate;
+    class ColorWidgetPrivate;
 
-    /// \brief A widget which holds a boolean property.
-    class IGNITION_GUI_VISIBLE BoolWidget : public PropertyWidget
+    /// \brief A widget which holds a color property.
+    class IGNITION_GUI_VISIBLE ColorWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _key Property key value, such as "enable", which will be
-      /// displayed next to the checkboxes representing the value.
-      public: explicit BoolWidget(const std::string &_key);
+      /// Note that unlike other similar widgets, a color widget doesn't hold
+      /// its own key value. Instead, it can be placed within another widget,
+      /// such as a CollapsibleWidget, which will display a key value.
+      public: ColorWidget();
 
       /// \brief Destructor
-      public: ~BoolWidget();
+      public: ~ColorWidget();
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Value will be handled if it holds a boolean value.
+      /// Value will be handled if it holds a ignition::math::Color value.
       ///
       /// An input can be constructed as follows:
-      /// QVariant value(true);
+      /// QVariant value = QVariant::fromValue(ignition::math::Color::Blue);
       ///
       /// \param[in] _value New value.
       /// \return True if succesfull.
@@ -57,17 +57,21 @@ namespace ignition
 
       /// \brief Inherited from PropertyWidget.
       ///
-      /// Returns a variant containing the widget's current bool value.
+      /// Returns a variant containing the widget's current
+      /// ignition::math::Color value.
       ///
-      /// The value can be retrieved as follows:
-      /// bool value = this->Value().toBool();
+      /// A color value can be retrieved as follows:
+      /// auto value = this->Value().value<ignition::math::Color>();
       ///
       /// \return Widget's current value.
       public: QVariant Value() const override;
 
+      /// \brief Callback which opens a color dialog.
+      private slots: void OnCustomColorDialog();
+
       /// \internal
       /// \brief Pointer to private data.
-      private: std::unique_ptr<BoolWidgetPrivate> dataPtr;
+      private: std::unique_ptr<ColorWidgetPrivate> dataPtr;
     };
   }
 }

@@ -14,21 +14,38 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_QTMETATYPES_HH_
-#define IGNITION_GUI_QTMETATYPES_HH_
+#ifndef IGNITION_GUI_PLUGINS_PLOT_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_HH_
 
-#include <QMetaType>
+#ifndef Q_MOC_RUN
+  #include <ignition/gui/qt.h>
+#endif
 
-#include <string>
+#include "ignition/gui/Plugin.hh"
+#include "ignition/gui/EditableLabel.hh"
 
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
+namespace ignition
+{
+namespace gui
+{
+namespace plugins
+{
+  /// \brief Widget that allow plotting of Ignition Transport topics.
+  class Plot : public Plugin
+  {
+    Q_OBJECT
 
-// Make it possible to use non-Qt types in QVariant
-Q_DECLARE_METATYPE(std::string)
-Q_DECLARE_METATYPE(ignition::math::Color)
-Q_DECLARE_METATYPE(ignition::math::Pose3d)
-Q_DECLARE_METATYPE(ignition::math::Vector3d)
+    /// \brief Constructor.
+    public: Plot();
 
+    /// \brief Destructor.
+    public: virtual ~Plot();
+
+    // Documentation inherited.
+    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+        override;
+  };
+}
+}
+}
 #endif

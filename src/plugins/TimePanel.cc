@@ -248,7 +248,6 @@ void TimePanel::OnPlay()
 /////////////////////////////////////////////////
 void TimePanel::OnPause()
 {
-  // FIXME: The service goes through but the callback is not being called
   std::function<void(const ignition::msgs::Empty &, const bool)> cb =
       [this](const ignition::msgs::Empty &/*_rep*/, const bool _result)
   {

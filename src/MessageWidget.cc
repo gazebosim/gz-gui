@@ -30,13 +30,16 @@
 
 #include "ignition/gui/BoolWidget.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
+#include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/StringWidget.hh"
+#include "ignition/gui/Vector3dWidget.hh"
 
 #include "ignition/gui/MessageWidget.hh"
 
@@ -152,21 +155,60 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   // Pose3d
   if (messageType == "ignition.msgs.Pose")
   {
-    // Coming soon
+    // If creating new widget
+    if (!propertyWidget)
+    {
+      propertyWidget = new Pose3dWidget();
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
+    }
+
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
+    // Set value
+    auto msg = dynamic_cast<const msgs::Pose *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
+
     return true;
   }
 
   // Vector3d
   if (messageType == "ignition.msgs.Vector3d")
   {
-    // Coming soon
+    // If creating new widget
+    if (!propertyWidget)
+    {
+      propertyWidget = new Vector3dWidget(descriptor->name());
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
+    }
+
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
+    // Set value
+    auto msg = dynamic_cast<const msgs::Vector3d *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
+
     return true;
   }
 
   // Color
   if (messageType == "ignition.msgs.Color")
   {
-    // Coming soon
+    // If creating new widget
+    if (!propertyWidget)
+    {
+      propertyWidget = new ColorWidget();
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
+    }
+
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
+    // Set value
+    auto msg = dynamic_cast<const msgs::Color *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(msgs::Convert(*msg)));
+
     return true;
   }
 
@@ -473,6 +515,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
       // Nested messages
       case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
       {
+        auto mutableMsg = reflection->MutableMessage(_msg, fieldDescriptor);
+
         // Geometry
         if (fieldDescriptor->message_type()->name() == "Geometry")
         {
@@ -481,17 +525,17 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         // Pose
         else if (fieldDescriptor->message_type()->name() == "Pose")
         {
-          // Coming soon
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Pose3d>()));
         }
         // Vector3d
         else if (fieldDescriptor->message_type()->name() == "Vector3d")
         {
-          // Coming soon
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Vector3d>()));
         }
         // Color
         else if (fieldDescriptor->message_type()->name() == "Color")
         {
-          // Coming soon
+          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Color>()));
         }
         // Recursively fill other types
         else
@@ -519,12 +563,11 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     return false;
   }
 
-  // Add to map if not there yet (nested special messages are added first to a
-  // collapsible and then the collapsible is added to the parent collapsible)
-  if (this->dataPtr->properties.find(_name) == this->dataPtr->properties.end())
-  {
-    this->dataPtr->properties[_name] = _property;
-  }
+  // If there's already an entry on the map, it will be overriden. This
+  // is expected in the case of nested special messages, which are added first
+  // to a collapsible and then the collapsible is added to the parent
+  // collapsible
+  this->dataPtr->properties[_name] = _property;
 
   // Forward widget's ValueChanged signal
   auto collapsibleSelf = qobject_cast<CollapsibleWidget *>(_property);
@@ -569,3 +612,4 @@ PropertyWidget *MessageWidget::PropertyWidgetByName(
 
   return nullptr;
 }
+
