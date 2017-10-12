@@ -18,6 +18,8 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/PropertyWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/SearchModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/StringWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/VariablePill.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/VariablePillContainer.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Vector3dWidget.cc
   PARENT_SCOPE
 )
@@ -37,6 +39,7 @@ set (gtest_sources
   Pose3dWidget_TEST.cc
   SearchModel_TEST.cc
   StringWidget_TEST.cc
+  VariablePillContainer_TEST.cc
   Vector3dWidget_TEST.cc
 )
 
