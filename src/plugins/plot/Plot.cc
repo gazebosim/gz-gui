@@ -39,11 +39,6 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 {
   if (this->title.empty())
     this->title = "Plotting Utility";
-
-  this->setObjectName("Plot");
-  this->setWindowFlags(Qt::Window | Qt::WindowTitleHint |
-      Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint |
-      Qt::CustomizeWindowHint);
 }
 
 // Register this plugin

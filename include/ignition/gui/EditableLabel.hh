@@ -50,11 +50,11 @@ namespace gui
 
     /// \brief Qt mouse double click event.
     /// \param[in] _event Qt mouse event
-    protected: virtual void mouseDoubleClickEvent(QMouseEvent *_event);
+    protected: virtual void mouseDoubleClickEvent(QMouseEvent *_event) override;
 
     /// \brief Qt key press event.
     /// \param[in] _event Qt key event
-    protected: virtual void keyPressEvent(QKeyEvent *_event);
+    protected: virtual void keyPressEvent(QKeyEvent *_event) override;
 
     /// \brief Qt callback when line edit loses focus
     private slots: void OnEditingFinished();

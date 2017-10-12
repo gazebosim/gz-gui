@@ -42,38 +42,62 @@ TEST(EditableLabelTest, Edit)
   EXPECT_TRUE(initApp());
 
   // Create a new EditableLabel widget
-  EditableLabel *editableLabel =
-      new EditableLabel("test_label", nullptr);
+  auto editableLabel = new EditableLabel("test_label");
   ASSERT_NE(nullptr, editableLabel);
-  QLineEdit *lineEdit = editableLabel->findChild<QLineEdit *>();
-  ASSERT_NE(nullptr, lineEdit);
-  EXPECT_EQ("test_label", editableLabel->Text());
-
   editableLabel->show();
 
-  // test editing value and hitting enter to save
+  // Get child widgets
+  auto lineEdit = editableLabel->findChild<QLineEdit *>();
+  ASSERT_NE(nullptr, lineEdit);
+
+  auto label = editableLabel->findChild<QLabel *>();
+  ASSERT_NE(nullptr, label);
+
+  // Check the initial state is not editing
+  EXPECT_EQ("test_label", editableLabel->Text());
+  EXPECT_TRUE(label->isVisible());
+  EXPECT_FALSE(lineEdit->isVisible());
+
+  // Double-click to trigger edit mode
   QPoint center(editableLabel->width() * 0.5, editableLabel->height() * 0.5);
-  QMouseEvent *mouseEvent = new QMouseEvent(QEvent::MouseButtonDblClick,
+  auto mouseEvent = new QMouseEvent(QEvent::MouseButtonDblClick,
     center, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
   QCoreApplication::postEvent(editableLabel, mouseEvent);
   QCoreApplication::processEvents();
 
+  EXPECT_EQ("test_label", label->text().toStdString());
+  EXPECT_FALSE(label->isVisible());
+  EXPECT_TRUE(lineEdit->isVisible());
+
+  // Edit and check new value
   lineEdit->setText("aaa");
   lineEdit->editingFinished();
-  EXPECT_EQ("aaa", editableLabel->Text());
 
-  // Test editing value and hitting escape to forget changes
-  mouseEvent = new QMouseEvent(QEvent::MouseButtonDblClick,
+  EXPECT_EQ("aaa", editableLabel->Text());
+  EXPECT_TRUE(label->isVisible());
+  EXPECT_FALSE(lineEdit->isVisible());
+
+  // Double-click again to enter edit mode
+  auto mouseEvent2 = new QMouseEvent(QEvent::MouseButtonDblClick,
     center, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
-  QCoreApplication::postEvent(editableLabel, mouseEvent);
+  QCoreApplication::postEvent(editableLabel, mouseEvent2);
   QCoreApplication::processEvents();
 
+  EXPECT_EQ("aaa", lineEdit->text().toStdString());
+  EXPECT_FALSE(label->isVisible());
+  EXPECT_TRUE(lineEdit->isVisible());
+
+  // Test editing value and hitting escape to forget changes
   lineEdit->setText("bbb");
-  QKeyEvent *keyboardEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape,
+
+  auto keyboardEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape,
     Qt::NoModifier);
   QCoreApplication::postEvent(lineEdit, keyboardEvent);
   QCoreApplication::processEvents();
+
   EXPECT_EQ("aaa", editableLabel->Text());
+  EXPECT_TRUE(label->isVisible());
+  EXPECT_FALSE(lineEdit->isVisible());
 
   delete editableLabel;
   EXPECT_TRUE(stop());
