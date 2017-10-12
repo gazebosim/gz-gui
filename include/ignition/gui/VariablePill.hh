@@ -161,7 +161,7 @@ namespace gui
       /// \param[in] _label New variable label.
       Q_SIGNALS: void VariableLabelChanged(const std::string &_label);
 
-     /// \brief Empty variable id used to indicate non-existent variable.
+      /// \brief Empty variable id used to indicate non-existent variable.
       public: static const unsigned int EmptyVariable;
 
       /// \internal
