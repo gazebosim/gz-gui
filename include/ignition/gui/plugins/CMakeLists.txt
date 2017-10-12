@@ -30,3 +30,4 @@ foreach (src ${qt_headers_local})
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})
 
+add_subdirectory(plot)

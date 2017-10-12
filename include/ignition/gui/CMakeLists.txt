@@ -13,6 +13,7 @@ set (qt_headers
   BoolWidget.hh
   CollapsibleWidget.hh
   ColorWidget.hh
+  EditableLabel.hh
   MainWindow.hh
   MessageWidget.hh
   NumberWidget.hh
