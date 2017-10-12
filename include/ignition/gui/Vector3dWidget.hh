@@ -40,7 +40,7 @@ namespace ignition
       /// \param[in] _key Property key value, such as "axis". Unlike other
       /// widgets, the key is not displayed in this widget, it is only used to
       /// set range and unit.
-      public: Vector3dWidget(const std::string &_key);
+      public: explicit Vector3dWidget(const std::string &_key);
 
       /// \brief Destructor
       public: ~Vector3dWidget();
