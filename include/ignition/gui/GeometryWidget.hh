@@ -67,8 +67,8 @@ namespace ignition
       public: QVariant Value() const override;
 
       /// \brief Callback when the geometry type is changed.
-      /// \param[in] _text New geometry type in string.
-      private slots: void OnTypeChanged(const QString &_text);
+      /// \param[in] _text New geometry type index.
+      private slots: void OnTypeChanged(const int _index);
 
       /// \brief Callback when the file button is clicked.
       private slots: void OnSelectFile();

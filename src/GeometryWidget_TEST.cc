@@ -22,7 +22,10 @@
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
 
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/StringWidget.hh"
+#include "ignition/gui/Vector3dWidget.hh"
 #include "ignition/gui/GeometryWidget.hh"
 
 using namespace ignition;
@@ -49,12 +52,15 @@ TEST(GeometryWidgetTest, Signal)
     });
 
   // Get signal emitting widgets
-  auto sizeSpins = widget->findChildren<QDoubleSpinBox *>("size");
-  EXPECT_EQ(sizeSpins.size(), 3);
+  auto boxWidget = widget->findChild<Vector3dWidget *>("boxWidget");
+  ASSERT_NE(nullptr, boxWidget);
+
+  auto spins = boxWidget->findChildren<QDoubleSpinBox *>();
+  EXPECT_EQ(spins.size(), 3);
 
   // Change the value and check new value at callback
-  sizeSpins[1]->setValue(2.0);
-  sizeSpins[1]->editingFinished();
+  spins[1]->setValue(2.0);
+  spins[1]->editingFinished();
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);
@@ -84,13 +90,74 @@ TEST(GeometryWidgetTest, SetValue)
   for (const auto &type : {msgs::Geometry::BOX,
                            msgs::Geometry::CYLINDER,
                            msgs::Geometry::SPHERE,
-                           msgs::Geometry::MESH,
-                           msgs::Geometry::POLYLINE})
+                           msgs::Geometry::MESH})
   {
     msg.set_type(type);
     EXPECT_TRUE(widget->SetValue(QVariant::fromValue(msg)));
     EXPECT_EQ(widget->Value().value<msgs::Geometry>().type(), type);
   }
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(GeometryWidgetTest, Dialog)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Create widget
+  auto widget = new GeometryWidget();
+  ASSERT_NE(widget, nullptr);
+
+  // Set it to mesh
+  msgs::Geometry msg;
+  msg.set_type(msgs::Geometry::MESH);
+  widget->SetValue(QVariant::fromValue(msg));
+
+  // Get URI line edit
+  auto string = widget->findChild<StringWidget *>("meshUriWidget");
+  ASSERT_NE(string, nullptr);
+  EXPECT_EQ(string->Value().value<std::string>(), std::string(""));
+
+  // Example file path
+  auto exampleFile = QString::fromStdString(
+        std::string(PROJECT_SOURCE_PATH) + "/test/media/fakemesh.dae");
+
+  // Close dialog after a while
+  bool closed = false;
+  QTimer::singleShot(300, [&]
+  {
+    auto dialog = widget->findChild<QFileDialog *>();
+    ASSERT_NE(dialog, nullptr);
+
+    // Select file
+    auto edits = dialog->findChildren<QLineEdit *>();
+    ASSERT_GT(edits.size(), 0);
+    edits[0]->setText(exampleFile);
+
+    // Accept
+    auto buttons = dialog->findChildren<QPushButton *>();
+    EXPECT_GT(buttons.size(), 0);
+    buttons[0]->click();
+
+    closed = true;
+  });
+
+  // Open dialog
+  auto button = widget->findChild<QPushButton *>();
+  ASSERT_NE(button, nullptr);
+  EXPECT_EQ(button->text(), QString("..."));
+  button->click();
+
+  while (!closed)
+    QCoreApplication::processEvents();
+
+  EXPECT_TRUE(closed);
+
+  // Check new URI value
+  EXPECT_EQ(string->Value().value<std::string>(), exampleFile.toStdString());
 
   delete widget;
   EXPECT_TRUE(stop());
