@@ -93,32 +93,32 @@ namespace gui
     /// \brief Get a variable pill by id.
     /// \param[in] _id Variable pill id.
     /// \return Variable pill with the specified id.
-    public: VariablePill *GetVariablePill(const unsigned int _id) const;
+    public: gui::VariablePill *VariablePill(const unsigned int _id) const;
 
     /// \brief Set the selected state of a variable pill.
     /// \param[in] _variable Variable pill to set the selected state.
-    public: void SetSelected(VariablePill *_variable);
+    public: void SetSelected(gui::VariablePill *_variable);
 
     /// \brief Used to accept drag enter events.
     /// \param[in] _evt The drag event.
-    protected: void dragEnterEvent(QDragEnterEvent *_evt);
+    protected: void dragEnterEvent(QDragEnterEvent *_evt) override;
 
     /// \brief Used to accept drop events.
     /// \param[in] _evt The drop event.
-    protected: void dropEvent(QDropEvent *_evt);
+    protected: void dropEvent(QDropEvent *_evt) override;
 
     /// \brief Qt callback when a key is pressed.
     /// \param[in] _event Qt key event.
-    protected: virtual void keyPressEvent(QKeyEvent *_event);
+    protected: virtual void keyPressEvent(QKeyEvent *_event) override;
 
     /// \brief Qt callback when the mouse is released.
     /// \param[in] _event Qt mouse event.
-    protected: void mouseReleaseEvent(QMouseEvent *_event);
+    protected: void mouseReleaseEvent(QMouseEvent *_event) override;
 
     /// \brief Helper function to check whether the drag action is valid.
     /// \param[in] _evt The drag event.
     /// \return True if the drag action is valid.
-    private: bool IsDragValid(QDropEvent *_evt) const;
+    private: bool IsDragValid(const QDropEvent *_evt) const;
 
     /// \brief Qt signal emitted when a variable is added to the container
     /// \param[in] _id Unique id of the variable pill.
@@ -126,9 +126,9 @@ namespace gui
     /// \param[in] _targetId Unique id of the target variable pill that this
     /// variable is added to. VariablePill::EmptyVariable if it is added to a
     /// container and not a variable pill.
-    Q_SIGNALS: void VariableAdded(const unsigned int _id,
-                                  const std::string &_name,
-                                  const unsigned int _targetId);
+    signals: void VariableAdded(const unsigned int _id,
+                                const std::string &_name,
+                                const unsigned int _targetId);
 
     /// \brief Qt signal emitted when a variable is removed from the container.
     /// \param[in] _id Unique id of the variable pill.
@@ -136,22 +136,22 @@ namespace gui
     /// variable is removed from. VariablePill::EmptyVariable if it is
     /// removed.
     /// from a container and not a variable pill.
-    Q_SIGNALS: void VariableRemoved(const unsigned int _id,
-                                    const unsigned int _targetId);
+    signals: void VariableRemoved(const unsigned int _id,
+                                  const unsigned int _targetId);
 
     /// \brief Qt signal emitted when a variable is moved into the container.
     /// \param[in] _id Unique id of the variable pill.
     /// \param[in] _targetId Unique id of the target variable pill that this
     /// variable has moved to. VariablePill::EmptyVariable if it moved to a
     /// container and not a variable pill.
-    Q_SIGNALS: void VariableMoved(const unsigned int _id,
-                                  const unsigned int _targetId);
+    signals: void VariableMoved(const unsigned int _id,
+                                const unsigned int _targetId);
 
     /// \brief Qt signal emitted when a variable label has changed.
     /// \param[in] _id Unique id of the variable pill.
     /// \param[in] _label New variable label.
-    Q_SIGNALS: void VariableLabelChanged(const unsigned int _id,
-                                         const std::string &_label);
+    signals: void VariableLabelChanged(const unsigned int _id,
+                                       const std::string &_label);
 
     /// \brief Qt Callback when a variable has been added to another variable.
     /// \param[in] _id Unique id of the added variable.

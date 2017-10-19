@@ -17,12 +17,9 @@
 #ifndef IGNITION_GUI_PLUGINS_PLOT_HH_
 #define IGNITION_GUI_PLUGINS_PLOT_HH_
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-#endif
+#include <memory>
 
 #include "ignition/gui/Plugin.hh"
-#include "ignition/gui/EditableLabel.hh"
 
 namespace ignition
 {
@@ -30,6 +27,8 @@ namespace gui
 {
 namespace plugins
 {
+  class PlotPrivate;
+
   /// \brief Widget that allow plotting of Ignition Transport topics.
   class Plot : public Plugin
   {
@@ -44,6 +43,9 @@ namespace plugins
     // Documentation inherited.
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
+
+    // Private data
+    private: std::unique_ptr<PlotPrivate> dataPtr;
   };
 }
 }

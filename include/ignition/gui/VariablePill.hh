@@ -32,7 +32,10 @@ namespace gui
     class VariablePillPrivate;
     class VariablePillContainer;
 
-    /// \brief A variable pill
+    /// \brief A variable pill. Every pill as an Id, which is a unique global
+    /// number that is incremented every time that a pill is created. Every pill
+    /// has a string name based on the prefix "variable" and its Id. Also,
+    /// a pill has a text or label that is displayed.
     class VariablePill : public QWidget
     {
       Q_OBJECT
@@ -116,19 +119,19 @@ namespace gui
 
       /// \brief Used to accept drag enter events.
       /// \param[in] _evt The drag event.
-      protected: void dragEnterEvent(QDragEnterEvent *_evt);
+      protected: void dragEnterEvent(QDragEnterEvent *_evt) override;
 
       /// \brief Used to accept drop events.
       /// \param[in] _evt The drop event.
-      protected: void dropEvent(QDropEvent *_evt);
+      protected: void dropEvent(QDropEvent *_evt) override;
 
       /// \brief Qt mouse press event.
       /// \param[in] _event Qt mouse event.
-      protected: void mouseMoveEvent(QMouseEvent *_event);
+      protected: void mouseMoveEvent(QMouseEvent *_event) override;
 
       /// \brief Qt mouse move event.
       /// \param[in] _event Qt mouse event.
-      protected: void mousePressEvent(QMouseEvent *_event);
+      protected: void mousePressEvent(QMouseEvent *_event) override;
 
       /// \brief Set whether to enable multi-variable mode.
       /// \param[in] _enable True to enable multi-variable mode.
@@ -140,26 +143,26 @@ namespace gui
       /// \brief Helper function to check whether the drag action is valid.
       /// \param[in] _evt The drag event.
       /// \return True if the drag action is valid
-      private: bool IsDragValid(QDropEvent *_evt);
+      private: bool IsDragValid(const QDropEvent *_evt) const;
 
       /// \brief Qt signal emitted when a child variable pill is added.
       /// \param[in] _id Unique id of the child variable pill.
       /// \param[in] _name Name of variable pill added.
-      Q_SIGNALS: void VariableAdded(const unsigned int _id,
-          const std::string &_name);
+      signals: void VariableAdded(const unsigned int _id,
+                                  const std::string &_name);
 
       /// \brief Qt signal emitted when a child variable pill is removed.
       /// \param[in] _id Name of child variable pill removed.
-      Q_SIGNALS: void VariableRemoved(const unsigned int _id);
+      signals: void VariableRemoved(const unsigned int _id);
 
       /// \brief Qt signal emitted when an existing variable pill is added.
       /// as a child of this variable pill.
       /// \param[in] _id Unique id of the existing variable pill that is added.
-      Q_SIGNALS: void VariableMoved(const unsigned int _id);
+      signals: void VariableMoved(const unsigned int _id);
 
       /// \brief Qt signal emitted when the variable pill's text has changed.
       /// \param[in] _label New variable label.
-      Q_SIGNALS: void VariableLabelChanged(const std::string &_label);
+      signals: void VariableLabelChanged(const std::string &_label);
 
       /// \brief Empty variable id used to indicate non-existent variable.
       public: static const unsigned int EmptyVariable;

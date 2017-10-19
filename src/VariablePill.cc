@@ -439,7 +439,7 @@ void VariablePill::dropEvent(QDropEvent *_evt)
   }
 }
 /////////////////////////////////////////////////
-bool VariablePill::IsDragValid(QDropEvent *_evt)
+bool VariablePill::IsDragValid(const QDropEvent *_evt) const
 {
   if (_evt->source() == this)
     return false;
@@ -563,31 +563,4 @@ bool VariablePill::IsSelected() const
 /////////////////////////////////////////////////
 void VariablePill::UpdateStyleSheet()
 {
-  std::string colorHex;
-  std::string bgColorStr;
-  std::string borderStr;
-  if (this->dataPtr->parent)
-    colorHex = "#64b5f6";
-  else
-    colorHex = "#2196f3";
-
-  bgColorStr = "background-color: " + colorHex + ";";
-
-  if (this->dataPtr->isSelected)
-    borderStr = "border: 1.5px solid #1565c0;";
-  else
-    borderStr = "border: 1.5px solid " + colorHex + ";";
-
-  this->dataPtr->label->setStyleSheet(QString::fromStdString(
-      "QLabel\\n"
-      "{\\n"
-        "color: #ffffff; \\n"
-        "border-radius: 10px;\\n"
-        "padding-left: 8px;\\n"
-        "padding-right: 8px;\\n"
-        "padding-top: 2px;\\n"
-        "padding-bottom: 2px;\\n"
-        "margin: 0px; \n"
-        + bgColorStr + borderStr +
-      "}"));
 }
