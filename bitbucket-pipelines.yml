@@ -34,7 +34,7 @@ pipelines:
           - make install
           - cd ../..
           # Ignition transport
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b msgs_versions
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
           - cd ign-transport
           - mkdir build
           - cd build
