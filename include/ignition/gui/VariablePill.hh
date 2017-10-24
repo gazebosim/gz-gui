@@ -35,7 +35,7 @@ namespace gui
     /// \brief A variable pill. Every pill as an Id, which is a unique global
     /// number that is incremented every time that a pill is created. Every pill
     /// has a string name based on the prefix "variable" and its Id. Also,
-    /// a pill has a text or label that is displayed.
+    /// a pill has a text that is displayed.
     class VariablePill : public QWidget
     {
       Q_OBJECT
