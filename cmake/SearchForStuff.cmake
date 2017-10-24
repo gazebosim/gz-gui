@@ -19,6 +19,19 @@ else()
   BUILD_WARNING ("ignition-tools not found, for command line utilities, please install ignition-tools.")
 endif()
 
+########################################
+# Ignition msgs
+find_package(ignition-msgs1 QUIET)
+if (NOT ignition-msgs1_FOUND)
+  BUILD_ERROR ("Missing: Ignition Transport libignition-msgs1-dev.")
+else()
+  message (STATUS "Found Ignition Messages")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-MSGS_CXX_FLAGS}")
+  include_directories(${IGNITION-MSGS_INCLUDE_DIRS})
+  link_directories(${IGNITION-MSGS_LIBRARY_DIRS})
+  set (HAVE_IGN_MSGS TRUE)
+endif()
+
 ################################################################################
 # Ignition common
 find_package(ignition-common0 QUIET)
