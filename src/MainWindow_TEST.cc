@@ -167,7 +167,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
     EXPECT_TRUE(savedStr.contains("<stylesheet>"));
     EXPECT_TRUE(savedStr.contains("<state>"));
     EXPECT_TRUE(savedStr.contains("<menus>"));
-    EXPECT_TRUE(savedStr.contains("<file>"));
+    EXPECT_TRUE(savedStr.contains("<file"));
     EXPECT_TRUE(savedStr.contains("<plugins"));
 
     // Delete file
@@ -466,13 +466,14 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_TRUE(c.showPlugins.empty());
 
   auto xml = c.XMLString();
+
   EXPECT_NE(xml.find("<window>"), std::string::npos);
   EXPECT_NE(xml.find("<position_x>"), std::string::npos);
   EXPECT_NE(xml.find("<position_y>"), std::string::npos);
   EXPECT_NE(xml.find("<width>"), std::string::npos);
   EXPECT_NE(xml.find("<height>"), std::string::npos);
   EXPECT_NE(xml.find("<menus>"), std::string::npos);
-  EXPECT_NE(xml.find("<file>"), std::string::npos);
+  EXPECT_NE(xml.find("<file"), std::string::npos);
   EXPECT_NE(xml.find("<plugins"), std::string::npos);
 }
 
@@ -503,5 +504,32 @@ TEST(WindowConfigTest, mergeFromXML)
   EXPECT_TRUE(c.menuVisibilityMap.empty());
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
+}
+
+/////////////////////////////////////////////////
+TEST(WindowConfigTest, MenusToString)
+{
+  setVerbosity(4);
+
+  WindowConfig c;
+
+  // Set some menu-related properties
+  c.menuVisibilityMap["file"] = false;
+  c.menuVisibilityMap["plugins"] = true;
+
+  c.pluginsFromPaths = false;
+
+  c.showPlugins.push_back("PluginA");
+  c.showPlugins.push_back("PluginB");
+
+  // Check generated string
+  auto str = c.XMLString();
+std::cout << str << std::endl;
+  EXPECT_FALSE(str.empty());
+  EXPECT_NE(str.find("<file visible=\"0\"/>"), std::string::npos);
+  EXPECT_NE(str.find("<plugins visible=\"1\" from_paths=\"0\">"), std::string::npos);
+  EXPECT_NE(str.find("<show>PluginA</show>"), std::string::npos);
+  EXPECT_NE(str.find("<show>PluginB</show>"), std::string::npos);
+  EXPECT_EQ(str.find("<show>PluginC</show>"), std::string::npos);
 }
 

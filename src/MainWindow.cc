@@ -460,87 +460,101 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
 /////////////////////////////////////////////////
 std::string WindowConfig::XMLString() const
 {
-  std::string str;
+  tinyxml2::XMLDocument doc;
 
-  str += "<window>\n";
+  // Window
+  auto windowElem = doc.NewElement("window");
+  doc.InsertEndChild(windowElem);
 
   // Position
-  str += "  <position_x>";
-  str += std::to_string(this->posX);
-  str += "</position_x>\n";
-  str += "  <position_y>";
-  str += std::to_string(this->posY);
-  str += "</position_y>\n";
+  {
+    auto elem = doc.NewElement("position_x");
+    elem->SetText(std::to_string(this->posX).c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  {
+    auto elem = doc.NewElement("position_y");
+    elem->SetText(std::to_string(this->posY).c_str());
+    windowElem->InsertEndChild(elem);
+  }
 
   // Docks state
-  str += "  <state>";
-  str += this->state.toBase64().toStdString();
-  str += "</state>\n";
+  {
+    auto elem = doc.NewElement("state");
+    elem->SetText(this->state.toBase64().toStdString().c_str());
+    windowElem->InsertEndChild(elem);
+  }
 
   // Size
-  str += "  <width>";
-  str += std::to_string(this->width);
-  str += "</width>\n";
-  str += "  <height>";
-  str += std::to_string(this->height);
-  str += "</height>\n";
+  {
+    auto elem = doc.NewElement("width");
+    elem->SetText(std::to_string(this->width).c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  {
+    auto elem = doc.NewElement("height");
+    elem->SetText(std::to_string(this->height).c_str());
+    windowElem->InsertEndChild(elem);
+  }
 
   // Stylesheet
-  str += "  <stylesheet>\n";
-  str += this->styleSheet;
-  str += "  </stylesheet>\n";
+  {
+    auto elem = doc.NewElement("stylesheet");
+    elem->SetText(this->styleSheet.c_str());
+    windowElem->InsertEndChild(elem);
+  }
 
   // Menus
-  str += "  <menus>\n";
-
-  // File menu
   {
-    str += "    <file";
+    auto menusElem = doc.NewElement("menus");
+    windowElem->InsertEndChild(menusElem);
 
-    // Visible
-    auto m = this->menuVisibilityMap.find("file");
-    if (m != this->menuVisibilityMap.end())
+    // File
     {
-      str += " visible=\"";
-      str += (m->second ? "true" : "false");
-      str += "\"";
-    }
-    str += ">\n";
+      auto elem = doc.NewElement("file");
 
-    str += "    </file>\n";
+      // Visible
+      auto m = this->menuVisibilityMap.find("file");
+      if (m != this->menuVisibilityMap.end())
+      {
+        elem->SetAttribute("visible", m->second);
+      }
+      menusElem->InsertEndChild(elem);
+    }
+
+    // Plugins
+    {
+      auto elem = doc.NewElement("plugins");
+
+      // Visible
+      auto m = this->menuVisibilityMap.find("plugins");
+      if (m != this->menuVisibilityMap.end())
+      {
+        elem->SetAttribute("visible", m->second);
+      }
+
+      // From paths
+      elem->SetAttribute("from_paths", this->pluginsFromPaths);
+
+      // Show
+      for (const auto &show : this->showPlugins)
+      {
+        auto showElem = doc.NewElement("show");
+        showElem->SetText(show.c_str());
+        elem->InsertEndChild(showElem);
+      }
+
+      menusElem->InsertEndChild(elem);
+    }
+
+    windowElem->InsertEndChild(menusElem);
   }
 
-  // Plugins menu
-  {
-    str += "    <plugins";
+  tinyxml2::XMLPrinter printer;
+  doc.Print(&printer);
 
-    // Visible
-    auto m = this->menuVisibilityMap.find("plugins");
-    if (m != this->menuVisibilityMap.end())
-    {
-      str += " visible=\"";
-      str += (m->second ? "true" : "false");
-      str += "\"";
-    }
-
-    // From paths
-    str += " from_paths=\"";
-    str += (this->pluginsFromPaths ? "true" : "false");
-    str += "\">\n";
-
-    // Show
-    for (const auto &show : this->showPlugins)
-    {
-      str += "      <show>" + show + "</show>\n";
-    }
-
-    str += "    </plugins>\n";
-  }
-
-  str += "  </menus>\n";
-
-  str += "</window>\n";
-
-  return str;
+  return printer.CStr();
 }
 
