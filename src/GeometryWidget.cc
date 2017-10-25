@@ -56,11 +56,15 @@ GeometryWidget::GeometryWidget()
   label->setToolTip(tr("type"));
 
   // Type combo
+  msgs::Geometry msg;
+  auto enumDescriptor = msg.Type_descriptor();
+
   auto comboBox = new QComboBox(this);
-  comboBox->addItem(tr("box"));
-  comboBox->addItem(tr("cylinder"));
-  comboBox->addItem(tr("sphere"));
-  comboBox->addItem(tr("mesh"));
+  for (int type = 0; type < enumDescriptor->value_count(); ++type)
+  {
+    auto value = enumDescriptor->value(type);
+    comboBox->addItem(QString::fromStdString(value->name()));
+  }
   this->connect(comboBox, SIGNAL(currentIndexChanged(const int)),
       this, SLOT(OnTypeChanged(const int)));
 
@@ -120,12 +124,16 @@ GeometryWidget::GeometryWidget()
   // Type - specific (make sure order matches combo)
   this->dataPtr->typeStack = new QStackedWidget();
   this->dataPtr->typeStack->setSizePolicy(QSizePolicy::Minimum,
-                                           QSizePolicy::Minimum);
+                                          QSizePolicy::Minimum);
 
   this->dataPtr->typeStack->insertWidget(0, boxWidget);
   this->dataPtr->typeStack->insertWidget(1, cylinderWidget);
   this->dataPtr->typeStack->insertWidget(2, sphereWidget);
-  this->dataPtr->typeStack->insertWidget(3, meshWidget);
+  this->dataPtr->typeStack->insertWidget(3, new QWidget());
+  this->dataPtr->typeStack->insertWidget(4, new QWidget());
+  this->dataPtr->typeStack->insertWidget(5, new QWidget());
+  this->dataPtr->typeStack->insertWidget(6, meshWidget);
+  this->dataPtr->typeStack->insertWidget(7, new QWidget());
 
   // Layout
   auto mainLayout = new QGridLayout;
@@ -155,12 +163,12 @@ bool GeometryWidget::SetValue(const QVariant _value)
   auto type = msgs::ConvertGeometryType(value.type());
 
   auto combo = this->findChild<QComboBox *>();
-  int index = combo->findText(tr(type.c_str()));
+  int index = combo->findText(QString(type.c_str()).toUpper());
 
   if (index < 0)
   {
-    ignwarn << "Error updating Geometry widget: '" << type << "' not supported"
-           << std::endl;
+    ignwarn << "Type [" << type << "] not supported yet. See issue #10."
+            << std::endl;
     return false;
   }
 
@@ -196,6 +204,12 @@ bool GeometryWidget::SetValue(const QVariant _value)
     uri->SetValue(QVariant::fromValue(
         std::string(value.mesh().filename().c_str())));
   }
+  else
+  {
+    ignwarn << "Type [" << type << "] not supported yet. See issue #10."
+            << std::endl;
+    return false;
+  }
 
   return true;
 }
@@ -208,11 +222,17 @@ QVariant GeometryWidget::Value() const
   auto combo = this->findChild<QComboBox *>();
 
   // Type
-  auto type = combo->currentText().toStdString();
+  auto type = combo->currentText().toLower().toStdString();
   value.set_type(msgs::ConvertGeometryType(type));
 
   // From type stack
-  auto widget = this->dataPtr->typeStack->widget(combo->currentIndex());
+  auto i = combo->currentIndex();
+
+  // Unsupported types
+  if (i > 7)
+    i = 7;
+
+  auto widget = this->dataPtr->typeStack->widget(i);
   if (type == "box")
   {
     auto sizeWidget = qobject_cast<Vector3dWidget *>(widget);
@@ -242,6 +262,11 @@ QVariant GeometryWidget::Value() const
     auto uriWidget = widget->findChild<StringWidget *>();
     value.mutable_mesh()->set_filename(uriWidget->Value().value<std::string>());
   }
+  else
+  {
+    ignwarn << "Type [" << type << "] not supported yet. See issue #10."
+            << std::endl;
+  }
 
   return QVariant::fromValue(value);
 }
@@ -249,7 +274,13 @@ QVariant GeometryWidget::Value() const
 /////////////////////////////////////////////////
 void GeometryWidget::OnTypeChanged(const int _index)
 {
-  this->dataPtr->typeStack->setCurrentIndex(_index);
+  int i = _index;
+
+  // Unsupported types
+  if (i > 7)
+    i = 7;
+
+  this->dataPtr->typeStack->setCurrentIndex(i);
   this->OnValueChanged();
 }
 

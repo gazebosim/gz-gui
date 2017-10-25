@@ -32,7 +32,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(GeometryWidgetTest, Signal)
+TEST(GeometryWidgetTest, BoxSignal)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -81,9 +81,16 @@ TEST(GeometryWidgetTest, SetValue)
   // Set bad value
   EXPECT_FALSE(widget->SetValue(true));
 
-  // Set message without type
+  // Set message with unconvertable type
   auto msg = msgs::Geometry();
   msg.set_type(msgs::Geometry::EMPTY);
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(msg)));
+
+  // Set message with unsupported type (issue #10)
+  msg.set_type(msgs::Geometry::PLANE);
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(msg)));
+
+  msg.set_type(msgs::Geometry::POLYLINE);
   EXPECT_FALSE(widget->SetValue(QVariant::fromValue(msg)));
 
   // Set message with supported type
