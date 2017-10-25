@@ -184,6 +184,315 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_DOUBLE_EQ(retMsg->suspension_erp(), 0.9);
   }
 
+  // update fields in the message widget and
+  // verify that the new message contains the updated values.
+  // Joint type revolute -> universal
+  {
+    // joint
+    widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated")));
+    widget->SetPropertyValue("id", 9999999u);
+    widget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated")));
+    widget->SetPropertyValue("parent_id", 1u);
+    widget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated")));
+    widget->SetPropertyValue("child_id", 2u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
+
+    // pose
+    math::Vector3d pos(2.0, 9.0, -4.0);
+    math::Quaterniond quat(0.0, 0.0, 1.57);
+    widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // axis1
+    widget->SetPropertyValue("axis1::xyz", QVariant::fromValue(
+        math::Vector3d::UnitY));
+    widget->SetPropertyValue("axis1::use_parent_model_frame",
+        true);
+    widget->SetPropertyValue("axis1::limit_lower", -1.2);
+    widget->SetPropertyValue("axis1::limit_upper", -1.0);
+    widget->SetPropertyValue("axis1::limit_effort", 1.0);
+    widget->SetPropertyValue("axis1::limit_velocity", 100.0);
+    widget->SetPropertyValue("axis1::damping", 0.9);
+
+    // axis2
+    widget->SetPropertyValue("axis2::xyz", QVariant::fromValue(
+        math::Vector3d::UnitZ));
+    widget->SetPropertyValue("axis2::use_parent_model_frame",
+        true);
+    widget->SetPropertyValue("axis2::limit_lower", -3.2);
+    widget->SetPropertyValue("axis2::limit_upper", -3.0);
+    widget->SetPropertyValue("axis2::limit_effort", 3.0);
+    widget->SetPropertyValue("axis2::limit_velocity", 300.0);
+    widget->SetPropertyValue("axis2::damping", 3.9);
+
+    // other joint physics properties
+    widget->SetPropertyValue("cfm", 0.9);
+    widget->SetPropertyValue("bounce", 0.8);
+    widget->SetPropertyValue("velocity", 0.7);
+    widget->SetPropertyValue("fudge_factor", 0.6);
+    widget->SetPropertyValue("limit_cfm", 0.5);
+    widget->SetPropertyValue("limit_erp", 0.4);
+    widget->SetPropertyValue("suspension_cfm", 0.3);
+    widget->SetPropertyValue("suspension_erp", 0.2);
+  }
+
+  // verify widget values
+  {
+    // joint
+    EXPECT_EQ(widget->PropertyValue("name").value<std::string>(),
+        "test_joint_updated");
+    EXPECT_EQ(widget->PropertyValue("id"), 9999999u);
+    EXPECT_EQ(widget->PropertyValue("parent").value<std::string>(),
+        "test_joint_parent_updated");
+    EXPECT_EQ(widget->PropertyValue("parent_id"), 1u);
+    EXPECT_EQ(widget->PropertyValue("child").value<std::string>(),
+        "test_joint_child_updated");
+    EXPECT_EQ(widget->PropertyValue("child_id"), 2u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
+
+    // pose
+    math::Vector3d pos(2.0, 9.0, -4.0);
+    math::Quaterniond quat(0.0, 0.0, 1.57);
+    EXPECT_EQ(widget->PropertyValue("pose").value<math::Pose3d>(),
+        math::Pose3d(pos, quat));
+
+    // axis1
+    EXPECT_EQ(widget->PropertyValue(
+        "axis1::xyz").value<math::Vector3d>(), math::Vector3d::UnitY);
+    EXPECT_EQ(widget->PropertyValue(
+        "axis1::use_parent_model_frame").toBool(), true);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_lower").toDouble(), -1.2);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_upper").toDouble(), -1.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_effort").toDouble(), 1.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_velocity").toDouble(), 100.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::damping").toDouble(), 0.9);
+
+    // axis2
+    EXPECT_EQ(widget->PropertyValue(
+        "axis2::xyz").value<math::Vector3d>(), math::Vector3d::UnitZ);
+    EXPECT_EQ(widget->PropertyValue(
+        "axis1::use_parent_model_frame").toBool(), true);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_lower").toDouble(), -3.2);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_upper").toDouble(), -3.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_effort").toDouble(), 3.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_velocity").toDouble(), 300.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::damping").toDouble(), 3.9);
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "cfm").toDouble(), 0.9);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "bounce").toDouble(), 0.8);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "velocity").toDouble(), 0.7);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "fudge_factor").toDouble(), 0.6);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_cfm").toDouble(), 0.5);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_erp").toDouble(), 0.4);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_cfm").toDouble(), 0.3);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_erp").toDouble(), 0.2);
+  }
+
+  // verify updates in new msg
+  {
+    auto retJointMsg = dynamic_cast<msgs::Joint *>(widget->Msg());
+    EXPECT_TRUE(retJointMsg != nullptr);
+
+    // joint
+    EXPECT_EQ(retJointMsg->name(), "test_joint_updated");
+    EXPECT_EQ(retJointMsg->id(), 9999999u);
+    EXPECT_EQ(retJointMsg->parent(), "test_joint_parent_updated");
+    EXPECT_EQ(retJointMsg->parent_id(), 1u);
+    EXPECT_EQ(retJointMsg->child(), "test_joint_child_updated");
+    EXPECT_EQ(retJointMsg->child_id(), 2u);
+
+    // type
+    EXPECT_EQ(retJointMsg->type(), msgs::ConvertJointType("universal"));
+
+    // pose
+    auto poseMsg = retJointMsg->pose();
+    auto posMsg = poseMsg.position();
+    EXPECT_DOUBLE_EQ(posMsg.x(), 2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), 9.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
+    auto quat = msgs::Convert(poseMsg.orientation());
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 1.57);
+
+    // axis1
+    auto axisMsg = retJointMsg->mutable_axis1();
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().x(), 0.0);
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().y(), 1.0);
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().z(), 0.0);
+    EXPECT_EQ(axisMsg->use_parent_model_frame(), true);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_lower(), -1.2);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_upper(), -1.0);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_effort(), 1.0);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_velocity(), 100.0);
+    EXPECT_DOUBLE_EQ(axisMsg->damping(), 0.9);
+
+    // axis2
+    auto axis2Msg = retJointMsg->mutable_axis2();
+    EXPECT_DOUBLE_EQ(axis2Msg->xyz().x(), 0.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->xyz().y(), 0.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->xyz().z(), 1.0);
+    EXPECT_EQ(axis2Msg->use_parent_model_frame(), true);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_lower(), -3.2);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_upper(), -3.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_effort(), 3.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_velocity(), 300.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->damping(), 3.9);
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(retJointMsg->cfm(), 0.9);
+    EXPECT_DOUBLE_EQ(retJointMsg->bounce(), 0.8);
+    EXPECT_DOUBLE_EQ(retJointMsg->velocity(), 0.7);
+    EXPECT_DOUBLE_EQ(retJointMsg->fudge_factor(), 0.6);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_cfm(), 0.5);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_erp(), 0.4);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_cfm(), 0.3);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_erp(), 0.2);
+  }
+
+  // update fields in the message widget and
+  // verify that the new message contains the updated values.
+  // Joint type universal -> ball
+  {
+    // joint
+    widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated2")));
+    widget->SetPropertyValue("id", 2222222u);
+    widget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated2")));
+    widget->SetPropertyValue("parent_id", 10u);
+    widget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated2")));
+    widget->SetPropertyValue("child_id", 20u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
+
+    // pose
+    math::Vector3d pos(-2.0, 1.0, 2.0);
+    math::Quaterniond quat(0.0, 0.0, 0.0);
+    widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // other joint physics properties
+    widget->SetPropertyValue("cfm", 0.19);
+    widget->SetPropertyValue("bounce", 0.18);
+    widget->SetPropertyValue("velocity", 2.7);
+    widget->SetPropertyValue("fudge_factor", 0.26);
+    widget->SetPropertyValue("limit_cfm", 0.15);
+    widget->SetPropertyValue("limit_erp", 0.24);
+    widget->SetPropertyValue("suspension_cfm", 0.13);
+    widget->SetPropertyValue("suspension_erp", 0.12);
+  }
+
+  // verify widget values
+  {
+    // joint
+    EXPECT_EQ(widget->PropertyValue("name").value<std::string>(),
+        "test_joint_updated2");
+    EXPECT_EQ(widget->PropertyValue("id"), 2222222u);
+    EXPECT_EQ(widget->PropertyValue("parent").value<std::string>(),
+        "test_joint_parent_updated2");
+    EXPECT_EQ(widget->PropertyValue("parent_id"), 10u);
+    EXPECT_EQ(widget->PropertyValue("child").value<std::string>(),
+        "test_joint_child_updated2");
+    EXPECT_EQ(widget->PropertyValue("child_id"), 20u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
+
+    // pose
+    math::Vector3d pos(-2.0, 1.0, 2.0);
+    math::Quaterniond quat(0.0, 0.0, 0.0);
+    EXPECT_EQ(widget->PropertyValue("pose"), QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "cfm").toDouble(), 0.19);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "bounce").toDouble(), 0.18);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "velocity").toDouble(), 2.7);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "fudge_factor").toDouble(), 0.26);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_cfm").toDouble(), 0.15);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_erp").toDouble(), 0.24);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_cfm").toDouble(), 0.13);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_erp").toDouble(), 0.12);
+  }
+
+  // verify updates in new msg
+  {
+    auto retJointMsg = dynamic_cast<msgs::Joint *>(widget->Msg());
+    EXPECT_TRUE(retJointMsg != nullptr);
+
+    // joint
+    EXPECT_EQ(retJointMsg->name(), "test_joint_updated2");
+    EXPECT_EQ(retJointMsg->id(), 2222222u);
+    EXPECT_EQ(retJointMsg->parent(), "test_joint_parent_updated2");
+    EXPECT_EQ(retJointMsg->parent_id(), 10u);
+    EXPECT_EQ(retJointMsg->child(), "test_joint_child_updated2");
+    EXPECT_EQ(retJointMsg->child_id(), 20u);
+
+    // type
+    EXPECT_EQ(retJointMsg->type(), msgs::ConvertJointType("ball"));
+
+    // pose
+    auto poseMsg = retJointMsg->pose();
+    auto posMsg = poseMsg.position();
+    EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), 1.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), 2.0);
+    auto quat = msgs::Convert(poseMsg.orientation());
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(retJointMsg->cfm(), 0.19);
+    EXPECT_DOUBLE_EQ(retJointMsg->bounce(), 0.18);
+    EXPECT_DOUBLE_EQ(retJointMsg->velocity(), 2.7);
+    EXPECT_DOUBLE_EQ(retJointMsg->fudge_factor(), 0.26);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_cfm(), 0.15);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_erp(), 0.24);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_cfm(), 0.13);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_erp(), 0.12);
+  }
   EXPECT_TRUE(stop());
 }
 
@@ -412,6 +721,184 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(scriptMsg.name(), "test_script_name_2");
   }
 
+  // update fields in the message widget and
+  // verify that the new message contains the updated values.
+  {
+    // visual
+    widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_visual_updated")));
+    widget->SetPropertyValue("id", 11111u);
+    widget->SetPropertyValue("parent_name", QVariant::fromValue(
+        std::string("test_visual_parent_updated")));
+    widget->SetPropertyValue("parent_id", 55555u);
+    widget->SetPropertyValue("cast_shadows", false);
+    widget->SetPropertyValue("transparency", 1.0);
+    widget->SetPropertyValue("visible", false);
+    widget->SetPropertyValue("delete_me", true);
+    widget->SetPropertyValue("is_static", true);
+    widget->SetPropertyValue("scale", QVariant::fromValue(
+        math::Vector3d(2.0, 1.5, 0.5)));
+
+    // pose
+    math::Vector3d pos(-2.0, -3.0, -4.0);
+    math::Quaterniond quat(0.0, 1.57, 0.0);
+    widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // geometry
+    msgs::Geometry newGeom;
+    newGeom.set_type(msgs::Geometry::BOX);
+    msgs::Set(newGeom.mutable_box()->mutable_size(),
+              math::Vector3d(5.0, 3.0, 4.0));
+    widget->SetPropertyValue("geometry", QVariant::fromValue(
+        newGeom));
+
+    // material
+    widget->SetPropertyValue("material::normal_map", QVariant::fromValue(
+        std::string("test_normal_map_updated")));
+    widget->SetPropertyValue("material::ambient", QVariant::fromValue(
+        math::Color(0.2, 0.3, 0.4, 0.5)));
+    widget->SetPropertyValue("material::diffuse", QVariant::fromValue(
+        math::Color(0.1, 0.8, 0.6, 0.4)));
+    widget->SetPropertyValue("material::specular", QVariant::fromValue(
+        math::Color(0.5, 0.4, 0.3, 0.2)));
+    widget->SetPropertyValue("material::emissive", QVariant::fromValue(
+        math::Color(0.4, 0.6, 0.8, 0.1)));
+    widget->SetPropertyValue("material::lighting", false);
+    // material::script
+    widget->SetPropertyValue("material::script::name", QVariant::fromValue(
+        std::string("test_script_name_updated")));
+  }
+
+  // verify widget values
+  {
+    EXPECT_EQ(widget->PropertyValue(
+        "name").value<std::string>(), "test_visual_updated");
+    EXPECT_EQ(widget->PropertyValue(
+        "id"), 11111u);
+    EXPECT_EQ(widget->PropertyValue(
+        "parent_name").value<std::string>(), "test_visual_parent_updated");
+    EXPECT_EQ(widget->PropertyValue(
+        "parent_id"), 55555u);
+    EXPECT_EQ(widget->PropertyValue(
+        "cast_shadows").toBool(), false);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "transparency").toDouble(), 1.0);
+    EXPECT_EQ(widget->PropertyValue(
+        "visible").toBool(), false);
+    EXPECT_EQ(widget->PropertyValue(
+        "delete_me").toBool(), true);
+    EXPECT_EQ(widget->PropertyValue(
+        "is_static").toBool(), true);
+    EXPECT_EQ(widget->PropertyValue(
+        "scale").value<math::Vector3d>(), math::Vector3d(2.0, 1.5, 0.5));
+
+    // pose
+    math::Vector3d pos(-2.0, -3.0, -4.0);
+    math::Quaterniond quat(0.0, 1.57, 0.0);
+    EXPECT_EQ(widget->PropertyValue("pose"), QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // geometry
+    auto geomValue =
+        widget->PropertyValue("geometry").value<msgs::Geometry>();
+    EXPECT_EQ(msgs::ConvertGeometryType(geomValue.type()), "box");
+    EXPECT_EQ(msgs::Convert(geomValue.box().size()),
+              math::Vector3d(5.0, 3.0, 4.0));
+
+    // material
+    EXPECT_EQ(widget->PropertyValue(
+        "material::normal_map").value<std::string>(),
+        "test_normal_map_updated");
+    EXPECT_EQ(widget->PropertyValue("material::ambient"),
+        QVariant::fromValue(math::Color(0.2, 0.3, 0.4, 0.5)));
+    EXPECT_EQ(widget->PropertyValue("material::diffuse"),
+        QVariant::fromValue(math::Color(0.1, 0.8, 0.6, 0.4)));
+    EXPECT_EQ(widget->PropertyValue("material::specular"),
+        QVariant::fromValue(math::Color(0.5, 0.4, 0.3, 0.2)));
+    EXPECT_EQ(widget->PropertyValue("material::emissive"),
+        QVariant::fromValue(math::Color(0.4, 0.6, 0.8, 0.1)));
+    EXPECT_EQ(widget->PropertyValue("material::lighting").toBool(), false);
+    // material::script
+    EXPECT_EQ(widget->PropertyValue(
+        "material::script::name").value<std::string>(),
+        "test_script_name_updated");
+  }
+
+  // verify updates in new msg
+  {
+    auto retMsg =
+        dynamic_cast<msgs::Visual *>(widget->Msg());
+    EXPECT_TRUE(retMsg != nullptr);
+
+    // visual
+    EXPECT_EQ(retMsg->name(), "test_visual_updated");
+    EXPECT_EQ(retMsg->id(), 11111u);
+    EXPECT_EQ(retMsg->parent_name(), "test_visual_parent_updated");
+    EXPECT_EQ(retMsg->parent_id(), 55555u);
+    EXPECT_EQ(retMsg->cast_shadows(), false);
+    EXPECT_DOUBLE_EQ(retMsg->transparency(), 1.0);
+    EXPECT_EQ(retMsg->visible(), false);
+    EXPECT_EQ(retMsg->delete_me(), true);
+    EXPECT_EQ(retMsg->is_static(), true);
+    auto scaleMsg = retMsg->scale();
+    EXPECT_DOUBLE_EQ(scaleMsg.x(), 2.0);
+    EXPECT_DOUBLE_EQ(scaleMsg.y(), 1.5);
+    EXPECT_DOUBLE_EQ(scaleMsg.z(), 0.5);
+
+    // pose
+    auto poseMsg = retMsg->pose();
+    auto posMsg = poseMsg.position();
+    EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), -3.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
+    auto quat = msgs::Convert(poseMsg.orientation());
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_LT(fabs(quat.Euler().Y() - 1.57), 0.0001);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+
+    // geometry
+    auto geometryMsg = retMsg->geometry();
+    EXPECT_EQ(geometryMsg.type(), msgs::Geometry::BOX);
+    auto boxGeomMsg = geometryMsg.box();
+    auto boxGeomSizeMsg = boxGeomMsg.size();
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.x(), 5.0);
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.y(), 3.0);
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.z(), 4.0);
+
+    // material
+    auto materialMsg = retMsg->material();
+    EXPECT_EQ(materialMsg.shader_type(), msgs::Material::Material::VERTEX);
+    EXPECT_EQ(materialMsg.normal_map(), "test_normal_map_updated");
+    auto ambientMsg = materialMsg.ambient();
+    EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.2f);
+    EXPECT_DOUBLE_EQ(ambientMsg.g(), 0.3f);
+    EXPECT_DOUBLE_EQ(ambientMsg.b(), 0.4f);
+    EXPECT_DOUBLE_EQ(ambientMsg.a(), 0.5f);
+    auto diffuseMsg = materialMsg.diffuse();
+    EXPECT_DOUBLE_EQ(diffuseMsg.r(), 0.1f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.g(), 0.8f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.b(), 0.6f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.a(), 0.4f);
+    auto specularMsg = materialMsg.specular();
+    EXPECT_DOUBLE_EQ(specularMsg.r(), 0.5f);
+    EXPECT_DOUBLE_EQ(specularMsg.g(), 0.4f);
+    EXPECT_DOUBLE_EQ(specularMsg.b(), 0.3f);
+    EXPECT_DOUBLE_EQ(specularMsg.a(), 0.2f);
+    auto emissiveMsg = materialMsg.emissive();
+    EXPECT_DOUBLE_EQ(emissiveMsg.r(), 0.4f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.g(), 0.6f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.b(), 0.8f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.a(), 0.1f);
+    EXPECT_EQ(materialMsg.lighting(), false);
+
+    // material::script
+    auto scriptMsg = materialMsg.script();
+    EXPECT_EQ(scriptMsg.uri(0), "test_script_uri_0");
+    EXPECT_EQ(scriptMsg.uri(1), "test_script_uri_1");
+    EXPECT_EQ(scriptMsg.name(), "test_script_name_updated");
+  }
+
   delete widget;
   EXPECT_TRUE(stop());
 }
@@ -455,6 +942,30 @@ TEST(MessageWidgetTest, PluginMsgWidget)
   EXPECT_EQ(retMsg->name(), "test_plugin_new");
   EXPECT_EQ(retMsg->filename(), "test_plugin_filename_new");
   EXPECT_EQ(retMsg->innerxml(), "<param>2</param>\n");
+
+  // Update fields
+  widget->SetPropertyValue("name", QVariant::fromValue(
+      std::string("test_plugin_updated")));
+  widget->SetPropertyValue("filename", QVariant::fromValue(
+      std::string("test_plugin_filename_updated")));
+  widget->SetPropertyValue("innerxml", QVariant::fromValue(
+      std::string("<param2>new_param</param2>\n")));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue(
+      "name").value<std::string>(), "test_plugin_updated");
+  EXPECT_EQ(widget->PropertyValue(
+      "filename").value<std::string>(), "test_plugin_filename_updated");
+  EXPECT_EQ(widget->PropertyValue(
+      "innerxml").value<std::string>(), "<param2>new_param</param2>\n");
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  EXPECT_NE(retMsg, nullptr);
+
+  EXPECT_EQ(retMsg->name(), "test_plugin_updated");
+  EXPECT_EQ(retMsg->filename(), "test_plugin_filename_updated");
+  EXPECT_EQ(retMsg->innerxml(), "<param2>new_param</param2>\n");
 
   delete widget;
   EXPECT_TRUE(stop());
@@ -607,6 +1118,9 @@ TEST(MessageWidgetTest, ChildStringSignal)
       EXPECT_EQ(v, "orange");
       signalReceived = true;
     });
+
+  // Check default string
+  EXPECT_EQ(widget->PropertyValue("string").value<std::string>(), "");
 
   // Get signal emitting widgets
   auto lineEdits = stringWidget->findChildren<QLineEdit *>();
@@ -763,6 +1277,10 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
       }
     });
 
+  // Check default vector3
+  EXPECT_EQ(widget->PropertyValue("").value<math::Vector3d>(),
+      math::Vector3d(1, -2, 3));
+
   // Get axes spins
   auto spins = vector3Widget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 3);
@@ -820,6 +1338,10 @@ TEST(MessageWidgetTest, ChildColorSignal)
       signalReceived = true;
     });
 
+  // Check default color (opaque white)
+  EXPECT_EQ(widget->PropertyValue("").value<math::Color>(),
+      math::Color(0.1, 0.2, 0.3, 0.4));
+
   // Get signal emitting widgets
   auto spins = colorWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 4);
@@ -871,6 +1393,10 @@ TEST(MessageWidgetTest, ChildPoseSignal)
       signalReceived = true;
     });
 
+  // Check default pose
+  EXPECT_EQ(widget->PropertyValue("").value<math::Pose3d>(),
+      math::Pose3d(0.1, 0.2, 0.3, -0.4, -0.5, -0.6));
+
   // Get signal emitting widgets
   auto spins = poseWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 6);
@@ -909,6 +1435,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
 
   auto geometryWidget = qobject_cast<GeometryWidget *>(propWidget);
   EXPECT_NE(geometryWidget, nullptr);
+
   // Connect signals
   bool signalReceived = false;
   widget->connect(widget, &MessageWidget::ValueChanged,
@@ -920,6 +1447,12 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
       EXPECT_DOUBLE_EQ(v.cylinder().radius(), 2.0);
       signalReceived = true;
     });
+
+  // Check value
+  auto value = widget->PropertyValue("").value<msgs::Geometry>();
+  EXPECT_EQ(value.type(), msgs::Geometry::CYLINDER);
+  EXPECT_DOUBLE_EQ(value.cylinder().length(), 10.0);
+  EXPECT_DOUBLE_EQ(value.cylinder().radius(), 0.5);
 
   // Get signal emitting widgets
   auto radiusWidget = widget->findChild<NumberWidget *>("cylinderRWidget");
@@ -970,6 +1503,10 @@ TEST(MessageWidgetTest, ChildEnumSignal)
       EXPECT_EQ(v, "GUI");
       signalReceived = true;
     });
+
+  // Check default value
+  EXPECT_EQ(widget->PropertyValue("type").value<std::string>(),
+      std::string("LINK"));
 
   auto label = enumWidget->findChild<QLabel *>();
   EXPECT_NE(label, nullptr);

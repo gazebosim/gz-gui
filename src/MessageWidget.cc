@@ -134,6 +134,27 @@ google::protobuf::Message *MessageWidget::Msg() const
 }
 
 /////////////////////////////////////////////////
+bool MessageWidget::SetPropertyValue(const std::string &_name,
+                                     const QVariant _value)
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+    return false;
+
+  return w->SetValue(_value);
+}
+
+/////////////////////////////////////////////////
+QVariant MessageWidget::PropertyValue(const std::string &_name) const
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+    return QVariant();
+
+  return w->Value();
+}
+
+/////////////////////////////////////////////////
 bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     const std::string &_scopedName, QWidget *_parent)
 {
@@ -245,10 +266,6 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       continue;
     }
 
-    // TODO parse repeated fields
-    if (fieldDescriptor->is_repeated())
-      continue;
-
     // Scoped name
     auto fieldName = fieldDescriptor->name();
     auto scopedName = _scopedName.empty() ?
@@ -259,6 +276,75 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
 
     // Handle each field type
     auto fieldType = fieldDescriptor->type();
+
+    // Repeated fields
+    if (fieldDescriptor->is_repeated())
+    {
+      // Create collapsible
+      auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget);
+      if (!collapsible)
+      {
+        collapsible = new CollapsibleWidget(fieldName);
+        _parent->layout()->addWidget(collapsible);
+      }
+
+      // Parse all fields in the message
+      int count = 0;
+      for (; count < reflection->FieldSize(*_msg, fieldDescriptor); ++count)
+      {
+        // Append number to name
+        auto name = scopedName + "::" + std::to_string(count);
+
+        // Get widget
+        auto repProp = this->PropertyWidgetByName(name);
+
+        // Create a collapsible
+        auto repCollapsible = qobject_cast<CollapsibleWidget *>(repProp);
+        if (!repCollapsible)
+        {
+          repCollapsible = new CollapsibleWidget(std::to_string(count));
+          collapsible->layout()->addWidget(repCollapsible);
+        }
+
+        // If it's a repeated message
+        if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+        {
+          // Parse message
+          auto &valueMsg = reflection->GetRepeatedMessage(*_msg,
+              fieldDescriptor, count);
+          this->Parse(&valueMsg, name, repCollapsible);
+        }
+
+        // If it's a repeated field
+        {
+          // TODO
+        }
+
+        // Collapse the first time it was created
+        if (!repProp)
+        {
+          repCollapsible->Toggle(false);
+          this->AddPropertyWidget(name, repCollapsible, collapsible);
+        }
+      }
+
+      // Drop repetitions which disappeared
+      auto colLayout = collapsible->layout();
+      for (; count < colLayout->count() - 1; ++count)
+      {
+        auto name = scopedName + "::" + std::to_string(count);
+        this->RemovePropertyWidget(name);
+      }
+
+      // Collapse the first time it was created
+      if (!propertyWidget)
+      {
+        collapsible->Toggle(false);
+        this->AddPropertyWidget(scopedName, collapsible, _parent);
+      }
+
+      continue;
+    }
 
     // Numbers
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
@@ -648,6 +734,39 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   }
 
   return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::RemovePropertyWidget(const std::string &_name)
+{
+  auto widget = this->PropertyWidgetByName(_name);
+
+  if (!widget)
+    return false;
+
+  // Remove all its children from property list
+  for (const auto &prop : this->dataPtr->properties)
+  {
+    if (prop.first.find(_name) == 0)
+      this->dataPtr->properties.erase(prop.first);
+  }
+
+  QWidget *toDelete = widget;
+
+  if (!qobject_cast<PropertyWidget *>(widget->parent()))
+    toDelete = qobject_cast<QWidget *>(widget->parent());
+
+  // Give its ownership to a new widget, and when it goes out of scope, it
+  // will delete it
+  toDelete->setParent(new QWidget());
+
+  return false;
+}
+
+/////////////////////////////////////////////////
+unsigned int MessageWidget::PropertyWidgetCount() const
+{
+  return this->dataPtr->properties.size();
 }
 
 /////////////////////////////////////////////////

@@ -84,11 +84,27 @@ namespace ignition
       signals: void ValueChanged(const std::string &_name,
                                  const QVariant _value);
 
+      /// \brief Set a value of a property widget.
+      /// \param[in] _name Name of the property widget.
+      /// \param[in] _value Value to set to.
+      /// \return True if the value is set successfully.
+      public: bool SetPropertyValue(const std::string &_name,
+                                    const QVariant _value);
+
+      /// \brief Get value from a property widget.
+      /// \param[in] _name Name of the property widget.
+      /// \return Value as QVariant.
+      public: QVariant PropertyValue(const std::string &_name) const;
+
       /// \brief Get a property widget by its scoped name.
       /// \param[in] _name Scoped name of the property widget.
       /// \return The widget with the given name or nullptr if it wasn't found.
       public: PropertyWidget *PropertyWidgetByName(
           const std::string &_name) const;
+
+      /// \brief Get the number of property widgets.
+      /// \return The number of property widgets.
+      public: unsigned int PropertyWidgetCount() const;
 
       /// \brief Performs the following:
       /// * Register the widget so that it can be referred by its scoped name
@@ -102,6 +118,18 @@ namespace ignition
       /// \return True if property successfully added.
       private: bool AddPropertyWidget(const std::string &_scopedName,
           PropertyWidget *_property, QWidget *_parent);
+
+      /// \brief Performs the following:
+      /// * Register the widget so that it can be referred by its scoped name
+      /// * Forwards its signals to the message widget
+      /// * Places the widget in the layout with the correct indentation
+      /// \param[in] _scopedName Unique name to indentify the property within
+      /// this widget. Nested message names are scoped using `::`, for example:
+      /// `pose::position::x`.
+      /// \param[in] _property Widget to be added.
+      /// \param[in] _parent Parent widget to add the property to.
+      /// \return True if property successfully added.
+      private: bool RemovePropertyWidget(const std::string &_scopedName);
 
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update existing widgets with
