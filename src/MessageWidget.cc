@@ -426,8 +426,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
         {
           // Parse message
-          auto &valueMsg = reflection->GetRepeatedMessage(*_msg, fieldDescriptor,
-              count);
+          auto &valueMsg = reflection->GetRepeatedMessage(*_msg,
+              fieldDescriptor, count);
           this->Parse(&valueMsg, name, repCollapsible);
         }
 
@@ -872,8 +872,8 @@ bool MessageWidget::RemovePropertyWidget(const std::string &_name)
   if (!qobject_cast<PropertyWidget *>(widget->parent()))
     toDelete = qobject_cast<QWidget *>(widget->parent());
 
-  // Give its ownership to a new widget, and when it goes out of scope, it will
-  //delete it
+  // Give its ownership to a new widget, and when it goes out of scope, it
+  // will delete it
   toDelete->setParent(new QWidget());
 
   return false;

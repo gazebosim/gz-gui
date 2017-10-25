@@ -17,8 +17,6 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/msgs.hh>
-
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/QtMetatypes.hh"

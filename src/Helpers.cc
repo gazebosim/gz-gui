@@ -123,7 +123,7 @@ void ignition::gui::rangeFromKey(const std::string &_key, double &_min,
   else if (_key == "bounce" || _key == "transparency" ||
       _key == "laser_retro" || _key == "ambient" || _key == "diffuse" ||
       _key == "specular" || _key == "emissive" ||
-      _key == "color" || _key == "backgroundd" || _key == "cloud_ambient" ||
+      _key == "color" || _key == "background" || _key == "cloud_ambient" ||
       _key == "restitution_coefficient")
   {
     _min = 0;
