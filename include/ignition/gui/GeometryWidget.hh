@@ -30,7 +30,8 @@ namespace ignition
   {
     class GeometryWidgetPrivate;
 
-    /// \brief A widget which holds a geometry property.
+    /// \brief A widget which holds a geometry property based on an
+    /// ignition::msgs::Geometry message.
     class IGNITION_GUI_VISIBLE GeometryWidget : public PropertyWidget
     {
       Q_OBJECT
