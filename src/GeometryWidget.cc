@@ -21,7 +21,10 @@
 #include <ignition/common/Console.hh>
 
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
+#include "ignition/gui/StringWidget.hh"
+#include "ignition/gui/Vector3dWidget.hh"
 
 #include "ignition/gui/GeometryWidget.hh"
 
@@ -36,25 +39,7 @@ namespace ignition
     {
       /// \brief A stacked widget containing widgets for configuring
       /// geometry dimensions.
-      public: QStackedWidget *dimensionWidget;
-
-      /// \brief A spin box for the length of the geometry.
-      public: QWidget *lengthSpinBox;
-
-      /// \brief A label for the length widget.
-      public: QLabel *lengthLabel;
-
-      /// \brief A label for the unit of the length widget.
-      public: QLabel *lengthUnitLabel;
-
-      /// \brief A line edit for the mesh filename.
-      public: QLineEdit *filenameLineEdit;
-
-      /// \brief A label for the mesh filename widget.
-      public: QLabel *filenameLabel;
-
-      /// \brief A button for selecting the mesh file.
-      public: QPushButton *filenameButton;
+      public: QStackedWidget *typeStack;
     };
   }
 }
@@ -66,180 +51,96 @@ using namespace gui;
 GeometryWidget::GeometryWidget()
     : dataPtr(new GeometryWidgetPrivate())
 {
-  // Geometry ComboBox
+  // Label
   auto label = new QLabel(tr("Type"));
   label->setToolTip(tr("type"));
+
+  // Type combo
+  msgs::Geometry msg;
+  auto enumDescriptor = msg.Type_descriptor();
+
   auto comboBox = new QComboBox(this);
-  comboBox->addItem(tr("box"));
-  comboBox->addItem(tr("cylinder"));
-  comboBox->addItem(tr("sphere"));
-  comboBox->addItem(tr("mesh"));
-  comboBox->addItem(tr("polyline"));
-  this->connect(comboBox, SIGNAL(currentIndexChanged(const QString)),
-      this, SLOT(OnTypeChanged(const QString)));
+  for (int type = 0; type < enumDescriptor->value_count(); ++type)
+  {
+    auto value = enumDescriptor->value(type);
+    comboBox->addItem(QString::fromStdString(value->name()));
+  }
+  this->connect(comboBox, SIGNAL(currentIndexChanged(const int)),
+      this, SLOT(OnTypeChanged(const int)));
 
-  // Size XYZ
-  double min = 0;
-  double max = 0;
-  rangeFromKey("length", min, max);
-
-  auto sizeXSpinBox = new QDoubleSpinBox(this);
-  sizeXSpinBox->setObjectName("size");
-  sizeXSpinBox->setRange(min, max);
-  sizeXSpinBox->setSingleStep(0.01);
-  sizeXSpinBox->setDecimals(6);
-  sizeXSpinBox->setValue(1.000);
-  sizeXSpinBox->setAlignment(Qt::AlignRight);
-  sizeXSpinBox->setMaximumWidth(100);
-  this->connect(sizeXSpinBox, SIGNAL(editingFinished()), this,
+  // Box widget
+  auto boxWidget = new Vector3dWidget("length");
+  boxWidget->setObjectName("boxWidget");
+  this->connect(boxWidget, SIGNAL(ValueChanged(const QVariant)), this,
       SLOT(OnValueChanged()));
 
-  auto sizeYSpinBox = new QDoubleSpinBox(this);
-  sizeYSpinBox->setObjectName("size");
-  sizeYSpinBox->setRange(min, max);
-  sizeYSpinBox->setSingleStep(0.01);
-  sizeYSpinBox->setDecimals(6);
-  sizeYSpinBox->setValue(1.000);
-  sizeYSpinBox->setAlignment(Qt::AlignRight);
-  sizeYSpinBox->setMaximumWidth(100);
-  this->connect(sizeYSpinBox, SIGNAL(editingFinished()), this,
+  // Cylinder widget
+  auto cylinderRWidget = new NumberWidget("radius");
+  cylinderRWidget->setObjectName("cylinderRWidget");
+  this->connect(cylinderRWidget, SIGNAL(ValueChanged(const QVariant)), this,
       SLOT(OnValueChanged()));
 
-  auto sizeZSpinBox = new QDoubleSpinBox(this);
-  sizeZSpinBox->setObjectName("size");
-  sizeZSpinBox->setRange(min, max);
-  sizeZSpinBox->setSingleStep(0.01);
-  sizeZSpinBox->setDecimals(6);
-  sizeZSpinBox->setValue(1.000);
-  sizeZSpinBox->setAlignment(Qt::AlignRight);
-  sizeZSpinBox->setMaximumWidth(100);
-  this->connect(sizeZSpinBox, SIGNAL(editingFinished()), this,
+  auto cylinderLWidget = new NumberWidget("length");
+  cylinderLWidget->setObjectName("cylinderLWidget");
+  this->connect(cylinderRWidget, SIGNAL(ValueChanged(const QVariant)), this,
       SLOT(OnValueChanged()));
 
-  auto sizeXLabel = new QLabel(tr("X"));
-  auto sizeYLabel = new QLabel(tr("Y"));
-  auto sizeZLabel = new QLabel(tr("Z"));
-  sizeXLabel->setStyleSheet("QLabel{color: " + kRedColor + ";}");
-  sizeYLabel->setStyleSheet("QLabel{color: " + kGreenColor + ";}");
-  sizeZLabel->setStyleSheet("QLabel{color: " + kBlueColor + ";}");
-  sizeXLabel->setToolTip(tr("x"));
-  sizeYLabel->setToolTip(tr("y"));
-  sizeZLabel->setToolTip(tr("z"));
+  auto cylinderLayout = new QHBoxLayout;
+  cylinderLayout->addWidget(cylinderRWidget);
+  cylinderLayout->addWidget(cylinderLWidget);
 
-  auto unit = unitFromKey("length");
-  auto sizeXUnitLabel = new QLabel(QString::fromStdString(unit));
-  auto sizeYUnitLabel = new QLabel(QString::fromStdString(unit));
-  auto sizeZUnitLabel = new QLabel(QString::fromStdString(unit));
+  auto cylinderWidget = new QWidget;
+  cylinderWidget->setLayout(cylinderLayout);
 
-  auto sizeLayout = new QHBoxLayout;
-  sizeLayout->addWidget(sizeXLabel);
-  sizeLayout->addWidget(sizeXSpinBox);
-  sizeLayout->addWidget(sizeXUnitLabel);
-  sizeLayout->addWidget(sizeYLabel);
-  sizeLayout->addWidget(sizeYSpinBox);
-  sizeLayout->addWidget(sizeYUnitLabel);
-  sizeLayout->addWidget(sizeZLabel);
-  sizeLayout->addWidget(sizeZSpinBox);
-  sizeLayout->addWidget(sizeZUnitLabel);
-
-  sizeLayout->setAlignment(sizeXLabel, Qt::AlignRight);
-  sizeLayout->setAlignment(sizeYLabel, Qt::AlignRight);
-  sizeLayout->setAlignment(sizeZLabel, Qt::AlignRight);
-
-  // Uri
-  auto filenameLabel = new QLabel(tr("Uri"));
-  filenameLabel->setToolTip(tr("uri"));
-  auto filenameLineEdit = new QLineEdit(this);
-  this->connect(filenameLineEdit, SIGNAL(editingFinished()), this,
+  // Sphere widget
+  auto sphereWidget = new NumberWidget("radius");
+  sphereWidget->setObjectName("sphereWidget");
+  this->connect(sphereWidget, SIGNAL(ValueChanged(const QVariant)), this,
       SLOT(OnValueChanged()));
+
+  // Mesh widget
+  auto meshScaleWidget = new Vector3dWidget("size");
+  meshScaleWidget->setObjectName("meshScaleWidget");
+  this->connect(meshScaleWidget, SIGNAL(ValueChanged(const QVariant)), this,
+      SLOT(OnValueChanged()));
+
+  auto meshUriWidget = new StringWidget("uri");
+  meshUriWidget->setObjectName("meshUriWidget");
+  this->connect(meshUriWidget, SIGNAL(ValueChanged(const QVariant)), this,
+      SLOT(OnValueChanged()));
+
   auto filenameButton = new QPushButton(tr("..."));
   filenameButton->setMaximumWidth(30);
-
-  auto filenameLayout = new QHBoxLayout;
-  filenameLayout->addWidget(filenameLabel);
-  filenameLayout->addWidget(filenameLineEdit);
-  filenameLayout->addWidget(filenameButton);
-
-  auto sizeFilenameLayout = new QVBoxLayout;
-  sizeFilenameLayout->addLayout(sizeLayout);
-  sizeFilenameLayout->addLayout(filenameLayout);
-
-  auto sizeWidget = new QWidget(this);
-  sizeWidget->setLayout(sizeFilenameLayout);
-
-  // Radius / Length
-  auto radiusLabel = new QLabel(tr("Radius"));
-  auto lengthLabel = new QLabel(tr("Length"));
-  auto radiusUnitLabel = new QLabel(QString::fromStdString(unit));
-  auto lengthUnitLabel = new QLabel(QString::fromStdString(unit));
-  radiusLabel->setToolTip(tr("radius"));
-  lengthLabel->setToolTip(tr("length"));
-
-  auto radiusSpinBox = new QDoubleSpinBox(this);
-  radiusSpinBox->setObjectName("radius");
-  radiusSpinBox->setRange(min, max);
-  radiusSpinBox->setSingleStep(0.01);
-  radiusSpinBox->setDecimals(6);
-  radiusSpinBox->setValue(0.500);
-  radiusSpinBox->setAlignment(Qt::AlignRight);
-  radiusSpinBox->setMaximumWidth(100);
-  this->connect(radiusSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnValueChanged()));
-
-  auto lengthSpinBox = new QDoubleSpinBox(this);
-  lengthSpinBox->setObjectName("length");
-  lengthSpinBox->setRange(min, max);
-  lengthSpinBox->setSingleStep(0.01);
-  lengthSpinBox->setDecimals(6);
-  lengthSpinBox->setValue(1.000);
-  lengthSpinBox->setAlignment(Qt::AlignRight);
-  lengthSpinBox->setMaximumWidth(100);
-  this->connect(lengthSpinBox, SIGNAL(editingFinished()), this,
-      SLOT(OnValueChanged()));
-
-  auto rLLayout = new QHBoxLayout;
-  rLLayout->addWidget(radiusLabel);
-  rLLayout->addWidget(radiusSpinBox);
-  rLLayout->addWidget(radiusUnitLabel);
-  rLLayout->addWidget(lengthLabel);
-  rLLayout->addWidget(lengthSpinBox);
-  rLLayout->addWidget(lengthUnitLabel);
-
-  rLLayout->setAlignment(radiusLabel, Qt::AlignRight);
-  rLLayout->setAlignment(lengthLabel, Qt::AlignRight);
-
-  auto rLWidget = new QWidget;
-  rLWidget->setLayout(rLLayout);
-
-  // Dimensions
-  auto dimensionWidget = new QStackedWidget(this);
-  dimensionWidget->insertWidget(0, sizeWidget);
-
-  dimensionWidget->insertWidget(1, rLWidget);
-  dimensionWidget->setCurrentIndex(0);
-  dimensionWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-  // Layout
-  auto widgetLayout = new QGridLayout;
-  widgetLayout->addWidget(label, 0, 1);
-  widgetLayout->addWidget(comboBox, 0, 2, 1, 2);
-  widgetLayout->addWidget(dimensionWidget, 2, 1, 1, 3);
-
-  this->dataPtr->dimensionWidget = dimensionWidget;
-  this->dataPtr->lengthSpinBox = lengthSpinBox;
-  this->dataPtr->lengthLabel = lengthLabel;
-  this->dataPtr->lengthUnitLabel = lengthUnitLabel;
-  this->dataPtr->filenameLabel = filenameLabel;
-  this->dataPtr->filenameLineEdit = filenameLineEdit;
-  this->dataPtr->filenameButton = filenameButton;
-
-  filenameLabel->setVisible(false);
-  filenameLineEdit->setVisible(false);
-  filenameButton->setVisible(false);
-
   this->connect(filenameButton, SIGNAL(clicked()), this, SLOT(OnSelectFile()));
 
-  this->setLayout(widgetLayout);
+  auto meshLayout = new QGridLayout;
+  meshLayout->addWidget(meshScaleWidget, 0, 0, 1, 2);
+  meshLayout->addWidget(meshUriWidget, 1, 0, 1, 1);
+  meshLayout->addWidget(filenameButton, 1, 1, 1, 1);
+
+  auto meshWidget = new QWidget;
+  meshWidget->setLayout(meshLayout);
+
+  // Type - specific (make sure order matches combo)
+  this->dataPtr->typeStack = new QStackedWidget();
+  this->dataPtr->typeStack->setSizePolicy(QSizePolicy::Minimum,
+                                          QSizePolicy::Minimum);
+
+  this->dataPtr->typeStack->insertWidget(0, boxWidget);
+  this->dataPtr->typeStack->insertWidget(1, cylinderWidget);
+  this->dataPtr->typeStack->insertWidget(2, sphereWidget);
+  this->dataPtr->typeStack->insertWidget(3, new QWidget());
+  this->dataPtr->typeStack->insertWidget(4, new QWidget());
+  this->dataPtr->typeStack->insertWidget(5, new QWidget());
+  this->dataPtr->typeStack->insertWidget(6, meshWidget);
+  this->dataPtr->typeStack->insertWidget(7, new QWidget());
+
+  // Layout
+  auto mainLayout = new QGridLayout;
+  mainLayout->addWidget(label, 0, 1);
+  mainLayout->addWidget(comboBox, 0, 2, 1, 2);
+  mainLayout->addWidget(this->dataPtr->typeStack, 2, 1, 1, 3);
+  this->setLayout(mainLayout);
 }
 
 /////////////////////////////////////////////////
@@ -250,58 +151,67 @@ GeometryWidget::~GeometryWidget()
 /////////////////////////////////////////////////
 bool GeometryWidget::SetValue(const QVariant _value)
 {
-  auto value = _value.value<msgs::Geometry>();
-
-  auto combo = this->findChild<QComboBox *>();
-  auto sizeSpins = this->findChildren<QDoubleSpinBox *>("size");
-  auto radiusSpin = this->findChild<QDoubleSpinBox *>("radius");
-  auto lengthSpin = this->findChild<QDoubleSpinBox *>("length");
-  auto edit = this->findChild<QLineEdit *>();
-
-  auto type = msgs::ConvertGeometryType(value.type());
-  int index = combo->findText(tr(type.c_str()));
-
-  if (index < 0)
+  if (!_value.canConvert<msgs::Geometry>())
   {
-    ignerr << "Error updating Geometry widget: '" << type <<
-      "' not found" << std::endl;
+    ignerr << "Wrong variant type, expected [ignition::msgs::Geometry]"
+           << std::endl;
     return false;
   }
 
+  auto value = _value.value<msgs::Geometry>();
+
+  auto type = msgs::ConvertGeometryType(value.type());
+
+  auto combo = this->findChild<QComboBox *>();
+  int index = combo->findText(QString(type.c_str()).toUpper());
+
+  if (index < 0)
+  {
+    ignwarn << "Type [" << type << "] not supported yet. See issue #10."
+            << std::endl;
+    return false;
+  }
+
+  // Update combo and type stack
   combo->setCurrentIndex(index);
+  this->dataPtr->typeStack->setCurrentIndex(index);
+
+  // Update type stack
+  auto widget = this->dataPtr->typeStack->widget(index);
 
   if (type == "box")
   {
-    sizeSpins[0]->setValue(value.box().size().x());
-    sizeSpins[1]->setValue(value.box().size().y());
-    sizeSpins[2]->setValue(value.box().size().z());
+    auto size = qobject_cast<Vector3dWidget *>(widget);
+    size->SetValue(QVariant::fromValue(msgs::Convert(value.box().size())));
   }
   else if (type == "cylinder")
   {
-    radiusSpin->setValue(value.cylinder().radius());
-    lengthSpin->setValue(value.cylinder().length());
+    auto numbers = widget->findChildren<NumberWidget *>();
+    numbers[0]->SetValue(value.cylinder().radius());
+    numbers[1]->SetValue(value.cylinder().length());
   }
   else if (type == "sphere")
   {
-    radiusSpin->setValue(value.sphere().radius());
+    auto radius = qobject_cast<NumberWidget *>(widget);
+    radius->SetValue(value.cylinder().radius());
   }
   else if (type == "mesh")
   {
-    sizeSpins[0]->setValue(value.mesh().scale().x());
-    sizeSpins[1]->setValue(value.mesh().scale().y());
-    sizeSpins[2]->setValue(value.mesh().scale().z());
-    edit->setText(tr(value.mesh().filename().c_str()));
-  }
-  else if (type == "polyline")
-  {
-    // do nothing
+    auto scale = widget->findChild<Vector3dWidget *>();
+    scale->SetValue(QVariant::fromValue(msgs::Convert(value.mesh().scale())));
+
+    auto uri = widget->findChild<StringWidget *>();
+    uri->SetValue(QVariant::fromValue(
+        std::string(value.mesh().filename().c_str())));
   }
   else
   {
-    ignwarn << "Geometry type [" << type << "] not supported" << std::endl;
+    ignwarn << "Type [" << type << "] not supported yet. See issue #10."
+            << std::endl;
+    return false;
   }
 
-  return false;
+  return true;
 }
 
 /////////////////////////////////////////////////
@@ -310,91 +220,67 @@ QVariant GeometryWidget::Value() const
   msgs::Geometry value;
 
   auto combo = this->findChild<QComboBox *>();
-  auto sizeSpins = this->findChildren<QDoubleSpinBox *>("size");
-  auto radiusSpin = this->findChild<QDoubleSpinBox *>("radius");
-  auto lengthSpin = this->findChild<QDoubleSpinBox *>("length");
-  auto edit = this->findChild<QLineEdit *>();
 
-  auto type = combo->currentText().toStdString();
+  // Type
+  auto type = combo->currentText().toLower().toStdString();
+  value.set_type(msgs::ConvertGeometryType(type));
 
+  // From type stack
+  auto i = combo->currentIndex();
+
+  // Unsupported types
+  if (i > 7)
+    i = 7;
+
+  auto widget = this->dataPtr->typeStack->widget(i);
   if (type == "box")
   {
-    value.set_type(msgs::Geometry::BOX);
-    auto size = value.mutable_box()->mutable_size();
-    size->set_x(sizeSpins[0]->value());
-    size->set_y(sizeSpins[1]->value());
-    size->set_z(sizeSpins[2]->value());
+    auto sizeWidget = qobject_cast<Vector3dWidget *>(widget);
+    auto size = sizeWidget->Value().value<math::Vector3d>();
+
+    msgs::Set(value.mutable_box()->mutable_size(), size);
   }
   else if (type == "cylinder")
   {
-    value.set_type(msgs::Geometry::CYLINDER);
-    value.mutable_cylinder()->set_radius(radiusSpin->value());
-    value.mutable_cylinder()->set_length(lengthSpin->value());
+    auto numberWidgets = widget->findChildren<NumberWidget *>();
+
+    value.mutable_cylinder()->set_radius(numberWidgets[0]->Value().toDouble());
+    value.mutable_cylinder()->set_length(numberWidgets[1]->Value().toDouble());
   }
   else if (type == "sphere")
   {
-    value.set_type(msgs::Geometry::SPHERE);
-    value.mutable_sphere()->set_radius(radiusSpin->value());
-  }
-  else if (type == "polyline")
-  {
-    // do nothing
+    auto numberWidget = qobject_cast<NumberWidget *>(widget);
+    value.mutable_sphere()->set_radius(numberWidget->Value().toDouble());
   }
   else if (type == "mesh")
   {
-    value.set_type(msgs::Geometry::MESH);
-    auto scale = value.mutable_mesh()->mutable_scale();
-    scale->set_x(sizeSpins[0]->value());
-    scale->set_y(sizeSpins[1]->value());
-    scale->set_z(sizeSpins[2]->value());
-    value.mutable_mesh()->set_filename(edit->text().toStdString());
+    auto scaleWidget = widget->findChild<Vector3dWidget *>();
+
+    msgs::Set(value.mutable_mesh()->mutable_scale(),
+              scaleWidget->Value().value<math::Vector3d>());
+
+    auto uriWidget = widget->findChild<StringWidget *>();
+    value.mutable_mesh()->set_filename(uriWidget->Value().value<std::string>());
   }
   else
   {
-    ignerr << "Error getting geometry dimensions for type: '" << type << "'"
-           << std::endl;
+    ignwarn << "Type [" << type << "] not supported yet. See issue #10."
+            << std::endl;
   }
 
-  QVariant v;
-  v.setValue(value);
-
-  return v;
+  return QVariant::fromValue(value);
 }
 
 /////////////////////////////////////////////////
-void GeometryWidget::OnTypeChanged(const QString &_text)
+void GeometryWidget::OnTypeChanged(const int _index)
 {
-  auto textStr = _text.toStdString();
-  bool isMesh = (textStr == "mesh");
-  if (textStr == "box" || isMesh)
-  {
-    this->dataPtr->dimensionWidget->show();
-    this->dataPtr->dimensionWidget->setCurrentIndex(0);
-  }
-  else if (textStr == "cylinder")
-  {
-    this->dataPtr->dimensionWidget->show();
-    this->dataPtr->dimensionWidget->setCurrentIndex(1);
-    this->dataPtr->lengthSpinBox->show();
-    this->dataPtr->lengthLabel->show();
-    this->dataPtr->lengthUnitLabel->show();
-  }
-  else if (textStr == "sphere")
-  {
-    this->dataPtr->dimensionWidget->show();
-    this->dataPtr->dimensionWidget->setCurrentIndex(1);
-    this->dataPtr->lengthSpinBox->hide();
-    this->dataPtr->lengthLabel->hide();
-    this->dataPtr->lengthUnitLabel->hide();
-  }
-  else if (textStr == "polyline")
-  {
-    this->dataPtr->dimensionWidget->hide();
-  }
+  int i = _index;
 
-  this->dataPtr->filenameLabel->setVisible(isMesh);
-  this->dataPtr->filenameLineEdit->setVisible(isMesh);
-  this->dataPtr->filenameButton->setVisible(isMesh);
+  // Unsupported types
+  if (i > 7)
+    i = 7;
+
+  this->dataPtr->typeStack->setCurrentIndex(i);
   this->OnValueChanged();
 }
 
@@ -402,21 +288,24 @@ void GeometryWidget::OnTypeChanged(const QString &_text)
 void GeometryWidget::OnSelectFile()
 {
   QFileDialog fd(this, tr("Select mesh file"), QDir::homePath(),
-    tr("Mesh files (*.dae *.stl)"));
+    tr("Mesh files (*.dae *.stl *.obj)"));
   fd.setFilter(QDir::AllDirs | QDir::Hidden);
   fd.setFileMode(QFileDialog::ExistingFile);
   fd.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+
   if (fd.exec())
   {
-    if (!fd.selectedFiles().isEmpty())
-    {
-      auto file = fd.selectedFiles().at(0);
-      if (!file.isEmpty())
-      {
-        this->dataPtr->filenameLineEdit->setText(file);
-      }
-    }
+    if (fd.selectedFiles().isEmpty())
+      return;
+
+    auto file = fd.selectedFiles().at(0);
+    if (file.isEmpty())
+      return;
+
+    auto uri = this->findChild<StringWidget *>("meshUriWidget");
+    uri->SetValue(QVariant::fromValue(file.toStdString()));
+    this->OnValueChanged();
   }
 }
 

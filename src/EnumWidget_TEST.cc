@@ -29,79 +29,6 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(EnumWidgetTest, Composing)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Enum values
-  std::vector<std::string> enumValues;
-  enumValues.push_back("value1");
-  enumValues.push_back("value2");
-  enumValues.push_back("value3");
-
-  // Create
-  auto widget = new EnumWidget("Enum Label", enumValues);
-  EXPECT_TRUE(widget != nullptr);
-
-  // Check that items can be selected
-  QVariant variant;
-
-  variant.setValue(std::string("value1"));
-  EXPECT_TRUE(widget->SetValue(variant));
-
-  variant.setValue(std::string("value2"));
-  EXPECT_TRUE(widget->SetValue(variant));
-
-  variant.setValue(std::string("value3"));
-  EXPECT_TRUE(widget->SetValue(variant));
-
-  // Check that an inexistent item cannot be selected
-  variant.setValue(std::string("value4"));
-  EXPECT_FALSE(widget->SetValue(variant));
-
-  // Check the number of items
-  auto comboBox = widget->findChild<QComboBox *>();
-  EXPECT_TRUE(comboBox != nullptr);
-  EXPECT_EQ(comboBox->count(), 3);
-
-  // Add an item and check count
-  EXPECT_TRUE(widget->AddItem("value4"));
-  EXPECT_EQ(comboBox->count(), 4);
-
-  // Check that the new item can be selected
-  EXPECT_TRUE(widget->SetValue(variant));
-
-  // Remove an item and check count
-  EXPECT_TRUE(widget->RemoveItem("value2"));
-  EXPECT_EQ(comboBox->count(), 3);
-
-  // Check that the removed item cannot be selected
-  variant.setValue(std::string("value2"));
-  EXPECT_FALSE(widget->SetValue(variant));
-
-  // Try to remove inexistent item
-  EXPECT_FALSE(widget->RemoveItem("value5"));
-  EXPECT_EQ(comboBox->count(), 3);
-
-  // Clear all items and check count
-  EXPECT_TRUE(widget->Clear());
-  EXPECT_EQ(comboBox->count(), 0);
-
-  // Check that none of the previous items can be selected
-  variant.setValue(std::string("value1"));
-  EXPECT_FALSE(widget->SetValue(variant));
-  variant.setValue(std::string("value2"));
-  EXPECT_FALSE(widget->SetValue(variant));
-  variant.setValue(std::string("value3"));
-  EXPECT_FALSE(widget->SetValue(variant));
-  variant.setValue(std::string("value4"));
-  EXPECT_FALSE(widget->SetValue(variant));
-
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
 TEST(EnumWidgetTest, Signal)
 {
   setVerbosity(4);
@@ -112,8 +39,8 @@ TEST(EnumWidgetTest, Signal)
   enumValues.push_back("value1");
   enumValues.push_back("value2");
   enumValues.push_back("value3");
-  auto widget = new EnumWidget("enum", enumValues);
-  EXPECT_TRUE(widget != nullptr);
+  auto widget = new EnumWidget("an_enum", enumValues);
+  ASSERT_NE(widget, nullptr);
 
   // Connect signals
   bool signalReceived = false;
@@ -128,6 +55,11 @@ TEST(EnumWidgetTest, Signal)
   // Check default value
   EXPECT_EQ(widget->Value().value<std::string>(), std::string("value1"));
 
+  // Check key label
+  auto label = widget->findChild<QLabel *>();
+  ASSERT_NE(label, nullptr);
+  EXPECT_EQ(label->text().toStdString(), "An enum");
+
   // Get signal emitting widgets
   auto comboBoxes = widget->findChildren<QComboBox *>();
   EXPECT_EQ(comboBoxes.size(), 1);
@@ -139,6 +71,75 @@ TEST(EnumWidgetTest, Signal)
   EXPECT_TRUE(signalReceived);
 
   delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(EnumWidgetTest, Composing)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Enum values
+  std::vector<std::string> enumValues;
+  enumValues.push_back("value1");
+  enumValues.push_back("value2");
+  enumValues.push_back("value3");
+
+  // Create
+  auto widget = new EnumWidget("Enum Label", enumValues);
+  ASSERT_NE(widget, nullptr);
+
+  // Check that items can be selected
+  EXPECT_TRUE(widget->SetValue(QVariant::fromValue(std::string("value1"))));
+  EXPECT_EQ(widget->Value().value<std::string>(), "value1");
+
+  EXPECT_TRUE(widget->SetValue(QVariant::fromValue(std::string("value2"))));
+  EXPECT_EQ(widget->Value().value<std::string>(), "value2");
+
+  EXPECT_TRUE(widget->SetValue(QVariant::fromValue(std::string("value3"))));
+  EXPECT_EQ(widget->Value().value<std::string>(), "value3");
+
+  // Check that an inexistent item cannot be selected
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(std::string("banana"))));
+  EXPECT_EQ(widget->Value().value<std::string>(), "value3");
+
+  // Check that a bad variant cannot be selected
+  EXPECT_FALSE(widget->SetValue(true));
+
+  // Check the number of items
+  auto comboBox = widget->findChild<QComboBox *>();
+  ASSERT_NE(comboBox, nullptr);
+  EXPECT_EQ(comboBox->count(), 3);
+
+  // Add an item and check count
+  EXPECT_TRUE(widget->AddItem("banana"));
+  EXPECT_EQ(comboBox->count(), 4);
+
+  // Check that the new item can be selected
+  EXPECT_TRUE(widget->SetValue(QVariant::fromValue(std::string("banana"))));
+
+  // Remove an item and check count
+  EXPECT_TRUE(widget->RemoveItem("value2"));
+  EXPECT_EQ(comboBox->count(), 3);
+
+  // Check that the removed item cannot be selected
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(std::string("value2"))));
+
+  // Try to remove inexistent item
+  EXPECT_FALSE(widget->RemoveItem("acerola"));
+  EXPECT_EQ(comboBox->count(), 3);
+
+  // Clear all items and check count
+  EXPECT_TRUE(widget->Clear());
+  EXPECT_EQ(comboBox->count(), 0);
+
+  // Check that none of the previous items can be selected
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(std::string("value1"))));
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(std::string("value2"))));
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(std::string("value3"))));
+  EXPECT_FALSE(widget->SetValue(QVariant::fromValue(std::string("banana"))));
+
   EXPECT_TRUE(stop());
 }
 

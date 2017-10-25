@@ -112,13 +112,15 @@ TEST(TimePanelTest, WorldControl)
   bool playCalled = false;
   bool pauseCalled = false;
   std::function<void(const msgs::WorldControl &, msgs::Empty &, bool &)> cb =
-      [&](const msgs::WorldControl &_req, msgs::Empty &, bool &)
+      [&](const msgs::WorldControl &_req, msgs::Empty &, bool &_result)
   {
     EXPECT_TRUE(_req.has_pause());
     if (_req.pause())
       pauseCalled = true;
     else
       playCalled = true;
+
+    _result = true;
   };
   transport::Node node;
   node.Advertise("/world_control_test", cb);

@@ -1596,12 +1596,15 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
   EXPECT_DOUBLE_EQ(value.cylinder().radius(), 0.5);
 
   // Get signal emitting widgets
-  auto spins = geometryWidget->findChildren<QDoubleSpinBox *>();
-  EXPECT_EQ(spins.size(), 5);
+  auto radiusWidget = widget->findChild<NumberWidget *>("cylinderRWidget");
+  ASSERT_NE(nullptr, radiusWidget);
+
+  auto spin = radiusWidget->findChild<QDoubleSpinBox *>();
+  ASSERT_NE(nullptr, spin);
 
   // Change the value and check new value at callback
-  spins[3]->setValue(2.0);
-  spins[3]->editingFinished();
+  spin->setValue(2.0);
+  spin->editingFinished();
 
   // Check callback was called
   EXPECT_TRUE(signalReceived);

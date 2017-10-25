@@ -72,9 +72,15 @@ EnumWidget::~EnumWidget()
 /////////////////////////////////////////////////
 bool EnumWidget::SetValue(const QVariant _value)
 {
-  auto combo = this->findChild<QComboBox *>();
+  if (!_value.canConvert<std::string>())
+  {
+    ignerr << "Wrong variant type, expected [std::string]" << std::endl;
+    return false;
+  }
 
   auto value = _value.value<std::string>();
+
+  auto combo = this->findChild<QComboBox *>();
 
   int index = combo->findText(QString::fromStdString(value));
 
@@ -96,10 +102,7 @@ QVariant EnumWidget::Value() const
   auto combo = this->findChild<QComboBox *>();
   auto value = combo->currentText().toStdString();
 
-  QVariant v;
-  v.setValue(value);
-
-  return v;
+  return QVariant::fromValue(value);
 }
 
 /////////////////////////////////////////////////
@@ -132,8 +135,7 @@ bool EnumWidget::RemoveItem(const std::string &_itemText)
   auto combo = this->findChild<QComboBox *>();
 
   // Remove item if exists, otherwise return false
-  int index = combo->findText(QString::fromStdString(
-      _itemText));
+  int index = combo->findText(QString::fromStdString(_itemText));
   if (index < 0)
     return false;
 
@@ -143,3 +145,4 @@ bool EnumWidget::RemoveItem(const std::string &_itemText)
 
   return true;
 }
+

@@ -7,6 +7,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DensityWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/EditableLabel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/EnumWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/GeometryWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
@@ -30,7 +31,9 @@ set (gtest_sources
   CollapsibleWidget_TEST.cc
   Conversions_TEST.cc
   DragDropModel_TEST.cc
+  EditableLabel_TEST.cc
   EnumWidget_TEST.cc
+  GeometryWidget_TEST.cc
   Helpers_TEST.cc
   Iface_TEST.cc
   MainWindow_TEST.cc

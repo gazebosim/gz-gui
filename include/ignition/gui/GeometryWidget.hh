@@ -30,26 +30,46 @@ namespace ignition
   {
     class GeometryWidgetPrivate;
 
-    /// \brief A widget which holds a geometry property.
+    /// \brief A widget which holds a geometry property based on an
+    /// ignition::msgs::Geometry message.
     class IGNITION_GUI_VISIBLE GeometryWidget : public PropertyWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
+      /// Note that unlike other similar widgets, a geometry widget doesn't hold
+      /// its own key value. Instead, it can be placed within another widget,
+      /// such as a CollapsibleWidget, which will display a key value.
       public: GeometryWidget();
 
       /// \brief Destructor
       public: ~GeometryWidget();
 
-      // Documentation inherited
-      public: bool SetValue(const QVariant _value);
+      /// \brief Inherited from PropertyWidget.
+      ///
+      /// Value will be handled if it holds a ignition::msgs::Geometry value.
+      ///
+      /// An input can be constructed as follows:
+      /// QVariant value = QVariant::fromValue(ignition::msgs::Geometry());
+      ///
+      /// \param[in] _value New value.
+      /// \return True if succesfull.
+      public: bool SetValue(const QVariant _value) override;
 
-      // Documentation inherited
-      public: QVariant Value() const;
+      /// \brief Inherited from PropertyWidget.
+      ///
+      /// Returns a variant containing the widget's current
+      /// ignition::msgs::Geometry value.
+      ///
+      /// A geometry value can be retrieved as follows:
+      /// auto value = this->Value().value<ignition::msgs::Geometry>();
+      ///
+      /// \return Widget's current value.
+      public: QVariant Value() const override;
 
       /// \brief Callback when the geometry type is changed.
-      /// \param[in] _text New geometry type in string.
-      private slots: void OnTypeChanged(const QString &_text);
+      /// \param[in] _text New geometry type index.
+      private slots: void OnTypeChanged(const int _index);
 
       /// \brief Callback when the file button is clicked.
       private slots: void OnSelectFile();
