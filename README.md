@@ -1,4 +1,9 @@
-[![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
+Build | status
+-- | --
+Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
+Ubuntu Xenial | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-xenial-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-xenial-amd64/)
+Homebrew | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-homebrew-amd64/)
+Windows 7 | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-windows7-amd64/)
 
 # Ignition gui
 
