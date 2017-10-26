@@ -904,68 +904,131 @@ TEST(MessageWidgetTest, VisualMsgWidget)
 }
 
 /////////////////////////////////////////////////
-// Test LINE and PLAIN_TEXT string fields
-TEST(MessageWidgetTest, PluginMsgWidget)
+// Test LINE and PLAIN_TEXT string fields, and repeated messages
+TEST(MessageWidgetTest, PluginVMsgWidget)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Message
-  msgs::Plugin msg;
-  msg.set_name("test_plugin");
-  msg.set_filename("test_plugin_filename");
-  msg.set_innerxml("<param>1</param>\n");
+  msgs::Plugin_V msg;
+
+  auto pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin");
+  pluginsMsg0->set_filename("test_plugin_filename");
+  pluginsMsg0->set_innerxml("<param>1</param>\n");
 
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(widget, nullptr);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
 
   // Retrieve message
-  auto retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  auto retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
   ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
 
-  EXPECT_EQ(retMsg->name(), "test_plugin");
-  EXPECT_EQ(retMsg->filename(), "test_plugin_filename");
-  EXPECT_EQ(retMsg->innerxml(), "<param>1</param>\n");
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>1</param>\n");
 
-  // Update from message
-  msg.set_name("test_plugin_new");
-  msg.set_filename("test_plugin_filename_new");
-  msg.set_innerxml("<param>2</param>\n");
+  // Update from message - change the only plugin
+  msg.clear_plugins();
+
+  pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin_new");
+  pluginsMsg0->set_filename("test_plugin_filename_new");
+  pluginsMsg0->set_innerxml("<param>2</param>\n");
 
   widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
 
   // Check new message
-  retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
   ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
 
-  EXPECT_EQ(retMsg->name(), "test_plugin_new");
-  EXPECT_EQ(retMsg->filename(), "test_plugin_filename_new");
-  EXPECT_EQ(retMsg->innerxml(), "<param>2</param>\n");
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_new");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_new");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>2</param>\n");
 
-  // Update fields
-  widget->SetPropertyValue("name", QVariant::fromValue(
-      std::string("test_plugin_updated")));
-  widget->SetPropertyValue("filename", QVariant::fromValue(
-      std::string("test_plugin_filename_updated")));
-  widget->SetPropertyValue("innerxml", QVariant::fromValue(
-      std::string("<param2>new_param</param2>\n")));
+  // Update fields of plugin 1
+  EXPECT_TRUE(widget->SetPropertyValue("plugins::0::name", QVariant::fromValue(
+      std::string("test_plugin_updated"))));
+  EXPECT_TRUE(widget->SetPropertyValue("plugins::0::filename",
+      QVariant::fromValue(std::string("test_plugin_filename_updated"))));
+  EXPECT_TRUE(widget->SetPropertyValue("plugins::0::innerxml",
+      QVariant::fromValue(std::string("<param2>new_param</param2>\n"))));
 
   // Check fields
   EXPECT_EQ(widget->PropertyValue(
-      "name").value<std::string>(), "test_plugin_updated");
+      "plugins::0::name").value<std::string>(), "test_plugin_updated");
   EXPECT_EQ(widget->PropertyValue(
-      "filename").value<std::string>(), "test_plugin_filename_updated");
+      "plugins::0::filename").value<std::string>(), "test_plugin_filename_updated");
   EXPECT_EQ(widget->PropertyValue(
-      "innerxml").value<std::string>(), "<param2>new_param</param2>\n");
+      "plugins::0::innerxml").value<std::string>(), "<param2>new_param</param2>\n");
 
   // Check new message
-  retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
   EXPECT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
 
-  EXPECT_EQ(retMsg->name(), "test_plugin_updated");
-  EXPECT_EQ(retMsg->filename(), "test_plugin_filename_updated");
-  EXPECT_EQ(retMsg->innerxml(), "<param2>new_param</param2>\n");
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_updated");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_updated");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param2>new_param</param2>\n");
+
+  // Update from message - add more plugins
+  msg.clear_plugins();
+
+  pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin_0");
+  pluginsMsg0->set_filename("test_plugin_filename_0");
+  pluginsMsg0->set_innerxml("<param>0</param>\n");
+
+  auto pluginsMsg1 = msg.add_plugins();
+  pluginsMsg1->set_name("test_plugin_1");
+  pluginsMsg1->set_filename("test_plugin_filename_1");
+  pluginsMsg1->set_innerxml("<param>1</param>\n");
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 2);
+
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_0");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_0");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>0</param>\n");
+
+  EXPECT_EQ(retMsg->plugins(1).name(), "test_plugin_1");
+  EXPECT_EQ(retMsg->plugins(1).filename(), "test_plugin_filename_1");
+  EXPECT_EQ(retMsg->plugins(1).innerxml(), "<param>1</param>\n");
+
+  // Update from message - remove plugins
+  msg.clear_plugins();
+
+  pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin_0_only");
+  pluginsMsg0->set_filename("test_plugin_filename_0_only");
+  pluginsMsg0->set_innerxml("<param>0_only</param>\n");
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
+
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_0_only");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_0_only");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>0_only</param>\n");
 
   delete widget;
   EXPECT_TRUE(stop());
@@ -1553,6 +1616,18 @@ TEST(MessageWidgetTest, PropertyByName)
   {
     EXPECT_EQ(widget->PropertyWidgetByName(name), nullptr) << name;
   }
+
+  // Set value of valid properties
+  EXPECT_TRUE(widget->SetPropertyValue("data",
+      QVariant::fromValue(std::string("the data value"))));
+  EXPECT_EQ(widget->PropertyValue("data").value<std::string>(),
+      std::string("the data value"));
+
+  // Set value of invalid properties
+  EXPECT_FALSE(widget->SetPropertyValue("banana",
+      QVariant::fromValue(std::string("the banana value"))));
+  EXPECT_EQ(widget->PropertyValue("banana").value<std::string>(),
+      std::string(""));
 
   delete widget;
   EXPECT_TRUE(stop());

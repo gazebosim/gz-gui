@@ -545,6 +545,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
   if (!_msg)
     return false;
 
+  _msg->Clear();
+
   // Get descriptor of given message
   auto descriptor = _msg->GetDescriptor();
   if (!descriptor)
@@ -565,10 +567,6 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     std::string name = fieldDescriptor->name();
 
     // Update each field in the message
-    // TODO update repeated fields
-    if (fieldDescriptor->is_repeated())
-      continue;
-
     auto scopedName = _parentScopedName.empty() ? name
         : _parentScopedName + "::" + name;
 
@@ -649,6 +647,19 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
       // Nested messages
       case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
       {
+        if (fieldDescriptor->is_repeated())
+        {
+          int c = 0;
+          while (this->PropertyWidgetByName(scopedName + "::" + std::to_string(c)))
+          {
+            auto msg = reflection->AddMessage(_msg, fieldDescriptor);
+            this->FillMsg(msg, scopedName + "::" + std::to_string(c));
+
+            c++;
+          }
+          continue;
+        }
+
         auto mutableMsg = reflection->MutableMessage(_msg, fieldDescriptor);
 
         // Geometry
