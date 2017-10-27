@@ -923,6 +923,7 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   ASSERT_NE(widget, nullptr);
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
+  auto count =  widget->PropertyWidgetCount();
 
   // Retrieve message
   auto retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
@@ -942,6 +943,7 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   pluginsMsg0->set_innerxml("<param>2</param>\n");
 
   widget->UpdateFromMsg(&msg);
+  EXPECT_EQ(count,  widget->PropertyWidgetCount());
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
 
@@ -965,10 +967,10 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   // Check fields
   EXPECT_EQ(widget->PropertyValue(
       "plugins::0::name").value<std::string>(), "test_plugin_updated");
-  EXPECT_EQ(widget->PropertyValue(
-      "plugins::0::filename").value<std::string>(), "test_plugin_filename_updated");
-  EXPECT_EQ(widget->PropertyValue(
-      "plugins::0::innerxml").value<std::string>(), "<param2>new_param</param2>\n");
+  EXPECT_EQ(widget->PropertyValue("plugins::0::filename").value<std::string>(),
+      "test_plugin_filename_updated");
+  EXPECT_EQ(widget->PropertyValue("plugins::0::innerxml").value<std::string>(),
+      "<param2>new_param</param2>\n");
 
   // Check new message
   retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
@@ -993,6 +995,7 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   pluginsMsg1->set_innerxml("<param>1</param>\n");
 
   widget->UpdateFromMsg(&msg);
+  EXPECT_LT(count,  widget->PropertyWidgetCount());
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::1"));
 
@@ -1018,6 +1021,7 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   pluginsMsg0->set_innerxml("<param>0_only</param>\n");
 
   widget->UpdateFromMsg(&msg);
+  EXPECT_EQ(count,  widget->PropertyWidgetCount());
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
 
@@ -1145,6 +1149,435 @@ TEST(MessageWidgetTest, WorldStatsMsgWidget)
   ASSERT_NE(retMsg, nullptr);
 
   EXPECT_EQ(retMsg->iterations(), 99999999u);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated int32 fields
+TEST(MessageWidgetTest, Int32VMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::Int32_V msg;
+  msg.add_data(0);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 0);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1);
+  msg.add_data(2);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 1);
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("data::0").value<int>(), 3);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 3);
+
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 4);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated int64 fields
+TEST(MessageWidgetTest, Int64VMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::Int64_V msg;
+  msg.add_data(0);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 0);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1);
+  msg.add_data(2);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 1);
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("data::0").value<int>(), 3);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 3);
+
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 4);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated uint64 fields
+TEST(MessageWidgetTest, UInt64VMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::UInt64_V msg;
+  msg.add_data(0);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 0u);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1);
+  msg.add_data(2);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 1u);
+  EXPECT_EQ(retMsg->data(1), 2u);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("data::0").value<unsigned int>(), 3u);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 3u);
+  EXPECT_EQ(retMsg->data(1), 2u);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 4u);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated float fields
+TEST(MessageWidgetTest, FloatVMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::Float_V msg;
+  msg.add_data(0.1);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_FLOAT_EQ(retMsg->data(0), 0.1);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1.1);
+  msg.add_data(2.1);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_FLOAT_EQ(retMsg->data(0), 1.1);
+  EXPECT_FLOAT_EQ(retMsg->data(1), 2.1);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3.1)));
+
+  // Check fields
+  EXPECT_FLOAT_EQ(widget->PropertyValue("data::0").value<float>(), 3.1);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_FLOAT_EQ(retMsg->data(0), 3.1);
+  EXPECT_FLOAT_EQ(retMsg->data(1), 2.1);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4.1);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_FLOAT_EQ(retMsg->data(0), 4.1);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated string, uint32 and double fields
+TEST(MessageWidgetTest, TactileMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one of each repeated field
+  msgs::Tactile msg;
+
+  msg.add_collision_name("col0");
+  msg.add_collision_id(0);
+  msg.add_pressure(0.1);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_name::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_id::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("pressure::1"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->collision_name_size(), 1);
+  ASSERT_EQ(retMsg->collision_id_size(), 1);
+  ASSERT_EQ(retMsg->pressure_size(), 1);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col0");
+  EXPECT_EQ(retMsg->collision_id(0), 0u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 0.1);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_collision_name();
+  msg.clear_collision_id();
+  msg.clear_pressure();
+
+  msg.add_collision_name("col1");
+  msg.add_collision_id(1);
+  msg.add_pressure(1.1);
+
+  msg.add_collision_name("col2");
+  msg.add_collision_id(2);
+  msg.add_pressure(2.1);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::1"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::1"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->collision_name_size(), 2);
+  ASSERT_EQ(retMsg->collision_id_size(), 2);
+  ASSERT_EQ(retMsg->pressure_size(), 2);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col1");
+  EXPECT_EQ(retMsg->collision_id(0), 1u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 1.1);
+
+  EXPECT_EQ(retMsg->collision_name(1), "col2");
+  EXPECT_EQ(retMsg->collision_id(1), 2u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(1), 2.1);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("collision_name::0", QVariant::fromValue(
+      std::string("col3"))));
+  EXPECT_TRUE(widget->SetPropertyValue("collision_id::1",
+      QVariant::fromValue(3)));
+  EXPECT_TRUE(widget->SetPropertyValue("pressure::0",
+      QVariant::fromValue(3.1)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("collision_name::0").value<std::string>(),
+      "col3");
+  EXPECT_EQ(widget->PropertyValue("collision_id::1").value<unsigned int>(), 3u);
+  EXPECT_DOUBLE_EQ(widget->PropertyValue("pressure::0").value<double>(), 3.1);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->collision_name_size(), 2);
+  ASSERT_EQ(retMsg->collision_id_size(), 2);
+  ASSERT_EQ(retMsg->pressure_size(), 2);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col3");
+  EXPECT_EQ(retMsg->collision_id(0), 1u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 3.1);
+
+  EXPECT_EQ(retMsg->collision_name(1), "col2");
+  EXPECT_EQ(retMsg->collision_id(1), 3u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(1), 2.1);
+
+  // Update from message - remove entries
+  msg.clear_collision_name();
+  msg.clear_collision_id();
+  msg.clear_pressure();
+
+  msg.add_collision_name("col4");
+  msg.add_collision_id(4);
+  msg.add_pressure(4.1);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_name::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_id::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("pressure::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->collision_name_size(), 1);
+  ASSERT_EQ(retMsg->collision_id_size(), 1);
+  ASSERT_EQ(retMsg->pressure_size(), 1);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col4");
+  EXPECT_EQ(retMsg->collision_id(0), 4u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 4.1);
 
   delete widget;
   EXPECT_TRUE(stop());

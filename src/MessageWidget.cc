@@ -327,7 +327,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
           // If creating new widget
           if (!repProp)
           {
-            repProp = new NumberWidget(std::to_string(count), NumberType::DOUBLE);
+            repProp = new NumberWidget(std::to_string(count),
+                NumberType::DOUBLE);
             this->AddPropertyWidget(name, repProp, collapsible);
           }
 
@@ -343,7 +344,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
           // If creating new widget
           if (!repProp)
           {
-            repProp = new NumberWidget(std::to_string(count), NumberType::DOUBLE);
+            repProp = new NumberWidget(std::to_string(count),
+                NumberType::DOUBLE);
             this->AddPropertyWidget(name, repProp, collapsible);
           }
 
@@ -392,8 +394,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
           }
 
           // Set value
-          unsigned int value = reflection->GetRepeatedUInt64(*_msg, fieldDescriptor,
-            count);
+          unsigned int value = reflection->GetRepeatedUInt64(*_msg,
+              fieldDescriptor, count);
           repProp->SetValue(value);
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
@@ -440,10 +442,38 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
             fieldDescriptor, count);
           repProp->SetValue(QVariant::fromValue(value));
         }
-        // If it's a repeated field
+        // Enum
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_ENUM)
+        {
+          // Value from field
+          auto value = reflection->GetRepeatedEnum(*_msg, fieldDescriptor,
+            count);
+
+          // If creating new widget
+          if (!repProp)
+          {
+            // Get all possible enum values
+            std::vector<std::string> enumValues;
+            auto enumDescriptor = value->type();
+            for (int j = 0; j < enumDescriptor->value_count(); ++j)
+            {
+              auto valueDescriptor = enumDescriptor->value(j);
+              if (valueDescriptor)
+                enumValues.push_back(valueDescriptor->name());
+            }
+
+            repProp = new EnumWidget(std::to_string(count), enumValues);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          repProp->SetValue(QVariant::fromValue(value->name()));
+        }
+        // Others
         else
         {
-          ignwarn << "Unhandled message type [" << fieldType << "]" << std::endl;
+          ignwarn << "Unhandled message type [" << fieldType << "]"
+                  << std::endl;
         }
       }
 
@@ -704,7 +734,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     if (fieldDescriptor->is_repeated())
     {
       int c = 0;
-      while (auto prop = this->PropertyWidgetByName(scopedName + "::" + std::to_string(c)))
+      while (auto prop = this->PropertyWidgetByName(scopedName + "::" +
+          std::to_string(c)))
       {
         variant = prop->Value();
 
@@ -738,7 +769,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_STRING)
         {
-          reflection->AddString(_msg, fieldDescriptor, variant.value<std::string>());
+          reflection->AddString(_msg, fieldDescriptor,
+              variant.value<std::string>());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_ENUM)
         {
@@ -827,7 +859,6 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         reflection->SetEnum(_msg, fieldDescriptor, enumValue);
       else
         ignerr << "Unable to find enum value [" << str << "]" << std::endl;
-
     }
     // Nested messages
     else if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
@@ -860,7 +891,6 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         auto valueMsg = (reflection->MutableMessage(_msg, fieldDescriptor));
         this->FillMsg(valueMsg, scopedName);
       }
-
     }
   }
   return true;
