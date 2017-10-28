@@ -1615,7 +1615,7 @@ TEST(MessageWidgetTest, ChildStringSignal)
       signalReceived = true;
     });
 
-  // Check default string
+  // Check default
   EXPECT_EQ(widget->PropertyValue("string").value<std::string>(), "");
 
   // Get signal emitting widgets
@@ -1665,6 +1665,9 @@ TEST(MessageWidgetTest, ChildNumberSignal)
       signalReceived = true;
     });
 
+  // Check value before
+  EXPECT_DOUBLE_EQ(widget->PropertyValue("data").value<double>(), -1.5);
+
   // Get signal emitting widgets
   auto spins = widget->findChildren<QDoubleSpinBox *>();
   ASSERT_EQ(spins.size(), 1);
@@ -1711,6 +1714,9 @@ TEST(MessageWidgetTest, ChildBoolSignal)
       EXPECT_FALSE(v);
       signalReceived = true;
     });
+
+  // Check value before
+  EXPECT_TRUE(widget->PropertyValue("data").value<bool>());
 
   // Get signal emitting widgets
   auto radios = widget->findChildren<QRadioButton *>();
@@ -1773,7 +1779,7 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
       }
     });
 
-  // Check default vector3
+  // Check value before
   EXPECT_EQ(widget->PropertyValue("").value<math::Vector3d>(),
       math::Vector3d(1, -2, 3));
 
@@ -1834,7 +1840,7 @@ TEST(MessageWidgetTest, ChildColorSignal)
       signalReceived = true;
     });
 
-  // Check default color (opaque white)
+  // Check value before
   EXPECT_EQ(widget->PropertyValue("").value<math::Color>(),
       math::Color(0.1, 0.2, 0.3, 0.4));
 
@@ -1889,7 +1895,7 @@ TEST(MessageWidgetTest, ChildPoseSignal)
       signalReceived = true;
     });
 
-  // Check default pose
+  // Check value before
   EXPECT_EQ(widget->PropertyValue("").value<math::Pose3d>(),
       math::Pose3d(0.1, 0.2, 0.3, -0.4, -0.5, -0.6));
 
@@ -1944,7 +1950,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
       signalReceived = true;
     });
 
-  // Check value
+  // Check value before
   auto value = widget->PropertyValue("").value<msgs::Geometry>();
   EXPECT_EQ(value.type(), msgs::Geometry::CYLINDER);
   EXPECT_DOUBLE_EQ(value.cylinder().length(), 10.0);
@@ -2000,7 +2006,7 @@ TEST(MessageWidgetTest, ChildEnumSignal)
       signalReceived = true;
     });
 
-  // Check default value
+  // Check value before
   EXPECT_EQ(widget->PropertyValue("type").value<std::string>(),
       std::string("LINK"));
 
