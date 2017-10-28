@@ -479,7 +479,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
 
       // Drop repetitions which disappeared
       auto colLayout = collapsible->layout();
-      for (; count < colLayout->count() - 1; ++count)
+      auto layoutCount = colLayout->count();
+      for (; count < layoutCount - 1; ++count)
       {
         auto name = scopedName + "::" + std::to_string(count);
         this->RemovePropertyWidget(name);
