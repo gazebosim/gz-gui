@@ -935,7 +935,9 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     auto w = new QWidget();
     w->setLayout(hLayout);
 
-    _parent->layout()->addWidget(w);
+    collapsibleParent->layout()->addWidget(w);
+
+    w->setVisible(collapsibleParent->IsExpanded());
   }
   else
   {

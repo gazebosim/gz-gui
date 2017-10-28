@@ -58,6 +58,7 @@ TEST(CollapsibleWidgetTest, Toggle)
 
   // Collapse
   widget->Toggle(false);
+  EXPECT_FALSE(widget->IsExpanded());
 
   // Check the content is not visible
   for (auto i = 1; i < layout->count(); ++i)
@@ -67,6 +68,7 @@ TEST(CollapsibleWidgetTest, Toggle)
 
   // Expand
   widget->Toggle(true);
+  EXPECT_TRUE(widget->IsExpanded());
 
   // Check the content is visible
   for (auto i = 1; i < layout->count(); ++i)
