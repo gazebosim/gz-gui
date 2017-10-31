@@ -128,32 +128,9 @@ void VariablePillContainer::SetVariablePillLabel(const unsigned int _id,
 unsigned int VariablePillContainer::AddVariablePill(const std::string &_name,
     const unsigned int _targetId)
 {
-  // Reached max size
-  if (this->dataPtr->maxSize != -1 &&
-      static_cast<int>(this->VariablePillCount()) >= this->dataPtr->maxSize)
-  {
-    return VariablePill::EmptyVariable;
-  }
-
-  if (_targetId != VariablePill::EmptyVariable &&
-    !this->VariablePill(_targetId))
-  {
-    ignerr << "Unable to add variable. Target variable not found" << std::endl;
-    return VariablePill::EmptyVariable;
-  }
-
   gui::VariablePill *variable = new gui::VariablePill;
   variable->SetName(_name);
   variable->SetText(_name);
-
-  this->connect(variable, SIGNAL(VariableMoved(unsigned int)),
-      this, SLOT(OnMoveVariable(unsigned int)));
-  this->connect(variable, SIGNAL(VariableAdded(unsigned int, std::string)),
-      this, SLOT(OnAddVariable(unsigned int, std::string)));
-  this->connect(variable, SIGNAL(VariableRemoved(unsigned int)),
-      this, SLOT(OnRemoveVariable(unsigned int)));
-  this->connect(variable, SIGNAL(VariableLabelChanged(std::string)),
-      this, SLOT(OnSetVariableLabel(std::string)));
 
   this->AddVariablePill(variable, _targetId);
 
@@ -192,14 +169,23 @@ void VariablePillContainer::AddVariablePill(gui::VariablePill *_variable,
     }
   }
 
-  // otherwise add to the container
+  // Reached max size
   if (this->dataPtr->maxSize != -1 &&
       static_cast<int>(this->VariablePillCount()) >= this->dataPtr->maxSize)
   {
-    ignerr << "Unable to add variable to container. Container is full" <<
-        std::endl;
+    ignerr << "Unable to add variable to container. Container is full"
+           << std::endl;
     return;
   }
+
+  this->connect(_variable, SIGNAL(VariableMoved(unsigned int)),
+      this, SLOT(OnMoveVariable(unsigned int)));
+  this->connect(_variable, SIGNAL(VariableAdded(unsigned int, std::string)),
+      this, SLOT(OnAddVariable(unsigned int, std::string)));
+  this->connect(_variable, SIGNAL(VariableRemoved(unsigned int)),
+      this, SLOT(OnRemoveVariable(unsigned int)));
+  this->connect(_variable, SIGNAL(VariableLabelChanged(std::string)),
+      this, SLOT(OnSetVariableLabel(std::string)));
 
   _variable->SetContainer(this);
   _variable->setVisible(true);
