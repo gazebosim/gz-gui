@@ -42,6 +42,9 @@ namespace plugins
 
     /// \brief Node for communication.
     public: ignition::transport::Node node;
+
+    ///
+    public: std::vector<std::string> hideWidgets;
   };
 }
 }
@@ -93,6 +96,19 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               << topic << "]." << std::endl;
     }
 
+    // Global read-only
+    bool readOnly = false;
+    if (auto readElem = _pluginElem->FirstChildElement("read_only"))
+      readElem->QueryBoolText(&readOnly);
+
+    // Visibility per widget
+    for (auto hideWidgetElem = _pluginElem->FirstChildElement("hide");
+        hideWidgetElem != nullptr;
+        hideWidgetElem = hideWidgetElem->NextSiblingElement("hide"))
+    {
+      this->dataPtr->hideWidgets.push_back(hideWidgetElem->GetText());
+    }
+
     // Message widget
     if (!msgType.empty())
     {
@@ -132,6 +148,9 @@ void TopicInterface::OnMessage(const google::protobuf::Message &_msg)
 void TopicInterface::CreateWidget(const google::protobuf::Message &_msg)
 {
   this->dataPtr->msgWidget = new MessageWidget(&_msg);
+
+  for (const auto &w : this->dataPtr->hideWidgets)
+    this->dataPtr->msgWidget->SetPropertyVisible(w, false);
 
   // Scroll area
   auto scrollArea = new QScrollArea();

@@ -134,12 +134,116 @@ google::protobuf::Message *MessageWidget::Msg() const
 }
 
 /////////////////////////////////////////////////
+bool MessageWidget::PropertyVisible(const std::string &_name) const
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
+    return false;
+  }
+
+  return w->isVisible();
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::SetPropertyVisible(const std::string &_name,
+    const bool _visible)
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
+    return false;
+  }
+
+  w->setVisible(_visible);
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::ReadOnly() const
+{
+  // Not read-only if there's at least one enabled widget
+  for (auto p : this->dataPtr->properties)
+  {
+    auto collapsible = qobject_cast<CollapsibleWidget *>(p.second);
+    if (!collapsible && p.second->isEnabled())
+      return false;
+  }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::SetReadOnly(const bool _readOnly)
+{
+  for (auto p : this->dataPtr->properties)
+  {
+    auto collapsible = qobject_cast<CollapsibleWidget *>(p.second);
+    if (!collapsible)
+      p.second->setEnabled(!_readOnly);
+  }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::PropertyReadOnly(const std::string &_name) const
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
+    return false;
+  }
+
+  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsibleParent)
+    return !collapsibleParent->isEnabled();
+
+  return !w->isEnabled();
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::SetPropertyReadOnly(const std::string &_name,
+    const bool _readOnly)
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
+    return false;
+  }
+
+  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(w->parent());
+  if (collapsibleParent)
+  {
+    collapsibleParent->setEnabled(!_readOnly);
+
+    // Qt docs: "Disabling a widget implicitly disables all its children.
+    // Enabling respectively enables all child widgets unless they have
+    // been explicitly disabled."
+    auto childWidgets = collapsibleParent->findChildren<QWidget *>();
+    for (auto widget : childWidgets)
+      widget->setEnabled(!_readOnly);
+  }
+  else
+    w->setEnabled(!_readOnly);
+
+  return true;
+}
+
+/////////////////////////////////////////////////
 bool MessageWidget::SetPropertyValue(const std::string &_name,
                                      const QVariant _value)
 {
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
     return false;
+  }
 
   return w->SetValue(_value);
 }

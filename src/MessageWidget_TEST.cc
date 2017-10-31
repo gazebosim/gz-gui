@@ -55,6 +55,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_FALSE(widget->UpdateFromMsg(new msgs::StringMsg()));
+
+    delete widget;
   }
 
   // Valid constructor, invalid update
@@ -63,6 +65,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_FALSE(widget->UpdateFromMsg(nullptr));
+
+    delete widget;
   }
 
   // Update type different from constructor
@@ -71,6 +75,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_FALSE(widget->UpdateFromMsg(new msgs::Int32()));
+
+    delete widget;
   }
 
   // Same type as constructor
@@ -79,6 +85,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_TRUE(widget->UpdateFromMsg(new msgs::StringMsg()));
+
+    delete widget;
   }
 
   EXPECT_TRUE(stop());
@@ -493,6 +501,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_DOUBLE_EQ(retJointMsg->suspension_cfm(), 0.13);
     EXPECT_DOUBLE_EQ(retJointMsg->suspension_erp(), 0.12);
   }
+
+  delete widget;
   EXPECT_TRUE(stop());
 }
 
@@ -1578,6 +1588,137 @@ TEST(MessageWidgetTest, TactileMsgWidget)
   EXPECT_EQ(retMsg->collision_name(0), "col4");
   EXPECT_EQ(retMsg->collision_id(0), 4u);
   EXPECT_DOUBLE_EQ(retMsg->pressure(0), 4.1);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, MessagePropertyVisible)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  msgs::Visual msg;
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
+  widget->show();
+
+  // Check that only top-level widgets are visible by default
+  {
+    // Inexistent widget
+    EXPECT_FALSE(widget->PropertyVisible("banana"));
+    // Leaf widget
+    EXPECT_TRUE(widget->PropertyVisible("id"));
+    // Custom nested widgets
+    EXPECT_TRUE(widget->PropertyVisible("pose"));
+    EXPECT_TRUE(widget->PropertyVisible("geometry"));
+    // Nested message widget
+    EXPECT_TRUE(widget->PropertyVisible("material"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyVisible("material::script"));
+    // Three levels deep leaf
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+  }
+
+  // Expand collapsible and check immediate children become visible
+  {
+    auto material = widget->PropertyWidgetByName("material");
+    ASSERT_NE(nullptr, material);
+
+    auto button = material->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    EXPECT_TRUE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+  }
+
+  // Inexistent widget
+  {
+    EXPECT_FALSE(widget->SetPropertyVisible("banana", false));
+  }
+
+  // Top-level leaf
+  {
+    EXPECT_TRUE(widget->SetPropertyVisible("id", false));
+    EXPECT_FALSE(widget->PropertyVisible("id"));
+
+    EXPECT_TRUE(widget->SetPropertyVisible("id", true));
+    EXPECT_TRUE(widget->PropertyVisible("id"));
+  }
+
+  // Top-level special message
+  {
+    EXPECT_TRUE(widget->SetPropertyVisible("pose", false));
+    EXPECT_FALSE(widget->PropertyVisible("pose"));
+
+    EXPECT_TRUE(widget->SetPropertyVisible("pose", true));
+    EXPECT_TRUE(widget->PropertyVisible("pose"));
+  }
+
+  // Top-level collapsed collapsible
+  {
+    // Check child was already hidden
+    EXPECT_FALSE(widget->PropertyVisible("meta::layer"));
+
+    // Hiding collapsible keeps child hidden
+    EXPECT_TRUE(widget->SetPropertyVisible("meta", false));
+    EXPECT_FALSE(widget->PropertyVisible("meta"));
+    EXPECT_FALSE(widget->PropertyVisible("meta::layer"));
+
+    // Showing collapsed collapsible doesn't show child
+    EXPECT_TRUE(widget->SetPropertyVisible("meta", true));
+    EXPECT_TRUE(widget->PropertyVisible("meta"));
+    EXPECT_FALSE(widget->PropertyVisible("meta::layer"));
+  }
+
+  // Top-level expanded collapsible
+  {
+    // Check immediate children were visible
+    EXPECT_TRUE(widget->PropertyVisible("material"));
+    EXPECT_TRUE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    // Hiding collapsible hides children
+    EXPECT_TRUE(widget->SetPropertyVisible("material", false));
+    EXPECT_FALSE(widget->PropertyVisible("material"));
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    // Explicitly hide a child
+    EXPECT_TRUE(widget->SetPropertyVisible("material::diffuse", false));
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+
+    // Showing expanded collapsible shows children except for those
+    // explicitly hidden or still collapsed
+    EXPECT_TRUE(widget->SetPropertyVisible("material", true));
+    EXPECT_TRUE(widget->PropertyVisible("material"));
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    // Showing collapsed child doesn't work until collapsible is expanded
+    EXPECT_TRUE(widget->SetPropertyVisible("material::script::name", true));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    auto script = widget->PropertyWidgetByName("material::script");
+    ASSERT_NE(nullptr, script);
+
+    auto button = script->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script::name"));
+  }
 
   delete widget;
   EXPECT_TRUE(stop());
