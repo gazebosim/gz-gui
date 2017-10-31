@@ -55,6 +55,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_FALSE(widget->UpdateFromMsg(new msgs::StringMsg()));
+
+    delete widget;
   }
 
   // Valid constructor, invalid update
@@ -63,6 +65,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_FALSE(widget->UpdateFromMsg(nullptr));
+
+    delete widget;
   }
 
   // Update type different from constructor
@@ -71,6 +75,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_FALSE(widget->UpdateFromMsg(new msgs::Int32()));
+
+    delete widget;
   }
 
   // Same type as constructor
@@ -79,6 +85,8 @@ TEST(MessageWidgetTest, ConstructAndUpdate)
     ASSERT_NE(widget, nullptr);
 
     EXPECT_TRUE(widget->UpdateFromMsg(new msgs::StringMsg()));
+
+    delete widget;
   }
 
   EXPECT_TRUE(stop());
@@ -493,6 +501,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_DOUBLE_EQ(retJointMsg->suspension_cfm(), 0.13);
     EXPECT_DOUBLE_EQ(retJointMsg->suspension_erp(), 0.12);
   }
+
+  delete widget;
   EXPECT_TRUE(stop());
 }
 
