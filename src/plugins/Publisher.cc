@@ -75,17 +75,39 @@ Publisher::~Publisher()
 }
 
 /////////////////////////////////////////////////
-void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
+void Publisher::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Publisher";
 
+  // Default values
+  std::string msgType("ignition.msgs.StringMsg");
+  std::string msg("data: \"Hello\"");
+  std::string topic("/echo");
+  double frequency(1.0);
+
+  // Parameters from SDF
+  if (_pluginElem)
+  {
+    if (auto typeElem = _pluginElem->FirstChildElement("message_type"))
+      msgType = typeElem->GetText();
+
+    if (auto msgElem = _pluginElem->FirstChildElement("message"))
+      msg = msgElem->GetText();
+
+    if (auto topicElem = _pluginElem->FirstChildElement("topic"))
+      topic = topicElem->GetText();
+
+    if (auto frequencyElem = _pluginElem->FirstChildElement("frequency"))
+      frequencyElem->QueryDoubleText(&frequency);
+  }
+
   // Populate with default values.
-  this->dataPtr->msgTypeEdit = new QLineEdit("ignition.msgs.StringMsg");
+  this->dataPtr->msgTypeEdit = new QLineEdit(QString::fromStdString(msgType));
   this->dataPtr->msgTypeEdit->setObjectName("msgTypeEdit");
-  this->dataPtr->msgEdit = new QTextEdit("data: \"Hello\"");
+  this->dataPtr->msgEdit = new QTextEdit(QString::fromStdString(msg));
   this->dataPtr->msgEdit->setObjectName("msgEdit");
-  this->dataPtr->topicEdit = new QLineEdit("/echo");
+  this->dataPtr->topicEdit = new QLineEdit(QString::fromStdString(topic));
   this->dataPtr->topicEdit->setObjectName("topicEdit");
 
   auto freqLabel = new QLabel("Frequency");
@@ -95,7 +117,7 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->freqSpin->setObjectName("frequencySpinBox");
   this->dataPtr->freqSpin->setMinimum(0);
   this->dataPtr->freqSpin->setMaximum(1000);
-  this->dataPtr->freqSpin->setValue(1);
+  this->dataPtr->freqSpin->setValue(frequency);
 
   this->dataPtr->publishButton = new QPushButton("Publish");
   this->dataPtr->publishButton->setObjectName("publishButton");
