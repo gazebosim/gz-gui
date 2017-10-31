@@ -26,13 +26,10 @@
 using namespace ignition;
 using namespace gui;
 
-  /// \internal
-  /// \brief VariablePill private data
+/// \internal
+/// \brief VariablePill private data
 class ignition::gui::VariablePillPrivate
 {
-  /// \brief Pointer to the main frame
-  public: QFrame *mainFrame;
-
   /// \brief Pointer to the container this variable pill is in
   public: VariablePillContainer *container = nullptr;
 
@@ -48,14 +45,8 @@ class ignition::gui::VariablePillPrivate
   /// \brief Text label
   public: QLabel *label;
 
-  /// \brief Frame that holds the label
-  public: QFrame *labelFrame;
-
   /// \brief Text label for the outer mulit-variable pill
   public: QLabel *multiLabel;
-
-  /// \brief Layout for the single ariable pill
-  public: QHBoxLayout *singleLayout;
 
   /// \brief Layout for a mulit-variable pill
   public: QHBoxLayout *multiLayout;
@@ -101,8 +92,8 @@ VariablePill::VariablePill(QWidget *_parent)
   QHBoxLayout *labelLayout = new QHBoxLayout;
   labelLayout->addWidget(this->dataPtr->label);
   labelLayout->setContentsMargins(0, 0, 0, 0);
-  this->dataPtr->labelFrame = new QFrame;
-  this->dataPtr->labelFrame->setLayout(labelLayout);
+  auto labelFrame = new QFrame;
+  labelFrame->setLayout(labelLayout);
 
   // child variable pills
   this->dataPtr->variableLayout = new QHBoxLayout;
@@ -116,22 +107,22 @@ VariablePill::VariablePill(QWidget *_parent)
   this->dataPtr->multiLabel->setVisible(false);
   this->dataPtr->multiLayout->addWidget(this->dataPtr->multiLabel);
 
-  this->dataPtr->singleLayout = new QHBoxLayout;
-  this->dataPtr->singleLayout->setAlignment(Qt::AlignLeft);
-  this->dataPtr->singleLayout->addWidget(this->dataPtr->labelFrame);
-  this->dataPtr->singleLayout->addLayout(this->dataPtr->variableLayout);
-  this->dataPtr->singleLayout->setContentsMargins(0, 0, 0, 0);
-  this->dataPtr->multiLayout->addLayout(this->dataPtr->singleLayout);
+  auto singleLayout = new QHBoxLayout;
+  singleLayout->setAlignment(Qt::AlignLeft);
+  singleLayout->addWidget(labelFrame);
+  singleLayout->addLayout(this->dataPtr->variableLayout);
+  singleLayout->setContentsMargins(0, 0, 0, 0);
+  this->dataPtr->multiLayout->addLayout(singleLayout);
 
   QHBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setAlignment(Qt::AlignLeft);
 
-  this->dataPtr->mainFrame = new QFrame(this);
-  this->dataPtr->mainFrame->setLayout(this->dataPtr->multiLayout);
-  this->dataPtr->mainFrame->setObjectName("variablePillFrame");
+  auto mainFrame = new QFrame(this);
+  mainFrame->setLayout(this->dataPtr->multiLayout);
+  mainFrame->setObjectName("variablePillFrame");
 
-  mainLayout->addWidget(this->dataPtr->mainFrame);
+  mainLayout->addWidget(mainFrame);
   this->setLayout(mainLayout);
 
   this->UpdateStyleSheet();
@@ -167,7 +158,7 @@ void VariablePill::SetText(const std::string &_text)
   QString text = QString::fromStdString(_text);
   this->dataPtr->label->setText(text);
   this->dataPtr->label->setToolTip(text);
-  emit VariableLabelChanged(_text);
+  this->VariableTextChanged(_text);
 }
 
 /////////////////////////////////////////////////
@@ -253,7 +244,7 @@ void VariablePill::AddVariablePill(VariablePill *_variable)
   this->dataPtr->variables[_variable->Id()] = _variable;
   this->dataPtr->variableLayout->addWidget(_variable);
 
-  emit VariableAdded(_variable->Id(), _variable->Text());
+  this->VariableAdded(_variable->Id(), _variable->Text());
 }
 
 /////////////////////////////////////////////////
@@ -294,7 +285,7 @@ void VariablePill::RemoveVariablePill(VariablePill *_variable)
     tmpContainer->blockSignals(false);
     this->SetMultiVariableMode(false);
 
-    emit VariableRemoved(_variable->Id());
+    this->VariableRemoved(_variable->Id());
 
     return;
   }
@@ -319,7 +310,7 @@ void VariablePill::RemoveVariablePill(VariablePill *_variable)
     this->SetMultiVariableMode(false);
   }
 
-  emit VariableRemoved(_variable->Id());
+  this->VariableRemoved(_variable->Id());
 }
 
 /////////////////////////////////////////////////
@@ -382,13 +373,13 @@ void VariablePill::dropEvent(QDropEvent *_evt)
     variable->SetText(dataStr);
     variable->SetName(dataStr);
 
-    connect(variable, SIGNAL(VariableMoved(unsigned int)),
+    this->connect(variable, SIGNAL(VariableMoved(unsigned int)),
         this->Container(), SLOT(OnMoveVariable(unsigned int)));
-    connect(variable, SIGNAL(VariableAdded(unsigned int, std::string)),
+    this->connect(variable, SIGNAL(VariableAdded(unsigned int, std::string)),
         this->Container(), SLOT(OnAddVariable(unsigned int, std::string)));
-    connect(variable, SIGNAL(VariableRemoved(unsigned int)),
+    this->connect(variable, SIGNAL(VariableRemoved(unsigned int)),
         this->Container(), SLOT(OnRemoveVariable(unsigned int)));
-    connect(variable, SIGNAL(VariableLabelChanged(std::string)),
+    this->connect(variable, SIGNAL(VariableTextChanged(std::string)),
         this->Container(), SLOT(OnSetVariableLabel(std::string)));
 
     this->AddVariablePill(variable);
@@ -435,7 +426,7 @@ void VariablePill::dropEvent(QDropEvent *_evt)
       this->blockSignals(false);
     }
 
-    emit VariableMoved(variable->Id());
+    this->VariableMoved(variable->Id());
   }
 }
 /////////////////////////////////////////////////
