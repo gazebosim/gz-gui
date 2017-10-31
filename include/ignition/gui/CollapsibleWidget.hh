@@ -71,6 +71,12 @@ namespace ignition
       /// _param[in] _expanded True for expanded.
       public: bool IsExpanded() const;
 
+      // Documentation inherited
+      public: virtual void SetReadOnly(const bool _readOnly) override;
+
+      // Documentation inherited
+      public: virtual bool ReadOnly() const override;
+
       /// \brief Pointer to private data
       private: std::unique_ptr<CollapsibleWidgetPrivate> dataPtr;
     };

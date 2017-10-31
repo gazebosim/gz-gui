@@ -1594,7 +1594,7 @@ TEST(MessageWidgetTest, TactileMsgWidget)
 }
 
 /////////////////////////////////////////////////
-TEST(MessageWidgetTest, MessagePropertyVisible)
+TEST(MessageWidgetTest, Visible)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -1718,6 +1718,96 @@ TEST(MessageWidgetTest, MessagePropertyVisible)
 
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
     EXPECT_TRUE(widget->PropertyVisible("material::script::name"));
+  }
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ReadOnly)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  msgs::Visual msg;
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
+  widget->show();
+
+  // Check that all properties are read-write by default
+  {
+    // Whole widget
+    EXPECT_FALSE(widget->ReadOnly());
+    // Inexistent widget
+    EXPECT_FALSE(widget->PropertyReadOnly("banana"));
+    // Leaf widget
+    EXPECT_FALSE(widget->PropertyReadOnly("id"));
+    // Custom nested widgets
+    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
+    EXPECT_FALSE(widget->PropertyReadOnly("geometry"));
+    // Nested message widget
+    EXPECT_FALSE(widget->PropertyReadOnly("material"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyReadOnly("material::diffuse"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
+    // Three levels deep leaf
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
+  }
+
+  // Inexistent widget
+  {
+    EXPECT_FALSE(widget->SetPropertyReadOnly("banana", false));
+  }
+
+  // Top-level leaf
+  {
+    EXPECT_TRUE(widget->SetPropertyReadOnly("id", true));
+    EXPECT_TRUE(widget->PropertyReadOnly("id"));
+
+    EXPECT_TRUE(widget->SetPropertyReadOnly("id", false));
+    EXPECT_FALSE(widget->PropertyReadOnly("id"));
+  }
+
+  // Top-level special message
+  {
+    EXPECT_TRUE(widget->SetPropertyReadOnly("pose", true));
+    EXPECT_TRUE(widget->PropertyReadOnly("pose"));
+
+    EXPECT_TRUE(widget->SetPropertyReadOnly("pose", false));
+    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
+  }
+
+  // Top-level collapsible
+  {
+    EXPECT_TRUE(widget->SetPropertyReadOnly("material", true));
+    EXPECT_TRUE(widget->PropertyReadOnly("material"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script::name"));
+
+    EXPECT_TRUE(widget->SetPropertyReadOnly("material", false));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
+  }
+
+  // The whole widget
+  {
+    EXPECT_TRUE(widget->SetReadOnly(true));
+    EXPECT_TRUE(widget->ReadOnly());
+    EXPECT_TRUE(widget->PropertyReadOnly("id"));
+    EXPECT_TRUE(widget->PropertyReadOnly("pose"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script::name"));
+
+    EXPECT_TRUE(widget->SetReadOnly(false));
+    EXPECT_FALSE(widget->ReadOnly());
+    EXPECT_FALSE(widget->PropertyReadOnly("id"));
+    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
   }
 
   delete widget;

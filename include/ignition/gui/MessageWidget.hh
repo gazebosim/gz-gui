@@ -107,7 +107,8 @@ namespace ignition
       /// \sa SetPropertyVisible
       public: bool PropertyVisible(const std::string &_name) const;
 
-      /// \brief Set whether all property widgets should be read-only.
+      /// \brief Set whether all property widgets should be read-only. This
+      /// disables all child widgets.
       /// \param[in] _readOnly True for read-only, false for read-write.
       /// \return True if the value is set successfully.
       /// \sa ReadOnly

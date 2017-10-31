@@ -58,6 +58,9 @@ namespace ignition
       /// \brief A copy of the message used to build the widget. Helps
       /// creating new messages.
       public: google::protobuf::Message *msg = nullptr;
+
+      /// \brief Whether all widgets should be read-only.
+      public: bool readOnly = false;
     };
   }
 }
@@ -167,8 +170,7 @@ bool MessageWidget::ReadOnly() const
   // Not read-only if there's at least one enabled widget
   for (auto p : this->dataPtr->properties)
   {
-    auto collapsible = qobject_cast<CollapsibleWidget *>(p.second);
-    if (!collapsible && p.second->isEnabled())
+    if (!p.second->ReadOnly())
       return false;
   }
 
@@ -178,12 +180,10 @@ bool MessageWidget::ReadOnly() const
 /////////////////////////////////////////////////
 bool MessageWidget::SetReadOnly(const bool _readOnly)
 {
+  this->dataPtr->readOnly = _readOnly;
+
   for (auto p : this->dataPtr->properties)
-  {
-    auto collapsible = qobject_cast<CollapsibleWidget *>(p.second);
-    if (!collapsible)
-      p.second->setEnabled(!_readOnly);
-  }
+    p.second->SetReadOnly(_readOnly);
 
   return true;
 }
@@ -198,11 +198,7 @@ bool MessageWidget::PropertyReadOnly(const std::string &_name) const
     return false;
   }
 
-  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (collapsibleParent)
-    return !collapsibleParent->isEnabled();
-
-  return !w->isEnabled();
+  return w->ReadOnly();
 }
 
 /////////////////////////////////////////////////
@@ -216,21 +212,7 @@ bool MessageWidget::SetPropertyReadOnly(const std::string &_name,
     return false;
   }
 
-  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(w->parent());
-  if (collapsibleParent)
-  {
-    collapsibleParent->setEnabled(!_readOnly);
-
-    // Qt docs: "Disabling a widget implicitly disables all its children.
-    // Enabling respectively enables all child widgets unless they have
-    // been explicitly disabled."
-    auto childWidgets = collapsibleParent->findChildren<QWidget *>();
-    for (auto widget : childWidgets)
-      widget->setEnabled(!_readOnly);
-  }
-  else
-    w->setEnabled(!_readOnly);
-
+  w->SetReadOnly(_readOnly);
   return true;
 }
 
@@ -1048,6 +1030,8 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   {
     _parent->layout()->addWidget(_property);
   }
+
+  _property->SetReadOnly(this->dataPtr->readOnly);
 
   return true;
 }

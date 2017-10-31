@@ -43,8 +43,11 @@ namespace plugins
     /// \brief Node for communication.
     public: ignition::transport::Node node;
 
-    ///
+    /// \brief List of widgets which should be hidden
     public: std::vector<std::string> hideWidgets;
+
+    /// \brief Whether the whole widget should be read-only.
+    public: bool readOnly;
   };
 }
 }
@@ -97,9 +100,9 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
 
     // Global read-only
-    bool readOnly = false;
-    if (auto readElem = _pluginElem->FirstChildElement("read_only"))
-      readElem->QueryBoolText(&readOnly);
+    this->dataPtr->readOnly = false;
+    if (_pluginElem->Attribute("read_only"))
+      _pluginElem->QueryBoolAttribute("read_only", &this->dataPtr->readOnly);
 
     // Visibility per widget
     for (auto hideWidgetElem = _pluginElem->FirstChildElement("hide");
@@ -151,6 +154,8 @@ void TopicInterface::CreateWidget(const google::protobuf::Message &_msg)
 
   for (const auto &w : this->dataPtr->hideWidgets)
     this->dataPtr->msgWidget->SetPropertyVisible(w, false);
+
+  this->dataPtr->msgWidget->SetReadOnly(this->dataPtr->readOnly);
 
   // Scroll area
   auto scrollArea = new QScrollArea();

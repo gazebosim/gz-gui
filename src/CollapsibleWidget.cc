@@ -124,3 +124,26 @@ bool CollapsibleWidget::IsExpanded() const
   return this->dataPtr->expanded;
 }
 
+/////////////////////////////////////////////////
+void CollapsibleWidget::SetReadOnly(const bool _readOnly)
+{
+  // Only apply to properties, but no other widgets, such as the button
+  auto props = this->findChildren<PropertyWidget *>();
+  for (auto prop : props)
+    prop->SetReadOnly(_readOnly);
+}
+
+/////////////////////////////////////////////////
+bool CollapsibleWidget::ReadOnly() const
+{
+  // Not read-only if at least one child isn't
+  auto props = this->findChildren<PropertyWidget *>();
+  for (auto prop : props)
+  {
+    if (!prop->ReadOnly())
+      return false;
+  }
+
+  return true;
+}
+

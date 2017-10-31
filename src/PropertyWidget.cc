@@ -25,3 +25,15 @@ void PropertyWidget::OnValueChanged()
 {
   this->ValueChanged(this->Value());
 }
+
+/////////////////////////////////////////////////
+void PropertyWidget::SetReadOnly(const bool _readOnly)
+{
+  this->setEnabled(!_readOnly);
+}
+
+/////////////////////////////////////////////////
+bool PropertyWidget::ReadOnly() const
+{
+  return !this->isEnabled();
+}
