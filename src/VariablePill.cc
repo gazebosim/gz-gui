@@ -125,7 +125,6 @@ VariablePill::VariablePill(QWidget *_parent)
   mainLayout->addWidget(mainFrame);
   this->setLayout(mainLayout);
 
-  this->UpdateStyleSheet();
   this->setAcceptDrops(true);
 }
 
@@ -199,8 +198,6 @@ void VariablePill::SetMultiVariableMode(const bool _enable)
   int margin = _enable ? 4 : 0;
   this->dataPtr->multiLayout->setContentsMargins(
       margin, margin, margin, margin);
-
-  this->UpdateStyleSheet();
 }
 
 /////////////////////////////////////////////////
@@ -240,7 +237,6 @@ void VariablePill::AddVariablePill(VariablePill *_variable)
   _variable->SetParent(this);
   _variable->setVisible(true);
   _variable->SetContainer(this->dataPtr->container);
-  _variable->UpdateStyleSheet();
   this->dataPtr->variables[_variable->Id()] = _variable;
   this->dataPtr->variableLayout->addWidget(_variable);
 
@@ -261,7 +257,6 @@ void VariablePill::RemoveVariablePill(VariablePill *_variable)
           qobject_cast<VariablePill *>(item->widget());
       newMultiVariable->SetParent(nullptr);
       newMultiVariable->blockSignals(true);
-      newMultiVariable->UpdateStyleSheet();
       while (this->dataPtr->variableLayout->count() > 0)
       {
         QLayoutItem *it = this->dataPtr->variableLayout->takeAt(0);
@@ -301,7 +296,6 @@ void VariablePill::RemoveVariablePill(VariablePill *_variable)
   _variable->setParent(nullptr);
   _variable->SetParent(nullptr);
   _variable->SetContainer(nullptr);
-  _variable->UpdateStyleSheet();
 
   // becomes single variable pill
   if (this->dataPtr->variables.empty())
@@ -541,17 +535,10 @@ std::map<unsigned int, VariablePill *> &VariablePill::VariablePills() const
 void VariablePill::SetSelected(const bool _selected)
 {
   this->dataPtr->isSelected = _selected;
-
-  this->UpdateStyleSheet();
 }
 
 /////////////////////////////////////////////////
 bool VariablePill::IsSelected() const
 {
   return this->dataPtr->isSelected;
-}
-
-/////////////////////////////////////////////////
-void VariablePill::UpdateStyleSheet()
-{
 }

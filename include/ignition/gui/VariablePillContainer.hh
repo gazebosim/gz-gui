@@ -143,8 +143,8 @@ namespace gui
     /// \brief Qt signal emitted when a variable is removed from the container.
     /// \param[in] _id Unique id of the variable pill which was removed.
     /// \param[in] _targetId Unique id of the variable pill from which the
-    /// previous variable was removed from. VariablePill::EmptyVariable if it was
-    /// removed directly from the container and not a multi-variable pill.
+    /// previous variable was removed from. VariablePill::EmptyVariable if it
+    /// was removed directly from the container and not a multi-variable pill.
     signals: void VariableRemoved(const unsigned int _id,
                                   const unsigned int _targetId);
 
