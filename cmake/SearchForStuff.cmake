@@ -45,6 +45,19 @@ else()
 endif()
 
 ########################################
+# Ignition msgs
+find_package(ignition-msgs1 QUIET)
+if (NOT ignition-msgs1_FOUND)
+  BUILD_ERROR ("Missing: Ignition Msgs libignition-msgs1-dev.")
+else()
+  message (STATUS "Found Ignition Msgs")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-MSGS_CXX_FLAGS}")
+  include_directories(${IGNITION-MSGS_INCLUDE_DIRS})
+  link_directories(${IGNITION-MSGS_LIBRARY_DIRS})
+  set (HAVE_IGN_MSGS TRUE)
+endif()
+
+########################################
 # Find QT
 find_package (Qt5Widgets)
 if (NOT Qt5Widgets_FOUND)

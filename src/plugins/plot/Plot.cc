@@ -22,7 +22,7 @@
 #include "ignition/gui/VariablePill.hh"
 #include "ignition/gui/VariablePillContainer.hh"
 
-class ignition::gui::plugins::PlotPrivate
+class ignition::gui::plugins::plot::PlotPrivate
 {
   /// \brief ToDo: Only here for testing purposes.
   public: ignition::gui::EditableLabel *label = nullptr;
@@ -34,6 +34,7 @@ class ignition::gui::plugins::PlotPrivate
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
+using namespace plot;
 
 /////////////////////////////////////////////////
 Plot::Plot()
@@ -93,5 +94,5 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Plot,
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::plot::Plot,
                                   ignition::gui::Plugin)

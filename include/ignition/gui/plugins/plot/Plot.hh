@@ -27,6 +27,8 @@ namespace gui
 {
 namespace plugins
 {
+namespace plot
+{
   class PlotPrivate;
 
   /// \brief Widget that allow plotting of Ignition Transport topics.
@@ -47,6 +49,7 @@ namespace plugins
     // Private data
     private: std::unique_ptr<PlotPrivate> dataPtr;
   };
+}
 }
 }
 }
