@@ -73,6 +73,18 @@ namespace ignition
   }
 }
 
+/////////////////////////////////////////////////
+// Get the family name (remove "::number::" from scoped name for repeated
+// fields)
+std::string familyName(const std::string &_scopedName)
+{
+  std::regex regMiddle("::[0-9]*::");
+  std::regex regEnd("::[0-9]*$");
+  auto familyName = std::regex_replace(_scopedName, regMiddle, "::$2");
+  familyName = std::regex_replace(familyName, regEnd, "$2");
+  return familyName;
+}
+
 using namespace ignition;
 using namespace gui;
 
@@ -176,12 +188,7 @@ bool MessageWidget::SetPropertyVisible(const std::string &_name,
     // name
     for (auto p : this->dataPtr->properties)
     {
-      std::regex regMiddle("::[0-9]*::");
-      std::regex regEnd("::[0-9]*$");
-      auto familyName = std::regex_replace(p.first, regMiddle, "::$2");
-      familyName = std::regex_replace(familyName, regEnd, "$2");
-
-      if (familyName == _name)
+      if (familyName(p.first) == _name)
       {
         p.second->setVisible(_visible);
         result = true;
@@ -597,9 +604,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       }
 
       // Drop repetitions which disappeared
-      auto colLayout = collapsible->layout();
-      auto layoutCount = colLayout->count();
-      for (; count < layoutCount - 1; ++count)
+      auto layoutCount = collapsible->ContentCount();
+      for (; count < static_cast<int>(layoutCount); ++count)
       {
         auto name = scopedName + "::" + std::to_string(count);
         this->RemovePropertyWidget(name);
@@ -1041,16 +1047,6 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
         {this->ValueChanged(_name, _value);});
   }
 
-  // Family name (remove "::number::" for repeated fields)
-  std::regex regMiddle("::[0-9]*::");
-  std::regex regEnd("::[0-9]*$");
-  auto familyName = std::regex_replace(_name, regMiddle, "::$2");
-  familyName = std::regex_replace(familyName, regEnd, "$2");
-
-  // Visibility
-  auto hide = this->dataPtr->hiddenProperties.find(familyName) !=
-      this->dataPtr->hiddenProperties.end();
-
   // If inside a collapsible, add indentation
   auto collapsibleParent = qobject_cast<CollapsibleWidget *>(_parent);
   if (collapsibleParent)
@@ -1072,13 +1068,15 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     _parent->layout()->addWidget(_property);
   }
 
-  // Read only
+  // Read only and visibility
+  auto family = familyName(_name);
+
   _property->SetReadOnly(this->dataPtr->readOnly ||
-      this->dataPtr->readOnlyProperties.find(familyName) !=
+      this->dataPtr->readOnlyProperties.find(family) !=
       this->dataPtr->readOnlyProperties.end());
 
-  // Visible
-  _property->setVisible(!hide);
+  _property->setVisible(this->dataPtr->hiddenProperties.find(family) ==
+      this->dataPtr->hiddenProperties.end());
 
   return true;
 }

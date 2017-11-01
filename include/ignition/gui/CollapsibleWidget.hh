@@ -76,6 +76,10 @@ namespace ignition
       /// \param[in] _widget Widget to be appended.
       public: void AppendContent(QWidget *_widget);
 
+      /// \brief Get the current number of items in the content.
+      /// \return The number of widgets in the content.
+      public: unsigned int ContentCount() const;
+
       // Documentation inherited
       public: virtual void SetReadOnly(const bool _readOnly) override;
 

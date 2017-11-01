@@ -66,6 +66,8 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
 
   // Content
   this->dataPtr->content = new QWidget();
+  this->dataPtr->content->setObjectName("collapsibleContent");
+  this->dataPtr->content->setVisible(false);
   this->dataPtr->content->setLayout(new QVBoxLayout());
   this->dataPtr->content->layout()->setContentsMargins(0, 0, 0, 0);
   this->dataPtr->content->layout()->setSpacing(0);
@@ -158,5 +160,12 @@ bool CollapsibleWidget::ReadOnly() const
 void CollapsibleWidget::AppendContent(QWidget *_widget)
 {
   this->dataPtr->content->layout()->addWidget(_widget);
+}
+
+/////////////////////////////////////////////////
+unsigned int CollapsibleWidget::ContentCount() const
+{
+  auto contentLayout = this->dataPtr->content->layout();
+  return contentLayout->count();
 }
 
