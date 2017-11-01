@@ -94,7 +94,8 @@ namespace ignition
       /// * If showing a collapsed property, it won't show until the containing
       ///   collapsible is expanded.
       ///
-      /// \param[in] _name Name of the property widget.
+      /// \param[in] _name Name of the property widget. For repeated fields,
+      /// omit the "::number" which would refer to a specific widget.
       /// \param[in] _visible True to set the widget to be visible.
       /// \return True if the value is set successfully.
       /// \sa PropertyVisible
@@ -120,7 +121,8 @@ namespace ignition
       public: bool ReadOnly() const;
 
       /// \brief Set whether a property widget should be read-only.
-      /// \param[in] _name Name of the property widget.
+      /// \param[in] _name Name of the property widget. For repeated fields,
+      /// omit the "::number" which would refer to a specific widget.
       /// \param[in] _readOnly True to set the widget to be read-only.
       /// \return True if the value is set successfully.
       /// \sa PropertyReadOnly

@@ -19,7 +19,9 @@
 #include <google/protobuf/message.h>
 
 #include <map>
+#include <regex>
 #include <string>
+#include <unordered_set>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/EnumIface.hh>
@@ -61,6 +63,12 @@ namespace ignition
 
       /// \brief Whether all widgets should be read-only.
       public: bool readOnly = false;
+
+      /// \brief List of all properties which should be read-only
+      public: std::unordered_set<std::string> readOnlyProperties;
+
+      /// \brief List of all properties which should be hidden
+      public: std::unordered_set<std::string> hiddenProperties;
     };
   }
 }
@@ -153,12 +161,15 @@ bool MessageWidget::PropertyVisible(const std::string &_name) const
 bool MessageWidget::SetPropertyVisible(const std::string &_name,
     const bool _visible)
 {
+  // Keep list in case widget is added later
+  if (!_visible)
+    this->dataPtr->hiddenProperties.insert(_name);
+  else
+    this->dataPtr->hiddenProperties.erase(_name);
+
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
-  {
-    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
     return false;
-  }
 
   w->setVisible(_visible);
   return true;
@@ -205,12 +216,15 @@ bool MessageWidget::PropertyReadOnly(const std::string &_name) const
 bool MessageWidget::SetPropertyReadOnly(const std::string &_name,
     const bool _readOnly)
 {
+  // Keep list in case widget is added later
+  if (_readOnly)
+    this->dataPtr->readOnlyProperties.insert(_name);
+  else
+    this->dataPtr->readOnlyProperties.erase(_name);
+
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
-  {
-    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
     return false;
-  }
 
   w->SetReadOnly(_readOnly);
   return true;
@@ -1008,6 +1022,16 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
         {this->ValueChanged(_name, _value);});
   }
 
+  // Family name (remove "::number::" for repeated fields)
+  std::regex regMiddle("::[0-9]*::");
+  std::regex regEnd("::[0-9]*$");
+  auto familyName = std::regex_replace(_name, regMiddle, "::$2");
+  familyName = std::regex_replace(familyName, regEnd, "$2");
+
+  // Visibility
+  auto hide = this->dataPtr->hiddenProperties.find(familyName) !=
+      this->dataPtr->hiddenProperties.end();
+
   // If inside a collapsible, add indentation
   auto collapsibleParent = qobject_cast<CollapsibleWidget *>(_parent);
   if (collapsibleParent)
@@ -1024,14 +1048,21 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
 
     collapsibleParent->layout()->addWidget(w);
 
-    w->setVisible(collapsibleParent->IsExpanded());
+    if (!collapsibleParent->IsExpanded() || hide)
+      w->setVisible(false);
   }
   else
   {
     _parent->layout()->addWidget(_property);
   }
 
-  _property->SetReadOnly(this->dataPtr->readOnly);
+  // Read only
+  _property->SetReadOnly(this->dataPtr->readOnly ||
+      this->dataPtr->readOnlyProperties.find(familyName) !=
+      this->dataPtr->readOnlyProperties.end());
+
+  // Visible
+  _property->setVisible(!hide);
 
   return true;
 }
