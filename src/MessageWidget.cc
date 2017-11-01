@@ -169,7 +169,26 @@ bool MessageWidget::SetPropertyVisible(const std::string &_name,
 
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
-    return false;
+  {
+    bool result = false;
+
+    // Iterate over all properties and affect those which have the same family
+    // name
+    for (auto p : this->dataPtr->properties)
+    {
+      std::regex regMiddle("::[0-9]*::");
+      std::regex regEnd("::[0-9]*$");
+      auto familyName = std::regex_replace(p.first, regMiddle, "::$2");
+      familyName = std::regex_replace(familyName, regEnd, "$2");
+
+      if (familyName == _name)
+      {
+        p.second->setVisible(_visible);
+        result = true;
+      }
+    }
+    return result;
+  }
 
   w->setVisible(_visible);
   return true;
@@ -1046,10 +1065,7 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     auto w = new QWidget();
     w->setLayout(hLayout);
 
-    collapsibleParent->layout()->addWidget(w);
-
-    if (!collapsibleParent->IsExpanded() || hide)
-      w->setVisible(false);
+    collapsibleParent->AppendContent(w);
   }
   else
   {

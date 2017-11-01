@@ -1621,6 +1621,11 @@ TEST(MessageWidgetTest, Visible)
     EXPECT_FALSE(widget->PropertyVisible("material::script"));
     // Three levels deep leaf
     EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+    // Repeated field (none yet)
+    EXPECT_TRUE(widget->PropertyVisible("plugin"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
   }
 
   // Expand collapsible and check immediate children become visible
@@ -1718,6 +1723,76 @@ TEST(MessageWidgetTest, Visible)
 
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
     EXPECT_TRUE(widget->PropertyVisible("material::script::name"));
+  }
+
+  // Repeated field (new repetitions)
+  {
+    // Add a plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+
+    // Check it isn't visible yet
+    EXPECT_TRUE(widget->PropertyVisible("plugin"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::name"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::name"));
+
+    // Expand
+    auto plugin = widget->PropertyWidgetByName("plugin");
+    ASSERT_NE(nullptr, plugin);
+
+    auto button = plugin->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    auto plugin0 = widget->PropertyWidgetByName("plugin::0");
+    ASSERT_NE(nullptr, plugin0);
+
+    button = plugin0->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    // Check it is now visible
+    EXPECT_TRUE(widget->PropertyVisible("plugin::0"));
+    EXPECT_TRUE(widget->PropertyVisible("plugin::0::header"));
+    EXPECT_TRUE(widget->PropertyVisible("plugin::0::name"));
+
+    // Hide plugin headers
+    EXPECT_TRUE(widget->SetPropertyVisible("plugin::header", false));
+
+    // Check it was hidden for the repetition
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::header"));
+
+    // Collapse it again so the next plugin fits inside the screen
+    button->click();
+
+    // Add another plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::name"));
+
+    // Expand it
+    auto plugin1 = widget->PropertyWidgetByName("plugin::1");
+    ASSERT_NE(nullptr, plugin1);
+
+    button = plugin1->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+    QCoreApplication::processEvents();
+
+    // Check the plugin is visible, but without headers
+    EXPECT_TRUE(widget->PropertyVisible("plugin::1"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
+    EXPECT_TRUE(widget->PropertyVisible("plugin::1::name"));
   }
 
   delete widget;

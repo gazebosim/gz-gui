@@ -100,7 +100,7 @@ namespace ignition
       /// \return True if the value is set successfully.
       /// \sa PropertyVisible
       public: bool SetPropertyVisible(const std::string &_name,
-                                    const bool _visible);
+                                      const bool _visible);
 
       /// \brief Get whether a property widget is visible.
       /// \param[in] _name Name of the property widget.

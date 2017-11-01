@@ -65,8 +65,8 @@ namespace ignition
       public: virtual bool SetValue(const QVariant _value) = 0;
 
       /// \brief Set whether this widget is read-only or read-write. By default,
-      /// it calls `this->setEnabled(!_readOnly)`, but derived classes can implement
-      /// their own.
+      /// it calls `this->setEnabled(!_readOnly)`, but derived classes can
+      /// implement their own.
       /// \param[in] _readOnly True for read-only (disabled)
       public: virtual void SetReadOnly(const bool _readOnly);
 

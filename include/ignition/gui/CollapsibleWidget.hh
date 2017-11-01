@@ -71,6 +71,11 @@ namespace ignition
       /// _param[in] _expanded True for expanded.
       public: bool IsExpanded() const;
 
+      /// \brief Append a widget to the collapsible contents. The contents
+      /// consist of a vertical layout.
+      /// \param[in] _widget Widget to be appended.
+      public: void AppendContent(QWidget *_widget);
+
       // Documentation inherited
       public: virtual void SetReadOnly(const bool _readOnly) override;
 

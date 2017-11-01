@@ -30,7 +30,10 @@ namespace ignition
     class CollapsibleWidgetPrivate
     {
       /// \brief Whether the widget is collapsed or expanded.
-      public: bool expanded;
+      public: bool expanded = false;
+
+      /// \brief Widget which holds the collapsible content.
+      public: QWidget *content;
     };
   }
 }
@@ -61,11 +64,18 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
 
   this->connect(button, SIGNAL(toggled(bool)), this, SLOT(Toggle(bool)));
 
+  // Content
+  this->dataPtr->content = new QWidget();
+  this->dataPtr->content->setLayout(new QVBoxLayout());
+  this->dataPtr->content->layout()->setContentsMargins(0, 0, 0, 0);
+  this->dataPtr->content->layout()->setSpacing(0);
+
   // Layout
   auto mainLayout = new QVBoxLayout;
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   mainLayout->addWidget(button);
+  mainLayout->addWidget(this->dataPtr->content);
   this->setLayout(mainLayout);
 }
 
@@ -77,11 +87,8 @@ CollapsibleWidget::~CollapsibleWidget()
 /////////////////////////////////////////////////
 void CollapsibleWidget::Toggle(const bool _checked)
 {
-  // Toggle all items below the button in the main layout
-  for (auto i = 1; i < this->layout()->count(); ++i)
-  {
-    this->layout()->itemAt(i)->widget()->setVisible(_checked);
-  }
+  // Toggle the content
+  this->dataPtr->content->setVisible(_checked);
 
   auto icon = this->findChild<QLabel *>("buttonIcon");
   // Change to ▼
@@ -145,5 +152,11 @@ bool CollapsibleWidget::ReadOnly() const
   }
 
   return true;
+}
+
+/////////////////////////////////////////////////
+void CollapsibleWidget::AppendContent(QWidget *_widget)
+{
+  this->dataPtr->content->layout()->addWidget(_widget);
 }
 
