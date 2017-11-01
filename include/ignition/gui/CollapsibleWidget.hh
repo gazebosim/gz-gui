@@ -81,7 +81,8 @@ namespace ignition
       public: unsigned int ContentCount() const;
 
       // Documentation inherited
-      public: virtual void SetReadOnly(const bool _readOnly) override;
+      public: virtual void SetReadOnly(const bool _readOnly,
+                                       const bool _explicit) override;
 
       // Documentation inherited
       public: virtual bool ReadOnly() const override;

@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_PROPERTYWIDGET_HH_
 #define IGNITION_GUI_PROPERTYWIDGET_HH_
 
+#include <memory>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
 
@@ -25,6 +27,8 @@ namespace ignition
 {
   namespace gui
   {
+    class PropertyWidgetPrivate;
+
     /// \brief Abstract base class for widgets which hold properties, such as
     /// numbers and strings. Each derived class specializes in a property type.
     /// The value of any derived widget can be retrieved as a QVariant.
@@ -52,8 +56,11 @@ namespace ignition
     {
       Q_OBJECT
 
-      /// \brief Constructor;
-      public: PropertyWidget() {}
+      /// \brief Constructor
+      public: PropertyWidget();
+
+      /// \brief Destructor
+      public: ~PropertyWidget();
 
       /// \brief Get value from widget.
       /// \return Value of the widget as a QVariant.
@@ -67,8 +74,12 @@ namespace ignition
       /// \brief Set whether this widget is read-only or read-write. By default,
       /// it calls `this->setEnabled(!_readOnly)`, but derived classes can
       /// implement their own.
+      /// Once set explicitly, it can only be overriden explicitly.
       /// \param[in] _readOnly True for read-only (disabled)
-      public: virtual void SetReadOnly(const bool _readOnly);
+      /// \param[in] _explicit True if explicitly setting the widget, false if
+      /// this is being handed down from a parent.
+      public: virtual void SetReadOnly(const bool _readOnly,
+                                       const bool _explicit = true);
 
       /// \brief Get whether this widget is read-only or read-write. By default,
       /// it returns `!this->isEnabled()`, but derived classes can implement
@@ -82,6 +93,9 @@ namespace ignition
 
       /// \brief Callback when an internal widget's value has changed.
       protected slots: void OnValueChanged();
+
+      /// \brief Pointer to private data
+      private: std::unique_ptr<PropertyWidgetPrivate> dataPtr;
     };
   }
 }

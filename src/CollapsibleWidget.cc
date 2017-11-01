@@ -20,9 +20,6 @@
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Helpers.hh"
 
-using namespace ignition;
-using namespace gui;
-
 namespace ignition
 {
   namespace gui
@@ -37,6 +34,9 @@ namespace ignition
     };
   }
 }
+
+using namespace ignition;
+using namespace gui;
 
 /////////////////////////////////////////////////
 CollapsibleWidget::CollapsibleWidget(const std::string &_key)
@@ -134,12 +134,13 @@ bool CollapsibleWidget::IsExpanded() const
 }
 
 /////////////////////////////////////////////////
-void CollapsibleWidget::SetReadOnly(const bool _readOnly)
+void CollapsibleWidget::SetReadOnly(const bool _readOnly,
+                                    const bool /*_explicit*/)
 {
   // Only apply to properties, but no other widgets, such as the button
   auto props = this->findChildren<PropertyWidget *>();
   for (auto prop : props)
-    prop->SetReadOnly(_readOnly);
+    prop->SetReadOnly(_readOnly, false);
 }
 
 /////////////////////////////////////////////////

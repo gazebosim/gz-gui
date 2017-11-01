@@ -1831,6 +1831,25 @@ TEST(MessageWidgetTest, ReadOnly)
     EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
   }
 
+  // The whole widget
+  {
+    EXPECT_TRUE(widget->SetReadOnly(true));
+    EXPECT_TRUE(widget->ReadOnly());
+    EXPECT_TRUE(widget->PropertyReadOnly("id"));
+    EXPECT_TRUE(widget->PropertyReadOnly("pose"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script::name"));
+
+    EXPECT_TRUE(widget->SetReadOnly(false));
+    EXPECT_FALSE(widget->ReadOnly());
+    EXPECT_FALSE(widget->PropertyReadOnly("id"));
+    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
+  }
+
   // Inexistent widget
   {
     EXPECT_FALSE(widget->SetPropertyReadOnly("banana", false));
@@ -1866,23 +1885,34 @@ TEST(MessageWidgetTest, ReadOnly)
     EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
   }
 
-  // The whole widget
+  // Repeated field (new repetitions)
   {
-    EXPECT_TRUE(widget->SetReadOnly(true));
-    EXPECT_TRUE(widget->ReadOnly());
-    EXPECT_TRUE(widget->PropertyReadOnly("id"));
-    EXPECT_TRUE(widget->PropertyReadOnly("pose"));
-    EXPECT_TRUE(widget->PropertyReadOnly("material"));
-    EXPECT_TRUE(widget->PropertyReadOnly("material::script"));
-    EXPECT_TRUE(widget->PropertyReadOnly("material::script::name"));
+    // Add a plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
 
-    EXPECT_TRUE(widget->SetReadOnly(false));
-    EXPECT_FALSE(widget->ReadOnly());
-    EXPECT_FALSE(widget->PropertyReadOnly("id"));
-    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
-    EXPECT_FALSE(widget->PropertyReadOnly("material"));
-    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
-    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
+    // Check it was created as write
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
+
+    // Set headers to read-only
+    EXPECT_TRUE(widget->SetPropertyReadOnly("plugin::header", true));
+
+    // Check it affected the repetition
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
+
+    // Add another plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+
+    // Check it was affected
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::1"));
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::1::name"));
   }
 
   delete widget;

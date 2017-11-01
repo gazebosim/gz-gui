@@ -220,7 +220,7 @@ bool MessageWidget::SetReadOnly(const bool _readOnly)
   this->dataPtr->readOnly = _readOnly;
 
   for (auto p : this->dataPtr->properties)
-    p.second->SetReadOnly(_readOnly);
+    p.second->SetReadOnly(_readOnly, false);
 
   return true;
 }
@@ -250,7 +250,21 @@ bool MessageWidget::SetPropertyReadOnly(const std::string &_name,
 
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
-    return false;
+  {
+    bool result = false;
+
+    // Iterate over all properties and affect those which have the same family
+    // name
+    for (auto p : this->dataPtr->properties)
+    {
+      if (familyName(p.first) == _name)
+      {
+        p.second->SetReadOnly(_readOnly);
+        result = true;
+      }
+    }
+    return result;
+  }
 
   w->SetReadOnly(_readOnly);
   return true;
@@ -1071,9 +1085,15 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   // Read only and visibility
   auto family = familyName(_name);
 
-  _property->SetReadOnly(this->dataPtr->readOnly ||
-      this->dataPtr->readOnlyProperties.find(family) !=
-      this->dataPtr->readOnlyProperties.end());
+  if (this->dataPtr->readOnlyProperties.find(family) !=
+      this->dataPtr->readOnlyProperties.end())
+  {
+    _property->SetReadOnly(true);
+  }
+  else if (this->dataPtr->readOnly)
+  {
+    _property->SetReadOnly(true, false);
+  }
 
   _property->setVisible(this->dataPtr->hiddenProperties.find(family) ==
       this->dataPtr->hiddenProperties.end());

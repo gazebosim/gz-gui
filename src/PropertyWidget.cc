@@ -17,8 +17,32 @@
 
 #include "ignition/gui/PropertyWidget.hh"
 
+namespace ignition
+{
+  namespace gui
+  {
+    class PropertyWidgetPrivate
+    {
+      /// \brief This becomes true once read-only has been explicitly set
+      /// and never goes back to false.
+      public: bool explicitReadOnly = false;
+    };
+  }
+}
+
 using namespace ignition;
 using namespace gui;
+
+/////////////////////////////////////////////////
+PropertyWidget::PropertyWidget()
+    : dataPtr(new PropertyWidgetPrivate)
+{
+}
+
+/////////////////////////////////////////////////
+PropertyWidget::~PropertyWidget()
+{
+}
 
 /////////////////////////////////////////////////
 void PropertyWidget::OnValueChanged()
@@ -27,9 +51,14 @@ void PropertyWidget::OnValueChanged()
 }
 
 /////////////////////////////////////////////////
-void PropertyWidget::SetReadOnly(const bool _readOnly)
+void PropertyWidget::SetReadOnly(const bool _readOnly,
+    const bool _explicit)
 {
-  this->setEnabled(!_readOnly);
+  if (_explicit)
+    this->dataPtr->explicitReadOnly = true;
+
+  if (_explicit || (!_explicit && !this->dataPtr->explicitReadOnly))
+    this->setEnabled(!_readOnly);
 }
 
 /////////////////////////////////////////////////
