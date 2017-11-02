@@ -82,7 +82,7 @@ VariablePill::VariablePill(QWidget *_parent)
 
   // generate default unique name
   std::stringstream nameStream;
-  nameStream << "variable" << this->dataPtr->id << std::endl;
+  nameStream << "variable" << this->dataPtr->id;
   this->dataPtr->name = nameStream.str();
 
   VariablePillPrivate::globalVariableId++;

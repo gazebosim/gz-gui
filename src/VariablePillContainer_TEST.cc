@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Open Source Robotics Foundation
+ * Copyright (C) 2017 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,98 @@
 
 using namespace ignition;
 using namespace gui;
+
+/////////////////////////////////////////////////
+TEST(VariablePillContainerTest, VariablePillBasicOperations)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // create container
+  VariablePillContainer *container01 = new VariablePillContainer(nullptr);
+  ASSERT_NE(nullptr, container01);
+  EXPECT_EQ(0u, container01->VariablePillCount());
+
+  // create variable pills
+  VariablePill *var01 = new VariablePill(nullptr);
+  ASSERT_NE(nullptr, var01);
+  var01->SetText("pill0");
+  EXPECT_EQ(0u, var01->VariablePillCount());
+  EXPECT_EQ(0u, var01->Id());
+  EXPECT_EQ("variable0", var01->Name());
+  EXPECT_EQ("pill0", var01->Text());
+  EXPECT_FALSE(var01->IsSelected());
+  var01->SetSelected(true);
+  EXPECT_TRUE(var01->IsSelected());
+  var01->SetSelected(false);
+  EXPECT_FALSE(var01->IsSelected());
+
+  VariablePill *var02 = new VariablePill(nullptr);
+  ASSERT_NE(nullptr, var02);
+  var02->SetText("pill1");
+  EXPECT_EQ(0u, var02->VariablePillCount());
+  EXPECT_EQ(1u, var02->Id());
+  EXPECT_EQ("variable1", var02->Name());
+  EXPECT_EQ("pill1", var02->Text());
+  var02->SetName("newVariable1");
+  EXPECT_EQ("newVariable1", var02->Name());
+
+  var02->SetParent(var01);
+  EXPECT_EQ(nullptr, var01->Parent());
+  EXPECT_EQ(var01, var02->Parent());
+
+  var01->SetContainer(container01);
+  EXPECT_EQ(container01, var01->Container());
+
+  EXPECT_TRUE(var01->ContainsPoint(ignition::math::Vector2i()));
+  EXPECT_FALSE(var01->ContainsPoint(ignition::math::Vector2i(1000, 1000)));
+
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(VariablePillContainerTest, VariablePillContainerBasicOperations)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // create container
+  VariablePillContainer *container01 = new VariablePillContainer(nullptr);
+  ASSERT_NE(nullptr, container01);
+  EXPECT_EQ(0u, container01->VariablePillCount());
+  container01->SetText("aContainer");
+  EXPECT_EQ("aContainer", container01->Text());
+
+  auto id0 = container01->AddVariablePill("var0");
+  container01->SetVariablePillLabel(id0, "label0");
+  auto var0 = container01->VariablePill(id0);
+  ASSERT_NE(nullptr, var0);
+  EXPECT_EQ("label0", var0->Text());
+
+  auto id1 = container01->AddVariablePill("var1");
+  auto var1 = container01->VariablePill(id1);
+  ASSERT_NE(nullptr, var1);
+
+  EXPECT_FALSE(var0->IsSelected());
+  EXPECT_FALSE(var1->IsSelected());
+  container01->SetSelected(nullptr);
+  EXPECT_FALSE(var0->IsSelected());
+  EXPECT_FALSE(var1->IsSelected());
+
+  container01->SetSelected(var0);
+  EXPECT_TRUE(var0->IsSelected());
+  EXPECT_FALSE(var1->IsSelected());
+  container01->SetSelected(var1);
+  EXPECT_FALSE(var0->IsSelected());
+  EXPECT_TRUE(var1->IsSelected());
+
+  EXPECT_EQ(2u, container01->VariablePillCount());
+  container01->RemoveVariablePill(id0);
+  container01->RemoveVariablePill(id1);
+  EXPECT_EQ(0u, container01->VariablePillCount());
+
+  EXPECT_TRUE(stop());
+}
 
 /////////////////////////////////////////////////
 TEST(VariablePillContainerTest, AddRemoveVariable)
@@ -56,6 +148,7 @@ TEST(VariablePillContainerTest, AddRemoveVariable)
   VariablePill *var05 = new VariablePill(nullptr);
   ASSERT_NE(nullptr, var05);
   EXPECT_EQ(0u, var05->VariablePillCount());
+  var05->SetName("var05");
 
   // add variable to container
   container01->AddVariablePill(var01);
@@ -69,12 +162,18 @@ TEST(VariablePillContainerTest, AddRemoveVariable)
   EXPECT_EQ(container01, var02->Container());
   EXPECT_EQ(nullptr, var02->Parent());
 
+  // add an invalid variable pill
+  var02->AddVariablePill(nullptr);
+  EXPECT_EQ(2u, container01->VariablePillCount());
+
   // add variable to another variable - verify that containers can hold
   // multi-variables and report correct variable count
   var02->AddVariablePill(var03);
   EXPECT_EQ(3u, container01->VariablePillCount());
   EXPECT_EQ(container01, var03->Container());
   EXPECT_EQ(var02, var03->Parent());
+
+  EXPECT_EQ(1u, var02->VariablePills().size());
 
   // make another multi-variable
   var01->AddVariablePill(var04);
@@ -87,6 +186,14 @@ TEST(VariablePillContainerTest, AddRemoveVariable)
   EXPECT_EQ(5u, container01->VariablePillCount());
   EXPECT_EQ(container01, var05->Container());
   EXPECT_EQ(var01, var05->Parent());
+
+  EXPECT_EQ(2u, var01->VariablePills().size());
+
+  EXPECT_EQ(nullptr, var04->VariablePillByName("___wrong_name___"));
+  EXPECT_EQ(nullptr, var04->VariablePillByName("var05"));
+  EXPECT_EQ(var05, var01->VariablePillByName("var05"));
+  EXPECT_EQ(nullptr, var02->VariablePillByName("var05"));
+  EXPECT_EQ(var05, var05->VariablePillByName("var05"));
 
   // remove variable
   container01->RemoveVariablePill(var01);
