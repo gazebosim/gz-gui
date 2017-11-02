@@ -307,4 +307,12 @@ QHeaderView::section
 
 /* QTableView::item styled by delegate */
 
+/* ---------------------------- */
+/*   QFrame#variablePillFrame   */
+/* ---------------------------- */
 
+QFrame#variablePillFrame
+{
+  border-radius: 4px;
+  background-color: #2196f3;
+}
