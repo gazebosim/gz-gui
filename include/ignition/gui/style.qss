@@ -311,8 +311,14 @@ QHeaderView::section
 /*   QFrame#variablePillFrame   */
 /* ---------------------------- */
 
-QFrame#variablePillFrame
+QFrame#variablePillFrame[selectedPill=false]
 {
   border-radius: 4px;
   background-color: #2196f3;
 }
+
+QFrame[selectedPill=true]
+{
+  background-color: #ff0000;
+}
+

@@ -121,6 +121,7 @@ VariablePill::VariablePill(QWidget *_parent)
   auto mainFrame = new QFrame(this);
   mainFrame->setLayout(this->dataPtr->multiLayout);
   mainFrame->setObjectName("variablePillFrame");
+  mainFrame->setProperty("selectedPill", false);
 
   mainLayout->addWidget(mainFrame);
   this->setLayout(mainLayout);
@@ -535,6 +536,11 @@ std::map<unsigned int, VariablePill *> &VariablePill::VariablePills() const
 void VariablePill::SetSelected(const bool _selected)
 {
   this->dataPtr->isSelected = _selected;
+
+  auto frame = this->findChild<QFrame *>("variablePillFrame");
+  frame->setProperty("selectedPill", _selected);
+  frame->style()->unpolish(frame);
+  frame->style()->polish(frame);
 }
 
 /////////////////////////////////////////////////
