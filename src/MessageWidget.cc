@@ -33,6 +33,8 @@
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/Enums.hh"
+#include "ignition/gui/EnumWidget.hh"
+#include "ignition/gui/GeometryWidget.hh"
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/PropertyWidget.hh"
@@ -148,7 +150,20 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   auto messageType = descriptor->full_name();
   if (messageType == "ignition.msgs.Geometry")
   {
-    // Coming soon
+    // If creating new widget
+    if (!propertyWidget)
+    {
+      propertyWidget = new GeometryWidget();
+      this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
+    }
+
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
+    // Set value
+    auto msg = dynamic_cast<const msgs::Geometry *>(_msg);
+    propertyWidget->SetValue(QVariant::fromValue(*msg));
+
     return true;
   }
 
@@ -383,16 +398,36 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     // Enum
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_ENUM)
     {
-      // Coming soon
+      // Value from field
+      auto value = reflection->GetEnum(*_msg, fieldDescriptor);
+
+      // If creating new widget
+      if (!propertyWidget)
+      {
+        // Get all possible enum values
+        std::vector<std::string> enumValues;
+        auto enumDescriptor = value->type();
+        for (int j = 0; j < enumDescriptor->value_count(); ++j)
+        {
+          auto valueDescriptor = enumDescriptor->value(j);
+          if (valueDescriptor)
+            enumValues.push_back(valueDescriptor->name());
+        }
+
+        // Create enum widget
+        propertyWidget = new EnumWidget(fieldName, enumValues);
+        this->AddPropertyWidget(scopedName, propertyWidget, _parent);
+      }
+
+      // Set value
+      propertyWidget->SetValue(QVariant::fromValue(value->name()));
+
       continue;
     }
 
     // Nested messages
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
     {
-      // Get nested message
-      auto &valueMsg = reflection->GetMessage(*_msg, fieldDescriptor);
-
       // Create collapsible
       auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget);
       if (!collapsible)
@@ -401,7 +436,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         _parent->layout()->addWidget(collapsible);
       }
 
-      // Generate / update widget
+      // Generate / update widget from message
+      auto &valueMsg = reflection->GetMessage(*_msg, fieldDescriptor);
       this->Parse(&valueMsg, scopedName, collapsible);
 
       // Collapse the first time it was created
@@ -509,7 +545,19 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
       // Enum
       case google::protobuf::FieldDescriptor::TYPE_ENUM:
       {
-        // Coming soon
+        auto str = variant.value<std::string>();
+
+        // Convert string into protobuf enum
+        auto enumDescriptor = fieldDescriptor->enum_type();
+        if (!enumDescriptor)
+          continue;
+
+        auto enumValue = enumDescriptor->FindValueByName(str);
+        if (enumValue)
+          reflection->SetEnum(_msg, fieldDescriptor, enumValue);
+        else
+          ignerr << "Unable to find enum value [" << str << "]" << std::endl;
+
         break;
       }
       // Nested messages
@@ -520,7 +568,7 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         // Geometry
         if (fieldDescriptor->message_type()->name() == "Geometry")
         {
-          // Coming soon
+          mutableMsg->CopyFrom(variant.value<msgs::Geometry>());
         }
         // Pose
         else if (fieldDescriptor->message_type()->name() == "Pose")

@@ -173,3 +173,55 @@ TEST(PublisherTest, Publish)
   plugins.clear();
   EXPECT_TRUE(stop());
 }
+
+/////////////////////////////////////////////////
+TEST(PublisherTest, ParamsFromSDF)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"Publisher\">"
+      "<topic>/fruit</topic>"
+      "<message>number: 1 fruit {name:\"banana\"}</message>"
+      "<message_type>ignition.msgs.Fruits</message_type>"
+      "<frequency>0.1</frequency>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(ignition::gui::loadPlugin("Publisher",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  ASSERT_NE(nullptr, win);
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "Publisher");
+
+  // Message type
+  auto msgTypeEdit = plugin->findChild<QLineEdit *>("msgTypeEdit");
+  ASSERT_NE(nullptr, msgTypeEdit);
+  EXPECT_EQ(msgTypeEdit->text(), "ignition.msgs.Fruits");
+
+  // Message
+  auto msgEdit = plugin->findChild<QTextEdit *>("msgEdit");
+  ASSERT_NE(nullptr, msgEdit);
+  EXPECT_EQ(msgEdit->toPlainText(), "number: 1 fruit {name:\"banana\"}");
+
+  // Topic
+  auto topicEdit = plugin->findChild<QLineEdit *>("topicEdit");
+  ASSERT_NE(nullptr, topicEdit);
+  EXPECT_EQ(topicEdit->text(), "/fruit");
+
+  // Frequency
+  auto freqSpin = plugin->findChild<QDoubleSpinBox *>("frequencySpinBox");
+  ASSERT_NE(nullptr, freqSpin);
+  EXPECT_DOUBLE_EQ(freqSpin->value(), 0.1);
+}
