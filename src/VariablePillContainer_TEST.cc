@@ -18,6 +18,8 @@
 #include <gtest/gtest.h>
 #include <string>
 
+#include <ignition/common/Console.hh>
+
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/VariablePill.hh"
 #include "ignition/gui/VariablePillContainer.hh"
@@ -69,6 +71,93 @@ TEST(VariablePillContainerTest, VariablePillBasicOperations)
 
   EXPECT_TRUE(var01->ContainsPoint(ignition::math::Vector2i()));
   EXPECT_FALSE(var01->ContainsPoint(ignition::math::Vector2i(1000, 1000)));
+
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(VariablePillContainerTest, VariablePillEvents)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // create container
+  VariablePillContainer *container01 = new VariablePillContainer(nullptr);
+  ASSERT_NE(nullptr, container01);
+  EXPECT_EQ(0u, container01->VariablePillCount());
+
+  // create variable pills
+  VariablePill *var01 = new VariablePill(nullptr);
+  ASSERT_NE(nullptr, var01);
+
+  VariablePill *var02 = new VariablePill(nullptr);
+  ASSERT_NE(nullptr, var02);
+
+  container01->show();
+
+  // First, we have a container with two variables. We're going to simulate
+  // dragging one of the variables (var01) into the other (var02). At that
+  // point we'll have a single multi-variable.
+  container01->AddVariablePill(var01);
+  container01->AddVariablePill(var02);
+  EXPECT_EQ(2u, container01->VariablePillCount());
+  EXPECT_EQ(0u, var01->VariablePillCount());
+  EXPECT_EQ(0u, var02->VariablePillCount());
+
+  QPoint var01Center(var01->width() * 0.5, var01->height() * 0.5);
+  QPoint var02Center(var02->width() * 0.5, var02->height() * 0.5);
+
+  // Click.
+  auto mousePressEvent = new QMouseEvent(QEvent::MouseButtonPress,
+    var01Center, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+  QCoreApplication::postEvent(var01, mousePressEvent);
+  QCoreApplication::processEvents();
+
+  auto var01Global = var01->mapToGlobal(var01Center);
+  auto var02Global = var02->mapToGlobal(var02Center);
+  unsigned int diff = var02Global.x() - var01Global.x();
+
+  // Drag.
+  int created = 0;
+  int triggered = 0;
+  for (unsigned int i = 0; i < diff; ++i)
+  {
+    created++;
+    QTimer::singleShot(50, [i, diff, var02Center, &triggered, &var01, &var02]
+    {
+      if (i == diff - 1)
+      {
+        // Release.
+        QTimer::singleShot(50, [var02Center, &var02] {
+          auto mouseReleaseEvent = new QMouseEvent(QEvent::MouseButtonRelease,
+            var02Center, var02->mapToGlobal(var02Center), Qt::LeftButton,
+            Qt::NoButton, Qt::NoModifier);
+          QCoreApplication::postEvent(var02, mouseReleaseEvent);
+          QCoreApplication::processEvents();
+        });
+      }
+
+      // Compute the next x pos to move the mouse cursor to.
+      QPoint center((var01->width() * 0.5) + i, var01->height() * 0.5);
+      auto mouseMoveEvent = new QMouseEvent(QEvent::MouseMove,
+        center, var01->mapToGlobal(center), Qt::NoButton, Qt::LeftButton,
+        Qt::NoModifier);
+      QCoreApplication::postEvent(var01, mouseMoveEvent);
+      QCoreApplication::processEvents();
+      triggered++;
+    });
+  }
+
+  while (triggered < created)
+  {
+    QCoreApplication::processEvents();
+  }
+  EXPECT_EQ(triggered, created);
+
+  // Then, a container with one multi-variable pill.
+  EXPECT_EQ(2u, container01->VariablePillCount());
+  EXPECT_EQ(0u, var01->VariablePillCount());
+  EXPECT_EQ(1u, var02->VariablePillCount());
 
   EXPECT_TRUE(stop());
 }
