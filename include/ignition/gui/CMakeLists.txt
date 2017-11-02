@@ -26,6 +26,7 @@ set (qt_headers
   VariablePill.hh
   VariablePillContainer.hh
   Vector3dWidget.hh
+  VariablePillContainer_TEST.hh
 )
 
 set (headers

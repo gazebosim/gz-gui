@@ -82,7 +82,7 @@ VariablePill::VariablePill(QWidget *_parent)
 
   // generate default unique name
   std::stringstream nameStream;
-  nameStream << "variable" << this->dataPtr->id << std::endl;
+  nameStream << "variable" << this->dataPtr->id;
   this->dataPtr->name = nameStream.str();
 
   VariablePillPrivate::globalVariableId++;
@@ -325,6 +325,7 @@ VariablePill *VariablePill::VariablePillByName(const std::string &_name)
 /////////////////////////////////////////////////
 void VariablePill::dragEnterEvent(QDragEnterEvent *_evt)
 {
+  std::cout << "dragEnterEvent()" << std::endl;
   if (!this->IsDragValid(_evt))
   {
     _evt->setDropAction(Qt::IgnoreAction);
@@ -352,6 +353,7 @@ void VariablePill::dragEnterEvent(QDragEnterEvent *_evt)
 /////////////////////////////////////////////////
 void VariablePill::dropEvent(QDropEvent *_evt)
 {
+  std::cout << "dropEvent()" << std::endl;
   if (!this->IsDragValid(_evt))
   {
     _evt->accept();
@@ -476,6 +478,7 @@ bool VariablePill::IsDragValid(const QDropEvent *_evt) const
 /////////////////////////////////////////////////
 void VariablePill::mousePressEvent(QMouseEvent *_event)
 {
+  std::cout << "mousePressEvent()" << std::endl;
   if (_event->button() == Qt::LeftButton)
     this->dataPtr->dragStartPosition = _event->pos();
 }
@@ -483,6 +486,7 @@ void VariablePill::mousePressEvent(QMouseEvent *_event)
 /////////////////////////////////////////////////
 void VariablePill::mouseMoveEvent(QMouseEvent *_event)
 {
+  std::cout << "mouseMoveEvent()" << std::endl;
   if (!(_event->buttons() & Qt::LeftButton))
       return;
 
@@ -499,12 +503,16 @@ void VariablePill::mouseMoveEvent(QMouseEvent *_event)
 
   QDrag *drag = new QDrag(this);
   QMimeData *mimeData = new QMimeData;
+
   QString textData = this->dataPtr->label->text();
   mimeData->setData("application/x-pill-item", textData.toLocal8Bit());
   mimeData->setText(textData);
   drag->setMimeData(mimeData);
+  std::cout << "About to drag->exec()" << std::endl;
 
   drag->exec(Qt::MoveAction);
+
+  std::cout << "mouseMoveEvent::end()" << std::endl;
 }
 
 /////////////////////////////////////////////////
