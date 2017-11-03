@@ -58,6 +58,19 @@ else()
 endif()
 
 ########################################
+# Ignition rendering
+find_package(ignition-rendering0 QUIET)
+if (NOT ignition-msgs0_FOUND)
+  BUILD_WARNING("Missing: Ignition Rendering libignition-rendering0-dev - rendering plugins won't be built")
+else()
+  message (STATUS "Found Ignition Rendering")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-RENDERING_CXX_FLAGS}")
+  include_directories(${IGNITION-RENDERING_INCLUDE_DIRS})
+  link_directories(${IGNITION-RENDERING_LIBRARY_DIRS})
+  set (HAVE_IGN_RENDERING TRUE)
+endif()
+
+########################################
 # Find QT
 find_package (Qt5Widgets)
 if (NOT Qt5Widgets_FOUND)
