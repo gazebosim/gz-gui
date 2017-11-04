@@ -19,6 +19,8 @@
 #define IGNITION_GUI_PLUGINS_RENDERSCENE_HH_
 
 #include <memory>
+#include <ignition/math/Vector2.hh>
+#include <ignition/math/Vector3.hh>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
@@ -48,11 +50,29 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
+    /// \brief Retrieve the first point in the 3D scene hit by a ray cast from
+    /// the given 2D screen coordinates.
+    /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
+    /// \return 3D coordinates of a point in the 3D scene.
+    public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos) const;
+
     // Documentation inherited
     protected: virtual void paintEvent(QPaintEvent *_e) override;
 
     // Documentation inherited
     protected: virtual void resizeEvent(QResizeEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void wheelEvent(QWheelEvent *_e) override;
 
     /// \internal
     /// \brief Pointer to private data.

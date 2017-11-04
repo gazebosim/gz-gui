@@ -26,6 +26,11 @@
 
 namespace ignition
 {
+  namespace common
+  {
+    class MouseEvent;
+  }
+
   namespace math
   {
     class Color;
@@ -68,6 +73,15 @@ namespace ignition
     /// \return Ignition vector 3d value
     IGNITION_GUI_VISIBLE
     math::Vector3d convert(const QVector3D &_vec);
+
+    /// \brief Return the equivalent ignition mouse event.
+    ///
+    /// Note that there isn't a 1-1 mapping between these types, so fields such
+    /// as common::MouseEvent::PressPos need to be set afterwards.
+    /// \param[in] _e Qt mouse event
+    /// \return Ignition mouse event
+    IGNITION_GUI_VISIBLE
+    common::MouseEvent convert(const QMouseEvent &_e);
   }
 }
 #endif
