@@ -11,7 +11,8 @@ set (plot_qt
 )
 
 foreach(src ${plot_qt})
-  set(plot_sources ${plot_sources} ${PROJECT_SOURCE_DIR}/src/plugins/plot/${src}.cc)
+  set(plot_sources ${plot_sources}
+    ${PROJECT_SOURCE_DIR}/src/plugins/plot/${src}.cc)
 endforeach()
 
 # Generate _MOC files.
@@ -23,6 +24,9 @@ add_library(${plotWidget} SHARED
   ${plotWidget_MOC}
   ${plot_sources}
 )
+
+MESSAGE(STATUS "qwt lib: ${QWT_LIBRARY}")
+
 target_link_libraries(${plotWidget}
   ${IGNITION-GUI_LIBRARIES}
   ${Qt5Core_LIBRARIES}

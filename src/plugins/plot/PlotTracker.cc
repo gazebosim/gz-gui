@@ -24,7 +24,6 @@ using namespace gui;
 using namespace plugins;
 using namespace plot;
 
-
 #if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
   /// \brief A widget that renders the hover line inside the main plot canvas.
   class ignition::gui::plugins::plot::HoverLineWidget : public QWidget
