@@ -68,6 +68,14 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
   common::MouseEvent event;
   event.SetPos(_e.pos().x(), _e.pos().y());
 
+  // Button
+  if (_e.button() == Qt::LeftButton)
+    event.SetButton(common::MouseEvent::LEFT);
+  else if (_e.button() == Qt::RightButton)
+    event.SetButton(common::MouseEvent::RIGHT);
+  else if (_e.button() == Qt::MidButton)
+    event.SetButton(common::MouseEvent::MIDDLE);
+
   // Buttons
   if (_e.buttons() & Qt::LeftButton)
     event.SetButtons(event.Buttons() | common::MouseEvent::LEFT);
@@ -84,11 +92,23 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
   else if (_e.type() == QEvent::MouseButtonRelease)
     event.SetType(common::MouseEvent::RELEASE);
   else if (_e.type() == QEvent::MouseMove)
+  {
     event.SetType(common::MouseEvent::MOVE);
 
-  // Dragging
-  if (_e.buttons())
-    event.SetDragging(true);
+    // Dragging
+    if (_e.buttons() || _e.button())
+      event.SetDragging(true);
+  }
+
+  // Modifiers
+  if (_e.modifiers() & Qt::ShiftModifier)
+    event.SetShift(true);
+
+  if (_e.modifiers() & Qt::ControlModifier)
+    event.SetControl(true);
+
+  if (_e.modifiers() & Qt::AltModifier)
+    event.SetAlt(true);
 
   return event;
 }
