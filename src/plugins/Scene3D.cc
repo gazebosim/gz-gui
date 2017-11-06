@@ -70,10 +70,21 @@ Scene3D::~Scene3D()
 }
 
 /////////////////////////////////////////////////
-void Scene3D::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
+void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "3D Scene";
+
+  std::string engineName{"ogre"};
+  std::string sceneName{"scene"};
+  if (_pluginElem)
+  {
+    if (auto elem = _pluginElem->FirstChildElement("engine"))
+      engineName = elem->GetText();
+
+    if (auto elem = _pluginElem->FirstChildElement("scene"))
+      sceneName = elem->GetText();
+  }
 
   // Layout
   this->setLayout(new QVBoxLayout());
@@ -81,7 +92,6 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->setMinimumHeight(300);
 
   // Render engine
-  std::string engineName{"ogre"};
   auto engine = rendering::engine(engineName);
   if (!engine)
   {
@@ -90,7 +100,6 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   }
 
   // Scene
-  std::string sceneName{"scene"};
   auto scene = engine->SceneByName(sceneName);
   if (!scene)
   {
@@ -101,28 +110,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   auto root = scene->RootVisual();
 
   // Directional light
+  // TODO: Move light insertion to another plugin
   auto light = scene->CreateDirectionalLight();
   root->AddChild(light);
   light->SetDirection(0.5, 0.5, -1);
   light->SetDiffuseColor(0.8, 0.8, 0.8);
   light->SetSpecularColor(0.5, 0.5, 0.5);
-
-  // Grid
-  auto gridGeom = scene->CreateGrid();
-  gridGeom->SetCellCount(20);
-  gridGeom->SetCellLength(1);
-  gridGeom->SetVerticalCellCount(0);
-
-  auto grid = scene->CreateVisual();
-  root->AddChild(grid);
-  grid->SetLocalPosition(3, 0, 0.0);
-  grid->AddGeometry(gridGeom);
-
-  auto gray = scene->CreateMaterial();
-  gray->SetAmbient(0.7, 0.7, 0.7);
-  gray->SetDiffuse(0.7, 0.7, 0.7);
-  gray->SetSpecular(0.7, 0.7, 0.7);
-  grid->SetMaterial(gray);
 
   // Camera
   this->dataPtr->camera = scene->CreateCamera("camera");
