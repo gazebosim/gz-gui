@@ -45,4 +45,4 @@
 
 #pragma clang diagnostic pop
 
-#endif
+#endif  // IGNITION_GUI_PLUGINS_PLOT_QWT_IGNITION_H_
