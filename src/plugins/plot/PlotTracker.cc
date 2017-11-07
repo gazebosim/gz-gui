@@ -28,7 +28,7 @@ using namespace plot;
   /// \brief A widget that renders the hover line inside the main plot canvas.
   class ignition::gui::plugins::plot::HoverLineWidget : public QWidget
   {
-    /// \brief Constructor
+    /// \brief Constructor.
     /// \param[in] _picker Plot picker that provides mouse tracking over a
     /// plot canvas.
     /// \param[in] _parent Parent wiget.
