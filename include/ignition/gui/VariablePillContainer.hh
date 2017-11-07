@@ -31,6 +31,9 @@ namespace gui
   class VariablePillContainerPrivate;
 
   /// \brief A container for holding variable pills
+  ///
+  /// The container consists of a label and a field where pills and multi-pills
+  /// can be dragged to.
   class IGNITION_GUI_VISIBLE VariablePillContainer : public QWidget
   {
     Q_OBJECT
@@ -66,16 +69,22 @@ namespace gui
     public: void SetVariablePillLabel(const unsigned int _id,
                                       const std::string &_text);
 
-    /// \brief Add a new variable pill to a multi-variable pill in the
-    /// container.
-    /// \param[in] _name Name of variable pill to add.
-    /// \param[in] _targetId Unqiue id of the variable pill to add to.
+    /// \brief Create a new variable pill and add it either to the container or
+    /// to a multi-variable pill in the container.
+    ///
+    /// This calls AddVariablePill(VariablePill *)
+    ///
+    /// \param[in] _name Name for the new variable pill.
+    /// \param[in] _targetId If adding to a multi-variable pill, this is the
+    /// pill's id. Leave as EmptyVariable so it is added to the container.
     public: unsigned int AddVariablePill(const std::string &_name,
                     const unsigned int _targetId = VariablePill::EmptyVariable);
 
-    /// \brief Add a variable pill to the container.
-    /// \param[in] _variable Variable pill to add.
-    /// \param[in] _targetId Unqiue id of the variable pill to add to.
+    /// \brief Add an existing variable pill to the container or one of the
+    /// multi-variable pills inside it.
+    /// \param[in] _variable Variable pill to be added.
+    /// \param[in] _targetId If adding to a multi-variable pill, this is the
+    /// pill's id. Leave as EmptyVariable so it is added to the container.
     public: void AddVariablePill(VariablePill *_variable,
                     const unsigned int _targetId = VariablePill::EmptyVariable);
 
@@ -96,8 +105,9 @@ namespace gui
     /// \return Variable pill with the specified id.
     public: gui::VariablePill *VariablePill(const unsigned int _id) const;
 
-    /// \brief Set the selected state of a variable pill.
-    /// \param[in] _variable Variable pill to set the selected state.
+    /// \brief Set the given variable pill as the currently selected one and
+    /// deselects any other variables which may be currently selected.
+    /// \param[in] _variable Variable pill which should be selected.
     public: void SetSelected(gui::VariablePill *_variable);
 
     /// \brief Used to accept drag enter events.
@@ -122,29 +132,28 @@ namespace gui
     private: bool IsDragValid(const QDropEvent *_evt) const;
 
     /// \brief Qt signal emitted when a variable is added to the container
-    /// \param[in] _id Unique id of the variable pill.
+    /// \param[in] _id Unique id of the added variable pill.
     /// \param[in] _name Name of variable pill added.
     /// \param[in] _targetId Unique id of the target variable pill that this
-    /// variable is added to. VariablePill::EmptyVariable if it is added to a
-    /// container and not a variable pill.
+    /// variable is added to. VariablePill::EmptyVariable if it is added to the
+    /// container and not a multi-variable pill.
     signals: void VariableAdded(const unsigned int _id,
                                 const std::string &_name,
                                 const unsigned int _targetId);
 
     /// \brief Qt signal emitted when a variable is removed from the container.
-    /// \param[in] _id Unique id of the variable pill.
-    /// \param[in] _targetId Unique id of the target variable pill that this
-    /// variable is removed from. VariablePill::EmptyVariable if it is
-    /// removed.
-    /// from a container and not a variable pill.
+    /// \param[in] _id Unique id of the variable pill which was removed.
+    /// \param[in] _targetId Unique id of the variable pill from which the
+    /// previous variable was removed from. VariablePill::EmptyVariable if it
+    /// was removed directly from the container and not a multi-variable pill.
     signals: void VariableRemoved(const unsigned int _id,
                                   const unsigned int _targetId);
 
     /// \brief Qt signal emitted when a variable is moved into the container.
     /// \param[in] _id Unique id of the variable pill.
     /// \param[in] _targetId Unique id of the target variable pill that this
-    /// variable has moved to. VariablePill::EmptyVariable if it moved to a
-    /// container and not a variable pill.
+    /// variable has moved to. VariablePill::EmptyVariable if it moved to the
+    /// container and not a multi-variable pill.
     signals: void VariableMoved(const unsigned int _id,
                                 const unsigned int _targetId);
 

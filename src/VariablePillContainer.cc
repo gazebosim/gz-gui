@@ -128,31 +128,9 @@ void VariablePillContainer::SetVariablePillLabel(const unsigned int _id,
 unsigned int VariablePillContainer::AddVariablePill(const std::string &_name,
     const unsigned int _targetId)
 {
-  if (this->dataPtr->maxSize != -1 &&
-      static_cast<int>(this->VariablePillCount()) >= this->dataPtr->maxSize)
-  {
-    return VariablePill::EmptyVariable;
-  }
-
-  if (_targetId != VariablePill::EmptyVariable &&
-    !this->VariablePill(_targetId))
-  {
-    ignerr << "Unable to add variable. Target variable not found" << std::endl;
-    return VariablePill::EmptyVariable;
-  }
-
   gui::VariablePill *variable = new gui::VariablePill;
   variable->SetName(_name);
   variable->SetText(_name);
-
-  connect(variable, SIGNAL(VariableMoved(unsigned int)),
-      this, SLOT(OnMoveVariable(unsigned int)));
-  connect(variable, SIGNAL(VariableAdded(unsigned int, std::string)),
-      this, SLOT(OnAddVariable(unsigned int, std::string)));
-  connect(variable, SIGNAL(VariableRemoved(unsigned int)),
-      this, SLOT(OnRemoveVariable(unsigned int)));
-  connect(variable, SIGNAL(VariableLabelChanged(std::string)),
-      this, SLOT(OnSetVariableLabel(std::string)));
 
   this->AddVariablePill(variable, _targetId);
 
@@ -171,7 +149,11 @@ void VariablePillContainer::AddVariablePill(gui::VariablePill *_variable,
   {
     gui::VariablePill *targetVariable = this->VariablePill(_targetId);
     if (!targetVariable)
+    {
+      ignerr << "Unable to add variable. Target variable not found"
+             << std::endl;
       return;
+    }
 
     targetVariable->AddVariablePill(_variable);
     return;
@@ -187,21 +169,30 @@ void VariablePillContainer::AddVariablePill(gui::VariablePill *_variable,
     }
   }
 
-  // otherwise add to the container
+  // Reached max size
   if (this->dataPtr->maxSize != -1 &&
       static_cast<int>(this->VariablePillCount()) >= this->dataPtr->maxSize)
   {
-    ignerr << "Unable to add variable to container. Container is full" <<
-        std::endl;
+    ignerr << "Unable to add variable to container. Container is full"
+           << std::endl;
     return;
   }
+
+  this->connect(_variable, SIGNAL(VariableMoved(unsigned int)),
+      this, SLOT(OnMoveVariable(unsigned int)));
+  this->connect(_variable, SIGNAL(VariableAdded(unsigned int, std::string)),
+      this, SLOT(OnAddVariable(unsigned int, std::string)));
+  this->connect(_variable, SIGNAL(VariableRemoved(unsigned int)),
+      this, SLOT(OnRemoveVariable(unsigned int)));
+  this->connect(_variable, SIGNAL(VariableLabelChanged(std::string)),
+      this, SLOT(OnSetVariableLabel(std::string)));
 
   _variable->SetContainer(this);
   _variable->setVisible(true);
   this->dataPtr->variableLayout->addWidget(_variable);
   this->dataPtr->variables[_variable->Id()] = _variable;
 
-  emit VariableAdded(_variable->Id(), _variable->Text(), _targetId);
+  this->VariableAdded(_variable->Id(), _variable->Text(), _targetId);
 }
 
 /////////////////////////////////////////////////
@@ -256,7 +247,7 @@ void VariablePillContainer::RemoveVariablePill(const unsigned int _id)
       variable->Parent()->RemoveVariablePill(variable);
     }
     else
-      emit VariableRemoved(variable->Id(), VariablePill::EmptyVariable);
+      this->VariableRemoved(variable->Id(), VariablePill::EmptyVariable);
   }
 
   // otherwise remove from container
@@ -396,7 +387,7 @@ void VariablePillContainer::dropEvent(QDropEvent *_evt)
     this->AddVariablePill(variable);
     this->blockSignals(false);
 
-    emit VariableMoved(variable->Id(), VariablePill::EmptyVariable);
+    this->VariableMoved(variable->Id(), VariablePill::EmptyVariable);
   }
 }
 
@@ -517,7 +508,7 @@ void VariablePillContainer::OnMoveVariable(const unsigned int _id)
   if (!variable)
     return;
 
-  emit VariableMoved(_id, variable->Id());
+  this->VariableMoved(_id, variable->Id());
 }
 
 /////////////////////////////////////////////////
@@ -529,7 +520,7 @@ void VariablePillContainer::OnAddVariable(const unsigned int _id,
   if (!variable)
     return;
 
-  emit VariableAdded(_id, _label, variable->Id());
+  this->VariableAdded(_id, _label, variable->Id());
 }
 
 /////////////////////////////////////////////////
@@ -540,7 +531,7 @@ void VariablePillContainer::OnRemoveVariable(const unsigned int _id)
   if (!variable)
     return;
 
-  emit VariableRemoved(_id, variable->Id());
+  this->VariableRemoved(_id, variable->Id());
 }
 
 /////////////////////////////////////////////////
@@ -551,5 +542,5 @@ void VariablePillContainer::OnSetVariableLabel(const std::string &_label)
   if (!variable)
     return;
 
-  emit VariableLabelChanged(variable->Id(), _label);
+  this->VariableLabelChanged(variable->Id(), _label);
 }

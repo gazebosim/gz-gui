@@ -14,6 +14,8 @@ set (qt_headers
   CollapsibleWidget.hh
   ColorWidget.hh
   EditableLabel.hh
+  EnumWidget.hh
+  GeometryWidget.hh
   MainWindow.hh
   MessageWidget.hh
   NumberWidget.hh

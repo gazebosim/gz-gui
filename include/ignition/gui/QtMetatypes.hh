@@ -18,6 +18,7 @@
 #define IGNITION_GUI_QTMETATYPES_HH_
 
 #include <QMetaType>
+#include <ignition/msgs/geometry.pb.h>
 
 #include <string>
 
@@ -30,5 +31,7 @@ Q_DECLARE_METATYPE(std::string)
 Q_DECLARE_METATYPE(ignition::math::Color)
 Q_DECLARE_METATYPE(ignition::math::Pose3d)
 Q_DECLARE_METATYPE(ignition::math::Vector3d)
+
+Q_DECLARE_METATYPE(ignition::msgs::Geometry)
 
 #endif

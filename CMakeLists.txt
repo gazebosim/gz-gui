@@ -130,6 +130,8 @@ include (${project_cmake_dir}/DissectVersion.cmake)
 
 message (STATUS "\n\n====== Finding 3rd Party Packages ======")
 include (${project_cmake_dir}/SearchForStuff.cmake)
+# include Utils again since ign-cmake has some of the same macros
+include (${project_cmake_dir}/Utils.cmake)
 message (STATUS "----------------------------------------\n")
 
 #####################################
