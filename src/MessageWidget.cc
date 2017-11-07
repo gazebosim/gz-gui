@@ -816,7 +816,7 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     }
     else if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
     {
-      reflection->SetFloat(_msg, fieldDescriptor, variant.toDouble());
+      reflection->SetFloat(_msg, fieldDescriptor, variant.toFloat());
     }
     else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
     {

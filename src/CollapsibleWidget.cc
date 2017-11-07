@@ -30,7 +30,7 @@ namespace ignition
     class CollapsibleWidgetPrivate
     {
       /// \brief Whether the widget is collapsed or expanded.
-      public: bool expanded;
+      public: bool expanded = true;
     };
   }
 }
