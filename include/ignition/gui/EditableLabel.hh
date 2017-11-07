@@ -21,6 +21,7 @@
 #include <string>
 
 #include "ignition/gui/qt.h"
+#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -31,7 +32,7 @@ namespace gui
 
   /// \brief Editable Label. The widget toggles between a QLabel and
   /// QLineEdit to support edits to the label text.
-  class EditableLabel : public QWidget
+  class IGNITION_GUI_VISIBLE EditableLabel : public QWidget
   {
     Q_OBJECT
 

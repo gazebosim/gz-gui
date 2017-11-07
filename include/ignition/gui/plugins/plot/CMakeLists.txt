@@ -7,6 +7,7 @@ set (plotWidget
 
 # The rest of source files.
 set (plot_qt
+  PlotCurve
   PlotTracker
 )
 
@@ -16,11 +17,12 @@ foreach(src ${plot_qt})
 endforeach()
 
 # Generate _MOC files.
-QT5_WRAP_CPP(plotWidget_MOC ${plotWidget}.hh qwt_ignition.h)
+QT5_WRAP_CPP(plotWidget_MOC ${plotWidget}.hh qwt_ignition.h IncrementalPlot.hh)
 
 # Create the plugin.
 add_library(${plotWidget} SHARED
   ${PROJECT_SOURCE_DIR}/src/plugins/plot/${plotWidget}.cc
+  ${PROJECT_SOURCE_DIR}/src/plugins/plot/IncrementalPlot.cc
   ${plotWidget_MOC}
   ${plot_sources}
 )
@@ -28,7 +30,7 @@ add_library(${plotWidget} SHARED
 MESSAGE(STATUS "qwt lib: ${QWT_LIBRARY}")
 
 target_link_libraries(${plotWidget}
-  ${IGNITION-GUI_LIBRARIES}
+  ${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
   ${QWT_LIBRARY})

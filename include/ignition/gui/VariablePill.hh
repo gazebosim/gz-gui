@@ -23,6 +23,7 @@
 
 #include <ignition/math/Vector2.hh>
 #include "ignition/gui/qt.h"
+#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -36,7 +37,7 @@ namespace gui
     /// number that is incremented every time that a pill is created. Every pill
     /// has a string name based on the prefix "variable" and its Id. Also,
     /// a pill has a text that is displayed.
-    class VariablePill : public QWidget
+    class IGNITION_GUI_VISIBLE VariablePill : public QWidget
     {
       Q_OBJECT
 

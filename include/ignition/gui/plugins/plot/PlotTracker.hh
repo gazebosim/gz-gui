@@ -22,6 +22,7 @@
 
 #include "ignition/gui/plugins/plot/qwt_ignition.h"
 #include "ignition/gui/qt.h"
+#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -34,8 +35,8 @@ namespace plot
   // Forward declarations.
   class PlotTrackerPrivate;
 
-  /// \brief Mouse hover tracking
-  class PlotTracker: public QwtPlotPicker
+  /// \brief Mouse hover tracking.
+  class IGNITION_GUI_VISIBLE PlotTracker: public QwtPlotPicker
   {
     /// \brief Constructor.
     /// \param[in] _canvas Canvas the tracker will be attached to.
@@ -83,7 +84,7 @@ namespace plot
     /// This is ported from qwt-6.1.
     /// \param[in] _series The plot series data.
     /// \param[in] _value Value to search.
-    /// \return Sample index..
+    /// \return Sample index.
     private: int UpperSampleIndex(const QwtSeriesData<QPointF> &_series,
                                   const double _value) const;
 

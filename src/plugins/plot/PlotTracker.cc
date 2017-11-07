@@ -41,8 +41,8 @@ using namespace plot;
     }
 
     /// \brief Draw the hover line
-    /// \param[in] Qt paint event
-    public: virtual void paintEvent(QPaintEvent *_e)
+    /// \param[in] _e Qt paint event
+    public: virtual void paintEvent(QPaintEvent *_e) overwrite
     {
       QPainter painter(this);
       painter.setClipRegion(_e->region());
@@ -75,7 +75,7 @@ using namespace plot;
 #endif
 
 /// \internal
-/// \brief PlotTracker private data
+/// \brief PlotTracker private data.
 class ignition::gui::plugins::plot::PlotTrackerPrivate
 {
 #if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))

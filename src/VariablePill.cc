@@ -26,8 +26,8 @@
 using namespace ignition;
 using namespace gui;
 
-  /// \internal
-  /// \brief VariablePill private data
+/// \internal
+/// \brief VariablePill private data
 class ignition::gui::VariablePillPrivate
 {
   /// \brief Pointer to the main frame

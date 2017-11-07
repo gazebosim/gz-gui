@@ -18,6 +18,7 @@
 #include <ignition/common/PluginMacros.hh>
 
 #include "ignition/gui/EditableLabel.hh"
+#include "ignition/gui/plugins/plot/IncrementalPlot.hh"
 #include "ignition/gui/plugins/plot/Plot.hh"
 #include "ignition/gui/VariablePill.hh"
 #include "ignition/gui/VariablePillContainer.hh"
@@ -25,10 +26,13 @@
 class ignition::gui::plugins::plot::PlotPrivate
 {
   /// \brief ToDo: Only here for testing purposes.
-  public: ignition::gui::EditableLabel *label = nullptr;
+  public: EditableLabel *label = nullptr;
 
   /// \brief ToDo: Only here for testing purposes.
   public: VariablePillContainer *yVariableContainer = nullptr;
+
+  /// \brief ToDo: Only here for testing purposes.
+  public: IncrementalPlot *emptyPlot = nullptr;
 };
 
 using namespace ignition;
@@ -73,10 +77,14 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->yVariableContainer->AddVariablePill("pose/X");
   this->dataPtr->yVariableContainer->AddVariablePill("pose/Y");
 
+  // Empty plot.
+  this->dataPtr->emptyPlot = new IncrementalPlot(this);
+
   QVBoxLayout *variableContainerLayout = new QVBoxLayout;
   variableContainerLayout->addWidget(this->dataPtr->label);
   variableContainerLayout->addWidget(xVariableContainer);
   variableContainerLayout->addWidget(this->dataPtr->yVariableContainer);
+  variableContainerLayout->addWidget(this->dataPtr->emptyPlot);
   variableContainerLayout->setSpacing(0);
   variableContainerLayout->setContentsMargins(0, 0, 0, 0);
 

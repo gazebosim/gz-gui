@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "ignition/gui/Plugin.hh"
+#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -32,7 +33,7 @@ namespace plot
   class PlotPrivate;
 
   /// \brief Widget that allow plotting of Ignition Transport topics.
-  class Plot : public Plugin
+  class IGNITION_GUI_VISIBLE Plot : public Plugin
   {
     Q_OBJECT
 
