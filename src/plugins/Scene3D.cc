@@ -118,7 +118,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   light->SetSpecularColor(0.5, 0.5, 0.5);
 
   // Camera
-  this->dataPtr->camera = scene->CreateCamera("camera");
+  this->dataPtr->camera = scene->CreateCamera();
   root->AddChild(this->dataPtr->camera);
   this->dataPtr->camera->SetLocalPosition(0.0, 0.0, 0.5);
   this->dataPtr->camera->SetLocalRotation(0.0, 0.0, 0.0);
