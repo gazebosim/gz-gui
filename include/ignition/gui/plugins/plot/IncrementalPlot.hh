@@ -24,8 +24,9 @@
 #include <ignition/math/Vector2.hh>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/plugins/plot/qwt_ignition.h"
+#include "ignition/gui/qwt.h"
 #include "ignition/gui/plugins/plot/PlottingTypes.hh"
+
 #include "ignition/gui/System.hh"
 
 class QwtPlotCurve;

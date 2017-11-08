@@ -20,8 +20,8 @@
 
 #include <memory>
 
-#include "ignition/gui/plugins/plot/qwt_ignition.h"
 #include "ignition/gui/qt.h"
+#include "ignition/gui/qwt.h"
 #include "ignition/gui/System.hh"
 
 namespace ignition

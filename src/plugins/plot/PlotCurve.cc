@@ -28,8 +28,8 @@
 #include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
 
+#include "ignition/gui/qwt.h"
 #include "ignition/gui/Conversions.hh"
-#include "ignition/gui/plugins/plot/qwt_ignition.h"
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
 #include "ignition/gui/plugins/plot/PlotCurve.hh"
 

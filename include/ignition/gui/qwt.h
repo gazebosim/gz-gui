@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_PLOT_QWT_IGNITION_H_
-#define IGNITION_GUI_PLUGINS_PLOT_QWT_IGNITION_H_
+#ifndef IGNITION_GUI_QWT_H_
+#define IGNITION_GUI_QWT_H_
 
 #pragma GCC system_header
 
@@ -45,4 +45,4 @@
 
 #pragma clang diagnostic pop
 
-#endif  // IGNITION_GUI_PLUGINS_PLOT_QWT_IGNITION_H_
+#endif  // IGNITION_GUI_QWT_H_
