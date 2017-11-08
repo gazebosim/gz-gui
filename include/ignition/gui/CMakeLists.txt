@@ -23,6 +23,8 @@ set (qt_headers
   Pose3dWidget.hh
   PropertyWidget.hh
   StringWidget.hh
+  VariablePill.hh
+  VariablePillContainer.hh
   Vector3dWidget.hh
 )
 
