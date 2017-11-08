@@ -18,7 +18,6 @@
 #define IGNITION_GUI_PLUGINS_PLOT_PLOTTINGTYPES_HH_
 
 #include <memory>
-#include <set>
 
 namespace ignition
 {
@@ -38,11 +37,6 @@ namespace plot
   /// \def PlotCurveWeakPtr
   /// \brief std weak pointer to a PlotCurve object
   typedef std::weak_ptr<PlotCurve> PlotCurveWeakPtr;
-
-  /// \def CurveVariableSet
-  /// \brief A set of unique plot curve pointers
-  using CurveVariableSet = std::set<PlotCurveWeakPtr,
-      std::owner_less<PlotCurveWeakPtr> >;
 }
 }
 }
