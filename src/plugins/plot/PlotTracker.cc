@@ -16,6 +16,7 @@
 */
 
 #include <ignition/math/Helpers.hh>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/plugins/plot/PlotTracker.hh"
 
