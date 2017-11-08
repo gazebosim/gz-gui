@@ -68,7 +68,7 @@ namespace ignition
       public slots: void Toggle(const bool _checked);
 
       /// \brief Whether this is collapsed or not
-      /// _param[in] _expanded True for expanded.
+      /// \return True for expanded.
       public: bool IsExpanded() const;
 
       /// \brief Append a widget to the collapsible contents. The contents

@@ -955,7 +955,7 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     }
     else if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
     {
-      reflection->SetFloat(_msg, fieldDescriptor, variant.toDouble());
+      reflection->SetFloat(_msg, fieldDescriptor, variant.toFloat());
     }
     else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
     {
@@ -1121,11 +1121,10 @@ bool MessageWidget::RemovePropertyWidget(const std::string &_name)
   if (!qobject_cast<PropertyWidget *>(widget->parent()))
     toDelete = qobject_cast<QWidget *>(widget->parent());
 
-  // Give its ownership to a new widget, and when it goes out of scope, it
-  // will delete it
-  toDelete->setParent(new QWidget());
+  toDelete->setParent(nullptr);
+  toDelete->deleteLater();
 
-  return false;
+  return true;
 }
 
 /////////////////////////////////////////////////
