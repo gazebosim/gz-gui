@@ -63,7 +63,7 @@ namespace ignition
       public: explicit MessageWidget(const google::protobuf::Message *_msg);
 
       /// \brief Destructor
-      public: ~MessageWidget();
+      public: virtual ~MessageWidget();
 
       /// \brief Get a message with the widget's current contents. The message
       /// will be of the same type as the one used on the constructor.

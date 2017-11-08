@@ -971,7 +971,7 @@ bool MessageWidget::RemovePropertyWidget(const std::string &_name)
   toDelete->setParent(nullptr);
   toDelete->deleteLater();
 
-  return false;
+  return true;
 }
 
 /////////////////////////////////////////////////
