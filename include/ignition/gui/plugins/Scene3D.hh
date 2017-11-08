@@ -33,9 +33,12 @@ namespace plugins
 {
   class Scene3DPrivate;
 
-  /// \brief
+  /// \brief Creates a new ignition rendering scene or adds a user-camera to an
+  /// existing scene. It is possible to orbit the camera around the scene with
+  /// the mouse.
   ///
   /// ## Configuration
+  ///
   class Scene3D : public Plugin
   {
     Q_OBJECT

@@ -19,6 +19,7 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/rendering.hh>
 
+#include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
@@ -31,10 +32,19 @@ namespace gui
 {
 namespace plugins
 {
+  struct GridInfo
+  {
+    int cellCount{20};
+    int vertCellCount{0};
+    double cellLength{1};
+    math::Pose3d pose;
+    math::Color color = math::Color(0.7, 0.7, 0.7);
+  };
+
   class Grid3DPrivate
   {
-    /// \brief Pointer to grid
-    public: rendering::GridPtr grid;
+    /// \brief Pointer to scene
+    public: std::vector<rendering::GridPtr> grids;
   };
 }
 }
@@ -64,44 +74,51 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Configuration
   std::string engineName{"ogre"};
   std::string sceneName{"scene"};
-  int cellCount{20};
-  int vertCellCount{0};
-  double cellLength{1};
-  math::Pose3d pose;
-  math::Color color(0.7, 0.7, 0.7);
   bool autoClose = false;
+  std::vector<GridInfo> grids;
   if (_pluginElem)
   {
-    if (_pluginElem->Attribute("auto_close"))
-      _pluginElem->QueryBoolAttribute("auto_close", &autoClose);
-
+    // All grids managed belong to the same engine and scene
     if (auto elem = _pluginElem->FirstChildElement("engine"))
       engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
       sceneName = elem->GetText();
 
-    if (auto elem = _pluginElem->FirstChildElement("cell_count"))
-      elem->QueryIntText(&cellCount);
+    if (_pluginElem->Attribute("auto_close"))
+      _pluginElem->QueryBoolAttribute("auto_close", &autoClose);
 
-    if (auto elem = _pluginElem->FirstChildElement("vertical_cell_count"))
-      elem->QueryIntText(&vertCellCount);
-
-    if (auto elem = _pluginElem->FirstChildElement("cell_length"))
-      elem->QueryDoubleText(&cellLength);
-
-    if (auto elem = _pluginElem->FirstChildElement("pose"))
+    // For grids to be inserted at startup
+    for (auto insertElem = _pluginElem->FirstChildElement("insert");
+         insertElem != nullptr;
+        insertElem = insertElem->NextSiblingElement("insert"))
     {
-      std::stringstream poseStr;
-      poseStr << std::string(elem->GetText());
-      poseStr >> pose;
-    }
+      GridInfo gridInfo;
 
-    if (auto elem = _pluginElem->FirstChildElement("color"))
-    {
-      std::stringstream colorStr;
-      colorStr << std::string(elem->GetText());
-      colorStr >> color;
+      if (auto elem = insertElem->FirstChildElement("cell_count"))
+        elem->QueryIntText(&gridInfo.cellCount);
+
+      if (auto elem = insertElem->FirstChildElement("vertical_cell_count"))
+        elem->QueryIntText(&gridInfo.vertCellCount);
+
+      if (auto elem = insertElem->FirstChildElement("cell_length"))
+        elem->QueryDoubleText(&gridInfo.cellLength);
+
+      if (auto elem = insertElem->FirstChildElement("pose"))
+      {
+        std::stringstream poseStr;
+        poseStr << std::string(elem->GetText());
+        poseStr >> gridInfo.pose;
+      }
+
+      if (auto elem = insertElem->FirstChildElement("color"))
+      {
+        std::stringstream colorStr;
+        colorStr << std::string(elem->GetText());
+        colorStr >> gridInfo.color;
+      }
+
+      grids.push_back(gridInfo);
     }
   }
 
@@ -122,22 +139,26 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
   auto root = scene->RootVisual();
 
-  // Grid
-  this->dataPtr->grid = scene->CreateGrid();
-  this->dataPtr->grid->SetCellCount(cellCount);
-  this->dataPtr->grid->SetVerticalCellCount(vertCellCount);
-  this->dataPtr->grid->SetCellLength(cellLength);
-  this->dataPtr->grid->SetVerticalCellCount(0);
+  // Initial grids
+  for (const auto &g : grids)
+  {
+    auto grid = scene->CreateGrid();
+    grid->SetCellCount(g.cellCount);
+    grid->SetVerticalCellCount(g.vertCellCount);
+    grid->SetCellLength(g.cellLength);
+    grid->SetVerticalCellCount(g.vertCellCount);
 
-  auto gridVis = scene->CreateVisual();
-  root->AddChild(gridVis);
-  gridVis->SetLocalPose(pose);
-  gridVis->AddGeometry(this->dataPtr->grid);
+    auto gridVis = scene->CreateVisual();
+    root->AddChild(gridVis);
+    gridVis->SetLocalPose(g.pose);
+    gridVis->AddGeometry(grid);
 
-  auto gray = scene->CreateMaterial();
-  gray->SetAmbient(color);
-  gridVis->SetMaterial(gray);
+    auto gray = scene->CreateMaterial();
+    gray->SetAmbient(g.color);
+    gridVis->SetMaterial(gray);
+  }
 
+  // Auto-close
   if (autoClose)
   {
     QTimer::singleShot(100, [this]()
@@ -154,66 +175,101 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
-  // Widgets
-  auto cellCountWidget = new NumberWidget("Horizontal cell count", NumberType::INT);
-  cellCountWidget->SetValue(QVariant::fromValue(cellCount));
-  cellCountWidget->setObjectName("cellCountWidget");
-  this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
-      SLOT(OnChange(QVariant)));
-
-  auto vertCellCountWidget = new NumberWidget("Vertical cell count", NumberType::INT);
-  vertCellCountWidget->SetValue(QVariant::fromValue(vertCellCount));
-  vertCellCountWidget->setObjectName("vertCellCountWidget");
-  this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
-      SLOT(OnChange(QVariant)));
-
-  auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
-  cellLengthWidget->SetValue(QVariant::fromValue(cellLength));
-  cellLengthWidget->setObjectName("cellLengthWidget");
-  this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
-      SLOT(OnChange(QVariant)));
-
-  auto poseWidget = new Pose3dWidget();
-  poseWidget->SetValue(QVariant::fromValue(pose));
-  poseWidget->setObjectName("poseWidget");
-  this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
-      SLOT(OnChange(QVariant)));
-
-  auto colorWidget = new ColorWidget();
-  colorWidget->SetValue(QVariant::fromValue(color));
-  colorWidget->setObjectName("colorWidget");
-  this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
-      SLOT(OnChange(QVariant)));
-
-  auto spacer = new QWidget();
-  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-  // Layout
+  // Populate widgets
   auto mainLayout = new QVBoxLayout();
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
-  mainLayout->addWidget(cellCountWidget);
-  mainLayout->addWidget(vertCellCountWidget);
-  mainLayout->addWidget(cellLengthWidget);
-  mainLayout->addWidget(poseWidget);
-  mainLayout->addWidget(colorWidget);
-  mainLayout->addWidget(spacer);
   this->setLayout(mainLayout);
+
+  for (unsigned int i = 0; i < scene->VisualCount(); ++i)
+  {
+    auto vis = scene->VisualByIndex(i);
+    if (!vis || vis->GeometryCount() == 0)
+      continue;
+
+    rendering::GridPtr grid;
+    for (unsigned int j = 0; j < vis->GeometryCount(); ++j)
+    {
+      grid = std::dynamic_pointer_cast<rendering::Grid>(vis->GeometryByIndex(i));
+      if (grid)
+        break;
+    }
+    if (!grid)
+      continue;
+
+    this->dataPtr->grids.push_back(grid);
+
+    auto cellCountWidget = new NumberWidget("Horizontal cell count", NumberType::INT);
+    cellCountWidget->SetValue(QVariant::fromValue(grid->CellCount()));
+    cellCountWidget->setObjectName(QString::fromStdString(grid->Name() + "::cellCountWidget"));
+    this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
+        SLOT(OnChange(QVariant)));
+
+    auto vertCellCountWidget = new NumberWidget("Vertical cell count", NumberType::INT);
+    vertCellCountWidget->SetValue(QVariant::fromValue(grid->VerticalCellCount()));
+    vertCellCountWidget->setObjectName(QString::fromStdString(grid->Name() + "::vertCellCountWidget"));
+    this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
+        SLOT(OnChange(QVariant)));
+
+    auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
+    cellLengthWidget->SetValue(QVariant::fromValue(grid->CellLength()));
+    cellLengthWidget->setObjectName(QString::fromStdString(grid->Name() + "::cellLengthWidget"));
+    this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
+        SLOT(OnChange(QVariant)));
+
+    auto poseWidget = new Pose3dWidget();
+    poseWidget->SetValue(QVariant::fromValue(grid->Parent()->WorldPose()));
+    poseWidget->setObjectName(QString::fromStdString(grid->Name() + "::poseWidget"));
+    this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
+        SLOT(OnChange(QVariant)));
+
+    auto colorWidget = new ColorWidget();
+    colorWidget->SetValue(QVariant::fromValue(grid->Material()->Ambient()));
+    colorWidget->setObjectName(QString::fromStdString(grid->Name() + "::colorWidget"));
+    this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
+        SLOT(OnChange(QVariant)));
+
+    auto collapsible = new CollapsibleWidget(grid->Name());
+    collapsible->layout()->addWidget(cellCountWidget);
+    collapsible->layout()->addWidget(vertCellCountWidget);
+    collapsible->layout()->addWidget(cellLengthWidget);
+    collapsible->layout()->addWidget(poseWidget);
+    collapsible->layout()->addWidget(colorWidget);
+
+    mainLayout->addWidget(collapsible);
+  }
+
+  auto spacer = new QWidget();
+  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  mainLayout->addWidget(spacer);
 }
 
 /////////////////////////////////////////////////
 void Grid3D::OnChange(const QVariant &_value)
 {
-  if (this->sender()->objectName() == "cellCountWidget")
-    this->dataPtr->grid->SetCellCount(_value.toInt());
-  else if (this->sender()->objectName() == "vertCellCountWidget")
-    this->dataPtr->grid->SetVerticalCellCount(_value.toInt());
-  else if (this->sender()->objectName() == "cellLengthWidget")
-    this->dataPtr->grid->SetCellLength(_value.toInt());
-  else if (this->sender()->objectName() == "poseWidget")
-    this->dataPtr->grid->Parent()->SetWorldPose(_value.value<math::Pose3d>());
-  else if (this->sender()->objectName() == "colorWidget")
-    this->dataPtr->grid->Material()->SetAmbient(_value.value<math::Color>());
+  auto parts = this->sender()->objectName().split("::");
+  if (parts.size() != 3)
+    return;
+
+  std::string gridName{(parts[0] + "::" + parts[1]).toStdString()};
+  for (auto grid : this->dataPtr->grids)
+  {
+    if (grid->Name() != gridName)
+      continue;
+
+    if (parts[2] == "cellCountWidget")
+      grid->SetCellCount(_value.toInt());
+    else if (parts[2] == "vertCellCountWidget")
+      grid->SetVerticalCellCount(_value.toInt());
+    else if (parts[2] == "cellLengthWidget")
+      grid->SetCellLength(_value.toInt());
+    else if (parts[2] == "poseWidget")
+      grid->Parent()->SetWorldPose(_value.value<math::Pose3d>());
+    else if (parts[2] == "colorWidget")
+      grid->Material()->SetAmbient(_value.value<math::Color>());
+
+    break;
+  }
 }
 
 // Register this plugin
