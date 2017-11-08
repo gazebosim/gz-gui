@@ -5,7 +5,7 @@ set (plotWidget
   Plot
 )
 
-# Files that require QT mock.
+# Files that require QT moc.
 set (plot_qt_others
   IncrementalPlot
 )
