@@ -26,6 +26,12 @@
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/plugins/Grid3D.hh"
 
+static const int kDefaultCellCount{20};
+static const int kDefaultVertCellCount{0};
+static const double kDefaultCellLength{1.0};
+static const ignition::math::Pose3d kDefaultPose{ignition::math::Pose3d::Zero};
+static const ignition::math::Color kDefaultColor{ignition::math::Color(0.7, 0.7, 0.7, 1.0)};
+
 namespace ignition
 {
 namespace gui
@@ -34,16 +40,19 @@ namespace plugins
 {
   struct GridInfo
   {
-    int cellCount{20};
-    int vertCellCount{0};
-    double cellLength{1};
-    math::Pose3d pose;
-    math::Color color = math::Color(0.7, 0.7, 0.7);
+    int cellCount{kDefaultCellCount};
+    int vertCellCount{kDefaultVertCellCount};
+    double cellLength{kDefaultCellLength};
+    math::Pose3d pose{kDefaultPose};
+    math::Color color{kDefaultColor};
   };
 
   class Grid3DPrivate
   {
     /// \brief Pointer to scene
+    public: rendering::ScenePtr scene;
+
+    /// \brief
     public: std::vector<rendering::GridPtr> grids;
   };
 }
@@ -131,31 +140,30 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Scene
-  auto scene = engine->SceneByName(sceneName);
-  if (!scene)
+  this->dataPtr->scene = engine->SceneByName(sceneName);
+  if (!this->dataPtr->scene)
   {
     ignerr << "Scene [" << sceneName << "] not found" << std::endl;
     return;
   }
-  auto root = scene->RootVisual();
+  auto root = this->dataPtr->scene->RootVisual();
 
   // Initial grids
   for (const auto &g : grids)
   {
-    auto grid = scene->CreateGrid();
+    auto grid = this->dataPtr->scene->CreateGrid();
     grid->SetCellCount(g.cellCount);
     grid->SetVerticalCellCount(g.vertCellCount);
     grid->SetCellLength(g.cellLength);
-    grid->SetVerticalCellCount(g.vertCellCount);
 
-    auto gridVis = scene->CreateVisual();
+    auto gridVis = this->dataPtr->scene->CreateVisual();
     root->AddChild(gridVis);
     gridVis->SetLocalPose(g.pose);
     gridVis->AddGeometry(grid);
 
-    auto gray = scene->CreateMaterial();
-    gray->SetAmbient(g.color);
-    gridVis->SetMaterial(gray);
+    auto mat = this->dataPtr->scene->CreateMaterial();
+    mat->SetAmbient(g.color);
+    gridVis->SetMaterial(mat);
   }
 
   // Auto-close
@@ -175,22 +183,59 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
-  // Populate widgets
-  auto mainLayout = new QVBoxLayout();
-  mainLayout->setContentsMargins(0, 0, 0, 0);
-  mainLayout->setSpacing(0);
-  this->setLayout(mainLayout);
+  this->Refresh();
+}
 
-  for (unsigned int i = 0; i < scene->VisualCount(); ++i)
+/////////////////////////////////////////////////
+void Grid3D::Refresh()
+{
+  // Populate widgets
+  auto mainLayout = this->layout();
+  if (mainLayout)
   {
-    auto vis = scene->VisualByIndex(i);
+    while (mainLayout->count() != 1)
+    {
+      auto item = mainLayout->takeAt(1);
+      if (qobject_cast<CollapsibleWidget *>(item->widget()))
+      {
+        delete item->widget();
+        delete item;
+      }
+    }
+  }
+  else
+  {
+    mainLayout = new QVBoxLayout();
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+    this->setLayout(mainLayout);
+
+    auto addButton = new QPushButton("New grid");
+    this->connect(addButton, SIGNAL(clicked()), this, SLOT(OnAdd()));
+
+    auto refreshButton = new QPushButton("Refresh");
+    this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(Refresh()));
+
+    auto buttonsLayout = new QHBoxLayout();
+    buttonsLayout->addWidget(addButton);
+    buttonsLayout->addWidget(refreshButton);
+
+    auto buttonsWidget = new QWidget();
+    buttonsWidget->setLayout(buttonsLayout);
+
+    mainLayout->addWidget(buttonsWidget);
+  }
+
+  for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
+  {
+    auto vis = this->dataPtr->scene->VisualByIndex(i);
     if (!vis || vis->GeometryCount() == 0)
       continue;
 
     rendering::GridPtr grid;
     for (unsigned int j = 0; j < vis->GeometryCount(); ++j)
     {
-      grid = std::dynamic_pointer_cast<rendering::Grid>(vis->GeometryByIndex(i));
+      grid = std::dynamic_pointer_cast<rendering::Grid>(vis->GeometryByIndex(j));
       if (grid)
         break;
     }
@@ -229,12 +274,17 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
+    auto deleteButton = new QPushButton("Delete grid");
+    deleteButton->setObjectName(QString::fromStdString(grid->Name() + "::deleteButton"));
+    this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
+
     auto collapsible = new CollapsibleWidget(grid->Name());
     collapsible->layout()->addWidget(cellCountWidget);
     collapsible->layout()->addWidget(vertCellCountWidget);
     collapsible->layout()->addWidget(cellLengthWidget);
     collapsible->layout()->addWidget(poseWidget);
     collapsible->layout()->addWidget(colorWidget);
+    collapsible->layout()->addWidget(deleteButton);
 
     mainLayout->addWidget(collapsible);
   }
@@ -262,7 +312,7 @@ void Grid3D::OnChange(const QVariant &_value)
     else if (parts[2] == "vertCellCountWidget")
       grid->SetVerticalCellCount(_value.toInt());
     else if (parts[2] == "cellLengthWidget")
-      grid->SetCellLength(_value.toInt());
+      grid->SetCellLength(_value.toDouble());
     else if (parts[2] == "poseWidget")
       grid->Parent()->SetWorldPose(_value.value<math::Pose3d>());
     else if (parts[2] == "colorWidget")
@@ -270,6 +320,51 @@ void Grid3D::OnChange(const QVariant &_value)
 
     break;
   }
+}
+
+/////////////////////////////////////////////////
+void Grid3D::OnDelete()
+{
+  auto parts = this->sender()->objectName().split("::");
+  if (parts.size() != 3)
+    return;
+
+  std::string gridName{(parts[0] + "::" + parts[1]).toStdString()};
+  for (auto grid : this->dataPtr->grids)
+  {
+    if (grid->Name() != gridName)
+      continue;
+
+    grid->Scene()->DestroyVisual(grid->Parent());
+    this->dataPtr->grids.erase(std::remove(this->dataPtr->grids.begin(),
+                                           this->dataPtr->grids.end(), grid),
+                                           this->dataPtr->grids.end());
+
+    this->Refresh();
+    break;
+  }
+}
+
+/////////////////////////////////////////////////
+void Grid3D::OnAdd()
+{
+  auto root = this->dataPtr->scene->RootVisual();
+
+  auto grid = this->dataPtr->scene->CreateGrid();
+  grid->SetCellCount(kDefaultCellCount);
+  grid->SetVerticalCellCount(kDefaultVertCellCount);
+  grid->SetCellLength(kDefaultCellLength);
+
+  auto gridVis = this->dataPtr->scene->CreateVisual();
+  root->AddChild(gridVis);
+  gridVis->SetLocalPose(kDefaultPose);
+  gridVis->AddGeometry(grid);
+
+  auto mat = this->dataPtr->scene->CreateMaterial();
+  mat->SetAmbient(kDefaultColor);
+  gridVis->SetMaterial(mat);
+
+  this->Refresh();
 }
 
 // Register this plugin

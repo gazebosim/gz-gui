@@ -52,6 +52,15 @@ namespace plugins
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);
 
+    /// \brief
+    private slots: void OnDelete();
+
+    /// \brief
+    private slots: void OnAdd();
+
+    /// \brief
+    private slots: void Refresh();
+
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<Grid3DPrivate> dataPtr;
