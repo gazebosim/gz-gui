@@ -5,29 +5,39 @@ set (plotWidget
   Plot
 )
 
+# Files that require QT mock.
+set (plot_qt_others
+  IncrementalPlot
+)
+
 # The rest of source files.
-set (plot_qt
+set (plot_others
   PlotCurve
   PlotTracker
 )
 
-foreach(src ${plot_qt})
+foreach(src ${plot_others})
   set(plot_sources ${plot_sources}
     ${PROJECT_SOURCE_DIR}/src/plugins/plot/${src}.cc)
 endforeach()
 
+foreach(src ${plot_qt_others})
+  set(plot_qt_headers ${plot_qt_headers}
+    ${PROJECT_SOURCE_DIR}/include/ignition/gui/plugins/plot/${src}.hh)
+  set(plot_qt_sources ${plot_qt_sources}
+    ${PROJECT_SOURCE_DIR}/src/plugins/plot/${src}.cc)
+endforeach()
+
 # Generate _MOC files.
-QT5_WRAP_CPP(plotWidget_MOC ${plotWidget}.hh qwt_ignition.h IncrementalPlot.hh)
+QT5_WRAP_CPP(plotWidget_MOC ${plotWidget}.hh ${plot_qt_headers})
 
 # Create the plugin.
 add_library(${plotWidget} SHARED
   ${PROJECT_SOURCE_DIR}/src/plugins/plot/${plotWidget}.cc
-  ${PROJECT_SOURCE_DIR}/src/plugins/plot/IncrementalPlot.cc
   ${plotWidget_MOC}
   ${plot_sources}
+  ${plot_qt_sources}
 )
-
-MESSAGE(STATUS "qwt lib: ${QWT_LIBRARY}")
 
 target_link_libraries(${plotWidget}
   ${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
