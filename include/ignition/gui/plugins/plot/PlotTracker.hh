@@ -40,14 +40,7 @@ namespace plot
   {
     /// \brief Constructor.
     /// \param[in] _canvas Canvas the tracker will be attached to.
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-    public: explicit PlotTracker(QwtPlotCanvas *_canvas);
-#else
     public: explicit PlotTracker(QWidget *_canvas);
-#endif
-
-    /// \brief Update the tracker text.
-    public: void Update();
 
     /// \brief Overriden to update the hover line and tracker text.
     protected: virtual void updateDisplay() override;

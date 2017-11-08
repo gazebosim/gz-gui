@@ -52,11 +52,7 @@ namespace plot
   {
     /// \brief Constructor
     /// \param[in] _canvas Canvas the magnifier will be attached to.
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-    public: explicit PlotMagnifier(QwtPlotCanvas *_canvas)
-#else
     public: explicit PlotMagnifier(QWidget *_canvas)
-#endif
             : QwtPlotMagnifier(_canvas)
           {
             // invert the wheel direction
@@ -239,11 +235,7 @@ IncrementalPlot::IncrementalPlot(QWidget *_parent)
 
   this->dataPtr->grid = new QwtPlotGrid;
 
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-  this->dataPtr->grid->setMajPen(QPen(Qt::gray, 0, Qt::DotLine));
-#else
   this->dataPtr->grid->setMajorPen(QPen(Qt::gray, 0, Qt::DotLine));
-#endif
   this->dataPtr->grid->attach(this);
 
   this->enableAxis(QwtPlot::yLeft);
@@ -415,7 +407,6 @@ void IncrementalPlot::Update()
   this->dataPtr->prevPoint = lastPoint;
   this->setAxisScale(QwtPlot::xBottom, minX, maxX);
 
-  this->dataPtr->tracker->Update();
   this->replot();
 }
 

@@ -24,163 +24,27 @@ using namespace gui;
 using namespace plugins;
 using namespace plot;
 
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-  /// \brief A widget that renders the hover line inside the main plot canvas.
-  class ignition::gui::plugins::plot::HoverLineWidget : public QWidget
-  {
-    /// \brief Constructor.
-    /// \param[in] _picker Plot picker that provides mouse tracking over a
-    /// plot canvas.
-    /// \param[in] _parent Parent wiget.
-    public: HoverLineWidget(QwtPicker *_picker, QWidget *_parent)
-      : QWidget(_parent), picker(_picker)
-    {
-      this->setAttribute(Qt::WA_TransparentForMouseEvents);
-      this->setAttribute(Qt::WA_NoSystemBackground);
-      this->setFocusPolicy(Qt::NoFocus);
-    }
-
-    /// \brief Draw the hover line
-    /// \param[in] _e Qt paint event
-    public: virtual void paintEvent(QPaintEvent *_e) overwrite
-    {
-      QPainter painter(this);
-      painter.setClipRegion(_e->region());
-
-      painter.setPen(this->picker->rubberBandPen());
-      this->Draw(&painter);
-    }
-
-    /// \brief Paint function to draw the hover line
-    /// \param[in] _painter Qt painter object.
-    public: void Draw(QPainter *_painter) const
-    {
-      const QWidget *widget = this->picker->parentWidget();
-      if (!widget)
-        return;
-
-      const QPoint trackerPos = this->picker->trackerPosition();
-      QPainterPath path;
-      path.addRect(widget->contentsRect());
-      const QRect pRect = path.boundingRect().toRect();
-      int trackerX = trackerPos.x();
-      int top = pRect.top();
-      int bottom = pRect.bottom();
-      QwtPainter::drawLine(_painter, trackerX, top, trackerX, bottom);
-    }
-
-    /// \brief Picker object. In this case, the PlotTracker.
-    private: QwtPicker *picker;
-  };
-#endif
-
 /// \internal
 /// \brief PlotTracker private data.
 class ignition::gui::plugins::plot::PlotTrackerPrivate
 {
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-  /// \brief The hover line widget drawn over the canvas.
-  public: HoverLineWidget *hoverLineWidget = nullptr;
-#endif
 };
 
 /////////////////////////////////////////////////
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-PlotTracker::PlotTracker(QwtPlotCanvas *_canvas)
-#else
 PlotTracker::PlotTracker(QWidget *_canvas)
-#endif
   : QwtPlotPicker(_canvas), dataPtr(new PlotTrackerPrivate)
 {
   this->setTrackerMode(QwtPlotPicker::AlwaysOn);
   this->setRubberBand(QwtPicker::VLineRubberBand);
-
-#if (QWT_VERSION >= ((6 << 16) | (1 << 8) | 0))
   this->setStateMachine(new QwtPickerTrackerMachine());
-#endif
 }
 
-/////////////////////////////////////////////////
-void PlotTracker::Update()
-{
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-  // default behavior of a tracker widget is that it only updates when mouse
-  // moves. This is a workaround to force the tracker text to update given
-  // that we are constantly updating the x-axis when simulation is playing.
-  if (!this->isActive())
-  {
-    QWidget *w = const_cast<QWidget *>(this->trackerWidget());
-    if (!w)
-      return;
-    w->update();
-  }
-#endif
-}
 
 /////////////////////////////////////////////////
 void PlotTracker::updateDisplay()
 {
   // this updates default rubberband and tracker text
   QwtPicker::updateDisplay();
-
-#if (QWT_VERSION < ((6 << 16) | (1 << 8) | 0))
-  // update hover line only when zoom is not active
-  if (!this->isActive())
-  {
-    // update display
-    QWidget *widget = this->parentWidget();
-    if (!widget)
-      return;
-
-    if (!this->dataPtr->hoverLineWidget)
-      this->dataPtr->hoverLineWidget = new HoverLineWidget(this, widget);
-
-    if (this->trackerPosition().x() < 0 ||
-        this->rubberBand() == QwtPicker::NoRubberBand)
-    {
-      this->dataPtr->hoverLineWidget->hide();
-      return;
-    }
-
-    // resize in case parent widget size changed.
-    this->dataPtr->hoverLineWidget->resize(widget->size());
-    this->dataPtr->hoverLineWidget->show();
-
-    // update mask
-    QBitmap bm(widget->width(), widget->height());
-    bm.fill(Qt::color0);
-    QPainter painter(&bm);
-    QPen pen = this->rubberBandPen();
-    pen.setColor(Qt::color1);
-    painter.setPen(pen);
-
-    // draw hover line
-    this->dataPtr->hoverLineWidget->Draw(&painter);
-
-    QRegion mask;
-    mask = QRegion(bm);
-    if (widget && !widget->testAttribute(Qt::WA_PaintOnScreen))
-    {
-        // The parent widget gets an update for its complete rectangle
-        // when the mask is changed in visible state.
-        // With this hide/show we only get an update for the
-        // previous mask.
-        this->dataPtr->hoverLineWidget->hide();
-    }
-    this->dataPtr->hoverLineWidget->setMask(mask);
-    this->dataPtr->hoverLineWidget->setVisible(!mask.isEmpty());
-
-    // update
-    this->dataPtr->hoverLineWidget->update();
-  }
-  else
-  {
-    if (this->dataPtr->hoverLineWidget)
-    {
-      this->dataPtr->hoverLineWidget->hide();
-    }
-  }
-#endif
 }
 
 /////////////////////////////////////////////////
