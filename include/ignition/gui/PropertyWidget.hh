@@ -60,7 +60,7 @@ namespace ignition
       public: PropertyWidget();
 
       /// \brief Destructor
-      public: ~PropertyWidget();
+      public: virtual ~PropertyWidget();
 
       /// \brief Get value from widget.
       /// \return Value of the widget as a QVariant.
