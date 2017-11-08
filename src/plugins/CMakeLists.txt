@@ -13,6 +13,6 @@ set (gtest_local_sources
   TopicViewer_TEST.cc
 )
 
-ign_build_tests(${gtest_local_sources})
+ign_build_tests(SOURCES ${gtest_local_sources})
 
 add_subdirectory(plot)

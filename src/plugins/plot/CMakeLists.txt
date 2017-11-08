@@ -7,4 +7,4 @@ set (gtest_local_sources
   PlotCurve_TEST.cc
 )
 
-ign_build_tests(${gtest_local_sources})
+ign_build_tests(SOURCES ${gtest_local_sources} LIB_DEPS Plot)
