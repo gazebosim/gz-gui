@@ -369,11 +369,9 @@ bool ignition::gui::loadConfig(const std::string &_config)
     {
       ignwarn << "There was an error parsing the <window> element"
               << std::endl;
+      return false;
     }
-    else
-    {
-      g_windowConfig.MergeFromXML(std::string(printer.CStr()));
-    }
+    g_windowConfig.MergeFromXML(std::string(printer.CStr()));
   }
 
   return true;
