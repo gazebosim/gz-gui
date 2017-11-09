@@ -436,6 +436,6 @@ sh upload.sh
    the new version. For example:
 
 ```
-curl -k -X POST -d '{"libName":"common", "version":"1.0.0", "releaseDate":"2017-10-09T12:10:13+02:00"}' https://api.ignitionrobotics.org/1.0/versions
+curl -k -X POST -d '{"libName":"common", "version":"1.0.0", "releaseDate":"2017-10-09T12:10:13+02:00","password":"secret"}' https://api.ignitionrobotics.org/1.0/versions
 ```
 
