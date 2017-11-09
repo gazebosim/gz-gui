@@ -78,8 +78,8 @@ namespace ignition
 // fields)
 std::string familyName(const std::string &_scopedName)
 {
-  std::regex regMiddle("::[0-9]*::");
-  std::regex regEnd("::[0-9]*$");
+  std::regex regMiddle("::[0-9]+::");
+  std::regex regEnd("::[0-9]+$");
   auto familyName = std::regex_replace(_scopedName, regMiddle, "::$2");
   familyName = std::regex_replace(familyName, regEnd, "$2");
   return familyName;
