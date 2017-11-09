@@ -1594,6 +1594,332 @@ TEST(MessageWidgetTest, TactileMsgWidget)
 }
 
 /////////////////////////////////////////////////
+TEST(MessageWidgetTest, Visible)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  msgs::Visual msg;
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
+  widget->show();
+
+  // Check that only top-level widgets are visible by default
+  {
+    // Inexistent widget
+    EXPECT_FALSE(widget->PropertyVisible("banana"));
+    // Leaf widget
+    EXPECT_TRUE(widget->PropertyVisible("id"));
+    // Custom nested widgets
+    EXPECT_TRUE(widget->PropertyVisible("pose"));
+    EXPECT_TRUE(widget->PropertyVisible("geometry"));
+    // Nested message widget
+    EXPECT_TRUE(widget->PropertyVisible("material"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyVisible("material::script"));
+    // Three levels deep leaf
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+    // Repeated field (none yet)
+    EXPECT_TRUE(widget->PropertyVisible("plugin"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
+  }
+
+  // Expand collapsible and check immediate children become visible
+  {
+    auto material = widget->PropertyWidgetByName("material");
+    ASSERT_NE(nullptr, material);
+
+    auto button = material->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    EXPECT_TRUE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+  }
+
+  // Inexistent widget
+  {
+    EXPECT_FALSE(widget->SetPropertyVisible("banana", false));
+  }
+
+  // Top-level leaf
+  {
+    EXPECT_TRUE(widget->SetPropertyVisible("id", false));
+    EXPECT_FALSE(widget->PropertyVisible("id"));
+
+    EXPECT_TRUE(widget->SetPropertyVisible("id", true));
+    EXPECT_TRUE(widget->PropertyVisible("id"));
+  }
+
+  // Top-level special message
+  {
+    EXPECT_TRUE(widget->SetPropertyVisible("pose", false));
+    EXPECT_FALSE(widget->PropertyVisible("pose"));
+
+    EXPECT_TRUE(widget->SetPropertyVisible("pose", true));
+    EXPECT_TRUE(widget->PropertyVisible("pose"));
+  }
+
+  // Top-level collapsed collapsible
+  {
+    // Check child was already hidden
+    EXPECT_FALSE(widget->PropertyVisible("meta::layer"));
+
+    // Hiding collapsible keeps child hidden
+    EXPECT_TRUE(widget->SetPropertyVisible("meta", false));
+    EXPECT_FALSE(widget->PropertyVisible("meta"));
+    EXPECT_FALSE(widget->PropertyVisible("meta::layer"));
+
+    // Showing collapsed collapsible doesn't show child
+    EXPECT_TRUE(widget->SetPropertyVisible("meta", true));
+    EXPECT_TRUE(widget->PropertyVisible("meta"));
+    EXPECT_FALSE(widget->PropertyVisible("meta::layer"));
+  }
+
+  // Top-level expanded collapsible
+  {
+    // Check immediate children were visible
+    EXPECT_TRUE(widget->PropertyVisible("material"));
+    EXPECT_TRUE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    // Hiding collapsible hides children
+    EXPECT_TRUE(widget->SetPropertyVisible("material", false));
+    EXPECT_FALSE(widget->PropertyVisible("material"));
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    // Explicitly hide a child
+    EXPECT_TRUE(widget->SetPropertyVisible("material::diffuse", false));
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+
+    // Showing expanded collapsible shows children except for those
+    // explicitly hidden or still collapsed
+    EXPECT_TRUE(widget->SetPropertyVisible("material", true));
+    EXPECT_TRUE(widget->PropertyVisible("material"));
+    EXPECT_FALSE(widget->PropertyVisible("material::diffuse"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    // Showing collapsed child doesn't work until collapsible is expanded
+    EXPECT_TRUE(widget->SetPropertyVisible("material::script::name", true));
+    EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
+
+    auto script = widget->PropertyWidgetByName("material::script");
+    ASSERT_NE(nullptr, script);
+
+    auto button = script->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    EXPECT_TRUE(widget->PropertyVisible("material::script"));
+    EXPECT_TRUE(widget->PropertyVisible("material::script::name"));
+  }
+
+  // Repeated field (new repetitions)
+  {
+    // Add a plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+
+    // Check it isn't visible yet
+    EXPECT_TRUE(widget->PropertyVisible("plugin"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::name"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::name"));
+
+    // Expand
+    auto plugin = widget->PropertyWidgetByName("plugin");
+    ASSERT_NE(nullptr, plugin);
+
+    auto button = plugin->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    auto plugin0 = widget->PropertyWidgetByName("plugin::0");
+    ASSERT_NE(nullptr, plugin0);
+
+    button = plugin0->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+
+    // Check it is now visible
+    EXPECT_TRUE(widget->PropertyVisible("plugin::0"));
+    EXPECT_TRUE(widget->PropertyVisible("plugin::0::header"));
+    EXPECT_TRUE(widget->PropertyVisible("plugin::0::name"));
+
+    // Hide plugin headers
+    EXPECT_TRUE(widget->SetPropertyVisible("plugin::header", false));
+
+    // Check it was hidden for the repetition
+    EXPECT_FALSE(widget->PropertyVisible("plugin::0::header"));
+
+    // Collapse it again so the next plugin fits inside the screen
+    button->click();
+
+    // Add another plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::name"));
+
+    // Expand it
+    auto plugin1 = widget->PropertyWidgetByName("plugin::1");
+    ASSERT_NE(nullptr, plugin1);
+
+    button = plugin1->findChild<QPushButton *>();
+    ASSERT_NE(nullptr, button);
+
+    button->click();
+    QCoreApplication::processEvents();
+
+    // Check the plugin is visible, but without headers
+    EXPECT_TRUE(widget->PropertyVisible("plugin::1"));
+    EXPECT_FALSE(widget->PropertyVisible("plugin::1::header"));
+    EXPECT_TRUE(widget->PropertyVisible("plugin::1::name"));
+  }
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ReadOnly)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  msgs::Visual msg;
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(widget, nullptr);
+  widget->show();
+
+  // Check that all properties are read-write by default
+  {
+    // Whole widget
+    EXPECT_FALSE(widget->ReadOnly());
+    // Inexistent widget
+    EXPECT_FALSE(widget->PropertyReadOnly("banana"));
+    // Leaf widget
+    EXPECT_FALSE(widget->PropertyReadOnly("id"));
+    // Custom nested widgets
+    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
+    EXPECT_FALSE(widget->PropertyReadOnly("geometry"));
+    // Nested message widget
+    EXPECT_FALSE(widget->PropertyReadOnly("material"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyReadOnly("material::diffuse"));
+    // Two levels deep message
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
+    // Three levels deep leaf
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
+  }
+
+  // The whole widget
+  {
+    EXPECT_TRUE(widget->SetReadOnly(true));
+    EXPECT_TRUE(widget->ReadOnly());
+    EXPECT_TRUE(widget->PropertyReadOnly("id"));
+    EXPECT_TRUE(widget->PropertyReadOnly("pose"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script::name"));
+
+    EXPECT_TRUE(widget->SetReadOnly(false));
+    EXPECT_FALSE(widget->ReadOnly());
+    EXPECT_FALSE(widget->PropertyReadOnly("id"));
+    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
+  }
+
+  // Inexistent widget
+  {
+    EXPECT_FALSE(widget->SetPropertyReadOnly("banana", false));
+  }
+
+  // Top-level leaf
+  {
+    EXPECT_TRUE(widget->SetPropertyReadOnly("id", true));
+    EXPECT_TRUE(widget->PropertyReadOnly("id"));
+
+    EXPECT_TRUE(widget->SetPropertyReadOnly("id", false));
+    EXPECT_FALSE(widget->PropertyReadOnly("id"));
+  }
+
+  // Top-level special message
+  {
+    EXPECT_TRUE(widget->SetPropertyReadOnly("pose", true));
+    EXPECT_TRUE(widget->PropertyReadOnly("pose"));
+
+    EXPECT_TRUE(widget->SetPropertyReadOnly("pose", false));
+    EXPECT_FALSE(widget->PropertyReadOnly("pose"));
+  }
+
+  // Top-level collapsible
+  {
+    EXPECT_TRUE(widget->SetPropertyReadOnly("material", true));
+    EXPECT_TRUE(widget->PropertyReadOnly("material"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script"));
+    EXPECT_TRUE(widget->PropertyReadOnly("material::script::name"));
+
+    EXPECT_TRUE(widget->SetPropertyReadOnly("material", false));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script"));
+    EXPECT_FALSE(widget->PropertyReadOnly("material::script::name"));
+  }
+
+  // Repeated field (new repetitions)
+  {
+    // Add a plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+
+    // Check it was created as write
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
+
+    // Set headers to read-only
+    EXPECT_TRUE(widget->SetPropertyReadOnly("plugin::header", true));
+
+    // Check it affected the repetition
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::0::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
+
+    // Add another plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+
+    // Check it was affected
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::1"));
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::1::name"));
+  }
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildStringSignal)
 {
   setVerbosity(4);
