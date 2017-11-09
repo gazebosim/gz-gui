@@ -63,7 +63,7 @@ namespace ignition
       public: explicit MessageWidget(const google::protobuf::Message *_msg);
 
       /// \brief Destructor
-      public: ~MessageWidget();
+      public: virtual ~MessageWidget();
 
       /// \brief Get a message with the widget's current contents. The message
       /// will be of the same type as the one used on the constructor.
@@ -84,11 +84,80 @@ namespace ignition
       signals: void ValueChanged(const std::string &_name,
                                  const QVariant _value);
 
+      /// \brief Set whether a property widget should be visible.
+      ///
+      /// * If hiding a collapsible, all its children will be hidden.
+      /// * If showing a collapsible, all its children will be shown unless
+      ///   they've been explicitly hidden.
+      /// * If hiding a collapsed property, it won't show when the containing
+      ///   collapsible is expanded.
+      /// * If showing a collapsed property, it won't show until the containing
+      ///   collapsible is expanded.
+      ///
+      /// \param[in] _name Name of the property widget. For repeated fields,
+      /// omit the "::number" which would refer to a specific widget.
+      /// \param[in] _visible True to set the widget to be visible.
+      /// \return True if the value is set successfully.
+      /// \sa PropertyVisible
+      public: bool SetPropertyVisible(const std::string &_name,
+                                      const bool _visible);
+
+      /// \brief Get whether a property widget is visible.
+      /// \param[in] _name Name of the property widget.
+      /// \return False if widget is not visible or doesn't exist.
+      /// \sa SetPropertyVisible
+      public: bool PropertyVisible(const std::string &_name) const;
+
+      /// \brief Set whether all property widgets should be read-only. This
+      /// disables all child widgets.
+      /// \param[in] _readOnly True for read-only, false for read-write.
+      /// \return True if the value is set successfully.
+      /// \sa ReadOnly
+      public: bool SetReadOnly(const bool _readOnly);
+
+      /// \brief Get whether all property widgets are read-only.
+      /// \return False if at least one widget is not read-only.
+      /// \sa SetReadOnly
+      public: bool ReadOnly() const;
+
+      /// \brief Set whether a property widget should be read-only.
+      /// \param[in] _name Name of the property widget. For repeated fields,
+      /// omit the "::number" which would refer to a specific widget.
+      /// \param[in] _readOnly True to set the widget to be read-only.
+      /// \return True if the value is set successfully.
+      /// \sa PropertyReadOnly
+      public: bool SetPropertyReadOnly(const std::string &_name,
+                                       const bool _readOnly);
+
+      /// \brief Get whether a property widget is read-only.
+      /// \param[in] _name Name of the property widget.
+      /// \return True if the widget is read-only.
+      /// \sa SetPropertyReadOnly
+      public: bool PropertyReadOnly(const std::string &_name) const;
+
+      /// \brief Set a value of a property widget.
+      /// \param[in] _name Name of the property widget.
+      /// \param[in] _value Value to set to.
+      /// \return True if the value is set successfully.
+      /// \sa PropertyValue
+      public: bool SetPropertyValue(const std::string &_name,
+                                    const QVariant _value);
+
+      /// \brief Get value from a property widget.
+      /// \param[in] _name Name of the property widget.
+      /// \return Value as QVariant.
+      /// \sa SetPropertyValue
+      public: QVariant PropertyValue(const std::string &_name) const;
+
       /// \brief Get a property widget by its scoped name.
       /// \param[in] _name Scoped name of the property widget.
       /// \return The widget with the given name or nullptr if it wasn't found.
       public: PropertyWidget *PropertyWidgetByName(
           const std::string &_name) const;
+
+      /// \brief Get the number of property widgets.
+      /// \return The number of property widgets.
+      public: unsigned int PropertyWidgetCount() const;
 
       /// \brief Performs the following:
       /// * Register the widget so that it can be referred by its scoped name
@@ -102,6 +171,11 @@ namespace ignition
       /// \return True if property successfully added.
       private: bool AddPropertyWidget(const std::string &_scopedName,
           PropertyWidget *_property, QWidget *_parent);
+
+      /// \brief Removes a property widget and deletes it.
+      /// \param[in] _scopedName Widget's scoped name.
+      /// \return True if property successfully removed.
+      private: bool RemovePropertyWidget(const std::string &_scopedName);
 
       /// \brief Parse the input message and either create widgets for
       /// configuring fields of the message, or update existing widgets with
