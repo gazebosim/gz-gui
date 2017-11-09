@@ -67,7 +67,8 @@ namespace plugins
     /// the given 2D screen coordinates.
     /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
     /// \return 3D coordinates of a point in the 3D scene.
-    public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos) const;
+    public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
+        const;
 
     // Documentation inherited
     protected: virtual void paintEvent(QPaintEvent *_e) override;

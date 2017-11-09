@@ -13,6 +13,15 @@ set (gtest_local_sources
   TopicViewer_TEST.cc
 )
 
-ign_build_tests(${gtest_local_sources})
+ign_build_tests(SOURCES ${gtest_local_sources})
+
+if (HAVE_IGN_RENDERING)
+  set (gtest_rendering_sources
+    Scene3D_TEST.cc
+  )
+endif()
+
+ign_build_tests(SOURCES ${gtest_rendering_sources}
+                LIB_DEPS ${IGNITION-RENDERING_LIBRARIES})
 
 add_subdirectory(plot)

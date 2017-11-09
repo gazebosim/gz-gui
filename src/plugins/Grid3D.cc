@@ -275,13 +275,14 @@ void Grid3D::Refresh()
     auto cellCountWidget = new NumberWidget("Horizontal cell count",
         NumberType::INT);
     cellCountWidget->SetValue(QVariant::fromValue(grid->CellCount()));
-    cellCountWidget->setObjectName( gridName + "---cellCountWidget");
+    cellCountWidget->setObjectName(gridName + "---cellCountWidget");
     this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto vertCellCountWidget = new NumberWidget("Vertical cell count",
         NumberType::INT);
-    vertCellCountWidget->SetValue(QVariant::fromValue(grid->VerticalCellCount()));
+    vertCellCountWidget->SetValue(
+        QVariant::fromValue(grid->VerticalCellCount()));
     vertCellCountWidget->setObjectName(gridName + "---vertCellCountWidget");
     this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
@@ -310,12 +311,12 @@ void Grid3D::Refresh()
     this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
 
     auto collapsible = new CollapsibleWidget(grid->Name());
-    collapsible->layout()->addWidget(cellCountWidget);
-    collapsible->layout()->addWidget(vertCellCountWidget);
-    collapsible->layout()->addWidget(cellLengthWidget);
-    collapsible->layout()->addWidget(poseWidget);
-    collapsible->layout()->addWidget(colorWidget);
-    collapsible->layout()->addWidget(deleteButton);
+    collapsible->AppendContent(cellCountWidget);
+    collapsible->AppendContent(vertCellCountWidget);
+    collapsible->AppendContent(cellLengthWidget);
+    collapsible->AppendContent(poseWidget);
+    collapsible->AppendContent(colorWidget);
+    collapsible->AppendContent(deleteButton);
 
     mainLayout->addWidget(collapsible);
   }

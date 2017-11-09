@@ -56,6 +56,10 @@ using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
+// Store the window id to use at paintEvent once
+// (Qt complains if we call this->winId() from the paint event)
+WId windowId;
+
 /////////////////////////////////////////////////
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
@@ -144,24 +148,30 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
   this->dataPtr->camera->SetHFOV(M_PI * 0.5);
 
-  // Render window
-  this->dataPtr->renderWindow = this->dataPtr->camera->CreateRenderWindow();
-  this->dataPtr->renderWindow->SetHandle(
-      std::to_string(static_cast<uint64_t>(this->winId())));
-  this->dataPtr->renderWindow->SetWidth(this->width());
-  this->dataPtr->renderWindow->SetHeight(this->height());
-
   // Timer to repaint
   this->dataPtr->updateTimer = new QTimer(this);
   this->connect(this->dataPtr->updateTimer, SIGNAL(timeout()),
       this, SLOT(update()));
   this->dataPtr->updateTimer->start(std::round(1000.0 / 60.0));
+
+  windowId = this->winId();
 }
 
 /////////////////////////////////////////////////
 void Scene3D::paintEvent(QPaintEvent *_e)
 {
-  if (this->dataPtr->camera)
+  // Create render window on first paint, so we're sure the window is showing
+  // when we attach to it
+  if (!this->dataPtr->renderWindow)
+  {
+    this->dataPtr->renderWindow = this->dataPtr->camera->CreateRenderWindow();
+    this->dataPtr->renderWindow->SetHandle(
+        std::to_string(static_cast<uint64_t>(windowId)));
+    this->dataPtr->renderWindow->SetWidth(this->width());
+    this->dataPtr->renderWindow->SetHeight(this->height());
+  }
+
+  if (this->dataPtr->camera && this->dataPtr->renderWindow)
     this->dataPtr->camera->Update();
 
   _e->accept();
