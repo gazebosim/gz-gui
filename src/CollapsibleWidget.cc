@@ -23,8 +23,21 @@
 using namespace ignition;
 using namespace gui;
 
+namespace ignition
+{
+  namespace gui
+  {
+    class CollapsibleWidgetPrivate
+    {
+      /// \brief Whether the widget is collapsed or expanded.
+      public: bool expanded = false;
+    };
+  }
+}
+
 /////////////////////////////////////////////////
 CollapsibleWidget::CollapsibleWidget(const std::string &_key)
+    : dataPtr(new CollapsibleWidgetPrivate)
 {
   // Button label
   auto buttonLabel = new QLabel(tr(humanReadable(_key).c_str()));
@@ -57,6 +70,11 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
 }
 
 /////////////////////////////////////////////////
+CollapsibleWidget::~CollapsibleWidget()
+{
+}
+
+/////////////////////////////////////////////////
 void CollapsibleWidget::Toggle(const bool _checked)
 {
   // Toggle all items below the button in the main layout
@@ -72,6 +90,8 @@ void CollapsibleWidget::Toggle(const bool _checked)
   // Change to ▲
   else
     icon->setText(QString::fromUtf8("\u25b2"));
+
+  this->dataPtr->expanded = _checked;
 }
 
 /////////////////////////////////////////////////
@@ -96,5 +116,11 @@ QVariant CollapsibleWidget::Value() const
     return QVariant();
 
   return prop->Value();
+}
+
+/////////////////////////////////////////////////
+bool CollapsibleWidget::IsExpanded() const
+{
+  return this->dataPtr->expanded;
 }
 

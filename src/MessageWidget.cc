@@ -134,6 +134,27 @@ google::protobuf::Message *MessageWidget::Msg() const
 }
 
 /////////////////////////////////////////////////
+bool MessageWidget::SetPropertyValue(const std::string &_name,
+                                     const QVariant _value)
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+    return false;
+
+  return w->SetValue(_value);
+}
+
+/////////////////////////////////////////////////
+QVariant MessageWidget::PropertyValue(const std::string &_name) const
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+    return QVariant();
+
+  return w->Value();
+}
+
+/////////////////////////////////////////////////
 bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     const std::string &_scopedName, QWidget *_parent)
 {
@@ -245,10 +266,6 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       continue;
     }
 
-    // TODO parse repeated fields
-    if (fieldDescriptor->is_repeated())
-      continue;
-
     // Scoped name
     auto fieldName = fieldDescriptor->name();
     auto scopedName = _scopedName.empty() ?
@@ -259,6 +276,225 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
 
     // Handle each field type
     auto fieldType = fieldDescriptor->type();
+
+    // Repeated fields
+    if (fieldDescriptor->is_repeated())
+    {
+      // Create collapsible
+      auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget);
+      if (!collapsible)
+      {
+        collapsible = new CollapsibleWidget(fieldName);
+        _parent->layout()->addWidget(collapsible);
+      }
+
+      // Parse all fields in the message
+      int count = 0;
+      for (; count < reflection->FieldSize(*_msg, fieldDescriptor); ++count)
+      {
+        // Append number to name
+        auto name = scopedName + "::" + std::to_string(count);
+
+        // Get widget
+        auto repProp = this->PropertyWidgetByName(name);
+
+        // If it's a repeated message
+        if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+        {
+          // Create a collapsible per repetition
+          auto repCollapsible = qobject_cast<CollapsibleWidget *>(repProp);
+          if (!repCollapsible)
+          {
+            repCollapsible = new CollapsibleWidget(std::to_string(count));
+            collapsible->layout()->addWidget(repCollapsible);
+          }
+
+          // Parse message
+          auto &valueMsg = reflection->GetRepeatedMessage(*_msg,
+              fieldDescriptor, count);
+          this->Parse(&valueMsg, name, repCollapsible);
+
+          // Collapse the first time it was created
+          if (!repProp)
+          {
+            repCollapsible->Toggle(false);
+            this->AddPropertyWidget(name, repCollapsible, collapsible);
+          }
+        }
+        // Numbers
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new NumberWidget(std::to_string(count),
+                NumberType::DOUBLE);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          auto value = reflection->GetRepeatedDouble(*_msg, fieldDescriptor,
+            count);
+          if (!math::equal(value, value))
+            value = 0;
+          repProp->SetValue(value);
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new NumberWidget(std::to_string(count),
+                NumberType::DOUBLE);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          auto value = reflection->GetRepeatedFloat(*_msg, fieldDescriptor,
+            count);
+          if (!math::equal(value, value))
+            value = 0;
+          repProp->SetValue(value);
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new NumberWidget(std::to_string(count), NumberType::INT);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          int value = reflection->GetRepeatedInt64(*_msg, fieldDescriptor,
+            count);
+          repProp->SetValue(value);
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new NumberWidget(std::to_string(count), NumberType::INT);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          auto value = reflection->GetRepeatedInt32(*_msg, fieldDescriptor,
+            count);
+          repProp->SetValue(value);
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new NumberWidget(std::to_string(count), NumberType::UINT);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          unsigned int value = reflection->GetRepeatedUInt64(*_msg,
+              fieldDescriptor, count);
+          repProp->SetValue(value);
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new NumberWidget(std::to_string(count), NumberType::UINT);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          auto value = reflection->GetRepeatedUInt32(*_msg, fieldDescriptor,
+            count);
+          repProp->SetValue(value);
+        }
+        // Boolean
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_BOOL)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new BoolWidget(std::to_string(count));
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          auto value = reflection->GetRepeatedBool(*_msg, fieldDescriptor,
+            count);
+          repProp->SetValue(value);
+        }
+        // String
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_STRING)
+        {
+          // If creating new widget
+          if (!repProp)
+          {
+            repProp = new StringWidget(std::to_string(count));
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          auto value = reflection->GetRepeatedString(*_msg,
+            fieldDescriptor, count);
+          repProp->SetValue(QVariant::fromValue(value));
+        }
+        // Enum
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_ENUM)
+        {
+          // Value from field
+          auto value = reflection->GetRepeatedEnum(*_msg, fieldDescriptor,
+            count);
+
+          // If creating new widget
+          if (!repProp)
+          {
+            // Get all possible enum values
+            std::vector<std::string> enumValues;
+            auto enumDescriptor = value->type();
+            for (int j = 0; j < enumDescriptor->value_count(); ++j)
+            {
+              auto valueDescriptor = enumDescriptor->value(j);
+              if (valueDescriptor)
+                enumValues.push_back(valueDescriptor->name());
+            }
+
+            repProp = new EnumWidget(std::to_string(count), enumValues);
+            this->AddPropertyWidget(name, repProp, collapsible);
+          }
+
+          // Set value
+          repProp->SetValue(QVariant::fromValue(value->name()));
+        }
+        // Others
+        else
+        {
+          ignwarn << "Unhandled message type [" << fieldType << "]"
+                  << std::endl;
+        }
+      }
+
+      // Drop repetitions which disappeared
+      auto colLayout = collapsible->layout();
+      auto layoutCount = colLayout->count();
+      for (; count < layoutCount - 1; ++count)
+      {
+        auto name = scopedName + "::" + std::to_string(count);
+        this->RemovePropertyWidget(name);
+      }
+
+      // Collapse the first time it was created
+      if (!propertyWidget)
+      {
+        collapsible->Toggle(false);
+        this->AddPropertyWidget(scopedName, collapsible, _parent);
+      }
+
+      continue;
+    }
 
     // Numbers
     if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
@@ -459,6 +695,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
   if (!_msg)
     return false;
 
+  _msg->Clear();
+
   // Get descriptor of given message
   auto descriptor = _msg->GetDescriptor();
   if (!descriptor)
@@ -479,10 +717,6 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     std::string name = fieldDescriptor->name();
 
     // Update each field in the message
-    // TODO update repeated fields
-    if (fieldDescriptor->is_repeated())
-      continue;
-
     auto scopedName = _parentScopedName.empty() ? name
         : _parentScopedName + "::" + name;
 
@@ -495,107 +729,169 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 
     auto childWidget = this->dataPtr->properties[scopedName];
     auto variant = childWidget->Value();
+    auto fieldType = fieldDescriptor->type();
 
-    switch (fieldDescriptor->type())
+    // Handle repeated fields and repeated nested messages
+    if (fieldDescriptor->is_repeated())
     {
-      // Numbers
-      case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
+      int c = 0;
+      while (auto prop = this->PropertyWidgetByName(scopedName + "::" +
+          std::to_string(c)))
       {
-        reflection->SetDouble(_msg, fieldDescriptor, variant.toDouble());
-        break;
-      }
-      case google::protobuf::FieldDescriptor::TYPE_FLOAT:
-      {
-        reflection->SetFloat(_msg, fieldDescriptor, variant.toDouble());
-        break;
-      }
-      case google::protobuf::FieldDescriptor::TYPE_INT64:
-      {
-        reflection->SetInt64(_msg, fieldDescriptor, variant.toInt());
-        break;
-      }
-      case google::protobuf::FieldDescriptor::TYPE_INT32:
-      {
-        reflection->SetInt32(_msg, fieldDescriptor, variant.toInt());
-        break;
-      }
-      case google::protobuf::FieldDescriptor::TYPE_UINT64:
-      {
-        reflection->SetUInt64(_msg, fieldDescriptor, variant.toUInt());
-        break;
-      }
-      case google::protobuf::FieldDescriptor::TYPE_UINT32:
-      {
-        reflection->SetUInt32(_msg, fieldDescriptor, variant.toUInt());
-        break;
-      }
-      // Boolean
-      case google::protobuf::FieldDescriptor::TYPE_BOOL:
-      {
-        reflection->SetBool(_msg, fieldDescriptor, variant.toBool());
-        break;
-      }
-      // String
-      case google::protobuf::FieldDescriptor::TYPE_STRING:
-      {
-        reflection->SetString(_msg, fieldDescriptor,
-            variant.value<std::string>());
-        break;
-      }
-      // Enum
-      case google::protobuf::FieldDescriptor::TYPE_ENUM:
-      {
-        auto str = variant.value<std::string>();
+        variant = prop->Value();
 
-        // Convert string into protobuf enum
-        auto enumDescriptor = fieldDescriptor->enum_type();
-        if (!enumDescriptor)
-          continue;
+        if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
+        {
+          reflection->AddDouble(_msg, fieldDescriptor, variant.toDouble());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
+        {
+          reflection->AddFloat(_msg, fieldDescriptor, variant.toFloat());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
+        {
+          reflection->AddInt64(_msg, fieldDescriptor, variant.toInt());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
+        {
+          reflection->AddInt32(_msg, fieldDescriptor, variant.toInt());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
+        {
+          reflection->AddUInt64(_msg, fieldDescriptor, variant.toUInt());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
+        {
+          reflection->AddUInt32(_msg, fieldDescriptor, variant.toUInt());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_BOOL)
+        {
+          reflection->AddBool(_msg, fieldDescriptor, variant.toBool());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_STRING)
+        {
+          reflection->AddString(_msg, fieldDescriptor,
+              variant.value<std::string>());
+        }
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_ENUM)
+        {
+          auto str = variant.value<std::string>();
 
-        auto enumValue = enumDescriptor->FindValueByName(str);
-        if (enumValue)
-          reflection->SetEnum(_msg, fieldDescriptor, enumValue);
-        else
-          ignerr << "Unable to find enum value [" << str << "]" << std::endl;
+          // Convert string into protobuf enum
+          auto enumDescriptor = fieldDescriptor->enum_type();
+          if (!enumDescriptor)
+          {
+            ignwarn << "Failed to get enum descriptor." << std::endl;
+            continue;
+          }
 
-        break;
-      }
-      // Nested messages
-      case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
-      {
-        auto mutableMsg = reflection->MutableMessage(_msg, fieldDescriptor);
-
-        // Geometry
-        if (fieldDescriptor->message_type()->name() == "Geometry")
-        {
-          mutableMsg->CopyFrom(variant.value<msgs::Geometry>());
+          auto enumValue = enumDescriptor->FindValueByName(str);
+          if (enumValue)
+            reflection->AddEnum(_msg, fieldDescriptor, enumValue);
+          else
+          {
+            ignwarn << "Unable to find enum value [" << str << "]" << std::endl;
+            continue;
+          }
         }
-        // Pose
-        else if (fieldDescriptor->message_type()->name() == "Pose")
+        else if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
         {
-          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Pose3d>()));
+          auto msg = reflection->AddMessage(_msg, fieldDescriptor);
+          this->FillMsg(msg, scopedName + "::" + std::to_string(c));
         }
-        // Vector3d
-        else if (fieldDescriptor->message_type()->name() == "Vector3d")
-        {
-          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Vector3d>()));
-        }
-        // Color
-        else if (fieldDescriptor->message_type()->name() == "Color")
-        {
-          mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Color>()));
-        }
-        // Recursively fill other types
         else
         {
-          auto valueMsg = (reflection->MutableMessage(_msg, fieldDescriptor));
-          this->FillMsg(valueMsg, scopedName);
+          ignwarn << "Unhandled field type [" << fieldType << "]" << std::endl;
         }
 
-        break;
+        c++;
       }
-      default:
-        break;
+      continue;
+    }
+
+    // Numbers
+    if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
+    {
+      reflection->SetDouble(_msg, fieldDescriptor, variant.toDouble());
+    }
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
+    {
+      reflection->SetFloat(_msg, fieldDescriptor, variant.toFloat());
+    }
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
+    {
+      reflection->SetInt64(_msg, fieldDescriptor, variant.toInt());
+    }
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
+    {
+      reflection->SetInt32(_msg, fieldDescriptor, variant.toInt());
+    }
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
+    {
+      reflection->SetUInt64(_msg, fieldDescriptor, variant.toUInt());
+    }
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
+    {
+      reflection->SetUInt32(_msg, fieldDescriptor, variant.toUInt());
+    }
+    // Boolean
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_BOOL)
+    {
+      reflection->SetBool(_msg, fieldDescriptor, variant.toBool());
+    }
+    // String
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_STRING)
+    {
+      reflection->SetString(_msg, fieldDescriptor,
+          variant.value<std::string>());
+    }
+    // Enum
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_ENUM)
+    {
+      auto str = variant.value<std::string>();
+
+      // Convert string into protobuf enum
+      auto enumDescriptor = fieldDescriptor->enum_type();
+      if (!enumDescriptor)
+        continue;
+
+      auto enumValue = enumDescriptor->FindValueByName(str);
+      if (enumValue)
+        reflection->SetEnum(_msg, fieldDescriptor, enumValue);
+      else
+        ignerr << "Unable to find enum value [" << str << "]" << std::endl;
+    }
+    // Nested messages
+    else if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+    {
+      auto mutableMsg = reflection->MutableMessage(_msg, fieldDescriptor);
+
+      // Geometry
+      if (fieldDescriptor->message_type()->name() == "Geometry")
+      {
+        mutableMsg->CopyFrom(variant.value<msgs::Geometry>());
+      }
+      // Pose
+      else if (fieldDescriptor->message_type()->name() == "Pose")
+      {
+        mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Pose3d>()));
+      }
+      // Vector3d
+      else if (fieldDescriptor->message_type()->name() == "Vector3d")
+      {
+        mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Vector3d>()));
+      }
+      // Color
+      else if (fieldDescriptor->message_type()->name() == "Color")
+      {
+        mutableMsg->CopyFrom(msgs::Convert(variant.value<math::Color>()));
+      }
+      // Recursively fill other types
+      else
+      {
+        auto valueMsg = (reflection->MutableMessage(_msg, fieldDescriptor));
+        this->FillMsg(valueMsg, scopedName);
+      }
     }
   }
   return true;
@@ -640,7 +936,9 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     auto w = new QWidget();
     w->setLayout(hLayout);
 
-    _parent->layout()->addWidget(w);
+    collapsibleParent->layout()->addWidget(w);
+
+    w->setVisible(collapsibleParent->IsExpanded());
   }
   else
   {
@@ -648,6 +946,38 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   }
 
   return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::RemovePropertyWidget(const std::string &_name)
+{
+  auto widget = this->PropertyWidgetByName(_name);
+
+  if (!widget)
+    return false;
+
+  // Remove all its children from property list
+  for (const auto &prop : this->dataPtr->properties)
+  {
+    if (prop.first.find(_name) == 0)
+      this->dataPtr->properties.erase(prop.first);
+  }
+
+  QWidget *toDelete = widget;
+
+  if (!qobject_cast<PropertyWidget *>(widget->parent()))
+    toDelete = qobject_cast<QWidget *>(widget->parent());
+
+  toDelete->setParent(nullptr);
+  toDelete->deleteLater();
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+unsigned int MessageWidget::PropertyWidgetCount() const
+{
+  return this->dataPtr->properties.size();
 }
 
 /////////////////////////////////////////////////
