@@ -57,7 +57,7 @@ void PropertyWidget::SetReadOnly(const bool _readOnly,
   if (_explicit)
     this->dataPtr->explicitReadOnly = true;
 
-  if (_explicit || (!_explicit && !this->dataPtr->explicitReadOnly))
+  if (_explicit || !this->dataPtr->explicitReadOnly)
     this->setEnabled(!_readOnly);
 }
 
