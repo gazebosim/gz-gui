@@ -192,6 +192,316 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_DOUBLE_EQ(retMsg->suspension_erp(), 0.9);
   }
 
+  // update fields in the message widget and
+  // verify that the new message contains the updated values.
+  // Joint type revolute -> universal
+  {
+    // joint
+    widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated")));
+    widget->SetPropertyValue("id", 9999999u);
+    widget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated")));
+    widget->SetPropertyValue("parent_id", 1u);
+    widget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated")));
+    widget->SetPropertyValue("child_id", 2u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
+
+    // pose
+    math::Vector3d pos(2.0, 9.0, -4.0);
+    math::Quaterniond quat(0.0, 0.0, 1.57);
+    widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // axis1
+    widget->SetPropertyValue("axis1::xyz", QVariant::fromValue(
+        math::Vector3d::UnitY));
+    widget->SetPropertyValue("axis1::use_parent_model_frame",
+        true);
+    widget->SetPropertyValue("axis1::limit_lower", -1.2);
+    widget->SetPropertyValue("axis1::limit_upper", -1.0);
+    widget->SetPropertyValue("axis1::limit_effort", 1.0);
+    widget->SetPropertyValue("axis1::limit_velocity", 100.0);
+    widget->SetPropertyValue("axis1::damping", 0.9);
+
+    // axis2
+    widget->SetPropertyValue("axis2::xyz", QVariant::fromValue(
+        math::Vector3d::UnitZ));
+    widget->SetPropertyValue("axis2::use_parent_model_frame",
+        true);
+    widget->SetPropertyValue("axis2::limit_lower", -3.2);
+    widget->SetPropertyValue("axis2::limit_upper", -3.0);
+    widget->SetPropertyValue("axis2::limit_effort", 3.0);
+    widget->SetPropertyValue("axis2::limit_velocity", 300.0);
+    widget->SetPropertyValue("axis2::damping", 3.9);
+
+    // other joint physics properties
+    widget->SetPropertyValue("cfm", 0.9);
+    widget->SetPropertyValue("bounce", 0.8);
+    widget->SetPropertyValue("velocity", 0.7);
+    widget->SetPropertyValue("fudge_factor", 0.6);
+    widget->SetPropertyValue("limit_cfm", 0.5);
+    widget->SetPropertyValue("limit_erp", 0.4);
+    widget->SetPropertyValue("suspension_cfm", 0.3);
+    widget->SetPropertyValue("suspension_erp", 0.2);
+  }
+
+  // verify widget values
+  {
+    // joint
+    EXPECT_EQ(widget->PropertyValue("name").value<std::string>(),
+        "test_joint_updated");
+    EXPECT_EQ(widget->PropertyValue("id"), 9999999u);
+    EXPECT_EQ(widget->PropertyValue("parent").value<std::string>(),
+        "test_joint_parent_updated");
+    EXPECT_EQ(widget->PropertyValue("parent_id"), 1u);
+    EXPECT_EQ(widget->PropertyValue("child").value<std::string>(),
+        "test_joint_child_updated");
+    EXPECT_EQ(widget->PropertyValue("child_id"), 2u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
+
+    // pose
+    math::Vector3d pos(2.0, 9.0, -4.0);
+    math::Quaterniond quat(0.0, 0.0, 1.57);
+    EXPECT_EQ(widget->PropertyValue("pose").value<math::Pose3d>(),
+        math::Pose3d(pos, quat));
+
+    // axis1
+    EXPECT_EQ(widget->PropertyValue(
+        "axis1::xyz").value<math::Vector3d>(), math::Vector3d::UnitY);
+    EXPECT_EQ(widget->PropertyValue(
+        "axis1::use_parent_model_frame").toBool(), true);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_lower").toDouble(), -1.2);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_upper").toDouble(), -1.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_effort").toDouble(), 1.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::limit_velocity").toDouble(), 100.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis1::damping").toDouble(), 0.9);
+
+    // axis2
+    EXPECT_EQ(widget->PropertyValue(
+        "axis2::xyz").value<math::Vector3d>(), math::Vector3d::UnitZ);
+    EXPECT_EQ(widget->PropertyValue(
+        "axis1::use_parent_model_frame").toBool(), true);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_lower").toDouble(), -3.2);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_upper").toDouble(), -3.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_effort").toDouble(), 3.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::limit_velocity").toDouble(), 300.0);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "axis2::damping").toDouble(), 3.9);
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "cfm").toDouble(), 0.9);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "bounce").toDouble(), 0.8);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "velocity").toDouble(), 0.7);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "fudge_factor").toDouble(), 0.6);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_cfm").toDouble(), 0.5);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_erp").toDouble(), 0.4);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_cfm").toDouble(), 0.3);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_erp").toDouble(), 0.2);
+  }
+
+  // verify updates in new msg
+  {
+    auto retJointMsg = dynamic_cast<msgs::Joint *>(widget->Msg());
+    EXPECT_TRUE(retJointMsg != nullptr);
+
+    // joint
+    EXPECT_EQ(retJointMsg->name(), "test_joint_updated");
+    EXPECT_EQ(retJointMsg->id(), 9999999u);
+    EXPECT_EQ(retJointMsg->parent(), "test_joint_parent_updated");
+    EXPECT_EQ(retJointMsg->parent_id(), 1u);
+    EXPECT_EQ(retJointMsg->child(), "test_joint_child_updated");
+    EXPECT_EQ(retJointMsg->child_id(), 2u);
+
+    // type
+    EXPECT_EQ(retJointMsg->type(), msgs::ConvertJointType("universal"));
+
+    // pose
+    auto poseMsg = retJointMsg->pose();
+    auto posMsg = poseMsg.position();
+    EXPECT_DOUBLE_EQ(posMsg.x(), 2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), 9.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
+    auto quat = msgs::Convert(poseMsg.orientation());
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 1.57);
+
+    // axis1
+    auto axisMsg = retJointMsg->mutable_axis1();
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().x(), 0.0);
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().y(), 1.0);
+    EXPECT_DOUBLE_EQ(axisMsg->xyz().z(), 0.0);
+    EXPECT_EQ(axisMsg->use_parent_model_frame(), true);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_lower(), -1.2);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_upper(), -1.0);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_effort(), 1.0);
+    EXPECT_DOUBLE_EQ(axisMsg->limit_velocity(), 100.0);
+    EXPECT_DOUBLE_EQ(axisMsg->damping(), 0.9);
+
+    // axis2
+    auto axis2Msg = retJointMsg->mutable_axis2();
+    EXPECT_DOUBLE_EQ(axis2Msg->xyz().x(), 0.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->xyz().y(), 0.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->xyz().z(), 1.0);
+    EXPECT_EQ(axis2Msg->use_parent_model_frame(), true);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_lower(), -3.2);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_upper(), -3.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_effort(), 3.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->limit_velocity(), 300.0);
+    EXPECT_DOUBLE_EQ(axis2Msg->damping(), 3.9);
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(retJointMsg->cfm(), 0.9);
+    EXPECT_DOUBLE_EQ(retJointMsg->bounce(), 0.8);
+    EXPECT_DOUBLE_EQ(retJointMsg->velocity(), 0.7);
+    EXPECT_DOUBLE_EQ(retJointMsg->fudge_factor(), 0.6);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_cfm(), 0.5);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_erp(), 0.4);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_cfm(), 0.3);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_erp(), 0.2);
+  }
+
+  // update fields in the message widget and
+  // verify that the new message contains the updated values.
+  // Joint type universal -> ball
+  {
+    // joint
+    widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated2")));
+    widget->SetPropertyValue("id", 2222222u);
+    widget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated2")));
+    widget->SetPropertyValue("parent_id", 10u);
+    widget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated2")));
+    widget->SetPropertyValue("child_id", 20u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
+
+    // pose
+    math::Vector3d pos(-2.0, 1.0, 2.0);
+    math::Quaterniond quat(0.0, 0.0, 0.0);
+    widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // other joint physics properties
+    widget->SetPropertyValue("cfm", 0.19);
+    widget->SetPropertyValue("bounce", 0.18);
+    widget->SetPropertyValue("velocity", 2.7);
+    widget->SetPropertyValue("fudge_factor", 0.26);
+    widget->SetPropertyValue("limit_cfm", 0.15);
+    widget->SetPropertyValue("limit_erp", 0.24);
+    widget->SetPropertyValue("suspension_cfm", 0.13);
+    widget->SetPropertyValue("suspension_erp", 0.12);
+  }
+
+  // verify widget values
+  {
+    // joint
+    EXPECT_EQ(widget->PropertyValue("name").value<std::string>(),
+        "test_joint_updated2");
+    EXPECT_EQ(widget->PropertyValue("id"), 2222222u);
+    EXPECT_EQ(widget->PropertyValue("parent").value<std::string>(),
+        "test_joint_parent_updated2");
+    EXPECT_EQ(widget->PropertyValue("parent_id"), 10u);
+    EXPECT_EQ(widget->PropertyValue("child").value<std::string>(),
+        "test_joint_child_updated2");
+    EXPECT_EQ(widget->PropertyValue("child_id"), 20u);
+
+    // type
+    widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
+
+    // pose
+    math::Vector3d pos(-2.0, 1.0, 2.0);
+    math::Quaterniond quat(0.0, 0.0, 0.0);
+    EXPECT_EQ(widget->PropertyValue("pose"), QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "cfm").toDouble(), 0.19);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "bounce").toDouble(), 0.18);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "velocity").toDouble(), 2.7);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "fudge_factor").toDouble(), 0.26);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_cfm").toDouble(), 0.15);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "limit_erp").toDouble(), 0.24);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_cfm").toDouble(), 0.13);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "suspension_erp").toDouble(), 0.12);
+  }
+
+  // verify updates in new msg
+  {
+    auto retJointMsg = dynamic_cast<msgs::Joint *>(widget->Msg());
+    EXPECT_TRUE(retJointMsg != nullptr);
+
+    // joint
+    EXPECT_EQ(retJointMsg->name(), "test_joint_updated2");
+    EXPECT_EQ(retJointMsg->id(), 2222222u);
+    EXPECT_EQ(retJointMsg->parent(), "test_joint_parent_updated2");
+    EXPECT_EQ(retJointMsg->parent_id(), 10u);
+    EXPECT_EQ(retJointMsg->child(), "test_joint_child_updated2");
+    EXPECT_EQ(retJointMsg->child_id(), 20u);
+
+    // type
+    EXPECT_EQ(retJointMsg->type(), msgs::ConvertJointType("ball"));
+
+    // pose
+    auto poseMsg = retJointMsg->pose();
+    auto posMsg = poseMsg.position();
+    EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), 1.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), 2.0);
+    auto quat = msgs::Convert(poseMsg.orientation());
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Y(), 0.0);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+
+    // other joint physics properties
+    EXPECT_DOUBLE_EQ(retJointMsg->cfm(), 0.19);
+    EXPECT_DOUBLE_EQ(retJointMsg->bounce(), 0.18);
+    EXPECT_DOUBLE_EQ(retJointMsg->velocity(), 2.7);
+    EXPECT_DOUBLE_EQ(retJointMsg->fudge_factor(), 0.26);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_cfm(), 0.15);
+    EXPECT_DOUBLE_EQ(retJointMsg->limit_erp(), 0.24);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_cfm(), 0.13);
+    EXPECT_DOUBLE_EQ(retJointMsg->suspension_erp(), 0.12);
+  }
+
   delete widget;
   EXPECT_TRUE(stop());
 }
@@ -421,49 +731,318 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(scriptMsg.name(), "test_script_name_2");
   }
 
+  // update fields in the message widget and
+  // verify that the new message contains the updated values.
+  {
+    // visual
+    widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_visual_updated")));
+    widget->SetPropertyValue("id", 11111u);
+    widget->SetPropertyValue("parent_name", QVariant::fromValue(
+        std::string("test_visual_parent_updated")));
+    widget->SetPropertyValue("parent_id", 55555u);
+    widget->SetPropertyValue("cast_shadows", false);
+    widget->SetPropertyValue("transparency", 1.0);
+    widget->SetPropertyValue("visible", false);
+    widget->SetPropertyValue("delete_me", true);
+    widget->SetPropertyValue("is_static", true);
+    widget->SetPropertyValue("scale", QVariant::fromValue(
+        math::Vector3d(2.0, 1.5, 0.5)));
+
+    // pose
+    math::Vector3d pos(-2.0, -3.0, -4.0);
+    math::Quaterniond quat(0.0, 1.57, 0.0);
+    widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // geometry
+    msgs::Geometry newGeom;
+    newGeom.set_type(msgs::Geometry::BOX);
+    msgs::Set(newGeom.mutable_box()->mutable_size(),
+              math::Vector3d(5.0, 3.0, 4.0));
+    widget->SetPropertyValue("geometry", QVariant::fromValue(
+        newGeom));
+
+    // material
+    widget->SetPropertyValue("material::normal_map", QVariant::fromValue(
+        std::string("test_normal_map_updated")));
+    widget->SetPropertyValue("material::ambient", QVariant::fromValue(
+        math::Color(0.2, 0.3, 0.4, 0.5)));
+    widget->SetPropertyValue("material::diffuse", QVariant::fromValue(
+        math::Color(0.1, 0.8, 0.6, 0.4)));
+    widget->SetPropertyValue("material::specular", QVariant::fromValue(
+        math::Color(0.5, 0.4, 0.3, 0.2)));
+    widget->SetPropertyValue("material::emissive", QVariant::fromValue(
+        math::Color(0.4, 0.6, 0.8, 0.1)));
+    widget->SetPropertyValue("material::lighting", false);
+    // material::script
+    widget->SetPropertyValue("material::script::name", QVariant::fromValue(
+        std::string("test_script_name_updated")));
+  }
+
+  // verify widget values
+  {
+    EXPECT_EQ(widget->PropertyValue(
+        "name").value<std::string>(), "test_visual_updated");
+    EXPECT_EQ(widget->PropertyValue(
+        "id"), 11111u);
+    EXPECT_EQ(widget->PropertyValue(
+        "parent_name").value<std::string>(), "test_visual_parent_updated");
+    EXPECT_EQ(widget->PropertyValue(
+        "parent_id"), 55555u);
+    EXPECT_EQ(widget->PropertyValue(
+        "cast_shadows").toBool(), false);
+    EXPECT_DOUBLE_EQ(widget->PropertyValue(
+        "transparency").toDouble(), 1.0);
+    EXPECT_EQ(widget->PropertyValue(
+        "visible").toBool(), false);
+    EXPECT_EQ(widget->PropertyValue(
+        "delete_me").toBool(), true);
+    EXPECT_EQ(widget->PropertyValue(
+        "is_static").toBool(), true);
+    EXPECT_EQ(widget->PropertyValue(
+        "scale").value<math::Vector3d>(), math::Vector3d(2.0, 1.5, 0.5));
+
+    // pose
+    math::Vector3d pos(-2.0, -3.0, -4.0);
+    math::Quaterniond quat(0.0, 1.57, 0.0);
+    EXPECT_EQ(widget->PropertyValue("pose"), QVariant::fromValue(
+        math::Pose3d(pos, quat)));
+
+    // geometry
+    auto geomValue =
+        widget->PropertyValue("geometry").value<msgs::Geometry>();
+    EXPECT_EQ(msgs::ConvertGeometryType(geomValue.type()), "box");
+    EXPECT_EQ(msgs::Convert(geomValue.box().size()),
+              math::Vector3d(5.0, 3.0, 4.0));
+
+    // material
+    EXPECT_EQ(widget->PropertyValue(
+        "material::normal_map").value<std::string>(),
+        "test_normal_map_updated");
+    EXPECT_EQ(widget->PropertyValue("material::ambient"),
+        QVariant::fromValue(math::Color(0.2, 0.3, 0.4, 0.5)));
+    EXPECT_EQ(widget->PropertyValue("material::diffuse"),
+        QVariant::fromValue(math::Color(0.1, 0.8, 0.6, 0.4)));
+    EXPECT_EQ(widget->PropertyValue("material::specular"),
+        QVariant::fromValue(math::Color(0.5, 0.4, 0.3, 0.2)));
+    EXPECT_EQ(widget->PropertyValue("material::emissive"),
+        QVariant::fromValue(math::Color(0.4, 0.6, 0.8, 0.1)));
+    EXPECT_EQ(widget->PropertyValue("material::lighting").toBool(), false);
+    // material::script
+    EXPECT_EQ(widget->PropertyValue(
+        "material::script::name").value<std::string>(),
+        "test_script_name_updated");
+  }
+
+  // verify updates in new msg
+  {
+    auto retMsg =
+        dynamic_cast<msgs::Visual *>(widget->Msg());
+    EXPECT_TRUE(retMsg != nullptr);
+
+    // visual
+    EXPECT_EQ(retMsg->name(), "test_visual_updated");
+    EXPECT_EQ(retMsg->id(), 11111u);
+    EXPECT_EQ(retMsg->parent_name(), "test_visual_parent_updated");
+    EXPECT_EQ(retMsg->parent_id(), 55555u);
+    EXPECT_EQ(retMsg->cast_shadows(), false);
+    EXPECT_DOUBLE_EQ(retMsg->transparency(), 1.0);
+    EXPECT_EQ(retMsg->visible(), false);
+    EXPECT_EQ(retMsg->delete_me(), true);
+    EXPECT_EQ(retMsg->is_static(), true);
+    auto scaleMsg = retMsg->scale();
+    EXPECT_DOUBLE_EQ(scaleMsg.x(), 2.0);
+    EXPECT_DOUBLE_EQ(scaleMsg.y(), 1.5);
+    EXPECT_DOUBLE_EQ(scaleMsg.z(), 0.5);
+
+    // pose
+    auto poseMsg = retMsg->pose();
+    auto posMsg = poseMsg.position();
+    EXPECT_DOUBLE_EQ(posMsg.x(), -2.0);
+    EXPECT_DOUBLE_EQ(posMsg.y(), -3.0);
+    EXPECT_DOUBLE_EQ(posMsg.z(), -4.0);
+    auto quat = msgs::Convert(poseMsg.orientation());
+    EXPECT_DOUBLE_EQ(quat.Euler().X(), 0.0);
+    EXPECT_LT(fabs(quat.Euler().Y() - 1.57), 0.0001);
+    EXPECT_DOUBLE_EQ(quat.Euler().Z(), 0.0);
+
+    // geometry
+    auto geometryMsg = retMsg->geometry();
+    EXPECT_EQ(geometryMsg.type(), msgs::Geometry::BOX);
+    auto boxGeomMsg = geometryMsg.box();
+    auto boxGeomSizeMsg = boxGeomMsg.size();
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.x(), 5.0);
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.y(), 3.0);
+    EXPECT_DOUBLE_EQ(boxGeomSizeMsg.z(), 4.0);
+
+    // material
+    auto materialMsg = retMsg->material();
+    EXPECT_EQ(materialMsg.shader_type(), msgs::Material::Material::VERTEX);
+    EXPECT_EQ(materialMsg.normal_map(), "test_normal_map_updated");
+    auto ambientMsg = materialMsg.ambient();
+    EXPECT_DOUBLE_EQ(ambientMsg.r(), 0.2f);
+    EXPECT_DOUBLE_EQ(ambientMsg.g(), 0.3f);
+    EXPECT_DOUBLE_EQ(ambientMsg.b(), 0.4f);
+    EXPECT_DOUBLE_EQ(ambientMsg.a(), 0.5f);
+    auto diffuseMsg = materialMsg.diffuse();
+    EXPECT_DOUBLE_EQ(diffuseMsg.r(), 0.1f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.g(), 0.8f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.b(), 0.6f);
+    EXPECT_DOUBLE_EQ(diffuseMsg.a(), 0.4f);
+    auto specularMsg = materialMsg.specular();
+    EXPECT_DOUBLE_EQ(specularMsg.r(), 0.5f);
+    EXPECT_DOUBLE_EQ(specularMsg.g(), 0.4f);
+    EXPECT_DOUBLE_EQ(specularMsg.b(), 0.3f);
+    EXPECT_DOUBLE_EQ(specularMsg.a(), 0.2f);
+    auto emissiveMsg = materialMsg.emissive();
+    EXPECT_DOUBLE_EQ(emissiveMsg.r(), 0.4f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.g(), 0.6f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.b(), 0.8f);
+    EXPECT_DOUBLE_EQ(emissiveMsg.a(), 0.1f);
+    EXPECT_EQ(materialMsg.lighting(), false);
+
+    // material::script
+    auto scriptMsg = materialMsg.script();
+    EXPECT_EQ(scriptMsg.uri(0), "test_script_uri_0");
+    EXPECT_EQ(scriptMsg.uri(1), "test_script_uri_1");
+    EXPECT_EQ(scriptMsg.name(), "test_script_name_updated");
+  }
+
   delete widget;
   EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
-// Test LINE and PLAIN_TEXT string fields
-TEST(MessageWidgetTest, PluginMsgWidget)
+// Test LINE and PLAIN_TEXT string fields, and repeated messages
+TEST(MessageWidgetTest, PluginVMsgWidget)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Message
-  msgs::Plugin msg;
-  msg.set_name("test_plugin");
-  msg.set_filename("test_plugin_filename");
-  msg.set_innerxml("<param>1</param>\n");
+  msgs::Plugin_V msg;
+
+  auto pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin");
+  pluginsMsg0->set_filename("test_plugin_filename");
+  pluginsMsg0->set_innerxml("<param>1</param>\n");
 
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(widget, nullptr);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
+  auto count =  widget->PropertyWidgetCount();
 
   // Retrieve message
-  auto retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  auto retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
   ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
 
-  EXPECT_EQ(retMsg->name(), "test_plugin");
-  EXPECT_EQ(retMsg->filename(), "test_plugin_filename");
-  EXPECT_EQ(retMsg->innerxml(), "<param>1</param>\n");
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>1</param>\n");
 
-  // Update from message
-  msg.set_name("test_plugin_new");
-  msg.set_filename("test_plugin_filename_new");
-  msg.set_innerxml("<param>2</param>\n");
+  // Update from message - change the only plugin
+  msg.clear_plugins();
+
+  pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin_new");
+  pluginsMsg0->set_filename("test_plugin_filename_new");
+  pluginsMsg0->set_innerxml("<param>2</param>\n");
 
   widget->UpdateFromMsg(&msg);
+  EXPECT_EQ(count,  widget->PropertyWidgetCount());
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
 
   // Check new message
-  retMsg = dynamic_cast<msgs::Plugin *>(widget->Msg());
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
   ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
 
-  EXPECT_EQ(retMsg->name(), "test_plugin_new");
-  EXPECT_EQ(retMsg->filename(), "test_plugin_filename_new");
-  EXPECT_EQ(retMsg->innerxml(), "<param>2</param>\n");
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_new");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_new");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>2</param>\n");
+
+  // Update fields of plugin 1
+  EXPECT_TRUE(widget->SetPropertyValue("plugins::0::name", QVariant::fromValue(
+      std::string("test_plugin_updated"))));
+  EXPECT_TRUE(widget->SetPropertyValue("plugins::0::filename",
+      QVariant::fromValue(std::string("test_plugin_filename_updated"))));
+  EXPECT_TRUE(widget->SetPropertyValue("plugins::0::innerxml",
+      QVariant::fromValue(std::string("<param2>new_param</param2>\n"))));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue(
+      "plugins::0::name").value<std::string>(), "test_plugin_updated");
+  EXPECT_EQ(widget->PropertyValue("plugins::0::filename").value<std::string>(),
+      "test_plugin_filename_updated");
+  EXPECT_EQ(widget->PropertyValue("plugins::0::innerxml").value<std::string>(),
+      "<param2>new_param</param2>\n");
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
+  EXPECT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
+
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_updated");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_updated");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param2>new_param</param2>\n");
+
+  // Update from message - add more plugins
+  msg.clear_plugins();
+
+  pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin_0");
+  pluginsMsg0->set_filename("test_plugin_filename_0");
+  pluginsMsg0->set_innerxml("<param>0</param>\n");
+
+  auto pluginsMsg1 = msg.add_plugins();
+  pluginsMsg1->set_name("test_plugin_1");
+  pluginsMsg1->set_filename("test_plugin_filename_1");
+  pluginsMsg1->set_innerxml("<param>1</param>\n");
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_LT(count,  widget->PropertyWidgetCount());
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 2);
+
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_0");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_0");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>0</param>\n");
+
+  EXPECT_EQ(retMsg->plugins(1).name(), "test_plugin_1");
+  EXPECT_EQ(retMsg->plugins(1).filename(), "test_plugin_filename_1");
+  EXPECT_EQ(retMsg->plugins(1).innerxml(), "<param>1</param>\n");
+
+  // Update from message - remove plugins
+  msg.clear_plugins();
+
+  pluginsMsg0 = msg.add_plugins();
+  pluginsMsg0->set_name("test_plugin_0_only");
+  pluginsMsg0->set_filename("test_plugin_filename_0_only");
+  pluginsMsg0->set_innerxml("<param>0_only</param>\n");
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_EQ(count,  widget->PropertyWidgetCount());
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->plugins_size(), 1);
+
+  EXPECT_EQ(retMsg->plugins(0).name(), "test_plugin_0_only");
+  EXPECT_EQ(retMsg->plugins(0).filename(), "test_plugin_filename_0_only");
+  EXPECT_EQ(retMsg->plugins(0).innerxml(), "<param>0_only</param>\n");
 
   delete widget;
   EXPECT_TRUE(stop());
@@ -586,6 +1165,435 @@ TEST(MessageWidgetTest, WorldStatsMsgWidget)
 }
 
 /////////////////////////////////////////////////
+// Test repeated int32 fields
+TEST(MessageWidgetTest, Int32VMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::Int32_V msg;
+  msg.add_data(0);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 0);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1);
+  msg.add_data(2);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 1);
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("data::0").value<int>(), 3);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 3);
+
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int32_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 4);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated int64 fields
+TEST(MessageWidgetTest, Int64VMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::Int64_V msg;
+  msg.add_data(0);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 0);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1);
+  msg.add_data(2);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 1);
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("data::0").value<int>(), 3);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 3);
+
+  EXPECT_EQ(retMsg->data(1), 2);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Int64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 4);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated uint64 fields
+TEST(MessageWidgetTest, UInt64VMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::UInt64_V msg;
+  msg.add_data(0);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 0u);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1);
+  msg.add_data(2);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 1u);
+  EXPECT_EQ(retMsg->data(1), 2u);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("data::0").value<unsigned int>(), 3u);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_EQ(retMsg->data(0), 3u);
+  EXPECT_EQ(retMsg->data(1), 2u);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::UInt64_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_EQ(retMsg->data(0), 4u);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated float fields
+TEST(MessageWidgetTest, FloatVMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one field
+  msgs::Float_V msg;
+  msg.add_data(0.1);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_FLOAT_EQ(retMsg->data(0), 0.1);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_data();
+  msg.add_data(1.1);
+  msg.add_data(2.1);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_FLOAT_EQ(retMsg->data(0), 1.1);
+  EXPECT_FLOAT_EQ(retMsg->data(1), 2.1);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("data::0", QVariant::fromValue(3.1)));
+
+  // Check fields
+  EXPECT_FLOAT_EQ(widget->PropertyValue("data::0").value<float>(), 3.1);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->data_size(), 2);
+
+  EXPECT_FLOAT_EQ(retMsg->data(0), 3.1);
+  EXPECT_FLOAT_EQ(retMsg->data(1), 2.1);
+
+  // Update from message - remove entries
+  msg.clear_data();
+  msg.add_data(4.1);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("data::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Float_V *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->data_size(), 1);
+  EXPECT_FLOAT_EQ(retMsg->data(0), 4.1);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+// Test repeated string, uint32 and double fields
+TEST(MessageWidgetTest, TactileMsgWidget)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with one of each repeated field
+  msgs::Tactile msg;
+
+  msg.add_collision_name("col0");
+  msg.add_collision_id(0);
+  msg.add_pressure(0.1);
+
+  // Create widget
+  auto widget = new MessageWidget(&msg);
+  ASSERT_NE(nullptr, widget);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_name::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_id::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("pressure::1"));
+
+  // Retrieve message
+  auto retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+  ASSERT_EQ(retMsg->collision_name_size(), 1);
+  ASSERT_EQ(retMsg->collision_id_size(), 1);
+  ASSERT_EQ(retMsg->pressure_size(), 1);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col0");
+  EXPECT_EQ(retMsg->collision_id(0), 0u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 0.1);
+
+  // Update from message with 2 of each repeated fiels
+  msg.clear_collision_name();
+  msg.clear_collision_id();
+  msg.clear_pressure();
+
+  msg.add_collision_name("col1");
+  msg.add_collision_id(1);
+  msg.add_pressure(1.1);
+
+  msg.add_collision_name("col2");
+  msg.add_collision_id(2);
+  msg.add_pressure(2.1);
+
+  widget->UpdateFromMsg(&msg);
+
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::1"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::1"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->collision_name_size(), 2);
+  ASSERT_EQ(retMsg->collision_id_size(), 2);
+  ASSERT_EQ(retMsg->pressure_size(), 2);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col1");
+  EXPECT_EQ(retMsg->collision_id(0), 1u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 1.1);
+
+  EXPECT_EQ(retMsg->collision_name(1), "col2");
+  EXPECT_EQ(retMsg->collision_id(1), 2u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(1), 2.1);
+
+  // Update fields
+  EXPECT_TRUE(widget->SetPropertyValue("collision_name::0", QVariant::fromValue(
+      std::string("col3"))));
+  EXPECT_TRUE(widget->SetPropertyValue("collision_id::1",
+      QVariant::fromValue(3)));
+  EXPECT_TRUE(widget->SetPropertyValue("pressure::0",
+      QVariant::fromValue(3.1)));
+
+  // Check fields
+  EXPECT_EQ(widget->PropertyValue("collision_name::0").value<std::string>(),
+      "col3");
+  EXPECT_EQ(widget->PropertyValue("collision_id::1").value<unsigned int>(), 3u);
+  EXPECT_DOUBLE_EQ(widget->PropertyValue("pressure::0").value<double>(), 3.1);
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(nullptr, retMsg);
+  ASSERT_EQ(retMsg->collision_name_size(), 2);
+  ASSERT_EQ(retMsg->collision_id_size(), 2);
+  ASSERT_EQ(retMsg->pressure_size(), 2);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col3");
+  EXPECT_EQ(retMsg->collision_id(0), 1u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 3.1);
+
+  EXPECT_EQ(retMsg->collision_name(1), "col2");
+  EXPECT_EQ(retMsg->collision_id(1), 3u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(1), 2.1);
+
+  // Update from message - remove entries
+  msg.clear_collision_name();
+  msg.clear_collision_id();
+  msg.clear_pressure();
+
+  msg.add_collision_name("col4");
+  msg.add_collision_id(4);
+  msg.add_pressure(4.1);
+
+  widget->UpdateFromMsg(&msg);
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("pressure::0"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_name::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("collision_id::1"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("pressure::1"));
+
+  // Check new message
+  retMsg = dynamic_cast<msgs::Tactile *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  ASSERT_EQ(retMsg->collision_name_size(), 1);
+  ASSERT_EQ(retMsg->collision_id_size(), 1);
+  ASSERT_EQ(retMsg->pressure_size(), 1);
+
+  EXPECT_EQ(retMsg->collision_name(0), "col4");
+  EXPECT_EQ(retMsg->collision_id(0), 4u);
+  EXPECT_DOUBLE_EQ(retMsg->pressure(0), 4.1);
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
 TEST(MessageWidgetTest, ChildStringSignal)
 {
   setVerbosity(4);
@@ -616,6 +1624,9 @@ TEST(MessageWidgetTest, ChildStringSignal)
       EXPECT_EQ(v, "orange");
       signalReceived = true;
     });
+
+  // Check default
+  EXPECT_EQ(widget->PropertyValue("string").value<std::string>(), "");
 
   // Get signal emitting widgets
   auto lineEdits = stringWidget->findChildren<QLineEdit *>();
@@ -664,6 +1675,9 @@ TEST(MessageWidgetTest, ChildNumberSignal)
       signalReceived = true;
     });
 
+  // Check value before
+  EXPECT_DOUBLE_EQ(widget->PropertyValue("data").value<double>(), -1.5);
+
   // Get signal emitting widgets
   auto spins = widget->findChildren<QDoubleSpinBox *>();
   ASSERT_EQ(spins.size(), 1);
@@ -710,6 +1724,9 @@ TEST(MessageWidgetTest, ChildBoolSignal)
       EXPECT_FALSE(v);
       signalReceived = true;
     });
+
+  // Check value before
+  EXPECT_TRUE(widget->PropertyValue("data").value<bool>());
 
   // Get signal emitting widgets
   auto radios = widget->findChildren<QRadioButton *>();
@@ -772,6 +1789,10 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
       }
     });
 
+  // Check value before
+  EXPECT_EQ(widget->PropertyValue("").value<math::Vector3d>(),
+      math::Vector3d(1, -2, 3));
+
   // Get axes spins
   auto spins = vector3Widget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 3);
@@ -829,6 +1850,10 @@ TEST(MessageWidgetTest, ChildColorSignal)
       signalReceived = true;
     });
 
+  // Check value before
+  EXPECT_EQ(widget->PropertyValue("").value<math::Color>(),
+      math::Color(0.1, 0.2, 0.3, 0.4));
+
   // Get signal emitting widgets
   auto spins = colorWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 4);
@@ -880,6 +1905,10 @@ TEST(MessageWidgetTest, ChildPoseSignal)
       signalReceived = true;
     });
 
+  // Check value before
+  EXPECT_EQ(widget->PropertyValue("").value<math::Pose3d>(),
+      math::Pose3d(0.1, 0.2, 0.3, -0.4, -0.5, -0.6));
+
   // Get signal emitting widgets
   auto spins = poseWidget->findChildren<QDoubleSpinBox *>();
   EXPECT_EQ(spins.size(), 6);
@@ -918,6 +1947,7 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
 
   auto geometryWidget = qobject_cast<GeometryWidget *>(propWidget);
   EXPECT_NE(geometryWidget, nullptr);
+
   // Connect signals
   bool signalReceived = false;
   widget->connect(widget, &MessageWidget::ValueChanged,
@@ -929,6 +1959,12 @@ TEST(MessageWidgetTest, ChildGeometrySignal)
       EXPECT_DOUBLE_EQ(v.cylinder().radius(), 2.0);
       signalReceived = true;
     });
+
+  // Check value before
+  auto value = widget->PropertyValue("").value<msgs::Geometry>();
+  EXPECT_EQ(value.type(), msgs::Geometry::CYLINDER);
+  EXPECT_DOUBLE_EQ(value.cylinder().length(), 10.0);
+  EXPECT_DOUBLE_EQ(value.cylinder().radius(), 0.5);
 
   // Get signal emitting widgets
   auto radiusWidget = widget->findChild<NumberWidget *>("cylinderRWidget");
@@ -980,6 +2016,10 @@ TEST(MessageWidgetTest, ChildEnumSignal)
       signalReceived = true;
     });
 
+  // Check value before
+  EXPECT_EQ(widget->PropertyValue("type").value<std::string>(),
+      std::string("LINK"));
+
   auto label = enumWidget->findChild<QLabel *>();
   EXPECT_NE(label, nullptr);
   EXPECT_EQ(label->text(), "Type");
@@ -1025,6 +2065,18 @@ TEST(MessageWidgetTest, PropertyByName)
   {
     EXPECT_EQ(widget->PropertyWidgetByName(name), nullptr) << name;
   }
+
+  // Set value of valid properties
+  EXPECT_TRUE(widget->SetPropertyValue("data",
+      QVariant::fromValue(std::string("the data value"))));
+  EXPECT_EQ(widget->PropertyValue("data").value<std::string>(),
+      std::string("the data value"));
+
+  // Set value of invalid properties
+  EXPECT_FALSE(widget->SetPropertyValue("banana",
+      QVariant::fromValue(std::string("the banana value"))));
+  EXPECT_EQ(widget->PropertyValue("banana").value<std::string>(),
+      std::string(""));
 
   delete widget;
   EXPECT_TRUE(stop());

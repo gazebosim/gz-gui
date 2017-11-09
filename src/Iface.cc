@@ -47,38 +47,6 @@ using namespace gui;
 // Forward declarations.
 std::string homePath();
 
-struct WindowConfig
-{
-  /// \brief Window X position in px
-  int pos_x = -1;
-
-  /// \brief Window Y position in px
-  int pos_y = -1;
-
-  /// \brief Window width in px
-  int width = -1;
-
-  /// \brief Window height in px
-  int height = -1;
-
-  /// \brief Window state (dock configuration)
-  QByteArray state;
-
-  /// \brief String holding the global style sheet in QSS format.
-  std::string styleSheet;
-
-  /// \brief Map menu name to whether it should be visible, all menus are shown
-  /// by default.
-  std::map<std::string, bool> menuVisibilityMap;
-
-  /// \brief True if plugins found in plugin paths should be listed under the
-  /// Plugins menu. True by default.
-  bool pluginsFromPaths = true;
-
-  /// \brief List of plugins which should be shown on the list
-  std::vector<std::string> showPlugins;
-};
-
 /// \brief Pointer to application
 QApplication *g_app;
 
@@ -97,7 +65,9 @@ std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 /// \brief Vector of paths to look for plugins
 std::vector<std::string> g_pluginPaths;
 
-/// \brief Window configuration
+/// \brief Holds a configuration which may be applied to g_mainWin once it
+/// is created by calling applyConfig(). It's no longer needed and should not
+/// be used after that.
 WindowConfig g_windowConfig;
 
 /// \brief The path containing the default configuration file.
@@ -394,81 +364,14 @@ bool ignition::gui::loadConfig(const std::string &_config)
   {
     igndbg << "Loading window config" << std::endl;
 
-    if (auto xElem = winElem->FirstChildElement("position_x"))
-      xElem->QueryIntText(&g_windowConfig.pos_x);
-
-    if (auto yElem = winElem->FirstChildElement("position_y"))
-      yElem->QueryIntText(&g_windowConfig.pos_y);
-
-    if (auto widthElem = winElem->FirstChildElement("width"))
-      widthElem->QueryIntText(&g_windowConfig.width);
-
-    if (auto heightElem = winElem->FirstChildElement("height"))
-      heightElem->QueryIntText(&g_windowConfig.height);
-
-    if (auto stateElem = winElem->FirstChildElement("state"))
+    tinyxml2::XMLPrinter printer;
+    if (!winElem->Accept(&printer))
     {
-      auto text = stateElem->GetText();
-      g_windowConfig.state = QByteArray::fromBase64(text);
+      ignwarn << "There was an error parsing the <window> element"
+              << std::endl;
+      return false;
     }
-
-    if (auto styleElem = winElem->FirstChildElement("stylesheet"))
-    {
-      if (auto txt = styleElem->GetText())
-      {
-        setStyleFromString(txt);
-      }
-      // empty string
-      else
-      {
-        setStyleFromString("");
-      }
-    }
-
-    // Menus
-    if (auto menusElem = winElem->FirstChildElement("menus"))
-    {
-      // File
-      if (auto fileElem = menusElem->FirstChildElement("file"))
-      {
-        // Visible
-        if (fileElem->Attribute("visible"))
-        {
-          bool visible = true;
-          fileElem->QueryBoolAttribute("visible", &visible);
-          g_windowConfig.menuVisibilityMap["fileMenu"] = visible;
-        }
-      }
-
-      // Plugins
-      if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
-      {
-        // Visible
-        if (pluginsElem->Attribute("visible"))
-        {
-          bool visible = true;
-          pluginsElem->QueryBoolAttribute("visible", &visible);
-          g_windowConfig.menuVisibilityMap["pluginsMenu"] = visible;
-        }
-
-        // From paths
-        if (pluginsElem->Attribute("from_paths"))
-        {
-          bool fromPaths = false;
-          pluginsElem->QueryBoolAttribute("from_paths", &fromPaths);
-          g_windowConfig.pluginsFromPaths = fromPaths;
-        }
-
-        // Show individual plugins
-        for (auto showElem = pluginsElem->FirstChildElement("show");
-            showElem != nullptr;
-            showElem = showElem->NextSiblingElement("show"))
-        {
-          if (auto pluginName = showElem->GetText())
-            g_windowConfig.showPlugins.push_back(pluginName);
-        }
-      }
-    }
+    g_windowConfig.MergeFromXML(std::string(printer.CStr()));
   }
 
   return true;
@@ -659,69 +562,7 @@ bool ignition::gui::applyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
-  // Window position
-  if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
-    g_mainWin->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
-
-  // Window size
-  if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
-    g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
-
-  // Docks state
-  if (!g_windowConfig.state.isEmpty())
-  {
-    if (!g_mainWin->restoreState(g_windowConfig.state))
-      ignwarn << "Failed to restore state" << std::endl;
-  }
-
-  // Stylesheet
-  setStyleFromString(g_windowConfig.styleSheet);
-
-  // Hide menus
-  for (auto visible : g_windowConfig.menuVisibilityMap)
-  {
-    if (auto menu =
-        g_mainWin->findChild<QMenu *>(QString::fromStdString(visible.first)))
-    {
-      menu->menuAction()->setVisible(visible.second);
-    }
-  }
-
-  // Plugins menu
-  if (auto menu = g_mainWin->findChild<QMenu *>("pluginsMenu"))
-  {
-    for (auto action : menu->actions())
-    {
-      action->setVisible(g_windowConfig.pluginsFromPaths ||
-          std::find(g_windowConfig.showPlugins.begin(),
-                    g_windowConfig.showPlugins.end(),
-                    action->text().toStdString()) !=
-                    g_windowConfig.showPlugins.end());
-    }
-
-    for (auto plugin : g_windowConfig.showPlugins)
-    {
-      bool exists = false;
-      for (auto action : menu->actions())
-      {
-        if (action->text().toStdString() == plugin)
-        {
-          exists = true;
-          break;
-        }
-      }
-
-      if (!exists)
-      {
-        ignwarn << "Requested to show plugin [" << plugin <<
-            "] but it doesn't exist." << std::endl;
-      }
-    }
-  }
-
-  QCoreApplication::processEvents();
-
-  return true;
+  return g_mainWin->ApplyConfig(g_windowConfig);
 }
 
 /////////////////////////////////////////////////
