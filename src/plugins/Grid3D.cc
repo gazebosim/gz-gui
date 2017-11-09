@@ -26,11 +26,21 @@
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/plugins/Grid3D.hh"
 
+// Default cell count
 static const int kDefaultCellCount{20};
+
+// Default vertical cell count
 static const int kDefaultVertCellCount{0};
+
+// Default cell length
 static const double kDefaultCellLength{1.0};
+
+// Default pose
 static const ignition::math::Pose3d kDefaultPose{ignition::math::Pose3d::Zero};
-static const ignition::math::Color kDefaultColor{ignition::math::Color(0.7, 0.7, 0.7, 1.0)};
+
+// Default color
+static const ignition::math::Color kDefaultColor{
+    ignition::math::Color(0.7, 0.7, 0.7, 1.0)};
 
 namespace ignition
 {
@@ -38,12 +48,22 @@ namespace gui
 {
 namespace plugins
 {
+  /// \brief Holds configuration for a grid
   struct GridInfo
   {
+    /// \brief Number of cells in the horizontal
     int cellCount{kDefaultCellCount};
+
+    /// \brief Number of cells in the vertical
     int vertCellCount{kDefaultVertCellCount};
+
+    /// \brief Cell length, both horizontal and vertical
     double cellLength{kDefaultCellLength};
+
+    /// \brief Grid pose in the world
     math::Pose3d pose{kDefaultPose};
+
+    /// \brief Grid ambient color
     math::Color color{kDefaultColor};
   };
 
@@ -52,7 +72,7 @@ namespace plugins
     /// \brief Pointer to scene
     public: rendering::ScenePtr scene;
 
-    /// \brief
+    /// \brief Keep track of grids we currently found on the scene
     public: std::vector<rendering::GridPtr> grids;
   };
 }
@@ -135,7 +155,8 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   auto engine = rendering::engine(engineName);
   if (!engine)
   {
-    ignerr << "Engine [" << engineName << "] is not supported" << std::endl;
+    ignerr << "Engine [" << engineName
+           << "] is not supported, grid plugin won't work." << std::endl;
     return;
   }
 
@@ -143,7 +164,8 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->dataPtr->scene = engine->SceneByName(sceneName);
   if (!this->dataPtr->scene)
   {
-    ignerr << "Scene [" << sceneName << "] not found" << std::endl;
+    ignerr << "Scene [" << sceneName << "] not found, grid plugin won't work."
+           << std::endl;
     return;
   }
   auto root = this->dataPtr->scene->RootVisual();
@@ -189,8 +211,8 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void Grid3D::Refresh()
 {
-  // Populate widgets
   auto mainLayout = this->layout();
+  // Clear previous layout
   if (mainLayout)
   {
     while (mainLayout->count() != 1)
@@ -203,6 +225,7 @@ void Grid3D::Refresh()
       }
     }
   }
+  // Creating layout for the first time
   else
   {
     mainLayout = new QVBoxLayout();
@@ -211,9 +234,11 @@ void Grid3D::Refresh()
     this->setLayout(mainLayout);
 
     auto addButton = new QPushButton("New grid");
+    addButton->setToolTip("Add a new grid with default values");
     this->connect(addButton, SIGNAL(clicked()), this, SLOT(OnAdd()));
 
     auto refreshButton = new QPushButton("Refresh");
+    refreshButton->setToolTip("Refresh the list of grids");
     this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(Refresh()));
 
     auto buttonsLayout = new QHBoxLayout();
@@ -226,6 +251,7 @@ void Grid3D::Refresh()
     mainLayout->addWidget(buttonsWidget);
   }
 
+  // Search for all grids currently in the scene
   for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
   {
     auto vis = this->dataPtr->scene->VisualByIndex(i);
@@ -235,7 +261,8 @@ void Grid3D::Refresh()
     rendering::GridPtr grid;
     for (unsigned int j = 0; j < vis->GeometryCount(); ++j)
     {
-      grid = std::dynamic_pointer_cast<rendering::Grid>(vis->GeometryByIndex(j));
+      grid = std::dynamic_pointer_cast<rendering::Grid>(
+          vis->GeometryByIndex(j));
       if (grid)
         break;
     }
@@ -243,39 +270,43 @@ void Grid3D::Refresh()
       continue;
 
     this->dataPtr->grids.push_back(grid);
+    auto gridName = QString::fromStdString(grid->Name());
 
-    auto cellCountWidget = new NumberWidget("Horizontal cell count", NumberType::INT);
+    auto cellCountWidget = new NumberWidget("Horizontal cell count",
+        NumberType::INT);
     cellCountWidget->SetValue(QVariant::fromValue(grid->CellCount()));
-    cellCountWidget->setObjectName(QString::fromStdString(grid->Name() + "::cellCountWidget"));
+    cellCountWidget->setObjectName( gridName + "---cellCountWidget");
     this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
-    auto vertCellCountWidget = new NumberWidget("Vertical cell count", NumberType::INT);
+    auto vertCellCountWidget = new NumberWidget("Vertical cell count",
+        NumberType::INT);
     vertCellCountWidget->SetValue(QVariant::fromValue(grid->VerticalCellCount()));
-    vertCellCountWidget->setObjectName(QString::fromStdString(grid->Name() + "::vertCellCountWidget"));
+    vertCellCountWidget->setObjectName(gridName + "---vertCellCountWidget");
     this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
     cellLengthWidget->SetValue(QVariant::fromValue(grid->CellLength()));
-    cellLengthWidget->setObjectName(QString::fromStdString(grid->Name() + "::cellLengthWidget"));
+    cellLengthWidget->setObjectName(gridName + "---cellLengthWidget");
     this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto poseWidget = new Pose3dWidget();
     poseWidget->SetValue(QVariant::fromValue(grid->Parent()->WorldPose()));
-    poseWidget->setObjectName(QString::fromStdString(grid->Name() + "::poseWidget"));
+    poseWidget->setObjectName(gridName + "---poseWidget");
     this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto colorWidget = new ColorWidget();
     colorWidget->SetValue(QVariant::fromValue(grid->Material()->Ambient()));
-    colorWidget->setObjectName(QString::fromStdString(grid->Name() + "::colorWidget"));
+    colorWidget->setObjectName(gridName + "---colorWidget");
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto deleteButton = new QPushButton("Delete grid");
-    deleteButton->setObjectName(QString::fromStdString(grid->Name() + "::deleteButton"));
+    deleteButton->setToolTip("Delete grid " + gridName);
+    deleteButton->setObjectName(gridName + "---deleteButton");
     this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
 
     auto collapsible = new CollapsibleWidget(grid->Name());
@@ -297,25 +328,24 @@ void Grid3D::Refresh()
 /////////////////////////////////////////////////
 void Grid3D::OnChange(const QVariant &_value)
 {
-  auto parts = this->sender()->objectName().split("::");
-  if (parts.size() != 3)
+  auto parts = this->sender()->objectName().split("---");
+  if (parts.size() != 2)
     return;
 
-  std::string gridName{(parts[0] + "::" + parts[1]).toStdString()};
   for (auto grid : this->dataPtr->grids)
   {
-    if (grid->Name() != gridName)
+    if (grid->Name() != parts[0].toStdString())
       continue;
 
-    if (parts[2] == "cellCountWidget")
+    if (parts[1] == "cellCountWidget")
       grid->SetCellCount(_value.toInt());
-    else if (parts[2] == "vertCellCountWidget")
+    else if (parts[1] == "vertCellCountWidget")
       grid->SetVerticalCellCount(_value.toInt());
-    else if (parts[2] == "cellLengthWidget")
+    else if (parts[1] == "cellLengthWidget")
       grid->SetCellLength(_value.toDouble());
-    else if (parts[2] == "poseWidget")
+    else if (parts[1] == "poseWidget")
       grid->Parent()->SetWorldPose(_value.value<math::Pose3d>());
-    else if (parts[2] == "colorWidget")
+    else if (parts[1] == "colorWidget")
       grid->Material()->SetAmbient(_value.value<math::Color>());
 
     break;
@@ -325,14 +355,13 @@ void Grid3D::OnChange(const QVariant &_value)
 /////////////////////////////////////////////////
 void Grid3D::OnDelete()
 {
-  auto parts = this->sender()->objectName().split("::");
-  if (parts.size() != 3)
+  auto parts = this->sender()->objectName().split("---");
+  if (parts.size() != 2)
     return;
 
-  std::string gridName{(parts[0] + "::" + parts[1]).toStdString()};
   for (auto grid : this->dataPtr->grids)
   {
-    if (grid->Name() != gridName)
+    if (grid->Name() != parts[0].toStdString())
       continue;
 
     grid->Scene()->DestroyVisual(grid->Parent());

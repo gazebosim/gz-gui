@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_RENDERSCENE_HH_
-#define IGNITION_GUI_PLUGINS_RENDERSCENE_HH_
+#ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
+#define IGNITION_GUI_PLUGINS_SCENE3D_HH_
 
 #include <memory>
 #include <ignition/math/Vector2.hh>
@@ -35,10 +35,20 @@ namespace plugins
 
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
-  /// the mouse.
+  /// the mouse. Use other plugins to manage objects in the scene.
   ///
   /// ## Configuration
   ///
+  /// <engine> : Optional render engine name, defaults to 'ogre'.
+  /// <scene> : Optional scene name, defaults to 'scene'. The plugin will create
+  ///           a scene with this name if there isn't one yet. If there is
+  ///           already one, a new camera is added to it.
+  /// <ambient_light> : Optional color for ambient light, defaults to
+  ///                   (0.3, 0.3, 0.3, 1.0)
+  /// <background_color> : Optional background color, defaults to
+  ///                      (0.3, 0.3, 0.3, 1.0)
+  /// <camera_pose> : Optional starting pose for the camera, defaults to
+  ///                 (0, 0, 5, 0, 0, 0)
   class Scene3D : public Plugin
   {
     Q_OBJECT

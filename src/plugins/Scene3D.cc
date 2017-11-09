@@ -15,8 +15,6 @@
  *
 */
 
-#include <iostream>
-#include <mutex>
 #include <string>
 
 #include <ignition/common/Console.hh>
@@ -75,8 +73,14 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "3D Scene";
 
+  // Default parameters
   std::string engineName{"ogre"};
   std::string sceneName{"scene"};
+  math::Color ambientLight(0.3, 0.3, 0.3);
+  math::Color backgroundColor(0.3, 0.3, 0.3);
+  math::Pose3d cameraPose(0, 0, 5, 0, 0, 0);
+
+  // Custom parameters
   if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("engine"))
@@ -84,6 +88,27 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
       sceneName = elem->GetText();
+
+    if (auto elem = _pluginElem->FirstChildElement("ambient_light"))
+    {
+      std::stringstream colorStr;
+      colorStr << std::string(elem->GetText());
+      colorStr >> ambientLight;
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("background_color"))
+    {
+      std::stringstream colorStr;
+      colorStr << std::string(elem->GetText());
+      colorStr >> backgroundColor;
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("camera_pose"))
+    {
+      std::stringstream poseStr;
+      poseStr << std::string(elem->GetText());
+      poseStr >> cameraPose;
+    }
   }
 
   // Layout
@@ -104,24 +129,15 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (!scene)
   {
     scene = engine->CreateScene(sceneName);
-    scene->SetAmbientLight(0.3, 0.3, 0.3);
-    scene->SetBackgroundColor(0.3, 0.3, 0.3);
+    scene->SetAmbientLight(ambientLight);
+    scene->SetBackgroundColor(backgroundColor);
   }
   auto root = scene->RootVisual();
-
-  // Directional light
-  // TODO: Move light insertion to another plugin
-  auto light = scene->CreateDirectionalLight();
-  root->AddChild(light);
-  light->SetDirection(0.5, 0.5, -1);
-  light->SetDiffuseColor(0.8, 0.8, 0.8);
-  light->SetSpecularColor(0.5, 0.5, 0.5);
 
   // Camera
   this->dataPtr->camera = scene->CreateCamera();
   root->AddChild(this->dataPtr->camera);
-  this->dataPtr->camera->SetLocalPosition(0.0, 0.0, 0.5);
-  this->dataPtr->camera->SetLocalRotation(0.0, 0.0, 0.0);
+  this->dataPtr->camera->SetLocalPose(cameraPose);
   this->dataPtr->camera->SetImageWidth(800);
   this->dataPtr->camera->SetImageHeight(600);
   this->dataPtr->camera->SetAntiAliasing(2);
@@ -154,15 +170,18 @@ void Scene3D::paintEvent(QPaintEvent *_e)
 /////////////////////////////////////////////////
 void Scene3D::resizeEvent(QResizeEvent *_e)
 {
-  if (!this->dataPtr->renderWindow || !this->dataPtr->camera)
-    return;
+  if (this->dataPtr->renderWindow)
+  {
+    this->dataPtr->renderWindow->OnResize(_e->size().width(),
+                                          _e->size().height());
+  }
 
-  this->dataPtr->renderWindow->OnResize(_e->size().width(),
-                                        _e->size().height());
-
-  this->dataPtr->camera->SetAspectRatio(
-      static_cast<double>(this->width()) / this->height());
-  this->dataPtr->camera->SetHFOV(M_PI * 0.5);
+  if (this->dataPtr->camera)
+  {
+    this->dataPtr->camera->SetAspectRatio(
+        static_cast<double>(this->width()) / this->height());
+    this->dataPtr->camera->SetHFOV(M_PI * 0.5);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -172,6 +191,7 @@ void Scene3D::mousePressEvent(QMouseEvent *_e)
   event.SetPressPos(event.Pos());
   this->dataPtr->mouseEvent = event;
 
+  // Update target
   this->dataPtr->target = this->ScreenToScene(event.PressPos());
 }
 
