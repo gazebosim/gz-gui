@@ -127,7 +127,7 @@ namespace ignition
       /// \return True if the value is set successfully.
       /// \sa PropertyReadOnly
       public: bool SetPropertyReadOnly(const std::string &_name,
-                                     const bool _readOnly);
+                                       const bool _readOnly);
 
       /// \brief Get whether a property widget is read-only.
       /// \param[in] _name Name of the property widget.
