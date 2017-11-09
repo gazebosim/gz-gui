@@ -416,3 +416,26 @@ For example, you can run the example `pubsub.config` from the command line:
 
     ign gui -c examples/config/pubsub.config
 
+## Create Documentation & Release
+
+1. Build documentation
+
+```
+cd build
+make doc
+```
+
+1. Upload documentation to ignitionrobotics.org.
+
+```
+cd build
+sh upload.sh
+```
+
+1. If you're creating a new release, then tell ignitionrobotics.org about
+   the new version. For example:
+
+```
+curl -k -X POST -d '{"libName":"common", "version":"1.0.0", "releaseDate":"2017-10-09T12:10:13+02:00"}' https://api.ignitionrobotics.org/1.0/versions
+```
+
