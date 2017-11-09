@@ -123,14 +123,14 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   for (unsigned int i = 0; i < diff; ++i)
   {
     created++;
-    QTimer::singleShot(300, [i, diff, var02Center, &triggered, &created,
+    QTimer::singleShot(50, [i, diff, var02Center, &triggered, &created,
                              &var01, &var02]
     {
       if (i == diff - 1)
       {
         created++;
         // Release.
-        QTimer::singleShot(50, [var02Center, &var02, &triggered] {
+        QTimer::singleShot(300, [var02Center, &var02, &triggered] {
           auto mouseReleaseEvent = new QMouseEvent(QEvent::MouseButtonRelease,
             var02Center, var02->mapToGlobal(var02Center), Qt::LeftButton,
             Qt::NoButton, Qt::NoModifier);
