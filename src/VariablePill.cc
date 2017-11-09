@@ -347,7 +347,7 @@ void VariablePill::dragEnterEvent(QDragEnterEvent *_evt)
     return;
   }
 
-  igndbg << "Drag entered " << this->Name() << std::endl;
+  igndbg << "/Drag entered " << this->Name() << std::endl;
   _evt->acceptProposedAction();
 }
 
@@ -360,7 +360,6 @@ void VariablePill::dropEvent(QDropEvent *_evt)
     _evt->accept();
     return;
   }
-  igndbg << "Dropped on " << this->Name() << std::endl;
 
   if (_evt->mimeData()->hasFormat("application/x-item"))
   {
@@ -511,7 +510,7 @@ void VariablePill::mouseMoveEvent(QMouseEvent *_event)
   mimeData->setText(textData);
   drag->setMimeData(mimeData);
 
-  igndbg << "Moving over " << this->Name() << std::endl;
+  igndbg << "/Moving over " << this->Name() << std::endl;
   drag->exec(Qt::MoveAction);
 }
 

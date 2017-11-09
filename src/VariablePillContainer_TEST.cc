@@ -123,22 +123,30 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   for (unsigned int i = 0; i < diff; ++i)
   {
     created++;
+    igndbg << "Created move " << created << std::endl;
     QTimer::singleShot(50, [i, diff, var02Center, &triggered, &created,
                              &var01, &var02]
     {
       if (i == diff - 1)
       {
         created++;
+        igndbg << "Created release " << created << std::endl;
         // Release.
-        QTimer::singleShot(300, [var02Center, &var02, &triggered] {
+        QTimer::singleShot(300, [var02Center, &var02, &triggered]
+        {
+          triggered++;
+          igndbg << "Triggered release " << triggered << std::endl;
+
           auto mouseReleaseEvent = new QMouseEvent(QEvent::MouseButtonRelease,
             var02Center, var02->mapToGlobal(var02Center), Qt::LeftButton,
             Qt::NoButton, Qt::NoModifier);
           QCoreApplication::postEvent(var02, mouseReleaseEvent);
           QCoreApplication::processEvents();
-          triggered++;
         });
       }
+
+      triggered++;
+      igndbg << "Triggered move " << triggered << std::endl;
 
       // Compute the next x pos to move the mouse cursor to.
       QPoint center((var01->width() * 0.5) + i, var01->height() * 0.5);
@@ -147,7 +155,6 @@ TEST(VariablePillContainerTest, VariablePillEvents)
         Qt::NoModifier);
       QCoreApplication::postEvent(var01, mouseMoveEvent);
       QCoreApplication::processEvents();
-      triggered++;
     });
   }
 
