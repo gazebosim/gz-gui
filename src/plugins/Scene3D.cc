@@ -47,6 +47,10 @@ namespace plugins
 
     /// \brief Keep latest target point in the 3D world (for camera orbiting)
     public: math::Vector3d target;
+
+    /// \brief Store the window id to use at paintEvent once
+    /// (Qt complains if we call this->winId() from the paint event)
+    public: WId windowId;
   };
 }
 }
@@ -55,10 +59,6 @@ namespace plugins
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
-
-// Store the window id to use at paintEvent once
-// (Qt complains if we call this->winId() from the paint event)
-WId windowId;
 
 /////////////////////////////////////////////////
 Scene3D::Scene3D()
@@ -154,7 +154,8 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this, SLOT(update()));
   this->dataPtr->updateTimer->start(std::round(1000.0 / 60.0));
 
-  windowId = this->winId();
+  // Store window id
+  this->dataPtr->windowId = this->winId();
 }
 
 /////////////////////////////////////////////////
@@ -166,7 +167,7 @@ void Scene3D::paintEvent(QPaintEvent *_e)
   {
     this->dataPtr->renderWindow = this->dataPtr->camera->CreateRenderWindow();
     this->dataPtr->renderWindow->SetHandle(
-        std::to_string(static_cast<uint64_t>(windowId)));
+        std::to_string(static_cast<uint64_t>(this->dataPtr->windowId)));
     this->dataPtr->renderWindow->SetWidth(this->width());
     this->dataPtr->renderWindow->SetHeight(this->height());
   }
