@@ -18,8 +18,25 @@
 #include <ignition/common/Console.hh>
 #include "ignition/gui/Plugin.hh"
 
+class ignition::gui::PluginPrivate
+{
+  /// \brief Set this to true if the plugin should be deleted as soon as it has
+  ///  a parent.
+  public: bool deleteLater{false};
+};
+
 using namespace ignition;
 using namespace gui;
+
+/////////////////////////////////////////////////
+Plugin::Plugin() : dataPtr(new PluginPrivate)
+{
+}
+
+/////////////////////////////////////////////////
+Plugin::~Plugin()
+{
+}
 
 /////////////////////////////////////////////////
 void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
@@ -41,6 +58,18 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   else
   {
     this->configStr = std::string(printer.CStr());
+  }
+
+  // Delete later
+  if (_pluginElem->Attribute("delete_later"))
+  {
+    // Store param
+    _pluginElem->QueryBoolAttribute("delete_later",
+        &this->deleteLaterRequested);
+
+    // Use it
+    if (this->deleteLaterRequested)
+      this->DeleteLater();
   }
 
   // Read default params
@@ -84,5 +113,30 @@ void Plugin::ShowContextMenu(const QPoint &_pos)
   QMenu contextMenu(tr("Context menu"), this);
   contextMenu.addAction(&closeAct);
   contextMenu.exec(this->mapToGlobal(_pos));
+}
+
+/////////////////////////////////////////////////
+void Plugin::changeEvent(QEvent *_e)
+{
+  if (_e->type() == QEvent::ParentChange && this->parent() &&
+      this->dataPtr->deleteLater)
+  {
+    qobject_cast<QWidget *>(this->parent())->close();
+    this->parent()->deleteLater();
+  }
+}
+
+/////////////////////////////////////////////////
+void Plugin::DeleteLater()
+{
+  if (this->parent())
+  {
+    qobject_cast<QWidget *>(this->parent())->close();
+    this->parent()->deleteLater();
+  }
+  else
+  {
+    this->dataPtr->deleteLater = true;
+  }
 }
 

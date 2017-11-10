@@ -17,8 +17,9 @@
 #ifndef IGNITION_GUI_PLUGIN_HH_
 #define IGNITION_GUI_PLUGIN_HH_
 
-#include <tinyxml2.h>
+#include <memory>
 #include <string>
+#include <tinyxml2.h>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
@@ -27,14 +28,18 @@ namespace ignition
 {
   namespace gui
   {
+    class PluginPrivate;
+
     /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Plugin
-        : public QWidget
+    class IGNITION_GUI_VISIBLE Plugin : public QWidget
     {
       Q_OBJECT
 
       /// \brief Constructor
-      public: Plugin() {}
+      public: Plugin();
+
+      /// \brief Destructor
+      public: virtual ~Plugin();
 
       /// \brief Load the plugin with a configuration file.
       /// This loads the default parameters and then calls LoadConfig(), which
@@ -74,6 +79,13 @@ namespace ignition
       /// \param [in] _pos Click position
       protected slots: void ShowContextMenu(const QPoint &_pos);
 
+      // Documentation inherited
+      protected: void changeEvent(QEvent *_e) override;
+
+      /// \brief Wait until the plugin has a parent, then close and delete the
+      /// parent.
+      private: void DeleteLater();
+
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";
 
@@ -82,6 +94,15 @@ namespace ignition
 
       /// \brief XML configuration
       protected: std::string configStr;
+
+      /// \brief Holds the value of the `delete_later` attribute on the
+      /// configuration. Subclasses can check this value for example to return
+      /// before the end of LoadConfig.
+      protected: bool deleteLaterRequested = false;
+
+      /// \internal
+      /// \brief Pointer to private data
+      private: std::unique_ptr<PluginPrivate> dataPtr;
     };
   }
 }

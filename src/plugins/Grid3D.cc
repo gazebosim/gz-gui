@@ -103,7 +103,6 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Configuration
   std::string engineName{"ogre"};
   std::string sceneName{"scene"};
-  bool autoClose = false;
   std::vector<GridInfo> grids;
   if (_pluginElem)
   {
@@ -113,9 +112,6 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
       sceneName = elem->GetText();
-
-    if (_pluginElem->Attribute("auto_close"))
-      _pluginElem->QueryBoolAttribute("auto_close", &autoClose);
 
     // For grids to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
@@ -188,22 +184,9 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     gridVis->SetMaterial(mat);
   }
 
-  // Auto-close
-  if (autoClose)
-  {
-    QTimer::singleShot(100, [this]()
-        {
-          if (!this->parent())
-          {
-            ignerr << "Failed to autoclose plugin" << std::endl;
-            return;
-          }
-
-          qobject_cast<QWidget *>(this->parent())->close();
-        });
-
+  // Don't waste time loading widgets if this will be deleted anyway
+  if (this->deleteLaterRequested)
     return;
-  }
 
   this->Refresh();
 }
@@ -234,10 +217,12 @@ void Grid3D::Refresh()
     this->setLayout(mainLayout);
 
     auto addButton = new QPushButton("New grid");
+    addButton->setObjectName("addGridButton");
     addButton->setToolTip("Add a new grid with default values");
     this->connect(addButton, SIGNAL(clicked()), this, SLOT(OnAdd()));
 
     auto refreshButton = new QPushButton("Refresh");
+    refreshButton->setObjectName("refreshGridButton");
     refreshButton->setToolTip("Refresh the list of grids");
     this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(Refresh()));
 
@@ -273,14 +258,14 @@ void Grid3D::Refresh()
     auto gridName = QString::fromStdString(grid->Name());
 
     auto cellCountWidget = new NumberWidget("Horizontal cell count",
-        NumberType::INT);
+        NumberType::UINT);
     cellCountWidget->SetValue(QVariant::fromValue(grid->CellCount()));
     cellCountWidget->setObjectName(gridName + "---cellCountWidget");
     this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto vertCellCountWidget = new NumberWidget("Vertical cell count",
-        NumberType::INT);
+        NumberType::UINT);
     vertCellCountWidget->SetValue(
         QVariant::fromValue(grid->VerticalCellCount()));
     vertCellCountWidget->setObjectName(gridName + "---vertCellCountWidget");
