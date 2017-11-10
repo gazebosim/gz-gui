@@ -40,6 +40,7 @@ set (gtest_sources
   MainWindow_TEST.cc
   MessageWidget_TEST.cc
   NumberWidget_TEST.cc
+  Plugin_TEST.cc
   Pose3dWidget_TEST.cc
   SearchModel_TEST.cc
   StringWidget_TEST.cc
