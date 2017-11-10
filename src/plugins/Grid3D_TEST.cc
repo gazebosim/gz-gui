@@ -227,7 +227,8 @@ TEST(Grid3DTest, CRUD)
 
     // Vertical cell count
     {
-      auto name = QString::fromStdString(grid3->Name()+"---vertCellCountWidget");
+      auto name = QString::fromStdString(
+          grid3->Name()+"---vertCellCountWidget");
       auto w = win->findChild<NumberWidget *>(name);
       ASSERT_NE(nullptr, w);
       EXPECT_EQ(8, w->Value().toInt());
@@ -246,7 +247,8 @@ TEST(Grid3DTest, CRUD)
       auto name = QString::fromStdString(grid3->Name()+"---poseWidget");
       auto w = win->findChild<Pose3dWidget *>(name);
       ASSERT_NE(nullptr, w);
-      EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 0), w->Value().value<math::Pose3d>());
+      EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 0),
+                w->Value().value<math::Pose3d>());
     }
 
     // Color

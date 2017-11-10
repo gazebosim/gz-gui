@@ -17,9 +17,9 @@
 #ifndef IGNITION_GUI_PLUGIN_HH_
 #define IGNITION_GUI_PLUGIN_HH_
 
+#include <tinyxml2.h>
 #include <memory>
 #include <string>
-#include <tinyxml2.h>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
