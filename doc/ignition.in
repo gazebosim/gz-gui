@@ -2080,6 +2080,7 @@ SKIP_FUNCTION_MACROS   = NO
 # run, you must also specify the path to the tagfile here.
 
 TAGFILES               = "@CMAKE_SOURCE_DIR@/doc/cppreference.tag.xml = http://en.cppreference.com/w" \
+                         "@CMAKE_SOURCE_DIR@/doc/qt.tag.xml=http://doc.qt.io/qt-5/"\
                          "@IGNITION-MATH_DOXYGEN_TAGFILE@ = @IGNITION-MATH_API_URL@" \
                          "@IGNITION-MSGS_DOXYGEN_TAGFILE@ = @IGNITION-MSGS_API_URL@" \
                          "@IGNITION-TRANSPORT_DOXYGEN_TAGFILE@ = @IGNITION-TRANSPORT_API_URL@" \
@@ -2180,7 +2181,7 @@ DOT_NUM_THREADS        = 0
 # The default value is: Helvetica.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_FONTNAME           = 
+DOT_FONTNAME           =
 
 # The DOT_FONTSIZE tag can be used to set the size (in points) of the font of
 # dot graphs.
