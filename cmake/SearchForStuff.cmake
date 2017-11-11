@@ -60,7 +60,7 @@ endif()
 ########################################
 # Ignition rendering
 find_package(ignition-rendering0 QUIET)
-if (NOT ignition-msgs0_FOUND)
+if (NOT ignition-rendering0_FOUND)
   BUILD_WARNING("Missing: Ignition Rendering libignition-rendering0-dev - rendering plugins won't be built")
 else()
   message (STATUS "Found Ignition Rendering")
