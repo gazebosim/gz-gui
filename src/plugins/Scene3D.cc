@@ -117,8 +117,15 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Layout
   this->setLayout(new QVBoxLayout());
+
   this->setMinimumWidth(300);
   this->setMinimumHeight(300);
+  this->setAttribute(Qt::WA_OpaquePaintEvent, true);
+  this->setAttribute(Qt::WA_PaintOnScreen, true);
+  this->setAttribute(Qt::WA_NoSystemBackground, true);
+
+  // Store window id
+  this->dataPtr->windowId = this->winId();
 
   // Render engine
   auto engine = rendering::engine(engineName);
@@ -153,9 +160,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->connect(this->dataPtr->updateTimer, SIGNAL(timeout()),
       this, SLOT(update()));
   this->dataPtr->updateTimer->start(std::round(1000.0 / 60.0));
+}
 
-  // Store window id
-  this->dataPtr->windowId = this->winId();
+/////////////////////////////////////////////////
+QPaintEngine *Scene3D::paintEngine() const
+{
+  return nullptr;
 }
 
 /////////////////////////////////////////////////

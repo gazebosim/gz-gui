@@ -71,6 +71,9 @@ namespace plugins
         const;
 
     // Documentation inherited
+    protected: virtual QPaintEngine *paintEngine() const override;
+
+    // Documentation inherited
     protected: virtual void paintEvent(QPaintEvent *_e) override;
 
     // Documentation inherited
