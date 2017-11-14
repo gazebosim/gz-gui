@@ -13,6 +13,14 @@ pipelines:
             libprotoc-dev libprotobuf-dev libzmq3-dev protobuf-compiler cppcheck mercurial
           # Static checking before building
           - sh tools/code_check.sh
+          # Ignition cmake
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-cmake -b default
+          - cd ign-cmake
+          - mkdir build
+          - cd build
+          - cmake .. -DENABLE_TESTS_COMPILATION=false
+          - make install
+          - cd ../..
           # Ignition math
           - hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math4
           - cd ign-math
