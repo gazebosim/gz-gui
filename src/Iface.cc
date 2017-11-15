@@ -24,6 +24,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
+#include <ignition/common/Plugin.hh>
 #include <ignition/common/PluginLoader.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
@@ -89,7 +90,7 @@ MainWindow *g_mainWin = nullptr;
 std::vector<QDialog *> g_dialogs;
 
 /// \brief Vector of pointers to plugins
-std::vector<std::unique_ptr<Plugin>> g_plugins;
+std::vector<std::shared_ptr<Plugin>> g_plugins;
 
 /// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
@@ -324,6 +325,8 @@ bool ignition::gui::stop()
 {
   igndbg << "Stop" << std::endl;
 
+  g_plugins.clear();
+
   if (g_mainWin)
   {
     g_mainWin->close();
@@ -344,8 +347,6 @@ bool ignition::gui::stop()
     delete g_app;
     g_app = nullptr;
   }
-
-  g_plugins.clear();
 
   return true;
 }
@@ -380,6 +381,9 @@ bool ignition::gui::loadConfig(const std::string &_config)
   }
 
   ignmsg << "Loading config [" << _config << "]" << std::endl;
+
+  // Clear all previous plugins
+  g_plugins.clear();
 
   // Process each plugin
   for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
@@ -569,7 +573,16 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   // Load plugin
   ignition::common::PluginLoader pluginLoader;
 
-  auto pluginName = pluginLoader.LoadLibrary(pathToLib);
+  auto pluginNames = pluginLoader.LoadLibrary(pathToLib);
+  if (pluginNames.empty())
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't load library on path [" << pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  auto pluginName = *pluginNames.begin();
   if (pluginName.empty())
   {
     ignerr << "Failed to load plugin [" << _filename <<
@@ -578,11 +591,20 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     return false;
   }
 
-  auto plugin = pluginLoader.Instantiate<ignition::gui::Plugin>(pluginName);
-  if (!plugin)
+  auto commonPlugin = pluginLoader.Instantiate(pluginName);
+  if (!commonPlugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't instantiate plugin on path [" << pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  auto plugin = commonPlugin->as_shared_ptr<ignition::gui::Plugin>();
+  if (!plugin)
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't get interface [" << pluginName <<
               "]." << std::endl;
     return false;
   }
@@ -601,7 +623,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     plugin->Load(_pluginElem);
 
   // Store plugin in list
-  g_plugins.push_back(std::move(plugin));
+  g_plugins.push_back(plugin);
 
   return true;
 }
@@ -643,13 +665,8 @@ bool ignition::gui::addPluginsToWindow()
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
 
-    // Qt steals the ownership of the plugin (QWidget)
-    // Remove it from the smart pointer without calling the destructor
-    plugin.release();
-
     count++;
   }
-  g_plugins.clear();
 
   return true;
 }
@@ -770,10 +787,6 @@ bool ignition::gui::runDialogs()
     auto layout = new QVBoxLayout();
     layout->addWidget(plugin.get());
 
-    // Qt steals the ownership of the plugin (QWidget)
-    // Remove it from the smart pointer without calling the destructor
-    plugin.release();
-
     auto dialog = new QDialog();
     dialog->setLayout(layout);
     dialog->setWindowTitle(title);
@@ -785,7 +798,6 @@ bool ignition::gui::runDialogs()
     dialog->show();
     igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
   }
-  g_plugins.clear();
 
   return true;
 }
