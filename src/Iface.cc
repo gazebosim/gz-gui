@@ -18,7 +18,9 @@
 #include <signal.h>
 #include <stdio.h>
 #include <tinyxml2.h>
+
 #include <iostream>
+#include <queue>
 #include <string>
 #include <vector>
 
@@ -32,6 +34,8 @@
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/config.hh"
+#include "ignition/gui/Dialog.hh"
+#include "ignition/gui/Dock.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
@@ -87,10 +91,14 @@ QApplication *g_app;
 MainWindow *g_mainWin = nullptr;
 
 /// \brief Vector of pointers to dialogs
-std::vector<QDialog *> g_dialogs;
+std::vector<Dialog *> g_dialogs;
 
-/// \brief Vector of pointers to plugins
-std::vector<std::shared_ptr<Plugin>> g_plugins;
+/// \brief Queue of plugins which should be added to the window
+std::queue<std::shared_ptr<Plugin>> g_pluginsToAdd;
+
+/// \brief Vector of pointers to plugins already added, we hang on to these
+/// until it is ok to unload the plugin's shared library.
+std::vector<std::shared_ptr<Plugin>> g_pluginsAdded;
 
 /// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
@@ -204,6 +212,25 @@ std::string homePath()
 #endif
 
   return homePath;
+}
+
+/////////////////////////////////////////////////
+void removeAddedPlugin(std::shared_ptr<Plugin> _plugin)
+{
+  // If parent is a dialog, remove that too
+  auto dialog = qobject_cast<Dialog *>(_plugin->parent());
+  if (dialog)
+  {
+    g_dialogs.erase(std::remove(
+        g_dialogs.begin(),
+        g_dialogs.end(), dialog),
+        g_dialogs.end());
+  }
+
+  g_pluginsAdded.erase(std::remove(
+      g_pluginsAdded.begin(),
+      g_pluginsAdded.end(), _plugin),
+      g_pluginsAdded.end());
 }
 
 /////////////////////////////////////////////////
@@ -325,10 +352,9 @@ bool ignition::gui::stop()
 {
   igndbg << "Stop" << std::endl;
 
-  g_plugins.clear();
-
   if (g_mainWin)
   {
+    g_mainWin->CloseAllDocks();
     g_mainWin->close();
     delete g_mainWin;
     g_mainWin = nullptr;
@@ -347,6 +373,10 @@ bool ignition::gui::stop()
     delete g_app;
     g_app = nullptr;
   }
+
+  std::queue<std::shared_ptr<Plugin>> empty;
+  std::swap(g_pluginsToAdd, empty);
+  g_pluginsAdded.clear();
 
   return true;
 }
@@ -383,7 +413,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
   ignmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Clear all previous plugins
-  g_plugins.clear();
+  g_pluginsAdded.clear();
 
   // Process each plugin
   for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
@@ -622,8 +652,8 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   else
     plugin->Load(_pluginElem);
 
-  // Store plugin in list
-  g_plugins.push_back(plugin);
+  // Store plugin in queue to be added to the window
+  g_pluginsToAdd.push(plugin);
 
   return true;
 }
@@ -646,10 +676,14 @@ bool ignition::gui::addPluginsToWindow()
 {
   // Create a widget for each plugin
   auto count = 0;
-  for (auto &plugin : g_plugins)
+  while (!g_pluginsToAdd.empty())
   {
+    auto plugin = g_pluginsToAdd.front();
+
     auto title = QString::fromStdString(plugin->Title());
-    auto dock = new QDockWidget(title, g_mainWin);
+    auto dock = new Dock();
+    dock->setParent(g_mainWin);
+    dock->setWindowTitle(title);
     dock->setObjectName(title);
     dock->setAllowedAreas(Qt::TopDockWidgetArea);
     dock->setWidget(&*plugin);
@@ -664,6 +698,14 @@ bool ignition::gui::addPluginsToWindow()
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
+
+    g_pluginsAdded.push_back(plugin);
+    g_pluginsToAdd.pop();
+
+    g_mainWin->connect(dock, &Dock::Closing, [plugin]
+    {
+      removeAddedPlugin(plugin);
+    });
 
     count++;
   }
@@ -748,7 +790,7 @@ ignition::gui::MainWindow *ignition::gui::mainWindow()
 }
 
 /////////////////////////////////////////////////
-std::vector<QDialog *> ignition::gui::dialogs()
+std::vector<Dialog *> ignition::gui::dialogs()
 {
   return g_dialogs;
 }
@@ -780,20 +822,30 @@ bool ignition::gui::runDialogs()
 
   igndbg << "Run dialogs" << std::endl;
 
-  for (auto &plugin : g_plugins)
+  while (!g_pluginsToAdd.empty())
   {
+    auto plugin = g_pluginsToAdd.front();
+
     auto title = QString::fromStdString(plugin->Title());
 
     auto layout = new QVBoxLayout();
     layout->addWidget(plugin.get());
 
-    auto dialog = new QDialog();
+    auto dialog = new Dialog();
     dialog->setLayout(layout);
     dialog->setWindowTitle(title);
     dialog->setWindowModality(Qt::NonModal);
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
     g_dialogs.push_back(dialog);
+
+    g_pluginsAdded.push_back(plugin);
+    g_pluginsToAdd.pop();
+
+    g_mainWin->connect(dialog, &Dialog::Closing, [plugin]
+    {
+      removeAddedPlugin(plugin);
+    });
 
     dialog->show();
     igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;

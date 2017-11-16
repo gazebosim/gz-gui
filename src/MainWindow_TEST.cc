@@ -441,6 +441,15 @@ TEST(MainWindowTest, OnAddPlugin)
   plugins = mainWindow->findChildren<Plugin *>();
   EXPECT_EQ(plugins.size(), 1);
 
+  // Add another plugin
+  pluginAct->trigger();
+
+  QCoreApplication::processEvents();
+
+  // Check window has 2 plugins
+  plugins = mainWindow->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 2);
+
   // Clean up
   EXPECT_TRUE(stop());
 }
