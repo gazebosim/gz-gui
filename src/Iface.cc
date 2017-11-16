@@ -630,7 +630,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     return false;
   }
 
-  auto plugin = commonPlugin->as_shared_ptr<ignition::gui::Plugin>();
+  auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
   if (!plugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
