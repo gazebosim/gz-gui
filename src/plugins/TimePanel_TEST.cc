@@ -22,6 +22,7 @@
 
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/Plugin.hh"
+#include "ignition/gui/MainWindow.hh"
 
 using namespace ignition;
 using namespace gui;
