@@ -70,6 +70,13 @@ namespace plugins
     /// \brief Callback in Qt thread when pause button is clicked.
     public slots: void OnPause();
 
+    /// \brief Callback in Qt thread when step button is clicked.
+    public slots: void OnStep();
+
+    /// \brief Qt callback when the step value in the spinbox changed
+    /// \param[in] _value New step value.
+    public slots: void OnStepValueChanged(int _value);
+
     /// \brief Notify that it's now playing.
     signals: void Playing();
 

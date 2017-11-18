@@ -108,12 +108,16 @@ TEST(TimePanelTest, WorldControl)
   auto pauseButton = plugin->findChild<QPushButton *>("pauseButton");
   EXPECT_TRUE(pauseButton != nullptr);
   EXPECT_TRUE(pauseButton->isVisible());
+  auto stepButton = plugin->findChild<QPushButton *>("stepButton");
+  EXPECT_TRUE(stepButton != nullptr);
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_FALSE(stepButton->isEnabled());
 
   // World control service
   bool playCalled = false;
   bool pauseCalled = false;
-  std::function<void(const msgs::WorldControl &, msgs::Empty &, bool &)> cb =
-      [&](const msgs::WorldControl &_req, msgs::Empty &, bool &_result)
+  std::function<void(const msgs::WorldControl &, msgs::Boolean &, bool &)> cb =
+      [&](const msgs::WorldControl &_req, msgs::Boolean &, bool &_result)
   {
     EXPECT_TRUE(_req.has_pause());
     if (_req.pause())
@@ -131,12 +135,14 @@ TEST(TimePanelTest, WorldControl)
   EXPECT_TRUE(pauseCalled);
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
 
   // Play
   playButton->click();
   EXPECT_TRUE(playCalled);
   EXPECT_FALSE(playButton->isVisible());
   EXPECT_TRUE(pauseButton->isVisible());
+  EXPECT_FALSE(stepButton->isEnabled());
 
   // Cleanup
   plugins.clear();
@@ -197,6 +203,10 @@ TEST(TimePanelTest, WorldStats)
   auto pauseButton = plugin->findChild<QPushButton *>("pauseButton");
   EXPECT_TRUE(pauseButton != nullptr);
   EXPECT_FALSE(pauseButton->isVisible());
+  auto stepButton = plugin->findChild<QPushButton *>("stepButton");
+  EXPECT_TRUE(stepButton != nullptr);
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
 
   // Publish stats
   transport::Node node;
@@ -214,6 +224,8 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_EQ(realTime->text().toStdString(), "N/A");
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
 
   {
     msgs::WorldStatistics msg;
@@ -227,6 +239,8 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
 
   {
     msgs::WorldStatistics msg;
@@ -238,6 +252,8 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
 
   {
     msgs::WorldStatistics msg;
@@ -249,6 +265,8 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
   EXPECT_FALSE(playButton->isVisible());
   EXPECT_TRUE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_FALSE(stepButton->isEnabled());
 
   // Cleanup
   plugins.clear();
