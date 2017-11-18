@@ -291,16 +291,9 @@ void TimePanel::OnPause()
 /////////////////////////////////////////////////
 void TimePanel::OnStep()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
-  {
-    if (_result)
-      QMetaObject::invokeMethod(this, "Stepped");
-  };
-
   ignition::msgs::WorldControl req;
   req.set_multi_step(this->dataPtr->multiStep);
-  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+  this->dataPtr->node.Request(this->dataPtr->controlService, req);
 }
 
 /////////////////////////////////////////////////
