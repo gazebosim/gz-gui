@@ -379,7 +379,8 @@ void VariablePill::dropEvent(QDropEvent *_evt)
     this->connect(variable, SIGNAL(VariableTextChanged(std::string)),
         this->Container(), SLOT(OnSetVariableLabel(std::string)));
 
-    igndbg << "Added " << variable->Name() << " to " << this->Name() << std::endl;
+    igndbg << "Added " << variable->Name() << " to " << this->Name()
+           << std::endl;
     this->AddVariablePill(variable);
   }
   else if (_evt->mimeData()->hasFormat("application/x-pill-item"))
