@@ -20,6 +20,7 @@
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
 using namespace ignition;

@@ -19,6 +19,7 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
 using namespace ignition;

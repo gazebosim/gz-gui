@@ -22,6 +22,7 @@
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/Plugin.hh"
