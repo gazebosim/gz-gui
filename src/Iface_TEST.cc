@@ -20,6 +20,8 @@
 #include <ignition/common/Console.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
+#include "ignition/gui/Dialog.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Iface.hh"
 
 using namespace ignition;
@@ -429,6 +431,45 @@ TEST(IfaceTest, Dialog)
     QTimer::singleShot(300, ds[0], SLOT(close()));
 
     while (!closed)
+      QCoreApplication::processEvents();
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Multiple dialogs
+  {
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
+    addPluginPath(testBuildPath + "plugins");
+
+    // Create app
+    EXPECT_TRUE(initApp());
+
+    // Load 2 test plugins
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
+
+    // Run dialog
+    EXPECT_TRUE(runDialogs());
+
+    // Check they were open
+    auto ds = dialogs();
+    EXPECT_EQ(ds.size(), 2u);
+
+    // Wait until they are closed
+    int closed{0};
+    for (auto d : ds)
+    {
+      d->connect(d, &QDialog::finished, d, [&](){
+        closed++;
+      });
+    }
+
+    // Close dialogs after some time
+    QTimer::singleShot(300, ds[0], SLOT(close()));
+    QTimer::singleShot(300, ds[1], SLOT(close()));
+
+    while (closed != 2)
       QCoreApplication::processEvents();
 
     EXPECT_TRUE(stop());
