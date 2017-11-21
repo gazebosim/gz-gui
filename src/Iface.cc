@@ -18,12 +18,15 @@
 #include <signal.h>
 #include <stdio.h>
 #include <tinyxml2.h>
+
 #include <iostream>
+#include <queue>
 #include <string>
 #include <vector>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
+#include <ignition/common/Plugin.hh>
 #include <ignition/common/PluginLoader.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
@@ -31,6 +34,8 @@
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/config.hh"
+#include "ignition/gui/Dialog.hh"
+#include "ignition/gui/Dock.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
@@ -47,38 +52,6 @@ using namespace gui;
 // Forward declarations.
 std::string homePath();
 
-struct WindowConfig
-{
-  /// \brief Window X position in px
-  int pos_x = -1;
-
-  /// \brief Window Y position in px
-  int pos_y = -1;
-
-  /// \brief Window width in px
-  int width = -1;
-
-  /// \brief Window height in px
-  int height = -1;
-
-  /// \brief Window state (dock configuration)
-  QByteArray state;
-
-  /// \brief String holding the global style sheet in QSS format.
-  std::string styleSheet;
-
-  /// \brief Map menu name to whether it should be visible, all menus are shown
-  /// by default.
-  std::map<std::string, bool> menuVisibilityMap;
-
-  /// \brief True if plugins found in plugin paths should be listed under the
-  /// Plugins menu. True by default.
-  bool pluginsFromPaths = true;
-
-  /// \brief List of plugins which should be shown on the list
-  std::vector<std::string> showPlugins;
-};
-
 /// \brief Pointer to application
 QApplication *g_app;
 
@@ -86,10 +59,14 @@ QApplication *g_app;
 MainWindow *g_mainWin = nullptr;
 
 /// \brief Vector of pointers to dialogs
-std::vector<QDialog *> g_dialogs;
+std::vector<Dialog *> g_dialogs;
 
-/// \brief Vector of pointers to plugins
-std::vector<std::unique_ptr<Plugin>> g_plugins;
+/// \brief Queue of plugins which should be added to the window
+std::queue<std::shared_ptr<Plugin>> g_pluginsToAdd;
+
+/// \brief Vector of pointers to plugins already added, we hang on to these
+/// until it is ok to unload the plugin's shared library.
+std::vector<std::shared_ptr<Plugin>> g_pluginsAdded;
 
 /// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
@@ -97,7 +74,9 @@ std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 /// \brief Vector of paths to look for plugins
 std::vector<std::string> g_pluginPaths;
 
-/// \brief Window configuration
+/// \brief Holds a configuration which may be applied to g_mainWin once it
+/// is created by calling applyConfig(). It's no longer needed and should not
+/// be used after that.
 WindowConfig g_windowConfig;
 
 /// \brief The path containing the default configuration file.
@@ -203,6 +182,25 @@ std::string homePath()
 #endif
 
   return homePath;
+}
+
+/////////////////////////////////////////////////
+void removeAddedPlugin(std::shared_ptr<Plugin> _plugin)
+{
+  // If parent is a dialog, remove that too
+  auto dialog = qobject_cast<Dialog *>(_plugin->parent());
+  if (dialog)
+  {
+    g_dialogs.erase(std::remove(
+        g_dialogs.begin(),
+        g_dialogs.end(), dialog),
+        g_dialogs.end());
+  }
+
+  g_pluginsAdded.erase(std::remove(
+      g_pluginsAdded.begin(),
+      g_pluginsAdded.end(), _plugin),
+      g_pluginsAdded.end());
 }
 
 /////////////////////////////////////////////////
@@ -326,6 +324,7 @@ bool ignition::gui::stop()
 
   if (g_mainWin)
   {
+    g_mainWin->CloseAllDocks();
     g_mainWin->close();
     delete g_mainWin;
     g_mainWin = nullptr;
@@ -345,7 +344,9 @@ bool ignition::gui::stop()
     g_app = nullptr;
   }
 
-  g_plugins.clear();
+  std::queue<std::shared_ptr<Plugin>> empty;
+  std::swap(g_pluginsToAdd, empty);
+  g_pluginsAdded.clear();
 
   return true;
 }
@@ -381,6 +382,9 @@ bool ignition::gui::loadConfig(const std::string &_config)
 
   ignmsg << "Loading config [" << _config << "]" << std::endl;
 
+  // Clear all previous plugins
+  g_pluginsAdded.clear();
+
   // Process each plugin
   for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
       pluginElem = pluginElem->NextSiblingElement("plugin"))
@@ -394,81 +398,14 @@ bool ignition::gui::loadConfig(const std::string &_config)
   {
     igndbg << "Loading window config" << std::endl;
 
-    if (auto xElem = winElem->FirstChildElement("position_x"))
-      xElem->QueryIntText(&g_windowConfig.pos_x);
-
-    if (auto yElem = winElem->FirstChildElement("position_y"))
-      yElem->QueryIntText(&g_windowConfig.pos_y);
-
-    if (auto widthElem = winElem->FirstChildElement("width"))
-      widthElem->QueryIntText(&g_windowConfig.width);
-
-    if (auto heightElem = winElem->FirstChildElement("height"))
-      heightElem->QueryIntText(&g_windowConfig.height);
-
-    if (auto stateElem = winElem->FirstChildElement("state"))
+    tinyxml2::XMLPrinter printer;
+    if (!winElem->Accept(&printer))
     {
-      auto text = stateElem->GetText();
-      g_windowConfig.state = QByteArray::fromBase64(text);
+      ignwarn << "There was an error parsing the <window> element"
+              << std::endl;
+      return false;
     }
-
-    if (auto styleElem = winElem->FirstChildElement("stylesheet"))
-    {
-      if (auto txt = styleElem->GetText())
-      {
-        setStyleFromString(txt);
-      }
-      // empty string
-      else
-      {
-        setStyleFromString("");
-      }
-    }
-
-    // Menus
-    if (auto menusElem = winElem->FirstChildElement("menus"))
-    {
-      // File
-      if (auto fileElem = menusElem->FirstChildElement("file"))
-      {
-        // Visible
-        if (fileElem->Attribute("visible"))
-        {
-          bool visible = true;
-          fileElem->QueryBoolAttribute("visible", &visible);
-          g_windowConfig.menuVisibilityMap["fileMenu"] = visible;
-        }
-      }
-
-      // Plugins
-      if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
-      {
-        // Visible
-        if (pluginsElem->Attribute("visible"))
-        {
-          bool visible = true;
-          pluginsElem->QueryBoolAttribute("visible", &visible);
-          g_windowConfig.menuVisibilityMap["pluginsMenu"] = visible;
-        }
-
-        // From paths
-        if (pluginsElem->Attribute("from_paths"))
-        {
-          bool fromPaths = false;
-          pluginsElem->QueryBoolAttribute("from_paths", &fromPaths);
-          g_windowConfig.pluginsFromPaths = fromPaths;
-        }
-
-        // Show individual plugins
-        for (auto showElem = pluginsElem->FirstChildElement("show");
-            showElem != nullptr;
-            showElem = showElem->NextSiblingElement("show"))
-        {
-          if (auto pluginName = showElem->GetText())
-            g_windowConfig.showPlugins.push_back(pluginName);
-        }
-      }
-    }
+    g_windowConfig.MergeFromXML(std::string(printer.CStr()));
   }
 
   return true;
@@ -569,7 +506,16 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   // Load plugin
   ignition::common::PluginLoader pluginLoader;
 
-  auto pluginName = pluginLoader.LoadLibrary(pathToLib);
+  auto pluginNames = pluginLoader.LoadLibrary(pathToLib);
+  if (pluginNames.empty())
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't load library on path [" << pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  auto pluginName = *pluginNames.begin();
   if (pluginName.empty())
   {
     ignerr << "Failed to load plugin [" << _filename <<
@@ -578,11 +524,20 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     return false;
   }
 
-  auto plugin = pluginLoader.Instantiate<ignition::gui::Plugin>(pluginName);
-  if (!plugin)
+  auto commonPlugin = pluginLoader.Instantiate(pluginName);
+  if (!commonPlugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't instantiate plugin on path [" << pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
+  if (!plugin)
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't get interface [" << pluginName <<
               "]." << std::endl;
     return false;
   }
@@ -600,8 +555,8 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   else
     plugin->Load(_pluginElem);
 
-  // Store plugin in list
-  g_plugins.push_back(std::move(plugin));
+  // Store plugin in queue to be added to the window
+  g_pluginsToAdd.push(plugin);
 
   return true;
 }
@@ -624,10 +579,14 @@ bool ignition::gui::addPluginsToWindow()
 {
   // Create a widget for each plugin
   auto count = 0;
-  for (auto &plugin : g_plugins)
+  while (!g_pluginsToAdd.empty())
   {
+    auto plugin = g_pluginsToAdd.front();
+
     auto title = QString::fromStdString(plugin->Title());
-    auto dock = new QDockWidget(title, g_mainWin);
+    auto dock = new Dock();
+    dock->setParent(g_mainWin);
+    dock->setWindowTitle(title);
     dock->setObjectName(title);
     dock->setAllowedAreas(Qt::TopDockWidgetArea);
     dock->setWidget(&*plugin);
@@ -643,13 +602,16 @@ bool ignition::gui::addPluginsToWindow()
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
 
-    // Qt steals the ownership of the plugin (QWidget)
-    // Remove it from the smart pointer without calling the destructor
-    plugin.release();
+    g_pluginsAdded.push_back(plugin);
+    g_pluginsToAdd.pop();
+
+    g_mainWin->connect(dock, &Dock::Closing, [plugin]
+    {
+      removeAddedPlugin(plugin);
+    });
 
     count++;
   }
-  g_plugins.clear();
 
   return true;
 }
@@ -659,69 +621,7 @@ bool ignition::gui::applyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
-  // Window position
-  if (g_windowConfig.pos_x >= 0 && g_windowConfig.pos_y >= 0)
-    g_mainWin->move(g_windowConfig.pos_x, g_windowConfig.pos_y);
-
-  // Window size
-  if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
-    g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
-
-  // Docks state
-  if (!g_windowConfig.state.isEmpty())
-  {
-    if (!g_mainWin->restoreState(g_windowConfig.state))
-      ignwarn << "Failed to restore state" << std::endl;
-  }
-
-  // Stylesheet
-  setStyleFromString(g_windowConfig.styleSheet);
-
-  // Hide menus
-  for (auto visible : g_windowConfig.menuVisibilityMap)
-  {
-    if (auto menu =
-        g_mainWin->findChild<QMenu *>(QString::fromStdString(visible.first)))
-    {
-      menu->menuAction()->setVisible(visible.second);
-    }
-  }
-
-  // Plugins menu
-  if (auto menu = g_mainWin->findChild<QMenu *>("pluginsMenu"))
-  {
-    for (auto action : menu->actions())
-    {
-      action->setVisible(g_windowConfig.pluginsFromPaths ||
-          std::find(g_windowConfig.showPlugins.begin(),
-                    g_windowConfig.showPlugins.end(),
-                    action->text().toStdString()) !=
-                    g_windowConfig.showPlugins.end());
-    }
-
-    for (auto plugin : g_windowConfig.showPlugins)
-    {
-      bool exists = false;
-      for (auto action : menu->actions())
-      {
-        if (action->text().toStdString() == plugin)
-        {
-          exists = true;
-          break;
-        }
-      }
-
-      if (!exists)
-      {
-        ignwarn << "Requested to show plugin [" << plugin <<
-            "] but it doesn't exist." << std::endl;
-      }
-    }
-  }
-
-  QCoreApplication::processEvents();
-
-  return true;
+  return g_mainWin->ApplyConfig(g_windowConfig);
 }
 
 /////////////////////////////////////////////////
@@ -731,7 +631,7 @@ ignition::gui::MainWindow *ignition::gui::mainWindow()
 }
 
 /////////////////////////////////////////////////
-std::vector<QDialog *> ignition::gui::dialogs()
+std::vector<Dialog *> ignition::gui::dialogs()
 {
   return g_dialogs;
 }
@@ -763,18 +663,16 @@ bool ignition::gui::runDialogs()
 
   igndbg << "Run dialogs" << std::endl;
 
-  for (auto &plugin : g_plugins)
+  while (!g_pluginsToAdd.empty())
   {
+    auto plugin = g_pluginsToAdd.front();
+
     auto title = QString::fromStdString(plugin->Title());
 
     auto layout = new QVBoxLayout();
     layout->addWidget(plugin.get());
 
-    // Qt steals the ownership of the plugin (QWidget)
-    // Remove it from the smart pointer without calling the destructor
-    plugin.release();
-
-    auto dialog = new QDialog();
+    auto dialog = new Dialog();
     dialog->setLayout(layout);
     dialog->setWindowTitle(title);
     dialog->setWindowModality(Qt::NonModal);
@@ -782,10 +680,17 @@ bool ignition::gui::runDialogs()
 
     g_dialogs.push_back(dialog);
 
+    g_pluginsAdded.push_back(plugin);
+    g_pluginsToAdd.pop();
+
+    g_mainWin->connect(dialog, &Dialog::Closing, [plugin]
+    {
+      removeAddedPlugin(plugin);
+    });
+
     dialog->show();
     igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
   }
-  g_plugins.clear();
 
   return true;
 }
