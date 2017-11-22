@@ -325,7 +325,6 @@ VariablePill *VariablePill::VariablePillByName(const std::string &_name)
 /////////////////////////////////////////////////
 void VariablePill::dragEnterEvent(QDragEnterEvent *_evt)
 {
-  igndbg << "Drag entered " << this->Name() << std::endl;
   if (!this->IsDragValid(_evt))
   {
     _evt->setDropAction(Qt::IgnoreAction);
@@ -347,14 +346,12 @@ void VariablePill::dragEnterEvent(QDragEnterEvent *_evt)
     return;
   }
 
-  igndbg << "/Drag entered " << this->Name() << std::endl;
   _evt->acceptProposedAction();
 }
 
 /////////////////////////////////////////////////
 void VariablePill::dropEvent(QDropEvent *_evt)
 {
-  igndbg << "Dropped on " << this->Name() << std::endl;
   if (!this->IsDragValid(_evt))
   {
     _evt->accept();
@@ -379,8 +376,6 @@ void VariablePill::dropEvent(QDropEvent *_evt)
     this->connect(variable, SIGNAL(VariableTextChanged(std::string)),
         this->Container(), SLOT(OnSetVariableLabel(std::string)));
 
-    igndbg << "Added " << variable->Name() << " to " << this->Name()
-           << std::endl;
     this->AddVariablePill(variable);
   }
   else if (_evt->mimeData()->hasFormat("application/x-pill-item"))
@@ -481,7 +476,6 @@ bool VariablePill::IsDragValid(const QDropEvent *_evt) const
 /////////////////////////////////////////////////
 void VariablePill::mousePressEvent(QMouseEvent *_event)
 {
-  igndbg << "Pressed " << this->Name() << std::endl;
   if (_event->button() == Qt::LeftButton)
     this->dataPtr->dragStartPosition = _event->pos();
 }
@@ -489,7 +483,6 @@ void VariablePill::mousePressEvent(QMouseEvent *_event)
 /////////////////////////////////////////////////
 void VariablePill::mouseMoveEvent(QMouseEvent *_event)
 {
-  igndbg << "Moving over " << this->Name() << std::endl;
   if (!(_event->buttons() & Qt::LeftButton))
       return;
 
@@ -511,7 +504,6 @@ void VariablePill::mouseMoveEvent(QMouseEvent *_event)
   mimeData->setText(textData);
   drag->setMimeData(mimeData);
 
-  igndbg << "/Moving over " << this->Name() << std::endl;
   drag->exec(Qt::MoveAction);
 }
 
