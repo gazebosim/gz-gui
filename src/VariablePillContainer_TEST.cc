@@ -82,7 +82,7 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   EXPECT_TRUE(initApp());
 
   // create container
-  VariablePillContainer *container01 = new VariablePillContainer(nullptr);
+  auto container01 = new VariablePillContainer(nullptr);
   ASSERT_NE(nullptr, container01);
   EXPECT_EQ(0u, container01->VariablePillCount());
 
@@ -93,17 +93,25 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   VariablePill *var02 = new VariablePill(nullptr);
   ASSERT_NE(nullptr, var02);
 
-  container01->show();
-
   // First, we have a container with two variables. We're going to simulate
   // dragging one of the variables (var01) into the other (var02). At that
-  // point we'll have a single multi-variable.
+  // point we'll have a single multi-variable pill.
   container01->AddVariablePill(var01);
   container01->AddVariablePill(var02);
+  QCoreApplication::processEvents();
+  container01->show();
   QCoreApplication::processEvents();
   EXPECT_EQ(2u, container01->VariablePillCount());
   EXPECT_EQ(0u, var01->VariablePillCount());
   EXPECT_EQ(0u, var02->VariablePillCount());
+
+  // Check the container begins at 0, 0
+  EXPECT_EQ(0, container01->pos().x());
+  EXPECT_EQ(0, container01->pos().y());
+
+          igndbg << "Container initial pos: "
+             << container01->pos().x() << " "
+             << container01->pos().y() << std::endl;
 
   // Check both pills have the same size
   EXPECT_EQ(var01->width(), var02->width());
@@ -170,9 +178,17 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   EXPECT_EQ(varCenter.x(), static_cast<int>(var02->width() * 0.5));
   EXPECT_EQ(varCenter.y(), static_cast<int>(var02->height() * 0.5));
 
-  // ... but they move -- sometimes -- not sure why
+  // Check the container moved to another place on the screen -- not sure why
+  EXPECT_LT(0, container01->pos().x());
+  EXPECT_LT(0, container01->pos().y());
+
+  // ... and so did the variables
   EXPECT_LE(var01Global.x(), var01->mapToGlobal(varCenter).x());
   EXPECT_LE(var02Global.y(), var02->mapToGlobal(varCenter).y());
+
+  // Store their new global poses
+  var01Global = var01->mapToGlobal(varCenter);
+  var02Global = var02->mapToGlobal(varCenter);
 
           igndbg << "Pills new global: "
              << var01Global.x() << " "
@@ -181,9 +197,9 @@ TEST(VariablePillContainerTest, VariablePillEvents)
              << var02Global.y() << " "
              << std::endl;
 
-  // Store their new global poses
-  var01Global = var01->mapToGlobal(varCenter);
-  var02Global = var02->mapToGlobal(varCenter);
+          igndbg << "Container new pos: "
+             << container01->pos().x() << " "
+             << container01->pos().y() << std::endl;
 
   // Adjust the mouse position
   mouseGlobalPos = var01Global;
