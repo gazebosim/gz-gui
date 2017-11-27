@@ -166,12 +166,24 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   // \fixme Locally, the container moves to another place on the screen
   // On Jenkins it doesn't and the mouse never enters var02
   bool containerMoved = false;
-  if (container01->pos().x() > 0 && container01->pos().y() > 0)
+  if (container01->pos().x() > 0 || container01->pos().y() > 0)
+  {
     containerMoved = true;
 
-  // If the container moves, the variables' global pos moves too
-  EXPECT_LE(var01Global.x(), var01->mapToGlobal(varCenter).x());
-  EXPECT_LE(var02Global.y(), var02->mapToGlobal(varCenter).y());
+    // If the container moves, the variables move too
+    if (container01->pos().x() > 0)
+      EXPECT_LT(var01Global.x(), var01->mapToGlobal(varCenter).x());
+    if (container01->pos().y() > 0)
+      EXPECT_LT(var02Global.y(), var02->mapToGlobal(varCenter).y());
+  }
+  else
+  {
+    igndbg << "Container didn't move" << std::endl;
+
+    // If the container didn't move, the variables are the same
+    EXPECT_EQ(var01Global.x(), var01->mapToGlobal(varCenter).x());
+    EXPECT_EQ(var02Global.y(), var02->mapToGlobal(varCenter).y());
+  }
 
   // Store their new global poses
   var01Global = var01->mapToGlobal(varCenter);
