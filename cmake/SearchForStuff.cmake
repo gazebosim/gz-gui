@@ -19,6 +19,19 @@ else()
   BUILD_WARNING ("ignition-tools not found, for command line utilities, please install ignition-tools.")
 endif()
 
+########################################
+# Ignition math
+find_package(ignition-math4 QUIET)
+if (NOT ignition-math4_FOUND)
+  BUILD_ERROR ("Missing: Ignition Math libignition-math4-dev.")
+else()
+  message (STATUS "Found Ignition Math")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-MATH_CXX_FLAGS}")
+  include_directories(${IGNITION-MATH_INCLUDE_DIRS})
+  link_directories(${IGNITION-MATH_LIBRARY_DIRS})
+  set (HAVE_IGN_MATH TRUE)
+endif()
+
 ################################################################################
 # Ignition common
 find_package(ignition-common0 QUIET)
