@@ -14,7 +14,7 @@ pipelines:
           - cd ign-cmake
           - mkdir build
           - cd build
-          - cmake .. -BUILD_TESTING=false
+          - cmake .. -DBUILD_TESTING=false
           - make install
           - cd ../..
           # Ignition math
