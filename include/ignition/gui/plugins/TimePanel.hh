@@ -36,12 +36,13 @@ namespace plugins
   /// \brief This plugin provides a time panel which may:
   /// * Display simulation time
   /// * Display real time
-  /// * Have a play / pause button
+  /// * Have a play / pause and step buttons
   ///
   /// ## Configuration
   ///
   /// <world_control> : Configuration for controlling the world, optional.
-  /// * <play_pause> : Set to true to see a play/pause button, false by default.
+  /// * <play_pause> : Set to true to see a play/pause and step buttons,
+  ///                  false by default.
   /// * <start_paused> : Set to false to start playing, false by default.
   /// * <service> : Service for world control, required.
   /// <world_stats> : Configuration for displaying stats, optional.
@@ -72,10 +73,6 @@ namespace plugins
 
     /// \brief Callback in Qt thread when step button is clicked.
     public slots: void OnStep();
-
-    /// \brief Qt callback when the step value in the spinbox changed
-    /// \param[in] _value New step value.
-    public slots: void OnStepValueChanged(int _value);
 
     /// \brief Notify that it's now playing.
     signals: void Playing();

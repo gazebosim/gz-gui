@@ -42,7 +42,7 @@ namespace plugins
     public: ignition::transport::Node node;
 
     /// \brief The multi step value
-    public: unsigned int multiStep = 1;
+    public: unsigned int multiStep = 1u;
   };
 }
 }
@@ -128,8 +128,9 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               stepButton->setDisabled(false);
               stepSpinBox->setDisabled(false);
             });
-          this->connect(stepSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(OnStepValueChanged(int)));
+          this->connect(
+            stepSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+            [=](int _newValue) {this->dataPtr->multiStep = _newValue;});
 
           mainLayout->addWidget(playButton,  0, 0);
           mainLayout->addWidget(pauseButton, 0, 0);
@@ -291,15 +292,14 @@ void TimePanel::OnPause()
 /////////////////////////////////////////////////
 void TimePanel::OnStep()
 {
+  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+      [this](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+  {
+  };
+
   ignition::msgs::WorldControl req;
   req.set_multi_step(this->dataPtr->multiStep);
-  this->dataPtr->node.Request(this->dataPtr->controlService, req);
-}
-
-/////////////////////////////////////////////////
-void TimePanel::OnStepValueChanged(int _value)
-{
-  this->dataPtr->multiStep = _value;
+  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
 // Register this plugin

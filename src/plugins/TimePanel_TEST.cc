@@ -116,15 +116,13 @@ TEST(TimePanelTest, WorldControl)
   // World control service
   bool playCalled = false;
   bool pauseCalled = false;
+  bool multiStepCalled = false;
   std::function<void(const msgs::WorldControl &, msgs::Boolean &, bool &)> cb =
       [&](const msgs::WorldControl &_req, msgs::Boolean &, bool &_result)
   {
-    EXPECT_TRUE(_req.has_pause());
-    if (_req.pause())
-      pauseCalled = true;
-    else
-      playCalled = true;
-
+    pauseCalled = _req.has_pause() && _req.pause();
+    playCalled = _req.has_pause() && !_req.pause();
+    multiStepCalled = _req.has_multi_step();
     _result = true;
   };
   transport::Node node;
@@ -137,12 +135,69 @@ TEST(TimePanelTest, WorldControl)
   EXPECT_FALSE(pauseButton->isVisible());
   EXPECT_TRUE(stepButton->isEnabled());
 
+  // Step
+  stepButton->click();
+  EXPECT_TRUE(multiStepCalled);
+  EXPECT_TRUE(playButton->isVisible());
+  EXPECT_FALSE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
+
   // Play
   playButton->click();
   EXPECT_TRUE(playCalled);
   EXPECT_FALSE(playButton->isVisible());
   EXPECT_TRUE(pauseButton->isVisible());
   EXPECT_FALSE(stepButton->isEnabled());
+
+  // Cleanup
+  plugins.clear();
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(TimePanelTest, IncorrectWorldStats)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"TimePanel\">"
+      "<world_stats>"
+        "<sim_time>true</sim_time>"
+        "<real_time>true</real_time>"
+        "<topic>incorrect   topic  with spaces</topic>"
+      "</world_stats>"
+      "<world_control>"
+        "<play_pause>true</play_pause>"
+        "<start_paused>true</start_paused>"
+        "<service>/world_control_test</service>"
+      "</world_control>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  EXPECT_TRUE(win != nullptr);
+
+  // Show, but don't exec, so we don't block
+  win->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+
+  // Labels
+  auto simTime = plugin->findChild<QLabel *>("simTimeLabel");
+  EXPECT_TRUE(simTime == nullptr);
+  auto realTime = plugin->findChild<QLabel *>("realTimeLabel");
+  EXPECT_TRUE(realTime == nullptr);
 
   // Cleanup
   plugins.clear();
