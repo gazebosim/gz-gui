@@ -14,7 +14,9 @@ set (qt_headers_local
 
 if (HAVE_IGN_RENDERING)
   set (qt_headers_rendering
+    Geometry3D
     Grid3D
+    Light3D
     Scene3D
   )
 endif()

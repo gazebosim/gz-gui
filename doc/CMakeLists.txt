@@ -17,8 +17,9 @@ if (DOXYGEN_FOUND)
 
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/tutorials.dox
 
-    COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    #COMMENT "Generating API documentation with Doxygen" VERBATIM
+   )
 
-  install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml 
+  install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/ignition/${PROJECT_NAME_LOWER}${PROJECT_MINOR_VERSION}_${PROJECT_MINOR_VERSION})
 endif()
