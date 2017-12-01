@@ -23,6 +23,11 @@ class ignition::gui::PluginPrivate
   /// \brief Set this to true if the plugin should be deleted as soon as it has
   ///  a parent.
   public: bool deleteLater{false};
+
+  /// \brief Holds the value of the `delete_later` attribute on the
+  /// configuration. Subclasses can check this value for example to return
+  /// before the end of LoadConfig.
+  public: bool deleteLaterRequested{false};
 };
 
 using namespace ignition;
@@ -65,10 +70,10 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   {
     // Store param
     _pluginElem->QueryBoolAttribute("delete_later",
-        &this->deleteLaterRequested);
+        &this->dataPtr->deleteLaterRequested);
 
     // Use it
-    if (this->deleteLaterRequested)
+    if (this->dataPtr->deleteLaterRequested)
       this->DeleteLater();
   }
 
@@ -122,7 +127,6 @@ void Plugin::changeEvent(QEvent *_e)
       this->dataPtr->deleteLater)
   {
     qobject_cast<QWidget *>(this->parent())->close();
-    this->parent()->deleteLater();
   }
 }
 
@@ -132,11 +136,16 @@ void Plugin::DeleteLater()
   if (this->parent())
   {
     qobject_cast<QWidget *>(this->parent())->close();
-    this->parent()->deleteLater();
   }
   else
   {
     this->dataPtr->deleteLater = true;
   }
+}
+
+/////////////////////////////////////////////////
+bool Plugin::DeleteLaterRequested()
+{
+  return this->dataPtr->deleteLaterRequested;
 }
 

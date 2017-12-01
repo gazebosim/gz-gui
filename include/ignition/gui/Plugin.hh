@@ -79,6 +79,10 @@ namespace ignition
       /// \return True if it is displayed
       public: virtual bool HasTitlebar() {return this->hasTitlebar;}
 
+      /// \brief Returns the value of the the `delete_later` attribute on the
+      /// configuration, which defaults to false.
+      public: bool DeleteLaterRequested();
+
       /// \brief Show context menu
       /// \param [in] _pos Click position
       protected slots: void ShowContextMenu(const QPoint &_pos);
@@ -98,11 +102,6 @@ namespace ignition
 
       /// \brief XML configuration
       protected: std::string configStr;
-
-      /// \brief Holds the value of the `delete_later` attribute on the
-      /// configuration. Subclasses can check this value for example to return
-      /// before the end of LoadConfig.
-      protected: bool deleteLaterRequested = false;
 
       /// \internal
       /// \brief Pointer to private data
