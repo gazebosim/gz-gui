@@ -78,8 +78,8 @@ namespace plugins
     protected: virtual bool Change(const rendering::ObjectPtr &_obj,
         const std::string &_property, const QVariant &_value) override;
 
-    /// \brief Callback when the refresh button is pressed.
-    private slots: void Refresh();
+    // Documentation inherited
+    protected: virtual void Refresh() override;
 
     /// \internal
     /// \brief Pointer to private data.

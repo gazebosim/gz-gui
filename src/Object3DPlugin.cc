@@ -152,13 +152,14 @@ void Object3DPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->DeleteLaterRequested())
     return;
 
-  this->Refresh();
+  this->OnRefresh();
 }
 
 /////////////////////////////////////////////////
-void Object3DPlugin::Refresh()
+void Object3DPlugin::OnRefresh()
 {
   auto mainLayout = this->layout();
+
   // Clear previous layout
   if (mainLayout)
   {
@@ -192,7 +193,7 @@ void Object3DPlugin::Refresh()
     refreshButton->setObjectName("refreshButton" + QString::fromStdString(
         this->typeSingular));
     refreshButton->setToolTip("Refresh the list of objs");
-    this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(Refresh()));
+    this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(OnRefresh()));
 
     auto buttonsLayout = new QHBoxLayout();
     buttonsLayout->addWidget(addButton);
@@ -204,55 +205,37 @@ void Object3DPlugin::Refresh()
     mainLayout->addWidget(buttonsWidget);
   }
 
-  // Search for all objs currently in the scene
-  for (unsigned int i = 0; i < this->scene->VisualCount(); ++i)
-  {
-    auto vis = this->scene->VisualByIndex(i);
-    if (!vis || vis->GeometryCount() == 0)
-      continue;
-
-    rendering::ObjectPtr obj;
-    for (unsigned int j = 0; j < vis->GeometryCount(); ++j)
-    {
-      obj = std::dynamic_pointer_cast<rendering::Object>(
-          vis->GeometryByIndex(j));
-      if (obj)
-        break;
-    }
-    if (!obj)
-      continue;
-
-    this->objs.push_back(obj);
-    auto objName = QString::fromStdString(obj->Name());
-
-    auto poseWidget = new Pose3dWidget();
-//    poseWidget->SetValue(QVariant::fromValue(obj->Parent()->WorldPose()));
-    poseWidget->setObjectName(objName + "---poseWidget");
-    this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
-        SLOT(OnChange(QVariant)));
-
-    auto colorWidget = new ColorWidget();
-//    colorWidget->SetValue(QVariant::fromValue(obj->Material()->Ambient()));
-    colorWidget->setObjectName(objName + "---colorWidget");
-    this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
-        SLOT(OnChange(QVariant)));
-
-    auto deleteButton = new QPushButton("Delete obj");
-    deleteButton->setToolTip("Delete obj " + objName);
-    deleteButton->setObjectName(objName + "---deleteButton");
-    this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
-
-    auto collapsible = new CollapsibleWidget(obj->Name());
-    collapsible->AppendContent(poseWidget);
-    collapsible->AppendContent(colorWidget);
-    collapsible->AppendContent(deleteButton);
-
-    mainLayout->addWidget(collapsible);
-  }
+  this->Refresh();
 
   auto spacer = new QWidget();
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   mainLayout->addWidget(spacer);
+}
+
+/////////////////////////////////////////////////
+void Object3DPlugin::AppendObj(const rendering::ObjectPtr &_obj,
+    const std::vector<PropertyWidget *> _props)
+{
+  // Store on list
+  this->objs.push_back(_obj);
+
+  // Delete button
+  auto objName = QString::fromStdString(_obj->Name());
+  auto deleteButton = new QPushButton("Delete " +
+      QString::fromStdString(this->typeSingular));
+  deleteButton->setToolTip("Delete " +
+      QString::fromStdString(this->typeSingular) + " " + objName);
+  deleteButton->setObjectName(objName + "---deleteButton");
+  this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
+
+  // Collapsible
+  auto collapsible = new CollapsibleWidget(_obj->Name());
+  for (const auto &prop : _props)
+    collapsible->AppendContent(prop);
+  collapsible->AppendContent(deleteButton);
+
+  // Add to layout
+  this->layout()->addWidget(collapsible);
 }
 
 /////////////////////////////////////////////////
@@ -285,14 +268,14 @@ void Object3DPlugin::OnDelete()
     if (obj->Name() != parts[0].toStdString())
       continue;
 
-    if (!this->Delete(obj));
+    if (!this->Delete(obj))
       continue;
 
     this->objs.erase(std::remove(this->objs.begin(),
-                                           this->objs.end(), obj),
-                                           this->objs.end());
+                                 this->objs.end(), obj),
+                                 this->objs.end());
 
-    this->Refresh();
+    this->OnRefresh();
     break;
   }
 }
@@ -301,4 +284,6 @@ void Object3DPlugin::OnDelete()
 void Object3DPlugin::OnAdd()
 {
   this->Add();
+
+  this->OnRefresh();
 }

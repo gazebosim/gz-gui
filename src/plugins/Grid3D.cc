@@ -186,58 +186,12 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->DeleteLaterRequested())
     return;
 
-  this->Refresh();
+  this->OnRefresh();
 }
 
 /////////////////////////////////////////////////
 void Grid3D::Refresh()
 {
-  auto mainLayout = this->layout();
-  // Clear previous layout
-  if (mainLayout)
-  {
-    while (mainLayout->count() != 1)
-    {
-      auto item = mainLayout->takeAt(1);
-      if (qobject_cast<CollapsibleWidget *>(item->widget()))
-      {
-        delete item->widget();
-        delete item;
-      }
-    }
-  }
-  // Creating layout for the first time
-  else
-  {
-    mainLayout = new QVBoxLayout();
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
-    this->setLayout(mainLayout);
-
-    auto addButton = new QPushButton("New " +
-        QString::fromStdString(this->typeSingular));
-    addButton->setObjectName("addButton" + QString::fromStdString(
-        this->typeSingular));
-    addButton->setToolTip("Add a new " + QString::fromStdString(
-        this->typeSingular) + " with default values");
-    this->connect(addButton, SIGNAL(clicked()), this, SLOT(OnAdd()));
-
-    auto refreshButton = new QPushButton("Refresh");
-    refreshButton->setObjectName("refreshButton" + QString::fromStdString(
-        this->typeSingular));
-    refreshButton->setToolTip("Refresh the list of objs");
-    this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(Refresh()));
-
-    auto buttonsLayout = new QHBoxLayout();
-    buttonsLayout->addWidget(addButton);
-    buttonsLayout->addWidget(refreshButton);
-
-    auto buttonsWidget = new QWidget();
-    buttonsWidget->setLayout(buttonsLayout);
-
-    mainLayout->addWidget(buttonsWidget);
-  }
-
   // Search for all objs currently in the scene
   for (unsigned int i = 0; i < this->scene->VisualCount(); ++i)
   {
@@ -256,7 +210,8 @@ void Grid3D::Refresh()
     if (!obj)
       continue;
 
-    this->objs.push_back(obj);
+    // Create widgets
+    std::vector<PropertyWidget *> props;
     auto objName = QString::fromStdString(obj->Name());
 
     auto cellCountWidget = new NumberWidget("Horizontal cell count",
@@ -265,6 +220,7 @@ void Grid3D::Refresh()
     cellCountWidget->setObjectName(objName + "---cellCountWidget");
     this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
+    props.push_back(cellCountWidget);
 
     auto vertCellCountWidget = new NumberWidget("Vertical cell count",
         NumberType::UINT);
@@ -273,44 +229,31 @@ void Grid3D::Refresh()
     vertCellCountWidget->setObjectName(objName + "---vertCellCountWidget");
     this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
+    props.push_back(vertCellCountWidget);
 
     auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
     cellLengthWidget->SetValue(QVariant::fromValue(obj->CellLength()));
     cellLengthWidget->setObjectName(objName + "---cellLengthWidget");
     this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
+    props.push_back(cellLengthWidget);
 
     auto poseWidget = new Pose3dWidget();
     poseWidget->SetValue(QVariant::fromValue(obj->Parent()->WorldPose()));
     poseWidget->setObjectName(objName + "---poseWidget");
     this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
+    props.push_back(poseWidget);
 
     auto colorWidget = new ColorWidget();
     colorWidget->SetValue(QVariant::fromValue(obj->Material()->Ambient()));
     colorWidget->setObjectName(objName + "---colorWidget");
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
+    props.push_back(colorWidget);
 
-    auto deleteButton = new QPushButton("Delete obj");
-    deleteButton->setToolTip("Delete obj " + objName);
-    deleteButton->setObjectName(objName + "---deleteButton");
-    this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
-
-    auto collapsible = new CollapsibleWidget(obj->Name());
-    collapsible->AppendContent(cellCountWidget);
-    collapsible->AppendContent(vertCellCountWidget);
-    collapsible->AppendContent(cellLengthWidget);
-    collapsible->AppendContent(poseWidget);
-    collapsible->AppendContent(colorWidget);
-    collapsible->AppendContent(deleteButton);
-
-    mainLayout->addWidget(collapsible);
+    this->AppendObj(obj, props);
   }
-
-  auto spacer = new QWidget();
-  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacer);
 }
 
 /////////////////////////////////////////////////
@@ -370,8 +313,6 @@ void Grid3D::Add()
   auto mat = this->scene->CreateMaterial();
   mat->SetAmbient(kDefaultColor);
   objVis->SetMaterial(mat);
-
-  this->Refresh();
 }
 
 // Register this plugin

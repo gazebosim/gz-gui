@@ -29,6 +29,7 @@ namespace ignition
 namespace gui
 {
   class Object3DPluginPrivate;
+  class PropertyWidget;
 
   /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
   /// used for:
@@ -76,6 +77,13 @@ namespace gui
     protected: virtual bool Change(const rendering::ObjectPtr &_obj,
         const std::string &_property, const QVariant &_value) = 0;
 
+    /// \brief
+    protected: virtual void Refresh() = 0;
+
+    /// \brief
+    protected: void AppendObj(const rendering::ObjectPtr &_obj,
+        const std::vector<PropertyWidget *> _props);
+
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);
@@ -87,7 +95,7 @@ namespace gui
     protected slots: void OnAdd();
 
     /// \brief Callback when the refresh button is pressed.
-    private slots: void Refresh();
+    protected slots: void OnRefresh();
 
     /// \brief Pointer to scene
     protected: rendering::ScenePtr scene;
