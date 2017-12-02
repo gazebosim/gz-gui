@@ -21,6 +21,7 @@ set (qt_headers
   MainWindow.hh
   MessageWidget.hh
   NumberWidget.hh
+  Object3DPlugin.hh
   Plugin.hh
   Pose3dWidget.hh
   PropertyWidget.hh
@@ -58,6 +59,7 @@ target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${IGNITION-COMMON_LIBRARIES}
   ${IGNITION-MATH_LIBRARIES}
   ${IGNITION-MSGS_LIBRARIES}
+  ${IGNITION-RENDERING_LIBRARIES}
   ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}

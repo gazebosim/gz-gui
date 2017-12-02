@@ -15,21 +15,20 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_GRID3D_HH_
-#define IGNITION_GUI_PLUGINS_GRID3D_HH_
+#ifndef IGNITION_GUI_OBJECT3DPLUGIN_HH_
+#define IGNITION_GUI_OBJECT3DPLUGIN_HH_
 
 #include <memory>
+#include <ignition/rendering/RenderTypes.hh>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/Object3DPlugin.hh"
+#include "ignition/gui/Plugin.hh"
 
 namespace ignition
 {
 namespace gui
 {
-namespace plugins
-{
-  class Grid3DPrivate;
+  class Object3DPluginPrivate;
 
   /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
   /// used for:
@@ -51,41 +50,58 @@ namespace plugins
   /// * <vertical_cell_count> : Number of cells in the vertical direction,
   ///                           defaults to 0;
   /// * <cell_length> : Length of each cell, defaults to 1.
-  /// * <pose> : Grid pose, defaults to the origin.
-  /// * <color> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class Grid3D : public Object3DPlugin
+  /// * <pose> : Object pose, defaults to the origin.
+  /// * <color> : Object color, defaults to (0.7, 0.7, 0.7, 1.0)
+  class Object3DPlugin : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: Grid3D();
+    public: Object3DPlugin();
 
     /// \brief Destructor
-    public: virtual ~Grid3D();
+    public: virtual ~Object3DPlugin();
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    // Documentation inherited
-    protected: virtual bool Delete(const rendering::ObjectPtr &_obj)
-        override;
+    /// \brief
+    protected: virtual bool Delete(const rendering::ObjectPtr &_obj) = 0;
 
-    // Documentation inherited
-    protected: virtual void Add() override;
+    /// \brief
+    protected: virtual void Add() = 0;
 
     /// \brief
     protected: virtual bool Change(const rendering::ObjectPtr &_obj,
-        const std::string &_property, const QVariant &_value) override;
+        const std::string &_property, const QVariant &_value) = 0;
+
+    /// \brief Called when a value changes on a widget
+    /// \param[in] _value New value
+    private slots: void OnChange(const QVariant &_value);
+
+    /// \brief Callback when a delete button is pressed.
+    protected slots: void OnDelete();
+
+    /// \brief Callback when the add button is pressed.
+    protected slots: void OnAdd();
 
     /// \brief Callback when the refresh button is pressed.
     private slots: void Refresh();
 
+    /// \brief Pointer to scene
+    protected: rendering::ScenePtr scene;
+
+    /// \brief Keep track of objs on the scene
+    protected: std::vector<rendering::ObjectPtr> objs;
+
+    /// \brief Obj name singular
+    protected: std::string typeSingular;
+
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<Grid3DPrivate> dataPtr;
+    private: std::unique_ptr<Object3DPluginPrivate> dataPtr;
   };
-}
 }
 }
 

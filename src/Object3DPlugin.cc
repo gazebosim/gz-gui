@@ -16,7 +16,6 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/CollapsibleWidget.hh"
@@ -24,65 +23,59 @@
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
-#include "ignition/gui/plugins/Geometry3D.hh"
+#include "ignition/gui/Object3DPlugin.hh"
 
 // Default pose
 static const ignition::math::Pose3d kDefaultPose{ignition::math::Pose3d::Zero};
 
 // Default color
 static const ignition::math::Color kDefaultColor{
-    ignition::math::Color(0.2, 0.2, 0.8, 1.0)};
+    ignition::math::Color(0.7, 0.7, 0.7, 1.0)};
 
 namespace ignition
 {
 namespace gui
 {
-namespace plugins
-{
-  /// \brief Holds configuration for a geometry
-  struct GeometryInfo
+  /// \brief Holds configuration for an object
+  struct ObjInfo
   {
-    /// \brief Geometry pose in the world
+    /// \brief Pose in the world
     math::Pose3d pose{kDefaultPose};
 
-    /// \brief Geometry ambient color
+    /// \brief Color
     math::Color color{kDefaultColor};
   };
 
-  class Geometry3DPrivate
+  class Object3DPluginPrivate
   {
   };
-}
 }
 }
 
 using namespace ignition;
 using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
-Geometry3D::Geometry3D()
-  : Object3DPlugin(), dataPtr(new Geometry3DPrivate)
+Object3DPlugin::Object3DPlugin()
+  : Plugin(), dataPtr(new Object3DPluginPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-Geometry3D::~Geometry3D()
+Object3DPlugin::~Object3DPlugin()
 {
 }
 
 /////////////////////////////////////////////////
-void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+void Object3DPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
-  this->typeSingular = "geometry";
-
   if (this->title.empty())
     this->title = "3D " + this->typeSingular;
 
   // Configuration
   std::string engineName{"ogre"};
   std::string sceneName{"scene"};
-  std::vector<GeometryInfo> objInfos;
+  std::vector<ObjInfo> objInfos;
   if (_pluginElem)
   {
     // All objs managed belong to the same engine and scene
@@ -97,7 +90,7 @@ void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
          insertElem != nullptr;
         insertElem = insertElem->NextSiblingElement("insert"))
     {
-      GeometryInfo objInfo;
+      ObjInfo objInfo;
 
       if (auto elem = insertElem->FirstChildElement("pose"))
       {
@@ -140,16 +133,19 @@ void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Initial objs
   for (const auto &g : objInfos)
   {
-    auto geometry = this->scene->CreateBox();
-
-    auto geometryVis = this->scene->CreateVisual();
-    root->AddChild(geometryVis);
-    geometryVis->SetLocalPose(g.pose);
-    geometryVis->AddGeometry(geometry);
-
-    auto mat = this->scene->CreateMaterial();
-    mat->SetAmbient(g.color);
-    geometryVis->SetMaterial(mat);
+//    auto grid = this->scene->CreateObject();
+//    grid->SetCellCount(g.cellCount);
+//    grid->SetVerticalCellCount(g.vertCellCount);
+//    grid->SetCellLength(g.cellLength);
+//
+//    auto gridVis = this->scene->CreateVisual();
+//    root->AddChild(gridVis);
+//    gridVis->SetLocalPose(g.pose);
+//    gridVis->AddGeometry(grid);
+//
+//    auto mat = this->scene->CreateMaterial();
+//    mat->SetAmbient(g.color);
+//    gridVis->SetMaterial(mat);
   }
 
   // Don't waste time loading widgets if this will be deleted anyway
@@ -160,7 +156,7 @@ void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void Geometry3D::Refresh()
+void Object3DPlugin::Refresh()
 {
   auto mainLayout = this->layout();
   // Clear previous layout
@@ -208,17 +204,17 @@ void Geometry3D::Refresh()
     mainLayout->addWidget(buttonsWidget);
   }
 
-  // Search for all geometries currently in the scene
+  // Search for all objs currently in the scene
   for (unsigned int i = 0; i < this->scene->VisualCount(); ++i)
   {
     auto vis = this->scene->VisualByIndex(i);
     if (!vis || vis->GeometryCount() == 0)
       continue;
 
-    rendering::GeometryPtr obj;
+    rendering::ObjectPtr obj;
     for (unsigned int j = 0; j < vis->GeometryCount(); ++j)
     {
-      obj = std::dynamic_pointer_cast<rendering::Geometry>(
+      obj = std::dynamic_pointer_cast<rendering::Object>(
           vis->GeometryByIndex(j));
       if (obj)
         break;
@@ -230,13 +226,13 @@ void Geometry3D::Refresh()
     auto objName = QString::fromStdString(obj->Name());
 
     auto poseWidget = new Pose3dWidget();
-    poseWidget->SetValue(QVariant::fromValue(obj->Parent()->WorldPose()));
+//    poseWidget->SetValue(QVariant::fromValue(obj->Parent()->WorldPose()));
     poseWidget->setObjectName(objName + "---poseWidget");
     this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto colorWidget = new ColorWidget();
-    colorWidget->SetValue(QVariant::fromValue(obj->Material()->Ambient()));
+//    colorWidget->SetValue(QVariant::fromValue(obj->Material()->Ambient()));
     colorWidget->setObjectName(objName + "---colorWidget");
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
@@ -260,58 +256,49 @@ void Geometry3D::Refresh()
 }
 
 /////////////////////////////////////////////////
-bool Geometry3D::Change(const rendering::ObjectPtr &_obj,
-    const std::string &_property, const QVariant &_value)
+void Object3DPlugin::OnChange(const QVariant &_value)
 {
-  auto derived = std::dynamic_pointer_cast<rendering::Geometry>(_obj);
-  if (!derived)
-    return false;
+  auto parts = this->sender()->objectName().split("---");
+  if (parts.size() != 2)
+    return;
 
-  if (_property == "poseWidget")
-    derived->Parent()->SetWorldPose(_value.value<math::Pose3d>());
-  else if (_property == "colorWidget")
-    derived->Material()->SetAmbient(_value.value<math::Color>());
-  else
+  for (auto obj : this->objs)
   {
-    ignwarn << "Unknown property [" << _property << std::endl;
-    return false;
+    if (obj->Name() != parts[0].toStdString())
+      continue;
+
+    this->Change(obj, parts[1].toStdString(), _value);
+
+    break;
   }
-
-  return true;
 }
 
 /////////////////////////////////////////////////
-bool Geometry3D::Delete(const rendering::ObjectPtr &_obj)
+void Object3DPlugin::OnDelete()
 {
-  auto derived = std::dynamic_pointer_cast<rendering::Geometry>(_obj);
-  if (!derived)
-    return false;
+  auto parts = this->sender()->objectName().split("---");
+  if (parts.size() != 2)
+    return;
 
-  this->scene->DestroyVisual(derived->Parent());
+  for (auto obj : this->objs)
+  {
+    if (obj->Name() != parts[0].toStdString())
+      continue;
 
-  return true;
+    if (!this->Delete(obj));
+      continue;
+
+    this->objs.erase(std::remove(this->objs.begin(),
+                                           this->objs.end(), obj),
+                                           this->objs.end());
+
+    this->Refresh();
+    break;
+  }
 }
 
 /////////////////////////////////////////////////
-void Geometry3D::Add()
+void Object3DPlugin::OnAdd()
 {
-  auto root = this->scene->RootVisual();
-
-  auto geometry = this->scene->CreateBox();
-
-  auto geometryVis = this->scene->CreateVisual();
-  root->AddChild(geometryVis);
-  geometryVis->SetLocalPose(kDefaultPose);
-  geometryVis->AddGeometry(geometry);
-
-  auto mat = this->scene->CreateMaterial();
-  mat->SetAmbient(kDefaultColor);
-  geometryVis->SetMaterial(mat);
-
-  this->Refresh();
+  this->Add();
 }
-
-// Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Geometry3D,
-                                  ignition::gui::Plugin)
-

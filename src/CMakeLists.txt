@@ -17,6 +17,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MessageWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/NumberWidget.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Object3DPlugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Pose3dWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/PropertyWidget.cc

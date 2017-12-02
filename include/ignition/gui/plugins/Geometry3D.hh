@@ -21,7 +21,7 @@
 #include <memory>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/Plugin.hh"
+#include "ignition/gui/Object3DPlugin.hh"
 
 namespace ignition
 {
@@ -53,7 +53,7 @@ namespace plugins
   /// * <cell_length> : Length of each cell, defaults to 1.
   /// * <pose> : Geometry pose, defaults to the origin.
   /// * <color> : Geometry color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class Geometry3D : public Plugin
+  class Geometry3D : public Object3DPlugin
   {
     Q_OBJECT
 
@@ -67,15 +67,16 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Called when a value changes on a widget
-    /// \param[in] _value New value
-    private slots: void OnChange(const QVariant &_value);
+    // Documentation inherited
+    protected: virtual bool Delete(const rendering::ObjectPtr &_obj)
+        override;
 
-    /// \brief Callback when a delete button is pressed.
-    private slots: void OnDelete();
+    // Documentation inherited
+    protected: virtual void Add() override;
 
-    /// \brief Callback when the add button is pressed.
-    private slots: void OnAdd();
+    /// \brief
+    protected: virtual bool Change(const rendering::ObjectPtr &_obj,
+        const std::string &_property, const QVariant &_value) override;
 
     /// \brief Callback when the refresh button is pressed.
     private slots: void Refresh();
