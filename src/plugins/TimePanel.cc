@@ -19,7 +19,6 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/common/Time.hh>
 
-#include "ignition/gui/qt.h"
 #include "ignition/gui/plugins/TimePanel.hh"
 
 namespace ignition
@@ -129,8 +128,8 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               stepButton->setDisabled(false);
               stepSpinBox->setDisabled(false);
             });
-          this->connect(
-            stepSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+          this->connect(stepSpinBox,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             [=](int _newValue) {this->dataPtr->multiStep = _newValue;});
 
           mainLayout->addWidget(playButton,  0, 0);
