@@ -19,6 +19,7 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/common/Time.hh>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/plugins/TimePanel.hh"
 
 namespace ignition
