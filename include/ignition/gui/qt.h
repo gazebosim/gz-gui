@@ -23,11 +23,10 @@
 #endif
 
 #include <QtCore/QtCore>
+#include <QtCore/QtGlobal>
 #include <QtCore/QPoint>
 #include <QtCore/QPointF>
 #include <QtCore/QSignalMapper>
-
-#include <QtGlobal>
 
 #include <QtGui/QBitmap>
 #include <QtGui/QDrag>
