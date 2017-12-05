@@ -14,6 +14,7 @@ set (qt_headers_local
 
 if (HAVE_IGN_RENDERING)
   set (qt_headers_rendering
+    CameraTrack3D
     Grid3D
     Scene3D
   )

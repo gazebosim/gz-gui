@@ -43,7 +43,7 @@ namespace ignition
       /// displayed next to the dropdown which holds the enum options.
       /// \param[in] _values Vector of possible values for the enum.
       public: EnumWidget(const std::string &_key,
-                         const std::vector<std::string> &_values);
+          const std::vector<std::string> &_values = std::vector<std::string>());
 
       /// \brief Destructor
       public: ~EnumWidget();
