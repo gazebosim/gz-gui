@@ -74,7 +74,7 @@ endif()
 # Ignition rendering
 find_package(ignition-rendering0 QUIET)
 if (NOT ignition-rendering0_FOUND)
-  BUILD_WARNING("Missing: Ignition Rendering libignition-rendering0-dev - rendering plugins won't be built")
+  BUILD_ERROR("Missing: Ignition Rendering libignition-rendering0-dev - rendering plugins won't be built")
 else()
   message (STATUS "Found Ignition Rendering")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-RENDERING_CXX_FLAGS}")
