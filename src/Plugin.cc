@@ -133,6 +133,7 @@ void Plugin::changeEvent(QEvent *_e)
 /////////////////////////////////////////////////
 void Plugin::DeleteLater()
 {
+  this->dataPtr->deleteLaterRequested = true;
   if (this->parent())
   {
     qobject_cast<QWidget *>(this->parent())->close();
