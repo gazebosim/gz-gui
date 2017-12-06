@@ -33,7 +33,7 @@ pipelines:
           - cd ign-rendering
           - mkdir build
           - cd build
-          - cmake .. -DENABLE_TESTS_COMPILATION=false
+          - cmake .. # -DENABLE_TESTS_COMPILATION=false
           - make -j4 install
           - cd ../..
           # Ignition GUI
