@@ -20,6 +20,8 @@
 #include <tinyxml2.h>
 #include <string>
 
+#include <ignition/common/PluginMacros.hh>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
 
@@ -32,6 +34,8 @@ namespace ignition
         : public QWidget
     {
       Q_OBJECT
+
+      public: IGN_COMMON_SPECIALIZE_INTERFACE(ignition::gui::Plugin)
 
       /// \brief Constructor
       public: Plugin() {}

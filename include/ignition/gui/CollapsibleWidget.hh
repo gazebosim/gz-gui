@@ -71,6 +71,22 @@ namespace ignition
       /// \return True for expanded.
       public: bool IsExpanded() const;
 
+      /// \brief Append a widget to the collapsible contents. The contents
+      /// consist of a vertical layout.
+      /// \param[in] _widget Widget to be appended.
+      public: void AppendContent(QWidget *_widget);
+
+      /// \brief Get the current number of items in the content.
+      /// \return The number of widgets in the content.
+      public: unsigned int ContentCount() const;
+
+      // Documentation inherited
+      public: virtual void SetReadOnly(const bool _readOnly,
+                                       const bool _explicit) override;
+
+      // Documentation inherited
+      public: virtual bool ReadOnly() const override;
+
       /// \brief Pointer to private data
       private: std::unique_ptr<CollapsibleWidgetPrivate> dataPtr;
     };

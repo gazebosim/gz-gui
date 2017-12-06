@@ -19,7 +19,9 @@
 #include <google/protobuf/message.h>
 
 #include <map>
+#include <regex>
 #include <string>
+#include <unordered_set>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/EnumIface.hh>
@@ -58,8 +60,29 @@ namespace ignition
       /// \brief A copy of the message used to build the widget. Helps
       /// creating new messages.
       public: google::protobuf::Message *msg = nullptr;
+
+      /// \brief Whether all widgets should be read-only.
+      public: bool readOnly = false;
+
+      /// \brief List of all properties which should be read-only
+      public: std::unordered_set<std::string> readOnlyProperties;
+
+      /// \brief List of all properties which should be hidden
+      public: std::unordered_set<std::string> hiddenProperties;
     };
   }
+}
+
+/////////////////////////////////////////////////
+// Get the family name (remove "::number::" from scoped name for repeated
+// fields)
+std::string familyName(const std::string &_scopedName)
+{
+  std::regex regMiddle("::[0-9]+::");
+  std::regex regEnd("::[0-9]+$");
+  auto familyName = std::regex_replace(_scopedName, regMiddle, "::$2");
+  familyName = std::regex_replace(familyName, regEnd, "$2");
+  return familyName;
 }
 
 using namespace ignition;
@@ -134,12 +157,129 @@ google::protobuf::Message *MessageWidget::Msg() const
 }
 
 /////////////////////////////////////////////////
+bool MessageWidget::PropertyVisible(const std::string &_name) const
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
+    return false;
+  }
+
+  return w->isVisible();
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::SetPropertyVisible(const std::string &_name,
+    const bool _visible)
+{
+  // Keep list in case widget is added later
+  if (!_visible)
+    this->dataPtr->hiddenProperties.insert(_name);
+  else
+    this->dataPtr->hiddenProperties.erase(_name);
+
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    bool result = false;
+
+    // Iterate over all properties and affect those which have the same family
+    // name
+    for (auto p : this->dataPtr->properties)
+    {
+      if (familyName(p.first) == _name)
+      {
+        p.second->setVisible(_visible);
+        result = true;
+      }
+    }
+    return result;
+  }
+
+  w->setVisible(_visible);
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::ReadOnly() const
+{
+  // Not read-only if there's at least one enabled widget
+  for (auto p : this->dataPtr->properties)
+  {
+    if (!p.second->ReadOnly())
+      return false;
+  }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::SetReadOnly(const bool _readOnly)
+{
+  this->dataPtr->readOnly = _readOnly;
+
+  for (auto p : this->dataPtr->properties)
+    p.second->SetReadOnly(_readOnly, false);
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::PropertyReadOnly(const std::string &_name) const
+{
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
+    return false;
+  }
+
+  return w->ReadOnly();
+}
+
+/////////////////////////////////////////////////
+bool MessageWidget::SetPropertyReadOnly(const std::string &_name,
+    const bool _readOnly)
+{
+  // Keep list in case widget is added later
+  if (_readOnly)
+    this->dataPtr->readOnlyProperties.insert(_name);
+  else
+    this->dataPtr->readOnlyProperties.erase(_name);
+
+  auto w = this->PropertyWidgetByName(_name);
+  if (!w)
+  {
+    bool result = false;
+
+    // Iterate over all properties and affect those which have the same family
+    // name
+    for (auto p : this->dataPtr->properties)
+    {
+      if (familyName(p.first) == _name)
+      {
+        p.second->SetReadOnly(_readOnly);
+        result = true;
+      }
+    }
+    return result;
+  }
+
+  w->SetReadOnly(_readOnly);
+  return true;
+}
+
+/////////////////////////////////////////////////
 bool MessageWidget::SetPropertyValue(const std::string &_name,
                                      const QVariant _value)
 {
   auto w = this->PropertyWidgetByName(_name);
   if (!w)
+  {
+    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
     return false;
+  }
 
   return w->SetValue(_value);
 }
@@ -478,9 +618,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       }
 
       // Drop repetitions which disappeared
-      auto colLayout = collapsible->layout();
-      auto layoutCount = colLayout->count();
-      for (; count < layoutCount - 1; ++count)
+      auto layoutCount = collapsible->ContentCount();
+      for (; count < static_cast<int>(layoutCount); ++count)
       {
         auto name = scopedName + "::" + std::to_string(count);
         this->RemovePropertyWidget(name);
@@ -936,14 +1075,28 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     auto w = new QWidget();
     w->setLayout(hLayout);
 
-    collapsibleParent->layout()->addWidget(w);
-
-    w->setVisible(collapsibleParent->IsExpanded());
+    collapsibleParent->AppendContent(w);
   }
   else
   {
     _parent->layout()->addWidget(_property);
   }
+
+  // Read only and visibility
+  auto family = familyName(_name);
+
+  if (this->dataPtr->readOnlyProperties.find(family) !=
+      this->dataPtr->readOnlyProperties.end())
+  {
+    _property->SetReadOnly(true);
+  }
+  else if (this->dataPtr->readOnly)
+  {
+    _property->SetReadOnly(true, false);
+  }
+
+  _property->setVisible(this->dataPtr->hiddenProperties.find(family) ==
+      this->dataPtr->hiddenProperties.end());
 
   return true;
 }

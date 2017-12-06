@@ -13,6 +13,8 @@ set (qt_headers
   BoolWidget.hh
   CollapsibleWidget.hh
   ColorWidget.hh
+  Dialog.hh
+  Dock.hh
   EditableLabel.hh
   EnumWidget.hh
   GeometryWidget.hh
@@ -54,6 +56,7 @@ ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
 
 target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${IGNITION-COMMON_LIBRARIES}
+  ${IGNITION-MATH_LIBRARIES}
   ${IGNITION-MSGS_LIBRARIES}
   ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
