@@ -31,6 +31,6 @@ pipelines:
           - mkdir build
           - cd build
           - cmake ..
-          - make install
+          - make -j4 install
           # Tests currently fail, graphics issue?
           # - make test
