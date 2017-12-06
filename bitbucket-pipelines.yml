@@ -24,6 +24,14 @@ pipelines:
           - cd ign-common
           - mkdir build
           - cd build
+          - cmake .. -DBUILD_TESTING=false
+          - make -j4 install
+          - cd ../..
+          # Ignition rendering
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+          - cd ign-rendering
+          - mkdir build
+          - cd build
           - cmake .. -DENABLE_TESTS_COMPILATION=false
           - make -j4 install
           - cd ../..
