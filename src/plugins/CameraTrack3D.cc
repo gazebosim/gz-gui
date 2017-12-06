@@ -461,7 +461,8 @@ void CameraTrack3D::RefreshTargetLists()
   if (currentTrack.empty())
     currentTrack = kEmpty;
 
-  auto currentFollow = this->dataPtr->followTarget->Value().value<std::string>();
+  auto currentFollow =
+      this->dataPtr->followTarget->Value().value<std::string>();
   if (currentFollow.empty())
     currentFollow = kEmpty;
 
