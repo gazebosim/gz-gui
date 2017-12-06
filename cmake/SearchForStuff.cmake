@@ -86,13 +86,6 @@ else()
   message (STATUS "Found Qt5Core")
 endif()
 
-find_package (Qt5OpenGL)
-if (NOT Qt5OpenGL_FOUND)
-  BUILD_ERROR("Missing: Qt5OpenGL")
-else()
-  message (STATUS "Found Qt5OpenGL")
-endif()
-
 #################################################
 # Find tinyxml2. Only debian distributions package tinyxml with a pkg-config
 # Use pkg_check_modules and fallback to manual detection
