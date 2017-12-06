@@ -25,12 +25,12 @@ pipelines:
           - mkdir build
           - cd build
           - cmake .. -DENABLE_TESTS_COMPILATION=false
-          - make install
+          - make -j4 install
           - cd ../..
           # Ignition GUI
           - mkdir build
           - cd build
           - cmake ..
-          - make install
+          - make -j4 install
           # Tests currently fail, graphics issue?
           # - make test
