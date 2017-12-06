@@ -240,6 +240,9 @@ void CameraTrack3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Refresh
   this->RefreshCameraList();
   this->RefreshTargetLists();
+
+  // Select no camera
+  this->OnCameraChange(QVariant::fromValue(kEmpty));
 }
 
 /////////////////////////////////////////////////
@@ -257,49 +260,60 @@ void CameraTrack3D::OnCameraChange(const QVariant &_value)
   auto camera = std::dynamic_pointer_cast<rendering::Camera>(
       this->dataPtr->scene->SensorByName(value));
 
+  rendering::NodePtr trackTarget;
+  rendering::NodePtr followTarget;
+  if (camera)
+  {
+    // Update widgets
+    trackTarget = camera->TrackTarget();
+    if (trackTarget)
+    {
+      this->dataPtr->trackTarget->SetValue(QVariant::fromValue(
+          trackTarget->Name()));
+      this->dataPtr->trackOffset->SetValue(QVariant::fromValue(
+          camera->TrackOffset()));
+      this->dataPtr->trackGain->SetValue(QVariant::fromValue(
+          camera->TrackPGain()));
+      // TODO: world frame
+    }
+    else
+    {
+      this->dataPtr->trackTarget->SetValue(QVariant::fromValue(kEmpty));
+    }
+
+    followTarget = camera->FollowTarget();
+    if (followTarget)
+    {
+      this->dataPtr->followTarget->SetValue(QVariant::fromValue(
+          followTarget->Name()));
+      this->dataPtr->followOffset->SetValue(QVariant::fromValue(
+          camera->FollowOffset()));
+      this->dataPtr->followGain->SetValue(QVariant::fromValue(
+          camera->FollowPGain()));
+      // TODO: world frame
+    }
+    else
+    {
+      this->dataPtr->followTarget->SetValue(QVariant::fromValue(kEmpty));
+    }
+  }
+
   // Enable widgets
   this->dataPtr->trackTarget->SetReadOnly(camera == nullptr);
-  this->dataPtr->trackOffset->SetReadOnly(camera == nullptr);
-  this->dataPtr->trackFrame->SetReadOnly(camera == nullptr);
-  this->dataPtr->trackGain->SetReadOnly(camera == nullptr);
+  this->dataPtr->trackOffset->SetReadOnly(camera == nullptr ||
+                                          trackTarget == nullptr);
+  this->dataPtr->trackFrame->SetReadOnly(camera == nullptr ||
+                                         trackTarget == nullptr);
+  this->dataPtr->trackGain->SetReadOnly(camera == nullptr ||
+                                        trackTarget == nullptr);
+
   this->dataPtr->followTarget->SetReadOnly(camera == nullptr);
-  this->dataPtr->followOffset->SetReadOnly(camera == nullptr);
-  this->dataPtr->followFrame->SetReadOnly(camera == nullptr);
-  this->dataPtr->followGain->SetReadOnly(camera == nullptr);
-
-  if (!camera)
-    return;
-
-  // Update widgets
-  auto target = camera->TrackTarget();
-  if (target)
-  {
-    this->dataPtr->trackTarget->SetValue(QVariant::fromValue(target->Name()));
-    this->dataPtr->trackOffset->SetValue(QVariant::fromValue(
-        camera->TrackOffset()));
-    this->dataPtr->trackGain->SetValue(QVariant::fromValue(
-        camera->TrackPGain()));
-    // TODO: world frame
-  }
-  else
-  {
-    this->dataPtr->trackTarget->SetValue(QVariant::fromValue(kEmpty));
-  }
-
-  target = camera->FollowTarget();
-  if (target)
-  {
-    this->dataPtr->followTarget->SetValue(QVariant::fromValue(target->Name()));
-    this->dataPtr->followOffset->SetValue(QVariant::fromValue(
-        camera->FollowOffset()));
-    this->dataPtr->followGain->SetValue(QVariant::fromValue(
-        camera->FollowPGain()));
-    // TODO: world frame
-  }
-  else
-  {
-    this->dataPtr->followTarget->SetValue(QVariant::fromValue(kEmpty));
-  }
+  this->dataPtr->followOffset->SetReadOnly(camera == nullptr ||
+      followTarget == nullptr);
+  this->dataPtr->followFrame->SetReadOnly(camera == nullptr ||
+      followTarget == nullptr);
+  this->dataPtr->followGain->SetReadOnly(camera == nullptr ||
+      followTarget == nullptr);
 }
 
 /////////////////////////////////////////////////
@@ -323,22 +337,27 @@ void CameraTrack3D::OnTrackChange(const QVariant &/*_value*/)
   if (!target)
   {
     camera->SetTrackTarget(nullptr);
-    return;
+  }
+  else
+  {
+    // Offset
+    auto offset = this->dataPtr->trackOffset->Value()
+        .value<math::Vector3d>();
+
+    // Frame
+    auto worldFrame = this->dataPtr->trackFrame->Value().toBool();
+
+    // Gain
+    auto gain = this->dataPtr->trackGain->Value().toDouble();
+
+    // Set
+    camera->SetTrackTarget(target, offset, worldFrame);
+    camera->SetTrackPGain(gain);
   }
 
-  // Offset
-  auto offset = this->dataPtr->trackOffset->Value()
-      .value<math::Vector3d>();
-
-  // Frame
-  auto worldFrame = this->dataPtr->trackFrame->Value().toBool();
-
-  // Gain
-  auto gain = this->dataPtr->trackGain->Value().toDouble();
-
-  // Set
-  camera->SetTrackTarget(target, offset, worldFrame);
-  camera->SetTrackPGain(gain);
+  this->dataPtr->trackOffset->SetReadOnly(target == nullptr);
+  this->dataPtr->trackFrame->SetReadOnly(target == nullptr);
+  this->dataPtr->trackGain->SetReadOnly(target == nullptr);
 }
 
 /////////////////////////////////////////////////
@@ -362,48 +381,57 @@ void CameraTrack3D::OnFollowChange(const QVariant &/*_value*/)
   if (!target)
   {
     camera->SetFollowTarget(nullptr);
-    return;
+  }
+  else
+  {
+    // Offset
+    auto offset = this->dataPtr->followOffset->Value()
+        .value<math::Vector3d>();
+
+    // Frame
+    auto worldFrame = this->dataPtr->followFrame->Value().toBool();
+
+    // Gain
+    auto gain = this->dataPtr->followGain->Value().toDouble();
+
+    // Set
+    camera->SetFollowTarget(target, offset, worldFrame);
+    camera->SetFollowPGain(gain);
   }
 
-  // Offset
-  auto offset = this->dataPtr->followOffset->Value()
-      .value<math::Vector3d>();
-
-  // Frame
-  auto worldFrame = this->dataPtr->followFrame->Value().toBool();
-
-  // Gain
-  auto gain = this->dataPtr->followGain->Value().toDouble();
-
-  // Set
-  camera->SetFollowTarget(target, offset, worldFrame);
-  camera->SetFollowPGain(gain);
+  this->dataPtr->followOffset->SetReadOnly(target == nullptr);
+  this->dataPtr->followFrame->SetReadOnly(target == nullptr);
+  this->dataPtr->followGain->SetReadOnly(target == nullptr);
 }
 
 /////////////////////////////////////////////////
 bool CameraTrack3D::eventFilter(QObject *_obj, QEvent *_e)
 {
-  // Refresh cameras
   if (_e->type() == QEvent::Show)
   {
     if (_obj->objectName() == "cameraListView")
     {
       this->RefreshCameraList();
     }
-
-    if (_obj->objectName() == "trackTargetView" ||
+    else if (_obj->objectName() == "trackTargetView" ||
         _obj->objectName() == "followTargetView")
     {
       this->RefreshTargetLists();
     }
   }
 
-  return QObject::eventFilter(_obj, _e);
+  return false;
 }
 
 /////////////////////////////////////////////////
 void CameraTrack3D::RefreshCameraList()
 {
+  // Current selection
+  auto current = this->dataPtr->cameraEnum->Value().value<std::string>();
+
+  if (current.empty())
+    current = kEmpty;
+
   // Clear
   this->dataPtr->cameraEnum->Clear();
 
@@ -420,6 +448,9 @@ void CameraTrack3D::RefreshCameraList()
 
     this->dataPtr->cameraEnum->AddItem(camera->Name());
   }
+
+  // Restore selection
+  this->dataPtr->cameraEnum->SetValue(QVariant::fromValue(current));
 }
 
 /////////////////////////////////////////////////
@@ -427,7 +458,12 @@ void CameraTrack3D::RefreshTargetLists()
 {
   // Current selection
   auto currentTrack = this->dataPtr->trackTarget->Value().value<std::string>();
+  if (currentTrack.empty())
+    currentTrack = kEmpty;
+
   auto currentFollow = this->dataPtr->followTarget->Value().value<std::string>();
+  if (currentFollow.empty())
+    currentFollow = kEmpty;
 
   // Clear
   this->dataPtr->trackTarget->Clear();

@@ -66,8 +66,7 @@ MovingRandomlyPlugin::MovingRandomlyPlugin()
   });
   this->timer->start(100);
 
-  // Layout
-  this->setLayout(new QHBoxLayout);
+  this->DeleteLater();
 }
 
 /////////////////////////////////////////////////
