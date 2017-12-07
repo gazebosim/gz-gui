@@ -69,6 +69,22 @@ Scene3D::Scene3D()
 /////////////////////////////////////////////////
 Scene3D::~Scene3D()
 {
+  igndbg << "Destroy camera [" << this->dataPtr->camera->Name() << "]"
+         << std::endl;
+  // Destroy camera
+  auto scene = this->dataPtr->camera->Scene();
+  scene->DestroyNode(this->dataPtr->camera);
+  this->dataPtr->camera.reset();
+
+  // If that was the last sensor, destroy scene
+  if (scene->SensorCount() == 0)
+  {
+    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
+    auto engine = scene->Engine();
+    engine->DestroyScene(scene);
+
+    // TODO: If that was the last scene, terminate engine?
+  }
 }
 
 /////////////////////////////////////////////////
@@ -139,6 +155,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   auto scene = engine->SceneByName(sceneName);
   if (!scene)
   {
+    igndbg << "Create scene [" << sceneName << "]" << std::endl;
     scene = engine->CreateScene(sceneName);
     scene->SetAmbientLight(ambientLight);
     scene->SetBackgroundColor(backgroundColor);
@@ -146,6 +163,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   auto root = scene->RootVisual();
 
   // Camera
+  igndbg << "Create camera" << std::endl;
   this->dataPtr->camera = scene->CreateCamera();
   root->AddChild(this->dataPtr->camera);
   this->dataPtr->camera->SetLocalPose(cameraPose);
