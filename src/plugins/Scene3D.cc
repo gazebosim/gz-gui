@@ -15,11 +15,17 @@
  *
 */
 
+#include <cmath>
+#include <sstream>
 #include <string>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/common/PluginMacros.hh>
+#include <ignition/math/Color.hh>
+#include <ignition/math/Pose3.hh>
+#include <ignition/math/Vector2.hh>
+#include <ignition/math/Vector3.hh>
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/Conversions.hh"
