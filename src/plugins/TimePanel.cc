@@ -205,8 +205,8 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               this->connect(this, SIGNAL(SetRealTime(QString)), realTime,
                   SLOT(setText(QString)));
 
-              mainLayout->addWidget(new QLabel("Real time"), 2, 0);
-              mainLayout->addWidget(realTime, 2, 1);
+              mainLayout->addWidget(new QLabel("Real time"), 1, 2);
+              mainLayout->addWidget(realTime, 1, 3);
             }
           }
         }
