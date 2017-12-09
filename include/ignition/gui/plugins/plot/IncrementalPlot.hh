@@ -74,9 +74,12 @@ namespace plot
     /// \brief Destructor.
     public: virtual ~IncrementalPlot();
 
-    /// \brief Add a named curve.
+    /// \brief Create a new curve and attach it to this plot.
     /// \param[in] _label Name of the curve.
     /// \return A pointer to the new curve.
+    /// \sa AttachCurve
+    /// \sa RemoveCurve
+    /// \sa DetachCurve
     public: PlotCurveWeakPtr AddCurve(const std::string &_label);
 
     /// \brief Add a new point to a curve.
@@ -107,25 +110,39 @@ namespace plot
     /// \brief Update all the curves in the plot.
     public: void Update();
 
-    /// \brief Remove a curve by id.
+    /// \brief Remove a curve by id, this renders the curve unusable by other
+    /// plots.
     /// \param[in] _id Unique id of the curve.
+    /// \sa AddCurve
+    /// \sa AttachCurve
+    /// \sa DetachCurve
     public: void RemoveCurve(const unsigned int _id);
 
-    /// \brief Get the period over which to plot.
+    /// \brief Get the period over which to plot. The period refers to the X
+    /// axis.
     /// \return Period duration in seconds.
+    /// \sa SetPeriod
     public: ignition::common::Time Period() const;
 
     /// \brief Set the period over which to plot.
     /// \param[in] _time Period duration in seconds.
+    /// \sa Period
     public: void SetPeriod(const ignition::common::Time &_time);
 
-    /// \brief Attach a curve to this plot.
-    /// \param[in] _plotCurve The curve to attach to the plot.
+    /// \brief Attach an existing curve to this plot.
+    /// \param[in] _curve The curve to attach to the plot.
+    /// \sa AddCurve
+    /// \sa DetachCurve
+    /// \sa RemoveCurve
     public: void AttachCurve(PlotCurveWeakPtr _curve);
 
-    /// \brief Detach a curve from this plot.
+    /// \brief Detach a curve from this plot. Unlike RemoveCurve, this doesn't
+    /// delete the curve, so it can be reused.
     /// \param[in] _id Unique id of the plot curve to detach.
     /// \return Pointer to the plot curve
+    /// \sa AttachCurve
+    /// \sa AddCurve
+    /// \sa RemoveCurve
     public: PlotCurvePtr DetachCurve(const unsigned int _id);
 
     /// \brief Set a new label for the given curve.

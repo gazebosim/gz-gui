@@ -57,13 +57,13 @@ namespace plot
           {
             // invert the wheel direction
             double f = this->wheelFactor();
-            if (!ignition::math::equal(f, 0.0))
+            if (!math::equal(f, 0.0))
               this->setWheelFactor(1/f);
           }
 
     /// \brief Callback for a mouse wheel event
     /// \param[in] _wheelEvent Qt mouse wheel event
-    protected: virtual void widgetWheelEvent(QWheelEvent *_wheelEvent)
+    protected: virtual void widgetWheelEvent(QWheelEvent *_wheelEvent) override
           {
             this->mousePos = _wheelEvent->pos();
 
@@ -72,15 +72,15 @@ namespace plot
 
     /// \brief Update plot scale by changing bounds of x and y axes.
     /// \param[in] _factor Factor to scale the plot by.
-    protected: virtual void rescale(double _factor)
+    protected: virtual void rescale(double _factor) override
           {
             QwtPlot *plt = plot();
             if (plt == nullptr)
                 return;
 
             double factor = qAbs(_factor);
-            if (ignition::math::equal(factor, 1.0) ||
-                ignition::math::equal(factor, 0.0))
+            if (math::equal(factor, 1.0) ||
+                math::equal(factor, 0.0))
             {
               return;
             }
@@ -153,7 +153,7 @@ namespace plot
   class IncrementalPlotPrivate
   {
     /// \brief A map of unique ids to plot curves.
-    public: typedef std::map<unsigned int, PlotCurvePtr > CurveMap;
+    public: typedef std::map<unsigned int, PlotCurvePtr> CurveMap;
 
     /// \brief The curve to draw.
     public: CurveMap curves;
@@ -161,26 +161,17 @@ namespace plot
     /// \brief Drawing utility.
     public: QwtPlotDirectPainter *directPainter;
 
-    /// \brief Pointer to the plot magnifier.
-    public: PlotMagnifier *magnifier;
-
     /// \brief Pointer to the plot tracker.
     public: PlotTracker *tracker;
-
-    /// \brief Pointer to the plot zoomer.
-    public: QwtPlotZoomer *zoomer;
-
-    /// \brief Pointer to the plot panner.
-    public: QwtPlotPanner *panner;
 
     /// \brief Pointer to the grid lines.
     public: QwtPlotGrid *grid;
 
     /// \brief Period duration in seconds.
-    public: double period;
+    public: double period{10.0};
 
     /// \brief Previous last point on plot.
-    public: ignition::math::Vector2d prevPoint;
+    public: math::Vector2d prevPoint;
   };
 }
 }
@@ -194,28 +185,27 @@ IncrementalPlot::IncrementalPlot(QWidget *_parent)
 {
   this->setObjectName("incrementalPlot");
 
-  this->dataPtr->period = 10;
   this->dataPtr->directPainter = new QwtPlotDirectPainter(this);
 
   // panning with the left mouse button
-  this->dataPtr->panner = new QwtPlotPanner(this->canvas());
+  new QwtPlotPanner(this->canvas());
 
   // line hover display
   this->dataPtr->tracker = new PlotTracker(this->canvas());
   this->dataPtr->tracker->setEnabled(false);
 
   // box zoom
-  this->dataPtr->zoomer = new QwtPlotZoomer(this->canvas());
-  this->dataPtr->zoomer->setMousePattern(QwtEventPattern::MouseSelect1,
+  auto zoomer = new QwtPlotZoomer(this->canvas());
+  zoomer->setMousePattern(QwtEventPattern::MouseSelect1,
       Qt::MidButton);
-  this->dataPtr->zoomer->setMousePattern(QwtEventPattern::MouseSelect2,
+  zoomer->setMousePattern(QwtEventPattern::MouseSelect2,
       Qt::RightButton, Qt::ControlModifier);
-  this->dataPtr->zoomer->setMousePattern(QwtEventPattern::MouseSelect3,
+  zoomer->setMousePattern(QwtEventPattern::MouseSelect3,
       Qt::NoButton);
-  this->dataPtr->zoomer->setTrackerMode(QwtPicker::AlwaysOff);
+  zoomer->setTrackerMode(QwtPicker::AlwaysOff);
 
   // zoom in/out with the wheel
-  this->dataPtr->magnifier = new PlotMagnifier(this->canvas());
+  new PlotMagnifier(this->canvas());
 
 #if defined(Q_WS_X11)
   this->canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
@@ -284,7 +274,7 @@ PlotCurveWeakPtr IncrementalPlot::Curve(const unsigned int _id) const
 
 /////////////////////////////////////////////////
 void IncrementalPlot::AddPoints(const unsigned int _id,
-    const std::vector<ignition::math::Vector2d> &_pts)
+    const std::vector<math::Vector2d> &_pts)
 {
   PlotCurveWeakPtr plotCurve = this->Curve(_id);
 
@@ -301,7 +291,7 @@ void IncrementalPlot::AddPoints(const unsigned int _id,
 
 /////////////////////////////////////////////////
 void IncrementalPlot::AddPoint(const unsigned int _id,
-    const ignition::math::Vector2d &_pt)
+    const math::Vector2d &_pt)
 {
   PlotCurveWeakPtr plotCurve = this->Curve(_id);
 
@@ -350,7 +340,7 @@ void IncrementalPlot::Update()
   if (this->dataPtr->curves.empty())
     return;
 
-  ignition::math::Vector2d lastPoint;
+  math::Vector2d lastPoint;
   for (auto &curve : this->dataPtr->curves)
   {
     if (!curve.second->Active())
@@ -362,17 +352,17 @@ void IncrementalPlot::Update()
 
     lastPoint = curve.second->Point(pointCount-1);
 
-    if (ignition::math::isnan(lastPoint.X()) ||
-        ignition::math::isnan(lastPoint.Y()))
+    if (math::isnan(lastPoint.X()) ||
+        math::isnan(lastPoint.Y()))
     {
       continue;
     }
 
-    ignition::math::Vector2d minPt = curve.second->Min();
-    ignition::math::Vector2d maxPt = curve.second->Max();
+    math::Vector2d minPt = curve.second->Min();
+    math::Vector2d maxPt = curve.second->Max();
 
     this->dataPtr->directPainter->drawSeries(curve.second->Curve(),
-      pointCount - 1, pointCount - 1);
+        pointCount - 1, pointCount - 1);
   }
 
   // get x axis lower and upper bounds
@@ -387,8 +377,8 @@ void IncrementalPlot::Update()
   // Checking the min X bound (xScaleMap.s1()) helps to detect a
   // user zoom at beginning of the plot. At any time the scale is changed
   // (from zooming), the moving window size is updated.
-  if ((ignition::math::equal(xScaleMap.s1(), 0.0) &&
-      lastX < this->dataPtr->period) || ignition::math::equal(prevX, 0.0))
+  if ((math::equal(xScaleMap.s1(), 0.0) &&
+      lastX < this->dataPtr->period) || math::equal(prevX, 0.0))
   {
     // update moving window based on specified period
     minX = std::max(0.0, lastX - this->dataPtr->period);
@@ -559,8 +549,7 @@ void IncrementalPlot::dragEnterEvent(QDragEnterEvent *_evt)
 {
   if (_evt->mimeData()->hasFormat("application/x-item"))
   {
-    QString mimeData =
-        _evt->mimeData()->data("application/x-item");
+    QString mimeData = _evt->mimeData()->data("application/x-item");
     _evt->setDropAction(Qt::LinkAction);
     if (!mimeData.isEmpty())
     {
@@ -576,8 +565,7 @@ void IncrementalPlot::dropEvent(QDropEvent *_evt)
 {
   if (_evt->mimeData()->hasFormat("application/x-item"))
   {
-    QString mimeData =
-        _evt->mimeData()->data("application/x-item");
+    QString mimeData = _evt->mimeData()->data("application/x-item");
     if (!mimeData.isEmpty())
     {
       emit VariableAdded(mimeData.toStdString());

@@ -33,6 +33,7 @@ using namespace plot;
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, AddRemoveCurve)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -97,7 +98,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
   ASSERT_NE(nullptr, plot);
 
-  // Try to attach a curve that has been removed.
+  // Try to attach a curve that has been removed by another plot.
   EXPECT_EQ(0u, plot->Curves().size());
   plot->AttachCurve(curve01);
   EXPECT_EQ(0u, plot->Curves().size());
@@ -108,6 +109,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest,  AttachDetachCurve)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -182,6 +184,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, AddPoint)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -244,6 +247,7 @@ TEST(IncrementalPlotTest, AddPoint)
 /////////////////////////////////////////////////
 TEST(ncrementalPlotTest, SetCurveLabel)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -289,6 +293,7 @@ TEST(ncrementalPlotTest, SetCurveLabel)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, Period)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -311,6 +316,7 @@ TEST(IncrementalPlotTest, Period)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, Grid)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -332,6 +338,7 @@ TEST(IncrementalPlotTest, Grid)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, HoverLine)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -346,6 +353,45 @@ TEST(IncrementalPlotTest, HoverLine)
   EXPECT_FALSE(plot->IsShowHoverLine());
 
   delete plot;
+
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(IncrementalPlotTest, Update)
+{
+  setVerbosity(4);
+  ASSERT_TRUE(initApp());
+  ASSERT_TRUE(loadPlugin("Plot"));
+
+  // Create plot
+  auto plot = new IncrementalPlot(nullptr);
+  ASSERT_NE(nullptr, plot);
+
+  // Update with no curves doesn't cause errors
+  plot->Update();
+
+  // Add a curve
+  auto curve01 = plot->AddCurve("curve01");
+  auto c01 = curve01.lock();
+  ASSERT_NE(nullptr, c01);
+
+  // Update with a curve that has no points
+  plot->Update();
+
+  // Add point to curve
+  plot->AddPoint(c01->Id(), math::Vector2d(0.2, 0.4));
+
+  // Update with a curve that has points
+  plot->Update();
+
+  // Add points to curve so it goes beyond the period and the window needs to
+  // move
+  for (double i = 0.5; i < plot->Period().Double() + 2; i += 0.5)
+  {
+    plot->AddPoint(c01->Id(), math::Vector2d(i, 0.4));
+    plot->Update();
+  }
 
   EXPECT_TRUE(stop());
 }
