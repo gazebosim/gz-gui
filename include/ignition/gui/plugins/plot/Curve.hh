@@ -14,8 +14,9 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PLOT_PLOTCURVE_HH_
-#define IGNITION_GUI_PLUGINS_PLOT_PLOTCURVE_HH_
+
+#ifndef IGNITION_GUI_PLUGINS_PLOT_CURVE_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_CURVE_HH_
 
 #include <memory>
 #include <string>
@@ -37,18 +38,18 @@ namespace plugins
 namespace plot
 {
   // Forward declare private data class.
-  class PlotCurvePrivate;
+  class CurvePrivate;
   class IncrementalPlot;
 
   /// \brief Plot Curve data.
-  class IGNITION_GUI_VISIBLE PlotCurve
+  class IGNITION_GUI_VISIBLE Curve
   {
     /// \brief Constructor.
     /// \param[in] _label Plot label.
-    public: explicit PlotCurve(const std::string &_label);
+    public: explicit Curve(const std::string &_label);
 
     /// \brief Destructor.
-    public: ~PlotCurve();
+    public: ~Curve();
 
     /// \brief Add a point to the curve.
     /// \param[in] _pt Point to add.
@@ -126,11 +127,11 @@ namespace plot
     /// \internal
     /// \brief Get the internal QwtPlotCurve object.
     /// \return QwtPlotCurve object.
-    public: QwtPlotCurve *Curve();
+    public: QwtPlotCurve *QwtCurve();
 
     /// \internal
     /// \brief Private data pointer.
-    private: std::unique_ptr<PlotCurvePrivate> dataPtr;
+    private: std::unique_ptr<CurvePrivate> dataPtr;
   };
 }
 }

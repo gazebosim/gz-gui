@@ -29,9 +29,8 @@
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Helpers.hh>
 
-#include "ignition/gui/plugins/plot/PlotCurve.hh"
-#include "ignition/gui/plugins/plot/PlottingTypes.hh"
-#include "ignition/gui/plugins/plot/PlotTracker.hh"
+#include "ignition/gui/plugins/plot/Curve.hh"
+#include "ignition/gui/plugins/plot/Tracker.hh"
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
 
 using namespace ignition;
@@ -47,12 +46,12 @@ namespace plugins
 {
 namespace plot
 {
-  /// \brief Zoom to mouse position
-  class PlotMagnifier : public QwtPlotMagnifier
+  /// \brief Zoom to mouse position based on wheel events
+  class Magnifier : public QwtPlotMagnifier
   {
     /// \brief Constructor
     /// \param[in] _canvas Canvas the magnifier will be attached to.
-    public: explicit PlotMagnifier(QWidget *_canvas)
+    public: explicit Magnifier(QWidget *_canvas)
             : QwtPlotMagnifier(_canvas)
           {
             // invert the wheel direction
@@ -153,7 +152,7 @@ namespace plot
   class IncrementalPlotPrivate
   {
     /// \brief A map of unique ids to plot curves.
-    public: typedef std::map<unsigned int, PlotCurvePtr> CurveMap;
+    public: typedef std::map<unsigned int, CurvePtr> CurveMap;
 
     /// \brief The curve to draw.
     public: CurveMap curves;
@@ -162,7 +161,7 @@ namespace plot
     public: QwtPlotDirectPainter *directPainter;
 
     /// \brief Pointer to the plot tracker.
-    public: PlotTracker *tracker;
+    public: Tracker *tracker;
 
     /// \brief Pointer to the grid lines.
     public: QwtPlotGrid *grid;
@@ -191,7 +190,7 @@ IncrementalPlot::IncrementalPlot(QWidget *_parent)
   new QwtPlotPanner(this->canvas());
 
   // line hover display
-  this->dataPtr->tracker = new PlotTracker(this->canvas());
+  this->dataPtr->tracker = new Tracker(this->canvas());
   this->dataPtr->tracker->setEnabled(false);
 
   // box zoom
@@ -205,7 +204,7 @@ IncrementalPlot::IncrementalPlot(QWidget *_parent)
   zoomer->setTrackerMode(QwtPicker::AlwaysOff);
 
   // zoom in/out with the wheel
-  new PlotMagnifier(this->canvas());
+  new Magnifier(this->canvas());
 
 #if defined(Q_WS_X11)
   this->canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
@@ -249,7 +248,7 @@ IncrementalPlot::~IncrementalPlot()
 }
 
 /////////////////////////////////////////////////
-PlotCurveWeakPtr IncrementalPlot::Curve(const std::string &_label) const
+CurveWeakPtr IncrementalPlot::Curve(const std::string &_label) const
 {
   for (const auto &it : this->dataPtr->curves)
   {
@@ -257,18 +256,18 @@ PlotCurveWeakPtr IncrementalPlot::Curve(const std::string &_label) const
       return it.second;
   }
 
-  return PlotCurveWeakPtr();
+  return CurveWeakPtr();
 }
 
 /////////////////////////////////////////////////
-PlotCurveWeakPtr IncrementalPlot::Curve(const unsigned int _id) const
+CurveWeakPtr IncrementalPlot::Curve(const unsigned int _id) const
 {
   auto it = this->dataPtr->curves.find(_id);
   if (it != this->dataPtr->curves.end())
     return it->second;
   else
   {
-    return PlotCurveWeakPtr();
+    return CurveWeakPtr();
   }
 }
 
@@ -276,7 +275,7 @@ PlotCurveWeakPtr IncrementalPlot::Curve(const unsigned int _id) const
 void IncrementalPlot::AddPoints(const unsigned int _id,
     const std::vector<math::Vector2d> &_pts)
 {
-  PlotCurveWeakPtr plotCurve = this->Curve(_id);
+  CurveWeakPtr plotCurve = this->Curve(_id);
 
   auto c = plotCurve.lock();
   if (!c)
@@ -293,7 +292,7 @@ void IncrementalPlot::AddPoints(const unsigned int _id,
 void IncrementalPlot::AddPoint(const unsigned int _id,
     const math::Vector2d &_pt)
 {
-  PlotCurveWeakPtr plotCurve = this->Curve(_id);
+  CurveWeakPtr plotCurve = this->Curve(_id);
 
   auto c = plotCurve.lock();
   if (!c)
@@ -307,20 +306,20 @@ void IncrementalPlot::AddPoint(const unsigned int _id,
 }
 
 /////////////////////////////////////////////////
-PlotCurveWeakPtr IncrementalPlot::AddCurve(const std::string &_label)
+CurveWeakPtr IncrementalPlot::AddCurve(const std::string &_label)
 {
-  PlotCurveWeakPtr plotCurve = this->Curve(_label);
+  CurveWeakPtr plotCurve = this->Curve(_label);
   if (!plotCurve.expired())
   {
     ignerr << "Curve '" << _label << "' already exists" << std::endl;
     return plotCurve;
   }
 
-  PlotCurvePtr newPlotCurve(new PlotCurve(_label));
-  newPlotCurve->Attach(this);
-  this->dataPtr->curves[newPlotCurve->Id()] = newPlotCurve;
+  CurvePtr newCurve(new plot::Curve(_label));
+  newCurve->Attach(this);
+  this->dataPtr->curves[newCurve->Id()] = newCurve;
 
-  return newPlotCurve;
+  return newCurve;
 }
 
 /////////////////////////////////////////////////
@@ -361,7 +360,7 @@ void IncrementalPlot::Update()
     math::Vector2d minPt = curve.second->Min();
     math::Vector2d maxPt = curve.second->Max();
 
-    this->dataPtr->directPainter->drawSeries(curve.second->Curve(),
+    this->dataPtr->directPainter->drawSeries(curve.second->QwtCurve(),
         pointCount - 1, pointCount - 1);
   }
 
@@ -413,7 +412,7 @@ void IncrementalPlot::SetPeriod(const common::Time &_time)
 }
 
 /////////////////////////////////////////////////
-void IncrementalPlot::AttachCurve(PlotCurveWeakPtr _plotCurve)
+void IncrementalPlot::AttachCurve(CurveWeakPtr _plotCurve)
 {
   auto c = _plotCurve.lock();
   if (!c)
@@ -424,9 +423,9 @@ void IncrementalPlot::AttachCurve(PlotCurveWeakPtr _plotCurve)
 }
 
 /////////////////////////////////////////////////
-PlotCurvePtr IncrementalPlot::DetachCurve(const unsigned int _id)
+CurvePtr IncrementalPlot::DetachCurve(const unsigned int _id)
 {
-  PlotCurveWeakPtr plotCurve =  this->Curve(_id);
+  CurveWeakPtr plotCurve =  this->Curve(_id);
 
   auto c = plotCurve.lock();
   if (!c)
@@ -450,7 +449,7 @@ void IncrementalPlot::SetCurveLabel(const unsigned int _id,
   if (_label.empty())
     return;
 
-  PlotCurveWeakPtr plotCurve = this->Curve(_id);
+  CurveWeakPtr plotCurve = this->Curve(_id);
 
   auto c = plotCurve.lock();
   if (!c)
@@ -525,9 +524,9 @@ bool IncrementalPlot::IsShowHoverLine() const
 }
 
 /////////////////////////////////////////////////
-std::vector<PlotCurveWeakPtr> IncrementalPlot::Curves() const
+std::vector<CurveWeakPtr> IncrementalPlot::Curves() const
 {
-  std::vector<PlotCurveWeakPtr> curves;
+  std::vector<CurveWeakPtr> curves;
   for (const auto &it : this->dataPtr->curves)
     curves.push_back(it.second);
 

@@ -25,10 +25,8 @@
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/qwt.h"
-#include "ignition/gui/plugins/plot/PlottingTypes.hh"
+#include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/System.hh"
-
-class QwtPlotCurve;
 
 namespace ignition
 {
@@ -80,7 +78,7 @@ namespace plot
     /// \sa AttachCurve
     /// \sa RemoveCurve
     /// \sa DetachCurve
-    public: PlotCurveWeakPtr AddCurve(const std::string &_label);
+    public: CurveWeakPtr AddCurve(const std::string &_label);
 
     /// \brief Add a new point to a curve.
     /// \param[in] _id Unique id of the curve.
@@ -100,12 +98,12 @@ namespace plot
     /// \brief Find a plot curve by name
     /// \param[in] _label Name of the curve to look for.
     /// \return Plot curve if found, nullptr otherwise.
-    public: PlotCurveWeakPtr Curve(const std::string &_label) const;
+    public: CurveWeakPtr Curve(const std::string &_label) const;
 
     /// \brief Find a plot curve by id.
     /// \param[in] _id Unique id of the plot curve.
     /// \return Plot curve if found, nullptr otherwise.
-    public: PlotCurveWeakPtr Curve(const unsigned int _id) const;
+    public: CurveWeakPtr Curve(const unsigned int _id) const;
 
     /// \brief Update all the curves in the plot.
     public: void Update();
@@ -134,7 +132,7 @@ namespace plot
     /// \sa AddCurve
     /// \sa DetachCurve
     /// \sa RemoveCurve
-    public: void AttachCurve(PlotCurveWeakPtr _curve);
+    public: void AttachCurve(CurveWeakPtr _curve);
 
     /// \brief Detach a curve from this plot. Unlike RemoveCurve, this doesn't
     /// delete the curve, so it can be reused.
@@ -143,7 +141,7 @@ namespace plot
     /// \sa AttachCurve
     /// \sa AddCurve
     /// \sa RemoveCurve
-    public: PlotCurvePtr DetachCurve(const unsigned int _id);
+    public: CurvePtr DetachCurve(const unsigned int _id);
 
     /// \brief Set a new label for the given curve.
     /// \param[in] _id Unique id of the plot curve.
@@ -175,7 +173,7 @@ namespace plot
 
     /// \brief Get all curves in this plot
     /// \return A list of curves in this plot.
-    public: std::vector<PlotCurveWeakPtr> Curves() const;
+    public: std::vector<CurveWeakPtr> Curves() const;
 
     /// \brief Give QT a size hint.
     /// \return Default size of the plot.

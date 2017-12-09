@@ -21,8 +21,8 @@
 #include <ignition/math/Vector2.hh>
 
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
-#include "ignition/gui/plugins/plot/PlotCurve.hh"
-#include "ignition/gui/plugins/plot/PlottingTypes.hh"
+#include "ignition/gui/plugins/plot/Curve.hh"
+#include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/Iface.hh"
 
 using namespace ignition;
@@ -37,7 +37,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
-  PlotCurveWeakPtr curve01;
+  CurveWeakPtr curve01;
   {
     // Create a new plot.
     IncrementalPlot *plot = new IncrementalPlot(nullptr);
@@ -56,7 +56,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
     EXPECT_EQ(1u, plot->Curves().size());
 
     // Add another curve and verify that both curves are in the plot.
-    PlotCurveWeakPtr curve02 = plot->AddCurve("curve02");
+    CurveWeakPtr curve02 = plot->AddCurve("curve02");
     EXPECT_FALSE(curve02.expired());
     auto c02 = curve02.lock();
     ASSERT_NE(nullptr, c02);
@@ -79,7 +79,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
     EXPECT_TRUE(plot->Curve(c02->Label()).expired());
 
     // Check we can add more curves.
-    PlotCurveWeakPtr curve03 = plot->AddCurve("curve03");
+    CurveWeakPtr curve03 = plot->AddCurve("curve03");
     auto c03 = curve03.lock();
 
     ASSERT_NE(nullptr, c03);
@@ -121,7 +121,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   ASSERT_NE(nullptr, plot02);
 
   // Add a curve to plot01 and verify that it is in the right plot.
-  PlotCurveWeakPtr curve01 = plot01->AddCurve("curve01");
+  CurveWeakPtr curve01 = plot01->AddCurve("curve01");
   EXPECT_FALSE(curve01.expired());
   auto c01 = curve01.lock();
   ASSERT_NE(nullptr, c01);
@@ -129,7 +129,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_TRUE(plot02->Curve(c01->Id()).expired());
 
   // Add another curve to plot01 and verify it is in the right plot.
-  PlotCurveWeakPtr curve02 = plot01->AddCurve("curve02");
+  CurveWeakPtr curve02 = plot01->AddCurve("curve02");
   EXPECT_FALSE(curve02.expired());
   auto c02 = curve02.lock();
   ASSERT_NE(nullptr, c02);
@@ -137,7 +137,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_TRUE(plot02->Curve(c02->Id()).expired());
 
   // Detach curve01 from plot01 and verify it is no longer in the plot.
-  PlotCurvePtr pc01 = plot01->DetachCurve(c01->Id());
+  CurvePtr pc01 = plot01->DetachCurve(c01->Id());
   EXPECT_EQ(pc01, c01);
   EXPECT_TRUE(plot01->Curve(c01->Id()).expired());
   EXPECT_TRUE(plot01->Curve(c01->Label()).expired());
@@ -148,13 +148,13 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_EQ(c01, plot02->Curve(pc01->Label()).lock());
 
   // Detach curve02 from plot01.
-  PlotCurvePtr pc02 = plot01->DetachCurve(c02->Id());
+  CurvePtr pc02 = plot01->DetachCurve(c02->Id());
   EXPECT_EQ(pc02, c02);
   EXPECT_TRUE(plot02->Curve(c02->Id()).expired());
   EXPECT_TRUE(plot02->Curve(c02->Label()).expired());
 
   // Detach already datched curve02 from plot01.
-  PlotCurvePtr nullptrPc02 = plot01->DetachCurve(c02->Id());
+  CurvePtr nullptrPc02 = plot01->DetachCurve(c02->Id());
   EXPECT_EQ(nullptrPc02, nullptr);
 
   // Attach curve02 to plot02 and verify.
@@ -163,13 +163,13 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_EQ(c02, plot02->Curve(pc02->Label()).lock());
 
   // Verify we can still add a curves to plot01 and plot02.
-  PlotCurveWeakPtr curve03 = plot01->AddCurve("curve03");
+  CurveWeakPtr curve03 = plot01->AddCurve("curve03");
   EXPECT_FALSE(curve03.expired());
   auto c03 = curve03.lock();
   ASSERT_NE(nullptr, c03);
   EXPECT_EQ(c03, plot01->Curve(c03->Id()).lock());
 
-  PlotCurveWeakPtr curve04 = plot02->AddCurve("curve04");
+  CurveWeakPtr curve04 = plot02->AddCurve("curve04");
   EXPECT_FALSE(curve04.expired());
   auto c04 = curve04.lock();
   ASSERT_NE(nullptr, c04);
@@ -193,13 +193,13 @@ TEST(IncrementalPlotTest, AddPoint)
   ASSERT_NE(nullptr, plot);
 
   // Add two curves.
-  PlotCurveWeakPtr curve01 = plot->AddCurve("curve01");
+  CurveWeakPtr curve01 = plot->AddCurve("curve01");
   EXPECT_FALSE(curve01.expired());
   auto c01 = curve01.lock();
   ASSERT_NE(nullptr, c01);
   EXPECT_EQ(c01, plot->Curve(c01->Id()).lock());
 
-  PlotCurveWeakPtr curve02 = plot->AddCurve("curve02");
+  CurveWeakPtr curve02 = plot->AddCurve("curve02");
   EXPECT_FALSE(curve02.expired());
   auto c02 = curve02.lock();
   ASSERT_NE(nullptr, c02);
@@ -251,7 +251,7 @@ TEST(ncrementalPlotTest, SetCurveLabel)
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
-  PlotCurveWeakPtr curve01;
+  CurveWeakPtr curve01;
   unsigned int id;
   {
     // Create a new plot.

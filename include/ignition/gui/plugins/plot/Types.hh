@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PLOT_PLOTTINGTYPES_HH_
-#define IGNITION_GUI_PLUGINS_PLOT_PLOTTINGTYPES_HH_
+#ifndef IGNITION_GUI_PLUGINS_PLOT_TYPES_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_TYPES_HH_
 
 #include <memory>
 
@@ -28,15 +28,15 @@ namespace plugins
 namespace plot
 {
   /// \brief Plotting tool forward declarations and type defines.
-  class PlotCurve;
+  class Curve;
 
-  /// \def PlotCurvePtr
-  /// \brief std shared pointer to a PlotCurve object
-  typedef std::shared_ptr<PlotCurve> PlotCurvePtr;
+  /// \def CurvePtr
+  /// \brief std shared pointer to a Curve object
+  typedef std::shared_ptr<Curve> CurvePtr;
 
-  /// \def PlotCurveWeakPtr
-  /// \brief std weak pointer to a PlotCurve object
-  typedef std::weak_ptr<PlotCurve> PlotCurveWeakPtr;
+  /// \def CurveWeakPtr
+  /// \brief std weak pointer to a Curve object
+  typedef std::weak_ptr<Curve> CurveWeakPtr;
 }
 }
 }
