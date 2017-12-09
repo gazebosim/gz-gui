@@ -10,7 +10,7 @@ pipelines:
           - apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
           - apt update
           - apt install -y build-essential wget cmake cppcheck mercurial
-            libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev
+            libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev
             libprotoc-dev libprotobuf-dev protobuf-compiler
             qtbase5-dev libqwt-qt5-dev libtinyxml2-dev
             libignition-cmake-dev
@@ -25,12 +25,12 @@ pipelines:
           - mkdir build
           - cd build
           - cmake .. -DENABLE_TESTS_COMPILATION=false
-          - make install
+          - make -j4 install
           - cd ../..
           # Ignition GUI
           - mkdir build
           - cd build
           - cmake ..
-          - make install
+          - make -j4 install
           # Tests currently fail, graphics issue?
           # - make test
