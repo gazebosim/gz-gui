@@ -101,6 +101,12 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->setLayout(mainLayout);
 }
 
+/////////////////////////////////////////////////
+void Plot::ShowContextMenu(const QPoint &/*_pos*/)
+{
+  // Do nothing so the panner works
+}
+
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::plot::Plot,
                                   ignition::gui::Plugin)

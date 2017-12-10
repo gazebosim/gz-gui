@@ -76,7 +76,7 @@ namespace ignition
 
       /// \brief Show context menu
       /// \param [in] _pos Click position
-      protected slots: void ShowContextMenu(const QPoint &_pos);
+      protected slots: virtual void ShowContextMenu(const QPoint &_pos);
 
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";
