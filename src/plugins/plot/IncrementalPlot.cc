@@ -73,9 +73,12 @@ namespace plot
     /// \param[in] _factor Factor to scale the plot by.
     protected: virtual void rescale(double _factor) override
           {
-            QwtPlot *plt = plot();
+            QwtPlot *plt = this->plot();
             if (plt == nullptr)
-                return;
+            {
+              ignwarn << "Magnifier has no plot" << std::endl;
+              return;
+            }
 
             double factor = qAbs(_factor);
             if (math::equal(factor, 1.0) ||

@@ -395,3 +395,42 @@ TEST(IncrementalPlotTest, Update)
 
   EXPECT_TRUE(stop());
 }
+
+
+/////////////////////////////////////////////////
+TEST(IncrementalPlotTest, Magnify)
+{
+  setVerbosity(4);
+  ASSERT_TRUE(initApp());
+  ASSERT_TRUE(loadPlugin("Plot"));
+
+  // Create plot
+  auto plot = new IncrementalPlot(nullptr);
+  ASSERT_NE(nullptr, plot);
+
+  // Get initial axis scale
+  auto xInterval = plot->axisInterval(QwtPlot::xBottom).width();
+  auto yInterval = plot->axisInterval(QwtPlot::yLeft).width();
+
+  // Scroll mouse wheel
+  auto wheelEvent = new QWheelEvent(QPointF(1, 1), 10, Qt::NoButton,
+      Qt::NoModifier, Qt::Horizontal);
+  QCoreApplication::postEvent(plot->canvas(), wheelEvent);
+  QCoreApplication::processEvents();
+
+  // Check it zoomed in
+  EXPECT_GT(xInterval, plot->axisInterval(QwtPlot::xBottom).width());
+  EXPECT_GT(yInterval, plot->axisInterval(QwtPlot::yLeft).width());
+
+  // Scroll mouse wheel
+  wheelEvent = new QWheelEvent(QPointF(1, 1), -20, Qt::NoButton,
+      Qt::NoModifier, Qt::Horizontal);
+  QCoreApplication::postEvent(plot->canvas(), wheelEvent);
+  QCoreApplication::processEvents();
+
+  // Check it zoomed out
+  EXPECT_LT(xInterval, plot->axisInterval(QwtPlot::xBottom).width());
+  EXPECT_LT(yInterval, plot->axisInterval(QwtPlot::yLeft).width());
+
+  EXPECT_TRUE(stop());
+}
