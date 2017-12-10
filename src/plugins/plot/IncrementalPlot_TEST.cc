@@ -350,11 +350,11 @@ TEST(IncrementalPlotTest, HoverLine)
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
   ASSERT_NE(nullptr, plot);
 
-  EXPECT_FALSE(plot->IsShowHoverLine());
-  plot->ShowHoverLine(true);
   EXPECT_TRUE(plot->IsShowHoverLine());
   plot->ShowHoverLine(false);
   EXPECT_FALSE(plot->IsShowHoverLine());
+  plot->ShowHoverLine(true);
+  EXPECT_TRUE(plot->IsShowHoverLine());
 
   delete plot;
 
