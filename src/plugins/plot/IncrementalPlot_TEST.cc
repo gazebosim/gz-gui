@@ -208,7 +208,7 @@ TEST(IncrementalPlotTest, AddPoint)
   EXPECT_EQ(c02, plot->Curve(c02->Id()).lock());
 
   // Add point to curve01 and verify.
-  ignition::math::Vector2d point01(12.3, 99);
+  math::Vector2d point01(12.3, 99);
   EXPECT_EQ(0u, c01->Size());
 
   // Try to add a point with an incorrect Id.
@@ -220,16 +220,16 @@ TEST(IncrementalPlotTest, AddPoint)
   EXPECT_EQ(point01, c01->Point(0u));
 
   // Add another point to curve01 and verify.
-  ignition::math::Vector2d point02(-1.3, -9.9);
+  math::Vector2d point02(-1.3, -9.9);
   plot->AddPoint(c01->Id(), point02);
   EXPECT_EQ(2u, c01->Size());
   EXPECT_EQ(point02, c01->Point(1u));
 
   // Add a list of points to curve02 and verify.
-  std::vector<ignition::math::Vector2d> points;
+  std::vector<math::Vector2d> points;
   unsigned int ptSize = 10;
   for (unsigned int i = 0; i < ptSize; ++i)
-    points.push_back(ignition::math::Vector2d(i * 2, i * 0.5));
+    points.push_back(math::Vector2d(i * 2, i * 0.5));
 
   // Try to add points with an incorrect Id.
   plot->AddPoints(99999, points);

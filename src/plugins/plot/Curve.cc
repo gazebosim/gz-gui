@@ -265,7 +265,7 @@ Curve::~Curve()
 }
 
 /////////////////////////////////////////////////
-void Curve::AddPoint(const ignition::math::Vector2d &_pt)
+void Curve::AddPoint(const math::Vector2d &_pt)
 {
   if (!this->dataPtr->active)
     return;
@@ -275,7 +275,7 @@ void Curve::AddPoint(const ignition::math::Vector2d &_pt)
 }
 
 /////////////////////////////////////////////////
-void Curve::AddPoints(const std::vector<ignition::math::Vector2d> &_pts)
+void Curve::AddPoints(const std::vector<math::Vector2d> &_pts)
 {
   if (!this->dataPtr->active)
     return;
@@ -361,31 +361,30 @@ unsigned int Curve::Size() const
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2d Curve::Min() const
+math::Vector2d Curve::Min() const
 {
-  return ignition::math::Vector2d(this->dataPtr->curve->minXValue(),
+  return math::Vector2d(this->dataPtr->curve->minXValue(),
       this->dataPtr->curve->minYValue());
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2d Curve::Max() const
+math::Vector2d Curve::Max() const
 {
-  return ignition::math::Vector2d(this->dataPtr->curve->maxXValue(),
+  return math::Vector2d(this->dataPtr->curve->maxXValue(),
       this->dataPtr->curve->maxYValue());
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2d Curve::Point(const unsigned int _index) const
+math::Vector2d Curve::Point(const unsigned int _index) const
 {
   if (_index >= static_cast<unsigned int>(
       this->dataPtr->curveData->samples().size()))
   {
-    return ignition::math::Vector2d(ignition::math::NAN_D,
-        ignition::math::NAN_D);
+    return math::Vector2d(math::NAN_D, math::NAN_D);
   }
 
   const QPointF &pt = this->dataPtr->curveData->samples()[_index];
-  return ignition::math::Vector2d(pt.x(), pt.y());
+  return math::Vector2d(pt.x(), pt.y());
 }
 
 /////////////////////////////////////////////////

@@ -56,14 +56,14 @@ namespace plot
     /// \sa AddPoints
     /// \sa Point
     /// \sa Points
-    public: void AddPoint(const ignition::math::Vector2d &_pt);
+    public: void AddPoint(const math::Vector2d &_pt);
 
     /// \brief Add points to the curve.
     /// \param[in] _pts Points to add.
     /// \sa AddPoint
     /// \sa Point
     /// \sa Points
-    public: void AddPoints(const std::vector<ignition::math::Vector2d> &_pts);
+    public: void AddPoints(const std::vector<math::Vector2d> &_pts);
 
     /// \brief Clear all data from the curve.
     public: void Clear();
@@ -125,12 +125,12 @@ namespace plot
     /// \brief Get the min x and y values of this curve.
     /// \return Point with min values
     /// \sa Max
-    public: ignition::math::Vector2d Min() const;
+    public: math::Vector2d Min() const;
 
     /// \brief Get the max x and y values of this curve.
     /// \return Point with max values
     /// \sa Min
-    public: ignition::math::Vector2d Max() const;
+    public: math::Vector2d Max() const;
 
     /// \brief Get a point in the curve.
     /// \param[in] _index Index of the point in the curve.
@@ -139,14 +139,14 @@ namespace plot
     /// \sa AddPoint
     /// \sa AddPoints
     /// \sa Points
-    public: ignition::math::Vector2d Point(const unsigned int _index) const;
+    public: math::Vector2d Point(const unsigned int _index) const;
 
     /// \brief Return all the sample points in the curve.
     /// \return Curve sample points.
     /// \sa AddPoint
     /// \sa AddPoints
     /// \sa Point
-    public: std::vector<ignition::math::Vector2d> Points() const;
+    public: std::vector<math::Vector2d> Points() const;
 
     /// \internal
     /// \brief Get the internal QwtPlotCurve object.

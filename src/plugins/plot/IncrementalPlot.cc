@@ -194,7 +194,7 @@ IncrementalPlot::IncrementalPlot(QWidget *_parent)
 
   // line hover display
   this->dataPtr->tracker = new Tracker(this->canvas());
-  this->dataPtr->tracker->setEnabled(false);
+  this->dataPtr->tracker->setEnabled(true);
 
   // box zoom
   auto zoomer = new QwtPlotZoomer(this->canvas());

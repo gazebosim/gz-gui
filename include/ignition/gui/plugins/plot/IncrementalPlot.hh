@@ -84,13 +84,13 @@ namespace plot
     /// \param[in] _id Unique id of the curve.
     /// \param[in] _pt Point to add.
     public: void AddPoint(const unsigned int _id,
-                          const ignition::math::Vector2d &_pt);
+                          const math::Vector2d &_pt);
 
     /// \brief Add new points to a curve.
     /// \param[in] _id Unique id of the curve.
     /// \param[in] _pts Points to add.
     public: void AddPoints(const unsigned int _id,
-                           const std::vector<ignition::math::Vector2d> &_pts);
+                           const std::vector<math::Vector2d> &_pts);
 
     /// \brief Clear all points from the plot.
     public: void Clear();
@@ -120,12 +120,12 @@ namespace plot
     /// axis.
     /// \return Period duration in seconds.
     /// \sa SetPeriod
-    public: ignition::common::Time Period() const;
+    public: common::Time Period() const;
 
     /// \brief Set the period over which to plot.
     /// \param[in] _time Period duration in seconds.
     /// \sa Period
-    public: void SetPeriod(const ignition::common::Time &_time);
+    public: void SetPeriod(const common::Time &_time);
 
     /// \brief Attach an existing curve to this plot.
     /// \param[in] _curve The curve to attach to the plot.

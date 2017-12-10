@@ -112,7 +112,7 @@ TEST(CurveTest, AddPoint)
   EXPECT_EQ(0u, plotCurve->Size());
 
   // Add points.
-  ignition::math::Vector2d point01(12.3, -39.4);
+  math::Vector2d point01(12.3, -39.4);
   // If it's inactive, the point shouldn't be added.
   plotCurve->SetActive(false);
   plotCurve->AddPoint(point01);
@@ -124,21 +124,21 @@ TEST(CurveTest, AddPoint)
   EXPECT_EQ(1u, plotCurve->Size());
   EXPECT_EQ(point01, plotCurve->Point(0));
 
-  ignition::math::Vector2d point02(3.3, -3.4);
+  math::Vector2d point02(3.3, -3.4);
   plotCurve->AddPoint(point02);
   EXPECT_EQ(2u, plotCurve->Size());
   EXPECT_EQ(point02, plotCurve->Point(1));
 
-  EXPECT_EQ(ignition::math::Vector2d(3.3, -39.4), plotCurve->Min());
-  EXPECT_EQ(ignition::math::Vector2d(12.3, -3.4), plotCurve->Max());
+  EXPECT_EQ(math::Vector2d(3.3, -39.4), plotCurve->Min());
+  EXPECT_EQ(math::Vector2d(12.3, -3.4), plotCurve->Max());
 
   plotCurve->Clear();
 
   // Create a list of points and add them to the curve.
-  std::vector<ignition::math::Vector2d> points;
+  std::vector<math::Vector2d> points;
   unsigned int ptSize = 11000u;
   for (unsigned int i = 0u; i < ptSize; ++i)
-    points.push_back(ignition::math::Vector2d(i, ptSize - i));
+    points.push_back(math::Vector2d(i, ptSize - i));
 
   // If it's inactive, the points shouldn't be added.
   plotCurve->SetActive(false);
@@ -156,8 +156,8 @@ TEST(CurveTest, AddPoint)
 
   // Wrong index point.
   auto point = plotCurve->Point(99999);
-  EXPECT_TRUE(ignition::math::isnan(point.X()));
-  EXPECT_TRUE(ignition::math::isnan(point.Y()));
+  EXPECT_TRUE(math::isnan(point.X()));
+  EXPECT_TRUE(math::isnan(point.Y()));
 
   ASSERT_NE(nullptr, plotCurve->QwtCurve());
 
