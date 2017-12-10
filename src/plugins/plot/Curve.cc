@@ -68,7 +68,7 @@ namespace plot
 
     /// \brief Get the bounding box of a sample.
     /// \return Bounding box of the sample.
-    public: virtual QRectF boundingRect() const
+    public: virtual QRectF boundingRect() const override
             {
               if (this->d_boundingRect.width() < 0.0)
                 this->d_boundingRect = qwtBoundingRect(*this);
@@ -96,11 +96,11 @@ namespace plot
             {
               this->d_samples += _point;
 
-              if (this->d_samples.size() > maxSampleSize)
+              if (this->d_samples.size() > this->maxSampleSize)
               {
                 // remove sample window
                 // update bounding rect?
-                this->d_samples.remove(0, windowSize);
+                this->d_samples.remove(0, this->windowSize);
               }
 
               if (this->d_samples.size() == 1)
@@ -131,17 +131,17 @@ namespace plot
             }
 
     /// \brief Get the sample data.
-    /// \return A vector of same points.
+    /// \return A vector of sample points.
     public: QVector<QPointF> Samples() const
             {
               return this->d_samples;
             }
 
-    /// \brief maximum sample size of this curve.
-    private: int maxSampleSize = 11000;
+    /// \brief Maximum sample size of this curve.
+    private: int maxSampleSize{11000};
 
     /// \brief Size of samples to remove when maxSampleSize is reached.
-    private: int windowSize = 1000;
+    private: int windowSize{1000};
   };
 
   /// \internal
@@ -155,10 +155,10 @@ namespace plot
     public: std::string label;
 
     /// \brief Active state of the plot curve.
-    public: bool active = true;
+    public: bool active{true};
 
     /// \brief Age of the curve since the first restart.
-    public: unsigned int age = 0;
+    public: unsigned int age{0};
 
     /// \brief Qwt Curve object.
     public: QwtPlotCurve *curve = nullptr;
@@ -219,10 +219,10 @@ const math::Color ColorPalette::Colors
     };
 
 // global curve id counter.
-unsigned int CurvePrivate::globalCurveId = 0;
+unsigned int CurvePrivate::globalCurveId{0};
 
 // curve color counter.
-unsigned int CurvePrivate::colorCounter = 0;
+unsigned int CurvePrivate::colorCounter{0};
 
 /////////////////////////////////////////////////
 Curve::Curve(const std::string &_label)
@@ -240,8 +240,7 @@ Curve::Curve(const std::string &_label)
       this->dataPtr->colorCounter / ColorPalette::ColorGroupCount)
       % ColorPalette::ColorCount;
   this->dataPtr->colorCounter++;
-  QColor penColor =
-      gui::convert(ColorPalette::Colors[colorGroup][color]);
+  QColor penColor = gui::convert(ColorPalette::Colors[colorGroup][color]);
 
   QPen pen(penColor);
   pen.setWidth(1.0);

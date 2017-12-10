@@ -103,6 +103,8 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
   plot->AttachCurve(curve01);
   EXPECT_EQ(0u, plot->Curves().size());
 
+  delete plot;
+
   EXPECT_TRUE(stop());
 }
 
@@ -287,6 +289,8 @@ TEST(ncrementalPlotTest, SetCurveLabel)
   EXPECT_EQ(0u, plot->Curves().size());
   EXPECT_TRUE(curve01.expired());
 
+  delete plot;
+
   EXPECT_TRUE(stop());
 }
 
@@ -393,6 +397,8 @@ TEST(IncrementalPlotTest, Update)
     plot->Update();
   }
 
+  delete plot;
+
   EXPECT_TRUE(stop());
 }
 
@@ -431,6 +437,8 @@ TEST(IncrementalPlotTest, Magnify)
   // Check it zoomed out
   EXPECT_LT(xInterval, plot->axisInterval(QwtPlot::xBottom).width());
   EXPECT_LT(yInterval, plot->axisInterval(QwtPlot::yLeft).width());
+
+  delete plot;
 
   EXPECT_TRUE(stop());
 }
