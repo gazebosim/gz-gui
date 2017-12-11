@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PLOT_HH_
-#define IGNITION_GUI_PLUGINS_PLOT_HH_
+#ifndef IGNITION_GUI_PLUGINS_PLOT_PLOT_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_PLOT_HH_
 
 #include <memory>
 
