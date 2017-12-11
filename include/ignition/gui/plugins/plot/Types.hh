@@ -14,13 +14,10 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PLOT_HH_
-#define IGNITION_GUI_PLUGINS_PLOT_HH_
+#ifndef IGNITION_GUI_PLUGINS_PLOT_TYPES_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_TYPES_HH_
 
 #include <memory>
-
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -30,31 +27,19 @@ namespace plugins
 {
 namespace plot
 {
-  class PlotPrivate;
+  /// \brief Plotting tool forward declarations and type defines.
+  class Curve;
 
-  /// \brief Widget that allow plotting of Ignition Transport topics.
-  class IGNITION_GUI_VISIBLE Plot : public Plugin
-  {
-    Q_OBJECT
+  /// \def CurvePtr
+  /// \brief std shared pointer to a Curve object
+  typedef std::shared_ptr<Curve> CurvePtr;
 
-    /// \brief Constructor.
-    public: Plot();
-
-    /// \brief Destructor.
-    public: virtual ~Plot();
-
-    // Documentation inherited.
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
-
-    // Documentation inherited
-    protected slots: void ShowContextMenu(const QPoint &_pos) override;
-
-    // Private data
-    private: std::unique_ptr<PlotPrivate> dataPtr;
-  };
+  /// \def CurveWeakPtr
+  /// \brief std weak pointer to a Curve object
+  typedef std::weak_ptr<Curve> CurveWeakPtr;
 }
 }
 }
 }
+
 #endif

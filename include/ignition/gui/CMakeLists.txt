@@ -38,6 +38,7 @@ set (headers
   Iface.hh
   ign.hh
   qt.h
+  qwt.h
   QtMetatypes.hh
   SearchModel.hh
   System.hh

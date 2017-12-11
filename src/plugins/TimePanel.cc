@@ -40,6 +40,9 @@ namespace plugins
 
     /// \brief Communication node
     public: ignition::transport::Node node;
+
+    /// \brief The multi step value
+    public: unsigned int multiStep = 1u;
   };
 }
 }
@@ -106,8 +109,34 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           this->connect(this, SIGNAL(Playing()), pauseButton, SLOT(show()));
           this->connect(this, SIGNAL(Paused()), pauseButton, SLOT(hide()));
 
-          mainLayout->addWidget(playButton, 0, 0, 2, 1);
-          mainLayout->addWidget(pauseButton, 0, 0, 2, 1);
+          auto stepButton = new QPushButton("Step");
+          stepButton->setObjectName("stepButton");
+          QLabel *stepLabel = new QLabel(tr("Steps:"));
+          QSpinBox *stepSpinBox = new QSpinBox;
+          stepSpinBox->setRange(1, 9999);
+
+          this->connect(stepButton, SIGNAL(clicked()), this, SLOT(OnStep()));
+          this->connect(this, &TimePanel::Playing,
+            [=]()
+            {
+              stepButton->setDisabled(true);
+              stepSpinBox->setDisabled(true);
+            });
+          this->connect(this, &TimePanel::Paused,
+            [=]()
+            {
+              stepButton->setDisabled(false);
+              stepSpinBox->setDisabled(false);
+            });
+          this->connect(stepSpinBox,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            [=](int _newValue) {this->dataPtr->multiStep = _newValue;});
+
+          mainLayout->addWidget(playButton,  0, 0);
+          mainLayout->addWidget(pauseButton, 0, 0);
+          mainLayout->addWidget(stepButton,  0, 1);
+          mainLayout->addWidget(stepLabel,   0, 2);
+          mainLayout->addWidget(stepSpinBox, 0, 3);
 
           auto startPaused = false;
           if (auto pausedElem = controlElem->FirstChildElement("start_paused"))
@@ -158,8 +187,8 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               this->connect(this, SIGNAL(SetSimTime(QString)), simTime,
                   SLOT(setText(QString)));
 
-              mainLayout->addWidget(new QLabel("Sim time"), 0, 1);
-              mainLayout->addWidget(simTime, 0, 2);
+              mainLayout->addWidget(new QLabel("Sim time"), 1, 0);
+              mainLayout->addWidget(simTime, 1, 1);
             }
           }
 
@@ -176,8 +205,8 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               this->connect(this, SIGNAL(SetRealTime(QString)), realTime,
                   SLOT(setText(QString)));
 
-              mainLayout->addWidget(new QLabel("Real time"), 1, 1);
-              mainLayout->addWidget(realTime, 1, 2);
+              mainLayout->addWidget(new QLabel("Real time"), 1, 2);
+              mainLayout->addWidget(realTime, 1, 3);
             }
           }
         }
@@ -233,8 +262,8 @@ void TimePanel::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 /////////////////////////////////////////////////
 void TimePanel::OnPlay()
 {
-  std::function<void(const ignition::msgs::Empty &, const bool)> cb =
-      [this](const ignition::msgs::Empty &/*_rep*/, const bool _result)
+  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
   {
     if (_result)
       QMetaObject::invokeMethod(this, "Playing");
@@ -248,8 +277,8 @@ void TimePanel::OnPlay()
 /////////////////////////////////////////////////
 void TimePanel::OnPause()
 {
-  std::function<void(const ignition::msgs::Empty &, const bool)> cb =
-      [this](const ignition::msgs::Empty &/*_rep*/, const bool _result)
+  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
   {
     if (_result)
       QMetaObject::invokeMethod(this, "Paused");
@@ -257,6 +286,19 @@ void TimePanel::OnPause()
 
   ignition::msgs::WorldControl req;
   req.set_pause(true);
+  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+}
+
+/////////////////////////////////////////////////
+void TimePanel::OnStep()
+{
+  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+      [this](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+  {
+  };
+
+  ignition::msgs::WorldControl req;
+  req.set_multi_step(this->dataPtr->multiStep);
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
