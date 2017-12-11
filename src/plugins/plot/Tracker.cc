@@ -18,7 +18,7 @@
 #include <ignition/math/Helpers.hh>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/plugins/plot/PlotTracker.hh"
+#include "ignition/gui/plugins/plot/Tracker.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -26,14 +26,14 @@ using namespace plugins;
 using namespace plot;
 
 /// \internal
-/// \brief PlotTracker private data.
-class ignition::gui::plugins::plot::PlotTrackerPrivate
+/// \brief Tracker private data.
+class ignition::gui::plugins::plot::TrackerPrivate
 {
 };
 
 /////////////////////////////////////////////////
-PlotTracker::PlotTracker(QWidget *_canvas)
-  : QwtPlotPicker(_canvas), dataPtr(new PlotTrackerPrivate)
+Tracker::Tracker(QWidget *_canvas)
+  : QwtPlotPicker(_canvas), dataPtr(new TrackerPrivate)
 {
   this->setTrackerMode(QwtPlotPicker::AlwaysOn);
   this->setRubberBand(QwtPicker::VLineRubberBand);
@@ -42,28 +42,28 @@ PlotTracker::PlotTracker(QWidget *_canvas)
 
 
 /////////////////////////////////////////////////
-void PlotTracker::updateDisplay()
+void Tracker::updateDisplay()
 {
   // this updates default rubberband and tracker text
   QwtPicker::updateDisplay();
 }
 
 /////////////////////////////////////////////////
-void PlotTracker::widgetMousePressEvent(QMouseEvent *_e)
+void Tracker::widgetMousePressEvent(QMouseEvent *_e)
 {
   this->setRubberBand(QwtPicker::NoRubberBand);
   QwtPicker::widgetMousePressEvent(_e);
 }
 
 /////////////////////////////////////////////////
-void PlotTracker::widgetMouseReleaseEvent(QMouseEvent *_e)
+void Tracker::widgetMouseReleaseEvent(QMouseEvent *_e)
 {
   this->setRubberBand(QwtPicker::VLineRubberBand);
   QwtPicker::widgetMouseReleaseEvent(_e);
 }
 
 /////////////////////////////////////////////////
-QwtText PlotTracker::trackerTextF(const QPointF &_pos) const
+QwtText Tracker::trackerTextF(const QPointF &_pos) const
 {
   // format hover text
   QwtText tracker;
@@ -93,7 +93,7 @@ QwtText PlotTracker::trackerTextF(const QPointF &_pos) const
 }
 
 /////////////////////////////////////////////////
-QString PlotTracker::CurveInfoAt(const QwtPlotCurve *curve,
+QString Tracker::CurveInfoAt(const QwtPlotCurve *curve,
     const QPointF &_pos) const
 {
   const QLineF line = this->CurveLineAt(curve, _pos.x());
@@ -110,7 +110,7 @@ QString PlotTracker::CurveInfoAt(const QwtPlotCurve *curve,
 }
 
 /////////////////////////////////////////////////
-QLineF PlotTracker::CurveLineAt(const QwtPlotCurve *_curve,
+QLineF Tracker::CurveLineAt(const QwtPlotCurve *_curve,
     const double _x) const
 {
   // line segment of curve at x
@@ -142,7 +142,7 @@ QLineF PlotTracker::CurveLineAt(const QwtPlotCurve *_curve,
 }
 
 /////////////////////////////////////////////////
-int PlotTracker::UpperSampleIndex(const QwtSeriesData<QPointF> &_series,
+int Tracker::UpperSampleIndex(const QwtSeriesData<QPointF> &_series,
     const double _value) const
 {
   // binary search to find index in series with the closest value

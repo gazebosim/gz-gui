@@ -12,8 +12,8 @@ set (plot_qt_others
 
 # The rest of source files.
 set (plot_others
-  PlotCurve
-  PlotTracker
+  Curve
+  Tracker
 )
 
 foreach(src ${plot_others})

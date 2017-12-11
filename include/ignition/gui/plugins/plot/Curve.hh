@@ -14,8 +14,9 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_PLOT_PLOTCURVE_HH_
-#define IGNITION_GUI_PLUGINS_PLOT_PLOTCURVE_HH_
+
+#ifndef IGNITION_GUI_PLUGINS_PLOT_CURVE_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_CURVE_HH_
 
 #include <memory>
 #include <string>
@@ -37,68 +38,84 @@ namespace plugins
 namespace plot
 {
   // Forward declare private data class.
-  class PlotCurvePrivate;
+  class CurvePrivate;
   class IncrementalPlot;
 
   /// \brief Plot Curve data.
-  class IGNITION_GUI_VISIBLE PlotCurve
+  class IGNITION_GUI_VISIBLE Curve
   {
     /// \brief Constructor.
     /// \param[in] _label Plot label.
-    public: explicit PlotCurve(const std::string &_label);
+    public: explicit Curve(const std::string &_label);
 
     /// \brief Destructor.
-    public: ~PlotCurve();
+    public: ~Curve();
 
     /// \brief Add a point to the curve.
     /// \param[in] _pt Point to add.
-    public: void AddPoint(const ignition::math::Vector2d &_pt);
+    /// \sa AddPoints
+    /// \sa Point
+    /// \sa Points
+    public: void AddPoint(const math::Vector2d &_pt);
 
     /// \brief Add points to the curve.
     /// \param[in] _pts Points to add.
-    public: void AddPoints(const std::vector<ignition::math::Vector2d> &_pts);
+    /// \sa AddPoint
+    /// \sa Point
+    /// \sa Points
+    public: void AddPoints(const std::vector<math::Vector2d> &_pts);
 
     /// \brief Clear all data from the curve.
     public: void Clear();
 
     /// \brief Attach the curve to a plot.
     /// \param[in] _plot Plot to attach to.
+    /// \sa Detach
     public: void Attach(IncrementalPlot *_plot);
 
     /// \brief Detach the curve from the plot.
+    /// \sa Attach
     public: void Detach();
 
     /// \brief Set the curve label.
     /// \param[in] _label Label to set the curve to.
+    /// \sa Label
     public: void SetLabel(const std::string &_label);
 
     /// \brief Get the curve label.
     /// \return Curve label.
+    /// \sa SetLabel
     public: std::string Label() const;
 
     /// \brief Set the curve id.
     /// \param[in] _id Id to set the curve to.
+    /// \sa Id
     public: void SetId(const unsigned int _id);
 
     /// \brief Get the curve id.
     /// \return Curve id.
+    /// \sa SetId
     public: unsigned int Id() const;
 
     /// \brief Set whether the curve should be active.
     /// \param[in] _active True to make the curve active and accept new points.
+    /// \sa Active
     public: void SetActive(const bool _active);
 
     /// \brief Get whether the curve is active.
     /// \return Active state of the plot curve.
+    /// \sa SetActive
     public: bool Active() const;
 
     /// \brief Set the age of the curve.
     /// \param[in] _age Age of the curve. Currently used to keep track of
     /// how many restarts it has been through.
+    /// \sa Age
     public: void SetAge(const unsigned int _age);
 
     /// \brief Get the age of the curve.
     /// \return Curve age.
+    /// \sa SetAge
     public: unsigned int Age() const;
 
     /// \brief Get the number of data points in the curve.
@@ -107,30 +124,38 @@ namespace plot
 
     /// \brief Get the min x and y values of this curve.
     /// \return Point with min values
-    public: ignition::math::Vector2d Min() const;
+    /// \sa Max
+    public: math::Vector2d Min() const;
 
     /// \brief Get the max x and y values of this curve.
     /// \return Point with max values
-    public: ignition::math::Vector2d Max() const;
+    /// \sa Min
+    public: math::Vector2d Max() const;
 
     /// \brief Get a point in the curve.
     /// \param[in] _index Index of the point in the curve.
     /// \return 2d point at the specified index. A Vector2d of nans is
     /// returned if the index is out of bounds.
-    public: ignition::math::Vector2d Point(const unsigned int _index) const;
+    /// \sa AddPoint
+    /// \sa AddPoints
+    /// \sa Points
+    public: math::Vector2d Point(const unsigned int _index) const;
 
     /// \brief Return all the sample points in the curve.
     /// \return Curve sample points.
-    public: std::vector<ignition::math::Vector2d> Points() const;
+    /// \sa AddPoint
+    /// \sa AddPoints
+    /// \sa Point
+    public: std::vector<math::Vector2d> Points() const;
 
     /// \internal
     /// \brief Get the internal QwtPlotCurve object.
     /// \return QwtPlotCurve object.
-    public: QwtPlotCurve *Curve();
+    public: QwtPlotCurve *QwtCurve();
 
     /// \internal
     /// \brief Private data pointer.
-    private: std::unique_ptr<PlotCurvePrivate> dataPtr;
+    private: std::unique_ptr<CurvePrivate> dataPtr;
   };
 }
 }

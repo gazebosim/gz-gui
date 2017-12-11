@@ -21,8 +21,8 @@
 #include <ignition/math/Vector2.hh>
 
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
-#include "ignition/gui/plugins/plot/PlotCurve.hh"
-#include "ignition/gui/plugins/plot/PlottingTypes.hh"
+#include "ignition/gui/plugins/plot/Curve.hh"
+#include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/Iface.hh"
 
 using namespace ignition;
@@ -33,10 +33,11 @@ using namespace plot;
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, AddRemoveCurve)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
-  PlotCurveWeakPtr curve01;
+  CurveWeakPtr curve01;
   {
     // Create a new plot.
     IncrementalPlot *plot = new IncrementalPlot(nullptr);
@@ -55,7 +56,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
     EXPECT_EQ(1u, plot->Curves().size());
 
     // Add another curve and verify that both curves are in the plot.
-    PlotCurveWeakPtr curve02 = plot->AddCurve("curve02");
+    CurveWeakPtr curve02 = plot->AddCurve("curve02");
     EXPECT_FALSE(curve02.expired());
     auto c02 = curve02.lock();
     ASSERT_NE(nullptr, c02);
@@ -78,7 +79,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
     EXPECT_TRUE(plot->Curve(c02->Label()).expired());
 
     // Check we can add more curves.
-    PlotCurveWeakPtr curve03 = plot->AddCurve("curve03");
+    CurveWeakPtr curve03 = plot->AddCurve("curve03");
     auto c03 = curve03.lock();
 
     ASSERT_NE(nullptr, c03);
@@ -97,10 +98,12 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
   ASSERT_NE(nullptr, plot);
 
-  // Try to attach a curve that has been removed.
+  // Try to attach a curve that has been removed by another plot.
   EXPECT_EQ(0u, plot->Curves().size());
   plot->AttachCurve(curve01);
   EXPECT_EQ(0u, plot->Curves().size());
+
+  delete plot;
 
   EXPECT_TRUE(stop());
 }
@@ -108,6 +111,7 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest,  AttachDetachCurve)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -119,7 +123,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   ASSERT_NE(nullptr, plot02);
 
   // Add a curve to plot01 and verify that it is in the right plot.
-  PlotCurveWeakPtr curve01 = plot01->AddCurve("curve01");
+  CurveWeakPtr curve01 = plot01->AddCurve("curve01");
   EXPECT_FALSE(curve01.expired());
   auto c01 = curve01.lock();
   ASSERT_NE(nullptr, c01);
@@ -127,7 +131,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_TRUE(plot02->Curve(c01->Id()).expired());
 
   // Add another curve to plot01 and verify it is in the right plot.
-  PlotCurveWeakPtr curve02 = plot01->AddCurve("curve02");
+  CurveWeakPtr curve02 = plot01->AddCurve("curve02");
   EXPECT_FALSE(curve02.expired());
   auto c02 = curve02.lock();
   ASSERT_NE(nullptr, c02);
@@ -135,7 +139,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_TRUE(plot02->Curve(c02->Id()).expired());
 
   // Detach curve01 from plot01 and verify it is no longer in the plot.
-  PlotCurvePtr pc01 = plot01->DetachCurve(c01->Id());
+  CurvePtr pc01 = plot01->DetachCurve(c01->Id());
   EXPECT_EQ(pc01, c01);
   EXPECT_TRUE(plot01->Curve(c01->Id()).expired());
   EXPECT_TRUE(plot01->Curve(c01->Label()).expired());
@@ -146,13 +150,13 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_EQ(c01, plot02->Curve(pc01->Label()).lock());
 
   // Detach curve02 from plot01.
-  PlotCurvePtr pc02 = plot01->DetachCurve(c02->Id());
+  CurvePtr pc02 = plot01->DetachCurve(c02->Id());
   EXPECT_EQ(pc02, c02);
   EXPECT_TRUE(plot02->Curve(c02->Id()).expired());
   EXPECT_TRUE(plot02->Curve(c02->Label()).expired());
 
   // Detach already datched curve02 from plot01.
-  PlotCurvePtr nullptrPc02 = plot01->DetachCurve(c02->Id());
+  CurvePtr nullptrPc02 = plot01->DetachCurve(c02->Id());
   EXPECT_EQ(nullptrPc02, nullptr);
 
   // Attach curve02 to plot02 and verify.
@@ -161,13 +165,13 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
   EXPECT_EQ(c02, plot02->Curve(pc02->Label()).lock());
 
   // Verify we can still add a curves to plot01 and plot02.
-  PlotCurveWeakPtr curve03 = plot01->AddCurve("curve03");
+  CurveWeakPtr curve03 = plot01->AddCurve("curve03");
   EXPECT_FALSE(curve03.expired());
   auto c03 = curve03.lock();
   ASSERT_NE(nullptr, c03);
   EXPECT_EQ(c03, plot01->Curve(c03->Id()).lock());
 
-  PlotCurveWeakPtr curve04 = plot02->AddCurve("curve04");
+  CurveWeakPtr curve04 = plot02->AddCurve("curve04");
   EXPECT_FALSE(curve04.expired());
   auto c04 = curve04.lock();
   ASSERT_NE(nullptr, c04);
@@ -182,6 +186,7 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, AddPoint)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -190,20 +195,20 @@ TEST(IncrementalPlotTest, AddPoint)
   ASSERT_NE(nullptr, plot);
 
   // Add two curves.
-  PlotCurveWeakPtr curve01 = plot->AddCurve("curve01");
+  CurveWeakPtr curve01 = plot->AddCurve("curve01");
   EXPECT_FALSE(curve01.expired());
   auto c01 = curve01.lock();
   ASSERT_NE(nullptr, c01);
   EXPECT_EQ(c01, plot->Curve(c01->Id()).lock());
 
-  PlotCurveWeakPtr curve02 = plot->AddCurve("curve02");
+  CurveWeakPtr curve02 = plot->AddCurve("curve02");
   EXPECT_FALSE(curve02.expired());
   auto c02 = curve02.lock();
   ASSERT_NE(nullptr, c02);
   EXPECT_EQ(c02, plot->Curve(c02->Id()).lock());
 
   // Add point to curve01 and verify.
-  ignition::math::Vector2d point01(12.3, 99);
+  math::Vector2d point01(12.3, 99);
   EXPECT_EQ(0u, c01->Size());
 
   // Try to add a point with an incorrect Id.
@@ -215,16 +220,16 @@ TEST(IncrementalPlotTest, AddPoint)
   EXPECT_EQ(point01, c01->Point(0u));
 
   // Add another point to curve01 and verify.
-  ignition::math::Vector2d point02(-1.3, -9.9);
+  math::Vector2d point02(-1.3, -9.9);
   plot->AddPoint(c01->Id(), point02);
   EXPECT_EQ(2u, c01->Size());
   EXPECT_EQ(point02, c01->Point(1u));
 
   // Add a list of points to curve02 and verify.
-  std::vector<ignition::math::Vector2d> points;
+  std::vector<math::Vector2d> points;
   unsigned int ptSize = 10;
   for (unsigned int i = 0; i < ptSize; ++i)
-    points.push_back(ignition::math::Vector2d(i * 2, i * 0.5));
+    points.push_back(math::Vector2d(i * 2, i * 0.5));
 
   // Try to add points with an incorrect Id.
   plot->AddPoints(99999, points);
@@ -244,10 +249,11 @@ TEST(IncrementalPlotTest, AddPoint)
 /////////////////////////////////////////////////
 TEST(ncrementalPlotTest, SetCurveLabel)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
-  PlotCurveWeakPtr curve01;
+  CurveWeakPtr curve01;
   unsigned int id;
   {
     // Create a new plot.
@@ -283,12 +289,15 @@ TEST(ncrementalPlotTest, SetCurveLabel)
   EXPECT_EQ(0u, plot->Curves().size());
   EXPECT_TRUE(curve01.expired());
 
+  delete plot;
+
   EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, Period)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -311,6 +320,7 @@ TEST(IncrementalPlotTest, Period)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, Grid)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -332,6 +342,7 @@ TEST(IncrementalPlotTest, Grid)
 /////////////////////////////////////////////////
 TEST(IncrementalPlotTest, HoverLine)
 {
+  setVerbosity(4);
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
@@ -339,11 +350,93 @@ TEST(IncrementalPlotTest, HoverLine)
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
   ASSERT_NE(nullptr, plot);
 
-  EXPECT_FALSE(plot->IsShowHoverLine());
-  plot->ShowHoverLine(true);
   EXPECT_TRUE(plot->IsShowHoverLine());
   plot->ShowHoverLine(false);
   EXPECT_FALSE(plot->IsShowHoverLine());
+  plot->ShowHoverLine(true);
+  EXPECT_TRUE(plot->IsShowHoverLine());
+
+  delete plot;
+
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(IncrementalPlotTest, Update)
+{
+  setVerbosity(4);
+  ASSERT_TRUE(initApp());
+  ASSERT_TRUE(loadPlugin("Plot"));
+
+  // Create plot
+  auto plot = new IncrementalPlot(nullptr);
+  ASSERT_NE(nullptr, plot);
+
+  // Update with no curves doesn't cause errors
+  plot->Update();
+
+  // Add a curve
+  auto curve01 = plot->AddCurve("curve01");
+  auto c01 = curve01.lock();
+  ASSERT_NE(nullptr, c01);
+
+  // Update with a curve that has no points
+  plot->Update();
+
+  // Add point to curve
+  plot->AddPoint(c01->Id(), math::Vector2d(0.2, 0.4));
+
+  // Update with a curve that has points
+  plot->Update();
+
+  // Add points to curve so it goes beyond the period and the window needs to
+  // move
+  for (double i = 0.5; i < plot->Period().Double() + 2; i += 0.5)
+  {
+    plot->AddPoint(c01->Id(), math::Vector2d(i, 0.4));
+    plot->Update();
+  }
+
+  delete plot;
+
+  EXPECT_TRUE(stop());
+}
+
+
+/////////////////////////////////////////////////
+TEST(IncrementalPlotTest, Magnify)
+{
+  setVerbosity(4);
+  ASSERT_TRUE(initApp());
+  ASSERT_TRUE(loadPlugin("Plot"));
+
+  // Create plot
+  auto plot = new IncrementalPlot(nullptr);
+  ASSERT_NE(nullptr, plot);
+
+  // Get initial axis scale
+  auto xInterval = plot->axisInterval(QwtPlot::xBottom).width();
+  auto yInterval = plot->axisInterval(QwtPlot::yLeft).width();
+
+  // Scroll mouse wheel
+  auto wheelEvent = new QWheelEvent(QPointF(1, 1), 10, Qt::NoButton,
+      Qt::NoModifier, Qt::Horizontal);
+  QCoreApplication::postEvent(plot->canvas(), wheelEvent);
+  QCoreApplication::processEvents();
+
+  // Check it zoomed in
+  EXPECT_GT(xInterval, plot->axisInterval(QwtPlot::xBottom).width());
+  EXPECT_GT(yInterval, plot->axisInterval(QwtPlot::yLeft).width());
+
+  // Scroll mouse wheel
+  wheelEvent = new QWheelEvent(QPointF(1, 1), -20, Qt::NoButton,
+      Qt::NoModifier, Qt::Horizontal);
+  QCoreApplication::postEvent(plot->canvas(), wheelEvent);
+  QCoreApplication::processEvents();
+
+  // Check it zoomed out
+  EXPECT_LT(xInterval, plot->axisInterval(QwtPlot::xBottom).width());
+  EXPECT_LT(yInterval, plot->axisInterval(QwtPlot::yLeft).width());
 
   delete plot;
 

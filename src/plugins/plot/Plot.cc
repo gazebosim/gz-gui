@@ -18,6 +18,7 @@
 #include <ignition/common/PluginMacros.hh>
 
 #include "ignition/gui/EditableLabel.hh"
+#include "ignition/gui/plugins/plot/Curve.hh"
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
 #include "ignition/gui/plugins/plot/Plot.hh"
 #include "ignition/gui/VariablePill.hh"
@@ -80,6 +81,19 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   // Empty plot.
   this->dataPtr->emptyPlot = new IncrementalPlot(this);
 
+  // TODO: Remove curves once the plugin is fully implemented
+  auto curve01 = this->dataPtr->emptyPlot->AddCurve("Curve 01");
+  auto c01 = curve01.lock();
+  c01->AddPoint(math::Vector2d(1.2, 94));
+  c01->AddPoint(math::Vector2d(2.3, 99));
+  c01->AddPoint(math::Vector2d(3.6, 97));
+
+  auto curve02 = this->dataPtr->emptyPlot->AddCurve("Curve 02");
+  auto c02 = curve02.lock();
+  c02->AddPoint(math::Vector2d(1.6, 95));
+  c02->AddPoint(math::Vector2d(4.6, 91));
+  c02->AddPoint(math::Vector2d(7.0, 90));
+
   QVBoxLayout *variableContainerLayout = new QVBoxLayout;
   variableContainerLayout->addWidget(this->dataPtr->label);
   variableContainerLayout->addWidget(xVariableContainer);
@@ -99,6 +113,12 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   mainLayout->addWidget(mainFrame);
   mainLayout->setContentsMargins(0, 0, 0, 0);
   this->setLayout(mainLayout);
+}
+
+/////////////////////////////////////////////////
+void Plot::ShowContextMenu(const QPoint &/*_pos*/)
+{
+  // Do nothing so the panner works
 }
 
 // Register this plugin

@@ -20,8 +20,8 @@
 #include <vector>
 #include <ignition/math/Vector2.hh>
 
-#include "ignition/gui/plugins/plot/PlotCurve.hh"
-#include "ignition/gui/plugins/plot/PlottingTypes.hh"
+#include "ignition/gui/plugins/plot/Curve.hh"
+#include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/Iface.hh"
 
 using namespace ignition;
@@ -30,13 +30,13 @@ using namespace plugins;
 using namespace plot;
 
 /////////////////////////////////////////////////
-TEST(PlotCurveTest, Curve)
+TEST(CurveTest, Curve)
 {
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create a new plot curve.
-  PlotCurve *plotCurve = new PlotCurve("curve01");
+  Curve *plotCurve = new Curve("curve01");
 
   ASSERT_NE(nullptr, plotCurve);
 
@@ -61,7 +61,7 @@ TEST(PlotCurveTest, Curve)
 }
 
 /////////////////////////////////////////////////
-TEST(PlotCurveTest, CurveId)
+TEST(CurveTest, CurveId)
 {
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
@@ -70,19 +70,19 @@ TEST(PlotCurveTest, CurveId)
   std::set<unsigned int> ids;
 
   // Create new variable pills and verify they all have unique ids.
-  PlotCurve *curve01 = new PlotCurve("curve01");
+  Curve *curve01 = new Curve("curve01");
   ASSERT_NE(nullptr, curve01);
   unsigned int id = curve01->Id();
   ASSERT_EQ(0u, ids.count(id));
   ids.insert(id);
 
-  PlotCurve *curve02 = new PlotCurve("curve02");
+  Curve *curve02 = new Curve("curve02");
   ASSERT_NE(nullptr, curve02);
   id = curve02->Id();
   EXPECT_EQ(0u, ids.count(id));
   ids.insert(id);
 
-  PlotCurve *curve03 = new PlotCurve("curve03");
+  Curve *curve03 = new Curve("curve03");
   ASSERT_NE(nullptr, curve03);
   curve03->SetId(999u);
   id = curve03->Id();
@@ -98,13 +98,13 @@ TEST(PlotCurveTest, CurveId)
 }
 
 /////////////////////////////////////////////////
-TEST(PlotCurveTest, AddPoint)
+TEST(CurveTest, AddPoint)
 {
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create a new plot curve.
-  PlotCurve *plotCurve = new PlotCurve("curve01");
+  Curve *plotCurve = new Curve("curve01");
 
   ASSERT_NE(nullptr, plotCurve);
 
@@ -112,7 +112,7 @@ TEST(PlotCurveTest, AddPoint)
   EXPECT_EQ(0u, plotCurve->Size());
 
   // Add points.
-  ignition::math::Vector2d point01(12.3, -39.4);
+  math::Vector2d point01(12.3, -39.4);
   // If it's inactive, the point shouldn't be added.
   plotCurve->SetActive(false);
   plotCurve->AddPoint(point01);
@@ -124,21 +124,21 @@ TEST(PlotCurveTest, AddPoint)
   EXPECT_EQ(1u, plotCurve->Size());
   EXPECT_EQ(point01, plotCurve->Point(0));
 
-  ignition::math::Vector2d point02(3.3, -3.4);
+  math::Vector2d point02(3.3, -3.4);
   plotCurve->AddPoint(point02);
   EXPECT_EQ(2u, plotCurve->Size());
   EXPECT_EQ(point02, plotCurve->Point(1));
 
-  EXPECT_EQ(ignition::math::Vector2d(3.3, -39.4), plotCurve->Min());
-  EXPECT_EQ(ignition::math::Vector2d(12.3, -3.4), plotCurve->Max());
+  EXPECT_EQ(math::Vector2d(3.3, -39.4), plotCurve->Min());
+  EXPECT_EQ(math::Vector2d(12.3, -3.4), plotCurve->Max());
 
   plotCurve->Clear();
 
   // Create a list of points and add them to the curve.
-  std::vector<ignition::math::Vector2d> points;
+  std::vector<math::Vector2d> points;
   unsigned int ptSize = 11000u;
   for (unsigned int i = 0u; i < ptSize; ++i)
-    points.push_back(ignition::math::Vector2d(i, ptSize - i));
+    points.push_back(math::Vector2d(i, ptSize - i));
 
   // If it's inactive, the points shouldn't be added.
   plotCurve->SetActive(false);
@@ -156,10 +156,10 @@ TEST(PlotCurveTest, AddPoint)
 
   // Wrong index point.
   auto point = plotCurve->Point(99999);
-  EXPECT_TRUE(ignition::math::isnan(point.X()));
-  EXPECT_TRUE(ignition::math::isnan(point.Y()));
+  EXPECT_TRUE(math::isnan(point.X()));
+  EXPECT_TRUE(math::isnan(point.Y()));
 
-  ASSERT_NE(nullptr, plotCurve->Curve());
+  ASSERT_NE(nullptr, plotCurve->QwtCurve());
 
   // Verify that some of the oldest points are removed when reaching
   // "maxSampleSize" points.

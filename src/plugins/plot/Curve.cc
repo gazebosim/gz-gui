@@ -31,7 +31,7 @@
 #include "ignition/gui/qwt.h"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
-#include "ignition/gui/plugins/plot/PlotCurve.hh"
+#include "ignition/gui/plugins/plot/Curve.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -46,7 +46,7 @@ namespace plugins
 {
 namespace plot
 {
-  /// \brief Color palette for the PlotCurve.
+  /// \brief Color palette for the Curve.
   class ColorPalette
   {
     /// \brief Number of unique colors in a color group.
@@ -68,7 +68,7 @@ namespace plot
 
     /// \brief Get the bounding box of a sample.
     /// \return Bounding box of the sample.
-    public: virtual QRectF boundingRect() const
+    public: virtual QRectF boundingRect() const override
             {
               if (this->d_boundingRect.width() < 0.0)
                 this->d_boundingRect = qwtBoundingRect(*this);
@@ -96,11 +96,11 @@ namespace plot
             {
               this->d_samples += _point;
 
-              if (this->d_samples.size() > maxSampleSize)
+              if (this->d_samples.size() > this->maxSampleSize)
               {
                 // remove sample window
                 // update bounding rect?
-                this->d_samples.remove(0, windowSize);
+                this->d_samples.remove(0, this->windowSize);
               }
 
               if (this->d_samples.size() == 1)
@@ -131,22 +131,22 @@ namespace plot
             }
 
     /// \brief Get the sample data.
-    /// \return A vector of same points.
+    /// \return A vector of sample points.
     public: QVector<QPointF> Samples() const
             {
               return this->d_samples;
             }
 
-    /// \brief maximum sample size of this curve.
-    private: int maxSampleSize = 11000;
+    /// \brief Maximum sample size of this curve.
+    private: int maxSampleSize{11000};
 
     /// \brief Size of samples to remove when maxSampleSize is reached.
-    private: int windowSize = 1000;
+    private: int windowSize{1000};
   };
 
   /// \internal
-  /// \brief PlotCurve private data.
-  class PlotCurvePrivate
+  /// \brief Curve private data.
+  class CurvePrivate
   {
     /// \brief Unique id;
     public: unsigned int id;
@@ -155,10 +155,10 @@ namespace plot
     public: std::string label;
 
     /// \brief Active state of the plot curve.
-    public: bool active = true;
+    public: bool active{true};
 
     /// \brief Age of the curve since the first restart.
-    public: unsigned int age = 0;
+    public: unsigned int age{0};
 
     /// \brief Qwt Curve object.
     public: QwtPlotCurve *curve = nullptr;
@@ -219,14 +219,14 @@ const math::Color ColorPalette::Colors
     };
 
 // global curve id counter.
-unsigned int PlotCurvePrivate::globalCurveId = 0;
+unsigned int CurvePrivate::globalCurveId{0};
 
 // curve color counter.
-unsigned int PlotCurvePrivate::colorCounter = 0;
+unsigned int CurvePrivate::colorCounter{0};
 
 /////////////////////////////////////////////////
-PlotCurve::PlotCurve(const std::string &_label)
-  : dataPtr(new PlotCurvePrivate())
+Curve::Curve(const std::string &_label)
+  : dataPtr(new CurvePrivate())
 {
   QwtPlotCurve *curve = new QwtPlotCurve(QString::fromStdString(_label));
   this->dataPtr->curve = curve;
@@ -240,8 +240,7 @@ PlotCurve::PlotCurve(const std::string &_label)
       this->dataPtr->colorCounter / ColorPalette::ColorGroupCount)
       % ColorPalette::ColorCount;
   this->dataPtr->colorCounter++;
-  QColor penColor =
-      gui::convert(ColorPalette::Colors[colorGroup][color]);
+  QColor penColor = gui::convert(ColorPalette::Colors[colorGroup][color]);
 
   QPen pen(penColor);
   pen.setWidth(1.0);
@@ -255,18 +254,18 @@ PlotCurve::PlotCurve(const std::string &_label)
       static_cast<CurveData *>(this->dataPtr->curve->data());
   assert(this->dataPtr->curveData != nullptr);
 
-  this->dataPtr->id = PlotCurvePrivate::globalCurveId++;
+  this->dataPtr->id = CurvePrivate::globalCurveId++;
 
   this->dataPtr->label = _label;
 }
 
 /////////////////////////////////////////////////
-PlotCurve::~PlotCurve()
+Curve::~Curve()
 {
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::AddPoint(const ignition::math::Vector2d &_pt)
+void Curve::AddPoint(const math::Vector2d &_pt)
 {
   if (!this->dataPtr->active)
     return;
@@ -276,7 +275,7 @@ void PlotCurve::AddPoint(const ignition::math::Vector2d &_pt)
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::AddPoints(const std::vector<ignition::math::Vector2d> &_pts)
+void Curve::AddPoints(const std::vector<math::Vector2d> &_pts)
 {
   if (!this->dataPtr->active)
     return;
@@ -289,108 +288,107 @@ void PlotCurve::AddPoints(const std::vector<ignition::math::Vector2d> &_pts)
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::Clear()
+void Curve::Clear()
 {
   this->dataPtr->curveData->Clear();
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::Detach()
+void Curve::Detach()
 {
   this->dataPtr->curve->detach();
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::Attach(IncrementalPlot *_plot)
+void Curve::Attach(IncrementalPlot *_plot)
 {
   this->dataPtr->curve->attach(_plot);
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::SetLabel(const std::string &_label)
+void Curve::SetLabel(const std::string &_label)
 {
   this->dataPtr->label = _label;
   this->dataPtr->curve->setTitle(QString::fromStdString(_label));
 }
 
 /////////////////////////////////////////////////
-std::string PlotCurve::Label() const
+std::string Curve::Label() const
 {
   return this->dataPtr->label;
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::SetId(const unsigned int _id)
+void Curve::SetId(const unsigned int _id)
 {
   this->dataPtr->id = _id;
 }
 
 /////////////////////////////////////////////////
-unsigned int PlotCurve::Id() const
+unsigned int Curve::Id() const
 {
   return this->dataPtr->id;
 }
 
 /////////////////////////////////////////////////
-bool PlotCurve::Active() const
+bool Curve::Active() const
 {
   return this->dataPtr->active;
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::SetActive(const bool _active)
+void Curve::SetActive(const bool _active)
 {
   this->dataPtr->active = _active;
 }
 
 /////////////////////////////////////////////////
-unsigned int PlotCurve::Age() const
+unsigned int Curve::Age() const
 {
   return this->dataPtr->age;
 }
 
 /////////////////////////////////////////////////
-void PlotCurve::SetAge(const unsigned int _age)
+void Curve::SetAge(const unsigned int _age)
 {
   this->dataPtr->age = _age;
 }
 
 /////////////////////////////////////////////////
-unsigned int PlotCurve::Size() const
+unsigned int Curve::Size() const
 {
   return static_cast<unsigned int>(this->dataPtr->curveData->samples().size());
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2d PlotCurve::Min() const
+math::Vector2d Curve::Min() const
 {
-  return ignition::math::Vector2d(this->dataPtr->curve->minXValue(),
+  return math::Vector2d(this->dataPtr->curve->minXValue(),
       this->dataPtr->curve->minYValue());
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2d PlotCurve::Max() const
+math::Vector2d Curve::Max() const
 {
-  return ignition::math::Vector2d(this->dataPtr->curve->maxXValue(),
+  return math::Vector2d(this->dataPtr->curve->maxXValue(),
       this->dataPtr->curve->maxYValue());
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2d PlotCurve::Point(const unsigned int _index) const
+math::Vector2d Curve::Point(const unsigned int _index) const
 {
   if (_index >= static_cast<unsigned int>(
       this->dataPtr->curveData->samples().size()))
   {
-    return ignition::math::Vector2d(ignition::math::NAN_D,
-        ignition::math::NAN_D);
+    return math::Vector2d(math::NAN_D, math::NAN_D);
   }
 
   const QPointF &pt = this->dataPtr->curveData->samples()[_index];
-  return ignition::math::Vector2d(pt.x(), pt.y());
+  return math::Vector2d(pt.x(), pt.y());
 }
 
 /////////////////////////////////////////////////
-QwtPlotCurve *PlotCurve::Curve()
+QwtPlotCurve *Curve::QwtCurve()
 {
   return this->dataPtr->curve;
 }

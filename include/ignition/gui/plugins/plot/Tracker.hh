@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_PLOT_PLOTTRACKER_HH_
-#define IGNITION_GUI_PLUGINS_PLOT_PLOTTRACKER_HH_
+#ifndef IGNITION_GUI_PLUGINS_PLOT_TRACKER_HH_
+#define IGNITION_GUI_PLUGINS_PLOT_TRACKER_HH_
 
 #include <memory>
 
@@ -33,14 +33,14 @@ namespace plugins
 namespace plot
 {
   // Forward declarations.
-  class PlotTrackerPrivate;
+  class TrackerPrivate;
 
   /// \brief Mouse hover tracking.
-  class IGNITION_GUI_VISIBLE PlotTracker: public QwtPlotPicker
+  class IGNITION_GUI_VISIBLE Tracker: public QwtPlotPicker
   {
     /// \brief Constructor.
     /// \param[in] _canvas Canvas the tracker will be attached to.
-    public: explicit PlotTracker(QWidget *_canvas);
+    public: explicit Tracker(QWidget *_canvas);
 
     /// \brief Overriden to update the hover line and tracker text.
     protected: virtual void updateDisplay() override;
@@ -83,7 +83,7 @@ namespace plot
 
     /// \internal
     /// \brief Private data pointer.
-    private: std::unique_ptr<PlotTrackerPrivate> dataPtr;
+    private: std::unique_ptr<TrackerPrivate> dataPtr;
   };
 }
 }

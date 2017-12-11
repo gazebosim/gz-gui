@@ -47,6 +47,9 @@ namespace plot
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
+    // Documentation inherited
+    protected slots: void ShowContextMenu(const QPoint &_pos) override;
+
     // Private data
     private: std::unique_ptr<PlotPrivate> dataPtr;
   };
