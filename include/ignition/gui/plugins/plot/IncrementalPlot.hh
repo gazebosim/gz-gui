@@ -151,9 +151,9 @@ namespace plot
 
     /// \brief Set whether to show the axis label.
     /// \param[in] _axis Plot axis: X_BOTTOM_AXIS or Y_LEFT_AXIS.
-    /// \param[in] _show True to show the label, false to hide it.
+    /// \param[in] _label The label to show.
     public: void ShowAxisLabel(const PlotAxis _axis,
-                               const bool _show);
+                               const std::string &_label);
 
     /// \brief Set whether to show the grid lines.
     /// \param[in] _show True to show grid lines.

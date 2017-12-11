@@ -237,8 +237,8 @@ IncrementalPlot::IncrementalPlot(QWidget *_parent)
   this->enableAxis(QwtPlot::xBottom);
   this->setAxisScale(QwtPlot::xBottom, 0, this->dataPtr->period);
 
-  this->ShowAxisLabel(X_BOTTOM_AXIS, true);
-  this->ShowAxisLabel(Y_LEFT_AXIS, true);
+  this->ShowAxisLabel(X_BOTTOM_AXIS, "Time (seconds)");
+  this->ShowAxisLabel(Y_LEFT_AXIS, "Variable values");
 
   this->replot();
   this->setAcceptDrops(true);
@@ -462,41 +462,30 @@ void IncrementalPlot::SetCurveLabel(const unsigned int _id,
 }
 
 /////////////////////////////////////////////////
-void IncrementalPlot::ShowAxisLabel(const PlotAxis _axis, const bool _show)
+void IncrementalPlot::ShowAxisLabel(const PlotAxis _axis,
+  const std::string &_label)
 {
-  /// TODO Figure out a way to properly label the x and y axis
-  std::string axisLabel;
   QFont axisLabelFont(fontInfo().family(), 10, QFont::Bold);
+  QwtText title(QString::fromStdString(_label));
+  title.setFont(axisLabelFont);
   switch (_axis)
   {
     case X_BOTTOM_AXIS:
     {
-      if (_show)
-        axisLabel = "Time (seconds)";
-      QwtText xtitle(QString::fromStdString(axisLabel));
-      xtitle.setFont(axisLabelFont);
-      this->setAxisTitle(QwtPlot::xBottom, xtitle);
-      break;
-    }
-    case X_TOP_AXIS:
-    {
+      this->setAxisTitle(QwtPlot::xBottom, title);
       break;
     }
     case Y_LEFT_AXIS:
     {
-      if (_show)
-        axisLabel = "Variable values";
-      QwtText ytitle(QString::fromStdString(axisLabel));
-      ytitle.setFont(axisLabelFont);
-      this->setAxisTitle(QwtPlot::yLeft, ytitle);
+      this->setAxisTitle(QwtPlot::yLeft, title);
       break;
     }
+    case X_TOP_AXIS:
     case Y_RIGHT_AXIS:
+    default:
     {
       break;
     }
-    default:
-      return;
   }
 }
 
