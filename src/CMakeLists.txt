@@ -55,7 +55,7 @@ if (HAVE_IGN_TOOLS)
   )
 endif()
 
-ign_build_tests(${gtest_sources})
+ign_build_tests(SOURCES ${gtest_sources})
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)
