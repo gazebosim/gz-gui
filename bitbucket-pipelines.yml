@@ -16,7 +16,7 @@ pipelines:
             libignition-cmake-dev
             libignition-math4-dev
             libignition-msgs-dev
-            libignition-transport3-dev
+            libignition-transport4-dev
           # Static checking before building
           - sh tools/code_check.sh
           # Ignition common
