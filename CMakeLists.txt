@@ -77,6 +77,9 @@ endif()
 #--------------------------------------
 # Find ignition-tools
 ign_find_package(ignition-tools QUIET)
+if (ignition-tools_FOUND)
+  set (HAVE_IGN_TOOLS TRUE)
+endif()
 
 #--------------------------------------
 # Find QT
