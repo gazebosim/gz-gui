@@ -65,13 +65,12 @@ ign_find_package(ignition-msgs${IGN_MSGS_VER} REQUIRED)
 # Find ignition-transport
 find_package(ignition-transport3 QUIET)
 if (NOT ignition-transport3_FOUND)
-  BUILD_ERROR ("Missing: Ignition Transport libignition-transport3-dev.")
+  FATAL_ERROR ("Missing: Ignition Transport libignition-transport3-dev.")
 else()
   message (STATUS "Found Ignition Transport 3")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-TRANSPORT_CXX_FLAGS}")
   include_directories(${IGNITION-TRANSPORT_INCLUDE_DIRS})
   link_directories(${IGNITION-TRANSPORT_LIBRARY_DIRS})
-  set (HAVE_IGN_TRANSPORT TRUE)
 endif()
 
 #--------------------------------------
@@ -85,14 +84,14 @@ endif()
 # Find QT
 find_package (Qt5Widgets)
 if (NOT Qt5Widgets_FOUND)
-  BUILD_ERROR("Missing: Qt5Widgets")
+  FATAL_ERROR("Missing: Qt5Widgets")
 else()
   message (STATUS "Found Qt5Widgets")
 endif()
 
 find_package (Qt5Core)
 if (NOT Qt5Core_FOUND)
-  BUILD_ERROR("Missing: Qt5Core")
+  FATAL_ERROR("Missing: Qt5Core")
 else()
   message (STATUS "Found Qt5Core")
 endif()
@@ -118,7 +117,7 @@ find_library(QWT_LIBRARY NAMES qwt-qt5 qwt PATHS
 #============================================================================
 # Configure the build
 #============================================================================
-ign_configure_build(QUIT_IF_BUILD_ERRORS)
+ign_configure_build(QUIT_IF_FATAL_ERRORS)
 
 #============================================================================
 # ign command line support
