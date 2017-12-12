@@ -63,7 +63,7 @@ namespace plot
     public: TopicCurveHandler topicCurve;
 
     /// \brief A list of plot windows.
-    public: std::vector<PlotWindow *> windows;
+    public: std::vector<Plot *> windows;
   };
 }
 }
@@ -130,14 +130,14 @@ void Manager::RemoveTopicCurve(CurveWeakPtr _curve)
 }
 
 /////////////////////////////////////////////////
-void Manager::AddWindow(PlotWindow *_window)
+void Manager::AddWindow(Plot *_window)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->dataPtr->windows.push_back(_window);
 }
 
 /////////////////////////////////////////////////
-void Manager::RemoveWindow(PlotWindow *_window)
+void Manager::RemoveWindow(Plot *_window)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   for (auto it = this->dataPtr->windows.begin();

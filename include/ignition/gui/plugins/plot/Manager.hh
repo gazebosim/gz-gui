@@ -34,7 +34,7 @@ namespace plot
 {
   // Forward declarations.
   class ManagerPrivate;
-  class PlotWindow;
+  class Plot;
 
   /// \brief A class that connects simulation data with the plotting tool
   class Manager : public ignition::common::SingletonT<Manager>
@@ -75,11 +75,11 @@ namespace plot
     /// \brief Add a plot window to the manager. The manager will listen to
     /// world events, e.g. Reset, and update the window's plots accordingly
     /// \param[in] _window Plot window to add
-    public: void AddWindow(PlotWindow *_window);
+    public: void AddWindow(Plot *_window);
 
     /// \brief Remove a plot window from the manager.
     /// \param[in] _window Plot window to remove.
-    public: void RemoveWindow(PlotWindow *_window);
+    public: void RemoveWindow(Plot *_window);
 
     /// \brief Get Human-readable name from uri-formatted variable name
     /// \param[in] _uri URI representing the variable

@@ -44,8 +44,7 @@ namespace plot
   class ExportDialogPrivate;
   class Canvas;
 
-  /// \class ExportDialog gui/ExportDialog.hh
-  /// \brief Dialog for saving to file.
+  /// \brief Dialog for exporting plots to file.
   class ExportDialog : public QDialog
   {
     Q_OBJECT
