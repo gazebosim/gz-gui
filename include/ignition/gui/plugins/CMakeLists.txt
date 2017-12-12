@@ -1,5 +1,3 @@
-include (${project_cmake_dir}/Utils.cmake)
-
 set (qt_headers_local
   ImageDisplay
   Publisher
@@ -13,7 +11,7 @@ set (qt_headers_local
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
-  ${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/ign-gui-${PROJECT_MAJOR_VERSION}/plugins/
+  ${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${IGN_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
 )
 
 # Plugin shared libraries

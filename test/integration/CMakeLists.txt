@@ -1,9 +1,3 @@
-set(TEST_TYPE "INTEGRATION")
+ign_get_sources(tests)
 
-set(tests
-  Examples_TEST.cc
-)
-
-link_directories(${PROJECT_BINARY_DIR}/test)
-
-ign_build_tests(SOURCES ${tests})
+ign_build_tests(TYPE INTEGRATION SOURCES ${tests})
