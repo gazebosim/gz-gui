@@ -49,7 +49,7 @@ using namespace plot;
 // A special list widget that allows dragging of items from it to a plot.
 class DragableListWidget : public QListWidget
 {
-  public: DragableListWidget(QWidget *_parent)
+  public: explicit DragableListWidget(QWidget *_parent)
           : QListWidget(_parent)
           {
           }
@@ -144,13 +144,13 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   plotFrame->setLayout(plotLayout);
 
   // Palette
-  //auto plotPalette = new Palette(this);
+  // auto plotPalette = new Palette(this);
 
   auto splitter = new QSplitter(Qt::Horizontal, this);
-  //splitter->addWidget(plotPalette);
+  // splitter->addWidget(plotPalette);
   splitter->addWidget(plotFrame);
   splitter->setCollapsible(0, true);
-  //splitter->setCollapsible(1, false);
+  // splitter->setCollapsible(1, false);
 
   QList<int> sizes;
   sizes << 30 << 70;
@@ -162,8 +162,8 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   this->setLayout(mainLayout);
 
-  //QShortcut *space = new QShortcut(Qt::Key_Space, this);
-  //QObject::connect(space, SIGNAL(activated()), this, SLOT(TogglePause()));
+  // QShortcut *space = new QShortcut(Qt::Key_Space, this);
+  // QObject::connect(space, SIGNAL(activated()), this, SLOT(TogglePause()));
 
   QTimer *displayTimer = new QTimer(this);
   connect(displayTimer, SIGNAL(timeout()), this, SLOT(Update()));
@@ -295,8 +295,8 @@ void Plot::Restart()
 }
 
 /////////////////////////////////////////////////
-//void Plot::TogglePause()
-//{
+// void Plot::TogglePause()
+// {
 //  MainWindow *mainWindow = gui::get_main_window();
 //  if (!mainWindow)
 //    return;
@@ -305,7 +305,7 @@ void Plot::Restart()
 //    mainWindow->Play();
 //  else
 //    mainWindow->Pause();
-//}
+// }
 
 /////////////////////////////////////////////////
 void Plot::OnExport()
