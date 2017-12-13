@@ -16,7 +16,9 @@
 */
 
 #include <iostream>
+#include <ignition/common/Animation.hh>
 #include <ignition/common/PluginMacros.hh>
+#include <ignition/common/KeyFrame.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Rand.hh>
 #include <ignition/rendering.hh>
@@ -25,6 +27,8 @@
 
 using namespace ignition;
 using namespace gui;
+
+double g_cycle = 0.0;
 
 /////////////////////////////////////////////////
 MovingRandomlyPlugin::MovingRandomlyPlugin()
@@ -49,20 +53,50 @@ MovingRandomlyPlugin::MovingRandomlyPlugin()
 
   auto box = scene->CreateVisual();
   box->AddGeometry(scene->CreateBox());
-  box->SetLocalPosition(3, 0, 0);
   box->SetMaterial(green);
   root->AddChild(box);
 
+  auto animation = new common::PoseAnimation("anim", 4, true);
+
+  {
+    auto key = animation->CreateKeyFrame(0.0);
+    key->Translation(math::Vector3d(-3, 3, 0));
+    key->Rotation(math::Quaterniond(0, 0, -IGN_PI*0.5));
+  }
+
+  {
+    auto key = animation->CreateKeyFrame(1.0);
+    key->Translation(math::Vector3d(3, 3, 0));
+  }
+
+  {
+    auto key = animation->CreateKeyFrame(2.0);
+    key->Translation(math::Vector3d(3, -3, 0));
+    key->Rotation(math::Quaterniond(0, 0, IGN_PI*0.5));
+  }
+
+  {
+    auto key = animation->CreateKeyFrame(3.0);
+    key->Translation(math::Vector3d(-3, -3, 0));
+    key->Rotation(math::Quaterniond(0, 0, IGN_PI));
+  }
+
+  {
+    auto key = animation->CreateKeyFrame(4.0);
+    key->Translation(math::Vector3d(-3, 3, 0));
+    key->Rotation(math::Quaterniond(0, 0, -IGN_PI*0.5));
+  }
+
   this->timer = new QTimer();
-  this->connect(this->timer, &QTimer::timeout, [=](){
-    auto pose = box->WorldPose();
-    pose.Pos().X() += math::Rand::DblUniform(-0.1, 0.3);
-    pose.Pos().Y() += math::Rand::DblUniform(-0.1, 0.1);
-    pose.Pos().Z() += math::Rand::DblUniform(-0.1, 0.1);
-    pose.Rot().X() += math::Rand::DblUniform(-0.1, 0.1);
-    pose.Rot().Y() += math::Rand::DblUniform(-0.1, 0.1);
-    pose.Rot().Z() += math::Rand::DblUniform(-0.1, 0.1);
-    box->SetWorldPose(pose);
+  this->connect(this->timer, &QTimer::timeout, [=]()
+  {
+    common::PoseKeyFrame pose(g_cycle);
+    animation->Time(g_cycle);
+    animation->InterpolatedKeyFrame(pose);
+
+    box->SetWorldPose(math::Pose3d(pose.Translation(), pose.Rotation()));
+
+    g_cycle += 0.05;
   });
   this->timer->start(100);
 
