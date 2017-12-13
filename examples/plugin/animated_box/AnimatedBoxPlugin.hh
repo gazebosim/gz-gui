@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_MOVINGRANDOMLYPLUGIN_HH_
-#define IGNITION_GUI_MOVINGRANDOMLYPLUGIN_HH_
+#ifndef IGNITION_GUI_ANIMATEDBOXPLUGIN_HH_
+#define IGNITION_GUI_ANIMATEDBOXPLUGIN_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
@@ -28,18 +28,21 @@ namespace ignition
 {
   namespace gui
   {
-    class MovingRandomlyPlugin : public Plugin
+    class AnimatedBoxPlugin : public Plugin
     {
       Q_OBJECT
 
       /// \brief Constructor
-      public: MovingRandomlyPlugin();
+      public: AnimatedBoxPlugin();
 
       /// \brief Destructor
-      public: virtual ~MovingRandomlyPlugin();
+      public: virtual ~AnimatedBoxPlugin();
 
       /// \brief Timer for updates
       private: QTimer *timer;
+
+      /// \brief Current animation time
+      private: double animTime{0.0};
     };
   }
 }

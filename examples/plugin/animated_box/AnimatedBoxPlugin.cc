@@ -20,18 +20,15 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/common/KeyFrame.hh>
 #include <ignition/math/Pose3.hh>
-#include <ignition/math/Rand.hh>
 #include <ignition/rendering.hh>
 
-#include "MovingRandomlyPlugin.hh"
+#include "AnimatedBoxPlugin.hh"
 
 using namespace ignition;
 using namespace gui;
 
-double g_cycle = 0.0;
-
 /////////////////////////////////////////////////
-MovingRandomlyPlugin::MovingRandomlyPlugin()
+AnimatedBoxPlugin::AnimatedBoxPlugin()
   : Plugin()
 {
   auto engine = rendering::engine("ogre");
@@ -61,42 +58,41 @@ MovingRandomlyPlugin::MovingRandomlyPlugin()
   {
     auto key = animation->CreateKeyFrame(0.0);
     key->Translation(math::Vector3d(-3, 3, 0));
-    key->Rotation(math::Quaterniond(0, 0, -IGN_PI*0.5));
   }
 
   {
     auto key = animation->CreateKeyFrame(1.0);
     key->Translation(math::Vector3d(3, 3, 0));
+    key->Rotation(math::Quaterniond(0, 0, -IGN_PI*0.5));
   }
 
   {
     auto key = animation->CreateKeyFrame(2.0);
     key->Translation(math::Vector3d(3, -3, 0));
-    key->Rotation(math::Quaterniond(0, 0, IGN_PI*0.5));
+    key->Rotation(math::Quaterniond(0, 0, IGN_PI));
   }
 
   {
     auto key = animation->CreateKeyFrame(3.0);
     key->Translation(math::Vector3d(-3, -3, 0));
-    key->Rotation(math::Quaterniond(0, 0, IGN_PI));
+    key->Rotation(math::Quaterniond(0, 0, IGN_PI*0.5));
   }
 
   {
     auto key = animation->CreateKeyFrame(4.0);
     key->Translation(math::Vector3d(-3, 3, 0));
-    key->Rotation(math::Quaterniond(0, 0, -IGN_PI*0.5));
   }
 
   this->timer = new QTimer();
   this->connect(this->timer, &QTimer::timeout, [=]()
   {
-    common::PoseKeyFrame pose(g_cycle);
-    animation->Time(g_cycle);
+    common::PoseKeyFrame pose(animTime);
+    animation->Time(animTime);
     animation->InterpolatedKeyFrame(pose);
 
     box->SetWorldPose(math::Pose3d(pose.Translation(), pose.Rotation()));
 
-    g_cycle += 0.05;
+    animTime += 0.05;
   });
   this->timer->start(100);
 
@@ -104,10 +100,10 @@ MovingRandomlyPlugin::MovingRandomlyPlugin()
 }
 
 /////////////////////////////////////////////////
-MovingRandomlyPlugin::~MovingRandomlyPlugin()
+AnimatedBoxPlugin::~AnimatedBoxPlugin()
 {
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::MovingRandomlyPlugin,
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::AnimatedBoxPlugin,
                                   ignition::gui::Plugin);

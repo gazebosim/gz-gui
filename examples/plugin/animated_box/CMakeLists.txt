@@ -28,9 +28,9 @@ link_directories(
   ${IGNITION-RENDERING_LIBRARY_DIRS}
 )
 
-add_library(MovingRandomly SHARED ${headers_MOC}
-  MovingRandomlyPlugin.cc)
-target_link_libraries(MovingRandomly
+add_library(AnimatedBox SHARED ${headers_MOC}
+  AnimatedBoxPlugin.cc)
+target_link_libraries(AnimatedBox
   ${IGNITION-COMMON_LIBRARIES}
   ${IGNITION-GUI_LIBRARIES}
   ${IGNITION-MATH_LIBRARIES}
