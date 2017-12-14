@@ -16,6 +16,7 @@
 */
 
 #include <string>
+#include <iostream>
 
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/Helpers.hh"
@@ -98,7 +99,15 @@ void CollapsibleWidget::Toggle(const bool _checked)
   if (_checked)
   {
     icon->setText(QString::fromUtf8("\u25bc"));
-    this->layout()->setContentsMargins(0, 16, 0, 16);
+
+    // Get the index property. If this property is set, then we assume the
+    // collapsible widget is part of a list of collapsible widgets. The first
+    // widget in a list of collapsible widgets should not alter the top
+    // margin.
+    QVariant indexProperty = this->property("index");
+    int topMargin =
+      indexProperty.isValid() && indexProperty.toInt() == 0 ? 0 : 16;
+    this->layout()->setContentsMargins(0, topMargin, 0, 16);
   }
   // Change to ▲
   else

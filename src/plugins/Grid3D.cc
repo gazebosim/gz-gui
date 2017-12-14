@@ -243,6 +243,7 @@ void Grid3D::Refresh()
     mainLayout->addWidget(buttonsWidget);
   }
 
+  std::cout << "Grid size[" << this->dataPtr->grids.size() << "]\n";
   // Search for all grids currently in the scene
   for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
   {
@@ -319,6 +320,9 @@ void Grid3D::Refresh()
     collapsible->AppendContent(colorWidget);
     collapsible->AppendContent(deleteWidget);
     collapsible->setMinimumWidth(520);
+    // Set the index property. This property is used in CollapsibleWidget to
+    // make the first collapsible item's margin behave correctly.
+    collapsible->setProperty("index", i);
 
     mainLayout->addWidget(collapsible);
   }
