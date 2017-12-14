@@ -298,8 +298,9 @@ void Grid3D::Refresh()
         SLOT(OnChange(QVariant)));
 
     auto deleteButton = new QPushButton("Delete grid");
+    colorWidget->setObjectName(gridName + "---deleteButton");
     deleteButton->setToolTip("Delete grid " + gridName);
-    deleteButton->setObjectName("warning");
+    deleteButton->setProperty("warning", true);
     this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
 
     QHBoxLayout *deleteLayout = new QHBoxLayout();

@@ -139,14 +139,14 @@ QPushButton:focus
   outline: none;
 }
 
-QPushButton#warning
+QPushButton[warning=true]
 {
   background-color: rgba(239, 83, 80, 50%);
 }
 
-QPushButton#warning:hover
+QPushButton[warning=true]:hover
 {
-  background-color: rgba(229, 57, 53, 50%);
+  background-color: rgba(229, 57, 53, 70%);
 }
 
 QPushButton#collapsibleButton
