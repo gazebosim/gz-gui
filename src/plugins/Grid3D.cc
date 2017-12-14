@@ -15,8 +15,15 @@
  *
 */
 
+#include <algorithm>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
+#include <ignition/math/Color.hh>
+#include <ignition/math/Pose3.hh>
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/CollapsibleWidget.hh"
