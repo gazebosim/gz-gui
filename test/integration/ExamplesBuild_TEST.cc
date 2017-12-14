@@ -42,7 +42,7 @@ using namespace gui;
 bool createAndSwitchToTempDir(std::string &_newTempPath)
 {
   std::string tmppath;
-  const char *tmp = getenv("TMPDIR");
+  const char *tmp = std::getenv("TMPDIR");
   if (tmp)
   {
     tmppath = std::string(tmp);
