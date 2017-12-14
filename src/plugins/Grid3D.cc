@@ -299,8 +299,16 @@ void Grid3D::Refresh()
 
     auto deleteButton = new QPushButton("Delete grid");
     deleteButton->setToolTip("Delete grid " + gridName);
-    deleteButton->setObjectName(gridName + "---deleteButton");
+    deleteButton->setObjectName("warning");
     this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
+
+    QHBoxLayout *deleteLayout = new QHBoxLayout();
+    deleteLayout->setContentsMargins(0, 0, 0, 0);
+    deleteLayout->setSpacing(0);
+    deleteLayout->addWidget(deleteButton);
+    deleteLayout->addItem(new QSpacerItem(10, 1, QSizePolicy::Expanding));
+    QWidget *deleteWidget = new QWidget();
+    deleteWidget->setLayout(deleteLayout);
 
     auto collapsible = new CollapsibleWidget(grid->Name());
     collapsible->AppendContent(cellCountWidget);
@@ -308,7 +316,8 @@ void Grid3D::Refresh()
     collapsible->AppendContent(cellLengthWidget);
     collapsible->AppendContent(poseWidget);
     collapsible->AppendContent(colorWidget);
-    collapsible->AppendContent(deleteButton);
+    collapsible->AppendContent(deleteWidget);
+    collapsible->setMinimumWidth(500);
 
     mainLayout->addWidget(collapsible);
   }

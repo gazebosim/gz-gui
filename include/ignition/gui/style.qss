@@ -15,6 +15,7 @@ QDockWidget {
   titlebar-normal-icon: url(:/images/undock.svg);
   color: #fbfbfb;
   border: none;
+  background-color: #ededed;
 }
 
 QDockWidget::title {
@@ -138,20 +139,39 @@ QPushButton:focus
   outline: none;
 }
 
+QPushButton#warning
+{
+  background-color: rgba(239, 83, 80, 50%);
+}
+
+QPushButton#warning:hover
+{
+  background-color: rgba(229, 57, 53, 50%);
+}
+
 QPushButton#collapsibleButton
 {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 100%);
   margin: 0px;
+  border-bottom: 1px solid rgba(0, 0, 0, 20%);
+}
+
+/* The label on the QPushbuton#collapsibleButton */
+QLabel#collapsibleButtonLabel
+{
+  font-weight: 600;
 }
 
 QPushButton#collapsibleButton:checked
 {
-  background-color: rgba(100, 100, 100, 70);
+  background-color: rgba(0, 0, 0, 10%);
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0%);
 }
 
 QPushButton#collapsibleButton:hover
 {
-  background-color: rgba(100, 100, 100, 50);
+  background-color: rgba(0, 0, 0, 30%);
 }
 
 /* ---------------------------- */
@@ -315,4 +335,10 @@ QFrame#variablePillFrame
 {
   border-radius: 4px;
   background-color: #2196f3;
+}
+
+QWidget#collapsibleContent
+{
+  background-color: rgba(255, 255, 255, 100%);
+  margin-botom: 30px;
 }

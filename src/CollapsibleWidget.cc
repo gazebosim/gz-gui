@@ -45,6 +45,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   // Button label
   auto buttonLabel = new QLabel(tr(humanReadable(_key).c_str()));
   buttonLabel->setToolTip(tr(_key.c_str()));
+  buttonLabel->setObjectName("collapsibleButtonLabel");
 
   // Button icon initialized to ▲
   auto buttonIcon = new QLabel(QString::fromUtf8("\u25b2"));
@@ -69,12 +70,12 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   this->dataPtr->content->setObjectName("collapsibleContent");
   this->dataPtr->content->setVisible(false);
   this->dataPtr->content->setLayout(new QVBoxLayout());
-  this->dataPtr->content->layout()->setContentsMargins(0, 0, 0, 0);
+  this->dataPtr->content->layout()->setContentsMargins(0, 20, 0, 0);
   this->dataPtr->content->layout()->setSpacing(0);
 
   // Layout
   auto mainLayout = new QVBoxLayout;
-  mainLayout->setContentsMargins(0, 0, 0, 0);
+  mainLayout->setContentsMargins(24, 0, 24, 0);
   mainLayout->setSpacing(0);
   mainLayout->addWidget(button);
   mainLayout->addWidget(this->dataPtr->content);
@@ -95,10 +96,16 @@ void CollapsibleWidget::Toggle(const bool _checked)
   auto icon = this->findChild<QLabel *>("buttonIcon");
   // Change to ▼
   if (_checked)
+  {
     icon->setText(QString::fromUtf8("\u25bc"));
+    this->layout()->setContentsMargins(24, 16, 24, 16);
+  }
   // Change to ▲
   else
+  {
     icon->setText(QString::fromUtf8("\u25b2"));
+    this->layout()->setContentsMargins(24, 0, 24, 0);
+  }
 
   this->dataPtr->expanded = _checked;
 }
