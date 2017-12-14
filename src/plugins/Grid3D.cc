@@ -243,7 +243,6 @@ void Grid3D::Refresh()
     mainLayout->addWidget(buttonsWidget);
   }
 
-  std::cout << "Grid size[" << this->dataPtr->grids.size() << "]\n";
   // Search for all grids currently in the scene
   for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
   {
@@ -299,9 +298,9 @@ void Grid3D::Refresh()
         SLOT(OnChange(QVariant)));
 
     auto deleteButton = new QPushButton("Delete grid");
-    colorWidget->setObjectName(gridName + "---deleteButton");
     deleteButton->setToolTip("Delete grid " + gridName);
     deleteButton->setProperty("warning", true);
+    deleteButton->setProperty("gridName", gridName);
     this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
 
     QHBoxLayout *deleteLayout = new QHBoxLayout();
@@ -362,13 +361,16 @@ void Grid3D::OnChange(const QVariant &_value)
 /////////////////////////////////////////////////
 void Grid3D::OnDelete()
 {
-  auto parts = this->sender()->objectName().split("---");
-  if (parts.size() != 2)
+  QVariant gridNameVariant = this->sender()->property("gridName");
+
+  if (!gridNameVariant.isValid())
     return;
+
+  std::string gridName = gridNameVariant.toString().toStdString();
 
   for (auto grid : this->dataPtr->grids)
   {
-    if (grid->Name() != parts[0].toStdString())
+    if (grid->Name() != gridName)
       continue;
 
     grid->Scene()->DestroyVisual(grid->Parent());
