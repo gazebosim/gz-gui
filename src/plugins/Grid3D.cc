@@ -317,7 +317,7 @@ void Grid3D::Refresh()
     collapsible->AppendContent(poseWidget);
     collapsible->AppendContent(colorWidget);
     collapsible->AppendContent(deleteWidget);
-    collapsible->setMinimumWidth(500);
+    collapsible->setMinimumWidth(520);
 
     mainLayout->addWidget(collapsible);
   }
