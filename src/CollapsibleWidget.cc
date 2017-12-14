@@ -71,7 +71,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   this->dataPtr->content->setObjectName("collapsibleContent");
   this->dataPtr->content->setVisible(false);
   this->dataPtr->content->setLayout(new QVBoxLayout());
-  this->dataPtr->content->layout()->setContentsMargins(0, 20, 0, 0);
+  this->dataPtr->content->layout()->setContentsMargins(0, 0, 0, 0);
   this->dataPtr->content->layout()->setSpacing(0);
 
   // Layout
@@ -81,6 +81,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   mainLayout->addWidget(button);
   mainLayout->addWidget(this->dataPtr->content);
   this->setLayout(mainLayout);
+  this->setEnabled(false);
 }
 
 /////////////////////////////////////////////////
@@ -105,9 +106,11 @@ void CollapsibleWidget::Toggle(const bool _checked)
     // widget in a list of collapsible widgets should not alter the top
     // margin.
     QVariant indexProperty = this->property("index");
-    int topMargin =
-      indexProperty.isValid() && indexProperty.toInt() == 0 ? 0 : 16;
-    this->layout()->setContentsMargins(0, topMargin, 0, 16);
+    this->layout()->setContentsMargins(0,
+        this->ContentCount() > 0 && indexProperty.isValid() &&
+        indexProperty.toInt() == 0 ? 0 : 16,
+        0,
+        this->ContentCount() > 0 ? 16 : 0);
   }
   // Change to ▲
   else
@@ -177,12 +180,12 @@ bool CollapsibleWidget::ReadOnly() const
 void CollapsibleWidget::AppendContent(QWidget *_widget)
 {
   this->dataPtr->content->layout()->addWidget(_widget);
+  this->setEnabled(true);
 }
 
 /////////////////////////////////////////////////
 unsigned int CollapsibleWidget::ContentCount() const
 {
-  auto contentLayout = this->dataPtr->content->layout();
-  return contentLayout->count();
+  return this->dataPtr->content->layout()->count();
 }
 
