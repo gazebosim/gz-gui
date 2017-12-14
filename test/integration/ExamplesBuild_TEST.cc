@@ -16,6 +16,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <string>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
@@ -30,13 +31,12 @@ using namespace gui;
 // https://bitbucket.org/ignitionrobotics/ign-common/raw/default/src/Filesystem_TEST.cc
 
 #ifndef _WIN32
-#include <fcntl.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <string>
+#include <fcntl.h>  // NOLINT(build/include_order)
+#include <limits.h>  // NOLINT(build/include_order)
+#include <stdlib.h>  // NOLINT(build/include_order)
+#include <sys/stat.h>  // NOLINT(build/include_order)
+#include <sys/types.h>  // NOLINT(build/include_order)
+#include <unistd.h>  // NOLINT(build/include_order)
 
 /////////////////////////////////////////////////
 bool createAndSwitchToTempDir(std::string &_newTempPath)
@@ -76,8 +76,8 @@ bool createAndSwitchToTempDir(std::string &_newTempPath)
 }
 
 #else
-#include <windows.h>
-#include <winnt.h>
+#include <windows.h>  // NOLINT(build/include_order)
+#include <winnt.h>  // NOLINT(build/include_order)
 #include <cstdint>
 #include <ignition/common/PrintWindowsSystemWarning.hh>
 
