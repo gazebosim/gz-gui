@@ -123,7 +123,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     // For grids to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
          insertElem != nullptr;
-        insertElem = insertElem->NextSiblingElement("insert"))
+         insertElem = insertElem->NextSiblingElement("insert"))
     {
       GridInfo gridInfo;
 
