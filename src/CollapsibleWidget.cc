@@ -75,7 +75,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
 
   // Layout
   auto mainLayout = new QVBoxLayout;
-  mainLayout->setContentsMargins(24, 0, 24, 0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   mainLayout->addWidget(button);
   mainLayout->addWidget(this->dataPtr->content);
@@ -98,13 +98,13 @@ void CollapsibleWidget::Toggle(const bool _checked)
   if (_checked)
   {
     icon->setText(QString::fromUtf8("\u25bc"));
-    this->layout()->setContentsMargins(24, 16, 24, 16);
+    this->layout()->setContentsMargins(0, 16, 0, 16);
   }
   // Change to ▲
   else
   {
     icon->setText(QString::fromUtf8("\u25b2"));
-    this->layout()->setContentsMargins(24, 0, 24, 0);
+    this->layout()->setContentsMargins(0, 0, 0, 0);
   }
 
   this->dataPtr->expanded = _checked;
