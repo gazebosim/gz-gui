@@ -80,6 +80,10 @@ namespace ignition
       /// \return True if the item is removed successfully.
       public: bool RemoveItem(const std::string &_itemText);
 
+      /// \brief Get the internal combo box.
+      /// \return Pointer to the combo box.
+      public: QComboBox *Combo() const;
+
       /// \brief Remove all items from widget.
       /// \return True if successful.
       public: bool Clear();

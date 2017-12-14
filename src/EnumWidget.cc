@@ -146,3 +146,9 @@ bool EnumWidget::RemoveItem(const std::string &_itemText)
   return true;
 }
 
+/////////////////////////////////////////////////
+QComboBox *EnumWidget::Combo() const
+{
+  return this->findChild<QComboBox *>();
+}
+
