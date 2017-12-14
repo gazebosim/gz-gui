@@ -244,6 +244,7 @@ void Grid3D::Refresh()
   }
 
   // Search for all grids currently in the scene
+  this->dataPtr->grids.clear();
   for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
   {
     auto vis = this->dataPtr->scene->VisualByIndex(i);
