@@ -29,7 +29,7 @@ Add it to the path:
 
 Run the example:
 
-    ign gui -v 2 -c ../camera_tracking_box.config
+    ign gui -v 2 -c ../camera_track_box.config
 
 Try out different tracking settings.
 
