@@ -51,7 +51,8 @@ COMMANDS = {  'gui' =>
                        "  -t [ --style ] arg         Apply a stylesheet to the whole application.\n" +
                        "                             Give a QSS file path as an argument.\n" +
                        "\n" +
-                       "  -v [ --verbose ] arg       Adjust the level of console output (0~4).\n" +
+                       "  -v [ --verbose ] [arg]     Adjust the level of console output (0~4).\n" +
+                       "                             If no argument is provided, the level is set to 4.\n" +
                        "\n" +
                        COMMON_OPTIONS,
             }
@@ -91,8 +92,11 @@ class Cmd
           'Load a stylesheet') do |t|
         options['style'] = t
       end
-      opts.on('-v verbose', '--verbose', String,
+      opts.on('-v [verbose]', '--verbose [verbose]', String,
           'Adjust level of console output') do |v|
+        if !v
+          v = '4'
+        end
         options['verbose'] = v
       end
 
