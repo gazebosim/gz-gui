@@ -58,6 +58,21 @@ namespace ignition
     /// \return The string type.
     IGNITION_GUI_VISIBLE
     StringType stringTypeFromKey(const std::string &_key);
+
+    /// \brief
+    /// \param[in] _
+    /// \return
+    template<class T>
+    IGNITION_GUI_VISIBLE
+    T findFirstByProperty(const QList<T> _list, const char *_property, QVariant _value)
+    {
+      for (const auto &w : _list)
+      {
+        if (w->property(_property) == _value)
+          return w;
+      }
+      return nullptr;
+    }
   }
 }
 #endif

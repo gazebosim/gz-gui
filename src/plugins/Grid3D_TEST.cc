@@ -21,6 +21,7 @@
 
 #include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/NumberWidget.hh"
@@ -111,7 +112,7 @@ TEST(Grid3DTest, CRUD)
 
   // Cell count
   {
-    auto name = QString::fromStdString(grid->Name()+"---cellCountWidget");
+    auto name = QString::fromStdString("cellCountWidget");
     auto w = win->findChild<NumberWidget *>(name);
     ASSERT_NE(nullptr, w);
     EXPECT_EQ(5, w->Value().toInt());
@@ -122,7 +123,7 @@ TEST(Grid3DTest, CRUD)
 
   // Vertical cell count
   {
-    auto name = QString::fromStdString(grid->Name()+"---vertCellCountWidget");
+    auto name = QString::fromStdString("vertCellCountWidget");
     auto w = win->findChild<NumberWidget *>(name);
     ASSERT_NE(nullptr, w);
     EXPECT_EQ(3, w->Value().toInt());
@@ -133,7 +134,7 @@ TEST(Grid3DTest, CRUD)
 
   // Cell length
   {
-    auto name = QString::fromStdString(grid->Name()+"---cellLengthWidget");
+    auto name = QString::fromStdString("cellLengthWidget");
     auto w = win->findChild<NumberWidget *>(name);
     ASSERT_NE(nullptr, w);
     EXPECT_DOUBLE_EQ(3.5, w->Value().toDouble());
@@ -144,7 +145,7 @@ TEST(Grid3DTest, CRUD)
 
   // Pose
   {
-    auto name = QString::fromStdString(grid->Name()+"---poseWidget");
+    auto name = QString::fromStdString("poseWidget");
     auto w = win->findChild<Pose3dWidget *>(name);
     ASSERT_NE(nullptr, w);
     EXPECT_EQ(math::Pose3d(1, 0, 0, 0, 0, 0), w->Value().value<math::Pose3d>());
@@ -155,7 +156,7 @@ TEST(Grid3DTest, CRUD)
 
   // Color
   {
-    auto name = QString::fromStdString(grid->Name()+"---colorWidget");
+    auto name = QString::fromStdString("colorWidget");
     auto w = win->findChild<ColorWidget *>(name);
     ASSERT_NE(nullptr, w);
     EXPECT_EQ(math::Color::Blue, w->Value().value<math::Color>());
@@ -218,10 +219,13 @@ TEST(Grid3DTest, CRUD)
     auto collapsibles = win->findChildren<CollapsibleWidget *>();
     EXPECT_EQ(3, collapsibles.size());
 
+    auto gridName = QVariant(QString::fromStdString(grid3->Name()));
+
     // Cell count
     {
-      auto name = QString::fromStdString(grid3->Name()+"---cellCountWidget");
-      auto w = win->findChild<NumberWidget *>(name);
+      auto name = QString::fromStdString("cellCountWidget");
+      auto w = findFirstByProperty(win->findChildren<NumberWidget *>(name),
+          "gridName", gridName);
       ASSERT_NE(nullptr, w);
       EXPECT_EQ(66, w->Value().toInt());
     }
@@ -229,24 +233,27 @@ TEST(Grid3DTest, CRUD)
     // Vertical cell count
     {
       auto name = QString::fromStdString(
-          grid3->Name()+"---vertCellCountWidget");
-      auto w = win->findChild<NumberWidget *>(name);
+          "vertCellCountWidget");
+      auto w = findFirstByProperty(win->findChildren<NumberWidget *>(name),
+          "gridName", gridName);
       ASSERT_NE(nullptr, w);
       EXPECT_EQ(8, w->Value().toInt());
     }
 
     // Cell length
     {
-      auto name = QString::fromStdString(grid3->Name()+"---cellLengthWidget");
-      auto w = win->findChild<NumberWidget *>(name);
+      auto name = QString::fromStdString("cellLengthWidget");
+      auto w = findFirstByProperty(win->findChildren<NumberWidget *>(name),
+          "gridName", gridName);
       ASSERT_NE(nullptr, w);
       EXPECT_DOUBLE_EQ(2.6, w->Value().toDouble());
     }
 
     // Pose
     {
-      auto name = QString::fromStdString(grid3->Name()+"---poseWidget");
-      auto w = win->findChild<Pose3dWidget *>(name);
+      auto name = QString::fromStdString("poseWidget");
+      auto w = findFirstByProperty(win->findChildren<Pose3dWidget *>(name),
+          "gridName", gridName);
       ASSERT_NE(nullptr, w);
       EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 0),
                 w->Value().value<math::Pose3d>());
@@ -254,8 +261,9 @@ TEST(Grid3DTest, CRUD)
 
     // Color
     {
-      auto name = QString::fromStdString(grid3->Name()+"---colorWidget");
-      auto w = win->findChild<ColorWidget *>(name);
+      auto name = QString::fromStdString("colorWidget");
+      auto w = findFirstByProperty(win->findChildren<ColorWidget *>(name),
+          "gridName", gridName);
       ASSERT_NE(nullptr, w);
       EXPECT_EQ(math::Color(0.1, 0.2, 0.3), w->Value().value<math::Color>());
     }
@@ -263,11 +271,13 @@ TEST(Grid3DTest, CRUD)
 
   // Delete a grid
   {
-    auto name = QString::fromStdString(grid->Name()+"---deleteButton");
-    auto deleteButton = win->findChild<QPushButton *>(name);
-    ASSERT_NE(nullptr, deleteButton);
+    auto gridName = QVariant(QString::fromStdString(grid->Name()));
+    auto name = QString::fromStdString("deleteButton");
+    auto w = findFirstByProperty(win->findChildren<QPushButton *>(name),
+        "gridName", gridName);
+    ASSERT_NE(nullptr, w);
 
-    deleteButton->click();
+    w->click();
 
     // Check scene
     EXPECT_EQ(2u, scene->VisualCount());
