@@ -59,16 +59,20 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     StringType stringTypeFromKey(const std::string &_key);
 
-    /// \brief
-    /// \param[in] _
-    /// \return
+    /// \brief Returns the first element on a QList which matches the given
+    /// property.
+    /// \param[in] _list The list to search through.
+    /// \param[in] _key The property key value.
+    /// \param[in] _value The property value.
+    /// \return The first matching element.
     template<class T>
     IGNITION_GUI_VISIBLE
-    T findFirstByProperty(const QList<T> _list, const char *_property, QVariant _value)
+    T findFirstByProperty(const QList<T> _list, const char *_key,
+        QVariant _value)
     {
       for (const auto &w : _list)
       {
-        if (w->property(_property) == _value)
+        if (w->property(_key) == _value)
           return w;
       }
       return nullptr;
