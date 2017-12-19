@@ -249,8 +249,7 @@ Canvas::~Canvas()
 }
 
 /////////////////////////////////////////////////
-void Canvas::SetVariableLabel(const unsigned int _id,
-    const std::string &_label)
+void Canvas::SetVariableLabel(const unsigned int _id, const std::string &_label)
 {
   // set new variable labeland let the signals/slots do the work on updating
   // the plot curve

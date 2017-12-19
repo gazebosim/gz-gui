@@ -208,6 +208,7 @@ void Plot::RemoveCanvas(Canvas *_canvas)
 /////////////////////////////////////////////////
 void Plot::Clear()
 {
+  std::cout << "CanvasCount: " << this->CanvasCount() << std::endl;
   while (this->CanvasCount() > 0u)
   {
     Canvas *canvas =
