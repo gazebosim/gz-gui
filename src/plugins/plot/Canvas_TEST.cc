@@ -34,7 +34,6 @@ TEST(CanvasTest, AddRemovePlot)
 
   // Create a new plot canvas widget
   Canvas *plotCanvas = new Canvas(nullptr);
-
   ASSERT_NE(nullptr, plotCanvas);
 
   plotCanvas->show();
@@ -145,7 +144,7 @@ TEST(CanvasTest, VariableLabel)
 
   // Create a new plot canvas widget
   Canvas *plotCanvas = new Canvas(nullptr);
-  EXPECT_NE(nullptr, plotCanvas);
+  ASSERT_NE(nullptr, plotCanvas);
 
   plotCanvas->show();
 

@@ -7,6 +7,7 @@ set (gtest_local_sources
   ExportDialog_TEST.cc
   IncrementalPlot_TEST.cc
   Plot_TEST.cc
+  TopicCurveHandler_TEST.cc
 )
 
 ign_build_tests(SOURCES ${gtest_local_sources} LIB_DEPS Plot)

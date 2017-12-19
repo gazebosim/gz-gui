@@ -32,14 +32,28 @@ TEST(ExportDialogTest, VerifyButtons)
   ASSERT_TRUE(initApp());
   ASSERT_TRUE(loadPlugin("Plot"));
 
-  Canvas *canvas = new Canvas(nullptr);
+  Canvas *plotCanvas = new Canvas(nullptr);
+  ASSERT_NE(nullptr, plotCanvas);
+
+  plotCanvas->show();
+
   std::list<Canvas *> plots;
-  plots.push_back(canvas);
+  plots.push_back(plotCanvas);
+
   ExportDialog *exportDialog = new ExportDialog(nullptr, plots);
+  ASSERT_NE(nullptr, exportDialog);
+
+  exportDialog->show();
 
   QList<QPushButton *> buttons = exportDialog->findChildren<QPushButton *>(
       "materialFlat");
   EXPECT_EQ(2, buttons.count());
+
+  exportDialog->hide();
+  delete exportDialog;
+
+  plotCanvas->hide();
+  delete plotCanvas;
 
   EXPECT_TRUE(stop());
 }
