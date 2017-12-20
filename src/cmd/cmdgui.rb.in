@@ -94,10 +94,7 @@ class Cmd
       end
       opts.on('-v [verbose]', '--verbose [verbose]', String,
           'Adjust level of console output') do |v|
-        if !v
-          v = '4'
-        end
-        options['verbose'] = v
+        options['verbose'] = v || '4'
       end
 
     end
