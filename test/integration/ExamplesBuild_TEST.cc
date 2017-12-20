@@ -124,7 +124,7 @@ bool createAndSwitchToTempDir(std::string &_newTempPath)
 //////////////////////////////////////////////////
 class ExamplesBuild : public ::testing::TestWithParam<const char*>
 {
-  /// \brief Build code in subfolder _type/_name in a temporary build folder
+  /// \brief Build code in a temporary build folder.
   /// \param[in] _type Type of example to build (plugins, standalone).
   public: void Build(const std::string &_type);
 };
