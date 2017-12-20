@@ -7,7 +7,11 @@ set (plotWidget
 
 # Files that require QT moc.
 set (plot_qt_others
+  Canvas
+  ExportDialog
   IncrementalPlot
+  Manager
+  TopicCurveHandler
 )
 
 # The rest of source files.
