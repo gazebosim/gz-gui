@@ -20,6 +20,7 @@
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
   #include <ignition/gui/Iface.hh>
+  #include <ignition/gui/MainWindow.hh>
 #endif
 
 //////////////////////////////////////////////////

@@ -25,7 +25,7 @@ find_package(ignition-math4 QUIET)
 if (NOT ignition-math4_FOUND)
   BUILD_ERROR ("Missing: Ignition Math libignition-math4-dev.")
 else()
-  message (STATUS "Found Ignition Math")
+  message (STATUS "Found Ignition Math 4")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-MATH_CXX_FLAGS}")
   include_directories(${IGNITION-MATH_INCLUDE_DIRS})
   link_directories(${IGNITION-MATH_LIBRARY_DIRS})
@@ -38,7 +38,7 @@ find_package(ignition-common0 QUIET)
 if (NOT ignition-common0_FOUND)
   BUILD_ERROR ("Missing: Ignition Common (libignition-common0-dev)")
 else()
-  message (STATUS "Found Ignition Common")
+  message (STATUS "Found Ignition Common 0")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-COMMON_CXX_FLAGS}")
   include_directories(${IGNITION-COMMON_INCLUDE_DIRS})
   link_directories(${IGNITION-COMMON_LIBRARY_DIRS})
@@ -50,7 +50,7 @@ find_package(ignition-transport3 QUIET)
 if (NOT ignition-transport3_FOUND)
   BUILD_ERROR ("Missing: Ignition Transport libignition-transport3-dev.")
 else()
-  message (STATUS "Found Ignition Transport")
+  message (STATUS "Found Ignition Transport 3")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-TRANSPORT_CXX_FLAGS}")
   include_directories(${IGNITION-TRANSPORT_INCLUDE_DIRS})
   link_directories(${IGNITION-TRANSPORT_LIBRARY_DIRS})
@@ -63,7 +63,7 @@ find_package(ignition-msgs1 QUIET)
 if (NOT ignition-msgs1_FOUND)
   BUILD_ERROR ("Missing: Ignition Msgs libignition-msgs1-dev.")
 else()
-  message (STATUS "Found Ignition Msgs")
+  message (STATUS "Found Ignition Msgs 1")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-MSGS_CXX_FLAGS}")
   include_directories(${IGNITION-MSGS_INCLUDE_DIRS})
   link_directories(${IGNITION-MSGS_LIBRARY_DIRS})
@@ -88,22 +88,34 @@ endif()
 find_package (Qt5Widgets)
 if (NOT Qt5Widgets_FOUND)
   BUILD_ERROR("Missing: Qt5Widgets")
+else()
+  message (STATUS "Found Qt5Widgets")
 endif()
 
 find_package (Qt5Core)
 if (NOT Qt5Core_FOUND)
   BUILD_ERROR("Missing: Qt5Core")
+else()
+  message (STATUS "Found Qt5Core")
 endif()
 
-find_package (Qt5OpenGL)
-if (NOT Qt5OpenGL_FOUND)
-  BUILD_ERROR("Missing: Qt5OpenGL")
-endif()
+########################################
+# Find QWT (QT graphing library)
+find_path(QWT_INCLUDE_DIR NAMES qwt.h PATHS
+  /usr/include
+  /usr/local/include
+  /usr/local/lib/qwt.framework/Headers
+  ${QWT_WIN_INCLUDE_DIR}
 
-find_package (Qt5Test)
-if (NOT Qt5Test_FOUND)
-  BUILD_ERROR("Missing: Qt5Test")
-endif()
+  PATH_SUFFIXES qwt qwt5
+)
+
+find_library(QWT_LIBRARY NAMES qwt-qt5 qwt PATHS
+  /usr/lib
+  /usr/local/lib
+  /usr/local/lib/qwt.framework
+  ${QWT_WIN_LIBRARY_DIR}
+)
 
 #################################################
 # Find tinyxml2. Only debian distributions package tinyxml with a pkg-config
