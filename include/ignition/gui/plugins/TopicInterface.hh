@@ -43,14 +43,15 @@ namespace plugins
   /// through an Ignition Transport topic.
   ///
   /// ## Configuration
-  /// <topic>: Topic to subscribe to. This is defined the moment the plugin is
-  ///          created and can't be changed afterwards. If no topic is
-  ///          specified, the plugin subscribes to `/echo`.
-  /// <message_type>: Fully qualified name of the message type expected on the
-  ///                 topic above. Widgets will be generated according to this.
-  ///                 If not specified, widget will be constructed according to
-  ///                 the first message received on <topic>. Once widgets have
-  ///                 been generated, the message type can't be changed.
+  /// \<topic\>: Topic to subscribe to. This is defined the moment the plugin is
+  ///            created and can't be changed afterwards. If no topic is
+  ///            specified, the plugin subscribes to `/echo`.
+  /// \<message_type\>: Fully qualified name of the message type expected on the
+  ///                   topic above. Widgets will be generated according to
+  ///                   this.
+  ///                   If not specified, widget will be constructed according
+  ///                   to the first message received on \<topic\>. Once widgets
+  ///                   have been generated, the message type can't be changed.
   class TopicInterface : public Plugin
   {
     Q_OBJECT

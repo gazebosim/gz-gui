@@ -57,11 +57,6 @@ set(IGN_COMMON_VER 0)
 ign_find_package(ignition-common${IGN_COMMON_VER} REQUIRED)
 
 #--------------------------------------
-# Find ignition-msgs
-set(IGN_MSGS_VER 1)
-ign_find_package(ignition-msgs${IGN_MSGS_VER} REQUIRED)
-
-#--------------------------------------
 # Find ignition-transport
 find_package(ignition-transport3 QUIET)
 if (NOT ignition-transport3_FOUND)
@@ -72,6 +67,11 @@ else()
   include_directories(${IGNITION-TRANSPORT_INCLUDE_DIRS})
   link_directories(${IGNITION-TRANSPORT_LIBRARY_DIRS})
 endif()
+
+#--------------------------------------
+# Find ignition-msgs
+set(IGN_MSGS_VER 1)
+ign_find_package(ignition-msgs${IGN_MSGS_VER} REQUIRED)
 
 #--------------------------------------
 # Find ignition-tools
