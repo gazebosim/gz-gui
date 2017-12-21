@@ -76,8 +76,13 @@ namespace plugins
 
   class Grid3DPrivate
   {
-    /// \brief Pointer to scene
-    public: rendering::ScenePtr scene;
+    /// \brief We keep a pointer to the engine and rely on it not being
+    /// destroyed, since it is a singleton.
+    public: rendering::RenderEngine *engine;
+
+    /// \brief We keep the scene name rather than a shared pointer because we
+    /// don't want to share ownership.
+    public: std::string sceneName{"scene"};
 
     /// \brief Keep track of grids we currently found on the scene
     public: std::vector<rendering::GridPtr> grids;
@@ -109,7 +114,6 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Configuration
   std::string engineName{"ogre"};
-  std::string sceneName{"scene"};
   std::vector<GridInfo> grids;
   if (_pluginElem)
   {
@@ -118,7 +122,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      sceneName = elem->GetText();
+      this->dataPtr->sceneName = elem->GetText();
 
     // For grids to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
@@ -154,46 +158,67 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
+  std::string error{""};
+  rendering::ScenePtr scene;
+
   // Render engine
-  auto engine = rendering::engine(engineName);
-  if (!engine)
+  this->dataPtr->engine = rendering::engine(engineName);
+  if (!this->dataPtr->engine)
   {
-    ignerr << "Engine [" << engineName
-           << "] is not supported, grid plugin won't work." << std::endl;
-    return;
+    error = "Engine \"" + engineName
+           + "\" not supported, Grid plugin won't work.";
+    ignwarn << error << std::endl;
   }
-
-  // Scene
-  this->dataPtr->scene = engine->SceneByName(sceneName);
-  if (!this->dataPtr->scene)
+  else
   {
-    ignerr << "Scene [" << sceneName << "] not found, grid plugin won't work."
-           << std::endl;
-    return;
-  }
-  auto root = this->dataPtr->scene->RootVisual();
+    // Scene
+    scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
+    if (!scene)
+    {
+      error = "Scene \"" + this->dataPtr->sceneName
+             + "\" not found, Grid plugin won't work.";
+      ignwarn << error << std::endl;
+    }
+    else
+    {
+      auto root = scene->RootVisual();
 
-  // Initial grids
-  for (const auto &g : grids)
-  {
-    auto grid = this->dataPtr->scene->CreateGrid();
-    grid->SetCellCount(g.cellCount);
-    grid->SetVerticalCellCount(g.vertCellCount);
-    grid->SetCellLength(g.cellLength);
+      // Initial grids
+      for (const auto &g : grids)
+      {
+        auto grid = scene->CreateGrid();
+        grid->SetCellCount(g.cellCount);
+        grid->SetVerticalCellCount(g.vertCellCount);
+        grid->SetCellLength(g.cellLength);
 
-    auto gridVis = this->dataPtr->scene->CreateVisual();
-    root->AddChild(gridVis);
-    gridVis->SetLocalPose(g.pose);
-    gridVis->AddGeometry(grid);
+        auto gridVis = scene->CreateVisual();
+        root->AddChild(gridVis);
+        gridVis->SetLocalPose(g.pose);
+        gridVis->AddGeometry(grid);
 
-    auto mat = this->dataPtr->scene->CreateMaterial();
-    mat->SetAmbient(g.color);
-    gridVis->SetMaterial(mat);
+        auto mat = scene->CreateMaterial();
+        mat->SetAmbient(g.color);
+        gridVis->SetMaterial(mat);
+      }
+    }
   }
 
   // Don't waste time loading widgets if this will be deleted anyway
   if (this->DeleteLaterRequested())
     return;
+
+  if (!error.empty())
+  {
+    // Add message
+    auto msg = new QLabel(QString::fromStdString(error));
+
+    auto mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(msg);
+    mainLayout->setAlignment(msg, Qt::AlignCenter);
+    this->setLayout(mainLayout);
+
+    return;
+  }
 
   this->Refresh();
 }
@@ -243,11 +268,33 @@ void Grid3D::Refresh()
     mainLayout->addWidget(buttonsWidget);
   }
 
+  auto scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
+  // Scene has been destroyed
+  if (!scene)
+  {
+    // Delete buttons
+    auto item = mainLayout->takeAt(0);
+    if (item)
+    {
+      delete item->widget();
+      delete item;
+    }
+
+    // Add message
+    auto msg = new QLabel(QString::fromStdString(
+        "Scene \"" + this->dataPtr->sceneName + "\" has been destroyed.\n"
+        + "Create a new scene and then open a new Grid plugin."));
+    mainLayout->addWidget(msg);
+    mainLayout->setAlignment(msg, Qt::AlignCenter);
+    return;
+  }
+
+
   // Search for all grids currently in the scene
   this->dataPtr->grids.clear();
-  for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
+  for (unsigned int i = 0; i < scene->VisualCount(); ++i)
   {
-    auto vis = this->dataPtr->scene->VisualByIndex(i);
+    auto vis = scene->VisualByIndex(i);
     if (!vis || vis->GeometryCount() == 0)
       continue;
 
@@ -374,19 +421,25 @@ void Grid3D::OnDelete()
 /////////////////////////////////////////////////
 void Grid3D::OnAdd()
 {
-  auto root = this->dataPtr->scene->RootVisual();
+  auto scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
+  if (!scene)
+  {
+    return;
+  }
 
-  auto grid = this->dataPtr->scene->CreateGrid();
+  auto root = scene->RootVisual();
+
+  auto grid = scene->CreateGrid();
   grid->SetCellCount(kDefaultCellCount);
   grid->SetVerticalCellCount(kDefaultVertCellCount);
   grid->SetCellLength(kDefaultCellLength);
 
-  auto gridVis = this->dataPtr->scene->CreateVisual();
+  auto gridVis = scene->CreateVisual();
   root->AddChild(gridVis);
   gridVis->SetLocalPose(kDefaultPose);
   gridVis->AddGeometry(grid);
 
-  auto mat = this->dataPtr->scene->CreateMaterial();
+  auto mat = scene->CreateMaterial();
   mat->SetAmbient(kDefaultColor);
   gridVis->SetMaterial(mat);
 
