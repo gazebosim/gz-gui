@@ -123,7 +123,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     // For grids to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
          insertElem != nullptr;
-        insertElem = insertElem->NextSiblingElement("insert"))
+         insertElem = insertElem->NextSiblingElement("insert"))
     {
       GridInfo gridInfo;
 
@@ -244,6 +244,7 @@ void Grid3D::Refresh()
   }
 
   // Search for all grids currently in the scene
+  this->dataPtr->grids.clear();
   for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
   {
     auto vis = this->dataPtr->scene->VisualByIndex(i);
@@ -267,7 +268,8 @@ void Grid3D::Refresh()
     auto cellCountWidget = new NumberWidget("Horizontal cell count",
         NumberType::UINT);
     cellCountWidget->SetValue(QVariant::fromValue(grid->CellCount()));
-    cellCountWidget->setObjectName(gridName + "---cellCountWidget");
+    cellCountWidget->setProperty("gridName", gridName);
+    cellCountWidget->setObjectName("cellCountWidget");
     this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
@@ -275,31 +277,36 @@ void Grid3D::Refresh()
         NumberType::UINT);
     vertCellCountWidget->SetValue(
         QVariant::fromValue(grid->VerticalCellCount()));
-    vertCellCountWidget->setObjectName(gridName + "---vertCellCountWidget");
+    vertCellCountWidget->setProperty("gridName", gridName);
+    vertCellCountWidget->setObjectName("vertCellCountWidget");
     this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
     cellLengthWidget->SetValue(QVariant::fromValue(grid->CellLength()));
-    cellLengthWidget->setObjectName(gridName + "---cellLengthWidget");
+    cellLengthWidget->setProperty("gridName", gridName);
+    cellLengthWidget->setObjectName("cellLengthWidget");
     this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto poseWidget = new Pose3dWidget();
     poseWidget->SetValue(QVariant::fromValue(grid->Parent()->WorldPose()));
-    poseWidget->setObjectName(gridName + "---poseWidget");
+    poseWidget->setProperty("gridName", gridName);
+    poseWidget->setObjectName("poseWidget");
     this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto colorWidget = new ColorWidget();
     colorWidget->SetValue(QVariant::fromValue(grid->Material()->Ambient()));
-    colorWidget->setObjectName(gridName + "---colorWidget");
+    colorWidget->setProperty("gridName", gridName);
+    colorWidget->setObjectName("colorWidget");
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
 
     auto deleteButton = new QPushButton("Delete grid");
     deleteButton->setToolTip("Delete grid " + gridName);
-    deleteButton->setObjectName(gridName + "---deleteButton");
+    deleteButton->setProperty("gridName", gridName);
+    deleteButton->setObjectName("deleteButton");
     this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
 
     auto collapsible = new CollapsibleWidget(grid->Name());
@@ -321,24 +328,23 @@ void Grid3D::Refresh()
 /////////////////////////////////////////////////
 void Grid3D::OnChange(const QVariant &_value)
 {
-  auto parts = this->sender()->objectName().split("---");
-  if (parts.size() != 2)
-    return;
+  auto gridName = this->sender()->property("gridName").toString().toStdString();
+  auto type = this->sender()->objectName().toStdString();
 
   for (auto grid : this->dataPtr->grids)
   {
-    if (grid->Name() != parts[0].toStdString())
+    if (grid->Name() != gridName)
       continue;
 
-    if (parts[1] == "cellCountWidget")
+    if (type == "cellCountWidget")
       grid->SetCellCount(_value.toInt());
-    else if (parts[1] == "vertCellCountWidget")
+    else if (type == "vertCellCountWidget")
       grid->SetVerticalCellCount(_value.toInt());
-    else if (parts[1] == "cellLengthWidget")
+    else if (type == "cellLengthWidget")
       grid->SetCellLength(_value.toDouble());
-    else if (parts[1] == "poseWidget")
+    else if (type == "poseWidget")
       grid->Parent()->SetWorldPose(_value.value<math::Pose3d>());
-    else if (parts[1] == "colorWidget")
+    else if (type == "colorWidget")
       grid->Material()->SetAmbient(_value.value<math::Color>());
 
     break;
@@ -348,13 +354,11 @@ void Grid3D::OnChange(const QVariant &_value)
 /////////////////////////////////////////////////
 void Grid3D::OnDelete()
 {
-  auto parts = this->sender()->objectName().split("---");
-  if (parts.size() != 2)
-    return;
+  auto gridName = this->sender()->property("gridName").toString().toStdString();
 
   for (auto grid : this->dataPtr->grids)
   {
-    if (grid->Name() != parts[0].toStdString())
+    if (grid->Name() != gridName)
       continue;
 
     grid->Scene()->DestroyVisual(grid->Parent());
