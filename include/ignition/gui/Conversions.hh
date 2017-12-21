@@ -18,6 +18,7 @@
 #ifndef IGNITION_GUI_CONVERSIONS_HH_
 #define IGNITION_GUI_CONVERSIONS_HH_
 
+#include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
@@ -29,11 +30,6 @@ namespace ignition
   namespace common
   {
     class MouseEvent;
-  }
-
-  namespace math
-  {
-    class Color;
   }
 
   namespace gui

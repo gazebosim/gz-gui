@@ -161,8 +161,6 @@ void TopicInterface::CreateWidget(const google::protobuf::Message &_msg)
   auto scrollArea = new QScrollArea();
   scrollArea->setWidget(this->dataPtr->msgWidget);
   scrollArea->setWidgetResizable(true);
-  scrollArea->setStyleSheet(
-      "QScrollArea{background-color: transparent; border: none}");
 
   this->layout()->addWidget(scrollArea);
 }
