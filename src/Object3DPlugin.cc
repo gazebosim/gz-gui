@@ -225,7 +225,8 @@ void Object3DPlugin::AppendObj(const rendering::ObjectPtr &_obj,
       QString::fromStdString(this->typeSingular));
   deleteButton->setToolTip("Delete " +
       QString::fromStdString(this->typeSingular) + " " + objName);
-  deleteButton->setObjectName(objName + "---deleteButton");
+  deleteButton->setProperty("objName", objName);
+  deleteButton->setObjectName("deleteButton");
   this->connect(deleteButton, SIGNAL(clicked()), this, SLOT(OnDelete()));
 
   // Collapsible
@@ -241,16 +242,15 @@ void Object3DPlugin::AppendObj(const rendering::ObjectPtr &_obj,
 /////////////////////////////////////////////////
 void Object3DPlugin::OnChange(const QVariant &_value)
 {
-  auto parts = this->sender()->objectName().split("---");
-  if (parts.size() != 2)
-    return;
+  auto objName = this->sender()->property("objName").toString().toStdString();
+  auto type = this->sender()->objectName().toStdString();
 
   for (auto obj : this->objs)
   {
-    if (obj->Name() != parts[0].toStdString())
+    if (obj->Name() != objName)
       continue;
 
-    this->Change(obj, parts[1].toStdString(), _value);
+    this->Change(obj, type, _value);
 
     break;
   }
@@ -259,13 +259,12 @@ void Object3DPlugin::OnChange(const QVariant &_value)
 /////////////////////////////////////////////////
 void Object3DPlugin::OnDelete()
 {
-  auto parts = this->sender()->objectName().split("---");
-  if (parts.size() != 2)
-    return;
+  auto objName = this->sender()->property("objName").toString().toStdString();
+  auto type = this->sender()->objectName().toStdString();
 
   for (auto obj : this->objs)
   {
-    if (obj->Name() != parts[0].toStdString())
+    if (obj->Name() != objName)
       continue;
 
     if (!this->Delete(obj))

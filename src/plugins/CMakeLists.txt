@@ -15,6 +15,7 @@ set (gtest_local_sources
   TopicViewer_TEST.cc
 )
 
-ign_build_tests(SOURCES ${gtest_local_sources})
+ign_build_tests(SOURCES ${gtest_local_sources}
+                LIB_DEPS ${IGNITION-RENDERING_LIBRARIES})
 
 add_subdirectory(plot)

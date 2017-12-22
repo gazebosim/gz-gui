@@ -79,8 +79,9 @@ namespace ignition
       /// \return True if it is displayed
       public: virtual bool HasTitlebar() {return this->hasTitlebar;}
 
-      /// \brief Returns the value of the the `delete_later` attribute on the
-      /// configuration, which defaults to false.
+      /// \brief Get the value of the the `delete_later` attribute on the
+      /// configuration file, which defaults to false.
+      /// \return The value of `delete_later`.
       public: bool DeleteLaterRequested();
 
       /// \brief Show context menu
@@ -92,7 +93,7 @@ namespace ignition
 
       /// \brief Wait until the plugin has a parent, then close and delete the
       /// parent.
-      private: void DeleteLater();
+      protected: void DeleteLater();
 
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";

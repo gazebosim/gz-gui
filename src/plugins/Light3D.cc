@@ -174,14 +174,16 @@ void Light3D::Refresh()
     std::vector<PropertyWidget *> props;
     auto poseWidget = new Pose3dWidget();
     poseWidget->SetValue(QVariant::fromValue(obj->Parent()->WorldPose()));
-    poseWidget->setObjectName(objName + "---poseWidget");
+    poseWidget->setProperty("objName", objName);
+    poseWidget->setObjectName("poseWidget");
     this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(poseWidget);
 
     auto colorWidget = new ColorWidget();
     colorWidget->SetValue(QVariant::fromValue(obj->DiffuseColor()));
-    colorWidget->setObjectName(objName + "---colorWidget");
+    colorWidget->setProperty("objName", objName);
+    colorWidget->setObjectName("colorWidget");
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(colorWidget);

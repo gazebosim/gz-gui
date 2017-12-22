@@ -113,7 +113,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     // For objs to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
          insertElem != nullptr;
-        insertElem = insertElem->NextSiblingElement("insert"))
+         insertElem = insertElem->NextSiblingElement("insert"))
     {
       ObjInfo objInfo;
 
@@ -193,6 +193,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 void Grid3D::Refresh()
 {
   // Search for all objs currently in the scene
+  //this->dataPtr->grids.clear();
   for (unsigned int i = 0; i < this->scene->VisualCount(); ++i)
   {
     auto vis = this->scene->VisualByIndex(i);
@@ -217,7 +218,8 @@ void Grid3D::Refresh()
     auto cellCountWidget = new NumberWidget("Horizontal cell count",
         NumberType::UINT);
     cellCountWidget->SetValue(QVariant::fromValue(obj->CellCount()));
-    cellCountWidget->setObjectName(objName + "---cellCountWidget");
+    cellCountWidget->setProperty("objName", objName);
+    cellCountWidget->setObjectName("cellCountWidget");
     this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(cellCountWidget);
@@ -226,28 +228,32 @@ void Grid3D::Refresh()
         NumberType::UINT);
     vertCellCountWidget->SetValue(
         QVariant::fromValue(obj->VerticalCellCount()));
-    vertCellCountWidget->setObjectName(objName + "---vertCellCountWidget");
+    vertCellCountWidget->setProperty("objName", objName);
+    vertCellCountWidget->setObjectName("vertCellCountWidget");
     this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(vertCellCountWidget);
 
     auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
     cellLengthWidget->SetValue(QVariant::fromValue(obj->CellLength()));
-    cellLengthWidget->setObjectName(objName + "---cellLengthWidget");
+    cellLengthWidget->setProperty("objName", objName);
+    cellLengthWidget->setObjectName("cellLengthWidget");
     this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(cellLengthWidget);
 
     auto poseWidget = new Pose3dWidget();
     poseWidget->SetValue(QVariant::fromValue(obj->Parent()->WorldPose()));
-    poseWidget->setObjectName(objName + "---poseWidget");
+    poseWidget->setProperty("objName", objName);
+    poseWidget->setObjectName("poseWidget");
     this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(poseWidget);
 
     auto colorWidget = new ColorWidget();
     colorWidget->SetValue(QVariant::fromValue(obj->Material()->Ambient()));
-    colorWidget->setObjectName(objName + "---colorWidget");
+    colorWidget->setProperty("objName", objName);
+    colorWidget->setObjectName("colorWidget");
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(colorWidget);

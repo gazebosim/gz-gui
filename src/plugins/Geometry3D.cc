@@ -186,14 +186,16 @@ void Geometry3D::Refresh()
 
     auto poseWidget = new Pose3dWidget();
     poseWidget->SetValue(QVariant::fromValue(obj->Parent()->WorldPose()));
-    poseWidget->setObjectName(objName + "---poseWidget");
+    poseWidget->setProperty("objName", objName);
+    poseWidget->setObjectName("poseWidget");
     this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(poseWidget);
 
     auto colorWidget = new ColorWidget();
     colorWidget->SetValue(QVariant::fromValue(obj->Material()->Ambient()));
-    colorWidget->setObjectName(objName + "---colorWidget");
+    colorWidget->setProperty("objName", objName);
+    colorWidget->setObjectName("colorWidget");
     this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
         SLOT(OnChange(QVariant)));
     props.push_back(colorWidget);
@@ -213,7 +215,11 @@ bool Geometry3D::Change(const rendering::ObjectPtr &_obj,
   if (_property == "poseWidget")
     derived->Parent()->SetWorldPose(_value.value<math::Pose3d>());
   else if (_property == "colorWidget")
-    derived->Material()->SetAmbient(_value.value<math::Color>());
+  {
+    auto mat = this->scene->CreateMaterial();
+    mat->SetAmbient(_value.value<math::Color>());
+    derived->SetMaterial(mat);
+  }
   else
   {
     ignwarn << "Unknown property [" << _property << std::endl;
