@@ -97,8 +97,13 @@ namespace gui
     /// \brief Callback when the refresh button is pressed.
     protected slots: void OnRefresh();
 
-    /// \brief Pointer to scene
-    protected: rendering::ScenePtr scene;
+    /// \brief We keep a pointer to the engine and rely on it not being
+    /// destroyed, since it is a singleton.
+    protected: rendering::RenderEngine *engine;
+
+    /// \brief We keep the scene name rather than a shared pointer because we
+    /// don't want to share ownership.
+    protected: std::string sceneName{"scene"};
 
     /// \brief Keep track of objs on the scene
     protected: std::vector<rendering::ObjectPtr> objs;

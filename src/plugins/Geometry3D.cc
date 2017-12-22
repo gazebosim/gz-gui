@@ -81,7 +81,6 @@ void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Configuration
   std::string engineName{"ogre"};
-  std::string sceneName{"scene"};
   std::vector<GeometryInfo> objInfos;
   if (_pluginElem)
   {
@@ -90,7 +89,7 @@ void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      sceneName = elem->GetText();
+      this->sceneName = elem->GetText();
 
     // For objs to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
@@ -117,44 +116,64 @@ void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
+  std::string error{""};
+  rendering::ScenePtr scene;
+
   // Render engine
-  auto engine = rendering::engine(engineName);
-  if (!engine)
+  this->engine = rendering::engine(engineName);
+  if (!this->engine)
   {
-    ignerr << "Engine [" << engineName << "] is not supported, "
-           << this->typeSingular << " plugin won't work." << std::endl;
-    return;
+    error = "Engine \"" + engineName
+           + "\" not supported, plugin won't work.";
+    ignwarn << error << std::endl;
   }
-
-  // Scene
-  this->scene = engine->SceneByName(sceneName);
-  if (!this->scene)
+  else
   {
-    ignerr << "Scene [" << sceneName << "] not found, "
-           << this->typeSingular << " plugin won't work."
-           << std::endl;
-    return;
-  }
-  auto root = this->scene->RootVisual();
+    // Scene
+    scene = this->engine->SceneByName(this->sceneName);
+    if (!scene)
+    {
+      error = "Scene \"" + this->sceneName
+             + "\" not found, plugin won't work.";
+      ignwarn << error << std::endl;
+    }
+    else
+    {
+      auto root = scene->RootVisual();
 
-  // Initial objs
-  for (const auto &g : objInfos)
-  {
-    auto geometry = this->scene->CreateBox();
+      // Initial objs
+      for (const auto &g : objInfos)
+      {
+        auto geometry = scene->CreateBox();
 
-    auto geometryVis = this->scene->CreateVisual();
-    root->AddChild(geometryVis);
-    geometryVis->SetLocalPose(g.pose);
-    geometryVis->AddGeometry(geometry);
+        auto geometryVis = scene->CreateVisual();
+        root->AddChild(geometryVis);
+        geometryVis->SetLocalPose(g.pose);
+        geometryVis->AddGeometry(geometry);
 
-    auto mat = this->scene->CreateMaterial();
-    mat->SetAmbient(g.color);
-    geometryVis->SetMaterial(mat);
+        auto mat = scene->CreateMaterial();
+        mat->SetAmbient(g.color);
+        geometryVis->SetMaterial(mat);
+      }
+    }
   }
 
   // Don't waste time loading widgets if this will be deleted anyway
   if (this->DeleteLaterRequested())
     return;
+
+  if (!error.empty())
+  {
+    // Add message
+    auto msg = new QLabel(QString::fromStdString(error));
+
+    auto mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(msg);
+    mainLayout->setAlignment(msg, Qt::AlignCenter);
+    this->setLayout(mainLayout);
+
+    return;
+  }
 
   this->OnRefresh();
 }
@@ -162,10 +181,14 @@ void Geometry3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void Geometry3D::Refresh()
 {
+  auto scene = this->engine->SceneByName(this->sceneName);
+  if (!scene)
+    return;
+
   // Search for all geometries currently in the scene
-  for (unsigned int i = 0; i < this->scene->VisualCount(); ++i)
+  for (unsigned int i = 0; i < scene->VisualCount(); ++i)
   {
-    auto vis = this->scene->VisualByIndex(i);
+    auto vis = scene->VisualByIndex(i);
     if (!vis || vis->GeometryCount() == 0)
       continue;
 
@@ -216,7 +239,7 @@ bool Geometry3D::Change(const rendering::ObjectPtr &_obj,
     derived->Parent()->SetWorldPose(_value.value<math::Pose3d>());
   else if (_property == "colorWidget")
   {
-    auto mat = this->scene->CreateMaterial();
+    auto mat = derived->Scene()->CreateMaterial();
     mat->SetAmbient(_value.value<math::Color>());
     derived->SetMaterial(mat);
   }
@@ -236,7 +259,7 @@ bool Geometry3D::Delete(const rendering::ObjectPtr &_obj)
   if (!derived)
     return false;
 
-  this->scene->DestroyVisual(derived->Parent());
+  derived->Scene()->DestroyVisual(derived->Parent());
 
   return true;
 }
@@ -244,16 +267,20 @@ bool Geometry3D::Delete(const rendering::ObjectPtr &_obj)
 /////////////////////////////////////////////////
 void Geometry3D::Add()
 {
-  auto root = this->scene->RootVisual();
+  auto scene = this->engine->SceneByName(this->sceneName);
+  if (!scene)
+    return;
 
-  auto geometry = this->scene->CreateBox();
+  auto root = scene->RootVisual();
 
-  auto geometryVis = this->scene->CreateVisual();
+  auto geometry = scene->CreateBox();
+
+  auto geometryVis = scene->CreateVisual();
   root->AddChild(geometryVis);
   geometryVis->SetLocalPose(kDefaultPose);
   geometryVis->AddGeometry(geometry);
 
-  auto mat = this->scene->CreateMaterial();
+  auto mat = scene->CreateMaterial();
   mat->SetAmbient(kDefaultColor);
   geometryVis->SetMaterial(mat);
 }

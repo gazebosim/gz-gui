@@ -74,7 +74,6 @@ void Object3DPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Configuration
   std::string engineName{"ogre"};
-  std::string sceneName{"scene"};
   std::vector<ObjInfo> objInfos;
   if (_pluginElem)
   {
@@ -83,7 +82,7 @@ void Object3DPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      sceneName = elem->GetText();
+      this->sceneName = elem->GetText();
 
     // For objs to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
@@ -110,47 +109,69 @@ void Object3DPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
+  // Keep error to show the user
+  std::string error{""};
+  rendering::ScenePtr scene;
+
   // Render engine
-  auto engine = rendering::engine(engineName);
-  if (!engine)
+  this->engine = rendering::engine(engineName);
+  if (!this->engine)
   {
-    ignerr << "Engine [" << engineName << "] is not supported, "
-           << this->typeSingular << " plugin won't work." << std::endl;
-    return;
+    error = "Engine \"" + engineName
+           + "\" not supported, plugin won't work.";
+    ignwarn << error << std::endl;
   }
-
-  // Scene
-  this->scene = engine->SceneByName(sceneName);
-  if (!this->scene)
+  else
   {
-    ignerr << "Scene [" << sceneName << "] not found, "
-           << this->typeSingular << " plugin won't work."
-           << std::endl;
-    return;
-  }
-  auto root = this->scene->RootVisual();
+    // Scene
+    scene = this->engine->SceneByName(this->sceneName);
+    if (!scene)
+    {
+      error = "Scene \"" + this->sceneName
+             + "\" not found, plugin won't work.";
+      ignwarn << error << std::endl;
+    }
+    else
+    {
+      auto root = scene->RootVisual();
 
-  // Initial objs
-  for (const auto &g : objInfos)
-  {
-//    auto grid = this->scene->CreateObject();
-//    grid->SetCellCount(g.cellCount);
-//    grid->SetVerticalCellCount(g.vertCellCount);
-//    grid->SetCellLength(g.cellLength);
-//
-//    auto gridVis = this->scene->CreateVisual();
-//    root->AddChild(gridVis);
-//    gridVis->SetLocalPose(g.pose);
-//    gridVis->AddGeometry(grid);
-//
-//    auto mat = this->scene->CreateMaterial();
-//    mat->SetAmbient(g.color);
-//    gridVis->SetMaterial(mat);
+      // Initial objs
+      for (const auto &o : objInfos)
+      {
+    //    auto grid = scene->CreateObject();
+    //    grid->SetCellCount(o.cellCount);
+    //    grid->SetVerticalCellCount(o.vertCellCount);
+    //    grid->SetCellLength(o.cellLength);
+    //
+    //    auto gridVis = scene->CreateVisual();
+    //    root->AddChild(gridVis);
+    //    gridVis->SetLocalPose(o.pose);
+    //    gridVis->AddGeometry(grid);
+    //
+    //    auto mat = scene->CreateMaterial();
+    //    mat->SetAmbient(o.color);
+    //    gridVis->SetMaterial(mat);
+      }
+    }
   }
 
   // Don't waste time loading widgets if this will be deleted anyway
   if (this->DeleteLaterRequested())
     return;
+
+  if (!error.empty())
+  {
+    // Add message
+    auto msg = new QLabel(QString::fromStdString(error));
+
+    auto mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(msg);
+    mainLayout->setAlignment(msg, Qt::AlignCenter);
+    this->setLayout(mainLayout);
+
+    return;
+  }
+
 
   this->OnRefresh();
 }
@@ -205,6 +226,32 @@ void Object3DPlugin::OnRefresh()
     mainLayout->addWidget(buttonsWidget);
   }
 
+  auto scene = this->engine->SceneByName(this->sceneName);
+
+  // Scene has been destroyed
+  if (!scene)
+  {
+    // Delete buttons
+    auto item = mainLayout->takeAt(0);
+    if (item)
+    {
+      delete item->widget();
+      delete item;
+    }
+
+    // Add message
+    auto msg = new QLabel(QString::fromStdString(
+        "Scene \"" + this->sceneName + "\" has been destroyed.\n"
+        + "Create a new scene and then open a new plugin."));
+    mainLayout->addWidget(msg);
+    mainLayout->setAlignment(msg, Qt::AlignCenter);
+    return;
+  }
+
+  // Clear current list of objects
+  this->objs.clear();
+
+  // Update list
   this->Refresh();
 
   auto spacer = new QWidget();

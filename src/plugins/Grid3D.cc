@@ -99,7 +99,6 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Configuration
   std::string engineName{"ogre"};
-  std::string sceneName{"scene"};
   std::vector<ObjInfo> objInfos;
   if (_pluginElem)
   {
@@ -108,7 +107,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      sceneName = elem->GetText();
+      this->sceneName = elem->GetText();
 
     // For objs to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
@@ -144,47 +143,67 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
+  std::string error{""};
+  rendering::ScenePtr scene;
+
   // Render engine
-  auto engine = rendering::engine(engineName);
-  if (!engine)
+  this->engine = rendering::engine(engineName);
+  if (!this->engine)
   {
-    ignerr << "Engine [" << engineName << "] is not supported, "
-           << this->typeSingular << " plugin won't work." << std::endl;
-    return;
+    error = "Engine \"" + engineName
+           + "\" not supported, plugin won't work.";
+    ignwarn << error << std::endl;
   }
-
-  // Scene
-  this->scene = engine->SceneByName(sceneName);
-  if (!this->scene)
+  else
   {
-    ignerr << "Scene [" << sceneName << "] not found, "
-           << this->typeSingular << " plugin won't work."
-           << std::endl;
-    return;
-  }
-  auto root = this->scene->RootVisual();
+    // Scene
+    scene = this->engine->SceneByName(this->sceneName);
+    if (!scene)
+    {
+      error = "Scene \"" + this->sceneName
+             + "\" not found, plugin won't work.";
+      ignwarn << error << std::endl;
+    }
+    else
+    {
+      auto root = scene->RootVisual();
 
-  // Initial objs
-  for (const auto &g : objInfos)
-  {
-    auto grid = this->scene->CreateGrid();
-    grid->SetCellCount(g.cellCount);
-    grid->SetVerticalCellCount(g.vertCellCount);
-    grid->SetCellLength(g.cellLength);
+      // Initial objs
+      for (const auto &g : objInfos)
+      {
+        auto grid = scene->CreateGrid();
+        grid->SetCellCount(g.cellCount);
+        grid->SetVerticalCellCount(g.vertCellCount);
+        grid->SetCellLength(g.cellLength);
 
-    auto gridVis = this->scene->CreateVisual();
-    root->AddChild(gridVis);
-    gridVis->SetLocalPose(g.pose);
-    gridVis->AddGeometry(grid);
+        auto gridVis = scene->CreateVisual();
+        root->AddChild(gridVis);
+        gridVis->SetLocalPose(g.pose);
+        gridVis->AddGeometry(grid);
 
-    auto mat = this->scene->CreateMaterial();
-    mat->SetAmbient(g.color);
-    gridVis->SetMaterial(mat);
+        auto mat = scene->CreateMaterial();
+        mat->SetAmbient(g.color);
+        gridVis->SetMaterial(mat);
+      }
+    }
   }
 
   // Don't waste time loading widgets if this will be deleted anyway
   if (this->DeleteLaterRequested())
     return;
+
+  if (!error.empty())
+  {
+    // Add message
+    auto msg = new QLabel(QString::fromStdString(error));
+
+    auto mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(msg);
+    mainLayout->setAlignment(msg, Qt::AlignCenter);
+    this->setLayout(mainLayout);
+
+    return;
+  }
 
   this->OnRefresh();
 }
@@ -192,11 +211,14 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void Grid3D::Refresh()
 {
+  auto scene = this->engine->SceneByName(this->sceneName);
+  if (!scene)
+    return;
+
   // Search for all objs currently in the scene
-  //this->dataPtr->grids.clear();
-  for (unsigned int i = 0; i < this->scene->VisualCount(); ++i)
+  for (unsigned int i = 0; i < scene->VisualCount(); ++i)
   {
-    auto vis = this->scene->VisualByIndex(i);
+    auto vis = scene->VisualByIndex(i);
     if (!vis || vis->GeometryCount() == 0)
       continue;
 
@@ -296,7 +318,7 @@ bool Grid3D::Delete(const rendering::ObjectPtr &_obj)
   if (!derived)
     return false;
 
-  this->scene->DestroyVisual(derived->Parent());
+  derived->Scene()->DestroyVisual(derived->Parent());
 
   return true;
 }
@@ -304,19 +326,23 @@ bool Grid3D::Delete(const rendering::ObjectPtr &_obj)
 /////////////////////////////////////////////////
 void Grid3D::Add()
 {
-  auto root = this->scene->RootVisual();
+  auto scene = this->engine->SceneByName(this->sceneName);
+  if (!scene)
+    return;
 
-  auto obj = this->scene->CreateGrid();
+  auto root = scene->RootVisual();
+
+  auto obj = scene->CreateGrid();
   obj->SetCellCount(kDefaultCellCount);
   obj->SetVerticalCellCount(kDefaultVertCellCount);
   obj->SetCellLength(kDefaultCellLength);
 
-  auto objVis = this->scene->CreateVisual();
+  auto objVis = scene->CreateVisual();
   root->AddChild(objVis);
   objVis->SetLocalPose(kDefaultPose);
   objVis->AddGeometry(obj);
 
-  auto mat = this->scene->CreateMaterial();
+  auto mat = scene->CreateMaterial();
   mat->SetAmbient(kDefaultColor);
   objVis->SetMaterial(mat);
 }

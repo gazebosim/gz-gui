@@ -82,7 +82,6 @@ void Light3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Configuration
   std::string engineName{"ogre"};
-  std::string sceneName{"scene"};
   std::vector<ObjInfo> objInfos;
   if (_pluginElem)
   {
@@ -91,7 +90,7 @@ void Light3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      sceneName = elem->GetText();
+      this->sceneName = elem->GetText();
 
     // For objs to be inserted at startup
     for (auto insertElem = _pluginElem->FirstChildElement("insert");
@@ -118,37 +117,57 @@ void Light3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
+  std::string error{""};
+  rendering::ScenePtr scene;
+
   // Render engine
-  auto engine = rendering::engine(engineName);
-  if (!engine)
+  this->engine = rendering::engine(engineName);
+  if (!this->engine)
   {
-    ignerr << "Engine [" << engineName << "] is not supported, "
-           << this->typeSingular << " plugin won't work." << std::endl;
-    return;
+    error = "Engine \"" + engineName
+           + "\" not supported, plugin won't work.";
+    ignwarn << error << std::endl;
   }
-
-  // Scene
-  this->scene = engine->SceneByName(sceneName);
-  if (!this->scene)
+  else
   {
-    ignerr << "Scene [" << sceneName << "] not found, "
-           << this->typeSingular << " plugin won't work."
-           << std::endl;
-    return;
-  }
-  auto root = this->scene->RootVisual();
+    // Scene
+    scene = this->engine->SceneByName(this->sceneName);
+    if (!scene)
+    {
+      error = "Scene \"" + this->sceneName
+             + "\" not found, plugin won't work.";
+      ignwarn << error << std::endl;
+    }
+    else
+    {
+      auto root = scene->RootVisual();
 
-  // Initial objs
-  for (const auto &g : objInfos)
-  {
-    auto obj = this->scene->CreateDirectionalLight();
-    obj->SetDiffuseColor(g.color);
-    root->AddChild(obj);
+      // Initial objs
+      for (const auto &g : objInfos)
+      {
+        auto obj = scene->CreateDirectionalLight();
+        obj->SetDiffuseColor(g.color);
+        root->AddChild(obj);
+      }
+    }
   }
 
   // Don't waste time loading widgets if this will be deleted anyway
   if (this->DeleteLaterRequested())
     return;
+
+  if (!error.empty())
+  {
+    // Add message
+    auto msg = new QLabel(QString::fromStdString(error));
+
+    auto mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(msg);
+    mainLayout->setAlignment(msg, Qt::AlignCenter);
+    this->setLayout(mainLayout);
+
+    return;
+  }
 
   this->OnRefresh();
 }
@@ -156,10 +175,14 @@ void Light3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void Light3D::Refresh()
 {
+  auto scene = this->engine->SceneByName(this->sceneName);
+  if (!scene)
+    return;
+
   // Search for all objs currently in the scene
-  for (unsigned int i = 0; i < this->scene->LightCount(); ++i)
+  for (unsigned int i = 0; i < scene->LightCount(); ++i)
   {
-    auto obj = this->scene->LightByIndex(i);
+    auto obj = scene->LightByIndex(i);
     if (!obj)
       continue;
 
@@ -220,7 +243,7 @@ bool Light3D::Delete(const rendering::ObjectPtr &_obj)
   if (!derived)
     return false;
 
-//  this->scene->DestroyNode(derived);
+//  derived->Scene()->DestroyNode(derived);
 
   return true;
 }
@@ -228,9 +251,13 @@ bool Light3D::Delete(const rendering::ObjectPtr &_obj)
 /////////////////////////////////////////////////
 void Light3D::Add()
 {
-  auto root = this->scene->RootVisual();
+  auto scene = this->engine->SceneByName(this->sceneName);
+  if (!scene)
+    return;
 
-  auto obj = this->scene->CreateDirectionalLight();
+  auto root = scene->RootVisual();
+
+  auto obj = scene->CreateDirectionalLight();
   obj->SetDiffuseColor(kDefaultColor);
   root->AddChild(obj);
 }
