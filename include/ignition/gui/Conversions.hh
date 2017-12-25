@@ -47,13 +47,13 @@ namespace ignition
     math::Color convert(const QColor &_color);
 
     /// \brief Return the equivalent QPointF.
-    /// \param[in] _point Ignition vector to convert.
+    /// \param[in] _pt Ignition vector to convert.
     /// \return QPointF.
     IGNITION_GUI_VISIBLE
     QPointF convert(const math::Vector2d &_pt);
 
     /// \brief Return the equivalent ignition vector.
-    /// \param[in] _color QPointF to convert
+    /// \param[in] _pt QPointF to convert
     /// \return Ignition Vector2d.
     IGNITION_GUI_VISIBLE
     math::Vector2d convert(const QPointF &_pt);
