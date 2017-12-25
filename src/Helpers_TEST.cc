@@ -120,22 +120,23 @@ TEST(HelpersTest, findFirstByProperty)
 
   // Construct a list
   auto w0 = new QWidget();
-  w0->setProperty("banana", true);
+  w0->setProperty("banana", 1.0);
 
   auto w1 = new QWidget();
-  w1->setProperty("banana", false);
+  w1->setProperty("banana", 2.0);
 
   auto w2 = new QWidget();
-  w2->setProperty("banana", true);
+  w2->setProperty("banana", 1.0);
 
   QList<QWidget *> list;
   list.append(w0);
   list.append(w1);
   list.append(w2);
 
-  EXPECT_EQ(findFirstByProperty(list, "banana", true), w0);
-  EXPECT_EQ(findFirstByProperty(list, "banana", false), w1);
-  EXPECT_EQ(findFirstByProperty(list, "acerola", true), nullptr);
+  EXPECT_EQ(findFirstByProperty(list, "banana", 1.0), w0);
+  EXPECT_EQ(findFirstByProperty(list, "banana", 2.0), w1);
+  EXPECT_EQ(findFirstByProperty(list, "banana", 3.0), nullptr);
+  EXPECT_EQ(findFirstByProperty(list, "acerola", 1.0), nullptr);
 
   EXPECT_TRUE(stop());
 }

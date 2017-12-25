@@ -82,7 +82,7 @@ namespace ignition
       /// \brief Get the value of the the `delete_later` attribute from the
       /// configuration file, which defaults to false.
       /// \return The value of `delete_later`.
-      public: bool DeleteLaterRequested();
+      public: bool DeleteLaterRequested() const;
 
       /// \brief Show context menu
       /// \param [in] _pos Click position
@@ -93,7 +93,7 @@ namespace ignition
 
       /// \brief Wait until the plugin has a parent, then close and delete the
       /// parent.
-      protected: void DeleteLater();
+      protected: void DeleteLater() const;
 
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";

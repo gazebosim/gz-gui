@@ -131,7 +131,7 @@ void Plugin::changeEvent(QEvent *_e)
 }
 
 /////////////////////////////////////////////////
-void Plugin::DeleteLater()
+void Plugin::DeleteLater() const
 {
   this->dataPtr->deleteLaterRequested = true;
   if (this->parent())
@@ -145,7 +145,7 @@ void Plugin::DeleteLater()
 }
 
 /////////////////////////////////////////////////
-bool Plugin::DeleteLaterRequested()
+bool Plugin::DeleteLaterRequested() const
 {
   return this->dataPtr->deleteLaterRequested;
 }
