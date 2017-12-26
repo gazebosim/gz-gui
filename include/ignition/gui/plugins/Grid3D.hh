@@ -40,19 +40,20 @@ namespace plugins
   ///
   /// ## Configuration
   ///
-  /// * <engine> : Optional render engine name, defaults to 'ogre'.
-  /// * <scene> : Optional scene name, defaults to 'scene'. If a scene with the
-  ///             given name doesn't exist, the plugin is not initialized.
-  /// * <auto_close> : Set to true so the plugin closes after grids given by
-  ///                  <insert> tags are added to the scene.
-  /// * <insert> : One grid will be inserted at startup for each <insert> tag.
-  ///   * <cell_count> : Number of cells in the horizontal direction, defaults
-  ///                    to 20.
-  ///   * <vertical_cell_count> : Number of cells in the vertical direction,
-  ///                             defaults to 0;
-  ///   * <cell_length> : Length of each cell, defaults to 1.
-  ///   * <pose> : Grid pose, defaults to the origin.
-  ///   * <color> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
+  /// * \<engine\> : Optional render engine name, defaults to 'ogre'.
+  /// * \<scene\> : Optional scene name, defaults to 'scene'. If a scene with
+  ///               the given name doesn't exist, the plugin is not initialized.
+  /// * \<auto_close\> : Set to true so the plugin closes after grids given by
+  ///                    \<insert\> tags are added to the scene.
+  /// * \<insert\> : One grid will be inserted at startup for each \<insert\>
+  ///                tag.
+  ///   * \<cell_count\> : Number of cells in the horizontal direction, defaults
+  ///                      to 20.
+  ///   * \<vertical_cell_count\> : Number of cells in the vertical direction,
+  ///                               defaults to 0;
+  ///   * \<cell_length\> : Length of each cell, defaults to 1.
+  ///   * \<pose\> : Grid pose, defaults to the origin.
+  ///   * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
   class Grid3D : public Plugin
   {
     Q_OBJECT

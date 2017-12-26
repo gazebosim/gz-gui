@@ -17,6 +17,8 @@
 
 #include <gtest/gtest.h>
 #include <ignition/common/Console.hh>
+#include <ignition/math/Color.hh>
+#include <ignition/math/Pose3.hh>
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/Iface.hh"

@@ -63,7 +63,7 @@ namespace ignition
     /// \brief Load a plugin from a file name. The plugin file must be in the
     /// path.
     /// \param[in] _filename Plugin filename.
-    /// \param[in[ _pluginElem Element containing plugin configuration
+    /// \param[in] _pluginElem Element containing plugin configuration
     /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool loadPlugin(const std::string &_filename,

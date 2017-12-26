@@ -69,7 +69,7 @@ namespace ignition
       /// \sa Load
       /// \param[in] _pluginElem Element containing configuration
       protected: virtual void LoadConfig(
-          const tinyxml2::XMLElement */*_pluginElem*/) {}
+          const tinyxml2::XMLElement *_pluginElem) {_pluginElem;}
 
       /// \brief Get title
       /// \return Plugin title.
@@ -82,7 +82,7 @@ namespace ignition
       /// \brief Get the value of the the `delete_later` attribute from the
       /// configuration file, which defaults to false.
       /// \return The value of `delete_later`.
-      public: bool DeleteLaterRequested();
+      public: bool DeleteLaterRequested() const;
 
       /// \brief Show context menu
       /// \param [in] _pos Click position

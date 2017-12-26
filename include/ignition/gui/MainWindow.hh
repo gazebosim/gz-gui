@@ -87,13 +87,13 @@ namespace ignition
       /// \brief Update this config from an XML string. Only fields present on
       /// the XML will be overriden / created.
       /// \param[in] _windowXml XML window element in string format, it should
-      /// include the <window> tag, no only its child elements.
+      /// include the \<window\> tag, no only its child elements.
       /// \return True if successful. It may fail for example if the string
       /// can't be parsed into XML.
       bool MergeFromXML(const std::string &_windowXml);
 
       /// \brief Return this configuration in XML format as a string.
-      /// \return String containing a <window> element.
+      /// \return String containing a \<window\> element.
       std::string XMLString() const;
 
       /// \brief Window X position in px

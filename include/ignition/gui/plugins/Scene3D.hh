@@ -39,16 +39,16 @@ namespace plugins
   ///
   /// ## Configuration
   ///
-  /// * <engine> : Optional render engine name, defaults to 'ogre'.
-  /// * <scene> : Optional scene name, defaults to 'scene'. The plugin will
-  ///              create a scene with this name if there isn't one yet. If
-  ///              there is already one, a new camera is added to it.
-  /// * <ambient_light> : Optional color for ambient light, defaults to
-  ///                    (0.3, 0.3, 0.3, 1.0)
-  /// * <background_color> : Optional background color, defaults to
+  /// * \<engine\> : Optional render engine name, defaults to 'ogre'.
+  /// * \<scene\> : Optional scene name, defaults to 'scene'. The plugin will
+  ///               create a scene with this name if there isn't one yet. If
+  ///               there is already one, a new camera is added to it.
+  /// * \<ambient_light\> : Optional color for ambient light, defaults to
   ///                       (0.3, 0.3, 0.3, 1.0)
-  /// * <camera_pose> : Optional starting pose for the camera, defaults to
-  ///                 (0, 0, 5, 0, 0, 0)
+  /// * \<background_color\> : Optional background color, defaults to
+  ///                          (0.3, 0.3, 0.3, 1.0)
+  /// * \<camera_pose\> : Optional starting pose for the camera, defaults to
+  ///                     (0, 0, 5, 0, 0, 0)
   class Scene3D : public Plugin
   {
     Q_OBJECT
@@ -63,8 +63,8 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Retrieve the first point in the 3D scene hit by a ray cast from
-    /// the given 2D screen coordinates.
+    /// \brief Retrieve the first point on a surface in the 3D scene hit by a
+    /// ray cast from the given 2D screen coordinates.
     /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
     /// \return 3D coordinates of a point in the 3D scene.
     public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
