@@ -19,6 +19,8 @@
 #define IGNITION_GUI_OBJECT3DPLUGIN_HH_
 
 #include <memory>
+#include <string>
+#include <vector>
 #include <ignition/rendering/RenderTypes.hh>
 
 #include "ignition/gui/qt.h"
@@ -31,28 +33,8 @@ namespace gui
   class Object3DPluginPrivate;
   class PropertyWidget;
 
-  /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
-  /// used for:
-  /// * Adding grids
-  /// * Introspecting grids
-  /// * Editing grids
-  /// * Deleting grids
-  ///
-  /// ## Configuration
-  ///
-  /// <engine> : Optional render engine name, defaults to 'ogre'.
-  /// <scene> : Optional scene name, defaults to 'scene'. If a scene with the
-  ///           given name doesn't exist, the plugin is not initialized.
-  /// <auto_close> : Set to true so the plugin closes after grids given by
-  ///                <insert> tags are added to the scene.
-  /// <insert> : One grid will be inserted at startup for each <insert> tag.
-  /// * <cell_count> : Number of cells in the horizontal direction, defaults
-  ///                  to 20.
-  /// * <vertical_cell_count> : Number of cells in the vertical direction,
-  ///                           defaults to 0;
-  /// * <cell_length> : Length of each cell, defaults to 1.
-  /// * <pose> : Object pose, defaults to the origin.
-  /// * <color> : Object color, defaults to (0.7, 0.7, 0.7, 1.0)
+  /// \brief Base class for plugins which provide a CRUD
+  /// (create-read-update-delete) interface to 3D rendering objects.
   class Object3DPlugin : public Plugin
   {
     Q_OBJECT
@@ -67,20 +49,29 @@ namespace gui
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief
+    /// \brief Delete the passed object.
+    /// \param[in] _obj Object to be deleted.
+    /// \result True if successful.
     protected: virtual bool Delete(const rendering::ObjectPtr &_obj) = 0;
 
-    /// \brief
-    protected: virtual void Add() = 0;
+    /// \brief Add an object with default parameters to the scene.
+    /// \result True if successful.
+    protected: virtual bool Add() = 0;
 
-    /// \brief
+    /// \brief Handle a user request to change a property of a given object.
+    /// \param[in] _obj Object to be changed.
+    /// \param[in] _property Name of property to be changed.
+    /// \param[in] _value New value for the property.
+    /// \result True if successful.
     protected: virtual bool Change(const rendering::ObjectPtr &_obj,
         const std::string &_property, const QVariant &_value) = 0;
 
-    /// \brief
+    /// \brief Refresh the widgets listing all objects in the scene.
     protected: virtual void Refresh() = 0;
 
-    /// \brief
+    /// \brief Append an object to the internal list of objects.
+    /// \param[in] _obj Object to be added.
+    /// \param[in] _props Vector of property widgets.
     protected: void AppendObj(const rendering::ObjectPtr &_obj,
         const std::vector<PropertyWidget *> _props);
 

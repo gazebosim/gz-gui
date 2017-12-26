@@ -324,11 +324,11 @@ bool Grid3D::Delete(const rendering::ObjectPtr &_obj)
 }
 
 /////////////////////////////////////////////////
-void Grid3D::Add()
+bool Grid3D::Add()
 {
   auto scene = this->engine->SceneByName(this->sceneName);
   if (!scene)
-    return;
+    return false;
 
   auto root = scene->RootVisual();
 
@@ -345,6 +345,8 @@ void Grid3D::Add()
   auto mat = scene->CreateMaterial();
   mat->SetAmbient(kDefaultColor);
   objVis->SetMaterial(mat);
+
+  return true;
 }
 
 // Register this plugin

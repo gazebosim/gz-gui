@@ -19,6 +19,7 @@
 #define IGNITION_GUI_PLUGINS_GEOMETRY3D_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Object3DPlugin.hh"
@@ -72,9 +73,9 @@ namespace plugins
         override;
 
     // Documentation inherited
-    protected: virtual void Add() override;
+    protected: virtual bool Add() override;
 
-    /// \brief
+    // Documentation inherited
     protected: virtual bool Change(const rendering::ObjectPtr &_obj,
         const std::string &_property, const QVariant &_value) override;
 

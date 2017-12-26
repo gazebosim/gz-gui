@@ -249,17 +249,19 @@ bool Light3D::Delete(const rendering::ObjectPtr &_obj)
 }
 
 /////////////////////////////////////////////////
-void Light3D::Add()
+bool Light3D::Add()
 {
   auto scene = this->engine->SceneByName(this->sceneName);
   if (!scene)
-    return;
+    return false;
 
   auto root = scene->RootVisual();
 
   auto obj = scene->CreateDirectionalLight();
   obj->SetDiffuseColor(kDefaultColor);
   root->AddChild(obj);
+
+  return true;
 }
 
 // Register this plugin

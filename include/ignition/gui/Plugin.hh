@@ -79,7 +79,7 @@ namespace ignition
       /// \return True if it is displayed
       public: virtual bool HasTitlebar() {return this->hasTitlebar;}
 
-      /// \brief Get the value of the the `delete_later` attribute on the
+      /// \brief Get the value of the the `delete_later` attribute from the
       /// configuration file, which defaults to false.
       /// \return The value of `delete_later`.
       public: bool DeleteLaterRequested() const;
