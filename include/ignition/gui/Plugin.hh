@@ -93,7 +93,7 @@ namespace ignition
 
       /// \brief Wait until the plugin has a parent, then close and delete the
       /// parent.
-      protected: void DeleteLater() const;
+      protected: void DeleteLater();
 
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";
