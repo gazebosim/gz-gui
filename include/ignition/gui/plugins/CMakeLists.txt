@@ -1,8 +1,10 @@
 set (qt_headers_local
+  Grid3D
   ImageDisplay
   Publisher
   Requester
   Responder
+  Scene3D
   TimePanel
   TopicEcho
   TopicInterface
@@ -22,6 +24,7 @@ foreach (src ${qt_headers_local})
     ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}
     ${IGNITION-MSGS_LIBRARIES}
+    ${IGNITION-RENDERING_LIBRARIES}
     ${IGNITION-TRANSPORT_LIBRARIES}
     ${Qt5Core_LIBRARIES}
     ${Qt5Widgets_LIBRARIES})

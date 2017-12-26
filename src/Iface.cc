@@ -583,6 +583,15 @@ bool ignition::gui::addPluginsToWindow()
   {
     auto plugin = g_pluginsToAdd.front();
 
+    g_pluginsAdded.push_back(plugin);
+    g_pluginsToAdd.pop();
+
+    if (plugin->DeleteLaterRequested())
+    {
+      removeAddedPlugin(plugin);
+      continue;
+    }
+
     auto title = QString::fromStdString(plugin->Title());
     auto dock = new Dock();
     dock->setParent(g_mainWin);
@@ -601,9 +610,6 @@ bool ignition::gui::addPluginsToWindow()
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
-
-    g_pluginsAdded.push_back(plugin);
-    g_pluginsToAdd.pop();
 
     g_mainWin->connect(dock, &Dock::Closing, [plugin]
     {

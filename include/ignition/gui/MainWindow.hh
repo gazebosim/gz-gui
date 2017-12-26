@@ -93,7 +93,7 @@ namespace ignition
       bool MergeFromXML(const std::string &_windowXml);
 
       /// \brief Return this configuration in XML format as a string.
-      /// \return String containing a <window> element.
+      /// \return String containing a \<window\> element.
       std::string XMLString() const;
 
       /// \brief Window X position in px

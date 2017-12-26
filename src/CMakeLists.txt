@@ -29,33 +29,44 @@ set (sources
 )
 
 set (gtest_sources
-  BoolWidget_TEST.cc
-  ColorWidget_TEST.cc
-  CollapsibleWidget_TEST.cc
-  Conversions_TEST.cc
-  DragDropModel_TEST.cc
-  EditableLabel_TEST.cc
-  EnumWidget_TEST.cc
-  GeometryWidget_TEST.cc
-  Helpers_TEST.cc
-  Iface_TEST.cc
-  MainWindow_TEST.cc
-  MessageWidget_TEST.cc
-  NumberWidget_TEST.cc
-  Pose3dWidget_TEST.cc
-  SearchModel_TEST.cc
-  StringWidget_TEST.cc
-  VariablePillContainer_TEST.cc
-  Vector3dWidget_TEST.cc
+  BoolWidget_TEST
+  ColorWidget_TEST
+  CollapsibleWidget_TEST
+  Conversions_TEST
+  DragDropModel_TEST
+  EditableLabel_TEST
+  EnumWidget_TEST
+  GeometryWidget_TEST
+  Helpers_TEST
+  Iface_TEST
+  MainWindow_TEST
+  MessageWidget_TEST
+  NumberWidget_TEST
+  Plugin_TEST
+  Pose3dWidget_TEST
+  SearchModel_TEST
+  StringWidget_TEST
+  VariablePillContainer_TEST
+  Vector3dWidget_TEST
 )
 
+foreach(src ${gtest_sources})
+  set(gtest_cc ${gtest_cc} ${src}.cc)
+endforeach()
+
 if (HAVE_IGN_TOOLS)
-  set (gtest_sources ${gtest_sources}
+  set (gtest_cc ${gtest_sources}
     ign_TEST.cc
   )
 endif()
 
-ign_build_tests(TYPE UNIT SOURCES ${gtest_sources})
+ign_build_tests(TYPE UNIT
+                SOURCES ${gtest_sources}
+                LIB_DEPS ${IGNITION-MATH_LIBRARIES})
+
+foreach(src ${gtest_sources})
+  target_link_libraries(UNIT_${src} TINYXML2::TINYXML2)
+endforeach()
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)

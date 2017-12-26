@@ -69,6 +69,18 @@ else()
 endif()
 
 #--------------------------------------
+# Find ignition-rendering
+find_package(ignition-rendering0 QUIET)
+if (NOT ignition-rendering0_FOUND)
+  ign_build_error("Missing: Ignition Rendering libignition-rendering0-dev.")
+else()
+  message (STATUS "Found Ignition Rendering 0")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-RENDERING_CXX_FLAGS}")
+  include_directories(${IGNITION-RENDERING_INCLUDE_DIRS})
+  link_directories(${IGNITION-RENDERING_LIBRARY_DIRS})
+endif()
+
+#--------------------------------------
 # Find ignition-msgs
 set(IGN_MSGS_VER 1)
 ign_find_package(ignition-msgs${IGN_MSGS_VER} REQUIRED)

@@ -2,10 +2,12 @@
 # shared libraries
 
 set (gtest_local_sources
+  Grid3D_TEST
   ImageDisplay_TEST
   Publisher_TEST
   Requester_TEST
   Responder_TEST
+  Scene3D_TEST
   TimePanel_TEST
   TopicEcho_TEST
   TopicInterface_TEST
@@ -19,6 +21,7 @@ endforeach()
 
 ign_build_tests(TYPE UNIT
   SOURCES ${gtest_local_cc}
+  LIB_DEPS ${IGNITION-RENDERING_LIBRARIES}
   INCLUDE_DIRS
     # Used to make internal source file headers visible to the unit tests
     ${CMAKE_CURRENT_SOURCE_DIR}
