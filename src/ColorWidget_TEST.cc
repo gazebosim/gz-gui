@@ -19,6 +19,7 @@
 
 #include <ignition/msgs.hh>
 #include <ignition/common/Console.hh>
+#include <ignition/math/Color.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
