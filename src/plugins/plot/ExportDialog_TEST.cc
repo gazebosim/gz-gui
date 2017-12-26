@@ -254,7 +254,6 @@ TEST(ExportDialogTest, exportPDF)
   EXPECT_TRUE(stop());
 }
 
-// ToDo: Fix the exception on destruction.
 /////////////////////////////////////////////////
 TEST(ExportDialogTest, exportCSV)
 {
@@ -277,8 +276,6 @@ TEST(ExportDialogTest, exportCSV)
   std::string var = std::string("var01");
   plotCanvas->AddVariable(var, index);
   plotCanvas->SetVariableLabel(index, "test");
-
-  // std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
   // Export the plot to pdf
   plotCanvas->Export(newTempDir, FileType::CSVFile);

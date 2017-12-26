@@ -26,6 +26,7 @@ using namespace gui;
 using namespace plugins;
 using namespace plot;
 
+// ToDo: Fix segfault
 /////////////////////////////////////////////////
 TEST(PlotTest, Load)
 {

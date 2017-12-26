@@ -157,7 +157,7 @@ namespace plot
   class TopicCurveHandlerPrivate
   {
     /// \brief A map of unique topics to topic curves.
-    public: std::map<std::string, TopicCurve *> topics;
+    public: std::map<std::string, std::unique_ptr<TopicCurve>> topics;
   };
 }
 }
@@ -572,14 +572,14 @@ TopicCurveHandler::TopicCurveHandler()
 /////////////////////////////////////////////////
 TopicCurveHandler::~TopicCurveHandler()
 {
-  while (!this->dataPtr->topics.empty())
-  {
-    auto it = this->dataPtr->topics.begin();
-    delete it->second;
-    this->dataPtr->topics.erase(it);
-  }
+  // while (!this->dataPtr->topics.empty())
+  // {
+  //   auto it = this->dataPtr->topics.begin();
+  //   delete it->second;
+  //   this->dataPtr->topics.erase(it);
+  // }
 
-  this->dataPtr->topics.clear();
+  // this->dataPtr->topics.clear();
 }
 
 /////////////////////////////////////////////////
@@ -603,12 +603,12 @@ void TopicCurveHandler::AddCurve(const std::string &_name, CurveWeakPtr _curve)
   auto topicCurveIt = this->dataPtr->topics.find(topicPathStr);
   if (topicCurveIt == this->dataPtr->topics.end())
   {
-    TopicCurve *topicCurve = new TopicCurve(topicPathStr);
+    std::unique_ptr<TopicCurve> topicCurve{new TopicCurve(topicPathStr)};
     bool result = topicCurve->AddCurve(uriName, _curve);
     if (result)
-      this->dataPtr->topics[topicPathStr] = topicCurve;
-    else
-      delete topicCurve;
+      this->dataPtr->topics[topicPathStr] = std::move(topicCurve);
+    // else
+    //   delete topicCurve;
   }
   else
   {
@@ -620,14 +620,14 @@ void TopicCurveHandler::AddCurve(const std::string &_name, CurveWeakPtr _curve)
 void TopicCurveHandler::RemoveCurve(CurveWeakPtr _curve)
 {
   for (auto it = this->dataPtr->topics.begin();
-      it !=this->dataPtr->topics.end(); ++it)
+            it !=this->dataPtr->topics.end(); ++it)
   {
     if (it->second->HasCurve(_curve))
     {
       it->second->RemoveCurve(_curve);
       if (it->second->CurveCount() == 0)
       {
-        delete it->second;
+        // delete it->second;
         this->dataPtr->topics.erase(it);
       }
       break;
