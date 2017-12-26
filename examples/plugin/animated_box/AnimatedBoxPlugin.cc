@@ -20,6 +20,8 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/common/KeyFrame.hh>
 #include <ignition/math/Pose3.hh>
+#include <ignition/math/Quaterniond.hh>
+#include <ignition/math/Vector3.hh>
 #include <ignition/rendering.hh>
 
 #include "AnimatedBoxPlugin.hh"
