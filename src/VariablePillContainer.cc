@@ -121,12 +121,7 @@ void VariablePillContainer::SetVariablePillLabel(const unsigned int _id,
     variable = it->second;
 
   if (variable)
-  {
-    std::cout << "Setting test " << _label << std::endl;
     variable->SetText(_label);
-  }
-  else
-    std::cerr << "Not found!" << std::endl;
 }
 
 /////////////////////////////////////////////////

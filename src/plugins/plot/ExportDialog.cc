@@ -128,6 +128,7 @@ class PlotViewDelegate : public QStyledItemDelegate
   /// \brief Size hint tells QT how big an item is.
   /// \param[in] _option Style options
   /// \param[in] _index Item model index
+  /// \return The item's size.
   public: QSize sizeHint(const QStyleOptionViewItem &_option,
                          const QModelIndex &_index) const
           {
