@@ -57,7 +57,8 @@ if (HAVE_IGN_TOOLS)
   )
 endif()
 
-ign_build_tests(SOURCES ${gtest_sources})
+ign_build_tests(SOURCES ${gtest_sources}
+                LIB_DEPS ${IGNITION-MATH_LIBRARIES})
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)

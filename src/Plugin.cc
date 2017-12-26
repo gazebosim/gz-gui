@@ -145,7 +145,7 @@ void Plugin::DeleteLater()
 }
 
 /////////////////////////////////////////////////
-bool Plugin::DeleteLaterRequested()
+bool Plugin::DeleteLaterRequested() const
 {
   return this->dataPtr->deleteLaterRequested;
 }
