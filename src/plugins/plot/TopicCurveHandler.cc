@@ -27,9 +27,11 @@
 #include <ignition/msgs.hh>
 #include <ignition/transport.hh>
 
+#include "ignition/gui/Conversions.hh"
 #include "ignition/gui/plugins/plot/Curve.hh"
-#include "ignition/gui/plugins/plot/TopicCurveHandler.hh"
 #include "ignition/gui/plugins/plot/Types.hh"
+
+#include "ignition/gui/plugins/plot/TopicCurveHandler.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -123,16 +125,6 @@ namespace plot
                 const int _index, const double _x,
                 std::vector<std::pair<TopicCurve::CurveVariableMapIt,
                     ignition::math::Vector2d> > &_curvesUpdates);
-
-    /// \brief Convert an ignition::msgs::Time to an ignition::common::Time
-    /// \param[in] _t The time to convert
-    /// \return An ignition::common::Time object
-    public: ignition::common::Time Convert(const ignition::msgs::Time &_t);
-
-    /// \brief Convert an ignition::common::Time to an ignition::msgs::Time
-    /// \param[in] _t The time to convert
-    /// \return An ignition::msgs::Time object
-    public: ignition::msgs::Time Convert(const ignition::common::Time &_t);
 
     /// \brief Topic name
     private: std::string topic;
@@ -351,22 +343,6 @@ void TopicCurve::OnTopicData(const google::protobuf::Message &_msg,
 }
 
 /////////////////////////////////////////////////
-ignition::common::Time TopicCurve::Convert(const ignition::msgs::Time &_t)
-{
-  ignition::common::Time result(_t.sec(), _t.nsec());
-  return result;
-}
-
-/////////////////////////////////////////////////
-ignition::msgs::Time TopicCurve::Convert(const ignition::common::Time &_t)
-{
-  ignition::msgs::Time result;
-  result.set_sec(_t.sec);
-  result.set_nsec(_t.nsec);
-  return result;
-}
-
-/////////////////////////////////////////////////
 void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
     const int _index, const double x,
     std::vector<std::pair<TopicCurve::CurveVariableMapIt,
@@ -410,7 +386,7 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
         ignition::msgs::Time *msg = dynamic_cast<msgs::Time *>(valueMsg);
         if (msg)
         {
-          ignition::common::Time time = this->Convert(*msg);
+          ignition::common::Time time = convert(*msg);
           xData = time.Double();
         }
       }
@@ -488,7 +464,7 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
             if (!msg)
               continue;
 
-             common::Time time = this->Convert(*msg);
+             common::Time time = convert(*msg);
              data = time.Double();
           }
           else if (field->message_type()->name() == "Vector3d")
