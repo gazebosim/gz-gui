@@ -32,7 +32,6 @@ namespace ignition
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _parent Parent widget
       public: HelloPlugin();
 
       /// \brief Destructor

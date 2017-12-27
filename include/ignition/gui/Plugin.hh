@@ -18,6 +18,7 @@
 #define IGNITION_GUI_PLUGIN_HH_
 
 #include <tinyxml2.h>
+#include <memory>
 #include <string>
 
 #include <ignition/common/PluginMacros.hh>
@@ -29,16 +30,20 @@ namespace ignition
 {
   namespace gui
   {
+    class PluginPrivate;
+
     /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Plugin
-        : public QWidget
+    class IGNITION_GUI_VISIBLE Plugin : public QWidget
     {
       Q_OBJECT
 
       public: IGN_COMMON_SPECIALIZE_INTERFACE(ignition::gui::Plugin)
 
       /// \brief Constructor
-      public: Plugin() {}
+      public: Plugin();
+
+      /// \brief Destructor
+      public: virtual ~Plugin();
 
       /// \brief Load the plugin with a configuration file.
       /// This loads the default parameters and then calls LoadConfig(), which
@@ -64,7 +69,7 @@ namespace ignition
       /// \sa Load
       /// \param[in] _pluginElem Element containing configuration
       protected: virtual void LoadConfig(
-          const tinyxml2::XMLElement */*_pluginElem*/) {}
+          const tinyxml2::XMLElement *_pluginElem) {_pluginElem;}
 
       /// \brief Get title
       /// \return Plugin title.
@@ -74,9 +79,21 @@ namespace ignition
       /// \return True if it is displayed
       public: virtual bool HasTitlebar() {return this->hasTitlebar;}
 
+      /// \brief Get the value of the the `delete_later` attribute from the
+      /// configuration file, which defaults to false.
+      /// \return The value of `delete_later`.
+      public: bool DeleteLaterRequested() const;
+
       /// \brief Show context menu
       /// \param [in] _pos Click position
       protected slots: virtual void ShowContextMenu(const QPoint &_pos);
+
+      // Documentation inherited
+      protected: void changeEvent(QEvent *_e) override;
+
+      /// \brief Wait until the plugin has a parent, then close and delete the
+      /// parent.
+      protected: void DeleteLater();
 
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";
@@ -86,6 +103,10 @@ namespace ignition
 
       /// \brief XML configuration
       protected: std::string configStr;
+
+      /// \internal
+      /// \brief Pointer to private data
+      private: std::unique_ptr<PluginPrivate> dataPtr;
     };
   }
 }
