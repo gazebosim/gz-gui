@@ -20,68 +20,70 @@
 #include "ignition/gui/plugins/plot/Plot.hh"
 #include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/Iface.hh"
+#include "ignition/gui/MainWindow.hh"
 
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
 using namespace plot;
 
-// ToDo: Fix segfault
 /////////////////////////////////////////////////
 TEST(PlotTest, Load)
 {
-  EXPECT_TRUE(initApp());
+  setVerbosity(4);
+  ASSERT_TRUE(initApp());
 
+  // Load plugin
   EXPECT_TRUE(loadPlugin("Plot"));
 
-  // Create a new plot window widget
-  Plot *plotWindow = new Plot();
-  ASSERT_NE(nullptr, plotWindow);
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  ASSERT_NE(nullptr, win);
 
-  plotWindow->show();
+  // Get plot plugin
+  auto plotWidget = win->findChild<Plot *>();
+  ASSERT_NE(nullptr, plotWidget);
 
   // there should be an empty canvas
-  EXPECT_EQ(1u, plotWindow->CanvasCount());
+  EXPECT_EQ(1u, plotWidget->CanvasCount());
 
   // add canvas
-  Canvas *canvas01 = plotWindow->AddCanvas();
+  Canvas *canvas01 = plotWidget->AddCanvas();
   ASSERT_NE(nullptr, canvas01);
-  EXPECT_EQ(2u, plotWindow->CanvasCount());
+  EXPECT_EQ(2u, plotWidget->CanvasCount());
 
-  Canvas *canvas02 = plotWindow->AddCanvas();
+  Canvas *canvas02 = plotWidget->AddCanvas();
   ASSERT_NE(nullptr, canvas02);
-  EXPECT_EQ(3u, plotWindow->CanvasCount());
+  EXPECT_EQ(3u, plotWidget->CanvasCount());
 
-  Canvas *canvas03 = plotWindow->AddCanvas();
+  Canvas *canvas03 = plotWidget->AddCanvas();
   ASSERT_NE(nullptr, canvas03);
-  EXPECT_EQ(4u, plotWindow->CanvasCount());
+  EXPECT_EQ(4u, plotWidget->CanvasCount());
 
   // remove canvas
-  plotWindow->RemoveCanvas(canvas01);
-  EXPECT_EQ(3u, plotWindow->CanvasCount());
+  plotWidget->RemoveCanvas(canvas01);
+  EXPECT_EQ(3u, plotWidget->CanvasCount());
 
-  plotWindow->RemoveCanvas(canvas02);
-  EXPECT_EQ(2u, plotWindow->CanvasCount());
+  plotWidget->RemoveCanvas(canvas02);
+  EXPECT_EQ(2u, plotWidget->CanvasCount());
 
   // remove already removed canvas
-  plotWindow->RemoveCanvas(canvas02);
-  EXPECT_EQ(2u, plotWindow->CanvasCount());
+  plotWidget->RemoveCanvas(canvas02);
+  EXPECT_EQ(2u, plotWidget->CanvasCount());
 
   // remove last canvas
-  plotWindow->RemoveCanvas(canvas03);
-  EXPECT_EQ(1u, plotWindow->CanvasCount());
+  plotWidget->RemoveCanvas(canvas03);
+  EXPECT_EQ(1u, plotWidget->CanvasCount());
 
   // check we can add more canvases
-  Canvas *canvas04 = plotWindow->AddCanvas();
+  Canvas *canvas04 = plotWidget->AddCanvas();
   ASSERT_NE(nullptr, canvas04);
-  EXPECT_EQ(2u, plotWindow->CanvasCount());
+  EXPECT_EQ(2u, plotWidget->CanvasCount());
 
   // clear canvases
-  plotWindow->Clear();
-  EXPECT_EQ(0u, plotWindow->CanvasCount());
-
-  plotWindow->hide();
-  delete plotWindow;
+  plotWidget->Clear();
+  EXPECT_EQ(0u, plotWidget->CanvasCount());
 
   EXPECT_TRUE(stop());
 }
