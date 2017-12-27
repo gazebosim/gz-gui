@@ -41,6 +41,9 @@ TEST(PlotTest, Load)
   auto win = mainWindow();
   ASSERT_NE(nullptr, win);
 
+  // Show, but don't exec, so we don't block
+  win->show();
+
   // Get plot plugin
   auto plotWidget = win->findChild<Plot *>();
   ASSERT_NE(nullptr, plotWidget);
