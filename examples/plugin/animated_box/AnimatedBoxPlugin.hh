@@ -39,7 +39,7 @@ namespace ignition
       public: virtual ~AnimatedBoxPlugin();
 
       /// \brief Timer for updates
-      private: QTimer *timer;
+      private: QTimer *timer{nullptr};
 
       /// \brief Current animation time
       private: double animTime{0.0};
