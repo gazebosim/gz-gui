@@ -1,15 +1,23 @@
 find_package(Doxygen)
 
-if (DOXYGEN_FOUND)
-  configure_file(${CMAKE_SOURCE_DIR}/doc/ignition.in
-                 ${CMAKE_BINARY_DIR}/ignition.dox @ONLY)
+set(IGNITION_DOXYGEN_TAGFILES
+  "\"${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=http://doc.qt.io/qt-5/\" \
+   \"${IGNITION-MATH_DOXYGEN_TAGFILE} = ${IGNITION-MATH_API_URL}\" \
+   \"${IGNITION-MSGS_DOXYGEN_TAGFILE} = ${IGNITION-MSGS_API_URL}\" \
+   \"${IGNITION-TRANSPORT_DOXYGEN_TAGFILE} = ${IGNITION-TRANSPORT_API_URL}\" \
+   \"${IGNITION-COMMON_DOXYGEN_TAGFILE} = ${IGNITION-COMMON_API_URL}\""
+)
 
-  configure_file(${CMAKE_SOURCE_DIR}/doc/tutorials.in
+if (DOXYGEN_FOUND)
+  configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
+                 ${CMAKE_BINARY_DIR}/api.dox @ONLY)
+
+  configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in
                  ${CMAKE_BINARY_DIR}/tutorials.dox @ONLY)
 
   add_custom_target(doc ALL
     # Generate the API documentation
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/ignition.dox
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/tutorials.dox
