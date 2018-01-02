@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,11 @@
 #include <ignition/msgs.hh>
 #include <ignition/transport.hh>
 
+#include "ignition/gui/Conversions.hh"
 #include "ignition/gui/plugins/plot/Curve.hh"
-#include "ignition/gui/plugins/plot/TopicCurveHandler.hh"
 #include "ignition/gui/plugins/plot/Types.hh"
+
+#include "ignition/gui/plugins/plot/TopicCurveHandler.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -44,37 +46,6 @@ namespace plugins
 {
 namespace plot
 {
-  /// \brief Time data for topic messages
-  /// Gazebo messages are not timestamped so as a workaround this class
-  /// tries to match the messages against the last sim time received.
-  /// WARNING: This produces plots with inaccurate x values!
-  /// A better solution is to properly timestamp the messages.
-  // class TopicTime : public ignition::common::SingletonT<TopicTime>
-  // {
-  //  /// \brief Initialize the topic time helper class.
-  //  public: void Init();
-//
-  //  /// \brief Get last sim time.
-  //  /// \return last sim time received.
-  //  public: common::Time LastSimTime();
-//
-  //  /// \brief Callback when world stats message is receieved.
-  //  /// \param[in] _msg WorldStats msg.
-  //  public: void OnStats(ConstWorldStatisticsPtr &_msg);
-//
-  //  /// \brief Node for communications.
-  //  private: transport::NodePtr node;
-//
-  //  /// \brief Mutex to protect the sime time updates.
-  //  private: std::mutex mutex;
-//
-  //  /// \brief Subscriber to specified topic
-  //  private: transport::SubscriberPtr subscriber;
-//
-  //  /// \brief Last sim time received.
-  //  private: common::Time lastSimTime;
-  //  };
-
   /// \brief Helper class to update curves associated with a single topic
   class TopicCurve
   {
@@ -124,16 +95,6 @@ namespace plot
                 std::vector<std::pair<TopicCurve::CurveVariableMapIt,
                     ignition::math::Vector2d> > &_curvesUpdates);
 
-    /// \brief Convert an ignition::msgs::Time to an ignition::common::Time
-    /// \param[in] _t The time to convert
-    /// \return An ignition::common::Time object
-    public: ignition::common::Time Convert(const ignition::msgs::Time &_t);
-
-    /// \brief Convert an ignition::common::Time to an ignition::msgs::Time
-    /// \param[in] _t The time to convert
-    /// \return An ignition::msgs::Time object
-    public: ignition::msgs::Time Convert(const ignition::common::Time &_t);
-
     /// \brief Topic name
     private: std::string topic;
 
@@ -145,9 +106,6 @@ namespace plot
 
     /// \brief Mutex to protect the topic data updates.
     private: mutable std::mutex mutex;
-
-    /// \brief Topic message type.
-    // private: std::string msgType;
 
     /// \brief A map of param names to plot curves.
     private: std::map<std::string, CurveVariableSet> curves;
@@ -165,54 +123,11 @@ namespace plot
 }
 
 /////////////////////////////////////////////////
-// void TopicTime::Init()
-// {
-//  this->node = transport::NodePtr(new transport::Node());
-//  this->node->Init();
-//
-//  this->subscriber = this->node->Subscribe("~/world_stats",
-//      &TopicTime::OnStats, this);
-// }
-//
-///////////////////////////////////////////////////
-// void TopicTime::OnStats(ConstWorldStatisticsPtr &_msg)
-// {
-//  if (!_msg)
-//  {
-//    GZ_ASSERT(_msg, "_msg pointer in OnStats method should not be null");
-//    return;
-//  }
-//
-//  msgs::Time t = _msg->sim_time();
-//
-//  std::lock_guard<std::mutex> lock(this->mutex);
-//  this->lastSimTime = msgs::Convert(t);
-// }
-//
-///////////////////////////////////////////////////
-// common::Time TopicTime::LastSimTime()
-// {
-//  std::lock_guard<std::mutex> lock(this->mutex);
-//  return this->lastSimTime;
-// }
-
-/////////////////////////////////////////////////
 TopicCurve::TopicCurve(const std::string &_topic)
 {
-  // this->node = transport::NodePtr(new transport::Node());
-  // this->node->Init();
-
   this->topic = _topic;
 
   this->startTime = ignition::common::Time::SystemTime().Double();
-
-  // this->msgType = transport::getTopicMsgType(this->topic);
-  // if (this->msgType == "")
-  // {
-  //  gzwarn << "Couldn't find message type for topic [" <<
-  //      this->topic << "]" << std::endl;
-  //  return;
-  // }
 
   this->node.Subscribe(this->topic, &TopicCurve::OnTopicData, this);
 }
@@ -351,22 +266,6 @@ void TopicCurve::OnTopicData(const google::protobuf::Message &_msg,
 }
 
 /////////////////////////////////////////////////
-ignition::common::Time TopicCurve::Convert(const ignition::msgs::Time &_t)
-{
-  ignition::common::Time result(_t.sec(), _t.nsec());
-  return result;
-}
-
-/////////////////////////////////////////////////
-ignition::msgs::Time TopicCurve::Convert(const ignition::common::Time &_t)
-{
-  ignition::msgs::Time result;
-  result.set_sec(_t.sec);
-  result.set_nsec(_t.nsec);
-  return result;
-}
-
-/////////////////////////////////////////////////
 void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
     const int _index, const double x,
     std::vector<std::pair<TopicCurve::CurveVariableMapIt,
@@ -410,7 +309,7 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
         ignition::msgs::Time *msg = dynamic_cast<msgs::Time *>(valueMsg);
         if (msg)
         {
-          ignition::common::Time time = this->Convert(*msg);
+          ignition::common::Time time = convert(*msg);
           xData = time.Double();
         }
       }
@@ -488,7 +387,7 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
             if (!msg)
               continue;
 
-             common::Time time = this->Convert(*msg);
+             common::Time time = convert(*msg);
              data = time.Double();
           }
           else if (field->message_type()->name() == "Vector3d")
@@ -566,20 +465,11 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
 TopicCurveHandler::TopicCurveHandler()
   : dataPtr(new TopicCurveHandlerPrivate())
 {
-  // TopicTime::Instance()->Init();
 }
 
 /////////////////////////////////////////////////
 TopicCurveHandler::~TopicCurveHandler()
 {
-  // while (!this->dataPtr->topics.empty())
-  // {
-  //   auto it = this->dataPtr->topics.begin();
-  //   delete it->second;
-  //   this->dataPtr->topics.erase(it);
-  // }
-
-  // this->dataPtr->topics.clear();
 }
 
 /////////////////////////////////////////////////
@@ -607,8 +497,6 @@ void TopicCurveHandler::AddCurve(const std::string &_name, CurveWeakPtr _curve)
     bool result = topicCurve->AddCurve(uriName, _curve);
     if (result)
       this->dataPtr->topics[topicPathStr] = std::move(topicCurve);
-    // else
-    //   delete topicCurve;
   }
   else
   {
@@ -627,7 +515,6 @@ void TopicCurveHandler::RemoveCurve(CurveWeakPtr _curve)
       it->second->RemoveCurve(_curve);
       if (it->second->CurveCount() == 0)
       {
-        // delete it->second;
         this->dataPtr->topics.erase(it);
       }
       break;

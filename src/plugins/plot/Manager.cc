@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,9 @@
 #include <vector>
 
 #include <ignition/msgs.hh>
-// #include <ignition/transport.hh>
 #include <ignition/common/URI.hh>
 #include <ignition/common/Util.hh>
 
-// #include "ignition/gui/plugins/IntrospectionCurveHandler.hh"
 #include "ignition/gui/plugins/plot/Curve.hh"
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
 #include "ignition/gui/plugins/plot/Plot.hh"
@@ -50,15 +48,6 @@ namespace plot
     /// \brief Mutex to protect plot manager updates.
     public: std::mutex mutex;
 
-    /// \brief Node for communications.
-    // public: transport::Node node;
-
-    /// \brief Subscriber to the world control topic
-    // public: transport::SubscriberPtr worldControlSub;
-
-    /// \brief Handler for updating introspection curves
-    // public: IntrospectionCurveHandler introspectionCurve;
-
     /// \brief Handler for updating topic curves
     public: TopicCurveHandler topicCurve;
 
@@ -74,13 +63,6 @@ namespace plot
 Manager::Manager()
   : dataPtr(new ManagerPrivate())
 {
-  // this->dataPtr->node = transport::NodePtr(new transport::Node());
-  // this->dataPtr->node->Init();
-
-  // check for reset events and restart plots when time is reset
-  // this->dataPtr->worldControlSub =
-  //    this->dataPtr->node->Subscribe("~/world_control",
-  //    &Manager::OnWorldControl, this);
 }
 
 /////////////////////////////////////////////////
@@ -88,34 +70,6 @@ Manager::~Manager()
 {
   this->dataPtr->windows.clear();
 }
-
-/////////////////////////////////////////////////
-// void Manager::OnWorldControl(ConstWorldControlPtr &_data)
-// {
-//   if (_data->has_reset())
-//   {
-//     if ((_data->reset().has_all() && _data->reset().all())  ||
-//         (_data->reset().has_time_only() && _data->reset().time_only()))
-//     {
-//       std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-//       for (auto &w : this->dataPtr->windows)
-//         w->Restart();
-//     }
-//   }
-// }
-
-/////////////////////////////////////////////////
-// void Manager::AddIntrospectionCurve(const std::string &_uri,
-//     PlotCurveWeakPtr _curve)
-// {
-//   this->dataPtr->introspectionCurve.AddCurve(_uri, _curve);
-// }
-//
-// /////////////////////////////////////////////////
-// void Manager::RemoveIntrospectionCurve(PlotCurveWeakPtr _curve)
-// {
-//   this->dataPtr->introspectionCurve.RemoveCurve(_curve);
-// }
 
 /////////////////////////////////////////////////
 void Manager::AddTopicCurve(const std::string &_topic, CurveWeakPtr _curve)

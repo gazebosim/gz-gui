@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,21 +114,24 @@ Canvas::Canvas(QWidget *_parent)
   settingsMenu->setObjectName("material");
   QAction *clearPlotAct = new QAction("Clear all fields", settingsMenu);
   clearPlotAct->setStatusTip(tr("Clear variables and all plots on canvas"));
-  connect(clearPlotAct, SIGNAL(triggered()), this, SLOT(OnClearCanvas()));
+  this->connect(clearPlotAct, SIGNAL(triggered()), this, SLOT(OnClearCanvas()));
 
   this->dataPtr->deleteCanvasAct = new QAction("Delete canvas", settingsMenu);
   this->dataPtr->deleteCanvasAct->setStatusTip(tr("Delete entire canvas"));
-  connect(this->dataPtr->deleteCanvasAct, SIGNAL(triggered()), this,
+  this->connect(this->dataPtr->deleteCanvasAct, SIGNAL(triggered()), this,
       SLOT(OnDeleteCanvas()));
 
   QAction *showGridAct = new QAction("Show grid", settingsMenu);
   showGridAct->setStatusTip(tr("Show/hide grid lines on plot"));
   showGridAct->setCheckable(true);
+  this->connect(showGridAct, SIGNAL(toggled(bool)), this,
+      SLOT(OnShowGrid(bool)));
 
   QAction *showHoverLineAct = new QAction("Show hover line", settingsMenu);
   showHoverLineAct->setStatusTip(tr("Show hover line"));
   showHoverLineAct->setCheckable(true);
-  connect(showHoverLineAct, SIGNAL(triggered()), this, SLOT(OnShowHoverLine()));
+  this->connect(showHoverLineAct, SIGNAL(toggled(bool)), this,
+      SLOT(OnShowHoverLine(bool)));
 
   settingsMenu->addAction(clearPlotAct);
   settingsMenu->addAction(this->dataPtr->deleteCanvasAct);
@@ -174,16 +177,16 @@ Canvas::Canvas(QWidget *_parent)
       QSizePolicy::Expanding, QSizePolicy::Fixed);
   this->dataPtr->yVariableContainer->setContentsMargins(0, 0, 0, 0);
 
-  connect(this->dataPtr->yVariableContainer,
+  this->connect(this->dataPtr->yVariableContainer,
       SIGNAL(VariableAdded(unsigned int, std::string, unsigned int)),
       this, SLOT(OnAddVariable(unsigned int, std::string, unsigned int)));
-  connect(this->dataPtr->yVariableContainer,
+  this->connect(this->dataPtr->yVariableContainer,
       SIGNAL(VariableRemoved(unsigned int, unsigned int)),
       this, SLOT(OnRemoveVariable(unsigned int, unsigned int)));
-  connect(this->dataPtr->yVariableContainer,
+  this->connect(this->dataPtr->yVariableContainer,
       SIGNAL(VariableMoved(unsigned int, unsigned int)),
       this, SLOT(OnMoveVariable(unsigned int, unsigned int)));
-  connect(this->dataPtr->yVariableContainer,
+  this->connect(this->dataPtr->yVariableContainer,
       SIGNAL(VariableLabelChanged(unsigned int, std::string)),
       this, SLOT(OnSetVariableLabel(unsigned int, std::string)));
 
@@ -219,13 +222,11 @@ Canvas::Canvas(QWidget *_parent)
 
   // empty plot
   this->dataPtr->emptyPlot = new IncrementalPlot(this);
-  connect(this->dataPtr->emptyPlot, SIGNAL(VariableAdded(std::string)),
+  this->connect(this->dataPtr->emptyPlot, SIGNAL(VariableAdded(std::string)),
       this, SLOT(OnAddVariable(std::string)));
   plotLayout->addWidget(this->dataPtr->emptyPlot);
-
-  // set initial show grid state
   showGridAct->setChecked(this->dataPtr->emptyPlot->IsShowGrid());
-  connect(showGridAct, SIGNAL(triggered()), this, SLOT(OnShowGrid()));
+  showHoverLineAct->setChecked(this->dataPtr->emptyPlot->IsShowHoverLine());
 
   QFrame *mainFrame = new QFrame;
   mainFrame->setObjectName("CanvasFrame");
@@ -320,16 +321,6 @@ void Canvas::AddVariable(const unsigned int _id,
 
   if (common::URI::Valid(_variable))
   {
-    // common::URI uri(_variable);
-    // std::string schemeStr = uri.Scheme();
-    // if (schemeStr == "data")
-    // {
-    //   Manager::Instance()->AddIntrospectionCurve(_variable, curve);
-    //    // give it a more compact, friendly name
-    //   // do this after Manager AddIntrospectionCurve call!
-    //   std::string label = Manager::Instance()->HumanReadableName(_variable);
-    //   this->SetVariableLabel(_id, label);
-    // }
     ignerr << "Not available" << std::endl;
   }
   else
@@ -385,7 +376,6 @@ void Canvas::RemoveVariable(const unsigned int _id,
   else
   {
     ignerr << "Not available" << std::endl;
-    // Manager::Instance()->RemoveIntrospectionCurve(plotCurve);
   }
 
   // erase from map
@@ -425,7 +415,7 @@ unsigned int Canvas::AddPlot()
   plot->setAutoDelete(false);
   plot->ShowGrid(this->dataPtr->emptyPlot->IsShowGrid());
   plot->ShowHoverLine(this->dataPtr->emptyPlot->IsShowHoverLine());
-  connect(plot, SIGNAL(VariableAdded(std::string)), this,
+  this->connect(plot, SIGNAL(VariableAdded(std::string)), this,
       SLOT(OnAddVariable(std::string)));
   this->dataPtr->plotSplitter->addWidget(plot);
 
@@ -710,7 +700,6 @@ void Canvas::Restart()
         else
         {
           ignerr << "Not available" << std::endl;
-          // Manager::Instance()->RemoveIntrospectionCurve(c);
         }
 
         // add to the list of variables to clone
@@ -890,22 +879,21 @@ void Canvas::OnDeleteCanvas()
 }
 
 /////////////////////////////////////////////////
-void Canvas::OnShowGrid()
+void Canvas::OnShowGrid(const bool _show)
 {
-  this->dataPtr->emptyPlot->ShowGrid(!this->dataPtr->emptyPlot->IsShowGrid());
+  this->dataPtr->emptyPlot->ShowGrid(_show);
 
   for (const auto &it : this->dataPtr->plotData)
-    it.second->plot->ShowGrid(!it.second->plot->IsShowGrid());
+    it.second->plot->ShowGrid(_show);
 }
 
 /////////////////////////////////////////////////
-void Canvas::OnShowHoverLine()
+void Canvas::OnShowHoverLine(const bool _show)
 {
-  this->dataPtr->emptyPlot->ShowHoverLine(
-      !this->dataPtr->emptyPlot->IsShowHoverLine());
+  this->dataPtr->emptyPlot->ShowHoverLine(_show);
 
   for (const auto &it : this->dataPtr->plotData)
-    it.second->plot->ShowHoverLine(!it.second->plot->IsShowHoverLine());
+    it.second->plot->ShowHoverLine(_show);
 }
 
 /////////////////////////////////////////////////

@@ -18,9 +18,11 @@
 #ifndef IGNITION_GUI_CONVERSIONS_HH_
 #define IGNITION_GUI_CONVERSIONS_HH_
 
+#include <ignition/common/Time.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/msgs/time.pb.h>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
@@ -47,13 +49,13 @@ namespace ignition
     math::Color convert(const QColor &_color);
 
     /// \brief Return the equivalent QPointF.
-    /// \param[in] _point Ignition vector to convert.
+    /// \param[in] _pt Ignition vector to convert.
     /// \return QPointF.
     IGNITION_GUI_VISIBLE
     QPointF convert(const math::Vector2d &_pt);
 
     /// \brief Return the equivalent ignition vector.
-    /// \param[in] _color QPointF to convert
+    /// \param[in] _pt QPointF to convert
     /// \return Ignition Vector2d.
     IGNITION_GUI_VISIBLE
     math::Vector2d convert(const QPointF &_pt);
@@ -78,6 +80,18 @@ namespace ignition
     /// \return Ignition mouse event
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QMouseEvent &_e);
+
+    /// \brief Convert an ignition::msgs::Time to an ignition::common::Time
+    /// \param[in] _t The time to convert
+    /// \return An ignition::common::Time object
+    IGNITION_GUI_VISIBLE
+    common::Time convert(const msgs::Time &_t);
+
+    /// \brief Convert an ignition::common::Time to an ignition::msgs::Time
+    /// \param[in] _t The time to convert
+    /// \return An ignition::msgs::Time object
+    IGNITION_GUI_VISIBLE
+    msgs::Time convert(const common::Time &_t);
   }
 }
 #endif

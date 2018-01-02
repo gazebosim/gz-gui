@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-#include <ignition/math/Vector2.hh>
 
 #include "ignition/gui/plugins/plot/ExportDialog.hh"
 #include "ignition/gui/plugins/plot/Types.hh"
@@ -121,18 +119,20 @@ namespace plot
     /// \param[in] _o Object that receives the event.
     /// \param[in] _event Pointer to the event.
     /// \return True if event was handled.
-    public: virtual bool eventFilter(QObject *_o,
-                                     QEvent *_event);
+    public: virtual bool eventFilter(QObject *_o, QEvent *_event) override;
 
     /// \brief Get the title of the plot
     /// \return Title of the plot
     public: std::string Title() const;
 
-    /// \brief Export to PDF files in the given directory.
+    /// \brief Export to files in the given directory.
     /// \param[in] _dirName Name of the directory to save the files into.
     /// \param[in] _type File type, such as PDFFile or CSVFile.
     public: void Export(const std::string &_dirName,
                         const FileType _type) const;
+
+    /// \brief Empty plot used to indicate non-existent plot.
+    public: static const unsigned int EmptyPlot;
 
     /// \brief Export to PDF files in the given directory.
     /// \param[in] _dirName Name of the directory to save the PDF files
@@ -212,13 +212,12 @@ namespace plot
     private slots: void OnDeleteCanvas();
 
     /// \brief Qt Callback to show/hide grids on plot.
-    private slots: void OnShowGrid();
+    /// \param[in] _show True to show.
+    private slots: void OnShowGrid(const bool _show);
 
     /// \brief Qt Callback to show/hide hover line on plot.
-    private slots: void OnShowHoverLine();
-
-    /// \brief Empty plot used to indicate non-existent plot.
-    public: static const unsigned int EmptyPlot;
+    /// \param[in] _show True to show.
+    private slots: void OnShowHoverLine(const bool _show);
 
     /// \internal
     /// \brief Pointer to private data.

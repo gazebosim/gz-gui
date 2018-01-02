@@ -40,15 +40,16 @@ namespace plugins
   ///
   /// ## Configuration
   ///
-  /// <world_control> : Configuration for controlling the world, optional.
-  /// * <play_pause> : Set to true to see a play/pause and step buttons,
-  ///                  false by default.
-  /// * <start_paused> : Set to false to start playing, false by default.
-  /// * <service> : Service for world control, required.
-  /// <world_stats> : Configuration for displaying stats, optional.
-  /// * <sim_time> : Set to true to display a sim time widget, false by default.
-  /// * <real_time> : True to display a real time widget, false by default.
-  /// * <topic> : Topic to receive world statistics, required.
+  /// \<world_control\> : Configuration for controlling the world, optional.
+  /// * \<play_pause\> : Set to true to see a play/pause and step buttons,
+  ///                    false by default.
+  /// * \<start_paused\> : Set to false to start playing, false by default.
+  /// * \<service\> : Service for world control, required.
+  /// \<world_stats\> : Configuration for displaying stats, optional.
+  /// * \<sim_time\> : Set to true to display a sim time widget, false by
+  ///                  default.
+  /// * \<real_time\> : True to display a real time widget, false by default.
+  /// * \<topic\> : Topic to receive world statistics, required.
   class TimePanel: public ignition::gui::Plugin
   {
     Q_OBJECT
