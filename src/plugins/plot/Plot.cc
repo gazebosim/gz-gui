@@ -293,19 +293,6 @@ void Plot::Restart()
 }
 
 /////////////////////////////////////////////////
-// void Plot::TogglePause()
-// {
-//  MainWindow *mainWindow = gui::get_main_window();
-//  if (!mainWindow)
-//    return;
-//
-//  if (mainWindow->IsPaused())
-//    mainWindow->Play();
-//  else
-//    mainWindow->Pause();
-// }
-
-/////////////////////////////////////////////////
 void Plot::OnExport()
 {
   // Get the plots that have data.

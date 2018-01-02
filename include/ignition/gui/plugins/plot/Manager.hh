@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,22 +44,6 @@ namespace plot
 
     /// \brief Destructor.
     public: virtual ~Manager();
-
-    /// \brief Callback when a world control message is received. It is used
-    /// to detect simulation resets.
-    /// \param[in] _data Message data containing world control commands
-    // public: void OnWorldControl(ConstWorldControlPtr &_data);
-
-    /// \brief Add an introspection curve to the manager. Data received from
-    /// the introspection client will be added to the curve
-    /// \param[in] _name Name of variable
-    /// \param[in] _curve Curve that will be populated with data.
-    // public: void AddIntrospectionCurve(const std::string &_name,
-    //                                   PlotCurveWeakPtr _curve);
-
-    /// \brief Remove an introspection curve from the manager
-    /// \param[in] _curve Curve to remove.
-    // public: void RemoveIntrospectionCurve(PlotCurveWeakPtr _curve);
 
     /// \brief Add a topic curve to the manager. Data received from
     /// the topic subscriber will be added to the curve

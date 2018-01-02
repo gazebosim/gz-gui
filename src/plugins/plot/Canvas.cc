@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -321,16 +321,6 @@ void Canvas::AddVariable(const unsigned int _id,
 
   if (common::URI::Valid(_variable))
   {
-    // common::URI uri(_variable);
-    // std::string schemeStr = uri.Scheme();
-    // if (schemeStr == "data")
-    // {
-    //   Manager::Instance()->AddIntrospectionCurve(_variable, curve);
-    //    // give it a more compact, friendly name
-    //   // do this after Manager AddIntrospectionCurve call!
-    //   std::string label = Manager::Instance()->HumanReadableName(_variable);
-    //   this->SetVariableLabel(_id, label);
-    // }
     ignerr << "Not available" << std::endl;
   }
   else
@@ -386,7 +376,6 @@ void Canvas::RemoveVariable(const unsigned int _id,
   else
   {
     ignerr << "Not available" << std::endl;
-    // Manager::Instance()->RemoveIntrospectionCurve(plotCurve);
   }
 
   // erase from map
@@ -711,7 +700,6 @@ void Canvas::Restart()
         else
         {
           ignerr << "Not available" << std::endl;
-          // Manager::Instance()->RemoveIntrospectionCurve(c);
         }
 
         // add to the list of variables to clone
