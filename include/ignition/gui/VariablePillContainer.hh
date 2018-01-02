@@ -21,6 +21,7 @@
 #include <string>
 
 #include "ignition/gui/VariablePill.hh"
+#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -33,7 +34,7 @@ namespace gui
   ///
   /// The container consists of a label and a field where pills and multi-pills
   /// can be dragged to.
-  class VariablePillContainer : public QWidget
+  class IGNITION_GUI_VISIBLE VariablePillContainer : public QWidget
   {
     Q_OBJECT
 

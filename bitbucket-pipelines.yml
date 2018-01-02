@@ -11,8 +11,9 @@ pipelines:
           - apt update
           - apt install -y build-essential wget cmake cppcheck mercurial
             libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev
+            libogre-1.9-dev
             libprotoc-dev libprotobuf-dev protobuf-compiler
-            qtbase5-dev libtinyxml2-dev
+            qtbase5-dev libqwt-qt5-dev libtinyxml2-dev
             libignition-cmake-dev
             libignition-math4-dev
             libignition-msgs-dev
@@ -24,7 +25,15 @@ pipelines:
           - cd ign-common
           - mkdir build
           - cd build
-          - cmake .. -DENABLE_TESTS_COMPILATION=false
+          - cmake .. -DBUILD_TESTING=false
+          - make -j4 install
+          - cd ../..
+          # Ignition rendering
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+          - cd ign-rendering
+          - mkdir build
+          - cd build
+          - cmake .. # -DENABLE_TESTS_COMPILATION=false
           - make -j4 install
           - cd ../..
           # Ignition GUI

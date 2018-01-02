@@ -71,6 +71,19 @@ else()
 endif()
 
 ########################################
+# Ignition rendering
+find_package(ignition-rendering0 QUIET)
+if (NOT ignition-rendering0_FOUND)
+  BUILD_ERROR("Missing: Ignition Rendering libignition-rendering0-dev")
+else()
+  message (STATUS "Found Ignition Rendering 0")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-RENDERING_CXX_FLAGS}")
+  include_directories(${IGNITION-RENDERING_INCLUDE_DIRS})
+  link_directories(${IGNITION-RENDERING_LIBRARY_DIRS})
+  set (HAVE_IGN_RENDERING TRUE)
+endif()
+
+########################################
 # Find QT
 find_package (Qt5Widgets)
 if (NOT Qt5Widgets_FOUND)
@@ -85,6 +98,24 @@ if (NOT Qt5Core_FOUND)
 else()
   message (STATUS "Found Qt5Core")
 endif()
+
+########################################
+# Find QWT (QT graphing library)
+find_path(QWT_INCLUDE_DIR NAMES qwt.h PATHS
+  /usr/include
+  /usr/local/include
+  /usr/local/lib/qwt.framework/Headers
+  ${QWT_WIN_INCLUDE_DIR}
+
+  PATH_SUFFIXES qwt qwt5
+)
+
+find_library(QWT_LIBRARY NAMES qwt-qt5 qwt PATHS
+  /usr/lib
+  /usr/local/lib
+  /usr/local/lib/qwt.framework
+  ${QWT_WIN_LIBRARY_DIR}
+)
 
 #################################################
 # Find tinyxml2. Only debian distributions package tinyxml with a pkg-config

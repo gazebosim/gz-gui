@@ -49,11 +49,11 @@ std::string custom_exec_str(std::string _cmd)
 TEST(CmdLine, list)
 {
   std::string output = custom_exec_str("ign gui -l");
-  EXPECT_GT(output.find("ImageDisplay"), 0u);
-  EXPECT_GT(output.find("TopicEcho"), 0u);
-  EXPECT_GT(output.find("Requester"), 0u);
-  EXPECT_GT(output.find("Responder"), 0u);
-  EXPECT_GT(output.find("TimePanel"), 0u);
-  EXPECT_GT(output.find("Publisher"), 0u);
+  EXPECT_NE(output.find("ImageDisplay"), std::string::npos);
+  EXPECT_NE(output.find("TopicEcho"), std::string::npos);
+  EXPECT_NE(output.find("Requester"), std::string::npos);
+  EXPECT_NE(output.find("Responder"), std::string::npos);
+  EXPECT_NE(output.find("TimePanel"), std::string::npos);
+  EXPECT_NE(output.find("Publisher"), std::string::npos);
 }
 
