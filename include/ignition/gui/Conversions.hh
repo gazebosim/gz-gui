@@ -18,11 +18,11 @@
 #ifndef IGNITION_GUI_CONVERSIONS_HH_
 #define IGNITION_GUI_CONVERSIONS_HH_
 
+#include <ignition/msgs/time.pb.h>
 #include <ignition/common/Time.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
-#include <ignition/msgs/time.pb.h>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
