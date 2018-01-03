@@ -15,7 +15,6 @@ set (plot_qt_others
 # The rest of source files.
 set (plot_others
   Curve
-  Manager
   TopicCurveHandler
   Tracker
 )
