@@ -22,7 +22,6 @@
 #include <vector>
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/URI.hh>
 
 #include "ignition/gui/EditableLabel.hh"
 #include "ignition/gui/plugins/plot/Canvas.hh"
@@ -318,15 +317,7 @@ void Canvas::AddVariable(const unsigned int _id,
     this->dataPtr->plotSplitter->setVisible(true);
   }
 
-
-  if (common::URI::Valid(_variable))
-  {
-    ignerr << "Not available" << std::endl;
-  }
-  else
-  {
-    Manager::Instance()->AddTopicCurve(_variable, curve);
-  }
+  Manager::Instance()->AddTopicCurve(_variable, curve);
 }
 
 /////////////////////////////////////////////////
