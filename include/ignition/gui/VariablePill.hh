@@ -43,6 +43,18 @@ namespace gui
     /// incremented every time that a pill is created. Every pill
     /// has a string name based on the prefix "variable" and its Id. Also,
     /// a pill has a text that is displayed.
+    ///
+    /// ## Styling
+    ///
+    /// It is possible to use custom QSS styles to control the appearance of
+    /// a variable pill. A reference style is provided at
+    /// include/ignition/gui/style.qss
+    ///
+    /// Stylable elements:
+    ///   * #variablePillFrame
+    ///   * #variablePillFrame > QLabel
+    /// Stylable properties:
+    ///   * `selectedPill` (for example: QFrame[selectedPill=true])
     class IGNITION_GUI_VISIBLE VariablePill : public QWidget
     {
       Q_OBJECT

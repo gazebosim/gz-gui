@@ -89,11 +89,6 @@ VariablePill::VariablePill(QWidget *_parent)
 
   // label
   this->dataPtr->label = new QLabel;
-  QHBoxLayout *labelLayout = new QHBoxLayout;
-  labelLayout->addWidget(this->dataPtr->label);
-  labelLayout->setContentsMargins(0, 0, 0, 0);
-  auto labelFrame = new QFrame;
-  labelFrame->setLayout(labelLayout);
 
   // child variable pills
   this->dataPtr->variableLayout = new QHBoxLayout;
@@ -109,7 +104,7 @@ VariablePill::VariablePill(QWidget *_parent)
 
   auto singleLayout = new QHBoxLayout;
   singleLayout->setAlignment(Qt::AlignLeft);
-  singleLayout->addWidget(labelFrame);
+  singleLayout->addWidget(this->dataPtr->label);
   singleLayout->addLayout(this->dataPtr->variableLayout);
   singleLayout->setContentsMargins(0, 0, 0, 0);
   this->dataPtr->multiLayout->addLayout(singleLayout);
