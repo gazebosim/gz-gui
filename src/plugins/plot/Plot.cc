@@ -24,7 +24,6 @@
 #include "ignition/gui/plugins/plot/Curve.hh"
 #include "ignition/gui/plugins/plot/ExportDialog.hh"
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
-#include "ignition/gui/plugins/plot/Manager.hh"
 #include "ignition/gui/plugins/plot/Plot.hh"
 #include "ignition/gui/VariablePill.hh"
 #include "ignition/gui/VariablePillContainer.hh"
@@ -138,36 +137,11 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   plotLayout->setStretchFactor(this->dataPtr->canvasSplitter, 1);
   plotLayout->setStretchFactor(addButtonLayout, 0);
 
-  auto plotFrame = new QFrame;
-  plotFrame->setLayout(plotLayout);
-
-  // Palette
-  // auto plotPalette = new Palette(this);
-
-  auto splitter = new QSplitter(Qt::Horizontal, this);
-  // splitter->addWidget(plotPalette);
-  splitter->addWidget(plotFrame);
-  splitter->setCollapsible(0, true);
-  // splitter->setCollapsible(1, false);
-
-  QList<int> sizes;
-  sizes << 30 << 70;
-  splitter->setSizes(sizes);
-
-  auto mainLayout = new QHBoxLayout;
-  mainLayout->addWidget(splitter);
-  mainLayout->setContentsMargins(0, 0, 0, 0);
-
-  this->setLayout(mainLayout);
-
-  // QShortcut *space = new QShortcut(Qt::Key_Space, this);
-  // QObject::connect(space, SIGNAL(activated()), this, SLOT(TogglePause()));
+  this->setLayout(plotLayout);
 
   QTimer *displayTimer = new QTimer(this);
   connect(displayTimer, SIGNAL(timeout()), this, SLOT(Update()));
   displayTimer->start(30);
-
-  Manager::Instance()->AddWindow(this);
 
   this->setMinimumSize(640, 480);
 }

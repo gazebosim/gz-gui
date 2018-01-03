@@ -56,15 +56,6 @@ namespace plot
     /// \param[in] _curve Curve to remove.
     public: void RemoveTopicCurve(CurveWeakPtr _curve);
 
-    /// \brief Add a plot window to the manager. The manager will listen to
-    /// world events, e.g. Reset, and update the window's plots accordingly
-    /// \param[in] _window Plot window to add
-    public: void AddWindow(Plot *_window);
-
-    /// \brief Remove a plot window from the manager.
-    /// \param[in] _window Plot window to remove.
-    public: void RemoveWindow(Plot *_window);
-
     /// \brief Get Human-readable name from uri-formatted variable name
     /// \param[in] _uri URI representing the variable
     /// \return Human readable name

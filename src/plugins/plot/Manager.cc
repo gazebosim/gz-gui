@@ -50,9 +50,6 @@ namespace plot
 
     /// \brief Handler for updating topic curves
     public: TopicCurveHandler topicCurve;
-
-    /// \brief A list of plot windows.
-    public: std::vector<Plot *> windows;
   };
 }
 }
@@ -68,7 +65,6 @@ Manager::Manager()
 /////////////////////////////////////////////////
 Manager::~Manager()
 {
-  this->dataPtr->windows.clear();
 }
 
 /////////////////////////////////////////////////
@@ -81,28 +77,6 @@ void Manager::AddTopicCurve(const std::string &_topic, CurveWeakPtr _curve)
 void Manager::RemoveTopicCurve(CurveWeakPtr _curve)
 {
   this->dataPtr->topicCurve.RemoveCurve(_curve);
-}
-
-/////////////////////////////////////////////////
-void Manager::AddWindow(Plot *_window)
-{
-  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-  this->dataPtr->windows.push_back(_window);
-}
-
-/////////////////////////////////////////////////
-void Manager::RemoveWindow(Plot *_window)
-{
-  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-  for (auto it = this->dataPtr->windows.begin();
-      it != this->dataPtr->windows.end(); ++it)
-  {
-    if ((*it) == _window)
-    {
-      this->dataPtr->windows.erase(it);
-      return;
-    }
-  }
 }
 
 /////////////////////////////////////////////////
