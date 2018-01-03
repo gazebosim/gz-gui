@@ -326,29 +326,48 @@ QHeaderView::section
 /*          VariablePill        */
 /* ---------------------------- */
 
-#variablePillFrame
+/* General */
+ignition--gui--VariablePill
 {
   border-radius: 10px;
+  margin: 0px;
+}
+
+ignition--gui--VariablePill > QLabel
+{
+  border-radius: 10px;
+  color: #ffffff;
   padding-left: 8px;
   padding-right: 8px;
   padding-top: 2px;
   padding-bottom: 2px;
-  margin: 0px;
-  background-color: #2196f3;
 }
 
-#variablePillFrame > QLabel
-{
-  color: #ffffff;
-}
-
-QFrame[selectedPill=false]
+/* Not selected pill */
+ignition--gui--VariablePill[multiPillParent=false][selectedPill=false],
+ignition--gui--VariablePill[multiPillParent=true][selectedPill=false] > QLabel
 {
   border: 1.5px solid #2196f3;
 }
 
-QFrame[selectedPill=true]
+/* Selected pill */
+ignition--gui--VariablePill[multiPillParent=false][selectedPill=true],
+ignition--gui--VariablePill[multiPillParent=true][selectedPill=true] > QLabel
 {
   border: 1.5px solid #1565c0;
+}
+
+/* Not child */
+ignition--gui--VariablePill[multiPillChild=false],
+ignition--gui--VariablePill[multiPillParent=false][multiPillChild=false] > QLabel
+{
+  background-color: #2196f3;
+}
+
+/* Child */
+ignition--gui--VariablePill[multiPillChild=true],
+ignition--gui--VariablePill[multiPillParent=true][multiPillChild=false] > QLabel
+{
+  background-color: #64b5f6;
 }
 
