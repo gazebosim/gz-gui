@@ -69,6 +69,21 @@ QDialog {
 }
 
 /* ---------------------------- */
+/*            ScrollArea        */
+/* ---------------------------- */
+
+QScrollArea
+{
+  background: transparent;
+  border: none;
+}
+
+QScrollArea > QWidget > QWidget
+{
+  background: transparent;
+}
+
+/* ---------------------------- */
 /*          Line Edit           */
 /* ---------------------------- */
 

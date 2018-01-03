@@ -21,7 +21,6 @@
 #include <utility>
 #include <vector>
 
-#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/System.hh"
 
 // Forward declarations.
@@ -34,6 +33,9 @@ namespace ignition
 {
   namespace gui
   {
+    class Dialog;
+    class MainWindow;
+
     /// \brief Initialize the application. This must be run before everything
     /// else.
     /// \return True on success.
@@ -61,7 +63,7 @@ namespace ignition
     /// \brief Load a plugin from a file name. The plugin file must be in the
     /// path.
     /// \param[in] _filename Plugin filename.
-    /// \param[in[ _pluginElem Element containing plugin configuration
+    /// \param[in] _pluginElem Element containing plugin configuration
     /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool loadPlugin(const std::string &_filename,
@@ -151,7 +153,7 @@ namespace ignition
 
     /// \brief Get the dialogs, if they have been generated.
     IGNITION_GUI_VISIBLE
-    std::vector<QDialog *> dialogs();
+    std::vector<Dialog *> dialogs();
 
     /// \brief Run previously created window.
     /// \return True if successful

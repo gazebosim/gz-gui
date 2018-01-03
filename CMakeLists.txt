@@ -46,21 +46,6 @@ if (PACKAGE_SOURCE_ONLY)
   return()
 endif()
 
-#################################################
-# Documentation:
-add_subdirectory(doc)
-
-# Configure documentation uploader
-configure_file("${project_cmake_dir}/upload_doc.sh.in"
-  ${CMAKE_BINARY_DIR}/upload_doc.sh @ONLY)
-
-# If we're configuring only to build docs, stop here
-if (DOC_ONLY)
-  message(WARNING "Configuration was done in DOC_ONLY mode."
-  " You can build documentation (make doc), but nothing else.")
-  return()
-endif()
-
 enable_testing()
 
 # Use GNUInstallDirst to get canonical paths
@@ -130,6 +115,8 @@ include (${project_cmake_dir}/DissectVersion.cmake)
 
 message (STATUS "\n\n====== Finding 3rd Party Packages ======")
 include (${project_cmake_dir}/SearchForStuff.cmake)
+# include Utils again since ign-cmake has some of the same macros
+include (${project_cmake_dir}/Utils.cmake)
 message (STATUS "----------------------------------------\n")
 
 #####################################
@@ -220,6 +207,22 @@ configure_file(
 add_custom_target(uninstall
   "${CMAKE_COMMAND}" -P
   "${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake")
+
+#################################################
+# Documentation:
+add_subdirectory(doc)
+
+# Configure documentation uploader
+configure_file("${project_cmake_dir}/upload_doc.sh.in"
+  ${CMAKE_BINARY_DIR}/upload_doc.sh @ONLY)
+
+# If we're configuring only to build docs, stop here
+if (DOC_ONLY)
+  message(WARNING "Configuration was done in DOC_ONLY mode."
+  " You can build documentation (make doc), but nothing else.")
+  return()
+endif()
+
 
 if (build_errors)
   message(STATUS "BUILD ERRORS: These must be resolved before compiling.")

@@ -42,6 +42,12 @@ namespace plugins
 
     /// \brief Node for communication.
     public: ignition::transport::Node node;
+
+    /// \brief List of widgets which should be hidden
+    public: std::vector<std::string> hideWidgets;
+
+    /// \brief Whether the whole widget should be read-only.
+    public: bool readOnly;
   };
 }
 }
@@ -93,6 +99,19 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               << topic << "]." << std::endl;
     }
 
+    // Global read-only
+    this->dataPtr->readOnly = false;
+    if (_pluginElem->Attribute("read_only"))
+      _pluginElem->QueryBoolAttribute("read_only", &this->dataPtr->readOnly);
+
+    // Visibility per widget
+    for (auto hideWidgetElem = _pluginElem->FirstChildElement("hide");
+        hideWidgetElem != nullptr;
+        hideWidgetElem = hideWidgetElem->NextSiblingElement("hide"))
+    {
+      this->dataPtr->hideWidgets.push_back(hideWidgetElem->GetText());
+    }
+
     // Message widget
     if (!msgType.empty())
     {
@@ -133,12 +152,15 @@ void TopicInterface::CreateWidget(const google::protobuf::Message &_msg)
 {
   this->dataPtr->msgWidget = new MessageWidget(&_msg);
 
+  for (const auto &w : this->dataPtr->hideWidgets)
+    this->dataPtr->msgWidget->SetPropertyVisible(w, false);
+
+  this->dataPtr->msgWidget->SetReadOnly(this->dataPtr->readOnly);
+
   // Scroll area
   auto scrollArea = new QScrollArea();
   scrollArea->setWidget(this->dataPtr->msgWidget);
   scrollArea->setWidgetResizable(true);
-  scrollArea->setStyleSheet(
-      "QScrollArea{background-color: transparent; border: none}");
 
   this->layout()->addWidget(scrollArea);
 }

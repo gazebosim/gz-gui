@@ -23,6 +23,7 @@
 
 #include <ignition/math/Vector2.hh>
 #include "ignition/gui/qt.h"
+#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -42,7 +43,7 @@ namespace gui
     /// incremented every time that a pill is created. Every pill
     /// has a string name based on the prefix "variable" and its Id. Also,
     /// a pill has a text that is displayed.
-    class VariablePill : public QWidget
+    class IGNITION_GUI_VISIBLE VariablePill : public QWidget
     {
       Q_OBJECT
 
@@ -147,6 +148,10 @@ namespace gui
       /// \param[in] _evt The drag event.
       /// \return True if the drag action is valid
       private: bool IsDragValid(const QDropEvent *_evt) const;
+
+      /// \brief Qt signal emitted when a variable label has changed.
+      /// \param[in] _label New variable label.
+      signals: void VariableLabelChanged(const std::string &_label);
 
       /// \brief Qt signal emitted when a child variable pill is added.
       /// \param[in] _id Unique id of the child variable pill.

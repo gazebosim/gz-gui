@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "ignition/gui/Plugin.hh"
+#include "ignition/gui/System.hh"
 
 namespace ignition
 {
@@ -27,10 +28,12 @@ namespace gui
 {
 namespace plugins
 {
+namespace plot
+{
   class PlotPrivate;
 
   /// \brief Widget that allow plotting of Ignition Transport topics.
-  class Plot : public Plugin
+  class IGNITION_GUI_VISIBLE Plot : public Plugin
   {
     Q_OBJECT
 
@@ -44,9 +47,13 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
+    // Documentation inherited
+    protected slots: void ShowContextMenu(const QPoint &_pos) override;
+
     // Private data
     private: std::unique_ptr<PlotPrivate> dataPtr;
   };
+}
 }
 }
 }

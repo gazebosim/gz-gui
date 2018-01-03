@@ -46,12 +46,13 @@ TEST(SearchModelTest, FlatStructure)
 
   // A source model
   auto sourceModel = new QStandardItemModel();
-  ASSERT_TRUE(sourceModel != nullptr);
+  ASSERT_NE(nullptr, sourceModel);
 
   std::vector<std::string> items = {"foo", "bar", "foobar", "foofoo"};
   for (size_t i = 0; i < items.size(); ++i)
   {
     auto it = new QStandardItem();
+    ASSERT_NE(nullptr, it);
     it->setData(items[i].c_str(), DataRole::DISPLAY_NAME);
     sourceModel->insertRow(i, it);
   }
@@ -59,7 +60,8 @@ TEST(SearchModelTest, FlatStructure)
   // Add a title
   {
     auto it = new QStandardItem();
-    it->setData(items[items.size()].c_str(), DataRole::DISPLAY_NAME);
+    ASSERT_NE(nullptr, it);
+    it->setData("The Title", DataRole::DISPLAY_NAME);
     it->setData("title", DataRole::TYPE);
     sourceModel->insertRow(items.size(), it);
   }
@@ -68,7 +70,7 @@ TEST(SearchModelTest, FlatStructure)
 
   // A search model
   auto searchModel = new SearchModel();
-  ASSERT_TRUE(searchModel != nullptr);
+  ASSERT_NE(nullptr, searchModel);
 
   searchModel->setFilterRole(DataRole::DISPLAY_NAME);
   searchModel->setSourceModel(sourceModel);

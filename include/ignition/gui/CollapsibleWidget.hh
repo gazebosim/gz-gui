@@ -18,6 +18,7 @@
 #ifndef IGNITION_GUI_COLLAPSIBLEWIDGET_HH_
 #define IGNITION_GUI_COLLAPSIBLEWIDGET_HH_
 
+#include <memory>
 #include <string>
 
 #include "ignition/gui/qt.h"
@@ -28,6 +29,8 @@ namespace ignition
 {
   namespace gui
   {
+    class CollapsibleWidgetPrivate;
+
     /// \brief A widget consisting of a button and some content. The
     /// content is hidden or shown as the button is toggled.
     /// It inherits from property widget, but it doesn't hold a property value.
@@ -38,6 +41,9 @@ namespace ignition
       /// \brief Constructor
       /// \param[in] _key Title to be displayed on the button.
       public: explicit CollapsibleWidget(const std::string &_key);
+
+      /// \brief Destructor
+      public: virtual ~CollapsibleWidget();
 
       /// \brief Inherited from PropertyWidget.
       ///
@@ -60,6 +66,29 @@ namespace ignition
       /// \brief Callback that collapses or expands the contents.
       /// _param[in] _checked True for expanded.
       public slots: void Toggle(const bool _checked);
+
+      /// \brief Whether this is collapsed or not
+      /// \return True for expanded.
+      public: bool IsExpanded() const;
+
+      /// \brief Append a widget to the collapsible contents. The contents
+      /// consist of a vertical layout.
+      /// \param[in] _widget Widget to be appended.
+      public: void AppendContent(QWidget *_widget);
+
+      /// \brief Get the current number of items in the content.
+      /// \return The number of widgets in the content.
+      public: unsigned int ContentCount() const;
+
+      // Documentation inherited
+      public: virtual void SetReadOnly(const bool _readOnly,
+                                       const bool _explicit) override;
+
+      // Documentation inherited
+      public: virtual bool ReadOnly() const override;
+
+      /// \brief Pointer to private data
+      private: std::unique_ptr<CollapsibleWidgetPrivate> dataPtr;
     };
   }
 }

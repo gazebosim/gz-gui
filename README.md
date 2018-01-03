@@ -2,6 +2,7 @@ Build | status
 -- | --
 Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
 Ubuntu Xenial | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-xenial-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-xenial-amd64/)
+Ubuntu Zesty | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-zesty-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-zesty-amd64/)
 Homebrew | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-homebrew-amd64/)
 Windows 7 | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-windows7-amd64/)
 
@@ -124,9 +125,28 @@ To run the code checker:
 
     sh tools/code_check.sh
 
-## Documentation generation
+## Documentation
 
-    # TODO
+1. Build documentation
+
+        cd build
+        cmake ..
+        make doc
+
+1. View documentation
+
+        firefox doxygen/html/index.html
+
+1. Upload documentation to ignitionrobotics.org (you'll need appropriate Amazon
+   S3 credentials)
+
+        cd build
+        sh upload.sh
+
+1. If you're creating a new release, then tell ignitionrobotics.org about
+   the new version. For example:
+
+        curl -k -X POST -d '{"libName":"gui", "version":"1.0.0", "releaseDate":"2017-10-09T12:10:13+02:00","password":"secret"}' https://api.ignitionrobotics.org/1.0/versions
 
 ## Plugins
 

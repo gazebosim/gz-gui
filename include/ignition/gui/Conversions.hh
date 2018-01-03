@@ -18,6 +18,7 @@
 #ifndef IGNITION_GUI_CONVERSIONS_HH_
 #define IGNITION_GUI_CONVERSIONS_HH_
 
+#include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
@@ -26,9 +27,9 @@
 
 namespace ignition
 {
-  namespace math
+  namespace common
   {
-    class Color;
+    class MouseEvent;
   }
 
   namespace gui
@@ -46,13 +47,13 @@ namespace ignition
     math::Color convert(const QColor &_color);
 
     /// \brief Return the equivalent QPointF.
-    /// \param[in] _point Ignition vector to convert.
+    /// \param[in] _pt Ignition vector to convert.
     /// \return QPointF.
     IGNITION_GUI_VISIBLE
     QPointF convert(const math::Vector2d &_pt);
 
     /// \brief Return the equivalent ignition vector.
-    /// \param[in] _color QPointF to convert
+    /// \param[in] _pt QPointF to convert
     /// \return Ignition Vector2d.
     IGNITION_GUI_VISIBLE
     math::Vector2d convert(const QPointF &_pt);
@@ -68,6 +69,15 @@ namespace ignition
     /// \return Ignition vector 3d value
     IGNITION_GUI_VISIBLE
     math::Vector3d convert(const QVector3D &_vec);
+
+    /// \brief Return the equivalent ignition mouse event.
+    ///
+    /// Note that there isn't a 1-1 mapping between these types, so fields such
+    /// as common::MouseEvent::PressPos need to be set afterwards.
+    /// \param[in] _e Qt mouse event
+    /// \return Ignition mouse event
+    IGNITION_GUI_VISIBLE
+    common::MouseEvent convert(const QMouseEvent &_e);
   }
 }
 #endif

@@ -41,38 +41,37 @@ TEST(CollapsibleWidgetTest, Toggle)
   ASSERT_NE(label, nullptr);
   EXPECT_EQ(label->text().toStdString(), "Collapse me");
 
-  // Check it has a button and no content
-  auto layout = widget->layout();
-  EXPECT_EQ(layout->count(), 1);
+  // Check the content is empty
+  EXPECT_EQ(widget->ContentCount(), 0u);
 
   // Add content
-  layout->addWidget(new QLabel("banana"));
-  layout->addWidget(new QLabel("grape"));
+  widget->AppendContent(new QDoubleSpinBox());
+  widget->AppendContent(new QDoubleSpinBox());
   widget->show();
+  EXPECT_EQ(widget->ContentCount(), 2u);
 
-  // Check the new content is visible
-  for (auto i = 0; i < layout->count(); ++i)
-  {
-    EXPECT_TRUE(layout->itemAt(i)->widget()->isVisible());
-  }
-
-  // Collapse
-  widget->Toggle(false);
-
-  // Check the content is not visible
-  for (auto i = 1; i < layout->count(); ++i)
-  {
-    EXPECT_FALSE(layout->itemAt(i)->widget()->isVisible());
-  }
+  // Check the new content is not visible (start collapsed)
+  EXPECT_FALSE(widget->IsExpanded());
+  auto spins = widget->findChildren<QDoubleSpinBox *>();
+  ASSERT_EQ(spins.size(), 2);
+  EXPECT_FALSE(spins[0]->isVisible());
+  EXPECT_FALSE(spins[1]->isVisible());
 
   // Expand
   widget->Toggle(true);
+  EXPECT_TRUE(widget->IsExpanded());
 
   // Check the content is visible
-  for (auto i = 1; i < layout->count(); ++i)
-  {
-    EXPECT_TRUE(layout->itemAt(i)->widget()->isVisible());
-  }
+  EXPECT_TRUE(spins[0]->isVisible());
+  EXPECT_TRUE(spins[1]->isVisible());
+
+  // Collapse
+  widget->Toggle(false);
+  EXPECT_FALSE(widget->IsExpanded());
+
+  // Check the content is not visible
+  EXPECT_FALSE(spins[0]->isVisible());
+  EXPECT_FALSE(spins[1]->isVisible());
 
   delete widget;
   EXPECT_TRUE(stop());

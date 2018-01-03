@@ -5,6 +5,8 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/CollapsibleWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ColorWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Dialog.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Dock.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/EditableLabel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/EnumWidget.cc
@@ -40,6 +42,7 @@ set (gtest_sources
   MainWindow_TEST.cc
   MessageWidget_TEST.cc
   NumberWidget_TEST.cc
+  Plugin_TEST.cc
   Pose3dWidget_TEST.cc
   SearchModel_TEST.cc
   StringWidget_TEST.cc
@@ -53,7 +56,8 @@ if (HAVE_IGN_TOOLS)
   )
 endif()
 
-ign_build_tests(${gtest_sources})
+ign_build_tests(SOURCES ${gtest_sources}
+                LIB_DEPS ${IGNITION-MATH_LIBRARIES})
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)
