@@ -98,7 +98,7 @@ namespace plot
     /// \brief Topic name
     private: std::string topic;
 
-    /// \brief ToDo.
+    /// \brief Keep track of time when curve was created.
     private: double startTime;
 
     /// \brief Node for communications.

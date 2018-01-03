@@ -188,7 +188,7 @@ TEST(ExportDialogTest, OnePlot)
 
   // ToDo: Fix this test.
   // The export button should now be enabled.
-  // verifyButtons(exportDialog, true);
+  verifyButtons(exportDialog, true);
 
   // Click the list item again
   mouseEvent = new QMouseEvent(QEvent::MouseButtonPress,

@@ -204,18 +204,18 @@ ExportDialog::ExportDialog(QWidget *_parent,
   QHBoxLayout *buttonsLayout = new QHBoxLayout;
   QPushButton *cancelButton = new QPushButton(tr("&Cancel"));
   cancelButton->setObjectName("materialFlat");
-  connect(cancelButton, SIGNAL(clicked()), this, SLOT(OnCancel()));
+  this->connect(cancelButton, SIGNAL(clicked()), this, SLOT(OnCancel()));
 
   QMenu *exportMenu = new QMenu(this);
   exportMenu->setObjectName("material");
 
   QAction *csvAct = new QAction("CSV (.csv)", exportMenu);
   csvAct->setStatusTip("Export to CSV files");
-  connect(csvAct, SIGNAL(triggered()), this, SLOT(OnExportCSV()));
+  this->connect(csvAct, SIGNAL(triggered()), this, SLOT(OnExportCSV()));
 
   QAction *pdfAct = new QAction("PDF (.pdf)", exportMenu);
   pdfAct->setStatusTip("Export to PDF files");
-  connect(pdfAct, SIGNAL(triggered()), this, SLOT(OnExportPDF()));
+  this->connect(pdfAct, SIGNAL(triggered()), this, SLOT(OnExportPDF()));
 
   exportMenu->addAction(csvAct);
   exportMenu->addAction(pdfAct);
@@ -258,7 +258,7 @@ ExportDialog::ExportDialog(QWidget *_parent,
   this->dataPtr->listView->setResizeMode(QListView::Adjust);
   this->dataPtr->listView->setMovement(QListView::Static);
   this->dataPtr->listView->setSelectionMode(QAbstractItemView::MultiSelection);
-  connect(this->dataPtr->listView, SIGNAL(clicked(const QModelIndex &)),
+  this->connect(this->dataPtr->listView, SIGNAL(pressed(const QModelIndex &)),
           this, SLOT(OnSelected()));
 
   PlotViewDelegate *plotViewDelegate = new PlotViewDelegate;
@@ -278,14 +278,14 @@ ExportDialog::ExportDialog(QWidget *_parent,
   // Set a reasonable default size.
   this->resize(720, 520);
 
-  connect(clearAct, SIGNAL(triggered()),
+  this->connect(clearAct, SIGNAL(triggered()),
           this->dataPtr->listView, SLOT(clearSelection()));
-  connect(clearAct, SIGNAL(triggered()),
+  this->connect(clearAct, SIGNAL(triggered()),
           this, SLOT(OnSelected()));
 
-  connect(selectAllAct, SIGNAL(triggered()),
+  this->connect(selectAllAct, SIGNAL(triggered()),
           this->dataPtr->listView, SLOT(selectAll()));
-  connect(selectAllAct, SIGNAL(triggered()),
+  this->connect(selectAllAct, SIGNAL(triggered()),
           this, SLOT(OnSelected()));
 }
 
