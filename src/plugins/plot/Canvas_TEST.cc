@@ -158,10 +158,9 @@ TEST(CanvasTest, VariableLabel)
   auto c = curve.lock();
   EXPECT_EQ(std::string("var01"), c->Label());
 
-  // set new label and verify.
-  // ToDo: Fix it.
-  // plotCanvas->SetVariableLabel(var01, "new_var01");
-  // EXPECT_EQ(std::string("new_var01"), c->Label());
+  // Set new label and verify.
+  plotCanvas->SetVariableLabel(var01, "new_var01");
+  EXPECT_EQ(std::string("new_var01"), c->Label());
 
   plotCanvas->hide();
   delete plotCanvas;

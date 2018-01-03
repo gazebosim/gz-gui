@@ -252,9 +252,9 @@ Canvas::~Canvas()
 /////////////////////////////////////////////////
 void Canvas::SetVariableLabel(const unsigned int _id, const std::string &_label)
 {
-  // set new variable labeland let the signals/slots do the work on updating
+  // set new variable label and let the signals/slots do the work on updating
   // the plot curve
-  return this->dataPtr->yVariableContainer->SetVariablePillLabel(_id, _label);
+  this->dataPtr->yVariableContainer->SetVariablePillLabel(_id, _label);
 }
 
 /////////////////////////////////////////////////

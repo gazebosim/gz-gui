@@ -10,13 +10,13 @@ set (plot_qt_others
   Canvas
   ExportDialog
   IncrementalPlot
-  Manager
-  TopicCurveHandler
 )
 
 # The rest of source files.
 set (plot_others
   Curve
+  Manager
+  TopicCurveHandler
   Tracker
 )
 
