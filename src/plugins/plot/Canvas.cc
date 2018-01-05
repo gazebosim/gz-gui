@@ -27,7 +27,7 @@
 #include "ignition/gui/plugins/plot/Canvas.hh"
 #include "ignition/gui/plugins/plot/Curve.hh"
 #include "ignition/gui/plugins/plot/IncrementalPlot.hh"
-#include "ignition/gui/plugins/plot/Manager.hh"
+#include "ignition/gui/plugins/plot/TopicCurveHandler.hh"
 #include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/VariablePill.hh"
 #include "ignition/gui/VariablePillContainer.hh"
@@ -82,6 +82,9 @@ namespace plot
 
     /// \brief Global plot counter.
     public: static unsigned int globalPlotId;
+
+    /// \brief Handler for updating topic curves
+    public: TopicCurveHandler topicCurve;
   };
 }
 }
@@ -317,7 +320,7 @@ void Canvas::AddVariable(const unsigned int _id,
     this->dataPtr->plotSplitter->setVisible(true);
   }
 
-  Manager::Instance()->AddTopicCurve(_variable, curve);
+  this->dataPtr->topicCurve.AddCurve(_variable, curve);
 }
 
 /////////////////////////////////////////////////
@@ -363,7 +366,9 @@ void Canvas::RemoveVariable(const unsigned int _id,
   }
   // assume topic name starts with '/'
   if (!curveLabel.empty() && curveLabel[0] == '/')
-    Manager::Instance()->RemoveTopicCurve(plotCurve);
+  {
+    this->dataPtr->topicCurve.RemoveCurve(plotCurve);
+  }
   else
   {
     ignerr << "Not available" << std::endl;
@@ -687,7 +692,7 @@ void Canvas::Restart()
         // assume topic name starts with '/'
         std::string curveLabel = c->Label();
         if (!curveLabel.empty() && curveLabel[0] == '/')
-          Manager::Instance()->RemoveTopicCurve(c);
+          this->dataPtr->topicCurve.RemoveCurve(c);
         else
         {
           ignerr << "Not available" << std::endl;
