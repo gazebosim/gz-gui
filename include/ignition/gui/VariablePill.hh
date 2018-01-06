@@ -43,7 +43,20 @@ namespace gui
     /// incremented every time that a pill is created. Every pill
     /// has a string name based on the prefix "variable" and its Id. Also,
     /// a pill has a text that is displayed.
-    class IGNITION_GUI_VISIBLE VariablePill : public QWidget
+    ///
+    /// ## Styling
+    ///
+    /// It is possible to use custom QSS styles to control the appearance of
+    /// a variable pill. A reference style is provided at
+    /// include/ignition/gui/style.qss
+    ///
+    /// Properties:
+    ///   * selectedPill: True when pill is selected
+    ///   * multiPillChild: True if this pill is currently a child of another
+    ///                     pill
+    ///   * multiPillParent: True if this pill is currently a parent of another
+    ///                      pill
+    class IGNITION_GUI_VISIBLE VariablePill : public QFrame
     {
       Q_OBJECT
 
@@ -78,7 +91,8 @@ namespace gui
       /// \param[in] _parent Parent variable pill.
       public: void SetParent(VariablePill *_parent);
 
-      /// \brief Get the parent of this variable pill.
+      /// \brief Get the parent of this variable pill. If this is a multi-
+      /// variable pill, the parent is equal to itself.
       /// \return Parent variable pill.
       public: VariablePill *Parent() const;
 
@@ -148,6 +162,9 @@ namespace gui
       /// \param[in] _evt The drag event.
       /// \return True if the drag action is valid
       private: bool IsDragValid(const QDropEvent *_evt) const;
+
+      /// \brief Reapply styles, usually called after a dybamic property change.
+      private: void Polish();
 
       /// \brief Qt signal emitted when a child variable pill is added.
       /// \param[in] _id Unique id of the child variable pill.
