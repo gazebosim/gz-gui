@@ -22,6 +22,7 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/Iface.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -110,5 +111,33 @@ TEST(HelpersTest, stringTypeFromKey)
 {
   EXPECT_EQ(stringTypeFromKey("name"), StringType::LINE);
   EXPECT_EQ(stringTypeFromKey("innerxml"), StringType::PLAIN_TEXT);
+}
+
+/////////////////////////////////////////////////
+TEST(HelpersTest, findFirstByProperty)
+{
+  ASSERT_TRUE(initApp());
+
+  // Construct a list
+  auto w0 = new QWidget();
+  w0->setProperty("banana", 1.0);
+
+  auto w1 = new QWidget();
+  w1->setProperty("banana", 2.0);
+
+  auto w2 = new QWidget();
+  w2->setProperty("banana", 1.0);
+
+  QList<QWidget *> list;
+  list.append(w0);
+  list.append(w1);
+  list.append(w2);
+
+  EXPECT_EQ(findFirstByProperty(list, "banana", 1.0), w0);
+  EXPECT_EQ(findFirstByProperty(list, "banana", 2.0), w1);
+  EXPECT_EQ(findFirstByProperty(list, "banana", 3.0), nullptr);
+  EXPECT_EQ(findFirstByProperty(list, "acerola", 1.0), nullptr);
+
+  EXPECT_TRUE(stop());
 }
 
