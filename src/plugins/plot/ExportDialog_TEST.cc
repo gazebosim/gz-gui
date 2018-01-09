@@ -130,7 +130,7 @@ TEST(ExportDialogTest, Empty)
 
   exportDialog->show();
 
-  auto listView = exportDialog->findChild<QListView *>("plotExportListView");
+  auto listView = exportDialog->findChild<QListView *>();
   ASSERT_NE(nullptr, listView);
   EXPECT_EQ(0, listView->model()->columnCount());
   EXPECT_EQ(0, listView->model()->rowCount());
@@ -169,7 +169,7 @@ TEST(ExportDialogTest, OnePlot)
   exportDialog->show();
 
   // Get the list view, which holds the plotcanvas items.
-  auto listView = exportDialog->findChild<QListView *>("plotExportListView");
+  auto listView = exportDialog->findChild<QListView *>();
   ASSERT_NE(nullptr, listView);
   EXPECT_EQ(1, listView->model()->columnCount());
   EXPECT_EQ(1, listView->model()->rowCount());

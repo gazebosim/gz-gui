@@ -102,8 +102,6 @@ Canvas::Canvas(QWidget *_parent)
   : QWidget(_parent),
     dataPtr(new CanvasPrivate())
 {
-  this->setObjectName("Canvas");
-
   // Plot title
   this->dataPtr->title = new EditableLabel("Plot Name");
 
@@ -141,7 +139,6 @@ Canvas::Canvas(QWidget *_parent)
   settingsMenu->addAction(showHoverLineAct);
 
   QToolButton *settingsButton = new QToolButton();
-  settingsButton->setObjectName("CanvasTitleTool");
   settingsButton->installEventFilter(this);
   settingsButton->setToolTip(tr("Settings"));
   settingsButton->setIcon(QIcon(":/images/settings.svg"));
@@ -160,7 +157,6 @@ Canvas::Canvas(QWidget *_parent)
   titleSettingsLayout->setContentsMargins(0, 0, 0, 0);
 
   QFrame *titleFrame = new QFrame;
-  titleFrame->setObjectName("CanvasTitleFrame");
   titleFrame->setLayout(titleSettingsLayout);
 
   // X and Y variable containers
@@ -200,7 +196,6 @@ Canvas::Canvas(QWidget *_parent)
 
   // plot
   QScrollArea *plotScrollArea = new QScrollArea(this);
-  plotScrollArea->setObjectName("plotScrollArea");
   plotScrollArea->setLineWidth(0);
   plotScrollArea->setFrameShape(QFrame::NoFrame);
   plotScrollArea->setFrameShadow(QFrame::Plain);
@@ -212,7 +207,6 @@ Canvas::Canvas(QWidget *_parent)
 
   QFrame *plotFrame = new QFrame(plotScrollArea);
   plotFrame->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-  plotFrame->setObjectName("CanvasPlotFrame");
   QVBoxLayout *plotLayout = new QVBoxLayout;
   plotFrame->setLayout(plotLayout);
 
@@ -231,7 +225,6 @@ Canvas::Canvas(QWidget *_parent)
   showHoverLineAct->setChecked(this->dataPtr->emptyPlot->IsShowHoverLine());
 
   QFrame *mainFrame = new QFrame;
-  mainFrame->setObjectName("CanvasFrame");
   QVBoxLayout *mainFrameLayout = new QVBoxLayout;
   mainFrameLayout->addWidget(titleFrame);
   mainFrameLayout->addLayout(variableContainerLayout);

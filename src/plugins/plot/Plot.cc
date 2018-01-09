@@ -88,18 +88,12 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   if (this->title.empty())
     this->title = "Plotting Utility";
 
-  this->setObjectName("plotWindow");
-  this->setWindowFlags(Qt::Window | Qt::WindowTitleHint |
-      Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint |
-      Qt::CustomizeWindowHint);
-
   // new empty canvas
   this->dataPtr->canvasSplitter = new QSplitter(Qt::Vertical);
   this->AddCanvas();
 
   // add button
   QPushButton *addCanvasButton = new QPushButton("+");
-  addCanvasButton->setObjectName("plotAddCanvas");
   addCanvasButton->setDefault(false);
   addCanvasButton->setAutoDefault(false);
   addCanvasButton->setToolTip("Add a new canvas");
@@ -112,7 +106,6 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   // export button
   QPushButton *exportPlotButton = new QPushButton("Export");
   exportPlotButton->setIcon(QIcon(":/images/file_upload.svg"));
-  exportPlotButton->setObjectName("plotExport");
   exportPlotButton->setDefault(false);
   exportPlotButton->setAutoDefault(false);
   exportPlotButton->setToolTip("Export plot data");

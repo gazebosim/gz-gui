@@ -180,7 +180,6 @@ ExportDialog::ExportDialog(QWidget *_parent,
   clearAct->setVisible(true);
 
   QToolBar *selectToolbar = new QToolBar;
-  selectToolbar->setObjectName("plotToolbar");
   selectToolbar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   selectToolbar->addAction(selectAllAct);
   selectToolbar->addAction(clearAct);
@@ -193,10 +192,8 @@ ExportDialog::ExportDialog(QWidget *_parent,
   titleLayout->setContentsMargins(0, 0, 0, 0);
 
   QFrame *titleFrame = new QFrame;
-  titleFrame->setObjectName("plotExportTitleFrame");
   titleFrame->setLayout(titleLayout);
 
-  this->setObjectName("plotExport");
   this->setWindowTitle("Export Plot");
   this->setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
                        Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
@@ -231,7 +228,6 @@ ExportDialog::ExportDialog(QWidget *_parent,
   buttonsLayout->addWidget(this->dataPtr->exportButton);
 
   this->dataPtr->listView = new QListView;
-  this->dataPtr->listView->setObjectName("plotExportListView");
 
   QStandardItemModel *model = new QStandardItemModel();
 
