@@ -48,9 +48,6 @@ class ignition::gui::VariablePillPrivate
   /// \brief Text label for the outer mulit-variable pill
   public: QLabel *multiLabel;
 
-  /// \brief Layout for a mulit-variable pill
-  public: QHBoxLayout *multiLayout;
-
   /// \brief Starting position of the drag action.
   public: QPoint dragStartPosition;
 
@@ -75,7 +72,7 @@ unsigned int VariablePillPrivate::globalVariableId = 0;
 
 /////////////////////////////////////////////////
 VariablePill::VariablePill(QWidget *_parent)
-  : QWidget(_parent),
+  : QFrame(_parent),
     dataPtr(new VariablePillPrivate)
 {
   this->dataPtr->id = VariablePillPrivate::globalVariableId;
@@ -87,44 +84,31 @@ VariablePill::VariablePill(QWidget *_parent)
 
   VariablePillPrivate::globalVariableId++;
 
-  // label
-  this->dataPtr->label = new QLabel;
-  QHBoxLayout *labelLayout = new QHBoxLayout;
-  labelLayout->addWidget(this->dataPtr->label);
-  labelLayout->setContentsMargins(0, 0, 0, 0);
-  auto labelFrame = new QFrame;
-  labelFrame->setLayout(labelLayout);
-
-  // child variable pills
-  this->dataPtr->variableLayout = new QHBoxLayout;
-  this->dataPtr->variableLayout->setAlignment(Qt::AlignLeft);
-
-  this->dataPtr->multiLayout = new QHBoxLayout;
-  this->dataPtr->multiLayout->setAlignment(Qt::AlignLeft);
-  this->dataPtr->multiLayout->setContentsMargins(0, 0, 0, 0);
+  // "Variables" label for multi-pill
   this->dataPtr->multiLabel = new QLabel;
   this->dataPtr->multiLabel->setText(QString(" Variables:"));
   this->dataPtr->multiLabel->setVisible(false);
-  this->dataPtr->multiLayout->addWidget(this->dataPtr->multiLabel);
 
-  auto singleLayout = new QHBoxLayout;
-  singleLayout->setAlignment(Qt::AlignLeft);
-  singleLayout->addWidget(labelFrame);
-  singleLayout->addLayout(this->dataPtr->variableLayout);
-  singleLayout->setContentsMargins(0, 0, 0, 0);
-  this->dataPtr->multiLayout->addLayout(singleLayout);
+  // Label for this pill
+  this->dataPtr->label = new QLabel;
 
-  QHBoxLayout *mainLayout = new QHBoxLayout;
-  mainLayout->setContentsMargins(0, 0, 0, 0);
+  // Layout to place child pills
+  this->dataPtr->variableLayout = new QHBoxLayout;
+  this->dataPtr->variableLayout->setAlignment(Qt::AlignLeft);
+
+  // Main layout
+  auto mainLayout = new QHBoxLayout;
   mainLayout->setAlignment(Qt::AlignLeft);
-
-  auto mainFrame = new QFrame(this);
-  mainFrame->setLayout(this->dataPtr->multiLayout);
-  mainFrame->setObjectName("variablePillFrame");
-
-  mainLayout->addWidget(mainFrame);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
+  mainLayout->addWidget(this->dataPtr->multiLabel);
+  mainLayout->addWidget(this->dataPtr->label);
+  mainLayout->addLayout(this->dataPtr->variableLayout);
   this->setLayout(mainLayout);
 
+  // Properties
+  this->setProperty("multiPillParent", false);
+  this->setProperty("multiPillChild", false);
+  this->setProperty("selectedPill", false);
   this->setAcceptDrops(true);
 }
 
@@ -170,6 +154,10 @@ std::string VariablePill::Text() const
 void VariablePill::SetParent(VariablePill *_parent)
 {
   this->dataPtr->parent = _parent;
+
+  this->setProperty("multiPillChild",
+      (_parent != nullptr && _parent != this));
+  this->Polish();
 }
 
 /////////////////////////////////////////////////
@@ -195,9 +183,8 @@ void VariablePill::SetMultiVariableMode(const bool _enable)
 {
   this->dataPtr->multiLabel->setVisible(_enable);
 
-  int margin = _enable ? 4 : 0;
-  this->dataPtr->multiLayout->setContentsMargins(
-      margin, margin, margin, margin);
+  this->setProperty("multiPillParent", _enable);
+  this->Polish();
 }
 
 /////////////////////////////////////////////////
@@ -535,10 +522,22 @@ std::map<unsigned int, VariablePill *> &VariablePill::VariablePills() const
 void VariablePill::SetSelected(const bool _selected)
 {
   this->dataPtr->isSelected = _selected;
+
+  this->setProperty("selectedPill", _selected);
+  this->Polish();
 }
 
 /////////////////////////////////////////////////
 bool VariablePill::IsSelected() const
 {
   return this->dataPtr->isSelected;
+}
+
+/////////////////////////////////////////////////
+void VariablePill::Polish()
+{
+  this->style()->unpolish(this);
+  this->style()->polish(this);
+  this->dataPtr->label->style()->unpolish(this->dataPtr->label);
+  this->dataPtr->label->style()->polish(this->dataPtr->label);
 }
