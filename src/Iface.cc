@@ -493,7 +493,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
 
   // Add default folder and install folder
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
-                             IGN_GUI_PLUGIN_INSTALL_PATH);
+                             IGN_GUI_PLUGIN_INSTALL_DIR);
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -757,7 +757,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   paths.push_back(home + "/.ignition/gui/plugins");
 
   // 4. Install path
-  paths.push_back(IGN_GUI_PLUGIN_INSTALL_PATH);
+  paths.push_back(IGN_GUI_PLUGIN_INSTALL_DIR);
 
   // Populate map
   std::vector<std::pair<std::string, std::vector<std::string>>> plugins;

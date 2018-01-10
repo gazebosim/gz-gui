@@ -1,5 +1,3 @@
-include (${project_cmake_dir}/Utils.cmake)
-
 # Just the plot widget.
 set (plotWidget
   Plot
@@ -43,7 +41,7 @@ add_library(${plotWidget} SHARED
 )
 
 target_link_libraries(${plotWidget}
-  ${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
+  ${PROJECT_NAME_LOWER}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
   ${QWT_LIBRARY})
