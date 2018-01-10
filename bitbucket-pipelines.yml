@@ -8,16 +8,16 @@ pipelines:
           - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable xenial main" > /etc/apt/sources.list.d/gazebo-stable.list
           - apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
           - apt update
-          - apt install -y build-essential wget cmake cppcheck mercurial
-            libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev
-            libogre-1.9-dev
-            libprotoc-dev libprotobuf-dev protobuf-compiler
-            qtbase5-dev libqwt-qt5-dev libtinyxml2-dev
+          - apt install -y
+            build-essential wget cmake cppcheck mercurial
+            qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotobuf-dev
             libignition-cmake-dev
             libignition-math4-dev
             libignition-common-dev
             libignition-msgs-dev
             libignition-transport3-dev
+            # ign-rendering deps
+            libogre-1.9-dev
           # Static checking before building
           - sh tools/code_check.sh
           # Ignition rendering
