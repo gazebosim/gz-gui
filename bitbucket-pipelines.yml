@@ -6,7 +6,6 @@ pipelines:
         script:
           # Install dependencies
           - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable xenial main" > /etc/apt/sources.list.d/gazebo-stable.list
-          - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease xenial main" > /etc/apt/sources.list.d/gazebo-prerelease.list
           - apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
           - apt update
           - apt install -y build-essential wget cmake cppcheck mercurial
@@ -16,18 +15,11 @@ pipelines:
             qtbase5-dev libqwt-qt5-dev libtinyxml2-dev
             libignition-cmake-dev
             libignition-math4-dev
+            libignition-common-dev
             libignition-msgs-dev
             libignition-transport3-dev
           # Static checking before building
           - sh tools/code_check.sh
-          # Ignition common
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-common -b default
-          - cd ign-common
-          - mkdir build
-          - cd build
-          - cmake .. -DBUILD_TESTING=false
-          - make -j4 install
-          - cd ../..
           # Ignition rendering
           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
           - cd ign-rendering

@@ -10,8 +10,16 @@ Install {#install}
 ### Ignition (from source)
 
 ```
+# Ignition cmake
+hg clone http://bitbucket.org/ignitionrobotics/ign-cmake -b default
+cd ign-cmake
+mkdir build
+cd build
+cmake .. -DENABLE_TESTS_COMPILATION=false
+make install
+cd ../..
 # Ignition math
-hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math3
+hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math4
 cd ign-math
 mkdir build
 cd build
@@ -19,7 +27,7 @@ cmake .. -DENABLE_TESTS_COMPILATION=false
 make install
 cd ../..
 # Ignition common
-hg clone http://bitbucket.org/ignitionrobotics/ign-common -b default
+hg clone http://bitbucket.org/ignitionrobotics/ign-common -b ign-common1
 cd ign-common
 mkdir build
 cd build
@@ -27,7 +35,7 @@ cmake .. -DENABLE_TESTS_COMPILATION=false
 make install
 cd ../..
 # Ignition msgs
-hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
+hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b ign-msgs1
 cd ign-msgs
 mkdir build
 cd build
@@ -37,6 +45,14 @@ cd ../..
 # Ignition transport
 hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
 cd ign-transport
+mkdir build
+cd build
+cmake .. -DENABLE_TESTS_COMPILATION=false
+make install
+cd ../..
+# Ignition rendering
+hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+cd ign-rendering
 mkdir build
 cd build
 cmake .. -DENABLE_TESTS_COMPILATION=false

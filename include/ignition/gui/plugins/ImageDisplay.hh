@@ -37,7 +37,7 @@ namespace plugins
   ///
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
-  ///                  this is false, a \<topic\> must be specified.
+  ///                    this is false, a \<topic\> must be specified.
   class ImageDisplay : public Plugin
   {
     Q_OBJECT
