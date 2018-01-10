@@ -5,16 +5,15 @@ Plugins {#plugins}
 
 Ignition GUI will look for plugins on the following paths, in this order:
 
-1. all paths set on the `IGN_GUI_PLUGIN_PATH` environment variable
-1. all paths added by calling `ignition::gui::addPluginPath`
-1. `~/.ignition/gui/plugins`
-1. plugins which come built into Ignition GUI
+1. All paths set on the `IGN_GUI_PLUGIN_PATH` environment variable
+2. All paths added by calling `ignition::gui::addPluginPath`
+3. `~/.ignition/gui/plugins`
+4. [Plugins which are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1plugins.html)
 
 ## Plugin configuration
 
 Ignition GUI supports loading configuration files (XML) which are passed to
-plugins and can be parsed using TinyXml2 (TODO: consider alternative to
-Tinyxml).
+plugins and can be parsed using TinyXml2 (For now, see issue #7).
 
 For example (`examples/config/image.config`):
 

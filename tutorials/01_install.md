@@ -1,63 +1,47 @@
 Install {#install}
 ======
 
+Instructions on how to install from source on Ubuntu Xenial or higher.
+
 ## Dependencies
 
 ### External
 
-    sudo apt-get install -y build-essential wget cmake qtbase5-dev libtinyxml2-dev libfreeimage-dev libgts-dev uuid-dev libswscale-dev libavutil-dev libavcodec-dev libavformat-dev libprotoc-dev libprotobuf-dev libzmq3-dev protobuf-compiler cppcheck mercurial
+    sudo apt install -y
+        build-essential
+        wget
+        cmake
+        qtbase5-dev
+        libtinyxml2-dev
+        libprotoc-dev
+        libprotobuf-dev
+        cppcheck
+        mercurial
+        libignition-cmake-dev
+        libignition-math4-dev
+        libignition-common-dev
+        libignition-msgs-dev
+        libignition-transport3-dev
 
 ### Ignition (from source)
 
-```
-# Ignition cmake
-hg clone http://bitbucket.org/ignitionrobotics/ign-cmake -b default
-cd ign-cmake
-mkdir build
-cd build
-cmake .. -DENABLE_TESTS_COMPILATION=false
-make install
-cd ../..
-# Ignition math
-hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math4
-cd ign-math
-mkdir build
-cd build
-cmake .. -DENABLE_TESTS_COMPILATION=false
-make install
-cd ../..
-# Ignition common
-hg clone http://bitbucket.org/ignitionrobotics/ign-common -b ign-common1
-cd ign-common
-mkdir build
-cd build
-cmake .. -DENABLE_TESTS_COMPILATION=false
-make install
-cd ../..
-# Ignition msgs
-hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b ign-msgs1
-cd ign-msgs
-mkdir build
-cd build
-cmake .. -DENABLE_TESTS_COMPILATION=false
-make install
-cd ../..
-# Ignition transport
-hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
-cd ign-transport
-mkdir build
-cd build
-cmake .. -DENABLE_TESTS_COMPILATION=false
-make install
-cd ../..
-# Ignition rendering
-hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
-cd ign-rendering
-mkdir build
-cd build
-cmake .. -DENABLE_TESTS_COMPILATION=false
-make install
-```
+At the moment, these are the dependencies which need to be built from source:
+
+#### Ignition rendering
+
+Install dependencies
+
+    sudo apt install -y libogre-1.9-dev
+
+Clone and install
+
+    hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+    cd ign-rendering
+    mkdir build
+    cd build
+    cmake .. -DENABLE_TESTS_COMPILATION=false
+    make install
+    cd ../..
 
 ## Install GUI
 
@@ -80,17 +64,18 @@ To uninstall the software installed with the previous steps:
 
 Tests are built by default. After building, to run all tests:
 
+    cd build
     make test
 
-To run one specific test:
+You can also run one specific test, for example:
 
-    ./src/UNIT_Example_TEST
+    ./src/UNIT_MainWindow_TEST
 
 ### Disable tests building
 
 To build without tests, on the cmake step, do this instead:
 
-    cmake .. -DENABLE_TESTS_COMPILATION=False
+    cmake .. -DBUILD_TESTING=False
 
 ### Test coverage
 
@@ -118,7 +103,8 @@ See coverage report:
 
     firefox coverage/index.html
 
-Upload to [codecov.io](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default):
+Upload to [codecov.io](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
+(you'll need the secret token):
 
     bash <(curl -s https://codecov.io/bash) -t <CODECOV_TOKEN>
 
@@ -130,20 +116,27 @@ To run the code checker:
 
 ## Build documentation
 
-1. Build documentation
+The following explains how to build both the
+[API documentation](https://ignitionrobotics.org/api/gui/0.1/index.html) and the
+[tutorials](https://ignitionrobotics.org/tutorials/gui/0.1/index.html).
+
+1. Build all documentation
 
         cd build
         cmake ..
         make doc
 
-1. View documentation
+1. View generated API documentation
 
-        firefox build/doxygen/html/index.html
+        firefox doxygen/html/index.html
+
+1. View generated tutorials
+
+        firefox tutorials/html/index.html
 
 1. Upload documentation to ignitionrobotics.org (you'll need appropriate Amazon
    S3 credentials)
 
-        cd build
         sh upload.sh
 
 1. If you're creating a new release, then tell ignitionrobotics.org about

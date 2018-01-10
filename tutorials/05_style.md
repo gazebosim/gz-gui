@@ -17,8 +17,7 @@ You can pass a stylesheet file on the command line with the `-t` option. Try:
 
     ign gui -s Publisher -t examples/standalone/style_cmake/style.qss
 
-> Note: when loading a config file which has a stylesheet, this option will not
-  override it.
+> Note: when loading a config file which has a stylesheet, this option will not override it.
 
 ## Through the GUI
 
@@ -32,5 +31,4 @@ configuration file. See an example:
 
     ign gui -c examples/config/stylesheet.config
 
->Note: When saving the configuration file through the GUI, the current stylesheet will
-be added.
+> Note: When saving the configuration file through the GUI, the current stylesheet will be saved as well.
