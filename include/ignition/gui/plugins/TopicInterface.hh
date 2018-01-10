@@ -47,7 +47,8 @@ namespace plugins
   ///            created and can't be changed afterwards. If no topic is
   ///            specified, the plugin subscribes to `/echo`.
   /// \<message_type\>: Fully qualified name of the message type expected on the
-  ///                   topic above. Widgets will be generated accordingly.
+  ///                   topic above. Widgets will be generated according to
+  ///                   this.
   ///                   If not specified, widget will be constructed according
   ///                   to the first message received on \<topic\>. Once widgets
   ///                   have been generated, the message type can't be changed.
