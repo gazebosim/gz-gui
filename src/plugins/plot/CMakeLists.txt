@@ -7,4 +7,4 @@ set (gtest_local_sources
   Plot_TEST.cc
 )
 
-ign_build_tests(SOURCES ${gtest_local_sources} LIB_DEPS Plot)
+ign_build_tests(TYPE UNIT SOURCES ${gtest_local_sources} LIB_DEPS Plot)

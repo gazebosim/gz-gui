@@ -2,6 +2,7 @@ Build | status
 -- | --
 Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
 Ubuntu Xenial | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-xenial-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-xenial-amd64/)
+Ubuntu Zesty | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-zesty-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-zesty-amd64/)
 Homebrew | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-homebrew-amd64/)
 Windows 7 | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-windows7-amd64/)
 
@@ -23,8 +24,16 @@ of libraries designed to rapidly develop robot applications.
 
 ### Ignition
 
+    # Ignition cmake
+    hg clone http://bitbucket.org/ignitionrobotics/ign-cmake -b default
+    cd ign-cmake
+    mkdir build
+    cd build
+    cmake .. -DENABLE_TESTS_COMPILATION=false
+    make install
+    cd ../..
     # Ignition math
-    hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math3
+    hg clone http://bitbucket.org/ignitionrobotics/ign-math -b ign-math4
     cd ign-math
     mkdir build
     cd build
@@ -40,7 +49,7 @@ of libraries designed to rapidly develop robot applications.
     make install
     cd ../..
     # Ignition msgs
-    hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
+    hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b ign-msgs1
     cd ign-msgs
     mkdir build
     cd build

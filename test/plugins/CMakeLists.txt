@@ -20,6 +20,7 @@ foreach (src ${plugins})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
   add_library(${src} SHARED ${src}.cc ${${src}_MOC})
   target_link_libraries(${src}
+    ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}
     ${Qt5Core_LIBRARIES}
     ${Qt5Widgets_LIBRARIES})

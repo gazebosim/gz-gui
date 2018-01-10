@@ -1,8 +1,3 @@
-set(TEST_TYPE "REGRESSION")
+ign_get_sources(tests)
 
-set(tests
-)
-
-link_directories(${PROJECT_BINARY_DIR}/test)
-
-ign_build_tests(SOURCES ${tests})
+ign_build_tests(TYPE REGRESSION SOURCES ${tests})
