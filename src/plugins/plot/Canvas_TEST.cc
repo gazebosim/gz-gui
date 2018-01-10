@@ -52,18 +52,18 @@ TEST(CanvasTest, AddRemovePlot)
   EXPECT_EQ(4u, plotCanvas->PlotCount());
 
   // remove plot
-  plotCanvas->RemovePlot(plot01);
+  EXPECT_TRUE(plotCanvas->RemovePlot(plot01));
   EXPECT_EQ(3u, plotCanvas->PlotCount());
 
-  plotCanvas->RemovePlot(plot02);
+  EXPECT_TRUE(plotCanvas->RemovePlot(plot02));
   EXPECT_EQ(2u, plotCanvas->PlotCount());
 
   // remove already removed plot
-  plotCanvas->RemovePlot(plot02);
+  EXPECT_FALSE(plotCanvas->RemovePlot(plot02));
   EXPECT_EQ(2u, plotCanvas->PlotCount());
 
   // remove last plot
-  plotCanvas->RemovePlot(plot03);
+  EXPECT_TRUE(plotCanvas->RemovePlot(plot03));
   EXPECT_EQ(1u, plotCanvas->PlotCount());
 
   // check we can add more plots

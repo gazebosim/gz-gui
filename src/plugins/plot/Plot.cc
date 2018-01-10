@@ -101,7 +101,7 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   addCanvasShadow->setBlurRadius(8);
   addCanvasShadow->setOffset(0, 0);
   addCanvasButton->setGraphicsEffect(addCanvasShadow);
-  connect(addCanvasButton, SIGNAL(clicked()), this, SLOT(OnAddCanvas()));
+  this->connect(addCanvasButton, SIGNAL(clicked()), this, SLOT(OnAddCanvas()));
 
   // export button
   QPushButton *exportPlotButton = new QPushButton("Export");
@@ -113,7 +113,7 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   exportPlotShadow->setBlurRadius(8);
   exportPlotShadow->setOffset(0, 0);
   exportPlotButton->setGraphicsEffect(exportPlotShadow);
-  connect(exportPlotButton, SIGNAL(clicked()), this, SLOT(OnExport()));
+  this->connect(exportPlotButton, SIGNAL(clicked()), this, SLOT(OnExport()));
 
   QHBoxLayout *addButtonLayout = new QHBoxLayout;
   addButtonLayout->addWidget(exportPlotButton);
@@ -133,7 +133,7 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->setLayout(plotLayout);
 
   QTimer *displayTimer = new QTimer(this);
-  connect(displayTimer, SIGNAL(timeout()), this, SLOT(Update()));
+  this->connect(displayTimer, SIGNAL(timeout()), this, SLOT(Update()));
   displayTimer->start(30);
 
   this->setMinimumSize(640, 480);
@@ -149,7 +149,7 @@ void Plot::ShowContextMenu(const QPoint &/*_pos*/)
 Canvas *Plot::AddCanvas()
 {
   Canvas *canvas = new Canvas(this);
-  connect(canvas, SIGNAL(CanvasDeleted()), this, SLOT(OnRemoveCanvas()));
+  this->connect(canvas, SIGNAL(CanvasDeleted()), this, SLOT(OnRemoveCanvas()));
 
   this->dataPtr->canvasSplitter->addWidget(canvas);
 

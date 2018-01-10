@@ -63,22 +63,22 @@ namespace plot
   class CanvasPrivate
   {
     /// \brief Text label
-    public: EditableLabel *title;
+    public: EditableLabel *title{nullptr};
 
     /// \brief Splitter that contains all the plots.
-    public: QSplitter *plotSplitter;
+    public: QSplitter *plotSplitter{nullptr};
 
     /// \brief A map of plot id to plot data;
     public: std::map<unsigned int, Data *> plotData;
 
     /// \brief Pointer to an empty plot.
-    public: IncrementalPlot *emptyPlot = nullptr;
+    public: IncrementalPlot *emptyPlot{nullptr};
 
     /// \brief Container for all the variableCurves on the Y axis.
-    public: VariablePillContainer *yVariableContainer = nullptr;
+    public: VariablePillContainer *yVariableContainer{nullptr};
 
     /// \brief Delete canvas Qt action
-    public: QAction *deleteCanvasAct = nullptr;
+    public: QAction *deleteCanvasAct{nullptr};
 
     /// \brief Global plot counter.
     public: static unsigned int globalPlotId;
@@ -419,11 +419,11 @@ unsigned int Canvas::AddPlot()
 }
 
 /////////////////////////////////////////////////
-void Canvas::RemovePlot(const unsigned int _id)
+bool Canvas::RemovePlot(const unsigned int _id)
 {
   auto it = this->dataPtr->plotData.find(_id);
   if (it == this->dataPtr->plotData.end())
-    return;
+    return false;
 
   // remove the plot if it does not contain any variableCurves (curves)
   if (it->second->variableCurves.empty())
@@ -432,7 +432,7 @@ void Canvas::RemovePlot(const unsigned int _id)
     delete it->second->plot;
     delete it->second;
     this->dataPtr->plotData.erase(it);
-    return;
+    return true;
   }
 
   unsigned int plotId = it->first;
@@ -448,6 +448,8 @@ void Canvas::RemovePlot(const unsigned int _id)
   this->RemoveVariable(it->second->variableCurves.begin()->first, plotId);
 
   this->UpdateAxisLabel();
+
+  return true;
 }
 
 /////////////////////////////////////////////////

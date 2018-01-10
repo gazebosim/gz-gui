@@ -75,7 +75,8 @@ namespace plot
 
     /// \brief Remove a plot from the canvas.
     /// \param[in] _id Unique id of the plot
-    public: void RemovePlot(const unsigned int _plotId);
+    /// \return True if successfully removed.
+    public: bool RemovePlot(const unsigned int _plotId);
 
     /// \brief Get the number of plots in this canvas.
     /// \return Number of plots
@@ -95,7 +96,8 @@ namespace plot
 
     /// \brief Get the plot id which the variable is plotted in
     /// \param[in] _id Unique id of the variable
-    /// \return Unique id of the plot
+    /// \return Unique id of the plot, or EmptyPlot if the variable can't be
+    /// found.
     public: unsigned int PlotByVariable(const unsigned int _variableId) const;
 
     /// \brief Get all the plots in this canvas.
