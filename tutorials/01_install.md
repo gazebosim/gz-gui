@@ -138,7 +138,7 @@ To run the code checker:
 
 1. View documentation
 
-        firefox doxygen/html/index.html
+        firefox build/doxygen/html/index.html
 
 1. Upload documentation to ignitionrobotics.org (you'll need appropriate Amazon
    S3 credentials)
