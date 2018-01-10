@@ -16,7 +16,6 @@ pipelines:
             libignition-common-dev
             libignition-msgs-dev
             libignition-transport3-dev
-            # ign-rendering deps
             libogre-1.9-dev
           # Static checking before building
           - sh tools/code_check.sh
