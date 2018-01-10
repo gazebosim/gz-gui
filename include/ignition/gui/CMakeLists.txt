@@ -1,5 +1,3 @@
-include (${project_cmake_dir}/Utils.cmake)
-
 include_directories(
   ${Qt5Core_INCLUDE_DIRS}
   ${tinyxml_INCLUDE_DIRS}
@@ -49,13 +47,13 @@ set (resources resources.qrc)
 QT5_WRAP_CPP(headers_MOC ${qt_headers})
 QT5_ADD_RESOURCES(resources_RCC ${resources})
 
-ign_add_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
+ign_add_library(${PROJECT_NAME_LOWER}
   ${sources}
   ${headers_MOC}
   ${resources_RCC}
 )
 
-target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
+target_link_libraries(${PROJECT_NAME_LOWER}
   ${IGNITION-COMMON_LIBRARIES}
   ${IGNITION-MATH_LIBRARIES}
   ${IGNITION-MSGS_LIBRARIES}
@@ -65,22 +63,12 @@ target_link_libraries(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION}
   ${tinyxml2_LIBRARIES}
 )
 
-ign_install_library(${PROJECT_NAME_LOWER}${PROJECT_MAJOR_VERSION})
+ign_install_library()
 
 add_subdirectory(plugins)
 
-#################################################
-### Do not change the following
+#ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}.hh)
+#ign_install_includes(${IGN_DESIGNATION} ${headers} ${qt_headers})
 
-set (ign_headers "" CACHE INTERNAL "Ignition headers" FORCE)
-foreach (hdr ${headers} ${qt_headers})
-  APPEND_TO_CACHED_STRING(ign_headers
-    "Ignition headers" "#include <ignition/${IGN_PROJECT_NAME}/${hdr}>\n")
-endforeach()
-
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/ign_auto_headers.hh.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${IGN_PROJECT_NAME}.hh)
-
-ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_PROJECT_NAME}.hh)
-ign_install_includes(${IGN_PROJECT_NAME} ${headers} ${qt_headers})
+ign_install_all_headers()
 
