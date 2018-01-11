@@ -1,9 +1,9 @@
 # Generate a the ruby script.
 # Note that the major version of the library is included in the name.
 if (APPLE)
-  set(IGN_LIBRARY_NAME lib${PROJECT_NAME_LOWER}${PROJECT_VERSION_MAJOR}.dylib)
+  set(IGN_LIBRARY_NAME lib${PROJECT_NAME_LOWER}.dylib)
 else()
-  set(IGN_LIBRARY_NAME lib${PROJECT_NAME_LOWER}${PROJECT_VERSION_MAJOR}.so)
+  set(IGN_LIBRARY_NAME lib${PROJECT_NAME_LOWER}.so)
 endif()
 configure_file(
   "cmdgui.rb.in"
