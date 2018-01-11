@@ -48,6 +48,7 @@ TEST(PlotTest, Load)
   auto plotWidget = win->findChild<Plot *>();
   ASSERT_NE(nullptr, plotWidget);
 
+/*
   // there should be an empty canvas
   EXPECT_EQ(1u, plotWidget->CanvasCount());
 
@@ -80,13 +81,14 @@ TEST(PlotTest, Load)
   EXPECT_EQ(1u, plotWidget->CanvasCount());
 
   // check we can add more canvases
+
   Canvas *canvas04 = plotWidget->AddCanvas();
   ASSERT_NE(nullptr, canvas04);
   EXPECT_EQ(2u, plotWidget->CanvasCount());
-
   // clear canvases
   plotWidget->Clear();
   EXPECT_EQ(0u, plotWidget->CanvasCount());
+*/
 
   EXPECT_TRUE(stop());
 }
