@@ -15,12 +15,8 @@
  *
 */
 
-#include <sys/stat.h>
-#include <cassert>
 #include <map>
-#include <tuple>
 #include <vector>
-#include <mutex>
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
 
@@ -30,6 +26,7 @@
 #include "ignition/gui/plugins/plot/Plot.hh"
 #include "ignition/gui/plugins/plot/TopicCurveHandler.hh"
 #include "ignition/gui/plugins/plot/Types.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/VariablePill.hh"
 #include "ignition/gui/VariablePillContainer.hh"
 
@@ -77,9 +74,6 @@ class PlotPrivate
 
   /// \brief Handler for updating topic curves
   public: TopicCurveHandler topicCurve;
-
-  /// \brief Mutex to protect the canvas updates
-  public: std::mutex mutex;
 };
 }
 }
@@ -120,7 +114,7 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   titleLayout->setAlignment(Qt::AlignHCenter);
 
   // Settings menu
-  auto settingsMenu = new QMenu;
+  auto settingsMenu = new QMenu();
   settingsMenu->setObjectName("material");
   auto clearPlotAct = new QAction("Clear all fields", settingsMenu);
   clearPlotAct->setStatusTip(tr("Clear variables and all plots"));
@@ -141,11 +135,17 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
       SLOT(OnShowHoverLine(bool)));
   settingsMenu->addAction(showHoverLineAct);
 
-  auto exportAct = new QAction("Export", settingsMenu);
-  exportAct->setStatusTip(tr("Export plot data"));
-  this->connect(exportAct, SIGNAL(triggered()), this,
-      SLOT(OnExport()));
-  settingsMenu->addAction(exportAct);
+  auto exportMenu = settingsMenu->addMenu("Export");
+
+  auto csvAct = new QAction("CSV (.csv)", exportMenu);
+  csvAct->setStatusTip("Export to CSV file");
+  this->connect(csvAct, SIGNAL(triggered()), this, SLOT(OnExportCSV()));
+  exportMenu->addAction(csvAct);
+
+  auto pdfAct = new QAction("PDF (.pdf)", exportMenu);
+  pdfAct->setStatusTip("Export to PDF file");
+  this->connect(pdfAct, SIGNAL(triggered()), this, SLOT(OnExportPDF()));
+  exportMenu->addAction(pdfAct);
 
   // Settings button
   auto settingsButton = new QToolButton();
@@ -182,8 +182,8 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   this->dataPtr->yVariableContainer->setContentsMargins(0, 0, 0, 0);
 
   this->connect(this->dataPtr->yVariableContainer,
-      SIGNAL(VariableAdded(unsigned int, std::string, unsigned int)),
-      this, SLOT(OnAddVariableFromPill(unsigned int, std::string, unsigned int)));
+      SIGNAL(VariableAdded(unsigned int, std::string, unsigned int)), this,
+      SLOT(OnAddVariableFromPill(unsigned int, std::string, unsigned int)));
   this->connect(this->dataPtr->yVariableContainer,
       SIGNAL(VariableRemoved(unsigned int, unsigned int)),
       this, SLOT(OnRemoveVariableFromPill(unsigned int, unsigned int)));
@@ -246,8 +246,7 @@ void Plot::ShowContextMenu(const QPoint &/*_pos*/)
 }
 
 /////////////////////////////////////////////////
-// TODO
-void Plot::OnExport()
+std::string Plot::ExportFilename()
 {
   // Get the plots that have data.
   bool hasData = false;
@@ -277,15 +276,32 @@ void Plot::OnExport()
         Qt::Window | Qt::WindowTitleHint |
         Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
     msgBox.exec();
+    return "";
   }
-  else
-  {
-/*    std::list<Canvas *> canvases;
-    canvases.push_back(canvas);
-    auto dialog = new ExportDialog(this, canvases);
-    dialog->setModal(true);
-    dialog->show();*/
-  }
+
+  // Open file dialog
+  QFileDialog fileDialog(this, tr("Save Directory"), QDir::homePath());
+  fileDialog.setObjectName("material");
+  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
+      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+  fileDialog.setFileMode(QFileDialog::DirectoryOnly);
+
+  if (fileDialog.exec() != QDialog::Accepted)
+    return "";
+
+  // Get the selected directory
+  auto selected = fileDialog.selectedFiles();
+
+  if (selected.empty())
+    return "";
+
+  // Cleanup the title
+  std::string plotTitle = this->dataPtr->title->Text();
+  std::replace(plotTitle.begin(), plotTitle.end(), '/', '_');
+  std::replace(plotTitle.begin(), plotTitle.end(), '?', ':');
+
+  return selected[0].toStdString() + "/" + plotTitle;
 }
 
 /////////////////////////////////////////////////
@@ -494,7 +510,6 @@ void Plot::Clear()
     this->RemovePlot(p->first);
   }
 
-  // FIXME: Show empty plot
   this->ShowEmptyPlot(true);
 }
 
@@ -565,7 +580,7 @@ void Plot::OnRemoveVariableFromPill(const unsigned int _id,
 void Plot::OnMoveVariableFromPill(const unsigned int _id,
     const unsigned int _targetId)
 {
-  auto plotIt = this->dataPtr->plotData.end();
+  auto plotData = this->dataPtr->plotData.end();
   auto targetPlotIt = this->dataPtr->plotData.end();
   unsigned int curveId = 0;
 
@@ -577,7 +592,7 @@ void Plot::OnMoveVariableFromPill(const unsigned int _id,
     auto v = it->second->variableCurves.find(_id);
     if (v != it->second->variableCurves.end())
     {
-      plotIt = it;
+      plotData = it;
       curveId = v->second;
     }
 
@@ -587,12 +602,12 @@ void Plot::OnMoveVariableFromPill(const unsigned int _id,
       targetPlotIt = it;
     }
 
-    if (plotIt != this->dataPtr->plotData.end() &&
+    if (plotData != this->dataPtr->plotData.end() &&
         targetPlotIt != this->dataPtr->plotData.end())
       break;
   }
 
-  if (plotIt == this->dataPtr->plotData.end())
+  if (plotData == this->dataPtr->plotData.end())
   {
     ignerr << "Couldn't find plot containing variable [" << _id << "]"
            << std::endl;
@@ -600,7 +615,7 @@ void Plot::OnMoveVariableFromPill(const unsigned int _id,
   }
 
   // detach from old plot and attach to new one
-  auto p = plotIt->second;
+  auto p = plotData->second;
 
   // detach variable from plot (qwt plot doesn't seem to do anything
   // apart from setting the plot item to null)
@@ -618,7 +633,6 @@ void Plot::OnMoveVariableFromPill(const unsigned int _id,
     // create new plot
     unsigned int plotId = this->AddPlot();
     auto it = this->dataPtr->plotData.find(plotId);
-    assert(it != this->dataPtr->plotData.end());
     Data *newPlotData = it->second;
     // attach curve to plot
     newPlotData->plot->AttachCurve(plotCurve);
@@ -629,29 +643,9 @@ void Plot::OnMoveVariableFromPill(const unsigned int _id,
       this->ShowEmptyPlot(false);
   }
 
-  // delete plot if empty
+  // Delete whole plot if this was its last variable
   if (p->variableCurves.empty())
-  {
-    p->plot->hide();
-
-    // careful about deleting by iterator (plotIt) as it may have been
-    // changed if a new plot is added to the vector
-    for (auto it = this->dataPtr->plotData.begin();
-        it != this->dataPtr->plotData.end(); ++it)
-    {
-      if (it->second == p)
-      {
-        this->dataPtr->plotData.erase(it);
-        break;
-      }
-    }
-
-    p->plot->detachItems(QwtPlotItem::Rtti_PlotItem, false);
-    delete p->plot;
-    delete p;
-
-    this->UpdateAxisLabel();
-  }
+    this->RemovePlot(plotData->first);
 }
 
 /////////////////////////////////////////////////
@@ -685,23 +679,6 @@ std::vector<IncrementalPlot *> Plot::Plots() const
 }
 
 /////////////////////////////////////////////////
-std::string Plot::UniqueFilePath(const std::string &_pathAndName,
-    const std::string &_extension) const
-{
-  std::string result = _pathAndName + "." + _extension;
-  int count = 1;
-  struct stat buf;
-
-  // Check if file exists and change name accordingly
-  while (stat(result.c_str(), &buf) != -1)
-  {
-    result = _pathAndName + "(" + std::to_string(count++) + ")." + _extension;
-  }
-
-  return result;
-}
-
-/////////////////////////////////////////////////
 void Plot::OnClear()
 {
   // Ask for confirmation
@@ -709,7 +686,7 @@ void Plot::OnClear()
         "This will remove all the plots in this canvas. \n";
 
   QMessageBox msgBox(QMessageBox::Warning, QString("Clear canvas?"),
-      QString(msg.c_str()));
+      QString(msg.c_str()), QMessageBox::NoButton, this);
   msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
 
@@ -772,36 +749,23 @@ void Plot::ShowEmptyPlot(const bool _show)
 }
 
 /////////////////////////////////////////////////
-void Plot::Export(const std::string &_dirName,
-    const FileType _type) const
+void Plot::OnExportPDF()
 {
-  std::string plotTitle = this->Title();
+  auto filePrefix = this->ExportFilename();
 
-  // Cleanup the title
-  std::replace(plotTitle.begin(), plotTitle.end(), '/', '_');
-  std::replace(plotTitle.begin(), plotTitle.end(), '?', ':');
+  if (filePrefix.empty())
+    return;
 
-  std::string filePrefix = _dirName + "/" + plotTitle;
-
-  if (_type == FileType::PDFFile)
-    this->ExportPDF(filePrefix);
-  else if (_type == FileType::CSVFile)
-    this->ExportCSV(filePrefix);
-}
-
-/////////////////////////////////////////////////
-void Plot::ExportPDF(const std::string &_filePrefix) const
-{
   // Render the plot to a PDF
   int index = 0;
   for (const auto it : this->dataPtr->plotData)
   {
-    std::string suffix =
+    auto suffix =
         this->dataPtr->plotData.size() > 1 ? std::to_string(index) : "";
 
-    std::string filename = this->UniqueFilePath(_filePrefix + suffix, "pdf");
+    auto filename = uniqueFilePath(filePrefix + suffix, "pdf");
 
-    IncrementalPlot *plot = it.second->plot;
+    auto plot = it.second->plot;
 
     QSizeF docSize(plot->canvas()->width() + plot->legend()->width(),
                    plot->canvas()->height());
@@ -816,8 +780,13 @@ void Plot::ExportPDF(const std::string &_filePrefix) const
 }
 
 /////////////////////////////////////////////////
-void Plot::ExportCSV(const std::string &_filePrefix) const
+void Plot::OnExportCSV()
 {
+  auto filePrefix = this->ExportFilename();
+
+  if (filePrefix.empty())
+    return;
+
   // Save data from each curve into a separate file.
   for (const auto it : this->dataPtr->plotData)
   {
@@ -828,15 +797,14 @@ void Plot::ExportCSV(const std::string &_filePrefix) const
         continue;
 
       // Cleanup the label
-      std::string label = c->Label();
+      auto label = c->Label();
       std::replace(label.begin(), label.end(), '/', '_');
       std::replace(label.begin(), label.end(), '?', ':');
 
-      std::string filename =
-        this->UniqueFilePath(_filePrefix + "-" + label, "csv");
+      auto filename = uniqueFilePath(filePrefix + "-" + label, "csv");
 
       std::ofstream out(filename);
-      // \todo: fix hardcoded sim_time
+      // \todo: fix hardcoded sim_time - issue #18
       out << "time, " << c->Label() << std::endl;
       for (unsigned int j = 0; j < c->Size(); ++j)
       {

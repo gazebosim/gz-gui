@@ -94,8 +94,11 @@ namespace plot
     /// \param[in] _show True to show.
     private slots: void OnShowHoverLine(const bool _show);
 
-    /// \brief QT callback for when a plot is to be exported.
-    private slots: void OnExport();
+    /// \brief Export to a PDF file.
+    private slots: void OnExportPDF();
+
+    /// \brief Export to a CSV file.
+    private slots: void OnExportCSV();
 
     /// \brief Update all plots; this is called periodically by a timer.
     private slots: void Update();
@@ -157,31 +160,10 @@ namespace plot
     /// \return True if event was handled.
     private: virtual bool eventFilter(QObject *_o, QEvent *_event) override;
 
-    /// \brief Export to files in the given directory.
-    /// \param[in] _dirName Name of the directory to save the files into.
-    /// \param[in] _type File type, such as PDFFile or CSVFile.
-    private: void Export(const std::string &_dirName,
-                        const FileType _type) const;
-
-    /// \brief Export to PDF files in the given directory.
-    /// \param[in] _dirName Name of the directory to save the PDF files
-    /// into.
-    private: void ExportPDF(const std::string &_dirName) const;
-
-    /// \brief Export to CSV files in the given directory.
-    /// \param[in] _dirName Name of the directory to save the CSV files
-    /// into.
-    private: void ExportCSV(const std::string &_dirName) const;
-
-    /// \brief Generates a path for a file which doesn't collide with existing
-    /// files, by appending numbers to it (i.e. (0), (1), ...)
-    /// \param[in] _pathAndName Full absolute path and file name up to the
-    /// file extension.
-    /// \param[in] _extension File extension, such as "pdf".
-    /// \return Full path with name and extension, which doesn't collide with
-    /// existing files
-    private: std::string UniqueFilePath(const std::string &_pathAndName,
-                                        const std::string &_extension) const;
+    /// \brief Prompts the user to choose a path to export plots to. This is
+    /// independent of file type.
+    /// \return File path up to the name, without an extension.
+    private: std::string ExportFilename();
 
     /// \brief Empty plot used to indicate non-existent plot.
     private: static const unsigned int EmptyPlot;

@@ -39,7 +39,7 @@ add_library(${plotWidget} SHARED
 )
 
 target_link_libraries(${plotWidget}
-  ${PROJECT_NAME_LOWER}
+  ${IGNITION-GUI_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
   ${QWT_LIBRARY})
