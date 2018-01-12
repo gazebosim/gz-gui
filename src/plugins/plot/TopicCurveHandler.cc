@@ -16,7 +16,6 @@
 */
 
 #include <google/protobuf/message.h>
-#include <cassert>
 #include <map>
 #include <mutex>
 #include <string>
@@ -64,6 +63,7 @@ namespace plot
     /// \param[in] _query URI query string containing the param the curve is
     /// associated with.
     /// \param[in] _curve Pointer to the plot curve to add.
+    /// \return True if successful.
     public: bool AddCurve(const std::string &_query, CurveWeakPtr _curve);
 
     /// \brief Remove a curve from the topic data handler
@@ -233,9 +233,6 @@ void TopicCurve::OnTopicData(const google::protobuf::Message &_msg,
   if (this->curves.empty())
     return;
 
-  // auto msg = msgs::MsgFactory::NewMsg(this->msgType);
-  // msg->ParseFromString(_msg);
-
   // stores a list of curve iterators and their new values
   std::vector<std::pair<TopicCurve::CurveVariableMapIt,
       ignition::math::Vector2d> > curvesUpdates;
@@ -243,10 +240,6 @@ void TopicCurve::OnTopicData(const google::protobuf::Message &_msg,
   // nearest sim time - use this x value if the message is not timestamped
   // double x = TopicTime::Instance()->LastSimTime().Double();
   double x = ignition::common::Time::SystemTime().Double() - this->startTime;
-
-  // collect updates
-  // google::protobuf::Message *msg;
-  // msg->CopyFrom(_msg);
 
   this->UpdateCurve(const_cast<google::protobuf::Message *>(&_msg), 0, x,
     curvesUpdates);
@@ -273,16 +266,23 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
 {
   if (!_msg)
   {
-    assert(_msg);
+    ignerr << "Null message" << std::endl;
+    return;
   }
 
   auto ref = _msg->GetReflection();
   if (!ref)
+  {
+    ignerr << "Failed to get message reflection." << std::endl;
     return;
+  }
 
   auto descriptor = _msg->GetDescriptor();
   if (!descriptor)
+  {
+    ignerr << "Failed to get message descriptor." << std::endl;
     return;
+  }
 
   // x axis data
   double xData = x;
