@@ -107,47 +107,65 @@ QTextEdit
 }
 
 /* ---------------------------- */
-/*         Push Button          */
+/*           Buttons            */
 /* ---------------------------- */
 
-QPushButton
+QPushButton,
+QToolButton
 {
-  padding: 8px;
-  font-weight: 300;
-  color: #393939;
-  text-align: center;
   border-radius: 0px;
   border: 0px;
-  selection-color: transparent;
-  min-width: 80px;
   margin: 8px;
+  selection-color: transparent;
   background-color: rgba(153, 153, 153, 20%);
 }
 
-QPushButton:hover
+QPushButton
+{
+  color: #393939;
+  font-weight: 300;
+  text-align: center;
+  padding: 8px;
+  min-width: 80px;
+}
+
+QToolButton
+{
+  min-height: 30px;
+  min-width: 30px;
+}
+
+QPushButton:hover,
+QToolButton:hover
 {
   color: #393939;
   selection-color: transparent;
   background-color: rgba(153, 153, 153, 40%);
 }
-QPushButton:pressed
+
+QPushButton:pressed,
+QToolButton:pressed
 {
   color: #393939;
   background-color: rgba(153, 153, 153, 60%);
   selection-color: transparent;
 }
-QPushButton:!enabled
+
+QPushButton:!enabled,
+QToolButton:!enabled
 {
   color: rgba(0, 0, 0, 26%);
   selection-color: transparent;
 }
 
-QPushButton:checked
+QPushButton:checked,
+QToolButton:checked
 {
   selection-color: transparent;
 }
 
-QPushButton:focus
+QPushButton:focus,
+QToolButton:focus
 {
   border: none;
   outline: none;

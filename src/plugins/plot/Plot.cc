@@ -115,7 +115,6 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
 
   // Settings menu
   auto settingsMenu = new QMenu();
-  settingsMenu->setObjectName("material");
   auto clearPlotAct = new QAction("Clear all fields", settingsMenu);
   clearPlotAct->setStatusTip(tr("Clear variables and all plots"));
   this->connect(clearPlotAct, SIGNAL(triggered()), this, SLOT(OnClear()));
@@ -281,7 +280,6 @@ std::string Plot::ExportFilename()
 
   // Open file dialog
   QFileDialog fileDialog(this, tr("Save Directory"), QDir::homePath());
-  fileDialog.setObjectName("material");
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
   fileDialog.setAcceptMode(QFileDialog::AcceptSave);
