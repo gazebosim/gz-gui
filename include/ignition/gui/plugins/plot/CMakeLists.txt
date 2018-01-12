@@ -5,8 +5,6 @@ set (plotWidget
 
 # Files that require QT moc.
 set (plot_qt_others
-  Canvas
-  ExportDialog
   IncrementalPlot
 )
 

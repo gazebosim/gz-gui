@@ -17,10 +17,11 @@
 
 #include <gtest/gtest.h>
 
-#include "ignition/gui/plugins/plot/Plot.hh"
-#include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/VariablePillContainer.hh"
+#include "ignition/gui/plugins/plot/IncrementalPlot.hh"
+#include "ignition/gui/plugins/plot/Plot.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -28,7 +29,7 @@ using namespace plugins;
 using namespace plot;
 
 /////////////////////////////////////////////////
-TEST(PlotTest, Load)
+TEST(PlotTest, AddRemoveVariables)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
@@ -45,50 +46,70 @@ TEST(PlotTest, Load)
   win->show();
 
   // Get plot plugin
-  auto plotWidget = win->findChild<Plot *>();
-  ASSERT_NE(nullptr, plotWidget);
+  auto plotPlugin = win->findChild<Plot *>();
+  ASSERT_NE(nullptr, plotPlugin);
 
-/*
-  // there should be an empty canvas
-  EXPECT_EQ(1u, plotWidget->CanvasCount());
+  // There should be an empty plot
+  auto plots = plotPlugin->findChildren<IncrementalPlot *>();
+  EXPECT_EQ(1, plots.size());
+  EXPECT_TRUE(plots[0]->isVisible());
 
-  // add canvas
-  Canvas *canvas01 = plotWidget->AddCanvas();
-  ASSERT_NE(nullptr, canvas01);
-  EXPECT_EQ(2u, plotWidget->CanvasCount());
+  // There are two variable containers
+  auto containers = plotPlugin->findChildren<VariablePillContainer *>();
+  EXPECT_EQ(2, containers.size());
+  EXPECT_EQ(1u, containers[0]->VariablePillCount());
+  EXPECT_EQ(0u, containers[1]->VariablePillCount());
 
-  Canvas *canvas02 = plotWidget->AddCanvas();
-  ASSERT_NE(nullptr, canvas02);
-  EXPECT_EQ(3u, plotWidget->CanvasCount());
+  // Simulate dropping a variable on a plot
+  plots[0]->VariableAdded("banana");
 
-  Canvas *canvas03 = plotWidget->AddCanvas();
-  ASSERT_NE(nullptr, canvas03);
-  EXPECT_EQ(4u, plotWidget->CanvasCount());
+  // Check the empty plot is hidden and a new one is created
+  plots = plotPlugin->findChildren<IncrementalPlot *>();
+  EXPECT_EQ(2, plots.size());
+  EXPECT_FALSE(plots[0]->isVisible());
+  EXPECT_TRUE(plots[1]->isVisible());
 
-  // remove canvas
-  plotWidget->RemoveCanvas(canvas01);
-  EXPECT_EQ(3u, plotWidget->CanvasCount());
+  // Simulate dropping a variable on the container
+  containers[1]->VariableAdded(1, "coconut", VariablePill::EmptyVariable);
 
-  plotWidget->RemoveCanvas(canvas02);
-  EXPECT_EQ(2u, plotWidget->CanvasCount());
+  // Check another plot is created
+  plots = plotPlugin->findChildren<IncrementalPlot *>();
+  EXPECT_EQ(3, plots.size());
+  EXPECT_FALSE(plots[0]->isVisible());
+  EXPECT_TRUE(plots[1]->isVisible());
+  EXPECT_TRUE(plots[2]->isVisible());
 
-  // remove already removed canvas
-  plotWidget->RemoveCanvas(canvas02);
-  EXPECT_EQ(2u, plotWidget->CanvasCount());
+  // Simulate dropping a variable on an existing pill
+  containers[1]->VariableAdded(2, "acerola", 1);
 
-  // remove last canvas
-  plotWidget->RemoveCanvas(canvas03);
-  EXPECT_EQ(1u, plotWidget->CanvasCount());
+  // Check we still have 3 plots
+  plots = plotPlugin->findChildren<IncrementalPlot *>();
+  EXPECT_EQ(3, plots.size());
+  EXPECT_FALSE(plots[0]->isVisible());
+  EXPECT_TRUE(plots[1]->isVisible());
+  EXPECT_TRUE(plots[2]->isVisible());
 
-  // check we can add more canvases
+  // Simulate moving a variable on the container
+  containers[1]->VariableMoved(2, VariablePill::EmptyVariable);
 
-  Canvas *canvas04 = plotWidget->AddCanvas();
-  ASSERT_NE(nullptr, canvas04);
-  EXPECT_EQ(2u, plotWidget->CanvasCount());
-  // clear canvases
-  plotWidget->Clear();
-  EXPECT_EQ(0u, plotWidget->CanvasCount());
-*/
+  // Check now we have 4 plots
+  plots = plotPlugin->findChildren<IncrementalPlot *>();
+  EXPECT_EQ(4, plots.size());
+  EXPECT_FALSE(plots[0]->isVisible());
+  EXPECT_TRUE(plots[1]->isVisible());
+  EXPECT_TRUE(plots[2]->isVisible());
+  EXPECT_TRUE(plots[3]->isVisible());
+
+  // Simulate deleting a variable from the container
+  containers[1]->VariableRemoved(2, VariablePill::EmptyVariable);
+
+  // Check now we have 3 plots again
+  plots = plotPlugin->findChildren<IncrementalPlot *>();
+  EXPECT_EQ(3, plots.size());
+  EXPECT_FALSE(plots[0]->isVisible());
+  EXPECT_TRUE(plots[1]->isVisible());
+  EXPECT_TRUE(plots[2]->isVisible());
 
   EXPECT_TRUE(stop());
 }
+

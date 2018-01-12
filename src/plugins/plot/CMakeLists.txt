@@ -2,9 +2,7 @@
 # shared libraries
 
 set (gtest_local_sources
-  Canvas_TEST.cc
   Curve_TEST.cc
-  ExportDialog_TEST.cc
   IncrementalPlot_TEST.cc
   Plot_TEST.cc
   TopicCurveHandler_TEST.cc

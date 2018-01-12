@@ -39,8 +39,8 @@ namespace plot
   class IGNITION_GUI_VISIBLE Tracker: public QwtPlotPicker
   {
     /// \brief Constructor.
-    /// \param[in] _canvas Canvas the tracker will be attached to.
-    public: explicit Tracker(QWidget *_canvas);
+    /// \param[in] _canvas Plot the tracker will be attached to.
+    public: explicit Tracker(QWidget *_plot);
 
     /// \brief Overriden to update the hover line and tracker text.
     protected: virtual void updateDisplay() override;
