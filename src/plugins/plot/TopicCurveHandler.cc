@@ -54,6 +54,7 @@ namespace plot
         std::map<std::string, CurveVariableSet>::iterator;
 
     /// \brief Constructor.
+    /// \param[in] _topic Ignition transport topic name.
     public: explicit TopicCurve(const std::string &_topic);
 
     /// \brief Destructor.
@@ -68,6 +69,7 @@ namespace plot
 
     /// \brief Remove a curve from the topic data handler
     /// \param[in] _curve Pointer to the plot curve to remove.
+    /// \return True if successful.
     public: bool RemoveCurve(CurveWeakPtr _curve);
 
     /// \brief Get whether the topic curve has the specified plot curve.
@@ -81,7 +83,7 @@ namespace plot
 
     /// \brief Topic data callback
     /// \param[in] _msg Message data.
-    /// \param[in] _info ToDo.
+    /// \param[in] _info Message info, not used.
     public: void OnTopicData(const google::protobuf::Message &_msg,
         const ignition::transport::MessageInfo &_info);
 

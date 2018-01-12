@@ -37,7 +37,18 @@ namespace plot
   class IncrementalPlot;
   class PlotPrivate;
 
-  /// \brief Widget that allow plotting of Ignition Transport topics.
+  /// \brief This plugin allows plotting Ignition Transport topics.
+  /// Topics can be dragged from other widgets, such as `TopicViewer`
+  /// and dropped onto a variable pill container or a plot. There is support
+  /// for multiple plots in parallel with different Y axes, while sharing the
+  /// same X axis. The X axis is currently always based on wall time.
+  ///
+  /// Through the settings menu, plots can be cleared, configured or exported
+  /// to CSV or PDF files,
+  ///
+  /// ## Configuration
+  /// This plugin doesn't accept any custom configuration.
+  ///
   class IGNITION_GUI_VISIBLE Plot : public Plugin
   {
     Q_OBJECT
