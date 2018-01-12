@@ -150,7 +150,7 @@ void Plot::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   auto settingsButton = new QToolButton();
   settingsButton->installEventFilter(this);
   settingsButton->setToolTip(tr("Settings"));
-  settingsButton->setIcon(QIcon(":/images/settings.svg"));
+  settingsButton->setIcon(QIcon(":/images/settings.png"));
   settingsButton->setIconSize(QSize(25, 25));
   settingsButton->setFixedSize(QSize(45, 35));
   settingsButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
