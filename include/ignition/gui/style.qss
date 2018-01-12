@@ -361,6 +361,8 @@ ignition--gui--VariablePill[multiPillParent=true][selectedPill=true] > QLabel
 ignition--gui--VariablePill[multiPillChild=false],
 ignition--gui--VariablePill[multiPillParent=false][multiPillChild=false] > QLabel
 {
+  border-radius: 10px;
+  border: 0.5px solid #2196f3;
   background-color: #2196f3;
 }
 
@@ -370,4 +372,3 @@ ignition--gui--VariablePill[multiPillParent=true][multiPillChild=false] > QLabel
 {
   background-color: #64b5f6;
 }
-
