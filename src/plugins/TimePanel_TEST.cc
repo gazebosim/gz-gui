@@ -126,7 +126,7 @@ TEST(TimePanelTest, WorldControl)
     return true;
   };
   transport::Node node;
-  node.Advertise("/world_control_test", &cb);
+  node.Advertise("/world_control_test", cb);
 
   // Pause
   pauseButton->click();
