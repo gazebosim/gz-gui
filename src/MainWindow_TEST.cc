@@ -541,7 +541,7 @@ TEST(WindowConfigTest, MenusToString)
       std::string::npos) << str;
 #else
   EXPECT_NE(str.find("<file visible=\"false\"/>"), std::string::npos) << str;
-  EXPECT_NE(str.find("<plugins visible=\"true\" from_paths=\"0\">"),
+  EXPECT_NE(str.find("<plugins visible=\"true\" from_paths=\"false\">"),
       std::string::npos) << str;
 #endif
   EXPECT_NE(str.find("<show>PluginA</show>"), std::string::npos) << str;
