@@ -117,13 +117,13 @@ TEST(TimePanelTest, WorldControl)
   bool playCalled = false;
   bool pauseCalled = false;
   bool multiStepCalled = false;
-  std::function<void(const msgs::WorldControl &, msgs::Boolean &, bool &)> cb =
-      [&](const msgs::WorldControl &_req, msgs::Boolean &, bool &_result)
+  std::function<bool(const msgs::WorldControl &, msgs::Boolean &)> cb =
+      [&](const msgs::WorldControl &_req, msgs::Boolean &)
   {
     pauseCalled = _req.has_pause() && _req.pause();
     playCalled = _req.has_pause() && !_req.pause();
     multiStepCalled = _req.has_multi_step();
-    _result = true;
+    return true;
   };
   transport::Node node;
   node.Advertise("/world_control_test", &cb);
