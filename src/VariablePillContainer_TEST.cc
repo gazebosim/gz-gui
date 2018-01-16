@@ -105,9 +105,16 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   EXPECT_EQ(0u, var01->VariablePillCount());
   EXPECT_EQ(0u, var02->VariablePillCount());
 
-  // Check the container begins at 0, 0
-  EXPECT_EQ(0, container01->pos().x());
-  EXPECT_EQ(0, container01->pos().y());
+  // Check the container begins at 0, 0 on Linux and higher on OSX
+  auto initialContainerX = container01->pos().x();
+  auto initialContainerY = container01->pos().y();
+#if !defined(__APPLE__)
+  EXPECT_EQ(0, initialContainerX);
+  EXPECT_EQ(0, initialContainerY);
+#else
+  EXPECT_GT(initialContainerX, 0);
+  EXPECT_GT(initialContainerY, 0);
+#endif
 
   // Check both pills have the same size
   EXPECT_EQ(var01->width(), var02->width());
@@ -166,14 +173,15 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   // \fixme Locally, the container moves to another place on the screen
   // On Jenkins it doesn't and the mouse never enters var02
   bool containerMoved = false;
-  if (container01->pos().x() > 0 || container01->pos().y() > 0)
+  if (container01->pos().x() > initialContainerX ||
+      container01->pos().y() > initialContainerY)
   {
     containerMoved = true;
 
     // If the container moves, the variables move too
-    if (container01->pos().x() > 0)
+    if (container01->pos().x() > initialContainerX)
       EXPECT_LT(var01Global.x(), var01->mapToGlobal(varCenter).x());
-    if (container01->pos().y() > 0)
+    if (container01->pos().y() > initialContainerY)
       EXPECT_LT(var02Global.y(), var02->mapToGlobal(varCenter).y());
   }
   else
