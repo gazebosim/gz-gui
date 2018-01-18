@@ -395,7 +395,6 @@ void Plot::RemoveVariable(const unsigned int _id,
   // Variable not found
   if (plotData == this->dataPtr->plotData.end())
   {
-    ignerr << "Failed to find plot data" << std::endl;
     return;
   }
 
