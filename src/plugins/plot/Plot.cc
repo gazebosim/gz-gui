@@ -395,6 +395,7 @@ void Plot::RemoveVariable(const unsigned int _id,
   // Variable not found
   if (plotData == this->dataPtr->plotData.end())
   {
+    ignerr << "Failed to find plot data" << std::endl;
     return;
   }
 
@@ -417,8 +418,11 @@ void Plot::RemoveVariable(const unsigned int _id,
   // Remove from plot
   plotData->second->plot->RemoveCurve(curveId);
 
-  // Remove from variable pill container
+  // Remove from variable pill container - block signals so it doesn't call
+  // this function recursively
+  this->dataPtr->yVariableContainer->blockSignals(true);
   this->dataPtr->yVariableContainer->RemoveVariablePill(_id);
+  this->dataPtr->yVariableContainer->blockSignals(false);
 
   // Delete whole plot if this was its last variable
   if (plotData->second->variableCurves.empty())
