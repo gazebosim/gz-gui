@@ -71,6 +71,16 @@ namespace gui
     /// \brief Unsigned integer
     UINT
   };
+
+  /// \brief File types
+  enum FileType
+  {
+    /// \brief Comma separated value (CSV)
+    CSVFile,
+
+    /// \brief Portable document format (PDF)
+    PDFFile
+  };
 }
 }
 #endif

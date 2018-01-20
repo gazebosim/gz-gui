@@ -113,3 +113,19 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
   return event;
 }
 
+/////////////////////////////////////////////////
+ignition::common::Time ignition::gui::convert(const ignition::msgs::Time &_t)
+{
+  ignition::common::Time result(_t.sec(), _t.nsec());
+  return result;
+}
+
+/////////////////////////////////////////////////
+ignition::msgs::Time ignition::gui::convert(const ignition::common::Time &_t)
+{
+  ignition::msgs::Time result;
+  result.set_sec(_t.sec);
+  result.set_nsec(_t.nsec);
+  return result;
+}
+
