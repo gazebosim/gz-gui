@@ -148,3 +148,27 @@ TEST(ConversionsTest, MouseEvent)
   }
 }
 
+/////////////////////////////////////////////////
+TEST(ConversionsTest, Time)
+{
+  double s = 521;
+  double ns = 8898900;
+
+  // Msgs to common to msgs
+  {
+    ignition::msgs::Time t;
+    t.set_sec(s);
+    t.set_nsec(ns);
+
+    auto nt = convert(convert(t));
+    EXPECT_DOUBLE_EQ(nt.sec(), t.sec());
+    EXPECT_DOUBLE_EQ(nt.nsec(), t.nsec());
+  }
+
+  // Common to msgs to common
+  {
+    common::Time t(s, ns);
+    EXPECT_EQ(convert(convert(t)), t);
+  }
+}
+

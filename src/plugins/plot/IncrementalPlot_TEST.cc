@@ -35,7 +35,6 @@ TEST(IncrementalPlotTest, AddRemoveCurve)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   CurveWeakPtr curve01;
   {
@@ -113,7 +112,6 @@ TEST(IncrementalPlotTest,  AttachDetachCurve)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create new plots
   IncrementalPlot *plot01 = new IncrementalPlot(nullptr);
@@ -188,7 +186,6 @@ TEST(IncrementalPlotTest, AddPoint)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create new plots
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
@@ -251,7 +248,6 @@ TEST(ncrementalPlotTest, SetCurveLabel)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   CurveWeakPtr curve01;
   unsigned int id;
@@ -299,7 +295,6 @@ TEST(IncrementalPlotTest, Period)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create a new plot
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
@@ -322,7 +317,6 @@ TEST(IncrementalPlotTest, Grid)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create a new plot
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
@@ -344,7 +338,6 @@ TEST(IncrementalPlotTest, HoverLine)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create a new plot
   IncrementalPlot *plot = new IncrementalPlot(nullptr);
@@ -366,7 +359,6 @@ TEST(IncrementalPlotTest, Update)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create plot
   auto plot = new IncrementalPlot(nullptr);
@@ -408,7 +400,6 @@ TEST(IncrementalPlotTest, Magnify)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create plot
   auto plot = new IncrementalPlot(nullptr);

@@ -166,10 +166,6 @@ namespace gui
       /// \brief Reapply styles, usually called after a dybamic property change.
       private: void Polish();
 
-      /// \brief Qt signal emitted when a variable label has changed.
-      /// \param[in] _label New variable label.
-      signals: void VariableLabelChanged(const std::string &_label);
-
       /// \brief Qt signal emitted when a child variable pill is added.
       /// \param[in] _id Unique id of the child variable pill.
       /// \param[in] _name Name of variable pill added.

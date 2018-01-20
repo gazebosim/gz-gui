@@ -131,7 +131,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
 
   // Save to file
   {
-    // Close window after 1 s
+    // Choose file after a while
     closed = false;
     QTimer::singleShot(300, [&]
     {

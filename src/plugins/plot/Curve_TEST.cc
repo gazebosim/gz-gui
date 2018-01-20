@@ -33,7 +33,6 @@ using namespace plot;
 TEST(CurveTest, Curve)
 {
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create a new plot curve.
   Curve *plotCurve = new Curve("curve01");
@@ -64,7 +63,6 @@ TEST(CurveTest, Curve)
 TEST(CurveTest, CurveId)
 {
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // A set of unique plot curve ids.
   std::set<unsigned int> ids;
@@ -101,7 +99,6 @@ TEST(CurveTest, CurveId)
 TEST(CurveTest, AddPoint)
 {
   ASSERT_TRUE(initApp());
-  ASSERT_TRUE(loadPlugin("Plot"));
 
   // Create a new plot curve.
   Curve *plotCurve = new Curve("curve01");
