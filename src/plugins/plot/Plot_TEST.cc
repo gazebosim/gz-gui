@@ -86,7 +86,10 @@ TEST(PlotTest, AddRemoveVariables)
   win->show();
 
   // Get plot plugin
-  auto plotPlugin = win->findChild<Plot *>();
+  auto plugin = win->findChild<Plugin *>();
+  ASSERT_NE(nullptr, plugin);
+
+  auto plotPlugin = qobject_cast<Plot *>(plugin);
   ASSERT_NE(nullptr, plotPlugin);
 
   // There should be an empty plot

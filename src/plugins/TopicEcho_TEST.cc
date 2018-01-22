@@ -126,9 +126,9 @@ TEST(TopicEchoTest, Echo)
   ASSERT_EQ(msgList->count(), 10);
   for (auto i= 0; i < 10; ++i)
   {
-    auto str = "data: \"many messages: " + std::to_string(i+5) + "\"\n";
-    EXPECT_EQ(msgList->item(i)->text(), QString::fromStdString(str))
-        << msgList->item(i)->text().toStdString();
+    auto expected = "data: \"many messages: " + std::to_string(i+5) + "\"\n";
+    auto actual = msgList->item(i)->text().toStdString();
+    EXPECT_EQ(expected, actual);
   }
 
   // Increase buffer
