@@ -106,7 +106,7 @@ TEST(TopicEchoTest, Echo)
   EXPECT_EQ(msgList->item(0)->text(), QString("data: \"example string\"\n"))
       << msgList->item(0)->text().toStdString();
 
-  // Publish more than buffer size
+  // Publish more than buffer size (messages numbered 0 to 14)
   for (auto i = 0; i < bufferSpin->value() + 5; ++i)
   {
     msgs::StringMsg msg;
@@ -114,6 +114,8 @@ TEST(TopicEchoTest, Echo)
     pub.Publish(msg);
   }
 
+  // Wait until all 15 messages are received
+  // This could be flaky if we happen to receive 14 before 13
   sleep = 0;
   while ((msgList->count() < 10 || msgList->item(9)->text().indexOf("14") < 0)
       && sleep < maxSleep)
@@ -122,14 +124,21 @@ TEST(TopicEchoTest, Echo)
     QCoreApplication::processEvents();
     sleep++;
   }
+  EXPECT_LT(sleep, maxSleep);
 
+  // Check we have only 10 messages listed
   ASSERT_EQ(msgList->count(), 10);
-  for (auto i= 0; i < 10; ++i)
+
+  // We can't guarantee the order of messages
+  // We expect that out of the 10 messages last, at least 8 belong to the [5-14]
+  // range
+  unsigned int count = 0;
+  for (auto i = 5; i < 15; ++i)
   {
-    auto expected = "data: \"many messages: " + std::to_string(i+5) + "\"\n";
-    auto actual = msgList->item(i)->text().toStdString();
-    EXPECT_EQ(expected, actual);
+    if (msgList->findItems(QString::number(i), Qt::MatchContains).count() > 0)
+      count++;
   }
+  EXPECT_GE(count, 8);
 
   // Increase buffer
   bufferSpin->setValue(20);
