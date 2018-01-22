@@ -115,7 +115,8 @@ TEST(TopicEchoTest, Echo)
   }
 
   sleep = 0;
-  while (msgList->count() < 10 && sleep < maxSleep)
+  while ((msgList->count() < 10 || msgList->item(9)->text().indexOf("14") < 0)
+      && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
@@ -123,10 +124,12 @@ TEST(TopicEchoTest, Echo)
   }
 
   ASSERT_EQ(msgList->count(), 10);
-  EXPECT_EQ(msgList->item(0)->text(), QString("data: \"many messages: 5\"\n"))
-      << msgList->item(0)->text().toStdString();
-  EXPECT_EQ(msgList->item(9)->text(), QString("data: \"many messages: 14\"\n"))
-      << msgList->item(9)->text().toStdString();
+  for (auto i= 0; i < 10; ++i)
+  {
+    auto str = "data: \"many messages: " + std::to_string(i+5) + "\"\n";
+    EXPECT_EQ(msgList->item(i)->text(), QString::fromStdString(str))
+        << msgList->item(i)->text().toStdString();
+  }
 
   // Increase buffer
   bufferSpin->setValue(20);

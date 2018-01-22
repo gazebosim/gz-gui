@@ -534,16 +534,14 @@ TEST(WindowConfigTest, MenusToString)
   // Check generated string
   auto str = c.XMLString();
   EXPECT_FALSE(str.empty());
-  // Linux prints 0/1, OSX prints false/true
-#if !defined(__APPLE__)
-  EXPECT_NE(str.find("<file visible=\"0\"/>"), std::string::npos) << str;
-  EXPECT_NE(str.find("<plugins visible=\"1\" from_paths=\"0\">"),
-      std::string::npos) << str;
-#else
-  EXPECT_NE(str.find("<file visible=\"false\"/>"), std::string::npos) << str;
-  EXPECT_NE(str.find("<plugins visible=\"true\" from_paths=\"false\">"),
-      std::string::npos) << str;
-#endif
+
+  EXPECT_TRUE(str.find("<file visible=\"0\"/>") != std::string::npos ||
+              str.find("<file visible=\"false\"/>") != std::string::npos);
+  EXPECT_TRUE(str.find("<plugins visible=\"1\" from_paths=\"0\">") !=
+      std::string::npos ||
+      str.find("<plugins visible=\"true\" from_paths=\"false\">") !=
+      std::string::npos);
+
   EXPECT_NE(str.find("<show>PluginA</show>"), std::string::npos) << str;
   EXPECT_NE(str.find("<show>PluginB</show>"), std::string::npos) << str;
   EXPECT_EQ(str.find("<show>PluginC</show>"), std::string::npos) << str;
