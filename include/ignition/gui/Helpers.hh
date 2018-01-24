@@ -59,6 +59,17 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     StringType stringTypeFromKey(const std::string &_key);
 
+    /// \brief Generates a path for a file which doesn't collide with existing
+    /// files, by appending numbers to it (i.e. (0), (1), ...)
+    /// \param[in] _pathAndName Full absolute path and file name up to the
+    /// file extension.
+    /// \param[in] _extension File extension, such as "pdf".
+    /// \return Full path, with name and extension, which doesn't collide with
+    /// existing files
+    IGNITION_GUI_VISIBLE
+    std::string uniqueFilePath(const std::string &_pathAndName,
+                               const std::string &_extension);
+
     /// \brief Returns the first element on a QList which matches the given
     /// property.
     /// \param[in] _list The list to search through.

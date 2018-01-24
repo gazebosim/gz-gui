@@ -59,7 +59,7 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
   // Make sure it fits QSpinBox
   if (this->dataPtr->type == NumberType::UINT)
   {
-    min = std::max((unsigned int)min, 0u);
+    min = (unsigned int)min;
     max = math::equal(max, math::MAX_D) ? math::MAX_I32 : (unsigned int)max;
   }
   else if (this->dataPtr->type == NumberType::INT)

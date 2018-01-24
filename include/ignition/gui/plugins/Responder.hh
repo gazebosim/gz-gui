@@ -66,13 +66,13 @@ namespace plugins
     /// \brief Service callback
     /// \param[in] _req Request protobuf message
     /// \param[out] _res Response protobuf message
-    /// \param[out] _success True if successful
+    /// \return True if successful
     template<typename REQ, typename RES>
-    void Callback(const REQ &_req, RES &_res, bool &_success)
+    bool Callback(const REQ &_req, RES &_res)
     {
       this->UpdateRequest(QString::fromStdString(_req.DebugString()));
       _res.CopyFrom(*this->res);
-      _success = true;
+      return true;
     }
 
     /// \brief Holds user defined response

@@ -117,13 +117,13 @@ TEST(TimePanelTest, WorldControl)
   bool playCalled = false;
   bool pauseCalled = false;
   bool multiStepCalled = false;
-  std::function<void(const msgs::WorldControl &, msgs::Boolean &, bool &)> cb =
-      [&](const msgs::WorldControl &_req, msgs::Boolean &, bool &_result)
+  std::function<bool(const msgs::WorldControl &, msgs::Boolean &)> cb =
+      [&](const msgs::WorldControl &_req, msgs::Boolean &)
   {
     pauseCalled = _req.has_pause() && _req.pause();
     playCalled = _req.has_pause() && !_req.pause();
     multiStepCalled = _req.has_multi_step();
-    _result = true;
+    return true;
   };
   transport::Node node;
   node.Advertise("/world_control_test", cb);
@@ -267,12 +267,23 @@ TEST(TimePanelTest, WorldStats)
   transport::Node node;
   auto pub = node.Advertise<msgs::WorldStatistics>("/world_stats_test");
 
+  // Sim time
   {
     msgs::WorldStatistics msg;
     auto simTimeMsg = msg.mutable_sim_time();
     simTimeMsg->set_sec(3600);
     simTimeMsg->set_nsec(123456789);
     pub.Publish(msg);
+  }
+
+  // Give it time to be processed
+  int sleep = 0;
+  int maxSleep = 10;
+  while (simTime->text() == "N/A" && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
   }
 
   EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
@@ -282,6 +293,7 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_TRUE(stepButton->isVisible());
   EXPECT_TRUE(stepButton->isEnabled());
 
+  // Real time
   {
     msgs::WorldStatistics msg;
     auto realTimeMsg = msg.mutable_real_time();
@@ -290,17 +302,13 @@ TEST(TimePanelTest, WorldStats)
     pub.Publish(msg);
   }
 
-  EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
-  EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
-  EXPECT_TRUE(playButton->isVisible());
-  EXPECT_FALSE(pauseButton->isVisible());
-  EXPECT_TRUE(stepButton->isVisible());
-  EXPECT_TRUE(stepButton->isEnabled());
-
+  // Give it time to be processed
+  sleep = 0;
+  while (realTime->text() == "N/A" && sleep < maxSleep)
   {
-    msgs::WorldStatistics msg;
-    msg.set_paused(true);
-    pub.Publish(msg);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
   }
 
   EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
@@ -310,10 +318,20 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_TRUE(stepButton->isVisible());
   EXPECT_TRUE(stepButton->isEnabled());
 
+  // Un-pause
   {
     msgs::WorldStatistics msg;
     msg.set_paused(false);
     pub.Publish(msg);
+  }
+
+  // Give it time to be processed
+  sleep = 0;
+  while (!pauseButton->isVisible() && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
   }
 
   EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
@@ -322,6 +340,29 @@ TEST(TimePanelTest, WorldStats)
   EXPECT_TRUE(pauseButton->isVisible());
   EXPECT_TRUE(stepButton->isVisible());
   EXPECT_FALSE(stepButton->isEnabled());
+
+  // Pause
+  {
+    msgs::WorldStatistics msg;
+    msg.set_paused(true);
+    pub.Publish(msg);
+  }
+
+  // Give it time to be processed
+  sleep = 0;
+  while (pauseButton->isVisible() && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
+  EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_TRUE(playButton->isVisible());
+  EXPECT_FALSE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
 
   // Cleanup
   plugins.clear();

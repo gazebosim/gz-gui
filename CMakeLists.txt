@@ -58,15 +58,8 @@ ign_find_package(ignition-common${IGN_COMMON_VER} REQUIRED)
 
 #--------------------------------------
 # Find ignition-transport
-find_package(ignition-transport3 QUIET)
-if (NOT ignition-transport3_FOUND)
-  ign_build_error("Missing: Ignition Transport libignition-transport3-dev.")
-else()
-  message (STATUS "Found Ignition Transport 3")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-TRANSPORT_CXX_FLAGS}")
-  include_directories(${IGNITION-TRANSPORT_INCLUDE_DIRS})
-  link_directories(${IGNITION-TRANSPORT_LIBRARY_DIRS})
-endif()
+set(IGN_TRANSPORT_VER 4)
+ign_find_package(ignition-transport${IGN_TRANSPORT_VER} REQUIRED)
 
 #--------------------------------------
 # Find ignition-rendering

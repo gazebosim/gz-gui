@@ -15,6 +15,7 @@
  *
 */
 
+#include <sys/stat.h>
 #include <algorithm>
 #include <string>
 #include <ignition/math/Helpers.hh>
@@ -147,3 +148,19 @@ ignition::gui::StringType ignition::gui::stringTypeFromKey(
   return StringType::LINE;
 }
 
+/////////////////////////////////////////////////
+std::string ignition::gui::uniqueFilePath(const std::string &_pathAndName,
+    const std::string &_extension)
+{
+  std::string result = _pathAndName + "." + _extension;
+  int count = 1;
+  struct stat buf;
+
+  // Check if file exists and change name accordingly
+  while (stat(result.c_str(), &buf) != -1)
+  {
+    result = _pathAndName + "(" + std::to_string(count++) + ")." + _extension;
+  }
+
+  return result;
+}

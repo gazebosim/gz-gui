@@ -114,11 +114,16 @@ void VariablePillContainer::SetVariablePillLabel(const unsigned int _id,
       auto &childVariables = v.second->VariablePills();
       auto childIt = childVariables.find(_id);
       if (childIt != childVariables.end())
+      {
         variable = childIt->second;
+        break;
+      }
     }
   }
   else
+  {
     variable = it->second;
+  }
 
   if (variable)
     variable->SetText(_label);
@@ -184,7 +189,7 @@ void VariablePillContainer::AddVariablePill(gui::VariablePill *_variable,
       this, SLOT(OnAddVariable(unsigned int, std::string)));
   this->connect(_variable, SIGNAL(VariableRemoved(unsigned int)),
       this, SLOT(OnRemoveVariable(unsigned int)));
-  this->connect(_variable, SIGNAL(VariableLabelChanged(std::string)),
+  this->connect(_variable, SIGNAL(VariableTextChanged(std::string)),
       this, SLOT(OnSetVariableLabel(std::string)));
 
   _variable->SetContainer(this);

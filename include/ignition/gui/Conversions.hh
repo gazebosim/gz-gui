@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_CONVERSIONS_HH_
 #define IGNITION_GUI_CONVERSIONS_HH_
 
+#include <ignition/msgs/time.pb.h>
+#include <ignition/common/Time.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
@@ -78,6 +80,18 @@ namespace ignition
     /// \return Ignition mouse event
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QMouseEvent &_e);
+
+    /// \brief Convert an ignition::msgs::Time to an ignition::common::Time
+    /// \param[in] _t The time to convert
+    /// \return An ignition::common::Time object
+    IGNITION_GUI_VISIBLE
+    common::Time convert(const msgs::Time &_t);
+
+    /// \brief Convert an ignition::common::Time to an ignition::msgs::Time
+    /// \param[in] _t The time to convert
+    /// \return An ignition::msgs::Time object
+    IGNITION_GUI_VISIBLE
+    msgs::Time convert(const common::Time &_t);
   }
 }
 #endif

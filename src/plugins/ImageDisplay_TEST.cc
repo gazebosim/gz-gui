@@ -16,6 +16,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
 #include <ignition/transport/Node.hh>
 
@@ -172,6 +173,16 @@ TEST(ImageDisplayTest, ReceiveImage)
     pub.Publish(msg);
   }
 
+  // Give it time to be processed
+  int sleep = 0;
+  int maxSleep = 10;
+  while (!label->text().isEmpty() && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
   // Still no image
   EXPECT_EQ(label->text(), "No image");
   EXPECT_TRUE(label->pixmap() == nullptr);
@@ -185,9 +196,18 @@ TEST(ImageDisplayTest, ReceiveImage)
     pub.Publish(msg);
   }
 
+  // Give it time to be processed
+  sleep = 0;
+  while (!label->text().isEmpty() && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
   // Now it has an image
-  EXPECT_EQ(label->text(), QString());
-  ASSERT_TRUE(label->pixmap() != nullptr);
+  EXPECT_TRUE(label->text().isEmpty());
+  ASSERT_NE(nullptr, label->pixmap());
   EXPECT_EQ(label->pixmap()->height(), 100);
   EXPECT_EQ(label->pixmap()->width(), 200);
 

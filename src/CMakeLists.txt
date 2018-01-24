@@ -61,12 +61,12 @@ if (HAVE_IGN_TOOLS)
 endif()
 
 ign_build_tests(TYPE UNIT
-                SOURCES ${gtest_sources}
-                LIB_DEPS ${IGNITION-MATH_LIBRARIES})
-
-foreach(src ${gtest_sources})
-  target_link_libraries(UNIT_${src} TINYXML2::TINYXML2)
-endforeach()
+                SOURCES
+                  ${gtest_sources}
+                LIB_DEPS
+                  ${IGNITION-MATH_LIBRARIES}
+                  TINYXML2::TINYXML2
+)
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)

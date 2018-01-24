@@ -185,8 +185,6 @@ IncrementalPlot::IncrementalPlot(QWidget *_parent)
   : QwtPlot(_parent),
     dataPtr(new IncrementalPlotPrivate)
 {
-  this->setObjectName("incrementalPlot");
-
   this->dataPtr->directPainter = new QwtPlotDirectPainter(this);
 
   // panning with the left mouse button
