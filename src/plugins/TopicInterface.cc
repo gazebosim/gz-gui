@@ -48,6 +48,9 @@ namespace plugins
 
     /// \brief Whether the whole widget should be read-only.
     public: bool readOnly;
+
+    /// \brief Latest received message
+    public: google::protobuf::Message *msg{nullptr};
   };
 }
 }
@@ -124,7 +127,9 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       }
       else
       {
-        this->CreateWidget(*msg);
+        this->dataPtr->msg = msg->New();
+        this->dataPtr->msg->CopyFrom(*msg);
+        this->CreateWidget();
       }
     }
   }
@@ -134,6 +139,9 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     ignerr << "Failed to subscribe to topic [" << topic << "]" << std::endl;
   }
+
+  // Connect
+  this->connect(this, SIGNAL(MessageReceived()), this, SLOT(OnMessageImpl()));
 }
 
 /////////////////////////////////////////////////
@@ -141,16 +149,26 @@ void TopicInterface::OnMessage(const google::protobuf::Message &_msg)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  if (!this->dataPtr->msgWidget)
-    this->CreateWidget(_msg);
-  else
-    this->dataPtr->msgWidget->UpdateFromMsg(&_msg);
+  this->dataPtr->msg = _msg.New();
+  this->dataPtr->msg->CopyFrom(_msg);
+  this->MessageReceived();
 }
 
 /////////////////////////////////////////////////
-void TopicInterface::CreateWidget(const google::protobuf::Message &_msg)
+void TopicInterface::OnMessageImpl()
 {
-  this->dataPtr->msgWidget = new MessageWidget(&_msg);
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+
+  if (!this->dataPtr->msgWidget)
+    this->CreateWidget();
+  else
+    this->dataPtr->msgWidget->UpdateFromMsg(this->dataPtr->msg);
+}
+
+/////////////////////////////////////////////////
+void TopicInterface::CreateWidget()
+{
+  this->dataPtr->msgWidget = new MessageWidget(this->dataPtr->msg);
 
   for (const auto &w : this->dataPtr->hideWidgets)
     this->dataPtr->msgWidget->SetPropertyVisible(w, false);
