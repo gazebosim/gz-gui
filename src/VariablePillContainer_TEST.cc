@@ -180,9 +180,13 @@ TEST(VariablePillContainerTest, VariablePillEvents)
 
     // If the container moves, the variables move too
     if (container01->pos().x() > initialContainerX)
+    {
       EXPECT_LT(var01Global.x(), var01->mapToGlobal(varCenter).x());
+    }
     if (container01->pos().y() > initialContainerY)
+    {
       EXPECT_LT(var02Global.y(), var02->mapToGlobal(varCenter).y());
+    }
   }
   else
   {
@@ -253,7 +257,9 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   // \fixme When the container doesn't move, the test fails, this happens on
   // Jenkins
   if (containerMoved)
+  {
     EXPECT_EQ(1u, var02->VariablePillCount());
+  }
 
   EXPECT_TRUE(stop());
 }

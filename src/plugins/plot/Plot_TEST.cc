@@ -85,6 +85,8 @@ TEST(PlotTest, AddRemoveVariables)
   // Show, but don't exec, so we don't block
   win->show();
 
+  // See issue #24
+#if !defined(__APPLE__)
   // Get plot plugin
   auto plotPlugin = win->findChild<Plot *>();
   ASSERT_NE(nullptr, plotPlugin);
@@ -190,6 +192,7 @@ TEST(PlotTest, AddRemoveVariables)
   plots = plotPlugin->findChildren<IncrementalPlot *>();
   EXPECT_EQ(1, plots.size());
   EXPECT_TRUE(plots[0]->isVisible());
+#endif
 
   EXPECT_TRUE(stop());
 }
@@ -214,6 +217,8 @@ TEST(PlotTest, Export)
   // Show, but don't exec, so we don't block
   win->show();
 
+  // See issue #24
+#if !defined(__APPLE__)
   // Get plot plugin
   auto plotPlugin = win->findChild<Plot *>();
   ASSERT_NE(nullptr, plotPlugin);
@@ -333,6 +338,7 @@ TEST(PlotTest, Export)
 
   // Clean.
   ignition::common::removeAll(newTempDir);
+#endif
 
   EXPECT_TRUE(stop());
 }
