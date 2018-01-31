@@ -106,7 +106,7 @@ TEST(TopicEchoTest, Echo)
   EXPECT_EQ(msgList->item(0)->text(), QString("data: \"example string\"\n"))
       << msgList->item(0)->text().toStdString();
 
-  // Publish more than buffer size
+  // Publish more than buffer size (messages numbered 0 to 14)
   for (auto i = 0; i < bufferSpin->value() + 5; ++i)
   {
     msgs::StringMsg msg;
@@ -114,19 +114,34 @@ TEST(TopicEchoTest, Echo)
     pub.Publish(msg);
   }
 
+  // Wait until all 15 messages are received
+  // To avoid flakiness due to messages coming out of order, we check for both
+  // 13 and 14. There's a chance a lower number comes afterwards, but that's
+  // just bad luck.
   sleep = 0;
-  while (msgList->count() < 10 && sleep < maxSleep)
+  while (msgList->findItems(QString::number(13), Qt::MatchContains).count() == 0
+      && msgList->findItems(QString::number(14), Qt::MatchContains).count() == 0
+      && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
     sleep++;
   }
+  EXPECT_LT(sleep, maxSleep);
 
+  // Check we have only 10 messages listed
   ASSERT_EQ(msgList->count(), 10);
-  EXPECT_EQ(msgList->item(0)->text(), QString("data: \"many messages: 5\"\n"))
-      << msgList->item(0)->text().toStdString();
-  EXPECT_EQ(msgList->item(9)->text(), QString("data: \"many messages: 14\"\n"))
-      << msgList->item(9)->text().toStdString();
+
+  // We can't guarantee the order of messages
+  // We expect that out of the 10 messages last, at least 8 belong to the [5-14]
+  // range
+  unsigned int count = 0;
+  for (auto i = 5; i < 15; ++i)
+  {
+    if (msgList->findItems(QString::number(i), Qt::MatchContains).count() > 0)
+      count++;
+  }
+  EXPECT_GE(count, 8u);
 
   // Increase buffer
   bufferSpin->setValue(20);
@@ -146,7 +161,10 @@ TEST(TopicEchoTest, Echo)
     sleep++;
   }
 
+  // We have 11 messages
   ASSERT_EQ(msgList->count(), 11);
+
+  // The last one is guaranteed to be the new message
   EXPECT_EQ(msgList->item(10)->text(), QString("data: \"new message\"\n"))
       << msgList->item(10)->text().toStdString();
 
@@ -175,9 +193,10 @@ TEST(TopicEchoTest, Echo)
   // Decrease buffer
   bufferSpin->setValue(5);
 
+  // Check we have less messages
   ASSERT_EQ(msgList->count(), 5);
-  EXPECT_EQ(msgList->item(0)->text(), QString("data: \"many messages: 11\"\n"))
-      << msgList->item(0)->text().toStdString();
+
+  // The last message is still the new one
   EXPECT_EQ(msgList->item(4)->text(), QString("data: \"new message\"\n"))
       << msgList->item(4)->text().toStdString();
 
