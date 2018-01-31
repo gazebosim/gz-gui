@@ -65,13 +65,18 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
+    /// \brief Signal that a new message has been received.
+    signals: void MessageReceived();
+
+    /// \brief Handle new messages when the MessageReceived signal is called.
+    private slots: void OnMessageImpl();
+
     /// \brief Callback when a message is received.
     /// \param[in] _msg New message.
     private: void OnMessage(const google::protobuf::Message &_msg);
 
     /// \brief Create message widget and add it to layout.
-    /// \param[in] _msg Message.
-    private: void CreateWidget(const google::protobuf::Message &_msg);
+    private: void CreateWidget();
 
     /// \internal
     /// \brief Pointer to private data.
