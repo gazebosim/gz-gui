@@ -132,6 +132,8 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             [=](int _newValue) {this->dataPtr->multiStep = _newValue;});
 
+          this->connect(this, SIGNAL(ProcessMsg()), this, SLOT(OnProcessMsg()));
+
           mainLayout->addWidget(playButton,  0, 0);
           mainLayout->addWidget(pauseButton, 0, 0);
           mainLayout->addWidget(stepButton,  0, 1);
@@ -219,7 +221,7 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void TimePanel::ProcessMsg()
+void TimePanel::OnProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -256,7 +258,8 @@ void TimePanel::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
   this->dataPtr->msg.CopyFrom(_msg);
-  QMetaObject::invokeMethod(this, "ProcessMsg");
+  this->ProcessMsg();
+  //QMetaObject::invokeMethod(this, "ProcessMsg");
 }
 
 /////////////////////////////////////////////////

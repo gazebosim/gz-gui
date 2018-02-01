@@ -63,8 +63,8 @@ namespace plugins
     // Documentation inherited
     public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief Callback in main thread when diagnostics come in
-    public slots: void ProcessMsg();
+    /// \brief Callback in Qt thread to handle a new message.
+    public slots: void OnProcessMsg();
 
     /// \brief Callback in Qt thread when play button is clicked.
     public slots: void OnPlay();
@@ -74,6 +74,9 @@ namespace plugins
 
     /// \brief Callback in Qt thread when step button is clicked.
     public slots: void OnStep();
+
+    /// \brief Signal that a new message has been received.
+    signals: void ProcessMsg();
 
     /// \brief Notify that it's now playing.
     signals: void Playing();
