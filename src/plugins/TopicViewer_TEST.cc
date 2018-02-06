@@ -46,10 +46,6 @@ TEST(TopicViewerTest, OnMessage)
   EXPECT_TRUE(initApp());
 
   // Load plugin.
-  const char *pluginStr = "<plugin filename=\"TopicViewer\"> </plugin>";
-
-  tinyxml2::XMLDocument pluginDoc;
-  pluginDoc.Parse(pluginStr);
   EXPECT_TRUE(ignition::gui::loadPlugin("TopicViewer"));
 
   // Create main window.
