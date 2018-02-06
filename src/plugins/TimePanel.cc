@@ -259,7 +259,6 @@ void TimePanel::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 
   this->dataPtr->msg.CopyFrom(_msg);
   this->ProcessMsg();
-  //QMetaObject::invokeMethod(this, "ProcessMsg");
 }
 
 /////////////////////////////////////////////////
