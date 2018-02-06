@@ -16,6 +16,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <thread>
 #include <ignition/msgs.hh>
 #include <ignition/transport/Node.hh>
 
@@ -27,6 +28,16 @@
 using namespace std::chrono_literals;
 using namespace ignition;
 using namespace gui;
+
+/////////////////////////////////////////////////
+TEST(TopicViewerTest, Load)
+{
+  EXPECT_TRUE(initApp());
+
+  EXPECT_TRUE(loadPlugin("TopicViewer"));
+
+  EXPECT_TRUE(stop());
+}
 
 /////////////////////////////////////////////////
 TEST(TopicInterfaceTest, OnMessage)
@@ -46,6 +57,7 @@ TEST(TopicInterfaceTest, OnMessage)
   EXPECT_TRUE(createMainWindow());
   auto win = mainWindow();
   EXPECT_TRUE(win != nullptr);
+  win->show();
 
   // Get plugin.
   auto plugins = win->findChildren<Plugin *>();
@@ -60,30 +72,26 @@ TEST(TopicInterfaceTest, OnMessage)
   // Check that there are no topics displayed.
   EXPECT_EQ(0, topicsModel[0]->rowCount());
 
-  std::thread t([&topicsModel](){
+  // Publish a message.
+  transport::Node node;
+  auto pub = node.Advertise<msgs::StringMsg>("/test_topic_str");
+  msgs::StringMsg msg;
+  msg.set_data("test_content");
+  pub.Publish(msg);
 
-    // Publish a message.
-    transport::Node node;
-    auto pub = node.Advertise<msgs::StringMsg>("/test_topic_str");
+  // Check that eventually we show the topic name on the widget.
+  unsigned int counter = 0u;
+  bool found = false;
+  while (counter < 20u && !found)
+  {
+    // We need this line to trigger the timeout event connected to the QT slot
+    // function that will update the topic list.
+    QCoreApplication::processEvents();
+    found = topicsModel[0]->rowCount() > 0;
+    std::this_thread::sleep_for(100ms);
+  }
 
-    msgs::StringMsg msg;
-    msg.set_data("test_content");
-
-    for (auto i = 0; i < 50; ++i)
-    {
-      pub.Publish(msg);
-      std::this_thread::sleep_for(100ms);
-      std::cout << topicsModel[0]->rowCount() << std::endl;
-    }
-  });
-
-  std::this_thread::sleep_for(2000ms);
-  EXPECT_NE(0, topicsModel[0]->rowCount());
-
-  t.join();
-
-  std::this_thread::sleep_for(1s);
-  EXPECT_EQ(0, topicsModel[0]->rowCount());
+  EXPECT_TRUE(found);
 
   // Cleanup.
   EXPECT_TRUE(stop());
