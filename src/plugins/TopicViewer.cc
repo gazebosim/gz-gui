@@ -456,11 +456,13 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
       case google::protobuf::FieldDescriptor::TYPE_INT32:
       case google::protobuf::FieldDescriptor::TYPE_UINT32:
       case google::protobuf::FieldDescriptor::TYPE_BOOL:
+      case google::protobuf::FieldDescriptor::TYPE_STRING:
       {
         auto humanName = humanReadableKey(name);
 
         auto *childItem = new QStandardItem();
         childItem->setData(humanName.c_str(), DataRole::DISPLAY_NAME);
+        childItem->setDragEnabled(true);
 
         switch (field->type())
         {
@@ -485,6 +487,10 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
           case google::protobuf::FieldDescriptor::TYPE_BOOL:
             childItem->setData("Bool", DataRole::TYPE);
             break;
+          case google::protobuf::FieldDescriptor::TYPE_STRING:
+            childItem->setData("String", DataRole::TYPE);
+            childItem->setDragEnabled(false);
+            break;
           default:
             continue;
         }
@@ -495,7 +501,6 @@ void TopicViewer::FillFromMsg(google::protobuf::Message *_msg,
 
         std::string dataName = _uri + "/" + name;
         childItem->setData(dataName.c_str(), DataRole::URI_QUERY);
-        childItem->setDragEnabled(true);
 
         _item->appendRow(childItem);
         break;
