@@ -40,7 +40,7 @@ TEST(TopicViewerTest, Load)
 }
 
 /////////////////////////////////////////////////
-TEST(TopicInterfaceTest, OnMessage)
+TEST(TopicViewerTest, OnMessage)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
@@ -50,8 +50,7 @@ TEST(TopicInterfaceTest, OnMessage)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("TopicViewer",
-      pluginDoc.FirstChildElement("plugin")));
+  EXPECT_TRUE(ignition::gui::loadPlugin("TopicViewer"));
 
   // Create main window.
   EXPECT_TRUE(createMainWindow());
