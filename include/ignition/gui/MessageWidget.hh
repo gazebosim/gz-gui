@@ -135,6 +135,10 @@ namespace ignition
       /// \sa SetPropertyReadOnly
       public: bool PropertyReadOnly(const std::string &_name) const;
 
+      public: std::string Topic() const;
+
+      public: void SetTopic(const std::string &_name);
+
       /// \brief Set a value of a property widget.
       /// \param[in] _name Name of the property widget.
       /// \param[in] _value Value to set to.

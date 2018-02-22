@@ -51,6 +51,8 @@ namespace plugins
 
     /// \brief Latest received message
     public: google::protobuf::Message *msg{nullptr};
+
+    public: std::string topic = "/echo";
   };
 }
 }
@@ -82,12 +84,11 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->setLayout(layout);
 
   // Parameters from SDF
-  std::string topic("/echo");
   if (_pluginElem)
   {
     if (auto topicElem = _pluginElem->FirstChildElement("topic"))
-      topic = topicElem->GetText();
-    if (topic.empty())
+      this->dataPtr->topic = topicElem->GetText();
+    if (this->dataPtr->topic.empty())
     {
       ignwarn << "Topic not specified, subscribing to [/echo]." << std::endl;
     }
@@ -99,7 +100,7 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       ignwarn << "Message type not specified, widget will be constructed "
               << "according to the first message received on topic ["
-              << topic << "]." << std::endl;
+              << this->dataPtr->topic << "]." << std::endl;
     }
 
     // Global read-only
@@ -135,9 +136,11 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Subscribe
-  if (!this->dataPtr->node.Subscribe(topic, &TopicInterface::OnMessage, this))
+  if (!this->dataPtr->node.Subscribe(this->dataPtr->topic,
+        &TopicInterface::OnMessage, this))
   {
-    ignerr << "Failed to subscribe to topic [" << topic << "]" << std::endl;
+    ignerr << "Failed to subscribe to topic [" << this->dataPtr->topic
+           << "]" << std::endl;
   }
 
   // Connect
@@ -174,6 +177,9 @@ void TopicInterface::CreateWidget()
     this->dataPtr->msgWidget->SetPropertyVisible(w, false);
 
   this->dataPtr->msgWidget->SetReadOnly(this->dataPtr->readOnly);
+
+  // Needed for drag and drop.
+  this->dataPtr->msgWidget->SetTopic(this->dataPtr->topic);
 
   // Scroll area
   auto scrollArea = new QScrollArea();

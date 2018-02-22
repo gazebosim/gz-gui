@@ -350,6 +350,7 @@ void VariablePillContainer::dropEvent(QDropEvent *_evt)
   {
     QString mimeData = _evt->mimeData()->data("application/x-item");
     std::string dataStr = mimeData.toStdString();
+
     this->AddVariablePill(dataStr);
   }
   else if (_evt->mimeData()->hasFormat("application/x-pill-item"))
@@ -419,17 +420,25 @@ bool VariablePillContainer::IsDragValid(const QDropEvent *_evt) const
     gui::VariablePill *dragVariable =
       qobject_cast<gui::VariablePill *>(_evt->source());
     if (!dragVariable)
+    {
       return false;
+    }
 
     // limit drag and drop to same container
     if (dragVariable->Container() && dragVariable->Container() != this)
+    {
       return false;
+    }
   }
   else
+  {
     return false;
+  }
 
   if (dataStr.empty())
+  {
     return false;
+  }
 
   return true;
 }

@@ -87,6 +87,17 @@ namespace ignition
       /// \return True if read-only (disabled)
       public: virtual bool ReadOnly() const;
 
+      public: std::string ScopedName() const;
+
+      public: void SetScopedName(const std::string &_scopedName);
+
+      public: std::string Topic() const;
+
+      public: void SetTopic(const std::string &_topic);
+
+      /// \brief ToDo.
+      public: void mouseMoveEvent(QMouseEvent *_event) override;
+
       /// \brief Signal that the value has changed.
       /// \param[in] _value New value.
       signals: void ValueChanged(const QVariant _value);

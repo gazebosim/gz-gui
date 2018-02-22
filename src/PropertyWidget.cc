@@ -15,6 +15,9 @@
  *
 */
 
+#include <iostream>
+#include <string>
+
 #include "ignition/gui/PropertyWidget.hh"
 
 namespace ignition
@@ -26,6 +29,10 @@ namespace ignition
       /// \brief This becomes true once read-only has been explicitly set
       /// and never goes back to false.
       public: bool explicitReadOnly = false;
+
+      public: std::string scopedName = "";
+
+      public: std::string topic = "";
     };
   }
 }
@@ -65,4 +72,66 @@ void PropertyWidget::SetReadOnly(const bool _readOnly,
 bool PropertyWidget::ReadOnly() const
 {
   return !this->isEnabled();
+}
+
+/////////////////////////////////////////////////
+void PropertyWidget::mouseMoveEvent(QMouseEvent *_event)
+{
+  if (!(_event->buttons() & Qt::LeftButton))
+    return;
+
+  if (this->dataPtr->topic.empty() ||
+      this->dataPtr->scopedName.empty())
+  {
+    return;
+  }
+
+  //if ((_event->pos() - this->dataPtr->dragStartPosition).manhattanLength()
+  //     < QApplication::startDragDistance())
+  //    return;
+//
+  // QLabel *child = static_cast<QLabel *>(
+  //     this->childAt(this->dataPtr->dragStartPosition));
+//
+  // // prevent dragging by the multi-variable label
+  // if (child == this->dataPtr->multiLabel)
+  //   return;
+
+  // std::string str = this->Topic() + "?p=/" + this->ScopedName();
+  // Hard-coded for testing
+  std::string str = this->Topic() + "?p=/model::2::pose::x";
+  QString textData(str.c_str());
+
+  //QString textData("/echo?p=/data");
+  QMimeData *mimeDataLocal = new QMimeData;
+  mimeDataLocal->setData("application/x-item", textData.toLocal8Bit());
+  mimeDataLocal->setText(textData);
+
+  QDrag *drag = new QDrag(this);
+  drag->setMimeData(mimeDataLocal);
+  drag->exec(Qt::MoveAction);
+}
+
+/////////////////////////////////////////////////
+std::string PropertyWidget::ScopedName() const
+{
+  return this->dataPtr->scopedName;
+}
+
+/////////////////////////////////////////////////
+void PropertyWidget::SetScopedName(const std::string &_scopedName)
+{
+  this->dataPtr->scopedName = _scopedName;
+}
+
+/////////////////////////////////////////////////
+std::string PropertyWidget::Topic() const
+{
+  return this->dataPtr->topic;
+}
+
+/////////////////////////////////////////////////
+void PropertyWidget::SetTopic(const std::string &_topic)
+{
+  this->dataPtr->topic = _topic;
 }
