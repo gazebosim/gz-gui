@@ -1069,7 +1069,10 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
 
   // Needed for drag and drop.
   _property->SetTopic(this->Topic());
-  _property->SetScopedName(_name);
+  // Replace :: with /
+  std::string adjustedScopedName;
+  ignition::common::replaceAll(adjustedScopedName, _name, "::", "/");
+  _property->SetScopedName(adjustedScopedName);
 
   // Forward widget's ValueChanged signal
   auto collapsibleSelf = qobject_cast<CollapsibleWidget *>(_property);

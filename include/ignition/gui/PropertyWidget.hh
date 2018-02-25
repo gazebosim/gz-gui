@@ -95,8 +95,7 @@ namespace ignition
 
       public: void SetTopic(const std::string &_topic);
 
-      /// \brief ToDo.
-      public: void mouseMoveEvent(QMouseEvent *_event) override;
+      public: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
       /// \brief Signal that the value has changed.
       /// \param[in] _value New value.

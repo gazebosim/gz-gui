@@ -75,44 +75,6 @@ bool PropertyWidget::ReadOnly() const
 }
 
 /////////////////////////////////////////////////
-void PropertyWidget::mouseMoveEvent(QMouseEvent *_event)
-{
-  if (!(_event->buttons() & Qt::LeftButton))
-    return;
-
-  if (this->dataPtr->topic.empty() ||
-      this->dataPtr->scopedName.empty())
-  {
-    return;
-  }
-
-  //if ((_event->pos() - this->dataPtr->dragStartPosition).manhattanLength()
-  //     < QApplication::startDragDistance())
-  //    return;
-//
-  // QLabel *child = static_cast<QLabel *>(
-  //     this->childAt(this->dataPtr->dragStartPosition));
-//
-  // // prevent dragging by the multi-variable label
-  // if (child == this->dataPtr->multiLabel)
-  //   return;
-
-  // std::string str = this->Topic() + "?p=/" + this->ScopedName();
-  // Hard-coded for testing
-  std::string str = this->Topic() + "?p=/model::2::pose::x";
-  QString textData(str.c_str());
-
-  //QString textData("/echo?p=/data");
-  QMimeData *mimeDataLocal = new QMimeData;
-  mimeDataLocal->setData("application/x-item", textData.toLocal8Bit());
-  mimeDataLocal->setText(textData);
-
-  QDrag *drag = new QDrag(this);
-  drag->setMimeData(mimeDataLocal);
-  drag->exec(Qt::MoveAction);
-}
-
-/////////////////////////////////////////////////
 std::string PropertyWidget::ScopedName() const
 {
   return this->dataPtr->scopedName;
@@ -134,4 +96,26 @@ std::string PropertyWidget::Topic() const
 void PropertyWidget::SetTopic(const std::string &_topic)
 {
   this->dataPtr->topic = _topic;
+}
+
+/////////////////////////////////////////////////
+bool PropertyWidget::eventFilter(QObject *_obj, QEvent *_event)
+{
+  std::string name = _obj->objectName().toStdString();
+
+  if (_event->type() == QEvent::MouseButtonPress && !name.empty())
+  {
+    std::string str = this->Topic() + "?p=/" + this->ScopedName() + name;
+    QString textData(str.c_str());
+
+    QMimeData *mimeDataLocal = new QMimeData;
+    mimeDataLocal->setData("application/x-item", textData.toLocal8Bit());
+    mimeDataLocal->setText(textData);
+
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimeDataLocal);
+    drag->exec(Qt::MoveAction);
+  }
+
+  return false;
 }
