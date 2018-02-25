@@ -99,13 +99,14 @@ void PropertyWidget::SetTopic(const std::string &_topic)
 }
 
 /////////////////////////////////////////////////
-bool PropertyWidget::eventFilter(QObject *_obj, QEvent *_event)
+bool PropertyWidget::eventFilter(QObject *_object, QEvent *_event)
 {
-  std::string name = _obj->objectName().toStdString();
+  QVariant value = _object->property("uri");
+  std::string uri = value.toString().toStdString();
 
-  if (_event->type() == QEvent::MouseButtonPress && !name.empty())
+  if (_event->type() == QEvent::MouseButtonPress && !uri.empty())
   {
-    std::string str = this->Topic() + "?p=/" + this->ScopedName() + name;
+    std::string str = this->Topic() + "?p=/" + this->ScopedName() + uri;
     QString textData(str.c_str());
 
     QMimeData *mimeDataLocal = new QMimeData;

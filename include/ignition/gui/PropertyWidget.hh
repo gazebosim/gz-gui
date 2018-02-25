@@ -19,6 +19,7 @@
 #define IGNITION_GUI_PROPERTYWIDGET_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/System.hh"
@@ -87,15 +88,32 @@ namespace ignition
       /// \return True if read-only (disabled)
       public: virtual bool ReadOnly() const;
 
-      public: std::string ScopedName() const;
-
-      public: void SetScopedName(const std::string &_scopedName);
-
+      /// \brief Used for drag and drop. The name of the Ignition Transport
+      /// topic associated to the widget. This is needed by the widget that
+      /// receives the drop event, as likely will subscribe to this topic to get
+      /// some data.
+      /// \return the Ignition Transport topic associated to this widget.
+      /// \sa SetTopic().
       public: std::string Topic() const;
 
+      /// \brief Used for drag and drop. Set the Ignition Transport
+      /// topic associated to the widget.
+      /// \param[in] _topic
+      /// \sa Topic().
       public: void SetTopic(const std::string &_topic);
 
-      public: bool eventFilter(QObject *_obj, QEvent *_event) override;
+      /// \brief Used for drag and drop. Get the scoped name of this widget.
+      /// This is needed by the widget that receives the drop event, as likely
+      /// will need to parse an Ignition message. The scoped name contains the
+      /// information about which field to parse.
+      /// \return The scoped name of the widget.
+      /// \sa SetScopedName().
+      public: std::string ScopedName() const;
+
+      /// \brief Used for drag and drop. Set the scoped name of this widget.
+      /// \param[in] _scopedName The scoped name of this widget.
+      /// \sa ScopedName().
+      public: void SetScopedName(const std::string &_scopedName);
 
       /// \brief Signal that the value has changed.
       /// \param[in] _value New value.
@@ -103,6 +121,13 @@ namespace ignition
 
       /// \brief Callback when an internal widget's value has changed.
       protected slots: void OnValueChanged();
+
+      /// \brief Filter events from other Qt objects.
+      /// param[in] _object Qt object watched by the event filter.
+      /// param[in] _event Qt event to be filtered.
+      /// \return True to stop event propagation.
+      protected slots: bool eventFilter(QObject *_object,
+                                        QEvent *_event) override;
 
       /// \brief Pointer to private data
       private: std::unique_ptr<PropertyWidgetPrivate> dataPtr;

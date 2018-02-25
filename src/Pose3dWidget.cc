@@ -82,8 +82,8 @@ Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
     spin->setDecimals(6);
     spin->setAlignment(Qt::AlignRight);
     spin->setMaximumWidth(100);
-    spin->setObjectName(names[i].c_str());
 
+    spin->setProperty("uri", names[i].c_str());
     spin->installEventFilter(this);
 
     auto label = new QLabel(humanReadable(elements[i]).c_str());
