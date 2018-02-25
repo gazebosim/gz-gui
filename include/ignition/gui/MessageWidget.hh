@@ -135,9 +135,15 @@ namespace ignition
       /// \sa SetPropertyReadOnly
       public: bool PropertyReadOnly(const std::string &_name) const;
 
+      /// \brief Get the Ignition Transport topic associated to this widget.
+      /// \return The topic name.
+      /// \sa SetTopic().
       public: std::string Topic() const;
 
-      public: void SetTopic(const std::string &_name);
+      /// \brief Set the Ignition Transport topic associated to this widget.
+      /// \param[in] _topic The topic name.
+      /// \sa Topic().
+      public: void SetTopic(const std::string &_topic);
 
       /// \brief Set a value of a property widget.
       /// \param[in] _name Name of the property widget.

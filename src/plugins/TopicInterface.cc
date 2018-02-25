@@ -52,6 +52,7 @@ namespace plugins
     /// \brief Latest received message
     public: google::protobuf::Message *msg{nullptr};
 
+    /// \brief The Ignition Transport topic to subscribe.
     public: std::string topic = "/echo";
   };
 }

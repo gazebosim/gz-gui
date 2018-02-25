@@ -70,6 +70,7 @@ namespace ignition
       /// \brief List of all properties which should be hidden
       public: std::unordered_set<std::string> hiddenProperties;
 
+      /// \brief The Ignition Transport topic associated to the topic.
       public: std::string topic = "";
     };
   }
@@ -1067,12 +1068,13 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   // collapsible
   this->dataPtr->properties[_name] = _property;
 
-  // Needed for drag and drop.
-  _property->SetTopic(this->Topic());
   // Replace :: with /
   std::string adjustedScopedName;
   ignition::common::replaceAll(adjustedScopedName, _name, "::", "/");
-  _property->SetScopedName(adjustedScopedName);
+
+  // Needed for drag and drop.
+  std::string uri = this->Topic() + "?p=/" + adjustedScopedName;
+  _property->SetDragAndDropURI(uri);
 
   // Forward widget's ValueChanged signal
   auto collapsibleSelf = qobject_cast<CollapsibleWidget *>(_property);

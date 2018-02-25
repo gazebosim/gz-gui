@@ -88,32 +88,19 @@ namespace ignition
       /// \return True if read-only (disabled)
       public: virtual bool ReadOnly() const;
 
-      /// \brief Used for drag and drop. The name of the Ignition Transport
-      /// topic associated to the widget. This is needed by the widget that
-      /// receives the drop event, as likely will subscribe to this topic to get
-      /// some data.
-      /// \return the Ignition Transport topic associated to this widget.
-      /// \sa SetTopic().
-      public: std::string Topic() const;
+      /// \brief Used for drag and drop. Set the URI that contains the Ignition
+      /// Transport topic and message field associated to the widget. This is
+      /// needed by the widget that receives the drop event, as likely it will
+      /// subscribe to this topic to get some data.
+      /// \param[in] _uri The URI used for drag and drop.
+      /// \sa DragAndDropURI().
+      public: void SetDragAndDropURI(const std::string &_uri);
 
-      /// \brief Used for drag and drop. Set the Ignition Transport
-      /// topic associated to the widget.
-      /// \param[in] _topic
-      /// \sa Topic().
-      public: void SetTopic(const std::string &_topic);
-
-      /// \brief Used for drag and drop. Get the scoped name of this widget.
-      /// This is needed by the widget that receives the drop event, as likely
-      /// will need to parse an Ignition message. The scoped name contains the
-      /// information about which field to parse.
-      /// \return The scoped name of the widget.
-      /// \sa SetScopedName().
-      public: std::string ScopedName() const;
-
-      /// \brief Used for drag and drop. Set the scoped name of this widget.
-      /// \param[in] _scopedName The scoped name of this widget.
-      /// \sa ScopedName().
-      public: void SetScopedName(const std::string &_scopedName);
+      /// \brief Used for drag and drop. The name of the URI that contains the
+      /// Ignition Transport topic and message field associated to the widget.
+      /// \return The URI.
+      /// \sa SetDragAndDropURI().
+      public: std::string DragAndDropURI() const;
 
       /// \brief Signal that the value has changed.
       /// \param[in] _value New value.

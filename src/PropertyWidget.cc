@@ -29,9 +29,8 @@ namespace ignition
       /// and never goes back to false.
       public: bool explicitReadOnly = false;
 
-      public: std::string scopedName = "";
-
-      public: std::string topic = "";
+      /// \brief The URI used as mime data for drag and drop.
+      public: std::string dragAndDropURI = "";
     };
   }
 }
@@ -74,27 +73,15 @@ bool PropertyWidget::ReadOnly() const
 }
 
 /////////////////////////////////////////////////
-std::string PropertyWidget::ScopedName() const
+std::string PropertyWidget::DragAndDropURI() const
 {
-  return this->dataPtr->scopedName;
+  return this->dataPtr->dragAndDropURI;
 }
 
 /////////////////////////////////////////////////
-void PropertyWidget::SetScopedName(const std::string &_scopedName)
+void PropertyWidget::SetDragAndDropURI(const std::string &_uri)
 {
-  this->dataPtr->scopedName = _scopedName;
-}
-
-/////////////////////////////////////////////////
-std::string PropertyWidget::Topic() const
-{
-  return this->dataPtr->topic;
-}
-
-/////////////////////////////////////////////////
-void PropertyWidget::SetTopic(const std::string &_topic)
-{
-  this->dataPtr->topic = _topic;
+  this->dataPtr->dragAndDropURI = _uri;
 }
 
 /////////////////////////////////////////////////
@@ -105,7 +92,7 @@ bool PropertyWidget::eventFilter(QObject *_object, QEvent *_event)
 
   if (_event->type() == QEvent::MouseButtonPress && !uri.empty())
   {
-    std::string str = this->Topic() + "?p=/" + this->ScopedName() + uri;
+    std::string str = this->dataPtr->dragAndDropURI + uri;
     QString textData(str.c_str());
 
     QMimeData *mimeDataLocal = new QMimeData;
