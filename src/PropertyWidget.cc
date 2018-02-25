@@ -15,7 +15,6 @@
  *
 */
 
-#include <iostream>
 #include <string>
 
 #include "ignition/gui/PropertyWidget.hh"
