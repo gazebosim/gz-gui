@@ -1073,7 +1073,11 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   ignition::common::replaceAll(adjustedScopedName, _name, "::", "/");
 
   // Needed for drag and drop.
-  std::string uri = this->Topic() + "?p=/" + adjustedScopedName;
+  auto topic = this->Topic();
+  std::string uri = adjustedScopedName;
+  if (!topic.empty())
+    uri = topic + "?p=/" + uri;
+
   _property->SetDragAndDropURI(uri);
 
   // Forward widget's ValueChanged signal

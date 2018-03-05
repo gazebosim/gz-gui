@@ -89,6 +89,11 @@ Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
     auto label = new QLabel(humanReadable(elements[i]).c_str());
     label->setToolTip(tr(elements[i].c_str()));
 
+    // We also install the filter on the label, in case the spinner doesn't
+    // allow drag.
+    label->setProperty("uri", names[i].c_str());
+    label->installEventFilter(this);
+
     auto unitLabel = new QLabel();
     unitLabel->setMaximumWidth(40);
     unitLabel->setMinimumWidth(40);
