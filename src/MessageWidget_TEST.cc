@@ -2411,3 +2411,24 @@ TEST(MessageWidgetTest, PropertyByName)
   EXPECT_TRUE(stop());
 }
 
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, TopicName)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message
+  auto msg = new msgs::StringMsg();
+
+  // Create widget from message
+  auto widget = new MessageWidget(msg);
+  ASSERT_NE(widget, nullptr);
+
+  std::string topic = "aTopic";
+  EXPECT_TRUE(widget->Topic().empty());
+  widget->SetTopic(topic);
+  EXPECT_EQ(topic, widget->Topic());
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}

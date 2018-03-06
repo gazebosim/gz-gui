@@ -54,7 +54,7 @@ namespace ignition
     /// \brief Private data for the MessageWidget class.
     class MessageWidgetPrivate
     {
-      /// \brief A map of unique scoped names to correpsonding widgets.
+      /// \brief A map of unique scoped names to corresponding widgets.
       public: std::map <std::string, PropertyWidget *> properties;
 
       /// \brief A copy of the message used to build the widget. Helps
@@ -69,6 +69,9 @@ namespace ignition
 
       /// \brief List of all properties which should be hidden
       public: std::unordered_set<std::string> hiddenProperties;
+
+      /// \brief The Ignition Transport topic associated to the topic.
+      public: std::string topic = "";
     };
   }
 }
@@ -269,6 +272,19 @@ bool MessageWidget::SetPropertyReadOnly(const std::string &_name,
   w->SetReadOnly(_readOnly);
   return true;
 }
+
+/////////////////////////////////////////////////
+std::string MessageWidget::Topic() const
+{
+  return this->dataPtr->topic;
+}
+
+/////////////////////////////////////////////////
+void MessageWidget::SetTopic(const std::string &_topic)
+{
+  this->dataPtr->topic = _topic;
+}
+
 
 /////////////////////////////////////////////////
 bool MessageWidget::SetPropertyValue(const std::string &_name,
@@ -1051,6 +1067,18 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   // to a collapsible and then the collapsible is added to the parent
   // collapsible
   this->dataPtr->properties[_name] = _property;
+
+  // Replace :: with /
+  std::string adjustedScopedName;
+  ignition::common::replaceAll(adjustedScopedName, _name, "::", "/");
+
+  // Needed for drag and drop.
+  auto topic = this->Topic();
+  std::string uri = adjustedScopedName;
+  if (!topic.empty())
+    uri = topic + "?p=/" + uri;
+
+  _property->SetDragAndDropURI(uri);
 
   // Forward widget's ValueChanged signal
   auto collapsibleSelf = qobject_cast<CollapsibleWidget *>(_property);

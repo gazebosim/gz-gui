@@ -44,12 +44,21 @@ Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
 {
   // Labels
   std::vector<std::string> elements;
+  std::vector<std::string> names;
+
   elements.push_back("x");
   elements.push_back("y");
   elements.push_back("z");
   elements.push_back("roll");
   elements.push_back("pitch");
   elements.push_back("yaw");
+
+  names.push_back("/position/x");
+  names.push_back("/position/y");
+  names.push_back("/position/z");
+  names.push_back("/orientation/roll");
+  names.push_back("/orientation/pitch");
+  names.push_back("/orientation/yaw");
 
   // Layout
   auto widgetLayout = new QGridLayout;
@@ -74,8 +83,16 @@ Pose3dWidget::Pose3dWidget() : dataPtr(new Pose3dWidgetPrivate())
     spin->setAlignment(Qt::AlignRight);
     spin->setMaximumWidth(100);
 
+    spin->setProperty("uri", names[i].c_str());
+    spin->installEventFilter(this);
+
     auto label = new QLabel(humanReadable(elements[i]).c_str());
     label->setToolTip(tr(elements[i].c_str()));
+
+    // We also install the filter on the label, in case the spinner doesn't
+    // allow drag.
+    label->setProperty("uri", names[i].c_str());
+    label->installEventFilter(this);
 
     auto unitLabel = new QLabel();
     unitLabel->setMaximumWidth(40);
