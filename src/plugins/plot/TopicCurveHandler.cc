@@ -301,7 +301,8 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
     // a top level msg field.
     // TODO x axis is hardcoded to be the sim time for now. Once it is
     // configurable, remove this logic for setting the x value
-    if (_index == 0 && (fieldName == "stamp" || fieldName == "time") &&
+    if (_index == 0 &&
+       (fieldName == "header" || fieldName == "stamp" || fieldName == "time") &&
         field->type() == google::protobuf::FieldDescriptor::TYPE_MESSAGE &&
         !field->is_repeated())
     {
@@ -312,6 +313,16 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
         if (msg)
         {
           ignition::common::Time time = convert(*msg);
+          xData = time.Double();
+        }
+      }
+      else if (field->message_type()->name() == "Header")
+      {
+        ignition::msgs::Header *msg = dynamic_cast<msgs::Header *>(valueMsg);
+        if (msg)
+        {
+          auto ts = msg->mutable_stamp();
+          ignition::common::Time time(ts->sec(), ts->nsec());
           xData = time.Double();
         }
       }
