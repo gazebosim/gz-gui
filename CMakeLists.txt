@@ -87,19 +87,7 @@ endif()
 
 #--------------------------------------
 # Find QT
-find_package (Qt5Widgets)
-if (NOT Qt5Widgets_FOUND)
-  ign_build_error("Missing: Qt5Widgets")
-else()
-  message (STATUS "Found Qt5Widgets")
-endif()
-
-find_package (Qt5Core)
-if (NOT Qt5Core_FOUND)
-  ign_build_error("Missing: Qt5Core")
-else()
-  message (STATUS "Found Qt5Core")
-endif()
+find_package (Qt5 COMPONENTS Core Widgets REQUIRED)
 
 #--------------------------------------
 # Find QWT (QT graphing library)
