@@ -52,7 +52,8 @@ COMMANDS = {  'gui' =>
                        "                             Give a QSS file path as an argument.\n" +
                        "\n" +
                        "  -v [ --verbose ] [arg]     Adjust the level of console output (0~4).\n" +
-                       "                             If no argument is provided, the level is set to 4.\n" +
+                       "                             The default verbosity is 1, use -v without\n"\
+                       "                             arguments for level 3.\n"\
                        "\n" +
                        COMMON_OPTIONS,
             }
@@ -65,7 +66,9 @@ class Cmd
   # Return a structure describing the options.
   #
   def parse(args)
-    options = {}
+    options = {
+      'verbose' => '1'
+    }
 
     usage = COMMANDS[args[0]]
 
@@ -94,7 +97,7 @@ class Cmd
       end
       opts.on('-v [verbose]', '--verbose [verbose]', String,
           'Adjust level of console output') do |v|
-        options['verbose'] = v || '4'
+        options['verbose'] = v || '3'
       end
 
     end
