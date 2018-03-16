@@ -28,7 +28,7 @@ pipelines:
           - make -j4 install
           - cd ../..
           # Ignition rendering
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b ign-cmake
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
           - cd ign-rendering
           - mkdir build
           - cd build
