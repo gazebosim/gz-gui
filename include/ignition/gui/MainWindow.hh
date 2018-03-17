@@ -131,7 +131,8 @@ namespace ignition
       /// \brief List of plugins which should be shown on the list
       std::vector<std::string> showPlugins;
 
-      /// \brief ToDo.
+      /// \brief Captures if the configuration should be automatically saved
+      /// when exit.
       bool saveOnExit = false;
     };
   }

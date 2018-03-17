@@ -16,6 +16,7 @@
  */
 
 #include <tinyxml2.h>
+#include <sstream>
 #include <string>
 
 #include <ignition/common/Console.hh>
@@ -390,13 +391,7 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
 
   // Save on exit
   if (auto saveOnExitElem = winElem->FirstChildElement("save_on_exit"))
-  {
     saveOnExitElem->QueryBoolText(&this->saveOnExit);
-    std::cout << "Found <save_on_exit>: " << std::boolalpha
-              << this->saveOnExit << std::endl;
-  }
-  else
-    std::cout << "Didn't find <save_on_exit>" << std::endl;
 
   // Docks state
   if (auto stateElem = winElem->FirstChildElement("state"))
