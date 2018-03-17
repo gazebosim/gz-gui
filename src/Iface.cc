@@ -320,29 +320,13 @@ bool ignition::gui::initApp()
 /////////////////////////////////////////////////
 bool ignition::gui::stop()
 {
-  std::cout << "Stop" << std::endl;
+  igndbg << "Stop" << std::endl;
 
   if (g_mainWin)
   {
-    //QString msg("Save Changes before exiting?\n\n");
-//
-    //QMessageBox msgBox(QMessageBox::NoIcon, QString("Exit"), msg);
-    //QPushButton *cancelButton = msgBox.addButton("Cancel",
-    //    QMessageBox::RejectRole);
-    //msgBox.addButton("Don't Save, Exit", QMessageBox::DestructiveRole);
-    //QPushButton *saveButton = msgBox.addButton("Save and Exit",
-    //    QMessageBox::AcceptRole);
-    //msgBox.setDefaultButton(cancelButton);
-    //msgBox.setDefaultButton(saveButton);
-    //msgBox.exec();
-
     if (g_windowConfig.SaveOnExit())
-    {
-      std::cout << "Saving" << std::endl;
       g_mainWin->SaveConfig(defaultConfigPath());
-    }
-    else
-      std::cout << "Not saving" << std::endl;
+
     g_mainWin->CloseAllDocks();
     g_mainWin->close();
     delete g_mainWin;

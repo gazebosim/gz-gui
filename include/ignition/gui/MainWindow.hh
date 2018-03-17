@@ -60,12 +60,6 @@ namespace ignition
       /// \brief Update the window's internal copy of WindowConfig.
       private: void UpdateWindowConfig();
 
-      //private: bool CheckForChanges();
-
-      //private slots: void Close();
-
-      //private: void closeEvent (QCloseEvent *event);
-
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
 
@@ -102,10 +96,11 @@ namespace ignition
       /// \return String containing a \<window\> element.
       std::string XMLString() const;
 
-      bool SaveOnExit() const
-      {
-        return this->saveOnExit;
-      }
+      /// \brief Get whether the configuration should automatically be saved
+      /// when exit or not.
+      /// \return True when the configuration should be automatically saved
+      /// or false otherwise.
+      bool SaveOnExit() const;
 
       /// \brief Window X position in px
       int posX = -1;
