@@ -102,9 +102,9 @@ MainWindow::MainWindow()
 
   auto quitAct = new QAction(tr("&Quit"), this);
   quitAct->setStatusTip(tr("Quit"));
-  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(Close()));
+  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
   fileMenu->addAction(quitAct);
-  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(Close())));
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close())));
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
@@ -388,6 +388,16 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   if (auto heightElem = winElem->FirstChildElement("height"))
     heightElem->QueryIntText(&this->height);
 
+  // Save on exit
+  if (auto saveOnExitElem = winElem->FirstChildElement("save_on_exit"))
+  {
+    saveOnExitElem->QueryBoolText(&this->saveOnExit);
+    std::cout << "Found <save_on_exit>: " << std::boolalpha
+              << this->saveOnExit << std::endl;
+  }
+  else
+    std::cout << "Didn't find <save_on_exit>" << std::endl;
+
   // Docks state
   if (auto stateElem = winElem->FirstChildElement("state"))
   {
@@ -499,6 +509,15 @@ std::string WindowConfig::XMLString() const
     windowElem->InsertEndChild(elem);
   }
 
+  // Save on exit
+  {
+    auto elem = doc.NewElement("save_on_exit");
+    std::ostringstream is;
+    is << std::boolalpha << this->saveOnExit;
+    elem->SetText(is.str().c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
   // Stylesheet
   {
     auto elem = doc.NewElement("stylesheet");
@@ -574,56 +593,56 @@ std::string WindowConfig::XMLString() const
 //  this->Close();
 //}
 
-bool MainWindow::CheckForChanges()
-{
-  bool res = true;
-  std::string tmpFilePath = defaultConfigPath() + ".swp";
-
-  this->SaveConfig(tmpFilePath);
-
-  {
-    std::ifstream in(defaultConfigPath());
-    std::ifstream in2(tmpFilePath);
-    while ((!in.eof()) && (!in2.eof()))
-    {
-      std::string line, line2;
-      std::getline(in, line);
-      std::getline(in2, line2);
-      if (line != line2)
-      {
-        res = false;
-        break;
-      }
-    }
-
-    res = res && in.eof() && in2.eof();
-  }
-
-  ignition::common::removeFile(tmpFilePath);
-  return res;
-}
-
-void MainWindow::Close()
-{
-  if (!this->CheckForChanges())
-  {
-    QString msg("Save Changes before exiting?\n\n");
-    QMessageBox msgBox(QMessageBox::NoIcon, QString("Exit"), msg);
-    QPushButton *cancelButton = msgBox.addButton("Cancel",
-        QMessageBox::RejectRole);
-    msgBox.addButton("Don't Save, Exit", QMessageBox::DestructiveRole);
-    QPushButton *saveButton = msgBox.addButton("Save and Exit",
-        QMessageBox::AcceptRole);
-    msgBox.setDefaultButton(cancelButton);
-    msgBox.setDefaultButton(saveButton);
-
-    msgBox.exec();
-    if (msgBox.clickedButton() == cancelButton)
-      return;
-
-    if (msgBox.clickedButton() == saveButton)
-      this->OnSaveConfig();
-  }
-
-  this->close();
-}
+//bool MainWindow::CheckForChanges()
+//{
+//  bool res = true;
+//  std::string tmpFilePath = defaultConfigPath() + ".swp";
+//
+//  this->SaveConfig(tmpFilePath);
+//
+//  {
+//    std::ifstream in(defaultConfigPath());
+//    std::ifstream in2(tmpFilePath);
+//    while ((!in.eof()) && (!in2.eof()))
+//    {
+//      std::string line, line2;
+//      std::getline(in, line);
+//      std::getline(in2, line2);
+//      if (line != line2)
+//      {
+//        res = false;
+//        break;
+//      }
+//    }
+//
+//    res = res && in.eof() && in2.eof();
+//  }
+//
+//  ignition::common::removeFile(tmpFilePath);
+//  return res;
+//}
+//
+//void MainWindow::Close()
+//{
+//  if (!this->CheckForChanges())
+//  {
+//    QString msg("Save Changes before exiting?\n\n");
+//    QMessageBox msgBox(QMessageBox::NoIcon, QString("Exit"), msg);
+//    QPushButton *cancelButton = msgBox.addButton("Cancel",
+//        QMessageBox::RejectRole);
+//    msgBox.addButton("Don't Save, Exit", QMessageBox::DestructiveRole);
+//    QPushButton *saveButton = msgBox.addButton("Save and Exit",
+//        QMessageBox::AcceptRole);
+//    msgBox.setDefaultButton(cancelButton);
+//    msgBox.setDefaultButton(saveButton);
+//
+//    msgBox.exec();
+//    if (msgBox.clickedButton() == cancelButton)
+//      return;
+//
+//    if (msgBox.clickedButton() == saveButton)
+//      this->OnSaveConfig();
+//  }
+//
+//  this->close();
+//}

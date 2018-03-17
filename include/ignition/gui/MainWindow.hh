@@ -60,9 +60,9 @@ namespace ignition
       /// \brief Update the window's internal copy of WindowConfig.
       private: void UpdateWindowConfig();
 
-      private: bool CheckForChanges();
+      //private: bool CheckForChanges();
 
-      private slots: void Close();
+      //private slots: void Close();
 
       //private: void closeEvent (QCloseEvent *event);
 
@@ -102,6 +102,11 @@ namespace ignition
       /// \return String containing a \<window\> element.
       std::string XMLString() const;
 
+      bool SaveOnExit() const
+      {
+        return this->saveOnExit;
+      }
+
       /// \brief Window X position in px
       int posX = -1;
 
@@ -130,6 +135,9 @@ namespace ignition
 
       /// \brief List of plugins which should be shown on the list
       std::vector<std::string> showPlugins;
+
+      /// \brief ToDo.
+      bool saveOnExit = false;
     };
   }
 }

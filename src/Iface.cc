@@ -320,7 +320,7 @@ bool ignition::gui::initApp()
 /////////////////////////////////////////////////
 bool ignition::gui::stop()
 {
-  igndbg << "Stop" << std::endl;
+  std::cout << "Stop" << std::endl;
 
   if (g_mainWin)
   {
@@ -336,7 +336,13 @@ bool ignition::gui::stop()
     //msgBox.setDefaultButton(saveButton);
     //msgBox.exec();
 
-    // g_mainWin->SaveConfig(defaultConfigPath());
+    if (g_windowConfig.SaveOnExit())
+    {
+      std::cout << "Saving" << std::endl;
+      g_mainWin->SaveConfig(defaultConfigPath());
+    }
+    else
+      std::cout << "Not saving" << std::endl;
     g_mainWin->CloseAllDocks();
     g_mainWin->close();
     delete g_mainWin;
