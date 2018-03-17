@@ -102,9 +102,9 @@ MainWindow::MainWindow()
 
   auto quitAct = new QAction(tr("&Quit"), this);
   quitAct->setStatusTip(tr("Quit"));
-  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
+  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(Close()));
   fileMenu->addAction(quitAct);
-  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close())));
+  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(Close())));
 
   // Plugins menu
   auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
@@ -558,3 +558,72 @@ std::string WindowConfig::XMLString() const
   return printer.CStr();
 }
 
+//#include <QCloseEvent>
+//void MainWindow::closeEvent (QCloseEvent *event)
+//{
+//    //QMessageBox::StandardButton resBtn = QMessageBox::question( this, "APP_NAME",
+//    //                                                            tr("Are you sure?\n"),
+//    //                                                            QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+//    //                                                            QMessageBox::Yes);
+//    //if (resBtn != QMessageBox::Yes) {
+//    //    event->ignore();
+//    //} else {
+//    //    event->accept();
+//    //}
+//  std::cout << "Close" << std::endl;
+//  this->Close();
+//}
+
+bool MainWindow::CheckForChanges()
+{
+  bool res = true;
+  std::string tmpFilePath = defaultConfigPath() + ".swp";
+
+  this->SaveConfig(tmpFilePath);
+
+  {
+    std::ifstream in(defaultConfigPath());
+    std::ifstream in2(tmpFilePath);
+    while ((!in.eof()) && (!in2.eof()))
+    {
+      std::string line, line2;
+      std::getline(in, line);
+      std::getline(in2, line2);
+      if (line != line2)
+      {
+        res = false;
+        break;
+      }
+    }
+
+    res = res && in.eof() && in2.eof();
+  }
+
+  ignition::common::removeFile(tmpFilePath);
+  return res;
+}
+
+void MainWindow::Close()
+{
+  if (!this->CheckForChanges())
+  {
+    QString msg("Save Changes before exiting?\n\n");
+    QMessageBox msgBox(QMessageBox::NoIcon, QString("Exit"), msg);
+    QPushButton *cancelButton = msgBox.addButton("Cancel",
+        QMessageBox::RejectRole);
+    msgBox.addButton("Don't Save, Exit", QMessageBox::DestructiveRole);
+    QPushButton *saveButton = msgBox.addButton("Save and Exit",
+        QMessageBox::AcceptRole);
+    msgBox.setDefaultButton(cancelButton);
+    msgBox.setDefaultButton(saveButton);
+
+    msgBox.exec();
+    if (msgBox.clickedButton() == cancelButton)
+      return;
+
+    if (msgBox.clickedButton() == saveButton)
+      this->OnSaveConfig();
+  }
+
+  this->close();
+}

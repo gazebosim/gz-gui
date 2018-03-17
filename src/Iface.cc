@@ -324,6 +324,19 @@ bool ignition::gui::stop()
 
   if (g_mainWin)
   {
+    //QString msg("Save Changes before exiting?\n\n");
+//
+    //QMessageBox msgBox(QMessageBox::NoIcon, QString("Exit"), msg);
+    //QPushButton *cancelButton = msgBox.addButton("Cancel",
+    //    QMessageBox::RejectRole);
+    //msgBox.addButton("Don't Save, Exit", QMessageBox::DestructiveRole);
+    //QPushButton *saveButton = msgBox.addButton("Save and Exit",
+    //    QMessageBox::AcceptRole);
+    //msgBox.setDefaultButton(cancelButton);
+    //msgBox.setDefaultButton(saveButton);
+    //msgBox.exec();
+
+    // g_mainWin->SaveConfig(defaultConfigPath());
     g_mainWin->CloseAllDocks();
     g_mainWin->close();
     delete g_mainWin;

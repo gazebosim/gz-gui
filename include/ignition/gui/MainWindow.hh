@@ -60,6 +60,12 @@ namespace ignition
       /// \brief Update the window's internal copy of WindowConfig.
       private: void UpdateWindowConfig();
 
+      private: bool CheckForChanges();
+
+      private slots: void Close();
+
+      //private: void closeEvent (QCloseEvent *event);
+
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
 
