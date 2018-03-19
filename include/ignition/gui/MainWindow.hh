@@ -57,6 +57,12 @@ namespace ignition
       /// \return True if successful.
       public: bool ApplyConfig(const WindowConfig &_config);
 
+      // Documentation inherited
+      protected: void paintEvent(QPaintEvent *_event) override;
+
+      // Documentation inherited
+      protected: void closeEvent(QCloseEvent *_event) override;
+
       /// \brief Update the window's internal copy of WindowConfig.
       private: void UpdateWindowConfig();
 

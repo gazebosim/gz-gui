@@ -140,6 +140,90 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
+void MainWindow::paintEvent(QPaintEvent */*_event*/)
+{
+  static bool firstPaint = true;
+
+  // Update config after first paint event so we're sure the window's size is
+  // correct
+  if (firstPaint)
+  {
+    this->UpdateWindowConfig();
+    firstPaint = false;
+  }
+}
+
+/////////////////////////////////////////////////
+void MainWindow::closeEvent(QCloseEvent *_event)
+{
+  // Check window configuration
+
+  // Position
+  auto savedPosX = this->dataPtr->windowConfig.posX;
+  auto currentPosX = this->pos().x();
+  auto savedPosY = this->dataPtr->windowConfig.posY;
+  auto currentPosY = this->pos().y();
+
+  // Size
+  auto savedWidth = this->dataPtr->windowConfig.width;
+  auto currentWidth = this->width();
+  auto savedHeight = this->dataPtr->windowConfig.height;
+  auto currentHeight = this->height();
+
+  // State
+  auto savedState = this->dataPtr->windowConfig.state.toBase64().toStdString();
+  auto currentState = this->saveState().toBase64().toStdString();
+
+  // Nothing changed, just close
+  if (savedPosX == currentPosX &&
+      savedPosY == currentPosY &&
+      savedWidth == currentWidth &&
+      savedHeight == currentHeight &&
+      savedState == currentState)
+  {
+    _event->accept();
+    return;
+  }
+
+  // Ask for confirmation
+  std::string msg = "There are unsaved changes. \n\n"
+        "Save changes to default configuration file?\n\n"
+        + defaultConfigPath() + "\n";
+
+  QMessageBox msgBox(QMessageBox::Warning, QString("Save configuration?"),
+      QString(msg.c_str()), QMessageBox::NoButton, this);
+  msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
+      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+
+  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::RejectRole);
+  msgBox.setEscapeButton(cancelButton);
+
+  auto closeButton = msgBox.addButton("Close without saving",
+      QMessageBox::RejectRole);
+  closeButton->setMinimumWidth(200);
+
+  auto saveButton = msgBox.addButton("Save", QMessageBox::AcceptRole);
+  msgBox.setDefaultButton(saveButton);
+
+  msgBox.show();
+  msgBox.exec();
+
+  // User doesn't want to close window anymore
+  if (msgBox.clickedButton() == cancelButton)
+  {
+    _event->ignore();
+    return;
+  }
+
+  // Save before closing
+  if (msgBox.clickedButton() == saveButton)
+  {
+    this->OnSaveConfig();
+  }
+  _event->accept();
+}
+
+/////////////////////////////////////////////////
 bool MainWindow::CloseAllDocks()
 {
   igndbg << "Closing all docks" << std::endl;
