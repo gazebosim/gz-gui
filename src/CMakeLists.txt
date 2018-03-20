@@ -64,7 +64,6 @@ ign_build_tests(TYPE UNIT
                 SOURCES
                   ${gtest_sources}
                 LIB_DEPS
-                  ${IGNITION-MATH_LIBRARIES}
                   TINYXML2::TINYXML2
 )
 
