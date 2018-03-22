@@ -63,8 +63,9 @@ namespace ignition
       // Documentation inherited
       protected: void closeEvent(QCloseEvent *_event) override;
 
-      /// \brief Update the window's internal copy of WindowConfig.
-      private: void UpdateWindowConfig();
+      /// \brief Update the passed configuration with current values.
+      /// \return Updated window config
+      private: WindowConfig CurrentWindowConfig() const;
 
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();
@@ -92,33 +93,32 @@ namespace ignition
     {
       /// \brief Update this config from an XML string. Only fields present on
       /// the XML will be overriden / created.
-      /// \param[in] _windowXml XML window element in string format, it should
-      /// include the \<window\> tag, no only its child elements.
+      /// \param[in] _xml XML file in string format
       /// \return True if successful. It may fail for example if the string
       /// can't be parsed into XML.
-      bool MergeFromXML(const std::string &_windowXml);
+      bool MergeFromXML(const std::string &_xml);
 
       /// \brief Return this configuration in XML format as a string.
-      /// \return String containing a \<window\> element.
+      /// \return String containing a complete config file.
       std::string XMLString() const;
 
       /// \brief Window X position in px
-      int posX = -1;
+      int posX{-1};
 
       /// \brief Window Y position in px
-      int posY = -1;
+      int posY{-1};
 
       /// \brief Window width in px
-      int width = -1;
+      int width{-1};
 
       /// \brief Window height in px
-      int height = -1;
+      int height{-1};
 
       /// \brief Window state (dock configuration)
       QByteArray state;
 
       /// \brief String holding the global style sheet in QSS format.
-      std::string styleSheet;
+      std::string styleSheet{""};
 
       /// \brief Map menu name to whether it should be visible, all menus are
       /// shown by default.
@@ -126,10 +126,13 @@ namespace ignition
 
       /// \brief True if plugins found in plugin paths should be listed under
       /// the Plugins menu. True by default.
-      bool pluginsFromPaths = true;
+      bool pluginsFromPaths{true};
 
       /// \brief List of plugins which should be shown on the list
       std::vector<std::string> showPlugins;
+
+      /// \brief Cocatenation of all plugin configurations.
+      std::string plugins{""};
     };
   }
 }

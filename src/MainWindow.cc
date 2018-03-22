@@ -148,7 +148,7 @@ void MainWindow::paintEvent(QPaintEvent */*_event*/)
   // correct
   if (firstPaint)
   {
-    this->UpdateWindowConfig();
+    this->dataPtr->windowConfig = this->CurrentWindowConfig();
     firstPaint = false;
   }
 }
@@ -156,30 +156,9 @@ void MainWindow::paintEvent(QPaintEvent */*_event*/)
 /////////////////////////////////////////////////
 void MainWindow::closeEvent(QCloseEvent *_event)
 {
-  // Check window configuration
-
-  // Position
-  auto savedPosX = this->dataPtr->windowConfig.posX;
-  auto currentPosX = this->pos().x();
-  auto savedPosY = this->dataPtr->windowConfig.posY;
-  auto currentPosY = this->pos().y();
-
-  // Size
-  auto savedWidth = this->dataPtr->windowConfig.width;
-  auto currentWidth = this->width();
-  auto savedHeight = this->dataPtr->windowConfig.height;
-  auto currentHeight = this->height();
-
-  // State
-  auto savedState = this->dataPtr->windowConfig.state.toBase64().toStdString();
-  auto currentState = this->saveState().toBase64().toStdString();
-
-  // Nothing changed, just close
-  if (savedPosX == currentPosX &&
-      savedPosY == currentPosY &&
-      savedWidth == currentWidth &&
-      savedHeight == currentHeight &&
-      savedState == currentState)
+  // Nothing has changed, just close
+  if (this->dataPtr->windowConfig.XMLString() ==
+      this->CurrentWindowConfig().XMLString())
   {
     _event->accept();
     return;
@@ -293,16 +272,7 @@ void MainWindow::OnSaveConfigAs()
 /////////////////////////////////////////////////
 void MainWindow::SaveConfig(const std::string &_path)
 {
-  std::string config = "<?xml version=\"1.0\"?>\n\n";
-
-  // Window settings
-  this->UpdateWindowConfig();
-  config += this->dataPtr->windowConfig.XMLString();
-
-  // Plugins
-  auto plugins = this->findChildren<Plugin *>();
-  for (const auto plugin : plugins)
-    config += plugin->ConfigStr();
+  this->dataPtr->windowConfig = this->CurrentWindowConfig();
 
   // Create the intermediate directories if needed.
   // We check for errors when we try to open the file.
@@ -320,7 +290,7 @@ void MainWindow::SaveConfig(const std::string &_path)
     msgBox.exec();
   }
   else
-    out << config;
+    out << this->dataPtr->windowConfig.XMLString();
 
   ignmsg << "Saved configuration [" << _path << "]" << std::endl;
 }
@@ -425,26 +395,35 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
 }
 
 /////////////////////////////////////////////////
-void MainWindow::UpdateWindowConfig()
+WindowConfig MainWindow::CurrentWindowConfig() const
 {
+  WindowConfig config;
+
   // Position
-  this->dataPtr->windowConfig.posX = this->pos().x();
-  this->dataPtr->windowConfig.posY = this->pos().y();
+  config.posX = this->pos().x();
+  config.posY = this->pos().y();
 
   // Size
-  this->dataPtr->windowConfig.width = this->width();
-  this->dataPtr->windowConfig.height = this->height();
+  config.width = this->width();
+  config.height = this->height();
 
   // Docks state
-  this->dataPtr->windowConfig.state = this->saveState();
+  config.state = this->saveState();
 
   // Stylesheet
-  this->dataPtr->windowConfig.styleSheet = static_cast<QApplication *>(
+  config.styleSheet = static_cast<QApplication *>(
       QApplication::instance())->styleSheet().toStdString();
 
   // Menus configuration is kept the same as the initial one. The menus might
   // have been changed programatically but we don't guarantee that will be
   // saved.
+
+  // Plugins
+  auto plugins = this->findChildren<Plugin *>();
+  for (const auto plugin : plugins)
+    config.plugins += plugin->ConfigStr();
+
+  return config;
 }
 
 /////////////////////////////////////////////////
@@ -639,6 +618,10 @@ std::string WindowConfig::XMLString() const
   tinyxml2::XMLPrinter printer;
   doc.Print(&printer);
 
-  return printer.CStr();
+  std::string config = "<?xml version=\"1.0\"?>\n\n";
+  config += printer.CStr();
+  config += this->plugins;
+
+  return config;
 }
 
