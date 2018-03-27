@@ -188,6 +188,8 @@ TEST(PlotTest, AddRemoveVariables)
   // Trigger clear
   menu->actions()[0]->trigger();
 
+  EXPECT_TRUE(closed);
+
   // Check we're back to the empty plot
   plots = plotPlugin->findChildren<IncrementalPlot *>();
   EXPECT_EQ(1, plots.size());
