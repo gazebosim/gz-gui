@@ -347,6 +347,8 @@ bool ignition::gui::stop()
   std::queue<std::shared_ptr<Plugin>> empty;
   std::swap(g_pluginsToAdd, empty);
   g_pluginsAdded.clear();
+  g_pluginPaths.clear();
+  g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 
   return true;
 }

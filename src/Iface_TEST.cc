@@ -27,7 +27,7 @@
 using namespace ignition;
 using namespace gui;
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, initApp)
 {
   setVerbosity(4);
@@ -42,7 +42,7 @@ TEST(IfaceTest, initApp)
   EXPECT_TRUE(stop());
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, stop)
 {
   setVerbosity(4);
@@ -51,7 +51,7 @@ TEST(IfaceTest, stop)
   EXPECT_TRUE(stop());
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, loadPlugin)
 {
   setVerbosity(4);
@@ -81,7 +81,7 @@ TEST(IfaceTest, loadPlugin)
 
   // Plugin path added programmatically
   {
-    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_TRUE(initApp());
 
@@ -93,7 +93,7 @@ TEST(IfaceTest, loadPlugin)
   // Plugin path added by env var
   {
     setenv("TEST_ENV_VAR",
-        (std::string(PROJECT_BINARY_PATH) + "/test/plugins").c_str(), 1);
+        (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
 
     setPluginPathEnv("TEST_ENV_VAR");
 
@@ -106,7 +106,7 @@ TEST(IfaceTest, loadPlugin)
 
   // Plugin which doesn't inherit from ignition::gui::Plugin
   {
-    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_TRUE(initApp());
 
@@ -117,7 +117,7 @@ TEST(IfaceTest, loadPlugin)
 
   // Plugin which is not registered
   {
-    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_TRUE(initApp());
 
@@ -127,7 +127,7 @@ TEST(IfaceTest, loadPlugin)
   }
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, loadConfig)
 {
   setVerbosity(4);
@@ -151,8 +151,8 @@ TEST(IfaceTest, loadConfig)
     EXPECT_TRUE(initApp());
 
     // Add test plugin to path (referenced in config)
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
-    addPluginPath(testBuildPath + "plugins");
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
 
     // Load test config file
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
@@ -162,7 +162,7 @@ TEST(IfaceTest, loadConfig)
   }
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, loadDefaultConfig)
 {
   setVerbosity(4);
@@ -175,8 +175,8 @@ TEST(IfaceTest, loadDefaultConfig)
 
     // Add test plugin to path (referenced in config)
     auto testBuildPath = ignition::common::joinPaths(
-      std::string(PROJECT_BINARY_PATH), "test", "plugins");
-    addPluginPath(testBuildPath + "plugins");
+      std::string(PROJECT_BINARY_PATH), "lib");
+    addPluginPath(testBuildPath);
 
     // Set default config file
     auto configPath = ignition::common::joinPaths(
@@ -189,7 +189,7 @@ TEST(IfaceTest, loadDefaultConfig)
   }
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, StyleSheet)
 {
   setVerbosity(4);
@@ -229,8 +229,8 @@ TEST(IfaceTest, StyleSheet)
   // Qss file with dialog
   {
     // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
-    addPluginPath(testBuildPath + "plugins");
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
 
     // Create app
     EXPECT_TRUE(initApp());
@@ -351,7 +351,7 @@ TEST(IfaceTest, StyleSheet)
   }
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, MainWindowNoPlugins)
 {
   setVerbosity(4);
@@ -392,7 +392,7 @@ TEST(IfaceTest, MainWindowNoPlugins)
   }
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, Dialog)
 {
   setVerbosity(4);
@@ -405,8 +405,8 @@ TEST(IfaceTest, Dialog)
   // Init app first
   {
     // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
-    addPluginPath(testBuildPath + "plugins");
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
 
     // Create app
     EXPECT_TRUE(initApp());
@@ -439,8 +439,8 @@ TEST(IfaceTest, Dialog)
   // Multiple dialogs
   {
     // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
-    addPluginPath(testBuildPath + "plugins");
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
 
     // Create app
     EXPECT_TRUE(initApp());
@@ -476,7 +476,7 @@ TEST(IfaceTest, Dialog)
   }
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, runEmptyWindow)
 {
   setVerbosity(4);
@@ -501,7 +501,7 @@ TEST(IfaceTest, runEmptyWindow)
   EXPECT_TRUE(closed);
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, runStandalone)
 {
   setVerbosity(4);
@@ -523,8 +523,8 @@ TEST(IfaceTest, runStandalone)
     ASSERT_TRUE(QApplication::instance() != nullptr);
 
     // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
-    addPluginPath(testBuildPath + "plugins");
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
 
     // Close dialog after 1 s
     bool closed = false;
@@ -552,7 +552,7 @@ TEST(IfaceTest, runStandalone)
   }
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, runConfig)
 {
   setVerbosity(4);
@@ -573,9 +573,9 @@ TEST(IfaceTest, runConfig)
     EXPECT_TRUE(initApp());
     ASSERT_TRUE(QApplication::instance() != nullptr);
 
-    // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/test/";
-    addPluginPath(testBuildPath + "plugins");
+    // // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
 
     // Close window after 1 s
     bool closed = false;
@@ -610,7 +610,7 @@ TEST(IfaceTest, messageHandler)
   EXPECT_TRUE(stop());
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(IfaceTest, menuConfig)
 {
   setVerbosity(4);
@@ -662,18 +662,21 @@ TEST(IfaceTest, menuConfig)
     auto pluginsMenu = win->menuBar()->findChild<QMenu *>("pluginsMenu");
     ASSERT_NE(pluginsMenu, nullptr);
 
-    // Check it has only 2 visible plugins
+    // Check it has at least 2 plugins
     EXPECT_GT(pluginsMenu->actions().size(), 2);
 
     auto count = 0;
+    // Check that only 2 plugins are visible
     for (auto action : pluginsMenu->actions())
     {
       if (action->isVisible())
+      {
+        std::cout << "Name[" << action->text().toStdString() << "]\n";
         count++;
+      }
     }
-    EXPECT_EQ(count, 2);
+    EXPECT_EQ(2, count);
 
     EXPECT_TRUE(stop());
   }
 }
-
