@@ -670,10 +670,7 @@ TEST(IfaceTest, menuConfig)
     for (auto action : pluginsMenu->actions())
     {
       if (action->isVisible())
-      {
-        std::cout << "Name[" << action->text().toStdString() << "]\n";
         count++;
-      }
     }
     EXPECT_EQ(2, count);
 
