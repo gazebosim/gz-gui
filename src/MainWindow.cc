@@ -178,20 +178,24 @@ void MainWindow::closeEvent(QCloseEvent *_event)
 
   auto saveButton = msgBox.addButton("Save as default",
       QMessageBox::AcceptRole);
-  saveButton->setToolTip(QString::fromStdString("Save to default config file \"" +
-      defaultConfigPath() + "\""));
+  saveButton->setObjectName("closeConfirmationDialogSaveButton");
+  saveButton->setToolTip(QString::fromStdString(
+      "Save to default config file \"" + defaultConfigPath() + "\""));
   msgBox.setDefaultButton(saveButton);
   saveButton->setMinimumWidth(160);
 
   auto saveAsButton = msgBox.addButton("Save as...", QMessageBox::AcceptRole);
+  saveAsButton->setObjectName("closeConfirmationDialogSaveAsButton");
   saveAsButton->setToolTip("Choose a file on your computer");
 
   auto cancelButton = msgBox.addButton("Cancel", QMessageBox::AcceptRole);
+  cancelButton->setObjectName("closeConfirmationDialogCancelButton");
   msgBox.setEscapeButton(cancelButton);
   cancelButton->setToolTip("Don't close window");
 
   auto closeButton = msgBox.addButton("Close without saving",
       QMessageBox::AcceptRole);
+  closeButton->setObjectName("closeConfirmationDialogCloseButton");
   closeButton->setToolTip("Close without saving");
   closeButton->setMinimumWidth(180);
 
