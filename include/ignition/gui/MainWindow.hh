@@ -63,7 +63,7 @@ namespace ignition
       // Documentation inherited
       protected: void closeEvent(QCloseEvent *_event) override;
 
-      /// \brief Update the passed configuration with current values.
+      /// \brief Get the current window configuration.
       /// \return Updated window config
       private: WindowConfig CurrentWindowConfig() const;
 
@@ -93,7 +93,7 @@ namespace ignition
     {
       /// \brief Update this config from an XML string. Only fields present on
       /// the XML will be overriden / created.
-      /// \param[in] _xml XML file in string format
+      /// \param[in] _xml A config XML file in string format
       /// \return True if successful. It may fail for example if the string
       /// can't be parsed into XML.
       bool MergeFromXML(const std::string &_xml);
@@ -131,7 +131,7 @@ namespace ignition
       /// \brief List of plugins which should be shown on the list
       std::vector<std::string> showPlugins;
 
-      /// \brief Cocatenation of all plugin configurations.
+      /// \brief Concatenation of all plugin configurations.
       std::string plugins{""};
     };
   }

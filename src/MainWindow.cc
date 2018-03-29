@@ -33,6 +33,13 @@ namespace ignition
     {
       /// \brief Configuration for this window.
       public: WindowConfig windowConfig;
+
+      /// \brief Counts the times the window has been painted
+      public: unsigned int paintCount{0};
+
+      /// \brief Minimum number of paint events to consider the window to be
+      /// fully initialized.
+      public: const unsigned int paintCountMin{20};
     };
   }
 }
@@ -140,24 +147,21 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
-void MainWindow::paintEvent(QPaintEvent */*_event*/)
+void MainWindow::paintEvent(QPaintEvent *_event)
 {
-  static bool firstPaint = true;
-
-  // Update config after first paint event so we're sure the window's size is
-  // correct
-  if (firstPaint)
+  this->dataPtr->paintCount++;
+  if (this->dataPtr->paintCount == this->dataPtr->paintCountMin)
   {
     this->dataPtr->windowConfig = this->CurrentWindowConfig();
-    firstPaint = false;
   }
+  _event->accept();
 }
 
 /////////////////////////////////////////////////
 void MainWindow::closeEvent(QCloseEvent *_event)
 {
-  // Nothing has changed, just close
-  if (this->dataPtr->windowConfig.XMLString() ==
+  if (this->dataPtr->paintCount < this->dataPtr->paintCountMin ||
+      this->dataPtr->windowConfig.XMLString() ==
       this->CurrentWindowConfig().XMLString())
   {
     _event->accept();
