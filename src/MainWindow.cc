@@ -169,24 +169,31 @@ void MainWindow::closeEvent(QCloseEvent *_event)
   }
 
   // Ask for confirmation
-  std::string msg = "There are unsaved changes. \n\n"
-        "Save changes to default configuration file?\n\n"
-        + defaultConfigPath() + "\n";
+  std::string msg = "There are unsaved changes. \n\n";
 
   QMessageBox msgBox(QMessageBox::Warning, QString("Save configuration?"),
       QString(msg.c_str()), QMessageBox::NoButton, this);
   msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
 
-  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::RejectRole);
+  auto saveButton = msgBox.addButton("Save as default",
+      QMessageBox::AcceptRole);
+  saveButton->setToolTip(QString::fromStdString("Save to default config file \"" +
+      defaultConfigPath() + "\""));
+  msgBox.setDefaultButton(saveButton);
+  saveButton->setMinimumWidth(160);
+
+  auto saveAsButton = msgBox.addButton("Save as...", QMessageBox::AcceptRole);
+  saveAsButton->setToolTip("Choose a file on your computer");
+
+  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::AcceptRole);
   msgBox.setEscapeButton(cancelButton);
+  cancelButton->setToolTip("Don't close window");
 
   auto closeButton = msgBox.addButton("Close without saving",
-      QMessageBox::RejectRole);
-  closeButton->setMinimumWidth(200);
-
-  auto saveButton = msgBox.addButton("Save", QMessageBox::AcceptRole);
-  msgBox.setDefaultButton(saveButton);
+      QMessageBox::AcceptRole);
+  closeButton->setToolTip("Close without saving");
+  closeButton->setMinimumWidth(180);
 
   msgBox.show();
   msgBox.exec();
@@ -198,10 +205,16 @@ void MainWindow::closeEvent(QCloseEvent *_event)
     return;
   }
 
-  // Save before closing
+  // Save to default config
   if (msgBox.clickedButton() == saveButton)
   {
     this->OnSaveConfig();
+  }
+
+  // Save to custom file
+  if (msgBox.clickedButton() == saveAsButton)
+  {
+    this->OnSaveConfigAs();
   }
   _event->accept();
 }
