@@ -187,7 +187,7 @@ TEST(MainWindowTest, OnLoadConfig)
   EXPECT_TRUE(initApp());
 
   // Add test plugins to path
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create main window
   createMainWindow();
@@ -253,7 +253,7 @@ TEST(MainWindowTest, OnLoadConfig)
 
     // Check window has 1 plugin
     plugins = mainWindow->findChildren<Plugin *>();
-    EXPECT_EQ(plugins.size(), 1);
+    EXPECT_EQ(1, plugins.size());
   }
 
   // Load file with 2 plugins and window state
@@ -285,7 +285,7 @@ TEST(MainWindowTest, OnLoadConfig)
 
     // Check window has 2 plugins
     plugins = mainWindow->findChildren<Plugin *>();
-    EXPECT_EQ(plugins.size(), 2);
+    EXPECT_EQ(2, plugins.size());
   }
 
   // Load file with stylesheet
@@ -410,7 +410,7 @@ TEST(MainWindowTest, OnAddPlugin)
   EXPECT_TRUE(initApp());
 
   // Add test plugins to path
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create window
   createMainWindow();

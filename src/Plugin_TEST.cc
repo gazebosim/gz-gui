@@ -29,7 +29,7 @@ using namespace gui;
 TEST(PluginTest, DeleteLater)
 {
   setVerbosity(4);
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   EXPECT_TRUE(initApp());
 
