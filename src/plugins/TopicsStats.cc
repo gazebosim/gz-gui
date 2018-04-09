@@ -414,7 +414,7 @@ void TopicsStats::FillTopics()
           this->dataPtr->prevTopics.end())
     {
       // Subscribe to the topic.
-      auto cb = std::bind(&TopicStats::onMessage, this, std::placeholders::_1,
+      auto cb = std::bind(&TopicStats::OnMessage, this, std::placeholders::_1,
         std::placeholders::_2, std::placeholders::_3);
       if (!this->dataPtr->node.Subscribe(topic, cb))
       {
