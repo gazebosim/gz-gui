@@ -18,6 +18,7 @@
 #include <google/protobuf/message.h>
 #include <algorithm>
 #include <cstdint>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -413,7 +414,9 @@ void TopicsStats::FillTopics()
           this->dataPtr->prevTopics.end())
     {
       // Subscribe to the topic.
-      if (!this->dataPtr->node.Subscribe(topic, &TopicsStats::OnMessage, this))
+      auto cb = std::bind(&TopicStats::onMessage, this, std::placeholders::_1,
+        std::placeholders::_2, std::placeholders::_3);
+      if (!this->dataPtr->node.Subscribe(topic, cb))
       {
         std::cerr << "Error subscribing to [" << topic << "]" << std::endl;
         continue;
@@ -488,7 +491,7 @@ void TopicsStats::UpdateGUIStats()
 }
 
 /////////////////////////////////////////////////
-void TopicsStats::OnMessage(const google::protobuf::Message &_msg,
+void TopicsStats::OnMessage(const char */*_msgData*/, const size_t _size,
     const ignition::transport::MessageInfo &_info)
 {
   auto topic = _info.Topic();
@@ -510,7 +513,7 @@ void TopicsStats::OnMessage(const google::protobuf::Message &_msg,
   stats.numMessagesLastSec++;
 
   // Update the number of bytes received during the last second.
-  stats.numBytesLastSec += _msg.ByteSize();
+  stats.numBytesLastSec += _size;
 }
 
 /////////////////////////////////////////////////
