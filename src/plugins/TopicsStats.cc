@@ -416,7 +416,7 @@ void TopicsStats::FillTopics()
       // Subscribe to the topic.
       auto cb = std::bind(&TopicsStats::OnMessage, this, std::placeholders::_1,
         std::placeholders::_2, std::placeholders::_3);
-      if (!this->dataPtr->node.Subscribe(topic, cb))
+      if (!this->dataPtr->node.SubscribeRaw(topic, cb))
       {
         std::cerr << "Error subscribing to [" << topic << "]" << std::endl;
         continue;
