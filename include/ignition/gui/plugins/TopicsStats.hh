@@ -62,9 +62,11 @@ namespace plugins
     /// \brief Function called each time a topic update is received.
     /// Note that this callback uses the generic signature, hence it may receive
     /// messages with different types.
-    /// \param[in] _msg The new message received.
+    /// \param[in] _msgData string of a serialized protobuf message
+    /// \param[in] _size Number of bytes in the serialized message data
     /// \param[in] _info Meta-information about the message received.
-    private: void OnMessage(const google::protobuf::Message &_msg,
+    private: void OnMessage(const char *_msgData,
+                            const size_t _size,
                             const ignition::transport::MessageInfo &_info);
 
     /// \brief Reset all the stats.
