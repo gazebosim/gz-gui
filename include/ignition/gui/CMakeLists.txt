@@ -47,7 +47,7 @@ set (resources resources.qrc)
 QT5_WRAP_CPP(headers_MOC ${qt_headers})
 QT5_ADD_RESOURCES(resources_RCC ${resources})
 
-ign_add_library(${PROJECT_NAME_LOWER}
+ign_create_core_library(SOURCES
   ${sources}
   ${headers_MOC}
   ${resources_RCC}
@@ -61,8 +61,6 @@ target_link_libraries(${PROJECT_NAME_LOWER}
   ${Qt5Widgets_LIBRARIES}
   ${tinyxml2_LIBRARIES}
 )
-
-ign_install_library()
 
 add_subdirectory(plugins)
 
