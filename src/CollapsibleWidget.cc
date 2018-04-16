@@ -101,6 +101,8 @@ void CollapsibleWidget::Toggle(const bool _checked)
     icon->setText(QString::fromUtf8("\u25b2"));
 
   this->dataPtr->expanded = _checked;
+
+  this->Toggled(_checked);
 }
 
 /////////////////////////////////////////////////

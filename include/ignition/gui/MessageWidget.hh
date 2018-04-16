@@ -202,7 +202,8 @@ namespace ignition
 
       /// \brief Update the given message using values from the widgets. This is
       /// called recursively to update nested messages.
-      /// \param[in] _msg Message to be updated.
+      /// \param[in] _msg Message to be updated. It won't be cleared, so
+      /// untouched fields will remain the same.
       /// \param[in] _parentScopedName Scoped name of parent widget, empty if
       /// this is the top level message.
       /// \return True if successful

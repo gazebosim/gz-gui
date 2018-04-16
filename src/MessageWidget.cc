@@ -149,6 +149,7 @@ bool MessageWidget::UpdateFromMsg(const google::protobuf::Message *_msg)
     return false;
   }
 
+  this->dataPtr->msg->CopyFrom(*_msg);
   return this->Parse(_msg, "", this);
 }
 
@@ -314,6 +315,12 @@ QVariant MessageWidget::PropertyValue(const std::string &_name) const
 bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     const std::string &_scopedName, QWidget *_parent)
 {
+  auto collapsibleParent = qobject_cast<CollapsibleWidget *>(_parent);
+  if (collapsibleParent && !collapsibleParent->IsExpanded())
+  {
+    return true;
+  }
+
   auto descriptor = _msg->GetDescriptor();
   if (!descriptor)
   {
@@ -327,15 +334,15 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   auto messageType = descriptor->full_name();
   if (messageType == "ignition.msgs.Geometry")
   {
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
     // If creating new widget
     if (!propertyWidget)
     {
       propertyWidget = new GeometryWidget();
       this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
-
-    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
-      propertyWidget = collapsible->findChild<PropertyWidget *>();
 
     // Set value
     auto msg = dynamic_cast<const msgs::Geometry *>(_msg);
@@ -347,15 +354,15 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   // Pose3d
   if (messageType == "ignition.msgs.Pose")
   {
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
     // If creating new widget
     if (!propertyWidget)
     {
       propertyWidget = new Pose3dWidget();
       this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
-
-    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
-      propertyWidget = collapsible->findChild<PropertyWidget *>();
 
     // Set value
     auto msg = dynamic_cast<const msgs::Pose *>(_msg);
@@ -367,15 +374,15 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   // Vector3d
   if (messageType == "ignition.msgs.Vector3d")
   {
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
     // If creating new widget
     if (!propertyWidget)
     {
       propertyWidget = new Vector3dWidget(descriptor->name());
       this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
-
-    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
-      propertyWidget = collapsible->findChild<PropertyWidget *>();
 
     // Set value
     auto msg = dynamic_cast<const msgs::Vector3d *>(_msg);
@@ -387,15 +394,15 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
   // Color
   if (messageType == "ignition.msgs.Color")
   {
+    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
+      propertyWidget = collapsible->findChild<PropertyWidget *>();
+
     // If creating new widget
     if (!propertyWidget)
     {
       propertyWidget = new ColorWidget();
       this->AddPropertyWidget(_scopedName, propertyWidget, _parent);
     }
-
-    if (auto collapsible = qobject_cast<CollapsibleWidget *>(propertyWidget))
-      propertyWidget = collapsible->findChild<PropertyWidget *>();
 
     // Set value
     auto msg = dynamic_cast<const msgs::Color *>(_msg);
@@ -441,6 +448,14 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       if (!collapsible)
       {
         collapsible = new CollapsibleWidget(fieldName);
+        this->connect(collapsible, &CollapsibleWidget::Toggled,
+            [this](const bool _expanded)
+            {
+              if(!_expanded)
+                return;
+
+              this->UpdateFromMsg(this->dataPtr->msg);
+            });
         _parent->layout()->addWidget(collapsible);
       }
 
@@ -462,6 +477,14 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
           if (!repCollapsible)
           {
             repCollapsible = new CollapsibleWidget(std::to_string(count));
+            this->connect(repCollapsible, &CollapsibleWidget::Toggled,
+                [this](const bool _expanded)
+                {
+                  if(!_expanded)
+                    return;
+
+                  this->UpdateFromMsg(this->dataPtr->msg);
+                });
             collapsible->layout()->addWidget(repCollapsible);
           }
 
@@ -824,6 +847,14 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
       if (!collapsible)
       {
         collapsible = new CollapsibleWidget(fieldName);
+        this->connect(collapsible, &CollapsibleWidget::Toggled,
+            [this](const bool _expanded)
+            {
+              if(!_expanded)
+                return;
+
+              this->UpdateFromMsg(this->dataPtr->msg);
+            });
         _parent->layout()->addWidget(collapsible);
       }
 
@@ -849,8 +880,6 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 {
   if (!_msg)
     return false;
-
-  _msg->Clear();
 
   // Get descriptor of given message
   auto descriptor = _msg->GetDescriptor();
@@ -884,6 +913,9 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 
     auto childWidget = this->dataPtr->properties[scopedName];
     auto variant = childWidget->Value();
+    if (!variant.isValid())
+     continue;
+
     auto fieldType = fieldDescriptor->type();
 
     // Handle repeated fields and repeated nested messages
