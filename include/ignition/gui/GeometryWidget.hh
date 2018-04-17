@@ -22,7 +22,7 @@
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/PropertyWidget.hh"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {

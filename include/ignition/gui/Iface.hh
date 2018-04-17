@@ -21,7 +21,7 @@
 #include <utility>
 #include <vector>
 
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 // Forward declarations.
 namespace tinyxml2
