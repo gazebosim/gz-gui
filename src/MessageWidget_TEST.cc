@@ -250,6 +250,9 @@ TEST(MessageWidgetTest, JointMsgWidget)
     widget->SetPropertyValue("suspension_erp", 0.2);
   }
 
+  // Expand all widgets so they're generated
+  widget->ToggleAll(true);
+
   // verify widget values
   {
     // joint
@@ -389,6 +392,7 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   // Joint type universal -> ball
+  // widget->ToggleAll(true);
   {
     // joint
     widget->SetPropertyValue("name", QVariant::fromValue(
@@ -2430,5 +2434,75 @@ TEST(MessageWidgetTest, TopicName)
   EXPECT_EQ(topic, widget->Topic());
 
   delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ToggleAll)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Message with 1 collapsible initially
+  {
+    auto msg = new msgs::StringMsg();
+
+    auto widget = new MessageWidget(msg);
+    ASSERT_NE(widget, nullptr);
+
+    // header and data
+    EXPECT_EQ(2u, widget->PropertyWidgetCount());
+
+    // Expand all
+    widget->ToggleAll(true);
+
+    // header, stamp, sec, nsec, data, data
+    EXPECT_EQ(6u, widget->PropertyWidgetCount());
+
+    // Collapse all - widgets don't get deleted
+    widget->ToggleAll(false);
+    EXPECT_EQ(6u, widget->PropertyWidgetCount());
+
+    // Update field - widgets don't get deleted
+    msg->set_data("banana");
+    widget->UpdateFromMsg(msg);
+    EXPECT_EQ(6u, widget->PropertyWidgetCount());
+    widget->ToggleAll(true);
+    EXPECT_EQ(6u, widget->PropertyWidgetCount());
+
+    delete widget;
+  }
+
+  // Message with repeated field
+  {
+    auto msg = new msgs::Plugin_V();
+    msg->add_plugins();
+    msg->add_plugins();
+
+    auto widget = new MessageWidget(msg);
+    ASSERT_NE(widget, nullptr);
+
+    EXPECT_EQ(2u, widget->PropertyWidgetCount());
+
+    widget->ToggleAll(true);
+
+    EXPECT_EQ(24u, widget->PropertyWidgetCount());
+
+    // Collapse all - widgets don't get deleted
+    widget->ToggleAll(false);
+    EXPECT_EQ(24u, widget->PropertyWidgetCount());
+
+    // Update field - widgets don't get created because it's collapsed
+    msg->add_plugins();
+    widget->UpdateFromMsg(msg);
+    EXPECT_EQ(24u, widget->PropertyWidgetCount());
+
+    // New widgets are created only when expanding
+    widget->ToggleAll(true);
+    EXPECT_EQ(33u, widget->PropertyWidgetCount());
+
+    delete widget;
+  }
+
   EXPECT_TRUE(stop());
 }

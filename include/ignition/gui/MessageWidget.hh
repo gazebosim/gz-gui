@@ -148,15 +148,21 @@ namespace ignition
       /// \brief Set a value of a property widget.
       /// \param[in] _name Name of the property widget.
       /// \param[in] _value Value to set to.
-      /// \return True if the value is set successfully.
+      /// \return True if the value is set successfully. It will fail if the
+      /// widget doesn't exist yet. You can make sure all widgets are created
+      /// using ToggleAll(true).
       /// \sa PropertyValue
+      /// \sa ToggleAll
       public: bool SetPropertyValue(const std::string &_name,
                                     const QVariant _value);
 
       /// \brief Get value from a property widget.
       /// \param[in] _name Name of the property widget.
-      /// \return Value as QVariant.
+      /// \return Value as QVariant. It will be invalid if the widget doesn't
+      /// exist yet. You can make sure all widgets are created using
+      /// ToggleAll(true).
       /// \sa SetPropertyValue
+      /// \sa ToggleAll
       public: QVariant PropertyValue(const std::string &_name) const;
 
       /// \brief Get a property widget by its scoped name.
@@ -168,6 +174,10 @@ namespace ignition
       /// \brief Get the number of property widgets.
       /// \return The number of property widgets.
       public: unsigned int PropertyWidgetCount() const;
+
+      /// \brief Toggle all collapsible child widgets.
+      /// \param[in] _expand True to expand, false to collapse.
+      public: void ToggleAll(const bool _expand);
 
       /// \brief Performs the following:
       /// * Register the widget so that it can be referred by its scoped name

@@ -292,23 +292,25 @@ bool MessageWidget::SetPropertyValue(const std::string &_name,
                                      const QVariant _value)
 {
   auto w = this->PropertyWidgetByName(_name);
-  if (!w)
-  {
-    ignwarn << "Failed to find widget named [" << _name << "]" << std::endl;
-    return false;
-  }
+  if (w)
+    return w->SetValue(_value);
 
-  return w->SetValue(_value);
+  // TODO: Set on msg so widget is filled when expanded
+
+  return false;
 }
 
 /////////////////////////////////////////////////
 QVariant MessageWidget::PropertyValue(const std::string &_name) const
 {
+  // Take from widget
   auto w = this->PropertyWidgetByName(_name);
-  if (!w)
-    return QVariant();
+  if (w)
+    return w->Value();
 
-  return w->Value();
+  // TODO: Take from msg in case widget is collapsed
+
+  return QVariant();
 }
 
 /////////////////////////////////////////////////
@@ -461,7 +463,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
 
       // Parse all fields in the message
       int count = 0;
-      for (; count < reflection->FieldSize(*_msg, fieldDescriptor); ++count)
+      for (; collapsible->IsExpanded() &&
+          count < reflection->FieldSize(*_msg, fieldDescriptor); ++count)
       {
         // Append number to name
         auto name = scopedName + "::" + std::to_string(count);
@@ -658,7 +661,8 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
 
       // Drop repetitions which disappeared
       auto layoutCount = collapsible->ContentCount();
-      for (; count < static_cast<int>(layoutCount); ++count)
+      for (; collapsible->IsExpanded() &&
+          count < static_cast<int>(layoutCount); ++count)
       {
         auto name = scopedName + "::" + std::to_string(count);
         this->RemovePropertyWidget(name);
@@ -1202,5 +1206,27 @@ PropertyWidget *MessageWidget::PropertyWidgetByName(
     return iter->second;
 
   return nullptr;
+}
+
+/////////////////////////////////////////////////
+void MessageWidget::ToggleAll(const bool _expand)
+{
+  int colCount{0};
+  auto collapsibles = this->findChildren<CollapsibleWidget *>();
+
+  // When expanding, the number of colapsibles may increase. Keep expanding
+  // until there are no more new collapsibles.
+  while (colCount != collapsibles.size() && colCount < 100)
+  {
+    colCount = collapsibles.size();
+
+    for (auto collapsible : collapsibles)
+    {
+      collapsible->Toggle(_expand);
+      QCoreApplication::processEvents();
+    }
+
+    collapsibles = this->findChildren<CollapsibleWidget *>();
+  }
 }
 

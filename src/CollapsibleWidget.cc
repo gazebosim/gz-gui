@@ -89,6 +89,9 @@ CollapsibleWidget::~CollapsibleWidget()
 /////////////////////////////////////////////////
 void CollapsibleWidget::Toggle(const bool _checked)
 {
+  if (_checked == this->dataPtr->expanded)
+    return;
+
   // Toggle the content
   this->dataPtr->content->setVisible(_checked);
 
