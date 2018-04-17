@@ -23,7 +23,7 @@
 
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/PropertyWidget.hh"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {
