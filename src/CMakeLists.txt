@@ -8,7 +8,9 @@ foreach(src ${sources_no_path})
 endforeach()
 set(sources ${sources} PARENT_SCOPE)
 
-if (NOT HAVE_IGN_TOOLS)
+# this test currently fails on brew (issue #27)
+# so disable it for now
+if (NOT HAVE_IGN_TOOLS OR APPLE)
   list(REMOVE_ITEM gtest_sources ign_TEST.cc)
 endif()
 
