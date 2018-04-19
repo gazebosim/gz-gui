@@ -133,7 +133,7 @@ TEST(TopicEchoTest, Echo)
   ASSERT_EQ(msgList->count(), 10);
 
   // We can't guarantee the order of messages
-  // We expect that out of the 10 messages last, at least 8 belong to the [5-14]
+  // We expect that out of the 10 messages last, at least 6 belong to the [5-14]
   // range
   unsigned int count = 0;
   for (auto i = 5; i < 15; ++i)
@@ -141,7 +141,7 @@ TEST(TopicEchoTest, Echo)
     if (msgList->findItems(QString::number(i), Qt::MatchContains).count() > 0)
       count++;
   }
-  EXPECT_GE(count, 8u);
+  EXPECT_GE(count, 6u);
 
   // Increase buffer
   bufferSpin->setValue(20);
