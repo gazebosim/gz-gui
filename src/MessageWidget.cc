@@ -317,6 +317,7 @@ QVariant MessageWidget::PropertyValue(const std::string &_name) const
 bool MessageWidget::Parse(const google::protobuf::Message *_msg,
     const std::string &_scopedName, QWidget *_parent)
 {
+  // Don't generate widgets whose parents are collapsed
   auto collapsibleParent = qobject_cast<CollapsibleWidget *>(_parent);
   if (collapsibleParent && !collapsibleParent->IsExpanded())
   {
