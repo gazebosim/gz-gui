@@ -21,7 +21,7 @@
 #include <string>
 
 #include "ignition/gui/VariablePill.hh"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {

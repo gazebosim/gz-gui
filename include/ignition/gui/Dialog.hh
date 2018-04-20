@@ -19,7 +19,7 @@
 #define IGNITION_GUI_DIALOG_HH_
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {

@@ -21,7 +21,7 @@
 
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/ign.hh"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()

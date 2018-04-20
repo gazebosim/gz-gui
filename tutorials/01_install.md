@@ -7,6 +7,15 @@ Instructions on how to install from source on Ubuntu Xenial or higher.
 
 ### External
 
+Add OSRF packages:
+
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable xenial main" > /etc/apt/sources.list.d/gazebo-stable.list
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease xenial main" > /etc/apt/sources.list.d/gazebo-prerelease.list
+    sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+    sudo apt update
+
+Then install dependencies:
+
     sudo apt install -y
         build-essential
         wget
@@ -17,11 +26,11 @@ Instructions on how to install from source on Ubuntu Xenial or higher.
         libprotobuf-dev
         cppcheck
         mercurial
-        libignition-cmake-dev
+        libignition-cmake1-dev
         libignition-math4-dev
         libignition-common-dev
         libignition-msgs-dev
-        libignition-transport3-dev
+        libignition-transport4-dev
 
 ### Ignition (from source)
 
