@@ -4,7 +4,7 @@ ign_get_libsources_and_unittests(sources_no_path gtest_sources)
 
 set(sources)
 foreach(src ${sources_no_path})
-  set (sources ${sources} ${CMAKE_CURRENT_SOURCE_DIR}/${src})
+  list(APPEND sources ${CMAKE_CURRENT_SOURCE_DIR}/${src})
 endforeach()
 set(sources ${sources} PARENT_SCOPE)
 
