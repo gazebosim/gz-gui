@@ -30,7 +30,7 @@ Then install dependencies:
         libignition-math4-dev
         libignition-common-dev
         libignition-msgs-dev
-        libignition-transport3-dev
+        libignition-transport4-dev
 
 ### Ignition (from source)
 
