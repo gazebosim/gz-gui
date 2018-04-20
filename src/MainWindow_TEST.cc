@@ -565,9 +565,9 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
     ASSERT_NE(nullptr, win);
     EXPECT_TRUE(win->isVisible());
 
-    for (unsigned int i = 0; i < 20; ++i)
+    for (unsigned int i = 0; i < 100; ++i)
     {
-      win->resize(10*i, 20*i);
+      win->resize(10+i, 10+2*i);
       QCoreApplication::processEvents();
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
