@@ -18,7 +18,7 @@
 #ifndef IGNITION_GUI_IGN_HH_
 #define IGNITION_GUI_IGN_HH_
 
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 /// \brief External hook to read the library version.
 /// \return C-string representing the version. Ex.: 0.1.2

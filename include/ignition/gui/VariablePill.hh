@@ -23,7 +23,7 @@
 
 #include <ignition/math/Vector2.hh>
 #include "ignition/gui/qt.h"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {

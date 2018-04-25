@@ -325,7 +325,8 @@ bool ignition::gui::stop()
   if (g_mainWin)
   {
     g_mainWin->CloseAllDocks();
-    g_mainWin->close();
+    if (g_mainWin->isVisible())
+      g_mainWin->close();
     delete g_mainWin;
     g_mainWin = nullptr;
   }
