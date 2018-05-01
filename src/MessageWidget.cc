@@ -1147,8 +1147,6 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
     this->connect(_property, &PropertyWidget::ValueChanged,
         [this, _name](const QVariant _value)
         {this->ValueChanged(_name, _value);});
-
-    // IDEA: put Toggled catcher here?
   }
 
   // If inside a collapsible, add indentation
@@ -1181,6 +1179,7 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   }
   else
   {
+    // Also set nested widgets
     for (auto readOnly : this->dataPtr->readOnlyProperties)
     {
       if (family.find(readOnly) == 0)
@@ -1248,7 +1247,7 @@ void MessageWidget::ToggleAll(const bool _expand)
 
   // When expanding, the number of colapsibles may increase. Keep expanding
   // until there are no more new collapsibles.
-  while (colCount != collapsibles.size() && colCount < 100)
+  while (colCount != collapsibles.size())
   {
     colCount = collapsibles.size();
 

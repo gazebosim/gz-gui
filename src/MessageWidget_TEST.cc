@@ -2524,8 +2524,6 @@ TEST(MessageWidgetTest, ToggleAllSimpleMsg)
   EXPECT_FALSE(widget->SetPropertyValue("header::stamp::nsec", 400));
 
   // Expand all
-  // FIXME: This updates the whole widget using the initial msg and overrides
-  // the top-level watermelon
   widget->ToggleAll(true);
 
   // Has nested messages
@@ -2567,7 +2565,6 @@ TEST(MessageWidgetTest, ToggleAllSimpleMsg)
   EXPECT_EQ(6u, widget->PropertyWidgetCount());
 
   delete widget;
-
   EXPECT_TRUE(stop());
 }
 
@@ -2604,6 +2601,5 @@ TEST(MessageWidgetTest, ToggleAllRepeatedField)
   EXPECT_EQ(33u, widget->PropertyWidgetCount());
 
   delete widget;
-
   EXPECT_TRUE(stop());
 }
