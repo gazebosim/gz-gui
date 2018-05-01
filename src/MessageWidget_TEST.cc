@@ -192,62 +192,65 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_DOUBLE_EQ(retMsg->suspension_erp(), 0.9);
   }
 
+  // Expand all widgets so they're generated
+  widget->ToggleAll(true);
+
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   // Joint type revolute -> universal
   {
     // joint
-    widget->SetPropertyValue("name", QVariant::fromValue(
-        std::string("test_joint_updated")));
-    widget->SetPropertyValue("id", 9999999u);
-    widget->SetPropertyValue("parent", QVariant::fromValue(
-        std::string("test_joint_parent_updated")));
-    widget->SetPropertyValue("parent_id", 1u);
-    widget->SetPropertyValue("child", QVariant::fromValue(
-        std::string("test_joint_child_updated")));
-    widget->SetPropertyValue("child_id", 2u);
+    EXPECT_TRUE(widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("id", 9999999u));
+    EXPECT_TRUE(widget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("parent_id", 1u));
+    EXPECT_TRUE(widget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("child_id", 2u));
 
     // type
-    widget->SetPropertyValue("type", QVariant::fromValue(
-        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
+    EXPECT_TRUE(widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL))));
 
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
     math::Quaterniond quat(0.0, 0.0, 1.57);
-    widget->SetPropertyValue("pose", QVariant::fromValue(
-        math::Pose3d(pos, quat)));
+    EXPECT_TRUE(widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat))));
 
     // axis1
-    widget->SetPropertyValue("axis1::xyz", QVariant::fromValue(
-        math::Vector3d::UnitY));
-    widget->SetPropertyValue("axis1::use_parent_model_frame",
-        true);
-    widget->SetPropertyValue("axis1::limit_lower", -1.2);
-    widget->SetPropertyValue("axis1::limit_upper", -1.0);
-    widget->SetPropertyValue("axis1::limit_effort", 1.0);
-    widget->SetPropertyValue("axis1::limit_velocity", 100.0);
-    widget->SetPropertyValue("axis1::damping", 0.9);
+    EXPECT_TRUE(widget->SetPropertyValue("axis1::xyz", QVariant::fromValue(
+        math::Vector3d::UnitY)));
+    EXPECT_TRUE(widget->SetPropertyValue("axis1::use_parent_model_frame",
+        true));
+    EXPECT_TRUE(widget->SetPropertyValue("axis1::limit_lower", -1.2));
+    EXPECT_TRUE(widget->SetPropertyValue("axis1::limit_upper", -1.0));
+    EXPECT_TRUE(widget->SetPropertyValue("axis1::limit_effort", 1.0));
+    EXPECT_TRUE(widget->SetPropertyValue("axis1::limit_velocity", 100.0));
+    EXPECT_TRUE(widget->SetPropertyValue("axis1::damping", 0.9));
 
     // axis2
-    widget->SetPropertyValue("axis2::xyz", QVariant::fromValue(
-        math::Vector3d::UnitZ));
-    widget->SetPropertyValue("axis2::use_parent_model_frame",
-        true);
-    widget->SetPropertyValue("axis2::limit_lower", -3.2);
-    widget->SetPropertyValue("axis2::limit_upper", -3.0);
-    widget->SetPropertyValue("axis2::limit_effort", 3.0);
-    widget->SetPropertyValue("axis2::limit_velocity", 300.0);
-    widget->SetPropertyValue("axis2::damping", 3.9);
+    EXPECT_TRUE(widget->SetPropertyValue("axis2::xyz", QVariant::fromValue(
+        math::Vector3d::UnitZ)));
+    EXPECT_TRUE(widget->SetPropertyValue("axis2::use_parent_model_frame",
+        true));
+    EXPECT_TRUE(widget->SetPropertyValue("axis2::limit_lower", -3.2));
+    EXPECT_TRUE(widget->SetPropertyValue("axis2::limit_upper", -3.0));
+    EXPECT_TRUE(widget->SetPropertyValue("axis2::limit_effort", 3.0));
+    EXPECT_TRUE(widget->SetPropertyValue("axis2::limit_velocity", 300.0));
+    EXPECT_TRUE(widget->SetPropertyValue("axis2::damping", 3.9));
 
     // other joint physics properties
-    widget->SetPropertyValue("cfm", 0.9);
-    widget->SetPropertyValue("bounce", 0.8);
-    widget->SetPropertyValue("velocity", 0.7);
-    widget->SetPropertyValue("fudge_factor", 0.6);
-    widget->SetPropertyValue("limit_cfm", 0.5);
-    widget->SetPropertyValue("limit_erp", 0.4);
-    widget->SetPropertyValue("suspension_cfm", 0.3);
-    widget->SetPropertyValue("suspension_erp", 0.2);
+    EXPECT_TRUE(widget->SetPropertyValue("cfm", 0.9));
+    EXPECT_TRUE(widget->SetPropertyValue("bounce", 0.8));
+    EXPECT_TRUE(widget->SetPropertyValue("velocity", 0.7));
+    EXPECT_TRUE(widget->SetPropertyValue("fudge_factor", 0.6));
+    EXPECT_TRUE(widget->SetPropertyValue("limit_cfm", 0.5));
+    EXPECT_TRUE(widget->SetPropertyValue("limit_erp", 0.4));
+    EXPECT_TRUE(widget->SetPropertyValue("suspension_cfm", 0.3));
+    EXPECT_TRUE(widget->SetPropertyValue("suspension_erp", 0.2));
   }
 
   // verify widget values
@@ -264,8 +267,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_EQ(widget->PropertyValue("child_id"), 2u);
 
     // type
-    widget->SetPropertyValue("type", QVariant::fromValue(
-        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL)));
+    EXPECT_TRUE(widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_UNIVERSAL))));
 
     // pose
     math::Vector3d pos(2.0, 9.0, -4.0);
@@ -391,35 +394,35 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // Joint type universal -> ball
   {
     // joint
-    widget->SetPropertyValue("name", QVariant::fromValue(
-        std::string("test_joint_updated2")));
-    widget->SetPropertyValue("id", 2222222u);
-    widget->SetPropertyValue("parent", QVariant::fromValue(
-        std::string("test_joint_parent_updated2")));
-    widget->SetPropertyValue("parent_id", 10u);
-    widget->SetPropertyValue("child", QVariant::fromValue(
-        std::string("test_joint_child_updated2")));
-    widget->SetPropertyValue("child_id", 20u);
+    EXPECT_TRUE(widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_joint_updated2"))));
+    EXPECT_TRUE(widget->SetPropertyValue("id", 2222222u));
+    EXPECT_TRUE(widget->SetPropertyValue("parent", QVariant::fromValue(
+        std::string("test_joint_parent_updated2"))));
+    EXPECT_TRUE(widget->SetPropertyValue("parent_id", 10u));
+    EXPECT_TRUE(widget->SetPropertyValue("child", QVariant::fromValue(
+        std::string("test_joint_child_updated2"))));
+    EXPECT_TRUE(widget->SetPropertyValue("child_id", 20u));
 
     // type
-    widget->SetPropertyValue("type", QVariant::fromValue(
-        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
+    EXPECT_TRUE(widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL))));
 
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
     math::Quaterniond quat(0.0, 0.0, 0.0);
-    widget->SetPropertyValue("pose", QVariant::fromValue(
-        math::Pose3d(pos, quat)));
+    EXPECT_TRUE(widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat))));
 
     // other joint physics properties
-    widget->SetPropertyValue("cfm", 0.19);
-    widget->SetPropertyValue("bounce", 0.18);
-    widget->SetPropertyValue("velocity", 2.7);
-    widget->SetPropertyValue("fudge_factor", 0.26);
-    widget->SetPropertyValue("limit_cfm", 0.15);
-    widget->SetPropertyValue("limit_erp", 0.24);
-    widget->SetPropertyValue("suspension_cfm", 0.13);
-    widget->SetPropertyValue("suspension_erp", 0.12);
+    EXPECT_TRUE(widget->SetPropertyValue("cfm", 0.19));
+    EXPECT_TRUE(widget->SetPropertyValue("bounce", 0.18));
+    EXPECT_TRUE(widget->SetPropertyValue("velocity", 2.7));
+    EXPECT_TRUE(widget->SetPropertyValue("fudge_factor", 0.26));
+    EXPECT_TRUE(widget->SetPropertyValue("limit_cfm", 0.15));
+    EXPECT_TRUE(widget->SetPropertyValue("limit_erp", 0.24));
+    EXPECT_TRUE(widget->SetPropertyValue("suspension_cfm", 0.13));
+    EXPECT_TRUE(widget->SetPropertyValue("suspension_erp", 0.12));
   }
 
   // verify widget values
@@ -436,8 +439,8 @@ TEST(MessageWidgetTest, JointMsgWidget)
     EXPECT_EQ(widget->PropertyValue("child_id"), 20u);
 
     // type
-    widget->SetPropertyValue("type", QVariant::fromValue(
-        msgs::Joint_Type_Name(msgs::Joint_Type_BALL)));
+    EXPECT_TRUE(widget->SetPropertyValue("type", QVariant::fromValue(
+        msgs::Joint_Type_Name(msgs::Joint_Type_BALL))));
 
     // pose
     math::Vector3d pos(-2.0, 1.0, 2.0);
@@ -731,53 +734,56 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(scriptMsg.name(), "test_script_name_2");
   }
 
+  // Expand all widgets so they're generated
+  widget->ToggleAll(true);
+
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   {
     // visual
-    widget->SetPropertyValue("name", QVariant::fromValue(
-        std::string("test_visual_updated")));
-    widget->SetPropertyValue("id", 11111u);
-    widget->SetPropertyValue("parent_name", QVariant::fromValue(
-        std::string("test_visual_parent_updated")));
-    widget->SetPropertyValue("parent_id", 55555u);
-    widget->SetPropertyValue("cast_shadows", false);
-    widget->SetPropertyValue("transparency", 1.0);
-    widget->SetPropertyValue("visible", false);
-    widget->SetPropertyValue("delete_me", true);
-    widget->SetPropertyValue("is_static", true);
-    widget->SetPropertyValue("scale", QVariant::fromValue(
-        math::Vector3d(2.0, 1.5, 0.5)));
+    EXPECT_TRUE(widget->SetPropertyValue("name", QVariant::fromValue(
+        std::string("test_visual_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("id", 11111u));
+    EXPECT_TRUE(widget->SetPropertyValue("parent_name", QVariant::fromValue(
+        std::string("test_visual_parent_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("parent_id", 55555u));
+    EXPECT_TRUE(widget->SetPropertyValue("cast_shadows", false));
+    EXPECT_TRUE(widget->SetPropertyValue("transparency", 1.0));
+    EXPECT_TRUE(widget->SetPropertyValue("visible", false));
+    EXPECT_TRUE(widget->SetPropertyValue("delete_me", true));
+    EXPECT_TRUE(widget->SetPropertyValue("is_static", true));
+    EXPECT_TRUE(widget->SetPropertyValue("scale", QVariant::fromValue(
+        math::Vector3d(2.0, 1.5, 0.5))));
 
     // pose
     math::Vector3d pos(-2.0, -3.0, -4.0);
     math::Quaterniond quat(0.0, 1.57, 0.0);
-    widget->SetPropertyValue("pose", QVariant::fromValue(
-        math::Pose3d(pos, quat)));
+    EXPECT_TRUE(widget->SetPropertyValue("pose", QVariant::fromValue(
+        math::Pose3d(pos, quat))));
 
     // geometry
     msgs::Geometry newGeom;
     newGeom.set_type(msgs::Geometry::BOX);
     msgs::Set(newGeom.mutable_box()->mutable_size(),
               math::Vector3d(5.0, 3.0, 4.0));
-    widget->SetPropertyValue("geometry", QVariant::fromValue(
-        newGeom));
+    EXPECT_TRUE(widget->SetPropertyValue("geometry", QVariant::fromValue(
+        newGeom)));
 
     // material
-    widget->SetPropertyValue("material::normal_map", QVariant::fromValue(
-        std::string("test_normal_map_updated")));
-    widget->SetPropertyValue("material::ambient", QVariant::fromValue(
-        math::Color(0.2, 0.3, 0.4, 0.5)));
-    widget->SetPropertyValue("material::diffuse", QVariant::fromValue(
-        math::Color(0.1, 0.8, 0.6, 0.4)));
-    widget->SetPropertyValue("material::specular", QVariant::fromValue(
-        math::Color(0.5, 0.4, 0.3, 0.2)));
-    widget->SetPropertyValue("material::emissive", QVariant::fromValue(
-        math::Color(0.4, 0.6, 0.8, 0.1)));
-    widget->SetPropertyValue("material::lighting", false);
+    EXPECT_TRUE(widget->SetPropertyValue("material::normal_map",
+        QVariant::fromValue(std::string("test_normal_map_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::ambient",
+        QVariant::fromValue(math::Color(0.2, 0.3, 0.4, 0.5))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::diffuse",
+        QVariant::fromValue(math::Color(0.1, 0.8, 0.6, 0.4))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::specular",
+        QVariant::fromValue(math::Color(0.5, 0.4, 0.3, 0.2))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::emissive",
+        QVariant::fromValue(math::Color(0.4, 0.6, 0.8, 0.1))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::lighting", false));
     // material::script
-    widget->SetPropertyValue("material::script::name", QVariant::fromValue(
-        std::string("test_script_name_updated")));
+    EXPECT_TRUE(widget->SetPropertyValue("material::script::name",
+        QVariant::fromValue(std::string("test_script_name_updated"))));
   }
 
   // verify widget values
@@ -931,6 +937,8 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(widget, nullptr);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
   auto count =  widget->PropertyWidgetCount();
@@ -1181,6 +1189,8 @@ TEST(MessageWidgetTest, Int32VMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1255,6 +1265,8 @@ TEST(MessageWidgetTest, Int64VMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1329,6 +1341,8 @@ TEST(MessageWidgetTest, UInt64VMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1402,6 +1416,8 @@ TEST(MessageWidgetTest, FloatVMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1478,6 +1494,7 @@ TEST(MessageWidgetTest, TactileMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
 
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
@@ -1640,6 +1657,7 @@ TEST(MessageWidgetTest, Visible)
     ASSERT_NE(nullptr, button);
 
     button->click();
+    QCoreApplication::processEvents();
 
     EXPECT_TRUE(widget->PropertyVisible("material::diffuse"));
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
@@ -1712,10 +1730,12 @@ TEST(MessageWidgetTest, Visible)
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
     EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
 
-    // Showing collapsed child doesn't work until collapsible is expanded
-    EXPECT_TRUE(widget->SetPropertyVisible("material::script::name", true));
+    // Can't set property visibility if widget has never been expanded
+    // (i.e. created)
+    EXPECT_FALSE(widget->SetPropertyVisible("material::script::name", true));
     EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
 
+    // Toggle
     auto script = widget->PropertyWidgetByName("material::script");
     ASSERT_NE(nullptr, script);
 
@@ -1723,7 +1743,9 @@ TEST(MessageWidgetTest, Visible)
     ASSERT_NE(nullptr, button);
 
     button->click();
+    QCoreApplication::processEvents();
 
+    // Now it is visible
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
     EXPECT_TRUE(widget->PropertyVisible("material::script::name"));
   }
@@ -1760,6 +1782,7 @@ TEST(MessageWidgetTest, Visible)
     ASSERT_NE(nullptr, button);
 
     button->click();
+    QCoreApplication::processEvents();
 
     // Check it is now visible
     EXPECT_TRUE(widget->PropertyVisible("plugin::0"));
@@ -1812,6 +1835,7 @@ TEST(MessageWidgetTest, ReadOnly)
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(widget, nullptr);
   widget->show();
+  widget->ToggleAll(true);
 
   // Check that all properties are read-write by default
   {
@@ -1893,10 +1917,12 @@ TEST(MessageWidgetTest, ReadOnly)
     // Add a plugin
     msg.add_plugin();
     widget->UpdateFromMsg(&msg);
+    widget->ToggleAll(true);
 
     // Check it was created as write
     EXPECT_FALSE(widget->PropertyReadOnly("plugin"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::header::stamp"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::header"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
@@ -1906,16 +1932,32 @@ TEST(MessageWidgetTest, ReadOnly)
 
     // Check it affected the repetition
     EXPECT_TRUE(widget->PropertyReadOnly("plugin::0::header"));
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::0::header::stamp"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
 
     // Add another plugin
     msg.add_plugin();
     widget->UpdateFromMsg(&msg);
+    widget->ToggleAll(true);
 
     // Check it was affected
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::1"));
     EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header"));
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header::stamp"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::1::name"));
+
+    // Set whole widget
+    EXPECT_TRUE(widget->SetReadOnly(true));
+
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::1"));
+
+    // Add a plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+    widget->ToggleAll(true);
+
+    // Check new plugin is read only, because whole widget is
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::2"));
   }
 
   delete widget;
@@ -2381,6 +2423,7 @@ TEST(MessageWidgetTest, PropertyByName)
   // Create widget from message
   auto widget = new MessageWidget(msg);
   ASSERT_NE(widget, nullptr);
+  widget->ToggleAll(true);
 
   // Get generated widgets by name
   for (auto name : {"header", "header::stamp", "header::stamp::sec",
@@ -2428,6 +2471,134 @@ TEST(MessageWidgetTest, TopicName)
   EXPECT_TRUE(widget->Topic().empty());
   widget->SetTopic(topic);
   EXPECT_EQ(topic, widget->Topic());
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ToggleAllSimpleMsg)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Fill message
+  auto msg = new msgs::StringMsg();
+  msg->set_data("acerola");
+
+  auto headerMsg = msg->mutable_header();
+  auto stampMsg = headerMsg->mutable_stamp();
+  stampMsg->set_sec(3);
+  stampMsg->set_nsec(300);
+
+  // Create widget
+  auto widget = new MessageWidget(msg);
+  ASSERT_NE(widget, nullptr);
+
+  // Has only top-level widgets
+  EXPECT_EQ(2u, widget->PropertyWidgetCount());
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("header::stamp"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("header::stamp::sec"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("header::stamp::nsec"));
+  EXPECT_EQ(nullptr, widget->PropertyWidgetByName("header::data"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data"));
+
+  // Check message is complete even with collapsed widgets
+  auto retMsg = dynamic_cast<msgs::StringMsg *>(widget->Msg());
+  ASSERT_NE(retMsg, nullptr);
+
+  EXPECT_EQ("acerola", retMsg->data());
+  EXPECT_EQ(3, retMsg->header().stamp().sec());
+  EXPECT_EQ(300, retMsg->header().stamp().nsec());
+
+  // Can get/set top-level properties
+  EXPECT_EQ("acerola", widget->PropertyValue("data").value<std::string>());
+  EXPECT_TRUE(widget->SetPropertyValue("data",
+      QVariant::fromValue(std::string("watermelon"))));
+
+  // Can't get/set collapsed properties
+  EXPECT_FALSE(widget->PropertyValue("header::stamp::sec").isValid());
+  EXPECT_FALSE(widget->PropertyValue("header::stamp::nsec").isValid());
+  EXPECT_FALSE(widget->SetPropertyValue("header::stamp::sec", 4));
+  EXPECT_FALSE(widget->SetPropertyValue("header::stamp::nsec", 400));
+
+  // Expand all
+  widget->ToggleAll(true);
+
+  // Has nested messages
+  EXPECT_EQ(6u, widget->PropertyWidgetCount());
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::stamp"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::stamp::sec"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::stamp::nsec"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::data"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("data"));
+
+  // Can get/set all properties
+  EXPECT_EQ("watermelon", widget->PropertyValue("data").value<std::string>());
+  EXPECT_EQ(3u,
+      widget->PropertyValue("header::stamp::sec").value<unsigned int>());
+  EXPECT_EQ(300u,
+      widget->PropertyValue("header::stamp::nsec").value<unsigned int>());
+
+  EXPECT_TRUE(widget->SetPropertyValue("data",
+      QVariant::fromValue(std::string("orange"))));
+  EXPECT_TRUE(widget->SetPropertyValue("header::stamp::sec", 5));
+  EXPECT_TRUE(widget->SetPropertyValue("header::stamp::nsec", 500));
+
+  // Collapse all - widgets don't get deleted
+  widget->ToggleAll(false);
+  EXPECT_EQ(6u, widget->PropertyWidgetCount());
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::stamp"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::stamp::sec"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::stamp::nsec"));
+  EXPECT_NE(nullptr, widget->PropertyWidgetByName("header::data"));
+
+  // Update field - widgets don't get deleted
+  msg->set_data("banana");
+  widget->UpdateFromMsg(msg);
+  EXPECT_EQ(6u, widget->PropertyWidgetCount());
+  widget->ToggleAll(true);
+  EXPECT_EQ(6u, widget->PropertyWidgetCount());
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(MessageWidgetTest, ToggleAllRepeatedField)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  auto msg = new msgs::Plugin_V();
+  msg->add_plugins();
+  msg->add_plugins();
+
+  auto widget = new MessageWidget(msg);
+  ASSERT_NE(widget, nullptr);
+
+  EXPECT_EQ(2u, widget->PropertyWidgetCount());
+
+  widget->ToggleAll(true);
+
+  EXPECT_EQ(24u, widget->PropertyWidgetCount());
+
+  // Collapse all - widgets don't get deleted
+  widget->ToggleAll(false);
+  EXPECT_EQ(24u, widget->PropertyWidgetCount());
+
+  // Update field - widgets don't get created because it's collapsed
+  msg->add_plugins();
+  widget->UpdateFromMsg(msg);
+  EXPECT_EQ(24u, widget->PropertyWidgetCount());
+
+  // New widgets are created only when expanding
+  widget->ToggleAll(true);
+  EXPECT_EQ(33u, widget->PropertyWidgetCount());
 
   delete widget;
   EXPECT_TRUE(stop());

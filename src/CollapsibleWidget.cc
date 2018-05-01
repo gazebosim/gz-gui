@@ -89,6 +89,9 @@ CollapsibleWidget::~CollapsibleWidget()
 /////////////////////////////////////////////////
 void CollapsibleWidget::Toggle(const bool _checked)
 {
+  if (_checked == this->dataPtr->expanded)
+    return;
+
   // Toggle the content
   this->dataPtr->content->setVisible(_checked);
 
@@ -101,6 +104,8 @@ void CollapsibleWidget::Toggle(const bool _checked)
     icon->setText(QString::fromUtf8("\u25b2"));
 
   this->dataPtr->expanded = _checked;
+
+  this->Toggled(_checked);
 }
 
 /////////////////////////////////////////////////
