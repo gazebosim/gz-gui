@@ -456,7 +456,7 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         this->connect(collapsible, &CollapsibleWidget::Toggled,
             [this](const bool _expanded)
             {
-              if(!_expanded)
+              if (!_expanded)
                 return;
 
               this->UpdateFromMsg(this->dataPtr->msg);
@@ -486,7 +486,7 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
             this->connect(repCollapsible, &CollapsibleWidget::Toggled,
                 [this](const bool _expanded)
                 {
-                  if(!_expanded)
+                  if (!_expanded)
                     return;
 
                   this->UpdateFromMsg(this->dataPtr->msg);
@@ -857,7 +857,7 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         this->connect(collapsible, &CollapsibleWidget::Toggled,
             [this](const bool _expanded)
             {
-              if(!_expanded)
+              if (!_expanded)
                 return;
 
               this->UpdateFromMsg(this->dataPtr->msg);
@@ -936,31 +936,38 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 
         if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
         {
-          reflection->SetRepeatedDouble(_msg, fieldDescriptor, repCount, variant.toDouble());
+          reflection->SetRepeatedDouble(_msg, fieldDescriptor, repCount,
+              variant.toDouble());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
         {
-          reflection->SetRepeatedFloat(_msg, fieldDescriptor, repCount, variant.toFloat());
+          reflection->SetRepeatedFloat(_msg, fieldDescriptor, repCount,
+              variant.toFloat());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
         {
-          reflection->SetRepeatedInt64(_msg, fieldDescriptor, repCount, variant.toInt());
+          reflection->SetRepeatedInt64(_msg, fieldDescriptor, repCount,
+              variant.toInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
         {
-          reflection->SetRepeatedInt32(_msg, fieldDescriptor, repCount, variant.toInt());
+          reflection->SetRepeatedInt32(_msg, fieldDescriptor, repCount,
+              variant.toInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
         {
-          reflection->SetRepeatedUInt64(_msg, fieldDescriptor, repCount, variant.toUInt());
+          reflection->SetRepeatedUInt64(_msg, fieldDescriptor, repCount,
+              variant.toUInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
         {
-          reflection->SetRepeatedUInt32(_msg, fieldDescriptor, repCount, variant.toUInt());
+          reflection->SetRepeatedUInt32(_msg, fieldDescriptor, repCount,
+              variant.toUInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_BOOL)
         {
-          reflection->SetRepeatedBool(_msg, fieldDescriptor, repCount, variant.toBool());
+          reflection->SetRepeatedBool(_msg, fieldDescriptor, repCount,
+              variant.toBool());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_STRING)
         {
@@ -981,7 +988,10 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 
           auto enumValue = enumDescriptor->FindValueByName(str);
           if (enumValue)
-            reflection->SetRepeatedEnum(_msg, fieldDescriptor, repCount, enumValue);
+          {
+            reflection->SetRepeatedEnum(_msg, fieldDescriptor, repCount,
+                enumValue);
+          }
           else
           {
             ignwarn << "Unable to find enum value [" << str << "]" << std::endl;
@@ -990,7 +1000,8 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
         {
-          auto msg = reflection->MutableRepeatedMessage(_msg, fieldDescriptor, repCount);
+          auto msg = reflection->MutableRepeatedMessage(_msg, fieldDescriptor,
+              repCount);
           if (!msg)
             msg = reflection->AddMessage(_msg, fieldDescriptor);
           this->FillMsg(msg, scopedName + "::" + std::to_string(repCount));

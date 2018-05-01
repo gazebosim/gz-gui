@@ -770,20 +770,20 @@ TEST(MessageWidgetTest, VisualMsgWidget)
         newGeom)));
 
     // material
-    EXPECT_TRUE(widget->SetPropertyValue("material::normal_map", QVariant::fromValue(
-        std::string("test_normal_map_updated"))));
-    EXPECT_TRUE(widget->SetPropertyValue("material::ambient", QVariant::fromValue(
-        math::Color(0.2, 0.3, 0.4, 0.5))));
-    EXPECT_TRUE(widget->SetPropertyValue("material::diffuse", QVariant::fromValue(
-        math::Color(0.1, 0.8, 0.6, 0.4))));
-    EXPECT_TRUE(widget->SetPropertyValue("material::specular", QVariant::fromValue(
-        math::Color(0.5, 0.4, 0.3, 0.2))));
-    EXPECT_TRUE(widget->SetPropertyValue("material::emissive", QVariant::fromValue(
-        math::Color(0.4, 0.6, 0.8, 0.1))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::normal_map",
+        QVariant::fromValue(std::string("test_normal_map_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::ambient",
+        QVariant::fromValue(math::Color(0.2, 0.3, 0.4, 0.5))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::diffuse",
+        QVariant::fromValue(math::Color(0.1, 0.8, 0.6, 0.4))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::specular",
+        QVariant::fromValue(math::Color(0.5, 0.4, 0.3, 0.2))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::emissive",
+        QVariant::fromValue(math::Color(0.4, 0.6, 0.8, 0.1))));
     EXPECT_TRUE(widget->SetPropertyValue("material::lighting", false));
     // material::script
-    EXPECT_TRUE(widget->SetPropertyValue("material::script::name", QVariant::fromValue(
-        std::string("test_script_name_updated"))));
+    EXPECT_TRUE(widget->SetPropertyValue("material::script::name",
+        QVariant::fromValue(std::string("test_script_name_updated"))));
   }
 
   // verify widget values
@@ -1945,6 +1945,19 @@ TEST(MessageWidgetTest, ReadOnly)
     EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header"));
     EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header::stamp"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::1::name"));
+
+    // Set whole widget
+    EXPECT_TRUE(widget->SetReadOnly(true));
+
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::1"));
+
+    // Add a plugin
+    msg.add_plugin();
+    widget->UpdateFromMsg(&msg);
+    widget->ToggleAll(true);
+
+    // Check new plugin is read only, because whole widget is
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::2"));
   }
 
   delete widget;
@@ -2527,7 +2540,8 @@ TEST(MessageWidgetTest, ToggleAllSimpleMsg)
 
   // Can get/set all properties
   EXPECT_EQ("watermelon", widget->PropertyValue("data").value<std::string>());
-  EXPECT_EQ(3u, widget->PropertyValue("header::stamp::sec").value<unsigned int>());
+  EXPECT_EQ(3u,
+      widget->PropertyValue("header::stamp::sec").value<unsigned int>());
   EXPECT_EQ(300u,
       widget->PropertyValue("header::stamp::nsec").value<unsigned int>());
 
