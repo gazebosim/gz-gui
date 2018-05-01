@@ -295,7 +295,9 @@ bool MessageWidget::SetPropertyValue(const std::string &_name,
   if (w)
     return w->SetValue(_value);
 
-  // TODO: Set on msg so widget is filled when expanded
+  // Update message too
+  // FIXME: This is not efficient
+  this->FillMsg(this->dataPtr->msg);
 
   return false;
 }

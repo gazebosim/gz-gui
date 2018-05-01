@@ -392,7 +392,6 @@ TEST(MessageWidgetTest, JointMsgWidget)
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   // Joint type universal -> ball
-  // widget->ToggleAll(true);
   {
     // joint
     EXPECT_TRUE(widget->SetPropertyValue("name", QVariant::fromValue(
@@ -735,6 +734,9 @@ TEST(MessageWidgetTest, VisualMsgWidget)
     EXPECT_EQ(scriptMsg.name(), "test_script_name_2");
   }
 
+  // Expand all widgets so they're generated
+  widget->ToggleAll(true);
+
   // update fields in the message widget and
   // verify that the new message contains the updated values.
   {
@@ -935,6 +937,8 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(widget, nullptr);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
   auto count =  widget->PropertyWidgetCount();
@@ -1185,6 +1189,8 @@ TEST(MessageWidgetTest, Int32VMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1259,6 +1265,8 @@ TEST(MessageWidgetTest, Int64VMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1333,6 +1341,8 @@ TEST(MessageWidgetTest, UInt64VMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1406,6 +1416,8 @@ TEST(MessageWidgetTest, FloatVMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
+
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("data::0"));
 
   // Retrieve message
@@ -1482,6 +1494,7 @@ TEST(MessageWidgetTest, TactileMsgWidget)
   // Create widget
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(nullptr, widget);
+  widget->ToggleAll(true);
 
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_name::0"));
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("collision_id::0"));
@@ -1644,6 +1657,7 @@ TEST(MessageWidgetTest, Visible)
     ASSERT_NE(nullptr, button);
 
     button->click();
+    QCoreApplication::processEvents();
 
     EXPECT_TRUE(widget->PropertyVisible("material::diffuse"));
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
@@ -2385,6 +2399,7 @@ TEST(MessageWidgetTest, PropertyByName)
   // Create widget from message
   auto widget = new MessageWidget(msg);
   ASSERT_NE(widget, nullptr);
+  widget->ToggleAll(true);
 
   // Get generated widgets by name
   for (auto name : {"header", "header::stamp", "header::stamp::sec",
