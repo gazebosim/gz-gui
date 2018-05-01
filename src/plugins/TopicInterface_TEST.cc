@@ -130,7 +130,7 @@ TEST(TopicInterfaceTest, OnMessage)
 
   int sleep = 0;
   int maxSleep = 30;
-  while (propertyWidgets.size() <= 6 && sleep < maxSleep)
+  while (propertyWidgets.size() <= 14 && sleep < maxSleep)
   {
     msgWidgets[0]->ToggleAll(true);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
