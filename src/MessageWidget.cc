@@ -928,43 +928,43 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
     // Handle repeated fields and repeated nested messages
     if (fieldDescriptor->is_repeated())
     {
-      int c = 0;
+      int repCount = 0;
       while (auto prop = this->PropertyWidgetByName(scopedName + "::" +
-          std::to_string(c)))
+          std::to_string(repCount)))
       {
         variant = prop->Value();
 
         if (fieldType == google::protobuf::FieldDescriptor::TYPE_DOUBLE)
         {
-          reflection->AddDouble(_msg, fieldDescriptor, variant.toDouble());
+          reflection->SetRepeatedDouble(_msg, fieldDescriptor, repCount, variant.toDouble());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_FLOAT)
         {
-          reflection->AddFloat(_msg, fieldDescriptor, variant.toFloat());
+          reflection->SetRepeatedFloat(_msg, fieldDescriptor, repCount, variant.toFloat());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT64)
         {
-          reflection->AddInt64(_msg, fieldDescriptor, variant.toInt());
+          reflection->SetRepeatedInt64(_msg, fieldDescriptor, repCount, variant.toInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_INT32)
         {
-          reflection->AddInt32(_msg, fieldDescriptor, variant.toInt());
+          reflection->SetRepeatedInt32(_msg, fieldDescriptor, repCount, variant.toInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT64)
         {
-          reflection->AddUInt64(_msg, fieldDescriptor, variant.toUInt());
+          reflection->SetRepeatedUInt64(_msg, fieldDescriptor, repCount, variant.toUInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_UINT32)
         {
-          reflection->AddUInt32(_msg, fieldDescriptor, variant.toUInt());
+          reflection->SetRepeatedUInt32(_msg, fieldDescriptor, repCount, variant.toUInt());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_BOOL)
         {
-          reflection->AddBool(_msg, fieldDescriptor, variant.toBool());
+          reflection->SetRepeatedBool(_msg, fieldDescriptor, repCount, variant.toBool());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_STRING)
         {
-          reflection->AddString(_msg, fieldDescriptor,
+          reflection->SetRepeatedString(_msg, fieldDescriptor, repCount,
               variant.value<std::string>());
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_ENUM)
@@ -981,7 +981,7 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
 
           auto enumValue = enumDescriptor->FindValueByName(str);
           if (enumValue)
-            reflection->AddEnum(_msg, fieldDescriptor, enumValue);
+            reflection->SetRepeatedEnum(_msg, fieldDescriptor, repCount, enumValue);
           else
           {
             ignwarn << "Unable to find enum value [" << str << "]" << std::endl;
@@ -990,15 +990,17 @@ bool MessageWidget::FillMsg(google::protobuf::Message *_msg,
         }
         else if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
         {
-          auto msg = reflection->AddMessage(_msg, fieldDescriptor);
-          this->FillMsg(msg, scopedName + "::" + std::to_string(c));
+          auto msg = reflection->MutableRepeatedMessage(_msg, fieldDescriptor, repCount);
+          if (!msg)
+            msg = reflection->AddMessage(_msg, fieldDescriptor);
+          this->FillMsg(msg, scopedName + "::" + std::to_string(repCount));
         }
         else
         {
           ignwarn << "Unhandled field type [" << fieldType << "]" << std::endl;
         }
 
-        c++;
+        repCount++;
       }
       continue;
     }
@@ -1162,14 +1164,20 @@ bool MessageWidget::AddPropertyWidget(const std::string &_name,
   // Read only and visibility
   auto family = familyName(_name);
 
-  if (this->dataPtr->readOnlyProperties.find(family) !=
-      this->dataPtr->readOnlyProperties.end())
-  {
-    _property->SetReadOnly(true);
-  }
-  else if (this->dataPtr->readOnly)
+  if (this->dataPtr->readOnly)
   {
     _property->SetReadOnly(true, false);
+  }
+  else
+  {
+    for (auto readOnly : this->dataPtr->readOnlyProperties)
+    {
+      if (family.find(readOnly) == 0)
+      {
+        _property->SetReadOnly(true);
+        break;
+      }
+    }
   }
 
   _property->setVisible(this->dataPtr->hiddenProperties.find(family) ==

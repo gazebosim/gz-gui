@@ -1730,10 +1730,12 @@ TEST(MessageWidgetTest, Visible)
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
     EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
 
-    // Showing collapsed child doesn't work until collapsible is expanded
-    EXPECT_TRUE(widget->SetPropertyVisible("material::script::name", true));
+    // Can't set property visibility if widget has never been expanded
+    // (i.e. created)
+    EXPECT_FALSE(widget->SetPropertyVisible("material::script::name", true));
     EXPECT_FALSE(widget->PropertyVisible("material::script::name"));
 
+    // Toggle
     auto script = widget->PropertyWidgetByName("material::script");
     ASSERT_NE(nullptr, script);
 
@@ -1741,7 +1743,9 @@ TEST(MessageWidgetTest, Visible)
     ASSERT_NE(nullptr, button);
 
     button->click();
+    QCoreApplication::processEvents();
 
+    // Now it is visible
     EXPECT_TRUE(widget->PropertyVisible("material::script"));
     EXPECT_TRUE(widget->PropertyVisible("material::script::name"));
   }
@@ -1778,6 +1782,7 @@ TEST(MessageWidgetTest, Visible)
     ASSERT_NE(nullptr, button);
 
     button->click();
+    QCoreApplication::processEvents();
 
     // Check it is now visible
     EXPECT_TRUE(widget->PropertyVisible("plugin::0"));
@@ -1830,6 +1835,7 @@ TEST(MessageWidgetTest, ReadOnly)
   auto widget = new MessageWidget(&msg);
   ASSERT_NE(widget, nullptr);
   widget->show();
+  widget->ToggleAll(true);
 
   // Check that all properties are read-write by default
   {
@@ -1911,10 +1917,12 @@ TEST(MessageWidgetTest, ReadOnly)
     // Add a plugin
     msg.add_plugin();
     widget->UpdateFromMsg(&msg);
+    widget->ToggleAll(true);
 
     // Check it was created as write
     EXPECT_FALSE(widget->PropertyReadOnly("plugin"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::header"));
+    EXPECT_FALSE(widget->PropertyReadOnly("plugin::header::stamp"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::header"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
@@ -1924,15 +1932,18 @@ TEST(MessageWidgetTest, ReadOnly)
 
     // Check it affected the repetition
     EXPECT_TRUE(widget->PropertyReadOnly("plugin::0::header"));
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::0::header::stamp"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::0::name"));
 
     // Add another plugin
     msg.add_plugin();
     widget->UpdateFromMsg(&msg);
+    widget->ToggleAll(true);
 
     // Check it was affected
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::1"));
     EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header"));
+    EXPECT_TRUE(widget->PropertyReadOnly("plugin::1::header::stamp"));
     EXPECT_FALSE(widget->PropertyReadOnly("plugin::1::name"));
   }
 

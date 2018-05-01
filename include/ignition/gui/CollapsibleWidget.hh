@@ -82,7 +82,7 @@ namespace ignition
 
       // Documentation inherited
       public: virtual void SetReadOnly(const bool _readOnly,
-                                       const bool _explicit) override;
+                                       const bool _explicit = true) override;
 
       // Documentation inherited
       public: virtual bool ReadOnly() const override;
