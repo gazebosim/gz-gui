@@ -15,6 +15,8 @@
  *
 */
 
+#include <string>
+
 #include "ignition/gui/PropertyWidget.hh"
 
 namespace ignition
@@ -26,6 +28,9 @@ namespace ignition
       /// \brief This becomes true once read-only has been explicitly set
       /// and never goes back to false.
       public: bool explicitReadOnly = false;
+
+      /// \brief The URI used as mime data for drag and drop.
+      public: std::string dragAndDropURI = "";
     };
   }
 }
@@ -65,4 +70,39 @@ void PropertyWidget::SetReadOnly(const bool _readOnly,
 bool PropertyWidget::ReadOnly() const
 {
   return !this->isEnabled();
+}
+
+/////////////////////////////////////////////////
+std::string PropertyWidget::DragAndDropURI() const
+{
+  return this->dataPtr->dragAndDropURI;
+}
+
+/////////////////////////////////////////////////
+void PropertyWidget::SetDragAndDropURI(const std::string &_uri)
+{
+  this->dataPtr->dragAndDropURI = _uri;
+}
+
+/////////////////////////////////////////////////
+bool PropertyWidget::eventFilter(QObject *_object, QEvent *_event)
+{
+  QVariant value = _object->property("uri");
+  std::string uri = value.toString().toStdString();
+
+  if (_event->type() == QEvent::MouseButtonPress && !uri.empty())
+  {
+    std::string str = this->dataPtr->dragAndDropURI + uri;
+    QString textData(str.c_str());
+
+    QMimeData *mimeDataLocal = new QMimeData;
+    mimeDataLocal->setData("application/x-item", textData.toLocal8Bit());
+    mimeDataLocal->setText(textData);
+
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimeDataLocal);
+    drag->exec(Qt::MoveAction);
+  }
+
+  return false;
 }

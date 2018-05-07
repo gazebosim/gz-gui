@@ -33,6 +33,13 @@ namespace ignition
     {
       /// \brief Configuration for this window.
       public: WindowConfig windowConfig;
+
+      /// \brief Counts the times the window has been painted
+      public: unsigned int paintCount{0};
+
+      /// \brief Minimum number of paint events to consider the window to be
+      /// fully initialized.
+      public: const unsigned int paintCountMin{20};
     };
   }
 }
@@ -140,6 +147,83 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
+void MainWindow::paintEvent(QPaintEvent *_event)
+{
+  this->dataPtr->paintCount++;
+  if (this->dataPtr->paintCount == this->dataPtr->paintCountMin)
+  {
+    this->dataPtr->windowConfig = this->CurrentWindowConfig();
+  }
+  _event->accept();
+}
+
+/////////////////////////////////////////////////
+void MainWindow::closeEvent(QCloseEvent *_event)
+{
+  if (this->dataPtr->paintCount < this->dataPtr->paintCountMin ||
+      this->dataPtr->windowConfig.XMLString() ==
+      this->CurrentWindowConfig().XMLString())
+  {
+    _event->accept();
+    return;
+  }
+
+  // Ask for confirmation
+  std::string msg = "There are unsaved changes. \n\n";
+
+  QMessageBox msgBox(QMessageBox::Warning, QString("Save configuration?"),
+      QString(msg.c_str()), QMessageBox::NoButton, this);
+  msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
+      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+
+  auto saveButton = msgBox.addButton("Save as default",
+      QMessageBox::AcceptRole);
+  saveButton->setObjectName("closeConfirmationDialogSaveButton");
+  saveButton->setToolTip(QString::fromStdString(
+      "Save to default config file \"" + defaultConfigPath() + "\""));
+  msgBox.setDefaultButton(saveButton);
+  saveButton->setMinimumWidth(160);
+
+  auto saveAsButton = msgBox.addButton("Save as...", QMessageBox::AcceptRole);
+  saveAsButton->setObjectName("closeConfirmationDialogSaveAsButton");
+  saveAsButton->setToolTip("Choose a file on your computer");
+
+  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::AcceptRole);
+  cancelButton->setObjectName("closeConfirmationDialogCancelButton");
+  msgBox.setEscapeButton(cancelButton);
+  cancelButton->setToolTip("Don't close window");
+
+  auto closeButton = msgBox.addButton("Close without saving",
+      QMessageBox::AcceptRole);
+  closeButton->setObjectName("closeConfirmationDialogCloseButton");
+  closeButton->setToolTip("Close without saving");
+  closeButton->setMinimumWidth(180);
+
+  msgBox.show();
+  msgBox.exec();
+
+  // User doesn't want to close window anymore
+  if (msgBox.clickedButton() == cancelButton)
+  {
+    _event->ignore();
+    return;
+  }
+
+  // Save to default config
+  if (msgBox.clickedButton() == saveButton)
+  {
+    this->OnSaveConfig();
+  }
+
+  // Save to custom file
+  if (msgBox.clickedButton() == saveAsButton)
+  {
+    this->OnSaveConfigAs();
+  }
+  _event->accept();
+}
+
+/////////////////////////////////////////////////
 bool MainWindow::CloseAllDocks()
 {
   igndbg << "Closing all docks" << std::endl;
@@ -209,16 +293,7 @@ void MainWindow::OnSaveConfigAs()
 /////////////////////////////////////////////////
 void MainWindow::SaveConfig(const std::string &_path)
 {
-  std::string config = "<?xml version=\"1.0\"?>\n\n";
-
-  // Window settings
-  this->UpdateWindowConfig();
-  config += this->dataPtr->windowConfig.XMLString();
-
-  // Plugins
-  auto plugins = this->findChildren<Plugin *>();
-  for (const auto plugin : plugins)
-    config += plugin->ConfigStr();
+  this->dataPtr->windowConfig = this->CurrentWindowConfig();
 
   // Create the intermediate directories if needed.
   // We check for errors when we try to open the file.
@@ -236,7 +311,7 @@ void MainWindow::SaveConfig(const std::string &_path)
     msgBox.exec();
   }
   else
-    out << config;
+    out << this->dataPtr->windowConfig.XMLString();
 
   ignmsg << "Saved configuration [" << _path << "]" << std::endl;
 }
@@ -341,26 +416,35 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
 }
 
 /////////////////////////////////////////////////
-void MainWindow::UpdateWindowConfig()
+WindowConfig MainWindow::CurrentWindowConfig() const
 {
+  WindowConfig config;
+
   // Position
-  this->dataPtr->windowConfig.posX = this->pos().x();
-  this->dataPtr->windowConfig.posY = this->pos().y();
+  config.posX = this->pos().x();
+  config.posY = this->pos().y();
 
   // Size
-  this->dataPtr->windowConfig.width = this->width();
-  this->dataPtr->windowConfig.height = this->height();
+  config.width = this->width();
+  config.height = this->height();
 
   // Docks state
-  this->dataPtr->windowConfig.state = this->saveState();
+  config.state = this->saveState();
 
   // Stylesheet
-  this->dataPtr->windowConfig.styleSheet = static_cast<QApplication *>(
+  config.styleSheet = static_cast<QApplication *>(
       QApplication::instance())->styleSheet().toStdString();
 
   // Menus configuration is kept the same as the initial one. The menus might
   // have been changed programatically but we don't guarantee that will be
   // saved.
+
+  // Plugins
+  auto plugins = this->findChildren<Plugin *>();
+  for (const auto plugin : plugins)
+    config.plugins += plugin->ConfigStr();
+
+  return config;
 }
 
 /////////////////////////////////////////////////
@@ -555,6 +639,10 @@ std::string WindowConfig::XMLString() const
   tinyxml2::XMLPrinter printer;
   doc.Print(&printer);
 
-  return printer.CStr();
+  std::string config = "<?xml version=\"1.0\"?>\n\n";
+  config += printer.CStr();
+  config += this->plugins;
+
+  return config;
 }
 

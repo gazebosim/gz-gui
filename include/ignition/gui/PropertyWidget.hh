@@ -19,9 +19,10 @@
 #define IGNITION_GUI_PROPERTYWIDGET_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {
@@ -87,12 +88,33 @@ namespace ignition
       /// \return True if read-only (disabled)
       public: virtual bool ReadOnly() const;
 
+      /// \brief Used for drag and drop. Set the URI that contains the Ignition
+      /// Transport topic and message field associated to the widget. This is
+      /// needed by the widget that receives the drop event, as likely it will
+      /// subscribe to this topic to get some data.
+      /// \param[in] _uri The URI used for drag and drop.
+      /// \sa DragAndDropURI().
+      public: void SetDragAndDropURI(const std::string &_uri);
+
+      /// \brief Used for drag and drop. The name of the URI that contains the
+      /// Ignition Transport topic and message field associated to the widget.
+      /// \return The URI.
+      /// \sa SetDragAndDropURI().
+      public: std::string DragAndDropURI() const;
+
       /// \brief Signal that the value has changed.
       /// \param[in] _value New value.
       signals: void ValueChanged(const QVariant _value);
 
       /// \brief Callback when an internal widget's value has changed.
       protected slots: void OnValueChanged();
+
+      /// \brief Filter events from other Qt objects.
+      /// param[in] _object Qt object watched by the event filter.
+      /// param[in] _event Qt event to be filtered.
+      /// \return True to stop event propagation.
+      protected slots: bool eventFilter(QObject *_object,
+                                        QEvent *_event) override;
 
       /// \brief Pointer to private data
       private: std::unique_ptr<PropertyWidgetPrivate> dataPtr;

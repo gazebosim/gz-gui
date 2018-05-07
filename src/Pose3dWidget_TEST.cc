@@ -86,4 +86,20 @@ TEST(Pose3dWidgetTest, SetValue)
   EXPECT_TRUE(stop());
 }
 
+/////////////////////////////////////////////////
+TEST(Pose3dWidgetTest, SetDragAndDrop)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
 
+  auto widget = new Pose3dWidget();
+  ASSERT_NE(widget, nullptr);
+
+  std::string uri = "aURI";
+  EXPECT_TRUE(widget->DragAndDropURI().empty());
+  widget->SetDragAndDropURI(uri);
+  EXPECT_EQ(uri, widget->DragAndDropURI());
+
+  delete widget;
+  EXPECT_TRUE(stop());
+}

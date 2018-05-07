@@ -26,7 +26,7 @@
 #include "ignition/gui/qt.h"
 #include "ignition/gui/qwt.h"
 #include "ignition/gui/plugins/plot/Types.hh"
-#include "ignition/gui/System.hh"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {

@@ -12,10 +12,11 @@ pipelines:
           - apt install -y
             build-essential wget cmake cppcheck mercurial
             qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
-            libignition-cmake-dev
-            libignition-math4-dev
+            libignition-cmake1-dev
             libignition-common-dev
+            libignition-math4-dev
             libignition-msgs-dev
+            libignition-tools-dev
             libignition-transport4-dev
             libogre-1.9-dev
           # Static checking before building

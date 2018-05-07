@@ -16,6 +16,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <thread>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Iface.hh"
@@ -187,7 +188,7 @@ TEST(MainWindowTest, OnLoadConfig)
   EXPECT_TRUE(initApp());
 
   // Add test plugins to path
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create main window
   createMainWindow();
@@ -253,7 +254,7 @@ TEST(MainWindowTest, OnLoadConfig)
 
     // Check window has 1 plugin
     plugins = mainWindow->findChildren<Plugin *>();
-    EXPECT_EQ(plugins.size(), 1);
+    EXPECT_EQ(1, plugins.size());
   }
 
   // Load file with 2 plugins and window state
@@ -285,7 +286,7 @@ TEST(MainWindowTest, OnLoadConfig)
 
     // Check window has 2 plugins
     plugins = mainWindow->findChildren<Plugin *>();
-    EXPECT_EQ(plugins.size(), 2);
+    EXPECT_EQ(2, plugins.size());
   }
 
   // Load file with stylesheet
@@ -410,7 +411,7 @@ TEST(MainWindowTest, OnAddPlugin)
   EXPECT_TRUE(initApp());
 
   // Add test plugins to path
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/test/plugins");
+  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create window
   createMainWindow();
@@ -545,5 +546,57 @@ TEST(WindowConfigTest, MenusToString)
   EXPECT_NE(str.find("<show>PluginA</show>"), std::string::npos) << str;
   EXPECT_NE(str.find("<show>PluginB</show>"), std::string::npos) << str;
   EXPECT_EQ(str.find("<show>PluginC</show>"), std::string::npos) << str;
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest, CloseWithoutSavingChanges)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+
+  // Access window after it's open
+  bool closed{false};
+  QTimer::singleShot(300, [&closed]
+  {
+    auto win = mainWindow();
+    ASSERT_NE(nullptr, win);
+    EXPECT_TRUE(win->isVisible());
+
+    for (unsigned int i = 0; i < 100; ++i)
+    {
+      win->resize(10+i, 10+2*i);
+      QCoreApplication::processEvents();
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+
+    // Access dialog after it's open
+    bool dialogClosed{false};
+    QTimer::singleShot(300, [&]
+    {
+      auto fileDialogs = win->findChildren<QDialog *>();
+      ASSERT_EQ(fileDialogs.size(), 1);
+
+      auto closeButton = fileDialogs[0]->findChild<QPushButton *>(
+          "closeConfirmationDialogCloseButton");
+
+      closeButton->click();
+      dialogClosed = true;
+    });
+
+    win->close();
+    EXPECT_TRUE(dialogClosed);
+
+    closed = true;
+  });
+
+  // Show window
+  EXPECT_TRUE(runMainWindow());
+
+  EXPECT_TRUE(closed);
+
+  EXPECT_TRUE(stop());
 }
 
