@@ -18,6 +18,8 @@ pipelines:
             libignition-msgs2-dev
             libignition-tools-dev
             libogre-1.9-dev
+            libzmq3-dev
+            uuid-dev
           # Dependency: Ignition Transport
           - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
           - cd ign-transport
