@@ -35,7 +35,9 @@ namespace ignition
 {
   namespace transport
   {
-    class MessageInfo;
+    inline namespace IGNITION_TRANSPORT_VERSION_NAMESPACE {
+      class MessageInfo;
+    }
   }
 namespace gui
 {
