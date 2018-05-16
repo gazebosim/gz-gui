@@ -18,6 +18,7 @@
 #define IGNITION_GUI_PLUGINS_TOPICSSTATS_HH_
 
 #include <memory>
+#include <ignition/transport/MessageInfo.hh>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
@@ -33,10 +34,6 @@ namespace google
 
 namespace ignition
 {
-  namespace transport
-  {
-    class MessageInfo;
-  }
 namespace gui
 {
 namespace plugins

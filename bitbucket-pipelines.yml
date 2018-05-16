@@ -13,11 +13,11 @@ pipelines:
             build-essential wget cmake cppcheck mercurial
             qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
             libignition-cmake1-dev
-            libignition-common-dev
-            libignition-math4-dev
-            libignition-msgs-dev
+            libignition-common2-dev
+            libignition-math5-dev
+            libignition-msgs2-dev
             libignition-tools-dev
-            libignition-transport4-dev
+            libignition-transport5-dev
             libogre-1.9-dev
           # Static checking before building
           - sh tools/code_check.sh

@@ -60,7 +60,7 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
-  ${tinyxml2_LIBRARIES}
+  TINYXML2::TINYXML2
 )
 
 add_subdirectory(plugins)
