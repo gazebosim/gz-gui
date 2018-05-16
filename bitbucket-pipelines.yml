@@ -17,17 +17,10 @@ pipelines:
             libignition-math5-dev
             libignition-msgs2-dev
             libignition-tools-dev
+            libignition-transport5-dev
             libogre-1.9-dev
             libzmq3-dev
             uuid-dev
-          # Dependency: Ignition Transport
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
-          - cd ign-transport
-          - mkdir build
-          - cd build
-          - cmake ..
-          - make -j4 install
-          - cd ../..
           # Static checking before building
           - sh tools/code_check.sh
           # Ignition rendering
