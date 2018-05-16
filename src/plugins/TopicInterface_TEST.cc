@@ -107,6 +107,7 @@ TEST(TopicInterfaceTest, OnMessage)
   // Check message widget was created
   auto msgWidgets = plugin->findChildren<MessageWidget *>();
   ASSERT_EQ(msgWidgets.size(), 1);
+  msgWidgets[0]->ToggleAll(true);
 
   // Check it was populated
   auto propertyWidgets = msgWidgets[0]->findChildren<PropertyWidget *>();
@@ -129,8 +130,9 @@ TEST(TopicInterfaceTest, OnMessage)
 
   int sleep = 0;
   int maxSleep = 30;
-  while (propertyWidgets.size() <= 6 && sleep < maxSleep)
+  while (propertyWidgets.size() <= 14 && sleep < maxSleep)
   {
+    msgWidgets[0]->ToggleAll(true);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
     propertyWidgets = msgWidgets[0]->findChildren<PropertyWidget *>();

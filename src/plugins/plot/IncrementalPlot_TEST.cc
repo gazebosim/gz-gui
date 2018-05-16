@@ -244,7 +244,7 @@ TEST(IncrementalPlotTest, AddPoint)
 }
 
 /////////////////////////////////////////////////
-TEST(ncrementalPlotTest, SetCurveLabel)
+TEST(IncrementalPlotTest, SetCurveLabel)
 {
   setVerbosity(4);
   ASSERT_TRUE(initApp());

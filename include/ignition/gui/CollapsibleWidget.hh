@@ -82,10 +82,14 @@ namespace ignition
 
       // Documentation inherited
       public: virtual void SetReadOnly(const bool _readOnly,
-                                       const bool _explicit) override;
+                                       const bool _explicit = true) override;
 
       // Documentation inherited
       public: virtual bool ReadOnly() const override;
+
+      /// \brief Notifies when widget has been toggled.
+      /// \param[in] _expanded True for expanded, false for collapsed.
+      signals: void Toggled(const bool _expanded) const;
 
       /// \brief Pointer to private data
       private: std::unique_ptr<CollapsibleWidgetPrivate> dataPtr;

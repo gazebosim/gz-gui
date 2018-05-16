@@ -53,14 +53,14 @@ ign_create_core_library(SOURCES
   ${resources_RCC}
 )
 
-target_link_libraries(${PROJECT_NAME_LOWER}
+target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   ${IGNITION-COMMON_LIBRARIES}
   ${IGNITION-MATH_LIBRARIES}
   ${IGNITION-MSGS_LIBRARIES}
   ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
-  ${tinyxml2_LIBRARIES}
+  TINYXML2::TINYXML2
 )
 
 add_subdirectory(plugins)
