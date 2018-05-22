@@ -89,6 +89,8 @@ find_path(QWT_INCLUDE_DIR NAMES qwt.h PATHS
   /usr/local/include
   /usr/local/lib/qwt.framework/Headers
   ${QWT_WIN_INCLUDE_DIR}
+
+  PATH_SUFFIXES qwt5
 )
 if (NOT QWT_INCLUDE_DIR)
   ign_build_error("qwt5 header file was not found")
