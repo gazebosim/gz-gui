@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
   <file>style.qss</file>
+  <file>dock.qml</file>
+  <file>titlebar.qml</file>
   <file>images/branch-end.png</file>
   <file>images/branch-more.png</file>
   <file>images/close.svg</file>

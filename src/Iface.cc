@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include <QQuickStyle>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
 #include <ignition/common/Plugin.hh>
@@ -304,6 +306,10 @@ bool ignition::gui::initApp()
 
   // Create app
   g_app = new QApplication(g_argc, g_argv);
+  g_app->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+
+  // Use material style
+  QQuickStyle::setStyle("Material");
 
   // Apply Ignition GUI's default stylesheet
   setStyleFromFile(":/style.qss");
@@ -601,7 +607,7 @@ bool ignition::gui::addPluginsToWindow()
     dock->setWindowTitle(title);
     dock->setObjectName(title);
     dock->setAllowedAreas(Qt::TopDockWidgetArea);
-    dock->setWidget(&*plugin);
+    dock->SetWidget(&*plugin);
     dock->setAttribute(Qt::WA_DeleteOnClose);
     if (!plugin->HasTitlebar())
       dock->setTitleBarWidget(new QWidget());

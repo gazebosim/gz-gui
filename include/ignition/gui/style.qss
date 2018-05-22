@@ -48,8 +48,8 @@ QDockWidget::close-button:hover, QDockWidget::float-button:hover {
 /* ---------------------------- */
 
 QMainWindow::separator {
-  width: 5px; /* when vertical */
-  height: 5px; /* when horizontal */
+  width: 3px; /* when vertical */
+  height: 3px; /* when horizontal */
 }
 
 QMainWindow::separator:hover {

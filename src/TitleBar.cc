@@ -16,55 +16,43 @@
  */
 
 #include <QQmlContext>
-#include <QQuickStyle>
 #include <QQuickWidget>
 
-#include <ignition/common/Console.hh>
-#include "ignition/gui/Dock.hh"
-#include "ignition/gui/Plugin.hh"
 #include "ignition/gui/TitleBar.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-Dock::Dock()
+TitleBar::TitleBar()
 {
-  this->setTitleBarWidget(new TitleBar());
+  this->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
+  // Instantiate widget described in QML
+  this->setSource(QUrl("qrc:titlebar.qml"));
 }
 
 /////////////////////////////////////////////////
-void Dock::closeEvent(QCloseEvent *_e)
+void TitleBar::mouseMoveEvent ( QMouseEvent * event )
 {
-  // Set child free
-  auto plugin = this->findChild<Plugin *>();
-  if (!plugin)
-  {
-    ignerr << "I lost my child" << std::endl;
-  }
-  else
-  {
-    // Notify everyone so the one responsible for the plugin deletes it
-    this->Closing();
-
-    // Set child free so we don't delete it with us
-    plugin->setParent(nullptr);
-  }
-
-  QDockWidget::closeEvent(_e);
+  event->ignore();
 }
 
 /////////////////////////////////////////////////
-void Dock::SetWidget(QWidget *_widget)
+void TitleBar::mousePressEvent ( QMouseEvent * event )
 {
-  auto layout = new QVBoxLayout();
-  layout->addWidget(_widget);
+  event->ignore();
+}
 
-  auto quick = new QQuickWidget();
-  quick->setResizeMode(QQuickWidget::SizeRootObjectToView);
-  quick->setSource(QUrl("qrc:dock.qml"));
-  quick->setLayout(layout);
+/////////////////////////////////////////////////
+void TitleBar::mouseReleaseEvent ( QMouseEvent * event )
+{
+  event->ignore();
+}
 
-  this->setWidget(quick);
+/////////////////////////////////////////////////
+void TitleBar::mouseDoubleClickEvent ( QMouseEvent * event )
+{
+  event->ignore();
 }
 
