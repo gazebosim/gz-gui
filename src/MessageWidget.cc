@@ -478,11 +478,53 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         // If it's a repeated message
         if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
         {
+          auto &valueMsg = reflection->GetRepeatedMessage(*_msg,
+                fieldDescriptor, count);
+
           // Create a collapsible per repetition
           auto repCollapsible = qobject_cast<CollapsibleWidget *>(repProp);
           if (!repCollapsible)
           {
-            repCollapsible = new CollapsibleWidget(std::to_string(count));
+            // We're about to create a collapsible widget with repeated
+            // elements that are TYPE_MESSAGES. If these messages have the
+            // "name" field, we'll use its value as the widget name. Otherwise,
+            // we'll use a number.
+            // E.g.:
+            //   Links
+            //     link1
+            //       name : link1
+            //       ...
+            //     link2
+            //       name : link2
+            //       ...
+            //   ...
+            std::string childName = std::to_string(count);
+            auto childDesc = valueMsg.GetDescriptor();
+            for (int j = 0; j < childDesc->field_count() ; ++j)
+            {
+              auto childFieldDescriptor = childDesc->field(j);
+              if (!childFieldDescriptor)
+                continue;
+
+              if (childFieldDescriptor->type() !=
+                  google::protobuf::FieldDescriptor::TYPE_STRING)
+              {
+                continue;
+              }
+
+              if (childFieldDescriptor->name() != "name")
+                continue;
+
+              auto childReflection = valueMsg.GetReflection();
+              auto childValue = childReflection->GetString(valueMsg,
+                  childFieldDescriptor);
+              if (!childValue.empty())
+                childName = childValue;
+
+              break;
+            }
+
+            repCollapsible = new CollapsibleWidget(childName);
             this->connect(repCollapsible, &CollapsibleWidget::Toggled,
                 [this](const bool _expanded)
                 {
@@ -495,8 +537,6 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
           }
 
           // Parse message
-          auto &valueMsg = reflection->GetRepeatedMessage(*_msg,
-              fieldDescriptor, count);
           this->Parse(&valueMsg, name, repCollapsible);
 
           // Collapse the first time it was created
