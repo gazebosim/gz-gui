@@ -475,12 +475,12 @@ bool MessageWidget::Parse(const google::protobuf::Message *_msg,
         // Get widget
         auto repProp = this->PropertyWidgetByName(name);
 
-        auto &valueMsg = reflection->GetRepeatedMessage(*_msg,
-              fieldDescriptor, count);
-
         // If it's a repeated message
         if (fieldType == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
         {
+          auto &valueMsg = reflection->GetRepeatedMessage(*_msg,
+                fieldDescriptor, count);
+
           // Create a collapsible per repetition
           auto repCollapsible = qobject_cast<CollapsibleWidget *>(repProp);
           if (!repCollapsible)
