@@ -92,13 +92,28 @@ find_path(QWT_INCLUDE_DIR NAMES qwt.h PATHS
 
   PATH_SUFFIXES qwt qwt5
 )
+if (NOT QWT_INCLUDE_DIR)
+  ign_build_error("qwt5 header file was not found")
+endif()
 
-find_library(QWT_LIBRARY NAMES qwt-qt5 qwt PATHS
-  /usr/lib
-  /usr/local/lib
-  /usr/local/lib/qwt.framework
-  ${QWT_WIN_LIBRARY_DIR}
-)
+if(APPLE)
+  find_library(QWT_LIBRARY NAMES qwt PATHS
+    /usr/lib
+    /usr/local/lib
+    /usr/local/lib/qwt.framework
+    ${QWT_WIN_LIBRARY_DIR}
+  )
+else()
+  find_library(QWT_LIBRARY NAMES qwt-qt5 PATHS
+    /usr/lib
+    /usr/local/lib
+    /usr/local/lib/qwt.framework
+    ${QWT_WIN_LIBRARY_DIR}
+  )
+endif()
+if (NOT QWT_LIBRARY)
+  ign_build_error("qwt5 library was not found")
+endif()
 
 #============================================================================
 # Configure the build
