@@ -45,6 +45,7 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   // Button label
   auto buttonLabel = new QLabel(tr(humanReadable(_key).c_str()));
   buttonLabel->setToolTip(tr(_key.c_str()));
+  buttonLabel->setObjectName("collapsibleButtonLabel");
 
   // Button icon initialized to ▲
   auto buttonIcon = new QLabel(QString::fromUtf8("\u25b2"));

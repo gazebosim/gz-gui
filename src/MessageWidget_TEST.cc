@@ -941,6 +941,17 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
 
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
+
+  // Check the repetition collapsible button has been properly named
+  auto prop0Col = qobject_cast<CollapsibleWidget *>(
+      widget->PropertyWidgetByName("plugins::0"));
+  ASSERT_NE(nullptr, prop0Col);
+
+  auto prop0Label = prop0Col->findChild<QLabel *>("collapsibleButtonLabel");
+  ASSERT_NE(nullptr, prop0Label);
+
+  EXPECT_EQ("Test plugin", prop0Label->text().toStdString());
+
   auto count =  widget->PropertyWidgetCount();
 
   // Retrieve message
@@ -964,6 +975,17 @@ TEST(MessageWidgetTest, PluginVMsgWidget)
   EXPECT_EQ(count,  widget->PropertyWidgetCount());
   EXPECT_NE(nullptr, widget->PropertyWidgetByName("plugins::0"));
   EXPECT_EQ(nullptr, widget->PropertyWidgetByName("plugins::1"));
+
+  // FIXME: The repetition collapsible button is not renamed on subsequent
+  // messages, see issue #29
+  // prop0Col = qobject_cast<CollapsibleWidget *>(
+  //     widget->PropertyWidgetByName("plugins::0"));
+  // ASSERT_NE(nullptr, prop0Col);
+
+  // prop0Label = prop0Col->findChild<QLabel *>("collapsibleButtonLabel");
+  // ASSERT_NE(nullptr, prop0Label);
+
+  // EXPECT_EQ("Test plugin new", prop0Label->text().toStdString());
 
   // Check new message
   retMsg = dynamic_cast<msgs::Plugin_V *>(widget->Msg());

@@ -214,7 +214,15 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  // Spacers so widget doesn't lock the dock sizes
+  auto spacerH = new QWidget();
+  spacerH->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  mainLayout->addWidget(spacerH, 0, 4, 2, 1);
+
+  auto spacerV = new QWidget();
+  spacerV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  mainLayout->addWidget(spacerV, 2, 0, 1, 5);
+
   this->setLayout(mainLayout);
 }
 
