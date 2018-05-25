@@ -120,9 +120,9 @@ TEST(TimePanelTest, WorldControl)
   std::function<bool(const msgs::WorldControl &, msgs::Boolean &)> cb =
       [&](const msgs::WorldControl &_req, msgs::Boolean &)
   {
-    pauseCalled = _req.has_pause() && _req.pause();
-    playCalled = _req.has_pause() && !_req.pause();
-    multiStepCalled = _req.has_multi_step();
+    pauseCalled = _req.pause();
+    playCalled = !_req.pause();
+    multiStepCalled = _req.multi_step() > 0;
     return true;
   };
   transport::Node node;

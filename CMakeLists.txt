@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-gui0 VERSION 0.1.0)
+project(ignition-gui1 VERSION 0.1.0)
 
 #============================================================================
 # Find ignition-cmake
@@ -27,20 +27,11 @@ message(STATUS "\n\n-- ====== Finding Dependencies ======")
 
 #--------------------------------------
 # Find Protobuf
-if(MSVC)
-  # On Windows we require version 3+ in order to have proper support for
-  # shared libraries.
-  set(REQ_PROTOBUF_VER 3)
-  set(PROTOBUF_PURPOSE "Windows requires version 3+ to ensure proper support for DLLs")
-else()
-  set(REQ_PROTOBUF_VER 2.3.0)
-  set(PROTOBUF_PURPOSE)
-endif()
+set(REQ_PROTOBUF_VER 3)
 ign_find_package(IgnProtobuf
                  VERSION ${REQ_PROTOBUF_VER}
                  REQUIRED
-                 PRETTY Protobuf
-                 PURPOSE ${PROTOBUF_PURPOSE})
+                 PRETTY Protobuf)
 
 #--------------------------------------
 # Find Tinyxml2
@@ -48,7 +39,7 @@ ign_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
 # Find ignition-math
-ign_find_package(ignition-math5 REQUIRED)
+ign_find_package(ignition-math6 REQUIRED)
 set(IGN_MATH_VER ${ignition-math5_VERSION_MAJOR})
 
 #--------------------------------------
@@ -58,7 +49,7 @@ set(IGN_COMMON_VER ${ignition-common2_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-transport
-ign_find_package(ignition-transport5 REQUIRED)
+ign_find_package(ignition-transport6 REQUIRED)
 set(IGN_TRANSPORT_VER ${ignition-transport5_VERSION_MAJOR})
 
 #--------------------------------------
@@ -68,7 +59,7 @@ set(IGN_RENDERING_VER ${ignition-rendering0_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-msgs
-ign_find_package(ignition-msgs2 REQUIRED)
+ign_find_package(ignition-msgs3 REQUIRED)
 set(IGN_MSGS_VER ${ignition-msgs2_VERSION_MAJOR})
 
 #--------------------------------------

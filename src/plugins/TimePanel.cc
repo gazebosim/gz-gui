@@ -249,13 +249,10 @@ void TimePanel::ProcessMsg()
     this->SetRealTime(QString::fromStdString(time.FormattedString()));
   }
 
-  if (this->dataPtr->msg.has_paused())
-  {
-    if (this->dataPtr->msg.paused())
-      this->Paused();
-    else
-      this->Playing();
-  }
+  if (this->dataPtr->msg.paused())
+    this->Paused();
+  else
+    this->Playing();
 }
 
 /////////////////////////////////////////////////
