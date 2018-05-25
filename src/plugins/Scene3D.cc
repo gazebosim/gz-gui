@@ -18,6 +18,7 @@
 #include <cmath>
 #include <sstream>
 #include <string>
+#include <QOpenGLFunctions>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
@@ -29,7 +30,14 @@
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/Conversions.hh"
+#include "ignition/gui/Iface.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/plugins/Scene3D.hh"
+
+    /** Pointer to QOpenGLContext to be used by Ogre. */
+    QOpenGLContext* m_ogreContext;
+    /** Pointer to QOpenGLContext to be restored after Ogre context. */
+    QOpenGLContext* m_qtContext;
 
 namespace ignition
 {
@@ -199,6 +207,14 @@ void Scene3D::paintEvent(QPaintEvent *_e)
   // when we attach to it
   if (!this->dataPtr->renderWindow)
   {
+    m_qtContext = QOpenGLContext::currentContext();
+
+    // create a new shared OpenGL context to be used exclusively by Ogre
+    m_ogreContext = new QOpenGLContext();
+    m_ogreContext->setFormat(this->windowHandle()->requestedFormat());
+    m_ogreContext->setShareContext(m_qtContext);
+    m_ogreContext->create();
+
     this->dataPtr->renderWindow = this->dataPtr->camera->CreateRenderWindow();
     this->dataPtr->renderWindow->SetHandle(
         std::to_string(static_cast<uint64_t>(this->dataPtr->windowId)));
@@ -207,7 +223,11 @@ void Scene3D::paintEvent(QPaintEvent *_e)
   }
 
   if (this->dataPtr->camera && this->dataPtr->renderWindow)
+  {
+    this->activateOgreContext();
     this->dataPtr->camera->Update();
+    this->doneOgreContext();
+  }
 
   _e->accept();
 }
@@ -313,6 +333,46 @@ math::Vector3d Scene3D::ScreenToScene(const math::Vector2i &_screenPos) const
 
   // Set point to be 10m away if no intersection found
   return rayQuery->Origin() + rayQuery->Direction() * 10;
+}
+
+void Scene3D::activateOgreContext()
+{
+    glPopAttrib();
+    glPopClientAttrib();
+
+    m_qtContext->functions()->glUseProgram(0);
+    m_qtContext->doneCurrent();
+
+    m_ogreContext->makeCurrent(this->windowHandle());
+}
+
+void Scene3D::doneOgreContext()
+{
+    m_ogreContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    m_ogreContext->functions()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    m_ogreContext->functions()->glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+
+    // unbind all possible remaining buffers; just to be on safe side
+    m_ogreContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_COPY_READ_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+//    m_ogreContext->functions()->glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+//    m_ogreContext->functions()->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_TEXTURE_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, 0);
+    m_ogreContext->functions()->glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    m_ogreContext->doneCurrent();
+
+    m_qtContext->makeCurrent(this->windowHandle());
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 }
 
 // Register this plugin

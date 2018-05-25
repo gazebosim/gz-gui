@@ -91,6 +91,9 @@ namespace plugins
     // Documentation inherited
     protected: virtual void wheelEvent(QWheelEvent *_e) override;
 
+    private: void activateOgreContext();
+    private: void doneOgreContext();
+
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
