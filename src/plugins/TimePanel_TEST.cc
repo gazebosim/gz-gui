@@ -57,9 +57,9 @@ TEST(TimePanelTest, DefaultConfig)
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Time panel");
 
-  // Empty
+  // Only the 2 spacers
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
@@ -397,9 +397,9 @@ TEST(TimePanelTest, ControlWithoutService)
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
 
-  // Empty
+  // Only the 2 spacers
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
@@ -434,9 +434,9 @@ TEST(TimePanelTest, StatsWithoutTopic)
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
 
-  // Empty
+  // Only the 2 spacers
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
