@@ -14,13 +14,16 @@ ApplicationWindow
 
   /**
    * Add a plugin
+   * @param type:string _pluginFile Plugin Qml file.
    */
-  function addPlugin() {
-    cardComponent.createObject(background,
-      {"x": background.width / 4,
-       "y": background.height / 4,
-       "width": background.width / 2,
-       "height": background.width / 2})
+  function addPlugin(_pluginFile) {
+    cardComponent.createObject(background, {
+     "sourceFile": _pluginFile,
+     "x": background.width / 4,
+     "y": background.height / 4,
+     "width": background.width / 2,
+     "height": background.width / 2
+    })
   }
 
   /**
@@ -115,13 +118,14 @@ ApplicationWindow
         highlighted: ListView.isCurrentItem
         onClicked: {
           listView.currentIndex = index
-          addPlugin();
+          addPlugin(model.source);
           drawer.close()
         }
       }
 
       model: ListModel {
         ListElement { title: "ExamplePlugin"; source: "qrc:qml/ExamplePlugin.qml" }
+        ListElement { title: "HelloPlugin"; source: "qrc:HelloPlugin/HelloPlugin.qml" }
       }
 
       ScrollIndicator.vertical: ScrollIndicator { }
@@ -166,6 +170,12 @@ ApplicationWindow
 
       property int rulersThickness: 25
       property int minSize: 100
+      property var sourceFile: ""
+
+      Loader {
+        anchors.fill: parent
+        source: sourceFile;
+      }
 
       MouseArea {
         anchors.fill: parent
