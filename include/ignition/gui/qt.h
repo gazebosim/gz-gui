@@ -83,4 +83,12 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QWidgetAction>
 
+#include <QQmlApplicationEngine>
+#include <QQmlComponent>
+#include <QQmlContext>
+#include <QQmlEngine>
+#include <QQuickItem>
+#include <QQuickStyle>
+#include <QQuickWindow>
+
 #endif  // IGNITION_GUI_QT_H_

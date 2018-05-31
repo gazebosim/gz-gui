@@ -14,13 +14,13 @@ if (NOT HAVE_IGN_TOOLS OR APPLE)
   list(REMOVE_ITEM gtest_sources ign_TEST.cc)
 endif()
 
-ign_build_tests(TYPE UNIT
-                SOURCES
-                  ${gtest_sources}
-                LIB_DEPS
-                  ${IGNITION-MATH_LIBRARIES}
-                  TINYXML2::TINYXML2
-)
+#ign_build_tests(TYPE UNIT
+#                SOURCES
+#                  ${gtest_sources}
+#                LIB_DEPS
+#                  ${IGNITION-MATH_LIBRARIES}
+#                  TINYXML2::TINYXML2
+#)
 
 add_subdirectory(cmd)
-add_subdirectory(plugins)
+#add_subdirectory(plugins)

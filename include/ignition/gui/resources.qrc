@@ -1,6 +1,15 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
   <file>style.qss</file>
+
+  <file>qml/Dialog.qml</file>
+  <file>qml/ExamplePlugin.qml</file>
+  <file>qml/MainWindow.qml</file>
+
+  <file>qml/images/menu.png</file>
+  <file>qml/images/back.png</file>
+  <file>qml/images/drawer.png</file>
+
   <file>images/branch-end.png</file>
   <file>images/branch-more.png</file>
   <file>images/close.svg</file>

@@ -23,22 +23,28 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-void Dialog::reject()
+Dialog::Dialog()
 {
-  // Set child free
-  auto plugin = this->findChild<Plugin *>();
-  if (!plugin)
-  {
-    ignerr << "I lost my child" << std::endl;
-  }
-  else
-  {
-    // Notify everyone so the one responsible for the plugin deletes it
-    this->Closing();
-
-    // Set child free so we don't delete it with us
-    plugin->setParent(nullptr);
-  }
-  QDialog::reject();
+  qmlRegisterType<Dialog>("ignition-gui", 1, 0, "Dialog");
 }
+
+/////////////////////////////////////////////////
+//void Dialog::reject()
+//{
+//  // Set child free
+//  auto plugin = this->findChild<Plugin *>();
+//  if (!plugin)
+//  {
+//    ignerr << "I lost my child" << std::endl;
+//  }
+//  else
+//  {
+//    // Notify everyone so the one responsible for the plugin deletes it
+//    this->Closing();
+//
+//    // Set child free so we don't delete it with us
+//    plugin->setParent(nullptr);
+//  }
+//  QDialog::reject();
+//}
 

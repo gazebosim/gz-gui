@@ -16,7 +16,10 @@
 */
 
 #include <iostream>
+#include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
+
+#include <ignition/gui/Iface.hh>
 
 #include "HelloPlugin.hh"
 
@@ -27,16 +30,16 @@ using namespace gui;
 HelloPlugin::HelloPlugin()
   : Plugin()
 {
-  // Create a push button, and connect it to the OnButton function
-  auto button = new QPushButton(tr("Hello, plugin!"));
-  connect(button, SIGNAL(clicked()), this, SLOT(OnButton()));
+  QQmlComponent component(qmlEngine(),
+      QString(":/HelloPlugin/HelloPlugin.qml"));
+  this->item = qobject_cast<QQuickItem *>(component.create());
+  if (!this->item)
+  {
+    ignerr << "Null plugin QQuickItem!" << std::endl;
+    return;
+  }
 
-  // Create the layout to hold the button
-  auto layout = new QHBoxLayout;
-  layout->addWidget(button);
-
-  // Use the layout
-  this->setLayout(layout);
+  qmlEngine()->rootContext()->setContextProperty("HelloPlugin", this);
 }
 
 /////////////////////////////////////////////////
@@ -48,6 +51,12 @@ HelloPlugin::~HelloPlugin()
 void HelloPlugin::OnButton()
 {
   std::cout << "Hello, plugin!" << std::endl;
+}
+
+/////////////////////////////////////////////////
+QQuickItem *HelloPlugin::Item() const
+{
+  return this->item;
 }
 
 // Register this plugin

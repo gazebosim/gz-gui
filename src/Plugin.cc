@@ -91,10 +91,10 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Setup default context menu
-  this->setContextMenuPolicy(Qt::CustomContextMenu);
-  this->connect(this,
-      SIGNAL(customContextMenuRequested(const QPoint &)),
-      this, SLOT(ShowContextMenu(const QPoint &)));
+//  this->setContextMenuPolicy(Qt::CustomContextMenu);
+//  this->connect(this,
+//      SIGNAL(customContextMenuRequested(const QPoint &)),
+//      this, SLOT(ShowContextMenu(const QPoint &)));
 
   // Load custom configuration
   this->LoadConfig(_pluginElem);
@@ -115,20 +115,20 @@ void Plugin::ShowContextMenu(const QPoint &_pos)
   this->connect(&closeAct, SIGNAL(triggered()), this->parent(), SLOT(close()));
 
   // Context menu
-  QMenu contextMenu(tr("Context menu"), this);
-  contextMenu.addAction(&closeAct);
-  contextMenu.exec(this->mapToGlobal(_pos));
+//  QMenu contextMenu(tr("Context menu"), this);
+//  contextMenu.addAction(&closeAct);
+//  contextMenu.exec(this->mapToGlobal(_pos));
 }
 
 /////////////////////////////////////////////////
-void Plugin::changeEvent(QEvent *_e)
-{
-  if (_e->type() == QEvent::ParentChange && this->parent() &&
-      this->dataPtr->deleteLater)
-  {
-    qobject_cast<QWidget *>(this->parent())->close();
-  }
-}
+//void Plugin::changeEvent(QEvent *_e)
+//{
+//  if (_e->type() == QEvent::ParentChange && this->parent() &&
+//      this->dataPtr->deleteLater)
+//  {
+//    qobject_cast<QWidget *>(this->parent())->close();
+//  }
+//}
 
 /////////////////////////////////////////////////
 void Plugin::DeleteLater()

@@ -33,7 +33,7 @@ namespace ignition
     class PluginPrivate;
 
     /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Plugin : public QWidget
+    class IGNITION_GUI_VISIBLE Plugin : public QObject
     {
       Q_OBJECT
 
@@ -59,6 +59,9 @@ namespace ignition
       /// \brief Get the configuration XML as a string
       /// \return Config element
       public: virtual std::string ConfigStr() const;
+
+      /// \brief
+      public: virtual QQuickItem *Item() const = 0;
 
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.
@@ -89,7 +92,7 @@ namespace ignition
       protected slots: virtual void ShowContextMenu(const QPoint &_pos);
 
       // Documentation inherited
-      protected: void changeEvent(QEvent *_e) override;
+//      protected: void changeEvent(QEvent *_e) override;
 
       /// \brief Wait until the plugin has a parent, then close and delete the
       /// parent.

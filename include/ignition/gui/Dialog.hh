@@ -26,15 +26,17 @@ namespace ignition
   namespace gui
   {
     /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Dialog : public QDialog
+    class IGNITION_GUI_VISIBLE Dialog : public QObject
     {
       Q_OBJECT
+
+      public: Dialog();
 
       /// \brief Signals that this dialog is about to be closed.
       signals: void Closing();
 
       // Documentation inherited
-      protected: void reject() override;
+//      protected: void reject() override;
     };
   }
 }
