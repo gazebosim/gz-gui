@@ -77,7 +77,7 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   TINYXML2::TINYXML2
 )
 
-#add_subdirectory(plugins)
+add_subdirectory(plugins)
 
 #ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}.hh)
 #ign_install_includes(${IGN_DESIGNATION} ${headers} ${qt_headers})

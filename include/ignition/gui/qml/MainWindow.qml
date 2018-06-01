@@ -125,7 +125,7 @@ ApplicationWindow
 
       model: ListModel {
         ListElement { title: "ExamplePlugin"; source: "qrc:qml/ExamplePlugin.qml" }
-        ListElement { title: "HelloPlugin"; source: "qrc:HelloPlugin/HelloPlugin.qml" }
+        ListElement { title: "Publisher"; source: "qrc:Publisher/Publisher.qml" }
       }
 
       ScrollIndicator.vertical: ScrollIndicator { }

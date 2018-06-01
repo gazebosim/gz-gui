@@ -599,7 +599,7 @@ bool ignition::gui::createMainWindow()
 
   g_mainWin = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
 
-  return true;//addPluginsToWindow() && applyConfig();
+  return addPluginsToWindow();// && applyConfig();
 }
 
 /////////////////////////////////////////////////
@@ -620,16 +620,16 @@ bool ignition::gui::addPluginsToWindow()
       continue;
     }
 
-    auto title = QString::fromStdString(plugin->Title());
-    auto dock = new Dock();
+//    auto title = QString::fromStdString(plugin->Title());
+//    auto dock = new Dock();
 //    dock->setParent(g_mainWin);
-    dock->setWindowTitle(title);
-    dock->setObjectName(title);
-    dock->setAllowedAreas(Qt::TopDockWidgetArea);
+//    dock->setWindowTitle(title);
+//    dock->setObjectName(title);
+//    dock->setAllowedAreas(Qt::TopDockWidgetArea);
 //    dock->setWidget(&*plugin);
-    dock->setAttribute(Qt::WA_DeleteOnClose);
-    if (!plugin->HasTitlebar())
-      dock->setTitleBarWidget(new QWidget());
+//    dock->setAttribute(Qt::WA_DeleteOnClose);
+//    if (!plugin->HasTitlebar())
+//      dock->setTitleBarWidget(new QWidget());
 
 //    if (count % 2 == 0)
 //      g_mainWin->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
@@ -639,10 +639,10 @@ bool ignition::gui::addPluginsToWindow()
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
 
-    g_mainWin->connect(dock, &Dock::Closing, [plugin]
-    {
-      removeAddedPlugin(plugin);
-    });
+//    g_mainWin->connect(dock, &Dock::Closing, [plugin]
+//    {
+//      removeAddedPlugin(plugin);
+//    });
 
     count++;
   }

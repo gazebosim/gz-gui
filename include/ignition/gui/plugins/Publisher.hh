@@ -48,9 +48,14 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
+    /// \brief
+    public: QQuickItem *Item() const override;
+
     /// \brief Callback when publish button is checked or unchecked.
     /// \param[in] _checked True if button is checked.
-    private slots: void OnPublish(const bool _checked);
+    public slots: void OnPublish(const bool _checked);
+
+    private: QQuickItem *item;
 
     /// \internal
     /// \brief Pointer to private data.

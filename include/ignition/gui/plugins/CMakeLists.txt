@@ -1,15 +1,15 @@
 set (qt_headers_local
-  Grid3D
-  ImageDisplay
+#  Grid3D
+#  ImageDisplay
   Publisher
-  Requester
-  Responder
-  Scene3D
-  TimePanel
-  TopicEcho
-  TopicInterface
-  TopicsStats
-  TopicViewer
+#  Requester
+#  Responder
+#  Scene3D
+#  TimePanel
+#  TopicEcho
+#  TopicInterface
+#  TopicsStats
+#  TopicViewer
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
@@ -19,7 +19,12 @@ set(IGNITION_GUI_PLUGIN_INSTALL_DIR
 # Plugin shared libraries
 foreach (src ${qt_headers_local})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
-  add_library(${src} SHARED ${PROJECT_SOURCE_DIR}/src/plugins/${src}.cc ${${src}_MOC})
+  QT5_ADD_RESOURCES(${src}_RCC ${src}.qrc)
+  add_library(${src} SHARED
+    ${PROJECT_SOURCE_DIR}/src/plugins/${src}.cc
+    ${${src}_MOC}
+    ${${src}_RCC}
+  )
   target_link_libraries(${src}
     ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}
@@ -27,8 +32,11 @@ foreach (src ${qt_headers_local})
     ${IGNITION-RENDERING_LIBRARIES}
     ${IGNITION-TRANSPORT_LIBRARIES}
     ${Qt5Core_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES})
+    ${Qt5Qml_LIBRARIES}
+    ${Qt5Quick_LIBRARIES}
+    ${Qt5QuickControls2_LIBRARIES}
+  )
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})
 
-add_subdirectory(plot)
+#add_subdirectory(plot)
