@@ -70,26 +70,30 @@ namespace plugins
     public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
         const;
 
-    // Documentation inherited
-    protected: virtual QPaintEngine *paintEngine() const override;
+    /// \brief
+    public: QQuickItem *Item() const override;
+    private: QQuickItem *item;
 
     // Documentation inherited
-    protected: virtual void paintEvent(QPaintEvent *_e) override;
+//    protected: virtual QPaintEngine *paintEngine() const override;
 
     // Documentation inherited
-    protected: virtual void resizeEvent(QResizeEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void wheelEvent(QWheelEvent *_e) override;
+//    protected: virtual void paintEvent(QPaintEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void resizeEvent(QResizeEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void wheelEvent(QWheelEvent *_e) override;
 
     /// \internal
     /// \brief Pointer to private data.

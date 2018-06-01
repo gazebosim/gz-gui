@@ -4,7 +4,7 @@ set (qt_headers_local
   Publisher
 #  Requester
 #  Responder
-#  Scene3D
+  Scene3D
 #  TimePanel
 #  TopicEcho
 #  TopicInterface

@@ -83,6 +83,7 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QWidgetAction>
 
+#include <QOpenGLFunctions>
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QQmlContext>
