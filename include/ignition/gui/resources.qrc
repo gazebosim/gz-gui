@@ -2,6 +2,8 @@
 <qresource>
   <file>style.qss</file>
 
+  <file>qtquickcontrols2.conf</file>
+
   <file>qml/Dialog.qml</file>
   <file>qml/ExamplePlugin.qml</file>
   <file>qml/MainWindow.qml</file>

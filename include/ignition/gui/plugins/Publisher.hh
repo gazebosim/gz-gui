@@ -39,6 +39,38 @@ namespace plugins
   {
     Q_OBJECT
 
+    // Message type
+    Q_PROPERTY(
+      QString msgType
+      READ MsgType
+      WRITE SetMsgType
+      NOTIFY MsgTypeChanged
+    )
+
+    // Message data
+    Q_PROPERTY(
+      QString msgData
+      READ MsgData
+      WRITE SetMsgData
+      NOTIFY MsgDataChanged
+    )
+
+    // Topic
+    Q_PROPERTY(
+      QString topic
+      READ Topic
+      WRITE SetTopic
+      NOTIFY TopicChanged
+    )
+
+    // Frequency
+    Q_PROPERTY(
+      double frequency
+      READ Frequency
+      WRITE SetFrequency
+      NOTIFY FrequencyChanged
+    )
+
     /// \brief Constructor
     public: Publisher();
 
@@ -54,6 +86,22 @@ namespace plugins
     /// \brief Callback when publish button is checked or unchecked.
     /// \param[in] _checked True if button is checked.
     public slots: void OnPublish(const bool _checked);
+
+    public: QString MsgType() const;
+    public: void SetMsgType(const QString &_msgType);
+    signals: void MsgTypeChanged();
+
+    public: QString MsgData() const;
+    public: void SetMsgData(const QString &_msgData);
+    signals: void MsgDataChanged();
+
+    public: QString Topic() const;
+    public: void SetTopic(const QString &_topic);
+    signals: void TopicChanged();
+
+    public: double Frequency() const;
+    public: void SetFrequency(const double _frequency);
+    signals: void FrequencyChanged();
 
     private: QQuickItem *item;
 

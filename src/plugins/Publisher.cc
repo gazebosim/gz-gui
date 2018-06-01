@@ -32,23 +32,20 @@ namespace plugins
 {
   class PublisherPrivate
   {
-    /// \brief Holds message type
-    public: QLineEdit *msgTypeEdit;
+    /// \brief Message type
+    public: QString msgType = "ignition.msgs.StringMsg";
 
-    /// \brief Holds message contents
-    public: QTextEdit *msgEdit;
+    /// \brief Message contents
+    public: QString msgData = "data: \"Hello\"";
 
-    /// \brief Holds topic
-    public: QLineEdit *topicEdit;
+    /// \brief Topic
+    public: QString topic = "/echo";
 
-    /// \brief Holds frequency
-    public: QDoubleSpinBox *freqSpin;
+    /// \brief Frequency
+    public: double frequency = 1.0;
 
     /// \brief Timer to keep publishing
     public: QTimer *timer;
-
-    /// \brief Button to publish
-    public: QPushButton *publishButton;
 
     /// \brief Node for communication
     public: ignition::transport::Node node;
@@ -68,16 +65,20 @@ using namespace plugins;
 Publisher::Publisher()
   : Plugin(), dataPtr(new PublisherPrivate)
 {
+  // This let's Publisher.qml use `Publisher` functions and properties
+  qmlEngine()->rootContext()->setContextProperty("Publisher", this);
+
+  // Instantiate QML file into a component
   QQmlComponent component(qmlEngine(),
       QString(":/Publisher/Publisher.qml"));
+
+  // Create an item
   this->item = qobject_cast<QQuickItem *>(component.create());
   if (!this->item)
   {
     ignerr << "Null plugin QQuickItem!" << std::endl;
     return;
   }
-
-  qmlEngine()->rootContext()->setContextProperty("Publisher", this);
 
   this->LoadConfig(nullptr);
 }
@@ -99,64 +100,21 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "Publisher";
 
-  // Default values
-  std::string msgType("ignition.msgs.StringMsg");
-  std::string msg("data: \"Hello\"");
-  std::string topic("/echo");
-  double frequency(1.0);
-
   // Parameters from SDF
   if (_pluginElem)
   {
     if (auto typeElem = _pluginElem->FirstChildElement("message_type"))
-      msgType = typeElem->GetText();
+      this->dataPtr->msgType = typeElem->GetText();
 
     if (auto msgElem = _pluginElem->FirstChildElement("message"))
-      msg = msgElem->GetText();
+      this->dataPtr->msgData = msgElem->GetText();
 
     if (auto topicElem = _pluginElem->FirstChildElement("topic"))
-      topic = topicElem->GetText();
+      this->dataPtr->topic = topicElem->GetText();
 
     if (auto frequencyElem = _pluginElem->FirstChildElement("frequency"))
-      frequencyElem->QueryDoubleText(&frequency);
+      frequencyElem->QueryDoubleText(&this->dataPtr->frequency);
   }
-
-  // Populate with default values.
-//  this->dataPtr->msgTypeEdit = new QLineEdit(QString::fromStdString(msgType));
-//  this->dataPtr->msgTypeEdit->setObjectName("msgTypeEdit");
-//  this->dataPtr->msgEdit = new QTextEdit(QString::fromStdString(msg));
-//  this->dataPtr->msgEdit->setObjectName("msgEdit");
-//  this->dataPtr->topicEdit = new QLineEdit(QString::fromStdString(topic));
-//  this->dataPtr->topicEdit->setObjectName("topicEdit");
-//
-//  auto freqLabel = new QLabel("Frequency");
-//  freqLabel->setToolTip("Set to zero to publish once");
-//
-//  this->dataPtr->freqSpin = new QDoubleSpinBox();
-//  this->dataPtr->freqSpin->setObjectName("frequencySpinBox");
-//  this->dataPtr->freqSpin->setMinimum(0);
-//  this->dataPtr->freqSpin->setMaximum(1000);
-//  this->dataPtr->freqSpin->setValue(frequency);
-//
-//  this->dataPtr->publishButton = new QPushButton("Publish");
-//  this->dataPtr->publishButton->setObjectName("publishButton");
-//  this->dataPtr->publishButton->setCheckable(true);
-//  this->dataPtr->publishButton->setMinimumWidth(200);
-//  this->connect(this->dataPtr->publishButton, SIGNAL(toggled(bool)), this,
-//      SLOT(OnPublish(bool)));
-//
-//  auto layout = new QGridLayout();
-//  layout->addWidget(new QLabel("Message type: "), 0, 0);
-//  layout->addWidget(this->dataPtr->msgTypeEdit, 0, 1, 1, 3);
-//  layout->addWidget(new QLabel("Message: "), 1, 0);
-//  layout->addWidget(this->dataPtr->msgEdit, 1, 1, 1, 3);
-//  layout->addWidget(new QLabel("Topic: "), 2, 0);
-//  layout->addWidget(this->dataPtr->topicEdit, 2, 1, 1, 3);
-//  layout->addWidget(freqLabel, 3, 0);
-//  layout->addWidget(this->dataPtr->freqSpin, 3, 1);
-//  layout->addWidget(new QLabel("Hz"), 3, 2);
-//  layout->addWidget(this->dataPtr->publishButton, 3, 3);
-//  this->setLayout(layout);
 
   this->dataPtr->timer = new QTimer(this);
 }
@@ -166,25 +124,18 @@ void Publisher::OnPublish(const bool _checked)
 {
   if (!_checked)
   {
-//    this->dataPtr->publishButton->setText("Publish");
-//    if (this->dataPtr->timer != nullptr)
-//    {
-//      this->dataPtr->timer->stop();
-//      this->disconnect(this->dataPtr->timer, 0, 0, 0);
-//    }
-//    this->dataPtr->pub = ignition::transport::Node::Publisher();
+    if (this->dataPtr->timer != nullptr)
+    {
+      this->dataPtr->timer->stop();
+      this->disconnect(this->dataPtr->timer, 0, 0, 0);
+    }
+    this->dataPtr->pub = ignition::transport::Node::Publisher();
     return;
   }
 
-//  auto topic = this->dataPtr->topicEdit->text().toStdString();
-//  auto msgType = this->dataPtr->msgTypeEdit->text().toStdString();
-//  auto msgData = this->dataPtr->msgEdit->toPlainText().toStdString();
-//  auto freq = this->dataPtr->freqSpin->value();
-
-  std::string msgType("ignition.msgs.StringMsg");
-  std::string msgData("data: \"Hello\"");
-  std::string topic("/echo");
-  double freq(1.0);
+  auto topic = this->dataPtr->topic.toStdString();
+  auto msgType = this->dataPtr->msgType.toStdString();
+  auto msgData = this->dataPtr->msgData.toStdString();
 
   // Check it's possible to create message
   auto msg = ignition::msgs::Factory::New(msgType, msgData);
@@ -192,7 +143,7 @@ void Publisher::OnPublish(const bool _checked)
   {
     ignerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";
-//    this->dataPtr->publishButton->setChecked(false);
+    // TODO: notify error and uncheck switch
     return;
   }
 
@@ -203,26 +154,77 @@ void Publisher::OnPublish(const bool _checked)
   {
     ignerr << "Unable to publish on topic[" << topic << "] "
       << "with message type[" << msgType << "].\n";
-//    this->dataPtr->publishButton->setChecked(false);
+    // TODO: notify error and uncheck switch
     return;
   }
 
   // Zero frequency, publish once
-  if (freq < 0.00001)
+  if (this->dataPtr->frequency < 0.00001)
   {
     this->dataPtr->pub.Publish(*msg);
-//    this->dataPtr->publishButton->setChecked(false);
+    // TODO: notify error and uncheck switch
     return;
   }
 
-//  this->dataPtr->publishButton->setText("Stop publishing");
-  this->dataPtr->timer->setInterval(1000/freq);
+  this->dataPtr->timer->setInterval(1000/this->dataPtr->frequency);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
   {
     auto newMsg = ignition::msgs::Factory::New(msgType, msgData);
     this->dataPtr->pub.Publish(*newMsg);
   });
   this->dataPtr->timer->start();
+}
+
+/////////////////////////////////////////////////
+QString Publisher::MsgType() const
+{
+  return this->dataPtr->msgType;
+}
+
+/////////////////////////////////////////////////
+void Publisher::SetMsgType(const QString &_msgType)
+{
+  this->dataPtr->msgType = _msgType;
+  this->MsgTypeChanged();
+}
+
+/////////////////////////////////////////////////
+QString Publisher::MsgData() const
+{
+  return this->dataPtr->msgData;
+}
+
+/////////////////////////////////////////////////
+void Publisher::SetMsgData(const QString &_msgData)
+{
+  this->dataPtr->msgData = _msgData;
+  this->MsgDataChanged();
+}
+
+/////////////////////////////////////////////////
+QString Publisher::Topic() const
+{
+  return this->dataPtr->topic;
+}
+
+/////////////////////////////////////////////////
+void Publisher::SetTopic(const QString &_topic)
+{
+  this->dataPtr->topic = _topic;
+  this->TopicChanged();
+}
+
+/////////////////////////////////////////////////
+double Publisher::Frequency() const
+{
+  return this->dataPtr->frequency;
+}
+
+/////////////////////////////////////////////////
+void Publisher::SetFrequency(const double _frequency)
+{
+  this->dataPtr->frequency = _frequency;
+  this->FrequencyChanged();
 }
 
 // Register this plugin

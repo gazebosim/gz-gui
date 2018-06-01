@@ -322,9 +322,6 @@ bool ignition::gui::initApp()
   g_app = new QGuiApplication(g_argc, g_argv);
   g_engine = new QQmlApplicationEngine();
 
-  // Material style by default
-  QQuickStyle::setStyle("Material");
-
   // Install signal handler for graceful shutdown
   installSignalHandler();
 
