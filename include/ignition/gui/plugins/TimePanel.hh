@@ -49,6 +49,8 @@ namespace plugins
   /// * \<sim_time\> : Set to true to display a sim time widget, false by
   ///                  default.
   /// * \<real_time\> : True to display a real time widget, false by default.
+  /// * \<real_time_factor\> : True to display a real time factor widget,
+  ///                          false by default.
   /// * \<topic\> : Topic to receive world statistics, required.
   class TimePanel: public ignition::gui::Plugin
   {
@@ -86,6 +88,9 @@ namespace plugins
 
     /// \brief Update real time.
     signals: void SetRealTime(QString _time);
+
+    /// \brief Update real time factor.
+    signals: void SetRealTimeFactor(QString _rtf);
 
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);

@@ -209,6 +209,25 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               mainLayout->addWidget(realTime, 1, 3);
             }
           }
+
+          // Real time factor
+          if (auto realTimeFactorElem =
+                statsElem->FirstChildElement("real_time_factor"))
+          {
+            auto hasRTF = false;
+            realTimeFactorElem->QueryBoolText(&hasRTF);
+
+            if (hasRTF)
+            {
+              auto rtf = new QLabel("N/A");
+              rtf->setObjectName("realTimeFactorLabel");
+              this->connect(this, SIGNAL(SetRealTimeFactor(QString)), rtf,
+                  SLOT(setText(QString)));
+
+              mainLayout->addWidget(new QLabel("Real Time Factor"), 1, 4);
+              mainLayout->addWidget(rtf, 1, 5);
+            }
+          }
         }
       }
     }
@@ -247,6 +266,14 @@ void TimePanel::ProcessMsg()
     time.nsec = this->dataPtr->msg.real_time().nsec();
 
     this->SetRealTime(QString::fromStdString(time.FormattedString()));
+  }
+
+  if (this->dataPtr->msg.has_real_time_factor())
+  {
+    // RTF as a percentage.
+    double rtf = this->dataPtr->msg.real_time_factor() * 100;
+
+    this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
   }
 
   if (this->dataPtr->msg.has_paused())
