@@ -4,8 +4,8 @@
 
   <file>qtquickcontrols2.conf</file>
 
+  <file>qml/Card.qml</file>
   <file>qml/Dialog.qml</file>
-  <file>qml/ExamplePlugin.qml</file>
   <file>qml/MainWindow.qml</file>
 
   <file>qml/images/menu.png</file>

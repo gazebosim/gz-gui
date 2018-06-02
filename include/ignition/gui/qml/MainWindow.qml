@@ -13,20 +13,6 @@ ApplicationWindow
   property var bgColor: "#eeeeee"
 
   /**
-   * Add a plugin
-   * @param type:string _pluginFile Plugin Qml file.
-   */
-  function addPlugin(_pluginFile) {
-    cardComponent.createObject(background, {
-     "sourceFile": _pluginFile,
-     "x": background.width / 4,
-     "y": background.height / 4,
-     "width": background.width / 2,
-     "height": background.width / 2
-    })
-  }
-
-  /**
    * Top toolbar
    */
   header: ToolBar {
@@ -118,14 +104,13 @@ ApplicationWindow
         highlighted: ListView.isCurrentItem
         onClicked: {
           listView.currentIndex = index
-          addPlugin(model.source);
+          MainWindow.OnAddPlugin(model.source);
           drawer.close()
         }
       }
 
       model: ListModel {
-        ListElement { title: "ExamplePlugin"; source: "qrc:qml/ExamplePlugin.qml" }
-        ListElement { title: "Publisher"; source: "qrc:Publisher/Publisher.qml" }
+        ListElement { title: "Publisher"; source: "Publisher" }
       }
 
       ScrollIndicator.vertical: ScrollIndicator { }
@@ -154,133 +139,6 @@ ApplicationWindow
         text: "Gorgeous robotic interfaces since 2018."
         wrapMode: Label.Wrap
         font.pixelSize: 12
-      }
-    }
-  }
-
-  /**
-   * Resizable card which contains a plugin
-   */
-  Component {
-    id: cardComponent
-
-    Pane {
-      id: cardPane
-      Material.elevation: 6
-
-      property int rulersThickness: 25
-      property int minSize: 100
-      property var sourceFile: ""
-
-      Loader {
-        anchors.fill: parent
-        source: sourceFile;
-      }
-
-      MouseArea {
-        anchors.fill: parent
-        drag{
-          target: parent.parent
-          minimumX: 0
-          minimumY: 0
-          maximumX: parent.parent.parent.width - parent.parent.width
-          maximumY: parent.parent.parent.height - parent.parent.height
-          smoothed: true
-        }
-      }
-
-      // Left ruler
-      Rectangle {
-        width: rulersThickness
-        height: parent.parent.height
-        color: "transparent"
-        anchors.horizontalCenter: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.SplitHCursor
-          drag{ target: parent; axis: Drag.XAxis }
-          onMouseXChanged: {
-            if(drag.active){
-              cardPane.width = cardPane.width - mouseX
-              cardPane.x = cardPane.x + mouseX
-              if(cardPane.width < minSize)
-                cardPane.width = minSize
-            }
-          }
-        }
-      }
-
-      // Right ruler
-      Rectangle {
-        width: rulersThickness
-        height: parent.parent.height
-        color: "transparent"
-        anchors.horizontalCenter: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.SplitHCursor
-          drag{ target: parent; axis: Drag.XAxis }
-          onMouseXChanged: {
-            if(drag.active){
-              cardPane.width = cardPane.width + mouseX
-              if(cardPane.width < minSize)
-                  cardPane.width = minSize
-            }
-          }
-        }
-      }
-
-      // Top ruler
-      Rectangle {
-        width: parent.parent.width
-        height: rulersThickness
-        x: parent.x / 2
-        y: 0
-        color: "transparent"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.top
-
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.SplitVCursor
-          drag{ target: parent; axis: Drag.YAxis }
-          onMouseYChanged: {
-            if(drag.active){
-              cardPane.height = cardPane.height - mouseY
-              cardPane.y = cardPane.y + mouseY
-              if(cardPane.height < minSize)
-                cardPane.height = minSize
-            }
-          }
-        }
-      }
-
-      // Bottom ruler
-      Rectangle {
-        width: parent.parent.width
-        height: rulersThickness
-        x: parent.x / 2
-        y: parent.y
-        color: "transparent"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.bottom
-
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.SplitVCursor
-          drag{ target: parent; axis: Drag.YAxis }
-          onMouseYChanged: {
-            if(drag.active){
-              cardPane.height = cardPane.height + mouseY
-              if(cardPane.height < minSize)
-                cardPane.height = minSize
-            }
-          }
-        }
       }
     }
   }

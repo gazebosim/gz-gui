@@ -60,6 +60,7 @@ QQmlApplicationEngine *g_engine;
 
 /// \brief Pointer to main window
 QQuickWindow *g_mainWin = nullptr;
+QObject *g_mainWinIface = nullptr;
 
 /// \brief Vector of pointers to dialogs
 std::vector<QObject *> g_dialogs;
@@ -596,6 +597,10 @@ bool ignition::gui::createMainWindow()
 
   g_mainWin = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
 
+  g_mainWinIface = new MainWindow();
+
+  g_engine->rootContext()->setContextProperty("MainWindow", g_mainWinIface);
+
   return addPluginsToWindow();// && applyConfig();
 }
 
@@ -617,29 +622,31 @@ bool ignition::gui::addPluginsToWindow()
       continue;
     }
 
-//    auto title = QString::fromStdString(plugin->Title());
-//    auto dock = new Dock();
-//    dock->setParent(g_mainWin);
-//    dock->setWindowTitle(title);
-//    dock->setObjectName(title);
-//    dock->setAllowedAreas(Qt::TopDockWidgetArea);
-//    dock->setWidget(&*plugin);
-//    dock->setAttribute(Qt::WA_DeleteOnClose);
-//    if (!plugin->HasTitlebar())
-//      dock->setTitleBarWidget(new QWidget());
+    // Instantiate a card
+    QQmlComponent component(qmlEngine(), QString(":qml/Card.qml"));
 
-//    if (count % 2 == 0)
-//      g_mainWin->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Horizontal);
-//    else
-//      g_mainWin->addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
+    // Create an item
+    auto cardItem = qobject_cast<QQuickItem *>(component.create());
+    if (!cardItem)
+    {
+      ignerr << "Null card QQuickItem!" << std::endl;
+      return false;
+    }
+    QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
+
+    // Add plugin to card
+    plugin->Item()->setParentItem(cardItem);
+
+    // Add card to main window
+    cardItem->setParentItem(g_mainWin->contentItem());
+    cardItem->setParent(g_engine);
+
+    // Configure card
+    cardItem->setProperty("width", 300);
+    cardItem->setProperty("height", 400);
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
-
-//    g_mainWin->connect(dock, &Dock::Closing, [plugin]
-//    {
-//      removeAddedPlugin(plugin);
-//    });
 
     count++;
   }
