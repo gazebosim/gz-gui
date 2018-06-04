@@ -292,11 +292,13 @@ bool ignition::gui::runStandalone(const std::string &_filename)
       ignerr << "Null dialog QQuickItem!" << std::endl;
       return false;
     }
-    // FIXME: Not working
-    dialogItem->setProperty("title", QString("Name on C++"));
 
     // Add to dialog
     plugin->Item()->setParentItem(dialogItem);
+
+    // FIXME: Not working
+    dialogItem->setProperty("pluginName",
+        QString::fromStdString(plugin->Title()));
   }
 
   // Run app - blocks
@@ -650,6 +652,7 @@ bool ignition::gui::addPluginsToWindow()
     cardItem->setParent(g_engine);
 
     // Configure card
+    cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
     cardItem->setProperty("width", 300);
     cardItem->setProperty("height", 400);
 

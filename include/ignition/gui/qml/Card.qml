@@ -14,11 +14,20 @@ Pane {
   property int rulersThickness: 25
   property int minSize: 100
 
-  // ✕
-  property var dockIcon: "\u2715"
+  /**
+   * The plugin name, which goes on the toolbar
+   */
+  property alias pluginName: titleLabel.text
 
-  // □
-  property var undockIcon: "\u25A1"
+  /**
+   * ✕
+   */
+  property string dockIcon: "\u2715"
+
+  /**
+   * □
+   */
+  property string undockIcon: "\u25A1"
 
   states: [
     State {
@@ -73,7 +82,6 @@ Pane {
 
       Label {
         id: titleLabel
-        text: "Plugin name"
         font.pixelSize: 20
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHLeft
