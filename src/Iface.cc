@@ -634,8 +634,16 @@ bool ignition::gui::addPluginsToWindow()
     }
     QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
 
-    // Add plugin to card
-    plugin->Item()->setParentItem(cardItem);
+    auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
+    if (!cardContentItem)
+    {
+      ignerr << "Null card content QQuickItem!" << std::endl;
+      return false;
+    }
+    QQmlEngine::setObjectOwnership(cardContentItem, QQmlEngine::CppOwnership);
+
+    // Add plugin to card content
+    plugin->Item()->setParentItem(cardContentItem);
 
     // Add card to main window
     cardItem->setParentItem(g_mainWin->contentItem());
