@@ -138,6 +138,8 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           mainLayout->addWidget(stepLabel,   0, 2);
           mainLayout->addWidget(stepSpinBox, 0, 3);
 
+          mainLayout->setAlignment(stepLabel, Qt::AlignRight);
+
           auto startPaused = false;
           if (auto pausedElem = controlElem->FirstChildElement("start_paused"))
           {
@@ -219,13 +221,18 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
             if (hasRTF)
             {
+              auto rtfLabel = new QLabel("Real Time Factor");
+              mainLayout->addWidget(rtfLabel, 2, 0, 1, 2);
+              mainLayout->setAlignment(rtfLabel, Qt::AlignRight);
+
               auto rtf = new QLabel("N/A");
               rtf->setObjectName("realTimeFactorLabel");
+              rtf->setMinimumWidth(70);
+              rtf->setAlignment(Qt::AlignRight);
+              mainLayout->addWidget(rtf, 2, 2);
+              mainLayout->setAlignment(rtf, Qt::AlignRight);
               this->connect(this, SIGNAL(SetRealTimeFactor(QString)), rtf,
                   SLOT(setText(QString)));
-
-              mainLayout->addWidget(new QLabel("Real Time Factor"), 1, 4);
-              mainLayout->addWidget(rtf, 1, 5);
             }
           }
         }
