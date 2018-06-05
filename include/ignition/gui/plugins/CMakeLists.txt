@@ -6,7 +6,7 @@ set (qt_headers_local
 #  Responder
   Scene3D
 #  TimePanel
-#  TopicEcho
+  TopicEcho
 #  TopicInterface
 #  TopicsStats
 #  TopicViewer
