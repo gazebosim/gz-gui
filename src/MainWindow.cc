@@ -113,27 +113,6 @@ MainWindow::MainWindow()
 //  fileMenu->addAction(quitAct);
 //  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close())));
 //
-//  // Plugins menu
-//  auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
-//  pluginsMenu->setObjectName("pluginsMenu");
-//
-//  auto pluginMapper = new QSignalMapper(this);
-//  this->connect(pluginMapper, SIGNAL(mapped(QString)),
-//      this, SLOT(OnAddPlugin(QString)));
-//
-//  auto plugins = getPluginList();
-//  for (auto const &path : plugins)
-//  {
-//    for (auto const &plugin : path.second)
-//    {
-//      auto pluginName = plugin.substr(3, plugin.find(".") - 3);
-//
-//      auto act = new QAction(QString::fromStdString(pluginName), this);
-//      this->connect(act, SIGNAL(triggered()), pluginMapper, SLOT(map()));
-//      pluginMapper->setMapping(act, QString::fromStdString(plugin));
-//      pluginsMenu->addAction(act);
-//    }
-//  }
 //
 //  // Docking
 //  this->setDockOptions(QMainWindow::AnimatedDocks |
@@ -245,6 +224,23 @@ void MainWindow::OnPluginClose()
 {
   auto pluginName = this->sender()->objectName();
   removePlugin(pluginName.toStdString());
+}
+
+/////////////////////////////////////////////////
+QStringList MainWindow::PluginListModel() const
+{
+  QStringList pluginNames;
+  auto plugins = getPluginList();
+  for (auto const &path : plugins)
+  {
+    for (auto const &plugin : path.second)
+    {
+      // Remove lib and .so
+      auto pluginName = plugin.substr(3, plugin.find(".") - 3);
+      pluginNames.append(QString::fromStdString(pluginName));
+    }
+  }
+  return pluginNames;
 }
 
 ///////////////////////////////////////////////////

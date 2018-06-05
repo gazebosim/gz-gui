@@ -100,18 +100,16 @@ ApplicationWindow
 
       delegate: ItemDelegate {
         width: parent.width
-        text: model.title
+        text: modelData
         highlighted: ListView.isCurrentItem
         onClicked: {
           listView.currentIndex = index
-          MainWindow.OnAddPlugin(model.source);
+          MainWindow.OnAddPlugin(modelData);
           drawer.close()
         }
       }
 
-      model: ListModel {
-        ListElement { title: "Publisher"; source: "Publisher" }
-      }
+      model: MainWindow.PluginListModel()
 
       ScrollIndicator.vertical: ScrollIndicator { }
     }

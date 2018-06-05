@@ -658,13 +658,16 @@ bool ignition::gui::createMainWindow()
 
   igndbg << "Create main window" << std::endl;
 
-  g_engine->load(QUrl(QStringLiteral("qrc:qml/MainWindow.qml")));
-
-  g_mainWin = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
-
+  // FIXME: Either remove the MainWindow class or make it more closely tied to
+  // the QML.
+  // It's currently being used to run C++ code that needs a QObject, which
+  // Iface  doesn't have.
   g_mainWinIface = new MainWindow();
-
   g_engine->rootContext()->setContextProperty("MainWindow", g_mainWinIface);
+
+  // Load QML and keep pointer to generated QQuickWindow
+  g_engine->load(QUrl(QStringLiteral("qrc:qml/MainWindow.qml")));
+  g_mainWin = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
 
   return addPluginsToWindow();// && applyConfig();
 }

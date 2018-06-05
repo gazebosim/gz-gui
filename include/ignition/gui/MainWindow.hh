@@ -86,6 +86,10 @@ namespace ignition
       /// \param [in] _plugin Plugin filename
       public slots: void OnAddPlugin(QString _plugin);
 
+      /// \brief Return a list of all plugin names found
+      /// \return List with plugin names
+      public: Q_INVOKABLE QStringList PluginListModel() const;
+
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;
