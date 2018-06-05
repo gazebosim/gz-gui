@@ -56,7 +56,10 @@ namespace ignition
 //      /// \param[in] _config The configuration to apply.
 //      /// \return True if successful.
 //      public: bool ApplyConfig(const WindowConfig &_config);
-//
+
+        /// \brief Callback when user requests to close a plugin
+        public slots: void OnPluginClose();
+
 //      // Documentation inherited
 //      protected: void paintEvent(QPaintEvent *_event) override;
 //

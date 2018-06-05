@@ -208,6 +208,40 @@ void removeAddedPlugin(std::shared_ptr<Plugin> _plugin)
 }
 
 /////////////////////////////////////////////////
+bool ignition::gui::removePlugin(const std::string &_pluginName)
+{
+  bool found{false};
+  for (auto plugin : g_pluginsAdded)
+  {
+    auto pluginItem = plugin->Item();
+    if (!pluginItem)
+      continue;
+
+    auto contentItem = pluginItem->parentItem();
+    if (!contentItem)
+      continue;
+
+    auto cardItem = contentItem->parent();
+    if (!cardItem)
+      continue;
+
+    if (cardItem->objectName().toStdString() == _pluginName)
+    {
+      // Remove on QML
+      cardItem->deleteLater();
+
+      // Unload shared library
+      removeAddedPlugin(plugin);
+
+      found = true;
+      break;
+    }
+  }
+
+  return found;
+}
+
+/////////////////////////////////////////////////
 bool ignition::gui::runConfig(const std::string &_config)
 {
   igndbg << "Loading config file [" << _config << "]" << std::endl;
@@ -293,12 +327,41 @@ bool ignition::gui::runStandalone(const std::string &_filename)
       return false;
     }
 
-    // Add to dialog
-    plugin->Item()->setParentItem(dialogItem);
+    // Instantiate a card
+    QQmlComponent component(qmlEngine(), QString(":qml/Card.qml"));
 
-    // FIXME: Not working
-    dialogItem->setProperty("pluginName",
-        QString::fromStdString(plugin->Title()));
+    // Create an item
+    auto cardItem = qobject_cast<QQuickItem *>(component.create());
+    if (!cardItem)
+    {
+      ignerr << "Null card QQuickItem!" << std::endl;
+      return false;
+    }
+    QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
+
+    auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
+    if (!cardContentItem)
+    {
+      ignerr << "Null card content QQuickItem!" << std::endl;
+      return false;
+    }
+
+    // Add plugin to card content
+    plugin->Item()->setParentItem(cardContentItem);
+
+    // Add card to dialog
+    cardItem->setParentItem(dialogItem);
+
+    // Configure card
+    cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
+    cardItem->setProperty("width", 300);
+    cardItem->setProperty("height", 400);
+    cardItem->setProperty("hasDockButton", false);
+    cardItem->setProperty("hasCloseButton", false);
+
+    // Signals
+    g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,
+        SLOT(OnPluginClose()));
   }
 
   // Run app - blocks
@@ -642,7 +705,6 @@ bool ignition::gui::addPluginsToWindow()
       ignerr << "Null card content QQuickItem!" << std::endl;
       return false;
     }
-    QQmlEngine::setObjectOwnership(cardContentItem, QQmlEngine::CppOwnership);
 
     // Add plugin to card content
     plugin->Item()->setParentItem(cardContentItem);
@@ -655,6 +717,10 @@ bool ignition::gui::addPluginsToWindow()
     cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
     cardItem->setProperty("width", 300);
     cardItem->setProperty("height", 400);
+
+    // Signals
+    g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,
+        SLOT(OnPluginClose()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;

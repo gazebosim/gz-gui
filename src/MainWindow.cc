@@ -239,7 +239,14 @@ MainWindow::~MainWindow()
 //
 //  return true;
 //}
-//
+
+/////////////////////////////////////////////////
+void MainWindow::OnPluginClose()
+{
+  auto pluginName = this->sender()->objectName();
+  removePlugin(pluginName.toStdString());
+}
+
 ///////////////////////////////////////////////////
 //void MainWindow::OnLoadConfig()
 //{
