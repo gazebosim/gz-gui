@@ -57,9 +57,9 @@ TEST(TimePanelTest, DefaultConfig)
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Time panel");
 
-  // Empty
+  // Two children
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
@@ -273,6 +273,7 @@ TEST(TimePanelTest, WorldStats)
     auto simTimeMsg = msg.mutable_sim_time();
     simTimeMsg->set_sec(3600);
     simTimeMsg->set_nsec(123456789);
+    msg.set_paused(true);
     pub.Publish(msg);
   }
 
@@ -299,6 +300,7 @@ TEST(TimePanelTest, WorldStats)
     auto realTimeMsg = msg.mutable_real_time();
     realTimeMsg->set_sec(86400);
     realTimeMsg->set_nsec(1000000);
+    msg.set_paused(true);
     pub.Publish(msg);
   }
 
@@ -397,9 +399,9 @@ TEST(TimePanelTest, ControlWithoutService)
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
 
-  // Empty
+  // Two children
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
@@ -434,9 +436,9 @@ TEST(TimePanelTest, StatsWithoutTopic)
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
 
-  // Empty
+  // Two children
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
