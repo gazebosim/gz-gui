@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
 #============================================================================
 # Initialize the project
@@ -8,12 +8,12 @@ project(ignition-gui1 VERSION 1.0.0)
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake1 REQUIRED)
+find_package(ignition-cmake2 REQUIRED)
 
 #============================================================================
 # Configure the project
 #============================================================================
-ign_configure_project()
+ign_configure_project(VERSION_SUFFIX pre1)
 
 #============================================================================
 # Set project-specific options
@@ -44,8 +44,8 @@ set(IGN_MATH_VER ${ignition-math5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-common
-ign_find_package(ignition-common2 REQUIRED)
-set(IGN_COMMON_VER ${ignition-common2_VERSION_MAJOR})
+ign_find_package(ignition-common3 REQUIRED)
+set(IGN_COMMON_VER ${ignition-common3_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-transport
@@ -54,7 +54,7 @@ set(IGN_TRANSPORT_VER ${ignition-transport5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering0 REQUIRED)
+ign_find_package(ignition-rendering1 REQUIRED)
 set(IGN_RENDERING_VER ${ignition-rendering0_VERSION_MAJOR})
 
 #--------------------------------------
