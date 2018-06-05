@@ -15,19 +15,12 @@ pipelines:
             libignition-cmake1-dev
             libignition-common2-dev
             libignition-math5-dev
+            libignition-msgs2-dev
             libignition-tools-dev
             libignition-transport5-dev
             libogre-1.9-dev
           # Static checking before building
           - sh tools/code_check.sh
-          # Ignition msgs
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
-          - cd ign-msgs
-          - mkdir build
-          - cd build
-          - cmake .. # -DENABLE_TESTS_COMPILATION=false
-          - make -j4 install
-          - cd ../..
           # Ignition rendering
           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
           - cd ign-rendering
