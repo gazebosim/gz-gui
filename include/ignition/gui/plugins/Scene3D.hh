@@ -32,6 +32,7 @@ namespace gui
 namespace plugins
 {
   class Scene3DPrivate;
+  class RenderWindowItemPrivate;
 
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
@@ -98,7 +99,32 @@ namespace plugins
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
+
+
+    private: void InitializeEngine();
+    private: void ActivateRenderWindowContext();
+    private: void DoneRenderWindowContext();
   };
+
+  class RenderWindowItem: public QQuickItem 
+  {
+    Q_OBJECT
+
+    /// \brief Constructor
+    public: explicit RenderWindowItem(QQuickItem *_parent = nullptr);
+
+    public: virtual ~RenderWindowItem();
+
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
+
+
+    private: void InitializeEngine();
+    private: void ActivateRenderWindowContext();
+    private: void DoneRenderWindowContext();
+  };
+
 }
 }
 }

@@ -19,6 +19,12 @@
 #include <sstream>
 #include <string>
 
+#include <QtQuick/QSGGeometryNode>
+#include <QtQuick/QSGTextureMaterial>
+#include <QtQuick/QSGOpaqueTextureMaterial>
+#include <QtQuick/QQuickWindow>
+
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/common/PluginMacros.hh>
@@ -38,16 +44,40 @@ namespace gui
 {
 namespace plugins
 {
+  class RenderWindowItemPrivate
+  {
+    public: QQuickWindow *m_quickWindow;
+    public: QOpenGLContext* m_ogreContext;
+    public: QOpenGLContext* m_qtContext;
+
+
+    public: QSGTextureMaterial       m_material;
+    public: QSGOpaqueTextureMaterial m_materialO;
+    public: QSGGeometry              *m_geometry = nullptr; //(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
+    public: QSize                    m_size;
+    public: QSGTexture               *m_texture = nullptr;
+
+     // Default parameters
+    public: std::string engineName{"ogre"};
+    public: std::string sceneName{"scene"};
+    public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3);
+    public: math::Color backgroundColor = math::Color(0.3, 0.3, 0.3);
+    public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
+    /// \brief Pointer to user camera
+    public: rendering::CameraPtr camera;
+  };
+
+
   class Scene3DPrivate
   {
     /// \brief Timer to repaint the widget
-    public: QTimer *updateTimer;
+    // public: QTimer *updateTimer;
 
     /// \brief Pointer to user camera
-    public: rendering::CameraPtr camera;
+    // public: rendering::CameraPtr camera;
 
     /// \brief Pointer to render window
-    public: rendering::RenderWindowPtr renderWindow;
+    // public: rendering::RenderWindowPtr renderWindow;
 
     /// \brief Keep latest mouse event
     public: common::MouseEvent mouseEvent;
@@ -59,10 +89,6 @@ namespace plugins
     /// (Qt complains if we call this->winId() from the paint event)
     public: WId windowId;
 
-
-    QQuickWindow *m_quickWindow;
-    QOpenGLContext* m_ogreContext;
-    QOpenGLContext* m_qtContext;
   };
 }
 }
@@ -73,23 +99,10 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-Scene3D::Scene3D()
-  : Plugin(), dataPtr(new Scene3DPrivate)
+RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
+  : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
 {
-  QQmlComponent component(qmlEngine(),
-      QString(":/Scene3D/Scene3D.qml"));
-  this->item = qobject_cast<QQuickItem *>(component.create());
-  if (!this->item)
-  {
-    ignerr << "Null plugin QQuickItem!" << std::endl;
-    return;
-  }
-
-  qmlEngine()->rootContext()->setContextProperty("Scene3D", this);
-
-  this->LoadConfig(nullptr);
-
-  this->connect(this->item, &QQuickItem::windowChanged, [=](QQuickWindow *_window)
+  this->connect(this, &QQuickItem::windowChanged, [=](QQuickWindow *_window)
     {
       if (!_window)
       {
@@ -103,24 +116,164 @@ Scene3D::Scene3D()
         ignerr << "Null plugin QQuickWindow!" << std::endl;
         return;
       }
-      this->dataPtr->m_qtContext = QOpenGLContext::currentContext();
-      if (!this->dataPtr->m_qtContext)
-      {
-        ignerr << "Null plugin Qt context!" << std::endl;
-      }
+      // start Ogre once we are in the rendering thread (Ogre must live in the rendering thread)
+      connect(this->dataPtr->m_quickWindow, &QQuickWindow::beforeRendering,
+          this, &RenderWindowItem::InitializeEngine, Qt::DirectConnection);
 
-      // create a new shared OpenGL context to be used exclusively by Ogre
-      this->dataPtr->m_ogreContext = new QOpenGLContext();
-      this->dataPtr->m_ogreContext->setFormat(this->dataPtr->m_quickWindow->requestedFormat());
-      this->dataPtr->m_ogreContext->setShareContext(this->dataPtr->m_qtContext);
-      this->dataPtr->m_ogreContext->create();
+      
     });
 }
 
 /////////////////////////////////////////////////
+RenderWindowItem::~RenderWindowItem()
+{
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::InitializeEngine()
+{
+  disconnect(this->dataPtr->m_quickWindow, &QQuickWindow::beforeRendering,
+            this, &RenderWindowItem::InitializeEngine);
+  this->dataPtr->m_qtContext = QOpenGLContext::currentContext();
+  if (!this->dataPtr->m_qtContext)
+  {
+    ignerr << "Null plugin Qt context! lala" << std::endl;
+  }
+
+  // create a new shared OpenGL context to be used exclusively by Ogre
+  this->dataPtr->m_ogreContext = new QOpenGLContext();
+  this->dataPtr->m_ogreContext->setFormat(this->dataPtr->m_quickWindow->requestedFormat());
+  this->dataPtr->m_ogreContext->setShareContext(this->dataPtr->m_qtContext);
+  this->dataPtr->m_ogreContext->create();
+  ignerr << "created context " << std::endl;
+
+  this->ActivateRenderWindowContext();
+  // Render engine
+  auto engine = rendering::engine(this->dataPtr->engineName);
+  if (!engine)
+  {
+    ignerr << "Engine [" << this->dataPtr->engineName << "] is not supported" << std::endl;
+    return;
+  }
+
+  // Scene
+  auto scene = engine->SceneByName(this->dataPtr->sceneName);
+  if (!scene)
+  {
+    igndbg << "Create scene [" << this->dataPtr->sceneName << "]" << std::endl;
+    scene = engine->CreateScene(this->dataPtr->sceneName);
+    scene->SetAmbientLight(this->dataPtr->ambientLight);
+    scene->SetBackgroundColor(this->dataPtr->backgroundColor);
+  }
+  auto root = scene->RootVisual();
+
+  // Camera
+  igndbg << "Create camera" << std::endl;
+  this->dataPtr->camera = scene->CreateCamera();
+  root->AddChild(this->dataPtr->camera);
+  this->dataPtr->camera->SetLocalPose(this->dataPtr->cameraPose);
+  this->dataPtr->camera->SetImageWidth(800);
+  this->dataPtr->camera->SetImageHeight(600);
+  this->dataPtr->camera->SetAntiAliasing(2);
+//  this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
+  this->dataPtr->camera->SetHFOV(M_PI * 0.5);
+
+  this->DoneRenderWindowContext();
+  ignerr << "created engine" << std::endl;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::ActivateRenderWindowContext()
+{
+  glPopAttrib();
+  glPopClientAttrib();
+
+  this->dataPtr->m_qtContext->functions()->glUseProgram(0);
+  this->dataPtr->m_qtContext->doneCurrent();
+
+  this->dataPtr->m_ogreContext->makeCurrent(this->dataPtr->m_quickWindow);
+}
+
+
+/////////////////////////////////////////////////
+void RenderWindowItem::DoneRenderWindowContext()
+{
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+
+  // unbind all possible remaining buffers; just to be on safe side
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_COPY_READ_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_TEXTURE_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, 0);
+  this->dataPtr->m_ogreContext->functions()->glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  this->dataPtr->m_ogreContext->doneCurrent();
+  this->dataPtr->m_qtContext->makeCurrent(this->dataPtr->m_quickWindow);
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+}
+
+
+
+/////////////////////////////////////////////////
+Scene3D::Scene3D()
+  : Plugin(), dataPtr(new Scene3DPrivate)
+{
+  qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
+
+  QQmlComponent component(qmlEngine(),
+      QString(":/Scene3D/Scene3D.qml"), QQmlComponent::PreferSynchronous);
+  this->item = qobject_cast<QQuickItem *>(component.create());
+  if (!this->item)
+  {
+    ignerr << "Null plugin QQuickItem!" << std::endl;
+    return;
+  }
+
+  qmlEngine()->rootContext()->setContextProperty("Scene3D", this);
+
+
+   
+//  this->LoadConfig(nullptr);
+
+/*  this->connect(this->item, &QQuickItem::windowChanged, [=](QQuickWindow *_window)
+    {
+      if (!_window)
+      {
+        igndbg << "Changed to null window" << std::endl;
+        return;
+      }
+
+      this->dataPtr->m_quickWindow = _window;
+      if (!this->dataPtr->m_quickWindow)
+      {
+        ignerr << "Null plugin QQuickWindow!" << std::endl;
+        return;
+      }
+      // start Ogre once we are in the rendering thread (Ogre must live in the rendering thread)
+      connect(this->dataPtr->m_quickWindow, &QQuickWindow::beforeRendering,
+          this, &Scene3D::InitializeEngine, Qt::DirectConnection);
+
+      
+    });
+    */
+}
+
+
+/////////////////////////////////////////////////
 Scene3D::~Scene3D()
 {
-  igndbg << "Destroy camera [" << this->dataPtr->camera->Name() << "]"
+/*  igndbg << "Destroy camera [" << this->dataPtr->camera->Name() << "]"
          << std::endl;
   // Destroy camera
   auto scene = this->dataPtr->camera->Scene();
@@ -136,6 +289,7 @@ Scene3D::~Scene3D()
 
     // TODO: If that was the last scene, terminate engine?
   }
+  */
 }
 
 /////////////////////////////////////////////////
@@ -150,43 +304,37 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "3D Scene";
 
-  // Default parameters
-  std::string engineName{"ogre"};
-  std::string sceneName{"scene"};
-  math::Color ambientLight(0.3, 0.3, 0.3);
-  math::Color backgroundColor(0.3, 0.3, 0.3);
-  math::Pose3d cameraPose(0, 0, 5, 0, 0, 0);
-
   // Custom parameters
-  if (_pluginElem)
+  /*if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("engine"))
-      engineName = elem->GetText();
+      this->dataPtr->engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      sceneName = elem->GetText();
+      this->dataPtr->sceneName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("ambient_light"))
     {
       std::stringstream colorStr;
       colorStr << std::string(elem->GetText());
-      colorStr >> ambientLight;
+      colorStr >> this->dataPtr->ambientLight;
     }
 
     if (auto elem = _pluginElem->FirstChildElement("background_color"))
     {
       std::stringstream colorStr;
       colorStr << std::string(elem->GetText());
-      colorStr >> backgroundColor;
+      colorStr >> this->dataPtr->backgroundColor;
     }
 
     if (auto elem = _pluginElem->FirstChildElement("camera_pose"))
     {
       std::stringstream poseStr;
       poseStr << std::string(elem->GetText());
-      poseStr >> cameraPose;
+      poseStr >> this->dataPtr->cameraPose;
     }
   }
+  */
 
   // Layout
 //  this->setLayout(new QVBoxLayout());
@@ -200,7 +348,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Store window id
 //  this->dataPtr->windowId = this->winId();
 
-  // Render engine
+/*  // Render engine
   auto engine = rendering::engine(engineName);
   if (!engine)
   {
@@ -235,6 +383,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->connect(this->dataPtr->updateTimer, SIGNAL(timeout()),
       this->item, SLOT(update()));
   this->dataPtr->updateTimer->start(std::round(1000.0 / 60.0));
+  */
 }
 
 /////////////////////////////////////////////////
@@ -347,7 +496,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 math::Vector3d Scene3D::ScreenToScene(const math::Vector2i &_screenPos) const
 {
-  // Normalize point on the image
+/*  // Normalize point on the image
   double width = this->dataPtr->camera->ImageWidth();
   double height = this->dataPtr->camera->ImageHeight();
 
@@ -364,6 +513,7 @@ math::Vector3d Scene3D::ScreenToScene(const math::Vector2i &_screenPos) const
 
   // Set point to be 10m away if no intersection found
   return rayQuery->Origin() + rayQuery->Direction() * 10;
+  */
 }
 
 // Register this plugin
