@@ -348,22 +348,33 @@ void MainWindow::OnAddPlugin(QString _plugin)
 bool MainWindow::ApplyConfig(const WindowConfig &_config)
 {
   // Window position
-  if (_config.posX >= 0 && _config.posY >= 0)
+  if (!_config.IsIgnoring("position_x") &&
+      !_config.IsIgnoring("position_y") &&
+      !_config.IsIgnoring("position") &&
+      _config.posX >= 0 && _config.posY >= 0)
+  {
     this->move(_config.posX, _config.posY);
+  }
 
   // Window size
-  if (_config.width >= 0 && _config.height >= 0)
+  if (!_config.IsIgnoring("width") &&
+      !_config.IsIgnoring("height") &&
+      !_config.IsIgnoring("size") &&
+      _config.width >= 0 && _config.height >= 0)
+  {
     this->resize(_config.width, _config.height);
+  }
 
   // Docks state
-  if (!_config.state.isEmpty())
+  if (!_config.IsIgnoring("state") && !_config.state.isEmpty())
   {
     if (!this->restoreState(_config.state))
       ignwarn << "Failed to restore state" << std::endl;
   }
 
   // Stylesheet
-  setStyleFromString(_config.styleSheet);
+  if (!_config.IsIgnoring("stylesheet"))
+    setStyleFromString(_config.styleSheet);
 
   // Hide menus
   for (auto visible : _config.menuVisibilityMap)
@@ -435,9 +446,9 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   config.styleSheet = static_cast<QApplication *>(
       QApplication::instance())->styleSheet().toStdString();
 
-  // Menus configuration is kept the same as the initial one. The menus might
-  // have been changed programatically but we don't guarantee that will be
-  // saved.
+  // Menus configuration and ignored properties are kept the same as the
+  // initial ones. They might have been changed programatically but we
+  // don't guarantee that will be saved.
 
   // Plugins
   auto plugins = this->findChildren<Plugin *>();
@@ -538,6 +549,15 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
     }
   }
 
+  // Ignore
+  for (auto ignoreElem = winElem->FirstChildElement("ignore");
+      ignoreElem != nullptr;
+      ignoreElem = ignoreElem->NextSiblingElement("ignore"))
+  {
+    if (auto prop = ignoreElem->GetText())
+      this->ignoredProps.insert(prop);
+  }
+
   return true;
 }
 
@@ -551,12 +571,14 @@ std::string WindowConfig::XMLString() const
   doc.InsertEndChild(windowElem);
 
   // Position
+  if (!this->IsIgnoring("position") && !this->IsIgnoring("position_x"))
   {
     auto elem = doc.NewElement("position_x");
     elem->SetText(std::to_string(this->posX).c_str());
     windowElem->InsertEndChild(elem);
   }
 
+  if (!this->IsIgnoring("position") && !this->IsIgnoring("position_y"))
   {
     auto elem = doc.NewElement("position_y");
     elem->SetText(std::to_string(this->posY).c_str());
@@ -564,6 +586,7 @@ std::string WindowConfig::XMLString() const
   }
 
   // Docks state
+  if (!this->IsIgnoring("state"))
   {
     auto elem = doc.NewElement("state");
     elem->SetText(this->state.toBase64().toStdString().c_str());
@@ -571,12 +594,14 @@ std::string WindowConfig::XMLString() const
   }
 
   // Size
+  if (!this->IsIgnoring("size") && !this->IsIgnoring("width"))
   {
     auto elem = doc.NewElement("width");
     elem->SetText(std::to_string(this->width).c_str());
     windowElem->InsertEndChild(elem);
   }
 
+  if (!this->IsIgnoring("size") && !this->IsIgnoring("height"))
   {
     auto elem = doc.NewElement("height");
     elem->SetText(std::to_string(this->height).c_str());
@@ -584,6 +609,7 @@ std::string WindowConfig::XMLString() const
   }
 
   // Stylesheet
+  if (!this->IsIgnoring("stylesheet"))
   {
     auto elem = doc.NewElement("stylesheet");
     elem->SetText(this->styleSheet.c_str());
@@ -636,6 +662,16 @@ std::string WindowConfig::XMLString() const
     windowElem->InsertEndChild(menusElem);
   }
 
+  // Ignored properties
+  {
+    for (const auto &ignore : this->ignoredProps)
+    {
+      auto ignoreElem = doc.NewElement("ignore");
+      ignoreElem->SetText(ignore.c_str());
+      windowElem->InsertEndChild(ignoreElem);
+    }
+  }
+
   tinyxml2::XMLPrinter printer;
   doc.Print(&printer);
 
@@ -644,5 +680,11 @@ std::string WindowConfig::XMLString() const
   config += this->plugins;
 
   return config;
+}
+
+/////////////////////////////////////////////////
+bool WindowConfig::IsIgnoring(const std::string &_prop) const
+{
+  return this->ignoredProps.find(_prop) != this->ignoredProps.end();
 }
 

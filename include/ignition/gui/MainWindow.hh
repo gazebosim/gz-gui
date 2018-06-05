@@ -19,6 +19,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -92,7 +93,7 @@ namespace ignition
     struct IGNITION_GUI_VISIBLE WindowConfig
     {
       /// \brief Update this config from an XML string. Only fields present on
-      /// the XML will be overriden / created.
+      /// the XML will be overriden / appended / created.
       /// \param[in] _xml A config XML file in string format
       /// \return True if successful. It may fail for example if the string
       /// can't be parsed into XML.
@@ -101,6 +102,10 @@ namespace ignition
       /// \brief Return this configuration in XML format as a string.
       /// \return String containing a complete config file.
       std::string XMLString() const;
+
+      /// \brief Get whether a property should be ignored
+      /// \return True if it's being ignored
+      bool IsIgnoring(const std::string &_prop) const;
 
       /// \brief Window X position in px
       int posX{-1};
@@ -130,6 +135,9 @@ namespace ignition
 
       /// \brief List of plugins which should be shown on the list
       std::vector<std::string> showPlugins;
+
+      /// \brief List of window properties which should be ignored on load
+      std::set<std::string> ignoredProps;
 
       /// \brief Concatenation of all plugin configurations.
       std::string plugins{""};

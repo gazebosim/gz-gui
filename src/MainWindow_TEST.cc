@@ -474,6 +474,7 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_TRUE(c.menuVisibilityMap.empty());
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
+  EXPECT_TRUE(c.ignoredProps.empty());
 
   auto xml = c.XMLString();
 
@@ -485,6 +486,7 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_NE(xml.find("<menus>"), std::string::npos);
   EXPECT_NE(xml.find("<file"), std::string::npos);
   EXPECT_NE(xml.find("<plugins"), std::string::npos);
+  EXPECT_EQ(xml.find("<ignore>"), std::string::npos);
 }
 
 /////////////////////////////////////////////////
@@ -499,10 +501,12 @@ TEST(WindowConfigTest, mergeFromXML)
   c.posY = 400;
   c.width = 1000;
   c.height = 600;
+  c.ignoredProps.insert("state");
 
   // Merge from XML
   c.MergeFromXML(std::string("<window><position_x>5000</position_x>")+
-    "<menus><plugins from_paths=\"false\"/></menus></window>");
+    "<menus><plugins from_paths=\"false\"/></menus>" +
+    "<ignore>size</ignore></window>");
 
   // Check values
   EXPECT_EQ(c.posX, 5000);
@@ -514,6 +518,9 @@ TEST(WindowConfigTest, mergeFromXML)
   EXPECT_TRUE(c.menuVisibilityMap.empty());
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
+  EXPECT_EQ(c.ignoredProps.size(), 2u);
+  EXPECT_TRUE(c.IsIgnoring("state"));
+  EXPECT_TRUE(c.IsIgnoring("size"));
 }
 
 /////////////////////////////////////////////////
@@ -546,6 +553,32 @@ TEST(WindowConfigTest, MenusToString)
   EXPECT_NE(str.find("<show>PluginA</show>"), std::string::npos) << str;
   EXPECT_NE(str.find("<show>PluginB</show>"), std::string::npos) << str;
   EXPECT_EQ(str.find("<show>PluginC</show>"), std::string::npos) << str;
+}
+
+/////////////////////////////////////////////////
+TEST(WindowConfigTest, IgnoreToString)
+{
+  setVerbosity(4);
+
+  WindowConfig c;
+
+  // Set some ignored properties
+  c.ignoredProps.insert("position");
+  c.ignoredProps.insert("size");
+
+  // Check generated string
+  auto str = c.XMLString();
+  EXPECT_FALSE(str.empty());
+
+  // Ignored properties are not present
+  EXPECT_EQ(str.find("<position_x>"), std::string::npos) << str;
+  EXPECT_EQ(str.find("<position_y>"), std::string::npos) << str;
+  EXPECT_EQ(str.find("<width>"), std::string::npos) << str;
+  EXPECT_EQ(str.find("<height>"), std::string::npos) << str;
+
+  // Ignore blocks are persisted
+  EXPECT_NE(str.find("<ignore>position</ignore>"), std::string::npos) << str;
+  EXPECT_NE(str.find("<ignore>size</ignore>"), std::string::npos) << str;
 }
 
 /////////////////////////////////////////////////
