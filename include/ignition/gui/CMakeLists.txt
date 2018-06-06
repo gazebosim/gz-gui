@@ -19,8 +19,7 @@ set (qt_headers
 #  BoolWidget.hh
 #  CollapsibleWidget.hh
 #  ColorWidget.hh
-  Dialog.hh
-  Dock.hh
+#  Dialog.hh
 #  EditableLabel.hh
 #  EnumWidget.hh
 #  GeometryWidget.hh

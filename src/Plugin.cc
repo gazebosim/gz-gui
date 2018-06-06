@@ -31,7 +31,8 @@ class ignition::gui::PluginPrivate
   public: bool deleteLaterRequested{false};
 
   /// \brief
-  public: QQuickItem *item;
+  public: QQuickItem *pluginItem{nullptr};
+  public: QQuickItem *cardItem{nullptr};
 };
 
 using namespace ignition;
@@ -76,15 +77,19 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   auto context = new QQmlContext(qmlEngine()->rootContext());
   context->setContextProperty(QString::fromStdString(filename), this);
 
-  // Instantiate QML file into a component
+  // Instantiate plugin QML file into a component
   std::string qmlFile(":/" + filename + "/" + filename + ".qml");
   QQmlComponent component(qmlEngine(), QString::fromStdString(qmlFile));
 
-  // Create an item
-  this->dataPtr->item = qobject_cast<QQuickItem *>(component.create(context));
-  if (!this->dataPtr->item)
+  // Create an item for the plugin
+  this->dataPtr->pluginItem =
+      qobject_cast<QQuickItem *>(component.create(context));
+  if (!this->dataPtr->pluginItem)
   {
-    ignerr << "Null plugin QQuickItem!" << std::endl;
+    ignerr << "Failed to instantiate QML file [" << qmlFile << "]." << std::endl
+           << "Are you sure it's been added to the .qrc file?" << std::endl
+           << "Are you sure the file is valid QML? "
+           << "You can check with the `qmlscene` tool" << std::endl;
     return;
   }
 
@@ -174,8 +179,56 @@ bool Plugin::DeleteLaterRequested() const
 }
 
 /////////////////////////////////////////////////
-QQuickItem *Plugin::Item() const
+QQuickItem *Plugin::CardItem() const
 {
-  return this->dataPtr->item;
+  // If already created, just return it
+  if (this->dataPtr->cardItem)
+    return this->dataPtr->cardItem;
+
+  // Instantiate a card
+  std::string qmlFile(":qml/Card.qml");
+  QQmlComponent cardComp(qmlEngine(), QString(QString::fromStdString(qmlFile)));
+  auto cardItem = qobject_cast<QQuickItem *>(cardComp.create());
+  if (!cardItem)
+  {
+    ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+           << "]" << std::endl;
+    return nullptr;
+  }
+
+  // C++ ownership
+  QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
+
+  // Get card parts
+  auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
+  if (!cardContentItem)
+  {
+    ignerr << "Null card content QQuickItem!" << std::endl;
+    return nullptr;
+  }
+
+  auto cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
+  if (!cardToolbarItem)
+  {
+    ignerr << "Null toolbar content QQuickItem!" << std::endl;
+    return nullptr;
+  }
+
+  // Add plugin to card content
+  this->dataPtr->pluginItem->setParentItem(cardContentItem);
+
+  // Configure card
+  auto pluginWidth = this->dataPtr->pluginItem->property("width").toInt();
+  auto pluginHeight = this->dataPtr->pluginItem->property("height").toInt() +
+                      cardToolbarItem->property("height").toInt();
+
+  cardItem->setProperty("pluginName",
+      QString::fromStdString(this->Title()));
+  cardItem->setProperty("width", pluginWidth);
+  cardItem->setProperty("height", pluginHeight);
+
+  this->dataPtr->cardItem = cardItem;
+
+  return cardItem;
 }
 

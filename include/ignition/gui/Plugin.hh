@@ -61,7 +61,7 @@ namespace ignition
       public: virtual std::string ConfigStr() const;
 
       /// \brief
-      public: QQuickItem *Item() const;
+      public: QQuickItem *CardItem() const;
 
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.
