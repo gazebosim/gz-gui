@@ -686,7 +686,7 @@ bool ignition::gui::createMainWindow()
   g_engine->load(QUrl(QStringLiteral("qrc:qml/MainWindow.qml")));
   g_mainWin = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
 
-  return addPluginsToWindow();// && applyConfig();
+  return addPluginsToWindow() && applyConfig();
 }
 
 /////////////////////////////////////////////////
@@ -777,6 +777,12 @@ bool ignition::gui::addPluginsToWindow()
 bool ignition::gui::applyConfig()
 {
   igndbg << "Applying config" << std::endl;
+
+  // TODO: move this to MainWindow when g_mainWin and g_mainWinIface are
+  // consolidated
+  // Window size
+  if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
+    g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
 
   return true;//g_mainWin->ApplyConfig(g_windowConfig);
 }

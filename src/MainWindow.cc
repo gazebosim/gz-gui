@@ -452,206 +452,205 @@ void MainWindow::OnAddPlugin(QString _plugin)
 //
 //  return config;
 //}
-//
-///////////////////////////////////////////////////
-//bool WindowConfig::MergeFromXML(const std::string &_windowXml)
-//{
-//  // TinyXml element from string
-//  tinyxml2::XMLDocument doc;
-//  doc.Parse(_windowXml.c_str());
-//  auto winElem = doc.FirstChildElement("window");
-//
-//  if (!winElem)
-//    return false;
-//
-//  // Position
-//  if (auto xElem = winElem->FirstChildElement("position_x"))
-//    xElem->QueryIntText(&this->posX);
-//
-//  if (auto yElem = winElem->FirstChildElement("position_y"))
-//    yElem->QueryIntText(&this->posY);
-//
-//  // Size
-//  if (auto widthElem = winElem->FirstChildElement("width"))
-//    widthElem->QueryIntText(&this->width);
-//
-//  if (auto heightElem = winElem->FirstChildElement("height"))
-//    heightElem->QueryIntText(&this->height);
-//
-//  // Docks state
-//  if (auto stateElem = winElem->FirstChildElement("state"))
-//  {
-//    auto text = stateElem->GetText();
-//    this->state = QByteArray::fromBase64(text);
-//  }
-//
-//  // Stylesheet
-//  if (auto styleElem = winElem->FirstChildElement("stylesheet"))
-//  {
-//    if (auto txt = styleElem->GetText())
-//    {
-//      setStyleFromString(txt);
-//    }
-//    // empty string
-//    else
-//    {
-//      setStyleFromString("");
-//    }
-//  }
-//
-//  // Menus
-//  if (auto menusElem = winElem->FirstChildElement("menus"))
-//  {
-//    // File
-//    if (auto fileElem = menusElem->FirstChildElement("file"))
-//    {
-//      // Visible
-//      if (fileElem->Attribute("visible"))
-//      {
-//        bool visible = true;
-//        fileElem->QueryBoolAttribute("visible", &visible);
-//        this->menuVisibilityMap["file"] = visible;
-//      }
-//    }
-//
-//    // Plugins
-//    if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
-//    {
-//      // Visible
-//      if (pluginsElem->Attribute("visible"))
-//      {
-//        bool visible = true;
-//        pluginsElem->QueryBoolAttribute("visible", &visible);
-//        this->menuVisibilityMap["plugins"] = visible;
-//      }
-//
-//      // From paths
-//      if (pluginsElem->Attribute("from_paths"))
-//      {
-//        bool fromPaths = false;
-//        pluginsElem->QueryBoolAttribute("from_paths", &fromPaths);
-//        this->pluginsFromPaths = fromPaths;
-//      }
-//
-//      // Show individual plugins
-//      for (auto showElem = pluginsElem->FirstChildElement("show");
-//          showElem != nullptr;
-//          showElem = showElem->NextSiblingElement("show"))
-//      {
-//        if (auto pluginName = showElem->GetText())
-//          this->showPlugins.push_back(pluginName);
-//      }
-//    }
-//  }
-//
-//  return true;
-//}
-//
-///////////////////////////////////////////////////
-//std::string WindowConfig::XMLString() const
-//{
-//  tinyxml2::XMLDocument doc;
-//
-//  // Window
-//  auto windowElem = doc.NewElement("window");
-//  doc.InsertEndChild(windowElem);
-//
-//  // Position
-//  {
-//    auto elem = doc.NewElement("position_x");
-//    elem->SetText(std::to_string(this->posX).c_str());
-//    windowElem->InsertEndChild(elem);
-//  }
-//
-//  {
-//    auto elem = doc.NewElement("position_y");
-//    elem->SetText(std::to_string(this->posY).c_str());
-//    windowElem->InsertEndChild(elem);
-//  }
-//
-//  // Docks state
-//  {
-//    auto elem = doc.NewElement("state");
-//    elem->SetText(this->state.toBase64().toStdString().c_str());
-//    windowElem->InsertEndChild(elem);
-//  }
-//
-//  // Size
-//  {
-//    auto elem = doc.NewElement("width");
-//    elem->SetText(std::to_string(this->width).c_str());
-//    windowElem->InsertEndChild(elem);
-//  }
-//
-//  {
-//    auto elem = doc.NewElement("height");
-//    elem->SetText(std::to_string(this->height).c_str());
-//    windowElem->InsertEndChild(elem);
-//  }
-//
-//  // Stylesheet
-//  {
-//    auto elem = doc.NewElement("stylesheet");
-//    elem->SetText(this->styleSheet.c_str());
-//    windowElem->InsertEndChild(elem);
-//  }
-//
-//  // Menus
-//  {
-//    auto menusElem = doc.NewElement("menus");
-//    windowElem->InsertEndChild(menusElem);
-//
-//    // File
-//    {
-//      auto elem = doc.NewElement("file");
-//
-//      // Visible
-//      auto m = this->menuVisibilityMap.find("file");
-//      if (m != this->menuVisibilityMap.end())
-//      {
-//        elem->SetAttribute("visible", m->second);
-//      }
-//      menusElem->InsertEndChild(elem);
-//    }
-//
-//    // Plugins
-//    {
-//      auto elem = doc.NewElement("plugins");
-//
-//      // Visible
-//      auto m = this->menuVisibilityMap.find("plugins");
-//      if (m != this->menuVisibilityMap.end())
-//      {
-//        elem->SetAttribute("visible", m->second);
-//      }
-//
-//      // From paths
-//      elem->SetAttribute("from_paths", this->pluginsFromPaths);
-//
-//      // Show
-//      for (const auto &show : this->showPlugins)
-//      {
-//        auto showElem = doc.NewElement("show");
-//        showElem->SetText(show.c_str());
-//        elem->InsertEndChild(showElem);
-//      }
-//
-//      menusElem->InsertEndChild(elem);
-//    }
-//
-//    windowElem->InsertEndChild(menusElem);
-//  }
-//
-//  tinyxml2::XMLPrinter printer;
-//  doc.Print(&printer);
-//
-//  std::string config = "<?xml version=\"1.0\"?>\n\n";
-//  config += printer.CStr();
-//  config += this->plugins;
-//
-//  return config;
-//}
-//
+
+/////////////////////////////////////////////////
+bool WindowConfig::MergeFromXML(const std::string &_windowXml)
+{
+  // TinyXml element from string
+  tinyxml2::XMLDocument doc;
+  doc.Parse(_windowXml.c_str());
+  auto winElem = doc.FirstChildElement("window");
+
+  if (!winElem)
+    return false;
+
+  // Position
+  if (auto xElem = winElem->FirstChildElement("position_x"))
+    xElem->QueryIntText(&this->posX);
+
+  if (auto yElem = winElem->FirstChildElement("position_y"))
+    yElem->QueryIntText(&this->posY);
+
+  // Size
+  if (auto widthElem = winElem->FirstChildElement("width"))
+    widthElem->QueryIntText(&this->width);
+
+  if (auto heightElem = winElem->FirstChildElement("height"))
+    heightElem->QueryIntText(&this->height);
+
+  // Docks state
+  if (auto stateElem = winElem->FirstChildElement("state"))
+  {
+    auto text = stateElem->GetText();
+    this->state = QByteArray::fromBase64(text);
+  }
+
+  // Stylesheet
+  if (auto styleElem = winElem->FirstChildElement("stylesheet"))
+  {
+    if (auto txt = styleElem->GetText())
+    {
+      setStyleFromString(txt);
+    }
+    // empty string
+    else
+    {
+      setStyleFromString("");
+    }
+  }
+
+  // Menus
+  if (auto menusElem = winElem->FirstChildElement("menus"))
+  {
+    // File
+    if (auto fileElem = menusElem->FirstChildElement("file"))
+    {
+      // Visible
+      if (fileElem->Attribute("visible"))
+      {
+        bool visible = true;
+        fileElem->QueryBoolAttribute("visible", &visible);
+        this->menuVisibilityMap["file"] = visible;
+      }
+    }
+
+    // Plugins
+    if (auto pluginsElem = menusElem->FirstChildElement("plugins"))
+    {
+      // Visible
+      if (pluginsElem->Attribute("visible"))
+      {
+        bool visible = true;
+        pluginsElem->QueryBoolAttribute("visible", &visible);
+        this->menuVisibilityMap["plugins"] = visible;
+      }
+
+      // From paths
+      if (pluginsElem->Attribute("from_paths"))
+      {
+        bool fromPaths = false;
+        pluginsElem->QueryBoolAttribute("from_paths", &fromPaths);
+        this->pluginsFromPaths = fromPaths;
+      }
+
+      // Show individual plugins
+      for (auto showElem = pluginsElem->FirstChildElement("show");
+          showElem != nullptr;
+          showElem = showElem->NextSiblingElement("show"))
+      {
+        if (auto pluginName = showElem->GetText())
+          this->showPlugins.push_back(pluginName);
+      }
+    }
+  }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+std::string WindowConfig::XMLString() const
+{
+  tinyxml2::XMLDocument doc;
+
+  // Window
+  auto windowElem = doc.NewElement("window");
+  doc.InsertEndChild(windowElem);
+
+  // Position
+  {
+    auto elem = doc.NewElement("position_x");
+    elem->SetText(std::to_string(this->posX).c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  {
+    auto elem = doc.NewElement("position_y");
+    elem->SetText(std::to_string(this->posY).c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  // Docks state
+  {
+    auto elem = doc.NewElement("state");
+    elem->SetText(this->state.toBase64().toStdString().c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  // Size
+  {
+    auto elem = doc.NewElement("width");
+    elem->SetText(std::to_string(this->width).c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  {
+    auto elem = doc.NewElement("height");
+    elem->SetText(std::to_string(this->height).c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  // Stylesheet
+  {
+    auto elem = doc.NewElement("stylesheet");
+    elem->SetText(this->styleSheet.c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  // Menus
+  {
+    auto menusElem = doc.NewElement("menus");
+    windowElem->InsertEndChild(menusElem);
+
+    // File
+    {
+      auto elem = doc.NewElement("file");
+
+      // Visible
+      auto m = this->menuVisibilityMap.find("file");
+      if (m != this->menuVisibilityMap.end())
+      {
+        elem->SetAttribute("visible", m->second);
+      }
+      menusElem->InsertEndChild(elem);
+    }
+
+    // Plugins
+    {
+      auto elem = doc.NewElement("plugins");
+
+      // Visible
+      auto m = this->menuVisibilityMap.find("plugins");
+      if (m != this->menuVisibilityMap.end())
+      {
+        elem->SetAttribute("visible", m->second);
+      }
+
+      // From paths
+      elem->SetAttribute("from_paths", this->pluginsFromPaths);
+
+      // Show
+      for (const auto &show : this->showPlugins)
+      {
+        auto showElem = doc.NewElement("show");
+        showElem->SetText(show.c_str());
+        elem->InsertEndChild(showElem);
+      }
+
+      menusElem->InsertEndChild(elem);
+    }
+
+    windowElem->InsertEndChild(menusElem);
+  }
+
+  tinyxml2::XMLPrinter printer;
+  doc.Print(&printer);
+
+  std::string config = "<?xml version=\"1.0\"?>\n\n";
+  config += printer.CStr();
+  config += this->plugins;
+
+  return config;
+}
 
 /////////////////////////////////////////////////
 int MainWindow::PluginCount() const
