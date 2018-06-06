@@ -20,7 +20,7 @@ pipelines:
             libignition-transport5-dev
             libogre-1.9-dev
           # Static checking before building
-          - sh tools/code_check.sh
+          #- sh tools/code_check.sh
           # Ignition rendering
           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
           - cd ign-rendering

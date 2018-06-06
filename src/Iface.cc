@@ -366,7 +366,8 @@ bool ignition::gui::runStandalone(const std::string &_filename)
     auto pluginHeight = plugin->Item()->property("height").toInt() +
                         cardToolbarItem->property("height").toInt();
 
-    cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
+    cardItem->setProperty("pluginName",
+        QString::fromStdString(plugin->Title()));
     cardItem->setProperty("width", pluginWidth);
     cardItem->setProperty("height", pluginHeight);
     cardItem->setProperty("hasDockButton", false);
@@ -561,7 +562,7 @@ bool ignition::gui::setStyleFromString(const std::string &_style)
     return false;
 
   g_windowConfig.styleSheet = _style;
-  //g_app->setStyleSheet(QString::fromStdString(g_windowConfig.styleSheet));
+  // g_app->setStyleSheet(QString::fromStdString(g_windowConfig.styleSheet));
 
   // \todo Return false if sheet is can't be correctly parsed.
   return true;
@@ -754,7 +755,8 @@ bool ignition::gui::addPluginsToWindow()
     auto pluginHeight = plugin->Item()->property("height").toInt() +
                         cardToolbarItem->property("height").toInt();
 
-    cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
+    cardItem->setProperty("pluginName",
+        QString::fromStdString(plugin->Title()));
     cardItem->setProperty("width", pluginWidth);
     cardItem->setProperty("height", pluginHeight);
 
@@ -784,13 +786,13 @@ bool ignition::gui::applyConfig()
   if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
     g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
 
-  return true;//g_mainWin->ApplyConfig(g_windowConfig);
+  return true;  // g_mainWin->ApplyConfig(g_windowConfig);
 }
 
 /////////////////////////////////////////////////
 ignition::gui::MainWindow *ignition::gui::mainWindow()
 {
-  return nullptr;//g_mainWin;
+  return g_mainWinIface;
 }
 
 /////////////////////////////////////////////////

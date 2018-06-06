@@ -144,14 +144,14 @@ void Plugin::ShowContextMenu(const QPoint &_pos)
 }
 
 /////////////////////////////////////////////////
-//void Plugin::changeEvent(QEvent *_e)
-//{
-//  if (_e->type() == QEvent::ParentChange && this->parent() &&
-//      this->dataPtr->deleteLater)
-//  {
-//    qobject_cast<QWidget *>(this->parent())->close();
-//  }
-//}
+// void Plugin::changeEvent(QEvent *_e)
+// {
+//   if (_e->type() == QEvent::ParentChange && this->parent() &&
+//       this->dataPtr->deleteLater)
+//   {
+//     qobject_cast<QWidget *>(this->parent())->close();
+//   }
+// }
 
 /////////////////////////////////////////////////
 void Plugin::DeleteLater()

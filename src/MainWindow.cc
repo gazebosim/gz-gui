@@ -80,14 +80,16 @@ MainWindow::MainWindow()
 //
 //  auto loadConfigAct = new QAction(tr("&Load configuration"), this);
 //  loadConfigAct->setStatusTip(tr("Load configuration"));
-//  this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
+//  this->connect(loadConfigAct, SIGNAL(triggered()), this,
+//      SLOT(OnLoadConfig()));
 //  fileMenu->addAction(loadConfigAct);
 //  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_O, this,
 //      SLOT(OnLoadConfig())));
 //
 //  auto saveConfigAct = new QAction(tr("&Save configuration"), this);
 //  saveConfigAct->setStatusTip(tr("Save configuration"));
-//  this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
+//  this->connect(saveConfigAct, SIGNAL(triggered()), this,
+//      SLOT(OnSaveConfig()));
 //  fileMenu->addAction(saveConfigAct);
 //  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_S, this,
 //      SLOT(OnSaveConfig())));
@@ -114,8 +116,8 @@ MainWindow::MainWindow()
 //  quitAct->setStatusTip(tr("Quit"));
 //  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
 //  fileMenu->addAction(quitAct);
-//  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close())));
-//
+//  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this,
+//      SLOT(close())));
 //
 //  // Docking
 //  this->setDockOptions(QMainWindow::AnimatedDocks |
@@ -129,19 +131,19 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
-//void MainWindow::paintEvent(QPaintEvent *_event)
-//{
+// void MainWindow::paintEvent(QPaintEvent *_event)
+// {
 //  this->dataPtr->paintCount++;
 //  if (this->dataPtr->paintCount == this->dataPtr->paintCountMin)
 //  {
 //    this->dataPtr->windowConfig = this->CurrentWindowConfig();
 //  }
 //  _event->accept();
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void MainWindow::closeEvent(QCloseEvent *_event)
-//{
+// void MainWindow::closeEvent(QCloseEvent *_event)
+// {
 //  if (this->dataPtr->paintCount < this->dataPtr->paintCountMin ||
 //      this->dataPtr->windowConfig.XMLString() ==
 //      this->CurrentWindowConfig().XMLString())
@@ -203,11 +205,11 @@ MainWindow::~MainWindow()
 //    this->OnSaveConfigAs();
 //  }
 //  _event->accept();
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//bool MainWindow::CloseAllDocks()
-//{
+// bool MainWindow::CloseAllDocks()
+// {
 //  igndbg << "Closing all docks" << std::endl;
 //
 //  auto docks = this->findChildren<QDockWidget *>();
@@ -220,7 +222,7 @@ MainWindow::~MainWindow()
 //  QCoreApplication::processEvents();
 //
 //  return true;
-//}
+// }
 
 /////////////////////////////////////////////////
 void MainWindow::OnPluginClose()
@@ -247,8 +249,8 @@ QStringList MainWindow::PluginListModel() const
 }
 
 ///////////////////////////////////////////////////
-//void MainWindow::OnLoadConfig()
-//{
+// void MainWindow::OnLoadConfig()
+// {
 //  QFileDialog fileDialog(this, tr("Load configuration"), QDir::homePath(),
 //      tr("*.config"));
 //  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
@@ -269,17 +271,17 @@ QStringList MainWindow::PluginListModel() const
 //
 //  addPluginsToWindow();
 //  applyConfig();
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void MainWindow::OnSaveConfig()
-//{
+// void MainWindow::OnSaveConfig()
+// {
 //  this->SaveConfig(defaultConfigPath());
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void MainWindow::OnSaveConfigAs()
-//{
+// void MainWindow::OnSaveConfigAs()
+// {
 //  QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
 //      tr("*.config"));
 //  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
@@ -294,11 +296,11 @@ QStringList MainWindow::PluginListModel() const
 //    return;
 //
 //  this->SaveConfig(selected[0].toStdString());
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void MainWindow::SaveConfig(const std::string &_path)
-//{
+// void MainWindow::SaveConfig(const std::string &_path)
+// {
 //  this->dataPtr->windowConfig = this->CurrentWindowConfig();
 //
 //  // Create the intermediate directories if needed.
@@ -320,11 +322,11 @@ QStringList MainWindow::PluginListModel() const
 //    out << this->dataPtr->windowConfig.XMLString();
 //
 //  ignmsg << "Saved configuration [" << _path << "]" << std::endl;
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void MainWindow::OnLoadStylesheet()
-//{
+// void MainWindow::OnLoadStylesheet()
+// {
 //  QFileDialog fileDialog(this, tr("Load stylesheet"), QDir::homePath(),
 //      tr("*.qss"));
 //  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
@@ -338,7 +340,7 @@ QStringList MainWindow::PluginListModel() const
 //    return;
 //
 //  setStyleFromFile(selected[0].toStdString());
-//}
+// }
 
 /////////////////////////////////////////////////
 void MainWindow::OnAddPlugin(QString _plugin)
@@ -351,8 +353,8 @@ void MainWindow::OnAddPlugin(QString _plugin)
 }
 
 ///////////////////////////////////////////////////
-//bool MainWindow::ApplyConfig(const WindowConfig &_config)
-//{
+// bool MainWindow::ApplyConfig(const WindowConfig &_config)
+// {
 //  // Window position
 //  if (!_config.IsIgnoring("position_x") &&
 //      !_config.IsIgnoring("position_y") &&
@@ -430,11 +432,11 @@ void MainWindow::OnAddPlugin(QString _plugin)
 //  QCoreApplication::processEvents();
 //
 //  return true;
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//WindowConfig MainWindow::CurrentWindowConfig() const
-//{
+// WindowConfig MainWindow::CurrentWindowConfig() const
+// {
 //  WindowConfig config;
 //
 //  // Position
@@ -466,7 +468,7 @@ void MainWindow::OnAddPlugin(QString _plugin)
 //    config.plugins += plugin->ConfigStr();
 //
 //  return config;
-//}
+// }
 
 /////////////////////////////////////////////////
 bool WindowConfig::MergeFromXML(const std::string &_windowXml)
