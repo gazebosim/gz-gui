@@ -449,6 +449,10 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we
   // don't guarantee that will be saved.
+  config.menuVisibilityMap = this->dataPtr->windowConfig.menuVisibilityMap;
+  config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
+  config.showPlugins = this->dataPtr->windowConfig.showPlugins;
+  config.ignoredProps = this->dataPtr->windowConfig.ignoredProps;
 
   // Plugins
   auto plugins = this->findChildren<Plugin *>();

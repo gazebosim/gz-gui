@@ -58,15 +58,15 @@ namespace ignition
       /// \return True if successful.
       public: bool ApplyConfig(const WindowConfig &_config);
 
+      /// \brief Get the current window configuration.
+      /// \return Updated window config
+      public: WindowConfig CurrentWindowConfig() const;
+
       // Documentation inherited
       protected: void paintEvent(QPaintEvent *_event) override;
 
       // Documentation inherited
       protected: void closeEvent(QCloseEvent *_event) override;
-
-      /// \brief Get the current window configuration.
-      /// \return Updated window config
-      private: WindowConfig CurrentWindowConfig() const;
 
       /// \brief Callback when load configuration is selected
       private slots: void OnLoadConfig();

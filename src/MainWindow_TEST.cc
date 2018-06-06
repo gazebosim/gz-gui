@@ -633,3 +633,59 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
   EXPECT_TRUE(stop());
 }
 
+/////////////////////////////////////////////////
+TEST(MainWindowTest, ApplyConfig)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Main window
+  auto mainWindow = new MainWindow;
+  ASSERT_TRUE(mainWindow);
+
+  // Default config
+  {
+    auto c = mainWindow->CurrentWindowConfig();
+    EXPECT_TRUE(c.menuVisibilityMap.empty());
+    EXPECT_TRUE(c.pluginsFromPaths);
+    EXPECT_TRUE(c.showPlugins.empty());
+    EXPECT_TRUE(c.ignoredProps.empty());
+  }
+
+  // Apply a config
+  {
+    WindowConfig c;
+    c.posX = 1000;
+    c.posY = 2000;
+    c.width = 100;
+    c.height = 200;
+    c.styleSheet = "pineapple";
+    c.menuVisibilityMap["File"] = false;
+    c.pluginsFromPaths = false;
+    c.showPlugins.push_back("watermelon");
+    c.ignoredProps.insert("position");
+
+    mainWindow->ApplyConfig(c);
+  }
+
+  // Check applied config
+  {
+    auto c = mainWindow->CurrentWindowConfig();
+
+    // ignored
+    EXPECT_NE(c.posX, 1000);
+    EXPECT_NE(c.posY, 2000);
+
+    EXPECT_EQ(c.width, 100);
+    EXPECT_EQ(c.height, 200);
+    EXPECT_EQ(c.styleSheet, "pineapple");
+    EXPECT_FALSE(c.menuVisibilityMap["File"]);
+    EXPECT_FALSE(c.pluginsFromPaths);
+    EXPECT_EQ(c.showPlugins.size(), 1u);
+    EXPECT_EQ(c.ignoredProps.size(), 1u);
+  }
+
+  delete mainWindow;
+  EXPECT_TRUE(stop());
+}
+
