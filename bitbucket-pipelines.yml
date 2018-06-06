@@ -11,7 +11,11 @@ pipelines:
           - apt update
           - apt install -y
             build-essential wget cmake cppcheck mercurial
-            qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
+            qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
+            qtdeclarative5-dev
+            qml-module-qtquick-controls
+            qml-module-qtquick-controls2
+            qml-module-qtquick-layouts
             libignition-cmake1-dev
             libignition-common2-dev
             libignition-math5-dev
