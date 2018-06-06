@@ -247,7 +247,7 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   auto spacerV = new QWidget();
   spacerV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacerV, 2, 0, 1, 5);
+  mainLayout->addWidget(spacerV, 3, 0, 1, 5);
 
   this->setLayout(mainLayout);
 }
