@@ -9,6 +9,8 @@ Rectangle {
 
   RenderWindow {
     id: renderWindow
+    anchors.fill: parent
+    anchors.margins: 20
   }
 }
 

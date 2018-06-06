@@ -111,6 +111,7 @@ ApplicationWindow
 
       model: ListModel {
         ListElement { title: "Publisher"; source: "Publisher" }
+        ListElement { title: "Scene3D"; source: "Scene3D" }
       }
 
       ScrollIndicator.vertical: ScrollIndicator { }

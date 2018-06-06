@@ -52,16 +52,18 @@ namespace plugins
 
 
     public: QSGTextureMaterial       m_material;
-    public: QSGOpaqueTextureMaterial m_materialO;
+    public: QSGOpaqueTextureMaterial m_materialOpaque;
     public: QSGGeometry              *m_geometry = nullptr; //(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
-    public: QSize                    m_size;
+    public: QSize                    size;
     public: QSGTexture               *m_texture = nullptr;
+
+    public: bool initialized = false;
 
      // Default parameters
     public: std::string engineName{"ogre"};
     public: std::string sceneName{"scene"};
     public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3);
-    public: math::Color backgroundColor = math::Color(0.3, 0.3, 0.3);
+    public: math::Color backgroundColor = math::Color(1.0, 0.3, 0.3);
     public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
     /// \brief Pointer to user camera
     public: rendering::CameraPtr camera;
@@ -102,6 +104,14 @@ using namespace plugins;
 RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
   : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
 {
+
+  this->setFlag(ItemHasContents);
+  this->setSmooth(false);
+  this->startTimer(16);
+
+  this->dataPtr->m_geometry =
+      new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
+
   this->connect(this, &QQuickItem::windowChanged, [=](QQuickWindow *_window)
     {
       if (!_window)
@@ -127,6 +137,7 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 /////////////////////////////////////////////////
 RenderWindowItem::~RenderWindowItem()
 {
+  delete this->dataPtr->m_geometry;
 }
 
 /////////////////////////////////////////////////
@@ -180,6 +191,7 @@ void RenderWindowItem::InitializeEngine()
 
   this->DoneRenderWindowContext();
   ignerr << "created engine" << std::endl;
+  this->dataPtr->initialized = true;
 }
 
 /////////////////////////////////////////////////
@@ -223,6 +235,102 @@ void RenderWindowItem::DoneRenderWindowContext()
   glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 }
 
+
+/////////////////////////////////////////////////
+void RenderWindowItem::timerEvent(QTimerEvent *)
+{
+  this->update();
+}
+
+
+/////////////////////////////////////////////////
+QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode, QQuickItem::UpdatePaintNodeData *)
+{
+  if (!this->dataPtr->initialized)
+  {
+    return nullptr;
+  }
+
+  this->ActivateRenderWindowContext();
+  this->dataPtr->camera->Update();
+  this->UpdateFBO();
+  this->DoneRenderWindowContext();
+
+
+
+  if (this->width() <= 0 || this->height() <= 0 || !this->dataPtr->m_texture)
+  {
+    if (_oldNode)
+    {
+      delete _oldNode;
+    }
+    return nullptr;
+  }
+
+  QSGGeometryNode *node = static_cast<QSGGeometryNode *>(_oldNode);
+
+  if (!node)
+  {
+    node = new QSGGeometryNode();
+    node->setGeometry(this->dataPtr->m_geometry);
+    node->setMaterial(&this->dataPtr->m_material);
+    node->setOpaqueMaterial(&this->dataPtr->m_materialOpaque);
+  }
+
+  node->markDirty(QSGNode::DirtyGeometry);
+  node->markDirty(QSGNode::DirtyMaterial);
+
+  std::cerr << "done update paint node " << std::endl;
+
+  return node;
+}
+
+
+/////////////////////////////////////////////////
+void RenderWindowItem::UpdateFBO()
+{
+  std::cerr << " update fbo" << std::endl;
+
+  QSize wsz(static_cast<qint32>(this->width()),
+      static_cast<qint32>(this->height()));
+
+  std::cerr << "  wh " << this->width() << " " << this->height() << std::endl;
+  std::cerr << "  size " << this->dataPtr->size.width() << " "
+      << this->dataPtr->size.height() << std::endl;
+
+  if (this->width() <= 0 || this->height() <= 0 || (wsz == this->dataPtr->size)) 
+  {
+    return;
+  }
+
+  this->dataPtr->size = wsz;
+
+  // setting the size should cause the render texture to be rebuilt
+  this->dataPtr->camera->SetImageWidth(this->dataPtr->size.width());
+  this->dataPtr->camera->SetImageHeight(this->dataPtr->size.height());
+  this->dataPtr->camera->PreRender();
+  
+
+  QSGGeometry::updateTexturedRectGeometry(this->dataPtr->m_geometry,
+      QRectF(0.0, 0.0, this->dataPtr->size.width(),
+      this->dataPtr->size.height()),
+      QRectF(0.0, 0.0, 1.0, 1.0));
+
+  // Ogre::GLTexture *native_texture = static_cast<Ogre::GLTexture *>(rtt.get());
+
+  delete this->dataPtr->m_texture;
+
+
+  std::cerr << " render texture gl id " << std::to_string(this->dataPtr->camera->RenderTextureGLId()) <<std::endl;
+  this->dataPtr->m_texture = window()->createTextureFromId(
+      this->dataPtr->camera->RenderTextureGLId(), /*native_texture->getGLID(),*/
+      this->dataPtr->size);
+
+  this->dataPtr->m_material.setTexture(this->dataPtr->m_texture);
+  this->dataPtr->m_materialOpaque.setTexture(this->dataPtr->m_texture);
+
+  std::cerr << " done update fbo" << std::endl;
+}
 
 
 /////////////////////////////////////////////////
