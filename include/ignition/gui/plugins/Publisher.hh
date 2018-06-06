@@ -20,7 +20,6 @@
 
 #include <memory>
 
-#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
@@ -80,9 +79,6 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief
-    public: QQuickItem *Item() const override;
-
     /// \brief Callback when publish button is checked or unchecked.
     /// \param[in] _checked True if button is checked.
     public slots: void OnPublish(const bool _checked);
@@ -102,8 +98,6 @@ namespace plugins
     public: double Frequency() const;
     public: void SetFrequency(const double _frequency);
     signals: void FrequencyChanged();
-
-    private: QQuickItem *item;
 
     /// \internal
     /// \brief Pointer to private data.

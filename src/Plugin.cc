@@ -16,6 +16,7 @@
  */
 
 #include <ignition/common/Console.hh>
+#include "ignition/gui/Iface.hh"
 #include "ignition/gui/Plugin.hh"
 
 class ignition::gui::PluginPrivate
@@ -28,6 +29,9 @@ class ignition::gui::PluginPrivate
   /// configuration. Subclasses can check this value for example to return
   /// before the end of LoadConfig.
   public: bool deleteLaterRequested{false};
+
+  /// \brief
+  public: QQuickItem *item;
 };
 
 using namespace ignition;
@@ -63,6 +67,25 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   else
   {
     this->configStr = std::string(printer.CStr());
+  }
+
+  // Qml file
+  std::string filename = _pluginElem->Attribute("filename");
+
+  // This let's <filename>.qml use <pluginclass> functions and properties
+  auto context = new QQmlContext(qmlEngine()->rootContext());
+  context->setContextProperty(QString::fromStdString(filename), this);
+
+  // Instantiate QML file into a component
+  std::string qmlFile(":/" + filename + "/" + filename + ".qml");
+  QQmlComponent component(qmlEngine(), QString::fromStdString(qmlFile));
+
+  // Create an item
+  this->dataPtr->item = qobject_cast<QQuickItem *>(component.create(context));
+  if (!this->dataPtr->item)
+  {
+    ignerr << "Null plugin QQuickItem!" << std::endl;
+    return;
   }
 
   // Delete later
@@ -148,5 +171,11 @@ void Plugin::DeleteLater()
 bool Plugin::DeleteLaterRequested() const
 {
   return this->dataPtr->deleteLaterRequested;
+}
+
+/////////////////////////////////////////////////
+QQuickItem *Plugin::Item() const
+{
+  return this->dataPtr->item;
 }
 

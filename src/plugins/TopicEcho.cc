@@ -62,35 +62,14 @@ using namespace plugins;
 TopicEcho::TopicEcho()
   : Plugin(), dataPtr(new TopicEchoPrivate)
 {
-  // This let's TopicEcho.qml use `TopicEcho` functions and properties
-  qmlEngine()->rootContext()->setContextProperty("TopicEcho", this);
+  // Connect model
   qmlEngine()->rootContext()->setContextProperty("TopicEchoMsgList",
       &this->dataPtr->msgList);
-
-  // Instantiate QML file into a component
-  QQmlComponent component(qmlEngine(),
-      QString(":/TopicEcho/TopicEcho.qml"));
-
-  // Create an item
-  this->item = qobject_cast<QQuickItem *>(component.create());
-  if (!this->item)
-  {
-    ignerr << "Null plugin QQuickItem!" << std::endl;
-    return;
-  }
-
-  this->LoadConfig(nullptr);
 }
 
 /////////////////////////////////////////////////
 TopicEcho::~TopicEcho()
 {
-}
-
-/////////////////////////////////////////////////
-QQuickItem *TopicEcho::Item() const
-{
-  return this->item;
 }
 
 /////////////////////////////////////////////////

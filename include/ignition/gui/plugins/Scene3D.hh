@@ -22,7 +22,6 @@
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
-#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
@@ -71,10 +70,6 @@ namespace plugins
     public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
         const;
 
-    /// \brief
-    public: QQuickItem *Item() const override;
-    private: QQuickItem *item;
-
     // Documentation inherited
 //    protected: virtual QPaintEngine *paintEngine() const override;
 
@@ -106,7 +101,7 @@ namespace plugins
     private: void DoneRenderWindowContext();
   };
 
-  class RenderWindowItem: public QQuickItem 
+  class RenderWindowItem: public QQuickItem
   {
     Q_OBJECT
 

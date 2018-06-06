@@ -28,7 +28,6 @@
 
 #include <memory>
 
-#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
@@ -80,9 +79,6 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief
-    public: QQuickItem *Item() const override;
-
     public: Q_INVOKABLE QString Topic() const;
     public: Q_INVOKABLE void SetTopic(const QString &_topic);
     signals: void TopicChanged();
@@ -112,8 +108,6 @@ namespace plugins
     /// \brief Callback from the ::AddMsg signal.
     /// \param[in] _msg Message to add to the list.
     private slots: void OnAddMsg(QString _msg);
-
-    private: QQuickItem *item;
 
     /// \internal
     /// \brief Pointer to private data.

@@ -129,8 +129,6 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
       // start Ogre once we are in the rendering thread (Ogre must live in the rendering thread)
       connect(this->dataPtr->m_quickWindow, &QQuickWindow::beforeRendering,
           this, &RenderWindowItem::InitializeEngine, Qt::DirectConnection);
-
-      
     });
 }
 
@@ -298,7 +296,7 @@ void RenderWindowItem::UpdateFBO()
   std::cerr << "  size " << this->dataPtr->size.width() << " "
       << this->dataPtr->size.height() << std::endl;
 
-  if (this->width() <= 0 || this->height() <= 0 || (wsz == this->dataPtr->size)) 
+  if (this->width() <= 0 || this->height() <= 0 || (wsz == this->dataPtr->size))
   {
     return;
   }
@@ -309,7 +307,7 @@ void RenderWindowItem::UpdateFBO()
   this->dataPtr->camera->SetImageWidth(this->dataPtr->size.width());
   this->dataPtr->camera->SetImageHeight(this->dataPtr->size.height());
   this->dataPtr->camera->PreRender();
-  
+
 
   QSGGeometry::updateTexturedRectGeometry(this->dataPtr->m_geometry,
       QRectF(0.0, 0.0, this->dataPtr->size.width(),
@@ -338,43 +336,6 @@ Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
-
-  QQmlComponent component(qmlEngine(),
-      QString(":/Scene3D/Scene3D.qml"), QQmlComponent::PreferSynchronous);
-  this->item = qobject_cast<QQuickItem *>(component.create());
-  if (!this->item)
-  {
-    ignerr << "Null plugin QQuickItem!" << std::endl;
-    return;
-  }
-
-  qmlEngine()->rootContext()->setContextProperty("Scene3D", this);
-
-
-   
-//  this->LoadConfig(nullptr);
-
-/*  this->connect(this->item, &QQuickItem::windowChanged, [=](QQuickWindow *_window)
-    {
-      if (!_window)
-      {
-        igndbg << "Changed to null window" << std::endl;
-        return;
-      }
-
-      this->dataPtr->m_quickWindow = _window;
-      if (!this->dataPtr->m_quickWindow)
-      {
-        ignerr << "Null plugin QQuickWindow!" << std::endl;
-        return;
-      }
-      // start Ogre once we are in the rendering thread (Ogre must live in the rendering thread)
-      connect(this->dataPtr->m_quickWindow, &QQuickWindow::beforeRendering,
-          this, &Scene3D::InitializeEngine, Qt::DirectConnection);
-
-      
-    });
-    */
 }
 
 
@@ -398,12 +359,6 @@ Scene3D::~Scene3D()
     // TODO: If that was the last scene, terminate engine?
   }
   */
-}
-
-/////////////////////////////////////////////////
-QQuickItem *Scene3D::Item() const
-{
-  return this->item;
 }
 
 /////////////////////////////////////////////////
