@@ -4,6 +4,4 @@ import QtQuick.Controls 1.2
 ApplicationWindow {
   id: dialog
   visible: true
-  minimumHeight: 320
-  minimumWidth: 250
 }

@@ -348,6 +348,13 @@ bool ignition::gui::runStandalone(const std::string &_filename)
       return false;
     }
 
+    auto cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
+    if (!cardToolbarItem)
+    {
+      ignerr << "Null toolbar content QQuickItem!" << std::endl;
+      return false;
+    }
+
     // Add plugin to card content
     plugin->Item()->setParentItem(cardContentItem);
 
@@ -355,11 +362,19 @@ bool ignition::gui::runStandalone(const std::string &_filename)
     cardItem->setParentItem(dialogItem);
 
     // Configure card
+    auto pluginWidth = plugin->Item()->property("width").toInt();
+    auto pluginHeight = plugin->Item()->property("height").toInt() +
+                        cardToolbarItem->property("height").toInt();
+
     cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
-    cardItem->setProperty("width", 300);
-    cardItem->setProperty("height", 400);
+    cardItem->setProperty("width", pluginWidth);
+    cardItem->setProperty("height", pluginHeight);
     cardItem->setProperty("hasDockButton", false);
     cardItem->setProperty("hasCloseButton", false);
+
+    // Configure dialog
+    dialogObj->setProperty("width", pluginWidth);
+    dialogObj->setProperty("height", pluginHeight);
 
     // Signals
     g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,
@@ -720,6 +735,13 @@ bool ignition::gui::addPluginsToWindow()
       return false;
     }
 
+    auto cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
+    if (!cardToolbarItem)
+    {
+      ignerr << "Null toolbar content QQuickItem!" << std::endl;
+      return false;
+    }
+
     // Add plugin to card content
     plugin->Item()->setParentItem(cardContentItem);
 
@@ -728,9 +750,13 @@ bool ignition::gui::addPluginsToWindow()
     cardItem->setParent(g_engine);
 
     // Configure card
+    auto pluginWidth = plugin->Item()->property("width").toInt();
+    auto pluginHeight = plugin->Item()->property("height").toInt() +
+                        cardToolbarItem->property("height").toInt();
+
     cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
-    cardItem->setProperty("width", 300);
-    cardItem->setProperty("height", 400);
+    cardItem->setProperty("width", pluginWidth);
+    cardItem->setProperty("height", pluginHeight);
 
     // Signals
     g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,

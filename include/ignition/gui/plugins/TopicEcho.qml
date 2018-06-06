@@ -3,8 +3,8 @@ import QtQuick.Controls 2.2
 
 Rectangle {
   id: topicEcho
-  width: parent.width
-  height: parent.height
+  width: 300
+  height: 410
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000

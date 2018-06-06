@@ -33,11 +33,6 @@ Pane {
   property alias pluginName: titleLabel.text
 
   /**
-   * Close signal
-   */
-  signal close()
-
-  /**
    * ▁
    */
   property string dockIcon: "\u2581"
@@ -51,6 +46,11 @@ Pane {
    * ✕
    */
   property string closeIcon: "\u2715"
+
+  /**
+   * Close signal
+   */
+  signal close()
 
   /**
    * ID within QML
@@ -92,8 +92,8 @@ Pane {
    */
   Window {
     // TODO: resize
-    width: 400;
-    height: 600;
+    width: card.width;
+    height: card.height;
     visible: false;
     id: undockedWindow
 
@@ -112,6 +112,7 @@ Pane {
    */
   ToolBar {
     id: cardToolbar
+    objectName: "cardToolbar"
     Material.foreground: "white"
     Material.background: Material.LightBlue
     width: card.width
