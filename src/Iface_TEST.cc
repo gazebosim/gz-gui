@@ -677,3 +677,33 @@ TEST(IfaceTest, menuConfig)
     EXPECT_TRUE(stop());
   }
 }
+
+//////////////////////////////////////////////////
+TEST(IfaceTest, ignoreConfig)
+{
+  setVerbosity(4);
+
+  // Ignore position and size
+  {
+    EXPECT_TRUE(initApp());
+
+    // Load config file
+    EXPECT_TRUE(loadConfig(common::joinPaths(std::string(PROJECT_SOURCE_PATH),
+        "test", "config", "ignore.config")));
+
+    // Create main window
+    EXPECT_TRUE(createMainWindow());
+    auto win = mainWindow();
+    ASSERT_NE(nullptr, win);
+
+    QCoreApplication::processEvents();
+
+    // Check the position and size were not applied
+    EXPECT_NE(1000, win->pos().x());
+    EXPECT_NE(1000, win->pos().y());
+    EXPECT_NE(1000, win->width());
+    EXPECT_NE(1000, win->height());
+
+    EXPECT_TRUE(stop());
+  }
+}
