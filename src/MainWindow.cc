@@ -35,7 +35,7 @@ namespace ignition
       public: int pluginCount;
 
       /// \brief
-      public: QQuickWindow *quickWindow;
+      public: QQuickWindow *quickWindow{nullptr};
 
       /// \brief Configuration for this window.
       public: WindowConfig windowConfig;
@@ -70,9 +70,17 @@ MainWindow::MainWindow()
   qmlEngine()->rootContext()->setContextProperty("MainWindow", this);
 
   // Load QML and keep pointer to generated QQuickWindow
-  qmlEngine()->load(QUrl(QStringLiteral("qrc:qml/MainWindow.qml")));
+  std::string qmlFile("qrc:qml/MainWindow.qml");
+  qmlEngine()->load(QUrl(QString::fromStdString(qmlFile)));
+
   this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
       qmlEngine()->rootObjects().value(0));
+  if (!this->dataPtr->quickWindow)
+  {
+    ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+           << "]" << std::endl;
+    return;
+  }
 
 
 

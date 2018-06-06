@@ -34,7 +34,7 @@ namespace ignition
 {
   namespace gui
   {
-//    class Dialog;
+    class Dialog;
     class MainWindow;
 
     /// \brief Initialize the application. This must be run before everything
@@ -163,7 +163,7 @@ namespace ignition
 
     /// \brief Get the dialogs, if they have been generated.
     IGNITION_GUI_VISIBLE
-    std::vector<QQuickWindow *> dialogs();
+    std::vector<Dialog *> dialogs();
 
     /// \brief Run previously created window.
     /// \return True if successful
