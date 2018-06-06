@@ -59,8 +59,7 @@ QGuiApplication *g_app;
 QQmlApplicationEngine *g_engine;
 
 /// \brief Pointer to main window
-QQuickWindow *g_mainWin = nullptr;
-MainWindow *g_mainWinIface = nullptr;
+MainWindow *g_mainWin = nullptr;
 
 /// \brief Vector of pointers to dialogs
 std::vector<QObject *> g_dialogs;
@@ -113,8 +112,8 @@ bool installSignalHandler()
       {
         // Note: Don't call stop() for the main window, we close it and let the
         // program pick it up from there
-        if (g_mainWin)
-          g_mainWin->close();
+        if (g_mainWin->QuickWindow())
+          g_mainWin->QuickWindow()->close();
         else
           stop();
       };
@@ -206,7 +205,7 @@ void removeAddedPlugin(std::shared_ptr<Plugin> _plugin)
       g_pluginsAdded.end(), _plugin),
       g_pluginsAdded.end());
 
-  g_mainWinIface->SetPluginCount(g_pluginsAdded.size());
+  g_mainWin->SetPluginCount(g_pluginsAdded.size());
 }
 
 /////////////////////////////////////////////////
@@ -378,7 +377,7 @@ bool ignition::gui::runStandalone(const std::string &_filename)
     dialogObj->setProperty("height", pluginHeight);
 
     // Signals
-    g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,
+    g_mainWin->connect(cardItem, SIGNAL(close()), g_mainWin,
         SLOT(OnPluginClose()));
   }
 
@@ -420,11 +419,11 @@ bool ignition::gui::stop()
 {
   igndbg << "Stop" << std::endl;
 
-  if (g_mainWin)
+  if (g_mainWin->QuickWindow())
   {
 //    g_mainWin->CloseAllDocks();
-    if (g_mainWin->isVisible())
-      g_mainWin->close();
+    if (g_mainWin->QuickWindow()->isVisible())
+      g_mainWin->QuickWindow()->close();
     delete g_mainWin;
     g_mainWin = nullptr;
   }
@@ -676,16 +675,7 @@ bool ignition::gui::createMainWindow()
 
   igndbg << "Create main window" << std::endl;
 
-  // FIXME: Either remove the MainWindow class or make it more closely tied to
-  // the QML.
-  // It's currently being used to run C++ code that needs a QObject, which
-  // Iface  doesn't have.
-  g_mainWinIface = new MainWindow();
-  g_engine->rootContext()->setContextProperty("MainWindow", g_mainWinIface);
-
-  // Load QML and keep pointer to generated QQuickWindow
-  g_engine->load(QUrl(QStringLiteral("qrc:qml/MainWindow.qml")));
-  g_mainWin = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
+  g_mainWin = new MainWindow();
 
   return addPluginsToWindow() && applyConfig();
 }
@@ -695,7 +685,7 @@ bool ignition::gui::addPluginsToWindow()
 {
   // Get main window background item
   auto bgItem =
-      g_mainWin->findChild<QQuickItem *>("background");
+      g_mainWin->QuickWindow()->findChild<QQuickItem *>("background");
   if (!g_pluginsToAdd.empty() && !bgItem)
   {
     ignerr << "Null background QQuickItem!" << std::endl;
@@ -761,7 +751,7 @@ bool ignition::gui::addPluginsToWindow()
     cardItem->setProperty("height", pluginHeight);
 
     // Signals
-    g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,
+    g_mainWin->connect(cardItem, SIGNAL(close()), g_mainWin,
         SLOT(OnPluginClose()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
@@ -770,7 +760,7 @@ bool ignition::gui::addPluginsToWindow()
     count++;
   }
 
-  g_mainWinIface->SetPluginCount(g_pluginsAdded.size());
+  g_mainWin->SetPluginCount(g_pluginsAdded.size());
 
   return true;
 }
@@ -780,23 +770,17 @@ bool ignition::gui::applyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
-  // TODO: move this to MainWindow when g_mainWin and g_mainWinIface are
-  // consolidated
-  // Window size
-  if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
-    g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
-
-  return true;  // g_mainWin->ApplyConfig(g_windowConfig);
+  return g_mainWin->ApplyConfig(g_windowConfig);
 }
 
 /////////////////////////////////////////////////
 ignition::gui::MainWindow *ignition::gui::mainWindow()
 {
-  return g_mainWinIface;
+  return g_mainWin;
 }
 
 /////////////////////////////////////////////////
-QQmlEngine *ignition::gui::qmlEngine()
+QQmlApplicationEngine *ignition::gui::qmlEngine()
 {
   return g_engine;
 }
@@ -852,7 +836,7 @@ bool ignition::gui::runDialogs()
     g_pluginsAdded.push_back(plugin);
     g_pluginsToAdd.pop();
 
-    g_mainWin->connect(dialog, &Dialog::Closing, [plugin]
+    g_mainWin->QuickWindow()->connect(dialog, &Dialog::Closing, [plugin]
     {
       removeAddedPlugin(plugin);
     });

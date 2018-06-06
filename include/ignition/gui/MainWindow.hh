@@ -50,44 +50,48 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
-//      /// \brief Close all docks
-//      /// \return True if all docks have been closed
+      /// \brief Get the QtQuick window created by this object
+      /// \return Pointer to the QtQuick window
+      public: QQuickWindow *QuickWindow() const;
+
+      /// \brief Close all docks
+      /// \return True if all docks have been closed
 //      public: bool CloseAllDocks();
-//
-//      /// \brief Save current window and plugin configuration to a file on disk.
-//      /// Will open an error dialog in case it's not possible to write to the
-//      /// path.
-//      /// \param[in] _path The full destination path including filename.
+
+      /// \brief Save current window and plugin configuration to a file on disk.
+      /// Will open an error dialog in case it's not possible to write to the
+      /// path.
+      /// \param[in] _path The full destination path including filename.
 //      public: void SaveConfig(const std::string &_path);
-//
-//      /// \brief Apply a WindowConfig to this window and keep a copy of it.
-//      /// \param[in] _config The configuration to apply.
-//      /// \return True if successful.
-//      public: bool ApplyConfig(const WindowConfig &_config);
-//
-//      /// \brief Get the current window configuration.
-//      /// \return Updated window config
-//      private: WindowConfig CurrentWindowConfig() const;
+
+      /// \brief Apply a WindowConfig to this window and keep a copy of it.
+      /// \param[in] _config The configuration to apply.
+      /// \return True if successful.
+      public: bool ApplyConfig(const WindowConfig &_config);
+
+      /// \brief Get the current window configuration.
+      /// \return Updated window config
+      private: WindowConfig CurrentWindowConfig() const;
 
         /// \brief Callback when user requests to close a plugin
         public slots: void OnPluginClose();
 
-//      // Documentation inherited
+      // Documentation inherited
 //      protected: void paintEvent(QPaintEvent *_event) override;
-//
-//      // Documentation inherited
+
+      // Documentation inherited
 //      protected: void closeEvent(QCloseEvent *_event) override;
-//
-//      /// \brief Callback when load configuration is selected
+
+      /// \brief Callback when load configuration is selected
 //      private slots: void OnLoadConfig();
-//
-//      /// \brief Callback when "save configuration" is selected
+
+      /// \brief Callback when "save configuration" is selected
 //      private slots: void OnSaveConfig();
-//
-//      /// \brief Callback when "save configuration as" is selected
+
+      /// \brief Callback when "save configuration as" is selected
 //      private slots: void OnSaveConfigAs();
-//
-//      /// \brief Callback when load stylesheet is selected
+
+      /// \brief Callback when load stylesheet is selected
 //      private slots: void OnLoadStylesheet();
 
       /// \brief Add a plugin to the window.

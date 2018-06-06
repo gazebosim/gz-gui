@@ -159,7 +159,7 @@ namespace ignition
 
     /// \brief
     IGNITION_GUI_VISIBLE
-    QQmlEngine *qmlEngine();
+    QQmlApplicationEngine *qmlEngine();
 
     /// \brief Get the dialogs, if they have been generated.
     IGNITION_GUI_VISIBLE

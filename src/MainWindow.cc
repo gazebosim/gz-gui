@@ -34,15 +34,18 @@ namespace ignition
       /// \brief
       public: int pluginCount;
 
-//      /// \brief Configuration for this window.
-//      public: WindowConfig windowConfig;
-//
-//      /// \brief Counts the times the window has been painted
-//      public: unsigned int paintCount{0};
-//
-//      /// \brief Minimum number of paint events to consider the window to be
-//      /// fully initialized.
-//      public: const unsigned int paintCountMin{20};
+      /// \brief
+      public: QQuickWindow *quickWindow;
+
+      /// \brief Configuration for this window.
+      public: WindowConfig windowConfig;
+
+      /// \brief Counts the times the window has been painted
+      public: unsigned int paintCount{0};
+
+      /// \brief Minimum number of paint events to consider the window to be
+      /// fully initialized.
+      public: const unsigned int paintCountMin{20};
     };
   }
 }
@@ -63,16 +66,23 @@ std::string dirName(const std::string &_path)
 MainWindow::MainWindow()
   : dataPtr(new MainWindowPrivate)
 {
+  // Make MainWindow functions available from all QML files (using root)
+  qmlEngine()->rootContext()->setContextProperty("MainWindow", this);
+
+  // Load QML and keep pointer to generated QQuickWindow
+  qmlEngine()->load(QUrl(QStringLiteral("qrc:qml/MainWindow.qml")));
+  this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
+      qmlEngine()->rootObjects().value(0));
+
+
+
+
+
 //  this->setObjectName("mainWindow");
 //
 //  // Ubuntu Xenial + Unity: the native menubar is not registering shortcuts,
 //  // so we register the shortcuts independently of actions
 //  std::vector<QShortcut *> shortcuts;
-//
-//  // Title
-//  std::string title = "Ignition GUI";
-//  this->setWindowIconText(tr(title.c_str()));
-//  this->setWindowTitle(tr(title.c_str()));
 //
 //  // File menu
 //  auto fileMenu = this->menuBar()->addMenu(tr("&File"));
@@ -118,11 +128,6 @@ MainWindow::MainWindow()
 //  fileMenu->addAction(quitAct);
 //  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this,
 //      SLOT(close())));
-//
-//  // Docking
-//  this->setDockOptions(QMainWindow::AnimatedDocks |
-//                       QMainWindow::AllowTabbedDocks |
-//                       QMainWindow::AllowNestedDocks);
 }
 
 /////////////////////////////////////////////////
@@ -353,48 +358,48 @@ void MainWindow::OnAddPlugin(QString _plugin)
 }
 
 ///////////////////////////////////////////////////
-// bool MainWindow::ApplyConfig(const WindowConfig &_config)
-// {
-//  // Window position
-//  if (!_config.IsIgnoring("position_x") &&
-//      !_config.IsIgnoring("position_y") &&
-//      !_config.IsIgnoring("position") &&
-//      _config.posX >= 0 && _config.posY >= 0)
-//  {
+bool MainWindow::ApplyConfig(const WindowConfig &_config)
+{
+  // Window position
+  if (!_config.IsIgnoring("position_x") &&
+      !_config.IsIgnoring("position_y") &&
+      !_config.IsIgnoring("position") &&
+      _config.posX >= 0 && _config.posY >= 0)
+  {
 //    this->move(_config.posX, _config.posY);
-//  }
-//
-//  // Window size
-//  if (!_config.IsIgnoring("width") &&
-//      !_config.IsIgnoring("height") &&
-//      !_config.IsIgnoring("size") &&
-//      _config.width >= 0 && _config.height >= 0)
-//  {
-//    this->resize(_config.width, _config.height);
-//  }
-//
-//  // Docks state
-//  if (!_config.IsIgnoring("state") && !_config.state.isEmpty())
-//  {
+  }
+
+  // Window size
+  if (!_config.IsIgnoring("width") &&
+      !_config.IsIgnoring("height") &&
+      !_config.IsIgnoring("size") &&
+      _config.width >= 0 && _config.height >= 0)
+  {
+    this->QuickWindow()->resize(_config.width, _config.height);
+  }
+
+  // Docks state
+  if (!_config.IsIgnoring("state") && !_config.state.isEmpty())
+  {
 //    if (!this->restoreState(_config.state))
 //      ignwarn << "Failed to restore state" << std::endl;
-//  }
-//
-//  // Stylesheet
+  }
+
+  // Stylesheet
 //  if (!_config.IsIgnoring("stylesheet"))
 //    setStyleFromString(_config.styleSheet);
-//
-//  // Hide menus
-//  for (auto visible : _config.menuVisibilityMap)
-//  {
+
+  // Hide menus
+  for (auto visible : _config.menuVisibilityMap)
+  {
 //    if (auto menu = this->findChild<QMenu *>(
 //        QString::fromStdString(visible.first + "Menu")))
 //    {
 //      menu->menuAction()->setVisible(visible.second);
 //    }
-//  }
-//
-//  // Plugins menu
+  }
+
+  // Plugins menu
 //  if (auto menu = this->findChild<QMenu *>("pluginsMenu"))
 //  {
 //    for (auto action : menu->actions())
@@ -425,50 +430,50 @@ void MainWindow::OnAddPlugin(QString _plugin)
 //      }
 //    }
 //  }
-//
-//  // Keep a copy
-//  this->dataPtr->windowConfig = _config;
-//
+
+  // Keep a copy
+  this->dataPtr->windowConfig = _config;
+
 //  QCoreApplication::processEvents();
-//
-//  return true;
-// }
-//
-///////////////////////////////////////////////////
-// WindowConfig MainWindow::CurrentWindowConfig() const
-// {
-//  WindowConfig config;
-//
-//  // Position
+
+  return true;
+ }
+
+/////////////////////////////////////////////////
+WindowConfig MainWindow::CurrentWindowConfig() const
+{
+  WindowConfig config;
+
+  // Position
 //  config.posX = this->pos().x();
 //  config.posY = this->pos().y();
-//
-//  // Size
-//  config.width = this->width();
-//  config.height = this->height();
-//
-//  // Docks state
+
+  // Size
+  config.width = this->QuickWindow()->width();
+  config.height = this->QuickWindow()->height();
+
+  // Docks state
 //  config.state = this->saveState();
-//
-//  // Stylesheet
+
+  // Stylesheet
 //  config.styleSheet = static_cast<QApplication *>(
 //      QApplication::instance())->styleSheet().toStdString();
-//
-//  // Menus configuration and ignored properties are kept the same as the
-//  // initial ones. They might have been changed programatically but we
-//  // don't guarantee that will be saved.
-//  config.menuVisibilityMap = this->dataPtr->windowConfig.menuVisibilityMap;
-//  config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
-//  config.showPlugins = this->dataPtr->windowConfig.showPlugins;
-//  config.ignoredProps = this->dataPtr->windowConfig.ignoredProps;
-//
-//  // Plugins
-//  auto plugins = this->findChildren<Plugin *>();
-//  for (const auto plugin : plugins)
-//    config.plugins += plugin->ConfigStr();
-//
-//  return config;
-// }
+
+  // Menus configuration and ignored properties are kept the same as the
+  // initial ones. They might have been changed programatically but we
+  // don't guarantee that will be saved.
+  config.menuVisibilityMap = this->dataPtr->windowConfig.menuVisibilityMap;
+  config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
+  config.showPlugins = this->dataPtr->windowConfig.showPlugins;
+  config.ignoredProps = this->dataPtr->windowConfig.ignoredProps;
+
+  // Plugins
+  auto plugins = this->findChildren<Plugin *>();
+  for (const auto plugin : plugins)
+    config.plugins += plugin->ConfigStr();
+
+  return config;
+}
 
 /////////////////////////////////////////////////
 bool WindowConfig::MergeFromXML(const std::string &_windowXml)
@@ -711,4 +716,10 @@ void MainWindow::SetPluginCount(const int _pluginCount)
 {
   this->dataPtr->pluginCount = _pluginCount;
   this->PluginCountChanged();
+}
+
+/////////////////////////////////////////////////
+QQuickWindow *MainWindow::QuickWindow() const
+{
+  return this->dataPtr->quickWindow;
 }
