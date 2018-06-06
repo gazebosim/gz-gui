@@ -123,6 +123,11 @@ namespace plugins
     private: void InitializeEngine();
     private: void ActivateRenderWindowContext();
     private: void DoneRenderWindowContext();
+    private: void UpdateFBO();
+    private: QSGNode *updatePaintNode(QSGNode *_oldNode,
+        QQuickItem::UpdatePaintNodeData *);
+
+    private: void timerEvent(QTimerEvent *);
   };
 
 }
