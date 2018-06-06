@@ -192,10 +192,12 @@ Pane {
       drag{ target: parent; axis: Drag.XAxis }
       onMouseXChanged: {
         if(drag.active){
-          card.width = card.width - mouseX
-          card.x = card.x + mouseX
-          if(card.width < minSize)
-            card.width = minSize
+          var newCardX = Math.max(card.x + mouseX, 0)
+          var newCardWidth = Math.max(card.width + (card.x - newCardX), minSize)
+          if (newCardWidth === card.width)
+            return;
+          card.x = newCardX
+          card.width = newCardWidth
         }
       }
     }
@@ -215,9 +217,11 @@ Pane {
       drag{ target: parent; axis: Drag.XAxis }
       onMouseXChanged: {
         if(drag.active){
-          card.width = card.width + mouseX
-          if(card.width < minSize)
-              card.width = minSize
+
+          card.width = Math.max(card.width + mouseX, minSize)
+
+          if (card.width + card.x > card.parent.width)
+            card.width = card.parent.width - card.x
         }
       }
     }
@@ -239,10 +243,12 @@ Pane {
       drag{ target: parent; axis: Drag.YAxis }
       onMouseYChanged: {
         if(drag.active){
-          card.height = card.height - mouseY
-          card.y = card.y + mouseY
-          if(card.height < minSize)
-            card.height = minSize
+          var newCardY = Math.max(card.y + mouseY, 0)
+          var newCardHeight = Math.max(card.height + (card.y - newCardY), minSize)
+          if (newCardHeight === card.height)
+            return;
+          card.y = newCardY
+          card.height = newCardHeight
         }
       }
     }
@@ -264,9 +270,11 @@ Pane {
       drag{ target: parent; axis: Drag.YAxis }
       onMouseYChanged: {
         if(drag.active){
-          card.height = card.height + mouseY
-          if(card.height < minSize)
-            card.height = minSize
+
+          card.height = Math.max(card.height + mouseY, minSize)
+
+          if (card.height + card.y > card.parent.height)
+            card.height = card.parent.height - card.y
         }
       }
     }

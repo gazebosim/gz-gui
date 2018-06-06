@@ -31,6 +31,9 @@ namespace ignition
   {
     class MainWindowPrivate
     {
+      /// \brief
+      public: int pluginCount;
+
 //      /// \brief Configuration for this window.
 //      public: WindowConfig windowConfig;
 //
@@ -649,3 +652,16 @@ void MainWindow::OnAddPlugin(QString _plugin)
 //  return config;
 //}
 //
+
+/////////////////////////////////////////////////
+int MainWindow::PluginCount() const
+{
+  return this->dataPtr->pluginCount;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetPluginCount(const int _pluginCount)
+{
+  this->dataPtr->pluginCount = _pluginCount;
+  this->PluginCountChanged();
+}

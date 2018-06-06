@@ -68,15 +68,17 @@ ApplicationWindow
    * Background
    */
   Rectangle {
+    objectName: "background"
     id: background
     anchors.fill: parent
     color: bgColor
 
     Label {
+      id: startLabel;
+      visible: MainWindow.pluginCount === 0
       text: "Insert plugins to start!"
-      anchors.margins: 20
-      anchors.left: parent.left
-      anchors.right: parent.right
+      anchors.fill: parent
+      font.pointSize: 24
       horizontalAlignment: Label.AlignHCenter
       verticalAlignment: Label.AlignVCenter
       wrapMode: Label.Wrap

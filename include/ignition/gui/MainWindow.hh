@@ -36,6 +36,13 @@ namespace ignition
     {
       Q_OBJECT
 
+      Q_PROPERTY(
+        int pluginCount
+        READ PluginCount
+        WRITE SetPluginCount
+        NOTIFY PluginCountChanged
+      )
+
       /// \brief Constructor
       public: MainWindow();
 
@@ -89,6 +96,10 @@ namespace ignition
       /// \brief Return a list of all plugin names found
       /// \return List with plugin names
       public: Q_INVOKABLE QStringList PluginListModel() const;
+
+      public: Q_INVOKABLE int PluginCount() const;
+      public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
+      signals: void PluginCountChanged();
 
       /// \internal
       /// \brief Private data pointer

@@ -60,7 +60,7 @@ QQmlApplicationEngine *g_engine;
 
 /// \brief Pointer to main window
 QQuickWindow *g_mainWin = nullptr;
-QObject *g_mainWinIface = nullptr;
+MainWindow *g_mainWinIface = nullptr;
 
 /// \brief Vector of pointers to dialogs
 std::vector<QObject *> g_dialogs;
@@ -205,6 +205,8 @@ void removeAddedPlugin(std::shared_ptr<Plugin> _plugin)
       g_pluginsAdded.begin(),
       g_pluginsAdded.end(), _plugin),
       g_pluginsAdded.end());
+
+  g_mainWinIface->SetPluginCount(g_pluginsAdded.size());
 }
 
 /////////////////////////////////////////////////
@@ -675,6 +677,15 @@ bool ignition::gui::createMainWindow()
 /////////////////////////////////////////////////
 bool ignition::gui::addPluginsToWindow()
 {
+  // Get main window background item
+  auto bgItem =
+      g_mainWin->findChild<QQuickItem *>("background");
+  if (!g_pluginsToAdd.empty() && !bgItem)
+  {
+    ignerr << "Null background QQuickItem!" << std::endl;
+    return false;
+  }
+
   // Create a widget for each plugin
   auto count = 0;
   while (!g_pluginsToAdd.empty())
@@ -713,7 +724,7 @@ bool ignition::gui::addPluginsToWindow()
     plugin->Item()->setParentItem(cardContentItem);
 
     // Add card to main window
-    cardItem->setParentItem(g_mainWin->contentItem());
+    cardItem->setParentItem(bgItem);
     cardItem->setParent(g_engine);
 
     // Configure card
@@ -730,6 +741,8 @@ bool ignition::gui::addPluginsToWindow()
 
     count++;
   }
+
+  g_mainWinIface->SetPluginCount(g_pluginsAdded.size());
 
   return true;
 }
