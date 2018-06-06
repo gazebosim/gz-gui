@@ -6,8 +6,8 @@ import QtQuick.Controls.Material 2.1
 ApplicationWindow
 {
   title: qsTr("Ignition GUI")
-  width: 640
-  height: 480
+  width: 1200
+  height: 1000
   visible: true
   id: window
   property var bgColor: "#eeeeee"
@@ -68,15 +68,17 @@ ApplicationWindow
    * Background
    */
   Rectangle {
+    objectName: "background"
     id: background
     anchors.fill: parent
     color: bgColor
 
     Label {
+      id: startLabel;
+      visible: MainWindow.pluginCount === 0
       text: "Insert plugins to start!"
-      anchors.margins: 20
-      anchors.left: parent.left
-      anchors.right: parent.right
+      anchors.fill: parent
+      font.pointSize: 24
       horizontalAlignment: Label.AlignHCenter
       verticalAlignment: Label.AlignVCenter
       wrapMode: Label.Wrap
@@ -100,18 +102,16 @@ ApplicationWindow
 
       delegate: ItemDelegate {
         width: parent.width
-        text: model.title
+        text: modelData
         highlighted: ListView.isCurrentItem
         onClicked: {
           listView.currentIndex = index
-          MainWindow.OnAddPlugin(model.source);
+          MainWindow.OnAddPlugin(modelData);
           drawer.close()
         }
       }
 
-      model: ListModel {
-        ListElement { title: "Publisher"; source: "Publisher" }
-      }
+      model: MainWindow.PluginListModel()
 
       ScrollIndicator.vertical: ScrollIndicator { }
     }

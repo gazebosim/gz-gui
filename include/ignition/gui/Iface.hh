@@ -109,6 +109,11 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool addPluginsToWindow();
 
+    /// \brief Remove plugin
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool removePlugin(const std::string &_pluginName);
+
     /// \brief Apply previously loaded config to the main window.
     /// * Make sure the window is created first
     /// * Be sure to call loadConfig() for each plugin first

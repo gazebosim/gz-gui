@@ -36,6 +36,13 @@ namespace ignition
     {
       Q_OBJECT
 
+      Q_PROPERTY(
+        int pluginCount
+        READ PluginCount
+        WRITE SetPluginCount
+        NOTIFY PluginCountChanged
+      )
+
       /// \brief Constructor
       public: MainWindow();
 
@@ -56,7 +63,10 @@ namespace ignition
 //      /// \param[in] _config The configuration to apply.
 //      /// \return True if successful.
 //      public: bool ApplyConfig(const WindowConfig &_config);
-//
+
+        /// \brief Callback when user requests to close a plugin
+        public slots: void OnPluginClose();
+
 //      // Documentation inherited
 //      protected: void paintEvent(QPaintEvent *_event) override;
 //
@@ -82,6 +92,14 @@ namespace ignition
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename
       public slots: void OnAddPlugin(QString _plugin);
+
+      /// \brief Return a list of all plugin names found
+      /// \return List with plugin names
+      public: Q_INVOKABLE QStringList PluginListModel() const;
+
+      public: Q_INVOKABLE int PluginCount() const;
+      public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
+      signals: void PluginCountChanged();
 
       /// \internal
       /// \brief Private data pointer
