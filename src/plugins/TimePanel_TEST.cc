@@ -57,9 +57,9 @@ TEST(TimePanelTest, DefaultConfig)
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Time panel");
 
-  // Empty
+  // Only the 2 spacers
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
@@ -198,6 +198,8 @@ TEST(TimePanelTest, IncorrectWorldStats)
   EXPECT_TRUE(simTime == nullptr);
   auto realTime = plugin->findChild<QLabel *>("realTimeLabel");
   EXPECT_TRUE(realTime == nullptr);
+  auto realTimeFactor = plugin->findChild<QLabel *>("realTimeFactorLabel");
+  EXPECT_TRUE(realTimeFactor == nullptr);
 
   // Cleanup
   plugins.clear();
@@ -216,6 +218,7 @@ TEST(TimePanelTest, WorldStats)
       "<world_stats>"
         "<sim_time>true</sim_time>"
         "<real_time>true</real_time>"
+        "<real_time_factor>true</real_time_factor>"
         "<topic>/world_stats_test</topic>"
       "</world_stats>"
       "<world_control>"
@@ -250,6 +253,9 @@ TEST(TimePanelTest, WorldStats)
   auto realTime = plugin->findChild<QLabel *>("realTimeLabel");
   EXPECT_TRUE(realTime != nullptr);
   EXPECT_EQ(realTime->text(), "N/A");
+  auto realTimeFactor = plugin->findChild<QLabel *>("realTimeFactorLabel");
+  EXPECT_TRUE(realTimeFactor != nullptr);
+  EXPECT_EQ(realTimeFactor->text(), "N/A");
 
   // Buttons
   auto playButton = plugin->findChild<QPushButton *>("playButton");
@@ -288,6 +294,7 @@ TEST(TimePanelTest, WorldStats)
 
   EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
   EXPECT_EQ(realTime->text().toStdString(), "N/A");
+  EXPECT_EQ(realTimeFactor->text().toStdString(), "N/A");
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
   EXPECT_TRUE(stepButton->isVisible());
@@ -313,6 +320,31 @@ TEST(TimePanelTest, WorldStats)
 
   EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
   EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_EQ(realTimeFactor->text().toStdString(), "N/A");
+  EXPECT_TRUE(playButton->isVisible());
+  EXPECT_FALSE(pauseButton->isVisible());
+  EXPECT_TRUE(stepButton->isVisible());
+  EXPECT_TRUE(stepButton->isEnabled());
+
+  // Real time factor
+  {
+    msgs::WorldStatistics msg;
+    msg.set_real_time_factor(1.0);
+    pub.Publish(msg);
+  }
+
+  // Give it time to be processed
+  sleep = 0;
+  while (realTimeFactor->text() == "N/A" && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
+  EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_EQ(realTimeFactor->text().toStdString(), "100.00 %");
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
   EXPECT_TRUE(stepButton->isVisible());
@@ -336,6 +368,7 @@ TEST(TimePanelTest, WorldStats)
 
   EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
   EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_EQ(realTimeFactor->text().toStdString(), "100.00 %");
   EXPECT_FALSE(playButton->isVisible());
   EXPECT_TRUE(pauseButton->isVisible());
   EXPECT_TRUE(stepButton->isVisible());
@@ -359,6 +392,7 @@ TEST(TimePanelTest, WorldStats)
 
   EXPECT_EQ(simTime->text().toStdString(), "00 01:00:00.123");
   EXPECT_EQ(realTime->text().toStdString(), "01 00:00:00.001");
+  EXPECT_EQ(realTimeFactor->text().toStdString(), "100.00 %");
   EXPECT_TRUE(playButton->isVisible());
   EXPECT_FALSE(pauseButton->isVisible());
   EXPECT_TRUE(stepButton->isVisible());
@@ -397,9 +431,9 @@ TEST(TimePanelTest, ControlWithoutService)
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
 
-  // Empty
+  // Only the 2 spacers
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
@@ -434,9 +468,9 @@ TEST(TimePanelTest, StatsWithoutTopic)
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
 
-  // Empty
+  // Only the 2 spacers
   auto children = plugin->findChildren<QWidget *>();
-  EXPECT_EQ(children.size(), 0);
+  EXPECT_EQ(children.size(), 2);
 
   // Cleanup
   plugins.clear();
