@@ -163,7 +163,7 @@ namespace ignition
 
     /// \brief Get the dialogs, if they have been generated.
     IGNITION_GUI_VISIBLE
-    std::vector<QObject *> dialogs();
+    std::vector<QQuickWindow *> dialogs();
 
     /// \brief Run previously created window.
     /// \return True if successful

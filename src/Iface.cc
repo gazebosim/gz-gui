@@ -61,7 +61,7 @@ QQmlApplicationEngine *g_engine;
 MainWindow *g_mainWin = nullptr;
 
 /// \brief Vector of pointers to dialogs
-std::vector<QObject *> g_dialogs;
+std::vector<QQuickWindow *> g_dialogs;
 
 /// \brief Queue of plugins which should be added to the window
 std::queue<std::shared_ptr<Plugin>> g_pluginsToAdd;
@@ -109,10 +109,17 @@ bool installSignalHandler()
 #ifndef _WIN32
   auto handler = [](int)  // NOLINT(readability/casting)
       {
-        // Note: Don't call stop() for the main window, we close it and let the
-        // program pick it up from there
+        // Note: Don't call stop() if there are windows, we close them and let
+        // the program pick it up from there
         if (g_mainWin && g_mainWin->QuickWindow())
+        {
           g_mainWin->QuickWindow()->close();
+        }
+        else if (!g_dialogs.empty())
+        {
+          for (auto dialog : g_dialogs)
+            dialog->close();
+        }
         else
           stop();
       };
@@ -305,12 +312,13 @@ bool ignition::gui::runStandalone(const std::string &_filename)
     // Create dialog
     g_engine->load(QUrl(QStringLiteral("qrc:qml/Dialog.qml")));
 
-    auto dialogObj = qobject_cast<QObject *>(g_engine->rootObjects().value(0));
+    auto dialogObj = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
     if (!dialogObj)
     {
       ignerr << "Null dialog QObject!" << std::endl;
       return false;
     }
+    g_dialogs.push_back(dialogObj);
 
     auto dialogItem = dialogObj->findChild<QQuickItem *>();
     if (!dialogItem)
@@ -384,7 +392,7 @@ bool ignition::gui::stop()
 
   for (auto dialog : g_dialogs)
   {
-//    dialog->close();
+    dialog->close();
     dialog->deleteLater();
   }
   g_dialogs.clear();
@@ -703,7 +711,7 @@ QQmlApplicationEngine *ignition::gui::qmlEngine()
 }
 
 /////////////////////////////////////////////////
-std::vector<QObject *> ignition::gui::dialogs()
+std::vector<QQuickWindow *> ignition::gui::dialogs()
 {
   return g_dialogs;
 }
