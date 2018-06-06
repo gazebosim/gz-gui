@@ -4,10 +4,8 @@ import QtQuick.Controls 2.2
 Rectangle {
   id: publisher
   color: "transparent"
-
-//  Component.onCompleted: {
-//    publisher.anchors.fill = parent
-//  }
+  width: 250
+  height: 350
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
