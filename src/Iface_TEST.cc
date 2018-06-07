@@ -85,7 +85,7 @@ TEST(IfaceTest, loadPlugin)
 
     EXPECT_TRUE(initApp());
 
-//    EXPECT_TRUE(loadPlugin("TestPlugin"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
 
     EXPECT_TRUE(stop());
   }
@@ -99,7 +99,7 @@ TEST(IfaceTest, loadPlugin)
 
     EXPECT_TRUE(initApp());
 
-//    EXPECT_TRUE(loadPlugin("TestPlugin"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
 
     EXPECT_TRUE(stop());
   }
@@ -415,9 +415,9 @@ TEST(IfaceTest, Dialog)
     EXPECT_TRUE(initApp());
 
     // Load test plugin
-//    EXPECT_TRUE(loadPlugin("TestPlugin"));
-//
-//    // Run dialog
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
+
+    // Run dialog
 //    EXPECT_TRUE(runDialogs());
 //
 //    // Check it was open
@@ -448,11 +448,11 @@ TEST(IfaceTest, Dialog)
     // Create app
     EXPECT_TRUE(initApp());
 
-//    // Load 2 test plugins
-//    EXPECT_TRUE(loadPlugin("TestPlugin"));
-//    EXPECT_TRUE(loadPlugin("TestPlugin"));
-//
-//    // Run dialog
+    // Load 2 test plugins
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
+    EXPECT_TRUE(loadPlugin("TestPlugin"));
+
+    // Run dialog
 //    EXPECT_TRUE(runDialogs());
 //
 //    // Check they were open
@@ -525,13 +525,12 @@ TEST(IfaceTest, runStandalone)
   {
     // Must initialize app before so we can use the timer on its thread
     EXPECT_TRUE(initApp());
-//    ASSERT_TRUE(QApplication::instance() != nullptr);
-//
-//    // Add test plugin to path
-//    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-//    addPluginPath(testBuildPath);
-//
-//    // Close dialog after 1 s
+
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
+
+    // Close dialog after 1 s
 //    bool closed = false;
 //    QTimer *timer = new QTimer();
 //    timer->setSingleShot(true);
@@ -548,11 +547,11 @@ TEST(IfaceTest, runStandalone)
 //      closed = true;
 //    });
 //    timer->start();
-//
-//    // Run test plugin
+
+    // Run test plugin
 //    EXPECT_TRUE(runStandalone("TestPlugin"));
-//
-//    // Make sure timer was triggered
+
+    // Make sure timer was triggered
 //    EXPECT_TRUE(closed);
 
     EXPECT_TRUE(stop());

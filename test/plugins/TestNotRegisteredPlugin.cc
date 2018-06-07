@@ -27,10 +27,6 @@ using namespace gui;
 TestNotRegisteredPlugin::TestNotRegisteredPlugin()
   : Plugin()
 {
-  auto layout = new QHBoxLayout;
-  layout->addWidget(new QLabel("Test plugin"));
-
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////

@@ -20,5 +20,5 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 #add_subdirectory(integration)
 #add_subdirectory(performance)
-#add_subdirectory(plugins)
+add_subdirectory(plugins)
 #add_subdirectory(regression)

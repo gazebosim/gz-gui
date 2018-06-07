@@ -18,7 +18,14 @@ set (plugins
 # Plugin shared libraries
 foreach (src ${plugins})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
-  add_library(${src} SHARED ${src}.cc ${${src}_MOC})
+  if (EXISTS "${src}.qrc")
+    QT5_ADD_RESOURCES(${src}_RCC ${src}.qrc)
+  endif()
+  add_library(${src} SHARED
+    ${src}.cc
+    ${${src}_MOC}
+    ${${src}_RCC}
+  )
   target_link_libraries(${src}
     ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}

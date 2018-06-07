@@ -7,7 +7,7 @@ pipelines:
           # Install dependencies
           - apt update
           - apt install -y
-            build-essential wget cmake cppcheck mercurial gnupg
+            build-essential wget cmake cppcheck mercurial
             qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
             qtdeclarative5-dev
             qtquickcontrols2-5-dev
@@ -16,19 +16,49 @@ pipelines:
             qml-module-qtquick-controls2
             qml-module-qtquick-layouts
             libogre-1.9-dev
-          - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable bionic main" > /etc/apt/sources.list.d/gazebo-stable.list
-          - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease bionic main" > /etc/apt/sources.list.d/gazebo-prerelease.list
-          - apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
-          - apt update
-          - apt install -y
-            libignition-cmake1-dev
-            libignition-common2-dev
-            libignition-math5-dev
-            libignition-msgs2-dev
-            libignition-tools-dev
-            libignition-transport5-dev
           # Static checking before building
           #- sh tools/code_check.sh
+          # Ignition cmake
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-cmake -b default
+          - cd ign-cmake
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition math
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-math -b default
+          - cd ign-math
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition common
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-common -b default
+          - cd ign-common
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition msgs
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
+          - cd ign-msgs
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition transport
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
+          - cd ign-transport
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+
           # Ignition rendering
           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
           - cd ign-rendering
