@@ -23,6 +23,9 @@ foreach (src ${plugins})
     ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}
     ${Qt5Core_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES})
+    ${Qt5Qml_LIBRARIES}
+    ${Qt5Quick_LIBRARIES}
+    ${Qt5QuickControls2_LIBRARIES}
+  )
 endforeach (src ${qt_headers_local})
 

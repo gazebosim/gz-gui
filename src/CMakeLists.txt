@@ -1,6 +1,6 @@
 include_directories(${PROJECT_BINARY_DIR})
 
-ign_get_libsources_and_unittests(sources_no_path gtest_sources)
+#ign_get_libsources_and_unittests(sources_no_path gtest_sources)
 
 set (sources
 #  ${CMAKE_CURRENT_SOURCE_DIR}/BoolWidget.cc
@@ -29,6 +29,29 @@ set (sources
   PARENT_SCOPE
 )
 
+set (gtest_sources
+#  BoolWidget_TEST
+#  ColorWidget_TEST
+#  CollapsibleWidget_TEST
+#  Conversions_TEST
+#  DragDropModel_TEST
+#  EditableLabel_TEST
+#  EnumWidget_TEST
+#  GeometryWidget_TEST
+#  Helpers_TEST
+  Iface_TEST
+  ign_TEST
+#  MainWindow_TEST
+#  MessageWidget_TEST
+#  NumberWidget_TEST
+#  Plugin_TEST
+#  Pose3dWidget_TEST
+#  SearchModel_TEST
+#  StringWidget_TEST
+#  VariablePillContainer_TEST
+#  Vector3dWidget_TEST
+)
+
 #set(sources)
 #foreach(src ${sources_no_path})
 #  list(APPEND sources ${CMAKE_CURRENT_SOURCE_DIR}/${src})
@@ -41,13 +64,13 @@ if (NOT HAVE_IGN_TOOLS OR APPLE)
   list(REMOVE_ITEM gtest_sources ign_TEST.cc)
 endif()
 
-#ign_build_tests(TYPE UNIT
-#                SOURCES
-#                  ${gtest_sources}
-#                LIB_DEPS
-#                  ${IGNITION-MATH_LIBRARIES}
-#                  TINYXML2::TINYXML2
-#)
+ign_build_tests(TYPE UNIT
+                SOURCES
+                  ${gtest_sources}
+                LIB_DEPS
+                  ${IGNITION-MATH_LIBRARIES}
+                  TINYXML2::TINYXML2
+)
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)
