@@ -18,6 +18,8 @@ pipelines:
           # Static checking before building
           #- sh tools/code_check.sh
           # Ignition tools
+          - apt install -y
+            ruby-ronn ruby-dev
           - hg clone http://bitbucket.org/ignitionrobotics/ign-tools -b default
           - cd ign-tools
           - mkdir build
