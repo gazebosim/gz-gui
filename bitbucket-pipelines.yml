@@ -15,7 +15,6 @@ pipelines:
             qml-module-qtquick-controls
             qml-module-qtquick-controls2
             qml-module-qtquick-layouts
-            libogre-1.9-dev
           # Static checking before building
           #- sh tools/code_check.sh
           # Ignition cmake
@@ -35,6 +34,10 @@ pipelines:
           - make -j4 install
           - cd ../..
           # Ignition common
+          - apt install -y
+            uuid-dev
+            libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev
+            libfreeimage-dev libgts-dev libswscale-dev
           - hg clone http://bitbucket.org/ignitionrobotics/ign-common -b default
           - cd ign-common
           - mkdir build
@@ -58,8 +61,9 @@ pipelines:
           - cmake ..
           - make -j4 install
           - cd ../..
-
           # Ignition rendering
+          - apt install -y
+            libogre-1.9-dev
           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
           - cd ign-rendering
           - mkdir build
