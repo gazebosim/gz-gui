@@ -1,5 +1,5 @@
 set (qt_headers_local
-#  Grid3D
+  Grid3D
 #  ImageDisplay
   Publisher
 #  Requester

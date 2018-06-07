@@ -126,13 +126,8 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
         igndbg << "Changed to null window" << std::endl;
         return;
       }
-
       this->dataPtr->quickWindow = _window;
-      if (!this->dataPtr->quickWindow)
-      {
-        ignerr << "Null plugin QQuickWindow!" << std::endl;
-        return;
-      }
+
       // start Ogre once we are in the rendering thread (Ogre must live in the
       // rendering thread)
       this->connect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
@@ -167,7 +162,7 @@ RenderWindowItem::~RenderWindowItem()
 /////////////////////////////////////////////////
 void RenderWindowItem::InitializeEngine()
 {
-  disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
+  this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
             this, &RenderWindowItem::InitializeEngine);
   this->dataPtr->qtContext = QOpenGLContext::currentContext();
   if (!this->dataPtr->qtContext)
