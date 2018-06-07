@@ -37,13 +37,8 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~HelloPlugin();
 
-      /// \brief
-      public: QQuickItem *Item() const override;
-
       /// \brief Callback trigged when the button is pressed.
       protected slots: void OnButton();
-
-      private: QQuickItem *item;
     };
   }
 }

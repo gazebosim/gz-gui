@@ -6,7 +6,6 @@ set (CMAKE_AUTOMOC ON)
 find_package (Qt5
   COMPONENTS
     Core
-    Widgets
     Quick
     QuickControls2
   REQUIRED
@@ -35,14 +34,13 @@ link_directories(
 )
 
 # Generate examples
-add_library(hello_plugin SHARED ${headers_MOC}
+add_library(HelloPlugin SHARED ${headers_MOC}
   HelloPlugin.cc
   ${resources_RCC}
 )
-target_link_libraries(hello_plugin
+target_link_libraries(HelloPlugin
   ${IGNITION-GUI_LIBRARIES}
   ${Qt5Core_LIBRARIES}
-  ${Qt5Widgets_LIBRARIES}
   ${Qt5Qml_LIBRARIES}
   ${Qt5Quick_LIBRARIES}
   ${Qt5QuickControls2_LIBRARIES}
