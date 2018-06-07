@@ -445,7 +445,7 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
 //  QCoreApplication::processEvents();
 
   return true;
- }
+}
 
 /////////////////////////////////////////////////
 WindowConfig MainWindow::CurrentWindowConfig() const

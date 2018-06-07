@@ -18,7 +18,9 @@
 #ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
 #define IGNITION_GUI_PLUGINS_SCENE3D_HH_
 
+#include <string>
 #include <memory>
+
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
@@ -97,8 +99,6 @@ namespace plugins
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
-
-
   };
 
   /// \brief A QQUickItem that manages the render window
@@ -161,7 +161,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
   };
-
 }
 }
 }

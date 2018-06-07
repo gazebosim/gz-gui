@@ -15,15 +15,14 @@
  *
 */
 
-#include <cmath>
-#include <sstream>
-#include <string>
-
 #include <QtQuick/QSGGeometryNode>
 #include <QtQuick/QSGTextureMaterial>
 #include <QtQuick/QSGOpaqueTextureMaterial>
 #include <QtQuick/QQuickWindow>
 
+#include <cmath>
+#include <sstream>
+#include <string>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
@@ -134,8 +133,9 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
         ignerr << "Null plugin QQuickWindow!" << std::endl;
         return;
       }
-      // start Ogre once we are in the rendering thread (Ogre must live in the rendering thread)
-      connect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
+      // start Ogre once we are in the rendering thread (Ogre must live in the
+      // rendering thread)
+      this->connect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
           this, &RenderWindowItem::InitializeEngine, Qt::DirectConnection);
     });
 }
@@ -276,14 +276,15 @@ void RenderWindowItem::DoneRenderWindowContext()
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::timerEvent(QTimerEvent *)
+void RenderWindowItem::timerEvent(
+    QTimerEvent */*_e*/)
 {
   this->update();
 }
 
 /////////////////////////////////////////////////
 QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
-    QQuickItem::UpdatePaintNodeData *)
+    QQuickItem::UpdatePaintNodeData */*_data*/)
 {
   if (!this->dataPtr->initialized)
   {
@@ -403,7 +404,8 @@ Scene3D::~Scene3D()
 /////////////////////////////////////////////////
 void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
-  RenderWindowItem *renderWindow= this->PluginItem()->findChild<RenderWindowItem *>();
+  RenderWindowItem *renderWindow =
+      this->PluginItem()->findChild<RenderWindowItem *>();
   if (!renderWindow)
   {
     ignerr << "Unable to find Render Window item. "
@@ -453,14 +455,14 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-//QPaintEngine *Scene3D::paintEngine() const
-//{
-//  return nullptr;
-//}
+// QPaintEngine *Scene3D::paintEngine() const
+// {
+//   return nullptr;
+// }
 
 /////////////////////////////////////////////////
-//void Scene3D::paintEvent(QPaintEvent *_e)
-//{
+// void Scene3D::paintEvent(QPaintEvent *_e)
+// {
 //  // Create render window on first paint, so we're sure the window is showing
 //  // when we attach to it
 //  if (!this->dataPtr->renderWindow)
@@ -476,11 +478,11 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //    this->dataPtr->camera->Update();
 //
 //  _e->accept();
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void Scene3D::resizeEvent(QResizeEvent *_e)
-//{
+// void Scene3D::resizeEvent(QResizeEvent *_e)
+// {
 //  if (this->dataPtr->renderWindow)
 //  {
 //    this->dataPtr->renderWindow->OnResize(_e->size().width(),
@@ -493,31 +495,31 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //        static_cast<double>(this->width()) / this->height());
 //    this->dataPtr->camera->SetHFOV(M_PI * 0.5);
 //  }
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void Scene3D::mousePressEvent(QMouseEvent *_e)
-//{
+// void Scene3D::mousePressEvent(QMouseEvent *_e)
+// {
 //  auto event = convert(*_e);
 //  event.SetPressPos(event.Pos());
 //  this->dataPtr->mouseEvent = event;
 //
 //  // Update target
 //  this->dataPtr->target = this->ScreenToScene(event.PressPos());
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void Scene3D::mouseReleaseEvent(QMouseEvent *_e)
-//{
+// void Scene3D::mouseReleaseEvent(QMouseEvent *_e)
+// {
 //  this->dataPtr->mouseEvent = convert(*_e);
 //
 //  // Clear target
 //  this->dataPtr->target = math::Vector3d::Zero;
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void Scene3D::mouseMoveEvent(QMouseEvent *_e)
-//{
+// void Scene3D::mouseMoveEvent(QMouseEvent *_e)
+// {
 //  auto event = convert(*_e);
 //  event.SetPressPos(this->dataPtr->mouseEvent.PressPos());
 //
@@ -539,11 +541,11 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //    controller.Orbit(dragDistance);
 //
 //  this->dataPtr->mouseEvent = event;
-//}
+// }
 //
 ///////////////////////////////////////////////////
-//void Scene3D::wheelEvent(QWheelEvent *_e)
-//{
+// void Scene3D::wheelEvent(QWheelEvent *_e)
+// {
 //  // 3D target
 //  auto target = this->ScreenToScene(math::Vector2i(_e->x(), _e->y()));
 //
@@ -557,12 +559,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //  controller.SetCamera(this->dataPtr->camera);
 //  controller.SetTarget(target);
 //  controller.Zoom(amount);
-//}
+// }
 
 ///////////////////////////////////////////////////
-//math::Vector3d RenderWindowItem::ScreenToScene(
+// math::Vector3d RenderWindowItem::ScreenToScene(
 //    const math::Vector2i &_screenPos) const
-//{
+// {
 //  // Normalize point on the image
 //  double width = this->dataPtr->camera->ImageWidth();
 //  double height = this->dataPtr->camera->ImageHeight();
@@ -580,7 +582,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //
 //  // Set point to be 10m away if no intersection found
 //  return rayQuery->Origin() + rayQuery->Direction() * 10;
-//}
+// }
 
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Scene3D,

@@ -142,7 +142,8 @@ void Plugin::ShowContextMenu(const QPoint &_pos)
   // Close action
 //  QAction closeAct(QString::fromStdString("Close [" + this->title + "]"),
 //      this);
-//  this->connect(&closeAct, SIGNAL(triggered()), this->parent(), SLOT(close()));
+//  this->connect(&closeAct, SIGNAL(triggered()), this->parent(),
+//      SLOT(close()));
 
   // Context menu
 //  QMenu contextMenu(tr("Context menu"), this);
