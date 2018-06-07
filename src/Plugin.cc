@@ -30,8 +30,10 @@ class ignition::gui::PluginPrivate
   /// before the end of LoadConfig.
   public: bool deleteLaterRequested{false};
 
-  /// \brief
+  /// \brief Pointer to item generated with plugin's QML
   public: QQuickItem *pluginItem{nullptr};
+
+  /// \brief Pointer to wrapping card item
   public: QQuickItem *cardItem{nullptr};
 };
 
@@ -138,9 +140,9 @@ std::string Plugin::ConfigStr() const
 void Plugin::ShowContextMenu(const QPoint &_pos)
 {
   // Close action
-  QAction closeAct(QString::fromStdString("Close [" + this->title + "]"),
-      this);
-  this->connect(&closeAct, SIGNAL(triggered()), this->parent(), SLOT(close()));
+//  QAction closeAct(QString::fromStdString("Close [" + this->title + "]"),
+//      this);
+//  this->connect(&closeAct, SIGNAL(triggered()), this->parent(), SLOT(close()));
 
   // Context menu
 //  QMenu contextMenu(tr("Context menu"), this);
@@ -162,14 +164,14 @@ void Plugin::ShowContextMenu(const QPoint &_pos)
 void Plugin::DeleteLater()
 {
   this->dataPtr->deleteLaterRequested = true;
-  if (this->parent())
-  {
-    qobject_cast<QWidget *>(this->parent())->close();
-  }
-  else
-  {
-    this->dataPtr->deleteLater = true;
-  }
+//  if (this->parent())
+//  {
+//    qobject_cast<QWidget *>(this->parent())->close();
+//  }
+//  else
+//  {
+//    this->dataPtr->deleteLater = true;
+//  }
 }
 
 /////////////////////////////////////////////////

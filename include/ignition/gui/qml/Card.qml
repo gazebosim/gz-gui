@@ -114,7 +114,7 @@ Pane {
     id: cardToolbar
     objectName: "cardToolbar"
     Material.foreground: "white"
-    Material.background: Material.LightBlue
+    Material.background: Material.accent
     width: card.width
     x: 0
     y: 0

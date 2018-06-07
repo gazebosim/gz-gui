@@ -50,4 +50,4 @@ endif()
 #)
 
 add_subdirectory(cmd)
-#add_subdirectory(plugins)
+add_subdirectory(plugins)

@@ -9,7 +9,6 @@
   <file>qml/MainWindow.qml</file>
 
   <file>qml/images/menu.png</file>
-  <file>qml/images/back.png</file>
   <file>qml/images/drawer.png</file>
 
   <file>images/branch-end.png</file>

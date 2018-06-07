@@ -25,7 +25,7 @@ namespace ignition
   {
     class DialogPrivate
     {
-      /// \brief
+      /// \brief Pointer to quick window
       public: QQuickWindow *quickWindow{nullptr};
     };
   }

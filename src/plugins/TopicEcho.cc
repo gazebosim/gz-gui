@@ -32,17 +32,17 @@ namespace plugins
   class TopicEchoPrivate
   {
     /// \brief Topic
-    public: QString topic = "/echo";
+    public: QString topic{"/echo"};
 
     /// \brief A list of text data.
     public: QStringListModel msgList;
 
     /// \brief Size of the text buffer. The size is the number of
     /// messages.
-    public: int buffer = 10;
+    public: int buffer{10};
 
     /// \brief Flag used to pause message parsing.
-    public: bool paused = false;
+    public: bool paused{false};
 
     /// \brief Mutex to protect message buffer.
     public: std::mutex mutex;

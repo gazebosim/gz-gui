@@ -276,7 +276,7 @@ bool ignition::gui::runEmptyWindow()
 
   initApp();
 
-//  loadDefaultConfig();
+  loadDefaultConfig();
 
   createMainWindow();
   runMainWindow();
@@ -684,7 +684,7 @@ bool ignition::gui::runMainWindow()
   if (!checkApp())
     return false;
 
-  if (!g_engine)
+  if (!mainWindow())
     return false;
 
   igndbg << "Run main window" << std::endl;
@@ -821,5 +821,4 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 
   return plugins;
 }
-
 

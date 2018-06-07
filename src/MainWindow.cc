@@ -31,10 +31,10 @@ namespace ignition
   {
     class MainWindowPrivate
     {
-      /// \brief
+      /// \brief Number of plugins on the window
       public: int pluginCount;
 
-      /// \brief
+      /// \brief Pointer to quick window
       public: QQuickWindow *quickWindow{nullptr};
 
       /// \brief Configuration for this window.

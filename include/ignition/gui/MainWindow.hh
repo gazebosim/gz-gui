@@ -33,10 +33,14 @@ namespace ignition
     class MainWindowPrivate;
     struct WindowConfig;
 
+    /// \brief The main window class creates a QQuickWindow and acts as an
+    /// interface which provides properties and functions which can be called
+    /// from MainWindow.qml
     class IGNITION_GUI_VISIBLE MainWindow : public QObject
     {
       Q_OBJECT
 
+      /// \brief Number of plugins currently instantiated inside the window.
       Q_PROPERTY(
         int pluginCount
         READ PluginCount
@@ -71,10 +75,31 @@ namespace ignition
 
       /// \brief Get the current window configuration.
       /// \return Updated window config
-      private: WindowConfig CurrentWindowConfig() const;
+      public: WindowConfig CurrentWindowConfig() const;
 
-        /// \brief Callback when user requests to close a plugin
-        public slots: void OnPluginClose();
+      /// \brief Callback when user requests to close a plugin
+      public slots: void OnPluginClose();
+
+      /// \brief Add a plugin to the window.
+      /// \param [in] _plugin Plugin filename
+      public slots: void OnAddPlugin(QString _plugin);
+
+      /// \brief Return a list of all plugin names found
+      /// \return List with plugin names
+      public: Q_INVOKABLE QStringList PluginListModel() const;
+
+      /// \brief Returns the number of plugins current instantiated in the
+      /// window.
+      /// \return Number of plugins
+      public: Q_INVOKABLE int PluginCount() const;
+
+      /// \brief Sets the number of plugins current instantiated in the
+      /// window.
+      /// \param[in] _pluginCount Number of plugins
+      public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
+
+      /// \brief Notifies when the number of plugins has changed.
+      signals: void PluginCountChanged();
 
       // Documentation inherited
 //      protected: void paintEvent(QPaintEvent *_event) override;
@@ -93,18 +118,6 @@ namespace ignition
 
       /// \brief Callback when load stylesheet is selected
 //      private slots: void OnLoadStylesheet();
-
-      /// \brief Add a plugin to the window.
-      /// \param [in] _plugin Plugin filename
-      public slots: void OnAddPlugin(QString _plugin);
-
-      /// \brief Return a list of all plugin names found
-      /// \return List with plugin names
-      public: Q_INVOKABLE QStringList PluginListModel() const;
-
-      public: Q_INVOKABLE int PluginCount() const;
-      public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
-      signals: void PluginCountChanged();
 
       /// \internal
       /// \brief Private data pointer
