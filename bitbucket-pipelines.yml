@@ -79,7 +79,7 @@ pipelines:
           # Ignition rendering
           - apt install -y
             libogre-1.9-dev
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b glrendertexture
           - cd ign-rendering
           - mkdir build
           - cd build
