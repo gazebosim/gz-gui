@@ -28,8 +28,6 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/common/PluginMacros.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/rendering.hh>
@@ -75,6 +73,9 @@ namespace plugins
     /// or not
     public: bool initialized = false;
 
+    /// \brief Pointer to user camera
+    public: rendering::CameraPtr camera;
+
     /// \brief Engine Name
     public: std::string engineName{"ogre"};
 
@@ -89,33 +90,16 @@ namespace plugins
 
     /// \brief Initial camera pose
     public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
-
-    /// \brief Pointer to user camera
-    public: rendering::CameraPtr camera;
   };
 
 
   class Scene3DPrivate
   {
-    /// \brief Timer to repaint the widget
-    // public: QTimer *updateTimer;
-
-    /// \brief Pointer to user camera
-    // public: rendering::CameraPtr camera;
-
-    /// \brief Pointer to render window
-    // public: rendering::RenderWindowPtr renderWindow;
-
     /// \brief Keep latest mouse event
     public: common::MouseEvent mouseEvent;
 
     /// \brief Keep latest target point in the 3D world (for camera orbiting)
     public: math::Vector3d target;
-
-    /// \brief Store the window id to use at paintEvent once
-    /// (Qt complains if we call this->winId() from the paint event)
-    public: WId windowId;
-
   };
 }
 }
@@ -191,8 +175,10 @@ void RenderWindowItem::InitializeEngine()
   this->dataPtr->qtContext = QOpenGLContext::currentContext();
   if (!this->dataPtr->qtContext)
   {
-    ignerr << "Null plugin Qt context! lala" << std::endl;
+    ignerr << "Null plugin Qt context!" << std::endl;
   }
+
+  std::cerr << "init engine " << std::endl;
 
   // create a new shared OpenGL context to be used exclusively by Ogre
   this->dataPtr->renderWindowContext = new QOpenGLContext();
@@ -301,7 +287,8 @@ void RenderWindowItem::timerEvent(QTimerEvent *)
 }
 
 /////////////////////////////////////////////////
-QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode, QQuickItem::UpdatePaintNodeData *)
+QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
+    QQuickItem::UpdatePaintNodeData *)
 {
   if (!this->dataPtr->initialized)
   {
@@ -375,6 +362,35 @@ void RenderWindowItem::UpdateFBO()
   this->dataPtr->materialOpaque.setTexture(this->dataPtr->texture);
 }
 
+/////////////////////////////////////////////////
+void RenderWindowItem::SetBackgroundColor(const math::Color &_color)
+{
+  this->dataPtr->backgroundColor = _color;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetAmbientLight(const math::Color &_ambient)
+{
+  this->dataPtr->ambientLight = _ambient;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetEngineName(const std::string &_name)
+{
+  this->dataPtr->engineName = _name;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetSceneName(const std::string &_name)
+{
+  this->dataPtr->sceneName = _name;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
+{
+  this->dataPtr->cameraPose = _pose;
+}
 
 /////////////////////////////////////////////////
 Scene3D::Scene3D()
@@ -392,31 +408,12 @@ Scene3D::Scene3D()
   }
 
   qmlEngine()->rootContext()->setContextProperty("Scene3D", this);
-
-//  this->LoadConfig(nullptr);
 }
 
 
 /////////////////////////////////////////////////
 Scene3D::~Scene3D()
 {
-/*  igndbg << "Destroy camera [" << this->dataPtr->camera->Name() << "]"
-         << std::endl;
-  // Destroy camera
-  auto scene = this->dataPtr->camera->Scene();
-  scene->DestroyNode(this->dataPtr->camera);
-  this->dataPtr->camera.reset();
-
-  // If that was the last sensor, destroy scene
-  if (scene->SensorCount() == 0)
-  {
-    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
-    auto engine = scene->Engine();
-    engine->DestroyScene(scene);
-
-    // TODO: If that was the last scene, terminate engine?
-  }
-  */
 }
 
 /////////////////////////////////////////////////
@@ -428,89 +425,55 @@ QQuickItem *Scene3D::Item() const
 /////////////////////////////////////////////////
 void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
+  RenderWindowItem *renderWindow = this->findChild<RenderWindowItem *>();
+  if (!renderWindow)
+  {
+    ignerr << "Unable to find Render Window item. "
+           << "Render window will not be created" << std::endl;
+    return;
+  }
+
   if (this->title.empty())
     this->title = "3D Scene";
 
+  std::cerr << "load config " << std::endl;
+    renderWindow->SetBackgroundColor(math::Color::Black);
   // Custom parameters
-  /*if (_pluginElem)
+  if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("engine"))
-      this->dataPtr->engineName = elem->GetText();
+      renderWindow->SetEngineName(elem->GetText());
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      this->dataPtr->sceneName = elem->GetText();
+      renderWindow->SetSceneName(elem->GetText());
 
     if (auto elem = _pluginElem->FirstChildElement("ambient_light"))
     {
+      math::Color ambient;
       std::stringstream colorStr;
       colorStr << std::string(elem->GetText());
-      colorStr >> this->dataPtr->ambientLight;
+      colorStr >> ambient;
+      renderWindow->SetAmbientLight(ambient);
     }
 
     if (auto elem = _pluginElem->FirstChildElement("background_color"))
     {
+      math::Color bgColor;
       std::stringstream colorStr;
       colorStr << std::string(elem->GetText());
-      colorStr >> this->dataPtr->backgroundColor;
+      colorStr >> bgColor;
+      renderWindow->SetBackgroundColor(bgColor);
     }
 
     if (auto elem = _pluginElem->FirstChildElement("camera_pose"))
     {
+      math::Pose3d pose;
       std::stringstream poseStr;
       poseStr << std::string(elem->GetText());
-      poseStr >> this->dataPtr->cameraPose;
+      poseStr >> pose;
+      renderWindow->SetCameraPose(pose);
     }
   }
-  */
-
-  // Layout
-//  this->setLayout(new QVBoxLayout());
-//
-//  this->setMinimumWidth(300);
-//  this->setMinimumHeight(300);
-//  this->setAttribute(Qt::WA_OpaquePaintEvent, true);
-//  this->setAttribute(Qt::WA_PaintOnScreen, true);
-//  this->setAttribute(Qt::WA_NoSystemBackground, true);
-
-  // Store window id
-//  this->dataPtr->windowId = this->winId();
-
-/*  // Render engine
-  auto engine = rendering::engine(engineName);
-  if (!engine)
-  {
-    ignerr << "Engine [" << engineName << "] is not supported" << std::endl;
-    return;
-  }
-
-  // Scene
-  auto scene = engine->SceneByName(sceneName);
-  if (!scene)
-  {
-    igndbg << "Create scene [" << sceneName << "]" << std::endl;
-    scene = engine->CreateScene(sceneName);
-    scene->SetAmbientLight(ambientLight);
-    scene->SetBackgroundColor(backgroundColor);
-  }
-  auto root = scene->RootVisual();
-
-  // Camera
-  igndbg << "Create camera" << std::endl;
-  this->dataPtr->camera = scene->CreateCamera();
-  root->AddChild(this->dataPtr->camera);
-  this->dataPtr->camera->SetLocalPose(cameraPose);
-  this->dataPtr->camera->SetImageWidth(800);
-  this->dataPtr->camera->SetImageHeight(600);
-  this->dataPtr->camera->SetAntiAliasing(2);
-//  this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
-  this->dataPtr->camera->SetHFOV(M_PI * 0.5);
-
-  // Timer to repaint
-  this->dataPtr->updateTimer = new QTimer(this);
-  this->connect(this->dataPtr->updateTimer, SIGNAL(timeout()),
-      this->item, SLOT(update()));
-  this->dataPtr->updateTimer->start(std::round(1000.0 / 60.0));
-  */
 }
 
 /////////////////////////////////////////////////
@@ -620,28 +583,28 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //  controller.Zoom(amount);
 //}
 
-/////////////////////////////////////////////////
-math::Vector3d Scene3D::ScreenToScene(const math::Vector2i &_screenPos) const
-{
-/*  // Normalize point on the image
-  double width = this->dataPtr->camera->ImageWidth();
-  double height = this->dataPtr->camera->ImageHeight();
-
-  double nx = 2.0 * _screenPos.X() / width - 1.0;
-  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
-
-  // Make a ray query
-  auto rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
-  rayQuery->SetFromCamera(this->dataPtr->camera, math::Vector2d(nx, ny));
-
-  auto result = rayQuery->ClosestPoint();
-  if (result)
-    return result.point;
-
-  // Set point to be 10m away if no intersection found
-  return rayQuery->Origin() + rayQuery->Direction() * 10;
-  */
-}
+///////////////////////////////////////////////////
+//math::Vector3d RenderWindowItem::ScreenToScene(
+//    const math::Vector2i &_screenPos) const
+//{
+//  // Normalize point on the image
+//  double width = this->dataPtr->camera->ImageWidth();
+//  double height = this->dataPtr->camera->ImageHeight();
+//
+//  double nx = 2.0 * _screenPos.X() / width - 1.0;
+//  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
+//
+//  // Make a ray query
+//  auto rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
+//  rayQuery->SetFromCamera(this->dataPtr->camera, math::Vector2d(nx, ny));
+//
+//  auto result = rayQuery->ClosestPoint();
+//  if (result)
+//    return result.point;
+//
+//  // Set point to be 10m away if no intersection found
+//  return rayQuery->Origin() + rayQuery->Direction() * 10;
+//}
 
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Scene3D,
