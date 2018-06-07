@@ -46,6 +46,8 @@ pipelines:
           - make -j4 install
           - cd ../..
           # Ignition msgs
+          - apt install -y
+            protobuf-compiler
           - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
           - cd ign-msgs
           - mkdir build
@@ -54,6 +56,9 @@ pipelines:
           - make -j4 install
           - cd ../..
           # Ignition transport
+          - apt install -y
+            libzmq3-dev
+            libsqlite3-dev
           - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
           - cd ign-transport
           - mkdir build
