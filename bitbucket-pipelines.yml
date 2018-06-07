@@ -17,6 +17,14 @@ pipelines:
             qml-module-qtquick-layouts
           # Static checking before building
           #- sh tools/code_check.sh
+          # Ignition tools
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-tools -b default
+          - cd ign-tools
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
           # Ignition cmake
           - hg clone http://bitbucket.org/ignitionrobotics/ign-cmake -b default
           - cd ign-cmake
