@@ -78,6 +78,10 @@ namespace ignition
       /// \return Pointer to card item.
       public: QQuickItem *CardItem() const;
 
+      /// \brief Get the plugin item.
+      /// \return Pointer to plugin item.
+      public: QQuickItem *PluginItem() const;
+
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.
       ///

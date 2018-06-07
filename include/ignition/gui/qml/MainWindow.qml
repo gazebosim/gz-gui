@@ -6,8 +6,8 @@ import QtQuick.Controls.Material 2.1
 ApplicationWindow
 {
   title: qsTr("Ignition GUI")
-  width: 640
-  height: 480
+  width: 1200
+  height: 1000
   visible: true
   id: window
   property var bgColor: "#eeeeee"

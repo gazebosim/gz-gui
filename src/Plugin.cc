@@ -181,6 +181,12 @@ bool Plugin::DeleteLaterRequested() const
 }
 
 /////////////////////////////////////////////////
+QQuickItem *Plugin::PluginItem() const
+{
+  return this->dataPtr->pluginItem;
+}
+
+/////////////////////////////////////////////////
 QQuickItem *Plugin::CardItem() const
 {
   // If already created, just return it
