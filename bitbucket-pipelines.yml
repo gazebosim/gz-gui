@@ -1,4 +1,4 @@
-image: ubuntu:xenial
+image: ubuntu:bionic
 
 pipelines:
   default:
@@ -12,6 +12,8 @@ pipelines:
           # Static checking before building
           - sh tools/code_check.sh
           # Ignition tools
+          - apt install -y
+            ruby-ronn ruby-dev
           - hg clone http://bitbucket.org/ignitionrobotics/ign-tools -b default
           - cd ign-tools
           - mkdir build
@@ -71,6 +73,7 @@ pipelines:
           # Ignition rendering
           - apt install -y
             libogre-1.9-dev
+            libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b bionic
           - cd ign-rendering
           - mkdir build

@@ -308,7 +308,8 @@ TEST(MainWindowTest, OnLoadConfig)
   //     auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
   //     ASSERT_GT(edits.size(), 0);
   //     edits[0]->setText(QString::fromStdString(
-  //         std::string(PROJECT_SOURCE_PATH) + "/test/config/stylesheet.config"));
+  //         std::string(PROJECT_SOURCE_PATH) +
+  //         "/test/config/stylesheet.config"));
 
   //     // Accept
   //     auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
