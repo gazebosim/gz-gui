@@ -113,7 +113,6 @@ using namespace plugins;
 RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
   : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
 {
-
   this->setFlag(ItemHasContents);
   this->setSmooth(false);
   this->startTimer(16);
@@ -138,8 +137,6 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
       // start Ogre once we are in the rendering thread (Ogre must live in the rendering thread)
       connect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
           this, &RenderWindowItem::InitializeEngine, Qt::DirectConnection);
-
-
     });
 }
 
@@ -177,8 +174,6 @@ void RenderWindowItem::InitializeEngine()
   {
     ignerr << "Null plugin Qt context!" << std::endl;
   }
-
-  std::cerr << "init engine " << std::endl;
 
   // create a new shared OpenGL context to be used exclusively by Ogre
   this->dataPtr->renderWindowContext = new QOpenGLContext();
@@ -397,17 +392,6 @@ Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
-
-  QQmlComponent component(qmlEngine(),
-      QString(":/Scene3D/Scene3D.qml"), QQmlComponent::PreferSynchronous);
-  this->item = qobject_cast<QQuickItem *>(component.create());
-  if (!this->item)
-  {
-    ignerr << "Null plugin QQuickItem!" << std::endl;
-    return;
-  }
-
-  qmlEngine()->rootContext()->setContextProperty("Scene3D", this);
 }
 
 
@@ -417,15 +401,9 @@ Scene3D::~Scene3D()
 }
 
 /////////////////////////////////////////////////
-QQuickItem *Scene3D::Item() const
-{
-  return this->item;
-}
-
-/////////////////////////////////////////////////
 void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
-  RenderWindowItem *renderWindow = this->findChild<RenderWindowItem *>();
+  RenderWindowItem *renderWindow= this->PluginItem()->findChild<RenderWindowItem *>();
   if (!renderWindow)
   {
     ignerr << "Unable to find Render Window item. "
@@ -436,8 +414,6 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "3D Scene";
 
-  std::cerr << "load config " << std::endl;
-    renderWindow->SetBackgroundColor(math::Color::Black);
   // Custom parameters
   if (_pluginElem)
   {

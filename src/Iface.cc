@@ -35,7 +35,6 @@
 #include "ignition/gui/qt.h"
 #include "ignition/gui/config.hh"
 #include "ignition/gui/Dialog.hh"
-#include "ignition/gui/Dock.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
@@ -59,11 +58,10 @@ QGuiApplication *g_app;
 QQmlApplicationEngine *g_engine;
 
 /// \brief Pointer to main window
-QQuickWindow *g_mainWin = nullptr;
-MainWindow *g_mainWinIface = nullptr;
+MainWindow *g_mainWin = nullptr;
 
 /// \brief Vector of pointers to dialogs
-std::vector<QObject *> g_dialogs;
+std::vector<Dialog *> g_dialogs;
 
 /// \brief Queue of plugins which should be added to the window
 std::queue<std::shared_ptr<Plugin>> g_pluginsToAdd;
@@ -111,10 +109,20 @@ bool installSignalHandler()
 #ifndef _WIN32
   auto handler = [](int)  // NOLINT(readability/casting)
       {
-        // Note: Don't call stop() for the main window, we close it and let the
-        // program pick it up from there
-        if (g_mainWin)
-          g_mainWin->close();
+        // Note: Don't call stop() if there are windows, we close them and let
+        // the program pick it up from there
+        if (g_mainWin && g_mainWin->QuickWindow())
+        {
+          g_mainWin->QuickWindow()->close();
+        }
+        else if (!g_dialogs.empty())
+        {
+          for (auto dialog : g_dialogs)
+          {
+            if (dialog->QuickWindow())
+              dialog->QuickWindow()->close();
+          }
+        }
         else
           stop();
       };
@@ -192,21 +200,21 @@ std::string homePath()
 void removeAddedPlugin(std::shared_ptr<Plugin> _plugin)
 {
   // If parent is a dialog, remove that too
-  auto dialog = qobject_cast<Dialog *>(_plugin->parent());
-  if (dialog)
-  {
-    g_dialogs.erase(std::remove(
-        g_dialogs.begin(),
-        g_dialogs.end(), dialog),
-        g_dialogs.end());
-  }
+//  auto dialog = qobject_cast<Dialog *>(_plugin->parent());
+//  if (dialog)
+//  {
+//    g_dialogs.erase(std::remove(
+//        g_dialogs.begin(),
+//        g_dialogs.end(), dialog),
+//        g_dialogs.end());
+//  }
 
   g_pluginsAdded.erase(std::remove(
       g_pluginsAdded.begin(),
       g_pluginsAdded.end(), _plugin),
       g_pluginsAdded.end());
 
-  g_mainWinIface->SetPluginCount(g_pluginsAdded.size());
+  g_mainWin->SetPluginCount(g_pluginsAdded.size());
 }
 
 /////////////////////////////////////////////////
@@ -215,15 +223,7 @@ bool ignition::gui::removePlugin(const std::string &_pluginName)
   bool found{false};
   for (auto plugin : g_pluginsAdded)
   {
-    auto pluginItem = plugin->Item();
-    if (!pluginItem)
-      continue;
-
-    auto contentItem = pluginItem->parentItem();
-    if (!contentItem)
-      continue;
-
-    auto cardItem = contentItem->parent();
+    auto cardItem = plugin->CardItem();
     if (!cardItem)
       continue;
 
@@ -276,7 +276,7 @@ bool ignition::gui::runEmptyWindow()
 
   initApp();
 
-//  loadDefaultConfig();
+  loadDefaultConfig();
 
   createMainWindow();
   runMainWindow();
@@ -305,84 +305,7 @@ bool ignition::gui::runStandalone(const std::string &_filename)
     return false;
   }
 
-  while (!g_pluginsToAdd.empty())
-  {
-    auto plugin = g_pluginsToAdd.front();
-
-    g_pluginsAdded.push_back(plugin);
-    g_pluginsToAdd.pop();
-
-    // Create dialog
-    g_engine->load(QUrl(QStringLiteral("qrc:qml/Dialog.qml")));
-
-    auto dialogObj = qobject_cast<QObject *>(g_engine->rootObjects().value(0));
-    if (!dialogObj)
-    {
-      ignerr << "Null dialog QObject!" << std::endl;
-      return false;
-    }
-
-    auto dialogItem = dialogObj->findChild<QQuickItem *>();
-    if (!dialogItem)
-    {
-      ignerr << "Null dialog QQuickItem!" << std::endl;
-      return false;
-    }
-
-    // Instantiate a card
-    QQmlComponent component(qmlEngine(), QString(":qml/Card.qml"));
-
-    // Create an item
-    auto cardItem = qobject_cast<QQuickItem *>(component.create());
-    if (!cardItem)
-    {
-      ignerr << "Null card QQuickItem!" << std::endl;
-      return false;
-    }
-    QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
-
-    auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
-    if (!cardContentItem)
-    {
-      ignerr << "Null card content QQuickItem!" << std::endl;
-      return false;
-    }
-
-    auto cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
-    if (!cardToolbarItem)
-    {
-      ignerr << "Null toolbar content QQuickItem!" << std::endl;
-      return false;
-    }
-
-    // Add plugin to card content
-    plugin->Item()->setParentItem(cardContentItem);
-
-    // Add card to dialog
-    cardItem->setParentItem(dialogItem);
-
-    // Configure card
-    auto pluginWidth = plugin->Item()->property("width").toInt();
-    auto pluginHeight = plugin->Item()->property("height").toInt() +
-                        cardToolbarItem->property("height").toInt();
-
-    cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
-    cardItem->setProperty("width", pluginWidth);
-    cardItem->setProperty("height", pluginHeight);
-    cardItem->setProperty("hasDockButton", false);
-    cardItem->setProperty("hasCloseButton", false);
-
-    // Configure dialog
-    dialogObj->setProperty("width", pluginWidth);
-    dialogObj->setProperty("height", pluginHeight);
-
-    // Signals
-    g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,
-        SLOT(OnPluginClose()));
-  }
-
-  // Run app - blocks
-  g_app->exec();
+  runDialogs();
 
   // Cleanup
   stop();
@@ -419,18 +342,19 @@ bool ignition::gui::stop()
 {
   igndbg << "Stop" << std::endl;
 
-  if (g_mainWin)
+  if (g_mainWin && g_mainWin->QuickWindow())
   {
 //    g_mainWin->CloseAllDocks();
-    if (g_mainWin->isVisible())
-      g_mainWin->close();
+    if (g_mainWin->QuickWindow()->isVisible())
+      g_mainWin->QuickWindow()->close();
     delete g_mainWin;
     g_mainWin = nullptr;
   }
 
   for (auto dialog : g_dialogs)
   {
-//    dialog->close();
+    if (dialog->QuickWindow())
+      dialog->QuickWindow()->close();
     dialog->deleteLater();
   }
   g_dialogs.clear();
@@ -561,7 +485,7 @@ bool ignition::gui::setStyleFromString(const std::string &_style)
     return false;
 
   g_windowConfig.styleSheet = _style;
-  //g_app->setStyleSheet(QString::fromStdString(g_windowConfig.styleSheet));
+  // g_app->setStyleSheet(QString::fromStdString(g_windowConfig.styleSheet));
 
   // \todo Return false if sheet is can't be correctly parsed.
   return true;
@@ -675,16 +599,7 @@ bool ignition::gui::createMainWindow()
 
   igndbg << "Create main window" << std::endl;
 
-  // FIXME: Either remove the MainWindow class or make it more closely tied to
-  // the QML.
-  // It's currently being used to run C++ code that needs a QObject, which
-  // Iface  doesn't have.
-  g_mainWinIface = new MainWindow();
-  g_engine->rootContext()->setContextProperty("MainWindow", g_mainWinIface);
-
-  // Load QML and keep pointer to generated QQuickWindow
-  g_engine->load(QUrl(QStringLiteral("qrc:qml/MainWindow.qml")));
-  g_mainWin = qobject_cast<QQuickWindow *>(g_engine->rootObjects().value(0));
+  g_mainWin = new MainWindow();
 
   return addPluginsToWindow() && applyConfig();
 }
@@ -694,7 +609,7 @@ bool ignition::gui::addPluginsToWindow()
 {
   // Get main window background item
   auto bgItem =
-      g_mainWin->findChild<QQuickItem *>("background");
+      g_mainWin->QuickWindow()->findChild<QQuickItem *>("background");
   if (!g_pluginsToAdd.empty() && !bgItem)
   {
     ignerr << "Null background QQuickItem!" << std::endl;
@@ -716,50 +631,14 @@ bool ignition::gui::addPluginsToWindow()
       continue;
     }
 
-    // Instantiate a card
-    QQmlComponent component(qmlEngine(), QString(":qml/Card.qml"));
-
-    // Create an item
-    auto cardItem = qobject_cast<QQuickItem *>(component.create());
-    if (!cardItem)
-    {
-      ignerr << "Null card QQuickItem!" << std::endl;
-      return false;
-    }
-    QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
-
-    auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
-    if (!cardContentItem)
-    {
-      ignerr << "Null card content QQuickItem!" << std::endl;
-      return false;
-    }
-
-    auto cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
-    if (!cardToolbarItem)
-    {
-      ignerr << "Null toolbar content QQuickItem!" << std::endl;
-      return false;
-    }
-
-    // Add plugin to card content
-    plugin->Item()->setParentItem(cardContentItem);
+    auto cardItem = plugin->CardItem();
 
     // Add card to main window
     cardItem->setParentItem(bgItem);
     cardItem->setParent(g_engine);
 
-    // Configure card
-    auto pluginWidth = plugin->Item()->property("width").toInt();
-    auto pluginHeight = plugin->Item()->property("height").toInt() +
-                        cardToolbarItem->property("height").toInt();
-
-    cardItem->setProperty("pluginName", QString::fromStdString(plugin->Title()));
-    cardItem->setProperty("width", pluginWidth);
-    cardItem->setProperty("height", pluginHeight);
-
     // Signals
-    g_mainWinIface->connect(cardItem, SIGNAL(close()), g_mainWinIface,
+    g_mainWin->connect(cardItem, SIGNAL(close()), g_mainWin,
         SLOT(OnPluginClose()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
@@ -768,7 +647,7 @@ bool ignition::gui::addPluginsToWindow()
     count++;
   }
 
-  g_mainWinIface->SetPluginCount(g_pluginsAdded.size());
+  g_mainWin->SetPluginCount(g_pluginsAdded.size());
 
   return true;
 }
@@ -778,29 +657,23 @@ bool ignition::gui::applyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
-  // TODO: move this to MainWindow when g_mainWin and g_mainWinIface are
-  // consolidated
-  // Window size
-  if (g_windowConfig.width >= 0 && g_windowConfig.height >= 0)
-    g_mainWin->resize(g_windowConfig.width, g_windowConfig.height);
-
-  return true;//g_mainWin->ApplyConfig(g_windowConfig);
+  return g_mainWin->ApplyConfig(g_windowConfig);
 }
 
 /////////////////////////////////////////////////
 ignition::gui::MainWindow *ignition::gui::mainWindow()
 {
-  return nullptr;//g_mainWin;
+  return g_mainWin;
 }
 
 /////////////////////////////////////////////////
-QQmlEngine *ignition::gui::qmlEngine()
+QQmlApplicationEngine *ignition::gui::qmlEngine()
 {
   return g_engine;
 }
 
 /////////////////////////////////////////////////
-std::vector<QObject *> ignition::gui::dialogs()
+std::vector<Dialog *> ignition::gui::dialogs()
 {
   return g_dialogs;
 }
@@ -811,7 +684,7 @@ bool ignition::gui::runMainWindow()
   if (!checkApp())
     return false;
 
-  if (!g_engine)
+  if (!mainWindow())
     return false;
 
   igndbg << "Run main window" << std::endl;
@@ -834,30 +707,33 @@ bool ignition::gui::runDialogs()
   {
     auto plugin = g_pluginsToAdd.front();
 
-    auto title = QString::fromStdString(plugin->Title());
-
-//    auto layout = new QVBoxLayout();
-//    layout->addWidget(plugin.get());
-
+    // Create dialog
     auto dialog = new Dialog();
-//    dialog->setLayout(layout);
-//    dialog->setWindowTitle(title);
-//    dialog->setWindowModality(Qt::NonModal);
-//    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-
     g_dialogs.push_back(dialog);
+
+    // Add card to dialog
+    auto cardItem = plugin->CardItem();
+    cardItem->setParentItem(dialog->RootItem());
+
+    // Configure card
+    cardItem->setProperty("hasDockButton", false);
+    cardItem->setProperty("hasCloseButton", false);
+
+    // Configure dialog
+    auto cardWidth = cardItem->property("width").toInt();
+    auto cardHeight = cardItem->property("height").toInt();
+    dialog->QuickWindow()->setProperty("width", cardWidth);
+    dialog->QuickWindow()->setProperty("height", cardHeight);
 
     g_pluginsAdded.push_back(plugin);
     g_pluginsToAdd.pop();
 
-    g_mainWin->connect(dialog, &Dialog::Closing, [plugin]
-    {
-      removeAddedPlugin(plugin);
-    });
-
-//    dialog->show();
+    auto title = QString::fromStdString(plugin->Title());
     igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
   }
+
+  // Run app - blocks
+  g_app->exec();
 
   return true;
 }

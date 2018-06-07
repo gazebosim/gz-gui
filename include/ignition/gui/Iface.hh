@@ -21,8 +21,8 @@
 #include <utility>
 #include <vector>
 
-#include "ignition/gui/Export.hh"
 #include "ignition/gui/qt.h"
+#include "ignition/gui/Export.hh"
 
 // Forward declarations.
 namespace tinyxml2
@@ -34,7 +34,7 @@ namespace ignition
 {
   namespace gui
   {
-//    class Dialog;
+    class Dialog;
     class MainWindow;
 
     /// \brief Initialize the application. This must be run before everything
@@ -154,16 +154,19 @@ namespace ignition
 
     /// \brief Get the main window, if one has been generated. Use this to
     /// customize the window before running it.
+    /// \return Pointer to the main window
     IGNITION_GUI_VISIBLE
     ignition::gui::MainWindow *mainWindow();
 
-    /// \brief
-    IGNITION_GUI_VISIBLE
-    QQmlEngine *qmlEngine();
-
     /// \brief Get the dialogs, if they have been generated.
+    /// \return Vector of dialogs
     IGNITION_GUI_VISIBLE
-    std::vector<QObject *> dialogs();
+    std::vector<Dialog *> dialogs();
+
+    /// \brief Get the QML engine
+    /// \return Pointer to the QML engine
+    IGNITION_GUI_VISIBLE
+    QQmlApplicationEngine *qmlEngine();
 
     /// \brief Run previously created window.
     /// \return True if successful

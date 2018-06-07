@@ -83,7 +83,6 @@ endif()
 find_package (Qt5
   COMPONENTS
     Core
-    Widgets
     Quick
     QuickControls2
   REQUIRED

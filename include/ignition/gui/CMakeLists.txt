@@ -20,7 +20,6 @@ set (qt_headers
 #  CollapsibleWidget.hh
 #  ColorWidget.hh
   Dialog.hh
-  Dock.hh
 #  EditableLabel.hh
 #  EnumWidget.hh
 #  GeometryWidget.hh
@@ -67,7 +66,6 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   ${IGNITION-MSGS_LIBRARIES}
   ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
-  ${Qt5Widgets_LIBRARIES}
   ${Qt5Qml_LIBRARIES}
   ${Qt5Quick_LIBRARIES}
   ${Qt5QuickControls2_LIBRARIES}

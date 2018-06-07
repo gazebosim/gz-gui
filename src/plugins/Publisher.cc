@@ -65,33 +65,11 @@ using namespace plugins;
 Publisher::Publisher()
   : Plugin(), dataPtr(new PublisherPrivate)
 {
-  // This let's Publisher.qml use `Publisher` functions and properties
-  qmlEngine()->rootContext()->setContextProperty("Publisher", this);
-
-  // Instantiate QML file into a component
-  QQmlComponent component(qmlEngine(),
-      QString(":/Publisher/Publisher.qml"));
-
-  // Create an item
-  this->item = qobject_cast<QQuickItem *>(component.create());
-  if (!this->item)
-  {
-    ignerr << "Null plugin QQuickItem!" << std::endl;
-    return;
-  }
-
-  this->LoadConfig(nullptr);
 }
 
 /////////////////////////////////////////////////
 Publisher::~Publisher()
 {
-}
-
-/////////////////////////////////////////////////
-QQuickItem *Publisher::Item() const
-{
-  return this->item;
 }
 
 /////////////////////////////////////////////////

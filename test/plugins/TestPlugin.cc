@@ -27,10 +27,6 @@ using namespace gui;
 TestPlugin::TestPlugin()
   : Plugin()
 {
-  auto layout = new QHBoxLayout;
-  layout->addWidget(new QLabel("Test plugin"));
-
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////

@@ -19,6 +19,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -32,10 +33,14 @@ namespace ignition
     class MainWindowPrivate;
     struct WindowConfig;
 
+    /// \brief The main window class creates a QQuickWindow and acts as an
+    /// interface which provides properties and functions which can be called
+    /// from MainWindow.qml
     class IGNITION_GUI_VISIBLE MainWindow : public QObject
     {
       Q_OBJECT
 
+      /// \brief Number of plugins currently instantiated inside the window.
       Q_PROPERTY(
         int pluginCount
         READ PluginCount
@@ -49,45 +54,31 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~MainWindow();
 
-//      /// \brief Close all docks
-//      /// \return True if all docks have been closed
+      /// \brief Get the QtQuick window created by this object
+      /// \return Pointer to the QtQuick window
+      public: QQuickWindow *QuickWindow() const;
+
+      /// \brief Close all docks
+      /// \return True if all docks have been closed
 //      public: bool CloseAllDocks();
-//
-//      /// \brief Save current window and plugin configuration to a file on disk.
-//      /// Will open an error dialog in case it's not possible to write to the
-//      /// path.
-//      /// \param[in] _path The full destination path including filename.
+
+      /// \brief Save current window and plugin configuration to a file on disk.
+      /// Will open an error dialog in case it's not possible to write to the
+      /// path.
+      /// \param[in] _path The full destination path including filename.
 //      public: void SaveConfig(const std::string &_path);
-//
-//      /// \brief Apply a WindowConfig to this window and keep a copy of it.
-//      /// \param[in] _config The configuration to apply.
-//      /// \return True if successful.
-//      public: bool ApplyConfig(const WindowConfig &_config);
 
-        /// \brief Callback when user requests to close a plugin
-        public slots: void OnPluginClose();
+      /// \brief Apply a WindowConfig to this window and keep a copy of it.
+      /// \param[in] _config The configuration to apply.
+      /// \return True if successful.
+      public: bool ApplyConfig(const WindowConfig &_config);
 
-//      // Documentation inherited
-//      protected: void paintEvent(QPaintEvent *_event) override;
-//
-//      // Documentation inherited
-//      protected: void closeEvent(QCloseEvent *_event) override;
-//
-//      /// \brief Get the current window configuration.
-//      /// \return Updated window config
-//      private: WindowConfig CurrentWindowConfig() const;
-//
-//      /// \brief Callback when load configuration is selected
-//      private slots: void OnLoadConfig();
-//
-//      /// \brief Callback when "save configuration" is selected
-//      private slots: void OnSaveConfig();
-//
-//      /// \brief Callback when "save configuration as" is selected
-//      private slots: void OnSaveConfigAs();
-//
-//      /// \brief Callback when load stylesheet is selected
-//      private slots: void OnLoadStylesheet();
+      /// \brief Get the current window configuration.
+      /// \return Updated window config
+      public: WindowConfig CurrentWindowConfig() const;
+
+      /// \brief Callback when user requests to close a plugin
+      public slots: void OnPluginClose();
 
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename
@@ -97,9 +88,36 @@ namespace ignition
       /// \return List with plugin names
       public: Q_INVOKABLE QStringList PluginListModel() const;
 
+      /// \brief Returns the number of plugins current instantiated in the
+      /// window.
+      /// \return Number of plugins
       public: Q_INVOKABLE int PluginCount() const;
+
+      /// \brief Sets the number of plugins current instantiated in the
+      /// window.
+      /// \param[in] _pluginCount Number of plugins
       public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
+
+      /// \brief Notifies when the number of plugins has changed.
       signals: void PluginCountChanged();
+
+      // Documentation inherited
+//      protected: void paintEvent(QPaintEvent *_event) override;
+
+      // Documentation inherited
+//      protected: void closeEvent(QCloseEvent *_event) override;
+
+      /// \brief Callback when load configuration is selected
+//      private slots: void OnLoadConfig();
+
+      /// \brief Callback when "save configuration" is selected
+//      private slots: void OnSaveConfig();
+
+      /// \brief Callback when "save configuration as" is selected
+//      private slots: void OnSaveConfigAs();
+
+      /// \brief Callback when load stylesheet is selected
+//      private slots: void OnLoadStylesheet();
 
       /// \internal
       /// \brief Private data pointer
@@ -110,7 +128,7 @@ namespace ignition
     struct IGNITION_GUI_VISIBLE WindowConfig
     {
       /// \brief Update this config from an XML string. Only fields present on
-      /// the XML will be overriden / created.
+      /// the XML will be overriden / appended / created.
       /// \param[in] _xml A config XML file in string format
       /// \return True if successful. It may fail for example if the string
       /// can't be parsed into XML.
@@ -119,6 +137,10 @@ namespace ignition
       /// \brief Return this configuration in XML format as a string.
       /// \return String containing a complete config file.
       std::string XMLString() const;
+
+      /// \brief Get whether a property should be ignored
+      /// \return True if it's being ignored
+      bool IsIgnoring(const std::string &_prop) const;
 
       /// \brief Window X position in px
       int posX{-1};
@@ -148,6 +170,9 @@ namespace ignition
 
       /// \brief List of plugins which should be shown on the list
       std::vector<std::string> showPlugins;
+
+      /// \brief List of window properties which should be ignored on load
+      std::set<std::string> ignoredProps;
 
       /// \brief Concatenation of all plugin configurations.
       std::string plugins{""};

@@ -138,6 +138,8 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           mainLayout->addWidget(stepLabel,   0, 2);
           mainLayout->addWidget(stepSpinBox, 0, 3);
 
+          mainLayout->setAlignment(stepLabel, Qt::AlignRight);
+
           auto startPaused = false;
           if (auto pausedElem = controlElem->FirstChildElement("start_paused"))
           {
@@ -209,6 +211,30 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
               mainLayout->addWidget(realTime, 1, 3);
             }
           }
+
+          // Real time factor
+          if (auto realTimeFactorElem =
+                statsElem->FirstChildElement("real_time_factor"))
+          {
+            auto hasRTF = false;
+            realTimeFactorElem->QueryBoolText(&hasRTF);
+
+            if (hasRTF)
+            {
+              auto rtfLabel = new QLabel("Real Time Factor");
+              mainLayout->addWidget(rtfLabel, 2, 0, 1, 2);
+              mainLayout->setAlignment(rtfLabel, Qt::AlignRight);
+
+              auto rtf = new QLabel("N/A");
+              rtf->setObjectName("realTimeFactorLabel");
+              rtf->setMinimumWidth(70);
+              rtf->setAlignment(Qt::AlignRight);
+              mainLayout->addWidget(rtf, 2, 2);
+              mainLayout->setAlignment(rtf, Qt::AlignRight);
+              this->connect(this, SIGNAL(SetRealTimeFactor(QString)), rtf,
+                  SLOT(setText(QString)));
+            }
+          }
         }
       }
     }
@@ -221,7 +247,7 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   auto spacerV = new QWidget();
   spacerV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacerV, 2, 0, 1, 5);
+  mainLayout->addWidget(spacerV, 3, 0, 1, 5);
 
   this->setLayout(mainLayout);
 }
@@ -247,6 +273,14 @@ void TimePanel::ProcessMsg()
     time.nsec = this->dataPtr->msg.real_time().nsec();
 
     this->SetRealTime(QString::fromStdString(time.FormattedString()));
+  }
+
+  if (this->dataPtr->msg.has_real_time_factor())
+  {
+    // RTF as a percentage.
+    double rtf = this->dataPtr->msg.real_time_factor() * 100;
+
+    this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
   }
 
   if (this->dataPtr->msg.has_paused())

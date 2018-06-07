@@ -1,32 +1,74 @@
-image: ubuntu:xenial
+image: ubuntu:bionic
 
 pipelines:
   default:
     - step:
         script:
           # Install dependencies
-          - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable xenial main" > /etc/apt/sources.list.d/gazebo-stable.list
-          - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease xenial main" > /etc/apt/sources.list.d/gazebo-prerelease.list
-          - apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
           - apt update
           - apt install -y
             build-essential wget cmake cppcheck mercurial
-            qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
-            libignition-cmake1-dev
-            libignition-common2-dev
-            libignition-math5-dev
-            libignition-msgs2-dev
-            libignition-tools-dev
-            libignition-transport5-dev
-            libogre-1.9-dev
+            qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
+            qtdeclarative5-dev
+            qtquickcontrols2-5-dev
+            qml-module-qtquick2
+            qml-module-qtquick-controls
+            qml-module-qtquick-controls2
+            qml-module-qtquick-layouts
           # Static checking before building
-          - sh tools/code_check.sh
+          #- sh tools/code_check.sh
+          # Ignition cmake
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-cmake -b default
+          - cd ign-cmake
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition math
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-math -b default
+          - cd ign-math
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition common
+          - apt install -y
+            uuid-dev
+            libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev
+            libfreeimage-dev libgts-dev libswscale-dev
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-common -b default
+          - cd ign-common
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition msgs
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
+          - cd ign-msgs
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
+          # Ignition transport
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
+          - cd ign-transport
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
           # Ignition rendering
+          - apt install -y
+            libogre-1.9-dev
           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
           - cd ign-rendering
           - mkdir build
           - cd build
-          - cmake .. # -DENABLE_TESTS_COMPILATION=false
+          - cmake ..
           - make -j4 install
           - cd ../..
           # Ignition GUI

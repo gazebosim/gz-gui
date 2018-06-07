@@ -32,7 +32,20 @@ namespace ignition
   {
     class PluginPrivate;
 
-    /// \brief Gui plugin
+    /// \brief Base class for Ignition GUI plugins.
+    ///
+    /// When inheriting from this plugin, the following are assumed:
+    ///
+    /// * The derived class' name is the same as the generated shared library
+    ///   (i.e. if the Publisher class extends Plugin, the library file is
+    ///   libPublisher.so)
+    ///
+    /// * There is a QML file with the same name as the plugin's shared library
+    ///   name.
+    ///   (i.e. there must be a Publisher.qml)
+    ///
+    /// * The QML file is prefixed by the library's name in the QRC file
+    ///   (i.e. the file's resource is found at ':/Publisher/Publisher.qml')
     class IGNITION_GUI_VISIBLE Plugin : public QObject
     {
       Q_OBJECT
@@ -60,8 +73,14 @@ namespace ignition
       /// \return Config element
       public: virtual std::string ConfigStr() const;
 
-      /// \brief
-      public: virtual QQuickItem *Item() const = 0;
+      /// \brief Get the card item which contains this plugin. The item is
+      /// generated the first time this function is run.
+      /// \return Pointer to card item.
+      public: QQuickItem *CardItem() const;
+
+      /// \brief Get the plugin item.
+      /// \return Pointer to plugin item.
+      public: QQuickItem *PluginItem() const;
 
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.

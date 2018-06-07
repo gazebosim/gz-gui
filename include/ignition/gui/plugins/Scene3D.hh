@@ -70,12 +70,8 @@ namespace plugins
     /// ray cast from the given 2D screen coordinates.
     /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
     /// \return 3D coordinates of a point in the 3D scene.
-    public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
-        const;
-
-    /// \brief
-    public: QQuickItem *Item() const override;
-    private: QQuickItem *item;
+    // piublic: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
+    //    const;
 
     // Documentation inherited
 //    protected: virtual QPaintEngine *paintEngine() const override;
@@ -103,9 +99,6 @@ namespace plugins
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
 
 
-    private: void InitializeEngine();
-    private: void ActivateRenderWindowContext();
-    private: void DoneRenderWindowContext();
   };
 
   /// \brief A QQUickItem that manages the render window
