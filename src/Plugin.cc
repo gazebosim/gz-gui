@@ -233,6 +233,7 @@ QQuickItem *Plugin::CardItem() const
 
   cardItem->setProperty("pluginName",
       QString::fromStdString(this->Title()));
+  cardItem->setProperty("hasTitlebar", this->hasTitlebar);
   cardItem->setProperty("width", pluginWidth);
   cardItem->setProperty("height", pluginHeight);
 

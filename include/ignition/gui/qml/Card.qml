@@ -28,6 +28,11 @@ Pane {
   property bool hasCloseButton: true
 
   /**
+   * True to have a title bar
+   */
+  property bool hasTitlebar: true
+
+  /**
    * The plugin name, which goes on the toolbar
    */
   property alias pluginName: titleLabel.text
@@ -113,9 +118,11 @@ Pane {
   ToolBar {
     id: cardToolbar
     objectName: "cardToolbar"
+    visible: card.hasTitlebar
     Material.foreground: "white"
     Material.background: Material.accent
     width: card.width
+    height: card.hasTitlebar ? 50 : 0
     x: 0
     y: 0
     z: 100
@@ -168,6 +175,20 @@ Pane {
           card.close();
         }
       }
+    }
+  }
+
+  // For drag
+  MouseArea {
+    enabled: !hasTitlebar
+    anchors.fill: content
+    drag{
+      target: card
+      minimumX: 0
+      minimumY: 0
+      maximumX: card.parent.width - card.width
+      maximumY: card.parent.height - card.height
+      smoothed: true
     }
   }
 
