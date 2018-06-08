@@ -26,11 +26,11 @@
 #include <ignition/math/Pose3.hh>
 #include <ignition/rendering.hh>
 
-//#include "ignition/gui/CollapsibleWidget.hh"
-//#include "ignition/gui/ColorWidget.hh"
-//#include "ignition/gui/NumberWidget.hh"
-//#include "ignition/gui/Pose3dWidget.hh"
-//#include "ignition/gui/QtMetatypes.hh"
+// #include "ignition/gui/CollapsibleWidget.hh"
+// #include "ignition/gui/ColorWidget.hh"
+// #include "ignition/gui/NumberWidget.hh"
+// #include "ignition/gui/Pose3dWidget.hh"
+// #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/plugins/Grid3D.hh"
 
 // Default cell count
@@ -363,7 +363,8 @@ void Grid3D::Refresh()
 //    this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
 //        SLOT(OnChange(QVariant)));
 //
-//    auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
+//    auto cellLengthWidget = new NumberWidget("Cell length",
+//        NumberType::DOUBLE);
 //    cellLengthWidget->SetValue(QVariant::fromValue(grid->CellLength()));
 //    cellLengthWidget->setProperty("gridName", gridName);
 //    cellLengthWidget->setObjectName("cellLengthWidget");
@@ -409,7 +410,8 @@ void Grid3D::Refresh()
 /////////////////////////////////////////////////
 void Grid3D::OnChange(const QVariant &_value)
 {
-//  auto gridName = this->sender()->property("gridName").toString().toStdString();
+//  auto gridName =
+//      this->sender()->property("gridName").toString().toStdString();
 //  auto type = this->sender()->objectName().toStdString();
 //
 //  for (auto grid : this->dataPtr->grids)
@@ -435,7 +437,8 @@ void Grid3D::OnChange(const QVariant &_value)
 /////////////////////////////////////////////////
 void Grid3D::OnDelete()
 {
-//  auto gridName = this->sender()->property("gridName").toString().toStdString();
+//  auto gridName =
+//      this->sender()->property("gridName").toString().toStdString();
 //
 //  for (auto grid : this->dataPtr->grids)
 //  {
