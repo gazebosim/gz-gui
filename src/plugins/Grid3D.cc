@@ -181,7 +181,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->dataPtr->quickWindow = _window;
 
       // Initialize after Scene3D plugins
-      this->connect(this->dataPtr->quickWindow, &QQuickWindow::afterRendering,
+      this->connect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
           this, &Grid3D::Initialize, Qt::DirectConnection);
     });
 }

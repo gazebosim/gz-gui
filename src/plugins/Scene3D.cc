@@ -289,6 +289,26 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
   // update render window
   this->ActivateRenderWindowContext();
   this->dataPtr->camera->Update();
+
+  static bool done = false;
+  if (!done)
+  {
+    auto scene = this->dataPtr->camera->Scene();
+    auto root = scene->RootVisual();
+    auto grid = scene->CreateGrid();
+    grid->SetCellCount(200);
+    grid->SetVerticalCellCount(0);
+    grid->SetCellLength(1.0);
+
+    auto gridVis = scene->CreateVisual();
+    root->AddChild(gridVis);
+    gridVis->AddGeometry(grid);
+
+    auto mat = scene->CreateMaterial();
+    gridVis->SetMaterial(mat);
+    done = true;
+  }
+
   this->UpdateFBO();
   this->DoneRenderWindowContext();
 
