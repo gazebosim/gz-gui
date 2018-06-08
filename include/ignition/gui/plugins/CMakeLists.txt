@@ -5,7 +5,7 @@ set (qt_headers_local
 #  Requester
 #  Responder
   Scene3D
-#  TimePanel
+  TimePanel
   TopicEcho
 #  TopicInterface
 #  TopicsStats
