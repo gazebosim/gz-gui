@@ -177,6 +177,7 @@ Pane {
     y: cardToolbar.height
     width: card.width
     height: card.height - cardToolbar.height
+    clip: true
   }
 
   // Left ruler
