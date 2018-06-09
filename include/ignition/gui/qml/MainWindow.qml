@@ -1,7 +1,8 @@
 import QtQuick 2.9
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
+import QtQuick.Dialogs 1.0
+import QtQuick.Layouts 1.3
 
 ApplicationWindow
 {
@@ -10,7 +11,58 @@ ApplicationWindow
   height: 1000
   visible: true
   id: window
-  property var bgColor: "#eeeeee"
+  property string bgColor: "#eeeeee"
+
+  // C++ signals to QML slots
+  Connections {
+    target: MainWindow
+    onNotify: {
+     notificationText.text = _message
+      notificationDialog.open()
+    }
+  }
+
+  /**
+   * Load a configuration file
+   */
+  function loadConfig() {
+    loadFileDialog.open()
+  }
+
+  /**
+   * Save a configuration file
+   */
+  function saveConfig() {
+    MainWindow.OnSaveConfig()
+  }
+
+  /**
+   * Save a configuration file to a given file
+   */
+  function saveConfigAs() {
+    saveFileDialog.open()
+  }
+
+  // Shortcuts (why not working on menu?)
+  Shortcut {
+    sequence: "Ctrl+O"
+    onActivated: loadConfig()
+  }
+
+  Shortcut {
+    sequence: "Ctrl+S"
+    onActivated: saveConfig()
+  }
+
+  Shortcut {
+    sequence: "Ctrl+Shift+S"
+    onActivated: saveConfigAs()
+  }
+
+  Shortcut {
+    sequence: "Ctrl+Q"
+    onActivated: close()
+  }
 
   /**
    * Top toolbar
@@ -23,6 +75,7 @@ ApplicationWindow
       anchors.fill: parent
 
       ToolButton {
+        highlighted: true
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -43,6 +96,7 @@ ApplicationWindow
       }
 
       ToolButton {
+        highlighted: true
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -56,8 +110,26 @@ ApplicationWindow
           x: parent.width - width
           transformOrigin: Menu.TopRight
           MenuItem {
+            text: "Load configuration"
+            onTriggered: loadConfig()
+          }
+          MenuItem {
+            text: "Save configuration"
+            onTriggered: saveConfig()
+          }
+          MenuItem {
+            text: "Save configuration as"
+            onTriggered: saveConfigAs()
+          }
+          MenuSeparator { }
+          MenuItem {
             text: "About"
             onTriggered: aboutDialog.open()
+          }
+          MenuSeparator { }
+          MenuItem {
+            text: "Quit"
+            onTriggered: close()
           }
         }
       }
@@ -139,6 +211,61 @@ ApplicationWindow
         text: "Gorgeous robotic interfaces since 2018."
         wrapMode: Label.Wrap
         font.pixelSize: 12
+      }
+    }
+  }
+
+  /**
+   * Load file dialog
+   */
+  FileDialog {
+    id: loadFileDialog
+    title: "Load configuration"
+    folder: shortcuts.home
+    nameFilters: [ "Config files (*.config)" ]
+    selectMultiple: false
+    selectExisting: true
+    onAccepted: {
+      MainWindow.OnLoadConfig(fileUrl)
+    }
+  }
+
+  /**
+   * Save file dialog
+   */
+  FileDialog {
+    id: saveFileDialog
+    title: "Save configuration"
+    folder: shortcuts.home
+    nameFilters: [ "Config files (*.config)" ]
+    selectMultiple: false
+    selectExisting: false
+    onAccepted: {
+      MainWindow.OnSaveConfigAs(fileUrl)
+    }
+  }
+
+  /**
+   * TODO: change to a snackbar / toast
+   */
+  Dialog {
+    id: notificationDialog
+    modal: true
+    focus: true
+    x: (window.width - width) / 2
+    y: window.height / 6
+    width: Math.min(window.width, window.height) / 3 * 2
+    contentHeight: notificationColumn.height
+
+    Column {
+      id: notificationColumn
+      spacing: 20
+
+      Label {
+        id: notificationText
+        width: notificationDialog.availableWidth
+        wrapMode: Label.Wrap
+        font.pixelSize: 18
       }
     }
   }

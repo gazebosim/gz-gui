@@ -66,7 +66,7 @@ namespace ignition
       /// Will open an error dialog in case it's not possible to write to the
       /// path.
       /// \param[in] _path The full destination path including filename.
-//      public: void SaveConfig(const std::string &_path);
+      public: void SaveConfig(const std::string &_path);
 
       /// \brief Apply a WindowConfig to this window and keep a copy of it.
       /// \param[in] _config The configuration to apply.
@@ -98,23 +98,26 @@ namespace ignition
       /// \param[in] _pluginCount Number of plugins
       public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
 
+      /// \brief Callback when load configuration is selected
+      public slots: void OnLoadConfig(const QString &_path);
+
+      /// \brief Callback when "save configuration" is selected
+      public slots: void OnSaveConfig();
+
+      /// \brief Callback when "save configuration as" is selected
+      public slots: void OnSaveConfigAs(const QString &_path);
+
       /// \brief Notifies when the number of plugins has changed.
       signals: void PluginCountChanged();
+
+      /// \brief Displays a message to the user
+      signals: void notify(const QString &_message);
 
       // Documentation inherited
 //      protected: void paintEvent(QPaintEvent *_event) override;
 
       // Documentation inherited
 //      protected: void closeEvent(QCloseEvent *_event) override;
-
-      /// \brief Callback when load configuration is selected
-//      private slots: void OnLoadConfig();
-
-      /// \brief Callback when "save configuration" is selected
-//      private slots: void OnSaveConfig();
-
-      /// \brief Callback when "save configuration as" is selected
-//      private slots: void OnSaveConfigAs();
 
       /// \brief Callback when load stylesheet is selected
 //      private slots: void OnLoadStylesheet();

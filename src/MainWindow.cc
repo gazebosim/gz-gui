@@ -82,60 +82,11 @@ MainWindow::MainWindow()
     return;
   }
 
-
-
-
-
-//  this->setObjectName("mainWindow");
-//
-//  // Ubuntu Xenial + Unity: the native menubar is not registering shortcuts,
-//  // so we register the shortcuts independently of actions
-//  std::vector<QShortcut *> shortcuts;
-//
-//  // File menu
-//  auto fileMenu = this->menuBar()->addMenu(tr("&File"));
-//  fileMenu->setObjectName("fileMenu");
-//
-//  auto loadConfigAct = new QAction(tr("&Load configuration"), this);
-//  loadConfigAct->setStatusTip(tr("Load configuration"));
-//  this->connect(loadConfigAct, SIGNAL(triggered()), this,
-//      SLOT(OnLoadConfig()));
-//  fileMenu->addAction(loadConfigAct);
-//  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_O, this,
-//      SLOT(OnLoadConfig())));
-//
-//  auto saveConfigAct = new QAction(tr("&Save configuration"), this);
-//  saveConfigAct->setStatusTip(tr("Save configuration"));
-//  this->connect(saveConfigAct, SIGNAL(triggered()), this,
-//      SLOT(OnSaveConfig()));
-//  fileMenu->addAction(saveConfigAct);
-//  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_S, this,
-//      SLOT(OnSaveConfig())));
-//
-//  auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
-//  saveConfigAsAct->setStatusTip(tr("Save configuration as"));
-//  this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
-//    SLOT(OnSaveConfigAs()));
-//  fileMenu->addAction(saveConfigAsAct);
-//  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S, this,
-//      SLOT(OnSaveConfigAs())));
-//
-//  fileMenu->addSeparator();
-//
 //  auto loadStylesheetAct = new QAction(tr("&Load stylesheet"), this);
 //  loadStylesheetAct->setStatusTip(tr("Choose a QSS file to load"));
 //  this->connect(loadStylesheetAct, SIGNAL(triggered()), this,
 //      SLOT(OnLoadStylesheet()));
 //  fileMenu->addAction(loadStylesheetAct);
-//
-//  fileMenu->addSeparator();
-//
-//  auto quitAct = new QAction(tr("&Quit"), this);
-//  quitAct->setStatusTip(tr("Quit"));
-//  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
-//  fileMenu->addAction(quitAct);
-//  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this,
-//      SLOT(close())));
 }
 
 /////////////////////////////////////////////////
@@ -261,82 +212,59 @@ QStringList MainWindow::PluginListModel() const
   return pluginNames;
 }
 
-///////////////////////////////////////////////////
-// void MainWindow::OnLoadConfig()
-// {
-//  QFileDialog fileDialog(this, tr("Load configuration"), QDir::homePath(),
-//      tr("*.config"));
-//  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
-//      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-//
-//  if (fileDialog.exec() != QDialog::Accepted)
-//    return;
-//
-//  auto selected = fileDialog.selectedFiles();
-//  if (selected.empty())
-//    return;
-//
-//  if (!loadConfig(selected[0].toStdString()))
-//    return;
-//
+//////////////////////////////////////////////////
+void MainWindow::OnLoadConfig(const QString &_path)
+{
+  if (!loadConfig(_path.toStdString()))
+    return;
+
 //  if (!this->CloseAllDocks())
 //    return;
-//
-//  addPluginsToWindow();
-//  applyConfig();
-// }
-//
-///////////////////////////////////////////////////
-// void MainWindow::OnSaveConfig()
-// {
-//  this->SaveConfig(defaultConfigPath());
-// }
-//
-///////////////////////////////////////////////////
-// void MainWindow::OnSaveConfigAs()
-// {
-//  QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
-//      tr("*.config"));
-//  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
-//      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-//  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
-//
-//  if (fileDialog.exec() != QDialog::Accepted)
-//    return;
-//
-//  auto selected = fileDialog.selectedFiles();
-//  if (selected.empty())
-//    return;
-//
-//  this->SaveConfig(selected[0].toStdString());
-// }
-//
-///////////////////////////////////////////////////
-// void MainWindow::SaveConfig(const std::string &_path)
-// {
-//  this->dataPtr->windowConfig = this->CurrentWindowConfig();
-//
-//  // Create the intermediate directories if needed.
-//  // We check for errors when we try to open the file.
-//  auto dirname = dirName(_path);
-//  ignition::common::createDirectories(dirname);
-//
-//  // Open the file
-//  std::ofstream out(_path.c_str(), std::ios::out);
-//  if (!out)
-//  {
-//    QMessageBox msgBox;
-//    std::string str = "Unable to open file: " + _path;
-//    str += ".\nCheck file permissions.";
-//    msgBox.setText(str.c_str());
-//    msgBox.exec();
-//  }
-//  else
-//    out << this->dataPtr->windowConfig.XMLString();
-//
-//  ignmsg << "Saved configuration [" << _path << "]" << std::endl;
-// }
-//
+
+  addPluginsToWindow();
+  applyConfig();
+}
+
+/////////////////////////////////////////////////
+ void MainWindow::OnSaveConfig()
+ {
+  this->SaveConfig(defaultConfigPath());
+ }
+
+/////////////////////////////////////////////////
+void MainWindow::OnSaveConfigAs(const QString &_path)
+{
+  auto localPath = QUrl(_path).toLocalFile();
+  this->SaveConfig(localPath.toStdString());
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SaveConfig(const std::string &_path)
+{
+  this->dataPtr->windowConfig = this->CurrentWindowConfig();
+
+  // Create the intermediate directories if needed.
+  // We check for errors when we try to open the file.
+  auto dirname = dirName(_path);
+  ignition::common::createDirectories(dirname);
+
+  // Open the file
+  std::ofstream out(_path.c_str(), std::ios::out);
+  if (!out)
+  {
+    std::string str = "Unable to open file: " + _path;
+    str += ".\nCheck file permissions.";
+    this->notify(QString::fromStdString(str));
+  }
+  else
+    out << this->dataPtr->windowConfig.XMLString();
+
+  std::string msg("Saved configuration to <b>" + _path + "</b>");
+
+  this->notify(QString::fromStdString(msg));
+  ignmsg << msg << std::endl;
+}
+
 ///////////////////////////////////////////////////
 // void MainWindow::OnLoadStylesheet()
 // {
