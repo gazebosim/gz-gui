@@ -226,10 +226,10 @@ void MainWindow::OnLoadConfig(const QString &_path)
 }
 
 /////////////////////////////////////////////////
- void MainWindow::OnSaveConfig()
- {
+void MainWindow::OnSaveConfig()
+{
   this->SaveConfig(defaultConfigPath());
- }
+}
 
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfigAs(const QString &_path)
