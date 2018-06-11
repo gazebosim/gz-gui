@@ -18,7 +18,11 @@
 #ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
 #define IGNITION_GUI_PLUGINS_SCENE3D_HH_
 
+#include <string>
 #include <memory>
+
+#include <ignition/math/Color.hh>
+#include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
@@ -32,6 +36,7 @@ namespace gui
 namespace plugins
 {
   class Scene3DPrivate;
+  class RenderWindowItemPrivate;
 
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
@@ -67,33 +72,94 @@ namespace plugins
     /// ray cast from the given 2D screen coordinates.
     /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
     /// \return 3D coordinates of a point in the 3D scene.
-    public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
-        const;
+    // piublic: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
+    //    const;
 
     // Documentation inherited
-    protected: virtual QPaintEngine *paintEngine() const override;
+//    protected: virtual QPaintEngine *paintEngine() const override;
 
     // Documentation inherited
-    protected: virtual void paintEvent(QPaintEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void resizeEvent(QResizeEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
-
-    // Documentation inherited
-    protected: virtual void wheelEvent(QWheelEvent *_e) override;
+//    protected: virtual void paintEvent(QPaintEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void resizeEvent(QResizeEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
+//
+//    // Documentation inherited
+//    protected: virtual void wheelEvent(QWheelEvent *_e) override;
 
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
+  };
+
+  /// \brief A QQUickItem that manages the render window
+  class RenderWindowItem: public QQuickItem
+  {
+    Q_OBJECT
+
+    /// \brief Constructor
+    /// \param[in] _parent Parent item
+    public: explicit RenderWindowItem(QQuickItem *_parent = nullptr);
+
+    /// \brief Destructor
+    public: virtual ~RenderWindowItem();
+
+    /// \brief Set background color of render window
+    /// \param[in] _color Color of render window background
+    public: void SetBackgroundColor(const math::Color &_color);
+
+    /// \brief Set ambient light of render window
+    /// \param[in] _ambient Color of ambient light
+    public: void SetAmbientLight(const math::Color &_ambient);
+
+    /// \brief Set engine name used to create the render window
+    /// \param[in] _name Name of render engine
+    public: void SetEngineName(const std::string &_name);
+
+    /// \brief Set name of scene created inside the render window
+    /// \param[in] _name Name of scene
+    public: void SetSceneName(const std::string &_name);
+
+    /// \brief Set the initial pose the render window camera
+    /// \param[in] _pose Initical camera pose
+    public: void SetCameraPose(const math::Pose3d &_pose);
+
+    /// \brief Initialize the render engine
+    private: void InitializeEngine();
+
+    /// \brief Activate the render window OpenGL context
+    private: void ActivateRenderWindowContext();
+
+    /// \brief Deactivate the render window OpenGL context
+    private: void DoneRenderWindowContext();
+
+    /// \brief Update the GL render texture
+    private: void UpdateFBO();
+
+    /// \brief Overrides the paint event to render the render engine
+    /// camera view
+    /// \param[in] _oldNode The node passed in previous updatePaintNode
+    /// function. It represents the visual representation of the item.
+    /// \param[in] _data The node transformation data.
+    private: QSGNode *updatePaintNode(QSGNode *_oldNode,
+        QQuickItem::UpdatePaintNodeData *_data);
+
+    /// \brief Timer callabck. This queues a call to update the item.
+    /// \param[in] _event A Qt timer event.
+    private: void timerEvent(QTimerEvent *_event);
+
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
   };
 }
 }

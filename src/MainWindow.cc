@@ -31,6 +31,12 @@ namespace ignition
   {
     class MainWindowPrivate
     {
+      /// \brief Number of plugins on the window
+      public: int pluginCount;
+
+      /// \brief Pointer to quick window
+      public: QQuickWindow *quickWindow{nullptr};
+
       /// \brief Configuration for this window.
       public: WindowConfig windowConfig;
 
@@ -60,85 +66,27 @@ std::string dirName(const std::string &_path)
 MainWindow::MainWindow()
   : dataPtr(new MainWindowPrivate)
 {
-  this->setObjectName("mainWindow");
+  // Make MainWindow functions available from all QML files (using root)
+  qmlEngine()->rootContext()->setContextProperty("MainWindow", this);
 
-  // Ubuntu Xenial + Unity: the native menubar is not registering shortcuts,
-  // so we register the shortcuts independently of actions
-  std::vector<QShortcut *> shortcuts;
+  // Load QML and keep pointer to generated QQuickWindow
+  std::string qmlFile("qrc:qml/MainWindow.qml");
+  qmlEngine()->load(QUrl(QString::fromStdString(qmlFile)));
 
-  // Title
-  std::string title = "Ignition GUI";
-  this->setWindowIconText(tr(title.c_str()));
-  this->setWindowTitle(tr(title.c_str()));
-
-  // File menu
-  auto fileMenu = this->menuBar()->addMenu(tr("&File"));
-  fileMenu->setObjectName("fileMenu");
-
-  auto loadConfigAct = new QAction(tr("&Load configuration"), this);
-  loadConfigAct->setStatusTip(tr("Load configuration"));
-  this->connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(OnLoadConfig()));
-  fileMenu->addAction(loadConfigAct);
-  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_O, this,
-      SLOT(OnLoadConfig())));
-
-  auto saveConfigAct = new QAction(tr("&Save configuration"), this);
-  saveConfigAct->setStatusTip(tr("Save configuration"));
-  this->connect(saveConfigAct, SIGNAL(triggered()), this, SLOT(OnSaveConfig()));
-  fileMenu->addAction(saveConfigAct);
-  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_S, this,
-      SLOT(OnSaveConfig())));
-
-  auto saveConfigAsAct = new QAction(tr("Save configuration as"), this);
-  saveConfigAsAct->setStatusTip(tr("Save configuration as"));
-  this->connect(saveConfigAsAct, SIGNAL(triggered()), this,
-    SLOT(OnSaveConfigAs()));
-  fileMenu->addAction(saveConfigAsAct);
-  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S, this,
-      SLOT(OnSaveConfigAs())));
-
-  fileMenu->addSeparator();
-
-  auto loadStylesheetAct = new QAction(tr("&Load stylesheet"), this);
-  loadStylesheetAct->setStatusTip(tr("Choose a QSS file to load"));
-  this->connect(loadStylesheetAct, SIGNAL(triggered()), this,
-      SLOT(OnLoadStylesheet()));
-  fileMenu->addAction(loadStylesheetAct);
-
-  fileMenu->addSeparator();
-
-  auto quitAct = new QAction(tr("&Quit"), this);
-  quitAct->setStatusTip(tr("Quit"));
-  this->connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
-  fileMenu->addAction(quitAct);
-  shortcuts.push_back(new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close())));
-
-  // Plugins menu
-  auto pluginsMenu = this->menuBar()->addMenu(tr("&Plugins"));
-  pluginsMenu->setObjectName("pluginsMenu");
-
-  auto pluginMapper = new QSignalMapper(this);
-  this->connect(pluginMapper, SIGNAL(mapped(QString)),
-      this, SLOT(OnAddPlugin(QString)));
-
-  auto plugins = getPluginList();
-  for (auto const &path : plugins)
+  this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
+      qmlEngine()->rootObjects().value(0));
+  if (!this->dataPtr->quickWindow)
   {
-    for (auto const &plugin : path.second)
-    {
-      auto pluginName = plugin.substr(3, plugin.find(".") - 3);
-
-      auto act = new QAction(QString::fromStdString(pluginName), this);
-      this->connect(act, SIGNAL(triggered()), pluginMapper, SLOT(map()));
-      pluginMapper->setMapping(act, QString::fromStdString(plugin));
-      pluginsMenu->addAction(act);
-    }
+    ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+           << "]" << std::endl;
+    return;
   }
 
-  // Docking
-  this->setDockOptions(QMainWindow::AnimatedDocks |
-                       QMainWindow::AllowTabbedDocks |
-                       QMainWindow::AllowNestedDocks);
+//  auto loadStylesheetAct = new QAction(tr("&Load stylesheet"), this);
+//  loadStylesheetAct->setStatusTip(tr("Choose a QSS file to load"));
+//  this->connect(loadStylesheetAct, SIGNAL(triggered()), this,
+//      SLOT(OnLoadStylesheet()));
+//  fileMenu->addAction(loadStylesheetAct);
 }
 
 /////////////////////////////////////////////////
@@ -147,119 +95,131 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
-void MainWindow::paintEvent(QPaintEvent *_event)
+// void MainWindow::paintEvent(QPaintEvent *_event)
+// {
+//  this->dataPtr->paintCount++;
+//  if (this->dataPtr->paintCount == this->dataPtr->paintCountMin)
+//  {
+//    this->dataPtr->windowConfig = this->CurrentWindowConfig();
+//  }
+//  _event->accept();
+// }
+//
+///////////////////////////////////////////////////
+// void MainWindow::closeEvent(QCloseEvent *_event)
+// {
+//  if (this->dataPtr->paintCount < this->dataPtr->paintCountMin ||
+//      this->dataPtr->windowConfig.XMLString() ==
+//      this->CurrentWindowConfig().XMLString())
+//  {
+//    _event->accept();
+//    return;
+//  }
+//
+//  // Ask for confirmation
+//  std::string msg = "There are unsaved changes. \n\n";
+//
+//  QMessageBox msgBox(QMessageBox::Warning, QString("Save configuration?"),
+//      QString(msg.c_str()), QMessageBox::NoButton, this);
+//  msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
+//      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+//
+//  auto saveButton = msgBox.addButton("Save as default",
+//      QMessageBox::AcceptRole);
+//  saveButton->setObjectName("closeConfirmationDialogSaveButton");
+//  saveButton->setToolTip(QString::fromStdString(
+//      "Save to default config file \"" + defaultConfigPath() + "\""));
+//  msgBox.setDefaultButton(saveButton);
+//  saveButton->setMinimumWidth(160);
+//
+//  auto saveAsButton = msgBox.addButton("Save as...", QMessageBox::AcceptRole);
+//  saveAsButton->setObjectName("closeConfirmationDialogSaveAsButton");
+//  saveAsButton->setToolTip("Choose a file on your computer");
+//
+//  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::AcceptRole);
+//  cancelButton->setObjectName("closeConfirmationDialogCancelButton");
+//  msgBox.setEscapeButton(cancelButton);
+//  cancelButton->setToolTip("Don't close window");
+//
+//  auto closeButton = msgBox.addButton("Close without saving",
+//      QMessageBox::AcceptRole);
+//  closeButton->setObjectName("closeConfirmationDialogCloseButton");
+//  closeButton->setToolTip("Close without saving");
+//  closeButton->setMinimumWidth(180);
+//
+//  msgBox.show();
+//  msgBox.exec();
+//
+//  // User doesn't want to close window anymore
+//  if (msgBox.clickedButton() == cancelButton)
+//  {
+//    _event->ignore();
+//    return;
+//  }
+//
+//  // Save to default config
+//  if (msgBox.clickedButton() == saveButton)
+//  {
+//    this->OnSaveConfig();
+//  }
+//
+//  // Save to custom file
+//  if (msgBox.clickedButton() == saveAsButton)
+//  {
+//    this->OnSaveConfigAs();
+//  }
+//  _event->accept();
+// }
+//
+///////////////////////////////////////////////////
+// bool MainWindow::CloseAllDocks()
+// {
+//  igndbg << "Closing all docks" << std::endl;
+//
+//  auto docks = this->findChildren<QDockWidget *>();
+//  for (auto dock : docks)
+//  {
+//    dock->close();
+//    dock->setParent(new QWidget());
+//  }
+//
+//  QCoreApplication::processEvents();
+//
+//  return true;
+// }
+
+/////////////////////////////////////////////////
+void MainWindow::OnPluginClose()
 {
-  this->dataPtr->paintCount++;
-  if (this->dataPtr->paintCount == this->dataPtr->paintCountMin)
-  {
-    this->dataPtr->windowConfig = this->CurrentWindowConfig();
-  }
-  _event->accept();
+  auto pluginName = this->sender()->objectName();
+  removePlugin(pluginName.toStdString());
 }
 
 /////////////////////////////////////////////////
-void MainWindow::closeEvent(QCloseEvent *_event)
+QStringList MainWindow::PluginListModel() const
 {
-  if (this->dataPtr->paintCount < this->dataPtr->paintCountMin ||
-      this->dataPtr->windowConfig.XMLString() ==
-      this->CurrentWindowConfig().XMLString())
+  QStringList pluginNames;
+  auto plugins = getPluginList();
+  for (auto const &path : plugins)
   {
-    _event->accept();
-    return;
+    for (auto const &plugin : path.second)
+    {
+      // Remove lib and .so
+      auto pluginName = plugin.substr(3, plugin.find(".") - 3);
+      pluginNames.append(QString::fromStdString(pluginName));
+    }
   }
-
-  // Ask for confirmation
-  std::string msg = "There are unsaved changes. \n\n";
-
-  QMessageBox msgBox(QMessageBox::Warning, QString("Save configuration?"),
-      QString(msg.c_str()), QMessageBox::NoButton, this);
-  msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
-      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-
-  auto saveButton = msgBox.addButton("Save as default",
-      QMessageBox::AcceptRole);
-  saveButton->setObjectName("closeConfirmationDialogSaveButton");
-  saveButton->setToolTip(QString::fromStdString(
-      "Save to default config file \"" + defaultConfigPath() + "\""));
-  msgBox.setDefaultButton(saveButton);
-  saveButton->setMinimumWidth(160);
-
-  auto saveAsButton = msgBox.addButton("Save as...", QMessageBox::AcceptRole);
-  saveAsButton->setObjectName("closeConfirmationDialogSaveAsButton");
-  saveAsButton->setToolTip("Choose a file on your computer");
-
-  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::AcceptRole);
-  cancelButton->setObjectName("closeConfirmationDialogCancelButton");
-  msgBox.setEscapeButton(cancelButton);
-  cancelButton->setToolTip("Don't close window");
-
-  auto closeButton = msgBox.addButton("Close without saving",
-      QMessageBox::AcceptRole);
-  closeButton->setObjectName("closeConfirmationDialogCloseButton");
-  closeButton->setToolTip("Close without saving");
-  closeButton->setMinimumWidth(180);
-
-  msgBox.show();
-  msgBox.exec();
-
-  // User doesn't want to close window anymore
-  if (msgBox.clickedButton() == cancelButton)
-  {
-    _event->ignore();
-    return;
-  }
-
-  // Save to default config
-  if (msgBox.clickedButton() == saveButton)
-  {
-    this->OnSaveConfig();
-  }
-
-  // Save to custom file
-  if (msgBox.clickedButton() == saveAsButton)
-  {
-    this->OnSaveConfigAs();
-  }
-  _event->accept();
+  return pluginNames;
 }
 
-/////////////////////////////////////////////////
-bool MainWindow::CloseAllDocks()
+//////////////////////////////////////////////////
+void MainWindow::OnLoadConfig(const QString &_path)
 {
-  igndbg << "Closing all docks" << std::endl;
-
-  auto docks = this->findChildren<QDockWidget *>();
-  for (auto dock : docks)
-  {
-    dock->close();
-    dock->setParent(new QWidget());
-  }
-
-  QCoreApplication::processEvents();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-void MainWindow::OnLoadConfig()
-{
-  QFileDialog fileDialog(this, tr("Load configuration"), QDir::homePath(),
-      tr("*.config"));
-  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
-      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-
-  if (fileDialog.exec() != QDialog::Accepted)
+  if (!loadConfig(_path.toStdString()))
     return;
 
-  auto selected = fileDialog.selectedFiles();
-  if (selected.empty())
-    return;
-
-  if (!loadConfig(selected[0].toStdString()))
-    return;
-
-  if (!this->CloseAllDocks())
-    return;
+//  if (!this->CloseAllDocks())
+//    return;
 
   addPluginsToWindow();
   applyConfig();
@@ -272,22 +232,10 @@ void MainWindow::OnSaveConfig()
 }
 
 /////////////////////////////////////////////////
-void MainWindow::OnSaveConfigAs()
+void MainWindow::OnSaveConfigAs(const QString &_path)
 {
-  QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
-      tr("*.config"));
-  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
-      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
-
-  if (fileDialog.exec() != QDialog::Accepted)
-    return;
-
-  auto selected = fileDialog.selectedFiles();
-  if (selected.empty())
-    return;
-
-  this->SaveConfig(selected[0].toStdString());
+  auto localPath = QUrl(_path).toLocalFile();
+  this->SaveConfig(localPath.toStdString());
 }
 
 /////////////////////////////////////////////////
@@ -304,35 +252,36 @@ void MainWindow::SaveConfig(const std::string &_path)
   std::ofstream out(_path.c_str(), std::ios::out);
   if (!out)
   {
-    QMessageBox msgBox;
     std::string str = "Unable to open file: " + _path;
     str += ".\nCheck file permissions.";
-    msgBox.setText(str.c_str());
-    msgBox.exec();
+    this->notify(QString::fromStdString(str));
   }
   else
     out << this->dataPtr->windowConfig.XMLString();
 
-  ignmsg << "Saved configuration [" << _path << "]" << std::endl;
+  std::string msg("Saved configuration to <b>" + _path + "</b>");
+
+  this->notify(QString::fromStdString(msg));
+  ignmsg << msg << std::endl;
 }
 
-/////////////////////////////////////////////////
-void MainWindow::OnLoadStylesheet()
-{
-  QFileDialog fileDialog(this, tr("Load stylesheet"), QDir::homePath(),
-      tr("*.qss"));
-  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
-      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-
-  if (fileDialog.exec() != QDialog::Accepted)
-    return;
-
-  auto selected = fileDialog.selectedFiles();
-  if (selected.empty())
-    return;
-
-  setStyleFromFile(selected[0].toStdString());
-}
+///////////////////////////////////////////////////
+// void MainWindow::OnLoadStylesheet()
+// {
+//  QFileDialog fileDialog(this, tr("Load stylesheet"), QDir::homePath(),
+//      tr("*.qss"));
+//  fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
+//      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+//
+//  if (fileDialog.exec() != QDialog::Accepted)
+//    return;
+//
+//  auto selected = fileDialog.selectedFiles();
+//  if (selected.empty())
+//    return;
+//
+//  setStyleFromFile(selected[0].toStdString());
+// }
 
 /////////////////////////////////////////////////
 void MainWindow::OnAddPlugin(QString _plugin)
@@ -344,7 +293,7 @@ void MainWindow::OnAddPlugin(QString _plugin)
   addPluginsToWindow();
 }
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////
 bool MainWindow::ApplyConfig(const WindowConfig &_config)
 {
   // Window position
@@ -353,7 +302,7 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
       !_config.IsIgnoring("position") &&
       _config.posX >= 0 && _config.posY >= 0)
   {
-    this->move(_config.posX, _config.posY);
+//    this->move(_config.posX, _config.posY);
   }
 
   // Window size
@@ -362,66 +311,66 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
       !_config.IsIgnoring("size") &&
       _config.width >= 0 && _config.height >= 0)
   {
-    this->resize(_config.width, _config.height);
+    this->QuickWindow()->resize(_config.width, _config.height);
   }
 
   // Docks state
   if (!_config.IsIgnoring("state") && !_config.state.isEmpty())
   {
-    if (!this->restoreState(_config.state))
-      ignwarn << "Failed to restore state" << std::endl;
+//    if (!this->restoreState(_config.state))
+//      ignwarn << "Failed to restore state" << std::endl;
   }
 
   // Stylesheet
-  if (!_config.IsIgnoring("stylesheet"))
-    setStyleFromString(_config.styleSheet);
+//  if (!_config.IsIgnoring("stylesheet"))
+//    setStyleFromString(_config.styleSheet);
 
   // Hide menus
   for (auto visible : _config.menuVisibilityMap)
   {
-    if (auto menu = this->findChild<QMenu *>(
-        QString::fromStdString(visible.first + "Menu")))
-    {
-      menu->menuAction()->setVisible(visible.second);
-    }
+//    if (auto menu = this->findChild<QMenu *>(
+//        QString::fromStdString(visible.first + "Menu")))
+//    {
+//      menu->menuAction()->setVisible(visible.second);
+//    }
   }
 
   // Plugins menu
-  if (auto menu = this->findChild<QMenu *>("pluginsMenu"))
-  {
-    for (auto action : menu->actions())
-    {
-      action->setVisible(_config.pluginsFromPaths ||
-          std::find(_config.showPlugins.begin(),
-                    _config.showPlugins.end(),
-                    action->text().toStdString()) !=
-                    _config.showPlugins.end());
-    }
-
-    for (auto plugin : _config.showPlugins)
-    {
-      bool exists = false;
-      for (auto action : menu->actions())
-      {
-        if (action->text().toStdString() == plugin)
-        {
-          exists = true;
-          break;
-        }
-      }
-
-      if (!exists)
-      {
-        ignwarn << "Requested to show plugin [" << plugin <<
-            "] but it doesn't exist." << std::endl;
-      }
-    }
-  }
+//  if (auto menu = this->findChild<QMenu *>("pluginsMenu"))
+//  {
+//    for (auto action : menu->actions())
+//    {
+//      action->setVisible(_config.pluginsFromPaths ||
+//          std::find(_config.showPlugins.begin(),
+//                    _config.showPlugins.end(),
+//                    action->text().toStdString()) !=
+//                    _config.showPlugins.end());
+//    }
+//
+//    for (auto plugin : _config.showPlugins)
+//    {
+//      bool exists = false;
+//      for (auto action : menu->actions())
+//      {
+//        if (action->text().toStdString() == plugin)
+//        {
+//          exists = true;
+//          break;
+//        }
+//      }
+//
+//      if (!exists)
+//      {
+//        ignwarn << "Requested to show plugin [" << plugin <<
+//            "] but it doesn't exist." << std::endl;
+//      }
+//    }
+//  }
 
   // Keep a copy
   this->dataPtr->windowConfig = _config;
 
-  QCoreApplication::processEvents();
+//  QCoreApplication::processEvents();
 
   return true;
 }
@@ -432,19 +381,19 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   WindowConfig config;
 
   // Position
-  config.posX = this->pos().x();
-  config.posY = this->pos().y();
+//  config.posX = this->pos().x();
+//  config.posY = this->pos().y();
 
   // Size
-  config.width = this->width();
-  config.height = this->height();
+  config.width = this->QuickWindow()->width();
+  config.height = this->QuickWindow()->height();
 
   // Docks state
-  config.state = this->saveState();
+//  config.state = this->saveState();
 
   // Stylesheet
-  config.styleSheet = static_cast<QApplication *>(
-      QApplication::instance())->styleSheet().toStdString();
+//  config.styleSheet = static_cast<QApplication *>(
+//      QApplication::instance())->styleSheet().toStdString();
 
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we
@@ -692,3 +641,21 @@ bool WindowConfig::IsIgnoring(const std::string &_prop) const
   return this->ignoredProps.find(_prop) != this->ignoredProps.end();
 }
 
+/////////////////////////////////////////////////
+int MainWindow::PluginCount() const
+{
+  return this->dataPtr->pluginCount;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetPluginCount(const int _pluginCount)
+{
+  this->dataPtr->pluginCount = _pluginCount;
+  this->PluginCountChanged();
+}
+
+/////////////////////////////////////////////////
+QQuickWindow *MainWindow::QuickWindow() const
+{
+  return this->dataPtr->quickWindow;
+}

@@ -1,44 +1,51 @@
 include_directories(
   ${Qt5Core_INCLUDE_DIRS}
   ${tinyxml_INCLUDE_DIRS}
+  ${Qt5Qml_INCLUDE_DIRS}
+  ${Qt5Quick_INCLUDE_DIRS}
+  ${Qt5QuickControls2_INCLUDE_DIRS}
 )
 
 set (CMAKE_AUTOMOC ON)
 
-add_definitions(${Qt5Core_DEFINITIONS})
+add_definitions(
+  ${Qt5Core_DEFINITIONS}
+  ${Qt5Qml_DEFINITIONS}
+  ${Qt5Quick_DEFINITIONS}
+  ${Qt5QuickControls2_DEFINITIONS}
+)
 
 set (qt_headers
-  BoolWidget.hh
-  CollapsibleWidget.hh
-  ColorWidget.hh
+#  BoolWidget.hh
+#  CollapsibleWidget.hh
+#  ColorWidget.hh
   Dialog.hh
-  Dock.hh
-  EditableLabel.hh
-  EnumWidget.hh
-  GeometryWidget.hh
+#  EditableLabel.hh
+#  EnumWidget.hh
+#  GeometryWidget.hh
   MainWindow.hh
-  MessageWidget.hh
-  NumberWidget.hh
+#  MessageWidget.hh
+#  NumberWidget.hh
   Plugin.hh
-  Pose3dWidget.hh
-  PropertyWidget.hh
-  StringWidget.hh
-  VariablePill.hh
-  VariablePillContainer.hh
-  Vector3dWidget.hh
+#  Pose3dWidget.hh
+#  PropertyWidget.hh
+#  StringWidget.hh
+#  VariablePill.hh
+#  VariablePillContainer.hh
+#  Vector3dWidget.hh
 )
 
 set (headers
-  Conversions.hh
-  DragDropModel.hh
-  Enums.hh
-  Helpers.hh
+#  Conversions.hh
+#  DragDropModel.hh
+#  Enums.hh
+#  Helpers.hh
   Iface.hh
   ign.hh
   qt.h
-  qwt.h
-  QtMetatypes.hh
-  SearchModel.hh
+#  qwt.h
+#  QtMetatypes.hh
+#  SearchModel.hh
   System.hh
 )
 
@@ -59,7 +66,9 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   ${IGNITION-MSGS_LIBRARIES}
   ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
-  ${Qt5Widgets_LIBRARIES}
+  ${Qt5Qml_LIBRARIES}
+  ${Qt5Quick_LIBRARIES}
+  ${Qt5QuickControls2_LIBRARIES}
   TINYXML2::TINYXML2
 )
 

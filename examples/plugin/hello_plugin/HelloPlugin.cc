@@ -27,16 +27,6 @@ using namespace gui;
 HelloPlugin::HelloPlugin()
   : Plugin()
 {
-  // Create a push button, and connect it to the OnButton function
-  auto button = new QPushButton(tr("Hello, plugin!"));
-  connect(button, SIGNAL(clicked()), this, SLOT(OnButton()));
-
-  // Create the layout to hold the button
-  auto layout = new QHBoxLayout;
-  layout->addWidget(button);
-
-  // Use the layout
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////
