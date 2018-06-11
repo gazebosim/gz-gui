@@ -21,6 +21,7 @@
 #include <utility>
 #include <vector>
 
+#include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
 // Forward declarations.
@@ -108,6 +109,11 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool addPluginsToWindow();
 
+    /// \brief Remove plugin
+    /// \return True if successful
+    IGNITION_GUI_VISIBLE
+    bool removePlugin(const std::string &_pluginName);
+
     /// \brief Apply previously loaded config to the main window.
     /// * Make sure the window is created first
     /// * Be sure to call loadConfig() for each plugin first
@@ -148,12 +154,19 @@ namespace ignition
 
     /// \brief Get the main window, if one has been generated. Use this to
     /// customize the window before running it.
+    /// \return Pointer to the main window
     IGNITION_GUI_VISIBLE
     ignition::gui::MainWindow *mainWindow();
 
     /// \brief Get the dialogs, if they have been generated.
+    /// \return Vector of dialogs
     IGNITION_GUI_VISIBLE
     std::vector<Dialog *> dialogs();
+
+    /// \brief Get the QML engine
+    /// \return Pointer to the QML engine
+    IGNITION_GUI_VISIBLE
+    QQmlApplicationEngine *qmlEngine();
 
     /// \brief Run previously created window.
     /// \return True if successful

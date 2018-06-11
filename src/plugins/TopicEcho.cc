@@ -20,6 +20,7 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
+#include "ignition/gui/Iface.hh"
 #include "ignition/gui/plugins/TopicEcho.hh"
 
 namespace ignition
@@ -30,21 +31,18 @@ namespace plugins
 {
   class TopicEchoPrivate
   {
-    /// \brief Holds the topic name
-    public: QLineEdit *topicEdit;
+    /// \brief Topic
+    public: QString topic{"/echo"};
 
-    /// \brief Button to start echoing a new topic
-    public: QPushButton *echoButton;
-
-    /// \brief A scolling list of text data.
-    public: QListWidget *msgList;
+    /// \brief A list of text data.
+    public: QStringListModel msgList;
 
     /// \brief Size of the text buffer. The size is the number of
     /// messages.
-    public: int bufferSize = 10;
+    public: int buffer{10};
 
     /// \brief Flag used to pause message parsing.
-    public: bool paused = false;
+    public: bool paused{false};
 
     /// \brief Mutex to protect message buffer.
     public: std::mutex mutex;
@@ -64,6 +62,9 @@ using namespace plugins;
 TopicEcho::TopicEcho()
   : Plugin(), dataPtr(new TopicEchoPrivate)
 {
+  // Connect model
+  qmlEngine()->rootContext()->setContextProperty("TopicEchoMsgList",
+      &this->dataPtr->msgList);
 }
 
 /////////////////////////////////////////////////
@@ -77,54 +78,6 @@ void TopicEcho::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
   if (this->title.empty())
     this->title = "Topic echo";
 
-  this->dataPtr->echoButton = new QPushButton("Echo");
-  this->dataPtr->echoButton->setObjectName("echoButton");
-  this->dataPtr->echoButton->setCheckable(true);
-  this->dataPtr->echoButton->setMinimumWidth(200);
-  this->connect(this->dataPtr->echoButton, SIGNAL(toggled(bool)), this,
-      SLOT(OnEcho(bool)));
-
-  this->dataPtr->topicEdit = new QLineEdit("/echo");
-  this->dataPtr->topicEdit->setObjectName("topicEdit");
-  this->connect(this->dataPtr->topicEdit, &QLineEdit::textChanged,
-      [=](const QString &)
-      {
-        this->Stop();
-        this->dataPtr->echoButton->setText("Echo");
-      });
-
-  this->dataPtr->msgList = new QListWidget();
-  this->dataPtr->msgList->setObjectName("msgList");
-  this->dataPtr->msgList->setVerticalScrollMode(
-      QAbstractItemView::ScrollPerPixel);
-
-  auto bufferSpin = new QSpinBox();
-  bufferSpin->setObjectName("bufferSpin");
-  bufferSpin->setMinimum(1);
-  bufferSpin->setValue(this->dataPtr->bufferSize);
-  this->connect(bufferSpin, SIGNAL(valueChanged(int)), this,
-      SLOT(OnBuffer(int)));
-
-  auto pauseCheck = new QCheckBox();
-  pauseCheck->setObjectName("pauseCheck");
-  pauseCheck->setChecked(this->dataPtr->paused);
-  this->connect(pauseCheck, SIGNAL(toggled(bool)), this, SLOT(OnPause(bool)));
-
-  auto spacer = new QWidget();
-  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-  auto layout = new QGridLayout();
-  layout->addWidget(new QLabel("Topic: "), 0, 0);
-  layout->addWidget(this->dataPtr->topicEdit, 0, 1, 1, 3);
-  layout->addWidget(this->dataPtr->echoButton, 0, 4);
-  layout->addWidget(this->dataPtr->msgList, 1, 0, 1, 5);
-  layout->addWidget(new QLabel("Buffer: "), 2, 0);
-  layout->addWidget(bufferSpin, 2, 1);
-  layout->addWidget(spacer, 2, 2);
-  layout->addWidget(pauseCheck, 2, 3);
-  layout->addWidget(new QLabel("Pause"), 2, 4);
-  this->setLayout(layout);
-
   this->connect(this, SIGNAL(AddMsg(QString)), this, SLOT(OnAddMsg(QString)),
           Qt::QueuedConnection);
 }
@@ -135,7 +88,8 @@ void TopicEcho::Stop()
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
   // Erase all previous messages
-  this->dataPtr->msgList->clear();
+  this->dataPtr->msgList.removeRows(0,
+      this->dataPtr->msgList.rowCount());
 
   // Unsubscribe
   for (auto const &sub : this->dataPtr->node.SubscribedTopics())
@@ -148,22 +102,15 @@ void TopicEcho::OnEcho(const bool _checked)
   this->Stop();
 
   if (!_checked)
-  {
-    this->dataPtr->echoButton->setText("Echo");
     return;
-  }
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
   // Subscribe to new topic
-  auto topic = this->dataPtr->topicEdit->text().toStdString();
+  auto topic = this->dataPtr->topic.toStdString();
   if (!this->dataPtr->node.Subscribe(topic, &TopicEcho::OnMessage, this))
   {
     ignerr << "Invalid topic [" << topic << "]" << std::endl;
-  }
-  else
-  {
-    this->dataPtr->echoButton->setText("Stop echoing");
   }
 }
 
@@ -184,30 +131,65 @@ void TopicEcho::OnAddMsg(QString _msg)
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
   // Append msg to list
-  this->dataPtr->msgList->addItem(_msg);
+  if (this->dataPtr->msgList.insertRow(this->dataPtr->msgList.rowCount()))
+  {
+    auto index = this->dataPtr->msgList.index(
+        this->dataPtr->msgList.rowCount() - 1, 0);
+    this->dataPtr->msgList.setData(index, _msg);
+  }
 
   // Remove items if the list is too long.
-  while (this->dataPtr->msgList->count() > this->dataPtr->bufferSize)
-    delete this->dataPtr->msgList->takeItem(0);
+  auto diff = this->dataPtr->msgList.rowCount() -
+      this->dataPtr->buffer;
+  this->dataPtr->msgList.removeRows(0, diff);
 }
 
 /////////////////////////////////////////////////
-void TopicEcho::OnPause(bool _value)
+QString TopicEcho::Topic() const
 {
-  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-  this->dataPtr->paused = _value;
+  return this->dataPtr->topic;
 }
 
 /////////////////////////////////////////////////
-void TopicEcho::OnBuffer(int _value)
+void TopicEcho::SetTopic(const QString &_topic)
+{
+  this->dataPtr->topic = _topic;
+  this->TopicChanged();
+}
+
+/////////////////////////////////////////////////
+int TopicEcho::Buffer() const
+{
+  return this->dataPtr->buffer;
+}
+
+/////////////////////////////////////////////////
+void TopicEcho::SetBuffer(const int &_buffer)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->dataPtr->bufferSize = _value;
+  this->dataPtr->buffer = _buffer;
 
-  // Remove and item if the list is too long.
-  while (this->dataPtr->msgList->count() > this->dataPtr->bufferSize)
-    delete this->dataPtr->msgList->takeItem(0);
+  // Remove an item if the list is too long.
+  auto diff = this->dataPtr->msgList.rowCount() -
+      this->dataPtr->buffer;
+  this->dataPtr->msgList.removeRows(0, diff);
+
+  this->BufferChanged();
+}
+
+/////////////////////////////////////////////////
+bool TopicEcho::Paused() const
+{
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  return this->dataPtr->paused;
+}
+
+/////////////////////////////////////////////////
+void TopicEcho::SetPaused(const bool &_paused)
+{
+  this->dataPtr->paused = _paused;
+  this->PausedChanged();
 }
 
 // Register this plugin

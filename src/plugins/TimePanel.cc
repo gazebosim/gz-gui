@@ -70,8 +70,6 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "Time panel";
 
-  auto mainLayout = new QGridLayout();
-
   // Create elements from configuration
   if (_pluginElem)
   {
@@ -95,50 +93,25 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
         if (hasPlay)
         {
-          // Play button
-          auto playButton = new QPushButton("Play");
-          playButton->setObjectName("playButton");
-          this->connect(playButton, SIGNAL(clicked()), this, SLOT(OnPlay()));
-          this->connect(this, SIGNAL(Playing()), playButton, SLOT(hide()));
-          this->connect(this, SIGNAL(Paused()), playButton, SLOT(show()));
-
-          // Pause button
-          auto pauseButton = new QPushButton("Pause");
-          pauseButton->setObjectName("pauseButton");
-          this->connect(pauseButton, SIGNAL(clicked()), this, SLOT(OnPause()));
-          this->connect(this, SIGNAL(Playing()), pauseButton, SLOT(show()));
-          this->connect(this, SIGNAL(Paused()), pauseButton, SLOT(hide()));
-
-          auto stepButton = new QPushButton("Step");
-          stepButton->setObjectName("stepButton");
-          QLabel *stepLabel = new QLabel(tr("Steps:"));
-          QSpinBox *stepSpinBox = new QSpinBox;
-          stepSpinBox->setRange(1, 9999);
-
-          this->connect(stepButton, SIGNAL(clicked()), this, SLOT(OnStep()));
-          this->connect(this, &TimePanel::Playing,
-            [=]()
-            {
-              stepButton->setDisabled(true);
-              stepSpinBox->setDisabled(true);
-            });
-          this->connect(this, &TimePanel::Paused,
-            [=]()
-            {
-              stepButton->setDisabled(false);
-              stepSpinBox->setDisabled(false);
-            });
-          this->connect(stepSpinBox,
-            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-            [=](int _newValue) {this->dataPtr->multiStep = _newValue;});
-
-          mainLayout->addWidget(playButton,  0, 0);
-          mainLayout->addWidget(pauseButton, 0, 0);
-          mainLayout->addWidget(stepButton,  0, 1);
-          mainLayout->addWidget(stepLabel,   0, 2);
-          mainLayout->addWidget(stepSpinBox, 0, 3);
-
-          mainLayout->setAlignment(stepLabel, Qt::AlignRight);
+//          QLabel *stepLabel = new QLabel(tr("Steps:"));
+//          QSpinBox *stepSpinBox = new QSpinBox;
+//          stepSpinBox->setRange(1, 9999);
+//
+//          this->connect(this, &TimePanel::Playing,
+//            [=]()
+//            {
+//              stepButton->setDisabled(true);
+//              stepSpinBox->setDisabled(true);
+//            });
+//          this->connect(this, &TimePanel::Paused,
+//            [=]()
+//            {
+//              stepButton->setDisabled(false);
+//              stepSpinBox->setDisabled(false);
+//            });
+//          this->connect(stepSpinBox,
+//            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+//            [=](int _newValue) {this->dataPtr->multiStep = _newValue;});
 
           auto startPaused = false;
           if (auto pausedElem = controlElem->FirstChildElement("start_paused"))
@@ -184,13 +157,13 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
             if (hasSim)
             {
-              auto simTime = new QLabel("N/A");
-              simTime->setObjectName("simTimeLabel");
-              this->connect(this, SIGNAL(SetSimTime(QString)), simTime,
-                  SLOT(setText(QString)));
-
-              mainLayout->addWidget(new QLabel("Sim time"), 1, 0);
-              mainLayout->addWidget(simTime, 1, 1);
+//              auto simTime = new QLabel("N/A");
+//              simTime->setObjectName("simTimeLabel");
+//              this->connect(this, SIGNAL(SetSimTime(QString)), simTime,
+//                  SLOT(setText(QString)));
+//
+//              mainLayout->addWidget(new QLabel("Sim time"), 1, 0);
+//              mainLayout->addWidget(simTime, 1, 1);
             }
           }
 
@@ -202,13 +175,13 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
             if (hasReal)
             {
-              auto realTime = new QLabel("N/A");
-              realTime->setObjectName("realTimeLabel");
-              this->connect(this, SIGNAL(SetRealTime(QString)), realTime,
-                  SLOT(setText(QString)));
-
-              mainLayout->addWidget(new QLabel("Real time"), 1, 2);
-              mainLayout->addWidget(realTime, 1, 3);
+//              auto realTime = new QLabel("N/A");
+//              realTime->setObjectName("realTimeLabel");
+//              this->connect(this, SIGNAL(SetRealTime(QString)), realTime,
+//                  SLOT(setText(QString)));
+//
+//              mainLayout->addWidget(new QLabel("Real time"), 1, 2);
+//              mainLayout->addWidget(realTime, 1, 3);
             }
           }
 
@@ -221,35 +194,24 @@ void TimePanel::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
             if (hasRTF)
             {
-              auto rtfLabel = new QLabel("Real Time Factor");
-              mainLayout->addWidget(rtfLabel, 2, 0, 1, 2);
-              mainLayout->setAlignment(rtfLabel, Qt::AlignRight);
-
-              auto rtf = new QLabel("N/A");
-              rtf->setObjectName("realTimeFactorLabel");
-              rtf->setMinimumWidth(70);
-              rtf->setAlignment(Qt::AlignRight);
-              mainLayout->addWidget(rtf, 2, 2);
-              mainLayout->setAlignment(rtf, Qt::AlignRight);
-              this->connect(this, SIGNAL(SetRealTimeFactor(QString)), rtf,
-                  SLOT(setText(QString)));
+//              auto rtfLabel = new QLabel("Real Time Factor");
+//              mainLayout->addWidget(rtfLabel, 2, 0, 1, 2);
+//              mainLayout->setAlignment(rtfLabel, Qt::AlignRight);
+//
+//              auto rtf = new QLabel("N/A");
+//              rtf->setObjectName("realTimeFactorLabel");
+//              rtf->setMinimumWidth(70);
+//              rtf->setAlignment(Qt::AlignRight);
+//              mainLayout->addWidget(rtf, 2, 2);
+//              mainLayout->setAlignment(rtf, Qt::AlignRight);
+//              this->connect(this, SIGNAL(SetRealTimeFactor(QString)), rtf,
+//                  SLOT(setText(QString)));
             }
           }
         }
       }
     }
   }
-
-  // Spacers so widget doesn't lock the dock sizes
-  auto spacerH = new QWidget();
-  spacerH->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacerH, 0, 4, 2, 1);
-
-  auto spacerV = new QWidget();
-  spacerV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacerV, 3, 0, 1, 5);
-
-  this->setLayout(mainLayout);
 }
 
 /////////////////////////////////////////////////

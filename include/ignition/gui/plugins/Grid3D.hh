@@ -68,6 +68,8 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
+    private slots: void Initialize();
+
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);

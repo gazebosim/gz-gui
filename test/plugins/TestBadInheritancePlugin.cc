@@ -27,10 +27,6 @@ using namespace gui;
 TestBadInheritancePlugin::TestBadInheritancePlugin()
   : MainWindow()
 {
-  auto layout = new QHBoxLayout;
-  layout->addWidget(new QLabel("Test plugin"));
-
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////

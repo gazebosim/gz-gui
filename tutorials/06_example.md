@@ -40,11 +40,11 @@ For example, we can build the `hello_plugin` example plugin:
 
 Then copy the generated library to a directory where Ignition GUI can find it:
 
-    cp libhello_plugin.so ~/.ignition/gui/plugins/
+    cp libHelloPlugin.so ~/.ignition/gui/plugins/
 
 Now you can use the command line to open it:
 
-    ign gui -s hello_plugin
+    ign gui -s HelloPlugin
 
 ### All example plugins
 
