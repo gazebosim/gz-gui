@@ -58,10 +58,6 @@ namespace ignition
       /// \return Pointer to the QtQuick window
       public: QQuickWindow *QuickWindow() const;
 
-      /// \brief Close all docks
-      /// \return True if all docks have been closed
-//      public: bool CloseAllDocks();
-
       /// \brief Save current window and plugin configuration to a file on disk.
       /// Will open an error dialog in case it's not possible to write to the
       /// path.

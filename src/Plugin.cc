@@ -133,6 +133,8 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 std::string Plugin::ConfigStr() const
 {
+  // TODO: Convert string to XML
+  // Update position / size fields
   return this->configStr;
 }
 
