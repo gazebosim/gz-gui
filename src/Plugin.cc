@@ -311,9 +311,12 @@ QQuickItem *Plugin::CardItem() const
   cardItem->setProperty("hasTitlebar", this->hasTitlebar);
   cardItem->setProperty("width", pluginWidth);
   cardItem->setProperty("height", pluginHeight);
-  cardItem->setProperty("x", this->dataPtr->x);
-  cardItem->setProperty("y", this->dataPtr->y);
-  cardItem->setProperty("z", this->dataPtr->z);
+  if (this->dataPtr->x >= 0)
+    cardItem->setProperty("x", this->dataPtr->x);
+  if (this->dataPtr->y >= 0)
+    cardItem->setProperty("y", this->dataPtr->y);
+  if (this->dataPtr->z >= 0)
+    cardItem->setProperty("z", this->dataPtr->z);
 
   this->dataPtr->cardItem = cardItem;
 
