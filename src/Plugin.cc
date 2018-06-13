@@ -35,6 +35,21 @@ class ignition::gui::PluginPrivate
 
   /// \brief Pointer to wrapping card item
   public: QQuickItem *cardItem{nullptr};
+
+  /// \brief Card's X position
+  public: int x{-1};
+
+  /// \brief Card's Y position
+  public: int y{-1};
+
+  /// \brief Card's Z position
+  public: int z{-1};
+
+  /// \brief Card's height
+  public: int height{-1};
+
+  /// \brief Card's width
+  public: int width{-1};
 };
 
 using namespace ignition;
@@ -95,6 +110,27 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
+  // Keep card state to set when creating card
+  int x;
+  if (_pluginElem->QueryAttribute("x", &x) == tinyxml2::XML_SUCCESS)
+    this->dataPtr->x = x;
+
+  int y;
+  if (_pluginElem->QueryAttribute("y", &y) == tinyxml2::XML_SUCCESS)
+    this->dataPtr->y = y;
+
+  int z;
+  if (_pluginElem->QueryAttribute("z", &z) == tinyxml2::XML_SUCCESS)
+    this->dataPtr->z = z;
+
+  int height;
+  if (_pluginElem->QueryAttribute("height", &height) == tinyxml2::XML_SUCCESS)
+    this->dataPtr->height = height;
+
+  int width;
+  if (_pluginElem->QueryAttribute("width", &width) == tinyxml2::XML_SUCCESS)
+    this->dataPtr->width = width;
+
   // Delete later
   if (_pluginElem->Attribute("delete_later"))
   {
@@ -131,8 +167,42 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-std::string Plugin::ConfigStr() const
+std::string Plugin::ConfigStr()
 {
+  // TODO: When plugins override this function they will lose the card updates,
+  // must refactor config handling
+
+  // Convert string to XML
+  tinyxml2::XMLDocument doc;
+  doc.Parse(this->configStr.c_str());
+
+  auto pluginElem = doc.FirstChildElement("plugin");
+  if (!pluginElem)
+  {
+    ignerr << "Missing <plugin> element, not updating config string."
+           << std::endl;
+    return this->configStr;
+  }
+
+  // Update arguments
+  pluginElem->SetAttribute("x", this->CardItem()->x());
+  pluginElem->SetAttribute("y", this->CardItem()->y());
+  pluginElem->SetAttribute("z", this->CardItem()->z());
+  pluginElem->SetAttribute("height", this->CardItem()->height());
+  pluginElem->SetAttribute("width", this->CardItem()->width());
+
+  // Then convert XML back to string
+  tinyxml2::XMLPrinter printer;
+  if (!pluginElem->Accept(&printer))
+  {
+    ignwarn << "There was an error parsing the plugin element for " <<
+        "[" << this->title << "]." << std::endl;
+  }
+  else
+  {
+    this->configStr = std::string(printer.CStr());
+  }
+
   return this->configStr;
 }
 
@@ -227,15 +297,26 @@ QQuickItem *Plugin::CardItem() const
   this->dataPtr->pluginItem->setParentItem(cardContentItem);
 
   // Configure card
-  auto pluginWidth = this->dataPtr->pluginItem->property("width").toInt();
-  auto pluginHeight = this->dataPtr->pluginItem->property("height").toInt() +
-                      cardToolbarItem->property("height").toInt();
+  // Adjust size to accomodate plugin if not explicitly set in config
+  auto pluginWidth = this->dataPtr->width > 0 ?
+      this->dataPtr->width :
+      this->dataPtr->pluginItem->property("width").toInt();
+  auto pluginHeight = this->dataPtr->height > 0 ?
+      this->dataPtr->height :
+      (this->dataPtr->pluginItem->property("height").toInt() +
+       cardToolbarItem->property("height").toInt());
 
   cardItem->setProperty("pluginName",
       QString::fromStdString(this->Title()));
   cardItem->setProperty("hasTitlebar", this->hasTitlebar);
   cardItem->setProperty("width", pluginWidth);
   cardItem->setProperty("height", pluginHeight);
+  if (this->dataPtr->x >= 0)
+    cardItem->setProperty("x", this->dataPtr->x);
+  if (this->dataPtr->y >= 0)
+    cardItem->setProperty("y", this->dataPtr->y);
+  if (this->dataPtr->z >= 0)
+    cardItem->setProperty("z", this->dataPtr->z);
 
   this->dataPtr->cardItem = cardItem;
 
