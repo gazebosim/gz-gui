@@ -70,6 +70,22 @@ ApplicationWindow
   header: ToolBar {
     Material.foreground: "white"
 
+    MouseArea {
+      anchors.fill: parent;
+      property variant clickPos: "1,1"
+      onPressed: {
+        clickPos  = Qt.point(mouse.x,mouse.y)
+      }
+      onPositionChanged: {
+        var delta = Qt.point(mouse.x-clickPos.x, mouse.y-clickPos.y)
+        window.x += delta.x;
+        window.y += delta.y;
+      }
+      onDoubleClicked: {
+        window.showMaximized()
+      }
+    }
+
     RowLayout {
       spacing: 20
       anchors.fill: parent

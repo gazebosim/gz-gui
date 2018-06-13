@@ -127,6 +127,19 @@ Pane {
     y: 0
     z: 100
 
+    // For drag
+    MouseArea {
+      anchors.fill: parent
+      drag{
+        target: card
+        minimumX: 0
+        minimumY: 0
+        maximumX: card.parent.width - card.width
+        maximumY: card.parent.height - card.height
+        smoothed: true
+      }
+    }
+
     RowLayout {
       spacing: 10
       anchors.fill: parent
@@ -139,19 +152,6 @@ Pane {
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
-
-        // For drag
-        MouseArea {
-          anchors.fill: parent
-          drag{
-            target: card
-            minimumX: 0
-            minimumY: 0
-            maximumX: card.parent.width - card.width
-            maximumY: card.parent.height - card.height
-            smoothed: true
-          }
-        }
       }
 
       // Dock / undock button
