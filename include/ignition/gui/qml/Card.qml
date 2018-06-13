@@ -15,7 +15,7 @@ Pane {
   /**
    * Minimum length of each dimension
    */
-  property int minSize: 100
+  property int minSize: 50
 
   /**
    * True to have a dock button
