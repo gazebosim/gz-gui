@@ -104,8 +104,8 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   if (!this->dataPtr->pluginItem)
   {
     ignerr << "Failed to instantiate QML file [" << qmlFile << "]." << std::endl
-           << "Are you sure it's been added to the .qrc file?" << std::endl
-           << "Are you sure the file is valid QML? "
+           << "* Are you sure it's been added to the .qrc file?" << std::endl
+           << "* Are you sure the file is valid QML? "
            << "You can check with the `qmlscene` tool" << std::endl;
     return;
   }

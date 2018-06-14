@@ -417,25 +417,23 @@ TEST(IfaceTest, Dialog)
     // Load test plugin
     EXPECT_TRUE(loadPlugin("TestPlugin"));
 
+    // Close dialog after some time
+    auto closed = false;
+    QTimer::singleShot(300, [&] {
+      auto ds = dialogs();
+      EXPECT_EQ(ds.size(), 1u);
+
+      // Close
+      ds[0]->QuickWindow()->close();
+      closed = true;
+    });
+
     // Run dialog
-//    EXPECT_TRUE(runDialogs());
-//
-//    // Check it was open
-//    auto ds = dialogs();
-//    EXPECT_EQ(ds.size(), 1u);
-//
-//    // Wait until it is closed
-//    auto closed = false;
-//    ds[0]->connect(ds[0], &QDialog::finished, ds[0], [&](){
-//      closed = true;
-//    });
-//
-//    // Close dialog after some time
-//    QTimer::singleShot(300, ds[0], SLOT(close()));
-//
-//    while (!closed)
-//      QCoreApplication::processEvents();
-//
+    EXPECT_TRUE(runDialogs());
+
+  // Make sure timer was triggered
+  EXPECT_TRUE(closed);
+
     EXPECT_TRUE(stop());
   }
 
@@ -452,29 +450,21 @@ TEST(IfaceTest, Dialog)
     EXPECT_TRUE(loadPlugin("TestPlugin"));
     EXPECT_TRUE(loadPlugin("TestPlugin"));
 
+    // Close dialogs after some time
+//    QTimer::singleShot(300, [&] {
+//      auto ds = dialogs();
+//      EXPECT_EQ(ds.size(), 2u);
+//
+//      ds[0]->QuickWindow()->close();
+//      ds[1]->QuickWindow()->close();
+//    });
+
     // Run dialog
 //    EXPECT_TRUE(runDialogs());
-//
-//    // Check they were open
-//    auto ds = dialogs();
-//    EXPECT_EQ(ds.size(), 2u);
-//
-//    // Wait until they are closed
-//    int closed{0};
-//    for (auto d : ds)
-//    {
-//      d->connect(d, &QDialog::finished, d, [&](){
-//        closed++;
-//      });
-//    }
-//
-//    // Close dialogs after some time
-//    QTimer::singleShot(300, ds[0], SLOT(close()));
-//    QTimer::singleShot(300, ds[1], SLOT(close()));
-//
-//    while (closed != 2)
-//      QCoreApplication::processEvents();
-//
+
+  // Make sure timer was triggered
+//  EXPECT_TRUE(closed);
+
     EXPECT_TRUE(stop());
   }
 }
@@ -486,22 +476,23 @@ TEST(IfaceTest, runEmptyWindow)
 
   // Must initialize app before so we can use the timer on its thread
   EXPECT_TRUE(initApp());
-//  ASSERT_TRUE(QApplication::instance() != nullptr);
-//
-//  // Close window after 1 s
-//  bool closed = false;
-//  QTimer::singleShot(300, [&] {
-//    auto win = mainWindow();
-//    EXPECT_TRUE(win != nullptr);
-//    win->close();
-//    closed = true;
-//  });
-//
-//  // Run empty window
-//  EXPECT_TRUE(runEmptyWindow());
-//
-//  // Make sure timer was triggered
-//  EXPECT_TRUE(closed);
+
+  // Close window after 1 s
+  bool closed = false;
+  QTimer::singleShot(300, [&] {
+
+    auto win = mainWindow();
+    ASSERT_NE(nullptr, win);
+
+    win->QuickWindow()->close();
+    closed = true;
+  });
+
+  // Run empty window
+  EXPECT_TRUE(runEmptyWindow());
+
+  // Make sure timer was triggered
+  EXPECT_TRUE(closed);
 
   EXPECT_TRUE(stop());
 }
@@ -531,28 +522,21 @@ TEST(IfaceTest, runStandalone)
     addPluginPath(testBuildPath);
 
     // Close dialog after 1 s
-//    bool closed = false;
-//    QTimer *timer = new QTimer();
-//    timer->setSingleShot(true);
-//    timer->moveToThread(QApplication::instance()->thread());
-//    timer->setInterval(300);
-//    timer->connect(timer, &QTimer::timeout, [&] {
-//      auto widgets = QApplication::topLevelWidgets();
-//      EXPECT_EQ(widgets.size(), 1);
-//
-//      auto dialog = qobject_cast<QDialog *>(widgets[0]);
-//      EXPECT_TRUE(dialog != nullptr);
-//
-//      dialog->close();
-//      closed = true;
-//    });
-//    timer->start();
+    bool closed = false;
+    QTimer::singleShot(300, [&] {
+      auto ds = dialogs();
+      EXPECT_EQ(ds.size(), 1u);
+
+      // Close
+      ds[0]->QuickWindow()->close();
+      closed = true;
+    });
 
     // Run test plugin
-//    EXPECT_TRUE(runStandalone("TestPlugin"));
+    EXPECT_TRUE(runStandalone("TestPlugin"));
 
     // Make sure timer was triggered
-//    EXPECT_TRUE(closed);
+    EXPECT_TRUE(closed);
 
     EXPECT_TRUE(stop());
   }
@@ -575,29 +559,28 @@ TEST(IfaceTest, runConfig)
 
   // Good file
   {
-//    // Must initialize app before so we can use the timer on its thread
-//    EXPECT_TRUE(initApp());
-//    ASSERT_TRUE(QApplication::instance() != nullptr);
-//
-//    // // Add test plugin to path
-//    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-//    addPluginPath(testBuildPath);
-//
-//    // Close window after 1 s
-//    bool closed = false;
-//    QTimer::singleShot(300, [&] {
-//      auto win = mainWindow();
-//      EXPECT_TRUE(win != nullptr);
-//      win->close();
-//      closed = true;
-//    });
-//
-//    // Run test config file
-//    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-//    EXPECT_TRUE(runConfig(testSourcePath + "config/test.config"));
-//
-//    // Make sure timer was triggered
-//    EXPECT_TRUE(closed);
+    // Must initialize app before so we can use the timer on its thread
+    EXPECT_TRUE(initApp());
+
+    // Add test plugin to path
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    addPluginPath(testBuildPath);
+
+    // Close window after 1 s
+    bool closed = false;
+    QTimer::singleShot(300, [&] {
+      auto win = mainWindow();
+      EXPECT_TRUE(win != nullptr);
+      win->QuickWindow()->close();
+      closed = true;
+    });
+
+    // Run test config file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(runConfig(testSourcePath + "config/test.config"));
+
+    // Make sure timer was triggered
+    EXPECT_TRUE(closed);
   }
 }
 

@@ -18,7 +18,7 @@ set (plugins
 # Plugin shared libraries
 foreach (src ${plugins})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
-  if (EXISTS "${src}.qrc")
+  if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${src}.qrc")
     QT5_ADD_RESOURCES(${src}_RCC ${src}.qrc)
   endif()
   add_library(${src} SHARED
