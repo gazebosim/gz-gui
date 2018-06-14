@@ -12,7 +12,7 @@ set (sources
 #  ${CMAKE_CURRENT_SOURCE_DIR}/EditableLabel.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/EnumWidget.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/GeometryWidget.cc
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
@@ -38,7 +38,7 @@ set (gtest_sources
 #  EditableLabel_TEST
 #  EnumWidget_TEST
 #  GeometryWidget_TEST
-#  Helpers_TEST
+  Helpers_TEST
   Iface_TEST
   ign_TEST
 #  MainWindow_TEST
