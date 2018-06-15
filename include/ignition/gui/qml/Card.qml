@@ -169,6 +169,7 @@ Pane {
       visible: showToolbar
       Material.foreground: "white"
       Material.background: Material.accent
+      Material.elevation: 0
       width: card.width
       height: showToolbar ? 50 : 0
       x: 0

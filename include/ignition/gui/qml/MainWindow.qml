@@ -74,6 +74,7 @@ ApplicationWindow
    */
   header: ToolBar {
     Material.foreground: "white"
+    Material.elevation: 0
 
     MouseArea {
       anchors.fill: parent;
