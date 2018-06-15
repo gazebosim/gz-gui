@@ -277,6 +277,9 @@ void MainWindow::OnAddPlugin(QString _plugin)
 ///////////////////////////////////////////////////
 bool MainWindow::ApplyConfig(const WindowConfig &_config)
 {
+  if (!this->dataPtr->quickWindow)
+    return false;
+
   // Window position
   if (!_config.IsIgnoring("position_x") &&
       !_config.IsIgnoring("position_y") &&
@@ -359,6 +362,9 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
 /////////////////////////////////////////////////
 WindowConfig MainWindow::CurrentWindowConfig() const
 {
+  if (!this->dataPtr->quickWindow)
+    return this->dataPtr->windowConfig;
+
   WindowConfig config;
 
   // Position

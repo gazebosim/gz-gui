@@ -258,6 +258,9 @@ QQuickItem *Plugin::PluginItem() const
 /////////////////////////////////////////////////
 QQuickItem *Plugin::CardItem() const
 {
+  if (!this->dataPtr->pluginItem)
+    return nullptr;
+
   // If already created, just return it
   if (this->dataPtr->cardItem)
     return this->dataPtr->cardItem;

@@ -648,6 +648,8 @@ bool ignition::gui::addPluginsToWindow()
     }
 
     auto cardItem = plugin->CardItem();
+    if (!cardItem)
+      continue;
 
     // Add card to main window
     cardItem->setParentItem(bgItem);
@@ -701,7 +703,7 @@ bool ignition::gui::runMainWindow()
   if (!checkApp())
     return false;
 
-  if (!mainWindow())
+  if (!mainWindow() || !mainWindow()->QuickWindow())
     return false;
 
   igndbg << "Run main window" << std::endl;
@@ -723,13 +725,20 @@ bool ignition::gui::runDialogs()
   while (!g_pluginsToAdd.empty())
   {
     auto plugin = g_pluginsToAdd.front();
+    g_pluginsToAdd.pop();
+
+    // Create card
+    auto cardItem = plugin->CardItem();
+    if (!cardItem)
+      continue;
 
     // Create dialog
     auto dialog = new Dialog();
+    if (!dialog || !dialog->QuickWindow())
+      continue;
+
     g_dialogs.push_back(dialog);
 
-    // Add card to dialog
-    auto cardItem = plugin->CardItem();
     cardItem->setParentItem(dialog->RootItem());
 
     // Configure card
@@ -743,11 +752,13 @@ bool ignition::gui::runDialogs()
     dialog->QuickWindow()->setProperty("height", cardHeight);
 
     g_pluginsAdded.push_back(plugin);
-    g_pluginsToAdd.pop();
 
     auto title = QString::fromStdString(plugin->Title());
     igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
   }
+
+  if (g_pluginsAdded.empty())
+    return false;
 
   // Run app - blocks
   g_app->exec();
