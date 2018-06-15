@@ -85,7 +85,7 @@ namespace plugins
     public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3);
 
     /// \brief Background color
-    public: math::Color backgroundColor = math::Color(1.0, 0.3, 0.3);
+    public: math::Color backgroundColor = math::Color(0.3, 0.3, 0.3);
 
     /// \brief Initial camera pose
     public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
