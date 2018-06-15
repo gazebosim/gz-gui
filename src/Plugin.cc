@@ -50,6 +50,9 @@ class ignition::gui::PluginPrivate
 
   /// \brief Card's width
   public: int width{-1};
+
+  /// \brief
+  public: std::string cardFrame = "visible";
 };
 
 using namespace ignition;
@@ -131,6 +134,10 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   if (_pluginElem->QueryAttribute("width", &width) == tinyxml2::XML_SUCCESS)
     this->dataPtr->width = width;
 
+  const char *cardFrame = _pluginElem->Attribute("card_frame");
+  if (cardFrame)
+    this->dataPtr->cardFrame = cardFrame;
+
   // Delete later
   if (_pluginElem->Attribute("delete_later"))
   {
@@ -146,15 +153,6 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   // Read default params
   if (auto titleElem = _pluginElem->FirstChildElement("title"))
     this->title = titleElem->GetText();
-
-  // Weird things happen if the bool is not initialized again here
-  this->hasTitlebar = true;
-  if (auto hasTitleElem = _pluginElem->FirstChildElement("has_titlebar"))
-  {
-    bool has = true;
-    hasTitleElem->QueryBoolText(&has);
-    this->hasTitlebar = has;
-  }
 
   // Setup default context menu
 //  this->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -308,7 +306,8 @@ QQuickItem *Plugin::CardItem() const
 
   cardItem->setProperty("pluginName",
       QString::fromStdString(this->Title()));
-  cardItem->setProperty("hasTitlebar", this->hasTitlebar);
+  cardItem->setProperty("cardFrame",
+      QString::fromStdString(this->dataPtr->cardFrame));
   cardItem->setProperty("width", pluginWidth);
   cardItem->setProperty("height", pluginHeight);
   if (this->dataPtr->x >= 0)

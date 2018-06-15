@@ -28,9 +28,19 @@ Pane {
   property bool hasCloseButton: true
 
   /**
-   * True to have a title bar
+   * Show top tooolbar
    */
-  property bool hasTitlebar: true
+  property bool showToolbar: card.cardFrame === "visible"
+
+  /**
+   * Show background and border
+   */
+  property bool showBorder: card.cardFrame !== "hover"
+
+  /**
+   * Frame configuration: visible / hidden / hover
+   */
+  property string cardFrame: "visible"
 
   /**
    * The plugin name, which goes on the toolbar
@@ -67,7 +77,14 @@ Pane {
    */
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
-  Material.elevation: 6
+  // FIXME: elevation is currently disabled because of Ogre, but once
+  // we re-enable it this must be revisited because the elevation doesn't
+  // work with a custom background, but there seems to be no way to set a Pane's
+  // background color
+//  Material.elevation: showBorder ? 6 : 0
+  background: Rectangle {
+    color: showBorder ? Material.background : "transparent"
+  }
   padding: 0
   state: "docked"
 
@@ -112,25 +129,115 @@ Pane {
     }
   }
 
-  /**
-   * Top toolbar
-   */
-  ToolBar {
-    id: cardToolbar
-    objectName: "cardToolbar"
-    visible: card.hasTitlebar
-    Material.foreground: "white"
-    Material.background: Material.accent
-    width: card.width
-    height: card.hasTitlebar ? 50 : 0
-    x: 0
-    y: 0
-    z: 100
+  // For hover
+  Timer {
+    id: hoverTimer
+    interval: 1000;
+    onTriggered: {
+      if (!hoverArea.containsMouse) {
+        return
+      }
+      showBorder = true
+      showToolbar = true
+    }
+  }
 
-    // For drag
+  /**
+   * Mouse area used to handle hovering over the whole card
+   * Toolbar and content must be children so their hover events propagate to the area
+   */
+  MouseArea {
+    id: hoverArea
+    enabled: cardFrame === "hover"
+    anchors.fill: parent
+    hoverEnabled: true
+    onEntered: {
+      hoverTimer.start()
+    }
+    onExited: {
+      hoverTimer.stop()
+      showBorder = false
+      showToolbar = false
+    }
+
+    /**
+     * Top toolbar
+     */
+    ToolBar {
+      id: cardToolbar
+      objectName: "cardToolbar"
+      visible: showToolbar
+      Material.foreground: "white"
+      Material.background: Material.accent
+      width: card.width
+      height: showToolbar ? 50 : 0
+      x: 0
+      y: -50
+      z: 100
+
+      /**
+       * For drag on "visible" and "hover" card frames
+       */
+      MouseArea {
+        anchors.fill: parent
+        drag{
+          target: card
+          minimumX: 0
+          minimumY: 0
+          maximumX: card.parent.width - card.width
+          maximumY: card.parent.height - card.height
+          smoothed: true
+        }
+      }
+
+      /**
+       * The toolbar contents
+       */
+      RowLayout {
+        spacing: 10
+        anchors.fill: parent
+        anchors.leftMargin: 10
+
+        Label {
+          id: titleLabel
+          font.pixelSize: 20
+          elide: Label.ElideRight
+          horizontalAlignment: Qt.AlignHLeft
+          verticalAlignment: Qt.AlignVCenter
+          Layout.fillWidth: true
+        }
+
+        // Dock / undock button
+        ToolButton {
+          id: dockButton
+          text: card.state === "docked" ? undockIcon : dockIcon
+          visible: card.hasDockButton
+          onClicked: {
+            const docked = card.state === "docked"
+            card.state = docked ? "undocked" : "docked"
+            undockedWindow.visible = docked
+          }
+        }
+
+        // Close button
+        ToolButton {
+          id: closeButton
+          visible: card.hasCloseButton
+          text: closeIcon
+          onClicked: {
+            card.close();
+          }
+        }
+      }
+    }
+
+    /**
+     * For dragging in "hidden" mode (whole card)
+     */
     MouseArea {
-      anchors.fill: parent
-      drag{
+      enabled: cardFrame === "hidden"
+      anchors.fill: content
+      drag {
         target: card
         minimumX: 0
         minimumY: 0
@@ -140,65 +247,16 @@ Pane {
       }
     }
 
-    RowLayout {
-      spacing: 10
+    /**
+     * Card contents
+     */
+    Rectangle {
+      objectName: "content"
+      id: content
       anchors.fill: parent
-      anchors.leftMargin: 10
-
-      Label {
-        id: titleLabel
-        font.pixelSize: 20
-        elide: Label.ElideRight
-        horizontalAlignment: Qt.AlignHLeft
-        verticalAlignment: Qt.AlignVCenter
-        Layout.fillWidth: true
-      }
-
-      // Dock / undock button
-      ToolButton {
-        id: dockButton
-        text: card.state === "docked" ? undockIcon : dockIcon
-        visible: card.hasDockButton
-        onClicked: {
-          const docked = card.state === "docked"
-          card.state = docked ? "undocked" : "docked"
-          undockedWindow.visible = docked
-        }
-      }
-
-      // Close button
-      ToolButton {
-        id: closeButton
-        visible: card.hasCloseButton
-        text: closeIcon
-        onClicked: {
-          card.close();
-        }
-      }
+      clip: true
+      color: "transparent"
     }
-  }
-
-  // For drag
-  MouseArea {
-    enabled: !hasTitlebar
-    anchors.fill: content
-    drag{
-      target: card
-      minimumX: 0
-      minimumY: 0
-      maximumX: card.parent.width - card.width
-      maximumY: card.parent.height - card.height
-      smoothed: true
-    }
-  }
-
-  Rectangle {
-    objectName: "content"
-    id: content
-    y: cardToolbar.height
-    width: card.width
-    height: card.height - cardToolbar.height
-    clip: true
   }
 
   // Left ruler
@@ -208,6 +266,7 @@ Pane {
     color: "transparent"
     anchors.horizontalCenter: parent.left
     anchors.verticalCenter: parent.verticalCenter
+    visible: showBorder
 
     MouseArea {
       anchors.fill: parent
@@ -233,6 +292,7 @@ Pane {
     color: "transparent"
     anchors.horizontalCenter: parent.right
     anchors.verticalCenter: parent.verticalCenter
+    visible: showBorder
 
     MouseArea {
       anchors.fill: parent
@@ -252,13 +312,15 @@ Pane {
 
   // Top ruler
   Rectangle {
-    width: parent.parent.width
+    parent: showToolbar ? cardToolbar : card
+    width: parent.width
     height: rulersThickness
     x: parent.x / 2
     y: 0
     color: "transparent"
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.top
+    visible: showBorder
 
     MouseArea {
       anchors.fill: parent
@@ -286,6 +348,7 @@ Pane {
     color: "transparent"
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.bottom
+    visible: showBorder
 
     MouseArea {
       anchors.fill: parent
