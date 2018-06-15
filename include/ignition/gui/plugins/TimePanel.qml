@@ -28,6 +28,7 @@ Row {
         TimePanel.OnPause()
     }
     Material.background: Material.primary
+    Material.elevation: 0
   }
 
   /**
@@ -43,5 +44,6 @@ Row {
       TimePanel.OnStep()
     }
     Material.background: Material.primary
+    Material.elevation: 0
   }
 }

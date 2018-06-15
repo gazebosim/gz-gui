@@ -86,6 +86,7 @@ Pane {
     color: showBorder ? Material.background : "transparent"
   }
   padding: 0
+  y: 50
   state: "docked"
 
   states: [
