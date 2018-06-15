@@ -628,7 +628,7 @@ bool ignition::gui::addPluginsToWindow()
       g_mainWin->QuickWindow()->findChild<QQuickItem *>("background");
   if (!g_pluginsToAdd.empty() && !bgItem)
   {
-    ignerr << "Null background QQuickItem!" << std::endl;
+    ignerr << "Internal error: Null background QQuickItem!" << std::endl;
     return false;
   }
 
@@ -651,8 +651,22 @@ bool ignition::gui::addPluginsToWindow()
     if (!cardItem)
       continue;
 
+    // Add split
+    QVariant splitName;
+    QMetaObject::invokeMethod(mainWindow()->QuickWindow(), "addSplit",
+        Q_RETURN_ARG(QVariant, splitName));
+
+    auto splitItem = bgItem->findChild<QQuickItem *>(
+        splitName.toString());
+    if (!splitItem)
+    {
+      ignerr << "Internal error: failed to create split ["
+             << splitName.toString().toStdString() << "]" << std::endl;
+      return false;
+    }
+
     // Add card to main window
-    cardItem->setParentItem(bgItem);
+    cardItem->setParentItem(splitItem);
     cardItem->setParent(g_engine);
     plugin->setParent(mainWindow());
 
