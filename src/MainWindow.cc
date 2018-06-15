@@ -170,23 +170,6 @@ MainWindow::~MainWindow()
 //  }
 //  _event->accept();
 // }
-//
-///////////////////////////////////////////////////
-// bool MainWindow::CloseAllDocks()
-// {
-//  igndbg << "Closing all docks" << std::endl;
-//
-//  auto docks = this->findChildren<QDockWidget *>();
-//  for (auto dock : docks)
-//  {
-//    dock->close();
-//    dock->setParent(new QWidget());
-//  }
-//
-//  QCoreApplication::processEvents();
-//
-//  return true;
-// }
 
 /////////////////////////////////////////////////
 void MainWindow::OnPluginClose()
@@ -215,11 +198,9 @@ QStringList MainWindow::PluginListModel() const
 //////////////////////////////////////////////////
 void MainWindow::OnLoadConfig(const QString &_path)
 {
-  if (!loadConfig(_path.toStdString()))
+  auto localPath = QUrl(_path).toLocalFile();
+  if (!loadConfig(localPath.toStdString()))
     return;
-
-//  if (!this->CloseAllDocks())
-//    return;
 
   addPluginsToWindow();
   applyConfig();

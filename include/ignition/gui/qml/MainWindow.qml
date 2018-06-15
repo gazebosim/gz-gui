@@ -22,7 +22,7 @@ ApplicationWindow
   Connections {
     target: MainWindow
     onNotify: {
-     notificationText.text = _message
+      notificationText.text = _message
       notificationDialog.open()
     }
   }
