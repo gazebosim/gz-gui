@@ -13,6 +13,11 @@ ApplicationWindow
   id: window
   property string bgColor: "#eeeeee"
 
+  // Not sure why the binding doesn't take care of this
+  onTitleChanged: {
+    titleLabel.text = window.title
+  }
+
   // C++ signals to QML slots
   Connections {
     target: MainWindow
@@ -88,7 +93,7 @@ ApplicationWindow
 
       Label {
         id: titleLabel
-        text: "Ignition GUI"
+        text: window.title
         font.pixelSize: 20
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHCenter
