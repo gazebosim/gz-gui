@@ -39,7 +39,7 @@ Dialog::Dialog()
   : dataPtr(new DialogPrivate)
 {
   // Load QML and keep pointer to generated QQuickWindow
-  std::string qmlFile("qrc:qml/Dialog.qml");
+  std::string qmlFile("qrc:qml/StandaloneDialog.qml");
   qmlEngine()->load(QUrl(QString::fromStdString(qmlFile)));
 
   this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
