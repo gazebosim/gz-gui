@@ -57,7 +57,8 @@ class TreeItemDelegate : public QStyledItemDelegate
     QString topicName = qvariant_cast<QString>(_index.data(DISPLAY_NAME));
     QString typeName = qvariant_cast<QString>(_index.data(TYPE));
 
-    // TODO: Change to QApplication::font() once Roboto is used everywhere.
+    // TODO(anyone): Change to QApplication::font() once Roboto is used
+    // everywhere.
     QFont fontBold, fontRegular;
 
     // Create a bold font.
@@ -233,7 +234,8 @@ class TreeItemDelegate : public QStyledItemDelegate
   {
     QSize size = QStyledItemDelegate::sizeHint(_option, _index);
 
-    // TODO: Change to QApplication::font() once Roboto is used everywhere.
+    // TODO(anyone): Change to QApplication::font() once Roboto is used
+    // everywhere.
     QFont font("Roboto Regular");
     QFontMetrics fm(font);
 

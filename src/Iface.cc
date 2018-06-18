@@ -633,7 +633,6 @@ bool ignition::gui::addPluginsToWindow()
   }
 
   // Create a widget for each plugin
-  auto count = 0;
   while (!g_pluginsToAdd.empty())
   {
     auto plugin = g_pluginsToAdd.front();
@@ -660,8 +659,6 @@ bool ignition::gui::addPluginsToWindow()
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
-
-    count++;
   }
 
   g_mainWin->SetPluginCount(g_pluginsAdded.size());

@@ -2169,6 +2169,7 @@ TEST(MessageWidgetTest, ChildVector3dSignal)
       EXPECT_EQ(_name, "");
 
       // From spins
+      // cppcheck-suppress knownConditionTrueFalse
       if (vector3SignalCount == 0)
       {
         EXPECT_EQ(v, math::Vector3d(2.5, -2, 3));

@@ -24,7 +24,7 @@
 
 #include "ignition/gui/MainWindow.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config";
+std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
 
 using namespace ignition;
 using namespace gui;
@@ -111,10 +111,9 @@ TEST(MainWindowTest, OnSaveConfigAs)
   auto saveAct = menus[0]->actions()[2];
   EXPECT_EQ(saveAct->text().toStdString(), "Save configuration as");
 
-  bool closed = false;
-
   // Close dialog without choosing file
   {
+    bool closed = false;
     // Close window after a while
     QTimer::singleShot(300, [&]
     {
@@ -207,10 +206,10 @@ TEST(MainWindowTest, OnLoadConfig)
   auto loadAct = menus[0]->actions()[0];
   EXPECT_EQ(loadAct->text(), QString("&Load configuration"));
 
-  bool closed = false;
 
   // Close dialog without choosing file
   {
+    bool closed = false;
     // Close window after 1 s
     QTimer::singleShot(300, [&]
     {
@@ -353,10 +352,10 @@ TEST(MainWindowTest, OnLoadStyleSheet)
   auto loadAct = menus[0]->actions()[4];
   EXPECT_EQ(loadAct->text(), QString("&Load stylesheet"));
 
-  bool closed = false;
 
   // Close dialog without choosing file
   {
+    bool closed = false;
     // Close window after 1 s
     QTimer::singleShot(300, [&]
     {
