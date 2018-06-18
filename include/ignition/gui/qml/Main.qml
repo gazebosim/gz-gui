@@ -131,6 +131,7 @@ ApplicationWindow
         PluginMenu {
           id: pluginMenu
           x: parent.width - width
+          height: window.height * 0.3
           transformOrigin: Menu.TopRight
         }
       }
