@@ -71,7 +71,7 @@ namespace ignition
 
       /// \brief Get the configuration XML as a string
       /// \return Config element
-      public: virtual std::string ConfigStr() const;
+      public: virtual std::string ConfigStr();
 
       /// \brief Get the card item which contains this plugin. The item is
       /// generated the first time this function is run.

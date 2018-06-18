@@ -344,7 +344,13 @@ bool ignition::gui::stop()
 
   if (g_mainWin && g_mainWin->QuickWindow())
   {
-//    g_mainWin->CloseAllDocks();
+    // Detach widget from main window and leave libraries for ign-common
+    auto plugins = g_mainWin->findChildren<Plugin *>();
+    for (auto plugin : plugins)
+    {
+      auto pluginName = plugin->CardItem()->objectName();
+      removePlugin(pluginName.toStdString());
+    }
     if (g_mainWin->QuickWindow()->isVisible())
       g_mainWin->QuickWindow()->close();
     delete g_mainWin;
@@ -413,6 +419,16 @@ bool ignition::gui::loadConfig(const std::string &_config)
   ignmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Clear all previous plugins
+  auto plugins = mainWindow()->findChildren<Plugin *>();
+  for (auto plugin : plugins)
+  {
+    auto pluginName = plugin->CardItem()->objectName();
+    removePlugin(pluginName.toStdString());
+  }
+  if (g_pluginsAdded.size() > 0)
+  {
+    ignerr << "The plugin list was not properly cleaned up." << std::endl;
+  }
   g_pluginsAdded.clear();
 
   // Process each plugin
@@ -636,6 +652,7 @@ bool ignition::gui::addPluginsToWindow()
     // Add card to main window
     cardItem->setParentItem(bgItem);
     cardItem->setParent(g_engine);
+    plugin->setParent(mainWindow());
 
     // Signals
     g_mainWin->connect(cardItem, SIGNAL(close()), g_mainWin,

@@ -37,4 +37,6 @@
 #include <QQuickStyle>
 #include <QQuickWindow>
 
+#include <QStandardItemModel>
+
 #endif  // IGNITION_GUI_QT_H_

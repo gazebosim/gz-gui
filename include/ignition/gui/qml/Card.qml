@@ -67,7 +67,7 @@ Pane {
    */
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
-  Material.elevation: 6
+//  Material.elevation: 6
   padding: 0
   state: "docked"
 
@@ -121,11 +121,25 @@ Pane {
     visible: card.hasTitlebar
     Material.foreground: "white"
     Material.background: Material.accent
+    Material.elevation: 0
     width: card.width
     height: card.hasTitlebar ? 50 : 0
     x: 0
     y: 0
     z: 100
+
+    // For drag
+    MouseArea {
+      anchors.fill: parent
+      drag{
+        target: card
+        minimumX: 0
+        minimumY: 0
+        maximumX: card.parent.width - card.width
+        maximumY: card.parent.height - card.height
+        smoothed: true
+      }
+    }
 
     RowLayout {
       spacing: 10
@@ -139,19 +153,6 @@ Pane {
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
-
-        // For drag
-        MouseArea {
-          anchors.fill: parent
-          drag{
-            target: card
-            minimumX: 0
-            minimumY: 0
-            maximumX: card.parent.width - card.width
-            maximumY: card.parent.height - card.height
-            smoothed: true
-          }
-        }
       }
 
       // Dock / undock button

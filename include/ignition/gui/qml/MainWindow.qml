@@ -13,11 +13,16 @@ ApplicationWindow
   id: window
   property string bgColor: "#eeeeee"
 
+  // Not sure why the binding doesn't take care of this
+  onTitleChanged: {
+    titleLabel.text = window.title
+  }
+
   // C++ signals to QML slots
   Connections {
     target: MainWindow
     onNotify: {
-     notificationText.text = _message
+      notificationText.text = _message
       notificationDialog.open()
     }
   }
@@ -69,6 +74,23 @@ ApplicationWindow
    */
   header: ToolBar {
     Material.foreground: "white"
+    Material.elevation: 0
+
+    MouseArea {
+      anchors.fill: parent;
+      property variant clickPos: "1,1"
+      onPressed: {
+        clickPos  = Qt.point(mouse.x,mouse.y)
+      }
+      onPositionChanged: {
+        var delta = Qt.point(mouse.x-clickPos.x, mouse.y-clickPos.y)
+        window.x += delta.x;
+        window.y += delta.y;
+      }
+      onDoubleClicked: {
+        window.showMaximized()
+      }
+    }
 
     RowLayout {
       spacing: 20
@@ -87,7 +109,7 @@ ApplicationWindow
 
       Label {
         id: titleLabel
-        text: "Ignition GUI"
+        text: window.title
         font.pixelSize: 20
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHCenter
