@@ -207,7 +207,7 @@ std::string Plugin::ConfigStr()
 }
 
 /////////////////////////////////////////////////
-void Plugin::ShowContextMenu(const QPoint &_pos)
+void Plugin::ShowContextMenu(const QPoint & /*_pos*/)
 {
   // Close action
 //  QAction closeAct(QString::fromStdString("Close [" + this->title + "]"),

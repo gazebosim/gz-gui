@@ -408,7 +408,7 @@ void Grid3D::Refresh()
 }
 
 /////////////////////////////////////////////////
-void Grid3D::OnChange(const QVariant &_value)
+void Grid3D::OnChange(const QVariant & /*_value*/)
 {
 //  auto gridName =
 //      this->sender()->property("gridName").toString().toStdString();
