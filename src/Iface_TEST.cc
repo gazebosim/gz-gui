@@ -431,8 +431,8 @@ TEST(IfaceTest, Dialog)
     // Run dialog
     EXPECT_TRUE(runDialogs());
 
-  // Make sure timer was triggered
-  EXPECT_TRUE(closed);
+    // Make sure timer was triggered
+    EXPECT_TRUE(closed);
 
     EXPECT_TRUE(stop());
   }

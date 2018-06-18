@@ -39,11 +39,6 @@ TEST(MainWindowTest, Constructor)
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
-  // Menu
-//  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-//  EXPECT_EQ(menus[0]->title(), QString("&File"));
-//  EXPECT_EQ(menus[1]->title(), QString("&Plugins"));
-
   delete mainWindow;
   EXPECT_TRUE(stop());
 }
@@ -61,35 +56,28 @@ TEST(MainWindowTest, OnSaveConfig)
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
-  // Get save action on menu
-//  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-//  ASSERT_GT(menus.size(), 0);
-//  ASSERT_GT(menus[0]->actions().size(), 2);
-//  auto saveAct = menus[0]->actions()[1];
-//  EXPECT_EQ(saveAct->text().toStdString(), "&Save configuration");
-//
-//  // Save to default location
-//  {
-//    // Trigger save
-//    saveAct->trigger();
-//
-//    // Check saved file
-//    QFile saved(QString::fromStdString(kTestConfigFile));
-//    ASSERT_TRUE(saved.open(QFile::ReadOnly));
-//
-//    QString savedStr = QLatin1String(saved.readAll());
-//    EXPECT_FALSE(savedStr.isNull());
-//    EXPECT_TRUE(savedStr.contains("<window>"));
-//    EXPECT_TRUE(savedStr.contains("<height>"));
-//    EXPECT_TRUE(savedStr.contains("<width>"));
-//    EXPECT_TRUE(savedStr.contains("<position_x>"));
-//    EXPECT_TRUE(savedStr.contains("<position_y>"));
-//    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
-//    EXPECT_TRUE(savedStr.contains("<state>"));
-//
-//    // Delete file
-//    std::remove(kTestConfigFile.c_str());
-//  }
+  // Save to default location
+  {
+    // Trigger save
+    mainWindow->OnSaveConfig();
+
+    // Check saved file
+    QFile saved(QString::fromStdString(kTestConfigFile));
+    ASSERT_TRUE(saved.open(QFile::ReadOnly));
+
+    QString savedStr = QLatin1String(saved.readAll());
+    EXPECT_FALSE(savedStr.isNull());
+    EXPECT_TRUE(savedStr.contains("<window>"));
+    EXPECT_TRUE(savedStr.contains("<height>"));
+    EXPECT_TRUE(savedStr.contains("<width>"));
+    EXPECT_TRUE(savedStr.contains("<position_x>"));
+    EXPECT_TRUE(savedStr.contains("<position_y>"));
+    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
+    EXPECT_TRUE(savedStr.contains("<state>"));
+
+    // Delete file
+    std::remove(kTestConfigFile.c_str());
+  }
 
   delete mainWindow;
   EXPECT_TRUE(stop());
@@ -104,78 +92,31 @@ TEST(MainWindowTest, OnSaveConfigAs)
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
-  // Get save action on menu
-//  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-//  ASSERT_GT(menus.size(), 0);
-//  ASSERT_GT(menus[0]->actions().size(), 2);
-//  auto saveAct = menus[0]->actions()[2];
-//  EXPECT_EQ(saveAct->text().toStdString(), "Save configuration as");
-//
-//  bool closed = false;
-//
-//  // Close dialog without choosing file
-//  {
-//    // Close window after a while
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//      fileDialogs[0]->close();
-//      closed = true;
-//    });
-//
-//    // Trigger Save
-//    saveAct->trigger();
-//
-//    EXPECT_TRUE(closed);
-//  }
-//
-//  // Save to file
-//  {
-//    // Choose file after a while
-//    closed = false;
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//
-//      // Select file
-//      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
-//      ASSERT_GT(edits.size(), 0);
-//      edits[0]->setText(QString::fromStdString(kTestConfigFile));
-//
-//      // Accept
-//      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
-//      EXPECT_GT(buttons.size(), 0);
-//      buttons[0]->click();
-//      closed = true;
-//    });
-//
-//    // Trigger save
-//    saveAct->trigger();
-//
-//    // Check saved file
-//    QFile saved(QString::fromStdString(kTestConfigFile));
-//    ASSERT_TRUE(saved.open(QFile::ReadOnly));
-//
-//    QString savedStr = QLatin1String(saved.readAll());
-//    EXPECT_FALSE(savedStr.isNull());
-//    EXPECT_TRUE(savedStr.contains("<window>"));
-//    EXPECT_TRUE(savedStr.contains("<height>"));
-//    EXPECT_TRUE(savedStr.contains("<width>"));
-//    EXPECT_TRUE(savedStr.contains("<position_x>"));
-//    EXPECT_TRUE(savedStr.contains("<position_y>"));
-//    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
-//    EXPECT_TRUE(savedStr.contains("<state>"));
-//    EXPECT_TRUE(savedStr.contains("<menus>"));
-//    EXPECT_TRUE(savedStr.contains("<file"));
-//    EXPECT_TRUE(savedStr.contains("<plugins"));
-//
-//    // Delete file
-//    std::remove(kTestConfigFile.c_str());
-//
-//    EXPECT_TRUE(closed);
-//  }
+  // Save to file
+  {
+    // Trigger save
+    mainWindow->OnSaveConfigAs(QString::fromStdString(kTestConfigFile));
+
+    // Check saved file
+    QFile saved(QString::fromStdString(kTestConfigFile));
+    ASSERT_TRUE(saved.open(QFile::ReadOnly));
+
+    QString savedStr = QLatin1String(saved.readAll());
+    EXPECT_FALSE(savedStr.isNull());
+    EXPECT_TRUE(savedStr.contains("<window>"));
+    EXPECT_TRUE(savedStr.contains("<height>"));
+    EXPECT_TRUE(savedStr.contains("<width>"));
+    EXPECT_TRUE(savedStr.contains("<position_x>"));
+    EXPECT_TRUE(savedStr.contains("<position_y>"));
+    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
+    EXPECT_TRUE(savedStr.contains("<state>"));
+    EXPECT_TRUE(savedStr.contains("<menus>"));
+    EXPECT_TRUE(savedStr.contains("<file"));
+    EXPECT_TRUE(savedStr.contains("<plugins"));
+
+    // Delete file
+    std::remove(kTestConfigFile.c_str());
+  }
 
   delete mainWindow;
   EXPECT_TRUE(stop());
@@ -196,99 +137,33 @@ TEST(MainWindowTest, OnLoadConfig)
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
-//  auto plugins = mainWindow->findChildren<Plugin *>();
-//  EXPECT_EQ(plugins.size(), 0);
-//
-//  // Get load action on menu
-//  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-//  ASSERT_GT(menus.size(), 0);
-//  ASSERT_GT(menus[0]->actions().size(), 1);
-//  auto loadAct = menus[0]->actions()[0];
-//  EXPECT_EQ(loadAct->text(), QString("&Load configuration"));
-//
-//  bool closed = false;
-//
-//  // Close dialog without choosing file
-//  {
-//    // Close window after 1 s
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//      fileDialogs[0]->close();
-//      closed = true;
-//    });
-//
-//    // Trigger load
-//    loadAct->trigger();
-//
-//    EXPECT_TRUE(closed);
-//  }
-//
-//  // Load file with single plugin
-//  {
-//    // Close window after 1 s
-//    closed = false;
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//
-//      // Select file
-//      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
-//      ASSERT_GT(edits.size(), 0);
-//      edits[0]->setText(QString::fromStdString(
-//          std::string(PROJECT_SOURCE_PATH) + "/test/config/test.config"));
-//
-//      // Accept
-//      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
-//      EXPECT_GT(buttons.size(), 0);
-//      buttons[0]->click();
-//      closed = true;
-//    });
-//
-//    // Trigger load
-//    loadAct->trigger();
-//
-//    EXPECT_TRUE(closed);
-//
-//    // Check window has 1 plugin
-//    plugins = mainWindow->findChildren<Plugin *>();
-//    EXPECT_EQ(1, plugins.size());
-//  }
-//
-//  // Load file with 2 plugins and window state
-//  {
-//    // Close window after 1 s
-//    closed = false;
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//
-//      // Select file
-//      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
-//      ASSERT_GT(edits.size(), 0);
-//      edits[0]->setText(QString::fromStdString(
-//          std::string(PROJECT_SOURCE_PATH) + "/test/config/state.config"));
-//
-//      // Accept
-//      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
-//      EXPECT_GT(buttons.size(), 0);
-//      buttons[0]->click();
-//      closed = true;
-//    });
-//
-//    // Trigger load
-//    loadAct->trigger();
-//
-//    EXPECT_TRUE(closed);
-//
-//    // Check window has 2 plugins
-//    plugins = mainWindow->findChildren<Plugin *>();
-//    EXPECT_EQ(2, plugins.size());
-//  }
-//
+  auto plugins = mainWindow->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 0);
+
+  // Load file with single plugin
+  {
+    // Trigger load
+    auto path = QString::fromStdString(
+          std::string(PROJECT_SOURCE_PATH) + "/test/config/test.config");
+    mainWindow->OnLoadConfig(path);
+
+    // Check window has 1 plugin
+    plugins = mainWindow->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.size());
+  }
+
+  // Load file with 2 plugins and window state
+  {
+    // Trigger load
+    auto path = QString::fromStdString(
+          std::string(PROJECT_SOURCE_PATH) + "/test/config/state.config");
+    mainWindow->OnLoadConfig(path);
+
+    // Check window has 2 plugins
+    plugins = mainWindow->findChildren<Plugin *>();
+    EXPECT_EQ(2, plugins.size());
+  }
+
 //  // Load file with stylesheet
 //  {
 //    // Check window style
@@ -419,40 +294,22 @@ TEST(MainWindowTest, OnAddPlugin)
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
-//  auto plugins = mainWindow->findChildren<Plugin *>();
-//  EXPECT_EQ(plugins.size(), 0);
-//
-//  // Get the TestPlugin plugin on menu
-//  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-//  ASSERT_GT(menus.size(), 1);
-//  ASSERT_GT(menus[0]->actions().size(), 0);
-//
-//  int i = 0;
-//  for (; menus[1]->actions().size(); ++i)
-//  {
-//    if (menus[1]->actions()[i]->text() == QString("TestPlugin"))
-//      break;
-//  }
-//  auto pluginAct = menus[1]->actions()[i];
-//  EXPECT_EQ(pluginAct->text(), QString("TestPlugin"));
-//
-//  // Add plugin
-//  pluginAct->trigger();
-//
-//  QCoreApplication::processEvents();
-//
-//  // Check window has 1 plugin
-//  plugins = mainWindow->findChildren<Plugin *>();
-//  EXPECT_EQ(plugins.size(), 1);
-//
-//  // Add another plugin
-//  pluginAct->trigger();
-//
-//  QCoreApplication::processEvents();
-//
-//  // Check window has 2 plugins
-//  plugins = mainWindow->findChildren<Plugin *>();
-//  EXPECT_EQ(plugins.size(), 2);
+  auto plugins = mainWindow->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 0);
+
+  // Add plugin
+  mainWindow->OnAddPlugin("TestPlugin");
+
+  // Check window has 1 plugin
+  plugins = mainWindow->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  // Add another plugin
+  mainWindow->OnAddPlugin("TestPlugin");
+
+  // Check window has 2 plugins
+  plugins = mainWindow->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 2);
 
   // Clean up
   EXPECT_TRUE(stop());

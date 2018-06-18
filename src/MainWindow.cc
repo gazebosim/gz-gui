@@ -199,6 +199,9 @@ QStringList MainWindow::PluginListModel() const
 void MainWindow::OnLoadConfig(const QString &_path)
 {
   auto localPath = QUrl(_path).toLocalFile();
+  if (localPath.isEmpty())
+    localPath = _path;
+
   if (!loadConfig(localPath.toStdString()))
     return;
 
@@ -216,6 +219,8 @@ void MainWindow::OnSaveConfig()
 void MainWindow::OnSaveConfigAs(const QString &_path)
 {
   auto localPath = QUrl(_path).toLocalFile();
+  if (localPath.isEmpty())
+    localPath = _path;
   this->SaveConfig(localPath.toStdString());
 }
 
