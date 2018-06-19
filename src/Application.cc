@@ -203,7 +203,7 @@ bool Application::RunConfig(const std::string &_config)
     return false;
   }
 
-  this->CreateMainWindow();
+  this->InitializeMainWindow();
 
   // Run app - blocks
   this->exec();
@@ -218,7 +218,7 @@ bool Application::RunEmptyWindow()
 
   this->LoadDefaultConfig();
 
-  this->CreateMainWindow();
+  this->InitializeMainWindow();
 
   // Run app - blocks
   this->exec();
@@ -417,7 +417,7 @@ bool Application::LoadPlugin(const std::string &_filename,
 }
 
 /////////////////////////////////////////////////
-bool Application::CreateMainWindow()
+bool Application::InitializeMainWindow()
 {
   igndbg << "Create main window" << std::endl;
 

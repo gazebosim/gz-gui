@@ -58,7 +58,7 @@ TEST(PluginTest, DeleteLater)
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
-  EXPECT_TRUE(app.CreateMainWindow());
+  EXPECT_TRUE(app.InitializeMainWindow());
 
   auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);

@@ -102,10 +102,10 @@ namespace ignition
 
       /* MainWindow */
 
-      /// \brief Run previously loaded plugins on a single main window.
+      /// \brief Create a main window, populate with plugins and apply configuration.
       /// An empty window will be created if no plugins have been loaded.
       /// \return True if successful
-      public: bool CreateMainWindow();
+      public: bool InitializeMainWindow();
 
       /// \brief Add previously loaded plugins to the main window.
       /// * Make sure the window is created first

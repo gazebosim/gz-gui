@@ -180,7 +180,7 @@ TEST(ApplicationTest, MainWindowNoPlugins)
     Application app(gg_argc, gg_argv);
 
     // Create main window
-    EXPECT_TRUE(app.CreateMainWindow());
+    EXPECT_TRUE(app.InitializeMainWindow());
 
     auto wins = app.allWindows();
     ASSERT_EQ(wins.size(), 1);
