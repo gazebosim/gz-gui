@@ -204,7 +204,9 @@ bool Application::RunConfig(const std::string &_config)
   }
 
   this->CreateMainWindow();
-  this->RunMainWindow();
+
+  // Run app - blocks
+  this->exec();
 
   return true;
 }
@@ -217,7 +219,9 @@ bool Application::RunEmptyWindow()
   this->LoadDefaultConfig();
 
   this->CreateMainWindow();
-  this->RunMainWindow();
+
+  // Run app - blocks
+  this->exec();
 
   return true;
 }
@@ -483,20 +487,6 @@ bool Application::AddPluginsToWindow()
 }
 
 /////////////////////////////////////////////////
-bool Application::RunMainWindow()
-{
-  if (!this->dataPtr->mainWin || !this->dataPtr->mainWin->QuickWindow())
-    return false;
-
-  igndbg << "Run main window" << std::endl;
-
-  // Execute app
-  qGuiApp->exec();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
 bool Application::RunDialogs()
 {
   igndbg << "Run dialogs" << std::endl;
@@ -540,7 +530,7 @@ bool Application::RunDialogs()
     return false;
 
   // Run app - blocks
-  App()->exec();
+  this->exec();
 
   return true;
 }

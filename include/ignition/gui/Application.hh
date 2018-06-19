@@ -74,10 +74,6 @@ namespace ignition
       /// \return True if successful
       public: bool RunEmptyWindow();
 
-      /// \brief Run previously created window.
-      /// \return True if successful
-      public: bool RunMainWindow();
-
       /* LOAD / UNLOAD */
 
       /// \brief Load plugins from a configuration file.

@@ -175,13 +175,6 @@ TEST(ApplicationTest, MainWindowNoPlugins)
 
   EXPECT_EQ(nullptr, qGuiApp);
 
-  // Try to run before creating
-  {
-    Application app(gg_argc, gg_argv);
-
-    EXPECT_FALSE(app.RunMainWindow());
-  }
-
   // Steps in order
   {
     Application app(gg_argc, gg_argv);
@@ -190,13 +183,13 @@ TEST(ApplicationTest, MainWindowNoPlugins)
     EXPECT_TRUE(app.CreateMainWindow());
 
     auto wins = app.allWindows();
-    ASSERT_EQ(wins.size(), 1u);
+    ASSERT_EQ(wins.size(), 1);
 
     // Close window after some time
     QTimer::singleShot(300, wins[0], SLOT(close()));
 
     // Show window
-    EXPECT_TRUE(app.RunMainWindow());
+    app.exec();
   }
 }
 
@@ -224,7 +217,7 @@ TEST(ApplicationTest, Dialog)
       auto ds = app.allWindows();
 
       // The main dialog and the hidden undocked dialog from Card.qml
-      EXPECT_EQ(ds.size(), 2u);
+      EXPECT_EQ(ds.size(), 2);
 
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[1]));
@@ -257,7 +250,7 @@ TEST(ApplicationTest, Dialog)
     auto closed = false;
     QTimer::singleShot(300, [&] {
       auto ds = app.allWindows();
-      EXPECT_EQ(ds.size(), 4u);
+      EXPECT_EQ(ds.size(), 4);
 
       for (auto dialog : ds)
         dialog->close();
@@ -286,7 +279,7 @@ TEST(ApplicationTest, RunEmptyWindow)
   QTimer::singleShot(300, [&] {
 
     auto wins = app.allWindows();
-    ASSERT_EQ(wins.size(), 1u);
+    ASSERT_EQ(wins.size(), 1);
 
     wins[0]->close();
     closed = true;
@@ -334,7 +327,7 @@ TEST(ApplicationTest, RunStandalone)
       auto ds = app.allWindows();
 
       // The main dialog and the hidden undocked dialog from Card.qml
-      EXPECT_EQ(ds.size(), 2u);
+      EXPECT_EQ(ds.size(), 2);
 
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[1]));
@@ -386,7 +379,7 @@ TEST(ApplicationTest, runConfig)
     QTimer::singleShot(300, [&]
     {
       auto wins = app.allWindows();
-      ASSERT_EQ(wins.size(), 2u);
+      ASSERT_EQ(wins.size(), 2);
 
       for (auto win : wins)
         win->close();

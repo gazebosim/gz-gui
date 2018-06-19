@@ -362,7 +362,7 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
   });
 
   // Show window
-  EXPECT_TRUE(App()->RunMainWindow());
+  App()->exec();
 
   EXPECT_TRUE(closed);
 }
