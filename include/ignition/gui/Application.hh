@@ -160,15 +160,6 @@ namespace ignition
       /// \param[in] _path Full path.
       public: void AddPluginPath(const std::string &_path);
 
-      /* HELPERS */
-
-      // QT message handler that pipes qt messages into our console system.
-      private: static void MessageHandler(QtMsgType _type,
-          const QMessageLogContext &_context, const QString &_msg);
-
-      // Install a signal handler to allow graceful shutdown on Ctrl-C.
-      private: bool InstallSignalHandler();
-
       /// \brief Get the list of available plugins, organized by path. The paths
       /// are given in the following order:
       ///

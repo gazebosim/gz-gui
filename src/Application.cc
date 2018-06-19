@@ -67,6 +67,11 @@ namespace ignition
       public: std::string defaultConfigPath;
 
       public: common::SignalHandler signalHandler;
+
+      /// \brief QT message handler that pipes qt messages into our console
+      /// system.
+      public: static void MessageHandler(QtMsgType _type,
+          const QMessageLogContext &_context, const QString &_msg);
     };
   }
 }
@@ -83,14 +88,20 @@ Application::Application(int &_argc, char **_argv)
   // Configure console
   common::Console::SetPrefix("[GUI] ");
 
+  // QML engine
   this->dataPtr->engine = new QQmlApplicationEngine();
 
   // Install signal handler for graceful shutdown
-  this->InstallSignalHandler();
+  this->dataPtr->signalHandler.AddCallback([](int)
+      {
+        for (auto window : App()->allWindows())
+          window->close();
+      });
 
   // Handle qt console messages
-  qInstallMessageHandler(this->MessageHandler);
+  qInstallMessageHandler(this->dataPtr->MessageHandler);
 
+  // Default config path
   std::string home;
   common::env(IGN_HOMEDIR, home);
   this->dataPtr->defaultConfigPath = common::joinPaths(
@@ -104,7 +115,7 @@ Application::~Application()
 
   if (this->dataPtr->mainWin && this->dataPtr->mainWin->QuickWindow())
   {
-    // Detach widget from main window and leave libraries for ign-common
+    // Detach object from main window and leave libraries for ign-common
     auto plugins = this->dataPtr->mainWin->findChildren<Plugin *>();
     for (auto plugin : plugins)
     {
@@ -603,34 +614,29 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 }
 
 /////////////////////////////////////////////////
-bool Application::InstallSignalHandler()
+void Application::RemoveAddedPlugin(std::shared_ptr<Plugin> _plugin)
 {
-  auto handler = [this](int)  // NOLINT(readability/casting)
-      {
-        // Note: Don't call stop() if there are windows, we close them and let
-        // the program pick it up from there
-        if (this->dataPtr->mainWin && this->dataPtr->mainWin->QuickWindow())
-        {
-          this->dataPtr->mainWin->QuickWindow()->close();
-        }
-        else if (!this->dataPtr->dialogs.empty())
-        {
-          for (auto dialog : this->dataPtr->dialogs)
-          {
-            if (dialog->QuickWindow())
-              dialog->QuickWindow()->close();
-          }
-        }
-        else {}
-        //  this->stop();
-      };
+  // If parent is a dialog, remove that too
+//  auto dialog = qobject_cast<Dialog *>(_plugin->parent());
+//  if (dialog)
+//  {
+//    this->dataPtr->dialogs.erase(std::remove(
+//        this->dataPtr->dialogs.begin(),
+//        this->dataPtr->dialogs.end(), dialog),
+//        this->dataPtr->dialogs.end());
+//  }
 
-  return this->dataPtr->signalHandler.AddCallback(handler);
+  this->dataPtr->pluginsAdded.erase(std::remove(
+      this->dataPtr->pluginsAdded.begin(),
+      this->dataPtr->pluginsAdded.end(), _plugin),
+      this->dataPtr->pluginsAdded.end());
+
+  this->dataPtr->mainWin->SetPluginCount(this->dataPtr->pluginsAdded.size());
 }
 
 //////////////////////////////////////////////////
-void Application::MessageHandler(QtMsgType _type, const QMessageLogContext &_context,
-    const QString &_msg)
+void ApplicationPrivate::MessageHandler(QtMsgType _type,
+    const QMessageLogContext &_context, const QString &_msg)
 {
   std::string msg = "[QT] " + _msg.toStdString();
   if (_context.function)
@@ -656,25 +662,4 @@ void Application::MessageHandler(QtMsgType _type, const QMessageLogContext &_con
         << msg << std::endl;
       break;
   }
-}
-
-/////////////////////////////////////////////////
-void Application::RemoveAddedPlugin(std::shared_ptr<Plugin> _plugin)
-{
-  // If parent is a dialog, remove that too
-//  auto dialog = qobject_cast<Dialog *>(_plugin->parent());
-//  if (dialog)
-//  {
-//    this->dataPtr->dialogs.erase(std::remove(
-//        this->dataPtr->dialogs.begin(),
-//        this->dataPtr->dialogs.end(), dialog),
-//        this->dataPtr->dialogs.end());
-//  }
-
-  this->dataPtr->pluginsAdded.erase(std::remove(
-      this->dataPtr->pluginsAdded.begin(),
-      this->dataPtr->pluginsAdded.end(), _plugin),
-      this->dataPtr->pluginsAdded.end());
-
-  this->dataPtr->mainWin->SetPluginCount(this->dataPtr->pluginsAdded.size());
 }
