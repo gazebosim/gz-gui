@@ -272,7 +272,7 @@ bool Application::LoadConfig(const std::string &_config)
   ignmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Clear all previous plugins
-  auto plugins = this->Window()->findChildren<Plugin *>();
+  auto plugins = this->dataPtr->mainWin->findChildren<Plugin *>();
   for (auto plugin : plugins)
   {
     auto pluginName = plugin->CardItem()->objectName();
@@ -418,6 +418,7 @@ bool Application::CreateMainWindow()
   igndbg << "Create main window" << std::endl;
 
   this->dataPtr->mainWin = new MainWindow();
+  this->dataPtr->mainWin->setParent(this);
 
   return this->AddPluginsToWindow() && this->ApplyConfig();
 }
@@ -464,7 +465,7 @@ bool Application::AddPluginsToWindow()
     // Add card to main window
     cardItem->setParentItem(bgItem);
 //    cardItem->setParent(this->dataPtr->engine);
-    plugin->setParent(this->Window());
+    plugin->setParent(this->dataPtr->mainWin);
 
     // Signals
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()), this->dataPtr->mainWin,
@@ -482,15 +483,9 @@ bool Application::AddPluginsToWindow()
 }
 
 /////////////////////////////////////////////////
-ignition::gui::MainWindow *Application::Window()
-{
-  return this->dataPtr->mainWin;
-}
-
-/////////////////////////////////////////////////
 bool Application::RunMainWindow()
 {
-  if (!this->Window() || !this->Window()->QuickWindow())
+  if (!this->dataPtr->mainWin || !this->dataPtr->mainWin->QuickWindow())
     return false;
 
   igndbg << "Run main window" << std::endl;

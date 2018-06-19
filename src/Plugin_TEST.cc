@@ -60,7 +60,7 @@ TEST(PluginTest, DeleteLater)
   // Create main window
   EXPECT_TRUE(app.CreateMainWindow());
 
-  auto win = app.Window();
+  auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
 
   // Check plugin count

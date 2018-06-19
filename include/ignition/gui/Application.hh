@@ -111,11 +111,6 @@ namespace ignition
       /// \return True if successful
       public: bool CreateMainWindow();
 
-      /// \brief Get the main window, if one has been generated. Use this to
-      /// customize the window before running it.
-      /// \return Pointer to the main window
-      public: MainWindow *Window();
-
       /// \brief Add previously loaded plugins to the main window.
       /// * Make sure the window is created first
       /// * Be sure to call LoadPlugin() for each plugin first

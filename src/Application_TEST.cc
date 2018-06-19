@@ -189,14 +189,11 @@ TEST(ApplicationTest, MainWindowNoPlugins)
     // Create main window
     EXPECT_TRUE(app.CreateMainWindow());
 
-    auto win = app.Window();
-    ASSERT_NE(nullptr, win);
-
-    auto quickWin = app.Window()->QuickWindow();
-    ASSERT_NE(nullptr, quickWin);
+    auto wins = app.allWindows();
+    ASSERT_EQ(wins.size(), 1u);
 
     // Close window after some time
-    QTimer::singleShot(300, quickWin, SLOT(close()));
+    QTimer::singleShot(300, wins[0], SLOT(close()));
 
     // Show window
     EXPECT_TRUE(app.RunMainWindow());
@@ -288,13 +285,10 @@ TEST(ApplicationTest, RunEmptyWindow)
   bool closed = false;
   QTimer::singleShot(300, [&] {
 
-    auto win = app.Window();
-    ASSERT_NE(nullptr, win);
+    auto wins = app.allWindows();
+    ASSERT_EQ(wins.size(), 1u);
 
-    auto quickWin = win->QuickWindow();
-    ASSERT_NE(nullptr, quickWin);
-
-    quickWin->close();
+    wins[0]->close();
     closed = true;
   });
 
@@ -389,10 +383,14 @@ TEST(ApplicationTest, runConfig)
 
     // Close window after 1 s
     bool closed = false;
-    QTimer::singleShot(300, [&] {
-      auto win = app.Window();
-      EXPECT_TRUE(win != nullptr);
-      win->QuickWindow()->close();
+    QTimer::singleShot(300, [&]
+    {
+      auto wins = app.allWindows();
+      ASSERT_EQ(wins.size(), 2u);
+
+      for (auto win : wins)
+        win->close();
+
       closed = true;
     });
 

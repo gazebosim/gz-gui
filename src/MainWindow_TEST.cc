@@ -129,7 +129,7 @@ TEST(MainWindowTest, OnLoadConfig)
 
   // Create main window
   App()->CreateMainWindow();
-  auto mainWindow = ignition::gui::App()->Window();
+  auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
@@ -172,7 +172,7 @@ TEST(MainWindowTest, OnAddPlugin)
 
   // Create window
   App()->CreateMainWindow();
-  auto mainWindow = ignition::gui::App()->Window();
+  auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
@@ -330,7 +330,7 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
   bool closed{false};
   QTimer::singleShot(300, [&closed]
   {
-    auto win = App()->Window();
+    auto win = App()->findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
     EXPECT_TRUE(win->QuickWindow()->isVisible());
 
