@@ -16,6 +16,7 @@ add_definitions(
 )
 
 set (qt_headers
+  Application.hh
 #  BoolWidget.hh
 #  CollapsibleWidget.hh
 #  ColorWidget.hh
@@ -40,7 +41,6 @@ set (headers
   DragDropModel.hh
   Enums.hh
   Helpers.hh
-  Iface.hh
   ign.hh
   qt.h
 #  qwt.h

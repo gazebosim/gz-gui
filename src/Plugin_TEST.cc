@@ -17,10 +17,15 @@
 
 #include <gtest/gtest.h>
 
+#include <ignition/common/Console.hh>
+
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Iface.hh"
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
+
+int g_argc = 1;
+char **g_argv = new char *[g_argc];
 
 using namespace ignition;
 using namespace gui;
@@ -28,10 +33,10 @@ using namespace gui;
 /////////////////////////////////////////////////
 TEST(PluginTest, DeleteLater)
 {
-  setVerbosity(4);
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  ignition::common::Console::SetVerbosity(4);
 
-  EXPECT_TRUE(initApp());
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load normal plugin
   const char *pluginStr =
@@ -40,27 +45,25 @@ TEST(PluginTest, DeleteLater)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(loadPlugin("TestPlugin",
+  EXPECT_TRUE(app.LoadPlugin("TestPlugin",
       pluginDoc.FirstChildElement("plugin")));
 
-  // Load normal plugin to be deleted
+  // Load plugin to be deleted
   pluginStr =
     "<plugin filename=\"TestPlugin\" delete_later=\"true\">"
     "</plugin>";
 
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(loadPlugin("TestPlugin",
+  EXPECT_TRUE(app.LoadPlugin("TestPlugin",
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
-  EXPECT_TRUE(createMainWindow());
+  EXPECT_TRUE(app.InitializeMainWindow());
 
-  auto win = mainWindow();
+  auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
 
   // Check plugin count
   EXPECT_EQ(1, win->findChildren<Plugin *>().size());
-
-  EXPECT_TRUE(stop());
 }
 

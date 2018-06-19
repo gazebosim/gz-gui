@@ -19,8 +19,9 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 
+#include <ignition/common/Console.hh>
+
 #include "ignition/gui/Enums.hh"
-#include "ignition/gui/Iface.hh"
 #include "ignition/gui/DragDropModel.hh"
 
 using namespace ignition;
@@ -29,7 +30,7 @@ using namespace gui;
 /////////////////////////////////////////////////
 TEST(DragDropModelTest, Mime)
 {
-  setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
   auto model = new DragDropModel();
   ASSERT_TRUE(model != nullptr);

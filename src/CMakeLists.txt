@@ -3,6 +3,7 @@ include_directories(${PROJECT_BINARY_DIR})
 #ign_get_libsources_and_unittests(sources_no_path gtest_sources)
 
 set (sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/Application.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/BoolWidget.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/CollapsibleWidget.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/ColorWidget.cc
@@ -13,7 +14,6 @@ set (sources
 #  ${CMAKE_CURRENT_SOURCE_DIR}/EnumWidget.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/GeometryWidget.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/Iface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/MessageWidget.cc
@@ -30,6 +30,7 @@ set (sources
 )
 
 set (gtest_sources
+  Application_TEST
 #  BoolWidget_TEST
 #  ColorWidget_TEST
 #  CollapsibleWidget_TEST
@@ -39,12 +40,11 @@ set (gtest_sources
 #  EnumWidget_TEST
 #  GeometryWidget_TEST
   Helpers_TEST
-  Iface_TEST
   ign_TEST
-#  MainWindow_TEST
+  MainWindow_TEST
 #  MessageWidget_TEST
 #  NumberWidget_TEST
-#  Plugin_TEST
+  Plugin_TEST
 #  Pose3dWidget_TEST
   SearchModel_TEST
 #  StringWidget_TEST
