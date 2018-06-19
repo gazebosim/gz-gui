@@ -91,8 +91,10 @@ Application::Application(int &_argc, char **_argv)
   // Handle qt console messages
   qInstallMessageHandler(this->MessageHandler);
 
+  std::string home;
+  common::env(IGN_HOMEDIR, home);
   this->dataPtr->defaultConfigPath = common::joinPaths(
-        IGN_HOMEDIR, ".ignition", "gui", "default.config");
+        home, ".ignition", "gui", "default.config");
 }
 
 /////////////////////////////////////////////////
@@ -328,7 +330,9 @@ bool Application::LoadPlugin(const std::string &_filename,
     systemPaths.AddPluginPaths(path);
 
   // Add default folder and install folder
-  systemPaths.AddPluginPaths(IGN_HOMEDIR "/.ignition/gui/plugins:"
+  std::string home;
+  common::env(IGN_HOMEDIR, home);
+  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
                              IGN_GUI_PLUGIN_INSTALL_DIR);
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
@@ -554,28 +558,6 @@ void Application::AddPluginPath(const std::string &_path)
 }
 
 /////////////////////////////////////////////////
-void Application::ListPlugins()
-{
-  auto pluginsList = this->PluginList();
-
-  for (auto const &path : pluginsList)
-  {
-    std::cout << path.first << std::endl;
-
-    for (unsigned int i = 0; i < path.second.size(); ++i)
-    {
-      if (i == path.second.size() - 1)
-        std::cout << "└── " << path.second[i] << std::endl;
-      else
-        std::cout << "├── " << path.second[i] << std::endl;
-    }
-
-    if (path.second.empty())
-      std::cout << "└── No plugins" << std::endl;
-  }
-}
-
-/////////////////////////////////////////////////
 std::vector<std::pair<std::string, std::vector<std::string>>>
     Application::PluginList()
 {
@@ -587,7 +569,9 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
     paths.push_back(path);
 
   // 3. ~/.ignition/gui/plugins
-  paths.push_back(IGN_HOMEDIR "/.ignition/gui/plugins");
+  std::string home;
+  common::env(IGN_HOMEDIR, home);
+  paths.push_back(home + "/.ignition/gui/plugins");
 
   // 4. Install path
   paths.push_back(IGN_GUI_PLUGIN_INSTALL_DIR);

@@ -169,9 +169,6 @@ namespace ignition
       // Install a signal handler to allow graceful shutdown on Ctrl-C.
       private: bool InstallSignalHandler();
 
-      /// \brief Print the available plugins, organized by path.
-      public: void ListPlugins();
-
       /// \brief Get the list of available plugins, organized by path. The paths
       /// are given in the following order:
       ///
@@ -191,7 +188,7 @@ namespace ignition
       private: std::unique_ptr<ApplicationPrivate> dataPtr;
     };
 
-    /// \brief Get current running application, this is a cast og qGuiApp.
+    /// \brief Get current running application, this is a cast of qGuiApp.
     /// \return Pointer to running application, or nullptr if none is running.
     IGNITION_GUI_VISIBLE
     Application *App();

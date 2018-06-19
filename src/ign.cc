@@ -37,8 +37,24 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
-  new ignition::gui::Application(gg_argc, gg_argv);
-  ignition::gui::App()->ListPlugins();
+  ignition::gui::Application app(gg_argc, gg_argv);
+
+  auto pluginsList = app.PluginList();
+  for (auto const &path : pluginsList)
+  {
+    std::cout << path.first << std::endl;
+
+    for (unsigned int i = 0; i < path.second.size(); ++i)
+    {
+      if (i == path.second.size() - 1)
+        std::cout << "└── " << path.second[i] << std::endl;
+      else
+        std::cout << "├── " << path.second[i] << std::endl;
+    }
+
+    if (path.second.empty())
+      std::cout << "└── No plugins" << std::endl;
+  }
 }
 
 //////////////////////////////////////////////////
