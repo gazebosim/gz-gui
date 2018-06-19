@@ -22,6 +22,7 @@
 #include <ignition/common/PluginLoader.hh>
 #include <ignition/common/SignalHandler.hh>
 #include <ignition/common/SystemPaths.hh>
+#include <ignition/common/Util.hh>
 
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/config.hh"
@@ -91,7 +92,7 @@ Application::Application(int &_argc, char **_argv)
   qInstallMessageHandler(this->MessageHandler);
 
   this->dataPtr->defaultConfigPath = common::joinPaths(
-        this->HomePath(), ".ignition", "gui", "default.config");
+        IGN_HOMEDIR, ".ignition", "gui", "default.config");
 }
 
 /////////////////////////////////////////////////
@@ -320,9 +321,6 @@ bool Application::LoadPlugin(const std::string &_filename,
 {
   ignmsg << "Loading plugin [" << _filename << "]" << std::endl;
 
-  // Get full path
-  auto home = this->HomePath();
-
   common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(this->dataPtr->pluginPathEnv);
 
@@ -330,7 +328,7 @@ bool Application::LoadPlugin(const std::string &_filename,
     systemPaths.AddPluginPaths(path);
 
   // Add default folder and install folder
-  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
+  systemPaths.AddPluginPaths(IGN_HOMEDIR "/.ignition/gui/plugins:"
                              IGN_GUI_PLUGIN_INSTALL_DIR);
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
@@ -589,8 +587,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
     paths.push_back(path);
 
   // 3. ~/.ignition/gui/plugins
-  auto home = this->HomePath();
-  paths.push_back(home + "/.ignition/gui/plugins");
+  paths.push_back(IGN_HOMEDIR "/.ignition/gui/plugins");
 
   // 4. Install path
   paths.push_back(IGN_GUI_PLUGIN_INSTALL_DIR);
@@ -675,19 +672,6 @@ void Application::MessageHandler(QtMsgType _type, const QMessageLogContext &_con
         << msg << std::endl;
       break;
   }
-}
-
-/////////////////////////////////////////////////
-std::string Application::HomePath()
-{
-  std::string homePath;
-#ifndef _WIN32
-  common::env("HOME", homePath);
-#else
-  common::env("HOMEPATH", homePath);
-#endif
-
-  return homePath;
 }
 
 /////////////////////////////////////////////////

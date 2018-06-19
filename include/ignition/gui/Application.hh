@@ -162,11 +162,6 @@ namespace ignition
 
       /* HELPERS */
 
-      /// \brief Get home directory.
-      /// \return Home directory or empty string if home wasn't found.
-      /// \ToDo: Move this function to ignition::common::Filesystem
-      public: std::string HomePath();
-
       // QT message handler that pipes qt messages into our console system.
       private: static void MessageHandler(QtMsgType _type,
           const QMessageLogContext &_context, const QString &_msg);
