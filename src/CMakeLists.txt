@@ -3,6 +3,8 @@ include_directories(${PROJECT_BINARY_DIR})
 #ign_get_libsources_and_unittests(sources_no_path gtest_sources)
 
 set (sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/Application.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/BackEnd.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/BoolWidget.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/CollapsibleWidget.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/ColorWidget.cc
@@ -30,6 +32,7 @@ set (sources
 )
 
 set (gtest_sources
+  BackEnd_TEST
 #  BoolWidget_TEST
 #  ColorWidget_TEST
 #  CollapsibleWidget_TEST

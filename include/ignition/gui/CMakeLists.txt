@@ -16,6 +16,8 @@ add_definitions(
 )
 
 set (qt_headers
+  Application.hh
+  BackEnd.hh
 #  BoolWidget.hh
 #  CollapsibleWidget.hh
 #  ColorWidget.hh
