@@ -123,6 +123,12 @@ namespace ignition
       /// \return True if successful
       public: bool AddPluginsToWindow();
 
+      /// \brief Apply previously loaded config to the main window.
+      /// * Make sure the window is created first
+      /// * Be sure to call loadConfig() for each plugin first
+      /// \return True if successful
+      public: bool ApplyConfig();
+
       /* Dialogs */
 
       /// \brief Get the dialogs, if they have been generated.

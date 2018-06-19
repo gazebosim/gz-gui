@@ -18,13 +18,16 @@
 #include <gtest/gtest.h>
 #include <thread>
 
+#include <ignition/common/Console.hh>
+
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Iface.hh"
+#include "ignition/gui/Application.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
-#include "ignition/gui/MainWindow.hh"
-
 std::string kTestConfigFile = "/tmp/ign-gui-test.config";
+int gg_argc = 1;
+char **gg_argv = new char *[gg_argc];
 
 using namespace ignition;
 using namespace gui;
@@ -32,25 +35,24 @@ using namespace gui;
 /////////////////////////////////////////////////
 TEST(MainWindowTest, Constructor)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  ignition::common::Console::SetVerbosity(4);
+  Application app(gg_argc, gg_argv);
 
   // Constructor
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
   delete mainWindow;
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest, OnSaveConfig)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  ignition::common::Console::SetVerbosity(4);
+  Application app(gg_argc, gg_argv);
 
   // Change default config path
-  setDefaultConfigPath(kTestConfigFile);
+  App()->SetDefaultConfigPath(kTestConfigFile);
 
   // Create window
   auto mainWindow = new MainWindow;
@@ -72,22 +74,19 @@ TEST(MainWindowTest, OnSaveConfig)
     EXPECT_TRUE(savedStr.contains("<width>"));
     EXPECT_TRUE(savedStr.contains("<position_x>"));
     EXPECT_TRUE(savedStr.contains("<position_y>"));
-    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
-    EXPECT_TRUE(savedStr.contains("<state>"));
 
     // Delete file
     std::remove(kTestConfigFile.c_str());
   }
 
   delete mainWindow;
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest, OnSaveConfigAs)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  ignition::common::Console::SetVerbosity(4);
+  Application app(gg_argc, gg_argv);
 
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
@@ -108,8 +107,6 @@ TEST(MainWindowTest, OnSaveConfigAs)
     EXPECT_TRUE(savedStr.contains("<width>"));
     EXPECT_TRUE(savedStr.contains("<position_x>"));
     EXPECT_TRUE(savedStr.contains("<position_y>"));
-    EXPECT_TRUE(savedStr.contains("<stylesheet>"));
-    EXPECT_TRUE(savedStr.contains("<state>"));
     EXPECT_TRUE(savedStr.contains("<menus>"));
     EXPECT_TRUE(savedStr.contains("<file"));
     EXPECT_TRUE(savedStr.contains("<plugins"));
@@ -119,21 +116,20 @@ TEST(MainWindowTest, OnSaveConfigAs)
   }
 
   delete mainWindow;
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest, OnLoadConfig)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  ignition::common::Console::SetVerbosity(4);
+  Application app(gg_argc, gg_argv);
 
   // Add test plugins to path
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create main window
-  createMainWindow();
-  auto mainWindow = ignition::gui::mainWindow();
+  App()->CreateMainWindow();
+  auto mainWindow = ignition::gui::App()->Window();
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
@@ -163,134 +159,20 @@ TEST(MainWindowTest, OnLoadConfig)
     plugins = mainWindow->findChildren<Plugin *>();
     EXPECT_EQ(2, plugins.size());
   }
-
-//  // Load file with stylesheet
-//  {
-//    // Check window style
-//    auto bg = mainWindow->palette().window().color();
-//    EXPECT_NE(bg.name(), "#0000ff");
-//
-//    // Close window after 1 s
-//    closed = false;
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//
-//      // Select file
-//      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
-//      ASSERT_GT(edits.size(), 0);
-//      edits[0]->setText(QString::fromStdString(
-//          std::string(PROJECT_SOURCE_PATH) + "/test/config/stylesheet.config"));
-//
-//      // Accept
-//      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
-//      EXPECT_GT(buttons.size(), 0);
-//      buttons[0]->click();
-//      closed = true;
-//    });
-//
-//    // Trigger load
-//    loadAct->trigger();
-//
-//    EXPECT_TRUE(closed);
-//
-//    // Check window style
-//    bg = mainWindow->palette().window().color();
-//    EXPECT_EQ(bg.name(), "#0000ff");
-//  }
-
-  EXPECT_TRUE(stop());
-}
-
-/////////////////////////////////////////////////
-TEST(MainWindowTest, OnLoadStyleSheet)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Create main window
-  createMainWindow();
-  auto mainWindow = ignition::gui::mainWindow();
-  ASSERT_NE(nullptr, mainWindow);
-
-  // Check window has Ignition GUI's default style
-//  auto bg = mainWindow->palette().window().color();
-//  EXPECT_EQ(bg.name(), "#ededed");
-//
-//  // Get load action on menu
-//  auto menus = mainWindow->menuBar()->findChildren<QMenu *>();
-//  ASSERT_GT(menus.size(), 0);
-//  ASSERT_GT(menus[0]->actions().size(), 3);
-//  auto loadAct = menus[0]->actions()[4];
-//  EXPECT_EQ(loadAct->text(), QString("&Load stylesheet"));
-//
-//  bool closed = false;
-//
-//  // Close dialog without choosing file
-//  {
-//    // Close window after 1 s
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//      fileDialogs[0]->close();
-//      closed = true;
-//    });
-//
-//    // Trigger load
-//    loadAct->trigger();
-//
-//    EXPECT_TRUE(closed);
-//  }
-//
-//  // Load test stylesheet
-//  {
-//    // Close window after 1 s
-//    closed = false;
-//    QTimer::singleShot(300, [&]
-//    {
-//      auto fileDialogs = mainWindow->findChildren<QFileDialog *>();
-//      ASSERT_EQ(fileDialogs.size(), 1);
-//
-//      // Select file
-//      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
-//      ASSERT_GT(edits.size(), 0);
-//      edits[0]->setText(QString::fromStdString(
-//          std::string(PROJECT_SOURCE_PATH) + "/test/styles/red_bg.qss"));
-//
-//      // Accept
-//      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
-//      EXPECT_GT(buttons.size(), 0);
-//      buttons[0]->click();
-//      closed = true;
-//    });
-//
-//    // Trigger load
-//    loadAct->trigger();
-//
-//    EXPECT_TRUE(closed);
-//
-//    // Check style was applied
-//    bg = mainWindow->palette().window().color();
-//    EXPECT_EQ(bg.name(), "#ff0000");
-//  }
-
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest, OnAddPlugin)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  ignition::common::Console::SetVerbosity(4);
+  Application app(gg_argc, gg_argv);
 
   // Add test plugins to path
-  addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create window
-  createMainWindow();
-  auto mainWindow = ignition::gui::mainWindow();
+  App()->CreateMainWindow();
+  auto mainWindow = ignition::gui::App()->Window();
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
@@ -310,15 +192,12 @@ TEST(MainWindowTest, OnAddPlugin)
   // Check window has 2 plugins
   plugins = mainWindow->findChildren<Plugin *>();
   EXPECT_EQ(plugins.size(), 2);
-
-  // Clean up
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, defaultValues)
 {
-  setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -349,7 +228,7 @@ TEST(WindowConfigTest, defaultValues)
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, mergeFromXML)
 {
-  setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -383,7 +262,7 @@ TEST(WindowConfigTest, mergeFromXML)
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, MenusToString)
 {
-  setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -415,7 +294,7 @@ TEST(WindowConfigTest, MenusToString)
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, IgnoreToString)
 {
-  setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -441,17 +320,17 @@ TEST(WindowConfigTest, IgnoreToString)
 /////////////////////////////////////////////////
 TEST(MainWindowTest, CloseWithoutSavingChanges)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  ignition::common::Console::SetVerbosity(4);
+  Application app(gg_argc, gg_argv);
 
   // Create main window
-  EXPECT_TRUE(createMainWindow());
+  EXPECT_TRUE(App()->CreateMainWindow());
 
   // Access window after it's open
   bool closed{false};
   QTimer::singleShot(300, [&closed]
   {
-    auto win = mainWindow();
+    auto win = App()->Window();
     ASSERT_NE(nullptr, win);
     EXPECT_TRUE(win->QuickWindow()->isVisible());
 
@@ -483,18 +362,16 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
   });
 
   // Show window
-  EXPECT_TRUE(runMainWindow());
+  EXPECT_TRUE(App()->RunMainWindow());
 
   EXPECT_TRUE(closed);
-
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest, ApplyConfig)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  ignition::common::Console::SetVerbosity(4);
+  Application app(gg_argc, gg_argv);
 
   // Main window
   auto mainWindow = new MainWindow;
@@ -543,6 +420,5 @@ TEST(MainWindowTest, ApplyConfig)
   }
 
   delete mainWindow;
-  EXPECT_TRUE(stop());
 }
 

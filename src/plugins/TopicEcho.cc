@@ -20,7 +20,7 @@
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/transport/Node.hh>
 
-#include "ignition/gui/Iface.hh"
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/plugins/TopicEcho.hh"
 
 namespace ignition
@@ -63,7 +63,7 @@ TopicEcho::TopicEcho()
   : Plugin(), dataPtr(new TopicEchoPrivate)
 {
   // Connect model
-  qmlEngine()->rootContext()->setContextProperty("TopicEchoMsgList",
+  App()->Engine()->rootContext()->setContextProperty("TopicEchoMsgList",
       &this->dataPtr->msgList);
 }
 

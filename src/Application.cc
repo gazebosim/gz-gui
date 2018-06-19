@@ -406,8 +406,15 @@ bool Application::CreateMainWindow()
 
   this->dataPtr->mainWin = new MainWindow();
 
-  return this->AddPluginsToWindow() &&
-      this->dataPtr->mainWin->ApplyConfig(this->dataPtr->windowConfig);
+  return this->AddPluginsToWindow() && this->ApplyConfig();
+}
+
+/////////////////////////////////////////////////
+bool Application::ApplyConfig()
+{
+  igndbg << "Applying config" << std::endl;
+
+  return this->dataPtr->mainWin->ApplyConfig(this->dataPtr->windowConfig);
 }
 
 /////////////////////////////////////////////////
