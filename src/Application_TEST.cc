@@ -59,6 +59,8 @@ TEST(ApplicationTest, Constructor)
 //////////////////////////////////////////////////
 TEST(ApplicationTest, LoadPlugin)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -115,6 +117,8 @@ TEST(ApplicationTest, LoadPlugin)
 //////////////////////////////////////////////////
 TEST(ApplicationTest, LoadConfig)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   // Empty string
@@ -141,6 +145,8 @@ TEST(ApplicationTest, LoadConfig)
 //////////////////////////////////////////////////
 TEST(ApplicationTest, LoadDefaultConfig)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   // Test config file
@@ -165,6 +171,8 @@ TEST(ApplicationTest, LoadDefaultConfig)
 //////////////////////////////////////////////////
 TEST(ApplicationTest, MainWindowNoPlugins)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   // Try to run before creating
@@ -198,6 +206,8 @@ TEST(ApplicationTest, MainWindowNoPlugins)
 //////////////////////////////////////////////////
 TEST(ApplicationTest, Dialog)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   // Init app first
@@ -214,19 +224,24 @@ TEST(ApplicationTest, Dialog)
     // Close dialog after some time
     auto closed = false;
     QTimer::singleShot(300, [&] {
-      auto ds = app.Dialogs();
-      EXPECT_EQ(ds.size(), 1u);
+      auto ds = app.allWindows();
+
+      // The main dialog and the hidden undocked dialog from Card.qml
+      EXPECT_EQ(ds.size(), 2u);
+
+      EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
+      EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[1]));
 
       // Close
-      ds[0]->QuickWindow()->close();
+      ds[0]->close();
       closed = true;
     });
 
     // Run dialog
-//    EXPECT_TRUE(app.RunDialogs());
+    EXPECT_TRUE(app.RunDialogs());
 
     // Make sure timer was triggered
-//    EXPECT_TRUE(closed);
+    EXPECT_TRUE(closed);
   }
 
   // Multiple dialogs
@@ -242,25 +257,29 @@ TEST(ApplicationTest, Dialog)
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
 
     // Close dialogs after some time
-//    QTimer::singleShot(300, [&] {
-//      auto ds = dialogs();
-//      EXPECT_EQ(ds.size(), 2u);
-//
-//      ds[0]->QuickWindow()->close();
-//      ds[1]->QuickWindow()->close();
-//    });
+    auto closed = false;
+    QTimer::singleShot(300, [&] {
+      auto ds = app.allWindows();
+      EXPECT_EQ(ds.size(), 4u);
+
+      for (auto dialog : ds)
+        dialog->close();
+      closed = true;
+    });
 
     // Run dialog
-//    EXPECT_TRUE(app.RunDialogs());
+    EXPECT_TRUE(app.RunDialogs());
 
-  // Make sure timer was triggered
-//  EXPECT_TRUE(closed);
+    // Make sure timer was triggered
+    EXPECT_TRUE(closed);
   }
 }
 
 //////////////////////////////////////////////////
 TEST(ApplicationTest, RunEmptyWindow)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   Application app(gg_argc, gg_argv);
@@ -289,6 +308,8 @@ TEST(ApplicationTest, RunEmptyWindow)
 //////////////////////////////////////////////////
 TEST(ApplicationTest, RunStandalone)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   // Empty string
@@ -316,11 +337,16 @@ TEST(ApplicationTest, RunStandalone)
     // Close dialog after 1 s
     bool closed = false;
     QTimer::singleShot(300, [&] {
-      auto ds = app.Dialogs();
-      EXPECT_EQ(ds.size(), 1u);
+      auto ds = app.allWindows();
+
+      // The main dialog and the hidden undocked dialog from Card.qml
+      EXPECT_EQ(ds.size(), 2u);
+
+      EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
+      EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[1]));
 
       // Close
-      ds[0]->QuickWindow()->close();
+      ds[0]->close();
       closed = true;
     });
 
@@ -335,6 +361,8 @@ TEST(ApplicationTest, RunStandalone)
 //////////////////////////////////////////////////
 TEST(ApplicationTest, runConfig)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   // Empty string
@@ -380,6 +408,8 @@ TEST(ApplicationTest, runConfig)
 /////////////////////////////////////////////////
 TEST(ApplicationTest, messageHandler)
 {
+  ignition::common::Console::SetVerbosity(4);
+
   EXPECT_EQ(nullptr, qGuiApp);
 
   Application app(gg_argc, gg_argv);

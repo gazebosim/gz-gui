@@ -488,12 +488,6 @@ ignition::gui::MainWindow *Application::Window()
 }
 
 /////////////////////////////////////////////////
-std::vector<Dialog *> Application::Dialogs()
-{
-  return this->dataPtr->dialogs;
-}
-
-/////////////////////////////////////////////////
 bool Application::RunMainWindow()
 {
   if (!this->Window() || !this->Window()->QuickWindow())

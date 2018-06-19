@@ -129,12 +129,6 @@ namespace ignition
       /// \return True if successful
       public: bool ApplyConfig();
 
-      /* Dialogs */
-
-      /// \brief Get the dialogs, if they have been generated.
-      /// \return Vector of dialogs
-      public: std::vector<Dialog *> Dialogs();
-
       /* SET / GET */
 
       /// \brief Specifies the location of the default configuration file.
