@@ -379,7 +379,7 @@ TEST(ApplicationTest, runConfig)
     QTimer::singleShot(300, [&]
     {
       auto wins = app.allWindows();
-      ASSERT_EQ(wins.size(), 1);
+      ASSERT_EQ(wins.size(), 2);
 
       for (auto win : wins)
         win->close();
