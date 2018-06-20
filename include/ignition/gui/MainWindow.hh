@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include <ignition/common/Console.hh>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
@@ -108,6 +110,10 @@ namespace ignition
 
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
+
+      /// \brief
+      signals: void cardResized();
+      public slots: void OnCardResized() {this->cardResized();}
 
       // Documentation inherited
 //      protected: void paintEvent(QPaintEvent *_event) override;
