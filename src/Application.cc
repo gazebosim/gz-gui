@@ -468,7 +468,7 @@ bool Application::AddPluginsToWindow()
 
     // Add card to main window
     cardItem->setParentItem(bgItem);
-//    cardItem->setParent(this->dataPtr->engine);
+    cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 
     // Signals
@@ -595,16 +595,6 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 /////////////////////////////////////////////////
 void Application::RemoveAddedPlugin(std::shared_ptr<Plugin> _plugin)
 {
-  // If parent is a dialog, remove that too
-//  auto dialog = qobject_cast<Dialog *>(_plugin->parent());
-//  if (dialog)
-//  {
-//    this->dataPtr->dialogs.erase(std::remove(
-//        this->dataPtr->dialogs.begin(),
-//        this->dataPtr->dialogs.end(), dialog),
-//        this->dataPtr->dialogs.end());
-//  }
-
   this->dataPtr->pluginsAdded.erase(std::remove(
       this->dataPtr->pluginsAdded.begin(),
       this->dataPtr->pluginsAdded.end(), _plugin),

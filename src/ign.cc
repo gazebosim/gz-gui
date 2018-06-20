@@ -25,8 +25,8 @@
 #include "ignition/gui/ign.hh"
 #include "ignition/gui/Export.hh"
 
-int gg_argc = 1;
-char **gg_argv = new char *[gg_argc];
+int g_argc = 1;
+char **g_argv = new char *[g_argc];
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
@@ -37,7 +37,7 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
-  ignition::gui::Application app(gg_argc, gg_argv);
+  ignition::gui::Application app(g_argc, g_argv);
 
   auto pluginsList = app.PluginList();
   for (auto const &path : pluginsList)
@@ -60,14 +60,14 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
-  new ignition::gui::Application(gg_argc, gg_argv);
+  new ignition::gui::Application(g_argc, g_argv);
   ignition::gui::App()->RunStandalone(std::string(_filename));
 }
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
-  new ignition::gui::Application(gg_argc, gg_argv);
+  new ignition::gui::Application(g_argc, g_argv);
   ignition::gui::App()->RunConfig(std::string(_config));
 }
 
@@ -80,7 +80,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
-  new ignition::gui::Application(gg_argc, gg_argv);
+  new ignition::gui::Application(g_argc, g_argv);
   ignition::gui::App()->RunEmptyWindow();
 }
 

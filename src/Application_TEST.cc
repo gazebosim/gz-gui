@@ -24,8 +24,8 @@
 #include "ignition/gui/Dialog.hh"
 #include "ignition/gui/MainWindow.hh"
 
-int gg_argc = 1;
-char **gg_argv = new char *[gg_argc];
+int g_argc = 1;
+char **g_argv = new char *[g_argc];
 
 using namespace ignition;
 using namespace gui;
@@ -41,7 +41,7 @@ TEST(ApplicationTest, Constructor)
 
   // One app construct - destruct
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_NE(nullptr, qGuiApp);
     ASSERT_NE(nullptr, App());
@@ -66,21 +66,21 @@ TEST(ApplicationTest, LoadPlugin)
 
   // Official plugin
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_TRUE(app.LoadPlugin("Publisher"));
   }
 
   // Inexistent plugin
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_FALSE(app.LoadPlugin("_doesnt_exist"));
   }
 
   // Plugin path added programmatically
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
@@ -91,7 +91,7 @@ TEST(ApplicationTest, LoadPlugin)
     setenv("TEST_ENV_VAR",
         (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
 
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
     app.SetPluginPathEnv("TEST_ENV_VAR");
 
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
@@ -99,7 +99,7 @@ TEST(ApplicationTest, LoadPlugin)
 
   // Plugin which doesn't inherit from ignition::gui::Plugin
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_FALSE(app.LoadPlugin("TestBadInheritancePlugin"));
@@ -107,7 +107,7 @@ TEST(ApplicationTest, LoadPlugin)
 
   // Plugin which is not registered
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_FALSE(app.LoadPlugin("TestNotRegisteredPlugin"));
@@ -123,14 +123,14 @@ TEST(ApplicationTest, LoadConfig)
 
   // Empty string
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_FALSE(app.LoadConfig(""));
   }
 
   // Test config file
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -151,7 +151,7 @@ TEST(ApplicationTest, LoadDefaultConfig)
 
   // Test config file
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
     auto testBuildPath = ignition::common::joinPaths(
@@ -177,7 +177,7 @@ TEST(ApplicationTest, MainWindowNoPlugins)
 
   // Steps in order
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     // Create main window
     EXPECT_TRUE(app.InitializeMainWindow());
@@ -202,7 +202,7 @@ TEST(ApplicationTest, Dialog)
 
   // Init app first
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -236,7 +236,7 @@ TEST(ApplicationTest, Dialog)
 
   // Multiple dialogs
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -272,7 +272,7 @@ TEST(ApplicationTest, RunEmptyWindow)
 
   EXPECT_EQ(nullptr, qGuiApp);
 
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // Close window after 1 s
   bool closed = false;
@@ -301,21 +301,21 @@ TEST(ApplicationTest, RunStandalone)
 
   // Empty string
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_FALSE(app.RunStandalone(""));
   }
 
   // Bad file
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_FALSE(app.RunStandalone("badfile"));
   }
 
   // Good file
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -354,21 +354,21 @@ TEST(ApplicationTest, runConfig)
 
   // Empty string
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_FALSE(app.RunConfig(""));
   }
 
   // Bad file
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     EXPECT_FALSE(app.RunConfig("badfile"));
   }
 
   // Good file
   {
-    Application app(gg_argc, gg_argv);
+    Application app(g_argc, g_argv);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -403,7 +403,7 @@ TEST(ApplicationTest, messageHandler)
 
   EXPECT_EQ(nullptr, qGuiApp);
 
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // \todo Verify output, see ignition::commmon::Console_TEST for example
   qDebug("This came from qDebug");

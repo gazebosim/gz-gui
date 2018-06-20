@@ -26,8 +26,8 @@
 #include "ignition/gui/Plugin.hh"
 
 std::string kTestConfigFile = "/tmp/ign-gui-test.config";
-int gg_argc = 1;
-char **gg_argv = new char *[gg_argc];
+int g_argc = 1;
+char **g_argv = new char *[g_argc];
 
 using namespace ignition;
 using namespace gui;
@@ -36,7 +36,7 @@ using namespace gui;
 TEST(MainWindowTest, Constructor)
 {
   ignition::common::Console::SetVerbosity(4);
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // Constructor
   auto mainWindow = new MainWindow;
@@ -49,7 +49,7 @@ TEST(MainWindowTest, Constructor)
 TEST(MainWindowTest, OnSaveConfig)
 {
   ignition::common::Console::SetVerbosity(4);
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // Change default config path
   App()->SetDefaultConfigPath(kTestConfigFile);
@@ -86,7 +86,7 @@ TEST(MainWindowTest, OnSaveConfig)
 TEST(MainWindowTest, OnSaveConfigAs)
 {
   ignition::common::Console::SetVerbosity(4);
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
@@ -122,7 +122,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
 TEST(MainWindowTest, OnLoadConfig)
 {
   ignition::common::Console::SetVerbosity(4);
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -165,7 +165,7 @@ TEST(MainWindowTest, OnLoadConfig)
 TEST(MainWindowTest, OnAddPlugin)
 {
   ignition::common::Console::SetVerbosity(4);
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -321,7 +321,7 @@ TEST(WindowConfigTest, IgnoreToString)
 TEST(MainWindowTest, CloseWithoutSavingChanges)
 {
   ignition::common::Console::SetVerbosity(4);
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // Create main window
   EXPECT_TRUE(App()->InitializeMainWindow());
@@ -371,7 +371,7 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
 TEST(MainWindowTest, ApplyConfig)
 {
   ignition::common::Console::SetVerbosity(4);
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
 
   // Main window
   auto mainWindow = new MainWindow;

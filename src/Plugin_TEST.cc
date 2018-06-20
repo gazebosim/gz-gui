@@ -24,8 +24,8 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
-int gg_argc = 1;
-char **gg_argv = new char *[gg_argc];
+int g_argc = 1;
+char **g_argv = new char *[g_argc];
 
 using namespace ignition;
 using namespace gui;
@@ -35,7 +35,7 @@ TEST(PluginTest, DeleteLater)
 {
   ignition::common::Console::SetVerbosity(4);
 
-  Application app(gg_argc, gg_argv);
+  Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load normal plugin
