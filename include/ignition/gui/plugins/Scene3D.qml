@@ -6,6 +6,14 @@ Rectangle {
   width: 1000
   height: 800
 
+  Connections {
+    target: MainWindow
+    onCardResized: {
+      width = parent.width
+      height = parent.height
+    }
+  }
+
   RenderWindow {
     id: renderWindow
     objectName: "rw"
