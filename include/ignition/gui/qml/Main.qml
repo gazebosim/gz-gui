@@ -4,6 +4,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
+import "qrc:/qml"
 
 ApplicationWindow
 {
@@ -111,9 +112,9 @@ ApplicationWindow
       Label {
         id: titleLabel
         text: window.title
-        font.pixelSize: 20
+        font.pixelSize: 18
         elide: Label.ElideRight
-        horizontalAlignment: Qt.AlignHCenter
+        horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
       }
@@ -126,34 +127,13 @@ ApplicationWindow
           verticalAlignment: Image.AlignVCenter
           source: "images/menu.png"
         }
-        onClicked: optionsMenu.open()
+        onClicked: pluginMenu.open()
 
-        Menu {
-          id: optionsMenu
+        PluginMenu {
+          id: pluginMenu
           x: parent.width - width
+          height: window.height * 0.3
           transformOrigin: Menu.TopRight
-          MenuItem {
-            text: "Load configuration"
-            onTriggered: loadConfig()
-          }
-          MenuItem {
-            text: "Save configuration"
-            onTriggered: saveConfig()
-          }
-          MenuItem {
-            text: "Save configuration as"
-            onTriggered: saveConfigAs()
-          }
-          MenuSeparator { }
-          MenuItem {
-            text: "About"
-            onTriggered: aboutDialog.open()
-          }
-          MenuSeparator { }
-          MenuItem {
-            text: "Quit"
-            onTriggered: close()
-          }
         }
       }
     }
@@ -208,33 +188,10 @@ ApplicationWindow
   /**
    * Left menu
    */
-  Drawer {
+  SideDrawer {
     id: drawer
-    width: Math.min(window.width, window.height) / 3 * 2
+    width: Math.min(window.width * 0.3, 500)
     height: window.height
-
-    ListView {
-      id: listView
-
-      focus: true
-      currentIndex: -1
-      anchors.fill: parent
-
-      delegate: ItemDelegate {
-        width: parent.width
-        text: modelData
-        highlighted: ListView.isCurrentItem
-        onClicked: {
-          listView.currentIndex = index
-          MainWindow.OnAddPlugin(modelData);
-          drawer.close()
-        }
-      }
-
-      model: MainWindow.PluginListModel()
-
-      ScrollIndicator.vertical: ScrollIndicator { }
-    }
   }
 
   /**

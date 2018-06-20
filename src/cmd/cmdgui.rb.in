@@ -178,10 +178,6 @@ class Cmd
               options.key?('config') or
               options.key?('emptywindow')
 
-          # Initialize app
-          Importer.extern 'void cmdInitApp()'
-          Importer.cmdInitApp()
-
           # Global configurations
           if options.key?('verbose')
             Importer.extern 'void cmdVerbose(const char *)'

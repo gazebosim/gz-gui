@@ -16,7 +16,7 @@
  */
 
 #include <ignition/common/Console.hh>
-#include "ignition/gui/Iface.hh"
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
 
 class ignition::gui::PluginPrivate
@@ -94,12 +94,12 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   std::string filename = _pluginElem->Attribute("filename");
 
   // This let's <filename>.qml use <pluginclass> functions and properties
-  auto context = new QQmlContext(qmlEngine()->rootContext());
+  auto context = new QQmlContext(App()->Engine()->rootContext());
   context->setContextProperty(QString::fromStdString(filename), this);
 
   // Instantiate plugin QML file into a component
   std::string qmlFile(":/" + filename + "/" + filename + ".qml");
-  QQmlComponent component(qmlEngine(), QString::fromStdString(qmlFile));
+  QQmlComponent component(App()->Engine(), QString::fromStdString(qmlFile));
 
   // Create an item for the plugin
   this->dataPtr->pluginItem =
@@ -267,7 +267,7 @@ QQuickItem *Plugin::CardItem() const
 
   // Instantiate a card
   std::string qmlFile(":qml/Card.qml");
-  QQmlComponent cardComp(qmlEngine(), QString(QString::fromStdString(qmlFile)));
+  QQmlComponent cardComp(App()->Engine(), QString(QString::fromStdString(qmlFile)));
   auto cardItem = qobject_cast<QQuickItem *>(cardComp.create());
   if (!cardItem)
   {
