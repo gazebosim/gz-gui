@@ -658,6 +658,8 @@ bool ignition::gui::addPluginsToWindow()
     g_mainWin->connect(cardItem, SIGNAL(close()), g_mainWin,
         SLOT(OnPluginClose()));
 
+    g_mainWin->connect(cardItem, SIGNAL(resized()), g_mainWin,
+        SLOT(OnCardResized()));
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
 
