@@ -195,6 +195,16 @@ ApplicationWindow
   }
 
   /**
+   * Style dialog
+   */
+  StyleDialog {
+    id: styleDialog
+    x: (window.width - width) / 2
+    y: window.height / 6
+    width: Math.min(window.width, window.height) / 3 * 2
+  }
+
+  /**
    * Load file dialog
    */
   FileDialog {
