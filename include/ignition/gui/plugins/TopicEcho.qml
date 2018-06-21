@@ -5,6 +5,7 @@ Rectangle {
   id: topicEcho
   width: 300
   height: 410
+  color: "transparent"
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000

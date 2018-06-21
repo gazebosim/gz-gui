@@ -17,7 +17,8 @@ Dialog {
   property int initialAccent: -1
   property int initialForeground: -1
   property int initialBackground: -1
-  property int materialShade: Material.Shade500
+  property int foregroundShade: Material.Shade500
+  property int backgroundShade: Material.Shade200
 
   property var materialColorStrs: [
     "Red",
@@ -39,8 +40,8 @@ Dialog {
     "Brown",
     "Grey",
     "BlueGrey",
-    "White",
-    "Black",
+//    "White",
+//    "Black",
   ]
 
   property var materialColorEnums: [
@@ -63,8 +64,8 @@ Dialog {
     Material.Brown,
     Material.Grey,
     Material.BlueGrey,
-    Material.White,
-    Material.Black,
+//    Material.White,
+//    Material.Black,
   ]
 
   // Helper functions to convert a QML color to a hex string, so that they can
@@ -89,7 +90,7 @@ Dialog {
 
     var c = Material.color(
         materialColorEnums[materialPrimaryCombo.currentIndex],
-        materialShade)
+        foregroundShade)
     window.Material.primary = c
   }
 
@@ -102,7 +103,7 @@ Dialog {
 
     var c = Material.color(
         materialColorEnums[materialAccentCombo.currentIndex],
-        materialShade)
+        foregroundShade)
     window.Material.accent = c
   }
 
@@ -115,7 +116,7 @@ Dialog {
 
     var c = Material.color(
         materialColorEnums[materialForegroundCombo.currentIndex],
-        materialShade)
+        foregroundShade)
     window.Material.foreground = c
   }
 
@@ -128,7 +129,7 @@ Dialog {
 
     var c = Material.color(
         materialColorEnums[materialBackgroundCombo.currentIndex],
-        materialShade)
+        backgroundShade)
     window.Material.background = c
   }
 
@@ -165,12 +166,12 @@ Dialog {
     // TODO(anyone) extend to universal / default styles, beware that
     // changing style at runtime doesn't seem to be supported, but we could save
     // and prompt the user to restart
-    Text {
+    Label {
       text: "Material style"
       font.weight: Font.Bold
     }
 
-    Text {
+    Label {
       text: "Theme"
     }
 
@@ -188,18 +189,20 @@ Dialog {
         window.Material.theme = currentText
 
         // Updade shade
-        materialShade = currentText === "Light" ? Material.Shade500 :
-                                                  Material.Shade100
+        foregroundShade = currentText === "Light" ? Material.Shade500 :
+                                                    Material.Shade200
+        backgroundShade = currentText === "Dark" ? Material.Shade500 :
+                                                   Material.Shade200
 
         // Update all colors according to new shade
         updatePrimary();
         updateAccent();
-        updateForeground();
-        updateBackground();
+        // updateForeground();
+        // updateBackground();
       }
     }
 
-    Text {
+    Label {
       text: "Primary"
       anchors.horizontalCenter: styleDialog.horizontalCenter
     }
@@ -219,7 +222,7 @@ Dialog {
       }
     }
 
-    Text {
+    Label {
       text: "Accent"
     }
 
@@ -238,42 +241,42 @@ Dialog {
       }
     }
 
-    Text {
-      text: "Foreground"
-    }
-
-    ComboBox {
-      id: materialForegroundCombo
-      width: 200
-      currentIndex: initialForeground
-      displayText: currentText
-      model: materialColorStrs
-      delegate: ItemDelegate {
-        text: materialColorStrs[index]
-        width: parent.width
-      }
-      onCurrentIndexChanged: {
-        updateForeground()
-      }
-    }
-
-    Text {
-      text: "Background"
-    }
-
-    ComboBox {
-      id: materialBackgroundCombo
-      width: 200
-      currentIndex: initialBackground
-      displayText: currentText
-      model: materialColorStrs
-      delegate: ItemDelegate {
-        text: materialColorStrs[index]
-        width: parent.width
-      }
-      onCurrentIndexChanged: {
-        updateBackground()
-      }
-    }
+//    Label {
+//      text: "Foreground"
+//    }
+//
+//    ComboBox {
+//      id: materialForegroundCombo
+//      width: 200
+//      currentIndex: initialForeground
+//      displayText: currentText
+//      model: materialColorStrs
+//      delegate: ItemDelegate {
+//        text: materialColorStrs[index]
+//        width: parent.width
+//      }
+//      onCurrentIndexChanged: {
+//        updateForeground()
+//      }
+//    }
+//
+//    Label {
+//      text: "Background"
+//    }
+//
+//    ComboBox {
+//      id: materialBackgroundCombo
+//      width: 200
+//      currentIndex: initialBackground
+//      displayText: currentText
+//      model: materialColorStrs
+//      delegate: ItemDelegate {
+//        text: materialColorStrs[index]
+//        width: parent.width
+//      }
+//      onCurrentIndexChanged: {
+//        updateBackground()
+//      }
+//    }
   }
 }

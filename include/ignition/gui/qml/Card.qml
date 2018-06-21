@@ -64,6 +64,10 @@ Pane {
   onWidthChanged: resized()
   onHeightChanged: resized()
 
+  Material.onBackgroundChanged: {
+    titleLabel.color = Material.background
+  }
+
   /**
    * ID within QML
    */
@@ -126,7 +130,7 @@ Pane {
     id: cardToolbar
     objectName: "cardToolbar"
     visible: card.hasTitlebar
-    Material.foreground: "white"
+    Material.foreground: Material.foreground
     Material.background: Material.accent
     Material.elevation: 0
     width: card.width
@@ -142,20 +146,21 @@ Pane {
         target: card
         minimumX: 0
         minimumY: 0
-        maximumX: card.parent.width - card.width
-        maximumY: card.parent.height - card.height
+        maximumX: card.parent ? card.parent.width - card.width : card.width
+        maximumY: card.parent ? card.parent.height - card.height : card.height
         smoothed: true
       }
     }
 
     RowLayout {
-      spacing: 10
+      spacing: 0
       anchors.fill: parent
       anchors.leftMargin: 10
 
       Label {
         id: titleLabel
-        font.pixelSize: 20
+        font.pixelSize: 16
+        color: card.Material.background
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
@@ -166,6 +171,14 @@ Pane {
       ToolButton {
         id: dockButton
         text: card.state === "docked" ? undockIcon : dockIcon
+        contentItem: Text {
+          text: dockButton.text
+          font: dockButton.font
+          opacity: enabled ? 1.0 : 0.3
+          color: card.Material.background
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
         visible: card.hasDockButton
         onClicked: {
           const docked = card.state === "docked"
@@ -179,6 +192,14 @@ Pane {
         id: closeButton
         visible: card.hasCloseButton
         text: closeIcon
+        contentItem: Text {
+          text: closeButton.text
+          font: closeButton.font
+          opacity: enabled ? 1.0 : 0.3
+          color: card.Material.background
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
         onClicked: {
           card.close();
         }
@@ -194,8 +215,8 @@ Pane {
       target: card
       minimumX: 0
       minimumY: 0
-      maximumX: card.parent.width - card.width
-      maximumY: card.parent.height - card.height
+      maximumX: card.parent ? card.parent.width - card.width : card.width
+      maximumY: card.parent ? card.parent.height - card.height : card.height
       smoothed: true
     }
   }
@@ -207,6 +228,7 @@ Pane {
     width: card.width
     height: card.height - cardToolbar.height
     clip: true
+    color: Material.background
   }
 
   // Left ruler

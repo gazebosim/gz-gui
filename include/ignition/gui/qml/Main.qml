@@ -12,11 +12,14 @@ ApplicationWindow
   height: 1000
   visible: true
   id: window
-  property string bgColor: "#eeeeee"
 
   // Not sure why the binding doesn't take care of this
   onTitleChanged: {
     titleLabel.text = window.title
+  }
+
+  Material.onBackgroundChanged: {
+    titleLabel.color = Material.background
   }
 
   // C++ signals to QML slots
@@ -74,7 +77,6 @@ ApplicationWindow
    * Top toolbar
    */
   header: ToolBar {
-    Material.foreground: "white"
     Material.elevation: 0
 
     MouseArea {
@@ -112,6 +114,7 @@ ApplicationWindow
         id: titleLabel
         text: window.title
         font.pixelSize: 18
+        color: Material.background
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
@@ -145,7 +148,7 @@ ApplicationWindow
     objectName: "background"
     id: background
     anchors.fill: parent
-    color: bgColor
+    color: Material.background
 
     Label {
       id: startLabel;
