@@ -15,8 +15,6 @@ Dialog {
 
   property int initialPrimary: -1
   property int initialAccent: -1
-  property int initialForeground: -1
-  property int initialBackground: -1
   property int foregroundShade: Material.Shade500
   property int backgroundShade: Material.Shade200
 
@@ -40,8 +38,6 @@ Dialog {
     "Brown",
     "Grey",
     "BlueGrey",
-//    "White",
-//    "Black",
   ]
 
   property var materialColorEnums: [
@@ -64,9 +60,28 @@ Dialog {
     Material.Brown,
     Material.Grey,
     Material.BlueGrey,
-//    Material.White,
-//    Material.Black,
   ]
+
+  Connections {
+    target: MainWindow
+    onMaterialThemeChanged: {
+      updateTheme(MainWindow.materialTheme);
+    }
+  }
+
+  Connections {
+    target: MainWindow
+    onMaterialPrimaryChanged: {
+      updatePrimary(MainWindow.materialPrimary);
+    }
+  }
+
+  Connections {
+    target: MainWindow
+    onMaterialAccentChanged: {
+      updateAccent(MainWindow.materialAccent);
+    }
+  }
 
   // Helper functions to convert a QML color to a hex string, so that they can
   // be compared
@@ -84,53 +99,93 @@ Dialog {
   /**
    * Update primary color
    */
-  function updatePrimary() {
-    if (materialPrimaryCombo.currentIndex === -1)
+  function updatePrimary(_primary) {
+
+    var index = -1;
+
+    if (typeof _primary === "string")
+    {
+      index = materialColorStrs.indexOf(_primary)
+    }
+    else if (materialPrimaryCombo.currentIndex !== -1)
+    {
+      index = materialPrimaryCombo.currentIndex
+    }
+    else
       return;
 
-    var c = Material.color(
-        materialColorEnums[materialPrimaryCombo.currentIndex],
-        foregroundShade)
+    var c;
+    if (index !== -1)
+    {
+      c = Material.color(materialColorEnums[index], foregroundShade);
+      materialPrimaryCombo.currentIndex = index;
+    }
+    else
+    {
+      c = _primary;
+    }
     window.Material.primary = c
   }
 
   /**
    * Update accent color
    */
-  function updateAccent() {
-    if (materialAccentCombo.currentIndex === -1)
+  function updateAccent(_accent) {
+
+    var index = -1;
+
+    if (typeof _accent === "string")
+    {
+      index = materialColorStrs.indexOf(_accent)
+    }
+    else if (materialAccentCombo.currentIndex !== -1)
+    {
+      index = materialAccentCombo.currentIndex
+    }
+    else
       return;
 
-    var c = Material.color(
-        materialColorEnums[materialAccentCombo.currentIndex],
-        foregroundShade)
+    var c;
+    if (index !== -1)
+    {
+      c = Material.color(materialColorEnums[index], foregroundShade);
+      materialAccentCombo.currentIndex = index;
+    }
+    else
+    {
+      c = _accent;
+    }
     window.Material.accent = c
   }
 
   /**
-   * Update foreground color
+   * Update theme
    */
-  function updateForeground() {
-    if (materialForegroundCombo.currentIndex === -1)
+  function updateTheme(_theme) {
+
+    // Change theme
+    if (typeof _theme === "string")
+    {
+      materialThemeCombo.currentIndex = _theme === "Light" ? 0 : 1;
+    }
+    else if (materialThemeCombo.currentIndex !== -1)
+    {
+      _theme = materialThemeCombo.currentText
+    }
+    else
       return;
 
-    var c = Material.color(
-        materialColorEnums[materialForegroundCombo.currentIndex],
-        foregroundShade)
-    window.Material.foreground = c
-  }
+    window.Material.theme = _theme
 
-  /**
-   * Update background color
-   */
-  function updateBackground() {
-    if (materialBackgroundCombo.currentIndex === -1)
-      return;
+    // Updade shade
+    foregroundShade = _theme === "Light" ? Material.Shade500 :
+                                           Material.Shade200
+    backgroundShade = _theme === "Dark" ? Material.Shade500 :
+                                          Material.Shade200
 
-    var c = Material.color(
-        materialColorEnums[materialBackgroundCombo.currentIndex],
-        backgroundShade)
-    window.Material.background = c
+    // Update all colors according to new shade
+    updatePrimary();
+    updateAccent();
   }
 
   Component.onCompleted: {
@@ -185,20 +240,7 @@ Dialog {
         width: parent.width
       }
       onCurrentTextChanged: {
-        // Change theme
-        window.Material.theme = currentText
-
-        // Updade shade
-        foregroundShade = currentText === "Light" ? Material.Shade500 :
-                                                    Material.Shade200
-        backgroundShade = currentText === "Dark" ? Material.Shade500 :
-                                                   Material.Shade200
-
-        // Update all colors according to new shade
-        updatePrimary();
-        updateAccent();
-        // updateForeground();
-        // updateBackground();
+        updateTheme();
       }
     }
 
@@ -240,43 +282,5 @@ Dialog {
         updateAccent()
       }
     }
-
-//    Label {
-//      text: "Foreground"
-//    }
-//
-//    ComboBox {
-//      id: materialForegroundCombo
-//      width: 200
-//      currentIndex: initialForeground
-//      displayText: currentText
-//      model: materialColorStrs
-//      delegate: ItemDelegate {
-//        text: materialColorStrs[index]
-//        width: parent.width
-//      }
-//      onCurrentIndexChanged: {
-//        updateForeground()
-//      }
-//    }
-//
-//    Label {
-//      text: "Background"
-//    }
-//
-//    ComboBox {
-//      id: materialBackgroundCombo
-//      width: 200
-//      currentIndex: initialBackground
-//      displayText: currentText
-//      model: materialColorStrs
-//      delegate: ItemDelegate {
-//        text: materialColorStrs[index]
-//        width: parent.width
-//      }
-//      onCurrentIndexChanged: {
-//        updateBackground()
-//      }
-//    }
   }
 }
