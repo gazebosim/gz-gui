@@ -18,6 +18,9 @@
 #define IGNITION_GUI_APPLICATION_HH_
 
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
@@ -102,7 +105,8 @@ namespace ignition
 
       /* MainWindow */
 
-      /// \brief Create a main window, populate with plugins and apply configuration.
+      /// \brief Create a main window, populate with plugins and apply
+      /// configuration.
       /// An empty window will be created if no plugins have been loaded.
       /// \return True if successful
       public: bool InitializeMainWindow();
@@ -125,7 +129,8 @@ namespace ignition
       /// \brief Specifies the location of the default configuration file.
       /// This is the file that stores the user settings when pressing
       /// "Save configuration".
-      /// \param[in] _path The default configuration full path including filename.
+      /// \param[in] _path The default configuration full path including
+      /// filename.
       /// \sa LoadDefaultConfig
       /// \sa defaultConfigPath
       public: void SetDefaultConfigPath(const std::string &_path);
@@ -136,8 +141,8 @@ namespace ignition
       /// \sa SetDefaultConfigPath
       public: std::string DefaultConfigPath();
 
-      /// \brief Set the environment variable which defines the paths to look for
-      /// plugins.
+      /// \brief Set the environment variable which defines the paths to
+      /// look for plugins.
       /// \param[in] _env Name of environment variable.
       public: void SetPluginPathEnv(const std::string &_env);
 
@@ -145,8 +150,8 @@ namespace ignition
       /// \param[in] _path Full path.
       public: void AddPluginPath(const std::string &_path);
 
-      /// \brief Get the list of available plugins, organized by path. The paths
-      /// are given in the following order:
+      /// \brief Get the list of available plugins, organized by path. The
+      /// paths are given in the following order:
       ///
       /// 1. Paths given by the environment variable
       /// 2. Paths added by calling addPluginPath

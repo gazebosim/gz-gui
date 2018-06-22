@@ -440,12 +440,10 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   {
     if (auto txt = styleElem->GetText())
     {
- //     setStyleFromString(txt);
     }
     // empty string
     else
     {
- //     setStyleFromString("");
     }
   }
 
