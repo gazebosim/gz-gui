@@ -70,7 +70,7 @@ MainWindow::MainWindow()
   qmlEngine()->rootContext()->setContextProperty("MainWindow", this);
 
   // Load QML and keep pointer to generated QQuickWindow
-  std::string qmlFile("qrc:qml/MainWindow.qml");
+  std::string qmlFile("qrc:qml/Main.qml");
   qmlEngine()->load(QUrl(QString::fromStdString(qmlFile)));
 
   this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
@@ -199,6 +199,9 @@ QStringList MainWindow::PluginListModel() const
 void MainWindow::OnLoadConfig(const QString &_path)
 {
   auto localPath = QUrl(_path).toLocalFile();
+  if (localPath.isEmpty())
+    localPath = _path;
+
   if (!loadConfig(localPath.toStdString()))
     return;
 
@@ -216,6 +219,8 @@ void MainWindow::OnSaveConfig()
 void MainWindow::OnSaveConfigAs(const QString &_path)
 {
   auto localPath = QUrl(_path).toLocalFile();
+  if (localPath.isEmpty())
+    localPath = _path;
   this->SaveConfig(localPath.toStdString());
 }
 
