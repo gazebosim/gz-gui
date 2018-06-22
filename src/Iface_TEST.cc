@@ -479,8 +479,8 @@ TEST(IfaceTest, runEmptyWindow)
 
   // Close window after 1 s
   bool closed = false;
-  QTimer::singleShot(300, [&] {
-
+  QTimer::singleShot(300, [&]
+  {
     auto win = mainWindow();
     ASSERT_NE(nullptr, win);
 

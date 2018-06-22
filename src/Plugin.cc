@@ -74,7 +74,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
-  // TODO: Too complicated to deep clone elements with tinyxml2, storing
+  // TODO(anyone): Too complicated to deep clone elements with tinyxml2, storing
   // string for now and consider moving away from tinyxml
   tinyxml2::XMLPrinter printer;
   if (!_pluginElem->Accept(&printer))
@@ -169,8 +169,8 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 std::string Plugin::ConfigStr()
 {
-  // TODO: When plugins override this function they will lose the card updates,
-  // must refactor config handling
+  // TODO(anyone): When plugins override this function they will lose the
+  // card updates, must refactor config handling
 
   // Convert string to XML
   tinyxml2::XMLDocument doc;
