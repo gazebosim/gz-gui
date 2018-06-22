@@ -420,7 +420,8 @@ TEST(MainWindowTest, ApplyConfig)
     EXPECT_EQ(c.height, 200);
     EXPECT_EQ(c.materialTheme, "Dark");
     EXPECT_EQ(c.materialPrimary, "#ff0000");
-    EXPECT_EQ(c.materialAccent, "Indigo");
+    // Always save hex
+    EXPECT_EQ(c.materialAccent, "#9fa8da");
 //    EXPECT_FALSE(c.menuVisibilityMap["File"]);
 //    EXPECT_FALSE(c.pluginsFromPaths);
 //    EXPECT_EQ(c.showPlugins.size(), 1u);

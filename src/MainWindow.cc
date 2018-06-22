@@ -544,7 +544,7 @@ std::string WindowConfig::XMLString() const
   }
 
   // Style
-  if (!this->IsIgnoring("stylesheet"))
+  if (!this->IsIgnoring("style"))
   {
     auto elem = doc.NewElement("style");
     elem->SetAttribute("material_theme", this->materialTheme.c_str());
