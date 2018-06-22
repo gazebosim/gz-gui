@@ -68,6 +68,8 @@ Rectangle {
     Rectangle {
       width: (topicEcho.width - 2 * 10)
       height: 200
+      color: "transparent"
+
       ListView {
         id: listView
         clip: true

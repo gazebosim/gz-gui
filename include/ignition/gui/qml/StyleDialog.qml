@@ -105,7 +105,7 @@ Dialog {
    * @param type:int _c Color in the 0~1 range
    */
   function componentToHex(_c) {
-    _c = _c * 255
+    _c = (_c * 255) | 0;
     var hex = _c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
   }
