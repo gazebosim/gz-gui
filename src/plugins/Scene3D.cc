@@ -88,7 +88,7 @@ namespace plugins
     public: math::Color backgroundColor = math::Color(0.3, 0.3, 0.3);
 
     /// \brief Initial camera pose
-    public: math::Pose3d cameraPose = math::Pose3d(-5, 0, 0, 0, 0, 0);
+    public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
   };
 
 
@@ -202,9 +202,9 @@ void RenderWindowItem::InitializeEngine()
   this->dataPtr->camera = scene->CreateCamera();
   root->AddChild(this->dataPtr->camera);
   this->dataPtr->camera->SetLocalPose(this->dataPtr->cameraPose);
-  this->dataPtr->camera->SetImageWidth(1000);
-  this->dataPtr->camera->SetImageHeight(800);
-//  this->dataPtr->camera->SetAntiAliasing(2);
+  this->dataPtr->camera->SetImageWidth(800);
+  this->dataPtr->camera->SetImageHeight(600);
+  this->dataPtr->camera->SetAntiAliasing(2);
 //  this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
   this->dataPtr->camera->SetHFOV(M_PI * 0.5);
 
@@ -295,7 +295,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
   {
     auto scene = this->dataPtr->camera->Scene();
     auto root = scene->RootVisual();
-/*    auto grid = scene->CreateGrid();
+    auto grid = scene->CreateGrid();
     grid->SetCellCount(200);
     grid->SetVerticalCellCount(0);
     grid->SetCellLength(1.0);
@@ -306,20 +306,10 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
 
     auto mat = scene->CreateMaterial();
     gridVis->SetMaterial(mat);
-    */
-
-    auto boxVis = scene->CreateVisual();
-    boxVis->AddGeometry(scene->CreateBox());
-    boxVis->SetLocalScale(1,1,1);
-    root->AddChild(boxVis);
-    // auto mat = scene->CreateMaterial();
-    // boxVis->SetMaterial(mat);
-
     done = true;
   }
 
   this->UpdateFBO();
-
   this->DoneRenderWindowContext();
 
   if (this->width() <= 0 || this->height() <= 0 || !this->dataPtr->texture)
@@ -361,16 +351,12 @@ void RenderWindowItem::UpdateFBO()
   }
 
   this->dataPtr->textureSize = s;
-  std::cerr << "FBO size " << s.width() << " " << s.height() << std::endl;
 
   // setting the size should cause the render texture to be rebuilt
-  if (this->dataPtr->camera->ImageWidth() != this->width() ||
-      this->dataPtr->camera->ImageHeight() != this->height())
-  {
-    this->dataPtr->camera->SetImageWidth(this->dataPtr->textureSize.width());
-    this->dataPtr->camera->SetImageHeight(this->dataPtr->textureSize.height());
-    this->dataPtr->camera->PreRender();
-  }
+  this->dataPtr->camera->SetImageWidth(this->dataPtr->textureSize.width());
+  this->dataPtr->camera->SetImageHeight(this->dataPtr->textureSize.height());
+  this->dataPtr->camera->PreRender();
+
 
   QSGGeometry::updateTexturedRectGeometry(this->dataPtr->geometry,
       QRectF(0.0, 0.0, this->dataPtr->textureSize.width(),
@@ -379,8 +365,7 @@ void RenderWindowItem::UpdateFBO()
 
   delete this->dataPtr->texture;
 
-  std::cerr << "GL Id " << this->dataPtr->camera->RenderTextureGLId() << std::endl;
-  this->dataPtr->texture = this->window()->createTextureFromId(
+  this->dataPtr->texture = window()->createTextureFromId(
       this->dataPtr->camera->RenderTextureGLId(),
       this->dataPtr->textureSize);
 
