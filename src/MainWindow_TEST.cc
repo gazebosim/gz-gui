@@ -399,7 +399,7 @@ TEST(MainWindowTest, ApplyConfig)
     c.height = 200;
     c.materialTheme = "Dark";
     c.materialPrimary = "#ff0000";
-    c.materialAccent = "#00ff00";
+    c.materialAccent = "Indigo";
 //    c.menuVisibilityMap["File"] = false;
 //    c.pluginsFromPaths = false;
 //    c.showPlugins.push_back("watermelon");
@@ -420,7 +420,7 @@ TEST(MainWindowTest, ApplyConfig)
     EXPECT_EQ(c.height, 200);
     EXPECT_EQ(c.materialTheme, "Dark");
     EXPECT_EQ(c.materialPrimary, "#ff0000");
-    EXPECT_EQ(c.materialAccent, "#00ff00");
+    EXPECT_EQ(c.materialAccent, "Indigo");
 //    EXPECT_FALSE(c.menuVisibilityMap["File"]);
 //    EXPECT_FALSE(c.pluginsFromPaths);
 //    EXPECT_EQ(c.showPlugins.size(), 1u);

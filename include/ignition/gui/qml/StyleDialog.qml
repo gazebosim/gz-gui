@@ -7,17 +7,29 @@ import QtQuick.Dialogs 1.0
  * Style dialog
  */
 Dialog {
+
+  // Inherited properties
   id: styleDialog
   modal: false
   focus: true
   title: "Style settings"
   contentHeight: styleColumn.height
 
+  // Custom properties
   property int initialPrimary: -1
   property int initialAccent: -1
   property int initialTheme: -1
   property int foregroundShade: Material.Shade500
 
+  /**
+   * ✎
+   */
+  property string editIcon: "\u270E"
+
+  /**
+   * Array with all pre-defined material colors.
+   * Must match materialColorEnums
+   */
   property var materialColorStrs: [
     "Red",
     "Pink",
@@ -40,6 +52,10 @@ Dialog {
     "BlueGrey",
   ]
 
+  /**
+   * Array with all pre-defined material colors
+   * Must match materialColorStrs
+   */
   property var materialColorEnums: [
     Material.Red,
     Material.Pink,
@@ -62,6 +78,7 @@ Dialog {
     Material.BlueGrey,
   ]
 
+  // Connections (C++ signal to QML slot)
   Connections {
     target: MainWindow
     onMaterialThemeChanged: {
@@ -83,13 +100,20 @@ Dialog {
     }
   }
 
-  // Helper functions to convert a QML color to a hex string, so that they can
-  // be compared
+  /**
+   * Convert a color component (R/G/B/A) to hex
+   * @param type:int _c Color in the 0~1 range
+   */
   function componentToHex(_c) {
     _c = _c * 255
     var hex = _c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
   }
+
+  /**
+   * Convert a color object to a hex string
+   * @param type:color _color Color object
+   */
   function colorToHex(_color) {
     return "#" + componentToHex(_color.r)
                + componentToHex(_color.g)
@@ -98,6 +122,7 @@ Dialog {
 
   /**
    * Update primary color
+   * @param type:string _primary Optional color name
    */
   function updatePrimary(_primary) {
 
@@ -142,6 +167,7 @@ Dialog {
 
   /**
    * Update accent color
+   * @param type:string _accent Optional color name
    */
   function updateAccent(_accent) {
 
@@ -186,6 +212,7 @@ Dialog {
 
   /**
    * Update theme
+   * @param type:string _theme Optional theme name
    */
   function updateTheme(_theme) {
 
@@ -218,6 +245,9 @@ Dialog {
     updateAccent();
   }
 
+  /**
+   * Lifecycle hook
+   */
   Component.onCompleted: {
 
     // Get initial values
@@ -270,7 +300,6 @@ Dialog {
 
     Label {
       text: "Primary"
-      anchors.horizontalCenter: styleDialog.horizontalCenter
     }
 
     ColorDialog {

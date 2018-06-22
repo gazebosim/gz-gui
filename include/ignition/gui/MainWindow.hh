@@ -58,7 +58,7 @@ namespace ignition
         NOTIFY MaterialThemeChanged
       )
 
-      /// \brief Material primary color
+      /// \brief Material primary color (Pre-defined color name or hex value)
       Q_PROPERTY(
         QString materialPrimary
         READ MaterialPrimary
@@ -66,7 +66,7 @@ namespace ignition
         NOTIFY MaterialPrimaryChanged
       )
 
-      /// \brief Material accent color
+      /// \brief Material accent color (Pre-defined color name or hex value)
       Q_PROPERTY(
         QString materialAccent
         READ MaterialAccent

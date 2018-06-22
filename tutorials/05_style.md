@@ -36,7 +36,7 @@ See
 
 You can try running the following command for example:
 
-    QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue QT_QUICK_CONTROLS_MATERIAL_ACCENT=Indigo ign gui -v 4
+    QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue ign gui -v 4
 
 ## Config files
 
