@@ -48,8 +48,8 @@ namespace ignition
       /// \brief Queue of plugins which should be added to the window
       public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
 
-      /// \brief Vector of pointers to plugins already added, we hang on to these
-      /// until it is ok to unload the plugin's shared library.
+      /// \brief Vector of pointers to plugins already added, we hang on to
+      /// these until it is ok to unload the plugin's shared library.
       public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
 
       /// \brief Environment variable which holds paths to look for plugins
@@ -59,8 +59,8 @@ namespace ignition
       public: std::vector<std::string> pluginPaths;
 
       /// \brief Holds a configuration which may be applied to mainWin once it
-      /// is created by calling applyConfig(). It's no longer needed and should
-      /// not be used after that.
+      /// is created by calling applyConfig(). It's no longer needed and
+      /// should not be used after that.
       public: WindowConfig windowConfig;
 
       /// \brief The path containing the default configuration file.
@@ -439,8 +439,8 @@ bool Application::ApplyConfig()
 bool Application::AddPluginsToWindow()
 {
   // Get main window background item
-  auto bgItem =
-      this->dataPtr->mainWin->QuickWindow()->findChild<QQuickItem *>("background");
+  auto bgItem = this->dataPtr->mainWin->QuickWindow()
+      ->findChild<QQuickItem *>("background");
   if (!this->dataPtr->pluginsToAdd.empty() && !bgItem)
   {
     ignerr << "Null background QQuickItem!" << std::endl;
@@ -472,8 +472,8 @@ bool Application::AddPluginsToWindow()
     plugin->setParent(this->dataPtr->mainWin);
 
     // Signals
-    this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()), this->dataPtr->mainWin,
-        SLOT(OnPluginClose()));
+    this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
+        this->dataPtr->mainWin, SLOT(OnPluginClose()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
