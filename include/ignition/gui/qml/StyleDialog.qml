@@ -15,6 +15,7 @@ Dialog {
 
   property int initialPrimary: -1
   property int initialAccent: -1
+  property int initialTheme: -1
   property int foregroundShade: Material.Shade500
 
   property var materialColorStrs: [
@@ -126,11 +127,15 @@ Dialog {
       materialPrimaryCombo.currentIndex = index;
     }
     // Custom color
-    else
+    else if (_primary.length !== 0)
     {
       c = _primary;
       materialPrimaryCombo.currentIndex = -1;
       materialPrimaryCombo.editText = _primary;
+    }
+    else
+    {
+      return;
     }
     window.Material.primary = c
   }
@@ -166,11 +171,15 @@ Dialog {
       materialAccentCombo.currentIndex = index;
     }
     // Custom color
-    else
+    else if (_accent.length !== 0)
     {
       c = _accent;
       materialAccentCombo.currentIndex = -1;
       materialAccentCombo.editText = _accent;
+    }
+    else
+    {
+      return;
     }
     window.Material.accent = c
   }
@@ -181,8 +190,9 @@ Dialog {
   function updateTheme(_theme) {
 
     // Change theme
-    if (typeof _theme === "string")
+    if (typeof _theme === "string" && _theme.length !== 0)
     {
+
       materialThemeCombo.currentIndex = _theme === "Light" ? 0 : 1;
     }
     else if (materialThemeCombo.currentIndex !== -1)
@@ -192,11 +202,16 @@ Dialog {
     else
       return;
 
-    window.Material.theme = _theme
-
-    // Updade shade
-    foregroundShade = _theme === "Light" ? Material.Shade500 :
-                                           Material.Shade200
+    if (_theme === "Light")
+    {
+      window.Material.theme = Material.Light
+      foregroundShade = Material.Shade500
+    }
+    else
+    {
+      window.Material.theme = Material.Dark
+      foregroundShade = Material.Shade200
+    }
 
     // Update all colors according to new shade
     updatePrimary();
@@ -217,15 +232,9 @@ Dialog {
       {
         initialAccent = i;
       }
-      if (hex == window.Material.foreground)
-      {
-        initialForeground = i;
-      }
-      if (hex == window.Material.background)
-      {
-        initialBackground = i;
-      }
     }
+
+    initialTheme = window.Material.theme
   }
 
   Column {
