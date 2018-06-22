@@ -364,9 +364,12 @@ WindowConfig MainWindow::CurrentWindowConfig() const
 //  config.state = this->saveState();
 
   // Style
-  config.materialTheme = this->MaterialTheme().toStdString();
-  config.materialPrimary = this->MaterialPrimary().toStdString();
-  config.materialAccent = this->MaterialAccent().toStdString();
+  config.materialTheme = this->QuickWindow()->property("materialTheme")
+      .toString().toStdString() == "0" ? "Light" : "Dark";
+  config.materialPrimary = this->QuickWindow()->property("materialPrimary")
+      .toString().toStdString();
+  config.materialAccent =
+      this->QuickWindow()->property("materialAccent").toString().toStdString();
 
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we

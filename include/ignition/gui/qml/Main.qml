@@ -13,6 +13,11 @@ ApplicationWindow
   visible: true
   id: window
 
+  // Expose material properties to C++
+  property string materialTheme: window.Material.theme
+  property string materialPrimary: window.Material.primary
+  property string materialAccent: window.Material.accent
+
   // Not sure why the binding doesn't take care of this
   onTitleChanged: {
     titleLabel.text = window.title
