@@ -41,10 +41,10 @@ set (gtest_sources
   Helpers_TEST
   Iface_TEST
   ign_TEST
-#  MainWindow_TEST
+  MainWindow_TEST
 #  MessageWidget_TEST
 #  NumberWidget_TEST
-#  Plugin_TEST
+  Plugin_TEST
 #  Pose3dWidget_TEST
   SearchModel_TEST
 #  StringWidget_TEST

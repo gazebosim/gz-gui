@@ -58,6 +58,13 @@ Pane {
   signal close()
 
   /**
+   * Resized signal
+   */
+  signal resized()
+  onWidthChanged: resized()
+  onHeightChanged: resized()
+
+  /**
    * ID within QML
    */
   id: card
