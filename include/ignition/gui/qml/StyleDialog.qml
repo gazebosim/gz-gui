@@ -16,7 +16,6 @@ Dialog {
   property int initialPrimary: -1
   property int initialAccent: -1
   property int foregroundShade: Material.Shade500
-  property int backgroundShade: Material.Shade200
 
   property var materialColorStrs: [
     "Red",
@@ -103,26 +102,35 @@ Dialog {
 
     var index = -1;
 
+    // When setting from MainWindow / ColorDialog
     if (typeof _primary === "string")
     {
       index = materialColorStrs.indexOf(_primary)
     }
+    // When setting from combo box
     else if (materialPrimaryCombo.currentIndex !== -1)
     {
       index = materialPrimaryCombo.currentIndex
     }
     else
+    {
       return;
+    }
 
     var c;
+
+    // One of the material colors
     if (index !== -1)
     {
       c = Material.color(materialColorEnums[index], foregroundShade);
       materialPrimaryCombo.currentIndex = index;
     }
+    // Custom color
     else
     {
       c = _primary;
+      materialPrimaryCombo.currentIndex = -1;
+      materialPrimaryCombo.editText = _primary;
     }
     window.Material.primary = c
   }
@@ -134,26 +142,35 @@ Dialog {
 
     var index = -1;
 
+    // When setting from MainWindow / ColorDialog
     if (typeof _accent === "string")
     {
       index = materialColorStrs.indexOf(_accent)
     }
+    // When setting from combo box
     else if (materialAccentCombo.currentIndex !== -1)
     {
       index = materialAccentCombo.currentIndex
     }
     else
+    {
       return;
+    }
 
     var c;
+
+    // One of the material colors
     if (index !== -1)
     {
       c = Material.color(materialColorEnums[index], foregroundShade);
       materialAccentCombo.currentIndex = index;
     }
+    // Custom color
     else
     {
       c = _accent;
+      materialAccentCombo.currentIndex = -1;
+      materialAccentCombo.editText = _accent;
     }
     window.Material.accent = c
   }
@@ -180,8 +197,6 @@ Dialog {
     // Updade shade
     foregroundShade = _theme === "Light" ? Material.Shade500 :
                                            Material.Shade200
-    backgroundShade = _theme === "Dark" ? Material.Shade500 :
-                                          Material.Shade200
 
     // Update all colors according to new shade
     updatePrimary();
@@ -216,7 +231,7 @@ Dialog {
   Column {
     id: styleColumn
     anchors.horizontalCenter: styleDialog.horizontalCenter
-    width: parent.width
+    width: styleDialog.width * 0.6
 
     // TODO(anyone) extend to universal / default styles, beware that
     // changing style at runtime doesn't seem to be supported, but we could save
@@ -232,7 +247,7 @@ Dialog {
 
     ComboBox {
       id: materialThemeCombo
-      width: 200
+      width: styleColumn.width
       currentIndex: initialTheme
       model: ["Light", "Dark"]
       delegate: ItemDelegate {
@@ -249,18 +264,45 @@ Dialog {
       anchors.horizontalCenter: styleDialog.horizontalCenter
     }
 
-    ComboBox {
-      id: materialPrimaryCombo
-      width: 200
-      currentIndex: initialPrimary
-      displayText: currentText
-      model: materialColorStrs
-      delegate: ItemDelegate {
-        text: materialColorStrs[index]
-        width: parent.width
+    ColorDialog {
+      id: materialPrimaryDialog
+      title: "Primary color"
+      // options: ColorDialog.NoButtons
+      onCurrentColorChanged: {
+
+        // Avoiding pure black because for some reason it is set to that as the
+        // dialog opens
+        if (currentColor == "#000000")
+          return;
+
+        updatePrimary(colorToHex(currentColor))
       }
-      onCurrentIndexChanged: {
-        updatePrimary()
+    }
+
+    Row {
+      ComboBox {
+        id: materialPrimaryCombo
+        width: styleColumn.width
+        editable: true
+        // selectByMouse: true
+        currentIndex: initialPrimary
+        displayText: currentText
+        model: materialColorStrs
+        delegate: ItemDelegate {
+          text: materialColorStrs[index]
+          width: parent.width
+        }
+        onCurrentTextChanged: {
+          updatePrimary()
+        }
+      }
+
+      ToolButton {
+        text: "\u270E"
+        font.pixelSize: 20
+        onClicked: {
+          materialPrimaryDialog.open()
+        }
       }
     }
 
@@ -268,18 +310,45 @@ Dialog {
       text: "Accent"
     }
 
-    ComboBox {
-      id: materialAccentCombo
-      width: 200
-      currentIndex: initialAccent
-      displayText: currentText
-      model: materialColorStrs
-      delegate: ItemDelegate {
-        text: materialColorStrs[index]
-        width: parent.width
+    ColorDialog {
+      id: materialAccentDialog
+      title: "Accent color"
+      // options: ColorDialog.NoButtons
+      onCurrentColorChanged: {
+
+        // Avoiding pure black because for some reason it is set to that as the
+        // dialog opens
+        if (currentColor == "#000000")
+          return;
+
+        updateAccent(colorToHex(currentColor))
       }
-      onCurrentIndexChanged: {
-        updateAccent()
+    }
+
+    Row {
+      ComboBox {
+        id: materialAccentCombo
+        width: styleColumn.width
+        editable: true
+        // selectByMouse: true
+        currentIndex: initialAccent
+        displayText: currentText
+        model: materialColorStrs
+        delegate: ItemDelegate {
+          text: materialColorStrs[index]
+          width: parent.width
+        }
+        onCurrentIndexChanged: {
+          updateAccent()
+        }
+      }
+
+      ToolButton {
+        text: "\u270E"
+        font.pixelSize: 20
+        onClicked: {
+          materialAccentDialog.open()
+        }
       }
     }
   }
