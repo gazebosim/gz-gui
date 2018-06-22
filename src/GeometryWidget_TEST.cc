@@ -132,43 +132,41 @@ TEST(GeometryWidgetTest, Dialog)
   auto exampleFile = QString::fromStdString(
         std::string(PROJECT_SOURCE_PATH) + "/test/media/fakemesh.dae");
 
-  // The remainder of this test hangs on Ubuntu Bionic
+  // Close dialog after a while
+  bool closed = false;
+  QTimer::singleShot(300, [&]
+  {
+    auto dialog = widget->findChild<QFileDialog *>();
+    ASSERT_NE(dialog, nullptr);
 
-  // // Close dialog after a while
-  // bool closed = false;
-  // QTimer::singleShot(300, [&]
-  // {
-  //   auto dialog = widget->findChild<QFileDialog *>();
-  //   ASSERT_NE(dialog, nullptr);
+    // Select file
+    auto edits = dialog->findChildren<QLineEdit *>();
+    ASSERT_GT(edits.size(), 0);
+    edits[0]->setText(exampleFile);
 
-  //   // Select file
-  //   auto edits = dialog->findChildren<QLineEdit *>();
-  //   ASSERT_GT(edits.size(), 0);
-  //   edits[0]->setText(exampleFile);
+    // Accept
+    auto buttons = dialog->findChildren<QPushButton *>();
+    EXPECT_GT(buttons.size(), 0);
+    buttons[0]->click();
 
-  //   // Accept
-  //   auto buttons = dialog->findChildren<QPushButton *>();
-  //   EXPECT_GT(buttons.size(), 0);
-  //   buttons[0]->click();
+    closed = true;
+  });
 
-  //   closed = true;
-  // });
+  // Open dialog
+  auto button = widget->findChild<QPushButton *>();
+  ASSERT_NE(button, nullptr);
+  EXPECT_EQ(button->text(), QString("..."));
+  button->click();
 
-  // // Open dialog
-  // auto button = widget->findChild<QPushButton *>();
-  // ASSERT_NE(button, nullptr);
-  // EXPECT_EQ(button->text(), QString("..."));
-  // button->click();
+  while (!closed)
+    QCoreApplication::processEvents();
 
-  // while (!closed)
-  //   QCoreApplication::processEvents();
+  EXPECT_TRUE(closed);
 
-  // EXPECT_TRUE(closed);
+  // Check new URI value
+  EXPECT_EQ(string->Value().value<std::string>(), exampleFile.toStdString());
 
-  // // Check new URI value
-  // EXPECT_EQ(string->Value().value<std::string>(), exampleFile.toStdString());
-
-  // delete widget;
-  // EXPECT_TRUE(stop());
+  delete widget;
+  EXPECT_TRUE(stop());
 }
 
