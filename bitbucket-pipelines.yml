@@ -17,6 +17,7 @@ pipelines:
             qml-module-qtquick-dialogs
             qml-module-qtquick-layouts
             qml-module-qt-labs-folderlistmodel
+            qml-module-qt-labs-settings
           # Static checking before building
           - sh tools/code_check.sh
           # Ignition tools
