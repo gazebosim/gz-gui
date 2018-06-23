@@ -237,7 +237,6 @@ void TimePanel::ProcessMsg()
     this->SetRealTime(QString::fromStdString(time.FormattedString()));
   }
 
-  if (this->dataPtr->msg.has_real_time_factor())
   {
     // RTF as a percentage.
     double rtf = this->dataPtr->msg.real_time_factor() * 100;
@@ -245,13 +244,10 @@ void TimePanel::ProcessMsg()
     this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
   }
 
-  if (this->dataPtr->msg.has_paused())
-  {
-    if (this->dataPtr->msg.paused())
-      this->Paused();
-    else
-      this->Playing();
-  }
+  if (this->dataPtr->msg.paused())
+    this->Paused();
+  else
+    this->Playing();
 }
 
 /////////////////////////////////////////////////

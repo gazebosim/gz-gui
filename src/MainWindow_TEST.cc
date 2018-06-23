@@ -25,7 +25,7 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config";
+std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
 

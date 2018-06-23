@@ -120,7 +120,7 @@ void Publisher::OnPublish(const bool _checked)
   {
     ignerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";
-    // TODO: notify error and uncheck switch
+    // TODO(anyone): notify error and uncheck switch
     return;
   }
 
@@ -131,7 +131,7 @@ void Publisher::OnPublish(const bool _checked)
   {
     ignerr << "Unable to publish on topic[" << topic << "] "
       << "with message type[" << msgType << "].\n";
-    // TODO: notify error and uncheck switch
+    // TODO(anyone): notify error and uncheck switch
     return;
   }
 
@@ -139,7 +139,7 @@ void Publisher::OnPublish(const bool _checked)
   if (this->dataPtr->frequency < 0.00001)
   {
     this->dataPtr->pub.Publish(*msg);
-    // TODO: notify error and uncheck switch
+    // TODO(anyone): notify error and uncheck switch
     return;
   }
 

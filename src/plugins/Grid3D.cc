@@ -165,7 +165,7 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  // TODO: remove - just for testing when inserting plugin
+  // TODO(anyone): remove - just for testing when inserting plugin
   GridInfo gridInfo;
   this->dataPtr->startupGrids.push_back(gridInfo);
 
@@ -408,7 +408,7 @@ void Grid3D::Refresh()
 }
 
 /////////////////////////////////////////////////
-void Grid3D::OnChange(const QVariant &_value)
+void Grid3D::OnChange(const QVariant & /*_value*/)
 {
 //  auto gridName =
 //      this->sender()->property("gridName").toString().toStdString();
