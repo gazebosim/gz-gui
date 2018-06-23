@@ -92,7 +92,8 @@ Application::Application(int &_argc, char **_argv)
   this->dataPtr->engine = new QQmlApplicationEngine();
 
   // Install signal handler for graceful shutdown
-  this->dataPtr->signalHandler.AddCallback([](int)
+  this->dataPtr->signalHandler.AddCallback(
+      [](int)  // NOLINT(readability/casting)
       {
         for (auto window : App()->allWindows())
           window->close();
@@ -448,7 +449,6 @@ bool Application::AddPluginsToWindow()
   }
 
   // Create a widget for each plugin
-  auto count = 0;
   while (!this->dataPtr->pluginsToAdd.empty())
   {
     auto plugin = this->dataPtr->pluginsToAdd.front();
@@ -477,8 +477,6 @@ bool Application::AddPluginsToWindow()
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
-
-    count++;
   }
 
   this->dataPtr->mainWin->SetPluginCount(this->dataPtr->pluginsAdded.size());

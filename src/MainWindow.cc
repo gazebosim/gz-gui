@@ -438,7 +438,7 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   // Stylesheet
   if (auto styleElem = winElem->FirstChildElement("stylesheet"))
   {
-    if (auto txt = styleElem->GetText())
+    if (styleElem->GetText())
     {
     }
     // empty string

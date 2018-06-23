@@ -299,7 +299,7 @@ void TopicCurve::UpdateCurve(google::protobuf::Message *_msg,
 
     // Check if message has timestamp and use it if it exists and is
     // a top level msg field.
-    // TODO x axis is hardcoded to be the sim time for now. Once it is
+    // TODO(anyone) x axis is hardcoded to be the sim time for now. Once it is
     // configurable, remove this logic for setting the x value
     if (_index == 0 &&
        (fieldName == "header" || fieldName == "stamp" || fieldName == "time") &&

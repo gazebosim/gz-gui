@@ -22,6 +22,7 @@
 #include <ignition/common/Console.hh>
 
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/config.hh"
 #include "ignition/gui/ign.hh"
 #include "ignition/gui/Export.hh"
 
@@ -31,7 +32,7 @@ char **g_argv = new char *[g_argc];
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 {
-  return strdup("0.1.0");
+  return strdup(IGNITION_GUI_VERSION_FULL);
 }
 
 //////////////////////////////////////////////////
@@ -85,7 +86,8 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(const char *_filename)
+extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(
+    const char */*_filename*/)
 {
 //  ignition::gui::setStyleFromFile(std::string(_filename));
 }

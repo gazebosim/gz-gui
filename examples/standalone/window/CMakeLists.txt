@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
 set (CMAKE_AUTOMOC ON)
 
@@ -7,7 +7,7 @@ find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Core REQUIRED)
 
 # Find the Ignition gui library
-find_package(ignition-gui0 REQUIRED)
+find_package(ignition-gui1 REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
 
