@@ -209,6 +209,14 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
 //      ignwarn << "Failed to restore state" << std::endl;
   }
 
+  // Style
+  if (!_config.IsIgnoring("style"))
+  {
+    this->SetMaterialTheme(QString::fromStdString(_config.materialTheme));
+    this->SetMaterialPrimary(QString::fromStdString(_config.materialPrimary));
+    this->SetMaterialAccent(QString::fromStdString(_config.materialAccent));
+  }
+
   // Hide menus
   for (auto visible : _config.menuVisibilityMap)
   {
@@ -275,6 +283,17 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   config.width = this->QuickWindow()->width();
   config.height = this->QuickWindow()->height();
 
+  // Docks state
+//  config.state = this->saveState();
+
+  // Style
+  config.materialTheme = this->QuickWindow()->property("materialTheme")
+      .toString().toStdString() == "0" ? "Light" : "Dark";
+  config.materialPrimary = this->QuickWindow()->property("materialPrimary")
+      .toString().toStdString();
+  config.materialAccent =
+      this->QuickWindow()->property("materialAccent").toString().toStdString();
+
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we
   // don't guarantee that will be saved.
@@ -315,6 +334,33 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
 
   if (auto heightElem = winElem->FirstChildElement("height"))
     heightElem->QueryIntText(&this->height);
+
+  // Docks state
+  if (auto stateElem = winElem->FirstChildElement("state"))
+  {
+    auto text = stateElem->GetText();
+    this->state = QByteArray::fromBase64(text);
+  }
+
+  // Style
+  if (auto styleElem = winElem->FirstChildElement("style"))
+  {
+    auto mTheme = styleElem->Attribute("material_theme");
+    if (mTheme)
+    {
+      this->materialTheme = mTheme;
+    }
+    auto mPrimary = styleElem->Attribute("material_primary");
+    if (mPrimary)
+    {
+      this->materialPrimary = mPrimary;
+    }
+    auto mAccent = styleElem->Attribute("material_accent");
+    if (mAccent)
+    {
+      this->materialAccent = mAccent;
+    }
+  }
 
   // Menus
   if (auto menusElem = winElem->FirstChildElement("menus"))
@@ -412,6 +458,16 @@ std::string WindowConfig::XMLString() const
     windowElem->InsertEndChild(elem);
   }
 
+  // Style
+  if (!this->IsIgnoring("style"))
+  {
+    auto elem = doc.NewElement("style");
+    elem->SetAttribute("material_theme", this->materialTheme.c_str());
+    elem->SetAttribute("material_primary", this->materialPrimary.c_str());
+    elem->SetAttribute("material_accent", this->materialAccent.c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
   // Menus
   {
     auto menusElem = doc.NewElement("menus");
@@ -495,6 +551,45 @@ void MainWindow::SetPluginCount(const int _pluginCount)
 {
   this->dataPtr->pluginCount = _pluginCount;
   this->PluginCountChanged();
+}
+
+/////////////////////////////////////////////////
+QString MainWindow::MaterialTheme() const
+{
+  return QString::fromStdString(this->dataPtr->windowConfig.materialTheme);
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetMaterialTheme(const QString &_materialTheme)
+{
+  this->dataPtr->windowConfig.materialTheme = _materialTheme.toStdString();
+  this->MaterialThemeChanged();
+}
+
+/////////////////////////////////////////////////
+QString MainWindow::MaterialPrimary() const
+{
+  return QString::fromStdString(this->dataPtr->windowConfig.materialPrimary);
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetMaterialPrimary(const QString &_materialPrimary)
+{
+  this->dataPtr->windowConfig.materialPrimary = _materialPrimary.toStdString();
+  this->MaterialPrimaryChanged();
+}
+
+/////////////////////////////////////////////////
+QString MainWindow::MaterialAccent() const
+{
+  return QString::fromStdString(this->dataPtr->windowConfig.materialAccent);
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetMaterialAccent(const QString &_materialAccent)
+{
+  this->dataPtr->windowConfig.materialAccent = _materialAccent.toStdString();
+  this->MaterialAccentChanged();
 }
 
 /////////////////////////////////////////////////

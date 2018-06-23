@@ -276,8 +276,8 @@ TEST(ApplicationTest, RunEmptyWindow)
 
   // Close window after 1 s
   bool closed = false;
-  QTimer::singleShot(300, [&] {
-
+  QTimer::singleShot(300, [&]
+  {
     auto wins = app.allWindows();
     ASSERT_EQ(wins.size(), 1);
 

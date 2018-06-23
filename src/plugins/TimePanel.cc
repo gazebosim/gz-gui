@@ -275,6 +275,7 @@ void TimePanel::OnPlay()
 
   ignition::msgs::WorldControl req;
   req.set_pause(false);
+
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 

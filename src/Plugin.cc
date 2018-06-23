@@ -267,7 +267,8 @@ QQuickItem *Plugin::CardItem() const
 
   // Instantiate a card
   std::string qmlFile(":qml/Card.qml");
-  QQmlComponent cardComp(App()->Engine(), QString(QString::fromStdString(qmlFile)));
+  QQmlComponent cardComp(App()->Engine(),
+      QString(QString::fromStdString(qmlFile)));
   auto cardItem = qobject_cast<QQuickItem *>(cardComp.create());
   if (!cardItem)
   {

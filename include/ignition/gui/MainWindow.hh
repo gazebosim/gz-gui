@@ -50,6 +50,30 @@ namespace ignition
         NOTIFY PluginCountChanged
       )
 
+      /// \brief Material theme (Light / Dark)
+      Q_PROPERTY(
+        QString materialTheme
+        READ MaterialTheme
+        WRITE SetMaterialTheme
+        NOTIFY MaterialThemeChanged
+      )
+
+      /// \brief Material primary color (Pre-defined color name or hex value)
+      Q_PROPERTY(
+        QString materialPrimary
+        READ MaterialPrimary
+        WRITE SetMaterialPrimary
+        NOTIFY MaterialPrimaryChanged
+      )
+
+      /// \brief Material accent color (Pre-defined color name or hex value)
+      Q_PROPERTY(
+        QString materialAccent
+        READ MaterialAccent
+        WRITE SetMaterialAccent
+        NOTIFY MaterialAccentChanged
+      )
+
       /// \brief Constructor
       public: MainWindow();
 
@@ -96,6 +120,33 @@ namespace ignition
       /// \param[in] _pluginCount Number of plugins
       public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
 
+      /// \brief Returns the material theme.
+      /// \return Theme (Light / Dark)
+      public: Q_INVOKABLE QString MaterialTheme() const;
+
+      /// \brief Sets the material theme
+      /// \param[in] _materialTheme Theme (Light / Dark)
+      public: Q_INVOKABLE void SetMaterialTheme(
+          const QString &_materialTheme);
+
+      /// \brief Returns the material primary color.
+      /// \return Primary color
+      public: Q_INVOKABLE QString MaterialPrimary() const;
+
+      /// \brief Sets the material primary color
+      /// \param[in] _materialPrimary Primary color
+      public: Q_INVOKABLE void SetMaterialPrimary(
+          const QString &_materialPrimary);
+
+      /// \brief Returns the material accent color.
+      /// \return Accent color
+      public: Q_INVOKABLE QString MaterialAccent() const;
+
+      /// \brief Sets the material accent color
+      /// \param[in] _materialAccent Accent color
+      public: Q_INVOKABLE void SetMaterialAccent(
+          const QString &_materialAccent);
+
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);
 
@@ -107,6 +158,15 @@ namespace ignition
 
       /// \brief Notifies when the number of plugins has changed.
       signals: void PluginCountChanged();
+
+      /// \brief Notifies when the theme has changed.
+      signals: void MaterialThemeChanged();
+
+      /// \brief Notifies when the primary color has changed.
+      signals: void MaterialPrimaryChanged();
+
+      /// \brief Notifies when the accent color has changed.
+      signals: void MaterialAccentChanged();
 
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
@@ -120,9 +180,6 @@ namespace ignition
 
       // Documentation inherited
 //      protected: void closeEvent(QCloseEvent *_event) override;
-
-      /// \brief Callback when load stylesheet is selected
-//      private slots: void OnLoadStylesheet();
 
       /// \internal
       /// \brief Private data pointer
@@ -162,8 +219,14 @@ namespace ignition
       /// \brief Window state (dock configuration)
       QByteArray state;
 
-      /// \brief String holding the global style sheet in QSS format.
-      std::string styleSheet{""};
+      /// \brief Material theme (light / dark)
+      std::string materialTheme{""};
+
+      /// \brief Material primary color
+      std::string materialPrimary{""};
+
+      /// \brief Material accent color
+      std::string materialAccent{""};
 
       /// \brief Map menu name to whether it should be visible, all menus are
       /// shown by default.

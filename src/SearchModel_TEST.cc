@@ -17,9 +17,9 @@
 
 #include <gtest/gtest.h>
 
-#include "test_config.h"  // NOLINT(build/include)
-
 #include <ignition/common/Console.hh>
+
+#include "test_config.h"  // NOLINT(build/include)
 
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/SearchModel.hh"
