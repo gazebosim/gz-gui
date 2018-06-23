@@ -26,6 +26,8 @@
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
+#include <ignition/rendering/Camera.hh>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
@@ -37,6 +39,7 @@ namespace plugins
 {
   class Scene3DPrivate;
   class RenderWindowItemPrivate;
+  class RenderWindowNodePrivate;
 
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
@@ -137,13 +140,12 @@ namespace plugins
     private: void InitializeEngine();
 
     /// \brief Activate the render window OpenGL context
-    private: void ActivateRenderWindowContext();
+    public: void ActivateRenderWindowContext();
 
     /// \brief Deactivate the render window OpenGL context
-    private: void DoneRenderWindowContext();
+    public: void DoneRenderWindowContext();
 
-    /// \brief Update the GL render texture
-    private: void UpdateFBO();
+    public: QOpenGLContext *RenderWindowContext() const;
 
     /// \brief Overrides the paint event to render the render engine
     /// camera view
@@ -161,6 +163,33 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
   };
+
+  /// \brief A QQUickItem that manages the render window
+  class RenderWindowNode: public QSGGeometryNode
+  {
+    public: RenderWindowNode();
+    public: ~RenderWindowNode();
+    public: void SetSize(QSize _size);
+    public: void SetRenderWindowItem(RenderWindowItem *_item);
+    public: void SetCamera(rendering::CameraPtr _camera);
+
+    public: void ActivateContext();
+    public: void DoneContext();
+
+    public: void preprocess();
+
+    /// \brief Update the GL render texture
+    private: void UpdateFBO();
+
+    public: void update();
+
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<RenderWindowNodePrivate> dataPtr;
+
+  };
+
+
 }
 }
 }

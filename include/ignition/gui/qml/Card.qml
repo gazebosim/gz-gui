@@ -74,7 +74,7 @@ Pane {
    */
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
-//  Material.elevation: 6
+  Material.elevation: 6
   padding: 0
   state: "docked"
 
