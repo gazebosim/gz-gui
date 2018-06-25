@@ -74,6 +74,22 @@ namespace ignition
         NOTIFY MaterialAccentChanged
       )
 
+      /// \brief
+      Q_PROPERTY(
+        bool showPanel
+        READ ShowPanel
+        WRITE SetShowPanel
+        NOTIFY ShowPanelChanged
+      )
+
+      /// \brief
+      Q_PROPERTY(
+        bool showDefaultPanelOpts
+        READ ShowDefaultPanelOpts
+        WRITE SetShowDefaultPanelOpts
+        NOTIFY ShowDefaultPanelOptsChanged
+      )
+
       /// \brief Constructor
       public: MainWindow();
 
@@ -147,6 +163,23 @@ namespace ignition
       public: Q_INVOKABLE void SetMaterialAccent(
           const QString &_materialAccent);
 
+      /// \brief
+      /// \return
+      public: Q_INVOKABLE bool ShowPanel() const;
+
+      /// \brief
+      /// \param[in] _showPanel
+      public: Q_INVOKABLE void SetShowPanel(const bool _showPanel);
+
+      /// \brief
+      /// \return
+      public: Q_INVOKABLE bool ShowDefaultPanelOpts() const;
+
+      /// \brief
+      /// \param[in] _showDefaultPanelOpts
+      public: Q_INVOKABLE void SetShowDefaultPanelOpts(
+          const bool _showDefaultPanelOpts);
+
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);
 
@@ -167,6 +200,12 @@ namespace ignition
 
       /// \brief Notifies when the accent color has changed.
       signals: void MaterialAccentChanged();
+
+      /// \brief
+      signals: void ShowPanelChanged();
+
+      /// \brief
+      signals: void ShowDefaultPanelOptsChanged();
 
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
@@ -228,9 +267,11 @@ namespace ignition
       /// \brief Material accent color
       std::string materialAccent{""};
 
-      /// \brief Map menu name to whether it should be visible, all menus are
-      /// shown by default.
-      std::map<std::string, bool> menuVisibilityMap;
+      /// \brief
+      bool showPanel{true};
+
+      /// \brief
+      bool showDefaultPanelOpts{true};
 
       /// \brief True if plugins found in plugin paths should be listed under
       /// the Plugins menu. True by default.

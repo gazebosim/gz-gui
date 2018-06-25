@@ -217,15 +217,9 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
     this->SetMaterialAccent(QString::fromStdString(_config.materialAccent));
   }
 
-  // Hide menus
-  for (auto visible : _config.menuVisibilityMap)
-  {
-//    if (auto menu = this->findChild<QMenu *>(
-//        QString::fromStdString(visible.first + "Menu")))
-//    {
-//      menu->menuAction()->setVisible(visible.second);
-//    }
-  }
+  // Menus
+  this->SetShowPanel(_config.showPanel);
+  this->SetShowDefaultPanelOpts(_config.showDefaultPanelOpts);
 
   // Plugins menu
 //  if (auto menu = this->findChild<QMenu *>("pluginsMenu"))
@@ -262,8 +256,6 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   // Keep a copy
   this->dataPtr->windowConfig = _config;
 
-//  QCoreApplication::processEvents();
-
   return true;
 }
 
@@ -297,7 +289,9 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we
   // don't guarantee that will be saved.
-  config.menuVisibilityMap = this->dataPtr->windowConfig.menuVisibilityMap;
+  config.showPanel = this->dataPtr->windowConfig.showPanel;
+  config.showDefaultPanelOpts =
+      this->dataPtr->windowConfig.showDefaultPanelOpts;
   config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
   config.showPlugins = this->dataPtr->windowConfig.showPlugins;
   config.ignoredProps = this->dataPtr->windowConfig.ignoredProps;
@@ -365,15 +359,22 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   // Menus
   if (auto menusElem = winElem->FirstChildElement("menus"))
   {
-    // File
-    if (auto fileElem = menusElem->FirstChildElement("file"))
+    // Panel
+    if (auto panelElem = menusElem->FirstChildElement("panel"))
     {
       // Visible
-      if (fileElem->Attribute("visible"))
+      if (panelElem->Attribute("visible"))
       {
         bool visible = true;
-        fileElem->QueryBoolAttribute("visible", &visible);
-        this->menuVisibilityMap["file"] = visible;
+        panelElem->QueryBoolAttribute("visible", &visible);
+        this->showPanel = visible;
+      }
+      // Default
+      if (panelElem->Attribute("default"))
+      {
+        bool def = true;
+        panelElem->QueryBoolAttribute("default", &def);
+        this->showDefaultPanelOpts = def;
       }
     }
 
@@ -385,7 +386,7 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
       {
         bool visible = true;
         pluginsElem->QueryBoolAttribute("visible", &visible);
-        this->menuVisibilityMap["plugins"] = visible;
+        // this->menuVisibilityMap["plugins"] = visible;
       }
 
       // From paths
@@ -473,16 +474,16 @@ std::string WindowConfig::XMLString() const
     auto menusElem = doc.NewElement("menus");
     windowElem->InsertEndChild(menusElem);
 
-    // File
+    // Panel
     {
-      auto elem = doc.NewElement("file");
+      auto elem = doc.NewElement("panel");
 
       // Visible
-      auto m = this->menuVisibilityMap.find("file");
-      if (m != this->menuVisibilityMap.end())
-      {
-        elem->SetAttribute("visible", m->second);
-      }
+      elem->SetAttribute("visible", this->showPanel);
+
+      // Default
+      elem->SetAttribute("default", this->showDefaultPanelOpts);
+
       menusElem->InsertEndChild(elem);
     }
 
@@ -491,11 +492,11 @@ std::string WindowConfig::XMLString() const
       auto elem = doc.NewElement("plugins");
 
       // Visible
-      auto m = this->menuVisibilityMap.find("plugins");
-      if (m != this->menuVisibilityMap.end())
-      {
-        elem->SetAttribute("visible", m->second);
-      }
+//      auto m = this->menuVisibilityMap.find("plugins");
+//      if (m != this->menuVisibilityMap.end())
+//      {
+//        elem->SetAttribute("visible", m->second);
+//      }
 
       // From paths
       elem->SetAttribute("from_paths", this->pluginsFromPaths);
@@ -596,4 +597,31 @@ void MainWindow::SetMaterialAccent(const QString &_materialAccent)
 QQuickWindow *MainWindow::QuickWindow() const
 {
   return this->dataPtr->quickWindow;
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ShowPanel() const
+{
+  return this->dataPtr->windowConfig.showPanel;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetShowPanel(const bool _showPanel)
+{
+  this->dataPtr->windowConfig.showPanel = _showPanel;
+  this->ShowPanelChanged();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ShowDefaultPanelOpts() const
+{
+  return this->dataPtr->windowConfig.showDefaultPanelOpts;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetShowDefaultPanelOpts(const bool _showDefaultPanelOpts)
+{
+  this->dataPtr->windowConfig.showDefaultPanelOpts =
+      _showDefaultPanelOpts;
+  this->ShowDefaultPanelOptsChanged();
 }

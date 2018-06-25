@@ -209,7 +209,6 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_TRUE(c.materialTheme.empty());
   EXPECT_TRUE(c.materialPrimary.empty());
   EXPECT_TRUE(c.materialAccent.empty());
-  EXPECT_TRUE(c.menuVisibilityMap.empty());
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_TRUE(c.ignoredProps.empty());
@@ -255,7 +254,6 @@ TEST(WindowConfigTest, mergeFromXML)
   EXPECT_TRUE(c.materialTheme.empty());
   EXPECT_TRUE(c.materialPrimary.empty());
   EXPECT_TRUE(c.materialAccent.empty());
-  EXPECT_TRUE(c.menuVisibilityMap.empty());
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_EQ(c.ignoredProps.size(), 2u);
@@ -271,8 +269,6 @@ TEST(WindowConfigTest, MenusToString)
   WindowConfig c;
 
   // Set some menu-related properties
-  c.menuVisibilityMap["file"] = false;
-  c.menuVisibilityMap["plugins"] = true;
 
   c.pluginsFromPaths = false;
 
@@ -384,7 +380,6 @@ TEST(MainWindowTest, ApplyConfig)
   // Default config
   {
     auto c = mainWindow->CurrentWindowConfig();
-    EXPECT_TRUE(c.menuVisibilityMap.empty());
     EXPECT_TRUE(c.pluginsFromPaths);
     EXPECT_TRUE(c.showPlugins.empty());
     EXPECT_TRUE(c.ignoredProps.empty());
@@ -400,7 +395,6 @@ TEST(MainWindowTest, ApplyConfig)
     c.materialTheme = "Dark";
     c.materialPrimary = "#ff0000";
     c.materialAccent = "Indigo";
-//    c.menuVisibilityMap["File"] = false;
 //    c.pluginsFromPaths = false;
 //    c.showPlugins.push_back("watermelon");
 //    c.ignoredProps.insert("position");
@@ -422,7 +416,6 @@ TEST(MainWindowTest, ApplyConfig)
     EXPECT_EQ(c.materialPrimary, "#ff0000");
     // Always save hex
     EXPECT_EQ(c.materialAccent, "#9fa8da");
-//    EXPECT_FALSE(c.menuVisibilityMap["File"]);
 //    EXPECT_FALSE(c.pluginsFromPaths);
 //    EXPECT_EQ(c.showPlugins.size(), 1u);
 //    EXPECT_EQ(c.ignoredProps.size(), 1u);
