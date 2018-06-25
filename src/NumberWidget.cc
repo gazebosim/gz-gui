@@ -64,8 +64,8 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
   }
   else if (this->dataPtr->type == NumberType::INT)
   {
-    min = math::equal(min, math::MIN_D) ? math::MIN_I32 : (int)max;
-    max = math::equal(max, math::MAX_D) ? math::MAX_I32 : (int)max;
+    min = math::equal(min, math::MIN_D) ? math::MIN_I32 : static_cast<int>(max);
+    max = math::equal(max, math::MAX_D) ? math::MAX_I32 : static_cast<int>(max);
   }
 
   // Unit
@@ -80,7 +80,7 @@ NumberWidget::NumberWidget(const std::string &_key, const NumberType _type)
       this->dataPtr->type == NumberType::INT)
   {
     auto spin = new QSpinBox(this);
-    spin->setRange((int)min, (int)max);
+    spin->setRange(static_cast<int>(min), static_cast<int>(max));
     spin->setAlignment(Qt::AlignRight);
     this->connect(spin, SIGNAL(editingFinished()), this,
       SLOT(OnValueChanged()));
