@@ -211,13 +211,16 @@ TEST(ApplicationTest, Dialog)
     // Load test plugin
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
 
+    // Initialize dialog
+    EXPECT_TRUE(app.InitializeDialogs());
+
     // Close dialog after some time
     auto closed = false;
     QTimer::singleShot(300, [&] {
       auto ds = app.allWindows();
 
       // The main dialog and the hidden undocked dialog from Card.qml
-      EXPECT_EQ(ds.size(), 2);
+      ASSERT_EQ(ds.size(), 2);
 
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[1]));
@@ -227,8 +230,8 @@ TEST(ApplicationTest, Dialog)
       closed = true;
     });
 
-    // Run dialog
-    EXPECT_TRUE(app.RunDialogs());
+    // Exec dialog
+    app.exec();
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
@@ -246,6 +249,9 @@ TEST(ApplicationTest, Dialog)
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
 
+    // Initialize dialogs
+    EXPECT_TRUE(app.InitializeDialogs());
+
     // Close dialogs after some time
     auto closed = false;
     QTimer::singleShot(300, [&] {
@@ -257,8 +263,8 @@ TEST(ApplicationTest, Dialog)
       closed = true;
     });
 
-    // Run dialog
-    EXPECT_TRUE(app.RunDialogs());
+    // Exec dialog
+    app.exec();
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
@@ -266,7 +272,7 @@ TEST(ApplicationTest, Dialog)
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, RunEmptyWindow)
+TEST(ApplicationTest, ExecEmptyWindow)
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -285,15 +291,15 @@ TEST(ApplicationTest, RunEmptyWindow)
     closed = true;
   });
 
-  // Run empty window
-  EXPECT_TRUE(app.RunEmptyWindow());
+  // Exec empty window
+  EXPECT_TRUE(app.ExecEmptyWindow());
 
   // Make sure timer was triggered
   EXPECT_TRUE(closed);
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, RunStandalone)
+TEST(ApplicationTest, ExecStandalone)
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -303,14 +309,14 @@ TEST(ApplicationTest, RunStandalone)
   {
     Application app(g_argc, g_argv);
 
-    EXPECT_FALSE(app.RunStandalone(""));
+    EXPECT_FALSE(app.ExecStandalone(""));
   }
 
   // Bad file
   {
     Application app(g_argc, g_argv);
 
-    EXPECT_FALSE(app.RunStandalone("badfile"));
+    EXPECT_FALSE(app.ExecStandalone("badfile"));
   }
 
   // Good file
@@ -337,8 +343,8 @@ TEST(ApplicationTest, RunStandalone)
       closed = true;
     });
 
-    // Run test plugin
-    EXPECT_TRUE(app.RunStandalone("TestPlugin"));
+    // Exec test plugin
+    EXPECT_TRUE(app.ExecStandalone("TestPlugin"));
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
@@ -356,14 +362,14 @@ TEST(ApplicationTest, runConfig)
   {
     Application app(g_argc, g_argv);
 
-    EXPECT_FALSE(app.RunConfig(""));
+    EXPECT_FALSE(app.ExecConfig(""));
   }
 
   // Bad file
   {
     Application app(g_argc, g_argv);
 
-    EXPECT_FALSE(app.RunConfig("badfile"));
+    EXPECT_FALSE(app.ExecConfig("badfile"));
   }
 
   // Good file
@@ -387,9 +393,9 @@ TEST(ApplicationTest, runConfig)
       closed = true;
     });
 
-    // Run test config file
+    // Exec test config file
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(app.RunConfig(testSourcePath + "config/test.config"));
+    EXPECT_TRUE(app.ExecConfig(testSourcePath + "config/test.config"));
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
