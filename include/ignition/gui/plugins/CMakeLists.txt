@@ -1,4 +1,5 @@
 set (qt_headers_local
+  Grid
   Grid3D
   ImageDisplay
   Publisher
