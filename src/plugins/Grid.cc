@@ -209,14 +209,8 @@ void Grid::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     return;
   }
-  this->CreateLayout();
-}
-
-/////////////////////////////////////////////////
-void Grid::CreateLayout()
-{
-  auto mainLayout = this->layout();
-  mainLayout = new QVBoxLayout();
+  // Create layout
+  auto mainLayout = new QVBoxLayout();
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   this->setLayout(mainLayout);
@@ -237,6 +231,16 @@ void Grid::CreateLayout()
   mainLayout->addWidget(buttonsWidget);
 
   // Create grid configuration options
+  mainLayout->addWidget(this->CreateProperties());
+
+  auto spacer = new QWidget();
+  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  mainLayout->addWidget(spacer);
+}
+
+/////////////////////////////////////////////////
+QWidget* Grid::CreateProperties()
+{
   auto gridName = QString::fromStdString(this->dataPtr->grid->Name());
 
   auto cellCountWidget = new NumberWidget("Horizontal cell count",
@@ -284,11 +288,7 @@ void Grid::CreateLayout()
   collapsible->AppendContent(poseWidget);
   collapsible->AppendContent(colorWidget);
 
-  mainLayout->addWidget(collapsible);
-
-  auto spacer = new QWidget();
-  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacer);
+  return collapsible;
 }
 
 /////////////////////////////////////////////////
