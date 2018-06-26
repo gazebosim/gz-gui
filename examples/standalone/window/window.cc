@@ -31,16 +31,15 @@ int main(int _argc, char **_argv)
   // Increase verboosity so we see all messages
   ignition::common::Console::SetVerbosity(4);
 
-  // Initialize app
+  // Create app
   ignition::gui::Application app(_argc, _argv);
 
-  // Load plugins and configurations
-  if (!app.LoadPlugin("Publisher"))
-    return 1;
-
   // Create main window
-  if (!app.InitializeMainWindow())
+  if (!app.Initialize(ignition::gui::InitializeType::kMainWindow, "",
+        {{"Publisher"}}))
+  {
     return 1;
+  }
 
   // Customize main window
   auto win = app.findChild<ignition::gui::MainWindow *>()->QuickWindow();

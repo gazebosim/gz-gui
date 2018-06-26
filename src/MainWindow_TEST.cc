@@ -128,7 +128,7 @@ TEST(MainWindowTest, OnLoadConfig)
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create main window
-  App()->InitializeMainWindow();
+  App()->Initialize(InitializeType::kMainWindow);
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -171,7 +171,7 @@ TEST(MainWindowTest, OnAddPlugin)
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Create window
-  App()->InitializeMainWindow();
+  App()->Initialize(InitializeType::kMainWindow);
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -324,7 +324,7 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
   Application app(g_argc, g_argv);
 
   // Create main window
-  EXPECT_TRUE(App()->InitializeMainWindow());
+  EXPECT_TRUE(App()->Initialize(InitializeType::kMainWindow));
 
   // Access window after it's open
   bool closed{false};

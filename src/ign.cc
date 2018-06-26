@@ -62,14 +62,26 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
   new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->ExecStandalone(std::string(_filename));
+  if (!ignition::gui::App()->Initialize(
+        ignition::gui::InitializeType::kDialog, "", {{_filename}}))
+  {
+    return;
+  }
+  ignition::gui::App()->exec();
 }
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
   new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->ExecConfig(std::string(_config));
+
+  if (!ignition::gui::App()->Initialize(
+      ignition::gui::InitializeType::kMainWindow, std::string(_config)))
+  {
+    return;
+  }
+
+  ignition::gui::App()->exec();
 }
 
 //////////////////////////////////////////////////
@@ -82,7 +94,11 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
   new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->ExecEmptyWindow();
+
+  if (!ignition::gui::App()->Initialize(
+        ignition::gui::InitializeType::kMainWindow, ""))
+    return;
+  ignition::gui::App()->exec();
 }
 
 //////////////////////////////////////////////////

@@ -38,6 +38,17 @@ namespace ignition
     class Dialog;
     class MainWindow;
     class Plugin;
+    enum class InitializeType : int
+    {
+      kMainWindow = 0,
+      kDialog = 1
+    };
+
+    struct PluginConfig
+    {
+      std::string filename = "";
+      tinyxml2::XMLElement *elem = nullptr;
+    };
 
     /// \brief An Ignition GUI application loads a QML engine and
     /// provides an API to load plugins and configuration files. The application
@@ -72,45 +83,16 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~Application();
 
+      public: bool Initialize(const InitializeType _type);
+      public: bool Initialize(const InitializeType _type,
+                              const std::string &_config);
+      public: bool Initialize(const InitializeType _type,
+                              const std::string &_config,
+                              const std::vector<PluginConfig> &plugins);
+
       /// \brief Get the QML engine
       /// \return Pointer to QML engine
       public: QQmlApplicationEngine *Engine() const;
-
-      /// \brief Run a main window using the given configuration file. This is
-      /// the main entry point for the command line tool "ign gui -c".
-      /// \param[in] _config Full path to configuration file.
-      /// \return True if successful
-      /// \remark This function blocks.
-      public: bool ExecConfig(const std::string &_config);
-
-      /// \brief Run a given plugin as a standalone window. This is the main
-      /// entry point for the command line tool "ign gui -s".
-      /// \param[in] _filename Plugin file name. The file must be in the path.
-      /// \return True if successful
-      /// \remark This function blocks.
-      public: bool ExecStandalone(const std::string &_filename);
-
-      /// \brief Create and run an empty window.
-      /// \return True if successful
-      /// \remark This function blocks.
-      public: bool ExecEmptyWindow();
-
-      /// \brief Load a configuration file, which includes window configurations
-      /// and plugins. This function doesn't instantiate the plugins, it just
-      /// keeps them in memory and they can be loaded later by either
-      /// instantiating a window or several dialogs.
-      /// \param[in] _config Full path to configuration file.
-      /// \return True if successful
-      /// \sa InitializeMainWindow
-      /// \sa InitializeDialogs
-      public: bool LoadConfig(const std::string &_config);
-
-      /// \brief Load the configuration from the default config file.
-      /// \return True if successful
-      /// \sa SetDefaultConfigPath
-      /// \sa DefaultConfigPath
-      /// \sa LoadConfig
-      public: bool LoadDefaultConfig();
 
       /// \brief Load a plugin from a file name. The plugin file must be in the
       /// path.
@@ -121,20 +103,15 @@ namespace ignition
       public: bool LoadPlugin(const std::string &_filename,
           const tinyxml2::XMLElement *_pluginElem = nullptr);
 
-      /// \brief Create a main window, populate with previously loaded plugins
-      /// and apply previously loaded configuration.
-      /// An empty window will be created if no plugins have been loaded.
+      /// \brief Load a configuration file, which includes window configurations
+      /// and plugins. This function doesn't instantiate the plugins, it just
+      /// keeps them in memory and they can be applied later by either
+      /// instantiating a window or several dialogs.
+      /// \param[in] _config Full path to configuration file.
       /// \return True if successful
-      /// \sa LoadConfig
-      /// \sa LoadPlugin
-      public: bool InitializeMainWindow();
-
-      /// \brief Create individual dialogs for all previously loaded plugins.
-      /// This has no effect if no plugins have been loaded.
-      /// \return True if successful
-      /// \sa LoadConfig
-      /// \sa LoadPlugin
-      public: bool InitializeDialogs();
+      /// \sa InitializeMainWindow
+      /// \sa InitializeDialogs
+      public: bool LoadConfig(const std::string &_config);
 
       /// \brief Add previously loaded plugins to the main window.
       /// * Make sure the window is created first
@@ -193,6 +170,29 @@ namespace ignition
       /// \param[in] _pluginName Plugn instance's unique name
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
+
+      /// \brief Load the configuration from the default config file.
+      /// \return True if successful
+      /// \sa SetDefaultConfigPath
+      /// \sa DefaultConfigPath
+      /// \sa LoadConfig
+      private: bool LoadDefaultConfig();
+
+      /// \brief Create a main window, populate with previously loaded plugins
+      /// and apply previously loaded configuration.
+      /// An empty window will be created if no plugins have been loaded.
+      /// \return True if successful
+      /// \sa LoadConfig
+      /// \sa LoadPlugin
+      private: bool InitializeMainWindow();
+
+      /// \brief Create individual dialogs for all previously loaded plugins.
+      /// This has no effect if no plugins have been loaded.
+      /// \return True if successful
+      /// \sa LoadConfig
+      /// \sa LoadPlugin
+      private: bool InitializeDialogs();
+
 
       /// \brief Remove plugin by pointer.
       /// \param[in] _plugin Shared pointer to plugin
