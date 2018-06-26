@@ -35,6 +35,7 @@ Drawer {
     objectName: "sideDrawer"
     id: sideDrawer
     anchors.fill: parent
+    property var sDialog: styleDialog
 
     ListModel {
       id: drawerModel

@@ -15,6 +15,13 @@ Rectangle {
       case "cppActionFromQml":
         CustomActions.cppActionFromQml()
         break
+      case "styleSettings":
+        if (parent && parent.sDialog)
+          parent.sDialog.open()
+        else
+          console.error("Invalid parent [", parent, "] or sDialog [", sDialog,
+                        "]")
+        break
       default:
         break
     }
@@ -26,6 +33,11 @@ Rectangle {
     ListElement {
       title: "Call C++ action"
       action: "cppActionFromQml"
+    }
+
+    ListElement {
+      title: "Call default action (Style)"
+      action: "styleSettings"
     }
   }
 
