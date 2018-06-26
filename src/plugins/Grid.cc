@@ -88,7 +88,7 @@ namespace plugins
     public: rendering::GridPtr grid;
 
     /// \brief If the display should be rendered.
-    public: bool visible{true};
+    public: bool visible = true;
   };
 }
 }
@@ -215,7 +215,8 @@ void Grid::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void Grid::CreateLayout()
 {
-  auto mainLayout = new QVBoxLayout();
+  auto mainLayout = this->layout();
+  mainLayout = new QVBoxLayout();
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   this->setLayout(mainLayout);
