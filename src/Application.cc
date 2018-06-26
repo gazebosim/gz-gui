@@ -204,7 +204,10 @@ bool Application::RunConfig(const std::string &_config)
     return false;
   }
 
-  this->InitializeMainWindow();
+  if (!this->InitializeMainWindow())
+  {
+    return false;
+  }
 
   // Run app - blocks
   this->exec();
@@ -219,7 +222,10 @@ bool Application::RunEmptyWindow()
 
   this->LoadDefaultConfig();
 
-  this->InitializeMainWindow();
+  if (!this->InitializeMainWindow())
+  {
+    return false;
+  }
 
   // Run app - blocks
   this->exec();
@@ -423,6 +429,9 @@ bool Application::InitializeMainWindow()
   igndbg << "Create main window" << std::endl;
 
   this->dataPtr->mainWin = new MainWindow();
+  if (!this->dataPtr->mainWin->QuickWindow())
+    return false;
+
   this->dataPtr->mainWin->setParent(this);
 
   return this->AddPluginsToWindow() && this->ApplyConfig();
