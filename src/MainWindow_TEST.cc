@@ -24,7 +24,7 @@
 
 #include "ignition/gui/MainWindow.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config";
+std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
 
 using namespace ignition;
 using namespace gui;
@@ -181,7 +181,8 @@ TEST(MainWindowTest, OnLoadConfig)
 //      auto edits = fileDialogs[0]->findChildren<QLineEdit *>();
 //      ASSERT_GT(edits.size(), 0);
 //      edits[0]->setText(QString::fromStdString(
-//          std::string(PROJECT_SOURCE_PATH) + "/test/config/stylesheet.config"));
+//          std::string(PROJECT_SOURCE_PATH) +
+//          "/test/config/stylesheet.config"));
 //
 //      // Accept
 //      auto buttons = fileDialogs[0]->findChildren<QPushButton *>();
@@ -225,10 +226,9 @@ TEST(MainWindowTest, OnLoadStyleSheet)
 //  auto loadAct = menus[0]->actions()[4];
 //  EXPECT_EQ(loadAct->text(), QString("&Load stylesheet"));
 //
-//  bool closed = false;
-//
 //  // Close dialog without choosing file
 //  {
+//    bool closed = false;
 //    // Close window after 1 s
 //    QTimer::singleShot(300, [&]
 //    {

@@ -120,9 +120,9 @@ TEST(TimePanelTest, WorldControl)
   std::function<bool(const msgs::WorldControl &, msgs::Boolean &)> cb =
       [&](const msgs::WorldControl &_req, msgs::Boolean &)
   {
-    pauseCalled = _req.has_pause() && _req.pause();
-    playCalled = _req.has_pause() && !_req.pause();
-    multiStepCalled = _req.has_multi_step();
+    pauseCalled = _req.pause();
+    playCalled = !_req.pause();
+    multiStepCalled = _req.multi_step() > 0;
     return true;
   };
   transport::Node node;
@@ -279,6 +279,7 @@ TEST(TimePanelTest, WorldStats)
     auto simTimeMsg = msg.mutable_sim_time();
     simTimeMsg->set_sec(3600);
     simTimeMsg->set_nsec(123456789);
+    msg.set_paused(true);
     pub.Publish(msg);
   }
 
@@ -306,6 +307,7 @@ TEST(TimePanelTest, WorldStats)
     auto realTimeMsg = msg.mutable_real_time();
     realTimeMsg->set_sec(86400);
     realTimeMsg->set_nsec(1000000);
+    msg.set_paused(true);
     pub.Publish(msg);
   }
 

@@ -152,7 +152,7 @@ RenderWindowItem::~RenderWindowItem()
     auto engine = scene->Engine();
     engine->DestroyScene(scene);
 
-    // TODO: If that was the last scene, terminate engine?
+    // TODO(anyone): If that was the last scene, terminate engine?
   }
 
   delete this->dataPtr->geometry;

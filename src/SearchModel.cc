@@ -151,7 +151,7 @@ void SearchModel::SetSearch(const QString &_search)
   // Trigger repaint on whole model
   this->filterChanged();
 
-  // TODO: Figure out why filterChanged works for TopicViewer but not
+  // TODO(anyone): Figure out why filterChanged works for TopicViewer but not
   // TopicsStats
   this->layoutChanged();
 }

@@ -18,6 +18,7 @@
 #ifndef IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
 #define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
+#include <memory>
 #include <ignition/msgs.hh>
 
 #include "ignition/gui/qt.h"

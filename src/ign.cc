@@ -19,6 +19,7 @@
 
 #include <iostream>
 
+#include "ignition/gui/config.hh"
 #include "ignition/gui/Iface.hh"
 #include "ignition/gui/ign.hh"
 #include "ignition/gui/Export.hh"
@@ -26,7 +27,7 @@
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 {
-  return strdup("0.1.0");
+  return strdup(IGNITION_GUI_VERSION_FULL);
 }
 
 //////////////////////////////////////////////////
