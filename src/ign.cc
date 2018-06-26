@@ -62,14 +62,14 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
   new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->RunStandalone(std::string(_filename));
+  ignition::gui::App()->ExecStandalone(std::string(_filename));
 }
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
   new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->RunConfig(std::string(_config));
+  ignition::gui::App()->ExecConfig(std::string(_config));
 }
 
 //////////////////////////////////////////////////
@@ -82,7 +82,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
   new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->RunEmptyWindow();
+  ignition::gui::App()->ExecEmptyWindow();
 }
 
 //////////////////////////////////////////////////

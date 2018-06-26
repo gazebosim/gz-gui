@@ -178,7 +178,7 @@ bool Application::RemovePlugin(const std::string &_pluginName)
       cardItem->deleteLater();
 
       // Unload shared library
-      this->RemoveAddedPlugin(plugin);
+      this->RemovePlugin(plugin);
 
       found = true;
       break;
@@ -189,7 +189,7 @@ bool Application::RemovePlugin(const std::string &_pluginName)
 }
 
 /////////////////////////////////////////////////
-bool Application::RunConfig(const std::string &_config)
+bool Application::ExecConfig(const std::string &_config)
 {
   igndbg << "Loading config file [" << _config << "]" << std::endl;
 
@@ -209,14 +209,14 @@ bool Application::RunConfig(const std::string &_config)
     return false;
   }
 
-  // Run app - blocks
+  // Exec app - blocks
   this->exec();
 
   return true;
 }
 
 /////////////////////////////////////////////////
-bool Application::RunEmptyWindow()
+bool Application::ExecEmptyWindow()
 {
   igndbg << "Loading default window" << std::endl;
 
@@ -227,14 +227,14 @@ bool Application::RunEmptyWindow()
     return false;
   }
 
-  // Run app - blocks
+  // Exec app - blocks
   this->exec();
 
   return true;
 }
 
 /////////////////////////////////////////////////
-bool Application::RunStandalone(const std::string &_filename)
+bool Application::ExecStandalone(const std::string &_filename)
 {
   igndbg << "Loading standalone plugin [" << _filename << "]" << std::endl;
 
@@ -249,7 +249,10 @@ bool Application::RunStandalone(const std::string &_filename)
     return false;
   }
 
-  this->RunDialogs();
+  this->InitializeDialogs();
+
+  // Exec app - blocks
+  this->exec();
 
   return true;
 }
@@ -467,7 +470,7 @@ bool Application::AddPluginsToWindow()
 
     if (plugin->DeleteLaterRequested())
     {
-      this->RemoveAddedPlugin(plugin);
+      this->RemovePlugin(plugin);
       continue;
     }
 
@@ -494,9 +497,9 @@ bool Application::AddPluginsToWindow()
 }
 
 /////////////////////////////////////////////////
-bool Application::RunDialogs()
+bool Application::InitializeDialogs()
 {
-  igndbg << "Run dialogs" << std::endl;
+  igndbg << "Initialize dialogs" << std::endl;
 
   while (!this->dataPtr->pluginsToAdd.empty())
   {
@@ -530,14 +533,11 @@ bool Application::RunDialogs()
     this->dataPtr->pluginsAdded.push_back(plugin);
 
     auto title = QString::fromStdString(plugin->Title());
-    igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
+    igndbg << "Initialized dialog [" << title.toStdString() << "]" << std::endl;
   }
 
   if (this->dataPtr->pluginsAdded.empty())
     return false;
-
-  // Run app - blocks
-  this->exec();
 
   return true;
 }
@@ -600,7 +600,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 }
 
 /////////////////////////////////////////////////
-void Application::RemoveAddedPlugin(std::shared_ptr<Plugin> _plugin)
+void Application::RemovePlugin(std::shared_ptr<Plugin> _plugin)
 {
   this->dataPtr->pluginsAdded.erase(std::remove(
       this->dataPtr->pluginsAdded.begin(),

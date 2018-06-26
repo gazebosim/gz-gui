@@ -39,7 +39,29 @@ namespace ignition
     class MainWindow;
     class Plugin;
 
-    /// \brief
+    /// \brief An Ignition GUI application, which loads a QML engine and
+    /// provides API to load plugins and configuration files. The application
+    /// supports either running a single main window or several plugins as
+    /// standalone dialogs.
+    ///
+    /// ## Usage
+    ///
+    /// ### Exec API
+    ///
+    /// All functions prefixed with `Exec` are self-contained and will run the
+    /// application, blocking until it is terminated (i.e. they call exec()).
+    ///
+    /// For example: `ExecConfig(configFilePath)` will load a configuration file
+    /// and run the application.
+    ///
+    /// ### Load-Initialize API
+    ///
+    /// To have more control over the application initialization, use the API
+    /// prefixed by `Load` and `Initialize`. Load functions such as `LoadPlugin`
+    /// and `LoadConfig` will store plugins and configurations in memory, and
+    /// then those can be applyed by either a main window
+    /// (`InitializeMainWindow`) or dialogs (`InitializeDialogs`).
+    ///
     class IGNITION_GUI_VISIBLE Application : public QGuiApplication
     {
       Q_OBJECT
@@ -54,40 +76,40 @@ namespace ignition
       /// \return Pointer to QML engine
       public: QQmlApplicationEngine *Engine() const;
 
-      /* RUN */
-
       /// \brief Run a main window using the given configuration file. This is
       /// the main entry point for the command line tool "ign gui -c".
       /// \param[in] _config Full path to configuration file.
       /// \return True if successful
-      public: bool RunConfig(const std::string &_config);
+      /// \remark This function blocks.
+      public: bool ExecConfig(const std::string &_config);
 
       /// \brief Run a given plugin as a standalone window. This is the main
       /// entry point for the command line tool "ign gui -s".
       /// \param[in] _filename Plugin file name. The file must be in the path.
       /// \return True if successful
-      public: bool RunStandalone(const std::string &_filename);
-
-      /// \brief Run previously loaded plugins as individual dialogs.
-      /// This has no effect if no plugins have been loaded.
-      /// \return True if successful
-      public: bool RunDialogs();
+      /// \remark This function blocks.
+      public: bool ExecStandalone(const std::string &_filename);
 
       /// \brief Create and run an empty window.
       /// \return True if successful
-      public: bool RunEmptyWindow();
+      /// \remark This function blocks.
+      public: bool ExecEmptyWindow();
 
-      /* LOAD / UNLOAD */
-
-      /// \brief Load plugins from a configuration file.
-      /// \param[in] _config Path to configuration file.
+      /// \brief Load a configuration file, which includes window configurations
+      /// and plugins. This function doesn't instantiate the plugins, it just
+      /// keeps them in memory and they can be loaded later by either
+      /// instantiating a window or several dialogs.
+      /// \param[in] _config Full path to configuration file.
       /// \return True if successful
+      /// \sa InitializeMainWindow
+      /// \sa InitializeDialogs
       public: bool LoadConfig(const std::string &_config);
 
       /// \brief Load the configuration from the default config file.
       /// \return True if successful
       /// \sa SetDefaultConfigPath
-      /// \sa defaultConfigPath
+      /// \sa DefaultConfigPath
+      /// \sa LoadConfig
       public: bool LoadDefaultConfig();
 
       /// \brief Load a plugin from a file name. The plugin file must be in the
@@ -95,21 +117,24 @@ namespace ignition
       /// \param[in] _filename Plugin filename.
       /// \param[in] _pluginElem Element containing plugin configuration
       /// \return True if successful
+      /// \sa LoadConfig
       public: bool LoadPlugin(const std::string &_filename,
           const tinyxml2::XMLElement *_pluginElem = nullptr);
 
-      /// \brief Remove plugin
-      /// \return True if successful
-      public: bool RemovePlugin(const std::string &_pluginName);
-      void RemoveAddedPlugin(std::shared_ptr<Plugin> _plugin);
-
-      /* MainWindow */
-
-      /// \brief Create a main window, populate with plugins and apply
-      /// configuration.
+      /// \brief Create a main window, populate with previously loaded plugins
+      /// and apply previously loaded configuration.
       /// An empty window will be created if no plugins have been loaded.
       /// \return True if successful
+      /// \sa LoadConfig
+      /// \sa LoadPlugin
       public: bool InitializeMainWindow();
+
+      /// \brief Create individual dialogs for all previously loaded plugins.
+      /// This has no effect if no plugins have been loaded.
+      /// \return True if successful
+      /// \sa LoadConfig
+      /// \sa LoadPlugin
+      public: bool InitializeDialogs();
 
       /// \brief Add previously loaded plugins to the main window.
       /// * Make sure the window is created first
@@ -123,8 +148,6 @@ namespace ignition
       /// * Be sure to call loadConfig() for each plugin first
       /// \return True if successful
       public: bool ApplyConfig();
-
-      /* SET / GET */
 
       /// \brief Specifies the location of the default configuration file.
       /// This is the file that stores the user settings when pressing
@@ -163,6 +186,17 @@ namespace ignition
       /// * A vector of plugins in that path
       public: std::vector<std::pair<std::string, std::vector<std::string>>>
           PluginList();
+
+      /// \brief Remove plugin by name. The plugin is removed from the
+      /// application and its shared library unloaded if this was its last
+      /// instance.
+      /// \param[in] _pluginName Plugn instance's unique name
+      /// \return True if successful
+      public: bool RemovePlugin(const std::string &_pluginName);
+
+      /// \brief Remove plugin by pointer.
+      /// \param[in] _plugin Shared pointer to plugin
+      private: void RemovePlugin(std::shared_ptr<Plugin> _plugin);
 
       /// \internal
       /// \brief Private data pointer
