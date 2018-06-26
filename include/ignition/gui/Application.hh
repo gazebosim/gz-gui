@@ -39,8 +39,8 @@ namespace ignition
     class MainWindow;
     class Plugin;
 
-    /// \brief An Ignition GUI application, which loads a QML engine and
-    /// provides API to load plugins and configuration files. The application
+    /// \brief An Ignition GUI application loads a QML engine and
+    /// provides an API to load plugins and configuration files. The application
     /// supports either running a single main window or several plugins as
     /// standalone dialogs.
     ///
@@ -59,7 +59,7 @@ namespace ignition
     /// To have more control over the application initialization, use the API
     /// prefixed by `Load` and `Initialize`. Load functions such as `LoadPlugin`
     /// and `LoadConfig` will store plugins and configurations in memory, and
-    /// then those can be applyed by either a main window
+    /// then those can be applied to either a main window
     /// (`InitializeMainWindow`) or dialogs (`InitializeDialogs`).
     ///
     class IGNITION_GUI_VISIBLE Application : public QGuiApplication
