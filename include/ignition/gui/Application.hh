@@ -57,18 +57,7 @@ namespace ignition
     ///
     /// ## Usage
     ///
-    /// ### Exec API
-    ///
-    /// All functions prefixed with `Exec` are self-contained and will run the
-    /// application, blocking until it is terminated (i.e. they call exec()).
-    ///
-    /// For example: `ExecConfig(configFilePath)` will load a configuration file
-    /// and run the application.
-    ///
-    /// ### Load-Initialize API
-    ///
-    /// To have more control over the application initialization, use the API
-    /// prefixed by `Load` and `Initialize`. Load functions such as `LoadPlugin`
+    /// Load functions such as `LoadPlugin`
     /// and `LoadConfig` will store plugins and configurations in memory, and
     /// then those can be applied to either a main window
     /// (`InitializeMainWindow`) or dialogs (`InitializeDialogs`).
