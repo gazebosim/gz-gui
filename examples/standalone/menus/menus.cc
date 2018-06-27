@@ -36,7 +36,7 @@ int main(int _argc, char **_argv)
   app.LoadConfig("../menus.config");
 
   // Create main window
-  app.InitializeMainWindow();
+  app.Initialize(ignition::gui::WindowType::kMainWindow);
 
   // Let QML files use CustomActions' functions and properties
   ignition::gui::CustomActions actions;

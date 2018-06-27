@@ -249,6 +249,7 @@ bool Application::LoadConfig(const std::string &_config)
               << std::endl;
       return false;
     }
+    // FIXME: default values are not being reset, do we want that?
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
   }
 

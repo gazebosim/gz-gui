@@ -18,8 +18,6 @@ by adding a `<window>` element to the config file. The child elements are:
         * `default`: Set to false to hide all the default menu options provided
                      by Ignition GUI. Downstream projects can always re-add the
                      desired ones.
-    * `<file>`: File menu configuration.
-        * `visible`: Set to false to hide the whole File menu.
     * `<plugins>`: Plugins menu configuration.
         * `visible`: Set to false to hide the whole Plugins menu.
         * `from_paths`: Set to false to prevent filling the menu with all

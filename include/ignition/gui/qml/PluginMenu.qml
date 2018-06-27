@@ -3,7 +3,16 @@ import QtQuick.Controls 2.2
 
 Menu {
   id: pluginMenu
+
+  Connections {
+    target: MainWindow
+    onConfigChanged: {
+      pluginMenuListView.model = MainWindow.PluginListModel()
+    }
+  }
+
   ListView {
+    id: pluginMenuListView
     height: pluginMenu.height
 
     delegate: ItemDelegate {

@@ -137,6 +137,7 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
+        visible: MainWindow.showPluginMenu
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter

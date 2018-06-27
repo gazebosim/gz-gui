@@ -90,6 +90,14 @@ namespace ignition
         NOTIFY ShowDefaultPanelOptsChanged
       )
 
+      /// \brief
+      Q_PROPERTY(
+        bool showPluginMenu
+        READ ShowPluginMenu
+        WRITE SetShowPluginMenu
+        NOTIFY ShowPluginMenuChanged
+      )
+
       /// \brief Constructor
       public: MainWindow();
 
@@ -180,6 +188,14 @@ namespace ignition
       public: Q_INVOKABLE void SetShowDefaultPanelOpts(
           const bool _showDefaultPanelOpts);
 
+      /// \brief
+      /// \return
+      public: Q_INVOKABLE bool ShowPluginMenu() const;
+
+      /// \brief
+      /// \param[in] _showPluginMenu
+      public: Q_INVOKABLE void SetShowPluginMenu(const bool _showPluginMenu);
+
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);
 
@@ -206,6 +222,12 @@ namespace ignition
 
       /// \brief
       signals: void ShowDefaultPanelOptsChanged();
+
+      /// \brief
+      signals: void ShowPluginMenuChanged();
+
+      /// \brief
+      signals: void configChanged();
 
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
@@ -272,6 +294,9 @@ namespace ignition
 
       /// \brief
       bool showDefaultPanelOpts{true};
+
+      /// \brief
+      bool showPluginMenu{true};
 
       /// \brief True if plugins found in plugin paths should be listed under
       /// the Plugins menu. True by default.
