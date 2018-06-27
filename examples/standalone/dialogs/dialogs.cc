@@ -36,17 +36,13 @@ int main(int _argc, char **_argv)
   // Initialize app
   ignition::gui::Application app(_argc, _argv);
 
-  // Load plugins and configurations
-  if (!app.LoadPlugin("Publisher"))
-    return 1;
-
-  // TODO(chapulina): fix multiple dialogs
-//  if (!app.LoadPlugin("TopicEcho"))
-//    return 1;
-
   // Create dialogs
-  if (!app.InitializeDialogs())
+  // TODO(chapulina): fix multiple dialogs
+  if (!app.Initialize(ignition::gui::WindowType::kDialog, "",
+        {{"Publisher"}, /*{"TopicEcho"}*/}))
+  {
     return 1;
+  }
 
   // Run dialogs
   app.exec();

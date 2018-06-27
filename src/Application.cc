@@ -189,75 +189,6 @@ bool Application::RemovePlugin(const std::string &_pluginName)
 }
 
 /////////////////////////////////////////////////
-bool Application::ExecConfig(const std::string &_config)
-{
-  igndbg << "Loading config file [" << _config << "]" << std::endl;
-
-  if (_config.empty())
-  {
-    ignerr << "Missing config filename" << std::endl;
-    return false;
-  }
-
-  if (!this->LoadConfig(_config))
-  {
-    return false;
-  }
-
-  if (!this->InitializeMainWindow())
-  {
-    return false;
-  }
-
-  // Exec app - blocks
-  this->exec();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool Application::ExecEmptyWindow()
-{
-  igndbg << "Loading default window" << std::endl;
-
-  this->LoadDefaultConfig();
-
-  if (!this->InitializeMainWindow())
-  {
-    return false;
-  }
-
-  // Exec app - blocks
-  this->exec();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool Application::ExecStandalone(const std::string &_filename)
-{
-  igndbg << "Loading standalone plugin [" << _filename << "]" << std::endl;
-
-  if (_filename.empty())
-  {
-    ignerr << "Missing plugin filename" << std::endl;
-    return false;
-  }
-
-  if (!this->LoadPlugin(_filename))
-  {
-    return false;
-  }
-
-  this->InitializeDialogs();
-
-  // Exec app - blocks
-  this->exec();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
 bool Application::LoadConfig(const std::string &_config)
 {
   if (_config.empty())
@@ -320,6 +251,8 @@ bool Application::LoadConfig(const std::string &_config)
     }
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
   }
+
+  this->ApplyConfig();
 
   return true;
 }
@@ -423,7 +356,56 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Store plugin in queue to be added to the window
   this->dataPtr->pluginsToAdd.push(plugin);
 
+  // Add to window if there's already one
+  this->AddPluginsToWindow();
+
   return true;
+}
+
+/////////////////////////////////////////////////
+bool Application::Initialize(const WindowType _type)
+{
+  switch (_type)
+  {
+    case WindowType::kMainWindow:
+      return this->InitializeMainWindow();
+    case WindowType::kDialog:
+      return this->InitializeDialogs();
+    default:
+      ignerr << "Unknown WindowType[" << static_cast<int>(_type) << "]\n";
+      return false;
+  }
+}
+
+/////////////////////////////////////////////////
+bool Application::Initialize(const WindowType _type,
+                             const std::string &_config)
+{
+  if (_config.empty())
+    this->LoadDefaultConfig();
+  else
+    this->LoadConfig(_config);
+
+  return this->Initialize(_type);
+}
+
+/////////////////////////////////////////////////
+bool Application::Initialize(const WindowType _type,
+                             const std::string &_config,
+                             const std::vector<PluginConfig> &_plugins)
+{
+  for (const auto plugin : _plugins)
+  {
+    if (!this->LoadPlugin(plugin.filename, plugin.elem))
+      return false;
+  }
+
+  if (_config.empty())
+    this->LoadDefaultConfig();
+  else
+    this->LoadConfig(_config);
+
+  return this->Initialize(_type);
 }
 
 /////////////////////////////////////////////////
@@ -445,12 +427,18 @@ bool Application::ApplyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
+  if (!this->dataPtr->mainWin)
+    return false;
+
   return this->dataPtr->mainWin->ApplyConfig(this->dataPtr->windowConfig);
 }
 
 /////////////////////////////////////////////////
 bool Application::AddPluginsToWindow()
 {
+  if (!this->dataPtr->mainWin || !this->dataPtr->mainWin->QuickWindow())
+    return false;
+
   // Get main window background item
   auto bgItem = this->dataPtr->mainWin->QuickWindow()
       ->findChild<QQuickItem *>("background");
