@@ -54,11 +54,10 @@ TEST(PluginTest, DeleteLater)
     "</plugin>";
 
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(app.LoadPlugin("TestPlugin",
-      pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
-  EXPECT_TRUE(app.InitializeMainWindow());
+  EXPECT_TRUE(app.Initialize(WindowType::kMainWindow, "",
+        {{"TestPlugin", pluginDoc.FirstChildElement("plugin")}}));
 
   auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);

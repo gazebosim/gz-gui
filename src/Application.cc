@@ -358,6 +358,52 @@ bool Application::LoadPlugin(const std::string &_filename,
 }
 
 /////////////////////////////////////////////////
+bool Application::Initialize(const WindowType _type)
+{
+  switch (_type)
+  {
+    case WindowType::kMainWindow:
+      return this->InitializeMainWindow();
+    case WindowType::kDialog:
+      return this->InitializeDialogs();
+    default:
+      ignerr << "Unknown WindowType[" << static_cast<int>(_type) << "]\n";
+      return false;
+  }
+}
+
+/////////////////////////////////////////////////
+bool Application::Initialize(const WindowType _type,
+                             const std::string &_config)
+{
+  if (_config.empty())
+    this->LoadDefaultConfig();
+  else
+    this->LoadConfig(_config);
+
+  return this->Initialize(_type);
+}
+
+/////////////////////////////////////////////////
+bool Application::Initialize(const WindowType _type,
+                             const std::string &_config,
+                             const std::vector<PluginConfig> &_plugins)
+{
+  for (const auto plugin : _plugins)
+  {
+    if (!this->LoadPlugin(plugin.filename, plugin.elem))
+      return false;
+  }
+
+  if (_config.empty())
+    this->LoadDefaultConfig();
+  else
+    this->LoadConfig(_config);
+
+  return this->Initialize(_type);
+}
+
+/////////////////////////////////////////////////
 bool Application::InitializeMainWindow()
 {
   igndbg << "Create main window" << std::endl;

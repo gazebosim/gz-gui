@@ -163,7 +163,7 @@ TEST(ApplicationTest, LoadDefaultConfig)
       std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
-    EXPECT_TRUE(app.LoadDefaultConfig());
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
     EXPECT_EQ(app.DefaultConfigPath(), configPath);
   }
 }
@@ -180,7 +180,7 @@ TEST(ApplicationTest, MainWindowNoPlugins)
     Application app(g_argc, g_argv);
 
     // Create main window
-    EXPECT_TRUE(app.InitializeMainWindow());
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
 
     auto wins = app.allWindows();
     ASSERT_EQ(wins.size(), 1);
@@ -200,7 +200,7 @@ TEST(ApplicationTest, Dialog)
 
   EXPECT_EQ(nullptr, qGuiApp);
 
-  // Init app first
+  // Single dialog
   {
     Application app(g_argc, g_argv);
 
@@ -208,11 +208,8 @@ TEST(ApplicationTest, Dialog)
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
 
-    // Load test plugin
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-
     // Initialize dialog
-    EXPECT_TRUE(app.InitializeDialogs());
+    EXPECT_TRUE(app.Initialize(WindowType::kDialog, "", {{"TestPlugin"}}));
 
     // Close dialog after some time
     auto closed = false;
@@ -245,12 +242,9 @@ TEST(ApplicationTest, Dialog)
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
 
-    // Load 2 test plugins
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-
     // Initialize dialogs
-    EXPECT_TRUE(app.InitializeDialogs());
+    EXPECT_TRUE(app.Initialize(WindowType::kDialog, "",
+          {{"TestPlugin"}, {"TestPlugin"}}));
 
     // Close dialogs after some time
     auto closed = false;

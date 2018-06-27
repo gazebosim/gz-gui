@@ -63,11 +63,11 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
   ignition::gui::Application app(g_argc, g_argv);
 
-  if (!app.LoadPlugin(_filename))
+  if (!app.Initialize(ignition::gui::WindowType::kDialog, "",
+      {{_filename}}))
+  {
     return;
-
-  if (!app.InitializeDialogs())
-    return;
+  }
 
   app.exec();
 }
@@ -77,11 +77,11 @@ extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
   ignition::gui::Application app(g_argc, g_argv);
 
-  if (!app.LoadConfig(_config))
+  if (!app.Initialize(
+      ignition::gui::WindowType::kMainWindow, std::string(_config)))
+  {
     return;
-
-  if (!app.InitializeMainWindow())
-    return;
+  }
 
   app.exec();
 }
@@ -97,10 +97,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
   ignition::gui::Application app(g_argc, g_argv);
 
-  if (!app.LoadDefaultConfig())
-    return;
-
-  if (!app.InitializeMainWindow())
+  if (!app.Initialize(ignition::gui::WindowType::kMainWindow, ""))
     return;
 
   app.exec();
