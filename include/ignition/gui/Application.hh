@@ -101,10 +101,14 @@ namespace ignition
 
       /// \brief Load a plugin from a file name. The plugin file must be in the
       /// path.
+      /// If a window has been initialized, the plugin is added to the window.
+      /// Otherwise, the plugin is stored and can be later added to a window or
+      /// dialog.
       /// \param[in] _filename Plugin filename.
       /// \param[in] _pluginElem Element containing plugin configuration
       /// \return True if successful
       /// \sa LoadConfig
+      /// \sa AddPluginsToWindow
       public: bool LoadPlugin(const std::string &_filename,
           const tinyxml2::XMLElement *_pluginElem = nullptr);
 
@@ -117,13 +121,6 @@ namespace ignition
       /// \sa InitializeMainWindow
       /// \sa InitializeDialogs
       public: bool LoadConfig(const std::string &_config);
-
-      /// \brief Add previously loaded plugins to the main window.
-      /// * Make sure the window is created first
-      /// * Be sure to call LoadPlugin() for each plugin first
-      /// * Plugins previously added must be loaded again
-      /// \return True if successful
-      public: bool AddPluginsToWindow();
 
       /// \brief Apply previously loaded config to the main window.
       /// * Make sure the window is created first
@@ -202,6 +199,12 @@ namespace ignition
       /// \brief Remove plugin by pointer.
       /// \param[in] _plugin Shared pointer to plugin
       private: void RemovePlugin(std::shared_ptr<Plugin> _plugin);
+
+      /// \brief Add previously loaded plugins to the main window.
+      /// \return True if successful. Will fail if the window hasn't been
+      /// created yet.
+      /// \sa LoadPlugin
+      private: bool AddPluginsToWindow();
 
       /// \internal
       /// \brief Private data pointer

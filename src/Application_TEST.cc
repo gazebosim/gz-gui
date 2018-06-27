@@ -23,6 +23,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
 #include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/Plugin.hh"
 
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
@@ -169,13 +170,13 @@ TEST(ApplicationTest, LoadDefaultConfig)
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, MainWindowNoPlugins)
+TEST(ApplicationTest, InitializeMainWindow)
 {
   ignition::common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
-  // Steps in order
+  // No plugins
   {
     Application app(g_argc, g_argv);
 
@@ -184,6 +185,62 @@ TEST(ApplicationTest, MainWindowNoPlugins)
 
     auto wins = app.allWindows();
     ASSERT_EQ(wins.size(), 1);
+
+    // Close window after some time
+    QTimer::singleShot(300, wins[0], SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Load plugin before
+  {
+    Application app(g_argc, g_argv);
+
+    EXPECT_TRUE(app.LoadPlugin("Publisher"));
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    // 2 windows, one from the plugin
+    auto wins = app.allWindows();
+    ASSERT_EQ(wins.size(), 2);
+
+    // Check plugin count
+    auto plugins = wins[0]->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
+
+    // Close window after some time
+    QTimer::singleShot(300, wins[0], SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Load plugin after
+  {
+    Application app(g_argc, g_argv);
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    // 1 window
+    auto wins = app.allWindows();
+    ASSERT_EQ(wins.size(), 1);
+
+    // Check plugin count
+    auto plugins = wins[0]->findChildren<Plugin *>();
+    EXPECT_EQ(0, plugins.count());
+
+    EXPECT_TRUE(app.LoadPlugin("Publisher"));
+
+    // 2 windows, one from the plugin
+    wins = app.allWindows();
+    ASSERT_EQ(wins.size(), 2);
+
+    // Check plugin count
+    plugins = wins[0]->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
     QTimer::singleShot(300, wins[0], SLOT(close()));

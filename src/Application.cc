@@ -354,6 +354,12 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Store plugin in queue to be added to the window
   this->dataPtr->pluginsToAdd.push(plugin);
 
+  // Add to window if there's already one
+  if (this->dataPtr->mainWin)
+  {
+    this->AddPluginsToWindow();
+  }
+
   return true;
 }
 

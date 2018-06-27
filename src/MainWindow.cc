@@ -205,7 +205,6 @@ void MainWindow::OnLoadConfig(const QString &_path)
   if (!App()->LoadConfig(localPath.toStdString()))
     return;
 
-  App()->AddPluginsToWindow();
   App()->ApplyConfig();
 }
 
@@ -276,7 +275,6 @@ void MainWindow::OnAddPlugin(QString _plugin)
   ignlog << "Add [" << plugin << "] via menu" << std::endl;
 
   App()->LoadPlugin(plugin);
-  App()->AddPluginsToWindow();
 }
 
 ///////////////////////////////////////////////////
