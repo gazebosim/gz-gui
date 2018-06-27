@@ -376,7 +376,7 @@ bool Application::Initialize(const InitializeType _type)
 bool Application::Initialize(const InitializeType _type,
                              const std::string &_config)
 {
-  if (!_config.empty())
+  if (_config.empty())
     this->LoadDefaultConfig();
   else
     this->LoadConfig(_config);
