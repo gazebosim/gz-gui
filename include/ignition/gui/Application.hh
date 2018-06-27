@@ -46,18 +46,7 @@ namespace ignition
     ///
     /// ## Usage
     ///
-    /// ### Exec API
-    ///
-    /// All functions prefixed with `Exec` are self-contained and will run the
-    /// application, blocking until it is terminated (i.e. they call exec()).
-    ///
-    /// For example: `ExecConfig(configFilePath)` will load a configuration file
-    /// and run the application.
-    ///
-    /// ### Load-Initialize API
-    ///
-    /// To have more control over the application initialization, use the API
-    /// prefixed by `Load` and `Initialize`. Load functions such as `LoadPlugin`
+    /// Load functions such as `LoadPlugin`
     /// and `LoadConfig` will store plugins and configurations in memory, and
     /// then those can be applied to either a main window
     /// (`InitializeMainWindow`) or dialogs (`InitializeDialogs`).
@@ -75,25 +64,6 @@ namespace ignition
       /// \brief Get the QML engine
       /// \return Pointer to QML engine
       public: QQmlApplicationEngine *Engine() const;
-
-      /// \brief Run a main window using the given configuration file. This is
-      /// the main entry point for the command line tool "ign gui -c".
-      /// \param[in] _config Full path to configuration file.
-      /// \return True if successful
-      /// \remark This function blocks.
-      public: bool ExecConfig(const std::string &_config);
-
-      /// \brief Run a given plugin as a standalone window. This is the main
-      /// entry point for the command line tool "ign gui -s".
-      /// \param[in] _filename Plugin file name. The file must be in the path.
-      /// \return True if successful
-      /// \remark This function blocks.
-      public: bool ExecStandalone(const std::string &_filename);
-
-      /// \brief Create and run an empty window.
-      /// \return True if successful
-      /// \remark This function blocks.
-      public: bool ExecEmptyWindow();
 
       /// \brief Load a configuration file, which includes window configurations
       /// and plugins. This function doesn't instantiate the plugins, it just
