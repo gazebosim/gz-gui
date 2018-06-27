@@ -23,6 +23,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
 #include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/Plugin.hh"
 
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
@@ -163,30 +164,143 @@ TEST(ApplicationTest, LoadDefaultConfig)
       std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
-    EXPECT_TRUE(app.LoadDefaultConfig());
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
     EXPECT_EQ(app.DefaultConfigPath(), configPath);
   }
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, MainWindowNoPlugins)
+TEST(ApplicationTest, InitializeMainWindow)
 {
   ignition::common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
-  // Steps in order
+  // No plugins
   {
     Application app(g_argc, g_argv);
 
     // Create main window
-    EXPECT_TRUE(app.InitializeMainWindow());
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
 
     auto wins = app.allWindows();
     ASSERT_EQ(wins.size(), 1);
 
     // Close window after some time
     QTimer::singleShot(300, wins[0], SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Load plugin before
+  {
+    Application app(g_argc, g_argv);
+
+    EXPECT_TRUE(app.LoadPlugin("Publisher"));
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
+
+    // Check plugin count
+    auto plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
+
+    // Close window after some time
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Load plugin after
+  {
+    Application app(g_argc, g_argv);
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
+
+    // Check plugin count
+    auto plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(0, plugins.count());
+
+    // Load plugin
+    EXPECT_TRUE(app.LoadPlugin("Publisher"));
+
+    // Check plugin count
+    plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
+
+    // Close window after some time
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Test config
+  auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+  auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+
+  // Load config before
+  {
+    Application app(g_argc, g_argv);
+
+    // Add test plugin to path (referenced in config)
+    app.AddPluginPath(testBuildPath);
+
+    // Load test config file
+    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
+
+    // Check plugin count
+    auto plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
+
+    // Close window after some time
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Load config after
+  {
+    Application app(g_argc, g_argv);
+
+    // Add test plugin to path (referenced in config)
+    app.AddPluginPath(testBuildPath);
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
+
+    // Check plugin count
+    auto plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(0, plugins.count());
+
+    // Load test config file
+    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
+
+    // Check plugin count
+    plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
+
+    // Close window after some time
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
 
     // Show window
     app.exec();
@@ -200,7 +314,7 @@ TEST(ApplicationTest, Dialog)
 
   EXPECT_EQ(nullptr, qGuiApp);
 
-  // Init app first
+  // Single dialog
   {
     Application app(g_argc, g_argv);
 
@@ -208,11 +322,8 @@ TEST(ApplicationTest, Dialog)
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
 
-    // Load test plugin
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-
     // Initialize dialog
-    EXPECT_TRUE(app.InitializeDialogs());
+    EXPECT_TRUE(app.Initialize(WindowType::kDialog, "", {{"TestPlugin"}}));
 
     // Close dialog after some time
     auto closed = false;
@@ -245,12 +356,9 @@ TEST(ApplicationTest, Dialog)
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
 
-    // Load 2 test plugins
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-
     // Initialize dialogs
-    EXPECT_TRUE(app.InitializeDialogs());
+    EXPECT_TRUE(app.Initialize(WindowType::kDialog, "",
+          {{"TestPlugin"}, {"TestPlugin"}}));
 
     // Close dialogs after some time
     auto closed = false;
@@ -265,137 +373,6 @@ TEST(ApplicationTest, Dialog)
 
     // Exec dialog
     app.exec();
-
-    // Make sure timer was triggered
-    EXPECT_TRUE(closed);
-  }
-}
-
-//////////////////////////////////////////////////
-TEST(ApplicationTest, ExecEmptyWindow)
-{
-  ignition::common::Console::SetVerbosity(4);
-
-  EXPECT_EQ(nullptr, qGuiApp);
-
-  Application app(g_argc, g_argv);
-
-  // Close window after 1 s
-  bool closed = false;
-  QTimer::singleShot(300, [&]
-  {
-    auto wins = app.allWindows();
-    ASSERT_EQ(wins.size(), 1);
-
-    wins[0]->close();
-    closed = true;
-  });
-
-  // Exec empty window
-  EXPECT_TRUE(app.ExecEmptyWindow());
-
-  // Make sure timer was triggered
-  EXPECT_TRUE(closed);
-}
-
-//////////////////////////////////////////////////
-TEST(ApplicationTest, ExecStandalone)
-{
-  ignition::common::Console::SetVerbosity(4);
-
-  EXPECT_EQ(nullptr, qGuiApp);
-
-  // Empty string
-  {
-    Application app(g_argc, g_argv);
-
-    EXPECT_FALSE(app.ExecStandalone(""));
-  }
-
-  // Bad file
-  {
-    Application app(g_argc, g_argv);
-
-    EXPECT_FALSE(app.ExecStandalone("badfile"));
-  }
-
-  // Good file
-  {
-    Application app(g_argc, g_argv);
-
-    // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-    app.AddPluginPath(testBuildPath);
-
-    // Close dialog after 1 s
-    bool closed = false;
-    QTimer::singleShot(300, [&] {
-      auto ds = app.allWindows();
-
-      // The main dialog and the hidden undocked dialog from Card.qml
-      EXPECT_EQ(ds.size(), 2);
-
-      EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
-      EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[1]));
-
-      // Close
-      ds[0]->close();
-      closed = true;
-    });
-
-    // Exec test plugin
-    EXPECT_TRUE(app.ExecStandalone("TestPlugin"));
-
-    // Make sure timer was triggered
-    EXPECT_TRUE(closed);
-  }
-}
-
-//////////////////////////////////////////////////
-TEST(ApplicationTest, runConfig)
-{
-  ignition::common::Console::SetVerbosity(4);
-
-  EXPECT_EQ(nullptr, qGuiApp);
-
-  // Empty string
-  {
-    Application app(g_argc, g_argv);
-
-    EXPECT_FALSE(app.ExecConfig(""));
-  }
-
-  // Bad file
-  {
-    Application app(g_argc, g_argv);
-
-    EXPECT_FALSE(app.ExecConfig("badfile"));
-  }
-
-  // Good file
-  {
-    Application app(g_argc, g_argv);
-
-    // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-    app.AddPluginPath(testBuildPath);
-
-    // Close window after 1 s
-    bool closed = false;
-    QTimer::singleShot(300, [&]
-    {
-      auto wins = app.allWindows();
-      ASSERT_EQ(wins.size(), 2);
-
-      for (auto win : wins)
-        win->close();
-
-      closed = true;
-    });
-
-    // Exec test config file
-    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(app.ExecConfig(testSourcePath + "config/test.config"));
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
