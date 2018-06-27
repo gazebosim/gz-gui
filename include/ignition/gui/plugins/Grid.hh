@@ -61,8 +61,11 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
+    /// \brief Create the widget for standard display plugins' properties.
+    public: QWidget* CreateStandardProperties();
+
     /// \brief Create the widget for the plugin's properties.
-    private: QWidget* CreateProperties();
+    public: QWidget* CreateProperties();
 
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value

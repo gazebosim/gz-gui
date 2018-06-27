@@ -209,13 +209,11 @@ void Grid::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     return;
   }
-  // Create layout
-  auto mainLayout = new QVBoxLayout();
-  mainLayout->setContentsMargins(0, 0, 0, 0);
-  mainLayout->setSpacing(0);
-  this->setLayout(mainLayout);
+}
 
-  // Create generic configuration options
+QWidget* Grid::CreateStandardProperties()
+{
+  // Create generic configuration options for all display plugins
   auto visibleCheck = new QCheckBox("Visible");
   visibleCheck->setObjectName("visibleCheck");
   visibleCheck->setToolTip("Toggle visibility");
@@ -227,15 +225,7 @@ void Grid::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   auto buttonsWidget = new QWidget();
   buttonsWidget->setLayout(buttonsLayout);
-
-  mainLayout->addWidget(buttonsWidget);
-
-  // Create grid configuration options
-  mainLayout->addWidget(this->CreateProperties());
-
-  auto spacer = new QWidget();
-  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacer);
+  return buttonsWidget;
 }
 
 /////////////////////////////////////////////////

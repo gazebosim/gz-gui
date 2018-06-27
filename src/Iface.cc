@@ -477,11 +477,11 @@ std::string ignition::gui::defaultConfigPath()
 }
 
 /////////////////////////////////////////////////
-bool ignition::gui::loadPlugin(const std::string &_filename,
+std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(const std::string &_filename,
     const tinyxml2::XMLElement *_pluginElem)
 {
   if (!checkApp())
-    return false;
+    return nullptr;
 
   ignmsg << "Loading plugin [" << _filename << "]" << std::endl;
 
@@ -503,7 +503,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   {
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't find shared library." << std::endl;
-    return false;
+    return nullptr;
   }
 
   // Load plugin
@@ -515,7 +515,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't load library on path [" << pathToLib <<
               "]." << std::endl;
-    return false;
+    return nullptr;
   }
 
   auto pluginName = *pluginNames.begin();
@@ -524,7 +524,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't load library on path [" << pathToLib <<
               "]." << std::endl;
-    return false;
+    return nullptr;
   }
 
   auto commonPlugin = pluginLoader.Instantiate(pluginName);
@@ -533,7 +533,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't instantiate plugin on path [" << pathToLib <<
               "]." << std::endl;
-    return false;
+    return nullptr;
   }
 
   auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
@@ -542,7 +542,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't get interface [" << pluginName <<
               "]." << std::endl;
-    return false;
+    return nullptr;
   }
 
   // Basic config in case there is none
@@ -558,8 +558,21 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   else
     plugin->Load(_pluginElem);
 
+  return plugin;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::loadPlugin(const std::string &_filename,
+    const tinyxml2::XMLElement *_pluginElem)
+{
+  auto loadedPlugin = loadPluginWithoutAdding(_filename, _pluginElem);
+  if (nullptr == loadedPlugin)
+  {
+    return false;
+  }
+
   // Store plugin in queue to be added to the window
-  g_pluginsToAdd.push(plugin);
+  g_pluginsToAdd.push(loadedPlugin);
 
   return true;
 }
