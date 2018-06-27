@@ -30,6 +30,12 @@ foreach (src ${qt_headers_local})
     ${IGNITION-TRANSPORT_LIBRARIES}
     ${Qt5Core_LIBRARIES}
     ${Qt5Widgets_LIBRARIES})
+endforeach (src ${qt_headers_local})
+
+target_link_libraries(Displays
+  Grid
+)
+foreach (src ${qt_headers_local})
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})
 
