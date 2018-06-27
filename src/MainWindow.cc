@@ -202,10 +202,7 @@ void MainWindow::OnLoadConfig(const QString &_path)
   if (localPath.isEmpty())
     localPath = _path;
 
-  if (!App()->LoadConfig(localPath.toStdString()))
-    return;
-
-  App()->ApplyConfig();
+  App()->LoadConfig(localPath.toStdString());
 }
 
 /////////////////////////////////////////////////

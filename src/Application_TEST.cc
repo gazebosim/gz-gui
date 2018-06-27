@@ -202,16 +202,15 @@ TEST(ApplicationTest, InitializeMainWindow)
     // Create main window
     EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
 
-    // 2 windows, one from the plugin
-    auto wins = app.allWindows();
-    ASSERT_EQ(wins.size(), 2);
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
 
     // Check plugin count
-    auto plugins = wins[0]->findChildren<Plugin *>();
+    auto plugins = win->findChildren<Plugin *>();
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
-    QTimer::singleShot(300, wins[0], SLOT(close()));
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
 
     // Show window
     app.exec();
@@ -224,26 +223,84 @@ TEST(ApplicationTest, InitializeMainWindow)
     // Create main window
     EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
 
-    // 1 window
-    auto wins = app.allWindows();
-    ASSERT_EQ(wins.size(), 1);
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
 
     // Check plugin count
-    auto plugins = wins[0]->findChildren<Plugin *>();
+    auto plugins = win->findChildren<Plugin *>();
     EXPECT_EQ(0, plugins.count());
 
+    // Load plugin
     EXPECT_TRUE(app.LoadPlugin("Publisher"));
 
-    // 2 windows, one from the plugin
-    wins = app.allWindows();
-    ASSERT_EQ(wins.size(), 2);
-
     // Check plugin count
-    plugins = wins[0]->findChildren<Plugin *>();
+    plugins = win->findChildren<Plugin *>();
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
-    QTimer::singleShot(300, wins[0], SLOT(close()));
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Test config
+  auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+  auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+
+  // Load config before
+  {
+    Application app(g_argc, g_argv);
+
+    // Add test plugin to path (referenced in config)
+    app.AddPluginPath(testBuildPath);
+
+    // Load test config file
+    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
+
+    // Check plugin count
+    auto plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
+
+    // Close window after some time
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+
+    // Show window
+    app.exec();
+  }
+
+  // Load config after
+  {
+    Application app(g_argc, g_argv);
+
+    // Add test plugin to path (referenced in config)
+    app.AddPluginPath(testBuildPath);
+
+    // Create main window
+    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
+
+    auto win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
+
+    // Check plugin count
+    auto plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(0, plugins.count());
+
+    // Load test config file
+    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
+
+    // Check plugin count
+    plugins = win->findChildren<Plugin *>();
+    EXPECT_EQ(1, plugins.count());
+
+    // Close window after some time
+    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
 
     // Show window
     app.exec();

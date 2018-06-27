@@ -252,6 +252,8 @@ bool Application::LoadConfig(const std::string &_config)
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
   }
 
+  this->ApplyConfig();
+
   return true;
 }
 
@@ -355,10 +357,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   this->dataPtr->pluginsToAdd.push(plugin);
 
   // Add to window if there's already one
-  if (this->dataPtr->mainWin)
-  {
-    this->AddPluginsToWindow();
-  }
+  this->AddPluginsToWindow();
 
   return true;
 }
@@ -428,12 +427,18 @@ bool Application::ApplyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
+  if (!this->dataPtr->mainWin)
+    return false;
+
   return this->dataPtr->mainWin->ApplyConfig(this->dataPtr->windowConfig);
 }
 
 /////////////////////////////////////////////////
 bool Application::AddPluginsToWindow()
 {
+  if (!this->dataPtr->mainWin || !this->dataPtr->mainWin->QuickWindow())
+    return false;
+
   // Get main window background item
   auto bgItem = this->dataPtr->mainWin->QuickWindow()
       ->findChild<QQuickItem *>("background");

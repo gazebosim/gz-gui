@@ -122,12 +122,6 @@ namespace ignition
       /// \sa InitializeDialogs
       public: bool LoadConfig(const std::string &_config);
 
-      /// \brief Apply previously loaded config to the main window.
-      /// * Make sure the window is created first
-      /// * Be sure to call loadConfig() for each plugin first
-      /// \return True if successful
-      public: bool ApplyConfig();
-
       /// \brief Specifies the location of the default configuration file.
       /// This is the file that stores the user settings when pressing
       /// "Save configuration".
@@ -195,7 +189,6 @@ namespace ignition
       /// \sa LoadPlugin
       private: bool InitializeDialogs();
 
-
       /// \brief Remove plugin by pointer.
       /// \param[in] _plugin Shared pointer to plugin
       private: void RemovePlugin(std::shared_ptr<Plugin> _plugin);
@@ -205,6 +198,11 @@ namespace ignition
       /// created yet.
       /// \sa LoadPlugin
       private: bool AddPluginsToWindow();
+
+      /// \brief Apply previously loaded config to the main window.
+      /// \return True if successful, will fail if there's no main window
+      /// initialized.
+      private: bool ApplyConfig();
 
       /// \internal
       /// \brief Private data pointer
