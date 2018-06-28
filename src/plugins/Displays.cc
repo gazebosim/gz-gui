@@ -129,25 +129,34 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   mainLayout->setSpacing(0);
   this->setLayout(mainLayout);
 
-  for (int i = 0; i<2; i++){
-  std::shared_ptr<Plugin> plugin = loadPluginWithoutAdding("Grid", nullptr); 
-  this->dataPtr->displayPlugins.push_back(plugin);
+  // TODO(dhood): Get list of initial display plugins from config file.
+  std::list<std::string> pluginsToLoad {"Grid", "Grid"};
+  for (auto pluginToLoad : pluginsToLoad) {
+    std::shared_ptr<Plugin> plugin = loadPluginWithoutAdding(pluginToLoad, nullptr);
+    if (plugin == nullptr)
+    {
+      ignerr << "Couldn't load plugin [" << pluginToLoad << "]" << std::endl;
+      return;
+    }
 
-  // Create grid configuration options
-  std::shared_ptr<ignition::gui::DisplayPlugin> displayPlugin =
-               std::dynamic_pointer_cast<ignition::gui::DisplayPlugin> (plugin);
-  if (displayPlugin == nullptr)
-  {
-    fprintf(stderr, "Error casting plugin\n");
-    return;
-  }
-  mainLayout->addWidget(displayPlugin->CreateStandardProperties());
+    std::shared_ptr<ignition::gui::DisplayPlugin> displayPlugin =
+                std::dynamic_pointer_cast<ignition::gui::DisplayPlugin> (plugin);
+    if (displayPlugin == nullptr)
+    {
+      ignerr << "Couldn't cast plugin [" << pluginToLoad << "] to DisplayPlugin" << std::endl;
+      return;
+    }
+    this->dataPtr->displayPlugins.push_back(plugin);
 
-  mainLayout->addWidget(displayPlugin->CreateProperties());
+    // Create the standard configuration options for display plugins.
+    mainLayout->addWidget(displayPlugin->CreateStandardProperties());
 
-  auto spacer = new QWidget();
-  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacer);
+    // Create the custom configuration options for this specific display plugin.
+    mainLayout->addWidget(displayPlugin->CreateProperties());
+
+    auto spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mainLayout->addWidget(spacer);
   }
 }
 
