@@ -164,7 +164,6 @@ TEST(ApplicationTest, LoadDefaultConfig)
       std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
-    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
     EXPECT_EQ(app.DefaultConfigPath(), configPath);
   }
 }
@@ -180,9 +179,6 @@ TEST(ApplicationTest, InitializeMainWindow)
   {
     Application app(g_argc, g_argv);
 
-    // Create main window
-    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
-
     auto wins = app.allWindows();
     ASSERT_EQ(wins.size(), 1);
 
@@ -193,48 +189,17 @@ TEST(ApplicationTest, InitializeMainWindow)
     app.exec();
   }
 
-  // Load plugin before
+  // Load plugin
   {
     Application app(g_argc, g_argv);
 
     EXPECT_TRUE(app.LoadPlugin("Publisher"));
-
-    // Create main window
-    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
 
     auto win = App()->findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
 
     // Check plugin count
     auto plugins = win->findChildren<Plugin *>();
-    EXPECT_EQ(1, plugins.count());
-
-    // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
-
-    // Show window
-    app.exec();
-  }
-
-  // Load plugin after
-  {
-    Application app(g_argc, g_argv);
-
-    // Create main window
-    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
-
-    auto win = App()->findChild<MainWindow *>();
-    ASSERT_NE(nullptr, win);
-
-    // Check plugin count
-    auto plugins = win->findChildren<Plugin *>();
-    EXPECT_EQ(0, plugins.count());
-
-    // Load plugin
-    EXPECT_TRUE(app.LoadPlugin("Publisher"));
-
-    // Check plugin count
-    plugins = win->findChildren<Plugin *>();
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
@@ -248,7 +213,7 @@ TEST(ApplicationTest, InitializeMainWindow)
   auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
   auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
 
-  // Load config before
+  // Load config
   {
     Application app(g_argc, g_argv);
 
@@ -258,45 +223,11 @@ TEST(ApplicationTest, InitializeMainWindow)
     // Load test config file
     EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
 
-    // Create main window
-    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
-
     auto win = App()->findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
 
     // Check plugin count
     auto plugins = win->findChildren<Plugin *>();
-    EXPECT_EQ(1, plugins.count());
-
-    // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
-
-    // Show window
-    app.exec();
-  }
-
-  // Load config after
-  {
-    Application app(g_argc, g_argv);
-
-    // Add test plugin to path (referenced in config)
-    app.AddPluginPath(testBuildPath);
-
-    // Create main window
-    EXPECT_TRUE(app.Initialize(WindowType::kMainWindow));
-
-    auto win = App()->findChild<MainWindow *>();
-    ASSERT_NE(nullptr, win);
-
-    // Check plugin count
-    auto plugins = win->findChildren<Plugin *>();
-    EXPECT_EQ(0, plugins.count());
-
-    // Load test config file
-    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
-
-    // Check plugin count
-    plugins = win->findChildren<Plugin *>();
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
@@ -316,14 +247,14 @@ TEST(ApplicationTest, Dialog)
 
   // Single dialog
   {
-    Application app(g_argc, g_argv);
+    Application app(g_argc, g_argv, WindowType::kDialog);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
 
-    // Initialize dialog
-    EXPECT_TRUE(app.Initialize(WindowType::kDialog, "", {{"TestPlugin"}}));
+    // Load plugin
+    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
 
     // Close dialog after some time
     auto closed = false;
@@ -350,15 +281,15 @@ TEST(ApplicationTest, Dialog)
 
   // Multiple dialogs
   {
-    Application app(g_argc, g_argv);
+    Application app(g_argc, g_argv, WindowType::kDialog);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
 
-    // Initialize dialogs
-    EXPECT_TRUE(app.Initialize(WindowType::kDialog, "",
-          {{"TestPlugin"}, {"TestPlugin"}}));
+    // Load plugins
+    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
+    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
 
     // Close dialogs after some time
     auto closed = false;

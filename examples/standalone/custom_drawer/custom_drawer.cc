@@ -36,9 +36,6 @@ int main(int _argc, char **_argv)
   // Hide original panel
   app.LoadConfig("../custom_drawer.config");
 
-  // Create main window
-  app.Initialize(ignition::gui::WindowType::kMainWindow);
-
   // Let QML files use CustomActions' functions and properties
   ignition::gui::CustomActions actions;
   auto context = new QQmlContext(app.Engine()->rootContext());
