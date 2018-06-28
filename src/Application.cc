@@ -80,7 +80,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-Application::Application(int &_argc, char **_argv)
+Application::Application(int &_argc, char **_argv, const WindowType _type)
   : QGuiApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
 {
   igndbg << "Initializing application." << std::endl;
@@ -107,6 +107,21 @@ Application::Application(int &_argc, char **_argv)
   common::env(IGN_HOMEDIR, home);
   this->dataPtr->defaultConfigPath = common::joinPaths(
         home, ".ignition", "gui", "default.config");
+
+  // If it's a main window, initialize it
+  if (_type == WindowType::kMainWindow)
+  {
+    if (!this->InitializeMainWindow())
+      ignerr << "Failed to initialize main window." << std::endl;
+  }
+  else if (_type == WindowType::kDialog)
+  {
+    // Do nothing, dialogs are initialized as plugins are loaded
+  }
+  else
+  {
+    ignerr << "Unknown WindowType [" << static_cast<int>(_type) << "]\n";
+  }
 }
 
 /////////////////////////////////////////////////
@@ -356,56 +371,13 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Store plugin in queue to be added to the window
   this->dataPtr->pluginsToAdd.push(plugin);
 
-  // Add to window if there's already one
-  this->AddPluginsToWindow();
+  // Add to window or dialog
+  if (this->dataPtr->mainWin)
+    this->AddPluginsToWindow();
+  else
+    this->InitializeDialogs();
 
   return true;
-}
-
-/////////////////////////////////////////////////
-bool Application::Initialize(const WindowType _type)
-{
-  switch (_type)
-  {
-    case WindowType::kMainWindow:
-      return this->InitializeMainWindow();
-    case WindowType::kDialog:
-      return this->InitializeDialogs();
-    default:
-      ignerr << "Unknown WindowType[" << static_cast<int>(_type) << "]\n";
-      return false;
-  }
-}
-
-/////////////////////////////////////////////////
-bool Application::Initialize(const WindowType _type,
-                             const std::string &_config)
-{
-  if (_config.empty())
-    this->LoadDefaultConfig();
-  else
-    this->LoadConfig(_config);
-
-  return this->Initialize(_type);
-}
-
-/////////////////////////////////////////////////
-bool Application::Initialize(const WindowType _type,
-                             const std::string &_config,
-                             const std::vector<PluginConfig> &_plugins)
-{
-  for (const auto plugin : _plugins)
-  {
-    if (!this->LoadPlugin(plugin.filename, plugin.elem))
-      return false;
-  }
-
-  if (_config.empty())
-    this->LoadDefaultConfig();
-  else
-    this->LoadConfig(_config);
-
-  return this->Initialize(_type);
 }
 
 /////////////////////////////////////////////////
@@ -419,7 +391,7 @@ bool Application::InitializeMainWindow()
 
   this->dataPtr->mainWin->setParent(this);
 
-  return this->AddPluginsToWindow() && this->ApplyConfig();
+  return true;
 }
 
 /////////////////////////////////////////////////
