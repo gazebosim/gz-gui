@@ -76,19 +76,8 @@ namespace plugins
 
   class GridPrivate
   {
-    /// \brief We keep a pointer to the engine and rely on it not being
-    /// destroyed, since it is a singleton.
-    public: rendering::RenderEngine *engine;
-
-    /// \brief We keep the scene name rather than a shared pointer because we
-    /// don't want to share ownership.
-    public: std::string sceneName{"scene"};
-
     /// \brief Keep track of this grid.
     public: rendering::GridPtr grid;
-
-    /// \brief If the display should be rendered.
-    public: bool visible = true;
   };
 }
 }
@@ -100,7 +89,7 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 Grid::Grid()
-  : Plugin(), dataPtr(new GridPrivate)
+  : DisplayPlugin(), dataPtr(new GridPrivate)
 {
 }
 
@@ -110,22 +99,15 @@ Grid::~Grid()
 }
 
 /////////////////////////////////////////////////
-void Grid::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+void Grid::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "3D Grid";
 
   // Configuration
-  std::string engineName{"ogre"};
   GridInfo gridInfo;
   if (_pluginElem)
   {
-    if (auto elem = _pluginElem->FirstChildElement("engine"))
-      engineName = elem->GetText();
-
-    if (auto elem = _pluginElem->FirstChildElement("scene"))
-      this->dataPtr->sceneName = elem->GetText();
-
     if (auto elem = _pluginElem->FirstChildElement("cell_count"))
       elem->QueryIntText(&gridInfo.cellCount);
 
@@ -151,81 +133,17 @@ void Grid::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   }
 
-  std::string error{""};
-  rendering::ScenePtr scene;
+  this->dataPtr->grid = this->Scene()->CreateGrid();
+  this->dataPtr->grid->SetCellCount(gridInfo.cellCount);
+  this->dataPtr->grid->SetVerticalCellCount(gridInfo.vertCellCount);
+  this->dataPtr->grid->SetCellLength(gridInfo.cellLength);
 
-  // Render engine
-  this->dataPtr->engine = rendering::engine(engineName);
-  if (!this->dataPtr->engine)
-  {
-    error = "Engine \"" + engineName
-           + "\" not supported, Grid plugin won't work.";
-    ignwarn << error << std::endl;
-  }
-  else
-  {
-    // Scene
-    scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
-    if (!scene)
-    {
-      error = "Scene \"" + this->dataPtr->sceneName
-             + "\" not found, Grid plugin won't work.";
-      ignwarn << error << std::endl;
-    }
-    else
-    {
-      auto root = scene->RootVisual();
+  this->Visual()->SetLocalPose(gridInfo.pose);
+  this->Visual()->AddGeometry(this->dataPtr->grid);
 
-      // TODO(dhood): Store a generic scene node
-      this->dataPtr->grid = scene->CreateGrid();
-      this->dataPtr->grid->SetCellCount(gridInfo.cellCount);
-      this->dataPtr->grid->SetVerticalCellCount(gridInfo.vertCellCount);
-      this->dataPtr->grid->SetCellLength(gridInfo.cellLength);
-
-      auto gridVis = scene->CreateVisual();
-      root->AddChild(gridVis);
-      gridVis->SetLocalPose(gridInfo.pose);
-      gridVis->AddGeometry(this->dataPtr->grid);
-
-      auto mat = scene->CreateMaterial();
-      mat->SetAmbient(gridInfo.color);
-      gridVis->SetMaterial(mat);
-    }
-  }
-
-  // Don't waste time loading widgets if this will be deleted anyway
-  if (this->DeleteLaterRequested())
-    return;
-
-  if (!error.empty())
-  {
-    // Add message
-    auto msg = new QLabel(QString::fromStdString(error));
-
-    auto mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(msg);
-    mainLayout->setAlignment(msg, Qt::AlignCenter);
-    this->setLayout(mainLayout);
-
-    return;
-  }
-}
-
-QWidget* Grid::CreateStandardProperties()
-{
-  // Create generic configuration options for all display plugins
-  auto visibleCheck = new QCheckBox("Visible");
-  visibleCheck->setObjectName("visibleCheck");
-  visibleCheck->setToolTip("Toggle visibility");
-  visibleCheck->setChecked(this->dataPtr->visible);
-  this->connect(visibleCheck, SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
-
-  auto buttonsLayout = new QHBoxLayout();
-  buttonsLayout->addWidget(visibleCheck);
-
-  auto buttonsWidget = new QWidget();
-  buttonsWidget->setLayout(buttonsLayout);
-  return buttonsWidget;
+  auto mat = this->Scene()->CreateMaterial();
+  mat->SetAmbient(gridInfo.color);
+  this->Visual()->SetMaterial(mat);
 }
 
 /////////////////////////////////////////////////
@@ -284,7 +202,7 @@ QWidget* Grid::CreateProperties()
 /////////////////////////////////////////////////
 void Grid::OnVisibilityChange(bool _value)
 {
-  this->dataPtr->visible = _value;
+  // TODO(dhood): remove this once parent visual has setVisible
   if (_value)
   {
     this->dataPtr->grid->Material()->SetTransparency(0.);

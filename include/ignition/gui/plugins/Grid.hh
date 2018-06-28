@@ -21,7 +21,7 @@
 #include <memory>
 
 #include "ignition/gui/qt.h"
-#include "ignition/gui/Plugin.hh"
+#include "ignition/gui/DisplayPlugin.hh"
 
 namespace ignition
 {
@@ -47,7 +47,7 @@ namespace plugins
   /// * \<cell_length\> : Length of each cell, defaults to 1.
   /// * \<pose\> : Grid pose, defaults to the origin.
   /// * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class Grid : public Plugin
+  class Grid : public DisplayPlugin
   {
     Q_OBJECT
 
@@ -58,14 +58,11 @@ namespace plugins
     public: virtual ~Grid();
 
     // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+    public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Create the widget for standard display plugins' properties.
-    public: QWidget* CreateStandardProperties();
-
     /// \brief Create the widget for the plugin's properties.
-    public: QWidget* CreateProperties();
+    public: QWidget* CreateProperties() override;
 
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value
