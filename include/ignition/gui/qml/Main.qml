@@ -106,6 +106,7 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
+        visible: MainWindow.showDrawer
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -113,6 +114,14 @@ ApplicationWindow
           source: "images/drawer.png"
         }
         onClicked: drawer.open()
+      }
+
+      // Padding for title
+      Rectangle {
+        height: 1
+        width: 1
+        visible: !MainWindow.showDrawer
+        color: "transparent"
       }
 
       Label {
@@ -128,6 +137,7 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
+        visible: MainWindow.showPluginMenu
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -172,6 +182,7 @@ ApplicationWindow
    */
   SideDrawer {
     id: drawer
+    interactive: MainWindow.showDrawer
     width: Math.min(window.width * 0.3, 500)
     height: window.height
   }
