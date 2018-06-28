@@ -137,7 +137,8 @@ QWidget* DisplayPlugin::CreateStandardProperties()
   visibleCheck->setObjectName("visibleCheck");
   visibleCheck->setToolTip("Toggle visibility");
   visibleCheck->setChecked(this->dataPtr->visible);
-  this->connect(visibleCheck, SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
+  this->connect(visibleCheck,
+    SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
 
   auto buttonsLayout = new QHBoxLayout();
   buttonsLayout->addWidget(visibleCheck);

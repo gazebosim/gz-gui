@@ -78,7 +78,8 @@ namespace ignition
     /// \param[in] _pluginElem Element containing plugin configuration
     /// \return The plugin loaded, will be `nullptr` on failure.
     IGNITION_GUI_VISIBLE
-    std::shared_ptr<ignition::gui::Plugin> loadPluginWithoutAdding(const std::string &_filename,
+    std::shared_ptr<ignition::gui::Plugin> loadPluginWithoutAdding(
+        const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
 
     /// \brief Set the global style sheet from a file.

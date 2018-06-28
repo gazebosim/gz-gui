@@ -20,9 +20,10 @@
 
 #include <memory>
 
+#include <ignition/rendering.hh>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
-#include <ignition/rendering.hh>
 
 namespace ignition
 {

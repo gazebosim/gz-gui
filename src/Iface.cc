@@ -477,7 +477,8 @@ std::string ignition::gui::defaultConfigPath()
 }
 
 /////////////////////////////////////////////////
-std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(const std::string &_filename,
+std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(
+    const std::string &_filename,
     const tinyxml2::XMLElement *_pluginElem)
 {
   if (!checkApp())

@@ -130,7 +130,6 @@ void Grid::Initialize(const tinyxml2::XMLElement *_pluginElem)
       colorStr << std::string(elem->GetText());
       colorStr >> gridInfo.color;
     }
-
   }
 
   this->dataPtr->grid = this->Scene()->CreateGrid();
@@ -153,7 +152,8 @@ QWidget* Grid::CreateProperties()
 
   auto cellCountWidget = new NumberWidget("Horizontal cell count",
       NumberType::UINT);
-  cellCountWidget->SetValue(QVariant::fromValue(this->dataPtr->grid->CellCount()));
+  cellCountWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->grid->CellCount()));
   cellCountWidget->setProperty("gridName", gridName);
   cellCountWidget->setObjectName("cellCountWidget");
   this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
@@ -169,21 +169,24 @@ QWidget* Grid::CreateProperties()
       SLOT(OnChange(QVariant)));
 
   auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
-  cellLengthWidget->SetValue(QVariant::fromValue(this->dataPtr->grid->CellLength()));
+  cellLengthWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->grid->CellLength()));
   cellLengthWidget->setProperty("gridName", gridName);
   cellLengthWidget->setObjectName("cellLengthWidget");
   this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
 
   auto poseWidget = new Pose3dWidget();
-  poseWidget->SetValue(QVariant::fromValue(this->dataPtr->grid->Parent()->WorldPose()));
+  poseWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->grid->Parent()->WorldPose()));
   poseWidget->setProperty("gridName", gridName);
   poseWidget->setObjectName("poseWidget");
   this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
 
   auto colorWidget = new ColorWidget();
-  colorWidget->SetValue(QVariant::fromValue(this->dataPtr->grid->Material()->Ambient()));
+  colorWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->grid->Material()->Ambient()));
   colorWidget->setProperty("gridName", gridName);
   colorWidget->setObjectName("colorWidget");
   this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
@@ -206,7 +209,9 @@ void Grid::OnVisibilityChange(bool _value)
   if (_value)
   {
     this->dataPtr->grid->Material()->SetTransparency(0.);
-  } else {
+  }
+  else
+  {
     this->dataPtr->grid->Material()->SetTransparency(1.);
   }
 }

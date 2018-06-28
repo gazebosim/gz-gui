@@ -33,7 +33,7 @@ namespace plugins
 
   /// \brief A single grid in an Ignition Rendering scene.
   ///
-  ///This plugin can be used for adding and configuring a single grid.
+  /// This plugin can be used for adding and configuring a single grid.
   ///
   /// ## Configuration
   ///

@@ -33,7 +33,7 @@ namespace plugins
 
   /// \brief A widget for loading display plugins.
   ///
-  ///This plugin can be used for adding and configuring display plugins.
+  /// This plugin can be used for adding and configuring display plugins.
   ///
   /// ## Configuration
   ///
