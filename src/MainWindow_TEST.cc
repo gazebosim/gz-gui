@@ -127,8 +127,7 @@ TEST(MainWindowTest, OnLoadConfig)
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  // Create main window
-  App()->Initialize(WindowType::kMainWindow);
+  // Get main window
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -170,8 +169,7 @@ TEST(MainWindowTest, OnAddPlugin)
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  // Create window
-  App()->Initialize(WindowType::kMainWindow);
+  // Get window
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -326,9 +324,6 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
-
-  // Create main window
-  EXPECT_TRUE(App()->Initialize(WindowType::kMainWindow));
 
   // Access window after it's open
   bool closed{false};

@@ -34,9 +34,8 @@ int main(int _argc, char **_argv)
   // Create app
   ignition::gui::Application app(_argc, _argv);
 
-  // Create main window
-  if (!app.Initialize(ignition::gui::WindowType::kMainWindow, "",
-        {{"Publisher"}}))
+  // Load plugins / config
+  if (!app.LoadPlugin("Publisher"))
   {
     return 1;
   }
