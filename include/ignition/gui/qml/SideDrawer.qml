@@ -11,6 +11,10 @@ Drawer {
     id: sideDrawer
     anchors.fill: parent
 
+    function closeDrawer() {
+      drawer.close();
+    }
+
     function onAction(action) {
       switch(action) {
         case "loadConfig":
@@ -75,8 +79,8 @@ Drawer {
         text: title
         highlighted: ListView.isCurrentItem
         onClicked: {
-          onAction(action)
-          drawer.close()
+          sideDrawer.onAction(action)
+          sideDrawer.closeDrawer();
         }
       }
 
