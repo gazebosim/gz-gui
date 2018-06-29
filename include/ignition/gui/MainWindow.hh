@@ -50,6 +50,54 @@ namespace ignition
         NOTIFY PluginCountChanged
       )
 
+      /// \brief Material theme (Light / Dark)
+      Q_PROPERTY(
+        QString materialTheme
+        READ MaterialTheme
+        WRITE SetMaterialTheme
+        NOTIFY MaterialThemeChanged
+      )
+
+      /// \brief Material primary color (Pre-defined color name or hex value)
+      Q_PROPERTY(
+        QString materialPrimary
+        READ MaterialPrimary
+        WRITE SetMaterialPrimary
+        NOTIFY MaterialPrimaryChanged
+      )
+
+      /// \brief Material accent color (Pre-defined color name or hex value)
+      Q_PROPERTY(
+        QString materialAccent
+        READ MaterialAccent
+        WRITE SetMaterialAccent
+        NOTIFY MaterialAccentChanged
+      )
+
+      /// \brief Flag to show side drawer
+      Q_PROPERTY(
+        bool showDrawer
+        READ ShowDrawer
+        WRITE SetShowDrawer
+        NOTIFY ShowDrawerChanged
+      )
+
+      /// \brief Flag to show side drawer's default options
+      Q_PROPERTY(
+        bool showDefaultDrawerOpts
+        READ ShowDefaultDrawerOpts
+        WRITE SetShowDefaultDrawerOpts
+        NOTIFY ShowDefaultDrawerOptsChanged
+      )
+
+      /// \brief Flag to show plugins menu
+      Q_PROPERTY(
+        bool showPluginMenu
+        READ ShowPluginMenu
+        WRITE SetShowPluginMenu
+        NOTIFY ShowPluginMenuChanged
+      )
+
       /// \brief Constructor
       public: MainWindow();
 
@@ -96,6 +144,58 @@ namespace ignition
       /// \param[in] _pluginCount Number of plugins
       public: Q_INVOKABLE void SetPluginCount(const int _pluginCount);
 
+      /// \brief Returns the material theme.
+      /// \return Theme (Light / Dark)
+      public: Q_INVOKABLE QString MaterialTheme() const;
+
+      /// \brief Sets the material theme
+      /// \param[in] _materialTheme Theme (Light / Dark)
+      public: Q_INVOKABLE void SetMaterialTheme(
+          const QString &_materialTheme);
+
+      /// \brief Returns the material primary color.
+      /// \return Primary color
+      public: Q_INVOKABLE QString MaterialPrimary() const;
+
+      /// \brief Sets the material primary color
+      /// \param[in] _materialPrimary Primary color
+      public: Q_INVOKABLE void SetMaterialPrimary(
+          const QString &_materialPrimary);
+
+      /// \brief Returns the material accent color.
+      /// \return Accent color
+      public: Q_INVOKABLE QString MaterialAccent() const;
+
+      /// \brief Sets the material accent color
+      /// \param[in] _materialAccent Accent color
+      public: Q_INVOKABLE void SetMaterialAccent(
+          const QString &_materialAccent);
+
+      /// \brief Get the flag to show the side drawer.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowDrawer() const;
+
+      /// \brief Set the flag to show the side drawer.
+      /// \param[in] _showDrawer True to show.
+      public: Q_INVOKABLE void SetShowDrawer(const bool _showDrawer);
+
+      /// \brief Get the flag to show the side drawer's default options.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowDefaultDrawerOpts() const;
+
+      /// \brief Set the flag to show the side drawer's default options.
+      /// \param[in] _showDefaultDrawerOpts True to show.
+      public: Q_INVOKABLE void SetShowDefaultDrawerOpts(
+          const bool _showDefaultDrawerOpts);
+
+      /// \brief Get the flag to show the plugin menu.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowPluginMenu() const;
+
+      /// \brief Set the flag to show the plugin menu.
+      /// \param[in] _showPluginMenu True to show.
+      public: Q_INVOKABLE void SetShowPluginMenu(const bool _showPluginMenu);
+
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);
 
@@ -107,6 +207,27 @@ namespace ignition
 
       /// \brief Notifies when the number of plugins has changed.
       signals: void PluginCountChanged();
+
+      /// \brief Notifies when the theme has changed.
+      signals: void MaterialThemeChanged();
+
+      /// \brief Notifies when the primary color has changed.
+      signals: void MaterialPrimaryChanged();
+
+      /// \brief Notifies when the accent color has changed.
+      signals: void MaterialAccentChanged();
+
+      /// \brief Notifies when the show drawer flag has changed.
+      signals: void ShowDrawerChanged();
+
+      /// \brief Notifies when the show drawer default options flag has changed.
+      signals: void ShowDefaultDrawerOptsChanged();
+
+      /// \brief Notifies when the show menu flag has changed.
+      signals: void ShowPluginMenuChanged();
+
+      /// \brief Notifies when the window config has changed.
+      signals: void configChanged();
 
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
@@ -120,9 +241,6 @@ namespace ignition
 
       // Documentation inherited
 //      protected: void closeEvent(QCloseEvent *_event) override;
-
-      /// \brief Callback when load stylesheet is selected
-//      private slots: void OnLoadStylesheet();
 
       /// \internal
       /// \brief Private data pointer
@@ -162,12 +280,23 @@ namespace ignition
       /// \brief Window state (dock configuration)
       QByteArray state;
 
-      /// \brief String holding the global style sheet in QSS format.
-      std::string styleSheet{""};
+      /// \brief Material theme (light / dark)
+      std::string materialTheme{""};
 
-      /// \brief Map menu name to whether it should be visible, all menus are
-      /// shown by default.
-      std::map<std::string, bool> menuVisibilityMap;
+      /// \brief Material primary color
+      std::string materialPrimary{""};
+
+      /// \brief Material accent color
+      std::string materialAccent{""};
+
+      /// \brief
+      bool showDrawer{true};
+
+      /// \brief
+      bool showDefaultDrawerOpts{true};
+
+      /// \brief
+      bool showPluginMenu{true};
 
       /// \brief True if plugins found in plugin paths should be listed under
       /// the Plugins menu. True by default.

@@ -84,6 +84,7 @@ TEST(TopicViewerTest, OnMessage)
     QCoreApplication::processEvents();
     found = topicsModel[0]->rowCount() > 0;
     std::this_thread::sleep_for(100ms);
+    ++counter;
   }
 
   EXPECT_TRUE(found);

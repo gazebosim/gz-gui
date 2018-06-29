@@ -13,11 +13,19 @@ ApplicationWindow
   height: 1000
   visible: true
   id: window
-  property string bgColor: "#eeeeee"
+
+  // Expose material properties to C++
+  property string materialTheme: window.Material.theme
+  property string materialPrimary: window.Material.primary
+  property string materialAccent: window.Material.accent
 
   // Not sure why the binding doesn't take care of this
   onTitleChanged: {
     titleLabel.text = window.title
+  }
+
+  Material.onBackgroundChanged: {
+    titleLabel.color = Material.background
   }
 
   // C++ signals to QML slots
@@ -75,7 +83,6 @@ ApplicationWindow
    * Top toolbar
    */
   header: ToolBar {
-    Material.foreground: "white"
     Material.elevation: 0
 
     MouseArea {
@@ -100,6 +107,7 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
+        visible: MainWindow.showDrawer
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -109,10 +117,19 @@ ApplicationWindow
         onClicked: drawer.open()
       }
 
+      // Padding for title
+      Rectangle {
+        height: 1
+        width: 1
+        visible: !MainWindow.showDrawer
+        color: "transparent"
+      }
+
       Label {
         id: titleLabel
         text: window.title
         font.pixelSize: 18
+        color: Material.background
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
@@ -121,6 +138,7 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
+        visible: MainWindow.showPluginMenu
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -172,7 +190,7 @@ ApplicationWindow
     Rectangle {
       visible: MainWindow.pluginCount === 0
       anchors.fill: parent
-      color: bgColor
+      color: Material.background
       Label {
         id: startLabel;
         text: "Insert plugins to start!"
@@ -190,6 +208,7 @@ ApplicationWindow
    */
   SideDrawer {
     id: drawer
+    interactive: MainWindow.showDrawer
     width: Math.min(window.width * 0.3, 500)
     height: window.height
   }
@@ -218,6 +237,16 @@ ApplicationWindow
         font.pixelSize: 12
       }
     }
+  }
+
+  /**
+   * Style dialog
+   */
+  StyleDialog {
+    id: styleDialog
+    x: (window.width - width) / 2
+    y: window.height / 6
+    width: Math.min(window.width, window.height) * 0.5
   }
 
   /**

@@ -22,6 +22,7 @@
 #include <ignition/common/Console.hh>
 
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/config.hh"
 #include "ignition/gui/ign.hh"
 #include "ignition/gui/Export.hh"
 
@@ -31,7 +32,7 @@ char **g_argv = new char *[g_argc];
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 {
-  return strdup("0.1.0");
+  return strdup(IGNITION_GUI_VERSION_FULL);
 }
 
 //////////////////////////////////////////////////
@@ -60,15 +61,28 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
-  new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->RunStandalone(std::string(_filename));
+  ignition::gui::Application app(g_argc, g_argv,
+      ignition::gui::WindowType::kDialog);
+
+  if (!app.LoadPlugin(_filename))
+  {
+    return;
+  }
+
+  app.exec();
 }
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
-  new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->RunConfig(std::string(_config));
+  ignition::gui::Application app(g_argc, g_argv);
+
+  if (!app.LoadConfig(std::string(_config)))
+  {
+    return;
+  }
+
+  app.exec();
 }
 
 //////////////////////////////////////////////////
@@ -80,12 +94,16 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
-  new ignition::gui::Application(g_argc, g_argv);
-  ignition::gui::App()->RunEmptyWindow();
+  ignition::gui::Application app(g_argc, g_argv);
+
+  app.LoadDefaultConfig();
+
+  app.exec();
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(const char *_filename)
+extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(
+    const char */*_filename*/)
 {
 //  ignition::gui::setStyleFromFile(std::string(_filename));
 }

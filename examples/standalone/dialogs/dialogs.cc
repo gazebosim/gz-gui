@@ -17,36 +17,36 @@
 
 #include <iostream>
 
+#include <ignition/common/Console.hh>
+
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
-  #include <ignition/gui/Iface.hh>
-  #include <ignition/gui/MainWindow.hh>
+  #include <ignition/gui/Application.hh>
+  #include <ignition/gui/Dialog.hh>
 #endif
 
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
-  // Increase verbosity so we see all messages
-  ignition::gui::setVerbosity(4);
+  std::cout << "Hello, GUI!" << std::endl;
+
+  // Increase verboosity so we see all messages
+  ignition::common::Console::SetVerbosity(4);
 
   // Initialize app
-  ignition::gui::initApp();
+  ignition::gui::Application app(_argc, _argv,
+      ignition::gui::WindowType::kDialog);
 
-  // Load plugins and configurations
-  ignition::gui::loadPlugin("libPublisher.so");
+  // Load plugins / config
+  app.LoadPlugin("Publisher");
 
-  // Create main window
-  ignition::gui::createMainWindow();
+  // TODO(chapulina): fix multiple dialogs
+  // app.LoadPlugin("TopicEcho");
 
-  // Customize main window
-  auto win = ignition::gui::mainWindow();
-  win->setWindowTitle("Custom styles!");
+  // Run dialogs
+  app.exec();
 
-  // Run window
-  ignition::gui::runMainWindow();
-
-  // After window is closed
-  ignition::gui::stop();
+  std::cout << "After run" << std::endl;
 
   return 0;
 }

@@ -19,7 +19,7 @@
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
-  #include <ignition/gui/Iface.hh>
+  #include <ignition/gui/Application.hh>
   #include <ignition/gui/MainWindow.hh>
 #endif
 
@@ -29,26 +29,23 @@ int main(int _argc, char **_argv)
   std::cout << "Hello, GUI!" << std::endl;
 
   // Increase verboosity so we see all messages
-  ignition::gui::setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
-  // Initialize app
-  ignition::gui::initApp();
+  // Create app
+  ignition::gui::Application app(_argc, _argv);
 
-  // Load plugins and configurations
-  ignition::gui::loadPlugin("libhello_plugin.so");
-
-  // Create main window
-  ignition::gui::createMainWindow();
+  // Load plugins / config
+  if (!app.LoadPlugin("Publisher"))
+  {
+    return 1;
+  }
 
   // Customize main window
-  auto win = ignition::gui::mainWindow();
-  win->setWindowTitle("Hello Window!");
+  auto win = app.findChild<ignition::gui::MainWindow *>()->QuickWindow();
+  win->setProperty("title", "Hello Window!");
 
   // Run window
-  ignition::gui::runMainWindow();
-
-  // After window is closed
-  ignition::gui::stop();
+  app.exec();
 
   std::cout << "After run" << std::endl;
 

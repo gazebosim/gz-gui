@@ -48,8 +48,8 @@ namespace ignition
       /// \brief Queue of plugins which should be added to the window
       public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
 
-      /// \brief Vector of pointers to plugins already added, we hang on to these
-      /// until it is ok to unload the plugin's shared library.
+      /// \brief Vector of pointers to plugins already added, we hang on to
+      /// these until it is ok to unload the plugin's shared library.
       public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
 
       /// \brief Environment variable which holds paths to look for plugins
@@ -59,8 +59,8 @@ namespace ignition
       public: std::vector<std::string> pluginPaths;
 
       /// \brief Holds a configuration which may be applied to mainWin once it
-      /// is created by calling applyConfig(). It's no longer needed and should
-      /// not be used after that.
+      /// is created by calling applyConfig(). It's no longer needed and
+      /// should not be used after that.
       public: WindowConfig windowConfig;
 
       /// \brief The path containing the default configuration file.
@@ -80,7 +80,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-Application::Application(int &_argc, char **_argv)
+Application::Application(int &_argc, char **_argv, const WindowType _type)
   : QGuiApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
 {
   igndbg << "Initializing application." << std::endl;
@@ -92,7 +92,8 @@ Application::Application(int &_argc, char **_argv)
   this->dataPtr->engine = new QQmlApplicationEngine();
 
   // Install signal handler for graceful shutdown
-  this->dataPtr->signalHandler.AddCallback([](int)
+  this->dataPtr->signalHandler.AddCallback(
+      [](int)  // NOLINT(readability/casting)
       {
         for (auto window : App()->allWindows())
           window->close();
@@ -106,6 +107,21 @@ Application::Application(int &_argc, char **_argv)
   common::env(IGN_HOMEDIR, home);
   this->dataPtr->defaultConfigPath = common::joinPaths(
         home, ".ignition", "gui", "default.config");
+
+  // If it's a main window, initialize it
+  if (_type == WindowType::kMainWindow)
+  {
+    if (!this->InitializeMainWindow())
+      ignerr << "Failed to initialize main window." << std::endl;
+  }
+  else if (_type == WindowType::kDialog)
+  {
+    // Do nothing, dialogs are initialized as plugins are loaded
+  }
+  else
+  {
+    ignerr << "Unknown WindowType [" << static_cast<int>(_type) << "]\n";
+  }
 }
 
 /////////////////////////////////////////////////
@@ -177,7 +193,7 @@ bool Application::RemovePlugin(const std::string &_pluginName)
       cardItem->deleteLater();
 
       // Unload shared library
-      this->RemoveAddedPlugin(plugin);
+      this->RemovePlugin(plugin);
 
       found = true;
       break;
@@ -185,66 +201,6 @@ bool Application::RemovePlugin(const std::string &_pluginName)
   }
 
   return found;
-}
-
-/////////////////////////////////////////////////
-bool Application::RunConfig(const std::string &_config)
-{
-  igndbg << "Loading config file [" << _config << "]" << std::endl;
-
-  if (_config.empty())
-  {
-    ignerr << "Missing config filename" << std::endl;
-    return false;
-  }
-
-  if (!this->LoadConfig(_config))
-  {
-    return false;
-  }
-
-  this->InitializeMainWindow();
-
-  // Run app - blocks
-  this->exec();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool Application::RunEmptyWindow()
-{
-  igndbg << "Loading default window" << std::endl;
-
-  this->LoadDefaultConfig();
-
-  this->InitializeMainWindow();
-
-  // Run app - blocks
-  this->exec();
-
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool Application::RunStandalone(const std::string &_filename)
-{
-  igndbg << "Loading standalone plugin [" << _filename << "]" << std::endl;
-
-  if (_filename.empty())
-  {
-    ignerr << "Missing plugin filename" << std::endl;
-    return false;
-  }
-
-  if (!this->LoadPlugin(_filename))
-  {
-    return false;
-  }
-
-  this->RunDialogs();
-
-  return true;
 }
 
 /////////////////////////////////////////////////
@@ -308,8 +264,11 @@ bool Application::LoadConfig(const std::string &_config)
               << std::endl;
       return false;
     }
+    // FIXME: default values are not being reset, do we want that?
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
   }
+
+  this->ApplyConfig();
 
   return true;
 }
@@ -413,6 +372,12 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Store plugin in queue to be added to the window
   this->dataPtr->pluginsToAdd.push(plugin);
 
+  // Add to window or dialog
+  if (this->dataPtr->mainWin)
+    this->AddPluginsToWindow();
+  else
+    this->InitializeDialogs();
+
   return true;
 }
 
@@ -422,9 +387,12 @@ bool Application::InitializeMainWindow()
   igndbg << "Create main window" << std::endl;
 
   this->dataPtr->mainWin = new MainWindow();
+  if (!this->dataPtr->mainWin->QuickWindow())
+    return false;
+
   this->dataPtr->mainWin->setParent(this);
 
-  return this->AddPluginsToWindow() && this->ApplyConfig();
+  return true;
 }
 
 /////////////////////////////////////////////////
@@ -432,15 +400,21 @@ bool Application::ApplyConfig()
 {
   igndbg << "Applying config" << std::endl;
 
+  if (!this->dataPtr->mainWin)
+    return false;
+
   return this->dataPtr->mainWin->ApplyConfig(this->dataPtr->windowConfig);
 }
 
 /////////////////////////////////////////////////
 bool Application::AddPluginsToWindow()
 {
+  if (!this->dataPtr->mainWin || !this->dataPtr->mainWin->QuickWindow())
+    return false;
+
   // Get main window background item
-  auto bgItem =
-      this->dataPtr->mainWin->QuickWindow()->findChild<QQuickItem *>("background");
+  auto bgItem = this->dataPtr->mainWin->QuickWindow()
+      ->findChild<QQuickItem *>("background");
   if (!this->dataPtr->pluginsToAdd.empty() && !bgItem)
   {
     ignerr << "Internal error: Null background QQuickItem!" << std::endl;
@@ -448,7 +422,6 @@ bool Application::AddPluginsToWindow()
   }
 
   // Create a widget for each plugin
-  auto count = 0;
   while (!this->dataPtr->pluginsToAdd.empty())
   {
     auto plugin = this->dataPtr->pluginsToAdd.front();
@@ -458,7 +431,7 @@ bool Application::AddPluginsToWindow()
 
     if (plugin->DeleteLaterRequested())
     {
-      this->RemoveAddedPlugin(plugin);
+      this->RemovePlugin(plugin);
       continue;
     }
 
@@ -495,8 +468,6 @@ bool Application::AddPluginsToWindow()
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
-
-    count++;
   }
 
   this->dataPtr->mainWin->SetPluginCount(this->dataPtr->pluginsAdded.size());
@@ -505,9 +476,9 @@ bool Application::AddPluginsToWindow()
 }
 
 /////////////////////////////////////////////////
-bool Application::RunDialogs()
+bool Application::InitializeDialogs()
 {
-  igndbg << "Run dialogs" << std::endl;
+  igndbg << "Initialize dialogs" << std::endl;
 
   while (!this->dataPtr->pluginsToAdd.empty())
   {
@@ -541,14 +512,11 @@ bool Application::RunDialogs()
     this->dataPtr->pluginsAdded.push_back(plugin);
 
     auto title = QString::fromStdString(plugin->Title());
-    igndbg << "Showing dialog [" << title.toStdString() << "]" << std::endl;
+    igndbg << "Initialized dialog [" << title.toStdString() << "]" << std::endl;
   }
 
   if (this->dataPtr->pluginsAdded.empty())
     return false;
-
-  // Run app - blocks
-  this->exec();
 
   return true;
 }
@@ -611,7 +579,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 }
 
 /////////////////////////////////////////////////
-void Application::RemoveAddedPlugin(std::shared_ptr<Plugin> _plugin)
+void Application::RemovePlugin(std::shared_ptr<Plugin> _plugin)
 {
   this->dataPtr->pluginsAdded.erase(std::remove(
       this->dataPtr->pluginsAdded.begin(),

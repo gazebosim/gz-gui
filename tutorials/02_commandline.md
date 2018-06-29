@@ -19,9 +19,6 @@ If you have Ignition Tools installed, you can use the `ign gui` command line too
       -c [ --config ] arg        Open the main window with a configuration file.
                                  Give the configuration file path as an argument.
 
-      -t [ --style ] arg         Apply a stylesheet to the whole application.
-                                 Give a QSS file path as an argument.
-
       -v [ --verbose ] [arg]     Adjust the level of console output (0~4).
                                  If no argument is provided, the level is set to 4.
 

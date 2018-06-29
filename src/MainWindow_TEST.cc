@@ -25,7 +25,7 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config";
+std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
 
@@ -108,7 +108,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
     EXPECT_TRUE(savedStr.contains("<position_x>"));
     EXPECT_TRUE(savedStr.contains("<position_y>"));
     EXPECT_TRUE(savedStr.contains("<menus>"));
-    EXPECT_TRUE(savedStr.contains("<file"));
+    EXPECT_TRUE(savedStr.contains("<drawer"));
     EXPECT_TRUE(savedStr.contains("<plugins"));
 
     // Delete file
@@ -127,8 +127,7 @@ TEST(MainWindowTest, OnLoadConfig)
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  // Create main window
-  App()->InitializeMainWindow();
+  // Get main window
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -170,8 +169,7 @@ TEST(MainWindowTest, OnAddPlugin)
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  // Create window
-  App()->InitializeMainWindow();
+  // Get window
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -206,8 +204,12 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_EQ(c.width, -1);
   EXPECT_EQ(c.height, -1);
   EXPECT_TRUE(c.state.isEmpty());
-  EXPECT_TRUE(c.styleSheet.empty());
-  EXPECT_TRUE(c.menuVisibilityMap.empty());
+  EXPECT_TRUE(c.materialTheme.empty());
+  EXPECT_TRUE(c.materialPrimary.empty());
+  EXPECT_TRUE(c.materialAccent.empty());
+  EXPECT_TRUE(c.showDrawer);
+  EXPECT_TRUE(c.showDefaultDrawerOpts);
+  EXPECT_TRUE(c.showPluginMenu);
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_TRUE(c.ignoredProps.empty());
@@ -220,7 +222,7 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_NE(xml.find("<width>"), std::string::npos);
   EXPECT_NE(xml.find("<height>"), std::string::npos);
   EXPECT_NE(xml.find("<menus>"), std::string::npos);
-  EXPECT_NE(xml.find("<file"), std::string::npos);
+  EXPECT_NE(xml.find("<drawer"), std::string::npos);
   EXPECT_NE(xml.find("<plugins"), std::string::npos);
   EXPECT_EQ(xml.find("<ignore>"), std::string::npos);
 }
@@ -250,8 +252,12 @@ TEST(WindowConfigTest, mergeFromXML)
   EXPECT_EQ(c.width, 1000);
   EXPECT_EQ(c.height, 600);
   EXPECT_TRUE(c.state.isEmpty());
-  EXPECT_TRUE(c.styleSheet.empty());
-  EXPECT_TRUE(c.menuVisibilityMap.empty());
+  EXPECT_TRUE(c.materialTheme.empty());
+  EXPECT_TRUE(c.materialPrimary.empty());
+  EXPECT_TRUE(c.materialAccent.empty());
+  EXPECT_TRUE(c.showDrawer);
+  EXPECT_TRUE(c.showDefaultDrawerOpts);
+  EXPECT_TRUE(c.showPluginMenu);
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_EQ(c.ignoredProps.size(), 2u);
@@ -267,9 +273,7 @@ TEST(WindowConfigTest, MenusToString)
   WindowConfig c;
 
   // Set some menu-related properties
-  c.menuVisibilityMap["file"] = false;
-  c.menuVisibilityMap["plugins"] = true;
-
+  c.showDrawer = false;
   c.pluginsFromPaths = false;
 
   c.showPlugins.push_back("PluginA");
@@ -279,8 +283,8 @@ TEST(WindowConfigTest, MenusToString)
   auto str = c.XMLString();
   EXPECT_FALSE(str.empty());
 
-  EXPECT_TRUE(str.find("<file visible=\"0\"/>") != std::string::npos ||
-              str.find("<file visible=\"false\"/>") != std::string::npos);
+  EXPECT_TRUE(str.find("<drawer visible=\"0\"") != std::string::npos ||
+              str.find("<drawer visible=\"false\"") != std::string::npos);
   EXPECT_TRUE(str.find("<plugins visible=\"1\" from_paths=\"0\">") !=
       std::string::npos ||
       str.find("<plugins visible=\"true\" from_paths=\"false\">") !=
@@ -322,9 +326,6 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
-
-  // Create main window
-  EXPECT_TRUE(App()->InitializeMainWindow());
 
   // Access window after it's open
   bool closed{false};
@@ -380,7 +381,9 @@ TEST(MainWindowTest, ApplyConfig)
   // Default config
   {
     auto c = mainWindow->CurrentWindowConfig();
-    EXPECT_TRUE(c.menuVisibilityMap.empty());
+    EXPECT_TRUE(c.showDrawer);
+    EXPECT_TRUE(c.showDefaultDrawerOpts);
+    EXPECT_TRUE(c.showPluginMenu);
     EXPECT_TRUE(c.pluginsFromPaths);
     EXPECT_TRUE(c.showPlugins.empty());
     EXPECT_TRUE(c.ignoredProps.empty());
@@ -393,9 +396,11 @@ TEST(MainWindowTest, ApplyConfig)
 //    c.posY = 2000;
     c.width = 100;
     c.height = 200;
-//    c.styleSheet = "pineapple";
-//    c.menuVisibilityMap["File"] = false;
-//    c.pluginsFromPaths = false;
+    c.materialTheme = "Dark";
+    c.materialPrimary = "#ff0000";
+    c.materialAccent = "Indigo";
+    c.showDrawer = false;
+    c.pluginsFromPaths = false;
 //    c.showPlugins.push_back("watermelon");
 //    c.ignoredProps.insert("position");
 
@@ -412,9 +417,12 @@ TEST(MainWindowTest, ApplyConfig)
 
     EXPECT_EQ(c.width, 100);
     EXPECT_EQ(c.height, 200);
-//    EXPECT_EQ(c.styleSheet, "pineapple");
-//    EXPECT_FALSE(c.menuVisibilityMap["File"]);
-//    EXPECT_FALSE(c.pluginsFromPaths);
+    EXPECT_EQ(c.materialTheme, "Dark");
+    EXPECT_EQ(c.materialPrimary, "#ff0000");
+    // Always save hex
+    EXPECT_EQ(c.materialAccent, "#9fa8da");
+    EXPECT_FALSE(c.showDrawer);
+    EXPECT_FALSE(c.pluginsFromPaths);
 //    EXPECT_EQ(c.showPlugins.size(), 1u);
 //    EXPECT_EQ(c.ignoredProps.size(), 1u);
   }
