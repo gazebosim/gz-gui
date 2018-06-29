@@ -34,15 +34,14 @@ int main(int _argc, char **_argv)
   ignition::common::Console::SetVerbosity(4);
 
   // Initialize app
-  ignition::gui::Application app(_argc, _argv);
+  ignition::gui::Application app(_argc, _argv,
+      ignition::gui::WindowType::kDialog);
 
-  // Create dialogs
+  // Load plugins / config
+  app.LoadPlugin("Publisher");
+
   // TODO(chapulina): fix multiple dialogs
-  if (!app.Initialize(ignition::gui::WindowType::kDialog, "",
-        {{"Publisher"}, /*{"TopicEcho"}*/}))
-  {
-    return 1;
-  }
+  // app.LoadPlugin("TopicEcho");
 
   // Run dialogs
   app.exec();

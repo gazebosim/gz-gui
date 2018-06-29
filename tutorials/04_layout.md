@@ -12,9 +12,9 @@ by adding a `<window>` element to the config file. The child elements are:
              encoded `QByteArray`. More information
              [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
 * `<menus>`: Configure menu options
-    * `<panel>`: Panel menu configuration.
-        * `visible`: Set to false to hide the whole panel and the button to open
-                     it.
+    * `<drawer>`: Panel menu configuration.
+        * `visible`: Set to false to hide the whole drawer and the button to
+                     open it.
         * `default`: Set to false to hide all the default menu options provided
                      by Ignition GUI. Downstream projects can always re-add the
                      desired ones.

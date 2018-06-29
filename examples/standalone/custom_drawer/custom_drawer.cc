@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,39 +15,53 @@
  *
 */
 
-#include <iostream>
+#include <ignition/common/Console.hh>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
   #include <ignition/gui/Application.hh>
   #include <ignition/gui/MainWindow.hh>
+  #include <ignition/gui/qt.h>
+  #include "custom_drawer.hh"
 #endif
 
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
-  std::cout << "Hello, GUI!" << std::endl;
-
   // Increase verboosity so we see all messages
   ignition::common::Console::SetVerbosity(4);
 
-  // Create app
+  // Initialize app
   ignition::gui::Application app(_argc, _argv);
 
-  // Load plugins / config
-  if (!app.LoadPlugin("Publisher"))
+  // Hide original panel
+  app.LoadConfig("../custom_drawer.config");
+
+  // Let QML files use CustomActions' functions and properties
+  ignition::gui::CustomActions actions;
+  auto context = new QQmlContext(app.Engine()->rootContext());
+  context->setContextProperty("CustomActions", &actions);
+
+  // Instantiate CustomDrawer.qml file into a component
+  QQmlComponent component(app.Engine(), ":/CustomDrawer/CustomDrawer.qml");
+  auto item = qobject_cast<QQuickItem *>(component.create(context));
+  if (!item)
   {
+    ignerr << "Failed to initialize custom panel" << std::endl;
     return 1;
   }
 
-  // Customize main window
+  // C++ ownership
+  QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+
+  // Add to main window
   auto win = app.findChild<ignition::gui::MainWindow *>()->QuickWindow();
-  win->setProperty("title", "Hello Window!");
+  auto drawerItem = win->findChild<QQuickItem *>("sideDrawer");
+
+  item->setParentItem(drawerItem);
+  item->setParent(app.Engine());
 
   // Run window
   app.exec();
-
-  std::cout << "After run" << std::endl;
 
   return 0;
 }

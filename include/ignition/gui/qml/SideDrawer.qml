@@ -6,36 +6,39 @@ import QtQuick.Controls 2.2
  */
 Drawer {
 
-  function onAction(action) {
-    switch(action) {
-      case "loadConfig":
-        loadConfig()
-        break
-      case "saveConfig":
-        saveConfig()
-        break
-      case "saveConfigAs":
-        saveConfigAs()
-        break
-      case "styleSettings":
-        styleDialog.open()
-        break
-      case "aboutDialog":
-        aboutDialog.open()
-        break
-      case "close":
-        window.close()
-        break
-      default:
-        break
-    }
-  }
-
   Rectangle {
     objectName: "sideDrawer"
     id: sideDrawer
     anchors.fill: parent
-    property var sDialog: styleDialog
+
+    function closeDrawer() {
+      drawer.close();
+    }
+
+    function onAction(action) {
+      switch(action) {
+        case "loadConfig":
+          loadConfig()
+          break
+        case "saveConfig":
+          saveConfig()
+          break
+        case "saveConfigAs":
+          saveConfigAs()
+          break
+        case "styleSettings":
+          styleDialog.open()
+          break
+        case "aboutDialog":
+          aboutDialog.open()
+          break
+        case "close":
+          window.close()
+          break
+        default:
+          break
+      }
+    }
 
     ListModel {
       id: drawerModel
@@ -69,15 +72,15 @@ Drawer {
     ListView {
       id: listView
       anchors.fill: parent
-      visible: MainWindow.showDefaultPanelOpts
+      visible: MainWindow.showDefaultDrawerOpts
 
       delegate: ItemDelegate {
         width: parent.width
         text: title
         highlighted: ListView.isCurrentItem
         onClicked: {
-          onAction(action)
-          drawer.close()
+          sideDrawer.onAction(action)
+          sideDrawer.closeDrawer();
         }
       }
 

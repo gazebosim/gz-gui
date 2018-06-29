@@ -233,8 +233,8 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   }
 
   // Menus
-  this->SetShowPanel(_config.showPanel);
-  this->SetShowDefaultPanelOpts(_config.showDefaultPanelOpts);
+  this->SetShowDrawer(_config.showDrawer);
+  this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
   this->SetShowPluginMenu(_config.showPluginMenu);
 
   // Keep a copy
@@ -276,9 +276,9 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we
   // don't guarantee that will be saved.
-  config.showPanel = this->dataPtr->windowConfig.showPanel;
-  config.showDefaultPanelOpts =
-      this->dataPtr->windowConfig.showDefaultPanelOpts;
+  config.showDrawer = this->dataPtr->windowConfig.showDrawer;
+  config.showDefaultDrawerOpts =
+      this->dataPtr->windowConfig.showDefaultDrawerOpts;
   config.showPluginMenu = this->dataPtr->windowConfig.showPluginMenu;
   config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
   config.showPlugins = this->dataPtr->windowConfig.showPlugins;
@@ -347,22 +347,22 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   // Menus
   if (auto menusElem = winElem->FirstChildElement("menus"))
   {
-    // Panel
-    if (auto panelElem = menusElem->FirstChildElement("panel"))
+    // Drawer
+    if (auto drawerElem = menusElem->FirstChildElement("drawer"))
     {
       // Visible
-      if (panelElem->Attribute("visible"))
+      if (drawerElem->Attribute("visible"))
       {
         bool visible = true;
-        panelElem->QueryBoolAttribute("visible", &visible);
-        this->showPanel = visible;
+        drawerElem->QueryBoolAttribute("visible", &visible);
+        this->showDrawer = visible;
       }
       // Default
-      if (panelElem->Attribute("default"))
+      if (drawerElem->Attribute("default"))
       {
         bool def = true;
-        panelElem->QueryBoolAttribute("default", &def);
-        this->showDefaultPanelOpts = def;
+        drawerElem->QueryBoolAttribute("default", &def);
+        this->showDefaultDrawerOpts = def;
       }
     }
 
@@ -462,15 +462,15 @@ std::string WindowConfig::XMLString() const
     auto menusElem = doc.NewElement("menus");
     windowElem->InsertEndChild(menusElem);
 
-    // Panel
+    // Drawer
     {
-      auto elem = doc.NewElement("panel");
+      auto elem = doc.NewElement("drawer");
 
       // Visible
-      elem->SetAttribute("visible", this->showPanel);
+      elem->SetAttribute("visible", this->showDrawer);
 
       // Default
-      elem->SetAttribute("default", this->showDefaultPanelOpts);
+      elem->SetAttribute("default", this->showDefaultDrawerOpts);
 
       menusElem->InsertEndChild(elem);
     }
@@ -584,30 +584,30 @@ QQuickWindow *MainWindow::QuickWindow() const
 }
 
 /////////////////////////////////////////////////
-bool MainWindow::ShowPanel() const
+bool MainWindow::ShowDrawer() const
 {
-  return this->dataPtr->windowConfig.showPanel;
+  return this->dataPtr->windowConfig.showDrawer;
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SetShowPanel(const bool _showPanel)
+void MainWindow::SetShowDrawer(const bool _showDrawer)
 {
-  this->dataPtr->windowConfig.showPanel = _showPanel;
-  this->ShowPanelChanged();
+  this->dataPtr->windowConfig.showDrawer = _showDrawer;
+  this->ShowDrawerChanged();
 }
 
 /////////////////////////////////////////////////
-bool MainWindow::ShowDefaultPanelOpts() const
+bool MainWindow::ShowDefaultDrawerOpts() const
 {
-  return this->dataPtr->windowConfig.showDefaultPanelOpts;
+  return this->dataPtr->windowConfig.showDefaultDrawerOpts;
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SetShowDefaultPanelOpts(const bool _showDefaultPanelOpts)
+void MainWindow::SetShowDefaultDrawerOpts(const bool _showDefaultDrawerOpts)
 {
-  this->dataPtr->windowConfig.showDefaultPanelOpts =
-      _showDefaultPanelOpts;
-  this->ShowDefaultPanelOptsChanged();
+  this->dataPtr->windowConfig.showDefaultDrawerOpts =
+      _showDefaultDrawerOpts;
+  this->ShowDefaultDrawerOptsChanged();
 }
 
 /////////////////////////////////////////////////

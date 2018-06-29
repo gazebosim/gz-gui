@@ -108,7 +108,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
     EXPECT_TRUE(savedStr.contains("<position_x>"));
     EXPECT_TRUE(savedStr.contains("<position_y>"));
     EXPECT_TRUE(savedStr.contains("<menus>"));
-    EXPECT_TRUE(savedStr.contains("<panel"));
+    EXPECT_TRUE(savedStr.contains("<drawer"));
     EXPECT_TRUE(savedStr.contains("<plugins"));
 
     // Delete file
@@ -127,8 +127,7 @@ TEST(MainWindowTest, OnLoadConfig)
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  // Create main window
-  App()->Initialize(WindowType::kMainWindow);
+  // Get main window
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -170,8 +169,7 @@ TEST(MainWindowTest, OnAddPlugin)
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  // Create window
-  App()->Initialize(WindowType::kMainWindow);
+  // Get window
   auto mainWindow = App()->findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
@@ -209,8 +207,8 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_TRUE(c.materialTheme.empty());
   EXPECT_TRUE(c.materialPrimary.empty());
   EXPECT_TRUE(c.materialAccent.empty());
-  EXPECT_TRUE(c.showPanel);
-  EXPECT_TRUE(c.showDefaultPanelOpts);
+  EXPECT_TRUE(c.showDrawer);
+  EXPECT_TRUE(c.showDefaultDrawerOpts);
   EXPECT_TRUE(c.showPluginMenu);
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
@@ -224,7 +222,7 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_NE(xml.find("<width>"), std::string::npos);
   EXPECT_NE(xml.find("<height>"), std::string::npos);
   EXPECT_NE(xml.find("<menus>"), std::string::npos);
-  EXPECT_NE(xml.find("<panel"), std::string::npos);
+  EXPECT_NE(xml.find("<drawer"), std::string::npos);
   EXPECT_NE(xml.find("<plugins"), std::string::npos);
   EXPECT_EQ(xml.find("<ignore>"), std::string::npos);
 }
@@ -257,8 +255,8 @@ TEST(WindowConfigTest, mergeFromXML)
   EXPECT_TRUE(c.materialTheme.empty());
   EXPECT_TRUE(c.materialPrimary.empty());
   EXPECT_TRUE(c.materialAccent.empty());
-  EXPECT_TRUE(c.showPanel);
-  EXPECT_TRUE(c.showDefaultPanelOpts);
+  EXPECT_TRUE(c.showDrawer);
+  EXPECT_TRUE(c.showDefaultDrawerOpts);
   EXPECT_TRUE(c.showPluginMenu);
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
@@ -275,7 +273,7 @@ TEST(WindowConfigTest, MenusToString)
   WindowConfig c;
 
   // Set some menu-related properties
-  c.showPanel = false;
+  c.showDrawer = false;
   c.pluginsFromPaths = false;
 
   c.showPlugins.push_back("PluginA");
@@ -285,8 +283,8 @@ TEST(WindowConfigTest, MenusToString)
   auto str = c.XMLString();
   EXPECT_FALSE(str.empty());
 
-  EXPECT_TRUE(str.find("<panel visible=\"0\"") != std::string::npos ||
-              str.find("<panel visible=\"false\"") != std::string::npos);
+  EXPECT_TRUE(str.find("<drawer visible=\"0\"") != std::string::npos ||
+              str.find("<drawer visible=\"false\"") != std::string::npos);
   EXPECT_TRUE(str.find("<plugins visible=\"1\" from_paths=\"0\">") !=
       std::string::npos ||
       str.find("<plugins visible=\"true\" from_paths=\"false\">") !=
@@ -328,9 +326,6 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
-
-  // Create main window
-  EXPECT_TRUE(App()->Initialize(WindowType::kMainWindow));
 
   // Access window after it's open
   bool closed{false};
@@ -386,8 +381,8 @@ TEST(MainWindowTest, ApplyConfig)
   // Default config
   {
     auto c = mainWindow->CurrentWindowConfig();
-    EXPECT_TRUE(c.showPanel);
-    EXPECT_TRUE(c.showDefaultPanelOpts);
+    EXPECT_TRUE(c.showDrawer);
+    EXPECT_TRUE(c.showDefaultDrawerOpts);
     EXPECT_TRUE(c.showPluginMenu);
     EXPECT_TRUE(c.pluginsFromPaths);
     EXPECT_TRUE(c.showPlugins.empty());
@@ -404,7 +399,7 @@ TEST(MainWindowTest, ApplyConfig)
     c.materialTheme = "Dark";
     c.materialPrimary = "#ff0000";
     c.materialAccent = "Indigo";
-    c.showPanel = false;
+    c.showDrawer = false;
     c.pluginsFromPaths = false;
 //    c.showPlugins.push_back("watermelon");
 //    c.ignoredProps.insert("position");
@@ -426,7 +421,7 @@ TEST(MainWindowTest, ApplyConfig)
     EXPECT_EQ(c.materialPrimary, "#ff0000");
     // Always save hex
     EXPECT_EQ(c.materialAccent, "#9fa8da");
-    EXPECT_FALSE(c.showPanel);
+    EXPECT_FALSE(c.showDrawer);
     EXPECT_FALSE(c.pluginsFromPaths);
 //    EXPECT_EQ(c.showPlugins.size(), 1u);
 //    EXPECT_EQ(c.ignoredProps.size(), 1u);

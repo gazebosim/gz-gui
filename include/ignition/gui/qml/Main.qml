@@ -106,7 +106,7 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
-        visible: MainWindow.showPanel
+        visible: MainWindow.showDrawer
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -120,7 +120,7 @@ ApplicationWindow
       Rectangle {
         height: 1
         width: 1
-        visible: !MainWindow.showPanel
+        visible: !MainWindow.showDrawer
         color: "transparent"
       }
 
@@ -182,7 +182,7 @@ ApplicationWindow
    */
   SideDrawer {
     id: drawer
-    interactive: MainWindow.showPanel
+    interactive: MainWindow.showDrawer
     width: Math.min(window.width * 0.3, 500)
     height: window.height
   }

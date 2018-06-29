@@ -74,23 +74,23 @@ namespace ignition
         NOTIFY MaterialAccentChanged
       )
 
-      /// \brief
+      /// \brief Flag to show side drawer
       Q_PROPERTY(
-        bool showPanel
-        READ ShowPanel
-        WRITE SetShowPanel
-        NOTIFY ShowPanelChanged
+        bool showDrawer
+        READ ShowDrawer
+        WRITE SetShowDrawer
+        NOTIFY ShowDrawerChanged
       )
 
-      /// \brief
+      /// \brief Flag to show side drawer's default options
       Q_PROPERTY(
-        bool showDefaultPanelOpts
-        READ ShowDefaultPanelOpts
-        WRITE SetShowDefaultPanelOpts
-        NOTIFY ShowDefaultPanelOptsChanged
+        bool showDefaultDrawerOpts
+        READ ShowDefaultDrawerOpts
+        WRITE SetShowDefaultDrawerOpts
+        NOTIFY ShowDefaultDrawerOptsChanged
       )
 
-      /// \brief
+      /// \brief Flag to show plugins menu
       Q_PROPERTY(
         bool showPluginMenu
         READ ShowPluginMenu
@@ -171,29 +171,29 @@ namespace ignition
       public: Q_INVOKABLE void SetMaterialAccent(
           const QString &_materialAccent);
 
-      /// \brief
-      /// \return
-      public: Q_INVOKABLE bool ShowPanel() const;
+      /// \brief Get the flag to show the side drawer.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowDrawer() const;
 
-      /// \brief
-      /// \param[in] _showPanel
-      public: Q_INVOKABLE void SetShowPanel(const bool _showPanel);
+      /// \brief Set the flag to show the side drawer.
+      /// \param[in] _showDrawer True to show.
+      public: Q_INVOKABLE void SetShowDrawer(const bool _showDrawer);
 
-      /// \brief
-      /// \return
-      public: Q_INVOKABLE bool ShowDefaultPanelOpts() const;
+      /// \brief Get the flag to show the side drawer's default options.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowDefaultDrawerOpts() const;
 
-      /// \brief
-      /// \param[in] _showDefaultPanelOpts
-      public: Q_INVOKABLE void SetShowDefaultPanelOpts(
-          const bool _showDefaultPanelOpts);
+      /// \brief Set the flag to show the side drawer's default options.
+      /// \param[in] _showDefaultDrawerOpts True to show.
+      public: Q_INVOKABLE void SetShowDefaultDrawerOpts(
+          const bool _showDefaultDrawerOpts);
 
-      /// \brief
-      /// \return
+      /// \brief Get the flag to show the plugin menu.
+      /// \return True to show.
       public: Q_INVOKABLE bool ShowPluginMenu() const;
 
-      /// \brief
-      /// \param[in] _showPluginMenu
+      /// \brief Set the flag to show the plugin menu.
+      /// \param[in] _showPluginMenu True to show.
       public: Q_INVOKABLE void SetShowPluginMenu(const bool _showPluginMenu);
 
       /// \brief Callback when load configuration is selected
@@ -217,16 +217,16 @@ namespace ignition
       /// \brief Notifies when the accent color has changed.
       signals: void MaterialAccentChanged();
 
-      /// \brief
-      signals: void ShowPanelChanged();
+      /// \brief Notifies when the show drawer flag has changed.
+      signals: void ShowDrawerChanged();
 
-      /// \brief
-      signals: void ShowDefaultPanelOptsChanged();
+      /// \brief Notifies when the show drawer default options flag has changed.
+      signals: void ShowDefaultDrawerOptsChanged();
 
-      /// \brief
+      /// \brief Notifies when the show menu flag has changed.
       signals: void ShowPluginMenuChanged();
 
-      /// \brief
+      /// \brief Notifies when the window config has changed.
       signals: void configChanged();
 
       /// \brief Displays a message to the user
@@ -290,10 +290,10 @@ namespace ignition
       std::string materialAccent{""};
 
       /// \brief
-      bool showPanel{true};
+      bool showDrawer{true};
 
       /// \brief
-      bool showDefaultPanelOpts{true};
+      bool showDefaultDrawerOpts{true};
 
       /// \brief
       bool showPluginMenu{true};
