@@ -17,10 +17,12 @@
 
 #include <iostream>
 
+#include <ignition/common/Console.hh>
+
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
   #include <ignition/gui/Application.hh>
-  #include <ignition/gui/MainWindow.hh>
+  #include <ignition/gui/Dialog.hh>
 #endif
 
 //////////////////////////////////////////////////
@@ -31,20 +33,17 @@ int main(int _argc, char **_argv)
   // Increase verboosity so we see all messages
   ignition::common::Console::SetVerbosity(4);
 
-  // Create app
-  ignition::gui::Application app(_argc, _argv);
+  // Initialize app
+  ignition::gui::Application app(_argc, _argv,
+      ignition::gui::WindowType::kDialog);
 
   // Load plugins / config
-  if (!app.LoadPlugin("Publisher"))
-  {
-    return 1;
-  }
+  app.LoadPlugin("Publisher");
 
-  // Customize main window
-  auto win = app.findChild<ignition::gui::MainWindow *>()->QuickWindow();
-  win->setProperty("title", "Hello Window!");
+  // TODO(chapulina): fix multiple dialogs
+  // app.LoadPlugin("TopicEcho");
 
-  // Run window
+  // Run dialogs
   app.exec();
 
   std::cout << "After run" << std::endl;

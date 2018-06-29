@@ -20,7 +20,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
-#include "ignition/gui/Iface.hh"
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/qt.h"
@@ -67,14 +67,14 @@ MainWindow::MainWindow()
   : dataPtr(new MainWindowPrivate)
 {
   // Make MainWindow functions available from all QML files (using root)
-  qmlEngine()->rootContext()->setContextProperty("MainWindow", this);
+  App()->Engine()->rootContext()->setContextProperty("MainWindow", this);
 
   // Load QML and keep pointer to generated QQuickWindow
   std::string qmlFile("qrc:qml/Main.qml");
-  qmlEngine()->load(QUrl(QString::fromStdString(qmlFile)));
+  App()->Engine()->load(QUrl(QString::fromStdString(qmlFile)));
 
   this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
-      qmlEngine()->rootObjects().value(0));
+      App()->Engine()->rootObjects().value(0));
   if (!this->dataPtr->quickWindow)
   {
     ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
@@ -175,14 +175,14 @@ MainWindow::~MainWindow()
 void MainWindow::OnPluginClose()
 {
   auto pluginName = this->sender()->objectName();
-  removePlugin(pluginName.toStdString());
+  App()->RemovePlugin(pluginName.toStdString());
 }
 
 /////////////////////////////////////////////////
 QStringList MainWindow::PluginListModel() const
 {
   QStringList pluginNames;
-  auto plugins = getPluginList();
+  auto plugins = App()->PluginList();
   for (auto const &path : plugins)
   {
     for (auto const &plugin : path.second)
@@ -202,17 +202,13 @@ void MainWindow::OnLoadConfig(const QString &_path)
   if (localPath.isEmpty())
     localPath = _path;
 
-  if (!loadConfig(localPath.toStdString()))
-    return;
-
-  addPluginsToWindow();
-  applyConfig();
+  App()->LoadConfig(localPath.toStdString());
 }
 
 /////////////////////////////////////////////////
 void MainWindow::OnSaveConfig()
 {
-  this->SaveConfig(defaultConfigPath());
+  this->SaveConfig(App()->DefaultConfigPath());
 }
 
 /////////////////////////////////////////////////
@@ -275,13 +271,15 @@ void MainWindow::OnAddPlugin(QString _plugin)
   auto plugin = _plugin.toStdString();
   ignlog << "Add [" << plugin << "] via menu" << std::endl;
 
-  loadPlugin(plugin);
-  addPluginsToWindow();
+  App()->LoadPlugin(plugin);
 }
 
 ///////////////////////////////////////////////////
 bool MainWindow::ApplyConfig(const WindowConfig &_config)
 {
+  if (!this->dataPtr->quickWindow)
+    return false;
+
   // Window position
   if (!_config.IsIgnoring("position_x") &&
       !_config.IsIgnoring("position_y") &&
@@ -364,6 +362,9 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
 /////////////////////////////////////////////////
 WindowConfig MainWindow::CurrentWindowConfig() const
 {
+  if (!this->dataPtr->quickWindow)
+    return this->dataPtr->windowConfig;
+
   WindowConfig config;
 
   // Position
@@ -432,14 +433,12 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   // Stylesheet
   if (auto styleElem = winElem->FirstChildElement("stylesheet"))
   {
-    if (auto txt = styleElem->GetText())
+    if (styleElem->GetText())
     {
-      setStyleFromString(txt);
     }
     // empty string
     else
     {
-      setStyleFromString("");
     }
   }
 

@@ -21,8 +21,11 @@
 #include <ignition/math/Helpers.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Helpers.hh"
-#include "ignition/gui/Iface.hh"
+
+int gg_argc = 1;
+char **gg_argv = new char *[gg_argc];
 
 using namespace ignition;
 using namespace gui;
@@ -116,7 +119,7 @@ TEST(HelpersTest, stringTypeFromKey)
 /////////////////////////////////////////////////
 TEST(HelpersTest, findFirstByProperty)
 {
-  ASSERT_TRUE(initApp());
+  Application app(gg_argc, gg_argv);
 
   // Construct a list
   auto o0 = new QObject();
@@ -137,7 +140,5 @@ TEST(HelpersTest, findFirstByProperty)
   EXPECT_EQ(findFirstByProperty(list, "banana", 2.0), o1);
   EXPECT_EQ(findFirstByProperty(list, "banana", 3.0), nullptr);
   EXPECT_EQ(findFirstByProperty(list, "acerola", 1.0), nullptr);
-
-  EXPECT_TRUE(stop());
 }
 

@@ -29,10 +29,10 @@ link_directories(
 )
 
 # Generate example
-add_executable(window
-  window.cc
+add_executable(dialogs
+  dialogs.cc
 )
-target_link_libraries(window
+target_link_libraries(dialogs
   ${IGNITION-GUI_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Qml_LIBRARIES}

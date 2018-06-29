@@ -16,8 +16,8 @@
  */
 
 #include <ignition/common/Console.hh>
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
-#include "ignition/gui/Iface.hh"
 
 namespace ignition
 {
@@ -40,10 +40,10 @@ Dialog::Dialog()
 {
   // Load QML and keep pointer to generated QQuickWindow
   std::string qmlFile("qrc:qml/StandaloneDialog.qml");
-  qmlEngine()->load(QUrl(QString::fromStdString(qmlFile)));
+  App()->Engine()->load(QUrl(QString::fromStdString(qmlFile)));
 
   this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
-      qmlEngine()->rootObjects().value(0));
+      App()->Engine()->rootObjects().value(0));
   if (!this->dataPtr->quickWindow)
   {
     ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile

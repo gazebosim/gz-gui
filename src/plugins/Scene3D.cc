@@ -32,7 +32,6 @@
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/Conversions.hh"
-#include "ignition/gui/Iface.hh"
 #include "ignition/gui/plugins/Scene3D.hh"
 
 namespace ignition
