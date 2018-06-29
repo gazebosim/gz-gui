@@ -221,6 +221,89 @@ Pane {
     }
   }
 
+  // For context menu
+  MouseArea {
+    anchors.fill: content
+    acceptedButtons: Qt.RightButton
+    onClicked: {
+      contextMenu.x = mouseX
+      contextMenu.y = mouseY
+      contextMenu.open()
+    }
+  }
+
+  Menu {
+    id: contextMenu
+    transformOrigin: Menu.TopRight
+    MenuItem {
+      text: "Settings"
+      onTriggered: settingsDialog.open();
+    }
+    MenuItem {
+      text: "Close"
+      onTriggered: card.close();
+    }
+  }
+
+  Dialog {
+    id: settingsDialog
+    modal: false
+    focus: true
+    title: pluginName + " settings"
+    x: (card.width - width) / 2
+    y: (card.height - height) / 2
+
+    Column {
+      id: settingsColumn
+      anchors.horizontalCenter: settingsDialog.horizontalCenter
+      width: settingsDialog.width * 0.6
+
+      Switch {
+        id: titleSwitch
+        text: "Show title bar"
+        checked: card.hasTitlebar
+        onToggled: {
+          card.hasTitlebar = checked
+          // why is binding not working?
+          closeSwitch.enabled = checked
+          dockSwitch.enabled = checked
+        }
+      }
+
+      Switch {
+        id: closeSwitch
+        text: "Show close button"
+        enabled: card.hasTitleBar
+        checked: card.hasCloseButton
+        onToggled: {
+          card.hasCloseButton = checked
+        }
+      }
+
+      Switch {
+        id: dockSwitch
+        text: "Show dock button"
+        enabled: card.hasTitleBar
+        checked: card.hasDockButton
+        onToggled: {
+          card.hasDockButton = checked
+        }
+      }
+
+      Label {
+        text: "Z position"
+      }
+
+      SpinBox {
+        id: zPosSpinBox
+        value: 1
+        onValueChanged: {
+          card.z = value;
+        }
+      }
+    }
+  }
+
   Rectangle {
     objectName: "content"
     id: content
