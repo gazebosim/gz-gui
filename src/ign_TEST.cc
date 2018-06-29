@@ -53,7 +53,7 @@ TEST(CmdLine, list)
   EXPECT_NE(output.find("TopicEcho"), std::string::npos);
   // EXPECT_NE(output.find("Requester"), std::string::npos);
   // EXPECT_NE(output.find("Responder"), std::string::npos);
-  // EXPECT_NE(output.find("TimePanel"), std::string::npos);
+  // EXPECT_NE(output.find("WorldControl"), std::string::npos);
   EXPECT_NE(output.find("Publisher"), std::string::npos);
 }
 

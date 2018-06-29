@@ -8,11 +8,12 @@ set (gtest_local_sources
   Requester_TEST
   Responder_TEST
   Scene3D_TEST
-  TimePanel_TEST
   TopicEcho_TEST
   TopicInterface_TEST
   TopicsStats_TEST
   TopicViewer_TEST
+  WorldControl_TEST
+  WorldStats_TEST
 )
 
 foreach(src ${gtest_local_sources})

@@ -79,6 +79,9 @@ Pane {
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
 //  Material.elevation: 6
+  background: Rectangle {
+    color: "transparent"
+  }
   padding: 0
   state: "docked"
 
@@ -311,7 +314,7 @@ Pane {
     width: card.width
     height: card.height - cardToolbar.height
     clip: true
-    color: Material.background
+    color: "transparent"
   }
 
   // Left ruler

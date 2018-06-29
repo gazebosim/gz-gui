@@ -3,7 +3,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 
 Row {
-  id: timePanel
   width: 250
   height: 50
   spacing: 10
@@ -22,9 +21,9 @@ Row {
     anchors.verticalCenter: parent.verticalCenter
     onClicked: {
       if (checked)
-        TimePanel.OnPlay()
+        WorldControl.OnPlay()
       else
-        TimePanel.OnPause()
+        WorldControl.OnPause()
     }
     Material.background: Material.primary
   }
@@ -38,7 +37,7 @@ Row {
     width: playButton.width * 0.8
     anchors.verticalCenter: parent.verticalCenter
     onClicked: {
-      TimePanel.OnStep()
+      WorldControl.OnStep()
     }
     Material.background: Material.primary
   }

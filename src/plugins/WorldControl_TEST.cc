@@ -28,23 +28,23 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, Load)
+TEST(WorldControlTest, Load)
 {
   EXPECT_TRUE(initApp());
 
-  EXPECT_TRUE(loadPlugin("TimePanel"));
+  EXPECT_TRUE(loadPlugin("WorldControl"));
 
   EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, DefaultConfig)
+TEST(WorldControlTest, DefaultConfig)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Load plugin
-  EXPECT_TRUE(loadPlugin("TimePanel"));
+  EXPECT_TRUE(loadPlugin("WorldControl"));
 
   // Create main window
   EXPECT_TRUE(createMainWindow());
@@ -67,14 +67,14 @@ TEST(TimePanelTest, DefaultConfig)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, WorldControl)
+TEST(WorldControlTest, WorldControl)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"TimePanel\">"
+    "<plugin filename=\"WorldControl\">"
       "<title>World Control!</title>"
       "<world_control>"
         "<play_pause>true</play_pause>"
@@ -84,7 +84,7 @@ TEST(TimePanelTest, WorldControl)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+  EXPECT_TRUE(ignition::gui::loadPlugin("WorldControl",
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
@@ -155,14 +155,14 @@ TEST(TimePanelTest, WorldControl)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, IncorrectWorldStats)
+TEST(WorldControlTest, IncorrectWorldStats)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"TimePanel\">"
+    "<plugin filename=\"WorldControl\">"
       "<world_stats>"
         "<sim_time>true</sim_time>"
         "<real_time>true</real_time>"
@@ -177,7 +177,7 @@ TEST(TimePanelTest, IncorrectWorldStats)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+  EXPECT_TRUE(ignition::gui::loadPlugin("WorldControl",
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
@@ -207,14 +207,14 @@ TEST(TimePanelTest, IncorrectWorldStats)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, WorldStats)
+TEST(WorldControlTest, WorldStats)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"TimePanel\">"
+    "<plugin filename=\"WorldControl\">"
       "<world_stats>"
         "<sim_time>true</sim_time>"
         "<real_time>true</real_time>"
@@ -230,7 +230,7 @@ TEST(TimePanelTest, WorldStats)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+  EXPECT_TRUE(ignition::gui::loadPlugin("WorldControl",
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
@@ -406,21 +406,21 @@ TEST(TimePanelTest, WorldStats)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, ControlWithoutService)
+TEST(WorldControlTest, ControlWithoutService)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Load plugin
   const char* pluginStr =
-    "<plugin filename=\"TimePanel\">"
+    "<plugin filename=\"WorldControl\">"
       "<world_control>"
       "</world_control>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+  EXPECT_TRUE(ignition::gui::loadPlugin("WorldControl",
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
@@ -443,21 +443,21 @@ TEST(TimePanelTest, ControlWithoutService)
 }
 
 /////////////////////////////////////////////////
-TEST(TimePanelTest, StatsWithoutTopic)
+TEST(WorldControlTest, StatsWithoutTopic)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
   // Load plugin
   const char *pluginStr =
-    "<plugin filename=\"TimePanel\">"
+    "<plugin filename=\"WorldControl\">"
       "<world_stats>"
       "</world_stats>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("TimePanel",
+  EXPECT_TRUE(ignition::gui::loadPlugin("WorldControl",
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
