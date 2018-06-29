@@ -132,7 +132,8 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // TODO(dhood): Get list of initial display plugins from config file.
   std::list<std::string> pluginsToLoad {"Grid", "Grid"};
   for (auto pluginToLoad : pluginsToLoad) {
-    std::shared_ptr<Plugin> plugin = loadPluginWithoutAdding(pluginToLoad, nullptr);
+    std::shared_ptr<Plugin> plugin =
+      loadPluginWithoutAdding(pluginToLoad, nullptr);
     if (plugin == nullptr)
     {
       ignerr << "Couldn't load plugin [" << pluginToLoad << "]" << std::endl;
@@ -140,10 +141,11 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
 
     std::shared_ptr<ignition::gui::DisplayPlugin> displayPlugin =
-                std::dynamic_pointer_cast<ignition::gui::DisplayPlugin> (plugin);
+      std::dynamic_pointer_cast<ignition::gui::DisplayPlugin> (plugin);
     if (displayPlugin == nullptr)
     {
-      ignerr << "Couldn't cast plugin [" << pluginToLoad << "] to DisplayPlugin" << std::endl;
+      ignerr << "Couldn't cast plugin [" << pluginToLoad
+        << "] to DisplayPlugin" << std::endl;
       return;
     }
     this->dataPtr->displayPlugins.push_back(plugin);
