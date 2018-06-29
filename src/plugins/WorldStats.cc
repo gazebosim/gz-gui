@@ -102,16 +102,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto hasSim = false;
     simTimeElem->QueryBoolText(&hasSim);
 
-    if (hasSim)
-    {
-//              auto simTime = new QLabel("N/A");
-//              simTime->setObjectName("simTimeLabel");
-//              this->connect(this, SIGNAL(SetSimTime(QString)), simTime,
-//                  SLOT(setText(QString)));
-//
-//              mainLayout->addWidget(new QLabel("Sim time"), 1, 0);
-//              mainLayout->addWidget(simTime, 1, 1);
-    }
+    // TODO
   }
 
   // Real time
@@ -120,16 +111,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto hasReal = false;
     realTimeElem->QueryBoolText(&hasReal);
 
-    if (hasReal)
-    {
-//              auto realTime = new QLabel("N/A");
-//              realTime->setObjectName("realTimeLabel");
-//              this->connect(this, SIGNAL(SetRealTime(QString)), realTime,
-//                  SLOT(setText(QString)));
-//
-//              mainLayout->addWidget(new QLabel("Real time"), 1, 2);
-//              mainLayout->addWidget(realTime, 1, 3);
-    }
+    // TODO
   }
 
   // Real time factor
@@ -139,21 +121,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto hasRTF = false;
     realTimeFactorElem->QueryBoolText(&hasRTF);
 
-    if (hasRTF)
-    {
-//              auto rtfLabel = new QLabel("Real Time Factor");
-//              mainLayout->addWidget(rtfLabel, 2, 0, 1, 2);
-//              mainLayout->setAlignment(rtfLabel, Qt::AlignRight);
-//
-//              auto rtf = new QLabel("N/A");
-//              rtf->setObjectName("realTimeFactorLabel");
-//              rtf->setMinimumWidth(70);
-//              rtf->setAlignment(Qt::AlignRight);
-//              mainLayout->addWidget(rtf, 2, 2);
-//              mainLayout->setAlignment(rtf, Qt::AlignRight);
-//              this->connect(this, SIGNAL(SetRealTimeFactor(QString)), rtf,
-//                  SLOT(setText(QString)));
-    }
+    // TODO
   }
 }
 
@@ -164,11 +132,8 @@ void WorldStats::ProcessMsg()
 
   ignition::common::Time time;
 
-igndbg << this->dataPtr->msg.DebugString() << std::endl;
-
   if (this->dataPtr->msg.has_sim_time())
   {
-igndbg << "sim time" << std::endl;
     time.sec = this->dataPtr->msg.sim_time().sec();
     time.nsec = this->dataPtr->msg.sim_time().nsec();
 
@@ -177,7 +142,6 @@ igndbg << "sim time" << std::endl;
 
   if (this->dataPtr->msg.has_real_time())
   {
-igndbg << "real time" << std::endl;
     time.sec = this->dataPtr->msg.real_time().sec();
     time.nsec = this->dataPtr->msg.real_time().nsec();
 
@@ -187,8 +151,11 @@ igndbg << "real time" << std::endl;
   {
     // RTF as a percentage.
     double rtf = this->dataPtr->msg.real_time_factor() * 100;
-
     this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
+  }
+
+  {
+    this->SetIterations(QString::number(this->dataPtr->msg.iterations()));
   }
 }
 

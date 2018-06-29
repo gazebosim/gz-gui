@@ -3,91 +3,196 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 
-GridLayout {
-  width: 250
-  height: 50
-  columns: 2
+Rectangle {
+  id: worldStats
+  width: 240
+  height: 90
+  color: "transparent"
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
 
-  /**
-   * Real time factor
-   */
-  Label {
-    text: "RTF"
-    ToolTip.visible: realTimeFactorMa.containsMouse
-    ToolTip.delay: tooltipDelay
-    ToolTip.timeout: tooltipTimeout
-    ToolTip.text: qsTr("Real time factor")
-
-    MouseArea {
-      id: realTimeFactorMa
-      anchors.fill: parent
-      hoverEnabled: true
+  RowLayout {
+    id: hideButton
+    height: worldStats.height
+    ToolButton {
+      id: hideToolButton
+      text: panel.state === "hide" ? "\u2039" : "\u203A"
+      Layout.alignment: Qt.AlignBottom
+      font.pixelSize: 20
+      onClicked: {
+        panel.state = panel.state === "hide" ? "show" : "hide"
+      }
+    }
+    Label {
+      id: compactLabel
+      width: 60
+      verticalAlignment: Text.AlignVCenter
+      Layout.alignment: Qt.AlignBottom
+      Layout.bottomMargin: hideToolButton.height * 0.3
+      text: WorldStats.realTimeFactor
     }
   }
-  Label {
-    text: WorldStats.realTimeFactor
-  }
 
-  /**
-   * Sim time
-   */
-  Label {
-    text: "Sim time"
-    ToolTip.visible: simTimeMa.containsMouse
-    ToolTip.delay: tooltipDelay
-    ToolTip.timeout: tooltipTimeout
-    ToolTip.text: qsTr("Simulation time")
+  Rectangle {
+    id: panel
+    state: "hide"
+    default property alias data: grid.data
+    implicitWidth: grid.implicitWidth + 10
+    implicitHeight: grid.implicitHeight + 10
+    color: "#22000000"
 
-    MouseArea {
-      id: simTimeMa
+    states:[
+      State {
+        name:"hide"
+        PropertyChanges {
+          target: panel
+          x: worldStats.width
+          opacity: 0
+        }
+        PropertyChanges {
+          target: hideButton
+          x: worldStats.width - hideButton.width
+        }
+        PropertyChanges {
+          target: compactLabel
+          Layout.maximumWidth: 60
+          opacity: 1
+        }
+      },
+      State {
+        name:"show"
+        PropertyChanges {
+          target: panel
+          x: hideButton.width + 5
+          opacity: 1
+        }
+        PropertyChanges {
+          target: hideButton
+          x: 0
+        }
+        PropertyChanges {
+          target: compactLabel
+          Layout.maximumWidth: 0
+          opacity: 0
+        }
+      }
+    ]
+
+    transitions: [
+      Transition {
+        to:"show"
+        NumberAnimation
+        {
+          duration: 500
+          properties:"x,width,opacity"
+          easing.type: Easing.OutCubic
+        }
+      },
+      Transition {
+        to:"hide"
+        NumberAnimation
+        {
+          duration: 500
+          properties:"x,width,opacity"
+          easing.type: Easing.InCubic
+        }
+      }
+    ]
+
+    GridLayout {
+      id: grid
+      columns: 2
       anchors.fill: parent
-      hoverEnabled: true
+      anchors.margins: 5
+
+      /**
+       * Real time factor
+       */
+      Label {
+        text: "RTF"
+        font.weight: Font.DemiBold
+        ToolTip.visible: realTimeFactorMa.containsMouse
+        ToolTip.delay: tooltipDelay
+        ToolTip.timeout: tooltipTimeout
+        ToolTip.text: qsTr("Real time factor")
+
+        MouseArea {
+          id: realTimeFactorMa
+          anchors.fill: parent
+          hoverEnabled: true
+        }
+      }
+      Label {
+        text: WorldStats.realTimeFactor
+        Layout.alignment: Qt.AlignRight
+      }
+
+      /**
+       * Sim time
+       */
+      Label {
+        text: "Sim time"
+        font.weight: Font.DemiBold
+        ToolTip.visible: simTimeMa.containsMouse
+        ToolTip.delay: tooltipDelay
+        ToolTip.timeout: tooltipTimeout
+        ToolTip.text: qsTr("Simulation time")
+
+        MouseArea {
+          id: simTimeMa
+          anchors.fill: parent
+          hoverEnabled: true
+        }
+      }
+      Label {
+        text: WorldStats.simTime
+        Layout.alignment: Qt.AlignRight
+      }
+
+      /**
+       * Real time
+       */
+      Label {
+        text: "Real time"
+        font.weight: Font.DemiBold
+        ToolTip.visible: realTimeMa.containsMouse
+        ToolTip.delay: tooltipDelay
+        ToolTip.timeout: tooltipTimeout
+        ToolTip.text: qsTr("Wall-clock time")
+
+        MouseArea {
+          id: realTimeMa
+          anchors.fill: parent
+          hoverEnabled: true
+        }
+      }
+      Label {
+        text: WorldStats.realTime
+        Layout.alignment: Qt.AlignRight
+      }
+
+      /**
+       * Iterations
+       */
+      Label {
+        text: "Iterations"
+        font.weight: Font.DemiBold
+        ToolTip.visible: iterationsMa.containsMouse
+        ToolTip.delay: tooltipDelay
+        ToolTip.timeout: tooltipTimeout
+        ToolTip.text: qsTr("Simulation iterations")
+
+        MouseArea {
+          id: iterationsMa
+          anchors.fill: parent
+          hoverEnabled: true
+        }
+      }
+      Label {
+        text: WorldStats.iterations
+        Layout.alignment: Qt.AlignRight
+      }
     }
-  }
-  Label {
-    text: WorldStats.simTime
-  }
-
-  /**
-   * Real time
-   */
-  Label {
-    text: "Real time"
-    ToolTip.visible: realTimeMa.containsMouse
-    ToolTip.delay: tooltipDelay
-    ToolTip.timeout: tooltipTimeout
-    ToolTip.text: qsTr("Wall-clock time")
-
-    MouseArea {
-      id: realTimeMa
-      anchors.fill: parent
-      hoverEnabled: true
-    }
-  }
-  Label {
-    text: WorldStats.realTime
-  }
-
-  /**
-   * Iterations
-   */
-  Label {
-    text: "Iterations"
-    ToolTip.visible: iterationsMa.containsMouse
-    ToolTip.delay: tooltipDelay
-    ToolTip.timeout: tooltipTimeout
-    ToolTip.text: qsTr("Simulation iterations")
-
-    MouseArea {
-      id: iterationsMa
-      anchors.fill: parent
-      hoverEnabled: true
-    }
-  }
-  Label {
-    text: WorldStats.iterations
   }
 }
