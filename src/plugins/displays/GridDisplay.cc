@@ -31,7 +31,7 @@
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
-#include "ignition/gui/plugins/Grid.hh"
+#include "ignition/gui/plugins/displays/GridDisplay.hh"
 
 // Default cell count
 static const int kDefaultCellCount{20};
@@ -55,8 +55,10 @@ namespace gui
 {
 namespace plugins
 {
+namespace displays
+{
   /// \brief Holds configuration for a grid
-  struct GridInfo
+  struct GridDisplayInfo
   {
     /// \brief Number of cells in the horizontal
     int cellCount{kDefaultCellCount};
@@ -74,7 +76,7 @@ namespace plugins
     math::Color color{kDefaultColor};
   };
 
-  class GridPrivate
+  class GridDisplayPrivate
   {
     /// \brief Keep track of this grid.
     public: rendering::GridPtr grid;
@@ -82,30 +84,32 @@ namespace plugins
 }
 }
 }
+}
 
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
+using namespace displays;
 
 /////////////////////////////////////////////////
-Grid::Grid()
-  : DisplayPlugin(), dataPtr(new GridPrivate)
+GridDisplay::GridDisplay()
+  : DisplayPlugin(), dataPtr(new GridDisplayPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-Grid::~Grid()
+GridDisplay::~GridDisplay()
 {
 }
 
 /////////////////////////////////////////////////
-void Grid::Initialize(const tinyxml2::XMLElement *_pluginElem)
+void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "3D Grid";
 
   // Configuration
-  GridInfo gridInfo;
+  GridDisplayInfo gridInfo;
   if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("cell_count"))
@@ -146,7 +150,7 @@ void Grid::Initialize(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-QWidget* Grid::CreateProperties()
+QWidget* GridDisplay::CreateProperties()
 {
   auto gridName = QString::fromStdString(this->dataPtr->grid->Name());
 
@@ -203,7 +207,7 @@ QWidget* Grid::CreateProperties()
 }
 
 /////////////////////////////////////////////////
-void Grid::OnVisibilityChange(bool _value)
+void GridDisplay::OnVisibilityChange(bool _value)
 {
   // TODO(dhood): remove this once parent visual has setVisible
   if (_value)
@@ -217,7 +221,7 @@ void Grid::OnVisibilityChange(bool _value)
 }
 
 /////////////////////////////////////////////////
-void Grid::OnChange(const QVariant &_value)
+void GridDisplay::OnChange(const QVariant &_value)
 {
   auto gridName = this->sender()->property("gridName").toString().toStdString();
   auto type = this->sender()->objectName().toStdString();
@@ -235,6 +239,6 @@ void Grid::OnChange(const QVariant &_value)
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Grid,
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::displays::GridDisplay,
                                   ignition::gui::Plugin)
 

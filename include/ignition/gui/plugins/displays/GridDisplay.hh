@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_GRID_HH_
-#define IGNITION_GUI_PLUGINS_GRID_HH_
+#ifndef IGNITION_GUI_PLUGINS_DISPLAYS_GRIDDISPLAY_HH_
+#define IGNITION_GUI_PLUGINS_DISPLAYS_GRIDDISPLAY_HH_
 
 #include <memory>
 
@@ -29,7 +29,9 @@ namespace gui
 {
 namespace plugins
 {
-  class GridPrivate;
+namespace displays
+{
+  class GridDisplayPrivate;
 
   /// \brief A single grid in an Ignition Rendering scene.
   ///
@@ -47,15 +49,15 @@ namespace plugins
   /// * \<cell_length\> : Length of each cell, defaults to 1.
   /// * \<pose\> : Grid pose, defaults to the origin.
   /// * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class Grid : public DisplayPlugin
+  class GridDisplay : public DisplayPlugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: Grid();
+    public: GridDisplay();
 
     /// \brief Destructor
-    public: virtual ~Grid();
+    public: virtual ~GridDisplay();
 
     // Documentation inherited
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
@@ -73,8 +75,9 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<GridPrivate> dataPtr;
+    private: std::unique_ptr<GridDisplayPrivate> dataPtr;
   };
+}
 }
 }
 }
