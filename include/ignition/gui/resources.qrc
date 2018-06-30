@@ -9,6 +9,7 @@
   <file>qml/PluginMenu.qml</file>
   <file>qml/SideDrawer.qml</file>
   <file>qml/StandaloneDialog.qml</file>
+  <file>qml/StyleDialog.qml</file>
 
   <file>qml/images/menu.png</file>
   <file>qml/images/drawer.png</file>

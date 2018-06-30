@@ -17,7 +17,7 @@ Run the example:
     ./save_on_close
 
 This will open an empty window. Now you can insert plugins, reposition
-them, change the stylesheet, resize the window and so on.
+them, change the style, resize the window and so on.
 
 Then close the window. On the console, you'll see that the configuration was
 saved to the default location, for example:

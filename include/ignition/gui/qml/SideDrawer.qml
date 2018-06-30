@@ -16,6 +16,9 @@ Drawer {
       case "saveConfigAs":
         saveConfigAs()
         break
+      case "styleSettings":
+        styleDialog.open()
+        break
       case "aboutDialog":
         aboutDialog.open()
         break
@@ -41,6 +44,10 @@ Drawer {
     ListElement {
       title: "Save configuration as"
       action: "saveConfigAs"
+    }
+    ListElement {
+      title: "Style settings"
+      action: "styleSettings"
     }
     ListElement {
       title: "About"

@@ -12,11 +12,19 @@ ApplicationWindow
   height: 1000
   visible: true
   id: window
-  property string bgColor: "#eeeeee"
+
+  // Expose material properties to C++
+  property string materialTheme: window.Material.theme
+  property string materialPrimary: window.Material.primary
+  property string materialAccent: window.Material.accent
 
   // Not sure why the binding doesn't take care of this
   onTitleChanged: {
     titleLabel.text = window.title
+  }
+
+  Material.onBackgroundChanged: {
+    titleLabel.color = Material.background
   }
 
   // C++ signals to QML slots
@@ -74,7 +82,6 @@ ApplicationWindow
    * Top toolbar
    */
   header: ToolBar {
-    Material.foreground: "white"
     Material.elevation: 0
 
     MouseArea {
@@ -112,6 +119,7 @@ ApplicationWindow
         id: titleLabel
         text: window.title
         font.pixelSize: 18
+        color: Material.background
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
@@ -145,7 +153,7 @@ ApplicationWindow
     objectName: "background"
     id: background
     anchors.fill: parent
-    color: bgColor
+    color: Material.background
 
     Label {
       id: startLabel;
@@ -195,6 +203,16 @@ ApplicationWindow
   }
 
   /**
+   * Style dialog
+   */
+  StyleDialog {
+    id: styleDialog
+    x: (window.width - width) / 2
+    y: window.height / 6
+    width: Math.min(window.width, window.height) * 0.5
+  }
+
+  /**
    * Load file dialog
    */
   FileDialog {
@@ -220,7 +238,14 @@ ApplicationWindow
     selectMultiple: false
     selectExisting: false
     onAccepted: {
-      MainWindow.OnSaveConfigAs(fileUrl)
+      var selected = fileUrl.toString();
+
+      if (!selected.endsWith(".config"))
+      {
+        selected += ".config";
+      }
+
+      MainWindow.OnSaveConfigAs(selected);
     }
   }
 

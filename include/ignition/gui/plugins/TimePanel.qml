@@ -18,7 +18,6 @@ Row {
   RoundButton {
     id: playButton
     text: checked ? pauseIcon : playIcon
-    highlighted: true
     checkable: true
     anchors.verticalCenter: parent.verticalCenter
     onClicked: {
@@ -35,7 +34,6 @@ Row {
    */
   RoundButton {
     text: stepIcon
-    highlighted: true
     height: playButton.height * 0.8
     width: playButton.width * 0.8
     anchors.verticalCenter: parent.verticalCenter

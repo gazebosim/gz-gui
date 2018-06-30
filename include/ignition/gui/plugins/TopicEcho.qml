@@ -5,6 +5,7 @@ Rectangle {
   id: topicEcho
   width: 300
   height: 410
+  color: "transparent"
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
@@ -67,6 +68,8 @@ Rectangle {
     Rectangle {
       width: (topicEcho.width - 2 * 10)
       height: 200
+      color: "transparent"
+
       ListView {
         id: listView
         clip: true

@@ -204,7 +204,9 @@ TEST(WindowConfigTest, defaultValues)
   EXPECT_EQ(c.width, -1);
   EXPECT_EQ(c.height, -1);
   EXPECT_TRUE(c.state.isEmpty());
-  EXPECT_TRUE(c.styleSheet.empty());
+  EXPECT_TRUE(c.materialTheme.empty());
+  EXPECT_TRUE(c.materialPrimary.empty());
+  EXPECT_TRUE(c.materialAccent.empty());
   EXPECT_TRUE(c.menuVisibilityMap.empty());
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
@@ -248,7 +250,9 @@ TEST(WindowConfigTest, mergeFromXML)
   EXPECT_EQ(c.width, 1000);
   EXPECT_EQ(c.height, 600);
   EXPECT_TRUE(c.state.isEmpty());
-  EXPECT_TRUE(c.styleSheet.empty());
+  EXPECT_TRUE(c.materialTheme.empty());
+  EXPECT_TRUE(c.materialPrimary.empty());
+  EXPECT_TRUE(c.materialAccent.empty());
   EXPECT_TRUE(c.menuVisibilityMap.empty());
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
@@ -388,7 +392,9 @@ TEST(MainWindowTest, ApplyConfig)
 //    c.posY = 2000;
     c.width = 100;
     c.height = 200;
-//    c.styleSheet = "pineapple";
+    c.materialTheme = "Dark";
+    c.materialPrimary = "#ff0000";
+    c.materialAccent = "Indigo";
 //    c.menuVisibilityMap["File"] = false;
 //    c.pluginsFromPaths = false;
 //    c.showPlugins.push_back("watermelon");
@@ -407,7 +413,10 @@ TEST(MainWindowTest, ApplyConfig)
 
     EXPECT_EQ(c.width, 100);
     EXPECT_EQ(c.height, 200);
-//    EXPECT_EQ(c.styleSheet, "pineapple");
+    EXPECT_EQ(c.materialTheme, "Dark");
+    EXPECT_EQ(c.materialPrimary, "#ff0000");
+    // Always save hex
+    EXPECT_EQ(c.materialAccent, "#9fa8da");
 //    EXPECT_FALSE(c.menuVisibilityMap["File"]);
 //    EXPECT_FALSE(c.pluginsFromPaths);
 //    EXPECT_EQ(c.showPlugins.size(), 1u);

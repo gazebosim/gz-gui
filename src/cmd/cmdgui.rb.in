@@ -48,9 +48,6 @@ COMMANDS = {  'gui' =>
                        "  -c [ --config ] arg        Open the main window with a configuration file.\n" +
                        "                             Give the configuration file path as an argument.\n" +
                        "\n" +
-                       "  -t [ --style ] arg         Apply a stylesheet to the whole application.\n" +
-                       "                             Give a QSS file path as an argument.\n" +
-                       "\n" +
                        "  -v [ --verbose ] [arg]     Adjust the level of console output (0~4).\n" +
                        "                             The default verbosity is 1, use -v without\n"\
                        "                             arguments for level 3.\n"\
@@ -90,10 +87,6 @@ class Cmd
       opts.on('-c config', '--config', String,
           'Load a configuration file') do |c|
         options['config'] = c
-      end
-      opts.on('-t style', '--style', String,
-          'Load a stylesheet') do |t|
-        options['style'] = t
       end
       opts.on('-v [verbose]', '--verbose [verbose]', String,
           'Adjust level of console output') do |v|
@@ -182,11 +175,6 @@ class Cmd
           if options.key?('verbose')
             Importer.extern 'void cmdVerbose(const char *)'
             Importer.cmdVerbose(options['verbose'])
-          end
-
-          if options.key?('style')
-            Importer.extern 'void cmdSetStyleFromFile(const char *)'
-            Importer.cmdSetStyleFromFile(options['style'])
           end
 
           # Open specific window
