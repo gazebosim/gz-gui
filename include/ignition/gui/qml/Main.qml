@@ -251,7 +251,7 @@ ApplicationWindow
     onAccepted: {
       var selected = fileUrl.toString();
 
-      if (selected.endsWith(".config") < 0)
+      if (!selected.endsWith(".config"))
       {
         selected += ".config";
       }
