@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 1.4 as QQC1
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
@@ -15,7 +16,7 @@ Pane {
   /**
    * Minimum length of each dimension
    */
-  property int minSize: 100
+  property int minSize: 50
 
   /**
    * True to have a dock button
@@ -31,6 +32,11 @@ Pane {
    * True to have a title bar
    */
   property bool hasTitlebar: true
+
+  /**
+   * True to have draggable rulers for resizing
+   */
+  property bool resizable: true
 
   /**
    * The plugin name, which goes on the toolbar
@@ -290,15 +296,92 @@ Pane {
         }
       }
 
-      Label {
-        text: "Z position"
+      Switch {
+        id: resizableSwitch
+        text: "Resizable"
+        checked: card.resizable
+        onToggled: {
+          card.resizable = checked
+        }
       }
 
-      SpinBox {
-        id: zPosSpinBox
-        value: 1
-        onValueChanged: {
-          card.z = value;
+      GridLayout {
+        width: parent.width
+        columns: 2
+
+        Label {
+          text: "Position"
+          font.weight: Font.DemiBold
+        }
+
+        Text {
+          text: ""
+        }
+
+        QQC1.SpinBox {
+          id: xPosSpinBox
+          maximumValue: card.parent.width - card.width
+          onVisibleChanged: value = card.x
+          onValueChanged: {
+            card.x = value;
+          }
+        }
+        Label {
+          text: "X"
+        }
+        QQC1.SpinBox {
+          id: yPosSpinBox
+          maximumValue: card.parent.height - card.height
+          onVisibleChanged: value = card.y
+          onValueChanged: {
+            card.y = value;
+          }
+        }
+        Label {
+          text: "Y"
+        }
+        QQC1.SpinBox {
+          id: zPosSpinBox
+          maximumValue: 1000
+          onVisibleChanged: value = card.z
+          onValueChanged: {
+            card.z = value;
+          }
+        }
+        Label {
+          text: "Z"
+        }
+
+        Label {
+          text: "Size"
+          font.weight: Font.DemiBold
+        }
+
+        Text {
+          text: ""
+        }
+
+        QQC1.SpinBox {
+          id: widthSpinBox
+          maximumValue: card.parent.width
+          onVisibleChanged: value = card.width
+          onValueChanged: {
+            card.width = value;
+          }
+        }
+        Label {
+          text: "Width"
+        }
+        QQC1.SpinBox {
+          id: heightSpinBox
+          maximumValue: card.parent.height
+          onVisibleChanged: value = card.height
+          onValueChanged: {
+            card.height = value;
+          }
+        }
+        Label {
+          text: "Height"
         }
       }
     }
@@ -318,6 +401,7 @@ Pane {
   Rectangle {
     width: rulersThickness
     height: parent.parent.height
+    visible: card.resizable
     color: "transparent"
     anchors.horizontalCenter: parent.left
     anchors.verticalCenter: parent.verticalCenter
@@ -343,6 +427,7 @@ Pane {
   Rectangle {
     width: rulersThickness
     height: parent.parent.height
+    visible: card.resizable
     color: "transparent"
     anchors.horizontalCenter: parent.right
     anchors.verticalCenter: parent.verticalCenter
@@ -367,6 +452,7 @@ Pane {
   Rectangle {
     width: parent.parent.width
     height: rulersThickness
+    visible: card.resizable
     x: parent.x / 2
     y: 0
     color: "transparent"
@@ -394,6 +480,7 @@ Pane {
   Rectangle {
     width: parent.parent.width
     height: rulersThickness
+    visible: card.resizable
     x: parent.x / 2
     y: parent.y
     color: "transparent"
