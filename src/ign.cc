@@ -23,8 +23,9 @@
 
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/config.hh"
-#include "ignition/gui/ign.hh"
 #include "ignition/gui/Export.hh"
+#include "ignition/gui/ign.hh"
+#include "ignition/gui/MainWindow.hh"
 
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
@@ -77,6 +78,11 @@ extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
   ignition::gui::Application app(g_argc, g_argv);
 
+  if (!app.findChild<ignition::gui::MainWindow *>())
+  {
+    return;
+  }
+
   if (!app.LoadConfig(std::string(_config)))
   {
     return;
@@ -95,6 +101,11 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
   ignition::gui::Application app(g_argc, g_argv);
+
+  if (!app.findChild<ignition::gui::MainWindow *>())
+  {
+    return;
+  }
 
   app.LoadDefaultConfig();
 
