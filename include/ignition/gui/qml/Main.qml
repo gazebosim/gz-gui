@@ -249,7 +249,14 @@ ApplicationWindow
     selectMultiple: false
     selectExisting: false
     onAccepted: {
-      MainWindow.OnSaveConfigAs(fileUrl)
+      var selected = fileUrl.toString();
+
+      if (selected.endsWith(".config") < 0)
+      {
+        selected += ".config";
+      }
+
+      MainWindow.OnSaveConfigAs(selected);
     }
   }
 
