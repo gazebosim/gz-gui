@@ -4,6 +4,7 @@ import QtQuick.Controls 1.4 as QQC1
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
+import "qrc:/qml"
 
 // TODO: don't use "parent"
 Pane {
@@ -108,6 +109,13 @@ Pane {
       }
     }
   ]
+
+  /**
+   * Show settings dialog
+   */
+  function showSettingsDialog() {
+    settingsDialog.open()
+  }
 
   /**
    * Window for undocking
@@ -243,7 +251,7 @@ Pane {
     transformOrigin: Menu.TopRight
     MenuItem {
       text: "Settings"
-      onTriggered: settingsDialog.open();
+      onTriggered: card.showSettingsDialog();
     }
     MenuItem {
       text: "Close"
@@ -256,8 +264,9 @@ Pane {
     modal: false
     focus: true
     title: pluginName + " settings"
-    x: (card.width - width) / 2
-    y: (card.height - height) / 2
+    parent: card.parent
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
 
     Column {
       id: settingsColumn
@@ -318,8 +327,7 @@ Pane {
           text: ""
         }
 
-        QQC1.SpinBox {
-          id: xPosSpinBox
+        IgnSpinBox {
           maximumValue: card.parent.width - card.width
           onVisibleChanged: value = card.x
           onValueChanged: {
@@ -329,8 +337,7 @@ Pane {
         Label {
           text: "X"
         }
-        QQC1.SpinBox {
-          id: yPosSpinBox
+        IgnSpinBox {
           maximumValue: card.parent.height - card.height
           onVisibleChanged: value = card.y
           onValueChanged: {
@@ -340,8 +347,7 @@ Pane {
         Label {
           text: "Y"
         }
-        QQC1.SpinBox {
-          id: zPosSpinBox
+        IgnSpinBox {
           maximumValue: 1000
           onVisibleChanged: value = card.z
           onValueChanged: {
@@ -351,18 +357,14 @@ Pane {
         Label {
           text: "Z"
         }
-
         Label {
           text: "Size"
           font.weight: Font.DemiBold
         }
-
         Text {
           text: ""
         }
-
-        QQC1.SpinBox {
-          id: widthSpinBox
+        IgnSpinBox {
           maximumValue: card.parent.width
           onVisibleChanged: value = card.width
           onValueChanged: {
@@ -372,8 +374,7 @@ Pane {
         Label {
           text: "Width"
         }
-        QQC1.SpinBox {
-          id: heightSpinBox
+        IgnSpinBox {
           maximumValue: card.parent.height
           onVisibleChanged: value = card.height
           onValueChanged: {
@@ -395,6 +396,13 @@ Pane {
     height: card.height - cardToolbar.height
     clip: true
     color: Material.background
+
+    /**
+     * Conveniently expose card to children
+     */
+    function card() {
+      return card;
+    }
   }
 
   // Left ruler

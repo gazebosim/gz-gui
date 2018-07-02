@@ -106,10 +106,6 @@ namespace ignition
       /// \return The value of `delete_later`.
       public: bool DeleteLaterRequested() const;
 
-      /// \brief Show context menu
-      /// \param [in] _pos Click position
-      protected slots: virtual void ShowContextMenu(const QPoint &_pos);
-
       // Documentation inherited
 //      protected: void changeEvent(QEvent *_e) override;
 

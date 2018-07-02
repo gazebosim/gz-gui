@@ -156,12 +156,6 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     this->hasTitlebar = has;
   }
 
-  // Setup default context menu
-//  this->setContextMenuPolicy(Qt::CustomContextMenu);
-//  this->connect(this,
-//      SIGNAL(customContextMenuRequested(const QPoint &)),
-//      this, SLOT(ShowContextMenu(const QPoint &)));
-
   // Load custom configuration
   this->LoadConfig(_pluginElem);
 }
@@ -204,21 +198,6 @@ std::string Plugin::ConfigStr()
   }
 
   return this->configStr;
-}
-
-/////////////////////////////////////////////////
-void Plugin::ShowContextMenu(const QPoint & /*_pos*/)
-{
-  // Close action
-//  QAction closeAct(QString::fromStdString("Close [" + this->title + "]"),
-//      this);
-//  this->connect(&closeAct, SIGNAL(triggered()), this->parent(),
-//      SLOT(close()));
-
-  // Context menu
-//  QMenu contextMenu(tr("Context menu"), this);
-//  contextMenu.addAction(&closeAct);
-//  contextMenu.exec(this->mapToGlobal(_pos));
 }
 
 /////////////////////////////////////////////////
