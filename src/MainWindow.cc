@@ -183,9 +183,29 @@ QStringList MainWindow::PluginListModel() const
     {
       // Remove lib and .so
       auto pluginName = plugin.substr(3, plugin.find(".") - 3);
-      pluginNames.append(QString::fromStdString(pluginName));
+
+      // Show?
+      if (this->dataPtr->windowConfig.pluginsFromPaths ||
+          std::find(this->dataPtr->windowConfig.showPlugins.begin(),
+                    this->dataPtr->windowConfig.showPlugins.end(),
+                    pluginName) !=
+                    this->dataPtr->windowConfig.showPlugins.end())
+      {
+        pluginNames.append(QString::fromStdString(pluginName));
+      }
     }
   }
+
+  // Error
+  for (auto plugin : this->dataPtr->windowConfig.showPlugins)
+  {
+    if (!pluginNames.contains(QString::fromStdString(plugin)))
+    {
+      ignwarn << "Requested to show plugin [" << plugin <<
+          "] but it doesn't exist." << std::endl;
+    }
+  }
+
   return pluginNames;
 }
 
@@ -289,52 +309,16 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
     this->SetMaterialAccent(QString::fromStdString(_config.materialAccent));
   }
 
-  // Hide menus
-  for (auto visible : _config.menuVisibilityMap)
-  {
-//    if (auto menu = this->findChild<QMenu *>(
-//        QString::fromStdString(visible.first + "Menu")))
-//    {
-//      menu->menuAction()->setVisible(visible.second);
-//    }
-  }
-
-  // Plugins menu
-//  if (auto menu = this->findChild<QMenu *>("pluginsMenu"))
-//  {
-//    for (auto action : menu->actions())
-//    {
-//      action->setVisible(_config.pluginsFromPaths ||
-//          std::find(_config.showPlugins.begin(),
-//                    _config.showPlugins.end(),
-//                    action->text().toStdString()) !=
-//                    _config.showPlugins.end());
-//    }
-//
-//    for (auto plugin : _config.showPlugins)
-//    {
-//      bool exists = false;
-//      for (auto action : menu->actions())
-//      {
-//        if (action->text().toStdString() == plugin)
-//        {
-//          exists = true;
-//          break;
-//        }
-//      }
-//
-//      if (!exists)
-//      {
-//        ignwarn << "Requested to show plugin [" << plugin <<
-//            "] but it doesn't exist." << std::endl;
-//      }
-//    }
-//  }
+  // Menus
+  this->SetShowDrawer(_config.showDrawer);
+  this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
+  this->SetShowPluginMenu(_config.showPluginMenu);
 
   // Keep a copy
   this->dataPtr->windowConfig = _config;
 
-//  QCoreApplication::processEvents();
+  // Notify view
+  this->configChanged();
 
   return true;
 }
@@ -369,7 +353,10 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we
   // don't guarantee that will be saved.
-  config.menuVisibilityMap = this->dataPtr->windowConfig.menuVisibilityMap;
+  config.showDrawer = this->dataPtr->windowConfig.showDrawer;
+  config.showDefaultDrawerOpts =
+      this->dataPtr->windowConfig.showDefaultDrawerOpts;
+  config.showPluginMenu = this->dataPtr->windowConfig.showPluginMenu;
   config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
   config.showPlugins = this->dataPtr->windowConfig.showPlugins;
   config.ignoredProps = this->dataPtr->windowConfig.ignoredProps;
@@ -437,15 +424,22 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   // Menus
   if (auto menusElem = winElem->FirstChildElement("menus"))
   {
-    // File
-    if (auto fileElem = menusElem->FirstChildElement("file"))
+    // Drawer
+    if (auto drawerElem = menusElem->FirstChildElement("drawer"))
     {
       // Visible
-      if (fileElem->Attribute("visible"))
+      if (drawerElem->Attribute("visible"))
       {
         bool visible = true;
-        fileElem->QueryBoolAttribute("visible", &visible);
-        this->menuVisibilityMap["file"] = visible;
+        drawerElem->QueryBoolAttribute("visible", &visible);
+        this->showDrawer = visible;
+      }
+      // Default
+      if (drawerElem->Attribute("default"))
+      {
+        bool def = true;
+        drawerElem->QueryBoolAttribute("default", &def);
+        this->showDefaultDrawerOpts = def;
       }
     }
 
@@ -457,7 +451,7 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
       {
         bool visible = true;
         pluginsElem->QueryBoolAttribute("visible", &visible);
-        this->menuVisibilityMap["plugins"] = visible;
+        this->showPluginMenu = visible;
       }
 
       // From paths
@@ -553,16 +547,16 @@ std::string WindowConfig::XMLString() const
     auto menusElem = doc.NewElement("menus");
     windowElem->InsertEndChild(menusElem);
 
-    // File
+    // Drawer
     {
-      auto elem = doc.NewElement("file");
+      auto elem = doc.NewElement("drawer");
 
       // Visible
-      auto m = this->menuVisibilityMap.find("file");
-      if (m != this->menuVisibilityMap.end())
-      {
-        elem->SetAttribute("visible", m->second);
-      }
+      elem->SetAttribute("visible", this->showDrawer);
+
+      // Default
+      elem->SetAttribute("default", this->showDefaultDrawerOpts);
+
       menusElem->InsertEndChild(elem);
     }
 
@@ -571,11 +565,7 @@ std::string WindowConfig::XMLString() const
       auto elem = doc.NewElement("plugins");
 
       // Visible
-      auto m = this->menuVisibilityMap.find("plugins");
-      if (m != this->menuVisibilityMap.end())
-      {
-        elem->SetAttribute("visible", m->second);
-      }
+      elem->SetAttribute("visible", this->showPluginMenu);
 
       // From paths
       elem->SetAttribute("from_paths", this->pluginsFromPaths);
@@ -676,4 +666,44 @@ void MainWindow::SetMaterialAccent(const QString &_materialAccent)
 QQuickWindow *MainWindow::QuickWindow() const
 {
   return this->dataPtr->quickWindow;
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ShowDrawer() const
+{
+  return this->dataPtr->windowConfig.showDrawer;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetShowDrawer(const bool _showDrawer)
+{
+  this->dataPtr->windowConfig.showDrawer = _showDrawer;
+  this->ShowDrawerChanged();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ShowDefaultDrawerOpts() const
+{
+  return this->dataPtr->windowConfig.showDefaultDrawerOpts;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetShowDefaultDrawerOpts(const bool _showDefaultDrawerOpts)
+{
+  this->dataPtr->windowConfig.showDefaultDrawerOpts =
+      _showDefaultDrawerOpts;
+  this->ShowDefaultDrawerOptsChanged();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ShowPluginMenu() const
+{
+  return this->dataPtr->windowConfig.showPluginMenu;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetShowPluginMenu(const bool _showPluginMenu)
+{
+  this->dataPtr->windowConfig.showPluginMenu = _showPluginMenu;
+  this->ShowPluginMenuChanged();
 }

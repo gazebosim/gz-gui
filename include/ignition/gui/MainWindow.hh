@@ -74,6 +74,30 @@ namespace ignition
         NOTIFY MaterialAccentChanged
       )
 
+      /// \brief Flag to show side drawer
+      Q_PROPERTY(
+        bool showDrawer
+        READ ShowDrawer
+        WRITE SetShowDrawer
+        NOTIFY ShowDrawerChanged
+      )
+
+      /// \brief Flag to show side drawer's default options
+      Q_PROPERTY(
+        bool showDefaultDrawerOpts
+        READ ShowDefaultDrawerOpts
+        WRITE SetShowDefaultDrawerOpts
+        NOTIFY ShowDefaultDrawerOptsChanged
+      )
+
+      /// \brief Flag to show plugins menu
+      Q_PROPERTY(
+        bool showPluginMenu
+        READ ShowPluginMenu
+        WRITE SetShowPluginMenu
+        NOTIFY ShowPluginMenuChanged
+      )
+
       /// \brief Constructor
       public: MainWindow();
 
@@ -147,6 +171,31 @@ namespace ignition
       public: Q_INVOKABLE void SetMaterialAccent(
           const QString &_materialAccent);
 
+      /// \brief Get the flag to show the side drawer.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowDrawer() const;
+
+      /// \brief Set the flag to show the side drawer.
+      /// \param[in] _showDrawer True to show.
+      public: Q_INVOKABLE void SetShowDrawer(const bool _showDrawer);
+
+      /// \brief Get the flag to show the side drawer's default options.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowDefaultDrawerOpts() const;
+
+      /// \brief Set the flag to show the side drawer's default options.
+      /// \param[in] _showDefaultDrawerOpts True to show.
+      public: Q_INVOKABLE void SetShowDefaultDrawerOpts(
+          const bool _showDefaultDrawerOpts);
+
+      /// \brief Get the flag to show the plugin menu.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowPluginMenu() const;
+
+      /// \brief Set the flag to show the plugin menu.
+      /// \param[in] _showPluginMenu True to show.
+      public: Q_INVOKABLE void SetShowPluginMenu(const bool _showPluginMenu);
+
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);
 
@@ -167,6 +216,18 @@ namespace ignition
 
       /// \brief Notifies when the accent color has changed.
       signals: void MaterialAccentChanged();
+
+      /// \brief Notifies when the show drawer flag has changed.
+      signals: void ShowDrawerChanged();
+
+      /// \brief Notifies when the show drawer default options flag has changed.
+      signals: void ShowDefaultDrawerOptsChanged();
+
+      /// \brief Notifies when the show menu flag has changed.
+      signals: void ShowPluginMenuChanged();
+
+      /// \brief Notifies when the window config has changed.
+      signals: void configChanged();
 
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
@@ -228,9 +289,14 @@ namespace ignition
       /// \brief Material accent color
       std::string materialAccent{""};
 
-      /// \brief Map menu name to whether it should be visible, all menus are
-      /// shown by default.
-      std::map<std::string, bool> menuVisibilityMap;
+      /// \brief
+      bool showDrawer{true};
+
+      /// \brief
+      bool showDefaultDrawerOpts{true};
+
+      /// \brief
+      bool showPluginMenu{true};
 
       /// \brief True if plugins found in plugin paths should be listed under
       /// the Plugins menu. True by default.
