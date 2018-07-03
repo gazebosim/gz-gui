@@ -48,11 +48,11 @@ namespace gui
     /// \brief Initialize the display plugin.
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem);
 
-    /// \brief Create the widget for standard display plugins' properties.
-    public: virtual QWidget* CreateStandardProperties();
-
-    /// \brief Create the widget for the plugin's properties.
+    /// \brief Create the widget for all of the display plugin's properties.
     public: virtual QWidget* CreateProperties();
+
+    /// \brief Create the widget for the properties specific to this plugin.
+    public: virtual QWidget* CreateCustomProperties();
 
     /// \brief Returns the visual for the display plugin.
     protected: ignition::rendering::VisualPtr Visual();

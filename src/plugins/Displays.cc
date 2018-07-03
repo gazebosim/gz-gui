@@ -150,9 +150,9 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
     this->dataPtr->displayPlugins.push_back(plugin);
 
-    // Create the standard options for the display plugin.
-    auto standardProperties = displayPlugin->CreateStandardProperties();
-    mainLayout->addWidget(standardProperties);
+    // Create the configuration options for the display plugin.
+    auto pluginProperties = displayPlugin->CreateProperties();
+    mainLayout->addWidget(pluginProperties);
 
   }
   auto spacer = new QWidget();

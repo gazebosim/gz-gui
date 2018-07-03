@@ -149,7 +149,7 @@ void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-QWidget* GridDisplay::CreateProperties()
+QWidget* GridDisplay::CreateCustomProperties()
 {
   auto gridName = QString::fromStdString(this->dataPtr->grid->Name());
 

@@ -56,6 +56,12 @@ DisplayPlugin::~DisplayPlugin()
 }
 
 /////////////////////////////////////////////////
+QWidget* DisplayPlugin::CreateCustomProperties()
+{
+  return nullptr;
+}
+
+/////////////////////////////////////////////////
 void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   this->title = "Unnamed display";
@@ -130,7 +136,7 @@ ignition::rendering::ScenePtr DisplayPlugin::Scene()
   return this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
 }
 
-QWidget* DisplayPlugin::CreateStandardProperties()
+QWidget* DisplayPlugin::CreateProperties()
 {
   auto propertiesLayout = new QHBoxLayout();
   auto propertiesWidget = new QWidget();
@@ -145,7 +151,7 @@ QWidget* DisplayPlugin::CreateStandardProperties()
   propertiesLayout->addWidget(visibleCheck);
 
   // Create the custom configuration options for this specific display plugin.
-  auto customProperties = this->CreateProperties();
+  auto customProperties = this->CreateCustomProperties();
 
   // Integrate the custom configutaion options, if appropriate.
   if (nullptr != customProperties)
@@ -166,13 +172,6 @@ QWidget* DisplayPlugin::CreateStandardProperties()
 /////////////////////////////////////////////////
 void DisplayPlugin::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
-}
-
-
-/////////////////////////////////////////////////
-QWidget* DisplayPlugin::CreateProperties()
-{
-  return nullptr;
 }
 
 /////////////////////////////////////////////////
