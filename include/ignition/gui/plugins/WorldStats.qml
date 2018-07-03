@@ -9,6 +9,26 @@ Rectangle {
   height: 90
   color: "transparent"
 
+  /**
+   * True to show sim time
+   */
+  property bool showSimTime: false
+
+  /**
+   * True to show real time
+   */
+  property bool showRealTime: false
+
+  /**
+   * True to show real time factor
+   */
+  property bool showRealTimeFactor: false
+
+  /**
+   * True to show iterations
+   */
+  property bool showIterations: false
+
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
 
@@ -26,6 +46,7 @@ Rectangle {
     }
     Label {
       id: compactLabel
+      visible: showRealTimeFactor
       width: 60
       verticalAlignment: Text.AlignVCenter
       Layout.alignment: Qt.AlignBottom
@@ -38,6 +59,7 @@ Rectangle {
     id: panel
     state: "hide"
     default property alias data: grid.data
+    anchors.bottom: worldStats.bottom
     implicitWidth: grid.implicitWidth + 10
     implicitHeight: grid.implicitHeight + 10
     color: "#22000000"
@@ -111,6 +133,7 @@ Rectangle {
        */
       Label {
         text: "RTF"
+        visible: showRealTimeFactor
         font.weight: Font.DemiBold
         ToolTip.visible: realTimeFactorMa.containsMouse
         ToolTip.delay: tooltipDelay
@@ -125,6 +148,7 @@ Rectangle {
       }
       Label {
         text: WorldStats.realTimeFactor
+        visible: showRealTimeFactor
         Layout.alignment: Qt.AlignRight
       }
 
@@ -133,6 +157,7 @@ Rectangle {
        */
       Label {
         text: "Sim time"
+        visible: showSimTime
         font.weight: Font.DemiBold
         ToolTip.visible: simTimeMa.containsMouse
         ToolTip.delay: tooltipDelay
@@ -147,6 +172,7 @@ Rectangle {
       }
       Label {
         text: WorldStats.simTime
+        visible: showSimTime
         Layout.alignment: Qt.AlignRight
       }
 
@@ -155,6 +181,7 @@ Rectangle {
        */
       Label {
         text: "Real time"
+        visible: showRealTime
         font.weight: Font.DemiBold
         ToolTip.visible: realTimeMa.containsMouse
         ToolTip.delay: tooltipDelay
@@ -169,6 +196,7 @@ Rectangle {
       }
       Label {
         text: WorldStats.realTime
+        visible: showRealTime
         Layout.alignment: Qt.AlignRight
       }
 
@@ -177,6 +205,7 @@ Rectangle {
        */
       Label {
         text: "Iterations"
+        visible: showIterations
         font.weight: Font.DemiBold
         ToolTip.visible: iterationsMa.containsMouse
         ToolTip.delay: tooltipDelay
@@ -191,6 +220,7 @@ Rectangle {
       }
       Label {
         text: WorldStats.iterations
+        visible: showIterations
         Layout.alignment: Qt.AlignRight
       }
     }

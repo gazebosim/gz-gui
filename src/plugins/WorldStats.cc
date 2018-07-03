@@ -38,9 +38,16 @@ namespace plugins
     /// \brief Communication node
     public: ignition::transport::Node node;
 
+    /// \brief Holds real time factor
     public: QString realTimeFactor;
+
+    /// \brief Holds sim time
     public: QString simTime;
+
+    /// \brief Holds real time
     public: QString realTime;
+
+    /// \brief Holds iterations
     public: QString iterations;
   };
 }
@@ -98,10 +105,9 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Sim time
   if (auto simTimeElem = _pluginElem->FirstChildElement("sim_time"))
   {
-    auto hasSim = false;
-    simTimeElem->QueryBoolText(&hasSim);
-
-    // TODO
+    auto has = false;
+    simTimeElem->QueryBoolText(&has);
+    this->PluginItem()->setProperty("showSimTime", has);
 
     this->SetSimTime("N/A");
   }
@@ -109,10 +115,9 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Real time
   if (auto realTimeElem = _pluginElem->FirstChildElement("real_time"))
   {
-    auto hasReal = false;
-    realTimeElem->QueryBoolText(&hasReal);
-
-    // TODO
+    auto has = false;
+    realTimeElem->QueryBoolText(&has);
+    this->PluginItem()->setProperty("showRealTime", has);
 
     this->SetRealTime("N/A");
   }
@@ -121,12 +126,22 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (auto realTimeFactorElem =
         _pluginElem->FirstChildElement("real_time_factor"))
   {
-    auto hasRTF = false;
-    realTimeFactorElem->QueryBoolText(&hasRTF);
-
-    // TODO
+    auto has = false;
+    realTimeFactorElem->QueryBoolText(&has);
+    this->PluginItem()->setProperty("showRealTimeFactor", has);
 
     this->SetRealTimeFactor("N/A");
+  }
+
+  // Iterations
+  if (auto iterationsElem =
+        _pluginElem->FirstChildElement("iterations"))
+  {
+    auto has = false;
+    iterationsElem->QueryBoolText(&has);
+    this->PluginItem()->setProperty("showIterations", has);
+
+    this->SetIterations("N/A");
   }
 }
 
