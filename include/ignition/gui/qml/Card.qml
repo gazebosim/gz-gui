@@ -22,17 +22,17 @@ Pane {
   /**
    * True to have a dock button
    */
-  property bool hasDockButton: true
+  property bool showDockButton: true
 
   /**
    * True to have a close button
    */
-  property bool hasCloseButton: true
+  property bool showCloseButton: true
 
   /**
    * True to have a title bar
    */
-  property bool hasTitlebar: true
+  property bool showTitleBar: true
 
   /**
    * True to have draggable rulers for resizing
@@ -143,12 +143,12 @@ Pane {
   ToolBar {
     id: cardToolbar
     objectName: "cardToolbar"
-    visible: card.hasTitlebar
+    visible: card.showTitleBar
     Material.foreground: Material.foreground
     Material.background: Material.accent
     Material.elevation: 0
     width: card.width
-    height: card.hasTitlebar ? 50 : 0
+    height: card.showTitleBar ? 50 : 0
     x: 0
     y: 0
     z: 100
@@ -193,7 +193,7 @@ Pane {
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
-        visible: card.hasDockButton
+        visible: card.showDockButton
         onClicked: {
           const docked = card.state === "docked"
           card.state = docked ? "undocked" : "docked"
@@ -204,7 +204,7 @@ Pane {
       // Close button
       ToolButton {
         id: closeButton
-        visible: card.hasCloseButton
+        visible: card.showCloseButton
         text: closeIcon
         contentItem: Text {
           text: closeButton.text
@@ -223,7 +223,7 @@ Pane {
 
   // For drag
   MouseArea {
-    enabled: !hasTitlebar
+    enabled: !showTitleBar
     anchors.fill: content
     drag{
       target: card
@@ -276,9 +276,9 @@ Pane {
       Switch {
         id: titleSwitch
         text: "Show title bar"
-        checked: card.hasTitlebar
+        checked: card.showTitleBar
         onToggled: {
-          card.hasTitlebar = checked
+          card.showTitleBar = checked
           // why is binding not working?
           closeSwitch.enabled = checked
           dockSwitch.enabled = checked
@@ -288,20 +288,20 @@ Pane {
       Switch {
         id: closeSwitch
         text: "Show close button"
-        enabled: card.hasTitleBar
-        checked: card.hasCloseButton
+        enabled: card.showTitleBar
+        checked: card.showCloseButton
         onToggled: {
-          card.hasCloseButton = checked
+          card.showCloseButton = checked
         }
       }
 
       Switch {
         id: dockSwitch
         text: "Show dock button"
-        enabled: card.hasTitleBar
-        checked: card.hasDockButton
+        enabled: card.showTitleBar
+        checked: card.showDockButton
         onToggled: {
-          card.hasDockButton = checked
+          card.showDockButton = checked
         }
       }
 

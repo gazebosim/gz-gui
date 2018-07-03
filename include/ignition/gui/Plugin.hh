@@ -97,10 +97,6 @@ namespace ignition
       /// \return Plugin title.
       public: virtual std::string Title() const {return this->title;}
 
-      /// \brief Get whether the title bar is displayed
-      /// \return True if it is displayed
-      public: virtual bool HasTitlebar() {return this->hasTitlebar;}
-
       /// \brief Get the value of the the `delete_later` attribute from the
       /// configuration file, which defaults to false.
       /// \return The value of `delete_later`.
@@ -115,9 +111,6 @@ namespace ignition
 
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";
-
-      /// \brief True if the plugin should have a title bar, false otherwise.
-      protected: bool hasTitlebar = true;
 
       /// \brief XML configuration
       protected: std::string configStr;
