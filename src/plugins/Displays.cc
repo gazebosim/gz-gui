@@ -130,7 +130,7 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->setLayout(mainLayout);
 
   // TODO(dhood): Get list of initial display plugins from config file.
-  std::list<std::string> pluginsToLoad {"Grid", "Grid"};
+  std::list<std::string> pluginsToLoad {"GridDisplay", "RealtimeFactorDisplay"};
   for (auto pluginToLoad : pluginsToLoad) {
     std::shared_ptr<Plugin> plugin =
       loadPluginWithoutAdding(pluginToLoad, nullptr);

@@ -212,11 +212,11 @@ void GridDisplay::OnVisibilityChange(bool _value)
   // TODO(dhood): remove this once parent visual has setVisible
   if (_value)
   {
-    this->dataPtr->grid->Material()->SetTransparency(0.);
+    this->Visual()->Material()->SetTransparency(0.);
   }
   else
   {
-    this->dataPtr->grid->Material()->SetTransparency(1.);
+    this->Visual()->Material()->SetTransparency(1.);
   }
 }
 

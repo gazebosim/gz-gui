@@ -151,14 +151,12 @@ QWidget* DisplayPlugin::CreateStandardProperties()
 /////////////////////////////////////////////////
 void DisplayPlugin::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
-  // TODO: remove this implementation
 }
 
 
 /////////////////////////////////////////////////
 QWidget* DisplayPlugin::CreateProperties()
 {
-  // TODO: remove this implementation
   return nullptr;
 }
 
@@ -167,10 +165,5 @@ void DisplayPlugin::OnVisibilityChange(bool _value)
 {
   this->dataPtr->visible = _value;
   // TODO(dhood): call setVisible on the visual
-}
-
-/////////////////////////////////////////////////
-void DisplayPlugin::OnChange(const QVariant &_value)
-{
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,13 @@
  *
 */
 
+#include <iomanip>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/common/Time.hh>
+#include <ignition/rendering/Text.hh>
+#include <ignition/transport.hh>
 
 #include "ignition/gui/plugins/displays/RealtimeFactorDisplay.hh"
 
@@ -34,17 +38,15 @@ namespace displays
     /// \brief Message holding latest world statistics
     public: ignition::msgs::WorldStatistics msg;
 
-    /// \brief Service to send world control requests
-    public: std::string controlService;
-
     /// \brief Mutex to protect msg
     public: std::recursive_mutex mutex;
 
     /// \brief Communication node
     public: ignition::transport::Node node;
 
-    /// \brief The multi step value
-    public: unsigned int multiStep = 1u;
+    /// \brief The text display
+    // TODO(dhood): Make an overlay
+    public: ignition::rendering::TextPtr realtimeFactorText;
   };
 }
 }
@@ -71,44 +73,38 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
-    this->title = "Time panel";
+    this->title = "Realtime Factor";
 
+  // Subscribe to world_stats
+  std::string topic = "/world_stats";
+  if (!this->dataPtr->node.Subscribe(topic, &RealtimeFactorDisplay::OnWorldStatsMsg,
+      this))
+  {
+    ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
+  }
+
+  this->dataPtr->realtimeFactorText = this->Scene()->CreateText();
+  this->dataPtr->realtimeFactorText->SetShowOnTop(true);
+
+  auto mat = this->Scene()->CreateMaterial();
+  // TODO(dhood): Configurable properties
+  this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
+  this->Visual()->SetMaterial(mat);
 }
 
 /////////////////////////////////////////////////
-QWidget* RealtimeFactorDisplay::CreateProperties()
+void RealtimeFactorDisplay::OnVisibilityChange(bool _value)
 {
-  auto rtfLabel = new QLabel("Real Time Factor");
-  //mainLayout->addWidget(rtfLabel, 2, 0, 1, 2);
-  //mainLayout->setAlignment(rtfLabel, Qt::AlignRight);
-
-  auto rtf = new QLabel("N/A");
-  rtf->setObjectName("realTimeFactorLabel");
-  rtf->setMinimumWidth(70);
-  rtf->setAlignment(Qt::AlignRight);
-  //mainLayout->addWidget(rtf, 2, 2);
-  //mainLayout->setAlignment(rtf, Qt::AlignRight);
-  this->connect(this, SIGNAL(SetRealTimeFactor(QString)), rtf,
-      SLOT(setText(QString)));
-
-  auto collapsible = new CollapsibleWidget("temp name");
-  collapsible->AppendContent(rtfLabel);
-  collapsible->AppendContent(rtf);
-
-  return collapsible;
-
-  /*
-  // Spacers so widget doesn't lock the dock sizes
-  auto spacerH = new QWidget();
-  spacerH->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacerH, 0, 4, 2, 1);
-
-  auto spacerV = new QWidget();
-  spacerV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  mainLayout->addWidget(spacerV, 3, 0, 1, 5);
-
-  this->setLayout(mainLayout);
-  */
+  // TODO(dhood): remove this once parent visual has setVisible
+  if (_value)
+  {
+    this->Visual()->Material()->SetTransparency(0.);
+  }
+  else
+  {
+    // TODO(dhood): this doesn't make TextPtr invisible
+    this->Visual()->Material()->SetTransparency(1.);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -116,14 +112,14 @@ void RealtimeFactorDisplay::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  ignition::common::Time time;
-
   if (this->dataPtr->msg.has_real_time_factor())
   {
     // RTF as a percentage.
     double rtf = this->dataPtr->msg.real_time_factor() * 100;
-
-    this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2);
+    ss << "Realtime factor: " << rtf << "%";
+    this->dataPtr->realtimeFactorText->SetTextString(ss.str());
   }
 }
 
@@ -137,5 +133,5 @@ void RealtimeFactorDisplay::OnWorldStatsMsg(const ignition::msgs::WorldStatistic
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::RealtimeFactorDisplay,
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::displays::RealtimeFactorDisplay,
                                   ignition::gui::Plugin)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 
 #include <memory>
 
+#include <ignition/msgs.hh>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/DisplayPlugin.hh"
 
@@ -33,22 +35,7 @@ namespace displays
 {
   class RealtimeFactorDisplayPrivate;
 
-  /// \brief A single grid in an Ignition Rendering scene.
-  ///
-  /// This plugin can be used for adding and configuring a single grid.
-  ///
-  /// ## Configuration
-  ///
-  /// * \<engine\> : Optional render engine name, defaults to 'ogre'.
-  /// * \<scene\> : Optional scene name, defaults to 'scene'. If a scene with
-  ///               the given name doesn't exist, the plugin is not initialized.
-  /// * \<cell_count\> : Number of cells in the horizontal direction, defaults
-  ///                    to 20.
-  /// * \<vertical_cell_count\> : Number of cells in the vertical direction,
-  ///                             defaults to 0.
-  /// * \<cell_length\> : Length of each cell, defaults to 1.
-  /// * \<pose\> : Grid pose, defaults to the origin.
-  /// * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
+  /// \brief Display the realtime factor on an Ignition Rendering scene.
   class RealtimeFactorDisplay : public DisplayPlugin
   {
     Q_OBJECT
@@ -63,15 +50,14 @@ namespace displays
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Create the widget for the plugin's properties.
-    public: QWidget* CreateProperties() override;
-
-    /// \brief Called when a value changes on a widget
-    /// \param[in] _value New value
-    private slots: void OnChange(const QVariant &_value);
-
     /// \brief Callback when the visibility checkbox is changed.
-    private slots: void OnVisibilityChange(bool _value);
+    private slots: void OnVisibilityChange(bool _value) override;
+
+    /// \brief Callback in main thread when diagnostics come in
+    public slots: void ProcessMsg();
+
+    /// \brief Subscriber callback when new world statistics are received
+    private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
 
     /// \internal
     /// \brief Pointer to private data.

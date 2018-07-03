@@ -71,7 +71,7 @@ namespace displays
     private slots: void OnChange(const QVariant &_value);
 
     /// \brief Callback when the visibility checkbox is changed.
-    private slots: void OnVisibilityChange(bool _value);
+    private slots: void OnVisibilityChange(bool _value) override;
 
     /// \internal
     /// \brief Pointer to private data.

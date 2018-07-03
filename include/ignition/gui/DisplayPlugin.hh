@@ -60,10 +60,6 @@ namespace gui
     /// \brief Returns the visual for the display plugin.
     protected: ignition::rendering::ScenePtr Scene();
 
-    /// \brief Called when a value changes on a widget
-    /// \param[in] _value New value
-    private slots: virtual void OnChange(const QVariant &_value);
-
     /// \brief Callback when the visibility checkbox is changed.
     private slots: virtual void OnVisibilityChange(bool _value);
 
