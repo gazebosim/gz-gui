@@ -67,7 +67,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   // Default name in case user didn't define one
   if (this->title.empty())
-    this->title = "Time panel";
+    this->title = "World stats";
 
   // Create elements from configuration
   if (!_pluginElem)
@@ -88,7 +88,6 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
-  // Subscribe to world_stats
   if (!this->dataPtr->node.Subscribe(topic, &WorldStats::OnWorldStatsMsg,
       this))
   {
@@ -103,6 +102,8 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     simTimeElem->QueryBoolText(&hasSim);
 
     // TODO
+
+    this->SetSimTime("N/A");
   }
 
   // Real time
@@ -112,6 +113,8 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     realTimeElem->QueryBoolText(&hasReal);
 
     // TODO
+
+    this->SetRealTime("N/A");
   }
 
   // Real time factor
@@ -122,6 +125,8 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     realTimeFactorElem->QueryBoolText(&hasRTF);
 
     // TODO
+
+    this->SetRealTimeFactor("N/A");
   }
 }
 

@@ -13,7 +13,7 @@ set (gtest_local_sources
 #  TopicsStats
 #  TopicViewer
   WorldControl
-#  WorldStats
+  WorldStats
 )
 
 foreach(src ${gtest_local_sources})
