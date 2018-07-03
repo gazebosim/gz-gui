@@ -27,11 +27,28 @@ For example (`examples/config/image.config`):
   `Plugin::LoadConfig` function.
 
 * Ignition GUI processes a few default parameters before passing the config to
-  implemented plugins. These are the parameters handled:
+  implemented plugins. These are the attributes handled:
 
-    * `<title>`: The title to be displayed on the plugin's title bar
+    * `title`: The title to be displayed on the plugin's title bar
 
-    * `<has_titlebar>`: Set this to false to remove the title bar
+    * `show_title_bar`: Set this to false to remove the title bar
+
+    * `show_dock_button`: Set this to false to remove the dock button
+
+    * `show_close_button`: Set this to false to remove the close button
+
+    * `resizable`: Set this to so the plugin can't be resized by dragging its
+                   edges
+
+    * `x`: The plugin's X position in pixels (horizontal, from the left)
+
+    * `y`: The plugin's Y position in pixels (vertical, from the top)
+
+    * `z`: The plugin's Z position in pixels (screen stack, 0 is the lowest)
+
+    * `width`: The plugin's width in pixels
+
+    * `height`: The plugin's height in pixels
 
 ## Built-in plugins
 

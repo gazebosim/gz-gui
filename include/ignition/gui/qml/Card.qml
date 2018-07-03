@@ -1,8 +1,10 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 1.4 as QQC1
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
+import "qrc:/qml"
 
 // TODO: don't use "parent"
 Pane {
@@ -20,17 +22,22 @@ Pane {
   /**
    * True to have a dock button
    */
-  property bool hasDockButton: true
+  property bool showDockButton: true
 
   /**
    * True to have a close button
    */
-  property bool hasCloseButton: true
+  property bool showCloseButton: true
 
   /**
    * True to have a title bar
    */
-  property bool hasTitlebar: true
+  property bool showTitleBar: true
+
+  /**
+   * True to have draggable rulers for resizing
+   */
+  property bool resizable: true
 
   /**
    * The plugin name, which goes on the toolbar
@@ -107,6 +114,13 @@ Pane {
   ]
 
   /**
+   * Show settings dialog
+   */
+  function showSettingsDialog() {
+    settingsDialog.open()
+  }
+
+  /**
    * Window for undocking
    */
   Window {
@@ -132,12 +146,12 @@ Pane {
   ToolBar {
     id: cardToolbar
     objectName: "cardToolbar"
-    visible: card.hasTitlebar
+    visible: card.showTitleBar
     Material.foreground: Material.foreground
     Material.background: Material.accent
     Material.elevation: 0
     width: card.width
-    height: card.hasTitlebar ? 50 : 0
+    height: card.showTitleBar ? 50 : 0
     x: 0
     y: 0
     z: 100
@@ -182,7 +196,7 @@ Pane {
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
-        visible: card.hasDockButton
+        visible: card.showDockButton
         onClicked: {
           const docked = card.state === "docked"
           card.state = docked ? "undocked" : "docked"
@@ -193,7 +207,7 @@ Pane {
       // Close button
       ToolButton {
         id: closeButton
-        visible: card.hasCloseButton
+        visible: card.showCloseButton
         text: closeIcon
         contentItem: Text {
           text: closeButton.text
@@ -212,7 +226,7 @@ Pane {
 
   // For drag
   MouseArea {
-    enabled: !hasTitlebar
+    enabled: !showTitleBar
     anchors.fill: content
     drag{
       target: card
@@ -240,7 +254,7 @@ Pane {
     transformOrigin: Menu.TopRight
     MenuItem {
       text: "Settings"
-      onTriggered: settingsDialog.open();
+      onTriggered: card.showSettingsDialog();
     }
     MenuItem {
       text: "Close"
@@ -253,8 +267,9 @@ Pane {
     modal: false
     focus: true
     title: pluginName + " settings"
-    x: (card.width - width) / 2
-    y: (card.height - height) / 2
+    parent: card.parent
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
 
     Column {
       id: settingsColumn
@@ -264,9 +279,9 @@ Pane {
       Switch {
         id: titleSwitch
         text: "Show title bar"
-        checked: card.hasTitlebar
+        checked: card.showTitleBar
         onToggled: {
-          card.hasTitlebar = checked
+          card.showTitleBar = checked
           // why is binding not working?
           closeSwitch.enabled = checked
           dockSwitch.enabled = checked
@@ -276,32 +291,101 @@ Pane {
       Switch {
         id: closeSwitch
         text: "Show close button"
-        enabled: card.hasTitleBar
-        checked: card.hasCloseButton
+        enabled: card.showTitleBar
+        checked: card.showCloseButton
         onToggled: {
-          card.hasCloseButton = checked
+          card.showCloseButton = checked
         }
       }
 
       Switch {
         id: dockSwitch
         text: "Show dock button"
-        enabled: card.hasTitleBar
-        checked: card.hasDockButton
+        enabled: card.showTitleBar
+        checked: card.showDockButton
         onToggled: {
-          card.hasDockButton = checked
+          card.showDockButton = checked
         }
       }
 
-      Label {
-        text: "Z position"
+      Switch {
+        id: resizableSwitch
+        text: "Resizable"
+        checked: card.resizable
+        onToggled: {
+          card.resizable = checked
+        }
       }
 
-      SpinBox {
-        id: zPosSpinBox
-        value: 1
-        onValueChanged: {
-          card.z = value;
+      GridLayout {
+        width: parent.width
+        columns: 2
+
+        Label {
+          text: "Position"
+          font.weight: Font.DemiBold
+        }
+
+        Text {
+          text: ""
+        }
+
+        IgnSpinBox {
+          maximumValue: card.parent.width - card.width
+          onVisibleChanged: value = card.x
+          onValueChanged: {
+            card.x = value;
+          }
+        }
+        Label {
+          text: "X"
+        }
+        IgnSpinBox {
+          maximumValue: card.parent.height - card.height
+          onVisibleChanged: value = card.y
+          onValueChanged: {
+            card.y = value;
+          }
+        }
+        Label {
+          text: "Y"
+        }
+        IgnSpinBox {
+          maximumValue: 1000
+          onVisibleChanged: value = card.z
+          onValueChanged: {
+            card.z = value;
+          }
+        }
+        Label {
+          text: "Z"
+        }
+        Label {
+          text: "Size"
+          font.weight: Font.DemiBold
+        }
+        Text {
+          text: ""
+        }
+        IgnSpinBox {
+          maximumValue: card.parent.width
+          onVisibleChanged: value = card.width
+          onValueChanged: {
+            card.width = value;
+          }
+        }
+        Label {
+          text: "Width"
+        }
+        IgnSpinBox {
+          maximumValue: card.parent.height
+          onVisibleChanged: value = card.height
+          onValueChanged: {
+            card.height = value;
+          }
+        }
+        Label {
+          text: "Height"
         }
       }
     }
@@ -315,12 +399,20 @@ Pane {
     height: card.height - cardToolbar.height
     clip: true
     color: "transparent"
+
+    /**
+     * Conveniently expose card to children
+     */
+    function card() {
+      return card;
+    }
   }
 
   // Left ruler
   Rectangle {
     width: rulersThickness
     height: parent.parent.height
+    visible: card.resizable
     color: "transparent"
     anchors.horizontalCenter: parent.left
     anchors.verticalCenter: parent.verticalCenter
@@ -346,6 +438,7 @@ Pane {
   Rectangle {
     width: rulersThickness
     height: parent.parent.height
+    visible: card.resizable
     color: "transparent"
     anchors.horizontalCenter: parent.right
     anchors.verticalCenter: parent.verticalCenter
@@ -370,6 +463,7 @@ Pane {
   Rectangle {
     width: parent.parent.width
     height: rulersThickness
+    visible: card.resizable
     x: parent.x / 2
     y: 0
     color: "transparent"
@@ -397,6 +491,7 @@ Pane {
   Rectangle {
     width: parent.parent.width
     height: rulersThickness
+    visible: card.resizable
     x: parent.x / 2
     y: parent.y
     color: "transparent"
