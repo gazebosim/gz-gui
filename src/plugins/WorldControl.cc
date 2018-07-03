@@ -68,7 +68,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   // Default name in case user didn't define one
   if (this->title.empty())
-    this->title = "Time panel";
+    this->title = "World control";
 
   // Create elements from configuration
   if (!_pluginElem)
