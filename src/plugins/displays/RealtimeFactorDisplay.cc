@@ -72,8 +72,7 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 /////////////////////////////////////////////////
 void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
-  if (this->title.empty())
-    this->title = "Realtime Factor";
+  this->title = "Realtime factor";
 
   // Subscribe to world_stats
   std::string topic = "/world_stats";

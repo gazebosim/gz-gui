@@ -57,8 +57,7 @@ DisplayPlugin::~DisplayPlugin()
 /////////////////////////////////////////////////
 void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
-  if (this->title.empty())
-    this->title = "DisplayPlugin";
+  this->title = "Unnamed display";
 
   // Configuration
   std::string engineName{"ogre"};
@@ -133,7 +132,7 @@ ignition::rendering::ScenePtr DisplayPlugin::Scene()
 QWidget* DisplayPlugin::CreateStandardProperties()
 {
   // Create generic configuration options for all display plugins
-  auto visibleCheck = new QCheckBox("Visible");
+  auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
   visibleCheck->setObjectName("visibleCheck");
   visibleCheck->setToolTip("Toggle visibility");
   visibleCheck->setChecked(this->dataPtr->visible);

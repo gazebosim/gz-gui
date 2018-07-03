@@ -105,8 +105,7 @@ GridDisplay::~GridDisplay()
 /////////////////////////////////////////////////
 void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
-  if (this->title.empty())
-    this->title = "3D Grid";
+  this->title = "Grid";
 
   // Configuration
   GridDisplayInfo gridInfo;
