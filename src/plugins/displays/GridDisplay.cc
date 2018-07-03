@@ -195,14 +195,15 @@ QWidget* GridDisplay::CreateProperties()
   this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
 
-  auto collapsible = new CollapsibleWidget(this->dataPtr->grid->Name());
-  collapsible->AppendContent(cellCountWidget);
-  collapsible->AppendContent(vertCellCountWidget);
-  collapsible->AppendContent(cellLengthWidget);
-  collapsible->AppendContent(poseWidget);
-  collapsible->AppendContent(colorWidget);
+  auto layout = new QVBoxLayout();
+  layout->addWidget(cellCountWidget);
+  layout->addWidget(vertCellCountWidget);
+  layout->addWidget(cellLengthWidget);
+  layout->addWidget(poseWidget);
+  auto widget = new QWidget();
+  widget->setLayout(layout);
 
-  return collapsible;
+  return widget;
 }
 
 /////////////////////////////////////////////////

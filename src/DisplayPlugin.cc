@@ -22,6 +22,7 @@
 
 #include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/DisplayPlugin.hh"
+#include "ignition/gui/CollapsibleWidget.hh"
 
 class ignition::gui::DisplayPluginPrivate
 {
@@ -131,20 +132,35 @@ ignition::rendering::ScenePtr DisplayPlugin::Scene()
 
 QWidget* DisplayPlugin::CreateStandardProperties()
 {
-  // Create generic configuration options for all display plugins
+  auto propertiesLayout = new QHBoxLayout();
+  auto propertiesWidget = new QWidget();
+
+  // Create generic configuration options for all display plugins.
   auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
   visibleCheck->setObjectName("visibleCheck");
   visibleCheck->setToolTip("Toggle visibility");
   visibleCheck->setChecked(this->dataPtr->visible);
   this->connect(visibleCheck,
     SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
+  propertiesLayout->addWidget(visibleCheck);
 
-  auto buttonsLayout = new QHBoxLayout();
-  buttonsLayout->addWidget(visibleCheck);
+  // Create the custom configuration options for this specific display plugin.
+  auto customProperties = this->CreateProperties();
 
-  auto buttonsWidget = new QWidget();
-  buttonsWidget->setLayout(buttonsLayout);
-  return buttonsWidget;
+  // Integrate the custom configutaion options, if appropriate.
+  if (nullptr != customProperties)
+  {
+    // Remove the title from the checkbox and put it in a collapsible button.
+    visibleCheck->setText("");
+    auto collapsible = new CollapsibleWidget(this->title);
+    // TODO(dhood): Make the widget use its uncollapsed size from the start?
+    collapsible->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    collapsible->AppendContent(customProperties);
+    propertiesLayout->addWidget(collapsible);
+  }
+  propertiesWidget->setLayout(propertiesLayout);
+
+  return propertiesWidget;
 }
 
 /////////////////////////////////////////////////
