@@ -29,9 +29,6 @@ foreach (src ${qt_headers_local})
     ${IGNITION-TRANSPORT_LIBRARIES}
     ${Qt5Core_LIBRARIES}
     ${Qt5Widgets_LIBRARIES})
-endforeach (src ${qt_headers_local})
-
-foreach (src ${qt_headers_local})
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})
 

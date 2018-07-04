@@ -72,8 +72,10 @@ namespace ignition
     bool loadPlugin(const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
 
-    /// \brief Load a plugin from a file name. The plugin file must be in the
-    /// path.
+    /// \brief Load a plugin from a file name.
+    ///
+    /// The plugin file must be in the path.
+    ///
     /// \param[in] _filename Plugin filename.
     /// \param[in] _pluginElem Element containing plugin configuration
     /// \return The plugin loaded, will be `nullptr` on failure.

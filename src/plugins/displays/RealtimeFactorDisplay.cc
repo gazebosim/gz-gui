@@ -72,6 +72,7 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 /////////////////////////////////////////////////
 void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
+  (void)_pluginElem;
   this->title = "Realtime factor";
 
   // Subscribe to world_stats
@@ -87,6 +88,7 @@ void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 
   auto mat = this->Scene()->CreateMaterial();
   // TODO(dhood): Configurable properties
+  // TODO(dhood): The following line causes an Ogre exception in some cases.
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
   this->Visual()->SetMaterial(mat);
 }

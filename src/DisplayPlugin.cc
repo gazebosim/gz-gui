@@ -157,9 +157,13 @@ QWidget* DisplayPlugin::CreateProperties()
   if (nullptr != customProperties)
   {
     // Remove the title from the checkbox and put it in a collapsible button.
+    // TODO(dhood): Make the collapsible widget take up the full width after
+    // being expanded (including space underneath the checkbox).
     visibleCheck->setText("");
     auto collapsible = new CollapsibleWidget(this->title);
-    // TODO(dhood): Make the widget use its uncollapsed size from the start?
+    // TODO(dhood): Make the widget use its uncollapsed width from the start?
+    // TODO(dhood): If the widget is at the bottom of the layout, its contents
+    // might not be visible after it's expanded.
     collapsible->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     collapsible->AppendContent(customProperties);
     propertiesLayout->addWidget(collapsible);
@@ -172,6 +176,7 @@ QWidget* DisplayPlugin::CreateProperties()
 /////////////////////////////////////////////////
 void DisplayPlugin::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
+  (void)_pluginElem;
 }
 
 /////////////////////////////////////////////////

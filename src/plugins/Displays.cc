@@ -122,10 +122,6 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  // Don't waste time loading widgets if this will be deleted anyway
-  if (this->DeleteLaterRequested())
-    return;
-
   if (!error.empty())
   {
     // Add message
@@ -167,6 +163,7 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto pluginProperties = displayPlugin->CreateProperties();
     mainLayout->addWidget(pluginProperties);
   }
+  // TODO(dhood): Stop the displays from being spread out vertically.
   auto spacer = new QWidget();
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   mainLayout->addWidget(spacer);
