@@ -166,7 +166,6 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     // Create the configuration options for the display plugin.
     auto pluginProperties = displayPlugin->CreateProperties();
     mainLayout->addWidget(pluginProperties);
-
   }
   auto spacer = new QWidget();
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

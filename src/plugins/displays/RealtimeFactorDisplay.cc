@@ -76,8 +76,8 @@ void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 
   // Subscribe to world_stats
   std::string topic = "/world_stats";
-  if (!this->dataPtr->node.Subscribe(topic, &RealtimeFactorDisplay::OnWorldStatsMsg,
-      this))
+  if (!this->dataPtr->node.Subscribe(topic,
+      &RealtimeFactorDisplay::OnWorldStatsMsg, this))
   {
     ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
   }
@@ -123,7 +123,8 @@ void RealtimeFactorDisplay::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
+void RealtimeFactorDisplay::OnWorldStatsMsg(
+    const ignition::msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -132,5 +133,6 @@ void RealtimeFactorDisplay::OnWorldStatsMsg(const ignition::msgs::WorldStatistic
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::displays::RealtimeFactorDisplay,
-                                  ignition::gui::Plugin)
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(
+  ignition::gui::plugins::displays::RealtimeFactorDisplay,
+  ignition::gui::Plugin)
