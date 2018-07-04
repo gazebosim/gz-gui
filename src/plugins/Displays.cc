@@ -106,6 +106,21 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       ignwarn << error << std::endl;
     }
   }
+  std::vector<std::string> pluginsToLoad;
+  // Displays
+  if (auto displaysElem = _pluginElem->FirstChildElement("displays"))
+  {
+    for (auto displayElem = displaysElem->FirstChildElement("display");
+        displayElem != nullptr;
+        displayElem = displayElem->NextSiblingElement("display"))
+    {
+      if (auto pluginType = displayElem->Attribute("type"))
+      {
+        // TODO(dhood): Get displays' initial config.
+        pluginsToLoad.push_back(pluginType);
+      }
+    }
+  }
 
   // Don't waste time loading widgets if this will be deleted anyway
   if (this->DeleteLaterRequested())
@@ -129,15 +144,13 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   mainLayout->setSpacing(0);
   this->setLayout(mainLayout);
 
-  // TODO(dhood): Get list of initial display plugins from config file.
-  std::list<std::string> pluginsToLoad {"GridDisplay", "RealtimeFactorDisplay"};
   for (auto pluginToLoad : pluginsToLoad) {
     std::shared_ptr<Plugin> plugin =
       loadPluginWithoutAdding(pluginToLoad, nullptr);
     if (plugin == nullptr)
     {
       ignerr << "Couldn't load plugin [" << pluginToLoad << "]" << std::endl;
-      return;
+      continue;
     }
 
     std::shared_ptr<ignition::gui::DisplayPlugin> displayPlugin =
@@ -146,7 +159,7 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       ignerr << "Couldn't cast plugin [" << pluginToLoad
         << "] to DisplayPlugin" << std::endl;
-      return;
+      continue;
     }
     this->dataPtr->displayPlugins.push_back(plugin);
 

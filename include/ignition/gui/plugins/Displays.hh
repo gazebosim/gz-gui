@@ -37,6 +37,7 @@ namespace plugins
   ///
   /// ## Configuration
   ///
+  /// * \<displays\> : List of displays to load.
   /// * \<engine\> : Optional render engine name, defaults to 'ogre'.
   /// * \<scene\> : Optional scene name, defaults to 'scene'. If a scene with
   ///               the given name doesn't exist, the plugin is not initialized.
