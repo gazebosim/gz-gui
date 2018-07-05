@@ -70,7 +70,8 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 }
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
+void RealtimeFactorDisplay::Initialize(
+  const tinyxml2::XMLElement */*_pluginElem*/)
 {
   this->title = "Realtime factor";
 

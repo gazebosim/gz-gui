@@ -140,7 +140,8 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   mainLayout->setSpacing(0);
   this->setLayout(mainLayout);
 
-  for (auto pluginToLoad : pluginsToLoad) {
+  for (const auto &pluginToLoad : pluginsToLoad)
+  {
     std::shared_ptr<Plugin> plugin =
       loadPluginWithoutAdding(pluginToLoad, nullptr);
     if (plugin == nullptr)
