@@ -64,6 +64,7 @@ QWidget *DisplayPlugin::CreateCustomProperties() const
 /////////////////////////////////////////////////
 void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
+  // TODO(dhood): support config parsing of displays
   this->title = "Unnamed display";
 
   // Configuration

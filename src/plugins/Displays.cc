@@ -37,15 +37,7 @@ namespace plugins
 {
   class DisplaysPrivate
   {
-    /// \brief We keep a pointer to the engine and rely on it not being
-    /// destroyed, since it is a singleton.
-    public: rendering::RenderEngine *engine;
-
-    /// \brief We keep the scene name rather than a shared pointer because we
-    /// don't want to share ownership.
-    public: std::string sceneName{"scene"};
-
-    /// \brief Keep track of the loaded plugins.
+    /// \brief Keep track of the loaded display plugins.
     public: std::vector<std::shared_ptr<Plugin> > displayPlugins;
   };
 }
@@ -73,39 +65,6 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "Displays";
 
-  // Configuration
-  std::string engineName{"ogre"};
-  if (_pluginElem)
-  {
-    if (auto elem = _pluginElem->FirstChildElement("engine"))
-      engineName = elem->GetText();
-
-    if (auto elem = _pluginElem->FirstChildElement("scene"))
-      this->dataPtr->sceneName = elem->GetText();
-  }
-
-  std::string error{""};
-  rendering::ScenePtr scene;
-
-  // Render engine
-  this->dataPtr->engine = rendering::engine(engineName);
-  if (!this->dataPtr->engine)
-  {
-    error = "Engine \"" + engineName
-           + "\" not supported, Displays plugin won't work.";
-    ignwarn << error << std::endl;
-  }
-  else
-  {
-    // Scene
-    scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
-    if (!scene)
-    {
-      error = "Scene \"" + this->dataPtr->sceneName
-             + "\" not found, Displays plugin won't work.";
-      ignwarn << error << std::endl;
-    }
-  }
   std::vector<std::string> pluginsToLoad;
   // Displays
   if (auto displaysElem = _pluginElem->FirstChildElement("displays"))
@@ -122,18 +81,6 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  if (!error.empty())
-  {
-    // Add message
-    auto msg = new QLabel(QString::fromStdString(error));
-
-    auto mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(msg);
-    mainLayout->setAlignment(msg, Qt::AlignCenter);
-    this->setLayout(mainLayout);
-
-    return;
-  }
   // Create layout
   auto mainLayout = new QVBoxLayout();
   mainLayout->setContentsMargins(0, 0, 0, 0);
