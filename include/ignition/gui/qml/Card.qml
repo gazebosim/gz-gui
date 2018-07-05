@@ -40,6 +40,11 @@ Pane {
   property bool resizable: true
 
   /**
+   * True if plugin is in a standalone dialog
+   */
+  property bool standalone: false
+
+  /**
    * The plugin name, which goes on the toolbar
    */
   property alias pluginName: titleLabel.text
@@ -193,7 +198,7 @@ Pane {
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
-        visible: card.showDockButton
+        visible: card.showDockButton && !card.standalone
         onClicked: {
           const docked = card.state === "docked"
           card.state = docked ? "undocked" : "docked"
@@ -204,7 +209,7 @@ Pane {
       // Close button
       ToolButton {
         id: closeButton
-        visible: card.showCloseButton
+        visible: card.showCloseButton && !card.standalone
         text: closeIcon
         contentItem: Text {
           text: closeButton.text
@@ -288,6 +293,7 @@ Pane {
       Switch {
         id: closeSwitch
         text: "Show close button"
+        visible: !card.standalone
         enabled: card.showTitleBar
         checked: card.showCloseButton
         onToggled: {
@@ -298,6 +304,7 @@ Pane {
       Switch {
         id: dockSwitch
         text: "Show dock button"
+        visible: !card.standalone
         enabled: card.showTitleBar
         checked: card.showDockButton
         onToggled: {

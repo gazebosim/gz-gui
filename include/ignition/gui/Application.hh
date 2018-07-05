@@ -147,6 +147,9 @@ namespace ignition
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
 
+      /// \brief Callback when user requests to close a plugin
+      public slots: void OnPluginClose();
+
       /// \brief Create a main window, populate with previously loaded plugins
       /// and apply previously loaded configuration.
       /// An empty window will be created if no plugins have been loaded.
