@@ -28,14 +28,14 @@ class ignition::gui::DisplayPluginPrivate
 {
   /// \brief We keep a pointer to the engine and rely on it not being
   /// destroyed, since it is a singleton.
-  public: rendering::RenderEngine *engine;
+  public: rendering::RenderEngine *engine = nullptr;
 
   /// \brief We keep the scene name rather than a shared pointer because we
   /// don't want to share ownership.
   public: std::string sceneName{"scene"};
 
   /// \brief The visual to which subclasses can attach their display(s).
-  public: rendering::VisualPtr visual;
+  public: rendering::VisualPtr visual = nullptr;
 
   /// \brief If the display should be rendered.
   public: bool visible = true;
@@ -56,7 +56,7 @@ DisplayPlugin::~DisplayPlugin()
 }
 
 /////////////////////////////////////////////////
-QWidget* DisplayPlugin::CreateCustomProperties()
+QWidget *DisplayPlugin::CreateCustomProperties() const
 {
   return nullptr;
 }
@@ -125,18 +125,20 @@ void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->Initialize(_pluginElem);
 }
 
-ignition::rendering::VisualPtr DisplayPlugin::Visual()
+ignition::rendering::VisualPtr DisplayPlugin::Visual() const
 {
   return this->dataPtr->visual;
 }
 
-ignition::rendering::ScenePtr DisplayPlugin::Scene()
+/////////////////////////////////////////////////
+ignition::rendering::ScenePtr DisplayPlugin::Scene() const
 {
-  // TODO: improve
+  // TODO(dhood): error handling
   return this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
 }
 
-QWidget* DisplayPlugin::CreateProperties()
+/////////////////////////////////////////////////
+QWidget *DisplayPlugin::CreateProperties() const
 {
   auto propertiesLayout = new QHBoxLayout();
   auto propertiesWidget = new QWidget();
@@ -174,9 +176,8 @@ QWidget* DisplayPlugin::CreateProperties()
 }
 
 /////////////////////////////////////////////////
-void DisplayPlugin::Initialize(const tinyxml2::XMLElement *_pluginElem)
+void DisplayPlugin::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
 {
-  (void)_pluginElem;
 }
 
 /////////////////////////////////////////////////

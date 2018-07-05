@@ -64,7 +64,7 @@ namespace displays
         override;
 
     /// \brief Create the widget for the plugin's properties.
-    public: QWidget* CreateCustomProperties() override;
+    public: QWidget *CreateCustomProperties() const override;
 
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value

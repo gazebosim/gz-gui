@@ -49,19 +49,20 @@ namespace gui
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem);
 
     /// \brief Create the widget for all of the display plugin's properties.
-    public: QWidget* CreateProperties();
+    public: QWidget *CreateProperties() const;
 
     /// \brief Create the widget for the properties specific to this plugin.
-    public: virtual QWidget* CreateCustomProperties();
+    public: virtual QWidget *CreateCustomProperties() const;
 
     /// \brief Returns the visual for the display plugin.
-    protected: ignition::rendering::VisualPtr Visual();
+    protected: ignition::rendering::VisualPtr Visual() const;
 
-    /// \brief Returns the visual for the display plugin.
-    protected: ignition::rendering::ScenePtr Scene();
+    /// \brief Returns the scene for the display plugin.
+    protected: ignition::rendering::ScenePtr Scene() const;
 
     /// \brief Callback when the visibility checkbox is changed.
-    private slots: virtual void OnVisibilityChange(bool _value);
+    /// \param[in] _value New visibility state (true if visible).
+    private slots: virtual void OnVisibilityChange(const bool _value);
 
     /// \internal
     /// \brief Pointer to private data.

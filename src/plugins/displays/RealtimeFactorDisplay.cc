@@ -46,7 +46,7 @@ namespace displays
 
     /// \brief The text display
     // TODO(dhood): Make an overlay
-    public: ignition::rendering::TextPtr realtimeFactorText;
+    public: ignition::rendering::TextPtr realtimeFactorText = nullptr;
   };
 }
 }
@@ -70,9 +70,8 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 }
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
+void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
 {
-  (void)_pluginElem;
   this->title = "Realtime factor";
 
   // Subscribe to world_stats
@@ -94,7 +93,7 @@ void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::OnVisibilityChange(bool _value)
+void RealtimeFactorDisplay::OnVisibilityChange(const bool _value)
 {
   // TODO(dhood): remove this once parent visual has setVisible
   if (_value)

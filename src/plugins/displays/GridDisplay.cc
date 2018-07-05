@@ -79,7 +79,7 @@ namespace displays
   class GridDisplayPrivate
   {
     /// \brief Keep track of this grid.
-    public: rendering::GridPtr grid;
+    public: rendering::GridPtr grid = nullptr;
   };
 }
 }
@@ -149,7 +149,7 @@ void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-QWidget* GridDisplay::CreateCustomProperties()
+QWidget *GridDisplay::CreateCustomProperties() const
 {
   auto gridName = QString::fromStdString(this->dataPtr->grid->Name());
 
@@ -207,7 +207,7 @@ QWidget* GridDisplay::CreateCustomProperties()
 }
 
 /////////////////////////////////////////////////
-void GridDisplay::OnVisibilityChange(bool _value)
+void GridDisplay::OnVisibilityChange(const bool _value)
 {
   // TODO(dhood): remove this once parent visual has setVisible
   if (_value)
