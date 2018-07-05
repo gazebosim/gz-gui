@@ -166,13 +166,6 @@ MainWindow::~MainWindow()
 // }
 
 /////////////////////////////////////////////////
-void MainWindow::OnPluginClose()
-{
-  auto pluginName = this->sender()->objectName();
-  App()->RemovePlugin(pluginName.toStdString());
-}
-
-/////////////////////////////////////////////////
 QStringList MainWindow::PluginListModel() const
 {
   QStringList pluginNames;

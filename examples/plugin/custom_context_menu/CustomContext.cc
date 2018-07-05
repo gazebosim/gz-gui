@@ -27,24 +27,11 @@ using namespace gui;
 CustomContext::CustomContext()
   : Plugin()
 {
-  auto layout = new QVBoxLayout();
-  layout->addWidget(new QLabel(tr("Right-click me!")));
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////
 CustomContext::~CustomContext()
 {
-}
-
-/////////////////////////////////////////////////
-void CustomContext::ShowContextMenu(const QPoint &_pos)
-{
-  auto menu = new QMenu(tr("Context menu"), this);
-  menu->addAction(new QAction("Do something", this));
-  menu->addAction(new QAction("Do something else", this));
-  menu->addAction(new QAction("Do nothing", this));
-  menu->exec(this->mapToGlobal(_pos));
 }
 
 // Register this plugin
