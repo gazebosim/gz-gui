@@ -85,8 +85,8 @@ class TreeItemDelegate : public QStyledItemDelegate
     // Handle hover style.
     if (typeName != "title" && _opt.state & QStyle::State_MouseOver)
     {
-      _painter->setPen(QPen(QColor(200, 200, 200, 0), 0));
-      _painter->setBrush(QColor(200, 200, 200));
+      _painter->setPen(QApplication::palette().highlight().color());
+      _painter->setBrush(QApplication::palette().highlight().color());
       _painter->drawRect(_opt.rect);
     }
 
