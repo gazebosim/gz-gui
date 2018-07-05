@@ -43,13 +43,13 @@ namespace gui
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
+        override final;
 
     /// \brief Initialize the display plugin.
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem);
 
     /// \brief Create the widget for all of the display plugin's properties.
-    public: virtual QWidget* CreateProperties();
+    public: QWidget* CreateProperties();
 
     /// \brief Create the widget for the properties specific to this plugin.
     public: virtual QWidget* CreateCustomProperties();
