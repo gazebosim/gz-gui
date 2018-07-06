@@ -27,7 +27,7 @@ ign_build_tests(TYPE UNIT
   LIB_DEPS
     ${IGNITION-RENDERING_LIBRARIES}
     TINYXML2::TINYXML2
-    ${gtest_local_libs}
+    ${gtest_local_sources}
   INCLUDE_DIRS
     # Used to make internal source file headers visible to the unit tests
     ${CMAKE_CURRENT_SOURCE_DIR}
