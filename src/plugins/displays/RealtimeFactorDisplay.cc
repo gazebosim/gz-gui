@@ -83,11 +83,20 @@ void RealtimeFactorDisplay::Initialize(
     ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
   }
 
-  this->dataPtr->realtimeFactorText = this->Scene()->CreateText();
+  ignition::rendering::MaterialPtr mat;
+  if (auto scenePtr = this->Scene().lock())
+  {
+    this->dataPtr->realtimeFactorText = scenePtr->CreateText();
+    mat = scenePtr->CreateMaterial();
+  }
+  else
+  {
+    ignerr << "Scene invalid. Realtime factor display not initialized." << std::endl;
+    return;
+  }
   this->dataPtr->realtimeFactorText->SetTextString("Realtime factor: ? %");
   this->dataPtr->realtimeFactorText->SetShowOnTop(true);
 
-  auto mat = this->Scene()->CreateMaterial();
   // TODO(dhood): Configurable properties
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
   this->Visual()->SetMaterial(mat);

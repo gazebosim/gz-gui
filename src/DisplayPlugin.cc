@@ -30,9 +30,8 @@ class ignition::gui::DisplayPluginPrivate
   /// destroyed, since it is a singleton.
   public: rendering::RenderEngine *engine = nullptr;
 
-  /// \brief We keep the scene name rather than a shared pointer because we
-  /// don't want to share ownership.
-  public: std::string sceneName{"scene"};
+  /// \brief Rendering scene to use.
+  public: std::weak_ptr<rendering::Scene> weakScenePtr;
 
   /// \brief The visual to which subclasses can attach their display(s).
   public: rendering::VisualPtr visual = nullptr;
@@ -71,13 +70,14 @@ void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Configuration
   std::string engineName{"ogre"};
+  std::string sceneName{"scene"};
   if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("engine"))
       engineName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      this->dataPtr->sceneName = elem->GetText();
+      sceneName = elem->GetText();
   }
 
   std::string error{""};
@@ -94,10 +94,11 @@ void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   else
   {
     // Scene
-    scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
+    scene = this->dataPtr->engine->SceneByName(sceneName);
+    this->dataPtr->weakScenePtr = scene;
     if (!scene)
     {
-      error = "Scene \"" + this->dataPtr->sceneName
+      error = "Scene \"" + sceneName
              + "\" not found, DisplayPlugin plugin won't work.";
       ignwarn << error << std::endl;
     }
@@ -130,10 +131,9 @@ ignition::rendering::VisualPtr DisplayPlugin::Visual() const
 }
 
 /////////////////////////////////////////////////
-ignition::rendering::ScenePtr DisplayPlugin::Scene() const
+std::weak_ptr<ignition::rendering::Scene> DisplayPlugin::Scene() const
 {
-  // TODO(dhood): error handling
-  return this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
+  return this->dataPtr->weakScenePtr;
 }
 
 /////////////////////////////////////////////////

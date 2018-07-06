@@ -58,7 +58,10 @@ namespace gui
     protected: ignition::rendering::VisualPtr Visual() const;
 
     /// \brief Returns the scene for the display plugin.
-    protected: ignition::rendering::ScenePtr Scene() const;
+    /// A weak pointer is returned because the scene may have been deleted
+    /// since the display was created.
+    /// /return Weak pointer to the scene.
+    protected: std::weak_ptr<ignition::rendering::Scene> Scene() const;
 
     /// \brief Callback when the visibility checkbox is changed.
     /// \param[in] _value New visibility state (true if visible).

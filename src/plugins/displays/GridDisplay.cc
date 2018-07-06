@@ -135,7 +135,17 @@ void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  this->dataPtr->grid = this->Scene()->CreateGrid();
+  ignition::rendering::MaterialPtr mat;
+  if (auto scenePtr = this->Scene().lock())
+  {
+    this->dataPtr->grid = scenePtr->CreateGrid();
+    mat = scenePtr->CreateMaterial();
+  }
+  else
+  {
+    ignerr << "Scene invalid. Grid display not initialized." << std::endl;
+    return;
+  }
   this->dataPtr->grid->SetCellCount(gridInfo.cellCount);
   this->dataPtr->grid->SetVerticalCellCount(gridInfo.vertCellCount);
   this->dataPtr->grid->SetCellLength(gridInfo.cellLength);
@@ -143,7 +153,6 @@ void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
   this->Visual()->SetLocalPose(gridInfo.pose);
   this->Visual()->AddGeometry(this->dataPtr->grid);
 
-  auto mat = this->Scene()->CreateMaterial();
   mat->SetAmbient(gridInfo.color);
   this->Visual()->SetMaterial(mat);
 }
