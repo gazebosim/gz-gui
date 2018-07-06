@@ -99,12 +99,15 @@ void RealtimeFactorDisplay::OnVisibilityChange(const bool _value)
   // TODO(dhood): remove this once parent visual has setVisible
   if (_value)
   {
-    this->Visual()->Material()->SetTransparency(0.);
+    auto color = this->dataPtr->realtimeFactorText->Color();
+    color.A(1.0);
+    this->dataPtr->realtimeFactorText->SetColor(color);
   }
   else
   {
-    // TODO(dhood): this doesn't make TextPtr invisible
-    this->Visual()->Material()->SetTransparency(1.);
+    auto color = this->dataPtr->realtimeFactorText->Color();
+    color.A(0.0);
+    this->dataPtr->realtimeFactorText->SetColor(color);
   }
 }
 
