@@ -95,6 +95,7 @@ using namespace displays;
 GridDisplay::GridDisplay()
   : DisplayPlugin(), dataPtr(new GridDisplayPrivate)
 {
+  this->title = "Grid";
 }
 
 /////////////////////////////////////////////////
@@ -105,8 +106,6 @@ GridDisplay::~GridDisplay()
 /////////////////////////////////////////////////
 void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
-  this->title = "Grid";
-
   // Configuration
   GridDisplayInfo gridInfo;
   if (_pluginElem)
@@ -160,6 +159,10 @@ void GridDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 QWidget *GridDisplay::CreateCustomProperties() const
 {
+  if (nullptr == this->dataPtr->grid)
+  {
+    return nullptr;
+  }
   auto gridName = QString::fromStdString(this->dataPtr->grid->Name());
 
   auto cellCountWidget = new NumberWidget("Horizontal cell count",
@@ -218,6 +221,10 @@ QWidget *GridDisplay::CreateCustomProperties() const
 /////////////////////////////////////////////////
 void GridDisplay::OnVisibilityChange(const bool _value)
 {
+  if (nullptr == this->Visual())
+  {
+    return;
+  }
   // TODO(dhood): remove this once parent visual has setVisible
   if (_value)
   {
@@ -232,7 +239,10 @@ void GridDisplay::OnVisibilityChange(const bool _value)
 /////////////////////////////////////////////////
 void GridDisplay::OnChange(const QVariant &_value)
 {
-  auto gridName = this->sender()->property("gridName").toString().toStdString();
+  if (nullptr == this->dataPtr->grid)
+  {
+    return;
+  }
   auto type = this->sender()->objectName().toStdString();
 
   if (type == "cellCountWidget")

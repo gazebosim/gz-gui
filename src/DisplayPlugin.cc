@@ -47,6 +47,7 @@ using namespace gui;
 DisplayPlugin::DisplayPlugin()
   : Plugin(), dataPtr(new DisplayPluginPrivate)
 {
+  this->title = "Unnamed display";
 }
 
 /////////////////////////////////////////////////
@@ -66,7 +67,6 @@ void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // TODO(dhood): support config parsing of displays.
   // Despite what it looks like in the following code, the config is not
   // actually being passed in currently.
-  this->title = "Unnamed display";
 
   // Configuration
   std::string engineName{"ogre"};

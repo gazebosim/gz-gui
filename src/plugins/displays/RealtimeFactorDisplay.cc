@@ -62,6 +62,7 @@ using namespace displays;
 RealtimeFactorDisplay::RealtimeFactorDisplay()
   : DisplayPlugin(), dataPtr(new RealtimeFactorDisplayPrivate)
 {
+  this->title = "Realtime factor";
 }
 
 /////////////////////////////////////////////////
@@ -73,8 +74,6 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 void RealtimeFactorDisplay::Initialize(
   const tinyxml2::XMLElement */*_pluginElem*/)
 {
-  this->title = "Realtime factor";
-
   // Subscribe to world_stats
   std::string topic = "/world_stats";
   if (!this->dataPtr->node.Subscribe(topic,
@@ -105,24 +104,30 @@ void RealtimeFactorDisplay::Initialize(
 /////////////////////////////////////////////////
 void RealtimeFactorDisplay::OnVisibilityChange(const bool _value)
 {
+  if (nullptr == this->dataPtr->realtimeFactorText)
+  {
+    return;
+  }
   // TODO(dhood): remove this once parent visual has setVisible
+  auto color = this->dataPtr->realtimeFactorText->Color();
   if (_value)
   {
-    auto color = this->dataPtr->realtimeFactorText->Color();
     color.A(1.0);
-    this->dataPtr->realtimeFactorText->SetColor(color);
   }
   else
   {
-    auto color = this->dataPtr->realtimeFactorText->Color();
     color.A(0.0);
-    this->dataPtr->realtimeFactorText->SetColor(color);
   }
+  this->dataPtr->realtimeFactorText->SetColor(color);
 }
 
 /////////////////////////////////////////////////
 void RealtimeFactorDisplay::ProcessMsg()
 {
+  if (nullptr == this->dataPtr->realtimeFactorText)
+  {
+    return;
+  }
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
   if (this->dataPtr->msg.has_real_time_factor())
