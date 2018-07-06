@@ -50,7 +50,7 @@ namespace displays
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Callback when the visibility checkbox is changed.
+    // Documentation inherited
     private slots: void OnVisibilityChange(bool _value) override;
 
     /// \brief Callback in main thread when diagnostics come in

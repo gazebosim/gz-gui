@@ -63,14 +63,14 @@ namespace displays
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Create the widget for the plugin's properties.
+    // Documentation inherited
     public: QWidget *CreateCustomProperties() const override;
 
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);
 
-    /// \brief Callback when the visibility checkbox is changed.
+    // Documentation inherited
     private slots: void OnVisibilityChange(bool _value) override;
 
     /// \internal
