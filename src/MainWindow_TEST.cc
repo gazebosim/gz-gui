@@ -689,3 +689,31 @@ TEST(MainWindowTest, ApplyConfig)
   EXPECT_TRUE(stop());
 }
 
+/////////////////////////////////////////////////
+TEST(MainWindowTest, HugeWindow)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load test config file
+  EXPECT_TRUE(loadConfig(std::string(PROJECT_SOURCE_PATH) +
+      "/test/config/huge_window.config"));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  ASSERT_NE(nullptr, win);
+
+  win->show();
+
+  // Check size is smaller than requested
+  EXPECT_GT(1000000, win->width());
+  EXPECT_LT(100, win->width());
+
+  EXPECT_GT(1000000, win->height());
+  EXPECT_LT(100, win->height());
+
+  // Cleanup
+  EXPECT_TRUE(stop());
+}
+
