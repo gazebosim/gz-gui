@@ -91,31 +91,12 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Play / pause buttons
   if (auto playElem = _pluginElem->FirstChildElement("play_pause"))
   {
-    auto hasPlay = false;
-    playElem->QueryBoolText(&hasPlay);
+    auto has = false;
+    playElem->QueryBoolText(&has);
+    this->PluginItem()->setProperty("showPlay", has);
 
-    if (hasPlay)
+    if (has)
     {
-//          QLabel *stepLabel = new QLabel(tr("Steps:"));
-//          QSpinBox *stepSpinBox = new QSpinBox;
-//          stepSpinBox->setRange(1, 9999);
-//
-//          this->connect(this, &WorldControl::Playing,
-//            [=]()
-//            {
-//              stepButton->setDisabled(true);
-//              stepSpinBox->setDisabled(true);
-//            });
-//          this->connect(this, &WorldControl::Paused,
-//            [=]()
-//            {
-//              stepButton->setDisabled(false);
-//              stepSpinBox->setDisabled(false);
-//            });
-//          this->connect(stepSpinBox,
-//            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-//            [=](int _newValue) {this->dataPtr->multiStep = _newValue;});
-
       auto startPaused = false;
       if (auto pausedElem = _pluginElem->FirstChildElement("start_paused"))
       {
@@ -128,21 +109,24 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
+  // Step buttons
+  if (auto stepElem = _pluginElem->FirstChildElement("step"))
+  {
+    auto has = false;
+    stepElem->QueryBoolText(&has);
+    this->PluginItem()->setProperty("showStep", has);
+  }
+
   // Subscribe to world stats
   std::string statsTopic;
   if (auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic"))
     statsTopic = statsTopicElem->GetText();
 
-  if (statsTopic.empty())
-  {
-    ignwarn << "No statsTopic, play/pause button status will not be updated."
-           << std::endl;
-  }
-  else
+  if (!statsTopic.empty())
   {
     // Subscribe to world_stats
-    if (!this->dataPtr->node.Subscribe(statsTopic, &WorldControl::OnWorldStatsMsg,
-        this))
+    if (!this->dataPtr->node.Subscribe(statsTopic,
+        &WorldControl::OnWorldStatsMsg, this))
     {
       ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
     }
@@ -197,6 +181,12 @@ void WorldControl::OnPause()
   ignition::msgs::WorldControl req;
   req.set_pause(true);
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+}
+
+/////////////////////////////////////////////////
+void WorldControl::OnStepCount(const unsigned int _steps)
+{
+  this->dataPtr->multiStep = _steps;
 }
 
 /////////////////////////////////////////////////

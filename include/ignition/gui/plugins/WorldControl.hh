@@ -68,6 +68,10 @@ namespace plugins
     /// \brief Callback in Qt thread when step button is clicked.
     public slots: void OnStep();
 
+    /// \brief Callback in Qt thread when step count is changed.
+    /// \param[in] _steps New number of steps.
+    public slots: void OnStepCount(const unsigned int _steps);
+
     /// \brief Notify that it's now playing.
     signals: void Playing();
 
