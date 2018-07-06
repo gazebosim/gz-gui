@@ -165,6 +165,7 @@ QWidget *DisplayPlugin::CreateProperties() const
     // TODO(dhood): Make the widget use its uncollapsed width from the start?
     // TODO(dhood): If the widget is at the bottom of the layout, its contents
     // might not be visible after it's expanded.
+    // See https://bitbucket.org/ignitionrobotics/ign-gui/issues/32.
     collapsible->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     collapsible->AppendContent(customProperties);
     propertiesLayout->addWidget(collapsible);
