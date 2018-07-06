@@ -123,9 +123,6 @@ namespace ignition
       /// \return Updated window config
       public: WindowConfig CurrentWindowConfig() const;
 
-      /// \brief Callback when user requests to close a plugin
-      public slots: void OnPluginClose();
-
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename
       public slots: void OnAddPlugin(QString _plugin);
