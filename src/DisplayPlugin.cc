@@ -109,10 +109,6 @@ void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  // Don't waste time loading widgets if this will be deleted anyway
-  if (this->DeleteLaterRequested())
-    return;
-
   if (!error.empty())
   {
     // Add message
