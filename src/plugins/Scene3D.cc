@@ -44,13 +44,13 @@ namespace plugins
   class RenderWindowItemPrivate
   {
     /// brief Parent window
-    public: QQuickWindow *quickWindow;
+    public: QQuickWindow *quickWindow{nullptr};
 
     /// \brief Render window OpenGL Context
-    public: QOpenGLContext* renderWindowContext;
+    public: QOpenGLContext *renderWindowContext{nullptr};
 
     /// \brief Qt OpenGL Context
-    public: QOpenGLContext* qtContext;
+    public: QOpenGLContext *qtContext{nullptr};
 
     /// \brief Qt scene graph texture material
     public: QSGTextureMaterial material;
@@ -59,20 +59,20 @@ namespace plugins
     public: QSGOpaqueTextureMaterial materialOpaque;
 
     /// \brief Qt scene graph texture
-    public: QSGTexture *texture = nullptr;
+    public: QSGTexture *texture{nullptr};
 
     /// \brief Qt scene graph geometry
-    public: QSGGeometry *geometry = nullptr;
+    public: QSGGeometry *geometry{nullptr};
 
     /// \brief Qt scene graph texture size
     public: QSize textureSize;
 
     /// \brief Flag to indicate if render window context has been initialized
     /// or not
-    public: bool initialized = false;
+    public: bool initialized{false};
 
     /// \brief Pointer to user camera
-    public: rendering::CameraPtr camera;
+    public: rendering::CameraPtr camera{nullptr};
 
     /// \brief Engine Name
     public: std::string engineName{"ogre"};
@@ -81,13 +81,13 @@ namespace plugins
     public: std::string sceneName{"scene"};
 
     /// \brief Ambient light color
-    public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3);
+    public: math::Color ambientLight{math::Color(0.3, 0.3, 0.3)};
 
     /// \brief Background color
-    public: math::Color backgroundColor = math::Color(0.3, 0.3, 0.3);
+    public: math::Color backgroundColor{math::Color(0.3, 0.3, 0.3)};
 
     /// \brief Initial camera pose
-    public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
+    public: math::Pose3d cameraPose{math::Pose3d(0, 0, 5, 0, 0, 0)};
   };
 
 
@@ -122,7 +122,6 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
     {
       if (!_window)
       {
-        igndbg << "Changed to null window" << std::endl;
         return;
       }
       this->dataPtr->quickWindow = _window;
@@ -161,15 +160,19 @@ RenderWindowItem::~RenderWindowItem()
 /////////////////////////////////////////////////
 void RenderWindowItem::InitializeEngine()
 {
+  // Only call once
   this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
-            this, &RenderWindowItem::InitializeEngine);
+      this, &RenderWindowItem::InitializeEngine);
+
+  // Get Qt context
   this->dataPtr->qtContext = QOpenGLContext::currentContext();
   if (!this->dataPtr->qtContext)
   {
-    ignerr << "Null plugin Qt context!" << std::endl;
+    ignerr << "Null plugin Qt context, not initializing." << std::endl;
+    return;
   }
 
-  // create a new shared OpenGL context to be used exclusively by Ogre
+  // Create a new shared OpenGL context to be used exclusively by Ogre
   this->dataPtr->renderWindowContext = new QOpenGLContext();
   this->dataPtr->renderWindowContext->setFormat(
       this->dataPtr->quickWindow->requestedFormat());
@@ -177,6 +180,7 @@ void RenderWindowItem::InitializeEngine()
   this->dataPtr->renderWindowContext->create();
 
   this->ActivateRenderWindowContext();
+
   // Render engine
   auto engine = rendering::engine(this->dataPtr->engineName);
   if (!engine)
@@ -204,10 +208,12 @@ void RenderWindowItem::InitializeEngine()
   this->dataPtr->camera->SetImageWidth(800);
   this->dataPtr->camera->SetImageHeight(600);
   this->dataPtr->camera->SetAntiAliasing(2);
-//  this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
+  this->dataPtr->camera->SetAspectRatio(this->dataPtr->quickWindow->width() /
+                                        this->dataPtr->quickWindow->height());
   this->dataPtr->camera->SetHFOV(M_PI * 0.5);
 
   this->DoneRenderWindowContext();
+
   this->dataPtr->initialized = true;
 }
 
@@ -263,15 +269,16 @@ void RenderWindowItem::DoneRenderWindowContext()
       GL_TRANSFORM_FEEDBACK_BUFFER, 0);
   this->dataPtr->renderWindowContext->functions()->glBindBuffer(
       GL_UNIFORM_BUFFER, 0);
+
   this->dataPtr->renderWindowContext->doneCurrent();
   this->dataPtr->qtContext->makeCurrent(this->dataPtr->quickWindow);
+
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::timerEvent(
-    QTimerEvent */*_e*/)
+void RenderWindowItem::timerEvent(QTimerEvent */*_e*/)
 {
   this->update();
 }
@@ -289,6 +296,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
   this->ActivateRenderWindowContext();
   this->dataPtr->camera->Update();
 
+  // TODO: remove!
   static bool done = false;
   if (!done)
   {
@@ -341,7 +349,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
 void RenderWindowItem::UpdateFBO()
 {
   QSize s(static_cast<qint32>(this->width()),
-      static_cast<qint32>(this->height()));
+          static_cast<qint32>(this->height()));
 
   if (this->width() <= 0 || this->height() <= 0 ||
       (s == this->dataPtr->textureSize))
@@ -356,7 +364,6 @@ void RenderWindowItem::UpdateFBO()
   this->dataPtr->camera->SetImageHeight(this->dataPtr->textureSize.height());
   this->dataPtr->camera->PreRender();
 
-
   QSGGeometry::updateTexturedRectGeometry(this->dataPtr->geometry,
       QRectF(0.0, 0.0, this->dataPtr->textureSize.width(),
       this->dataPtr->textureSize.height()),
@@ -364,7 +371,7 @@ void RenderWindowItem::UpdateFBO()
 
   delete this->dataPtr->texture;
 
-  this->dataPtr->texture = window()->createTextureFromId(
+  this->dataPtr->texture = this->window()->createTextureFromId(
       this->dataPtr->camera->RenderTextureGLId(),
       this->dataPtr->textureSize);
 
@@ -413,6 +420,7 @@ Scene3D::Scene3D()
 /////////////////////////////////////////////////
 Scene3D::~Scene3D()
 {
+  igndbg << "Destroy Scene3D" << std::endl;
 }
 
 /////////////////////////////////////////////////

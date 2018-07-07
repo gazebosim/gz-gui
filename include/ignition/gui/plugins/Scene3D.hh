@@ -113,15 +113,15 @@ namespace plugins
     /// \brief Destructor
     public: virtual ~RenderWindowItem();
 
-    /// \brief Set background color of render window
-    /// \param[in] _color Color of render window background
+    /// \brief Set background color of scene
+    /// \param[in] _color Color of scene background
     public: void SetBackgroundColor(const math::Color &_color);
 
-    /// \brief Set ambient light of render window
+    /// \brief Set ambient light of scene
     /// \param[in] _ambient Color of ambient light
     public: void SetAmbientLight(const math::Color &_ambient);
 
-    /// \brief Set engine name used to create the render window
+    /// \brief Set engine name used to create the scene
     /// \param[in] _name Name of render engine
     public: void SetEngineName(const std::string &_name);
 
@@ -151,11 +151,11 @@ namespace plugins
     /// function. It represents the visual representation of the item.
     /// \param[in] _data The node transformation data.
     private: QSGNode *updatePaintNode(QSGNode *_oldNode,
-        QQuickItem::UpdatePaintNodeData *_data);
+        QQuickItem::UpdatePaintNodeData *_data) override;
 
     /// \brief Timer callabck. This queues a call to update the item.
     /// \param[in] _event A Qt timer event.
-    private: void timerEvent(QTimerEvent *_event);
+    private: void timerEvent(QTimerEvent *_event) override;
 
     /// \internal
     /// \brief Pointer to private data.
