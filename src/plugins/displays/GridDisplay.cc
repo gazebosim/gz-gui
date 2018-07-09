@@ -211,6 +211,7 @@ QWidget *GridDisplay::CreateCustomProperties() const
   layout->addWidget(cellCountWidget);
   layout->addWidget(vertCellCountWidget);
   layout->addWidget(cellLengthWidget);
+  layout->addWidget(colorWidget);
   layout->addWidget(poseWidget);
   auto widget = new QWidget();
   widget->setLayout(layout);
