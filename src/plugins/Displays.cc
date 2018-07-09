@@ -82,10 +82,9 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Create layout
-  auto mainLayout = new QVBoxLayout();
-  mainLayout->setContentsMargins(0, 0, 0, 0);
-  mainLayout->setSpacing(0);
-  this->setLayout(mainLayout);
+  auto displaysLayout = new QVBoxLayout();
+  displaysLayout->setContentsMargins(0, 0, 0, 0);
+  displaysLayout->setSpacing(0);
 
   for (const auto &pluginToLoad : pluginsToLoad)
   {
@@ -109,10 +108,30 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     // Create the configuration options for the display plugin.
     auto pluginProperties = displayPlugin->CreateProperties();
-    mainLayout->addWidget(pluginProperties);
+    displaysLayout->addWidget(pluginProperties);
   }
   // Make the displays stack compactly vertically.
-  mainLayout->addStretch(1);
+  displaysLayout->addStretch(1);
+
+  auto widget = new QWidget();
+  widget->setLayout(displaysLayout);
+
+  // Place the list of displays inside a scroll area.
+  // This prevents the expansion of displays' configurations from pushing the
+  // widget off the bottom of the screen.
+  auto scrollArea = new QScrollArea();
+  scrollArea->setWidget(widget);
+  scrollArea->setWidgetResizable(true);
+  scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+  auto layout = new QVBoxLayout();
+  layout->addWidget(scrollArea);
+  auto spacer = new QWidget();
+  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  layout->addWidget(spacer);
+  layout->addStretch(1);
+
+  this->setLayout(layout);
 }
 
 // Register this plugin
