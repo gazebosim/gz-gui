@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.3
 
 Rectangle {
   id: worldStats
-  width: panel.implicitWidth + hideToolButton.width + 10
+  width: panel.implicitWidth + hideToolButton.width + 20
   height: panel.implicitHeight + 10
   color: "transparent"
 
