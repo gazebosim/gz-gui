@@ -126,10 +126,6 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   auto layout = new QVBoxLayout();
   layout->addWidget(scrollArea);
-  auto spacer = new QWidget();
-  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  layout->addWidget(spacer);
-  layout->addStretch(0);
 
   this->setLayout(layout);
 }
