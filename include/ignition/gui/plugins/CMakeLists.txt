@@ -5,11 +5,12 @@ set (qt_headers_local
 #  Requester
 #  Responder
   Scene3D
-  TimePanel
   TopicEcho
 #  TopicInterface
 #  TopicsStats
 #  TopicViewer
+  WorldControl
+  WorldStats
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR

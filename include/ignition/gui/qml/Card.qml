@@ -1,8 +1,8 @@
 import QtQuick 2.9
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4 as QQC1
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
+import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 import "qrc:/qml"
 
@@ -91,6 +91,9 @@ Pane {
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
 //  Material.elevation: 6
+  background: Rectangle {
+    color: "transparent"
+  }
   padding: 0
   state: "docked"
 
@@ -402,7 +405,7 @@ Pane {
     width: card.width
     height: card.height - cardToolbar.height
     clip: true
-    color: Material.background
+    color: "transparent"
 
     /**
      * Conveniently expose card to children
