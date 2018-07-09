@@ -129,7 +129,7 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   auto spacer = new QWidget();
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   layout->addWidget(spacer);
-  layout->addStretch(1);
+  layout->addStretch(0);
 
   this->setLayout(layout);
 }
