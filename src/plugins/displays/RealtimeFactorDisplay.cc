@@ -90,7 +90,8 @@ void RealtimeFactorDisplay::Initialize(
   }
   else
   {
-    ignerr << "Scene invalid. Realtime factor display not initialized." << std::endl;
+    ignerr << "Scene invalid. Realtime factor display not initialized."
+      << std::endl;
     return;
   }
   this->dataPtr->realtimeFactorText->SetTextString("Realtime factor: ? %");
