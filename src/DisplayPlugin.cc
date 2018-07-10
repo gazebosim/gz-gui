@@ -125,6 +125,7 @@ void DisplayPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->Initialize(_pluginElem);
 }
 
+/////////////////////////////////////////////////
 ignition::rendering::VisualPtr DisplayPlugin::Visual() const
 {
   return this->dataPtr->visual;
