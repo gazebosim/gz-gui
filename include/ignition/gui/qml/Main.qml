@@ -12,6 +12,7 @@ ApplicationWindow
   height: 1000
   visible: true
   id: window
+  font.family: "Roboto"
 
   // Expose material properties to C++
   property string materialTheme: window.Material.theme
