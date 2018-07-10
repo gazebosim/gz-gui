@@ -19,7 +19,6 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
-#include <ignition/common/Time.hh>
 #include <ignition/rendering/Text.hh>
 #include <ignition/transport.hh>
 
@@ -82,11 +81,9 @@ void RealtimeFactorDisplay::Initialize(
     ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
   }
 
-  ignition::rendering::MaterialPtr mat;
   if (auto scenePtr = this->Scene().lock())
   {
     this->dataPtr->realtimeFactorText = scenePtr->CreateText();
-    mat = scenePtr->CreateMaterial();
   }
   else
   {
@@ -99,7 +96,6 @@ void RealtimeFactorDisplay::Initialize(
 
   // TODO(dhood): Configurable properties
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
-  this->Visual()->SetMaterial(mat);
 }
 
 /////////////////////////////////////////////////
