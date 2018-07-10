@@ -286,6 +286,13 @@ Pane {
       anchors.fill: parent
       clip: true
       color: "transparent"
+
+      /**
+       * Conveniently expose card to children
+       */
+      function card() {
+        return card;
+      }
     }
   }
 

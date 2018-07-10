@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_TIMEPANEL_HH_
-#define IGNITION_GUI_PLUGINS_TIMEPANEL_HH_
+#ifndef IGNITION_GUI_PLUGINS_WORLDCONTROL_HH_
+#define IGNITION_GUI_PLUGINS_WORLDCONTROL_HH_
 
 #include <memory>
 
@@ -31,36 +31,27 @@ namespace gui
 {
 namespace plugins
 {
-  class TimePanelPrivate;
+  class WorldControlPrivate;
 
-  /// \brief This plugin provides a time panel which may:
-  /// * Display simulation time
-  /// * Display real time
-  /// * Have a play / pause and step buttons
+  /// \brief This plugin provides a world control panel which may have a
+  /// play / pause and step buttons.
   ///
   /// ## Configuration
   ///
-  /// \<world_control\> : Configuration for controlling the world, optional.
   /// * \<play_pause\> : Set to true to see a play/pause and step buttons,
   ///                    false by default.
   /// * \<start_paused\> : Set to false to start playing, false by default.
   /// * \<service\> : Service for world control, required.
-  /// \<world_stats\> : Configuration for displaying stats, optional.
-  /// * \<sim_time\> : Set to true to display a sim time widget, false by
-  ///                  default.
-  /// * \<real_time\> : True to display a real time widget, false by default.
-  /// * \<real_time_factor\> : True to display a real time factor widget,
-  ///                          false by default.
-  /// * \<topic\> : Topic to receive world statistics, required.
-  class TimePanel: public ignition::gui::Plugin
+  /// * \<stats_topic\> : Topic to receive world statistics, optional.
+  class WorldControl: public ignition::gui::Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: TimePanel();
+    public: WorldControl();
 
     /// \brief Destructor
-    public: virtual ~TimePanel();
+    public: virtual ~WorldControl();
 
     // Documentation inherited
     public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
@@ -77,26 +68,21 @@ namespace plugins
     /// \brief Callback in Qt thread when step button is clicked.
     public slots: void OnStep();
 
+    /// \brief Callback in Qt thread when step count is changed.
+    /// \param[in] _steps New number of steps.
+    public slots: void OnStepCount(const unsigned int _steps);
+
     /// \brief Notify that it's now playing.
     signals: void Playing();
 
     /// \brief Notify that it's now paused.
     signals: void Paused();
 
-    /// \brief Update simulation time.
-    signals: void SetSimTime(QString _time);
-
-    /// \brief Update real time.
-    signals: void SetRealTime(QString _time);
-
-    /// \brief Update real time factor.
-    signals: void SetRealTimeFactor(QString _rtf);
-
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
 
     // Private data
-    private: std::unique_ptr<TimePanelPrivate> dataPtr;
+    private: std::unique_ptr<WorldControlPrivate> dataPtr;
   };
 }
 }
