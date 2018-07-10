@@ -8,7 +8,7 @@ RowLayout {
   id: worldControl
   width: 200
   spacing: 2
-  anchors.fill: parent ? parent : none
+  anchors.fill: parent ? parent : null
 
   /**
    * True to show play/pause button
@@ -102,7 +102,7 @@ RowLayout {
   Popup {
     id: stepPopup
     visible: buttonHoverArea.containsMouse || popupHoverArea.containsMouse
-    parent: worldControl.parent.card().parent
+    parent: worldControl.parent ? worldControl.parent.card().parent : null
 
     contentItem: MouseArea {
       id: popupHoverArea

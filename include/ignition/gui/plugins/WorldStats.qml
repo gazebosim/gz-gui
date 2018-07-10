@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.3
 
 Rectangle {
   id: worldStats
-  width: 240
-  height: 90
+  width: panel.implicitWidth + hideToolButton.width + 20
+  height: panel.implicitHeight + 10
   color: "transparent"
 
   /**
@@ -62,7 +62,8 @@ Rectangle {
     anchors.bottom: worldStats.bottom
     implicitWidth: grid.implicitWidth + 10
     implicitHeight: grid.implicitHeight + 10
-    color: "#22000000"
+    // color: "#22000000"
+    color: "transparent"
 
     states:[
       State {
@@ -74,7 +75,7 @@ Rectangle {
         }
         PropertyChanges {
           target: hideButton
-          x: worldStats.width - hideButton.width
+          x: worldStats.width - hideToolButton.width - compactLabel.width - 10
         }
         PropertyChanges {
           target: compactLabel
