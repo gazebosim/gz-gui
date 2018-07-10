@@ -89,11 +89,81 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
-void MainWindow::OnPluginClose()
-{
-  auto pluginName = this->sender()->objectName();
-  App()->RemovePlugin(pluginName.toStdString());
-}
+// void MainWindow::paintEvent(QPaintEvent *_event)
+// {
+//  this->dataPtr->paintCount++;
+//  if (this->dataPtr->paintCount == this->dataPtr->paintCountMin)
+//  {
+//    this->dataPtr->windowConfig = this->CurrentWindowConfig();
+//  }
+//  _event->accept();
+// }
+//
+///////////////////////////////////////////////////
+// void MainWindow::closeEvent(QCloseEvent *_event)
+// {
+//  if (this->dataPtr->paintCount < this->dataPtr->paintCountMin ||
+//      this->dataPtr->windowConfig.XMLString() ==
+//      this->CurrentWindowConfig().XMLString())
+//  {
+//    _event->accept();
+//    return;
+//  }
+//
+//  // Ask for confirmation
+//  std::string msg = "There are unsaved changes. \n\n";
+//
+//  QMessageBox msgBox(QMessageBox::Warning, QString("Save configuration?"),
+//      QString(msg.c_str()), QMessageBox::NoButton, this);
+//  msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
+//      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+//
+//  auto saveButton = msgBox.addButton("Save as default",
+//      QMessageBox::AcceptRole);
+//  saveButton->setObjectName("closeConfirmationDialogSaveButton");
+//  saveButton->setToolTip(QString::fromStdString(
+//      "Save to default config file \"" + defaultConfigPath() + "\""));
+//  msgBox.setDefaultButton(saveButton);
+//  saveButton->setMinimumWidth(160);
+//
+//  auto saveAsButton = msgBox.addButton("Save as...", QMessageBox::AcceptRole);
+//  saveAsButton->setObjectName("closeConfirmationDialogSaveAsButton");
+//  saveAsButton->setToolTip("Choose a file on your computer");
+//
+//  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::AcceptRole);
+//  cancelButton->setObjectName("closeConfirmationDialogCancelButton");
+//  msgBox.setEscapeButton(cancelButton);
+//  cancelButton->setToolTip("Don't close window");
+//
+//  auto closeButton = msgBox.addButton("Close without saving",
+//      QMessageBox::AcceptRole);
+//  closeButton->setObjectName("closeConfirmationDialogCloseButton");
+//  closeButton->setToolTip("Close without saving");
+//  closeButton->setMinimumWidth(180);
+//
+//  msgBox.show();
+//  msgBox.exec();
+//
+//  // User doesn't want to close window anymore
+//  if (msgBox.clickedButton() == cancelButton)
+//  {
+//    _event->ignore();
+//    return;
+//  }
+//
+//  // Save to default config
+//  if (msgBox.clickedButton() == saveButton)
+//  {
+//    this->OnSaveConfig();
+//  }
+//
+//  // Save to custom file
+//  if (msgBox.clickedButton() == saveAsButton)
+//  {
+//    this->OnSaveConfigAs();
+//  }
+//  _event->accept();
+// }
 
 /////////////////////////////////////////////////
 QStringList MainWindow::PluginListModel() const
@@ -429,6 +499,14 @@ std::string WindowConfig::XMLString() const
   {
     auto elem = doc.NewElement("position_y");
     elem->SetText(std::to_string(this->posY).c_str());
+    windowElem->InsertEndChild(elem);
+  }
+
+  // Docks state
+  if (!this->IsIgnoring("state"))
+  {
+    auto elem = doc.NewElement("state");
+    elem->SetText(this->state.toBase64().toStdString().c_str());
     windowElem->InsertEndChild(elem);
   }
 

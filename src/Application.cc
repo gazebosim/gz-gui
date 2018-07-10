@@ -446,7 +446,7 @@ bool Application::AddPluginsToWindow()
 
     // Signals
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
-        this->dataPtr->mainWin, SLOT(OnPluginClose()));
+        this, SLOT(OnPluginClose()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
@@ -482,14 +482,17 @@ bool Application::InitializeDialogs()
     cardItem->setParentItem(dialog->RootItem());
 
     // Configure card
-    cardItem->setProperty("hasDockButton", false);
-    cardItem->setProperty("hasCloseButton", false);
+    cardItem->setProperty("standalone", true);
 
     // Configure dialog
     auto cardWidth = cardItem->property("width").toInt();
     auto cardHeight = cardItem->property("height").toInt();
     dialog->QuickWindow()->setProperty("width", cardWidth);
     dialog->QuickWindow()->setProperty("height", cardHeight);
+
+    // Signals
+    this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
+        this, SLOT(OnPluginClose()));
 
     this->dataPtr->pluginsAdded.push_back(plugin);
 
@@ -561,6 +564,13 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 }
 
 /////////////////////////////////////////////////
+void Application::OnPluginClose()
+{
+  auto pluginName = this->sender()->objectName();
+  this->RemovePlugin(pluginName.toStdString());
+}
+
+/////////////////////////////////////////////////
 void Application::RemovePlugin(std::shared_ptr<Plugin> _plugin)
 {
   this->dataPtr->pluginsAdded.erase(std::remove(
@@ -568,7 +578,18 @@ void Application::RemovePlugin(std::shared_ptr<Plugin> _plugin)
       this->dataPtr->pluginsAdded.end(), _plugin),
       this->dataPtr->pluginsAdded.end());
 
-  this->dataPtr->mainWin->SetPluginCount(this->dataPtr->pluginsAdded.size());
+  auto pluginCount = this->dataPtr->pluginsAdded.size();
+
+  // Update main window count
+  if (this->dataPtr->mainWin)
+  {
+    this->dataPtr->mainWin->SetPluginCount(pluginCount);
+  }
+  // Or close app if it's the last dialog
+  else if (pluginCount == 0)
+  {
+    this->exit();
+  }
 }
 
 //////////////////////////////////////////////////
