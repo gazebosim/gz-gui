@@ -51,8 +51,17 @@ class ignition::gui::PluginPrivate
   /// \brief Card's width
   public: int width{-1};
 
-  /// \brief
-  public: std::string cardFrame = "visible";
+  /// \brief True if the plugin should have a title bar, false otherwise.
+  public: bool showTitleBar{true};
+
+  /// \brief True if the plugin should have a dock button, false otherwise.
+  public: bool showDockButton{true};
+
+  /// \brief True if the plugin should have a close button, false otherwise.
+  public: bool showCloseButton{true};
+
+  /// \brief True if the plugin should be resizable, false otherwise.
+  public: bool resizable{true};
 };
 
 using namespace ignition;
@@ -134,9 +143,38 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   if (_pluginElem->QueryAttribute("width", &width) == tinyxml2::XML_SUCCESS)
     this->dataPtr->width = width;
 
-  const char *cardFrame = _pluginElem->Attribute("card_frame");
-  if (cardFrame)
-    this->dataPtr->cardFrame = cardFrame;
+  bool showTitleBar;
+  if (_pluginElem->QueryAttribute("show_title_bar", &showTitleBar) ==
+      tinyxml2::XML_SUCCESS)
+  {
+    this->dataPtr->showTitleBar = showTitleBar;
+  }
+
+  bool showDockButton;
+  if (_pluginElem->QueryAttribute("show_dock_button", &showDockButton) ==
+      tinyxml2::XML_SUCCESS)
+  {
+    this->dataPtr->showDockButton = showDockButton;
+  }
+
+  bool showCloseButton;
+  if (_pluginElem->QueryAttribute("show_close_button", &showCloseButton) ==
+      tinyxml2::XML_SUCCESS)
+  {
+    this->dataPtr->showCloseButton = showCloseButton;
+  }
+
+  bool resizable;
+  if (_pluginElem->QueryAttribute("resizable", &resizable) ==
+      tinyxml2::XML_SUCCESS)
+  {
+    this->dataPtr->resizable = resizable;
+  }
+
+  if (auto t = _pluginElem->Attribute("title"))
+  {
+    this->title = t;
+  }
 
   // Delete later
   if (_pluginElem->Attribute("delete_later"))
@@ -149,16 +187,6 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     if (this->dataPtr->deleteLaterRequested)
       this->DeleteLater();
   }
-
-  // Read default params
-  if (auto titleElem = _pluginElem->FirstChildElement("title"))
-    this->title = titleElem->GetText();
-
-  // Setup default context menu
-//  this->setContextMenuPolicy(Qt::CustomContextMenu);
-//  this->connect(this,
-//      SIGNAL(customContextMenuRequested(const QPoint &)),
-//      this, SLOT(ShowContextMenu(const QPoint &)));
 
   // Load custom configuration
   this->LoadConfig(_pluginElem);
@@ -188,6 +216,14 @@ std::string Plugin::ConfigStr()
   pluginElem->SetAttribute("z", this->CardItem()->z());
   pluginElem->SetAttribute("height", this->CardItem()->height());
   pluginElem->SetAttribute("width", this->CardItem()->width());
+  pluginElem->SetAttribute("show_title_bar",
+      this->CardItem()->property("showTitleBar").toBool());
+  pluginElem->SetAttribute("show_dock_button",
+      this->CardItem()->property("showDockButton").toBool());
+  pluginElem->SetAttribute("show_close_button",
+      this->CardItem()->property("showCloseButton").toBool());
+  pluginElem->SetAttribute("resizable",
+      this->CardItem()->property("resizable").toBool());
 
   // Then convert XML back to string
   tinyxml2::XMLPrinter printer;
@@ -202,21 +238,6 @@ std::string Plugin::ConfigStr()
   }
 
   return this->configStr;
-}
-
-/////////////////////////////////////////////////
-void Plugin::ShowContextMenu(const QPoint & /*_pos*/)
-{
-  // Close action
-//  QAction closeAct(QString::fromStdString("Close [" + this->title + "]"),
-//      this);
-//  this->connect(&closeAct, SIGNAL(triggered()), this->parent(),
-//      SLOT(close()));
-
-  // Context menu
-//  QMenu contextMenu(tr("Context menu"), this);
-//  contextMenu.addAction(&closeAct);
-//  contextMenu.exec(this->mapToGlobal(_pos));
 }
 
 /////////////////////////////////////////////////
@@ -310,8 +331,10 @@ QQuickItem *Plugin::CardItem() const
 
   cardItem->setProperty("pluginName",
       QString::fromStdString(this->Title()));
-  cardItem->setProperty("cardFrame",
-      QString::fromStdString(this->dataPtr->cardFrame));
+  cardItem->setProperty("showTitleBar", this->dataPtr->showTitleBar);
+  cardItem->setProperty("showDockButton", this->dataPtr->showDockButton);
+  cardItem->setProperty("showCloseButton", this->dataPtr->showCloseButton);
+  cardItem->setProperty("resizable", this->dataPtr->resizable);
   cardItem->setProperty("width", pluginWidth);
   cardItem->setProperty("height", pluginHeight);
   if (this->dataPtr->x >= 0)

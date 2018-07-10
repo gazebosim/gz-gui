@@ -89,7 +89,7 @@ TEST(WorldControlTest, WorldControl)
   EXPECT_EQ(plugins.size(), 1);
 
   auto plugin = plugins[0];
-//  EXPECT_EQ(plugin->Title(), "World Control!");
+  EXPECT_EQ(plugin->Title(), "World Control!");
 
   // World control service
   bool playCalled = false;
