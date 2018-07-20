@@ -50,11 +50,11 @@ namespace displays
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    // Documentation inherited
-    private slots: void OnVisibilityChange(bool _value) override;
-
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
+
+    // Documentation inherited
+    private slots: void OnVisibilityChange(bool _value) override;
 
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);

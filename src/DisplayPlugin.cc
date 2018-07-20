@@ -20,9 +20,9 @@
 #include <ignition/common/Console.hh>
 #include <ignition/rendering.hh>
 
-#include "ignition/gui/QtMetatypes.hh"
-#include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/CollapsibleWidget.hh"
+#include "ignition/gui/DisplayPlugin.hh"
+#include "ignition/gui/QtMetatypes.hh"
 
 class ignition::gui::DisplayPluginPrivate
 {
@@ -145,7 +145,6 @@ QWidget *DisplayPlugin::CreateProperties() const
 
   // Create generic configuration options for all display plugins.
   auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
-  visibleCheck->setObjectName("visibleCheck");
   visibleCheck->setToolTip("Toggle visibility");
   visibleCheck->setChecked(this->dataPtr->visible);
   this->connect(visibleCheck,
