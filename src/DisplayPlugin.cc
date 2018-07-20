@@ -174,6 +174,10 @@ QWidget *DisplayPlugin::CreateProperties() const
     collapsible->AppendContent(customProperties);
     propertiesLayout->addWidget(collapsible);
   }
+  else
+  {
+    visibleCheck->setStyleSheet("spacing: 15px;");
+  }
 
   auto propertiesWidget = new QWidget();
   propertiesWidget->setLayout(propertiesLayout);
