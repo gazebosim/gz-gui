@@ -31,6 +31,7 @@ namespace gui
 {
   class DisplayPluginPrivate;
 
+  /// \brief Base class for plugins that draw on the render scene.
   class DisplayPlugin : public Plugin
   {
     Q_OBJECT
