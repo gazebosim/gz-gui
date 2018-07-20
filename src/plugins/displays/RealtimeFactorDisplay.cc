@@ -61,7 +61,7 @@ using namespace displays;
 RealtimeFactorDisplay::RealtimeFactorDisplay()
   : DisplayPlugin(), dataPtr(new RealtimeFactorDisplayPrivate)
 {
-  this->title = "Realtime factor";
+  this->title = "Real time factor";
 }
 
 /////////////////////////////////////////////////
@@ -87,11 +87,11 @@ void RealtimeFactorDisplay::Initialize(
   }
   else
   {
-    ignerr << "Scene invalid. Realtime factor display not initialized."
+    ignerr << "Scene invalid. Real time factor display not initialized."
       << std::endl;
     return;
   }
-  this->dataPtr->realtimeFactorText->SetTextString("Realtime factor: ? %");
+  this->dataPtr->realtimeFactorText->SetTextString("Real time factor: ? %");
   this->dataPtr->realtimeFactorText->SetShowOnTop(true);
 
   // TODO(dhood): Configurable properties
@@ -133,7 +133,7 @@ void RealtimeFactorDisplay::ProcessMsg()
     double rtf = this->dataPtr->msg.real_time_factor() * 100;
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2);
-    ss << "Realtime factor: " << rtf << "%";
+    ss << "Real time factor: " << rtf << "%";
     this->dataPtr->realtimeFactorText->SetTextString(ss.str());
   }
 }

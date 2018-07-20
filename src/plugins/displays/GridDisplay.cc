@@ -25,7 +25,6 @@
 #include <ignition/math/Pose3.hh>
 #include <ignition/rendering.hh>
 
-#include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
