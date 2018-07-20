@@ -198,6 +198,8 @@ QWidget *GridDisplay::CreateCustomProperties() const
       SLOT(OnChange(QVariant)));
 
   auto layout = new QVBoxLayout();
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(0);
   layout->addWidget(cellCountWidget);
   layout->addWidget(vertCellCountWidget);
   layout->addWidget(cellLengthWidget);

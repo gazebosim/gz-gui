@@ -141,7 +141,8 @@ std::weak_ptr<ignition::rendering::Scene> DisplayPlugin::Scene() const
 QWidget *DisplayPlugin::CreateProperties() const
 {
   auto propertiesLayout = new QHBoxLayout();
-  auto propertiesWidget = new QWidget();
+  propertiesLayout->setContentsMargins(0, 0, 0, 0);
+  propertiesLayout->setSpacing(0);
 
   // Create generic configuration options for all display plugins.
   auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
@@ -167,6 +168,8 @@ QWidget *DisplayPlugin::CreateProperties() const
     collapsible->AppendContent(customProperties);
     propertiesLayout->addWidget(collapsible);
   }
+
+  auto propertiesWidget = new QWidget();
   propertiesWidget->setLayout(propertiesLayout);
 
   return propertiesWidget;
