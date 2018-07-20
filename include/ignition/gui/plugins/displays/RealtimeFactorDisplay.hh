@@ -54,7 +54,7 @@ namespace displays
     public slots: void ProcessMsg();
 
     // Documentation inherited
-    private slots: void OnVisibilityChange(bool _value) override;
+    private slots: void OnVisibilityChange(const bool _value) override;
 
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);

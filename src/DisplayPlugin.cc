@@ -178,7 +178,7 @@ void DisplayPlugin::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
 }
 
 /////////////////////////////////////////////////
-void DisplayPlugin::OnVisibilityChange(bool _value)
+void DisplayPlugin::OnVisibilityChange(const bool _value)
 {
   this->dataPtr->visible = _value;
   // TODO(dhood): call setVisible on the visual
