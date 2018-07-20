@@ -150,7 +150,13 @@ QWidget *DisplayPlugin::CreateProperties() const
   visibleCheck->setChecked(this->dataPtr->visible);
   this->connect(visibleCheck,
     SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
-  propertiesLayout->addWidget(visibleCheck);
+
+  auto checkLayout = new QVBoxLayout();
+  checkLayout->addWidget(visibleCheck);
+  checkLayout->setContentsMargins(5, 10, 5, 0);
+
+  propertiesLayout->addLayout(checkLayout);
+  propertiesLayout->setAlignment(checkLayout, Qt::AlignTop);
 
   // Create the custom configuration options for this specific display plugin.
   auto customProperties = this->CreateCustomProperties();
