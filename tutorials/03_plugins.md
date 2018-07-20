@@ -1,5 +1,6 @@
-Plugins {#plugins}
-=======
+\page plugins Plugins
+
+Next Tutorial: \ref layout
 
 ## Finding plugins
 

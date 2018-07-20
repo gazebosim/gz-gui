@@ -1,5 +1,8 @@
-Install {#install}
-======
+\page install Installation
+
+Next Tutorial: \ref commandline
+
+## Overview
 
 Instructions on how to install from source on Ubuntu Xenial or higher.
 
