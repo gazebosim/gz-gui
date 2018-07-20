@@ -17,7 +17,6 @@
 
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
@@ -161,13 +160,10 @@ QWidget *GridDisplay::CreateCustomProperties() const
   {
     return nullptr;
   }
-  auto gridName = QString::fromStdString(this->dataPtr->grid->Name());
-
   auto cellCountWidget = new NumberWidget("Horizontal cell count",
       NumberType::UINT);
   cellCountWidget->SetValue(
     QVariant::fromValue(this->dataPtr->grid->CellCount()));
-  cellCountWidget->setProperty("gridName", gridName);
   cellCountWidget->setObjectName("cellCountWidget");
   this->connect(cellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
@@ -176,7 +172,6 @@ QWidget *GridDisplay::CreateCustomProperties() const
       NumberType::UINT);
   vertCellCountWidget->SetValue(
       QVariant::fromValue(this->dataPtr->grid->VerticalCellCount()));
-  vertCellCountWidget->setProperty("gridName", gridName);
   vertCellCountWidget->setObjectName("vertCellCountWidget");
   this->connect(vertCellCountWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
@@ -184,7 +179,6 @@ QWidget *GridDisplay::CreateCustomProperties() const
   auto cellLengthWidget = new NumberWidget("Cell length", NumberType::DOUBLE);
   cellLengthWidget->SetValue(
     QVariant::fromValue(this->dataPtr->grid->CellLength()));
-  cellLengthWidget->setProperty("gridName", gridName);
   cellLengthWidget->setObjectName("cellLengthWidget");
   this->connect(cellLengthWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
@@ -192,7 +186,6 @@ QWidget *GridDisplay::CreateCustomProperties() const
   auto poseWidget = new Pose3dWidget();
   poseWidget->SetValue(
     QVariant::fromValue(this->dataPtr->grid->Parent()->WorldPose()));
-  poseWidget->setProperty("gridName", gridName);
   poseWidget->setObjectName("poseWidget");
   this->connect(poseWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
@@ -200,7 +193,6 @@ QWidget *GridDisplay::CreateCustomProperties() const
   auto colorWidget = new ColorWidget();
   colorWidget->SetValue(
     QVariant::fromValue(this->dataPtr->grid->Material()->Ambient()));
-  colorWidget->setProperty("gridName", gridName);
   colorWidget->setObjectName("colorWidget");
   this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
