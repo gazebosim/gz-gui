@@ -95,6 +95,7 @@ Pane {
     color: "transparent"
   }
   padding: 0
+  y: 50
   state: "docked"
 
   states: [
@@ -113,7 +114,6 @@ Pane {
       name: "docked"
       ParentChange {
         target: card;
-        parent: parent;
       }
     }
   ]
@@ -158,7 +158,7 @@ Pane {
     width: card.width
     height: card.showTitleBar ? 50 : 0
     x: 0
-    y: 0
+    y: -50
     z: 100
 
     // For drag
@@ -174,6 +174,9 @@ Pane {
       }
     }
 
+    /**
+     * The toolbar contents
+     */
     RowLayout {
       spacing: 0
       anchors.fill: parent
@@ -229,20 +232,6 @@ Pane {
     }
   }
 
-  // For drag
-  MouseArea {
-    enabled: !showTitleBar
-    anchors.fill: content
-    drag{
-      target: card
-      minimumX: 0
-      minimumY: 0
-      maximumX: card.parent ? card.parent.width - card.width : card.width
-      maximumY: card.parent ? card.parent.height - card.height : card.height
-      smoothed: true
-    }
-  }
-
   // For context menu
   MouseArea {
     anchors.fill: content
@@ -273,8 +262,8 @@ Pane {
     focus: true
     title: pluginName + " settings"
     parent: card.parent
-    x: (parent.width - width) / 2
-    y: (parent.height - height) / 2
+    x: parent ? (parent.width - width) / 2 : 0
+    y: parent ? (parent.height - height) / 2 : 0
 
     Column {
       id: settingsColumn
@@ -338,7 +327,7 @@ Pane {
         }
 
         IgnSpinBox {
-          maximumValue: card.parent.width - card.width
+          maximumValue: card.parent ? card.parent.width - card.width : minSize
           onVisibleChanged: value = card.x
           onValueChanged: {
             card.x = value;
@@ -348,7 +337,7 @@ Pane {
           text: "X"
         }
         IgnSpinBox {
-          maximumValue: card.parent.height - card.height
+          maximumValue: card.parent ? card.parent.height - card.height : minSize
           onVisibleChanged: value = card.y
           onValueChanged: {
             card.y = value;
@@ -358,7 +347,7 @@ Pane {
           text: "Y"
         }
         IgnSpinBox {
-          maximumValue: 1000
+          maximumValue: 10000
           onVisibleChanged: value = card.z
           onValueChanged: {
             card.z = value;
@@ -375,8 +364,11 @@ Pane {
           text: ""
         }
         IgnSpinBox {
-          maximumValue: card.parent.width
-          onVisibleChanged: value = card.width
+          maximumValue: card.parent ? card.parent.width : minSize
+          onVisibleChanged: {
+            if (card)
+              value = card.width
+          }
           onValueChanged: {
             card.width = value;
           }
@@ -385,8 +377,11 @@ Pane {
           text: "Width"
         }
         IgnSpinBox {
-          maximumValue: card.parent.height
-          onVisibleChanged: value = card.height
+          maximumValue: card.parent ? card.parent.height : minSize
+          onVisibleChanged: {
+            if (card)
+              value = card.height
+          }
           onValueChanged: {
             card.height = value;
           }
@@ -398,12 +393,13 @@ Pane {
     }
   }
 
+  /**
+   * Card contents
+   */
   Rectangle {
     objectName: "content"
     id: content
-    y: cardToolbar.height
-    width: card.width
-    height: card.height - cardToolbar.height
+    anchors.fill: parent
     clip: true
     color: "transparent"
 
@@ -468,7 +464,8 @@ Pane {
 
   // Top ruler
   Rectangle {
-    width: parent.parent.width
+    parent: showTitleBar ? cardToolbar : card
+    width: parent.width
     height: rulersThickness
     visible: card.resizable
     x: parent.x / 2

@@ -4,7 +4,7 @@
 
   <file>qtquickcontrols2.conf</file>
 
-  <file>qml/Card.qml</file>
+  <file>qml/IgnCard.qml</file>
   <file>qml/IgnSpinBox.qml</file>
   <file>qml/Main.qml</file>
   <file>qml/PluginMenu.qml</file>
