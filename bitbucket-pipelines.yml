@@ -6,18 +6,12 @@ pipelines:
         script:
           # Install dependencies
           - apt update
-          - apt install -y \
-            build-essential wget cmake cppcheck git mercurial g++-8 \
-            qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev \
-            qtdeclarative5-dev \
-            qtquickcontrols2-5-dev \
-            qml-module-qtquick2 \
-            qml-module-qtquick-controls \
-            qml-module-qtquick-controls2 \
-            qml-module-qtquick-dialogs \
-            qml-module-qtquick-layouts \
-            qml-module-qt-labs-folderlistmodel \
-            qml-module-qt-labs-settings \
+          - apt install -y
+            build-essential wget cmake cppcheck git mercurial g++-8
+            qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
+            qtdeclarative5-dev
+            qtquickcontrols2-5-dev
+            qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-layouts qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings
           - update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
           - gcc -v
           - g++ -v
