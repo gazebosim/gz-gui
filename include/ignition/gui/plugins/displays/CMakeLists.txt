@@ -7,6 +7,10 @@ set(IGNITION_GUI_PLUGIN_INSTALL_DIR
   ${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${IGN_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
 )
 
+set(IGNITION_GUI_DISPLAY_PLUGIN_INSTALL_DIR
+  ${IGNITION_GUI_PLUGIN_INSTALL_DIR}/display_plugins
+)
+
 # Plugin shared libraries
 foreach (src ${qt_headers_local})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
@@ -22,5 +26,5 @@ foreach (src ${qt_headers_local})
 endforeach (src ${qt_headers_local})
 
 foreach (src ${qt_headers_local})
-  install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
+  install (TARGETS ${src} DESTINATION ${IGNITION_GUI_DISPLAY_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})

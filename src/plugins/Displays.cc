@@ -86,8 +86,8 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   for (const auto &pluginToLoad : pluginsToLoad)
   {
-    std::shared_ptr<Plugin> plugin =
-      loadPluginWithoutAdding(pluginToLoad, nullptr);
+    std::shared_ptr<DisplayPlugin> plugin =
+      loadDisplayPlugin(pluginToLoad, nullptr);
     if (plugin == nullptr)
     {
       ignerr << "Couldn't load plugin [" << pluginToLoad << "]" << std::endl;

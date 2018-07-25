@@ -20,6 +20,7 @@
 
 #include <memory>
 
+#include <ignition/common/PluginMacros.hh>
 #include <ignition/rendering.hh>
 
 #include "ignition/gui/qt.h"
@@ -35,6 +36,8 @@ namespace gui
   class DisplayPlugin : public Plugin
   {
     Q_OBJECT
+
+    public: IGN_COMMON_SPECIALIZE_INTERFACE(ignition::gui::DisplayPlugin)
 
     /// \brief Constructor
     public: DisplayPlugin();

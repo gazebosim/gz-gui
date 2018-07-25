@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "ignition/gui/Export.hh"
+#include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/Plugin.hh"
 
 // Forward declarations.
@@ -72,15 +73,28 @@ namespace ignition
     bool loadPlugin(const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
 
-    /// \brief Load a plugin from a file name.
+    /// \brief Load a plugin from a library.
     ///
-    /// The plugin file must be in the path.
-    ///
+    /// \param[in] _filename Full path to the plugin's library.
     /// \param[in] _filename Plugin filename.
     /// \param[in] _pluginElem Element containing plugin configuration
     /// \return The plugin loaded, will be `nullptr` on failure.
     IGNITION_GUI_VISIBLE
     std::shared_ptr<ignition::gui::Plugin> loadPluginWithoutAdding(
+        const std::string &_pathToLib,
+        const std::string &_filename,
+        const tinyxml2::XMLElement *_pluginElem = nullptr);
+
+    /// \brief Load a display plugin from a filename.
+    ///
+    /// The plugin file must be in the path.
+    ///
+    /// \param[in] _filename Full path to the plugin's library.
+    /// \param[in] _filename Plugin filename.
+    /// \param[in] _pluginElem Element containing plugin configuration
+    /// \return The plugin loaded, will be `nullptr` on failure.
+    IGNITION_GUI_VISIBLE
+    std::shared_ptr<ignition::gui::DisplayPlugin> loadDisplayPlugin(
         const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
 

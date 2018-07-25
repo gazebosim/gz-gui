@@ -234,5 +234,5 @@ void GridDisplay::OnChange(const QVariant &_value)
 
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::displays::GridDisplay,
-                                  ignition::gui::Plugin)
+                                  ignition::gui::DisplayPlugin)
 
