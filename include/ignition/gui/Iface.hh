@@ -89,7 +89,6 @@ namespace ignition
     ///
     /// The plugin file must be in the path.
     ///
-    /// \param[in] _filename Full path to the plugin's library.
     /// \param[in] _filename Plugin filename.
     /// \param[in] _pluginElem Element containing plugin configuration
     /// \return The plugin loaded, will be `nullptr` on failure.

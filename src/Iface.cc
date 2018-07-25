@@ -28,6 +28,7 @@
 #include <ignition/common/Filesystem.hh>
 #include <ignition/common/Plugin.hh>
 #include <ignition/common/PluginLoader.hh>
+#include <ignition/common/PluginPtr.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
 #include <ignition/common/Util.hh>
@@ -48,6 +49,8 @@ char **g_argv;
 
 using namespace ignition;
 using namespace gui;
+using CommonPluginPtr = \
+  ignition::common::TemplatePluginPtr<ignition::common::Plugin>;
 
 // Forward declarations.
 std::string homePath();
@@ -477,13 +480,14 @@ std::string ignition::gui::defaultConfigPath()
 }
 
 /////////////////////////////////////////////////
-std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(
+bool instantiatePlugin(
     const std::string &_pathToLib,
     const std::string &_filename,
-    const tinyxml2::XMLElement *_pluginElem)
+    CommonPluginPtr &_commonPlugin
+)
 {
   if (!checkApp())
-    return nullptr;
+    return false;
 
   // Load plugin
   ignition::common::PluginLoader pluginLoader;
@@ -494,7 +498,7 @@ std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't load library on path [" << _pathToLib <<
               "]." << std::endl;
-    return nullptr;
+    return false;
   }
 
   auto pluginName = *pluginNames.begin();
@@ -503,41 +507,19 @@ std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't load library on path [" << _pathToLib <<
               "]." << std::endl;
-    return nullptr;
+    return false;
   }
 
-  auto commonPlugin = pluginLoader.Instantiate(pluginName);
-  if (!commonPlugin)
+  _commonPlugin = pluginLoader.Instantiate(pluginName);
+  if (!_commonPlugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't instantiate plugin on path [" << _pathToLib <<
               "]." << std::endl;
-    return nullptr;
+    return false;
   }
 
-  auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
-  if (!plugin)
-  {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't get interface [" << pluginName <<
-              "]." << std::endl;
-    return nullptr;
-  }
-
-  // Basic config in case there is none
-  if (!_pluginElem)
-  {
-    std::string pluginStr = "<plugin filename=\"" + _filename + "\"></plugin>";
-
-    tinyxml2::XMLDocument pluginDoc;
-    pluginDoc.Parse(pluginStr.c_str());
-
-    plugin->Load(pluginDoc.FirstChildElement("plugin"));
-  }
-  else
-    plugin->Load(_pluginElem);
-
-  return plugin;
+  return true;
 }
 
 /////////////////////////////////////////////////
@@ -551,20 +533,8 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
   ignmsg << "Loading display plugin [" << _filename << "]" << std::endl;
 
   ignition::common::SystemPaths systemPaths;
-/*
-  // Get full path
-  auto home = homePath();
-
-  systemPaths.SetPluginPathEnv(g_pluginPathEnv);
-
-  for (const auto &path : g_pluginPaths)
-    systemPaths.AddPluginPaths(path);
-
-  // Add default folder and install folder
-  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
-                             IGN_GUI_DISPLAY_PLUGIN_INSTALL_DIR);
-*/
   systemPaths.AddPluginPaths(IGN_GUI_DISPLAY_PLUGIN_INSTALL_DIR);
+
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
   {
@@ -572,43 +542,19 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
               "] : couldn't find shared library." << std::endl;
     return nullptr;
   }
-
-  // Load plugin
-  ignition::common::PluginLoader pluginLoader;
-
-  auto pluginNames = pluginLoader.LoadLibrary(pathToLib);
-  if (pluginNames.empty())
+  CommonPluginPtr commonPlugin;
+  if (!instantiatePlugin(pathToLib, _filename, commonPlugin))
   {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't load library on path [" << pathToLib <<
-              "]." << std::endl;
-    return nullptr;
+    return false;
   }
 
-  auto pluginName = *pluginNames.begin();
-  if (pluginName.empty())
-  {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't load library on path [" << pathToLib <<
-              "]." << std::endl;
-    return nullptr;
-  }
-
-  auto commonPlugin = pluginLoader.Instantiate(pluginName);
-  if (!commonPlugin)
-  {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't instantiate plugin on path [" << pathToLib <<
-              "]." << std::endl;
-    return nullptr;
-  }
-
-  auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::DisplayPlugin>();
+  auto plugin = \
+    commonPlugin->QueryInterfaceSharedPtr<ignition::gui::DisplayPlugin>();
   if (!plugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't get interface [" << pluginName <<
-              "]." << std::endl;
+              "] : couldn't get interface [ignition::gui::DisplayPlugin]." <<
+              std::endl;
     return nullptr;
   }
 
@@ -654,14 +600,37 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
               "] : couldn't find shared library." << std::endl;
     return false;
   }
-  auto loadedPlugin = loadPluginWithoutAdding(pathToLib, _filename, _pluginElem);
-  if (nullptr == loadedPlugin)
+
+  CommonPluginPtr commonPlugin;
+  if (!instantiatePlugin(pathToLib, _filename, commonPlugin))
   {
     return false;
   }
 
+  auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
+  if (!plugin)
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't get interface [ignition::gui::Plugin]." <<
+              std::endl;
+    return false;
+  }
+
+  // Basic config in case there is none
+  if (!_pluginElem)
+  {
+    std::string pluginStr = "<plugin filename=\"" + _filename + "\"></plugin>";
+
+    tinyxml2::XMLDocument pluginDoc;
+    pluginDoc.Parse(pluginStr.c_str());
+
+    plugin->Load(pluginDoc.FirstChildElement("plugin"));
+  }
+  else
+    plugin->Load(_pluginElem);
+
   // Store plugin in queue to be added to the window
-  g_pluginsToAdd.push(loadedPlugin);
+  g_pluginsToAdd.push(plugin);
 
   return true;
 }
