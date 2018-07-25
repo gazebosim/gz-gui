@@ -75,6 +75,11 @@ Scene3D::Scene3D()
 /////////////////////////////////////////////////
 Scene3D::~Scene3D()
 {
+  if (nullptr == this->dataPtr->camera)
+  {
+    return;
+  }
+
   igndbg << "Destroy camera [" << this->dataPtr->camera->Name() << "]"
          << std::endl;
   // Destroy camera
