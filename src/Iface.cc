@@ -483,7 +483,7 @@ std::string ignition::gui::defaultConfigPath()
 }
 
 /////////////////////////////////////////////////
-bool instantiatePlugin(
+bool instantiateCommonPlugin(
     const std::string &_pathToLib,
     const std::string &_filename,
     CommonPluginPtr &_commonPlugin
@@ -548,7 +548,7 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
     return nullptr;
   }
   CommonPluginPtr commonPlugin;
-  if (!instantiatePlugin(pathToLib, _filename, commonPlugin))
+  if (!instantiateCommonPlugin(pathToLib, _filename, commonPlugin))
   {
     return false;
   }
@@ -596,7 +596,7 @@ bool ignition::gui::loadPlugin(const std::string &_filename,
   }
 
   CommonPluginPtr commonPlugin;
-  if (!instantiatePlugin(pathToLib, _filename, commonPlugin))
+  if (!instantiateCommonPlugin(pathToLib, _filename, commonPlugin))
   {
     return false;
   }
