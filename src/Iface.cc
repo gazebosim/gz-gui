@@ -74,6 +74,9 @@ std::vector<std::shared_ptr<Plugin>> g_pluginsAdded;
 /// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
 
+/// \brief Environment variable which holds paths to look for display plugins
+std::string g_displayPluginPathEnv = "IGN_GUI_DISPLAY_PLUGIN_PATH";
+
 /// \brief Vector of paths to look for plugins
 std::vector<std::string> g_pluginPaths;
 
@@ -533,7 +536,9 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
   ignmsg << "Loading display plugin [" << _filename << "]" << std::endl;
 
   ignition::common::SystemPaths systemPaths;
+  systemPaths.SetPluginPathEnv(g_displayPluginPathEnv);
   systemPaths.AddPluginPaths(IGN_GUI_DISPLAY_PLUGIN_INSTALL_DIR);
+  systemPaths.AddPluginPaths(homePath() + "/.ignition/gui/display_plugins");
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
