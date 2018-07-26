@@ -50,7 +50,7 @@ namespace gui
     /// This loads the default parameters and then calls Initialize(), which
     /// should be overridden to load custom parameters.
     ///
-    /// A Visual is set up. Other Visuals may be attached to this Visual
+    /// A Visual is set up. Other Visuals may be attached to this Visual in
     /// Initialize() so that their visibility is automatically tied to that of
     /// the root Visual.
     ///
