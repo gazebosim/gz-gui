@@ -195,6 +195,10 @@ QPaintEngine *Scene3D::paintEngine() const
 /////////////////////////////////////////////////
 void Scene3D::paintEvent(QPaintEvent *_e)
 {
+  if (!this->dataPtr->camera)
+  {
+    return;
+  }
   // Create render window on first paint, so we're sure the window is showing
   // when we attach to it
   if (!this->dataPtr->renderWindow)
