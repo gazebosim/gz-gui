@@ -88,8 +88,10 @@ namespace ignition
     /// \brief Load a display plugin from a filename.
     ///
     /// The plugin file must be in the path.
+    /// The lifetime of the loaded plugin is managed by the shared pointer
+    /// that is returned: callers should store it themselves.
     ///
-    /// \param[in] _filename Plugin filename.
+    /// \param[in] _filename Display plugin filename.
     /// \param[in] _pluginElem Element containing plugin configuration
     /// \return The plugin loaded, will be `nullptr` on failure.
     IGNITION_GUI_VISIBLE

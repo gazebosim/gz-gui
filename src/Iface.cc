@@ -538,7 +538,7 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
   {
-    ignerr << "Failed to load plugin [" << _filename <<
+    ignerr << "Failed to load display plugin [" << _filename <<
               "] : couldn't find shared library." << std::endl;
     return nullptr;
   }
@@ -548,30 +548,19 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
     return false;
   }
 
-  auto plugin = \
+  auto displayPlugin = \
     commonPlugin->QueryInterfaceSharedPtr<ignition::gui::DisplayPlugin>();
-  if (!plugin)
+  if (!displayPlugin)
   {
-    ignerr << "Failed to load plugin [" << _filename <<
+    ignerr << "Failed to load display plugin [" << _filename <<
               "] : couldn't get interface [ignition::gui::DisplayPlugin]." <<
               std::endl;
     return nullptr;
   }
 
-  // Basic config in case there is none
-  if (!_pluginElem)
-  {
-    std::string pluginStr = "<plugin filename=\"" + _filename + "\"></plugin>";
+  displayPlugin->Load(_pluginElem);
 
-    tinyxml2::XMLDocument pluginDoc;
-    pluginDoc.Parse(pluginStr.c_str());
-
-    plugin->Load(pluginDoc.FirstChildElement("plugin"));
-  }
-  else
-    plugin->Load(_pluginElem);
-
-  return plugin;
+  return displayPlugin;
 }
 
 /////////////////////////////////////////////////
