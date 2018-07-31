@@ -169,6 +169,18 @@ QWidget *DisplayPlugin::CreateProperties() const
     // TODO(dhood): Make the widget use its uncollapsed width from the start?
     collapsible->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     collapsible->AppendContent(customProperties);
+    // Make the button flat so it does not look different to displays without
+    // collapsible custom configuration.
+    auto collapsible_button = collapsible->Button();
+    if (!collapsible_button)
+    {
+      ignerr << "Error creating collapsible widget for display plugin [ " <<
+        this->title << "]" << std::endl;
+    }
+    else
+    {
+      collapsible_button->setFlat(true);
+    }
     propertiesLayout->addWidget(collapsible);
   }
   else
