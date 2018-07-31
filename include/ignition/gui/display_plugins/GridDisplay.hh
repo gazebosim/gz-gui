@@ -27,9 +27,7 @@ namespace ignition
 {
 namespace gui
 {
-namespace plugins
-{
-namespace displays
+namespace display_plugins
 {
   class GridDisplayPrivate;
 
@@ -74,7 +72,6 @@ namespace displays
     /// \brief Pointer to private data.
     private: std::unique_ptr<GridDisplayPrivate> dataPtr;
   };
-}
 }
 }
 }

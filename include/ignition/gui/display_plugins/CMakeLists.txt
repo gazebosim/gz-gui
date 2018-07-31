@@ -10,7 +10,7 @@ set(IGNITION_GUI_DISPLAY_PLUGIN_INSTALL_DIR
 # Plugin shared libraries
 foreach (src ${qt_headers_local})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
-  add_library(${src} SHARED ${PROJECT_SOURCE_DIR}/src/plugins/displays/${src}.cc ${${src}_MOC})
+  add_library(${src} SHARED ${PROJECT_SOURCE_DIR}/src/display_plugins/${src}.cc ${${src}_MOC})
   target_link_libraries(${src}
     ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}

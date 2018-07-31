@@ -29,9 +29,7 @@ namespace ignition
 {
 namespace gui
 {
-namespace plugins
-{
-namespace displays
+namespace display_plugins
 {
   class RealtimeFactorDisplayPrivate;
 
@@ -60,7 +58,6 @@ namespace displays
     /// \brief Pointer to private data.
     private: std::unique_ptr<RealtimeFactorDisplayPrivate> dataPtr;
   };
-}
 }
 }
 }

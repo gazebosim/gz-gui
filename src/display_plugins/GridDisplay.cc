@@ -28,7 +28,7 @@
 #include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/Pose3dWidget.hh"
 #include "ignition/gui/QtMetatypes.hh"
-#include "ignition/gui/plugins/displays/GridDisplay.hh"
+#include "ignition/gui/display_plugins/GridDisplay.hh"
 
 // Default cell count
 static const int kDefaultCellCount{20};
@@ -50,9 +50,7 @@ namespace ignition
 {
 namespace gui
 {
-namespace plugins
-{
-namespace displays
+namespace display_plugins
 {
   /// \brief Holds configuration for a grid
   struct GridDisplayInfo
@@ -81,12 +79,10 @@ namespace displays
 }
 }
 }
-}
 
 using namespace ignition;
 using namespace gui;
-using namespace plugins;
-using namespace displays;
+using namespace display_plugins;
 
 /////////////////////////////////////////////////
 GridDisplay::GridDisplay()
@@ -233,6 +229,6 @@ void GridDisplay::OnChange(const QVariant &_value)
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::displays::GridDisplay,
+IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::display_plugins::GridDisplay,
                                   ignition::gui::DisplayPlugin)
 
