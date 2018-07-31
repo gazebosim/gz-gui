@@ -778,7 +778,7 @@ bool pluginInPluginList(std::string plugin,
   {
     auto plugins_in_path = path_pair.second;
     bool plugin_in_path = std::find(plugins_in_path.begin(),
-      plugins_in_path.end(), plugin) != plugins_in_path.end();
+        plugins_in_path.end(), plugin) != plugins_in_path.end();
     plugin_found |= plugin_in_path;
     if (plugin_found) break;
   }
@@ -803,7 +803,8 @@ TEST(IfaceTest, getPluginList)
     EXPECT_FALSE(plugin_found);
 
     // Display plugins shouldn't be detected
-    plugin_found = pluginInPluginList("libDisplayTestPlugin.so", getPluginList());
+    plugin_found = pluginInPluginList("libDisplayTestPlugin.so",
+        getPluginList());
     EXPECT_FALSE(plugin_found);
 
     EXPECT_TRUE(stop());
