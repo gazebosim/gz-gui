@@ -162,8 +162,6 @@ QWidget *DisplayPlugin::CreateProperties() const
   if (nullptr != customProperties)
   {
     // Remove the title from the checkbox and put it in a collapsible button.
-    // TODO(dhood): Make the collapsible widget take up the full width after
-    // being expanded (including space underneath the checkbox).
     visibleCheck->setText("");
     auto collapsible = new CollapsibleWidget(this->title);
     // TODO(dhood): Make the widget use its uncollapsed width from the start?
