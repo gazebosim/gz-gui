@@ -63,7 +63,11 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "Displays";
 
-  std::vector<std::string> pluginsToLoad;
+  // Create layout
+  auto displaysLayout = new QVBoxLayout();
+  displaysLayout->setContentsMargins(0, 0, 0, 0);
+  displaysLayout->setSpacing(0);
+
   // Displays
   if (auto displaysElem = _pluginElem->FirstChildElement("displays"))
   {
@@ -71,36 +75,28 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         displayElem != nullptr;
         displayElem = displayElem->NextSiblingElement("display"))
     {
-      if (auto pluginType = displayElem->Attribute("type"))
+      auto pluginToLoad = displayElem->Attribute("type");
+      if (!pluginToLoad)
       {
-        // TODO(dhood): Get displays' initial config.
-        pluginsToLoad.push_back(pluginType);
+        ignerr << "Display plugin type not specified." << std::endl;
+        continue;
       }
+      std::shared_ptr<DisplayPlugin> displayPlugin =
+        loadDisplayPlugin(pluginToLoad, displayElem);
+      if (displayPlugin == nullptr)
+      {
+        ignerr << "Couldn't load plugin [" << pluginToLoad << "]" << std::endl;
+        continue;
+      }
+
+      this->dataPtr->displayPlugins.push_back(displayPlugin);
+
+      // Create the configuration options for the display plugin.
+      auto pluginProperties = displayPlugin->CreateProperties();
+      displaysLayout->addWidget(pluginProperties);
     }
   }
 
-  // Create layout
-  auto displaysLayout = new QVBoxLayout();
-  displaysLayout->setContentsMargins(0, 0, 0, 0);
-  displaysLayout->setSpacing(0);
-
-  for (const auto &pluginToLoad : pluginsToLoad)
-  {
-    // TODO(dhood): Load display with its initial config.
-    std::shared_ptr<DisplayPlugin> displayPlugin =
-      loadDisplayPlugin(pluginToLoad, nullptr);
-    if (displayPlugin == nullptr)
-    {
-      ignerr << "Couldn't load plugin [" << pluginToLoad << "]" << std::endl;
-      continue;
-    }
-
-    this->dataPtr->displayPlugins.push_back(displayPlugin);
-
-    // Create the configuration options for the display plugin.
-    auto pluginProperties = displayPlugin->CreateProperties();
-    displaysLayout->addWidget(pluginProperties);
-  }
   // Make the displays stack compactly vertically.
   displaysLayout->addStretch(1);
 
