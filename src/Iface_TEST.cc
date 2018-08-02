@@ -770,19 +770,18 @@ TEST(IfaceTest, ignoreConfig)
 }
 
 //////////////////////////////////////////////////
-bool pluginInPluginList(std::string plugin,
-    std::vector<std::pair<std::string, std::vector<std::string>>> list)
+bool pluginInPluginList(std::string _plugin,
+    std::vector<std::pair<std::string, std::vector<std::string>>> _list)
 {
-  bool plugin_found = false;
-  for (auto path_pair : list)
+  for (auto pathPair : _list)
   {
-    auto plugins_in_path = path_pair.second;
-    bool plugin_in_path = std::find(plugins_in_path.begin(),
-        plugins_in_path.end(), plugin) != plugins_in_path.end();
-    plugin_found |= plugin_in_path;
-    if (plugin_found) break;
+    auto pluginsInPath = pathPair.second;
+    bool pluginInPath = std::find(pluginsInPath.begin(),
+        pluginsInPath.end(), _plugin) != pluginsInPath.end();
+    if (pluginInPath)
+      return true;
   }
-  return plugin_found;
+  return false;
 }
 
 //////////////////////////////////////////////////
@@ -793,19 +792,13 @@ TEST(IfaceTest, getPluginList)
   {
     EXPECT_TRUE(initApp());
 
-    bool plugin_found = pluginInPluginList("libPublisher.so", getPluginList());
-    EXPECT_TRUE(plugin_found);
-
-    plugin_found = pluginInPluginList("libTestPlugin.so", getPluginList());
-    EXPECT_FALSE(plugin_found);
-
-    plugin_found = pluginInPluginList("lib_doesnt_exist.so", getPluginList());
-    EXPECT_FALSE(plugin_found);
+    EXPECT_TRUE(pluginInPluginList("libPublisher.so", getPluginList()));
+    EXPECT_FALSE(pluginInPluginList("libTestPlugin.so", getPluginList()));
+    EXPECT_FALSE(pluginInPluginList("lib_doesnt_exist.so", getPluginList()));
 
     // Display plugins shouldn't be detected
-    plugin_found = pluginInPluginList("libDisplayTestPlugin.so",
-        getPluginList());
-    EXPECT_FALSE(plugin_found);
+    EXPECT_FALSE(pluginInPluginList("libDisplayTestPlugin.so",
+        getPluginList()));
 
     EXPECT_TRUE(stop());
   }
@@ -815,8 +808,7 @@ TEST(IfaceTest, getPluginList)
     EXPECT_TRUE(initApp());
 
     addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-    bool plugin_found = pluginInPluginList("libTestPlugin.so", getPluginList());
-    EXPECT_TRUE(plugin_found);
+    EXPECT_TRUE(pluginInPluginList("libTestPlugin.so", getPluginList()));
 
     EXPECT_TRUE(stop());
   }
@@ -828,8 +820,7 @@ TEST(IfaceTest, getPluginList)
     setenv("TEST_ENV_VAR",
         (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
     setPluginPathEnv("TEST_ENV_VAR");
-    bool plugin_found = pluginInPluginList("libTestPlugin.so", getPluginList());
-    EXPECT_TRUE(plugin_found);
+    EXPECT_TRUE(pluginInPluginList("libTestPlugin.so", getPluginList()));
 
     EXPECT_TRUE(stop());
   }

@@ -550,10 +550,10 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
   CommonPluginPtr commonPlugin;
   if (!instantiateCommonPlugin(pathToLib, _filename, commonPlugin))
   {
-    return false;
+    return nullptr;
   }
 
-  auto displayPlugin = \
+  auto displayPlugin =
     commonPlugin->QueryInterfaceSharedPtr<ignition::gui::DisplayPlugin>();
   if (!displayPlugin)
   {
