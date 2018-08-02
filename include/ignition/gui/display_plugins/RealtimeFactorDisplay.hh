@@ -18,9 +18,9 @@
 #ifndef IGNITION_GUI_DISPLAY_PLUGINS_REALTIMEFACTORDISPLAY_HH_
 #define IGNITION_GUI_DISPLAY_PLUGINS_REALTIMEFACTORDISPLAY_HH_
 
-#include <memory>
-
 #include <ignition/msgs/world_stats.pb.h>
+
+#include <memory>
 
 #include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/qt.h"
