@@ -194,6 +194,15 @@ QPushButton#collapsibleButton:hover
   background-color: rgba(100, 100, 100, 50);
 }
 
+/*
+ignition--gui--CollapsibleWidget#displayPluginCollapsible QPushButton#collapsibleButton
+{
+  // These buttons programmatically have setFlat(true) called so that it applies
+  // in other style sheets also.
+  // border: none;
+}
+*/
+
 /* ---------------------------- */
 /*             Menu             */
 /* ---------------------------- */

@@ -166,8 +166,13 @@ QWidget *DisplayPlugin::CreateProperties() const
     auto collapsible = new CollapsibleWidget(this->title);
     collapsible->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     collapsible->AppendContent(customProperties);
+    collapsible->setObjectName("displayPluginCollapsible");
     // Make the button flat so it does not look different to displays without
     // collapsible custom configuration.
+    // Note(dhood): this is done programmatically rather than via QSS so that
+    // it does not need to be specified in custom styles.
+    // There is a note in style.qss that references this, for users wondering
+    // why styles aren't taking effect.
     auto collapsible_button = collapsible->Button();
     if (!collapsible_button)
     {
