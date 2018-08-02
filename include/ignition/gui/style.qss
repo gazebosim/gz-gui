@@ -197,8 +197,9 @@ QPushButton#collapsibleButton:hover
 /*
 ignition--gui--CollapsibleWidget#displayPluginCollapsible QPushButton#collapsibleButton
 {
-  // These buttons programmatically have setFlat(true) called so that it applies
-  // in other style sheets also.
+  // Note(dhood): These buttons have setFlat(true) called programmatically
+  // rather than this being specified in QSS so that it applies in other style
+  // sheets also.
   // border: none;
 }
 */
