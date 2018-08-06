@@ -75,6 +75,9 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
       sceneName = elem->GetText();
+
+    if (auto elem = _pluginElem->FirstChildElement("visible"))
+      elem->QueryBoolText(&this->visible);
   }
 
   std::string error{""};
@@ -120,6 +123,7 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
   this->Initialize(_pluginElem);
+  this->OnVisibilityChange(this->visible);
 }
 
 /////////////////////////////////////////////////
