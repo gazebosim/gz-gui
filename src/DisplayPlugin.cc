@@ -144,7 +144,7 @@ QWidget *DisplayPlugin::CreateProperties() const
   // Create generic configuration options for all display plugins.
   auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
   visibleCheck->setToolTip("Toggle visibility");
-  visibleCheck->setChecked(true);
+  visibleCheck->setChecked(this->visible);
   this->connect(visibleCheck,
     SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
 
@@ -208,6 +208,34 @@ void DisplayPlugin::OnVisibilityChange(const bool _value)
   {
     return;
   }
+  this->visible = _value;
   this->dataPtr->visual->SetVisible(_value);
+}
+
+/////////////////////////////////////////////////
+tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
+{
+  // Display
+  auto displayElem = _doc->NewElement("display");
+  displayElem->SetAttribute("type", this->Type().c_str());
+  _doc->InsertEndChild(displayElem);
+
+  // Visible
+  auto visibleElem = _doc->NewElement("visible");
+  visibleElem->SetText(std::to_string(this->visible).c_str());
+  displayElem->InsertEndChild(visibleElem);
+
+  return displayElem;
+}
+
+/////////////////////////////////////////////////
+std::string DisplayPlugin::ConfigStr() const
+{
+  tinyxml2::XMLDocument doc;
+  this->Config(&doc);
+
+  tinyxml2::XMLPrinter printer;
+  doc.Print(&printer);
+  return printer.CStr();
 }
 

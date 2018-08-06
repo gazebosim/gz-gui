@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_TEST_TESTDISPLAYPLUGIN_HH_
 #define IGNITION_GUI_TEST_TESTDISPLAYPLUGIN_HH_
 
+#include <string>
+
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
   #include <ignition/gui/DisplayPlugin.hh>
@@ -36,6 +38,9 @@ namespace ignition
 
       /// \brief Destructor
       public: virtual ~TestDisplayPlugin();
+
+      /// \brief Destructor
+      public: virtual std::string Type() const override;
     };
   }
 }

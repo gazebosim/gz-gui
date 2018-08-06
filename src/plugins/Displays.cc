@@ -118,6 +118,33 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->setLayout(layout);
 }
 
+/////////////////////////////////////////////////
+std::string Displays::ConfigStr() const
+{
+  tinyxml2::XMLDocument doc;
+
+  // Displays
+  auto displaysElem = doc.NewElement("plugin");
+  displaysElem->SetAttribute("filename", "Displays");
+  doc.InsertEndChild(displaysElem);
+
+  for (auto displayPlugin : this->dataPtr->displayPlugins)
+  {
+    // Display
+    auto displayElem = displayPlugin->Config(&doc);
+    if (displayElem)
+    {
+      displaysElem->InsertEndChild(displayElem);
+    }
+  }
+
+  tinyxml2::XMLPrinter printer;
+  doc.Print(&printer);
+  std::string config = printer.CStr();
+  return config;
+}
+
+
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Displays,
                                   ignition::gui::Plugin)

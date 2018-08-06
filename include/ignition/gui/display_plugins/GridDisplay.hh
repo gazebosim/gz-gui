@@ -19,6 +19,7 @@
 #define IGNITION_GUI_PLUGINS_DISPLAYS_GRIDDISPLAY_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/DisplayPlugin.hh"
@@ -63,6 +64,9 @@ namespace display_plugins
 
     // Documentation inherited
     public: QWidget *CreateCustomProperties() const override;
+
+    // Documentation inherited
+    public: virtual std::string Type() const override;
 
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value

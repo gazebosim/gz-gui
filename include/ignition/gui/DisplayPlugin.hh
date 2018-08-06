@@ -75,6 +75,20 @@ namespace gui
     /// \return Display plugin title.
     public: virtual std::string Title() const {return this->title;}
 
+    /// \brief Get the type of the display plugin.
+    /// \return Display plugin type.
+    public: virtual std::string Type() const = 0;
+
+    /// \brief Get the configuration XML as a string
+    /// \return Config element as a string
+    public: virtual std::string ConfigStr() const;
+
+    /// \brief Get the configuration XML.
+    /// \param[in] _doc Document to be used for creating element(s).
+    /// \return Config element
+    public: virtual tinyxml2::XMLElement * Config(tinyxml2::XMLDocument *_doc)
+            const;
+
     /// \brief Returns the visual for the display plugin.
     protected: ignition::rendering::VisualPtr Visual() const;
 
@@ -94,6 +108,9 @@ namespace gui
 
     /// \brief Title of display plugin.
     protected: std::string title = "";
+
+    /// \brief If the display should be rendered.
+    protected: bool visible = true;
   };
 }
 }

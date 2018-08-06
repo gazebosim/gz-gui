@@ -208,6 +208,12 @@ QWidget *GridDisplay::CreateCustomProperties() const
 }
 
 /////////////////////////////////////////////////
+std::string GridDisplay::Type() const
+{
+  return "GridDisplay";
+}
+
+/////////////////////////////////////////////////
 void GridDisplay::OnChange(const QVariant &_value)
 {
   if (nullptr == this->dataPtr->grid)

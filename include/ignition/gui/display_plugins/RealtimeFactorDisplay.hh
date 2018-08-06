@@ -19,6 +19,7 @@
 #define IGNITION_GUI_PLUGINS_DISPLAYS_REALTIMEFACTORDISPLAY_HH_
 
 #include <memory>
+#include <string>
 
 #include <ignition/msgs.hh>
 
@@ -47,6 +48,9 @@ namespace display_plugins
     // Documentation inherited
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
+
+    // Documentation inherited
+    public: virtual std::string Type() const override;
 
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
