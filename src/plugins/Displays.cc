@@ -123,10 +123,14 @@ std::string Displays::ConfigStr() const
 {
   tinyxml2::XMLDocument doc;
 
+  // Plugin
+  auto pluginElem = doc.NewElement("plugin");
+  pluginElem->SetAttribute("filename", "Displays");
+  doc.InsertEndChild(pluginElem);
+
   // Displays
-  auto displaysElem = doc.NewElement("plugin");
-  displaysElem->SetAttribute("filename", "Displays");
-  doc.InsertEndChild(displaysElem);
+  auto displaysElem = doc.NewElement("displays");
+  pluginElem->InsertEndChild(displaysElem);
 
   for (auto displayPlugin : this->dataPtr->displayPlugins)
   {
