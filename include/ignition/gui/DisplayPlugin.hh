@@ -89,6 +89,14 @@ namespace gui
     public: virtual tinyxml2::XMLElement * Config(tinyxml2::XMLDocument *_doc)
             const;
 
+    /// \brief Get the configuration XML specific to this plugin.
+    /// The XML element returned has the display plugin's custom configuration
+    /// in its child elements.
+    /// \param[in] _doc Document to be used for creating element(s).
+    /// \return Config element
+    public: virtual tinyxml2::XMLElement * CustomConfig(
+                tinyxml2::XMLDocument */*_doc*/) const {return nullptr;}
+
     /// \brief Returns the visual for the display plugin.
     protected: ignition::rendering::VisualPtr Visual() const;
 

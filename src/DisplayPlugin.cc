@@ -229,6 +229,15 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
   visibleElem->SetText(std::to_string(this->visible).c_str());
   displayElem->InsertEndChild(visibleElem);
 
+  // Custom config for subclasses
+  if (auto customConfigElems = this->CustomConfig(_doc))
+  {
+    while (auto customConfigElem = customConfigElems->FirstChildElement())
+    {
+      displayElem->InsertEndChild(customConfigElem);
+    }
+  }
+
   return displayElem;
 }
 

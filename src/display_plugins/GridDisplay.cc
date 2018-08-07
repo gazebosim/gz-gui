@@ -234,6 +234,47 @@ void GridDisplay::OnChange(const QVariant &_value)
     this->dataPtr->grid->Material()->SetAmbient(_value.value<math::Color>());
 }
 
+/////////////////////////////////////////////////
+tinyxml2::XMLElement * GridDisplay::CustomConfig(tinyxml2::XMLDocument *_doc)
+  const
+{
+  auto customConfigElem = _doc->NewElement("config");
+
+  // Cell count
+  auto cellCountElem = _doc->NewElement("cell_count");
+  cellCountElem->SetText(
+    std::to_string(this->dataPtr->grid->CellCount()).c_str());
+  customConfigElem->InsertEndChild(cellCountElem);
+
+  // Vertical cell count
+  auto verticalCellCountElem = _doc->NewElement("vertical_cell_count");
+  verticalCellCountElem->SetText(
+    std::to_string(this->dataPtr->grid->VerticalCellCount()).c_str());
+  customConfigElem->InsertEndChild(verticalCellCountElem);
+
+  // Cell length
+  auto cellLengthElem = _doc->NewElement("cell_length");
+  cellLengthElem->SetText(
+    std::to_string(this->dataPtr->grid->CellLength()).c_str());
+  customConfigElem->InsertEndChild(cellLengthElem);
+
+  // Pose
+  auto poseElem = _doc->NewElement("pose");
+  std::stringstream poseStr;
+  poseStr << this->Visual()->LocalPose();
+  poseElem->SetText(poseStr.str().c_str());
+  customConfigElem->InsertEndChild(poseElem);
+
+  // Color
+  auto colorElem = _doc->NewElement("color");
+  std::stringstream colorStr;
+  colorStr << this->dataPtr->grid->Material()->Ambient();
+  colorElem->SetText(colorStr.str().c_str());
+  customConfigElem->InsertEndChild(colorElem);
+
+  return customConfigElem;
+}
+
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::display_plugins::GridDisplay,
                                   ignition::gui::DisplayPlugin)
