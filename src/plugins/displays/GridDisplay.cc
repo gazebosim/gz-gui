@@ -212,24 +212,6 @@ QWidget *GridDisplay::CreateCustomProperties() const
 }
 
 /////////////////////////////////////////////////
-void GridDisplay::OnVisibilityChange(const bool _value)
-{
-  if (nullptr == this->Visual())
-  {
-    return;
-  }
-  // TODO(dhood): remove this once parent visual has setVisible
-  if (_value)
-  {
-    this->Visual()->Material()->SetTransparency(0.);
-  }
-  else
-  {
-    this->Visual()->Material()->SetTransparency(1.);
-  }
-}
-
-/////////////////////////////////////////////////
 void GridDisplay::OnChange(const QVariant &_value)
 {
   if (nullptr == this->dataPtr->grid)

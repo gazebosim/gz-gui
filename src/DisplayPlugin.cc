@@ -35,9 +35,6 @@ class ignition::gui::DisplayPluginPrivate
 
   /// \brief The visual to which subclasses can attach their display(s).
   public: rendering::VisualPtr visual = nullptr;
-
-  /// \brief If the display should be rendered.
-  public: bool visible = true;
 };
 
 using namespace ignition;
@@ -147,7 +144,7 @@ QWidget *DisplayPlugin::CreateProperties() const
   // Create generic configuration options for all display plugins.
   auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
   visibleCheck->setToolTip("Toggle visibility");
-  visibleCheck->setChecked(this->dataPtr->visible);
+  visibleCheck->setChecked(true);
   this->connect(visibleCheck,
     SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
 
@@ -193,7 +190,10 @@ void DisplayPlugin::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
 /////////////////////////////////////////////////
 void DisplayPlugin::OnVisibilityChange(const bool _value)
 {
-  this->dataPtr->visible = _value;
-  // TODO(dhood): call setVisible on the visual
+  if (nullptr == this->dataPtr->visual)
+  {
+    return;
+  }
+  this->dataPtr->visual->SetVisible(_value);
 }
 

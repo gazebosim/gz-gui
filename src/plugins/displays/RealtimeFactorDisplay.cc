@@ -99,26 +99,6 @@ void RealtimeFactorDisplay::Initialize(
 }
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::OnVisibilityChange(const bool _value)
-{
-  if (nullptr == this->dataPtr->realtimeFactorText)
-  {
-    return;
-  }
-  // TODO(dhood): remove this once parent visual has setVisible
-  auto color = this->dataPtr->realtimeFactorText->Color();
-  if (_value)
-  {
-    color.A(1.0);
-  }
-  else
-  {
-    color.A(0.0);
-  }
-  this->dataPtr->realtimeFactorText->SetColor(color);
-}
-
-/////////////////////////////////////////////////
 void RealtimeFactorDisplay::ProcessMsg()
 {
   if (nullptr == this->dataPtr->realtimeFactorText)

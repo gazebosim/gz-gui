@@ -70,9 +70,6 @@ namespace displays
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);
 
-    // Documentation inherited
-    private slots: void OnVisibilityChange(const bool _value) override;
-
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<GridDisplayPrivate> dataPtr;
