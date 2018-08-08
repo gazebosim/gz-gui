@@ -80,6 +80,30 @@ void RealtimeFactorDisplay::Initialize(
   if (auto scenePtr = this->Scene().lock())
   {
     this->dataPtr->realtimeFactorText = scenePtr->CreateText();
+    // By default the Visual is attached to the RootVisual.
+    // Remove it from the RootVisual so it can be attached to a Camera instead.
+    auto root = scenePtr->RootVisual();
+    root->RemoveChild(this->Visual());
+
+    // Loop through the children looking for a Camera.
+    bool cameraFound = false;
+    for (unsigned int i = 0; i < root->ChildCount(); ++i)
+    {
+      auto camera = std::dynamic_pointer_cast<rendering::Camera>(
+        root->ChildByIndex(i));
+      if (camera)
+      {
+        if (!cameraFound)
+        {
+          cameraFound = true;
+          camera->AddChild(this->Visual());
+          continue;
+        }
+        ignwarn << "Multiple cameras found for scene [" << scenePtr->Name() <<
+          "]. Real time factor display will be attached to the first camera "
+          "and may be visible from other cameras." << std::endl;
+      }
+    }
   }
   else
   {
@@ -89,9 +113,18 @@ void RealtimeFactorDisplay::Initialize(
   }
   this->dataPtr->realtimeFactorText->SetTextString("Real time factor: ? %");
   this->dataPtr->realtimeFactorText->SetShowOnTop(true);
+  this->dataPtr->realtimeFactorText->SetCharHeight(0.2);
+  this->dataPtr->realtimeFactorText->SetTextAlignment(
+    ignition::rendering::TextHorizontalAlign::RIGHT,
+    ignition::rendering::TextVerticalAlign::CENTER);
 
   // TODO(dhood): Configurable properties
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
+
+  // TODO(dhood): Don't hard-code these offsets.
+  // Coordinate axes of the camera are: positive X is into the scene, positive
+  // Y is to the left, and positive Z is up.
+  this->Visual()->SetLocalPosition(5,-0.8,-1.);
 }
 
 /////////////////////////////////////////////////
