@@ -162,13 +162,27 @@ QWidget *DisplayPlugin::CreateProperties() const
   if (nullptr != customProperties)
   {
     // Remove the title from the checkbox and put it in a collapsible button.
-    // TODO(dhood): Make the collapsible widget take up the full width after
-    // being expanded (including space underneath the checkbox).
     visibleCheck->setText("");
     auto collapsible = new CollapsibleWidget(this->title);
-    // TODO(dhood): Make the widget use its uncollapsed width from the start?
     collapsible->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     collapsible->AppendContent(customProperties);
+    collapsible->setObjectName("displayPluginCollapsible");
+    // Make the button flat so it does not look different to displays without
+    // collapsible custom configuration.
+    // Note(dhood): this is done programmatically rather than via QSS so that
+    // it does not need to be specified in custom styles.
+    // There is a note in style.qss that references this, for users wondering
+    // why styles aren't taking effect.
+    auto collapsibleButton = collapsible->Button();
+    if (!collapsibleButton)
+    {
+      ignerr << "Error creating collapsible widget for display plugin [ " <<
+        this->title << "]" << std::endl;
+    }
+    else
+    {
+      collapsibleButton->setFlat(true);
+    }
     propertiesLayout->addWidget(collapsible);
   }
   else

@@ -116,7 +116,6 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   auto layout = new QVBoxLayout();
-  layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
   layout->addWidget(scrollArea);
 
