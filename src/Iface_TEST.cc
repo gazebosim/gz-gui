@@ -115,6 +115,17 @@ TEST(IfaceTest, loadPlugin)
     EXPECT_TRUE(stop());
   }
 
+  // Display plugin
+  {
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+    EXPECT_TRUE(initApp());
+
+    EXPECT_FALSE(loadPlugin("TestDisplayPlugin"));
+
+    EXPECT_TRUE(stop());
+  }
+
   // Plugin which is not registered
   {
     addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -122,6 +133,56 @@ TEST(IfaceTest, loadPlugin)
     EXPECT_TRUE(initApp());
 
     EXPECT_FALSE(loadPlugin("TestNotRegisteredPlugin"));
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+//////////////////////////////////////////////////
+TEST(IfaceTest, loadDisplayPlugin)
+{
+  setVerbosity(4);
+
+  // Before init
+  {
+    EXPECT_EQ(nullptr, loadDisplayPlugin("GridDisplay"));
+  }
+
+  // Official plugin
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_NE(nullptr, loadDisplayPlugin("GridDisplay"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Inexistent plugin
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_EQ(nullptr, loadDisplayPlugin("_doesnt_exist"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Display plugin path located using the env var
+  {
+    setenv("IGN_GUI_DISPLAY_PLUGIN_PATH",
+        (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
+
+    EXPECT_TRUE(initApp());
+
+    EXPECT_NE(nullptr, loadDisplayPlugin("TestDisplayPlugin"));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Plugin that inherits from ignition::gui::Plugin
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_EQ(nullptr, loadDisplayPlugin("Publisher"));
 
     EXPECT_TRUE(stop());
   }
@@ -703,6 +764,63 @@ TEST(IfaceTest, ignoreConfig)
     EXPECT_NE(1000, win->pos().y());
     EXPECT_NE(1000, win->width());
     EXPECT_NE(1000, win->height());
+
+    EXPECT_TRUE(stop());
+  }
+}
+
+//////////////////////////////////////////////////
+bool pluginInPluginList(std::string _plugin,
+    std::vector<std::pair<std::string, std::vector<std::string>>> _list)
+{
+  for (auto pathPair : _list)
+  {
+    auto pluginsInPath = pathPair.second;
+    bool pluginInPath = std::find(pluginsInPath.begin(),
+        pluginsInPath.end(), _plugin) != pluginsInPath.end();
+    if (pluginInPath)
+      return true;
+  }
+  return false;
+}
+
+//////////////////////////////////////////////////
+TEST(IfaceTest, getPluginList)
+{
+  setVerbosity(4);
+
+  {
+    EXPECT_TRUE(initApp());
+
+    EXPECT_TRUE(pluginInPluginList("libPublisher.so", getPluginList()));
+    EXPECT_FALSE(pluginInPluginList("libTestPlugin.so", getPluginList()));
+    EXPECT_FALSE(pluginInPluginList("lib_doesnt_exist.so", getPluginList()));
+
+    // Display plugins shouldn't be detected
+    EXPECT_FALSE(pluginInPluginList("libDisplayTestPlugin.so",
+        getPluginList()));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Plugin path added programmatically
+  {
+    EXPECT_TRUE(initApp());
+
+    addPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+    EXPECT_TRUE(pluginInPluginList("libTestPlugin.so", getPluginList()));
+
+    EXPECT_TRUE(stop());
+  }
+
+  // Plugin path added by env var
+  {
+    EXPECT_TRUE(initApp());
+
+    setenv("TEST_ENV_VAR",
+        (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
+    setPluginPathEnv("TEST_ENV_VAR");
+    EXPECT_TRUE(pluginInPluginList("libTestPlugin.so", getPluginList()));
 
     EXPECT_TRUE(stop());
   }

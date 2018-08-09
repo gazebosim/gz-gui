@@ -22,15 +22,13 @@
 #include <ignition/rendering/Text.hh>
 #include <ignition/transport.hh>
 
-#include "ignition/gui/plugins/displays/RealtimeFactorDisplay.hh"
+#include "ignition/gui/display_plugins/RealtimeFactorDisplay.hh"
 
 namespace ignition
 {
 namespace gui
 {
-namespace plugins
-{
-namespace displays
+namespace display_plugins
 {
   class RealtimeFactorDisplayPrivate
   {
@@ -50,12 +48,10 @@ namespace displays
 }
 }
 }
-}
 
 using namespace ignition;
 using namespace gui;
-using namespace plugins;
-using namespace displays;
+using namespace display_plugins;
 
 /////////////////////////////////////////////////
 RealtimeFactorDisplay::RealtimeFactorDisplay()
@@ -130,5 +126,5 @@ void RealtimeFactorDisplay::OnWorldStatsMsg(
 
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(
-  ignition::gui::plugins::displays::RealtimeFactorDisplay,
-  ignition::gui::Plugin)
+  ignition::gui::display_plugins::RealtimeFactorDisplay,
+  ignition::gui::DisplayPlugin)

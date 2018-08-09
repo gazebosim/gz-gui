@@ -28,6 +28,7 @@
 #include <ignition/common/Filesystem.hh>
 #include <ignition/common/Plugin.hh>
 #include <ignition/common/PluginLoader.hh>
+#include <ignition/common/PluginPtr.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
 #include <ignition/common/Util.hh>
@@ -48,6 +49,8 @@ char **g_argv;
 
 using namespace ignition;
 using namespace gui;
+using CommonPluginPtr = \
+  ignition::common::TemplatePluginPtr<ignition::common::Plugin>;
 
 // Forward declarations.
 std::string homePath();
@@ -70,6 +73,9 @@ std::vector<std::shared_ptr<Plugin>> g_pluginsAdded;
 
 /// \brief Environment variable which holds paths to look for plugins
 std::string g_pluginPathEnv = "IGN_GUI_PLUGIN_PATH";
+
+/// \brief Environment variable which holds paths to look for display plugins
+std::string g_displayPluginPathEnv = "IGN_GUI_DISPLAY_PLUGIN_PATH";
 
 /// \brief Vector of paths to look for plugins
 std::vector<std::string> g_pluginPaths;
@@ -477,13 +483,95 @@ std::string ignition::gui::defaultConfigPath()
 }
 
 /////////////////////////////////////////////////
-std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(
+bool instantiateCommonPlugin(
+    const std::string &_pathToLib,
+    const std::string &_filename,
+    CommonPluginPtr &_commonPlugin
+)
+{
+  if (!checkApp())
+    return false;
+
+  // Load plugin
+  ignition::common::PluginLoader pluginLoader;
+
+  auto pluginNames = pluginLoader.LoadLibrary(_pathToLib);
+  if (pluginNames.empty())
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't load library on path [" << _pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  auto pluginName = *pluginNames.begin();
+  if (pluginName.empty())
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't load library on path [" << _pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  _commonPlugin = pluginLoader.Instantiate(pluginName);
+  if (!_commonPlugin)
+  {
+    ignerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't instantiate plugin on path [" << _pathToLib <<
+              "]." << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
     const std::string &_filename,
     const tinyxml2::XMLElement *_pluginElem)
 {
   if (!checkApp())
     return nullptr;
 
+  ignmsg << "Loading display plugin [" << _filename << "]" << std::endl;
+
+  ignition::common::SystemPaths systemPaths;
+  systemPaths.SetPluginPathEnv(g_displayPluginPathEnv);
+  systemPaths.AddPluginPaths(IGN_GUI_DISPLAY_PLUGIN_INSTALL_DIR);
+  systemPaths.AddPluginPaths(homePath() + "/.ignition/gui/display_plugins");
+
+  auto pathToLib = systemPaths.FindSharedLibrary(_filename);
+  if (pathToLib.empty())
+  {
+    ignerr << "Failed to load display plugin [" << _filename <<
+              "] : couldn't find shared library." << std::endl;
+    return nullptr;
+  }
+  CommonPluginPtr commonPlugin;
+  if (!instantiateCommonPlugin(pathToLib, _filename, commonPlugin))
+  {
+    return nullptr;
+  }
+
+  auto displayPlugin =
+    commonPlugin->QueryInterfaceSharedPtr<ignition::gui::DisplayPlugin>();
+  if (!displayPlugin)
+  {
+    ignerr << "Failed to load display plugin [" << _filename <<
+              "] : couldn't get interface [ignition::gui::DisplayPlugin]." <<
+              std::endl;
+    return nullptr;
+  }
+
+  displayPlugin->Load(_pluginElem);
+
+  return displayPlugin;
+}
+
+/////////////////////////////////////////////////
+bool ignition::gui::loadPlugin(const std::string &_filename,
+    const tinyxml2::XMLElement *_pluginElem)
+{
   ignmsg << "Loading plugin [" << _filename << "]" << std::endl;
 
   // Get full path
@@ -504,46 +592,22 @@ std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(
   {
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't find shared library." << std::endl;
-    return nullptr;
+    return false;
   }
 
-  // Load plugin
-  ignition::common::PluginLoader pluginLoader;
-
-  auto pluginNames = pluginLoader.LoadLibrary(pathToLib);
-  if (pluginNames.empty())
+  CommonPluginPtr commonPlugin;
+  if (!instantiateCommonPlugin(pathToLib, _filename, commonPlugin))
   {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't load library on path [" << pathToLib <<
-              "]." << std::endl;
-    return nullptr;
-  }
-
-  auto pluginName = *pluginNames.begin();
-  if (pluginName.empty())
-  {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't load library on path [" << pathToLib <<
-              "]." << std::endl;
-    return nullptr;
-  }
-
-  auto commonPlugin = pluginLoader.Instantiate(pluginName);
-  if (!commonPlugin)
-  {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't instantiate plugin on path [" << pathToLib <<
-              "]." << std::endl;
-    return nullptr;
+    return false;
   }
 
   auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
   if (!plugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't get interface [" << pluginName <<
-              "]." << std::endl;
-    return nullptr;
+              "] : couldn't get interface [ignition::gui::Plugin]." <<
+              std::endl;
+    return false;
   }
 
   // Basic config in case there is none
@@ -559,21 +623,8 @@ std::shared_ptr<Plugin> ignition::gui::loadPluginWithoutAdding(
   else
     plugin->Load(_pluginElem);
 
-  return plugin;
-}
-
-/////////////////////////////////////////////////
-bool ignition::gui::loadPlugin(const std::string &_filename,
-    const tinyxml2::XMLElement *_pluginElem)
-{
-  auto loadedPlugin = loadPluginWithoutAdding(_filename, _pluginElem);
-  if (nullptr == loadedPlugin)
-  {
-    return false;
-  }
-
   // Store plugin in queue to be added to the window
-  g_pluginsToAdd.push(loadedPlugin);
+  g_pluginsToAdd.push(plugin);
 
   return true;
 }

@@ -36,7 +36,7 @@ namespace plugins
   class DisplaysPrivate
   {
     /// \brief Keep track of the loaded display plugins.
-    public: std::vector<std::shared_ptr<Plugin> > displayPlugins;
+    public: std::vector<std::shared_ptr<DisplayPlugin> > displayPlugins;
   };
 }
 }
@@ -86,23 +86,16 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   for (const auto &pluginToLoad : pluginsToLoad)
   {
-    std::shared_ptr<Plugin> plugin =
-      loadPluginWithoutAdding(pluginToLoad, nullptr);
-    if (plugin == nullptr)
+    // TODO(dhood): Load display with its initial config.
+    std::shared_ptr<DisplayPlugin> displayPlugin =
+      loadDisplayPlugin(pluginToLoad, nullptr);
+    if (displayPlugin == nullptr)
     {
       ignerr << "Couldn't load plugin [" << pluginToLoad << "]" << std::endl;
       continue;
     }
 
-    std::shared_ptr<ignition::gui::DisplayPlugin> displayPlugin =
-      std::dynamic_pointer_cast<ignition::gui::DisplayPlugin> (plugin);
-    if (displayPlugin == nullptr)
-    {
-      ignerr << "Couldn't cast plugin [" << pluginToLoad
-        << "] to DisplayPlugin" << std::endl;
-      continue;
-    }
-    this->dataPtr->displayPlugins.push_back(plugin);
+    this->dataPtr->displayPlugins.push_back(displayPlugin);
 
     // Create the configuration options for the display plugin.
     auto pluginProperties = displayPlugin->CreateProperties();
