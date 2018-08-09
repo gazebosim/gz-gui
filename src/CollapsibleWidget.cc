@@ -92,7 +92,7 @@ CollapsibleWidget::~CollapsibleWidget()
 }
 
 /////////////////////////////////////////////////
-QPushButton * CollapsibleWidget::Button() const
+QPushButton *CollapsibleWidget::Button() const
 {
   return this->dataPtr->button;
 }

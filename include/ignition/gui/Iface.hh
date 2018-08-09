@@ -21,8 +21,8 @@
 #include <utility>
 #include <vector>
 
-#include "ignition/gui/Export.hh"
 #include "ignition/gui/DisplayPlugin.hh"
+#include "ignition/gui/Export.hh"
 #include "ignition/gui/Plugin.hh"
 
 // Forward declarations.

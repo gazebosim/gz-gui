@@ -15,13 +15,13 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_DISPLAYS_GRIDDISPLAY_HH_
-#define IGNITION_GUI_PLUGINS_DISPLAYS_GRIDDISPLAY_HH_
+#ifndef IGNITION_GUI_DISPLAY_PLUGINS_GRIDDISPLAY_HH_
+#define IGNITION_GUI_DISPLAY_PLUGINS_GRIDDISPLAY_HH_
 
 #include <memory>
 
-#include "ignition/gui/qt.h"
 #include "ignition/gui/DisplayPlugin.hh"
+#include "ignition/gui/qt.h"
 
 namespace ignition
 {
