@@ -46,7 +46,7 @@ namespace ignition
       public: virtual ~CollapsibleWidget();
 
       /// \brief Get the button used to expand the collapsible contents.
-      /// \return True for expanded.
+      /// \return Pointer to the button.
       public: QPushButton *Button() const;
 
       /// \brief Inherited from PropertyWidget.
