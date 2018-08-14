@@ -57,6 +57,9 @@ namespace gui
     /// Called when a display plugin is first created.
     /// This function should not be blocking.
     ///
+    /// The _pluginElem passed in must have an attribute named "type"
+    /// that is the type of the display plugin.
+    ///
     /// \sa Initialize
     /// \sa Visual
     /// \param[in] _pluginElem Element containing configuration
@@ -77,7 +80,7 @@ namespace gui
 
     /// \brief Get the type of the display plugin.
     /// \return Display plugin type.
-    public: virtual std::string Type() const = 0;
+    public: virtual std::string Type() const {return this->title;}
 
     /// \brief Get the configuration XML as a string
     /// \return Config element as a string
@@ -116,6 +119,9 @@ namespace gui
 
     /// \brief Title of display plugin.
     protected: std::string title = "";
+
+    /// \brief Type of display plugin.
+    protected: std::string type = "";
 
     /// \brief If the display should be rendered.
     protected: bool visible = true;

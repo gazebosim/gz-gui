@@ -66,9 +66,6 @@ namespace display_plugins
     public: QWidget *CreateCustomProperties() const override;
 
     // Documentation inherited
-    public: virtual std::string Type() const override;
-
-    // Documentation inherited
     public: virtual tinyxml2::XMLElement * CustomConfig(
                 tinyxml2::XMLDocument */*_doc*/) const override;
 

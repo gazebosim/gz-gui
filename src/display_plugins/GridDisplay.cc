@@ -208,29 +208,23 @@ QWidget *GridDisplay::CreateCustomProperties() const
 }
 
 /////////////////////////////////////////////////
-std::string GridDisplay::Type() const
-{
-  return "GridDisplay";
-}
-
-/////////////////////////////////////////////////
 void GridDisplay::OnChange(const QVariant &_value)
 {
   if (nullptr == this->dataPtr->grid)
   {
     return;
   }
-  auto type = this->sender()->objectName().toStdString();
+  auto senderType = this->sender()->objectName().toStdString();
 
-  if (type == "cellCountWidget")
+  if (senderType == "cellCountWidget")
     this->dataPtr->grid->SetCellCount(_value.toInt());
-  else if (type == "vertCellCountWidget")
+  else if (senderType == "vertCellCountWidget")
     this->dataPtr->grid->SetVerticalCellCount(_value.toInt());
-  else if (type == "cellLengthWidget")
+  else if (senderType == "cellLengthWidget")
     this->dataPtr->grid->SetCellLength(_value.toDouble());
-  else if (type == "poseWidget")
+  else if (senderType == "poseWidget")
     this->dataPtr->grid->Parent()->SetWorldPose(_value.value<math::Pose3d>());
-  else if (type == "colorWidget")
+  else if (senderType == "colorWidget")
     this->dataPtr->grid->Material()->SetAmbient(_value.value<math::Color>());
 }
 

@@ -49,9 +49,6 @@ namespace display_plugins
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    // Documentation inherited
-    public: virtual std::string Type() const override;
-
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
 

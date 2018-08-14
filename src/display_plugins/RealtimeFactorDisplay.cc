@@ -95,12 +95,6 @@ void RealtimeFactorDisplay::Initialize(
 }
 
 /////////////////////////////////////////////////
-std::string RealtimeFactorDisplay::Type() const
-{
-  return "RealtimeFactorDisplay";
-}
-
-/////////////////////////////////////////////////
 void RealtimeFactorDisplay::ProcessMsg()
 {
   if (nullptr == this->dataPtr->realtimeFactorText)

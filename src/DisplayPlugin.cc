@@ -45,6 +45,7 @@ DisplayPlugin::DisplayPlugin()
   : dataPtr(new DisplayPluginPrivate)
 {
   this->title = "Unnamed display";
+  this->type = "DisplayPlugin";
 }
 
 /////////////////////////////////////////////////
@@ -64,6 +65,8 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
   // TODO(dhood): support config parsing of displays.
   // Despite what it looks like in the following code, the config is not
   // actually being passed in currently.
+
+  this->type = _pluginElem->Attribute("type");
 
   // Configuration
   std::string engineName{"ogre"};
@@ -88,7 +91,7 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
   if (!this->dataPtr->engine)
   {
     error = "Engine \"" + engineName
-           + "\" not supported, DisplayPlugin plugin won't work.";
+      + "\" not supported, display plugin [" + this->type + "] won't work.";
     ignwarn << error << std::endl;
   }
   else
@@ -99,7 +102,7 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
     if (!scene)
     {
       error = "Scene \"" + sceneName
-             + "\" not found, DisplayPlugin plugin won't work.";
+        + "\" not found, display plugin [" + this->type + "] won't work.";
       ignwarn << error << std::endl;
     }
     else
