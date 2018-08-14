@@ -39,7 +39,11 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~TestDisplayPlugin();
 
-      /// \brief Destructor
+      // Documentation inherited
+      public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
+        override;
+
+      // Documentation inherited
       public: virtual std::string Type() const override;
     };
   }

@@ -35,6 +35,20 @@ TestDisplayPlugin::~TestDisplayPlugin()
 }
 
 /////////////////////////////////////////////////
+void TestDisplayPlugin::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
+{
+  if (auto scenePtr = this->Scene().lock())
+  {
+    this->Visual()->AddGeometry(scenePtr->CreateBox());
+  }
+  else
+  {
+    ignerr << "Scene invalid. TestDisplayPlugin not initialized." << std::endl;
+  }
+}
+
+
+/////////////////////////////////////////////////
 std::string TestDisplayPlugin::Type() const
 {
   return "TestDisplayPlugin";

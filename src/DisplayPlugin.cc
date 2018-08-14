@@ -148,6 +148,7 @@ QWidget *DisplayPlugin::CreateProperties() const
   // Create generic configuration options for all display plugins.
   auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
   visibleCheck->setToolTip("Toggle visibility");
+  visibleCheck->setObjectName("displayPluginVisibleCheck");
   visibleCheck->setChecked(this->visible);
   this->connect(visibleCheck,
     SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
