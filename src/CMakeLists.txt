@@ -23,4 +23,5 @@ ign_build_tests(TYPE UNIT
 )
 
 add_subdirectory(cmd)
+add_subdirectory(display_plugins)
 add_subdirectory(plugins)
