@@ -47,7 +47,6 @@ void TestDisplayPlugin::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
   }
 }
 
-
 /////////////////////////////////////////////////
 std::string TestDisplayPlugin::Type() const
 {
