@@ -47,13 +47,13 @@ TEST(Grid3DTest, CRUD)
       "<engine>ogre</engine>"
       "<scene>scene</scene>"
       "<displays>"
-      "<display type=\"GridDisplay\">"
-        "<cell_count>5</cell_count>"
-        "<cell_length>3.5</cell_length>"
-        "<vertical_cell_count>3</vertical_cell_count>"
-        "<pose>1 0 0 0 0 0</pose>"
-        "<color>0 0 1 1</color>"
-      "</display>"
+        "<display type=\"GridDisplay\">"
+          "<cell_count>5</cell_count>"
+          "<cell_length>3.5</cell_length>"
+          "<vertical_cell_count>3</vertical_cell_count>"
+          "<pose>1 0 0 0 0 0</pose>"
+          "<color>0 0 1 1</color>"
+        "</display>"
       "</displays>"
     "</plugin>";
 
@@ -144,6 +144,52 @@ TEST(Grid3DTest, CRUD)
     EXPECT_EQ(math::Color::Blue, w->Value().value<math::Color>());
     w->ValueChanged(QVariant::fromValue(math::Color::Cyan));
     QCoreApplication::processEvents();
+    EXPECT_EQ(math::Color::Cyan, grid->Material()->Ambient());
+  }
+
+  // Check the same state can be loaded after saving.
+  auto currentConfigStr = win->CurrentWindowConfig().XMLString();
+  ASSERT_FALSE(currentConfigStr.empty());
+  ASSERT_NE(currentConfigStr.find("<display type=\"GridDisplay\">"),
+    std::string::npos) << currentConfigStr;
+
+  // Clear the loaded plugins.
+  EXPECT_TRUE(stop());
+
+  // Re-initialize the app.
+  EXPECT_TRUE(initApp());
+
+  tinyxml2::XMLDocument configDoc;
+  configDoc.Parse(currentConfigStr.c_str());
+  EXPECT_TRUE(ignition::gui::loadPlugin("Displays",
+      configDoc.FirstChildElement("plugin")));
+
+  // Recreate the main window.
+  EXPECT_TRUE(createMainWindow());
+
+  // Check the state of the re-loaded display plugin.
+  {
+    // Check scene
+    engine = rendering::engine("ogre");
+    ASSERT_NE(nullptr, engine);
+
+    scene = engine->SceneByName("scene");
+    ASSERT_NE(nullptr, scene);
+
+    // Visual created by the base class' constructor.
+    ASSERT_EQ(1u, scene->VisualCount());
+    // Grid added to the visual in the GridDisplay's initialization.
+    ASSERT_EQ(1u, scene->VisualByIndex(0)->GeometryCount());
+
+    // Check grid
+    grid = std::dynamic_pointer_cast<rendering::Grid>(
+        scene->VisualByIndex(0)->GeometryByIndex(0));
+    ASSERT_NE(nullptr, grid);
+
+    EXPECT_EQ(10u, grid->CellCount());
+    EXPECT_EQ(8u, grid->VerticalCellCount());
+    EXPECT_DOUBLE_EQ(0.2, grid->CellLength());
+    EXPECT_EQ(math::Pose3d(0, 0, 1, 0, 0, 0), grid->Parent()->WorldPose());
     EXPECT_EQ(math::Color::Cyan, grid->Material()->Ambient());
   }
 

@@ -72,7 +72,7 @@ TEST(DisplayPluginTest, LoadingSavingDisplayPlugin)
 
   // Visual created by the base DisplayPlugin class' constructor.
   ASSERT_EQ(1u, scene->VisualCount());
-  // Geometry added to the main visual in the TestDisplayPlugin's initialization.
+  // Geometry added to the visual in the TestDisplayPlugin's initialization.
   ASSERT_EQ(1u, scene->VisualByIndex(0)->GeometryCount());
 
   // By default the main visual is visible.
