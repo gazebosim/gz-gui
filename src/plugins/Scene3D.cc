@@ -40,18 +40,10 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Private data class for RendereWindowItem
-  class RenderWindowItemPrivate
+
+  /// \brief Private data class for RendereWindowNode
+  class RenderWindowNodePrivate
   {
-    /// brief Parent window
-    public: QQuickWindow *quickWindow;
-
-    /// \brief Render window OpenGL Context
-    public: QOpenGLContext* renderWindowContext;
-
-    /// \brief Qt OpenGL Context
-    public: QOpenGLContext* qtContext;
-
     /// \brief Qt scene graph texture material
     public: QSGTextureMaterial material;
 
@@ -67,6 +59,42 @@ namespace plugins
     /// \brief Qt scene graph texture size
     public: QSize textureSize;
 
+    public: bool fboDirty = false;
+
+    public: RenderWindowItem *renderWindowItem = nullptr;
+
+    public: rendering::CameraPtr camera;
+    public: GLuint glId;
+  };
+
+  /// \brief Private data class for RendereWindowItem
+  class RenderWindowItemPrivate
+  {
+    /// brief Parent window
+    public: QQuickWindow *quickWindow;
+
+    /// \brief Render window OpenGL Context
+    public: QOpenGLContext* renderWindowContext;
+
+    /// \brief Qt OpenGL Context
+    public: QOpenGLContext* qtContext;
+/*
+    /// \brief Qt scene graph texture material
+    public: QSGTextureMaterial material;
+
+    /// \brief Qt scene graph texture opaque material
+    public: QSGOpaqueTextureMaterial materialOpaque;
+
+    /// \brief Qt scene graph texture
+    public: QSGTexture *texture = nullptr;
+
+    /// \brief Qt scene graph geometry
+    public: QSGGeometry *geometry = nullptr;
+
+    /// \brief Qt scene graph texture size
+    public: QSize textureSize;
+*/
+
     /// \brief Flag to indicate if render window context has been initialized
     /// or not
     public: bool initialized = false;
@@ -75,7 +103,7 @@ namespace plugins
     public: rendering::CameraPtr camera;
 
     /// \brief Engine Name
-    public: std::string engineName{"ogre"};
+    public: std::string engineName{"ogre2"};
 
     /// \brief Scene Name
     public: std::string sceneName{"scene"};
@@ -111,12 +139,13 @@ using namespace plugins;
 RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
   : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
 {
+   std::cerr << "render item !!!!!!!!!!!!!!!!! " << std::endl;
   this->setFlag(ItemHasContents);
   this->setSmooth(false);
   this->startTimer(16);
 
-  this->dataPtr->geometry =
-      new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
+//  this->dataPtr->geometry =
+//      new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
 
   this->connect(this, &QQuickItem::windowChanged, [=](QQuickWindow *_window)
     {
@@ -154,8 +183,8 @@ RenderWindowItem::~RenderWindowItem()
     // TODO(anyone): If that was the last scene, terminate engine?
   }
 
-  delete this->dataPtr->geometry;
-  delete this->dataPtr->texture;
+//  delete this->dataPtr->geometry;
+//  delete this->dataPtr->texture;
 }
 
 /////////////////////////////////////////////////
@@ -217,10 +246,11 @@ void RenderWindowItem::ActivateRenderWindowContext()
   glPopAttrib();
   glPopClientAttrib();
 
-  this->dataPtr->qtContext->functions()->glUseProgram(0);
+//  this->dataPtr->qtContext->functions()->glUseProgram(0);
   this->dataPtr->qtContext->doneCurrent();
 
   this->dataPtr->renderWindowContext->makeCurrent(this->dataPtr->quickWindow);
+  this->dataPtr->quickWindow->resetOpenGLState();
 }
 
 
@@ -245,8 +275,8 @@ void RenderWindowItem::DoneRenderWindowContext()
       GL_COPY_READ_BUFFER, 0);
   this->dataPtr->renderWindowContext->functions()->glBindBuffer(
       GL_COPY_WRITE_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_DRAW_INDIRECT_BUFFER, 0);
+//  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
+//      GL_DRAW_INDIRECT_BUFFER, 0);
   this->dataPtr->renderWindowContext->functions()->glBindBuffer(
       GL_DISPATCH_INDIRECT_BUFFER, 0);
   this->dataPtr->renderWindowContext->functions()->glBindBuffer(
@@ -255,8 +285,8 @@ void RenderWindowItem::DoneRenderWindowContext()
       GL_PIXEL_PACK_BUFFER, 0);
   this->dataPtr->renderWindowContext->functions()->glBindBuffer(
       GL_PIXEL_UNPACK_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_SHADER_STORAGE_BUFFER, 0);
+//  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
+//      GL_SHADER_STORAGE_BUFFER, 0);
   this->dataPtr->renderWindowContext->functions()->glBindBuffer(
       GL_TEXTURE_BUFFER, 0);
   this->dataPtr->renderWindowContext->functions()->glBindBuffer(
@@ -285,7 +315,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
     return nullptr;
   }
 
-  // update render window
+/*  // update render window
   this->ActivateRenderWindowContext();
   this->dataPtr->camera->Update();
 
@@ -334,9 +364,43 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
   node->markDirty(QSGNode::DirtyMaterial);
 
   return node;
+*/
+
+  this->window()->resetOpenGLState();
+  if (this->width() <= 0 || this->height() <= 0 /*|| !this->dataPtr->texture*/)
+  {
+    if (_oldNode)
+    {
+      delete _oldNode;
+    }
+    return nullptr;
+  }
+
+  RenderWindowNode *node = static_cast<RenderWindowNode *>(_oldNode);
+
+  if (!node)
+  {
+    node = new RenderWindowNode();
+    node->SetRenderWindowItem(this);
+    node->SetCamera(this->dataPtr->camera);
+  }
+
+  node->SetSize(QSize(this->width(), this->height()));
+  node->update();
+
+  node->markDirty(QSGNode::DirtyMaterial);
+
+  this->window()->resetOpenGLState();
+
+  return node;
 }
 
-
+/////////////////////////////////////////////////
+QOpenGLContext *RenderWindowItem::RenderWindowContext() const
+{
+  return this->dataPtr->renderWindowContext;
+}
+/*
 /////////////////////////////////////////////////
 void RenderWindowItem::UpdateFBO()
 {
@@ -368,8 +432,148 @@ void RenderWindowItem::UpdateFBO()
       this->dataPtr->camera->RenderTextureGLId(),
       this->dataPtr->textureSize);
 
+   std::cerr << "render texture id : " << this->dataPtr->camera->RenderTextureGLId() << std::endl;
+
   this->dataPtr->material.setTexture(this->dataPtr->texture);
   this->dataPtr->materialOpaque.setTexture(this->dataPtr->texture);
+}
+*/
+
+RenderWindowNode::RenderWindowNode()
+  : dataPtr(new RenderWindowNodePrivate)
+{
+  this->dataPtr->geometry =
+      new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
+  this->setMaterial(&this->dataPtr->material);
+  this->setOpaqueMaterial(&this->dataPtr->materialOpaque);
+  this->setGeometry(this->dataPtr->geometry);
+  this->setFlag(UsePreprocess);
+}
+
+RenderWindowNode::~RenderWindowNode()
+{
+  delete this->dataPtr->geometry;
+  delete this->dataPtr->texture;
+}
+
+void RenderWindowNode::ActivateContext()
+{
+  if (!this->dataPtr->renderWindowItem)
+    return;
+  this->dataPtr->renderWindowItem->ActivateRenderWindowContext();
+  this->dataPtr->renderWindowItem->RenderWindowContext()->functions()->glBindFramebuffer(
+      GL_FRAMEBUFFER_EXT, this->dataPtr->glId);
+}
+
+void RenderWindowNode::DoneContext()
+{
+  if (!this->dataPtr->renderWindowItem)
+    return;
+  this->dataPtr->renderWindowItem->DoneRenderWindowContext();
+
+}
+
+void RenderWindowNode::SetRenderWindowItem(RenderWindowItem *_item)
+{
+  this->dataPtr->renderWindowItem = _item;
+}
+
+void RenderWindowNode::SetCamera(rendering::CameraPtr _camera)
+{
+  this->dataPtr->camera = _camera;
+}
+
+void RenderWindowNode::SetSize(QSize _size)
+{
+  if (_size == this->dataPtr->textureSize)
+  {
+    return;
+  }
+  this->dataPtr->textureSize = _size;
+  this->dataPtr->fboDirty = true;
+  this->markDirty(QSGNode::DirtyGeometry);
+}
+
+void RenderWindowNode::update()
+{
+  if (this->dataPtr->fboDirty)
+  {
+    this->ActivateContext();
+    this->UpdateFBO();
+    this->dataPtr->fboDirty = false;
+    this->DoneContext();
+  }
+}
+
+void RenderWindowNode::UpdateFBO()
+{
+  if (!this->dataPtr->camera)
+    return;
+
+  if (this->dataPtr->textureSize.width() == 0 ||
+      this->dataPtr->textureSize.height() == 0)
+    return;
+
+  // setting the size should cause the render texture to be rebuilt
+  this->dataPtr->camera->SetImageWidth(this->dataPtr->textureSize.width());
+  this->dataPtr->camera->SetImageHeight(this->dataPtr->textureSize.height());
+  this->dataPtr->camera->PreRender();
+
+
+  QSGGeometry::updateTexturedRectGeometry(this->dataPtr->geometry,
+      QRectF(0.0, 0.0, this->dataPtr->textureSize.width(),
+      this->dataPtr->textureSize.height()),
+      QRectF(0.0, 0.0, 1.0, 1.0));
+
+  delete this->dataPtr->texture;
+
+  this->dataPtr->glId = this->dataPtr->camera->RenderTextureGLId();
+  this->dataPtr->texture =
+      this->dataPtr->renderWindowItem->window()->createTextureFromId(
+      this->dataPtr->glId,
+      this->dataPtr->textureSize, QQuickWindow::TextureIsOpaque);
+
+  this->dataPtr->material.setTexture(this->dataPtr->texture);
+  this->dataPtr->materialOpaque.setTexture(this->dataPtr->texture);
+
+  this->dataPtr->camera->PostRender();
+}
+
+void RenderWindowNode::preprocess()
+{
+  this->ActivateContext();
+  static bool done = false;
+  if (!done)
+  {
+    auto scene = this->dataPtr->camera->Scene();
+    auto root = scene->RootVisual();
+/*    auto grid = scene->CreateGrid();
+    grid->SetCellCount(200);
+    grid->SetVerticalCellCount(0);
+    grid->SetCellLength(1.0);
+
+    auto gridVis = scene->CreateVisual();
+    root->AddChild(gridVis);
+    gridVis->AddGeometry(grid);
+
+    auto mat = scene->CreateMaterial();
+    gridVis->SetMaterial(mat);
+    */
+
+/*    auto box = scene->CreateBox();
+    auto boxVis = scene->CreateVisual();
+    root->AddChild(boxVis);
+    boxVis->AddGeometry(box);
+    boxVis->SetLocalPosition(
+        this->dataPtr->camera->LocalPosition() +
+        ignition::math::Vector3d(2, 0, 0));
+*/
+    done = true;
+  }
+
+
+  this->dataPtr->camera->Update();
+  this->DoneContext();
 }
 
 /////////////////////////////////////////////////

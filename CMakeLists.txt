@@ -40,7 +40,7 @@ ign_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 #--------------------------------------
 # Find ignition-math
 ign_find_package(ignition-math6 REQUIRED)
-set(IGN_MATH_VER ${ignition-math5_VERSION_MAJOR})
+set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-common
@@ -50,17 +50,17 @@ set(IGN_COMMON_VER ${ignition-common3_VERSION_MAJOR})
 #--------------------------------------
 # Find ignition-transport
 ign_find_package(ignition-transport6 REQUIRED)
-set(IGN_TRANSPORT_VER ${ignition-transport5_VERSION_MAJOR})
+set(IGN_TRANSPORT_VER ${ignition-transport6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering1 REQUIRED)
+ign_find_package(ignition-rendering0 REQUIRED)
 set(IGN_RENDERING_VER ${ignition-rendering0_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-msgs
 ign_find_package(ignition-msgs3 REQUIRED)
-set(IGN_MSGS_VER ${ignition-msgs2_VERSION_MAJOR})
+set(IGN_MSGS_VER ${ignition-msgs3_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-tools
