@@ -227,7 +227,7 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
 
   // Visible
   auto visibleElem = _doc->NewElement("visible");
-  visibleElem->SetText(std::to_string(this->visible).c_str());
+  visibleElem->SetText(this->visible ? "true" : "false");
   displayElem->InsertEndChild(visibleElem);
 
   // Custom config for subclasses

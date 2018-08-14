@@ -83,7 +83,7 @@ TEST(DisplayPluginTest, LoadingSavingDisplayPlugin)
   EXPECT_TRUE(visibleCheck->isChecked());
   auto currentConfigStr = win->CurrentWindowConfig().XMLString();
   EXPECT_FALSE(currentConfigStr.empty());
-  EXPECT_NE(currentConfigStr.find("<visible>1</visible>"),
+  EXPECT_NE(currentConfigStr.find("<visible>true</visible>"),
     std::string::npos) << currentConfigStr;
 
   // Disable the main visual.
@@ -91,7 +91,7 @@ TEST(DisplayPluginTest, LoadingSavingDisplayPlugin)
   EXPECT_FALSE(visibleCheck->isChecked());
   currentConfigStr = win->CurrentWindowConfig().XMLString();
   EXPECT_FALSE(currentConfigStr.empty());
-  EXPECT_NE(currentConfigStr.find("<visible>0</visible>"),
+  EXPECT_NE(currentConfigStr.find("<visible>false</visible>"),
     std::string::npos) << currentConfigStr;
 
   EXPECT_TRUE(stop());
