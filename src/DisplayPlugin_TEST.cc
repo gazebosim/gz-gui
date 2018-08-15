@@ -75,14 +75,21 @@ TEST(DisplayPluginTest, LoadingSavingDisplayPlugin)
   // Geometry added to the visual in the TestDisplayPlugin's initialization.
   ASSERT_EQ(1u, scene->VisualByIndex(0)->GeometryCount());
 
+  // Get the config of the DisplayPlugin in its default state.
+  auto currentConfigStr = win->CurrentWindowConfig().XMLString();
+  EXPECT_FALSE(currentConfigStr.empty());
+
+  // Scene should be written.
+  // TODO(dhood): narrow the scope of this check so can't give false positives.
+  EXPECT_NE(currentConfigStr.find("<scene>scene</scene>"),
+    std::string::npos) << currentConfigStr;
+
   // By default the main visual is visible.
   // This can't be checked directly (Ogre Nodes support setting visibility, but
   // not retrieving it), but we can still check the property and saved config.
   auto visibleCheck = win->findChild<QCheckBox *>("displayPluginVisibleCheck");
   EXPECT_TRUE(visibleCheck != nullptr);
   EXPECT_TRUE(visibleCheck->isChecked());
-  auto currentConfigStr = win->CurrentWindowConfig().XMLString();
-  EXPECT_FALSE(currentConfigStr.empty());
   EXPECT_NE(currentConfigStr.find("<visible>true</visible>"),
     std::string::npos) << currentConfigStr;
 

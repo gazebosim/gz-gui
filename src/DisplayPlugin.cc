@@ -26,6 +26,9 @@
 
 class ignition::gui::DisplayPluginPrivate
 {
+  /// \brief Name of rendering scene requested.
+  public: std::string sceneName = "scene";
+
   /// \brief Rendering scene to use.
   public: std::weak_ptr<rendering::Scene> weakScenePtr;
 
@@ -62,7 +65,6 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
 
   // Configuration
   std::string engineName{"ogre"};
-  std::string sceneName{"scene"};
   if (_pluginElem)
   {
     // We don't support other engines currently because only Ogre supports the
@@ -72,8 +74,10 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
       engineName = elem->GetText();
     */
 
+    // Update the requested scene name even it fails to load, so that it is the
+    // name that will be saved in the config.
     if (auto elem = _pluginElem->FirstChildElement("scene"))
-      sceneName = elem->GetText();
+      this->dataPtr->sceneName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("visible"))
       elem->QueryBoolText(&this->visible);
@@ -93,11 +97,11 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
   else
   {
     // Scene
-    scene = engine->SceneByName(sceneName);
+    scene = engine->SceneByName(this->dataPtr->sceneName);
     this->dataPtr->weakScenePtr = scene;
     if (!scene)
     {
-      error = "Scene \"" + sceneName
+      error = "Scene \"" + this->dataPtr->sceneName
         + "\" not found, display plugin [" + this->type + "] won't work.";
       ignwarn << error << std::endl;
     }
@@ -223,6 +227,11 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
   auto displayElem = _doc->NewElement("display");
   displayElem->SetAttribute("type", this->Type().c_str());
   _doc->InsertEndChild(displayElem);
+
+  // Scene
+  auto sceneElem = _doc->NewElement("scene");
+  sceneElem->SetText(this->dataPtr->sceneName.c_str());
+  displayElem->InsertEndChild(sceneElem);
 
   // Visible
   auto visibleElem = _doc->NewElement("visible");
