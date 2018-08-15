@@ -42,8 +42,6 @@ TEST(GridDisplayTest, CRUD)
   // Load Displays plugin with a GridDisplay
   const char *pluginStr =
     "<plugin filename=\"Displays\">"
-      "<engine>ogre</engine>"
-      "<scene>scene</scene>"
       "<displays>"
         "<display type=\"GridDisplay\">"
           "<cell_count>5</cell_count>"
@@ -190,6 +188,44 @@ TEST(GridDisplayTest, CRUD)
     EXPECT_EQ(math::Pose3d(0, 0, 1, 0, 0, 0), grid->Parent()->WorldPose());
     EXPECT_EQ(math::Color::Cyan, grid->Material()->Ambient());
   }
+
+  EXPECT_TRUE(stop());
+}
+
+/////////////////////////////////////////////////
+TEST(GridDisplayTest, InvalidScene)
+{
+  setVerbosity(4);
+  EXPECT_TRUE(initApp());
+
+  // Load Scene3D before Displays
+  EXPECT_TRUE(loadPlugin("Scene3D"));
+
+  // Load Displays plugin with a GridDisplay requesting an invalid scene name.
+  const char *pluginStr =
+    "<plugin filename=\"Displays\">"
+      "<displays>"
+        "<display type=\"GridDisplay\">"
+          "<scene>invalid_scene</scene>"
+        "</display>"
+      "</displays>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(ignition::gui::loadPlugin("Displays",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  EXPECT_TRUE(createMainWindow());
+  auto win = mainWindow();
+  ASSERT_NE(nullptr, win);
+
+  // Check the config can still be saved even if the scene was invalid.
+  auto currentConfigStr = win->CurrentWindowConfig().XMLString();
+  ASSERT_FALSE(currentConfigStr.empty());
+  ASSERT_NE(currentConfigStr.find("<display type=\"GridDisplay\">"),
+    std::string::npos) << currentConfigStr;
 
   EXPECT_TRUE(stop());
 }
