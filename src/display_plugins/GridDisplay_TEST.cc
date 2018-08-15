@@ -16,10 +16,8 @@
 */
 
 #include <gtest/gtest.h>
-#include <ignition/common/Console.hh>
 #include <ignition/rendering.hh>
 
-#include "ignition/gui/CollapsibleWidget.hh"
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/Helpers.hh"

@@ -89,6 +89,7 @@ void Displays::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         continue;
       }
 
+      // Store a reference to the display plugin so it doesn't get destructed.
       this->dataPtr->displayPlugins.push_back(displayPlugin);
 
       // Create the configuration options for the display plugin.
@@ -132,7 +133,7 @@ std::string Displays::ConfigStr() const
   auto displaysElem = doc.NewElement("displays");
   pluginElem->InsertEndChild(displaysElem);
 
-  for (auto displayPlugin : this->dataPtr->displayPlugins)
+  for (const auto displayPlugin : this->dataPtr->displayPlugins)
   {
     // Display
     auto displayElem = displayPlugin->Config(&doc);
