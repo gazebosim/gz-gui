@@ -18,8 +18,6 @@
 #ifndef IGNITION_GUI_TEST_TESTDISPLAYPLUGIN_HH_
 #define IGNITION_GUI_TEST_TESTDISPLAYPLUGIN_HH_
 
-#include <string>
-
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
   #include <ignition/gui/DisplayPlugin.hh>
@@ -42,9 +40,6 @@ namespace ignition
       // Documentation inherited
       public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
-
-      // Documentation inherited
-      public: virtual std::string Type() const override;
     };
   }
 }

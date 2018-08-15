@@ -78,10 +78,6 @@ namespace gui
     /// \return Display plugin title.
     public: virtual std::string Title() const {return this->title;}
 
-    /// \brief Get the type of the display plugin.
-    /// \return Display plugin type.
-    public: virtual std::string Type() const {return this->title;}
-
     /// \brief Get the configuration XML as a string
     /// \return Config element as a string
     public: virtual std::string ConfigStr() const;
@@ -119,12 +115,6 @@ namespace gui
 
     /// \brief Title of display plugin.
     protected: std::string title = "";
-
-    /// \brief Type of display plugin.
-    protected: std::string type = "";
-
-    /// \brief If the display should be rendered.
-    protected: bool visible = true;
   };
 }
 }

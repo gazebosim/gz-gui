@@ -26,6 +26,12 @@
 
 class ignition::gui::DisplayPluginPrivate
 {
+  /// \brief Type of display plugin.
+  public: std::string type = "DisplayPlugin";
+
+  /// \brief If the display should be rendered.
+  public: bool visible = true;
+
   /// \brief Name of rendering scene requested.
   public: std::string sceneName = "scene";
 
@@ -44,7 +50,6 @@ DisplayPlugin::DisplayPlugin()
   : dataPtr(new DisplayPluginPrivate)
 {
   this->title = "Unnamed display";
-  this->type = "DisplayPlugin";
 }
 
 /////////////////////////////////////////////////
@@ -61,7 +66,7 @@ QWidget *DisplayPlugin::CreateCustomProperties() const
 /////////////////////////////////////////////////
 void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
 {
-  this->type = _pluginElem->Attribute("type");
+  this->dataPtr->type = _pluginElem->Attribute("type");
 
   // Configuration
   std::string engineName{"ogre"};
@@ -80,7 +85,7 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
       this->dataPtr->sceneName = elem->GetText();
 
     if (auto elem = _pluginElem->FirstChildElement("visible"))
-      elem->QueryBoolText(&this->visible);
+      elem->QueryBoolText(&this->dataPtr->visible);
   }
 
   std::string error{""};
@@ -91,7 +96,8 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
   if (!engine)
   {
     error = "Engine \"" + engineName
-      + "\" not supported, display plugin [" + this->type + "] won't work.";
+      + "\" not supported, display plugin [" + this->dataPtr->type
+      + "] won't work.";
     ignwarn << error << std::endl;
   }
   else
@@ -102,7 +108,8 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
     if (!scene)
     {
       error = "Scene \"" + this->dataPtr->sceneName
-        + "\" not found, display plugin [" + this->type + "] won't work.";
+        + "\" not found, display plugin [" + this->dataPtr->type
+        + "] won't work.";
       ignwarn << error << std::endl;
     }
     else
@@ -126,7 +133,7 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
   this->Initialize(_pluginElem);
-  this->OnVisibilityChange(this->visible);
+  this->OnVisibilityChange(this->dataPtr->visible);
 }
 
 /////////////////////////////////////////////////
@@ -152,7 +159,7 @@ QWidget *DisplayPlugin::CreateProperties() const
   auto visibleCheck = new QCheckBox(QString::fromStdString(this->title));
   visibleCheck->setToolTip("Toggle visibility");
   visibleCheck->setObjectName("displayPluginVisibleCheck");
-  visibleCheck->setChecked(this->visible);
+  visibleCheck->setChecked(this->dataPtr->visible);
   this->connect(visibleCheck,
     SIGNAL(toggled(bool)), this, SLOT(OnVisibilityChange(bool)));
 
@@ -216,7 +223,7 @@ void DisplayPlugin::OnVisibilityChange(const bool _value)
   {
     return;
   }
-  this->visible = _value;
+  this->dataPtr->visible = _value;
   this->dataPtr->visual->SetVisible(_value);
 }
 
@@ -225,7 +232,7 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
 {
   // Display
   auto displayElem = _doc->NewElement("display");
-  displayElem->SetAttribute("type", this->Type().c_str());
+  displayElem->SetAttribute("type", this->dataPtr->type.c_str());
   _doc->InsertEndChild(displayElem);
 
   // Scene
@@ -235,7 +242,7 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
 
   // Visible
   auto visibleElem = _doc->NewElement("visible");
-  visibleElem->SetText(this->visible ? "true" : "false");
+  visibleElem->SetText(this->dataPtr->visible ? "true" : "false");
   displayElem->InsertEndChild(visibleElem);
 
   // Custom config for subclasses

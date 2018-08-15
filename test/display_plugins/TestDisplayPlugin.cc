@@ -47,12 +47,6 @@ void TestDisplayPlugin::Initialize(const tinyxml2::XMLElement */*_pluginElem*/)
   }
 }
 
-/////////////////////////////////////////////////
-std::string TestDisplayPlugin::Type() const
-{
-  return "TestDisplayPlugin";
-}
-
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::TestDisplayPlugin,
                                   ignition::gui::DisplayPlugin)
