@@ -19,7 +19,6 @@
 #define IGNITION_GUI_DISPLAY_PLUGINS_GRIDDISPLAY_HH_
 
 #include <memory>
-#include <string>
 
 #include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/qt.h"

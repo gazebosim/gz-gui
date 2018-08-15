@@ -214,17 +214,17 @@ void GridDisplay::OnChange(const QVariant &_value)
   {
     return;
   }
-  auto senderType = this->sender()->objectName().toStdString();
+  auto type = this->sender()->objectName().toStdString();
 
-  if (senderType == "cellCountWidget")
+  if (type == "cellCountWidget")
     this->dataPtr->grid->SetCellCount(_value.toInt());
-  else if (senderType == "vertCellCountWidget")
+  else if (type == "vertCellCountWidget")
     this->dataPtr->grid->SetVerticalCellCount(_value.toInt());
-  else if (senderType == "cellLengthWidget")
+  else if (type == "cellLengthWidget")
     this->dataPtr->grid->SetCellLength(_value.toDouble());
-  else if (senderType == "poseWidget")
+  else if (type == "poseWidget")
     this->dataPtr->grid->Parent()->SetWorldPose(_value.value<math::Pose3d>());
-  else if (senderType == "colorWidget")
+  else if (type == "colorWidget")
     this->dataPtr->grid->Material()->SetAmbient(_value.value<math::Color>());
 }
 

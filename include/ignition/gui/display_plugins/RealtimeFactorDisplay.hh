@@ -21,7 +21,6 @@
 #include <ignition/msgs/world_stats.pb.h>
 
 #include <memory>
-#include <string>
 
 #include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/qt.h"
