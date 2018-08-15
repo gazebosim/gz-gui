@@ -86,6 +86,9 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
 
     if (auto elem = _pluginElem->FirstChildElement("visible"))
       elem->QueryBoolText(&this->dataPtr->visible);
+
+    if (auto elem = _pluginElem->FirstChildElement("title"))
+      this->title = elem->GetText();
   }
 
   std::string error{""};
@@ -234,6 +237,11 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
   auto displayElem = _doc->NewElement("display");
   displayElem->SetAttribute("type", this->dataPtr->type.c_str());
   _doc->InsertEndChild(displayElem);
+
+  // Title
+  auto titleElem = _doc->NewElement("title");
+  titleElem->SetText(this->title.c_str());
+  displayElem->InsertEndChild(titleElem);
 
   // Scene
   auto sceneElem = _doc->NewElement("scene");

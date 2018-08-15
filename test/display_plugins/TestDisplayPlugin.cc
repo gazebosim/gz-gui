@@ -27,6 +27,7 @@ using namespace gui;
 TestDisplayPlugin::TestDisplayPlugin()
   : DisplayPlugin()
 {
+  this->title = "Test display plugin";
 }
 
 /////////////////////////////////////////////////
