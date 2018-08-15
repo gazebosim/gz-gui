@@ -235,6 +235,8 @@ tinyxml2::XMLElement * GridDisplay::CustomConfig(tinyxml2::XMLDocument *_doc)
   auto customConfigElem = _doc->NewElement("config");
   if (nullptr == this->dataPtr->grid)
   {
+    // The properties can't be retirieved from the grid.
+    // TODO(dhood): return the initial properties specified in this case.
     return customConfigElem;
   }
 

@@ -133,9 +133,11 @@ std::string Displays::ConfigStr() const
   auto displaysElem = doc.NewElement("displays");
   pluginElem->InsertEndChild(displaysElem);
 
+  // Get the element for each display.
   for (const auto displayPlugin : this->dataPtr->displayPlugins)
   {
-    // Display
+    // Pass in our document so it can be used to create the new element(s).
+    // TinyXML2 doesn't support inserting elements created from different docs.
     auto displayElem = displayPlugin->Config(&doc);
     if (displayElem)
     {

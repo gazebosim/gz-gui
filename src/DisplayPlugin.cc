@@ -245,6 +245,7 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
 
   // Scene
   auto sceneElem = _doc->NewElement("scene");
+  // Save the requested scene even if it couldn't be loaded/is not longer valid.
   sceneElem->SetText(this->dataPtr->sceneName.c_str());
   displayElem->InsertEndChild(sceneElem);
 
@@ -254,8 +255,15 @@ tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
   displayElem->InsertEndChild(visibleElem);
 
   // Custom config for subclasses
+  // Pass in this document so it can be used to create any new element(s).
+  // TinyXML2 doesn't support inserting elements created from different docs.
   if (auto customConfigElems = this->CustomConfig(_doc))
   {
+    // The custom config contains a list of sibling elements of the properties.
+    // Attach each of them to the display's element.
+    // Note that inserting the custom config element elsewhere in the document
+    // removes it from customConfigElems (which is why the first child is
+    // repeatedly checked).
     while (auto customConfigElem = customConfigElems->FirstChildElement())
     {
       displayElem->InsertEndChild(customConfigElem);
