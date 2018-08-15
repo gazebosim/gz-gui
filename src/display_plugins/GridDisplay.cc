@@ -233,6 +233,10 @@ tinyxml2::XMLElement * GridDisplay::CustomConfig(tinyxml2::XMLDocument *_doc)
   const
 {
   auto customConfigElem = _doc->NewElement("config");
+  if (nullptr == this->dataPtr->grid)
+  {
+    return customConfigElem;
+  }
 
   // Cell count
   auto cellCountElem = _doc->NewElement("cell_count");

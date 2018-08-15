@@ -62,10 +62,6 @@ QWidget *DisplayPlugin::CreateCustomProperties() const
 /////////////////////////////////////////////////
 void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
 {
-  // TODO(dhood): support config parsing of displays.
-  // Despite what it looks like in the following code, the config is not
-  // actually being passed in currently.
-
   this->type = _pluginElem->Attribute("type");
 
   // Configuration
