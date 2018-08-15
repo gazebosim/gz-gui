@@ -51,6 +51,8 @@ namespace display_plugins
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
 
+    private: void UpdateTextPose();
+
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
 

@@ -44,6 +44,8 @@ namespace display_plugins
     /// \brief The text display
     // TODO(dhood): Make an overlay
     public: ignition::rendering::TextPtr realtimeFactorText = nullptr;
+
+    public: std::shared_ptr<rendering::Camera> cameraAttachedTo = nullptr;
   };
 }
 }
@@ -86,17 +88,16 @@ void RealtimeFactorDisplay::Initialize(
     root->RemoveChild(this->Visual());
 
     // Loop through the children looking for a Camera.
-    bool cameraFound = false;
     for (unsigned int i = 0; i < root->ChildCount(); ++i)
     {
       auto camera = std::dynamic_pointer_cast<rendering::Camera>(
         root->ChildByIndex(i));
       if (camera)
       {
-        if (!cameraFound)
+        if (!this->dataPtr->cameraAttachedTo)
         {
-          cameraFound = true;
           camera->AddChild(this->Visual());
+          this->dataPtr->cameraAttachedTo = camera;
           continue;
         }
         ignwarn << "Multiple cameras found for scene [" << scenePtr->Name() <<
@@ -111,20 +112,51 @@ void RealtimeFactorDisplay::Initialize(
       << std::endl;
     return;
   }
+  if (!this->dataPtr->cameraAttachedTo)
+  {
+    ignerr << "Camera not found. Real time factor display not initialized."
+      << std::endl;
+    return;
+  }
   this->dataPtr->realtimeFactorText->SetTextString("Real time factor: ? %");
   this->dataPtr->realtimeFactorText->SetShowOnTop(true);
   this->dataPtr->realtimeFactorText->SetCharHeight(0.2);
+  // TODO(dhood): I don't think right alignment is working correctly,
+  // so will focus on left-aligned for now.
   this->dataPtr->realtimeFactorText->SetTextAlignment(
-    ignition::rendering::TextHorizontalAlign::RIGHT,
+    ignition::rendering::TextHorizontalAlign::LEFT,
     ignition::rendering::TextVerticalAlign::CENTER);
 
   // TODO(dhood): Configurable properties
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
 
-  // TODO(dhood): Don't hard-code these offsets.
+  this->UpdateTextPose();
+}
+
+/////////////////////////////////////////////////
+void RealtimeFactorDisplay::UpdateTextPose()
+{
+  if (!this->dataPtr->cameraAttachedTo || !this->dataPtr->realtimeFactorText)
+  {
+    return;
+  }
+
+  double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
+  double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
+
+  // Keep the same text height with wider images (image height doesn't affect).
+  double charHeight = 110/imgWidth;
+  this->dataPtr->realtimeFactorText->SetCharHeight(charHeight);
+
+  // Re-position the text so it's in the bottom left.
+  double xScale = 2.89/imgWidth;
+  int padding_horiz = 20;
+  int padding_vert = 20;
+  double leftOfImage = (imgWidth - padding_horiz) * xScale;
+  double bottomOfImage = (imgHeight - padding_vert) * xScale - charHeight;
   // Coordinate axes of the camera are: positive X is into the scene, positive
   // Y is to the left, and positive Z is up.
-  this->Visual()->SetLocalPosition(5,-0.8,-1.);
+  this->Visual()->SetLocalPosition(5, leftOfImage, -bottomOfImage);
 }
 
 /////////////////////////////////////////////////
@@ -145,6 +177,8 @@ void RealtimeFactorDisplay::ProcessMsg()
     ss << "Real time factor: " << rtf << "%";
     this->dataPtr->realtimeFactorText->SetTextString(ss.str());
   }
+  // TODO(dhood): trigger this from window resize.
+  this->UpdateTextPose();
 }
 
 /////////////////////////////////////////////////
