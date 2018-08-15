@@ -26,10 +26,6 @@
 
 class ignition::gui::DisplayPluginPrivate
 {
-  /// \brief We keep a pointer to the engine and rely on it not being
-  /// destroyed, since it is a singleton.
-  public: rendering::RenderEngine *engine = nullptr;
-
   /// \brief Rendering scene to use.
   public: std::weak_ptr<rendering::Scene> weakScenePtr;
 
@@ -69,8 +65,12 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
   std::string sceneName{"scene"};
   if (_pluginElem)
   {
+    // We don't support other engines currently because only Ogre supports the
+    // functionality required for Display Plugins (e.g. SetVisible()).
+    /*
     if (auto elem = _pluginElem->FirstChildElement("engine"))
       engineName = elem->GetText();
+    */
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
       sceneName = elem->GetText();
@@ -83,8 +83,8 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
   rendering::ScenePtr scene;
 
   // Render engine
-  this->dataPtr->engine = rendering::engine(engineName);
-  if (!this->dataPtr->engine)
+  auto engine = rendering::engine(engineName);
+  if (!engine)
   {
     error = "Engine \"" + engineName
       + "\" not supported, display plugin [" + this->type + "] won't work.";
@@ -93,7 +93,7 @@ void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
   else
   {
     // Scene
-    scene = this->dataPtr->engine->SceneByName(sceneName);
+    scene = engine->SceneByName(sceneName);
     this->dataPtr->weakScenePtr = scene;
     if (!scene)
     {
