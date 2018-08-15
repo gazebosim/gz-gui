@@ -22,6 +22,7 @@
 #include <ignition/rendering/Text.hh>
 #include <ignition/transport.hh>
 
+#include "ignition/gui/NumberWidget.hh"
 #include "ignition/gui/display_plugins/RealtimeFactorDisplay.hh"
 
 namespace ignition
@@ -46,6 +47,8 @@ namespace display_plugins
     public: ignition::rendering::TextPtr realtimeFactorText = nullptr;
 
     public: std::shared_ptr<rendering::Camera> cameraAttachedTo = nullptr;
+    public: int horizontalPadding = 20;
+    public: int verticalPadding = 20;
   };
 }
 }
@@ -133,6 +136,48 @@ void RealtimeFactorDisplay::Initialize(
 }
 
 /////////////////////////////////////////////////
+QWidget *RealtimeFactorDisplay::CreateCustomProperties() const
+{
+  auto horizontalPaddingWidget = new NumberWidget("Horizontal padding",
+      NumberType::INT);
+  horizontalPaddingWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->horizontalPadding));
+  horizontalPaddingWidget->setObjectName("horizontalPaddingWidget");
+  this->connect(horizontalPaddingWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
+  auto verticalPaddingWidget = new NumberWidget("Vertical padding",
+      NumberType::INT);
+  verticalPaddingWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->verticalPadding));
+  verticalPaddingWidget->setObjectName("verticalPaddingWidget");
+  this->connect(verticalPaddingWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
+  auto layout = new QVBoxLayout();
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(0);
+  layout->addWidget(horizontalPaddingWidget);
+  layout->addWidget(verticalPaddingWidget);
+  auto widget = new QWidget();
+  widget->setLayout(layout);
+
+  return widget;
+}
+
+/////////////////////////////////////////////////
+void RealtimeFactorDisplay::OnChange(const QVariant &_value)
+{
+  auto type = this->sender()->objectName().toStdString();
+
+  if (type == "horizontalPaddingWidget")
+    this->dataPtr->horizontalPadding = _value.toInt();
+  else if (type == "verticalPaddingWidget")
+    this->dataPtr->verticalPadding = _value.toInt();
+}
+
+
+/////////////////////////////////////////////////
 void RealtimeFactorDisplay::UpdateTextPose()
 {
   if (!this->dataPtr->cameraAttachedTo || !this->dataPtr->realtimeFactorText)
@@ -144,16 +189,14 @@ void RealtimeFactorDisplay::UpdateTextPose()
   double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
 
   // Keep the same text height with wider images (image height doesn't affect).
-  double xScale = 2.89/imgWidth;
+  double xScale = 2.89 / imgWidth;
   double charHeight = 38 * xScale;
   this->dataPtr->realtimeFactorText->SetCharHeight(charHeight);
 
   // Re-position the text so it's in the bottom left.
-  // TODO(dhood): make padding configurable.
-  int padding_horiz = 20;
-  int padding_vert = 10;
-  double leftOfImage = (imgWidth - padding_horiz) * xScale;
-  double bottomOfImage = (imgHeight - padding_vert) * xScale - charHeight;
+  double leftOfImage = (imgWidth - this->dataPtr->horizontalPadding) * xScale;
+  double bottomOfImage = (imgHeight - this->dataPtr->verticalPadding) * xScale;
+  bottomOfImage -= 0.8*charHeight;
   // Coordinate axes of the camera are: positive X is into the scene, positive
   // Y is to the left, and positive Z is up.
   this->Visual()->SetLocalPosition(5, leftOfImage, -bottomOfImage);

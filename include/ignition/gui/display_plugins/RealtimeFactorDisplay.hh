@@ -48,8 +48,15 @@ namespace display_plugins
     public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
         override;
 
+    // Documentation inherited
+    public: QWidget *CreateCustomProperties() const override;
+
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
+
+    /// \brief Called when a value changes on a widget
+    /// \param[in] _value New value
+    private slots: void OnChange(const QVariant &_value);
 
     private: void UpdateTextPose();
 
