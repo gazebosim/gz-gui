@@ -177,15 +177,15 @@ QWidget *DisplayPlugin::CreateProperties() const
     // it does not need to be specified in custom styles.
     // There is a note in style.qss that references this, for users wondering
     // why styles aren't taking effect.
-    auto collapsible_button = collapsible->Button();
-    if (!collapsible_button)
+    auto collapsibleButton = collapsible->Button();
+    if (!collapsibleButton)
     {
       ignerr << "Error creating collapsible widget for display plugin [ " <<
         this->title << "]" << std::endl;
     }
     else
     {
-      collapsible_button->setFlat(true);
+      collapsibleButton->setFlat(true);
     }
     propertiesLayout->addWidget(collapsible);
   }
