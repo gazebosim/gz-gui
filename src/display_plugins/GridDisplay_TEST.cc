@@ -33,7 +33,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(Grid3DTest, CRUD)
+TEST(GridDisplayTest, CRUD)
 {
   setVerbosity(4);
   EXPECT_TRUE(initApp());
