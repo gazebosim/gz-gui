@@ -2,18 +2,7 @@
 # shared libraries
 
 set (gtest_local_sources
-  Displays_TEST
-  Grid3D_TEST
-  ImageDisplay_TEST
-  Publisher_TEST
-  Requester_TEST
-  Responder_TEST
-  Scene3D_TEST
-  TimePanel_TEST
-  TopicEcho_TEST
-  TopicInterface_TEST
-  TopicsStats_TEST
-  TopicViewer_TEST
+  GridDisplay_TEST
 )
 
 foreach(src ${gtest_local_sources})
@@ -32,5 +21,3 @@ ign_build_tests(TYPE UNIT
     ${PROJECT_SOURCE_DIR}
     # Used to make test_config.h visible to the unit tests
     ${PROJECT_BINARY_DIR})
-
-add_subdirectory(plot)

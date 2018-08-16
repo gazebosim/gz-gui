@@ -64,6 +64,10 @@ namespace display_plugins
     // Documentation inherited
     public: QWidget *CreateCustomProperties() const override;
 
+    // Documentation inherited
+    public: virtual tinyxml2::XMLElement *CustomConfig(
+                tinyxml2::XMLDocument */*_doc*/) const override;
+
     /// \brief Called when a value changes on a widget
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);

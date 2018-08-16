@@ -36,6 +36,10 @@ namespace ignition
 
       /// \brief Destructor
       public: virtual ~TestDisplayPlugin();
+
+      // Documentation inherited
+      public: virtual void Initialize(const tinyxml2::XMLElement *_pluginElem)
+        override;
     };
   }
 }
