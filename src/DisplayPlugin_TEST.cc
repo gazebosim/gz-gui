@@ -20,7 +20,6 @@
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
 
 using namespace ignition;
 using namespace gui;
@@ -34,32 +33,12 @@ TEST(DisplayPluginTest, LoadingSavingDisplayPlugin)
   setVerbosity(4);
   EXPECT_TRUE(initApp());
 
-  // Load empty Displays plugin
-  EXPECT_TRUE(loadPlugin("Displays"));
-
-  // Load Scene3D before DisplayPlugins
+  // Load Scene3D before any DisplayPlugins
   EXPECT_TRUE(loadPlugin("Scene3D"));
 
-  // Load Displays plugin with a TestDisplayPlugin
-  const char *pluginStr =
-    "<plugin filename=\"Displays\">"
-      "<displays>"
-        "<display type=\"TestDisplayPlugin\" />"
-      "</displays>"
-    "</plugin>";
-
-  tinyxml2::XMLDocument pluginDoc;
-  pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("Displays",
-      pluginDoc.FirstChildElement("plugin")));
-
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
-  ASSERT_NE(nullptr, win);
-
-  // Check plugin count
-  EXPECT_EQ(3, win->findChildren<Plugin *>().size());
+  // Load TestDisplayPlugin with default configuration.
+  auto displayPlugin = loadDisplayPlugin("TestDisplayPlugin");
+  EXPECT_NE(nullptr, displayPlugin);
 
   // Check scene
   auto engine = rendering::engine("ogre");
@@ -75,11 +54,10 @@ TEST(DisplayPluginTest, LoadingSavingDisplayPlugin)
   ASSERT_EQ(1u, scene->VisualByIndex(0)->GeometryCount());
 
   // Get the config of the DisplayPlugin in its default state.
-  auto currentConfigStr = win->CurrentWindowConfig().XMLString();
+  auto currentConfigStr = displayPlugin->ConfigStr();
   EXPECT_FALSE(currentConfigStr.empty());
 
   // Scene should be written.
-  // TODO(dhood): narrow the scope of this check so can't give false positives.
   EXPECT_NE(currentConfigStr.find("<scene>scene</scene>"),
     std::string::npos) << currentConfigStr;
 
@@ -87,28 +65,15 @@ TEST(DisplayPluginTest, LoadingSavingDisplayPlugin)
   EXPECT_NE(currentConfigStr.find("<title>Test display plugin</title>"),
     std::string::npos) << currentConfigStr;
 
-  // By default the main visual is visible.
-  // This can't be checked directly (Ogre Nodes support setting visibility, but
-  // not retrieving it), but we can still check the property and saved config.
-  auto visibleCheck = win->findChild<QCheckBox *>("displayPluginVisibleCheck");
-  EXPECT_NE(nullptr, visibleCheck);
-  EXPECT_TRUE(visibleCheck->isChecked());
+  // Should be visible by default.
   EXPECT_NE(currentConfigStr.find("<visible>true</visible>"),
-    std::string::npos) << currentConfigStr;
-
-  // Disable the main visual.
-  visibleCheck->setChecked(false);
-  EXPECT_FALSE(visibleCheck->isChecked());
-  currentConfigStr = win->CurrentWindowConfig().XMLString();
-  EXPECT_FALSE(currentConfigStr.empty());
-  EXPECT_NE(currentConfigStr.find("<visible>false</visible>"),
     std::string::npos) << currentConfigStr;
 
   EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
-TEST(DisplayPluginTest, LoadingCustomizedTestDisplayPlugin)
+TEST(DisplayPluginTest, LoadingCustomizedDisplayPlugin)
 {
   setenv("IGN_GUI_DISPLAY_PLUGIN_PATH",
     (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
@@ -127,26 +92,18 @@ TEST(DisplayPluginTest, LoadingCustomizedTestDisplayPlugin)
   EXPECT_TRUE(ignition::gui::loadPlugin("Scene3D",
       pluginDoc.FirstChildElement("plugin")));
 
-  // Load Displays plugin with a customized TestDisplayPlugin
+  // Load TestDisplayPlugin with customized configuration.
   pluginStr =
-    "<plugin filename=\"Displays\">"
-      "<displays>"
-        "<display type=\"TestDisplayPlugin\">"
-          "<title>My display plugin title</title>"
-          "<scene>my_scene</scene>"
-          "<visible>false</visible>"
-        "</display>"
-      "</displays>"
-    "</plugin>";
+    "<display type=\"TestDisplayPlugin\">"
+      "<title>My display plugin title</title>"
+      "<scene>my_scene</scene>"
+      "<visible>false</visible>"
+    "</display>";
 
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("Displays",
-      pluginDoc.FirstChildElement("plugin")));
-
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
-  ASSERT_NE(nullptr, win);
+  auto displayPlugin = loadDisplayPlugin("TestDisplayPlugin",
+      pluginDoc.FirstChildElement("display"));
+  EXPECT_NE(nullptr, displayPlugin);
 
   // Check scene
   auto engine = rendering::engine("ogre");
@@ -156,11 +113,10 @@ TEST(DisplayPluginTest, LoadingCustomizedTestDisplayPlugin)
   ASSERT_NE(nullptr, scene);
 
   // Get the config of the DisplayPlugin in its default state.
-  auto currentConfigStr = win->CurrentWindowConfig().XMLString();
+  auto currentConfigStr = displayPlugin->ConfigStr();
   EXPECT_FALSE(currentConfigStr.empty());
 
   // Scene should be written with the custom name.
-  // TODO(dhood): narrow the scope of this check so can't give false positives.
   EXPECT_NE(currentConfigStr.find("<scene>my_scene</scene>"),
     std::string::npos) << currentConfigStr;
 
@@ -169,9 +125,6 @@ TEST(DisplayPluginTest, LoadingCustomizedTestDisplayPlugin)
     std::string::npos) << currentConfigStr;
 
   // Visible should be written as false.
-  auto visibleCheck = win->findChild<QCheckBox *>("displayPluginVisibleCheck");
-  EXPECT_NE(nullptr, visibleCheck);
-  EXPECT_FALSE(visibleCheck->isChecked());
   EXPECT_NE(currentConfigStr.find("<visible>false</visible>"),
     std::string::npos) << currentConfigStr;
 
