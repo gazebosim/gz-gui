@@ -229,7 +229,7 @@ void GridDisplay::OnChange(const QVariant &_value)
 }
 
 /////////////////////////////////////////////////
-tinyxml2::XMLElement * GridDisplay::CustomConfig(tinyxml2::XMLDocument *_doc)
+tinyxml2::XMLElement *GridDisplay::CustomConfig(tinyxml2::XMLDocument *_doc)
   const
 {
   auto customConfigElem = _doc->NewElement("config");
