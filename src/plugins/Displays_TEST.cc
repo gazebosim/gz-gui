@@ -170,7 +170,8 @@ TEST(DisplaysTest, LoadingCustomizedDisplayPlugin)
     std::string::npos) << currentConfigStr;
 
   // Custom title should be passed through.
-  EXPECT_STREQ(visibleCheck->text().toStdString().c_str(), "My display plugin title");
+  EXPECT_STREQ(visibleCheck->text().toStdString().c_str(),
+    "My display plugin title");
 
   EXPECT_TRUE(stop());
 }
