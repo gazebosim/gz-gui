@@ -57,6 +57,9 @@ namespace gui
     /// Called when a display plugin is first created.
     /// This function should not be blocking.
     ///
+    /// The _pluginElem passed in must have an attribute named "type"
+    /// that is the type of the display plugin.
+    ///
     /// \sa Initialize
     /// \sa Visual
     /// \param[in] _pluginElem Element containing configuration
@@ -74,6 +77,24 @@ namespace gui
     /// \brief Get title
     /// \return Display plugin title.
     public: virtual std::string Title() const {return this->title;}
+
+    /// \brief Get the configuration XML as a string
+    /// \return Config element as a string
+    public: virtual std::string ConfigStr() const;
+
+    /// \brief Get the configuration XML.
+    /// \param[in] _doc Document to be used for creating element(s).
+    /// \return Config element
+    public: virtual tinyxml2::XMLElement *Config(tinyxml2::XMLDocument *_doc)
+            const;
+
+    /// \brief Get the configuration XML specific to this plugin.
+    /// The XML element returned has the display plugin's custom configuration
+    /// in its child elements.
+    /// \param[in] _doc Document to be used for creating element(s).
+    /// \return Config element
+    public: virtual tinyxml2::XMLElement *CustomConfig(
+                tinyxml2::XMLDocument */*_doc*/) const {return nullptr;}
 
     /// \brief Returns the visual for the display plugin.
     protected: ignition::rendering::VisualPtr Visual() const;

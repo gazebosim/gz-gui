@@ -19,6 +19,7 @@
 #define IGNITION_GUI_PLUGINS_DISPLAYS_HH_
 
 #include <memory>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
@@ -54,6 +55,9 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
+
+    // Documentation inherited
+    public: virtual std::string ConfigStr() const override;
 
     /// \internal
     /// \brief Pointer to private data.
