@@ -238,7 +238,7 @@ void DisplayPlugin::OnVisibilityChange(const bool _value)
 }
 
 /////////////////////////////////////////////////
-tinyxml2::XMLElement * DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
+tinyxml2::XMLElement *DisplayPlugin::Config(tinyxml2::XMLDocument *_doc) const
 {
   // Display
   auto displayElem = _doc->NewElement("display");

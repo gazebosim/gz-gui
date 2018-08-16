@@ -16,7 +16,8 @@
 */
 
 #include <gtest/gtest.h>
-#include <ignition/rendering.hh>
+#include <ignition/rendering/Grid.hh>
+#include <ignition/rendering/Scene.hh>
 
 #include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/DisplayPlugin.hh"
@@ -70,6 +71,7 @@ TEST(GridDisplayTest, CRUD)
 
   // Visual created by the base class' constructor.
   ASSERT_EQ(1u, scene->VisualCount());
+
   // Grid added to the visual in the GridDisplay's initialization.
   ASSERT_EQ(1u, scene->VisualByIndex(0)->GeometryCount());
 
