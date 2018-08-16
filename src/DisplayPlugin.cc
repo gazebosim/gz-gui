@@ -66,7 +66,14 @@ QWidget *DisplayPlugin::CreateCustomProperties() const
 /////////////////////////////////////////////////
 void DisplayPlugin::Load(const tinyxml2::XMLElement *_pluginElem)
 {
-  this->dataPtr->type = _pluginElem->Attribute("type");
+  if (_pluginElem && _pluginElem->Attribute("type"))
+  {
+    this->dataPtr->type = _pluginElem->Attribute("type");
+  }
+  else
+  {
+    ignerr << "Type not known for display plugin." << std::endl;
+  }
 
   // Configuration
   std::string engineName{"ogre"};
