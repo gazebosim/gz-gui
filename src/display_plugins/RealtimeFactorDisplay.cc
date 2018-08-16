@@ -194,8 +194,8 @@ void RealtimeFactorDisplay::UpdateTextPose()
   this->dataPtr->realtimeFactorText->SetSpaceWidth(0.15);
 
   // Re-position the text so it's in the bottom left.
-  double scale = 5.0;  // Distance to display from camera.
   auto projMx = this->dataPtr->cameraAttachedTo->ProjectionMatrix();
+  double scale = 5.0 * projMx(0, 0);  // Distance to display from camera.
   // (x, y) are in film coordinates: origin at center of image, +x left, +y up.
   double x = 1 - this->dataPtr->horizontalPadding/imgWidth;
   double y = 1 - this->dataPtr->horizontalPadding/imgHeight;
