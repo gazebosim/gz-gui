@@ -2,6 +2,7 @@
 # shared libraries
 
 set (gtest_local_sources
+  Displays_TEST
   Grid3D_TEST
   ImageDisplay_TEST
   Publisher_TEST
