@@ -563,7 +563,20 @@ std::shared_ptr<DisplayPlugin> ignition::gui::loadDisplayPlugin(
     return nullptr;
   }
 
-  displayPlugin->Load(_pluginElem);
+  // Basic config in case there is none
+  if (!_pluginElem)
+  {
+    std::string displayPluginStr = "<display type=\"" + _filename + "\" />";
+
+    tinyxml2::XMLDocument displayPluginDoc;
+    displayPluginDoc.Parse(displayPluginStr.c_str());
+
+    displayPlugin->Load(displayPluginDoc.FirstChildElement("display"));
+  }
+  else
+  {
+    displayPlugin->Load(_pluginElem);
+  }
 
   return displayPlugin;
 }
