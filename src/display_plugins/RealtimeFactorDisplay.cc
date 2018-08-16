@@ -185,21 +185,28 @@ void RealtimeFactorDisplay::UpdateTextPose()
     return;
   }
 
-  double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
   double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
+  double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
 
   // Keep the same text height with wider images (image height doesn't affect).
-  double xScale = 2.89 / imgWidth;
-  double charHeight = 38 * xScale;
+  double charHeight = 200.0 / imgWidth;
   this->dataPtr->realtimeFactorText->SetCharHeight(charHeight);
+  this->dataPtr->realtimeFactorText->SetSpaceWidth(0.15);
 
   // Re-position the text so it's in the bottom left.
-  double leftOfImage = (imgWidth - this->dataPtr->horizontalPadding) * xScale;
-  double bottomOfImage = (imgHeight - this->dataPtr->verticalPadding) * xScale;
-  bottomOfImage -= 0.8*charHeight;
+  double scale = 5.0;  // Distance to display from camera.
+  auto projMx = this->dataPtr->cameraAttachedTo->ProjectionMatrix();
+  // (x, y) are in film coordinates: origin at center of image, +x left, +y up.
+  double x = 1 - this->dataPtr->horizontalPadding/imgWidth;
+  double y = 1 - this->dataPtr->horizontalPadding/imgHeight;
+  // Convert to camera coordinates.
   // Coordinate axes of the camera are: positive X is into the scene, positive
   // Y is to the left, and positive Z is up.
-  this->Visual()->SetLocalPosition(5, leftOfImage, -bottomOfImage);
+  double leftOfImage = (scale * x - projMx(0, 2) - projMx(0, 3)) / projMx(0, 0);
+  double topOfImage = (scale * y - projMx(1, 2) - projMx(1, 3)) / projMx(1, 1);
+  // Lift proportinal to text world height.
+  double almostBottomOfImage = -topOfImage + 0.8 * charHeight;
+  this->Visual()->SetLocalPosition(scale, leftOfImage, almostBottomOfImage);
 }
 
 /////////////////////////////////////////////////
