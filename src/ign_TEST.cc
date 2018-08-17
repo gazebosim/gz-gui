@@ -21,7 +21,10 @@
 
 #include <string>
 
+#include "ignition/gui/config.hh"
 #include "test_config.h"  // NOLINT(build/include)
+
+auto g_version = std::string(strdup(IGNITION_GUI_VERSION_FULL));
 
 /////////////////////////////////////////////////
 std::string custom_exec_str(std::string _cmd)
@@ -48,7 +51,8 @@ std::string custom_exec_str(std::string _cmd)
 /////////////////////////////////////////////////
 TEST(CmdLine, list)
 {
-  std::string output = custom_exec_str("ign gui -l");
+  std::string output = custom_exec_str(
+      "ign gui -l --force-version " + g_version);
   EXPECT_NE(output.find("ImageDisplay"), std::string::npos);
   EXPECT_NE(output.find("TopicEcho"), std::string::npos);
   EXPECT_NE(output.find("Requester"), std::string::npos);
