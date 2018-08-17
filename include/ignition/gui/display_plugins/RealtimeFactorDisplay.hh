@@ -58,6 +58,7 @@ namespace display_plugins
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);
 
+    /// \brief Called to reposition the text in the corner of the image
     private: void UpdateTextPose();
 
     /// \brief Subscriber callback when new world statistics are received

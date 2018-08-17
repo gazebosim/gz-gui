@@ -43,11 +43,15 @@ namespace display_plugins
     public: ignition::transport::Node node;
 
     /// \brief The text display
-    // TODO(dhood): Make an overlay
     public: ignition::rendering::TextPtr realtimeFactorText = nullptr;
 
+    /// \brief The camera to which the display is attached
     public: std::shared_ptr<rendering::Camera> cameraAttachedTo = nullptr;
+
+    /// \brief Horizontal padding away from the image border
     public: int horizontalPadding = 20;
+
+    /// \brief Vertical padding away from the image border
     public: int verticalPadding = 20;
   };
 }
@@ -123,6 +127,7 @@ void RealtimeFactorDisplay::Initialize(
   }
   this->dataPtr->realtimeFactorText->SetTextString("Real time factor: ? %");
   this->dataPtr->realtimeFactorText->SetShowOnTop(true);
+  // TODO(dhood): Allow text to be aligned to different corners of image.
   // TODO(dhood): I don't think right alignment is working correctly,
   // so will focus on left-aligned for now.
   this->dataPtr->realtimeFactorText->SetTextAlignment(
