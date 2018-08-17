@@ -105,7 +105,7 @@ namespace plugins
   };
 
   /// \brief A QQUickItem that manages the render window
-  class RenderWindowItem: public QQuickItem
+  class RenderWindowItem: public QQuickFramebufferObject
   {
     Q_OBJECT
 
@@ -115,6 +115,8 @@ namespace plugins
 
     /// \brief Destructor
     public: virtual ~RenderWindowItem();
+
+    public: QQuickFramebufferObject::Renderer *createRenderer() const;
 
     /// \brief Set background color of render window
     /// \param[in] _color Color of render window background
@@ -140,31 +142,36 @@ namespace plugins
     private: void InitializeEngine();
 
     /// \brief Activate the render window OpenGL context
-    public: void ActivateRenderWindowContext();
+    // public: void ActivateRenderWindowContext();
 
     /// \brief Deactivate the render window OpenGL context
-    public: void DoneRenderWindowContext();
+    // public: void DoneRenderWindowContext();
 
     /// \brief Get the render window context
     public: QOpenGLContext *RenderWindowContext() const;
+
+    /// \brief Get the qt context
+    public: QOpenGLContext *QtContext() const;
+
 
     /// \brief Overrides the paint event to render the render engine
     /// camera view
     /// \param[in] _oldNode The node passed in previous updatePaintNode
     /// function. It represents the visual representation of the item.
     /// \param[in] _data The node transformation data.
-    private: QSGNode *updatePaintNode(QSGNode *_oldNode,
+    private: QSGNode *updatePaintNode(QSGNode *_node,
         QQuickItem::UpdatePaintNodeData *_data);
-
+/*
     /// \brief Timer callabck. This queues a call to update the item.
     /// \param[in] _event A Qt timer event.
     private: void timerEvent(QTimerEvent *_event);
+*/
 
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
   };
-
+/*
 
   /// \brief A QQUickItem that manages the render window
   class RenderWindowNode: public QSGGeometryNode
@@ -190,6 +197,7 @@ namespace plugins
     private: std::unique_ptr<RenderWindowNodePrivate> dataPtr;
 
   };
+*/
 }
 }
 }

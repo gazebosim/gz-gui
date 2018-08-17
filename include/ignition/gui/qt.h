@@ -39,4 +39,9 @@
 
 #include <QStandardItemModel>
 
+#include <QOpenGLFramebufferObject>
+#include <QQuickFramebufferObject>
+#include <QSGSimpleTextureNode>
+#include <QOffscreenSurface>
+
 #endif  // IGNITION_GUI_QT_H_

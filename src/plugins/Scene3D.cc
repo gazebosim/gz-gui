@@ -41,30 +41,173 @@ namespace gui
 namespace plugins
 {
 
-  /// \brief Private data class for RendereWindowNode
-  class RenderWindowNodePrivate
+  class RenderWindowItemRenderer : public QQuickFramebufferObject::Renderer
   {
-    /// \brief Qt scene graph texture material
-    public: QSGTextureMaterial material;
+    public: RenderWindowItemRenderer(){};
+    public: void render() override
+            {
+              if (!this->item || !this->item->window())
+                return;
 
-    /// \brief Qt scene graph texture opaque material
-    public: QSGOpaqueTextureMaterial materialOpaque;
+              if (!this->surface)
+              {
+                this->surface = new QOffscreenSurface();
+                this->surface->setFormat(this->item->window()->requestedFormat());
+                this->surface->create();
+              }
+/*              glPopAttrib();
+              glPopClientAttrib();
+              this->item->QtContext()->functions()->glUseProgram(0);
+*/
+              //this->
+              this->item->window()->resetOpenGLState();
+              this->item->QtContext()->doneCurrent();
+              //this->item->RenderWindowContext()->makeCurrent(this->item->window());
+              this->item->RenderWindowContext()->makeCurrent(this->surface);
 
-    /// \brief Qt scene graph texture
-    public: QSGTexture *texture = nullptr;
 
-    /// \brief Qt scene graph geometry
-    public: QSGGeometry *geometry = nullptr;
+              if (!this->initialized)
+              {
+                auto engine = rendering::engine(this->engineName);
+                if (!engine)
+                {
+                  ignerr << "Engine [" << this->engineName << "] is not supported"
+                         << std::endl;
+                  return;
+                }
+                // Scene
+                //auto scene = engine->SceneByName(this->dataPtr->sceneName);
+                auto scene = engine->SceneByName(this->sceneName);
+                if (!scene)
+                {
+                  igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+                  scene = engine->CreateScene(this->sceneName);
+                  //scene->SetAmbientLight(this->dataPtr->ambientLight);
+                  //scene->SetBackgroundColor(this->dataPtr->backgroundColor);
+                }
+                auto root = scene->RootVisual();
 
-    /// \brief Qt scene graph texture size
-    public: QSize textureSize;
+                // Camera
+                this->camera = scene->CreateCamera();
+                root->AddChild(this->camera);
+                this->camera->SetLocalPose(this->cameraPose);
+                this->camera->SetImageWidth(this->textureSize.width());
+                this->camera->SetImageHeight(this->textureSize.height());
+                this->camera->SetAntiAliasing(2);
+              //  this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
+                this->camera->SetHFOV(M_PI * 0.5);
+                // setting the size should cause the render texture to be rebuilt
+                this->camera->PreRender();
+                this->textureId = this->camera->RenderTextureGLId();
+                std::cerr << " camera render texture gl id: " << this->textureId << std::endl;
 
-    public: bool fboDirty = false;
+                auto mat = scene->CreateMaterial();
+                mat->SetDiffuse(0, 1, 0);
+                auto sphere = scene->CreateSphere();
+                auto sphereVis = scene->CreateVisual();
+                root->AddChild(sphereVis);
+                sphereVis->AddGeometry(sphere);
+                sphereVis->SetMaterial(mat);
+                sphereVis->SetLocalPosition(
+                    this->camera->LocalPosition() +
+                    ignition::math::Vector3d(2, 0, 0));
 
-    public: RenderWindowItem *renderWindowItem = nullptr;
+                this->initialized = true;
+              }
 
-    public: rendering::CameraPtr camera;
-    public: GLuint glId;
+              this->camera->Update();
+
+              std::cerr << "render " << std::endl;
+              update();
+
+
+              this->item->RenderWindowContext()->doneCurrent();
+              this->item->QtContext()->makeCurrent(this->item->window());
+
+/*
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_ARRAY_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_ELEMENT_ARRAY_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindRenderbuffer(
+      GL_RENDERBUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindFramebuffer(
+      GL_FRAMEBUFFER_EXT, 0);
+
+  // unbind all possible remaining buffers; just to be on safe side
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_ARRAY_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_ATOMIC_COUNTER_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_COPY_READ_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_COPY_WRITE_BUFFER, 0);
+//  this->item->RenderWindowContext()->functions()->glBindBuffer(
+//      GL_DRAW_INDIRECT_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_DISPATCH_INDIRECT_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_ELEMENT_ARRAY_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_PIXEL_PACK_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_PIXEL_UNPACK_BUFFER, 0);
+//  this->item->RenderWindowContext()->functions()->glBindBuffer(
+//      GL_SHADER_STORAGE_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_TEXTURE_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_TRANSFORM_FEEDBACK_BUFFER, 0);
+  this->item->RenderWindowContext()->functions()->glBindBuffer(
+      GL_UNIFORM_BUFFER, 0);
+
+*/
+
+
+//              glPushAttrib(GL_ALL_ATTRIB_BITS);
+//              glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+
+
+              this->item->window()->resetOpenGLState();
+
+            }
+    public: QOpenGLFramebufferObject *createFramebufferObject(const QSize &size) override
+            {
+              QOpenGLFramebufferObjectFormat format;
+              format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+              format.setSamples(4);
+              return new QOpenGLFramebufferObject(size, format);
+            }
+
+    //public: void SetWindow(QQuickWindow *_window){this->window = _window;};
+    public: void SetItem(const RenderWindowItem *_item)
+            {
+              this->item = const_cast<RenderWindowItem *>(_item);
+              if (!this->item)
+                 std::cerr << "no item1 " << std::endl;
+            };
+
+    public: GLuint GLId() const
+            {
+              return this->textureId;
+            }
+
+    public: QSize Size() const
+            {
+              return textureSize;
+            }
+
+    private: QQuickWindow *window = nullptr;
+    private: RenderWindowItem *item = nullptr;
+    private: std::string sceneName{"scene"};
+    private: std::string engineName{"ogre2"};
+    private: rendering::CameraPtr camera;
+    private: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
+    private: bool initialized = false;
+    private: GLuint textureId = 0u;
+    private: QSize textureSize = QSize(800, 600);
+    private: QOffscreenSurface *surface = nullptr;
   };
 
   /// \brief Private data class for RendereWindowItem
@@ -73,27 +216,15 @@ namespace plugins
     /// brief Parent window
     public: QQuickWindow *quickWindow;
 
+    /// brief Parent window
+    public: QQuickFramebufferObject::Renderer *renderer = nullptr;
+
     /// \brief Render window OpenGL Context
-    public: QOpenGLContext* renderWindowContext;
+    public: QOpenGLContext* renderWindowContext = nullptr;
 
     /// \brief Qt OpenGL Context
-    public: QOpenGLContext* qtContext;
-/*
-    /// \brief Qt scene graph texture material
-    public: QSGTextureMaterial material;
+    public: QOpenGLContext* qtContext = nullptr;
 
-    /// \brief Qt scene graph texture opaque material
-    public: QSGOpaqueTextureMaterial materialOpaque;
-
-    /// \brief Qt scene graph texture
-    public: QSGTexture *texture = nullptr;
-
-    /// \brief Qt scene graph geometry
-    public: QSGGeometry *geometry = nullptr;
-
-    /// \brief Qt scene graph texture size
-    public: QSize textureSize;
-*/
 
     /// \brief Flag to indicate if render window context has been initialized
     /// or not
@@ -116,6 +247,8 @@ namespace plugins
 
     /// \brief Initial camera pose
     public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
+
+    public: QSGTexture *texture = nullptr;
   };
 
 
@@ -137,12 +270,12 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
-  : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
+  : QQuickFramebufferObject(_parent), dataPtr(new RenderWindowItemPrivate)
 {
    std::cerr << "render item !!!!!!!!!!!!!!!!! " << std::endl;
-  this->setFlag(ItemHasContents);
-  this->setSmooth(false);
-  this->startTimer(16);
+//  this->setFlag(ItemHasContents);
+//  this->setSmooth(false);
+//  this->startTimer(16);
 
 //  this->dataPtr->geometry =
 //      new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
@@ -155,6 +288,12 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
         return;
       }
       this->dataPtr->quickWindow = _window;
+      std::cerr << "got window" << std::endl;
+      if (this->dataPtr->renderer)
+      {
+        auto r = dynamic_cast<RenderWindowItemRenderer *>(this->dataPtr->renderer);
+        r->SetItem(this);
+      }
 
       // start Ogre once we are in the rendering thread (Ogre must live in the
       // rendering thread)
@@ -164,12 +303,22 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 }
 
 /////////////////////////////////////////////////
+QQuickFramebufferObject::Renderer *RenderWindowItem::createRenderer() const
+{
+  std::cerr << "create renderer" << std::endl;
+  auto r = new RenderWindowItemRenderer();
+  r->SetItem(this);
+  this->dataPtr->renderer = r;
+  return this->dataPtr->renderer;
+}
+
+/////////////////////////////////////////////////
 RenderWindowItem::~RenderWindowItem()
 {
   igndbg << "Destroy camera [" << this->dataPtr->camera->Name() << "]"
          << std::endl;
   // Destroy camera
-  auto scene = this->dataPtr->camera->Scene();
+ /* auto scene = this->dataPtr->camera->Scene();
   scene->DestroyNode(this->dataPtr->camera);
   this->dataPtr->camera.reset();
 
@@ -182,6 +331,7 @@ RenderWindowItem::~RenderWindowItem()
 
     // TODO(anyone): If that was the last scene, terminate engine?
   }
+*/
 
 //  delete this->dataPtr->geometry;
 //  delete this->dataPtr->texture;
@@ -190,21 +340,12 @@ RenderWindowItem::~RenderWindowItem()
 /////////////////////////////////////////////////
 void RenderWindowItem::InitializeEngine()
 {
+
   this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
             this, &RenderWindowItem::InitializeEngine);
-  this->dataPtr->qtContext = QOpenGLContext::currentContext();
-  if (!this->dataPtr->qtContext)
-  {
-    ignerr << "Null plugin Qt context!" << std::endl;
-  }
+  std::cerr << "initialize engine" << std::endl;
 
-  // create a new shared OpenGL context to be used exclusively by Ogre
-  this->dataPtr->renderWindowContext = new QOpenGLContext();
-  this->dataPtr->renderWindowContext->setFormat(
-      this->dataPtr->quickWindow->requestedFormat());
-  this->dataPtr->renderWindowContext->setShareContext(this->dataPtr->qtContext);
-  this->dataPtr->renderWindowContext->create();
-
+/*
   this->ActivateRenderWindowContext();
   // Render engine
   auto engine = rendering::engine(this->dataPtr->engineName);
@@ -238,8 +379,10 @@ void RenderWindowItem::InitializeEngine()
 
   this->DoneRenderWindowContext();
   this->dataPtr->initialized = true;
+*/
 }
 
+/*
 /////////////////////////////////////////////////
 void RenderWindowItem::ActivateRenderWindowContext()
 {
@@ -298,108 +441,80 @@ void RenderWindowItem::DoneRenderWindowContext()
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 }
-
-/////////////////////////////////////////////////
-void RenderWindowItem::timerEvent(
-    QTimerEvent */*_e*/)
-{
-  this->update();
-}
-
-/////////////////////////////////////////////////
-QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
-    QQuickItem::UpdatePaintNodeData */*_data*/)
-{
-  if (!this->dataPtr->initialized)
-  {
-    return nullptr;
-  }
-
-/*  // update render window
-  this->ActivateRenderWindowContext();
-  this->dataPtr->camera->Update();
-
-  static bool done = false;
-  if (!done)
-  {
-    auto scene = this->dataPtr->camera->Scene();
-    auto root = scene->RootVisual();
-    auto grid = scene->CreateGrid();
-    grid->SetCellCount(200);
-    grid->SetVerticalCellCount(0);
-    grid->SetCellLength(1.0);
-
-    auto gridVis = scene->CreateVisual();
-    root->AddChild(gridVis);
-    gridVis->AddGeometry(grid);
-
-    auto mat = scene->CreateMaterial();
-    gridVis->SetMaterial(mat);
-    done = true;
-  }
-
-  this->UpdateFBO();
-  this->DoneRenderWindowContext();
-
-  if (this->width() <= 0 || this->height() <= 0 || !this->dataPtr->texture)
-  {
-    if (_oldNode)
-    {
-      delete _oldNode;
-    }
-    return nullptr;
-  }
-
-  QSGGeometryNode *node = static_cast<QSGGeometryNode *>(_oldNode);
-
-  if (!node)
-  {
-    node = new QSGGeometryNode();
-    node->setGeometry(this->dataPtr->geometry);
-    node->setMaterial(&this->dataPtr->material);
-    node->setOpaqueMaterial(&this->dataPtr->materialOpaque);
-  }
-
-  node->markDirty(QSGNode::DirtyGeometry);
-  node->markDirty(QSGNode::DirtyMaterial);
-
-  return node;
 */
-
-  this->window()->resetOpenGLState();
-  if (this->width() <= 0 || this->height() <= 0 /*|| !this->dataPtr->texture*/)
-  {
-    if (_oldNode)
-    {
-      delete _oldNode;
-    }
-    return nullptr;
-  }
-
-  RenderWindowNode *node = static_cast<RenderWindowNode *>(_oldNode);
-
-  if (!node)
-  {
-    node = new RenderWindowNode();
-    node->SetRenderWindowItem(this);
-    node->SetCamera(this->dataPtr->camera);
-  }
-
-  node->SetSize(QSize(this->width(), this->height()));
-  node->update();
-
-  node->markDirty(QSGNode::DirtyMaterial);
-
-  this->window()->resetOpenGLState();
-
-  return node;
-}
 
 /////////////////////////////////////////////////
 QOpenGLContext *RenderWindowItem::RenderWindowContext() const
 {
   return this->dataPtr->renderWindowContext;
 }
+
+/////////////////////////////////////////////////
+QOpenGLContext *RenderWindowItem::QtContext() const
+{
+  return this->dataPtr->qtContext;
+}
+
+/////////////////////////////////////////////////
+QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
+    QQuickItem::UpdatePaintNodeData *_data)
+{
+  std::cerr << "update paint node " << std::endl;
+  QSGNode *out = QQuickFramebufferObject::updatePaintNode(_node, _data);
+
+  if (!this->dataPtr->renderWindowContext)
+  {
+    this->dataPtr->qtContext = QOpenGLContext::currentContext();
+    if (!this->dataPtr->qtContext)
+    {
+      ignerr << "Null plugin Qt context!" << std::endl;
+    }
+    this->dataPtr->qtContext->doneCurrent();
+    // create a new shared OpenGL context to be used exclusively by Ogre
+    this->dataPtr->renderWindowContext = new QOpenGLContext();
+    this->dataPtr->renderWindowContext->setFormat(
+        this->dataPtr->quickWindow->requestedFormat());
+    this->dataPtr->renderWindowContext->setShareContext(this->dataPtr->qtContext);
+    this->dataPtr->renderWindowContext->create();
+    this->dataPtr->qtContext->makeCurrent(this->dataPtr->quickWindow);
+  }
+
+
+
+//  std::cerr << "node type: " << static_cast<int>(_node->type()) << std::endl;
+
+  QSGSimpleTextureNode *n = dynamic_cast<QSGSimpleTextureNode *>(out);
+  if (!n && (width() <= 0 || height() <= 0))
+    return nullptr;
+/*
+  std::cerr << "update paint node r1 " << std::endl;
+
+  if (!this->dataPtr->texture && this->dataPtr->renderer)
+  {
+
+  std::cerr << "update paint node r2 " << std::endl;
+    auto r = dynamic_cast<RenderWindowItemRenderer *>(this->dataPtr->renderer);
+  std::cerr << "update paint node r3 " << r->GLId() << std::endl;
+    if (r && r->GLId() > 0)
+    {
+      std::cerr << "creating render gl texture with id: " << r->GLId() << " " << r->Size().width() << " " << r->Size().height() <<  std::endl;
+      this->dataPtr->texture = window()->createTextureFromId(
+        r->GLId(), r->Size());
+      std::cerr << "created texture " << this->dataPtr->texture <<  " vs " << n << std::endl;
+
+      // this should cause the original texture to be deleted
+      n->setTexture(this->dataPtr->texture);
+    }
+    else
+    {
+      this->update();
+    }
+  }
+  std::cerr << "update paint node done " << std::endl;
+*/
+  return n;
+}
+
 /*
 /////////////////////////////////////////////////
 void RenderWindowItem::UpdateFBO()
@@ -439,6 +554,7 @@ void RenderWindowItem::UpdateFBO()
 }
 */
 
+/*
 RenderWindowNode::RenderWindowNode()
   : dataPtr(new RenderWindowNodePrivate)
 {
@@ -547,7 +663,7 @@ void RenderWindowNode::preprocess()
   {
     auto scene = this->dataPtr->camera->Scene();
     auto root = scene->RootVisual();
-/*    auto grid = scene->CreateGrid();
+    auto grid = scene->CreateGrid();
     grid->SetCellCount(200);
     grid->SetVerticalCellCount(0);
     grid->SetCellLength(1.0);
@@ -558,16 +674,15 @@ void RenderWindowNode::preprocess()
 
     auto mat = scene->CreateMaterial();
     gridVis->SetMaterial(mat);
-    */
 
-/*    auto box = scene->CreateBox();
+    auto box = scene->CreateBox();
     auto boxVis = scene->CreateVisual();
     root->AddChild(boxVis);
     boxVis->AddGeometry(box);
     boxVis->SetLocalPosition(
         this->dataPtr->camera->LocalPosition() +
         ignition::math::Vector3d(2, 0, 0));
-*/
+
     done = true;
   }
 
@@ -575,6 +690,7 @@ void RenderWindowNode::preprocess()
   this->dataPtr->camera->Update();
   this->DoneContext();
 }
+*/
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetBackgroundColor(const math::Color &_color)
