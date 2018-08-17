@@ -191,7 +191,7 @@ void RealtimeFactorDisplay::UpdateTextPose()
   // Keep the same text height with wider images (image height doesn't affect).
   double charHeight = 200.0 / imgWidth;
   this->dataPtr->realtimeFactorText->SetCharHeight(charHeight);
-  this->dataPtr->realtimeFactorText->SetSpaceWidth(0.15);
+  this->dataPtr->realtimeFactorText->SetSpaceWidth(0.7 * charHeight);
 
   // Re-position the text so it's in the bottom left.
   auto projMx = this->dataPtr->cameraAttachedTo->ProjectionMatrix();
