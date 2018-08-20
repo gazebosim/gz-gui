@@ -76,6 +76,7 @@ find_package (Qt5
     Core
     Quick
     QuickControls2
+    OpenGLExtensions
   REQUIRED
 )
 

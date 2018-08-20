@@ -43,5 +43,10 @@
 #include <QQuickFramebufferObject>
 #include <QSGSimpleTextureNode>
 #include <QOffscreenSurface>
+#include <QSGTextureProvider>
+
+//#include <QOpenGLExtensions>
+#include <QOpenGLExtraFunctions>
+//#include <qopenglextensions.h>
 
 #endif  // IGNITION_GUI_QT_H_

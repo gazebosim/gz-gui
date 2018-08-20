@@ -198,6 +198,86 @@ namespace plugins
 
   };
 */
+
+/*
+
+class FboNode : public QSGTextureProvider, public QSGSimpleTextureNode
+{
+    Q_OBJECT
+
+public:
+    FboNode()
+        : window(nullptr)
+        , fbo(nullptr)
+        , msDisplayFbo(nullptr)
+        , renderer(nullptr)
+        , renderPending(true)
+        , invalidatePending(false)
+        , devicePixelRatio(1)
+    {
+        qsgnode_set_description(this, QStringLiteral("fbonode"));
+    }
+
+    ~FboNode()
+    {
+        delete renderer;
+        delete texture();
+        delete fbo;
+        delete msDisplayFbo;
+    }
+
+    void scheduleRender()
+    {
+        renderPending = true;
+        window->update();
+    }
+
+    QSGTexture *texture() const override
+    {
+        return QSGSimpleTextureNode::texture();
+    }
+
+public Q_SLOTS:
+    void render()
+    {
+        if (renderPending) {
+            renderPending = false;
+            fbo->bind();
+            QOpenGLContext::currentContext()->functions()->glViewport(0, 0, fbo->width(), fbo->height());
+            renderer->render();
+            fbo->bindDefault();
+
+            if (msDisplayFbo)
+                QOpenGLFramebufferObject::blitFramebuffer(msDisplayFbo, fbo);
+
+            markDirty(QSGNode::DirtyMaterial);
+            emit textureChanged();
+        }
+    }
+
+    void handleScreenChange()
+    {
+        if (window->effectiveDevicePixelRatio() != devicePixelRatio) {
+            renderer->invalidateFramebufferObject();
+            quickFbo->update();
+        }
+    }
+
+public:
+    QQuickWindow *window;
+    QOpenGLFramebufferObject *fbo;
+    QOpenGLFramebufferObject *msDisplayFbo;
+//    QQuickFramebufferObject::Renderer *renderer;
+    RenderWindowItemRenderer *renderer;
+    QQuickFramebufferObject *quickFbo;
+
+    bool renderPending;
+    bool invalidatePending;
+
+    qreal devicePixelRatio;
+};
+*/
+
 }
 }
 }

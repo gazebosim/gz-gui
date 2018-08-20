@@ -36,6 +36,7 @@ foreach (src ${qt_headers_local})
     ${Qt5Qml_LIBRARIES}
     ${Qt5Quick_LIBRARIES}
     ${Qt5QuickControls2_LIBRARIES}
+    ${Qt5OpenGLExtensions_LIBRARIES}
   )
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})

@@ -25,11 +25,14 @@
 #include <string>
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/Image.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/rendering.hh>
+
+//#include <GL/glext.h>
 
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/plugins/Scene3D.hh"
@@ -49,21 +52,22 @@ namespace plugins
               if (!this->item || !this->item->window())
                 return;
 
-              if (!this->surface)
+/*              if (!this->surface)
               {
                 this->surface = new QOffscreenSurface();
                 this->surface->setFormat(this->item->window()->requestedFormat());
                 this->surface->create();
               }
-/*              glPopAttrib();
-              glPopClientAttrib();
-              this->item->QtContext()->functions()->glUseProgram(0);
 */
+//              glPopAttrib();
+//              glPopClientAttrib();
+              this->item->QtContext()->functions()->glUseProgram(0);
+
               //this->
               this->item->window()->resetOpenGLState();
               this->item->QtContext()->doneCurrent();
-              //this->item->RenderWindowContext()->makeCurrent(this->item->window());
-              this->item->RenderWindowContext()->makeCurrent(this->surface);
+              this->item->RenderWindowContext()->makeCurrent(this->item->window());
+//              this->item->RenderWindowContext()->makeCurrent(this->surface);
 
 
               if (!this->initialized)
@@ -112,12 +116,39 @@ namespace plugins
                     this->camera->LocalPosition() +
                     ignition::math::Vector3d(2, 0, 0));
 
+                rendering::Image image = this->camera->CreateImage();
+                this->img = std::make_shared<rendering::Image>(image);
                 this->initialized = true;
               }
 
-              this->camera->Update();
+//              this->item->RenderWindowContext()->functions()->glBindFramebuffer(
+//                  GL_FRAMEBUFFER_EXT, this->textureId);
+
+//              this->camera->Update();
+              this->camera->Capture(*this->img);
+
+              const unsigned char *d = this->img->Data<unsigned char>();
+              common::Image im;
+              im.SetFromData(d, this->img->Width(), this->img->Height(), common::Image::RGB_INT8);
+              im.SavePNG("blit.png");
+
+/*              // blit?
+              QOpenGLContext *ctx = QOpenGLContext::currentContext();
+              if (!ctx)
+                std::cerr << "not ctx " << std::endl;;
+             // QOpenGLExtensions ext(ctx);
+              QOpenGLExtraFunctions ext(ctx);
+//              if (!ext.hasOpenGLExtension(QOpenGLExtensions::FramebufferBlit))
+//                std::cerr << "no blit!!!" << std::endl;;
+              ext.glBindFramebuffer(GL_READ_FRAMEBUFFER, this->textureId);
+              ext.glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->fbo->handle());
+              std::cerr << "blitting " << this->textureId << " " << this->fbo->handle() << std::endl;
+              ext.glBlitFramebuffer(0, 0, this->textureSize.width(), this->textureSize.height(),
+                                   0, 0, this->textureSize.width(), this->textureSize.height(),
+                                   GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
               std::cerr << "render " << std::endl;
+*/
               update();
 
 
@@ -170,14 +201,20 @@ namespace plugins
 
 
               this->item->window()->resetOpenGLState();
-
             }
+
+    public: void synchronize(QQuickFramebufferObject *_item) override
+            {
+              this->item = static_cast<RenderWindowItem *>(_item);
+            }
+
     public: QOpenGLFramebufferObject *createFramebufferObject(const QSize &size) override
             {
               QOpenGLFramebufferObjectFormat format;
               format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-              format.setSamples(4);
-              return new QOpenGLFramebufferObject(size, format);
+//              format.setSamples(4);
+              this->fbo = new QOpenGLFramebufferObject(size, format);
+              return this->fbo;
             }
 
     //public: void SetWindow(QQuickWindow *_window){this->window = _window;};
@@ -208,6 +245,8 @@ namespace plugins
     private: GLuint textureId = 0u;
     private: QSize textureSize = QSize(800, 600);
     private: QOffscreenSurface *surface = nullptr;
+    private: QOpenGLFramebufferObject *fbo = nullptr;
+    private: rendering::ImagePtr img;
   };
 
   /// \brief Private data class for RendereWindowItem
@@ -459,9 +498,6 @@ QOpenGLContext *RenderWindowItem::QtContext() const
 QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     QQuickItem::UpdatePaintNodeData *_data)
 {
-  std::cerr << "update paint node " << std::endl;
-  QSGNode *out = QQuickFramebufferObject::updatePaintNode(_node, _data);
-
   if (!this->dataPtr->renderWindowContext)
   {
     this->dataPtr->qtContext = QOpenGLContext::currentContext();
@@ -480,13 +516,76 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
   }
 
 
+  std::cerr << "update paint node " << std::endl;
+  QSGNode *out = QQuickFramebufferObject::updatePaintNode(_node, _data);
+
+/*  FboNode *n = static_cast<FboNode *>(_node);
+  if (!_n)
+  {
+    n = new FboNode;
+  }
+
+  if (!n->renderer)
+  {
+    n->window = window();
+    n->renderer = createRenderer();
+    n->renderer->data = n;
+    n->quickFbo = this;
+    connect(window(), SIGNAL(beforeRendering()), n, SLOT(render()));
+    connect(window(), SIGNAL(screenChanged(QScreen*)), n, SLOT(handleScreenChange()));
+  }
+
+   n->renderer->synchronize(this);
+
+//   QSize minFboSize = d->sceneGraphContext()->minimumFBOSize();
+   QSize minFboSize = QSize(1,1);
+   QSize desiredFboSize(qMax<int>(minFboSize.width(), width()),
+                        qMax<int>(minFboSize.height(), height()));
+
+   n->devicePixelRatio = window()->effectiveDevicePixelRatio();
+   desiredFboSize *= n->devicePixelRatio;
+
+   if (n->fbo && ((this->textureFollowsItemSize() && n->fbo->size() != desiredFboSize) || n->invalidatePending)) {
+       delete n->texture();
+       delete n->fbo;
+       n->fbo = nullptr;
+       delete n->msDisplayFbo;
+       n->msDisplayFbo = nullptr;
+       n->invalidatePending = false;
+   }
+
+   if (!n->fbo) {
+       n->fbo = n->renderer->createFramebufferObject(desiredFboSize);
+
+       GLuint displayTexture = n->fbo->texture();
+
+       if (n->fbo->format().samples() > 0) {
+           n->msDisplayFbo = new QOpenGLFramebufferObject(n->fbo->size());
+           displayTexture = n->msDisplayFbo->texture();
+       }
+
+       n->setTexture(window()->createTextureFromId(displayTexture,
+                                                   n->fbo->size(),
+                                                   QQuickWindow::TextureHasAlphaChannel));
+   }
+
+   n->setTextureCoordinatesTransform(d->mirrorVertically ? QSGSimpleTextureNode::MirrorVertically : QSGSimpleTextureNode::NoTransform);
+   n->setFiltering(d->smooth ? QSGTexture::Linear : QSGTexture::Nearest);
+   n->setRect(0, 0, width(), height());
+
+   n->scheduleRender();
+
+   return n;
+
+*/
+
 
 //  std::cerr << "node type: " << static_cast<int>(_node->type()) << std::endl;
 
-  QSGSimpleTextureNode *n = dynamic_cast<QSGSimpleTextureNode *>(out);
+/*  QSGSimpleTextureNode *n = dynamic_cast<QSGSimpleTextureNode *>(out);
   if (!n && (width() <= 0 || height() <= 0))
     return nullptr;
-/*
+
   std::cerr << "update paint node r1 " << std::endl;
 
   if (!this->dataPtr->texture && this->dataPtr->renderer)
@@ -504,15 +603,18 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 
       // this should cause the original texture to be deleted
       n->setTexture(this->dataPtr->texture);
+      n->markDirty(QSGNode::DirtyMaterial);
     }
     else
     {
       this->update();
     }
   }
+
   std::cerr << "update paint node done " << std::endl;
-*/
   return n;
+*/
+  return out;
 }
 
 /*
