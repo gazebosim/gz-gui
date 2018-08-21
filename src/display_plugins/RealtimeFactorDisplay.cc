@@ -94,24 +94,59 @@ void RealtimeFactorDisplay::Initialize(
     auto root = scenePtr->RootVisual();
     root->RemoveChild(this->Visual());
 
+    if (auto sensorPtr = scenePtr->SensorByName("user_camera"))
+    {
+      fprintf(stderr, "Found camera\n");
+      auto cameraPtr = std::dynamic_pointer_cast<rendering::Camera>(sensorPtr);
+      if (cameraPtr)
+      {
+        auto cameraVisual = std::dynamic_pointer_cast<rendering::Visual>(
+          cameraPtr->Parent());
+        if (cameraVisual)
+        {
+          cameraVisual->AddChild(this->Visual());
+          this->dataPtr->cameraAttachedTo = cameraPtr;
+        }
+        else
+        {
+          ignerr << "Parent of camera with requested name [" << "user_camera" << "] is not a Visual." << std::endl;
+        }
+      }
+      else
+      {
+        ignerr << "Sensor with requested name [" << "user_camera" << "] is not a camera." << std::endl;
+      }
+    }
+    /*
     // Loop through the children looking for a Camera.
     for (unsigned int i = 0; i < root->ChildCount(); ++i)
     {
       auto camera = std::dynamic_pointer_cast<rendering::Camera>(
         root->ChildByIndex(i));
-      if (camera)
+      if (!camera)
       {
-        if (!this->dataPtr->cameraAttachedTo)
-        {
-          camera->AddChild(this->Visual());
-          this->dataPtr->cameraAttachedTo = camera;
-          continue;
-        }
-        ignwarn << "Multiple cameras found for scene [" << scenePtr->Name() <<
-          "]. Real time factor display will be attached to the first camera "
-          "and may be visible from other cameras." << std::endl;
+        fprintf(stderr, "I am not a camera\n");
+        continue;
       }
+      auto cameraVisual = std::dynamic_pointer_cast<rendering::Visual>(
+        camera->Parent());
+      if (!cameraVisual)
+      {
+        fprintf(stderr, "I am not a visual\n");
+        continue;
+      }
+      // Camera with parent visual found: attach to it if not already attached.
+      if (!this->dataPtr->cameraAttachedTo)
+      {
+        cameraVisual->AddChild(this->Visual());
+        this->dataPtr->cameraAttachedTo = camera;
+        continue;
+      }
+      ignwarn << "Multiple cameras found for scene [" << scenePtr->Name() <<
+        "]. Real time factor display will be attached to the first camera "
+        "and may be visible from other cameras." << std::endl;
     }
+    */
   }
   else
   {
@@ -190,6 +225,7 @@ void RealtimeFactorDisplay::UpdateTextPose()
     return;
   }
 
+  std::cout << this->dataPtr->cameraAttachedTo->Parent()->WorldPosition() << std::endl;
   double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
   double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
 

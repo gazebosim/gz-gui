@@ -57,6 +57,10 @@ namespace plugins
     /// \brief Store the window id to use at paintEvent once
     /// (Qt complains if we call this->winId() from the paint event)
     public: WId windowId;
+
+    /// \brief Point to the visual to which the camera is attached
+    public: rendering::VisualPtr visual = nullptr;
+
   };
 }
 }
@@ -175,14 +179,19 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Camera
   igndbg << "Create camera" << std::endl;
-  this->dataPtr->camera = scene->CreateCamera();
-  root->AddChild(this->dataPtr->camera);
+  this->dataPtr->camera = scene->CreateCamera("user_camera");
   this->dataPtr->camera->SetLocalPose(cameraPose);
   this->dataPtr->camera->SetImageWidth(800);
   this->dataPtr->camera->SetImageHeight(600);
   this->dataPtr->camera->SetAntiAliasing(2);
   this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
   this->dataPtr->camera->SetHFOV(M_PI * 0.5);
+  // Attach the camera to a visual that is attached to the root.
+  // This allows other visuals to be attached to the camera via its visual
+  // (they cannot be attached to the camera directly).
+  this->dataPtr->visual = scene->CreateVisual();
+  this->dataPtr->visual->AddChild(this->dataPtr->camera);
+  root->AddChild(this->dataPtr->visual);
 
   // Timer to repaint
   this->dataPtr->updateTimer = new QTimer(this);
