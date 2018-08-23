@@ -204,7 +204,6 @@ void RealtimeFactorDisplay::UpdateTextPose()
   }
 
   double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
-  double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
 
   // Empirical constant so text size can be specified in pixels.
   static const double pixelScaleFactor = 15.7;
@@ -217,8 +216,11 @@ void RealtimeFactorDisplay::UpdateTextPose()
   auto projMx = this->dataPtr->cameraAttachedTo->ProjectionMatrix();
   double scale = 5.0 * projMx(0, 0);  // Distance to display from camera.
   // (x, y) are in film coordinates: origin at center of image, +x left, +y up.
-  double x = 1 - this->dataPtr->horizontalPadding * 2.0 / imgWidth;
-  double y = 1 - this->dataPtr->verticalPadding * 2.0 / imgHeight;
+  // Extremes are at +/-1.
+  double halfWidth = imgWidth / 2.0;
+  double halfHeight = imgWidth / 2.0;
+  double x = (halfWidth - this->dataPtr->horizontalPadding) / halfWidth;
+  double y = (halfHeight - this->dataPtr->verticalPadding) / halfHeight;
   // Convert to camera coordinates.
   // Coordinate axes of the camera are: positive X is into the scene, positive
   // Y is to the left, and positive Z is up.
