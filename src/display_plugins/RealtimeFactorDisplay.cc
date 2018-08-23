@@ -204,6 +204,7 @@ void RealtimeFactorDisplay::UpdateTextPose()
   }
 
   double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
+  double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
 
   // Empirical constant so text size can be specified in pixels.
   static const double pixelScaleFactor = 15.7;
@@ -218,16 +219,17 @@ void RealtimeFactorDisplay::UpdateTextPose()
   // (x, y) are in film coordinates: origin at center of image, +x left, +y up.
   // Extremes are at +/-1.
   double halfWidth = imgWidth / 2.0;
-  double halfHeight = imgWidth / 2.0;
+  double halfHeight = imgHeight / 2.0;
   double x = (halfWidth - this->dataPtr->horizontalPadding) / halfWidth;
   double y = (halfHeight - this->dataPtr->verticalPadding) / halfHeight;
   // Convert to camera coordinates.
   // Coordinate axes of the camera are: positive X is into the scene, positive
   // Y is to the left, and positive Z is up.
+  // Equations taken from projectPixelTo3dRay in image_geometry ROS package.
   double leftOfImage = (scale * x - projMx(0, 2) - projMx(0, 3)) / projMx(0, 0);
   double topOfImage = (scale * y - projMx(1, 2) - projMx(1, 3)) / projMx(1, 1);
-  // Lift proportinal to text world height.
-  double almostBottomOfImage = -topOfImage + 0.67 * charHeight;
+  // Pad the text an amount proportional to its world height (empirical).
+  double almostBottomOfImage = -topOfImage + 0.75 * charHeight;
   this->Visual()->SetLocalPosition(scale, leftOfImage, almostBottomOfImage);
 }
 
