@@ -48,6 +48,9 @@ namespace display_plugins
     /// \brief The camera to which the display is attached
     public: std::shared_ptr<rendering::Camera> cameraAttachedTo = nullptr;
 
+    /// \brief Text size in pixels
+    public: unsigned int textSize = 25;
+
     /// \brief Horizontal padding away from the image border
     public: int horizontalPadding = 20;
 
@@ -143,6 +146,13 @@ void RealtimeFactorDisplay::Initialize(
 /////////////////////////////////////////////////
 QWidget *RealtimeFactorDisplay::CreateCustomProperties() const
 {
+  auto textSizeWidget = new NumberWidget("Text size", NumberType::UINT);
+  textSizeWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->textSize));
+  textSizeWidget->setObjectName("textSizeWidget");
+  this->connect(textSizeWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
   auto horizontalPaddingWidget = new NumberWidget("Horizontal padding",
       NumberType::INT);
   horizontalPaddingWidget->SetValue(
@@ -162,6 +172,7 @@ QWidget *RealtimeFactorDisplay::CreateCustomProperties() const
   auto layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
+  layout->addWidget(textSizeWidget);
   layout->addWidget(horizontalPaddingWidget);
   layout->addWidget(verticalPaddingWidget);
   auto widget = new QWidget();
@@ -179,6 +190,8 @@ void RealtimeFactorDisplay::OnChange(const QVariant &_value)
     this->dataPtr->horizontalPadding = _value.toInt();
   else if (type == "verticalPaddingWidget")
     this->dataPtr->verticalPadding = _value.toInt();
+  else if (type == "textSizeWidget")
+    this->dataPtr->textSize = _value.toUInt();
 }
 
 
@@ -193,8 +206,10 @@ void RealtimeFactorDisplay::UpdateTextPose()
   double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
   double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
 
+  // Empirical constant so text size can be specified in pixels.
+  static const double pixelScaleFactor = 15.5;
   // Keep the same text height with wider images (image height doesn't affect).
-  double charHeight = 200.0 / imgWidth;
+  double charHeight = this->dataPtr->textSize * pixelScaleFactor / imgWidth;
   this->dataPtr->realtimeFactorText->SetCharHeight(charHeight);
   this->dataPtr->realtimeFactorText->SetSpaceWidth(0.7 * charHeight);
 
@@ -202,8 +217,8 @@ void RealtimeFactorDisplay::UpdateTextPose()
   auto projMx = this->dataPtr->cameraAttachedTo->ProjectionMatrix();
   double scale = 5.0 * projMx(0, 0);  // Distance to display from camera.
   // (x, y) are in film coordinates: origin at center of image, +x left, +y up.
-  double x = 1 - this->dataPtr->horizontalPadding/imgWidth;
-  double y = 1 - this->dataPtr->horizontalPadding/imgHeight;
+  double x = 1 - this->dataPtr->horizontalPadding / imgWidth;
+  double y = 1 - this->dataPtr->verticalPadding / imgHeight;
   // Convert to camera coordinates.
   // Coordinate axes of the camera are: positive X is into the scene, positive
   // Y is to the left, and positive Z is up.
