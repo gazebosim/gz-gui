@@ -19,10 +19,13 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
+#include <ignition/math/Color.hh>
 #include <ignition/rendering/Text.hh>
 #include <ignition/transport.hh>
 
+#include "ignition/gui/ColorWidget.hh"
 #include "ignition/gui/NumberWidget.hh"
+#include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/display_plugins/RealtimeFactorDisplay.hh"
 
 namespace ignition
@@ -162,6 +165,13 @@ QWidget *RealtimeFactorDisplay::CreateCustomProperties() const
   this->connect(textSizeWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
 
+  auto colorWidget = new ColorWidget();
+  colorWidget->SetValue(QVariant::fromValue(
+    this->dataPtr->realtimeFactorText->Color()));
+  colorWidget->setObjectName("colorWidget");
+  this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
   auto horizontalPaddingWidget = new NumberWidget("Horizontal padding",
       NumberType::INT);
   horizontalPaddingWidget->SetValue(
@@ -182,6 +192,7 @@ QWidget *RealtimeFactorDisplay::CreateCustomProperties() const
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
   layout->addWidget(textSizeWidget);
+  layout->addWidget(colorWidget);
   layout->addWidget(horizontalPaddingWidget);
   layout->addWidget(verticalPaddingWidget);
   auto widget = new QWidget();
@@ -201,6 +212,8 @@ void RealtimeFactorDisplay::OnChange(const QVariant &_value)
     this->dataPtr->verticalPadding = _value.toInt();
   else if (type == "textSizeWidget")
     this->dataPtr->textSize = _value.toUInt();
+  else if (type == "colorWidget")
+    this->dataPtr->realtimeFactorText->SetColor(_value.value<math::Color>());
 }
 
 
