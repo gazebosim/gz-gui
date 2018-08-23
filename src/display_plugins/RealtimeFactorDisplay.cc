@@ -207,7 +207,7 @@ void RealtimeFactorDisplay::UpdateTextPose()
   double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
 
   // Empirical constant so text size can be specified in pixels.
-  static const double pixelScaleFactor = 15.5;
+  static const double pixelScaleFactor = 15.7;
   // Keep the same text height with wider images (image height doesn't affect).
   double charHeight = this->dataPtr->textSize * pixelScaleFactor / imgWidth;
   this->dataPtr->realtimeFactorText->SetCharHeight(charHeight);
@@ -217,15 +217,15 @@ void RealtimeFactorDisplay::UpdateTextPose()
   auto projMx = this->dataPtr->cameraAttachedTo->ProjectionMatrix();
   double scale = 5.0 * projMx(0, 0);  // Distance to display from camera.
   // (x, y) are in film coordinates: origin at center of image, +x left, +y up.
-  double x = 1 - this->dataPtr->horizontalPadding / imgWidth;
-  double y = 1 - this->dataPtr->verticalPadding / imgHeight;
+  double x = 1 - this->dataPtr->horizontalPadding * 2.0 / imgWidth;
+  double y = 1 - this->dataPtr->verticalPadding * 2.0 / imgHeight;
   // Convert to camera coordinates.
   // Coordinate axes of the camera are: positive X is into the scene, positive
   // Y is to the left, and positive Z is up.
   double leftOfImage = (scale * x - projMx(0, 2) - projMx(0, 3)) / projMx(0, 0);
   double topOfImage = (scale * y - projMx(1, 2) - projMx(1, 3)) / projMx(1, 1);
   // Lift proportinal to text world height.
-  double almostBottomOfImage = -topOfImage + 0.8 * charHeight;
+  double almostBottomOfImage = -topOfImage + 0.67 * charHeight;
   this->Visual()->SetLocalPosition(scale, leftOfImage, almostBottomOfImage);
 }
 
