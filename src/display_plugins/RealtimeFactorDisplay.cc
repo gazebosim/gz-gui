@@ -49,13 +49,16 @@ namespace display_plugins
     public: std::shared_ptr<rendering::Camera> cameraAttachedTo = nullptr;
 
     /// \brief Text size in pixels
-    public: unsigned int textSize = 25;
+    public: unsigned int textSize = 15;
 
     /// \brief Horizontal padding away from the image border
     public: int horizontalPadding = 20;
 
     /// \brief Vertical padding away from the image border
     public: int verticalPadding = 20;
+
+    /// \brief Timer to update the text position
+    public: QTimer *updateTimer;
   };
 }
 }
@@ -139,6 +142,12 @@ void RealtimeFactorDisplay::Initialize(
 
   // TODO(dhood): Configurable properties
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
+
+  // Timer to update the text's pose when the camera is resized.
+  this->dataPtr->updateTimer = new QTimer(this);
+  this->connect(this->dataPtr->updateTimer, SIGNAL(timeout()),
+      this, SLOT(UpdateTextPose()));
+  this->dataPtr->updateTimer->start(std::round(1000.0 / 5.0));
 
   this->UpdateTextPose();
 }
@@ -251,8 +260,6 @@ void RealtimeFactorDisplay::ProcessMsg()
     ss << "Real time factor: " << rtf << "%";
     this->dataPtr->realtimeFactorText->SetTextString(ss.str());
   }
-  // TODO(dhood): trigger this from window resize.
-  this->UpdateTextPose();
 }
 
 /////////////////////////////////////////////////
