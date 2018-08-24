@@ -285,6 +285,55 @@ void RealtimeFactorDisplay::OnWorldStatsMsg(
   QMetaObject::invokeMethod(this, "ProcessMsg");
 }
 
+/////////////////////////////////////////////////
+tinyxml2::XMLElement *RealtimeFactorDisplay::CustomConfig(
+  tinyxml2::XMLDocument *_doc) const
+{
+  auto customConfigElem = _doc->NewElement("config");
+
+  // Text size
+  {
+    auto propertyElem = _doc->NewElement("text_size");
+    propertyElem->SetText(
+      std::to_string(this->dataPtr->textSize).c_str());
+    customConfigElem->InsertEndChild(propertyElem);
+  }
+
+  // Horizontal padding
+  {
+    auto propertyElem = _doc->NewElement("horizontal_padding");
+    propertyElem->SetText(
+      std::to_string(this->dataPtr->horizontalPadding).c_str());
+    customConfigElem->InsertEndChild(propertyElem);
+  }
+
+  // Vertical padding
+  {
+    auto propertyElem = _doc->NewElement("verical_padding");
+    propertyElem->SetText(
+      std::to_string(this->dataPtr->verticalPadding).c_str());
+    customConfigElem->InsertEndChild(propertyElem);
+  }
+
+  if (nullptr == this->dataPtr->realtimeFactorText)
+  {
+    // The properties can't be retirieved from the text.
+    // TODO(dhood): return the initial properties specified in this case.
+    return customConfigElem;
+  }
+
+  // Color
+  {
+    auto colorElem = _doc->NewElement("color");
+    std::stringstream colorStr;
+    colorStr << this->dataPtr->realtimeFactorText->Color();
+    colorElem->SetText(colorStr.str().c_str());
+    customConfigElem->InsertEndChild(colorElem);
+  }
+
+  return customConfigElem;
+}
+
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(
   ignition::gui::display_plugins::RealtimeFactorDisplay,
