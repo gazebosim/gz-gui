@@ -61,7 +61,7 @@ namespace display_plugins
     public: int verticalPadding = 20;
 
     /// \brief Color of the text
-    public: math::Color textColor = ignition::math::Color(0.7, 0.7, 0.7, 1.0);
+    public: math::Color textColor = math::Color::White;
 
     /// \brief Timer to update the text position
     public: QTimer *updateTimer;
@@ -87,8 +87,7 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 }
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::Initialize(
-  const tinyxml2::XMLElement */*_pluginElem*/)
+void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
   // Subscribe to world_stats
   std::string topic = "/world_stats";
@@ -96,6 +95,25 @@ void RealtimeFactorDisplay::Initialize(
       &RealtimeFactorDisplay::OnWorldStatsMsg, this))
   {
     ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
+  }
+
+  if (_pluginElem)
+  {
+    if (auto elem = _pluginElem->FirstChildElement("text_size"))
+      elem->QueryUnsignedText(&this->dataPtr->textSize);
+
+    if (auto elem = _pluginElem->FirstChildElement("color"))
+    {
+      std::stringstream colorStr;
+      colorStr << std::string(elem->GetText());
+      colorStr >> this->dataPtr->textColor;
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("horizontal_padding"))
+      elem->QueryIntText(&this->dataPtr->horizontalPadding);
+
+    if (auto elem = _pluginElem->FirstChildElement("vertical_padding"))
+      elem->QueryIntText(&this->dataPtr->verticalPadding);
   }
 
   if (auto scenePtr = this->Scene().lock())
@@ -146,7 +164,6 @@ void RealtimeFactorDisplay::Initialize(
     ignition::rendering::TextHorizontalAlign::LEFT,
     ignition::rendering::TextVerticalAlign::BOTTOM);
 
-  // TODO(dhood): Configurable properties
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
 
   // Timer to update the text's pose when the camera is resized.
