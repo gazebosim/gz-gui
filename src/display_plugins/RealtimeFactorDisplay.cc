@@ -60,6 +60,9 @@ namespace display_plugins
     /// \brief Vertical padding away from the image border
     public: int verticalPadding = 20;
 
+    /// \brief Color of the text
+    public: math::Color textColor = ignition::math::Color(0.7, 0.7, 0.7, 1.0);
+
     /// \brief Timer to update the text position
     public: QTimer *updateTimer;
   };
@@ -149,10 +152,10 @@ void RealtimeFactorDisplay::Initialize(
   // Timer to update the text's pose when the camera is resized.
   this->dataPtr->updateTimer = new QTimer(this);
   this->connect(this->dataPtr->updateTimer, SIGNAL(timeout()),
-      this, SLOT(UpdateTextPose()));
+      this, SLOT(UpdateText()));
   this->dataPtr->updateTimer->start(std::round(1000.0 / 5.0));
 
-  this->UpdateTextPose();
+  this->UpdateText();
 }
 
 /////////////////////////////////////////////////
@@ -166,8 +169,7 @@ QWidget *RealtimeFactorDisplay::CreateCustomProperties() const
       SLOT(OnChange(QVariant)));
 
   auto colorWidget = new ColorWidget();
-  colorWidget->SetValue(QVariant::fromValue(
-    this->dataPtr->realtimeFactorText->Color()));
+  colorWidget->SetValue(QVariant::fromValue(this->dataPtr->textColor));
   colorWidget->setObjectName("colorWidget");
   this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
       SLOT(OnChange(QVariant)));
@@ -213,17 +215,19 @@ void RealtimeFactorDisplay::OnChange(const QVariant &_value)
   else if (type == "textSizeWidget")
     this->dataPtr->textSize = _value.toUInt();
   else if (type == "colorWidget")
-    this->dataPtr->realtimeFactorText->SetColor(_value.value<math::Color>());
+    this->dataPtr->textColor = _value.value<math::Color>();
 }
 
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::UpdateTextPose()
+void RealtimeFactorDisplay::UpdateText()
 {
   if (!this->dataPtr->cameraAttachedTo || !this->dataPtr->realtimeFactorText)
   {
     return;
   }
+
+  this->dataPtr->realtimeFactorText->SetColor(this->dataPtr->textColor);
 
   double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
   double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
@@ -299,6 +303,15 @@ tinyxml2::XMLElement *RealtimeFactorDisplay::CustomConfig(
     customConfigElem->InsertEndChild(propertyElem);
   }
 
+  // Color
+  {
+    auto colorElem = _doc->NewElement("color");
+    std::stringstream colorStr;
+    colorStr << this->dataPtr->textColor;
+    colorElem->SetText(colorStr.str().c_str());
+    customConfigElem->InsertEndChild(colorElem);
+  }
+
   // Horizontal padding
   {
     auto propertyElem = _doc->NewElement("horizontal_padding");
@@ -313,22 +326,6 @@ tinyxml2::XMLElement *RealtimeFactorDisplay::CustomConfig(
     propertyElem->SetText(
       std::to_string(this->dataPtr->verticalPadding).c_str());
     customConfigElem->InsertEndChild(propertyElem);
-  }
-
-  if (nullptr == this->dataPtr->realtimeFactorText)
-  {
-    // The properties can't be retirieved from the text.
-    // TODO(dhood): return the initial properties specified in this case.
-    return customConfigElem;
-  }
-
-  // Color
-  {
-    auto colorElem = _doc->NewElement("color");
-    std::stringstream colorStr;
-    colorStr << this->dataPtr->realtimeFactorText->Color();
-    colorElem->SetText(colorStr.str().c_str());
-    customConfigElem->InsertEndChild(colorElem);
   }
 
   return customConfigElem;

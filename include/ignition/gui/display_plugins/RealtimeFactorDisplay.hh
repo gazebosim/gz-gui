@@ -62,8 +62,8 @@ namespace display_plugins
     /// \param[in] _value New value
     private slots: void OnChange(const QVariant &_value);
 
-    /// \brief Called to reposition the text in the corner of the image
-    private slots: void UpdateTextPose();
+    /// \brief Called to reformat/reposition the text in the corner of the image
+    private slots: void UpdateText();
 
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
