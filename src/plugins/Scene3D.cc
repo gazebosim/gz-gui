@@ -37,6 +37,63 @@
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/plugins/Scene3D.hh"
 
+bool checkFramebufferStatus(QOpenGLContext *ctx)
+{
+    if (!ctx)
+        return false;   // Context no longer exists.
+    GLenum status = ctx->functions()->glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    switch(status) {
+    case GL_NO_ERROR:
+    case GL_FRAMEBUFFER_COMPLETE:
+        return true;
+    case GL_FRAMEBUFFER_UNSUPPORTED:
+        std::cerr << "QOpenGLFramebufferObject: Unsupported framebuffer format." << std::endl;
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete attachment."<< std::endl;
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete, missing attachment."<< std::endl;
+        break;
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT
+    case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete, duplicate attachment."<< std::endl;
+        break;
+#endif
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
+    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete, attached images must have same dimensions."<< std::endl;
+        break;
+#endif
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_FORMATS
+    case GL_FRAMEBUFFER_INCOMPLETE_FORMATS:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete, attached images must have same format."<< std::endl;
+        break;
+#endif
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER
+    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete, missing draw buffer."<< std::endl;
+        break;
+#endif
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER
+    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete, missing read buffer."<< std::endl;
+        break;
+#endif
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE
+    case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+        std::cerr << "QOpenGLFramebufferObject: Framebuffer incomplete, attachments must have same number of samples per pixel."<< std::endl;
+        break;
+#endif
+    default:
+        std::cerr << "QOpenGLFramebufferObject: An undefined error has occurred: "<< status << std::endl;
+        break;
+    }
+    return false;
+}
+
+
+
 namespace ignition
 {
 namespace gui
@@ -47,27 +104,44 @@ namespace plugins
   class RenderWindowItemRenderer : public QQuickFramebufferObject::Renderer
   {
     public: RenderWindowItemRenderer(){};
+    public: ~RenderWindowItemRenderer()
+            {
+            };
     public: void render() override
             {
               if (!this->item || !this->item->window())
                 return;
 
-/*              if (!this->surface)
+              if (!this->surface)
               {
                 this->surface = new QOffscreenSurface();
                 this->surface->setFormat(this->item->window()->requestedFormat());
                 this->surface->create();
               }
-*/
-//              glPopAttrib();
-//              glPopClientAttrib();
-              this->item->QtContext()->functions()->glUseProgram(0);
 
-              //this->
-              this->item->window()->resetOpenGLState();
+
+//              this->fbo->bindDefault();
+
+//              this->item->window()->resetOpenGLState();
+              this->item->QtContext()->functions()->glUseProgram(0);
               this->item->QtContext()->doneCurrent();
               this->item->RenderWindowContext()->makeCurrent(this->item->window());
 //              this->item->RenderWindowContext()->makeCurrent(this->surface);
+
+//                auto ct = QOpenGLContext::currentContext();
+//                std::cerr << " renderwindow context " << ct->nativeHandle().toString().toStdString() << std::endl;
+
+/*                // restore original state
+                glPopAttrib();
+                glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+                // restore matrices
+                glMatrixMode(GL_TEXTURE);
+                glPopMatrix();
+                glMatrixMode(GL_PROJECTION);
+                glPopMatrix();
+                glMatrixMode(GL_MODELVIEW);
+                glPopMatrix();
+*/
 
 
               if (!this->initialized)
@@ -79,17 +153,29 @@ namespace plugins
                          << std::endl;
                   return;
                 }
+                auto c = QOpenGLContext::currentContext();
+                std::cerr << " engine context " << c->nativeHandle().typeName() << std::endl;
+                this->ctx = QOpenGLContext::currentContext();
+                if (!this->ctx)
+                  std::cerr << "no contexti !!!!!!!!!!!!! " << std::endl;
+
                 // Scene
-                //auto scene = engine->SceneByName(this->dataPtr->sceneName);
                 auto scene = engine->SceneByName(this->sceneName);
                 if (!scene)
                 {
                   igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
                   scene = engine->CreateScene(this->sceneName);
-                  //scene->SetAmbientLight(this->dataPtr->ambientLight);
+                  scene->SetAmbientLight(0.8, 0.8, 0.8);
                   //scene->SetBackgroundColor(this->dataPtr->backgroundColor);
                 }
                 auto root = scene->RootVisual();
+
+                rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
+                light0->SetDirection(-0.5, 0.5, -1);
+                light0->SetDiffuseColor(0.5, 0.5, 0.5);
+                light0->SetSpecularColor(0.5, 0.5, 0.5);
+                root->AddChild(light0);
+
 
                 // Camera
                 this->camera = scene->CreateCamera();
@@ -97,7 +183,7 @@ namespace plugins
                 this->camera->SetLocalPose(this->cameraPose);
                 this->camera->SetImageWidth(this->textureSize.width());
                 this->camera->SetImageHeight(this->textureSize.height());
-                this->camera->SetAntiAliasing(2);
+                this->camera->SetAntiAliasing(0);
               //  this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
                 this->camera->SetHFOV(M_PI * 0.5);
                 // setting the size should cause the render texture to be rebuilt
@@ -121,18 +207,54 @@ namespace plugins
                 this->initialized = true;
               }
 
+              static bool donee = false;
+              if (!donee)
+              {
+                donee = true;
+              for (unsigned int i = 0; i < 50; ++i)
+              {
+//              this->ctx->makeCurrent(this->surface);
+
 //              this->item->RenderWindowContext()->functions()->glBindFramebuffer(
 //                  GL_FRAMEBUFFER_EXT, this->textureId);
 
-//              this->camera->Update();
+//               QOpenGLContext::currentContext()->functions()->glViewport(
+//                   0, 0, this->img->Width(), this->img->Height());
+              this->camera->SetLocalPosition(this->camera->WorldPosition() + ignition::math::Vector3d(0.01, 0.01, 0));
+              std::cerr << "camera pose " << this->camera->LocalPosition() << std::endl;
+              this->camera->Update();
+//              this->item->RenderWindowContext()->functions()->glFlush();
+              // TODO why do we need to render and blit 2 times for it to render properly??!?!
               this->camera->Capture(*this->img);
 
               const unsigned char *d = this->img->Data<unsigned char>();
               common::Image im;
               im.SetFromData(d, this->img->Width(), this->img->Height(), common::Image::RGB_INT8);
-              im.SavePNG("blit.png");
+              im.SavePNG("bbb" + std::to_string(i) + ".png");
+              }
+              }
 
-/*              // blit?
+//              this->item->RenderWindowContext()->swapBuffers(this->surface);
+//              this->camera->Capture(*this->img);
+//              this->camera->Copy(*this->img);
+//              this->camera->Update();
+//              this->camera->Copy(*this->img);
+
+/*
+              static bool donee = false;
+              if (!donee)
+              {
+              const unsigned char *d = this->img->Data<unsigned char>();
+              common::Image im;
+              im.SetFromData(d, this->img->Width(), this->img->Height(), common::Image::RGB_INT8);
+              im.SavePNG("blit.png");
+              donee = true;
+              }
+*/
+
+/*
+              // blit?
+              GLuint fboId = 4;
               QOpenGLContext *ctx = QOpenGLContext::currentContext();
               if (!ctx)
                 std::cerr << "not ctx " << std::endl;;
@@ -140,20 +262,26 @@ namespace plugins
               QOpenGLExtraFunctions ext(ctx);
 //              if (!ext.hasOpenGLExtension(QOpenGLExtensions::FramebufferBlit))
 //                std::cerr << "no blit!!!" << std::endl;;
-              ext.glBindFramebuffer(GL_READ_FRAMEBUFFER, this->textureId);
+              ext.glBindFramebuffer(GL_READ_FRAMEBUFFER, fboId);
               ext.glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->fbo->handle());
-              std::cerr << "blitting " << this->textureId << " " << this->fbo->handle() << std::endl;
+              std::cerr << "blitting " << fboId << " " << this->fbo->handle() << std::endl;
               ext.glBlitFramebuffer(0, 0, this->textureSize.width(), this->textureSize.height(),
                                    0, 0, this->textureSize.width(), this->textureSize.height(),
                                    GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-              std::cerr << "render " << std::endl;
-*/
+              bool status = checkFramebufferStatus(ctx);
+              std::cerr << "status " << status << std::endl;
+
+              ext.glBindFramebuffer(GL_FRAMEBUFFER, this->fbo->handle());
+
+//              std::cerr << "render " << std::endl;
+
               update();
 
 
               this->item->RenderWindowContext()->doneCurrent();
               this->item->QtContext()->makeCurrent(this->item->window());
+*/
 
 /*
   this->item->RenderWindowContext()->functions()->glBindBuffer(
@@ -199,20 +327,41 @@ namespace plugins
 //              glPushAttrib(GL_ALL_ATTRIB_BITS);
 //              glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 
-
               this->item->window()->resetOpenGLState();
+
+//              this->fbo->bind();
+
+
+/*           	  glMatrixMode(GL_MODELVIEW);
+           	  glPushMatrix();
+           	  glMatrixMode(GL_PROJECTION);
+           	  glPushMatrix();
+           	  glMatrixMode(GL_TEXTURE);
+           	  glPushMatrix();
+           	  glLoadIdentity(); //Texture addressing should start out as direct.
+              glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+              glPushAttrib(GL_ALL_ATTRIB_BITS);
+*/
+
+
             }
 
     public: void synchronize(QQuickFramebufferObject *_item) override
             {
               this->item = static_cast<RenderWindowItem *>(_item);
+              if (this->img)
+              {
+                this->item->SetImage(QSize(this->img->Width(), this->img->Height()),
+                    this->img->Data<unsigned char>());
+              }
             }
 
     public: QOpenGLFramebufferObject *createFramebufferObject(const QSize &size) override
             {
               QOpenGLFramebufferObjectFormat format;
-              format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-//              format.setSamples(4);
+//              format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+              format.setAttachment(QOpenGLFramebufferObject::Depth);
+              format.setSamples(0);
               this->fbo = new QOpenGLFramebufferObject(size, format);
               return this->fbo;
             }
@@ -228,6 +377,11 @@ namespace plugins
     public: GLuint GLId() const
             {
               return this->textureId;
+            }
+
+    public: rendering::ImagePtr Image() const
+            {
+              return this->img;
             }
 
     public: QSize Size() const
@@ -247,6 +401,7 @@ namespace plugins
     private: QOffscreenSurface *surface = nullptr;
     private: QOpenGLFramebufferObject *fbo = nullptr;
     private: rendering::ImagePtr img;
+    private: QOpenGLContext *ctx = nullptr;
   };
 
   /// \brief Private data class for RendereWindowItem
@@ -288,6 +443,7 @@ namespace plugins
     public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
 
     public: QSGTexture *texture = nullptr;
+    public: QImage qimg;
   };
 
 
@@ -312,7 +468,7 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
   : QQuickFramebufferObject(_parent), dataPtr(new RenderWindowItemPrivate)
 {
    std::cerr << "render item !!!!!!!!!!!!!!!!! " << std::endl;
-//  this->setFlag(ItemHasContents);
+  this->setFlag(ItemHasContents);
 //  this->setSmooth(false);
 //  this->startTimer(16);
 
@@ -344,7 +500,6 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 /////////////////////////////////////////////////
 QQuickFramebufferObject::Renderer *RenderWindowItem::createRenderer() const
 {
-  std::cerr << "create renderer" << std::endl;
   auto r = new RenderWindowItemRenderer();
   r->SetItem(this);
   this->dataPtr->renderer = r;
@@ -373,7 +528,7 @@ RenderWindowItem::~RenderWindowItem()
 */
 
 //  delete this->dataPtr->geometry;
-//  delete this->dataPtr->texture;
+  delete this->dataPtr->texture;
 }
 
 /////////////////////////////////////////////////
@@ -495,6 +650,25 @@ QOpenGLContext *RenderWindowItem::QtContext() const
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetImage(QSize _size, unsigned char *_data)
+{
+  if (this->dataPtr->qimg.isNull())
+    this->dataPtr->qimg = QImage(_size.width(), _size.height(), QImage::Format_RGB888);
+
+  for (int i = 0; i < this->dataPtr->qimg.height(); ++i)
+  {
+    memcpy(this->dataPtr->qimg.scanLine(i), _data + i * this->dataPtr->qimg.bytesPerLine(),
+    this->dataPtr->qimg.bytesPerLine());
+  }
+
+/*  this->dataPtr->qimg.save("qsync.png");
+  common::Image im;
+  im.SetFromData(_data, _size.width(), _size.height(), common::Image::RGB_INT8);
+  im.SavePNG("sync.png");
+*/
+}
+
+/////////////////////////////////////////////////
 QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     QQuickItem::UpdatePaintNodeData *_data)
 {
@@ -516,8 +690,11 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
   }
 
 
+//    std::cerr << this->dataPtr->quickWindow->requestedFormat().samples() << std::endl;;
+
   std::cerr << "update paint node " << std::endl;
   QSGNode *out = QQuickFramebufferObject::updatePaintNode(_node, _data);
+//  return out;
 
 /*  FboNode *n = static_cast<FboNode *>(_node);
   if (!_n)
@@ -614,7 +791,53 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
   std::cerr << "update paint node done " << std::endl;
   return n;
 */
-  return out;
+
+
+  QSGSimpleTextureNode *n = dynamic_cast<QSGSimpleTextureNode *>(out);
+  if (!n && (width() <= 0 || height() <= 0))
+    return nullptr;
+
+  std::cerr << "update paint node r1 " << std::endl;
+
+  if ( this->dataPtr->renderer)
+  {
+
+  std::cerr << "update paint node r2 " << std::endl;
+    auto r = dynamic_cast<RenderWindowItemRenderer *>(this->dataPtr->renderer);
+  std::cerr << "update paint node r3 " << r->GLId() << std::endl;
+    if (r && r->GLId() > 0)
+    {
+      std::cerr << "creating render gl texture with id: " << r->GLId() << " " << r->Size().width() << " " << r->Size().height() <<  std::endl;
+//      this->dataPtr->qimg.save("qimg.png");
+//      std::cerr << " save qimg " << std::endl;
+      //common::Image im;
+      //im.SetFromData(r->Image()->Data<unsigned char>(), r->Image()->Width(), r->Image()->Height(), common::Image::RGB_INT8);
+      //im.SavePNG("qblit.png");
+
+
+
+      delete this->dataPtr->texture;
+//      this->dataPtr->texture = window()->createTextureFromId(
+//        r->GLId(), r->Size());
+
+      this->dataPtr->texture = window()->createTextureFromImage(this->dataPtr->qimg);
+//      std::cerr << "created texture " << this->dataPtr->texture <<  " vs " << n << std::endl;
+
+      // this should cause the original texture to be deleted
+      n->setTexture(this->dataPtr->texture);
+      n->markDirty(QSGNode::DirtyMaterial);
+    }
+    else
+    {
+//      this->update();
+    }
+  }
+
+  this->update();
+
+
+//  return out;
+  return n;
 }
 
 /*

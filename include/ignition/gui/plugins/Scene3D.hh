@@ -106,8 +106,35 @@ namespace plugins
 
   /// \brief A QQUickItem that manages the render window
   class RenderWindowItem: public QQuickFramebufferObject
+//  class RenderWindowItem : public QQuickItem
   {
     Q_OBJECT
+
+/*    public: class Renderer
+    {
+      public: Renderer(){}
+      public: virtual ~Renderer(){}
+      public: virtual void synchronize(RenderWindowItem *_item);
+      public: virtual void Initialize();
+//      public: virtual void update();
+      public: virtual void render();
+      public: virtual QOpenGLFramebufferObject *createFramebufferObject(const QSize &_isze);
+
+      private: QQuickWindow *window = nullptr;
+      public: RenderWindowItem *item = nullptr;
+      private: std::string sceneName{"scene"};
+      private: std::string engineName{"ogre2"};
+      private: rendering::CameraPtr camera;
+      private: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
+      private: bool initialized = false;
+      public: GLuint textureId = 0u;
+      public: QSize textureSize = QSize(800, 600);
+      private: QOffscreenSurface *surface = nullptr;
+      private: QOpenGLFramebufferObject *fbo = nullptr;
+      private: rendering::ImagePtr img;
+      private: QOpenGLContext *ctx = nullptr;
+    };
+*/
 
     /// \brief Constructor
     /// \param[in] _parent Parent item
@@ -116,6 +143,7 @@ namespace plugins
     /// \brief Destructor
     public: virtual ~RenderWindowItem();
 
+//    public: RenderWindowItem::Renderer *createRenderer() const;
     public: QQuickFramebufferObject::Renderer *createRenderer() const;
 
     /// \brief Set background color of render window
@@ -152,6 +180,8 @@ namespace plugins
 
     /// \brief Get the qt context
     public: QOpenGLContext *QtContext() const;
+
+    public: void SetImage(QSize _size, unsigned char *_data);
 
 
     /// \brief Overrides the paint event to render the render engine
@@ -199,62 +229,20 @@ namespace plugins
   };
 */
 
-/*
 
+/*
 class FboNode : public QSGTextureProvider, public QSGSimpleTextureNode
 {
     Q_OBJECT
 
 public:
-    FboNode()
-        : window(nullptr)
-        , fbo(nullptr)
-        , msDisplayFbo(nullptr)
-        , renderer(nullptr)
-        , renderPending(true)
-        , invalidatePending(false)
-        , devicePixelRatio(1)
-    {
-        qsgnode_set_description(this, QStringLiteral("fbonode"));
-    }
-
-    ~FboNode()
-    {
-        delete renderer;
-        delete texture();
-        delete fbo;
-        delete msDisplayFbo;
-    }
-
-    void scheduleRender()
-    {
-        renderPending = true;
-        window->update();
-    }
-
-    QSGTexture *texture() const override
-    {
-        return QSGSimpleTextureNode::texture();
-    }
+    FboNode();
+    ~FboNode();
+    void scheduleRender();
+    QSGTexture *texture() const override;
 
 public Q_SLOTS:
-    void render()
-    {
-        if (renderPending) {
-            renderPending = false;
-            fbo->bind();
-            QOpenGLContext::currentContext()->functions()->glViewport(0, 0, fbo->width(), fbo->height());
-            renderer->render();
-            fbo->bindDefault();
-
-            if (msDisplayFbo)
-                QOpenGLFramebufferObject::blitFramebuffer(msDisplayFbo, fbo);
-
-            markDirty(QSGNode::DirtyMaterial);
-            emit textureChanged();
-        }
-    }
-
+    void render();
     void handleScreenChange()
     {
         if (window->effectiveDevicePixelRatio() != devicePixelRatio) {
@@ -266,10 +254,9 @@ public Q_SLOTS:
 public:
     QQuickWindow *window;
     QOpenGLFramebufferObject *fbo;
-    QOpenGLFramebufferObject *msDisplayFbo;
 //    QQuickFramebufferObject::Renderer *renderer;
-    RenderWindowItemRenderer *renderer;
-    QQuickFramebufferObject *quickFbo;
+    RenderWindowItem::Renderer *renderer;
+//    QQuickFramebufferObject *quickFbo;
 
     bool renderPending;
     bool invalidatePending;
