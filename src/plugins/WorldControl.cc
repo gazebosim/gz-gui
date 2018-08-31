@@ -103,9 +103,9 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         pausedElem->QueryBoolText(&startPaused);
       }
       if (startPaused)
-        this->Paused();
+        this->paused();
       else
-        this->Playing();
+        this->playing();
     }
   }
 
@@ -139,9 +139,9 @@ void WorldControl::ProcessMsg()
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
   if (this->dataPtr->msg.paused())
-    this->Paused();
+    this->paused();
   else
-    this->Playing();
+    this->playing();
 }
 
 /////////////////////////////////////////////////
@@ -160,7 +160,7 @@ void WorldControl::OnPlay()
       [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
   {
     if (_result)
-      QMetaObject::invokeMethod(this, "Playing");
+      QMetaObject::invokeMethod(this, "playing");
   };
 
   ignition::msgs::WorldControl req;
@@ -175,7 +175,7 @@ void WorldControl::OnPause()
       [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
   {
     if (_result)
-      QMetaObject::invokeMethod(this, "Paused");
+      QMetaObject::invokeMethod(this, "paused");
   };
 
   ignition::msgs::WorldControl req;

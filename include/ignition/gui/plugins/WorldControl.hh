@@ -73,10 +73,10 @@ namespace plugins
     public slots: void OnStepCount(const unsigned int _steps);
 
     /// \brief Notify that it's now playing.
-    signals: void Playing();
+    signals: void playing();
 
     /// \brief Notify that it's now paused.
-    signals: void Paused();
+    signals: void paused();
 
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
