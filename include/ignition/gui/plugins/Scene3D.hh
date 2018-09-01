@@ -104,37 +104,95 @@ namespace plugins
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
   };
 
-  /// \brief A QQUickItem that manages the render window
-  class RenderWindowItem: public QQuickFramebufferObject
-//  class RenderWindowItem : public QQuickItem
+  /// \brief Ign-rendering renderer
+  class IgnRenderer
+  {
+    /// \brief Constructor
+    public: IgnRenderer(){};
+
+    /// \brief Destructor
+    public: ~IgnRenderer(){};
+
+    ///  \brief Main render function
+    public: void Render();
+
+    /// \brief Initialize the render engine
+    public: void Initialize();
+
+    /// \brief Destroy camera associated with this renderer
+    public: void Destroy();
+
+    /// \brief Render texture id
+    public: GLuint textureId = 0u;
+
+    /// \brief Render engine to use
+    public: std::string engineName = "ogre2";
+
+    /// \brief Unique scene name
+    public: std::string sceneName = "scene";
+
+    /// \brief Initial Camera pose
+    public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
+
+    /// \brief Scene background color
+    public: math::Color backgroundColor = math::Color::Black;
+
+    /// \brief Ambient color
+    public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3, 1.0);
+
+    /// \brief True if engine has been initialized;
+    public: bool initialized = false;
+
+    /// \brief Render texture size
+    public: QSize textureSize = QSize(512, 512);
+    public: bool textureDirty = false;
+
+    /// \brief User camera
+    private: rendering::CameraPtr camera;
+  };
+
+  /// \brief Rendering thread
+  class RenderThread : public QThread
   {
     Q_OBJECT
 
-/*    public: class Renderer
-    {
-      public: Renderer(){}
-      public: virtual ~Renderer(){}
-      public: virtual void synchronize(RenderWindowItem *_item);
-      public: virtual void Initialize();
-//      public: virtual void update();
-      public: virtual void render();
-      public: virtual QOpenGLFramebufferObject *createFramebufferObject(const QSize &_isze);
+    /// \brief Constructor
+    public: RenderThread();
 
-      private: QQuickWindow *window = nullptr;
-      public: RenderWindowItem *item = nullptr;
-      private: std::string sceneName{"scene"};
-      private: std::string engineName{"ogre2"};
-      private: rendering::CameraPtr camera;
-      private: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
-      private: bool initialized = false;
-      public: GLuint textureId = 0u;
-      public: QSize textureSize = QSize(800, 600);
-      private: QOffscreenSurface *surface = nullptr;
-      private: QOpenGLFramebufferObject *fbo = nullptr;
-      private: rendering::ImagePtr img;
-      private: QOpenGLContext *ctx = nullptr;
-    };
-*/
+    /// \brief Offscreen surface to render to
+    public: QOffscreenSurface *surface = nullptr;
+
+    /// \brief OpenGL context to be passed to the render engine
+    public: QOpenGLContext *context = nullptr;
+
+    /// \brief Render the next frame
+    public slots: void RenderNext();
+
+    /// \brief Shutdown the thread and the render engine
+    public slots: void ShutDown();
+
+    /// \brief Slot called to update render texture size
+    /// \brief New texture size
+    public slots: void SizeChanged(const QSize &_size);
+
+    /// \brief Signal to indicate that a frame has been rendered and ready
+    /// to be displayed
+    /// \param[in] _id GLuid of the opengl texture
+    /// \param[in] _size Size of the texture
+    signals: void TextureReady(int _id, const QSize &_size);
+
+    /// \brief Ign-rendering renderer
+    public: IgnRenderer ignRenderer;
+
+    /// \brief Texture size
+    public: QSize size;
+  };
+
+
+  /// \brief A QQUickItem that manages the render window
+  class RenderWindowItem : public QQuickItem
+  {
+    Q_OBJECT
 
     /// \brief Constructor
     /// \param[in] _parent Parent item
@@ -142,9 +200,6 @@ namespace plugins
 
     /// \brief Destructor
     public: virtual ~RenderWindowItem();
-
-//    public: RenderWindowItem::Renderer *createRenderer() const;
-    public: QQuickFramebufferObject::Renderer *createRenderer() const;
 
     /// \brief Set background color of render window
     /// \param[in] _color Color of render window background
@@ -166,23 +221,8 @@ namespace plugins
     /// \param[in] _pose Initical camera pose
     public: void SetCameraPose(const math::Pose3d &_pose);
 
-    /// \brief Initialize the render engine
-    private: void InitializeEngine();
-
-    /// \brief Activate the render window OpenGL context
-    // public: void ActivateRenderWindowContext();
-
-    /// \brief Deactivate the render window OpenGL context
-    // public: void DoneRenderWindowContext();
-
-    /// \brief Get the render window context
-    public: QOpenGLContext *RenderWindowContext() const;
-
-    /// \brief Get the qt context
-    public: QOpenGLContext *QtContext() const;
-
-    public: void SetImage(QSize _size, unsigned char *_data);
-
+    /// \brief Slot called when thread is ready to be started
+    public Q_SLOTS: void Ready();
 
     /// \brief Overrides the paint event to render the render engine
     /// camera view
@@ -191,80 +231,59 @@ namespace plugins
     /// \param[in] _data The node transformation data.
     private: QSGNode *updatePaintNode(QSGNode *_node,
         QQuickItem::UpdatePaintNodeData *_data);
-/*
-    /// \brief Timer callabck. This queues a call to update the item.
-    /// \param[in] _event A Qt timer event.
-    private: void timerEvent(QTimerEvent *_event);
-*/
 
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
+    //// \brief List of threads
+    public: static QList<QThread *> threads;
+
+    /// \brief Render thread
+    private: RenderThread *renderThread = nullptr;
   };
-/*
 
-  /// \brief A QQUickItem that manages the render window
-  class RenderWindowNode: public QSGGeometryNode
+  /// \brief Texture node for displaying the render texture from ign-renderer
+  class TextureNode : public QObject, public QSGSimpleTextureNode
   {
-    public: RenderWindowNode();
-    public: ~RenderWindowNode();
-    public: void SetSize(QSize _size);
-    public: void SetRenderWindowItem(RenderWindowItem *_item);
-    public: void SetCamera(rendering::CameraPtr _camera);
-
-    public: void ActivateContext();
-    public: void DoneContext();
-
-    public: void preprocess();
-
-    /// \brief Update the GL render texture
-    private: void UpdateFBO();
-
-    public: void update();
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<RenderWindowNodePrivate> dataPtr;
-
-  };
-*/
-
-
-/*
-class FboNode : public QSGTextureProvider, public QSGSimpleTextureNode
-{
     Q_OBJECT
 
-public:
-    FboNode();
-    ~FboNode();
-    void scheduleRender();
-    QSGTexture *texture() const override;
+    /// \brief Constructor
+    /// \param[in] _window Parent window
+    public: TextureNode(QQuickWindow *_window);
 
-public Q_SLOTS:
-    void render();
-    void handleScreenChange()
-    {
-        if (window->effectiveDevicePixelRatio() != devicePixelRatio) {
-            renderer->invalidateFramebufferObject();
-            quickFbo->update();
-        }
-    }
+    /// \brief Destructor
+    public: ~TextureNode() override;
 
-public:
-    QQuickWindow *window;
-    QOpenGLFramebufferObject *fbo;
-//    QQuickFramebufferObject::Renderer *renderer;
-    RenderWindowItem::Renderer *renderer;
-//    QQuickFramebufferObject *quickFbo;
+    /// \brief This function gets called on the FBO rendering thread and will
+    ///  store the texture id and size and schedule an update on the window.
+    /// \param[in] _id OpenGL render texture Id
+    /// \param[in] _size Texture size
+    public slots: void NewTexture(int _id, const QSize &_size);
 
-    bool renderPending;
-    bool invalidatePending;
+    /// \brief Before the scene graph starts to render, we update to the
+    /// pending texture
+    public slots: void PrepareNode();
 
-    qreal devicePixelRatio;
-};
-*/
+    /// \brief Signal emitted when the texture is being rendered and renderer
+    /// can start rendering next frame
+    signals: void TextureInUse();
 
+    /// \brief Signal emitted when a new texture is ready to trigger window
+    /// update
+    signals: void PendingNewTexture();
+
+    /// \brief OpenGL texture id
+    public: int id = 0;
+
+    /// \brief Texture size
+    public: QSize size = QSize(0, 0);
+
+    /// \brief Mutex to protect the texture variables
+    public: QMutex mutex;
+
+    /// \brief Qt's scene graph texture
+    public: QSGTexture *texture = nullptr;
+
+    /// \brief Qt quick window
+    public: QQuickWindow *window = nullptr;
+  };
 }
 }
 }
