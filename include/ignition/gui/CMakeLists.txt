@@ -12,6 +12,7 @@ set (qt_headers
   CollapsibleWidget.hh
   ColorWidget.hh
   Dialog.hh
+  DisplayPlugin.hh
   Dock.hh
   EditableLabel.hh
   EnumWidget.hh
@@ -57,12 +58,14 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   ${IGNITION-COMMON_LIBRARIES}
   ${IGNITION-MATH_LIBRARIES}
   ${IGNITION-MSGS_LIBRARIES}
+  ${IGNITION-RENDERING_LIBRARIES}
   ${IGNITION-TRANSPORT_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
   TINYXML2::TINYXML2
 )
 
+add_subdirectory(display_plugins)
 add_subdirectory(plugins)
 
 #ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}.hh)

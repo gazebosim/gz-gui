@@ -19,6 +19,7 @@ execute_process(COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/test_results
 include_directories(${GTEST_INCLUDE_DIRS})
 
 add_subdirectory(integration)
+add_subdirectory(display_plugins)
 add_subdirectory(performance)
 add_subdirectory(plugins)
 add_subdirectory(regression)

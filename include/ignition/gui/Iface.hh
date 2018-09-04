@@ -21,7 +21,9 @@
 #include <utility>
 #include <vector>
 
+#include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/Export.hh"
+#include "ignition/gui/Plugin.hh"
 
 // Forward declarations.
 namespace tinyxml2
@@ -60,13 +62,29 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     bool loadDefaultConfig();
 
-    /// \brief Load a plugin from a file name. The plugin file must be in the
-    /// path.
+    /// \brief Load a plugin from a file name and add it to the main window.
+    ///
+    /// The plugin file must be in the path.
+    ///
     /// \param[in] _filename Plugin filename.
     /// \param[in] _pluginElem Element containing plugin configuration
     /// \return True if successful
     IGNITION_GUI_VISIBLE
     bool loadPlugin(const std::string &_filename,
+        const tinyxml2::XMLElement *_pluginElem = nullptr);
+
+    /// \brief Load a display plugin from a filename.
+    ///
+    /// The plugin file must be in the path.
+    /// The lifetime of the loaded plugin is managed by the shared pointer
+    /// that is returned: callers should store it themselves.
+    ///
+    /// \param[in] _filename Display plugin filename.
+    /// \param[in] _pluginElem Element containing plugin configuration
+    /// \return The plugin loaded, will be `nullptr` on failure.
+    IGNITION_GUI_VISIBLE
+    std::shared_ptr<ignition::gui::DisplayPlugin> loadDisplayPlugin(
+        const std::string &_filename,
         const tinyxml2::XMLElement *_pluginElem = nullptr);
 
     /// \brief Set the global style sheet from a file.

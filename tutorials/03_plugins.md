@@ -92,3 +92,20 @@ Make custom service requests and serve custom services with these two
 plugins.
 
     ign gui -c examples/config/reqres.config
+
+### Displays {#display-plugins}
+
+This is a container for various Display Plugins that each paint on a Scene.
+The following example includes the display plugins that are installed with
+Ignition GUI by default.
+
+    ign gui -c examples/config/display_plugins.config
+
+#### Finding display plugins
+
+Ignition GUI will look for display plugins on the following paths, in this
+order:
+
+1. All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
+1. `~/.ignition/gui/display_plugins`
+1. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
