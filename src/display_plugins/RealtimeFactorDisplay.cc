@@ -100,8 +100,14 @@ void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
   if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("text_size"))
-      elem->QueryUnsignedText(&this->dataPtr->textSize);
-
+    {
+      if (elem->QueryUnsignedText(&this->dataPtr->textSize) !=
+          tinyxml2::XMLError::XML_SUCCESS)
+      {
+        ignwarn << "Expected text_size to be unsigned, but invalid type"
+                << std::endl;
+      }
+    }
     if (auto elem = _pluginElem->FirstChildElement("color"))
     {
       std::stringstream colorStr;
@@ -110,10 +116,24 @@ void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
     }
 
     if (auto elem = _pluginElem->FirstChildElement("horizontal_padding"))
-      elem->QueryIntText(&this->dataPtr->horizontalPadding);
+    {
+      if (elem->QueryIntText(&this->dataPtr->horizontalPadding) !=
+          tinyxml2::XMLError::XML_SUCCESS)
+      {
+        ignwarn << "Expected horizontal_padding to be integer, but invalid type"
+                << std::endl;
+      }
+    }
 
     if (auto elem = _pluginElem->FirstChildElement("vertical_padding"))
-      elem->QueryIntText(&this->dataPtr->verticalPadding);
+    {
+      if (elem->QueryIntText(&this->dataPtr->verticalPadding) !=
+          tinyxml2::XMLError::XML_SUCCESS)
+      {
+        ignwarn << "Expected vertical_padding to be integer, but invalid type"
+                << std::endl;
+      }
+    }
   }
 
   if (auto scenePtr = this->Scene().lock())
@@ -140,6 +160,7 @@ void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
         ignwarn << "Multiple cameras found for scene [" << scenePtr->Name() <<
           "]. Real time factor display will be attached to the first camera "
           "and may be visible from other cameras." << std::endl;
+        break;
       }
     }
   }
@@ -246,8 +267,10 @@ void RealtimeFactorDisplay::UpdateText()
 
   this->dataPtr->realtimeFactorText->SetColor(this->dataPtr->textColor);
 
-  double imgWidth = (double)this->dataPtr->cameraAttachedTo->ImageWidth();
-  double imgHeight = (double)this->dataPtr->cameraAttachedTo->ImageHeight();
+  double imgWidth = static_cast<double>(
+                      this->dataPtr->cameraAttachedTo->ImageWidth());
+  double imgHeight = static_cast<double>(
+                      this->dataPtr->cameraAttachedTo->ImageHeight());
 
   // Empirical constant so text size can be specified in pixels.
   static const double pixelScaleFactor = 15.7;
@@ -339,7 +362,7 @@ tinyxml2::XMLElement *RealtimeFactorDisplay::CustomConfig(
 
   // Vertical padding
   {
-    auto propertyElem = _doc->NewElement("verical_padding");
+    auto propertyElem = _doc->NewElement("vertical_padding");
     propertyElem->SetText(
       std::to_string(this->dataPtr->verticalPadding).c_str());
     customConfigElem->InsertEndChild(propertyElem);
