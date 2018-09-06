@@ -1,5 +1,8 @@
-Layout {#layout}
-======
+\page layout Layout
+
+Next Tutorial: \ref style
+
+## Overview
 
 It's possible to define the layout of various plugins loaded to the main window
 by adding a `<window>` element to the config file. The child elements are:
