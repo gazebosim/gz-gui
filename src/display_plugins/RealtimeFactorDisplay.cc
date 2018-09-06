@@ -19,9 +19,13 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/PluginMacros.hh>
+#include <ignition/math/Color.hh>
 #include <ignition/rendering/Text.hh>
 #include <ignition/transport.hh>
 
+#include "ignition/gui/ColorWidget.hh"
+#include "ignition/gui/NumberWidget.hh"
+#include "ignition/gui/QtMetatypes.hh"
 #include "ignition/gui/display_plugins/RealtimeFactorDisplay.hh"
 
 namespace ignition
@@ -42,8 +46,25 @@ namespace display_plugins
     public: ignition::transport::Node node;
 
     /// \brief The text display
-    // TODO(dhood): Make an overlay
     public: ignition::rendering::TextPtr realtimeFactorText = nullptr;
+
+    /// \brief The camera to which the display is attached
+    public: std::shared_ptr<rendering::Camera> cameraAttachedTo = nullptr;
+
+    /// \brief Text size in pixels
+    public: unsigned int textSize = 15;
+
+    /// \brief Horizontal padding away from the image border
+    public: int horizontalPadding = 20;
+
+    /// \brief Vertical padding away from the image border
+    public: int verticalPadding = 20;
+
+    /// \brief Color of the text
+    public: math::Color textColor = math::Color::White;
+
+    /// \brief Timer to update the text position
+    public: QTimer *updateTimer;
   };
 }
 }
@@ -66,8 +87,7 @@ RealtimeFactorDisplay::~RealtimeFactorDisplay()
 }
 
 /////////////////////////////////////////////////
-void RealtimeFactorDisplay::Initialize(
-  const tinyxml2::XMLElement */*_pluginElem*/)
+void RealtimeFactorDisplay::Initialize(const tinyxml2::XMLElement *_pluginElem)
 {
   // Subscribe to world_stats
   std::string topic = "/world_stats";
@@ -77,9 +97,72 @@ void RealtimeFactorDisplay::Initialize(
     ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
   }
 
+  if (_pluginElem)
+  {
+    if (auto elem = _pluginElem->FirstChildElement("text_size"))
+    {
+      if (elem->QueryUnsignedText(&this->dataPtr->textSize) !=
+          tinyxml2::XMLError::XML_SUCCESS)
+      {
+        ignwarn << "Expected text_size to be unsigned, but invalid type"
+                << std::endl;
+      }
+    }
+    if (auto elem = _pluginElem->FirstChildElement("color"))
+    {
+      std::stringstream colorStr;
+      colorStr << std::string(elem->GetText());
+      colorStr >> this->dataPtr->textColor;
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("horizontal_padding"))
+    {
+      if (elem->QueryIntText(&this->dataPtr->horizontalPadding) !=
+          tinyxml2::XMLError::XML_SUCCESS)
+      {
+        ignwarn << "Expected horizontal_padding to be integer, but invalid type"
+                << std::endl;
+      }
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("vertical_padding"))
+    {
+      if (elem->QueryIntText(&this->dataPtr->verticalPadding) !=
+          tinyxml2::XMLError::XML_SUCCESS)
+      {
+        ignwarn << "Expected vertical_padding to be integer, but invalid type"
+                << std::endl;
+      }
+    }
+  }
+
   if (auto scenePtr = this->Scene().lock())
   {
     this->dataPtr->realtimeFactorText = scenePtr->CreateText();
+    // By default the Visual is attached to the RootVisual.
+    // Remove it from the RootVisual so it can be attached to a Camera instead.
+    auto root = scenePtr->RootVisual();
+    root->RemoveChild(this->Visual());
+
+    // Loop through the children looking for a Camera.
+    for (unsigned int i = 0; i < root->ChildCount(); ++i)
+    {
+      auto camera = std::dynamic_pointer_cast<rendering::Camera>(
+        root->ChildByIndex(i));
+      if (camera)
+      {
+        if (!this->dataPtr->cameraAttachedTo)
+        {
+          camera->AddChild(this->Visual());
+          this->dataPtr->cameraAttachedTo = camera;
+          continue;
+        }
+        ignwarn << "Multiple cameras found for scene [" << scenePtr->Name() <<
+          "]. Real time factor display will be attached to the first camera "
+          "and may be visible from other cameras." << std::endl;
+        break;
+      }
+    }
   }
   else
   {
@@ -87,11 +170,133 @@ void RealtimeFactorDisplay::Initialize(
       << std::endl;
     return;
   }
+  if (!this->dataPtr->cameraAttachedTo)
+  {
+    ignerr << "Camera not found. Real time factor display not initialized."
+      << std::endl;
+    return;
+  }
   this->dataPtr->realtimeFactorText->SetTextString("Real time factor: ? %");
   this->dataPtr->realtimeFactorText->SetShowOnTop(true);
+  // TODO(dhood): Allow text to be aligned to different corners of image.
+  // TODO(dhood): I don't think right alignment is working correctly,
+  // so will focus on left-aligned for now.
+  this->dataPtr->realtimeFactorText->SetTextAlignment(
+    ignition::rendering::TextHorizontalAlign::LEFT,
+    ignition::rendering::TextVerticalAlign::BOTTOM);
 
-  // TODO(dhood): Configurable properties
   this->Visual()->AddGeometry(this->dataPtr->realtimeFactorText);
+
+  // Timer to update the text's pose when the camera is resized.
+  this->dataPtr->updateTimer = new QTimer(this);
+  this->connect(this->dataPtr->updateTimer, SIGNAL(timeout()),
+      this, SLOT(UpdateText()));
+  this->dataPtr->updateTimer->start(std::round(1000.0 / 5.0));
+
+  this->UpdateText();
+}
+
+/////////////////////////////////////////////////
+QWidget *RealtimeFactorDisplay::CreateCustomProperties() const
+{
+  auto textSizeWidget = new NumberWidget("Text size", NumberType::UINT);
+  textSizeWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->textSize));
+  textSizeWidget->setObjectName("textSizeWidget");
+  this->connect(textSizeWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
+  auto colorWidget = new ColorWidget();
+  colorWidget->SetValue(QVariant::fromValue(this->dataPtr->textColor));
+  colorWidget->setObjectName("colorWidget");
+  this->connect(colorWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
+  auto horizontalPaddingWidget = new NumberWidget("Horizontal padding",
+      NumberType::INT);
+  horizontalPaddingWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->horizontalPadding));
+  horizontalPaddingWidget->setObjectName("horizontalPaddingWidget");
+  this->connect(horizontalPaddingWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
+  auto verticalPaddingWidget = new NumberWidget("Vertical padding",
+      NumberType::INT);
+  verticalPaddingWidget->SetValue(
+    QVariant::fromValue(this->dataPtr->verticalPadding));
+  verticalPaddingWidget->setObjectName("verticalPaddingWidget");
+  this->connect(verticalPaddingWidget, SIGNAL(ValueChanged(QVariant)), this,
+      SLOT(OnChange(QVariant)));
+
+  auto layout = new QVBoxLayout();
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(0);
+  layout->addWidget(textSizeWidget);
+  layout->addWidget(colorWidget);
+  layout->addWidget(horizontalPaddingWidget);
+  layout->addWidget(verticalPaddingWidget);
+  auto widget = new QWidget();
+  widget->setLayout(layout);
+
+  return widget;
+}
+
+/////////////////////////////////////////////////
+void RealtimeFactorDisplay::OnChange(const QVariant &_value)
+{
+  auto type = this->sender()->objectName().toStdString();
+
+  if (type == "horizontalPaddingWidget")
+    this->dataPtr->horizontalPadding = _value.toInt();
+  else if (type == "verticalPaddingWidget")
+    this->dataPtr->verticalPadding = _value.toInt();
+  else if (type == "textSizeWidget")
+    this->dataPtr->textSize = _value.toUInt();
+  else if (type == "colorWidget")
+    this->dataPtr->textColor = _value.value<math::Color>();
+}
+
+
+/////////////////////////////////////////////////
+void RealtimeFactorDisplay::UpdateText()
+{
+  if (!this->dataPtr->cameraAttachedTo || !this->dataPtr->realtimeFactorText)
+  {
+    return;
+  }
+
+  this->dataPtr->realtimeFactorText->SetColor(this->dataPtr->textColor);
+
+  double imgWidth = static_cast<double>(
+                      this->dataPtr->cameraAttachedTo->ImageWidth());
+  double imgHeight = static_cast<double>(
+                      this->dataPtr->cameraAttachedTo->ImageHeight());
+
+  // Empirical constant so text size can be specified in pixels.
+  static const double pixelScaleFactor = 15.7;
+  // Keep the same text height with wider images (image height doesn't affect).
+  double charHeight = this->dataPtr->textSize * pixelScaleFactor / imgWidth;
+  this->dataPtr->realtimeFactorText->SetCharHeight(charHeight);
+  this->dataPtr->realtimeFactorText->SetSpaceWidth(0.7 * charHeight);
+
+  // Re-position the text so it's in the bottom left.
+  auto projMx = this->dataPtr->cameraAttachedTo->ProjectionMatrix();
+  double scale = 5.0 * projMx(0, 0);  // Distance to display from camera.
+  // (x, y) are in film coordinates: origin at center of image, +x left, +y up.
+  // Extremes are at +/-1.
+  double halfWidth = imgWidth / 2.0;
+  double halfHeight = imgHeight / 2.0;
+  double x = (halfWidth - this->dataPtr->horizontalPadding) / halfWidth;
+  double y = (halfHeight - this->dataPtr->verticalPadding) / halfHeight;
+  // Convert to camera coordinates.
+  // Coordinate axes of the camera are: positive X is into the scene, positive
+  // Y is to the left, and positive Z is up.
+  // Equations taken from projectPixelTo3dRay in image_geometry ROS package.
+  double leftOfImage = (scale * x - projMx(0, 2) - projMx(0, 3)) / projMx(0, 0);
+  double topOfImage = (scale * y - projMx(1, 2) - projMx(1, 3)) / projMx(1, 1);
+  // Pad the text an amount proportional to its world height (empirical).
+  double almostBottomOfImage = -topOfImage + 0.75 * charHeight;
+  this->Visual()->SetLocalPosition(scale, leftOfImage, almostBottomOfImage);
 }
 
 /////////////////////////////////////////////////
@@ -122,6 +327,48 @@ void RealtimeFactorDisplay::OnWorldStatsMsg(
 
   this->dataPtr->msg.CopyFrom(_msg);
   QMetaObject::invokeMethod(this, "ProcessMsg");
+}
+
+/////////////////////////////////////////////////
+tinyxml2::XMLElement *RealtimeFactorDisplay::CustomConfig(
+  tinyxml2::XMLDocument *_doc) const
+{
+  auto customConfigElem = _doc->NewElement("config");
+
+  // Text size
+  {
+    auto propertyElem = _doc->NewElement("text_size");
+    propertyElem->SetText(
+      std::to_string(this->dataPtr->textSize).c_str());
+    customConfigElem->InsertEndChild(propertyElem);
+  }
+
+  // Color
+  {
+    auto colorElem = _doc->NewElement("color");
+    std::stringstream colorStr;
+    colorStr << this->dataPtr->textColor;
+    colorElem->SetText(colorStr.str().c_str());
+    customConfigElem->InsertEndChild(colorElem);
+  }
+
+  // Horizontal padding
+  {
+    auto propertyElem = _doc->NewElement("horizontal_padding");
+    propertyElem->SetText(
+      std::to_string(this->dataPtr->horizontalPadding).c_str());
+    customConfigElem->InsertEndChild(propertyElem);
+  }
+
+  // Vertical padding
+  {
+    auto propertyElem = _doc->NewElement("vertical_padding");
+    propertyElem->SetText(
+      std::to_string(this->dataPtr->verticalPadding).c_str());
+    customConfigElem->InsertEndChild(propertyElem);
+  }
+
+  return customConfigElem;
 }
 
 // Register this plugin
