@@ -1,5 +1,6 @@
-Plugins {#plugins}
-=======
+\page plugins Plugins
+
+Next Tutorial: \ref layout
 
 ## Finding plugins
 
@@ -27,28 +28,11 @@ For example (`examples/config/image.config`):
   `Plugin::LoadConfig` function.
 
 * Ignition GUI processes a few default parameters before passing the config to
-  implemented plugins. These are the attributes handled:
+  implemented plugins. These are the parameters handled:
 
-    * `title`: The title to be displayed on the plugin's title bar
+    * `<title>`: The title to be displayed on the plugin's title bar
 
-    * `show_title_bar`: Set this to false to remove the title bar
-
-    * `show_dock_button`: Set this to false to remove the dock button
-
-    * `show_close_button`: Set this to false to remove the close button
-
-    * `resizable`: Set this to so the plugin can't be resized by dragging its
-                   edges
-
-    * `x`: The plugin's X position in pixels (horizontal, from the left)
-
-    * `y`: The plugin's Y position in pixels (vertical, from the top)
-
-    * `z`: The plugin's Z position in pixels (screen stack, 0 is the lowest)
-
-    * `width`: The plugin's width in pixels
-
-    * `height`: The plugin's height in pixels
+    * `<has_titlebar>`: Set this to false to remove the title bar
 
 ## Built-in plugins
 
@@ -108,3 +92,20 @@ Make custom service requests and serve custom services with these two
 plugins.
 
     ign gui -c examples/config/reqres.config
+
+### Displays {#display-plugins}
+
+This is a container for various Display Plugins that each paint on a Scene.
+The following example includes the display plugins that are installed with
+Ignition GUI by default.
+
+    ign gui -c examples/config/display_plugins.config
+
+#### Finding display plugins
+
+Ignition GUI will look for display plugins on the following paths, in this
+order:
+
+1. All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
+1. `~/.ignition/gui/display_plugins`
+1. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)

@@ -1,5 +1,8 @@
-Examples {#examples}
-========
+\page examples Examples
+
+Next Tutorial: \ref examples
+
+## Overview
 
 Ignition GUI comes with several examples of plugins and other files
 under the `examples` folder.
@@ -40,11 +43,11 @@ For example, we can build the `hello_plugin` example plugin:
 
 Then copy the generated library to a directory where Ignition GUI can find it:
 
-    cp libHelloPlugin.so ~/.ignition/gui/plugins/
+    cp libhello_plugin.so ~/.ignition/gui/plugins/
 
 Now you can use the command line to open it:
 
-    ign gui -s HelloPlugin
+    ign gui -s hello_plugin
 
 ### All example plugins
 
