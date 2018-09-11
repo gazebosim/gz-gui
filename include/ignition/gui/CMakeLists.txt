@@ -58,6 +58,7 @@ ign_create_core_library(SOURCES
   ${sources}
   ${headers_MOC}
   ${resources_RCC}
+  CXX_STANDARD 17
 )
 
 target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
