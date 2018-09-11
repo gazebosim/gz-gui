@@ -126,7 +126,7 @@ namespace plugins
     public: GLuint textureId = 0u;
 
     /// \brief Render engine to use
-    public: std::string engineName = "ogre2";
+    public: std::string engineName = "ogre";
 
     /// \brief Unique scene name
     public: std::string sceneName = "scene";

@@ -15,12 +15,8 @@
  *
 */
 
-#include <QtQuick/QSGGeometryNode>
-#include <QtQuick/QSGTextureMaterial>
-#include <QtQuick/QSGOpaqueTextureMaterial>
-#include <QtQuick/QQuickWindow>
-
 #include <cmath>
+#include <map>
 #include <sstream>
 #include <string>
 
@@ -88,7 +84,9 @@ void IgnRenderer::Initialize()
   if (this->initialized)
     return;
 
-  auto engine = rendering::engine(this->engineName);
+  std::map<std::string, std::string> params;
+  params["useCurrentGLContext"] = "1";
+  auto engine = rendering::engine(this->engineName, params);
   if (!engine)
   {
     ignerr << "Engine [" << this->engineName << "] is not supported"
@@ -119,7 +117,7 @@ void IgnRenderer::Initialize()
   this->camera->SetLocalPose(this->cameraPose);
   this->camera->SetImageWidth(this->textureSize.width());
   this->camera->SetImageHeight(this->textureSize.height());
-  this->camera->SetAntiAliasing(0);
+  this->camera->SetAntiAliasing(4);
   this->camera->SetHFOV(M_PI * 0.5);
   // setting the size should cause the render texture to be rebuilt
   this->camera->PreRender();
