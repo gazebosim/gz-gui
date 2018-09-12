@@ -90,7 +90,11 @@ Pane {
    */
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
-//  Material.elevation: 6
+  // TODO(louise) Support choosing between:
+  // * a transparent background
+  // * a custom color, in which case there will be elevation
+  // Elevation only works if background is not transparent.
+  Material.elevation: 6
   background: Rectangle {
     color: "transparent"
   }
@@ -154,7 +158,6 @@ Pane {
     visible: card.showTitleBar
     Material.foreground: Material.foreground
     Material.background: Material.accent
-    Material.elevation: 0
     width: card.width
     height: card.showTitleBar ? 50 : 0
     x: 0
