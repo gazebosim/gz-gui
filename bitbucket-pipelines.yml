@@ -46,7 +46,7 @@ pipelines:
           - make -j4 install
           - cd ../..
           # Ignition math
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-math -b gz11 
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-math -b gz11
           - cd ign-math
           - mkdir build
           - cd build
@@ -90,7 +90,7 @@ pipelines:
           - apt install -y
             libogre-1.9-dev
             libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b gz11
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b render_node_gz11
           - cd ign-rendering
           - mkdir build
           - cd build

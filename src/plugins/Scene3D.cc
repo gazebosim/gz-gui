@@ -21,14 +21,11 @@
 #include <string>
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/Image.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/common/PluginMacros.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/rendering.hh>
-
-//#include <GL/glext.h>
 
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/plugins/Scene3D.hh"
@@ -57,11 +54,18 @@ using namespace plugins;
 
 QList<QThread *> RenderWindowItem::threads;
 
+// TODO(anyone) Remove test code after integration with scene service
+bool testScene = true;
+
 /////////////////////////////////////////////////
 void IgnRenderer::Render()
 {
-  this->camera->SetLocalPosition(this->camera->WorldPosition()
-      + ignition::math::Vector3d(0.001, 0.001, 0));
+  // TODO(anyone) Remove test code after integration with scene service
+  if (testScene)
+  {
+    this->camera->SetLocalPosition(this->camera->WorldPosition()
+        + ignition::math::Vector3d(0.001, 0.001, 0));
+  }
 
   if (this->textureDirty)
   {
@@ -105,36 +109,40 @@ void IgnRenderer::Initialize()
   }
   auto root = scene->RootVisual();
 
-  rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
-  light0->SetDirection(-0.5, 0.5, -1);
-  light0->SetDiffuseColor(0.5, 0.5, 0.5);
-  light0->SetSpecularColor(0.5, 0.5, 0.5);
-  root->AddChild(light0);
-
   // Camera
   this->camera = scene->CreateCamera();
   root->AddChild(this->camera);
   this->camera->SetLocalPose(this->cameraPose);
   this->camera->SetImageWidth(this->textureSize.width());
   this->camera->SetImageHeight(this->textureSize.height());
-  this->camera->SetAntiAliasing(4);
+  this->camera->SetAntiAliasing(8);
   this->camera->SetHFOV(M_PI * 0.5);
-  // setting the size should cause the render texture to be rebuilt
+  // setting the size and calling PreRender should cause the render texture to
+  //  be rebuilt
   this->camera->PreRender();
   this->textureId = this->camera->RenderTextureGLId();
 
-  auto mat = scene->CreateMaterial();
-  mat->SetDiffuse(0, 1, 0);
-  auto sphere = scene->CreateSphere();
-  auto sphereVis = scene->CreateVisual();
-  root->AddChild(sphereVis);
-  sphereVis->AddGeometry(sphere);
-  sphereVis->SetMaterial(mat);
-  sphereVis->SetLocalPosition(
-      this->camera->LocalPosition() +
-      ignition::math::Vector3d(2, 0, 0));
+  // TODO(anyone) Remove test code after integration with scene service
+  if (testScene)
+  {
+    rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
+    light0->SetDirection(-0.5, 0.5, -1);
+    light0->SetDiffuseColor(0.5, 0.5, 0.5);
+    light0->SetSpecularColor(0.5, 0.5, 0.5);
+    root->AddChild(light0);
 
-  rendering::Image image = this->camera->CreateImage();
+    auto mat = scene->CreateMaterial();
+    mat->SetDiffuse(0, 1, 0);
+    auto sphere = scene->CreateSphere();
+    auto sphereVis = scene->CreateVisual();
+    root->AddChild(sphereVis);
+    sphereVis->AddGeometry(sphere);
+    sphereVis->SetMaterial(mat);
+    sphereVis->SetLocalPosition(
+        this->camera->LocalPosition() +
+        ignition::math::Vector3d(2, 0, 0));
+  }
+
   this->initialized = true;
 }
 
@@ -204,7 +212,6 @@ TextureNode::TextureNode(QQuickWindow *_window)
   // Our texture node must have a texture, so use the default 0 texture.
   this->texture = this->window->createTextureFromId(0, QSize(1, 1));
   this->setTexture(this->texture);
-//  this->setFiltering(QSGTexture::Linear);
 }
 
 /////////////////////////////////////////////////
@@ -238,15 +245,15 @@ void TextureNode::PrepareNode()
   if (newId)
   {
     delete this->texture;
-    // note: include QQuickWindow::TextureHasAlphaChannel if the rendered content
-    // has alpha.
+    // note: include QQuickWindow::TextureHasAlphaChannel if the rendered
+    // content has alpha.
     this->texture = this->window->createTextureFromId(newId, sz);
     this->setTexture(this->texture);
 
     this->markDirty(DirtyMaterial);
 
-    // This will notify the rendering thread that the texture is now being rendered
-    // and it can start rendering to the other one.
+    // This will notify the rendering thread that the texture is now being
+    // rendered and it can start rendering to the other one.
     emit TextureInUse();
   }
 }
@@ -337,7 +344,8 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
         &RenderThread::RenderNext, Qt::QueuedConnection);
 
     // Get the production of FBO textures started..
-    QMetaObject::invokeMethod(this->renderThread, "RenderNext", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this->renderThread, "RenderNext",
+        Qt::QueuedConnection);
   }
 
   node->setRect(this->boundingRect());

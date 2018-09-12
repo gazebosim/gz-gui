@@ -39,7 +39,6 @@ namespace plugins
 {
   class Scene3DPrivate;
   class RenderWindowItemPrivate;
-  class RenderWindowNodePrivate;
 
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
@@ -107,12 +106,6 @@ namespace plugins
   /// \brief Ign-rendering renderer
   class IgnRenderer
   {
-    /// \brief Constructor
-    public: IgnRenderer(){};
-
-    /// \brief Destructor
-    public: ~IgnRenderer(){};
-
     ///  \brief Main render function
     public: void Render();
 
@@ -144,7 +137,9 @@ namespace plugins
     public: bool initialized = false;
 
     /// \brief Render texture size
-    public: QSize textureSize = QSize(512, 512);
+    public: QSize textureSize = QSize(1024, 1024);
+
+    /// \brief Flag to indicate texture size has changed.
     public: bool textureDirty = false;
 
     /// \brief User camera

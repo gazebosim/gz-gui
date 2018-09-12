@@ -15,11 +15,11 @@ Rectangle {
   }
 
 
-    RenderWindow {
-      id: renderWindow
-      objectName: "rw"
-      anchors.fill: parent
-    }
+  RenderWindow {
+    id: renderWindow
+    objectName: "rw"
+    anchors.fill: parent
+  }
 }
 
 
