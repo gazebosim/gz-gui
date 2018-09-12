@@ -10,6 +10,16 @@ RowLayout {
   spacing: 2
   anchors.fill: parent ? parent : null
 
+  Connections {
+    target: WorldControl
+    onPlaying: {
+      paused = false;
+    }
+    onPaused: {
+      paused = true;
+    }
+  }
+
   /**
    * True to show play/pause button
    */
@@ -40,6 +50,10 @@ RowLayout {
    */
   property string stepIcon: "\u25B8\u25B8"
 
+  /**
+   * True if paused, false is playing
+   */
+  property bool paused: false
 
   /**
    * Play / pause
@@ -47,7 +61,7 @@ RowLayout {
   RoundButton {
     id: playButton
     visible: showPlay
-    text: checked ? pauseIcon : playIcon
+    text: paused ? playIcon : pauseIcon
     checkable: true
     anchors.verticalCenter: parent.verticalCenter
     Layout.minimumWidth: width

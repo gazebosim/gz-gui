@@ -1,56 +1,37 @@
-Style {#style}
-=====
+\page style Style
 
-Ignition GUI leverages [QtQuick Controls 2 Styles](https://doc.qt.io/qt-5.9/qtquickcontrols2-styles.html) for styling. The recommended and best supported style is the Material Style, but it is also possible to use others such as Default and Universal.
+Next Tutorial: \ref examples
 
-The default style is hardcoded into the
-[qtquickcontrols2.conf](https://bitbucket.org/ignitionrobotics/ign-gui/src/gz11/include/ignition/gui/qtquickcontrols2.conf)
-file.
+## Overview
 
-There are a few ways to override the default style:
+Ignition GUI comes with a reference style based on [material design](https://material.io/).
 
-* Through the graphical interface (GUI)
-* Setting environment variables (env)
-* Through Ignition GUI config files (config)
+There are different ways to use custom [QSS](http://doc.qt.io/qt-5/stylesheet-syntax.html) stylesheets:
 
-If styles are set from multiple sources, this is the order in which they take precendence:
+## Using cmake
 
-GUI > config > env
+Take a look at the
+[style_cmake example](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/examples/standalone/style_cmake/)
+to see how downstream projects can load their own style by setting it in cmake.
 
-## GUI
+## Command line
 
-To change the style at runtime using the graphical interface, on the left menu,
-choose "Style settings".
+You can pass a stylesheet file on the command line with the `-t` option. Try:
 
-A dialog will open, where you can change the theme (Light / Dark) and primary /
-accent colors. From the color dropdown menu, it is possible to choose one of the
-[pre-defined material colors](https://doc.qt.io/qt-5.9/qtquickcontrols2-material.html#pre-defined-material-colors),
-and from the button next to it, it is possible to choose any custom color.
+    ign gui -s Publisher -t examples/standalone/style_cmake/style.qss
 
-> **Note**: Custom colors won't be automatically shaded based on the theme.
+> Note: when loading a config file which has a stylesheet, this option will not override it.
 
-## Environment variables
+## Through the GUI
 
-See
-[Supported Environment Variables in Qt Quick Controls 2](https://doc.qt.io/qt-5.9/qtquickcontrols2-environment.html).
-
-You can try running the following command for example:
-
-    QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue ign gui -v 4
+At any time from the main window, you can choose `File -> Load stylesheet` and
+choose a QSS file on the fly.
 
 ## Config files
 
-Styles can be set on a configuration file's `<window><style>` tag. The supported
-attributes are:
+You can embed your stylesheet inside the `<window><stylesheet>` tag inside your
+configuration file. See an example:
 
-* `material_theme`
-* `material_primary`
-* `material_accent`
+    ign gui -c examples/config/stylesheet.config
 
-You can try an example:
-
-    ign gui -c examples/config/style.config
-
-> **Note**: When saving the configuration file through the GUI, the current style
-will be saved as well.
-
+> Note: When saving the configuration file through the GUI, the current stylesheet will be saved as well.
