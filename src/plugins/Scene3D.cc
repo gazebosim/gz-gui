@@ -163,7 +163,7 @@ void IgnRenderer::Destroy()
     igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
     engine->DestroyScene(scene);
 
-    // TODO: If that was the last scene, terminate engine?
+    // TODO(anyone) If that was the last scene, terminate engine?
   }
 }
 

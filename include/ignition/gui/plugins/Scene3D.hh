@@ -246,7 +246,7 @@ namespace plugins
 
     /// \brief Constructor
     /// \param[in] _window Parent window
-    public: TextureNode(QQuickWindow *_window);
+    public: explicit TextureNode(QQuickWindow *_window);
 
     /// \brief Destructor
     public: ~TextureNode() override;
