@@ -130,7 +130,7 @@ namespace plugins
     public: std::string sceneName = "scene";
 
     /// \brief Initial Camera pose
-    public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
+    public: math::Pose3d cameraPose = math::Pose3d(0, 0, 2, 0, 0.4, 0);
 
     /// \brief Scene background color
     public: math::Color backgroundColor = math::Color::Black;
@@ -146,6 +146,11 @@ namespace plugins
 
     /// \brief Flag to indicate texture size has changed.
     public: bool textureDirty = false;
+
+    /// \brief Scene service. If not empty, a request will be made to get the
+    /// scene information using this service and the renderer will populate the
+    /// scene based on the response data
+    public: std::string sceneService;
 
     /// \brief User camera
     private: rendering::CameraPtr camera;
@@ -220,6 +225,12 @@ namespace plugins
     /// \brief Set the initial pose the render window camera
     /// \param[in] _pose Initical camera pose
     public: void SetCameraPose(const math::Pose3d &_pose);
+
+    /// \brief Set scene service to use in this render window
+    /// A service call will be made using ign-transport to get scene
+    /// data using this service
+    /// \param[in] _service Scene service name
+    public: void SetSceneService(const std::string &_service);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
