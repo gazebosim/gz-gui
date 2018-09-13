@@ -159,12 +159,6 @@ namespace plugins
     /// \brief Constructor
     public: RenderThread();
 
-    /// \brief Offscreen surface to render to
-    public: QOffscreenSurface *surface = nullptr;
-
-    /// \brief OpenGL context to be passed to the render engine
-    public: QOpenGLContext *context = nullptr;
-
     /// \brief Render the next frame
     public slots: void RenderNext();
 
@@ -172,7 +166,7 @@ namespace plugins
     public slots: void ShutDown();
 
     /// \brief Slot called to update render texture size
-    /// \brief New texture size
+    /// \param[in] _size New texture size
     public slots: void SizeChanged(const QSize &_size);
 
     /// \brief Signal to indicate that a frame has been rendered and ready
@@ -180,6 +174,12 @@ namespace plugins
     /// \param[in] _id GLuid of the opengl texture
     /// \param[in] _size Size of the texture
     signals: void TextureReady(int _id, const QSize &_size);
+
+    /// \brief Offscreen surface to render to
+    public: QOffscreenSurface *surface = nullptr;
+
+    /// \brief OpenGL context to be passed to the render engine
+    public: QOpenGLContext *context = nullptr;
 
     /// \brief Ign-rendering renderer
     public: IgnRenderer ignRenderer;
@@ -229,8 +229,9 @@ namespace plugins
     /// \param[in] _oldNode The node passed in previous updatePaintNode
     /// function. It represents the visual representation of the item.
     /// \param[in] _data The node transformation data.
-    private: QSGNode *updatePaintNode(QSGNode *_node,
-        QQuickItem::UpdatePaintNodeData *_data);
+    /// \return Updated node.
+    private: QSGNode *updatePaintNode(QSGNode *_oldNode,
+        QQuickItem::UpdatePaintNodeData *_data) override;
 
     //// \brief List of threads
     public: static QList<QThread *> threads;

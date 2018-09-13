@@ -83,8 +83,6 @@ ApplicationWindow
    * Top toolbar
    */
   header: ToolBar {
-    Material.elevation: 0
-
     MouseArea {
       anchors.fill: parent;
       property variant clickPos: "1,1"
