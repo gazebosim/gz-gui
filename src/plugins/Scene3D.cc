@@ -156,6 +156,15 @@ void IgnRenderer::Destroy()
   if (!scene)
     return;
   scene->DestroySensor(this->camera);
+
+  // If that was the last sensor, destroy scene
+  if (scene->SensorCount() == 0)
+  {
+    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
+    engine->DestroyScene(scene);
+
+    // TODO: If that was the last scene, terminate engine?
+  }
 }
 
 /////////////////////////////////////////////////
@@ -279,7 +288,7 @@ void RenderWindowItem::Ready()
 
   this->renderThread->moveToThread(this->renderThread);
 
-  this->connect(this->window(), &QQuickWindow::sceneGraphInvalidated,
+  connect(this, &QObject::destroyed,
       this->renderThread, &RenderThread::ShutDown, Qt::QueuedConnection);
 
   this->renderThread->start();
