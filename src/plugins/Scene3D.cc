@@ -289,7 +289,7 @@ void RenderWindowItem::Ready()
 
   this->renderThread->moveToThread(this->renderThread);
 
-  connect(this->window(), &QQuickWindow::sceneGraphInvalidated,
+  connect(this, &QObject::destroyed,
       this->renderThread, &RenderThread::ShutDown, Qt::QueuedConnection);
 
   this->renderThread->start();
