@@ -236,7 +236,10 @@ rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
     geom->SetMaterial(material);
   }
   else
-    ignerr << "Failed to load geometry for visual: " << _msg.name() << std::endl;
+  {
+    ignerr << "Failed to load geometry for visual: " << _msg.name()
+           << std::endl;
+  }
 
   return visualVis;
 }
