@@ -155,6 +155,8 @@ void SceneRequester::LoadScene(const msgs::Scene &_msg)
     rendering::VisualPtr modelVis = this->LoadModel(_msg.model(i));
     if (modelVis)
       rootVis->AddChild(modelVis);
+    else
+      ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
   }
 }
 
@@ -170,6 +172,8 @@ rendering::VisualPtr SceneRequester::LoadModel(const msgs::Model &_msg)
     rendering::VisualPtr linkVis = this->LoadLink(_msg.link(i));
     if (linkVis)
       modelVis->AddChild(linkVis);
+    else
+      ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
   return modelVis;
 }
@@ -186,6 +190,8 @@ rendering::VisualPtr SceneRequester::LoadLink(const msgs::Link &_msg)
     rendering::VisualPtr visualVis = this->LoadVisual(_msg.visual(i));
     if (visualVis)
       linkVis->AddChild(visualVis);
+    else
+      ignerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
   }
   return linkVis;
 }
@@ -225,8 +231,12 @@ rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
         material->SetSpecular(0.4, 0.4, 0.4);
       }
     }
+    material->SetTransparency(_msg.transparency());
+
     geom->SetMaterial(material);
   }
+  else
+    ignerr << "Failed to load geometry for visual: " << _msg.name() << std::endl;
 
   return visualVis;
 }
@@ -303,8 +313,6 @@ rendering::MaterialPtr SceneRequester::LoadMaterial(const msgs::Material &_msg)
     material->SetEmissive(msgs::Convert(_msg.emissive()));
   }
 
-  // TODO(anyone) ign-msgs material.proto is missing the transparency field
-  // material->SetTransparent(_msg.transparency());
   return material;
 }
 
