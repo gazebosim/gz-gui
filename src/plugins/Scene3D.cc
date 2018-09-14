@@ -471,7 +471,6 @@ TextureNode::~TextureNode()
   delete this->texture;
 }
 
-
 /////////////////////////////////////////////////
 void TextureNode::NewTexture(int _id, const QSize &_size)
 {
@@ -540,14 +539,14 @@ void RenderWindowItem::Ready()
 
 /////////////////////////////////////////////////
 QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
-    QQuickItem::UpdatePaintNodeData * /*_data*/)
+    QQuickItem::UpdatePaintNodeData */*_data*/)
 {
   TextureNode *node = static_cast<TextureNode *>(_node);
 
   if (!this->renderThread->context)
   {
     QOpenGLContext *current = this->window()->openglContext();
-    // Some GL implementations requres that the currently bound context is
+    // Some GL implementations require that the currently bound context is
     // made non-current before we set up sharing, so we doneCurrent here
     // and makeCurrent down below while setting up our own context.
     current->doneCurrent();
@@ -585,13 +584,13 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // This rendering pipeline is throttled by vsync on the scene graph
     // rendering thread.
 
-    connect(this->renderThread, &RenderThread::TextureReady,
+    this->connect(this->renderThread, &RenderThread::TextureReady,
         node, &TextureNode::NewTexture, Qt::DirectConnection);
-    connect(node, &TextureNode::PendingNewTexture, this->window(),
+    this->connect(node, &TextureNode::PendingNewTexture, this->window(),
         &QQuickWindow::update, Qt::QueuedConnection);
-    connect(this->window(), &QQuickWindow::beforeRendering, node,
+    this->connect(this->window(), &QQuickWindow::beforeRendering, node,
         &TextureNode::PrepareNode, Qt::DirectConnection);
-    connect(node, &TextureNode::TextureInUse, this->renderThread,
+    this->connect(node, &TextureNode::TextureInUse, this->renderThread,
         &RenderThread::RenderNext, Qt::QueuedConnection);
 
     // Get the production of FBO textures started..

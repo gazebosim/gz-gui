@@ -14,7 +14,6 @@ Rectangle {
     }
   }
 
-
   RenderWindow {
     id: renderWindow
     objectName: "rw"
