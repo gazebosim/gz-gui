@@ -20,13 +20,17 @@
 
 #include <string>
 #include <memory>
+#include <mutex>
 
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
+#include <ignition/common/MouseEvent.hh>
+
 #include <ignition/rendering/Camera.hh>
+#include <ignition/rendering/OrbitViewController.hh>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
@@ -70,34 +74,6 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Retrieve the first point on a surface in the 3D scene hit by a
-    /// ray cast from the given 2D screen coordinates.
-    /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
-    /// \return 3D coordinates of a point in the 3D scene.
-    // piublic: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
-    //    const;
-
-    // Documentation inherited
-//    protected: virtual QPaintEngine *paintEngine() const override;
-
-    // Documentation inherited
-//    protected: virtual void paintEvent(QPaintEvent *_e) override;
-//
-//    // Documentation inherited
-//    protected: virtual void resizeEvent(QResizeEvent *_e) override;
-//
-//    // Documentation inherited
-//    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
-//
-//    // Documentation inherited
-//    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
-//
-//    // Documentation inherited
-//    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
-//
-//    // Documentation inherited
-//    protected: virtual void wheelEvent(QWheelEvent *_e) override;
-
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
@@ -119,6 +95,34 @@ namespace plugins
 
     /// \brief Destroy camera associated with this renderer
     public: void Destroy();
+
+    /// \brief New mouse event triggered
+    /// \param[in] _e New mouse event
+    /// \param[in] _drag Mouse move distance
+    public: void NewMouseEvent(const common::MouseEvent &_e,
+        const math::Vector2d &_drag = math::Vector2d::Zero);
+
+    /// \brief Handle mouse event for view control
+    private: void HandleMouseEvent();
+
+    /// \brief Retrieve the first point on a surface in the 3D scene hit by a
+    /// ray cast from the given 2D screen coordinates.
+    /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
+    /// \return 3D coordinates of a point in the 3D scene.
+    private: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
+        const;
+
+    /// \brief Flag to indicate if mouse event is dirty
+    public: bool mouseDirty = false;
+
+    /// \brief Mouse event
+    public: common::MouseEvent mouseEvent;
+
+    /// \brief Mouse move distance since last event.
+    public: math::Vector2d drag;
+
+    /// \brief Mutex to protect mouse events
+    public: std::mutex mutex;
 
     /// \brief Render texture id
     public: GLuint textureId = 0u;
@@ -154,6 +158,12 @@ namespace plugins
 
     /// \brief User camera
     private: rendering::CameraPtr camera;
+
+    /// \brief Camera orbit controller
+    private: rendering::OrbitViewController viewControl;
+
+    /// \brief Ray query for mouse clicks
+    private: rendering::RayQueryPtr rayQuery;
   };
 
   /// \brief Rendering thread
@@ -235,6 +245,18 @@ namespace plugins
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
 
+    // Documentation inherited
+    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void wheelEvent(QWheelEvent *_e) override;
+
     /// \brief Overrides the paint event to render the render engine
     /// camera view
     /// \param[in] _oldNode The node passed in previous updatePaintNode
@@ -249,6 +271,10 @@ namespace plugins
 
     /// \brief Render thread
     private: RenderThread *renderThread = nullptr;
+
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
   };
 
   /// \brief Texture node for displaying the render texture from ign-renderer
