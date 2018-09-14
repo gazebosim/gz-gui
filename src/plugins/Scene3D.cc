@@ -132,6 +132,9 @@ void SceneRequester::Request()
 
   msgs::Scene res;
 
+  // \todo(anyone) Look into using an asynchronous request, or an
+  // alternative Request function that is asynchronous. This could be used
+  // to make `Initialize` non-blocking.
   executed = node.Request(this->service, timeout, res, result);
   if (!executed || !result)
   {
