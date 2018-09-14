@@ -228,7 +228,6 @@ rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
     geom->SetMaterial(material);
   }
 
-
   return visualVis;
 }
 
@@ -237,7 +236,7 @@ rendering::GeometryPtr SceneRequester::LoadGeometry(const msgs::Geometry &_msg,
     math::Vector3d &_scale)
 {
   math::Vector3d scale = math::Vector3d::One;
-  rendering::GeometryPtr geom;
+  rendering::GeometryPtr geom{nullptr};
   if (_msg.has_box())
   {
     geom = this->scene->CreateBox();
@@ -289,27 +288,19 @@ rendering::MaterialPtr SceneRequester::LoadMaterial(const msgs::Material &_msg)
   rendering::MaterialPtr material = this->scene->CreateMaterial();
   if (_msg.has_ambient())
   {
-    material->SetAmbient(_msg.ambient().r(),
-                         _msg.ambient().g(),
-                         _msg.ambient().b());
+    material->SetAmbient(msgs::Convert(_msg.ambient()));
   }
   if (_msg.has_diffuse())
   {
-    material->SetDiffuse(_msg.diffuse().r(),
-                         _msg.diffuse().g(),
-                         _msg.diffuse().b());
+    material->SetDiffuse(msgs::Convert(_msg.diffuse()));
   }
   if (_msg.has_specular())
   {
-    material->SetDiffuse(_msg.specular().r(),
-                         _msg.specular().g(),
-                         _msg.specular().b());
+    material->SetDiffuse(msgs::Convert(_msg.specular()));
   }
   if (_msg.has_emissive())
   {
-    material->SetEmissive(_msg.emissive().r(),
-                          _msg.emissive().g(),
-                          _msg.emissive().b());
+    material->SetEmissive(msgs::Convert(_msg.emissive()));
   }
 
   // TODO(anyone) ign-msgs material.proto is missing the transparency field
