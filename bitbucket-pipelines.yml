@@ -40,17 +40,18 @@ pipelines:
             libignition-math6-dev
             libignition-msgs3-dev
             libignition-transport6-dev
-          # Ignition rendering
-          - apt install -y
-            libogre-1.9-dev
-            libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b render_node_gz11
-          - cd ign-rendering
-          - mkdir build
-          - cd build
-          - cmake ..
-          - make -j4 install
-          - cd ../..
+            libignition-rendering-dev
+          # Ignition rendering (uncomment if a specific branch is needed)
+          # - apt install -y
+          #   libogre-1.9-dev
+          #   libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
+          # - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b render_node_gz11
+          # - cd ign-rendering
+          # - mkdir build
+          # - cd build
+          # - cmake ..
+          # - make -j4 install
+          # - cd ../..
           # Ignition GUI
           - mkdir build
           - cd build

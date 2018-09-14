@@ -126,7 +126,6 @@ void SceneRequester::Request()
   // Create a transport node.
   ignition::transport::Node node;
 
-  bool executed{false};
   bool result{false};
   unsigned int timeout{5000};
 
@@ -135,14 +134,15 @@ void SceneRequester::Request()
   // \todo(anyone) Look into using an asynchronous request, or an
   // alternative Request function that is asynchronous. This could be used
   // to make `Initialize` non-blocking.
-  executed = node.Request(this->service, timeout, res, result);
-  if (!executed || !result)
+  if (node.Request(this->service, timeout, res, result) && result)
+  {
+    this->LoadScene(res);
+  }
+  else
   {
     ignerr << "Error making service request to " << this->service
            << std::endl;
-    return;
   }
-  this->LoadScene(res);
 }
 
 /////////////////////////////////////////////////
