@@ -23,9 +23,16 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/common/PluginMacros.hh>
+#include <ignition/common/MeshManager.hh>
+
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
+
+#include <ignition/msgs.hh>
+
 #include <ignition/rendering.hh>
+
+#include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/plugins/Scene3D.hh"
@@ -36,6 +43,57 @@ namespace gui
 {
 namespace plugins
 {
+  /// \brief Scene requester class for making scene service request
+  /// and populating the scene based on the response msg.
+  class SceneRequester
+  {
+    /// \brief Constrcutor
+    /// \param[in] _service Ign transport service name
+    /// \param[in] _scene Pointer to the rendering scene
+    public: SceneRequester(const std::string &_service,
+        rendering::ScenePtr _scene);
+
+    /// \brief Make the request and populate the scene
+    public: void Request();
+
+    /// \brief Load the scene from a scene msg
+    /// \param[in] _msg Scene msg
+    private: void LoadScene(const msgs::Scene &_msg);
+
+    /// \brief Load the model from a model msg
+    /// \param[in] _msg Model msg
+    /// \return Model visual created from the msg
+    private: rendering::VisualPtr LoadModel(const msgs::Model &_msg);
+
+    /// \brief Load a link from a link msg
+    /// \param[in] _msg Link msg
+    /// \return Link visual created from the msg
+    private: rendering::VisualPtr LoadLink(const msgs::Link &_msg);
+
+    /// \brief Load a visual from a visual msg
+    /// \param[in] _msg Visual msg
+    /// \return Visual visual created from the msg
+    private: rendering::VisualPtr LoadVisual(const msgs::Visual &_msg);
+
+    /// \brief Load a geometry from a geometry msg
+    /// \param[in] _msg Geometry msg
+    /// \param[out] _scale Geometry scale that will be set based on msg param
+    /// \return Geometry object created from the msg
+    private: rendering::GeometryPtr LoadGeometry(const msgs::Geometry &_msg,
+        math::Vector3d &_scale);
+
+    /// \brief Load a material from a material msg
+    /// \param[in] _msg Material msg
+    /// \return Material object created from the msg
+    private: rendering::MaterialPtr LoadMaterial(const msgs::Material &_msg);
+
+    //// \brief Ign-transport service name
+    private: std::string service;
+
+    //// \brief Pointer to the rendering scene
+    private: rendering::ScenePtr scene;
+  };
+
   class Scene3DPrivate
   {
     /// \brief Keep latest mouse event
@@ -54,19 +112,216 @@ using namespace plugins;
 
 QList<QThread *> RenderWindowItem::threads;
 
-// TODO(anyone) Remove test code after integration with scene service
-bool testScene = true;
+/////////////////////////////////////////////////
+SceneRequester::SceneRequester(const std::string &_service,
+    rendering::ScenePtr _scene)
+{
+  this->service = _service;
+  this->scene = _scene;
+}
+
+/////////////////////////////////////////////////
+void SceneRequester::Request()
+{
+  // Create a transport node.
+  ignition::transport::Node node;
+
+  bool result{false};
+  unsigned int timeout{5000};
+
+  msgs::Scene res;
+
+  // \todo(anyone) Look into using an asynchronous request, or an
+  // alternative Request function that is asynchronous. This could be used
+  // to make `Initialize` non-blocking.
+  if (node.Request(this->service, timeout, res, result) && result)
+  {
+    this->LoadScene(res);
+  }
+  else
+  {
+    ignerr << "Error making service request to " << this->service
+           << std::endl;
+  }
+}
+
+/////////////////////////////////////////////////
+void SceneRequester::LoadScene(const msgs::Scene &_msg)
+{
+  rendering::VisualPtr rootVis = this->scene->RootVisual();
+
+  for (int i = 0; i < _msg.model_size(); ++i)
+  {
+    rendering::VisualPtr modelVis = this->LoadModel(_msg.model(i));
+    if (modelVis)
+      rootVis->AddChild(modelVis);
+    else
+      ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+  }
+}
+
+/////////////////////////////////////////////////
+rendering::VisualPtr SceneRequester::LoadModel(const msgs::Model &_msg)
+{
+  rendering::VisualPtr modelVis = this->scene->CreateVisual();
+  if (_msg.has_pose())
+    modelVis->SetLocalPose(msgs::Convert(_msg.pose()));
+
+  for (int i = 0; i < _msg.link_size(); ++i)
+  {
+    rendering::VisualPtr linkVis = this->LoadLink(_msg.link(i));
+    if (linkVis)
+      modelVis->AddChild(linkVis);
+    else
+      ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
+  }
+  return modelVis;
+}
+
+/////////////////////////////////////////////////
+rendering::VisualPtr SceneRequester::LoadLink(const msgs::Link &_msg)
+{
+  rendering::VisualPtr linkVis = this->scene->CreateVisual();
+  if (_msg.has_pose())
+    linkVis->SetLocalPose(msgs::Convert(_msg.pose()));
+
+  for (int i = 0; i < _msg.visual_size(); ++i)
+  {
+    rendering::VisualPtr visualVis = this->LoadVisual(_msg.visual(i));
+    if (visualVis)
+      linkVis->AddChild(visualVis);
+    else
+      ignerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
+  }
+  return linkVis;
+}
+
+/////////////////////////////////////////////////
+rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
+{
+  if (!_msg.has_geometry())
+    return rendering::VisualPtr();
+
+  rendering::VisualPtr visualVis = this->scene->CreateVisual();
+  if (_msg.has_pose())
+    visualVis->SetLocalPose(msgs::Convert(_msg.pose()));
+
+  math::Vector3d scale = math::Vector3d::One;
+  rendering::GeometryPtr geom = this->LoadGeometry(_msg.geometry(), scale);
+  if (geom)
+  {
+    visualVis->AddGeometry(geom);
+    visualVis->SetLocalScale(scale);
+
+    // set material
+    rendering::MaterialPtr material;
+    if (_msg.has_material())
+    {
+      material = this->LoadMaterial(_msg.material());
+    }
+    else
+    {
+      // create default material
+      material = this->scene->Material("ign-grey");
+      if (!material)
+      {
+        material = this->scene->CreateMaterial("ign-grey");
+        material->SetAmbient(0.3, 0.3, 0.3);
+        material->SetDiffuse(0.7, 0.7, 0.7);
+        material->SetSpecular(0.4, 0.4, 0.4);
+      }
+    }
+    material->SetTransparency(_msg.transparency());
+
+    geom->SetMaterial(material);
+  }
+  else
+  {
+    ignerr << "Failed to load geometry for visual: " << _msg.name()
+           << std::endl;
+  }
+
+  return visualVis;
+}
+
+/////////////////////////////////////////////////
+rendering::GeometryPtr SceneRequester::LoadGeometry(const msgs::Geometry &_msg,
+    math::Vector3d &_scale)
+{
+  math::Vector3d scale = math::Vector3d::One;
+  rendering::GeometryPtr geom{nullptr};
+  if (_msg.has_box())
+  {
+    geom = this->scene->CreateBox();
+    if (_msg.box().has_size())
+      scale = msgs::Convert(_msg.box().size());
+  }
+  else if (_msg.has_cylinder())
+  {
+    geom = this->scene->CreateCylinder();
+    scale.X() = _msg.cylinder().radius() * 2;
+    scale.Y() = scale.X();
+    scale.Z() = _msg.cylinder().length();
+  }
+  else if (_msg.has_sphere())
+  {
+    geom = this->scene->CreateSphere();
+    scale.X() = _msg.sphere().radius() * 2;
+    scale.Y() = scale.X();
+    scale.Z() = scale.X();
+  }
+  else if (_msg.has_mesh())
+  {
+    if (_msg.mesh().filename().empty())
+    {
+      ignerr << "Mesh geometry missing filename" << std::endl;
+      return geom;
+    }
+    rendering::MeshDescriptor descriptor;
+    // TODO(anyone) resolve filename path?
+    // currently assumes absolute path to mesh file
+    descriptor.meshName = _msg.mesh().filename();
+
+    ignition::common::MeshManager* meshManager =
+        ignition::common::MeshManager::Instance();
+    descriptor.mesh = meshManager->Load(descriptor.meshName);
+    geom = this->scene->CreateMesh(descriptor);
+  }
+  else
+  {
+    ignerr << "Unsupported geometry type" << std::endl;
+  }
+  _scale = scale;
+  return geom;
+}
+
+/////////////////////////////////////////////////
+rendering::MaterialPtr SceneRequester::LoadMaterial(const msgs::Material &_msg)
+{
+  rendering::MaterialPtr material = this->scene->CreateMaterial();
+  if (_msg.has_ambient())
+  {
+    material->SetAmbient(msgs::Convert(_msg.ambient()));
+  }
+  if (_msg.has_diffuse())
+  {
+    material->SetDiffuse(msgs::Convert(_msg.diffuse()));
+  }
+  if (_msg.has_specular())
+  {
+    material->SetDiffuse(msgs::Convert(_msg.specular()));
+  }
+  if (_msg.has_emissive())
+  {
+    material->SetEmissive(msgs::Convert(_msg.emissive()));
+  }
+
+  return material;
+}
 
 /////////////////////////////////////////////////
 void IgnRenderer::Render()
 {
-  // TODO(anyone) Remove test code after integration with scene service
-  if (testScene)
-  {
-    this->camera->SetLocalPosition(this->camera->WorldPosition()
-        + ignition::math::Vector3d(0.001, 0.001, 0));
-  }
-
   if (this->textureDirty)
   {
     this->camera->SetImageWidth(this->textureSize.width());
@@ -122,25 +377,17 @@ void IgnRenderer::Initialize()
   this->camera->PreRender();
   this->textureId = this->camera->RenderTextureGLId();
 
-  // TODO(anyone) Remove test code after integration with scene service
-  if (testScene)
-  {
-    rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
-    light0->SetDirection(-0.5, 0.5, -1);
-    light0->SetDiffuseColor(0.5, 0.5, 0.5);
-    light0->SetSpecularColor(0.5, 0.5, 0.5);
-    root->AddChild(light0);
+  rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
+  light0->SetDirection(-0.5, 0.5, -1);
+  light0->SetDiffuseColor(0.5, 0.5, 0.5);
+  light0->SetSpecularColor(0.5, 0.5, 0.5);
+  root->AddChild(light0);
 
-    auto mat = scene->CreateMaterial();
-    mat->SetDiffuse(0, 1, 0);
-    auto sphere = scene->CreateSphere();
-    auto sphereVis = scene->CreateVisual();
-    root->AddChild(sphereVis);
-    sphereVis->AddGeometry(sphere);
-    sphereVis->SetMaterial(mat);
-    sphereVis->SetLocalPosition(
-        this->camera->LocalPosition() +
-        ignition::math::Vector3d(2, 0, 0));
+  // Make service call to populate scene
+  if (!this->sceneService.empty())
+  {
+    SceneRequester sq(this->sceneService, scene);
+    sq.Request();
   }
 
   this->initialized = true;
@@ -392,6 +639,12 @@ void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetSceneService(const std::string &_service)
+{
+  this->renderThread->ignRenderer.sceneService = _service;
+}
+
+/////////////////////////////////////////////////
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
@@ -453,6 +706,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       poseStr << std::string(elem->GetText());
       poseStr >> pose;
       renderWindow->SetCameraPose(pose);
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("service"))
+    {
+      std::string service = elem->GetText();
+      renderWindow->SetSceneService(service);
     }
   }
 }
