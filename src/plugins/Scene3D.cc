@@ -99,11 +99,9 @@ namespace plugins
   {
     /// \brief Keep latest mouse event
     public: common::MouseEvent mouseEvent;
-
-    /// \brief Keep latest target point in the 3D world (for camera orbiting)
-    public: math::Vector3d target;
   };
 
+  /// \brief Private data class for Scene3D
   class Scene3DPrivate
   {
   };
@@ -350,49 +348,49 @@ void IgnRenderer::Render()
 void IgnRenderer::HandleMouseEvent()
 {
   std::lock_guard<std::mutex> lock(this->mutex);
-  math::Vector3d target;
-  if (this->mouseDirty)
-  {
-    this->viewControl.SetCamera(this->camera);
+  if (!this->mouseDirty)
+    return;
 
-    if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
+  math::Vector3d target;
+  this->viewControl.SetCamera(this->camera);
+
+  if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
+  {
+    target = this->ScreenToScene(this->mouseEvent.Pos());
+    this->viewControl.SetTarget(target);
+    double distance = this->camera->WorldPosition().Distance(target);
+    double amount = -this->drag.Y() * distance / 5.0;
+    viewControl.Zoom(amount);
+  }
+  else
+  {
+    target = this->ScreenToScene(this->mouseEvent.PressPos());
+    this->viewControl.SetTarget(target);
+
+    // Pan with left button
+    if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
     {
-      target = this->ScreenToScene(this->mouseEvent.Pos());
-      this->viewControl.SetTarget(target);
+      viewControl.Pan(this->drag);
+    }
+    // Orbit with middle button
+    else if (this->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
+    {
+      viewControl.Orbit(this->drag);
+    }
+    else if (this->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
+    {
+      double hfov = this->camera->HFOV().Radian();
+      double vfov = 2.0f * atan(tan(hfov / 2.0f) /
+          this->camera->AspectRatio());
       double distance = this->camera->WorldPosition().Distance(target);
-      double amount = -this->drag.Y() * distance / 5.0;
+      double amount = ((-this->drag.Y() /
+          static_cast<double>(this->camera->ImageHeight()))
+          * distance * tan(vfov/2.0) * 6.0);
       viewControl.Zoom(amount);
     }
-    else
-    {
-      target = this->ScreenToScene(this->mouseEvent.PressPos());
-      this->viewControl.SetTarget(target);
-
-      // Pan with left button
-      if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
-      {
-        viewControl.Pan(this->drag);
-      }
-      // Orbit with middle button
-      else if (this->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
-      {
-        viewControl.Orbit(this->drag);
-      }
-      else if (this->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
-      {
-        double hfov = this->camera->HFOV().Radian();
-        double vfov = 2.0f * atan(tan(hfov / 2.0f) /
-            this->camera->AspectRatio());
-        double distance = this->camera->WorldPosition().Distance(target);
-        double amount = ((-this->drag.Y() /
-            static_cast<double>(this->camera->ImageHeight()))
-            * distance * tan(vfov/2.0) * 6.0);
-        viewControl.Zoom(amount);
-      }
-    }
-    this->drag = 0;
-    this->mouseDirty = false;
   }
+  this->drag = 0;
+  this->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -824,8 +822,6 @@ void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 
   this->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
-
-  // QQuickItem::mousePressEvent(_e);
 }
 
 ////////////////////////////////////////////////
@@ -835,8 +831,6 @@ void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 
   this->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
-
-  // QQuickItem::mouseReleaseEvent(_e);
 }
 
 ////////////////////////////////////////////////
