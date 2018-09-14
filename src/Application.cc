@@ -95,8 +95,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   this->dataPtr->signalHandler.AddCallback(
       [](int)  // NOLINT(readability/casting)
       {
-        for (auto window : App()->allWindows())
-          window->close();
+          App()->quit();
       });
 
   // Handle qt console messages

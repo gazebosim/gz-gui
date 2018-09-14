@@ -15,12 +15,8 @@
  *
 */
 
-#include <QtQuick/QSGGeometryNode>
-#include <QtQuick/QSGTextureMaterial>
-#include <QtQuick/QSGOpaqueTextureMaterial>
-#include <QtQuick/QQuickWindow>
-
 #include <cmath>
+#include <map>
 #include <sstream>
 #include <string>
 
@@ -40,57 +36,6 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Private data class for RendereWindowItem
-  class RenderWindowItemPrivate
-  {
-    /// brief Parent window
-    public: QQuickWindow *quickWindow;
-
-    /// \brief Render window OpenGL Context
-    public: QOpenGLContext* renderWindowContext;
-
-    /// \brief Qt OpenGL Context
-    public: QOpenGLContext* qtContext;
-
-    /// \brief Qt scene graph texture material
-    public: QSGTextureMaterial material;
-
-    /// \brief Qt scene graph texture opaque material
-    public: QSGOpaqueTextureMaterial materialOpaque;
-
-    /// \brief Qt scene graph texture
-    public: QSGTexture *texture = nullptr;
-
-    /// \brief Qt scene graph geometry
-    public: QSGGeometry *geometry = nullptr;
-
-    /// \brief Qt scene graph texture size
-    public: QSize textureSize;
-
-    /// \brief Flag to indicate if render window context has been initialized
-    /// or not
-    public: bool initialized = false;
-
-    /// \brief Pointer to user camera
-    public: rendering::CameraPtr camera;
-
-    /// \brief Engine Name
-    public: std::string engineName{"ogre"};
-
-    /// \brief Scene Name
-    public: std::string sceneName{"scene"};
-
-    /// \brief Ambient light color
-    public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3);
-
-    /// \brief Background color
-    public: math::Color backgroundColor = math::Color(0.3, 0.3, 0.3);
-
-    /// \brief Initial camera pose
-    public: math::Pose3d cameraPose = math::Pose3d(0, 0, 5, 0, 0, 0);
-  };
-
-
   class Scene3DPrivate
   {
     /// \brief Keep latest mouse event
@@ -107,299 +52,343 @@ using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
+QList<QThread *> RenderWindowItem::threads;
+
+// TODO(anyone) Remove test code after integration with scene service
+bool testScene = true;
+
 /////////////////////////////////////////////////
-RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
-  : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
+void IgnRenderer::Render()
 {
-  this->setFlag(ItemHasContents);
-  this->setSmooth(false);
-  this->startTimer(16);
+  // TODO(anyone) Remove test code after integration with scene service
+  if (testScene)
+  {
+    this->camera->SetLocalPosition(this->camera->WorldPosition()
+        + ignition::math::Vector3d(0.001, 0.001, 0));
+  }
 
-  this->dataPtr->geometry =
-      new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
+  if (this->textureDirty)
+  {
+    this->camera->SetImageWidth(this->textureSize.width());
+    this->camera->SetImageHeight(this->textureSize.height());
+    this->camera->SetAspectRatio(this->textureSize.width() /
+        this->textureSize.height());
+    // setting the size should cause the render texture to be rebuilt
+    this->camera->PreRender();
+    this->textureId = this->camera->RenderTextureGLId();
+    this->textureDirty = false;
+  }
 
-  this->connect(this, &QQuickItem::windowChanged, [=](QQuickWindow *_window)
-    {
-      if (!_window)
-      {
-        igndbg << "Changed to null window" << std::endl;
-        return;
-      }
-      this->dataPtr->quickWindow = _window;
-
-      // start Ogre once we are in the rendering thread (Ogre must live in the
-      // rendering thread)
-      this->connect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
-          this, &RenderWindowItem::InitializeEngine, Qt::DirectConnection);
-    });
+  this->camera->Update();
 }
 
 /////////////////////////////////////////////////
-RenderWindowItem::~RenderWindowItem()
+void IgnRenderer::Initialize()
 {
-  igndbg << "Destroy camera [" << this->dataPtr->camera->Name() << "]"
-         << std::endl;
-  // Destroy camera
-  auto scene = this->dataPtr->camera->Scene();
-  scene->DestroyNode(this->dataPtr->camera);
-  this->dataPtr->camera.reset();
+  if (this->initialized)
+    return;
 
-  // If that was the last sensor, destroy scene
-  if (scene->SensorCount() == 0)
-  {
-    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
-    auto engine = scene->Engine();
-    engine->DestroyScene(scene);
-
-    // TODO(anyone): If that was the last scene, terminate engine?
-  }
-
-  delete this->dataPtr->geometry;
-  delete this->dataPtr->texture;
-}
-
-/////////////////////////////////////////////////
-void RenderWindowItem::InitializeEngine()
-{
-  this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
-            this, &RenderWindowItem::InitializeEngine);
-  this->dataPtr->qtContext = QOpenGLContext::currentContext();
-  if (!this->dataPtr->qtContext)
-  {
-    ignerr << "Null plugin Qt context!" << std::endl;
-  }
-
-  // create a new shared OpenGL context to be used exclusively by Ogre
-  this->dataPtr->renderWindowContext = new QOpenGLContext();
-  this->dataPtr->renderWindowContext->setFormat(
-      this->dataPtr->quickWindow->requestedFormat());
-  this->dataPtr->renderWindowContext->setShareContext(this->dataPtr->qtContext);
-  this->dataPtr->renderWindowContext->create();
-
-  this->ActivateRenderWindowContext();
-  // Render engine
-  auto engine = rendering::engine(this->dataPtr->engineName);
+  std::map<std::string, std::string> params;
+  params["useCurrentGLContext"] = "1";
+  auto engine = rendering::engine(this->engineName, params);
   if (!engine)
   {
-    ignerr << "Engine [" << this->dataPtr->engineName << "] is not supported"
+    ignerr << "Engine [" << this->engineName << "] is not supported"
            << std::endl;
     return;
   }
 
   // Scene
-  auto scene = engine->SceneByName(this->dataPtr->sceneName);
+  auto scene = engine->SceneByName(this->sceneName);
   if (!scene)
   {
-    igndbg << "Create scene [" << this->dataPtr->sceneName << "]" << std::endl;
-    scene = engine->CreateScene(this->dataPtr->sceneName);
-    scene->SetAmbientLight(this->dataPtr->ambientLight);
-    scene->SetBackgroundColor(this->dataPtr->backgroundColor);
+    igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+    scene = engine->CreateScene(this->sceneName);
+    scene->SetAmbientLight(this->ambientLight);
+    scene->SetBackgroundColor(this->backgroundColor);
   }
   auto root = scene->RootVisual();
 
   // Camera
-  this->dataPtr->camera = scene->CreateCamera();
-  root->AddChild(this->dataPtr->camera);
-  this->dataPtr->camera->SetLocalPose(this->dataPtr->cameraPose);
-  this->dataPtr->camera->SetImageWidth(800);
-  this->dataPtr->camera->SetImageHeight(600);
-  this->dataPtr->camera->SetAntiAliasing(2);
-//  this->dataPtr->camera->SetAspectRatio(this->width() / this->height());
-  this->dataPtr->camera->SetHFOV(M_PI * 0.5);
+  this->camera = scene->CreateCamera();
+  root->AddChild(this->camera);
+  this->camera->SetLocalPose(this->cameraPose);
+  this->camera->SetImageWidth(this->textureSize.width());
+  this->camera->SetImageHeight(this->textureSize.height());
+  this->camera->SetAntiAliasing(8);
+  this->camera->SetHFOV(M_PI * 0.5);
+  // setting the size and calling PreRender should cause the render texture to
+  //  be rebuilt
+  this->camera->PreRender();
+  this->textureId = this->camera->RenderTextureGLId();
 
-  this->DoneRenderWindowContext();
-  this->dataPtr->initialized = true;
+  // TODO(anyone) Remove test code after integration with scene service
+  if (testScene)
+  {
+    rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
+    light0->SetDirection(-0.5, 0.5, -1);
+    light0->SetDiffuseColor(0.5, 0.5, 0.5);
+    light0->SetSpecularColor(0.5, 0.5, 0.5);
+    root->AddChild(light0);
+
+    auto mat = scene->CreateMaterial();
+    mat->SetDiffuse(0, 1, 0);
+    auto sphere = scene->CreateSphere();
+    auto sphereVis = scene->CreateVisual();
+    root->AddChild(sphereVis);
+    sphereVis->AddGeometry(sphere);
+    sphereVis->SetMaterial(mat);
+    sphereVis->SetLocalPosition(
+        this->camera->LocalPosition() +
+        ignition::math::Vector3d(2, 0, 0));
+  }
+
+  this->initialized = true;
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::ActivateRenderWindowContext()
+void IgnRenderer::Destroy()
 {
-  glPopAttrib();
-  glPopClientAttrib();
+  auto engine = rendering::engine(this->engineName);
+  if (!engine)
+    return;
+  auto scene = engine->SceneByName(this->sceneName);
+  if (!scene)
+    return;
+  scene->DestroySensor(this->camera);
 
-  this->dataPtr->qtContext->functions()->glUseProgram(0);
-  this->dataPtr->qtContext->doneCurrent();
+  // If that was the last sensor, destroy scene
+  if (scene->SensorCount() == 0)
+  {
+    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
+    engine->DestroyScene(scene);
 
-  this->dataPtr->renderWindowContext->makeCurrent(this->dataPtr->quickWindow);
+    // TODO(anyone) If that was the last scene, terminate engine?
+  }
+}
+
+/////////////////////////////////////////////////
+RenderThread::RenderThread()
+{
+  RenderWindowItem::threads << this;
+}
+
+/////////////////////////////////////////////////
+void RenderThread::RenderNext()
+{
+  this->context->makeCurrent(surface);
+
+  if (!this->ignRenderer.initialized)
+  {
+    // Initialize renderer
+    this->ignRenderer.Initialize();
+  }
+
+  this->ignRenderer.Render();
+
+  emit TextureReady(this->ignRenderer.textureId, this->ignRenderer.textureSize);
+}
+
+/////////////////////////////////////////////////
+void RenderThread::ShutDown()
+{
+  this->context->makeCurrent(this->surface);
+
+  this->ignRenderer.Destroy();
+
+  this->context->doneCurrent();
+  delete this->context;
+
+  // schedule this to be deleted only after we're done cleaning up
+  this->surface->deleteLater();
+
+  // Stop event processing, move the thread to GUI and make sure it is deleted.
+  this->moveToThread(QGuiApplication::instance()->thread());
 }
 
 
 /////////////////////////////////////////////////
-void RenderWindowItem::DoneRenderWindowContext()
+void RenderThread::SizeChanged(const QSize &_size)
 {
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_ARRAY_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_ELEMENT_ARRAY_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindRenderbuffer(
-      GL_RENDERBUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindFramebuffer(
-      GL_FRAMEBUFFER_EXT, 0);
-
-  // unbind all possible remaining buffers; just to be on safe side
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_ARRAY_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_ATOMIC_COUNTER_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_COPY_READ_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_COPY_WRITE_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_DRAW_INDIRECT_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_DISPATCH_INDIRECT_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_ELEMENT_ARRAY_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_PIXEL_PACK_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_PIXEL_UNPACK_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_SHADER_STORAGE_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_TEXTURE_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_TRANSFORM_FEEDBACK_BUFFER, 0);
-  this->dataPtr->renderWindowContext->functions()->glBindBuffer(
-      GL_UNIFORM_BUFFER, 0);
-  this->dataPtr->renderWindowContext->doneCurrent();
-  this->dataPtr->qtContext->makeCurrent(this->dataPtr->quickWindow);
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
-  glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+  this->ignRenderer.textureSize = _size;
+  this->ignRenderer.textureDirty = true;
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::timerEvent(
-    QTimerEvent */*_e*/)
+TextureNode::TextureNode(QQuickWindow *_window)
+    : window(_window)
 {
+  // Our texture node must have a texture, so use the default 0 texture.
+  this->texture = this->window->createTextureFromId(0, QSize(1, 1));
+  this->setTexture(this->texture);
+}
+
+/////////////////////////////////////////////////
+TextureNode::~TextureNode()
+{
+  delete this->texture;
+}
+
+/////////////////////////////////////////////////
+void TextureNode::NewTexture(int _id, const QSize &_size)
+{
+  this->mutex.lock();
+  this->id = _id;
+  this->size = _size;
+  this->mutex.unlock();
+
+  // We cannot call QQuickWindow::update directly here, as this is only allowed
+  // from the rendering thread or GUI thread.
+  emit PendingNewTexture();
+}
+
+/////////////////////////////////////////////////
+void TextureNode::PrepareNode()
+{
+  this->mutex.lock();
+  int newId = this->id;
+  QSize sz = this->size;
+  this->id = 0;
+  this->mutex.unlock();
+  if (newId)
+  {
+    delete this->texture;
+    // note: include QQuickWindow::TextureHasAlphaChannel if the rendered
+    // content has alpha.
+    this->texture = this->window->createTextureFromId(newId, sz);
+    this->setTexture(this->texture);
+
+    this->markDirty(DirtyMaterial);
+
+    // This will notify the rendering thread that the texture is now being
+    // rendered and it can start rendering to the other one.
+    emit TextureInUse();
+  }
+}
+
+/////////////////////////////////////////////////
+RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
+  : QQuickItem(_parent)
+{
+  this->setFlag(ItemHasContents);
+  this->renderThread = new RenderThread();
+}
+
+/////////////////////////////////////////////////
+RenderWindowItem::~RenderWindowItem()
+{
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::Ready()
+{
+  this->renderThread->surface = new QOffscreenSurface();
+  this->renderThread->surface->setFormat(this->renderThread->context->format());
+  this->renderThread->surface->create();
+
+  this->renderThread->moveToThread(this->renderThread);
+
+  connect(this, &QObject::destroyed,
+      this->renderThread, &RenderThread::ShutDown, Qt::QueuedConnection);
+
+  this->renderThread->start();
   this->update();
 }
 
 /////////////////////////////////////////////////
-QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_oldNode,
+QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     QQuickItem::UpdatePaintNodeData */*_data*/)
 {
-  if (!this->dataPtr->initialized)
+  TextureNode *node = static_cast<TextureNode *>(_node);
+
+  if (!this->renderThread->context)
   {
+    QOpenGLContext *current = this->window()->openglContext();
+    // Some GL implementations require that the currently bound context is
+    // made non-current before we set up sharing, so we doneCurrent here
+    // and makeCurrent down below while setting up our own context.
+    current->doneCurrent();
+
+    this->renderThread->context = new QOpenGLContext();
+    this->renderThread->context->setFormat(current->format());
+    this->renderThread->context->setShareContext(current);
+    this->renderThread->context->create();
+    this->renderThread->context->moveToThread(this->renderThread);
+
+    current->makeCurrent(this->window());
+
+    QMetaObject::invokeMethod(this, "Ready");
     return nullptr;
   }
-
-  // update render window
-  this->ActivateRenderWindowContext();
-  this->dataPtr->camera->Update();
-
-  static bool done = false;
-  if (!done)
-  {
-    auto scene = this->dataPtr->camera->Scene();
-    auto root = scene->RootVisual();
-    auto grid = scene->CreateGrid();
-    grid->SetCellCount(200);
-    grid->SetVerticalCellCount(0);
-    grid->SetCellLength(1.0);
-
-    auto gridVis = scene->CreateVisual();
-    root->AddChild(gridVis);
-    gridVis->AddGeometry(grid);
-
-    auto mat = scene->CreateMaterial();
-    gridVis->SetMaterial(mat);
-    done = true;
-  }
-
-  this->UpdateFBO();
-  this->DoneRenderWindowContext();
-
-  if (this->width() <= 0 || this->height() <= 0 || !this->dataPtr->texture)
-  {
-    if (_oldNode)
-    {
-      delete _oldNode;
-    }
-    return nullptr;
-  }
-
-  QSGGeometryNode *node = static_cast<QSGGeometryNode *>(_oldNode);
 
   if (!node)
   {
-    node = new QSGGeometryNode();
-    node->setGeometry(this->dataPtr->geometry);
-    node->setMaterial(&this->dataPtr->material);
-    node->setOpaqueMaterial(&this->dataPtr->materialOpaque);
+    node = new TextureNode(this->window());
+
+    // Set up connections to get the production of render texture in sync with
+    // vsync on the rendering thread.
+    //
+    // When a new texture is ready on the rendering thread, we use a direct
+    // connection to the texture node to let it know a new texture can be used.
+    // The node will then emit PendingNewTexture which we bind to
+    // QQuickWindow::update to schedule a redraw.
+    //
+    // When the scene graph starts rendering the next frame, the PrepareNode()
+    // function is used to update the node with the new texture. Once it
+    // completes, it emits TextureInUse() which we connect to the rendering
+    // thread's RenderNext() to have it start producing content into its render
+    // texture.
+    //
+    // This rendering pipeline is throttled by vsync on the scene graph
+    // rendering thread.
+
+    this->connect(this->renderThread, &RenderThread::TextureReady,
+        node, &TextureNode::NewTexture, Qt::DirectConnection);
+    this->connect(node, &TextureNode::PendingNewTexture, this->window(),
+        &QQuickWindow::update, Qt::QueuedConnection);
+    this->connect(this->window(), &QQuickWindow::beforeRendering, node,
+        &TextureNode::PrepareNode, Qt::DirectConnection);
+    this->connect(node, &TextureNode::TextureInUse, this->renderThread,
+        &RenderThread::RenderNext, Qt::QueuedConnection);
+
+    // Get the production of FBO textures started..
+    QMetaObject::invokeMethod(this->renderThread, "RenderNext",
+        Qt::QueuedConnection);
   }
 
-  node->markDirty(QSGNode::DirtyGeometry);
-  node->markDirty(QSGNode::DirtyMaterial);
+  node->setRect(this->boundingRect());
 
   return node;
-}
-
-
-/////////////////////////////////////////////////
-void RenderWindowItem::UpdateFBO()
-{
-  QSize s(static_cast<qint32>(this->width()),
-      static_cast<qint32>(this->height()));
-
-  if (this->width() <= 0 || this->height() <= 0 ||
-      (s == this->dataPtr->textureSize))
-  {
-    return;
-  }
-
-  this->dataPtr->textureSize = s;
-
-  // setting the size should cause the render texture to be rebuilt
-  this->dataPtr->camera->SetImageWidth(this->dataPtr->textureSize.width());
-  this->dataPtr->camera->SetImageHeight(this->dataPtr->textureSize.height());
-  this->dataPtr->camera->PreRender();
-
-
-  QSGGeometry::updateTexturedRectGeometry(this->dataPtr->geometry,
-      QRectF(0.0, 0.0, this->dataPtr->textureSize.width(),
-      this->dataPtr->textureSize.height()),
-      QRectF(0.0, 0.0, 1.0, 1.0));
-
-  delete this->dataPtr->texture;
-
-  this->dataPtr->texture = window()->createTextureFromId(
-      this->dataPtr->camera->RenderTextureGLId(),
-      this->dataPtr->textureSize);
-
-  this->dataPtr->material.setTexture(this->dataPtr->texture);
-  this->dataPtr->materialOpaque.setTexture(this->dataPtr->texture);
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetBackgroundColor(const math::Color &_color)
 {
-  this->dataPtr->backgroundColor = _color;
+  this->renderThread->ignRenderer.backgroundColor = _color;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetAmbientLight(const math::Color &_ambient)
 {
-  this->dataPtr->ambientLight = _ambient;
+  this->renderThread->ignRenderer.ambientLight = _ambient;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetEngineName(const std::string &_name)
 {
-  this->dataPtr->engineName = _name;
+  this->renderThread->ignRenderer.engineName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneName(const std::string &_name)
 {
-  this->dataPtr->sceneName = _name;
+  this->renderThread->ignRenderer.sceneName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 {
-  this->dataPtr->cameraPose = _pose;
+  this->renderThread->ignRenderer.cameraPose = _pose;
 }
 
 /////////////////////////////////////////////////

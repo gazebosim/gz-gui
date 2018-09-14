@@ -26,6 +26,7 @@
 
 #include <QGuiApplication>
 
+#include <QOffscreenSurface>
 #include <QOpenGLFunctions>
 
 #include <QQmlApplicationEngine>
@@ -37,6 +38,8 @@
 #include <QQuickStyle>
 #include <QQuickWindow>
 
+#include <QSGSimpleTextureNode>
 #include <QStandardItemModel>
+
 
 #endif  // IGNITION_GUI_QT_H_
