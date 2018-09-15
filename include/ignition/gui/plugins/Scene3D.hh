@@ -41,8 +41,9 @@ namespace gui
 {
 namespace plugins
 {
-  class Scene3DPrivate;
+  class IgnRendererPrivate;
   class RenderWindowItemPrivate;
+  class Scene3DPrivate;
 
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
@@ -87,6 +88,12 @@ namespace plugins
   /// ready to be displayed.
   class IgnRenderer
   {
+    ///  \brief Constructor
+    public: IgnRenderer();
+
+    ///  \brief Destructor
+    public: ~IgnRenderer();
+
     ///  \brief Main render function
     public: void Render();
 
@@ -111,18 +118,6 @@ namespace plugins
     /// \return 3D coordinates of a point in the 3D scene.
     private: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
         const;
-
-    /// \brief Flag to indicate if mouse event is dirty
-    public: bool mouseDirty = false;
-
-    /// \brief Mouse event
-    public: common::MouseEvent mouseEvent;
-
-    /// \brief Mouse move distance since last event.
-    public: math::Vector2d drag;
-
-    /// \brief Mutex to protect mouse events
-    public: std::mutex mutex;
 
     /// \brief Render texture id
     public: GLuint textureId = 0u;
@@ -156,14 +151,14 @@ namespace plugins
     /// scene based on the response data
     public: std::string sceneService;
 
-    /// \brief User camera
-    private: rendering::CameraPtr camera;
+    /// \brief Scene pose topic. If not empty, a node will subcribe to this
+    /// topic to get pose updates of objects in the scene
+    public: std::string poseTopic;
 
-    /// \brief Camera orbit controller
-    private: rendering::OrbitViewController viewControl;
-
-    /// \brief Ray query for mouse clicks
-    private: rendering::RayQueryPtr rayQuery;
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<IgnRendererPrivate> dataPtr;
+    // private: IgnRendererPrivate *dataPtr;
   };
 
   /// \brief Rendering thread
