@@ -94,13 +94,16 @@ namespace plugins
     private: rendering::ScenePtr scene;
   };
 
-  class Scene3DPrivate
+  /// \brief Private data class for RenderWindowItem
+  class RenderWindowItemPrivate
   {
     /// \brief Keep latest mouse event
     public: common::MouseEvent mouseEvent;
+  };
 
-    /// \brief Keep latest target point in the 3D world (for camera orbiting)
-    public: math::Vector3d target;
+  /// \brief Private data class for Scene3D
+  class Scene3DPrivate
+  {
   };
 }
 }
@@ -334,7 +337,60 @@ void IgnRenderer::Render()
     this->textureDirty = false;
   }
 
+  // view control
+  this->HandleMouseEvent();
+
+  // update and render to texture
   this->camera->Update();
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::HandleMouseEvent()
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  if (!this->mouseDirty)
+    return;
+
+  math::Vector3d target;
+  this->viewControl.SetCamera(this->camera);
+
+  if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
+  {
+    target = this->ScreenToScene(this->mouseEvent.Pos());
+    this->viewControl.SetTarget(target);
+    double distance = this->camera->WorldPosition().Distance(target);
+    double amount = -this->drag.Y() * distance / 5.0;
+    viewControl.Zoom(amount);
+  }
+  else
+  {
+    target = this->ScreenToScene(this->mouseEvent.PressPos());
+    this->viewControl.SetTarget(target);
+
+    // Pan with left button
+    if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
+    {
+      viewControl.Pan(this->drag);
+    }
+    // Orbit with middle button
+    else if (this->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
+    {
+      viewControl.Orbit(this->drag);
+    }
+    else if (this->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
+    {
+      double hfov = this->camera->HFOV().Radian();
+      double vfov = 2.0f * atan(tan(hfov / 2.0f) /
+          this->camera->AspectRatio());
+      double distance = this->camera->WorldPosition().Distance(target);
+      double amount = ((-this->drag.Y() /
+          static_cast<double>(this->camera->ImageHeight()))
+          * distance * tan(vfov/2.0) * 6.0);
+      viewControl.Zoom(amount);
+    }
+  }
+  this->drag = 0;
+  this->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -362,6 +418,7 @@ void IgnRenderer::Initialize()
     scene->SetAmbientLight(this->ambientLight);
     scene->SetBackgroundColor(this->backgroundColor);
   }
+
   auto root = scene->RootVisual();
 
   // Camera
@@ -390,6 +447,9 @@ void IgnRenderer::Initialize()
     sq.Request();
   }
 
+  // Ray Query
+  this->rayQuery = this->camera->Scene()->CreateRayQuery();
+
   this->initialized = true;
 }
 
@@ -412,6 +472,38 @@ void IgnRenderer::Destroy()
 
     // TODO(anyone) If that was the last scene, terminate engine?
   }
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e,
+    const math::Vector2d &_drag)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  this->mouseEvent = _e;
+  this->drag += _drag;
+  this->mouseDirty = true;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d IgnRenderer::ScreenToScene(
+    const math::Vector2i &_screenPos) const
+{
+  // Normalize point on the image
+  double width = this->camera->ImageWidth();
+  double height = this->camera->ImageHeight();
+
+  double nx = 2.0 * _screenPos.X() / width - 1.0;
+  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
+
+  // Make a ray query
+  this->rayQuery->SetFromCamera(this->camera, math::Vector2d(nx, ny));
+
+  auto result = this->rayQuery->ClosestPoint();
+  if (result)
+    return result.point;
+
+  // Set point to be 10m away if no intersection found
+  return rayQuery->Origin() + rayQuery->Direction() * 10;
 }
 
 /////////////////////////////////////////////////
@@ -515,8 +607,9 @@ void TextureNode::PrepareNode()
 
 /////////////////////////////////////////////////
 RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
-  : QQuickItem(_parent)
+  : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
 {
+  this->setAcceptedMouseButtons(Qt::AllButtons);
   this->setFlag(ItemHasContents);
   this->renderThread = new RenderThread();
 }
@@ -532,6 +625,9 @@ void RenderWindowItem::Ready()
   this->renderThread->surface = new QOffscreenSurface();
   this->renderThread->surface->setFormat(this->renderThread->context->format());
   this->renderThread->surface->create();
+
+  this->renderThread->ignRenderer.textureSize =
+      QSize(this->width(), this->height());
 
   this->renderThread->moveToThread(this->renderThread);
 
@@ -716,32 +812,54 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 }
 
-/////////////////////////////////////////////////
-// QPaintEngine *Scene3D::paintEngine() const
-// {
-//   return nullptr;
-// }
 
 /////////////////////////////////////////////////
-// void Scene3D::paintEvent(QPaintEvent *_e)
-// {
-//  // Create render window on first paint, so we're sure the window is showing
-//  // when we attach to it
-//  if (!this->dataPtr->renderWindow)
-//  {
-//    this->dataPtr->renderWindow = this->dataPtr->camera->CreateRenderWindow();
-//    this->dataPtr->renderWindow->SetHandle(
-//        std::to_string(static_cast<uint64_t>(this->dataPtr->windowId)));
-//    this->dataPtr->renderWindow->SetWidth(this->width());
-//    this->dataPtr->renderWindow->SetHeight(this->height());
-//  }
-//
-//  if (this->dataPtr->camera && this->dataPtr->renderWindow)
-//    this->dataPtr->camera->Update();
-//
-//  _e->accept();
-// }
-//
+void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
+{
+  auto event = convert(*_e);
+  event.SetPressPos(event.Pos());
+  this->dataPtr->mouseEvent = event;
+
+  this->renderThread->ignRenderer.NewMouseEvent(
+      this->dataPtr->mouseEvent);
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
+{
+  this->dataPtr->mouseEvent = convert(*_e);
+
+  this->renderThread->ignRenderer.NewMouseEvent(
+      this->dataPtr->mouseEvent);
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
+{
+  auto event = convert(*_e);
+  event.SetPressPos(this->dataPtr->mouseEvent.PressPos());
+
+  if (!event.Dragging())
+    return;
+
+  auto dragInt = event.Pos() - this->dataPtr->mouseEvent.Pos();
+  auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
+
+  this->renderThread->ignRenderer.NewMouseEvent(event, dragDistance);
+  this->dataPtr->mouseEvent = event;
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::wheelEvent(QWheelEvent *_e)
+{
+  this->dataPtr->mouseEvent.SetType(common::MouseEvent::SCROLL);
+  this->dataPtr->mouseEvent.SetPos(_e->x(), _e->y());
+  double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
+  this->renderThread->ignRenderer.NewMouseEvent(this->dataPtr->mouseEvent,
+      math::Vector2d(scroll, scroll));
+}
+
+
 ///////////////////////////////////////////////////
 // void Scene3D::resizeEvent(QResizeEvent *_e)
 // {
@@ -759,92 +877,6 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //  }
 // }
 //
-///////////////////////////////////////////////////
-// void Scene3D::mousePressEvent(QMouseEvent *_e)
-// {
-//  auto event = convert(*_e);
-//  event.SetPressPos(event.Pos());
-//  this->dataPtr->mouseEvent = event;
-//
-//  // Update target
-//  this->dataPtr->target = this->ScreenToScene(event.PressPos());
-// }
-//
-///////////////////////////////////////////////////
-// void Scene3D::mouseReleaseEvent(QMouseEvent *_e)
-// {
-//  this->dataPtr->mouseEvent = convert(*_e);
-//
-//  // Clear target
-//  this->dataPtr->target = math::Vector3d::Zero;
-// }
-//
-///////////////////////////////////////////////////
-// void Scene3D::mouseMoveEvent(QMouseEvent *_e)
-// {
-//  auto event = convert(*_e);
-//  event.SetPressPos(this->dataPtr->mouseEvent.PressPos());
-//
-//  if (!event.Dragging())
-//    return;
-//
-//  auto dragInt = event.Pos() - this->dataPtr->mouseEvent.Pos();
-//  auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
-//
-//  rendering::OrbitViewController controller;
-//  controller.SetCamera(this->dataPtr->camera);
-//  controller.SetTarget(this->dataPtr->target);
-//
-//  // Pan with left button
-//  if (event.Buttons() & common::MouseEvent::LEFT)
-//    controller.Pan(dragDistance);
-//  // Orbit with middle button
-//  else if (event.Buttons() & common::MouseEvent::MIDDLE)
-//    controller.Orbit(dragDistance);
-//
-//  this->dataPtr->mouseEvent = event;
-// }
-//
-///////////////////////////////////////////////////
-// void Scene3D::wheelEvent(QWheelEvent *_e)
-// {
-//  // 3D target
-//  auto target = this->ScreenToScene(math::Vector2i(_e->x(), _e->y()));
-//
-//  // Scroll amount
-//  double distance = this->dataPtr->camera->WorldPosition().Distance(target);
-//  double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
-//  double amount = -scroll * distance / 5.0;
-//
-//  // Zoom
-//  rendering::OrbitViewController controller;
-//  controller.SetCamera(this->dataPtr->camera);
-//  controller.SetTarget(target);
-//  controller.Zoom(amount);
-// }
-
-///////////////////////////////////////////////////
-// math::Vector3d RenderWindowItem::ScreenToScene(
-//    const math::Vector2i &_screenPos) const
-// {
-//  // Normalize point on the image
-//  double width = this->dataPtr->camera->ImageWidth();
-//  double height = this->dataPtr->camera->ImageHeight();
-//
-//  double nx = 2.0 * _screenPos.X() / width - 1.0;
-//  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
-//
-//  // Make a ray query
-//  auto rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
-//  rayQuery->SetFromCamera(this->dataPtr->camera, math::Vector2d(nx, ny));
-//
-//  auto result = rayQuery->ClosestPoint();
-//  if (result)
-//    return result.point;
-//
-//  // Set point to be 10m away if no intersection found
-//  return rayQuery->Origin() + rayQuery->Direction() * 10;
-// }
 
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Scene3D,
