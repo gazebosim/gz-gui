@@ -235,8 +235,7 @@ void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
   std::lock_guard<std::mutex> lock(this->mutex);
   for (int i = 0; i < _msg.pose_size(); ++i)
   {
-    auto pose = _msg.pose(i);
-    this->poses[_msg.pose(i).id()] = pose;
+    this->poses[_msg.pose(i).id()] = _msg.pose(i);
   }
 }
 
@@ -288,9 +287,7 @@ rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
   {
     rendering::VisualPtr linkVis = this->LoadLink(_msg.link(i));
     if (linkVis)
-    {
       modelVis->AddChild(linkVis);
-    }
     else
       ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
