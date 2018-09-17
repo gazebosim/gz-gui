@@ -193,9 +193,6 @@ namespace plugins
 
     /// \brief Ign-rendering renderer
     public: IgnRenderer ignRenderer;
-
-    /// \brief Texture size
-    public: QSize size;
   };
 
 
@@ -237,6 +234,12 @@ namespace plugins
     /// \param[in] _service Scene service name
     public: void SetSceneService(const std::string &_service);
 
+    /// \brief Set pose topic to use for updating objects in the scene
+    /// The renderer will subscribe to this topic to get pose messages of
+    /// visuals in the scene
+    /// \param[in] _topic Pose topic
+    public: void SetPoseTopic(const std::string &_topic);
+
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
 
@@ -260,12 +263,6 @@ namespace plugins
     /// \return Updated node.
     private: QSGNode *updatePaintNode(QSGNode *_oldNode,
         QQuickItem::UpdatePaintNodeData *_data) override;
-
-    //// \brief List of threads
-    public: static QList<QThread *> threads;
-
-    /// \brief Render thread
-    private: RenderThread *renderThread = nullptr;
 
     /// \internal
     /// \brief Pointer to private data.

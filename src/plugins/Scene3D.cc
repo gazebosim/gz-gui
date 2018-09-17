@@ -43,32 +43,34 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Scene requester class for making scene service request
-  /// and populating the scene based on the response msg.
-  class SceneRequester
+  /// \brief Scene manager class for loading and managing objects in the scene
+  class SceneManager
   {
     /// \brief Constructor
-    public: SceneRequester();
+    public: SceneManager();
 
-    /// \brief Constrcutor
-    /// \param[in] _service Ign transport service name
+    /// \brief Constructor
+    /// \param[in] _service Ign transport scene service name
     /// \param[in] _poseTopic Ign transport pose topic name
     /// \param[in] _scene Pointer to the rendering scene
-    public: SceneRequester(const std::string &_service,
+    public: SceneManager(const std::string &_service,
         const std::string &_poseTopic, rendering::ScenePtr _scene);
 
-    /// \brief Load the scene requester
+    /// \brief Load the scene manager
     /// \param[in] _service Ign transport service name
     /// \param[in] _poseTopic Ign transport pose topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: void Load(const std::string &_service,
         const std::string &_poseTopic, rendering::ScenePtr _scene);
 
-    /// \brief Make the request and populate the scene
+    /// \brief Make the scene service request and populate the scene
     public: void Request();
 
-    /// \brief Load the scene from a scene msg
-    /// \param[in] _msg Scene msg
+    /// \brief Update the scene based on pose msgs received
+    public: void Update();
+
+    /// \brief Callback function for the pose topic
+    /// \param[in] _msg Pose vector msg
     private: void OnPoseVMsg(const msgs::Pose_V &_msg);
 
     /// \brief Load the scene from a scene msg
@@ -116,6 +118,12 @@ namespace plugins
 
     /// \brief Map of entity id to pose msg
     private: std::map<unsigned int, msgs::Pose> poses;
+
+    /// \brief Map of entity id to pose msg
+    private: std::map<unsigned int, rendering::VisualPtr> visuals;
+
+    // Transport node for making service request and subscribing to pose topic
+    private: ignition::transport::Node node;
   };
 
   /// \brief Private data class for IgnRenderer
@@ -143,7 +151,7 @@ namespace plugins
     public: rendering::RayQueryPtr rayQuery;
 
     /// \brief Scene requester to get scene info
-    public: SceneRequester sceneRequester;
+    public: SceneManager sceneManager;
   };
 
   /// \brief Private data class for RenderWindowItem
@@ -151,6 +159,12 @@ namespace plugins
   {
     /// \brief Keep latest mouse event
     public: common::MouseEvent mouseEvent;
+
+    /// \brief Render thread
+    public : RenderThread *renderThread = nullptr;
+
+    //// \brief List of threads
+    public: static QList<QThread *> threads;
   };
 
   /// \brief Private data class for Scene3D
@@ -165,22 +179,22 @@ using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
-QList<QThread *> RenderWindowItem::threads;
+QList<QThread *> RenderWindowItemPrivate::threads;
 
 /////////////////////////////////////////////////
-SceneRequester::SceneRequester()
+SceneManager::SceneManager()
 {
 }
 
 /////////////////////////////////////////////////
-SceneRequester::SceneRequester(const std::string &_service,
+SceneManager::SceneManager(const std::string &_service,
     const std::string &_poseTopic, rendering::ScenePtr _scene)
 {
   this->Load(_service, _poseTopic, _scene);
 }
 
 /////////////////////////////////////////////////
-void SceneRequester::Load(const std::string &_service,
+void SceneManager::Load(const std::string &_service,
     const std::string &_poseTopic, rendering::ScenePtr _scene)
 {
   this->service = _service;
@@ -189,11 +203,8 @@ void SceneRequester::Load(const std::string &_service,
 }
 
 /////////////////////////////////////////////////
-void SceneRequester::Request()
+void SceneManager::Request()
 {
-  // Create a transport node.
-  ignition::transport::Node node;
-
   bool result{false};
   unsigned int timeout{5000};
 
@@ -202,10 +213,10 @@ void SceneRequester::Request()
   // \todo(anyone) Look into using an asynchronous request, or an
   // alternative Request function that is asynchronous. This could be used
   // to make `Initialize` non-blocking.
-  if (node.Request(this->service, timeout, res, result) && result)
+  if (this->node.Request(this->service, timeout, res, result) && result)
   {
     this->LoadScene(res);
-    if (!node.Subscribe(this->poseTopic, &SceneRequester::OnPoseVMsg, this))
+    if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
     {
       ignerr << "Error subscribing to pose topic: " << this->poseTopic
              << std::endl;
@@ -219,7 +230,7 @@ void SceneRequester::Request()
 }
 
 /////////////////////////////////////////////////
-void SceneRequester::OnPoseVMsg(const msgs::Pose_V &_msg)
+void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   for (int i = 0; i < _msg.pose_size(); ++i)
@@ -229,9 +240,29 @@ void SceneRequester::OnPoseVMsg(const msgs::Pose_V &_msg)
   }
 }
 
+/////////////////////////////////////////////////
+void SceneManager::Update()
+{
+  // process msgs
+  std::lock_guard<std::mutex> lock(this->mutex);
+
+  for (auto pIt = this->poses.begin(); pIt != this->poses.end();)
+  {
+    auto vIt = this->visuals.find(pIt->first);
+    if (vIt != this->visuals.end())
+    {
+      vIt->second->SetLocalPose(msgs::Convert(pIt->second));
+      this->poses.erase(pIt++);
+    }
+    else
+    {
+      ++pIt;
+    }
+  }
+}
 
 /////////////////////////////////////////////////
-void SceneRequester::LoadScene(const msgs::Scene &_msg)
+void SceneManager::LoadScene(const msgs::Scene &_msg)
 {
   rendering::VisualPtr rootVis = this->scene->RootVisual();
 
@@ -246,17 +277,20 @@ void SceneRequester::LoadScene(const msgs::Scene &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr SceneRequester::LoadModel(const msgs::Model &_msg)
+rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
 {
   rendering::VisualPtr modelVis = this->scene->CreateVisual();
   if (_msg.has_pose())
     modelVis->SetLocalPose(msgs::Convert(_msg.pose()));
+  this->visuals[_msg.id()] = modelVis;
 
   for (int i = 0; i < _msg.link_size(); ++i)
   {
     rendering::VisualPtr linkVis = this->LoadLink(_msg.link(i));
     if (linkVis)
+    {
       modelVis->AddChild(linkVis);
+    }
     else
       ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
@@ -264,11 +298,12 @@ rendering::VisualPtr SceneRequester::LoadModel(const msgs::Model &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr SceneRequester::LoadLink(const msgs::Link &_msg)
+rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
 {
   rendering::VisualPtr linkVis = this->scene->CreateVisual();
   if (_msg.has_pose())
     linkVis->SetLocalPose(msgs::Convert(_msg.pose()));
+  this->visuals[_msg.id()] = linkVis;
 
   for (int i = 0; i < _msg.visual_size(); ++i)
   {
@@ -282,7 +317,7 @@ rendering::VisualPtr SceneRequester::LoadLink(const msgs::Link &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
+rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
 {
   if (!_msg.has_geometry())
     return rendering::VisualPtr();
@@ -290,6 +325,7 @@ rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
   rendering::VisualPtr visualVis = this->scene->CreateVisual();
   if (_msg.has_pose())
     visualVis->SetLocalPose(msgs::Convert(_msg.pose()));
+  this->visuals[_msg.id()] = visualVis;
 
   math::Vector3d scale = math::Vector3d::One;
   rendering::GeometryPtr geom = this->LoadGeometry(_msg.geometry(), scale);
@@ -330,7 +366,7 @@ rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::GeometryPtr SceneRequester::LoadGeometry(const msgs::Geometry &_msg,
+rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     math::Vector3d &_scale)
 {
   math::Vector3d scale = math::Vector3d::One;
@@ -381,7 +417,7 @@ rendering::GeometryPtr SceneRequester::LoadGeometry(const msgs::Geometry &_msg,
 }
 
 /////////////////////////////////////////////////
-rendering::MaterialPtr SceneRequester::LoadMaterial(const msgs::Material &_msg)
+rendering::MaterialPtr SceneManager::LoadMaterial(const msgs::Material &_msg)
 {
   rendering::MaterialPtr material = this->scene->CreateMaterial();
   if (_msg.has_ambient())
@@ -430,6 +466,9 @@ void IgnRenderer::Render()
     this->textureId = this->dataPtr->camera->RenderTextureGLId();
     this->textureDirty = false;
   }
+
+  // update the scene
+  this->dataPtr->sceneManager.Update();
 
   // view control
   this->HandleMouseEvent();
@@ -537,9 +576,9 @@ void IgnRenderer::Initialize()
   // Make service call to populate scene
   if (!this->sceneService.empty())
   {
-    this->dataPtr->sceneRequester.Load(
+    this->dataPtr->sceneManager.Load(
         this->sceneService, this->poseTopic, scene);
-    this->dataPtr->sceneRequester.Request();
+    this->dataPtr->sceneManager.Request();
   }
 
   // Ray Query
@@ -606,13 +645,13 @@ math::Vector3d IgnRenderer::ScreenToScene(
 /////////////////////////////////////////////////
 RenderThread::RenderThread()
 {
-  RenderWindowItem::threads << this;
+  RenderWindowItemPrivate::threads << this;
 }
 
 /////////////////////////////////////////////////
 void RenderThread::RenderNext()
 {
-  this->context->makeCurrent(surface);
+  this->context->makeCurrent(this->surface);
 
   if (!this->ignRenderer.initialized)
   {
@@ -708,7 +747,7 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 {
   this->setAcceptedMouseButtons(Qt::AllButtons);
   this->setFlag(ItemHasContents);
-  this->renderThread = new RenderThread();
+  this->dataPtr->renderThread = new RenderThread();
 }
 
 /////////////////////////////////////////////////
@@ -719,19 +758,21 @@ RenderWindowItem::~RenderWindowItem()
 /////////////////////////////////////////////////
 void RenderWindowItem::Ready()
 {
-  this->renderThread->surface = new QOffscreenSurface();
-  this->renderThread->surface->setFormat(this->renderThread->context->format());
-  this->renderThread->surface->create();
+  this->dataPtr->renderThread->surface = new QOffscreenSurface();
+  this->dataPtr->renderThread->surface->setFormat(
+      this->dataPtr->renderThread->context->format());
+  this->dataPtr->renderThread->surface->create();
 
-  this->renderThread->ignRenderer.textureSize =
+  this->dataPtr->renderThread->ignRenderer.textureSize =
       QSize(this->width(), this->height());
 
-  this->renderThread->moveToThread(this->renderThread);
+  this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 
   connect(this, &QObject::destroyed,
-      this->renderThread, &RenderThread::ShutDown, Qt::QueuedConnection);
+      this->dataPtr->renderThread, &RenderThread::ShutDown,
+      Qt::QueuedConnection);
 
-  this->renderThread->start();
+  this->dataPtr->renderThread->start();
   this->update();
 }
 
@@ -741,7 +782,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 {
   TextureNode *node = static_cast<TextureNode *>(_node);
 
-  if (!this->renderThread->context)
+  if (!this->dataPtr->renderThread->context)
   {
     QOpenGLContext *current = this->window()->openglContext();
     // Some GL implementations require that the currently bound context is
@@ -749,11 +790,12 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // and makeCurrent down below while setting up our own context.
     current->doneCurrent();
 
-    this->renderThread->context = new QOpenGLContext();
-    this->renderThread->context->setFormat(current->format());
-    this->renderThread->context->setShareContext(current);
-    this->renderThread->context->create();
-    this->renderThread->context->moveToThread(this->renderThread);
+    this->dataPtr->renderThread->context = new QOpenGLContext();
+    this->dataPtr->renderThread->context->setFormat(current->format());
+    this->dataPtr->renderThread->context->setShareContext(current);
+    this->dataPtr->renderThread->context->create();
+    this->dataPtr->renderThread->context->moveToThread(
+        this->dataPtr->renderThread);
 
     current->makeCurrent(this->window());
 
@@ -782,17 +824,17 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // This rendering pipeline is throttled by vsync on the scene graph
     // rendering thread.
 
-    this->connect(this->renderThread, &RenderThread::TextureReady,
+    this->connect(this->dataPtr->renderThread, &RenderThread::TextureReady,
         node, &TextureNode::NewTexture, Qt::DirectConnection);
     this->connect(node, &TextureNode::PendingNewTexture, this->window(),
         &QQuickWindow::update, Qt::QueuedConnection);
     this->connect(this->window(), &QQuickWindow::beforeRendering, node,
         &TextureNode::PrepareNode, Qt::DirectConnection);
-    this->connect(node, &TextureNode::TextureInUse, this->renderThread,
+    this->connect(node, &TextureNode::TextureInUse, this->dataPtr->renderThread,
         &RenderThread::RenderNext, Qt::QueuedConnection);
 
     // Get the production of FBO textures started..
-    QMetaObject::invokeMethod(this->renderThread, "RenderNext",
+    QMetaObject::invokeMethod(this->dataPtr->renderThread, "RenderNext",
         Qt::QueuedConnection);
   }
 
@@ -804,37 +846,43 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 /////////////////////////////////////////////////
 void RenderWindowItem::SetBackgroundColor(const math::Color &_color)
 {
-  this->renderThread->ignRenderer.backgroundColor = _color;
+  this->dataPtr->renderThread->ignRenderer.backgroundColor = _color;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetAmbientLight(const math::Color &_ambient)
 {
-  this->renderThread->ignRenderer.ambientLight = _ambient;
+  this->dataPtr->renderThread->ignRenderer.ambientLight = _ambient;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetEngineName(const std::string &_name)
 {
-  this->renderThread->ignRenderer.engineName = _name;
+  this->dataPtr->renderThread->ignRenderer.engineName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneName(const std::string &_name)
 {
-  this->renderThread->ignRenderer.sceneName = _name;
+  this->dataPtr->renderThread->ignRenderer.sceneName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 {
-  this->renderThread->ignRenderer.cameraPose = _pose;
+  this->dataPtr->renderThread->ignRenderer.cameraPose = _pose;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneService(const std::string &_service)
 {
-  this->renderThread->ignRenderer.sceneService = _service;
+  this->dataPtr->renderThread->ignRenderer.sceneService = _service;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetPoseTopic(const std::string &_topic)
+{
+  this->dataPtr->renderThread->ignRenderer.poseTopic = _topic;
 }
 
 /////////////////////////////////////////////////
@@ -906,6 +954,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       std::string service = elem->GetText();
       renderWindow->SetSceneService(service);
     }
+
+    if (auto elem = _pluginElem->FirstChildElement("pose_topic"))
+    {
+      std::string topic = elem->GetText();
+      renderWindow->SetPoseTopic(topic);
+    }
   }
 }
 
@@ -917,7 +971,7 @@ void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
   event.SetPressPos(event.Pos());
   this->dataPtr->mouseEvent = event;
 
-  this->renderThread->ignRenderer.NewMouseEvent(
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
 }
 
@@ -926,7 +980,7 @@ void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
 
-  this->renderThread->ignRenderer.NewMouseEvent(
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
 }
 
@@ -942,7 +996,7 @@ void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
   auto dragInt = event.Pos() - this->dataPtr->mouseEvent.Pos();
   auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
 
-  this->renderThread->ignRenderer.NewMouseEvent(event, dragDistance);
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(event, dragDistance);
   this->dataPtr->mouseEvent = event;
 }
 
@@ -952,8 +1006,8 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
   this->dataPtr->mouseEvent.SetType(common::MouseEvent::SCROLL);
   this->dataPtr->mouseEvent.SetPos(_e->x(), _e->y());
   double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
-  this->renderThread->ignRenderer.NewMouseEvent(this->dataPtr->mouseEvent,
-      math::Vector2d(scroll, scroll));
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
+      this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
 }
 
 
