@@ -158,7 +158,6 @@ namespace plugins
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<IgnRendererPrivate> dataPtr;
-    // private: IgnRendererPrivate *dataPtr;
   };
 
   /// \brief Rendering thread

@@ -258,6 +258,10 @@ void SceneManager::Update()
       ++pIt;
     }
   }
+
+  // Note we are clearing the pose msgs here but later on we may need to
+  // consider the case where pose msgs before scene/visual msgs
+  this->poses.clear();
 }
 
 /////////////////////////////////////////////////
