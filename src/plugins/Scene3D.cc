@@ -43,18 +43,35 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Scene requester class for making scene service request
-  /// and populating the scene based on the response msg.
-  class SceneRequester
+  /// \brief Scene manager class for loading and managing objects in the scene
+  class SceneManager
   {
-    /// \brief Constrcutor
-    /// \param[in] _service Ign transport service name
-    /// \param[in] _scene Pointer to the rendering scene
-    public: SceneRequester(const std::string &_service,
-        rendering::ScenePtr _scene);
+    /// \brief Constructor
+    public: SceneManager();
 
-    /// \brief Make the request and populate the scene
+    /// \brief Constructor
+    /// \param[in] _service Ign transport scene service name
+    /// \param[in] _poseTopic Ign transport pose topic name
+    /// \param[in] _scene Pointer to the rendering scene
+    public: SceneManager(const std::string &_service,
+        const std::string &_poseTopic, rendering::ScenePtr _scene);
+
+    /// \brief Load the scene manager
+    /// \param[in] _service Ign transport service name
+    /// \param[in] _poseTopic Ign transport pose topic name
+    /// \param[in] _scene Pointer to the rendering scene
+    public: void Load(const std::string &_service,
+        const std::string &_poseTopic, rendering::ScenePtr _scene);
+
+    /// \brief Make the scene service request and populate the scene
     public: void Request();
+
+    /// \brief Update the scene based on pose msgs received
+    public: void Update();
+
+    /// \brief Callback function for the pose topic
+    /// \param[in] _msg Pose vector msg
+    private: void OnPoseVMsg(const msgs::Pose_V &_msg);
 
     /// \brief Load the scene from a scene msg
     /// \param[in] _msg Scene msg
@@ -87,11 +104,54 @@ namespace plugins
     /// \return Material object created from the msg
     private: rendering::MaterialPtr LoadMaterial(const msgs::Material &_msg);
 
-    //// \brief Ign-transport service name
+    //// \brief Ign-transport scene service name
     private: std::string service;
+
+    //// \brief Ign-transport pose topic name
+    private: std::string poseTopic;
 
     //// \brief Pointer to the rendering scene
     private: rendering::ScenePtr scene;
+
+    //// \brief Mutex to protect the pose msgs
+    private: std::mutex mutex;
+
+    /// \brief Map of entity id to pose msg
+    private: std::map<unsigned int, msgs::Pose> poses;
+
+    /// \brief Map of entity id to pose msg
+    private: std::map<unsigned int, rendering::VisualPtr> visuals;
+
+    // Transport node for making service request and subscribing to pose topic
+    private: ignition::transport::Node node;
+  };
+
+  /// \brief Private data class for IgnRenderer
+  class IgnRendererPrivate
+  {
+    /// \brief Flag to indicate if mouse event is dirty
+    public: bool mouseDirty = false;
+
+    /// \brief Mouse event
+    public: common::MouseEvent mouseEvent;
+
+    /// \brief Mouse move distance since last event.
+    public: math::Vector2d drag;
+
+    /// \brief Mutex to protect mouse events
+    public: std::mutex mutex;
+
+    /// \brief User camera
+    public: rendering::CameraPtr camera;
+
+    /// \brief Camera orbit controller
+    public: rendering::OrbitViewController viewControl;
+
+    /// \brief Ray query for mouse clicks
+    public: rendering::RayQueryPtr rayQuery;
+
+    /// \brief Scene requester to get scene info
+    public: SceneManager sceneManager;
   };
 
   /// \brief Private data class for RenderWindowItem
@@ -99,6 +159,12 @@ namespace plugins
   {
     /// \brief Keep latest mouse event
     public: common::MouseEvent mouseEvent;
+
+    /// \brief Render thread
+    public : RenderThread *renderThread = nullptr;
+
+    //// \brief List of threads
+    public: static QList<QThread *> threads;
   };
 
   /// \brief Private data class for Scene3D
@@ -113,22 +179,32 @@ using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
-QList<QThread *> RenderWindowItem::threads;
+QList<QThread *> RenderWindowItemPrivate::threads;
 
 /////////////////////////////////////////////////
-SceneRequester::SceneRequester(const std::string &_service,
-    rendering::ScenePtr _scene)
+SceneManager::SceneManager()
+{
+}
+
+/////////////////////////////////////////////////
+SceneManager::SceneManager(const std::string &_service,
+    const std::string &_poseTopic, rendering::ScenePtr _scene)
+{
+  this->Load(_service, _poseTopic, _scene);
+}
+
+/////////////////////////////////////////////////
+void SceneManager::Load(const std::string &_service,
+    const std::string &_poseTopic, rendering::ScenePtr _scene)
 {
   this->service = _service;
+  this->poseTopic = _poseTopic;
   this->scene = _scene;
 }
 
 /////////////////////////////////////////////////
-void SceneRequester::Request()
+void SceneManager::Request()
 {
-  // Create a transport node.
-  ignition::transport::Node node;
-
   bool result{false};
   unsigned int timeout{5000};
 
@@ -137,9 +213,14 @@ void SceneRequester::Request()
   // \todo(anyone) Look into using an asynchronous request, or an
   // alternative Request function that is asynchronous. This could be used
   // to make `Initialize` non-blocking.
-  if (node.Request(this->service, timeout, res, result) && result)
+  if (this->node.Request(this->service, timeout, res, result) && result)
   {
     this->LoadScene(res);
+    if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
+    {
+      ignerr << "Error subscribing to pose topic: " << this->poseTopic
+             << std::endl;
+    }
   }
   else
   {
@@ -149,7 +230,42 @@ void SceneRequester::Request()
 }
 
 /////////////////////////////////////////////////
-void SceneRequester::LoadScene(const msgs::Scene &_msg)
+void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  for (int i = 0; i < _msg.pose_size(); ++i)
+  {
+    this->poses[_msg.pose(i).id()] = _msg.pose(i);
+  }
+}
+
+/////////////////////////////////////////////////
+void SceneManager::Update()
+{
+  // process msgs
+  std::lock_guard<std::mutex> lock(this->mutex);
+
+  for (auto pIt = this->poses.begin(); pIt != this->poses.end();)
+  {
+    auto vIt = this->visuals.find(pIt->first);
+    if (vIt != this->visuals.end())
+    {
+      vIt->second->SetLocalPose(msgs::Convert(pIt->second));
+      this->poses.erase(pIt++);
+    }
+    else
+    {
+      ++pIt;
+    }
+  }
+
+  // Note we are clearing the pose msgs here but later on we may need to
+  // consider the case where pose msgs before scene/visual msgs
+  this->poses.clear();
+}
+
+/////////////////////////////////////////////////
+void SceneManager::LoadScene(const msgs::Scene &_msg)
 {
   rendering::VisualPtr rootVis = this->scene->RootVisual();
 
@@ -164,11 +280,12 @@ void SceneRequester::LoadScene(const msgs::Scene &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr SceneRequester::LoadModel(const msgs::Model &_msg)
+rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
 {
   rendering::VisualPtr modelVis = this->scene->CreateVisual();
   if (_msg.has_pose())
     modelVis->SetLocalPose(msgs::Convert(_msg.pose()));
+  this->visuals[_msg.id()] = modelVis;
 
   for (int i = 0; i < _msg.link_size(); ++i)
   {
@@ -182,11 +299,12 @@ rendering::VisualPtr SceneRequester::LoadModel(const msgs::Model &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr SceneRequester::LoadLink(const msgs::Link &_msg)
+rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
 {
   rendering::VisualPtr linkVis = this->scene->CreateVisual();
   if (_msg.has_pose())
     linkVis->SetLocalPose(msgs::Convert(_msg.pose()));
+  this->visuals[_msg.id()] = linkVis;
 
   for (int i = 0; i < _msg.visual_size(); ++i)
   {
@@ -200,7 +318,7 @@ rendering::VisualPtr SceneRequester::LoadLink(const msgs::Link &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
+rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
 {
   if (!_msg.has_geometry())
     return rendering::VisualPtr();
@@ -208,6 +326,7 @@ rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
   rendering::VisualPtr visualVis = this->scene->CreateVisual();
   if (_msg.has_pose())
     visualVis->SetLocalPose(msgs::Convert(_msg.pose()));
+  this->visuals[_msg.id()] = visualVis;
 
   math::Vector3d scale = math::Vector3d::One;
   rendering::GeometryPtr geom = this->LoadGeometry(_msg.geometry(), scale);
@@ -248,7 +367,7 @@ rendering::VisualPtr SceneRequester::LoadVisual(const msgs::Visual &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::GeometryPtr SceneRequester::LoadGeometry(const msgs::Geometry &_msg,
+rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     math::Vector3d &_scale)
 {
   math::Vector3d scale = math::Vector3d::One;
@@ -299,7 +418,7 @@ rendering::GeometryPtr SceneRequester::LoadGeometry(const msgs::Geometry &_msg,
 }
 
 /////////////////////////////////////////////////
-rendering::MaterialPtr SceneRequester::LoadMaterial(const msgs::Material &_msg)
+rendering::MaterialPtr SceneManager::LoadMaterial(const msgs::Material &_msg)
 {
   rendering::MaterialPtr material = this->scene->CreateMaterial();
   if (_msg.has_ambient())
@@ -323,74 +442,89 @@ rendering::MaterialPtr SceneRequester::LoadMaterial(const msgs::Material &_msg)
 }
 
 /////////////////////////////////////////////////
+IgnRenderer::IgnRenderer()
+  : dataPtr(new IgnRendererPrivate)
+{
+}
+
+
+/////////////////////////////////////////////////
+IgnRenderer::~IgnRenderer()
+{
+}
+
+/////////////////////////////////////////////////
 void IgnRenderer::Render()
 {
   if (this->textureDirty)
   {
-    this->camera->SetImageWidth(this->textureSize.width());
-    this->camera->SetImageHeight(this->textureSize.height());
-    this->camera->SetAspectRatio(this->textureSize.width() /
+    this->dataPtr->camera->SetImageWidth(this->textureSize.width());
+    this->dataPtr->camera->SetImageHeight(this->textureSize.height());
+    this->dataPtr->camera->SetAspectRatio(this->textureSize.width() /
         this->textureSize.height());
     // setting the size should cause the render texture to be rebuilt
-    this->camera->PreRender();
-    this->textureId = this->camera->RenderTextureGLId();
+    this->dataPtr->camera->PreRender();
+    this->textureId = this->dataPtr->camera->RenderTextureGLId();
     this->textureDirty = false;
   }
+
+  // update the scene
+  this->dataPtr->sceneManager.Update();
 
   // view control
   this->HandleMouseEvent();
 
   // update and render to texture
-  this->camera->Update();
+  this->dataPtr->camera->Update();
 }
 
 /////////////////////////////////////////////////
 void IgnRenderer::HandleMouseEvent()
 {
-  std::lock_guard<std::mutex> lock(this->mutex);
-  if (!this->mouseDirty)
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  if (!this->dataPtr->mouseDirty)
     return;
 
   math::Vector3d target;
-  this->viewControl.SetCamera(this->camera);
+  this->dataPtr->viewControl.SetCamera(this->dataPtr->camera);
 
-  if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
+  if (this->dataPtr->mouseEvent.Type() == common::MouseEvent::SCROLL)
   {
-    target = this->ScreenToScene(this->mouseEvent.Pos());
-    this->viewControl.SetTarget(target);
-    double distance = this->camera->WorldPosition().Distance(target);
-    double amount = -this->drag.Y() * distance / 5.0;
-    viewControl.Zoom(amount);
+    target = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+    this->dataPtr->viewControl.SetTarget(target);
+    double distance = this->dataPtr->camera->WorldPosition().Distance(target);
+    double amount = -this->dataPtr->drag.Y() * distance / 5.0;
+    this->dataPtr->viewControl.Zoom(amount);
   }
   else
   {
-    target = this->ScreenToScene(this->mouseEvent.PressPos());
-    this->viewControl.SetTarget(target);
+    target = this->ScreenToScene(this->dataPtr->mouseEvent.PressPos());
+    this->dataPtr->viewControl.SetTarget(target);
 
     // Pan with left button
-    if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
+    if (this->dataPtr->mouseEvent.Buttons() & common::MouseEvent::LEFT)
     {
-      viewControl.Pan(this->drag);
+      this->dataPtr->viewControl.Pan(this->dataPtr->drag);
     }
     // Orbit with middle button
-    else if (this->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
+    else if (this->dataPtr->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
     {
-      viewControl.Orbit(this->drag);
+      this->dataPtr->viewControl.Orbit(this->dataPtr->drag);
     }
-    else if (this->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
+    else if (this->dataPtr->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
     {
-      double hfov = this->camera->HFOV().Radian();
+      double hfov = this->dataPtr->camera->HFOV().Radian();
       double vfov = 2.0f * atan(tan(hfov / 2.0f) /
-          this->camera->AspectRatio());
-      double distance = this->camera->WorldPosition().Distance(target);
-      double amount = ((-this->drag.Y() /
-          static_cast<double>(this->camera->ImageHeight()))
+          this->dataPtr->camera->AspectRatio());
+      double distance = this->dataPtr->camera->WorldPosition().Distance(target);
+      double amount = ((-this->dataPtr->drag.Y() /
+          static_cast<double>(this->dataPtr->camera->ImageHeight()))
           * distance * tan(vfov/2.0) * 6.0);
-      viewControl.Zoom(amount);
+      this->dataPtr->viewControl.Zoom(amount);
     }
   }
-  this->drag = 0;
-  this->mouseDirty = false;
+  this->dataPtr->drag = 0;
+  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -422,17 +556,17 @@ void IgnRenderer::Initialize()
   auto root = scene->RootVisual();
 
   // Camera
-  this->camera = scene->CreateCamera();
-  root->AddChild(this->camera);
-  this->camera->SetLocalPose(this->cameraPose);
-  this->camera->SetImageWidth(this->textureSize.width());
-  this->camera->SetImageHeight(this->textureSize.height());
-  this->camera->SetAntiAliasing(8);
-  this->camera->SetHFOV(M_PI * 0.5);
+  this->dataPtr->camera = scene->CreateCamera();
+  root->AddChild(this->dataPtr->camera);
+  this->dataPtr->camera->SetLocalPose(this->cameraPose);
+  this->dataPtr->camera->SetImageWidth(this->textureSize.width());
+  this->dataPtr->camera->SetImageHeight(this->textureSize.height());
+  this->dataPtr->camera->SetAntiAliasing(8);
+  this->dataPtr->camera->SetHFOV(M_PI * 0.5);
   // setting the size and calling PreRender should cause the render texture to
   //  be rebuilt
-  this->camera->PreRender();
-  this->textureId = this->camera->RenderTextureGLId();
+  this->dataPtr->camera->PreRender();
+  this->textureId = this->dataPtr->camera->RenderTextureGLId();
 
   rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
   light0->SetDirection(-0.5, 0.5, -1);
@@ -443,12 +577,13 @@ void IgnRenderer::Initialize()
   // Make service call to populate scene
   if (!this->sceneService.empty())
   {
-    SceneRequester sq(this->sceneService, scene);
-    sq.Request();
+    this->dataPtr->sceneManager.Load(
+        this->sceneService, this->poseTopic, scene);
+    this->dataPtr->sceneManager.Request();
   }
 
   // Ray Query
-  this->rayQuery = this->camera->Scene()->CreateRayQuery();
+  this->dataPtr->rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
 
   this->initialized = true;
 }
@@ -462,7 +597,7 @@ void IgnRenderer::Destroy()
   auto scene = engine->SceneByName(this->sceneName);
   if (!scene)
     return;
-  scene->DestroySensor(this->camera);
+  scene->DestroySensor(this->dataPtr->camera);
 
   // If that was the last sensor, destroy scene
   if (scene->SensorCount() == 0)
@@ -478,10 +613,10 @@ void IgnRenderer::Destroy()
 void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e,
     const math::Vector2d &_drag)
 {
-  std::lock_guard<std::mutex> lock(this->mutex);
-  this->mouseEvent = _e;
-  this->drag += _drag;
-  this->mouseDirty = true;
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  this->dataPtr->mouseEvent = _e;
+  this->dataPtr->drag += _drag;
+  this->dataPtr->mouseDirty = true;
 }
 
 /////////////////////////////////////////////////
@@ -489,33 +624,35 @@ math::Vector3d IgnRenderer::ScreenToScene(
     const math::Vector2i &_screenPos) const
 {
   // Normalize point on the image
-  double width = this->camera->ImageWidth();
-  double height = this->camera->ImageHeight();
+  double width = this->dataPtr->camera->ImageWidth();
+  double height = this->dataPtr->camera->ImageHeight();
 
   double nx = 2.0 * _screenPos.X() / width - 1.0;
   double ny = 1.0 - 2.0 * _screenPos.Y() / height;
 
   // Make a ray query
-  this->rayQuery->SetFromCamera(this->camera, math::Vector2d(nx, ny));
+  this->dataPtr->rayQuery->SetFromCamera(
+      this->dataPtr->camera, math::Vector2d(nx, ny));
 
-  auto result = this->rayQuery->ClosestPoint();
+  auto result = this->dataPtr->rayQuery->ClosestPoint();
   if (result)
     return result.point;
 
   // Set point to be 10m away if no intersection found
-  return rayQuery->Origin() + rayQuery->Direction() * 10;
+  return this->dataPtr->rayQuery->Origin() +
+      this->dataPtr->rayQuery->Direction() * 10;
 }
 
 /////////////////////////////////////////////////
 RenderThread::RenderThread()
 {
-  RenderWindowItem::threads << this;
+  RenderWindowItemPrivate::threads << this;
 }
 
 /////////////////////////////////////////////////
 void RenderThread::RenderNext()
 {
-  this->context->makeCurrent(surface);
+  this->context->makeCurrent(this->surface);
 
   if (!this->ignRenderer.initialized)
   {
@@ -611,7 +748,7 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 {
   this->setAcceptedMouseButtons(Qt::AllButtons);
   this->setFlag(ItemHasContents);
-  this->renderThread = new RenderThread();
+  this->dataPtr->renderThread = new RenderThread();
 }
 
 /////////////////////////////////////////////////
@@ -622,19 +759,21 @@ RenderWindowItem::~RenderWindowItem()
 /////////////////////////////////////////////////
 void RenderWindowItem::Ready()
 {
-  this->renderThread->surface = new QOffscreenSurface();
-  this->renderThread->surface->setFormat(this->renderThread->context->format());
-  this->renderThread->surface->create();
+  this->dataPtr->renderThread->surface = new QOffscreenSurface();
+  this->dataPtr->renderThread->surface->setFormat(
+      this->dataPtr->renderThread->context->format());
+  this->dataPtr->renderThread->surface->create();
 
-  this->renderThread->ignRenderer.textureSize =
+  this->dataPtr->renderThread->ignRenderer.textureSize =
       QSize(this->width(), this->height());
 
-  this->renderThread->moveToThread(this->renderThread);
+  this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 
   connect(this, &QObject::destroyed,
-      this->renderThread, &RenderThread::ShutDown, Qt::QueuedConnection);
+      this->dataPtr->renderThread, &RenderThread::ShutDown,
+      Qt::QueuedConnection);
 
-  this->renderThread->start();
+  this->dataPtr->renderThread->start();
   this->update();
 }
 
@@ -644,7 +783,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 {
   TextureNode *node = static_cast<TextureNode *>(_node);
 
-  if (!this->renderThread->context)
+  if (!this->dataPtr->renderThread->context)
   {
     QOpenGLContext *current = this->window()->openglContext();
     // Some GL implementations require that the currently bound context is
@@ -652,11 +791,12 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // and makeCurrent down below while setting up our own context.
     current->doneCurrent();
 
-    this->renderThread->context = new QOpenGLContext();
-    this->renderThread->context->setFormat(current->format());
-    this->renderThread->context->setShareContext(current);
-    this->renderThread->context->create();
-    this->renderThread->context->moveToThread(this->renderThread);
+    this->dataPtr->renderThread->context = new QOpenGLContext();
+    this->dataPtr->renderThread->context->setFormat(current->format());
+    this->dataPtr->renderThread->context->setShareContext(current);
+    this->dataPtr->renderThread->context->create();
+    this->dataPtr->renderThread->context->moveToThread(
+        this->dataPtr->renderThread);
 
     current->makeCurrent(this->window());
 
@@ -685,17 +825,17 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // This rendering pipeline is throttled by vsync on the scene graph
     // rendering thread.
 
-    this->connect(this->renderThread, &RenderThread::TextureReady,
+    this->connect(this->dataPtr->renderThread, &RenderThread::TextureReady,
         node, &TextureNode::NewTexture, Qt::DirectConnection);
     this->connect(node, &TextureNode::PendingNewTexture, this->window(),
         &QQuickWindow::update, Qt::QueuedConnection);
     this->connect(this->window(), &QQuickWindow::beforeRendering, node,
         &TextureNode::PrepareNode, Qt::DirectConnection);
-    this->connect(node, &TextureNode::TextureInUse, this->renderThread,
+    this->connect(node, &TextureNode::TextureInUse, this->dataPtr->renderThread,
         &RenderThread::RenderNext, Qt::QueuedConnection);
 
     // Get the production of FBO textures started..
-    QMetaObject::invokeMethod(this->renderThread, "RenderNext",
+    QMetaObject::invokeMethod(this->dataPtr->renderThread, "RenderNext",
         Qt::QueuedConnection);
   }
 
@@ -707,37 +847,43 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 /////////////////////////////////////////////////
 void RenderWindowItem::SetBackgroundColor(const math::Color &_color)
 {
-  this->renderThread->ignRenderer.backgroundColor = _color;
+  this->dataPtr->renderThread->ignRenderer.backgroundColor = _color;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetAmbientLight(const math::Color &_ambient)
 {
-  this->renderThread->ignRenderer.ambientLight = _ambient;
+  this->dataPtr->renderThread->ignRenderer.ambientLight = _ambient;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetEngineName(const std::string &_name)
 {
-  this->renderThread->ignRenderer.engineName = _name;
+  this->dataPtr->renderThread->ignRenderer.engineName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneName(const std::string &_name)
 {
-  this->renderThread->ignRenderer.sceneName = _name;
+  this->dataPtr->renderThread->ignRenderer.sceneName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 {
-  this->renderThread->ignRenderer.cameraPose = _pose;
+  this->dataPtr->renderThread->ignRenderer.cameraPose = _pose;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneService(const std::string &_service)
 {
-  this->renderThread->ignRenderer.sceneService = _service;
+  this->dataPtr->renderThread->ignRenderer.sceneService = _service;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetPoseTopic(const std::string &_topic)
+{
+  this->dataPtr->renderThread->ignRenderer.poseTopic = _topic;
 }
 
 /////////////////////////////////////////////////
@@ -809,6 +955,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       std::string service = elem->GetText();
       renderWindow->SetSceneService(service);
     }
+
+    if (auto elem = _pluginElem->FirstChildElement("pose_topic"))
+    {
+      std::string topic = elem->GetText();
+      renderWindow->SetPoseTopic(topic);
+    }
   }
 }
 
@@ -820,7 +972,7 @@ void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
   event.SetPressPos(event.Pos());
   this->dataPtr->mouseEvent = event;
 
-  this->renderThread->ignRenderer.NewMouseEvent(
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
 }
 
@@ -829,7 +981,7 @@ void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
 
-  this->renderThread->ignRenderer.NewMouseEvent(
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
 }
 
@@ -845,7 +997,7 @@ void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
   auto dragInt = event.Pos() - this->dataPtr->mouseEvent.Pos();
   auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
 
-  this->renderThread->ignRenderer.NewMouseEvent(event, dragDistance);
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(event, dragDistance);
   this->dataPtr->mouseEvent = event;
 }
 
@@ -855,8 +1007,8 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
   this->dataPtr->mouseEvent.SetType(common::MouseEvent::SCROLL);
   this->dataPtr->mouseEvent.SetPos(_e->x(), _e->y());
   double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
-  this->renderThread->ignRenderer.NewMouseEvent(this->dataPtr->mouseEvent,
-      math::Vector2d(scroll, scroll));
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
+      this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
 }
 
 
