@@ -27,6 +27,7 @@ foreach (src ${qt_headers_local})
     ${${src}_RCC}
   )
   target_link_libraries(${src}
+    PUBLIC
     ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}
     ${IGNITION-MSGS_LIBRARIES}
@@ -36,6 +37,8 @@ foreach (src ${qt_headers_local})
     ${Qt5Qml_LIBRARIES}
     ${Qt5Quick_LIBRARIES}
     ${Qt5QuickControls2_LIBRARIES}
+    PRIVATE
+    ignition-plugin${IGN_PLUGIN_VER}::register
   )
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})
