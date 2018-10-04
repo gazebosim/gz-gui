@@ -141,9 +141,9 @@ void WorldControl::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  if (this->dataPtr->msg.paused())
+  if (!this->dataPtr->pause && this->dataPtr->msg.paused())
     this->paused();
-  else
+  else if (this->dataPtr->pause && !this->dataPtr->msg.paused())
     this->playing();
 }
 
