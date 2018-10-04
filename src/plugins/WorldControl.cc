@@ -43,6 +43,9 @@ namespace plugins
 
     /// \brief The multi step value
     public: unsigned int multiStep = 1u;
+
+    /// \brief True for paused
+    public: bool pause{true};
   };
 }
 }
@@ -165,6 +168,7 @@ void WorldControl::OnPlay()
 
   ignition::msgs::WorldControl req;
   req.set_pause(false);
+  this->dataPtr->pause = false;
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
@@ -180,6 +184,7 @@ void WorldControl::OnPause()
 
   ignition::msgs::WorldControl req;
   req.set_pause(true);
+  this->dataPtr->pause = true;
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
@@ -198,6 +203,7 @@ void WorldControl::OnStep()
   };
 
   ignition::msgs::WorldControl req;
+  req.set_pause(this->dataPtr->pause);
   req.set_multi_step(this->dataPtr->multiStep);
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
