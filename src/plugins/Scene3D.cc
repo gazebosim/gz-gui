@@ -684,9 +684,16 @@ void RenderThread::ShutDown()
 
 
 /////////////////////////////////////////////////
-void RenderThread::SizeChanged(const QSize &_size)
+void RenderThread::SizeChanged()
 {
-  this->ignRenderer.textureSize = _size;
+  auto item = qobject_cast<QQuickItem *>(this->sender());
+  if (!item)
+  {
+    ignerr << "Internal error, sender is not QQuickItem." << std::endl;
+    return;
+  }
+
+  this->ignRenderer.textureSize = QSize(item->width(), item->height());
   this->ignRenderer.textureDirty = true;
 }
 
@@ -769,9 +776,14 @@ void RenderWindowItem::Ready()
 
   this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 
-  connect(this, &QObject::destroyed,
+  this->connect(this, &QObject::destroyed,
       this->dataPtr->renderThread, &RenderThread::ShutDown,
       Qt::QueuedConnection);
+
+  this->connect(this, &QQuickItem::widthChanged,
+      this->dataPtr->renderThread, &RenderThread::SizeChanged);
+  this->connect(this, &QQuickItem::heightChanged,
+      this->dataPtr->renderThread, &RenderThread::SizeChanged);
 
   this->dataPtr->renderThread->start();
   this->update();
