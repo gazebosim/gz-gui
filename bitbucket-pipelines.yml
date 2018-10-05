@@ -38,7 +38,7 @@ pipelines:
             libignition-common3-dev
             libignition-math6-dev
             libignition-msgs3-dev
-            libignition-plugin1-dev
+            libignition-plugin-dev
             libignition-rendering-dev
             libignition-tools-dev
             libignition-transport6-dev
