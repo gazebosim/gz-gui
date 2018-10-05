@@ -17,7 +17,7 @@
 
 #include <iostream>
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 #include <ignition/msgs.hh>
 #include <ignition/transport/Node.hh>
 
@@ -179,5 +179,5 @@ void Requester::OnRequest()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Requester,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::Requester,
+                    ignition::gui::Plugin)

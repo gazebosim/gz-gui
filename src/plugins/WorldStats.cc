@@ -16,7 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 #include <ignition/common/Time.hh>
 
 #include "ignition/gui/plugins/WorldStats.hh"
@@ -241,5 +241,5 @@ void WorldStats::SetIterations(const QString &_iterations)
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::WorldStats,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::WorldStats,
+                    ignition::gui::Plugin)

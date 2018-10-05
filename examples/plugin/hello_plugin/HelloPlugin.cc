@@ -16,7 +16,7 @@
 */
 
 #include <iostream>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "HelloPlugin.hh"
 
@@ -41,5 +41,5 @@ void HelloPlugin::OnButton()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::HelloPlugin,
-                                  ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(ignition::gui::HelloPlugin,
+                    ignition::gui::Plugin);
