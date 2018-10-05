@@ -36,32 +36,10 @@ class ignition::gui::PluginPrivate
   /// \brief Pointer to wrapping card item
   public: QQuickItem *cardItem{nullptr};
 
-  /// \brief Card's X position
-  public: int x{-1};
-
-  /// \brief Card's Y position
-  public: int y{-1};
-
-  /// \brief Card's Z position
-  public: int z{-1};
-
-  /// \brief Card's height
-  public: int height{-1};
-
-  /// \brief Card's width
-  public: int width{-1};
-
-  /// \brief True if the plugin should have a title bar, false otherwise.
-  public: bool showTitleBar{true};
-
-  /// \brief True if the plugin should have a dock button, false otherwise.
-  public: bool showDockButton{true};
-
-  /// \brief True if the plugin should have a close button, false otherwise.
-  public: bool showCloseButton{true};
-
-  /// \brief True if the plugin should be resizable, false otherwise.
-  public: bool resizable{true};
+  /// \brief Map of card properties to be passed to QML card object.
+  /// Accepts all QML Pane properties plus custom Igntiion GUI properties.
+  /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
+  public: std::map<std::string, QVariant> cardProperties;
 };
 
 using namespace ignition;
@@ -130,55 +108,11 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   this->LoadConfig(_pluginElem);
 }
 
+/////////////////////////////////////////////////
 void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
 {
   if (nullptr == _ignGuiElem)
     return;
-
-  if (auto elem = _ignGuiElem->FirstChildElement("x"))
-  {
-    elem->QueryIntText(&this->dataPtr->x);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("y"))
-  {
-    elem->QueryIntText(&this->dataPtr->y);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("z"))
-  {
-    elem->QueryIntText(&this->dataPtr->z);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("width"))
-  {
-    elem->QueryIntText(&this->dataPtr->width);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("height"))
-  {
-    elem->QueryIntText(&this->dataPtr->height);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("show_title_bar"))
-  {
-    elem->QueryBoolText(&this->dataPtr->showTitleBar);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("show_dock_button"))
-  {
-    elem->QueryBoolText(&this->dataPtr->showDockButton);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("show_close_button"))
-  {
-    elem->QueryBoolText(&this->dataPtr->showCloseButton);
-  }
-
-  if (auto elem = _ignGuiElem->FirstChildElement("resizable"))
-  {
-    elem->QueryBoolText(&this->dataPtr->resizable);
-  }
 
   if (auto elem = _ignGuiElem->FirstChildElement("title"))
   {
@@ -195,6 +129,47 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
     if (this->dataPtr->deleteLaterRequested)
       this->DeleteLater();
   }
+
+  // Properties
+  for (auto propElem = _ignGuiElem->FirstChildElement("property");
+      propElem != nullptr;
+      propElem = propElem->NextSiblingElement("property"))
+  {
+    std::string key = propElem->Attribute("key");
+    std::string type = propElem->Attribute("type");
+    QVariant variant;
+
+    if (type == "bool")
+    {
+      bool value;
+      propElem->QueryBoolAttribute("value", &value);
+      variant = QVariant(value);
+    }
+    else if (type == "int")
+    {
+      int value;
+      propElem->QueryIntAttribute("value", &value);
+      variant = QVariant(value);
+    }
+    else if (type == "double")
+    {
+      double value;
+      propElem->QueryDoubleAttribute("value", &value);
+      variant = QVariant(value);
+    }
+    else if (type == "string")
+    {
+      std::string value = propElem->Attribute("value");
+      variant = QVariant(QString::fromStdString(value));
+    }
+    else
+    {
+      ignwarn << "Property type [" << type << "] not supported." << std::endl;
+      continue;
+    }
+
+    this->dataPtr->cardProperties[key] = variant;
+  }
 }
 
 /////////////////////////////////////////////////
@@ -207,6 +182,7 @@ std::string Plugin::ConfigStr()
   tinyxml2::XMLDocument doc;
   doc.Parse(this->configStr.c_str());
 
+  // <plugin>
   auto pluginElem = doc.FirstChildElement("plugin");
   if (!pluginElem)
   {
@@ -215,20 +191,44 @@ std::string Plugin::ConfigStr()
     return this->configStr;
   }
 
-  // Update arguments
-  pluginElem->SetAttribute("x", this->CardItem()->x());
-  pluginElem->SetAttribute("y", this->CardItem()->y());
-  pluginElem->SetAttribute("z", this->CardItem()->z());
-  pluginElem->SetAttribute("height", this->CardItem()->height());
-  pluginElem->SetAttribute("width", this->CardItem()->width());
-  pluginElem->SetAttribute("show_title_bar",
-      this->CardItem()->property("showTitleBar").toBool());
-  pluginElem->SetAttribute("show_dock_button",
-      this->CardItem()->property("showDockButton").toBool());
-  pluginElem->SetAttribute("show_close_button",
-      this->CardItem()->property("showCloseButton").toBool());
-  pluginElem->SetAttribute("resizable",
-      this->CardItem()->property("resizable").toBool());
+  // <ignition-gui>
+  auto ignGuiElem = pluginElem->FirstChildElement("ignition-gui");
+  if (!ignGuiElem)
+  {
+    ignGuiElem = doc.NewElement("ignition-gui");
+    pluginElem->InsertEndChild(ignGuiElem);
+  }
+
+  // Clean <property>s
+  for (auto propElem = ignGuiElem->FirstChildElement("property");
+      propElem != nullptr;
+      propElem = propElem->NextSiblingElement("property"))
+  {
+    ignGuiElem->DeleteChild(propElem);
+  }
+
+  // Add <property>s
+  auto meta = this->CardItem()->metaObject();
+  for (int i = 0; i < meta->propertyCount(); ++i)
+  {
+    auto key = meta->property(i).name();
+    auto type = std::string(meta->property(i).typeName());
+
+    std::string value;
+    if (type != "double" && type != "int" && type != "bool")
+    {
+      continue;
+    }
+
+    value = this->CardItem()->property(meta->property(i).name())
+            .toString().toStdString();
+
+    auto elem = doc.NewElement("property");
+    elem->SetAttribute("key", key);
+    elem->SetAttribute("type", type.c_str());
+    elem->SetAttribute("value", value.c_str());
+    ignGuiElem->InsertEndChild(elem);
+  }
 
   // Then convert XML back to string
   tinyxml2::XMLPrinter printer;
@@ -325,29 +325,28 @@ QQuickItem *Plugin::CardItem() const
   this->dataPtr->pluginItem->setParentItem(cardContentItem);
 
   // Configure card
-  // Adjust size to accomodate plugin if not explicitly set in config
-  auto pluginWidth = this->dataPtr->width > 0 ?
-      this->dataPtr->width :
-      this->dataPtr->pluginItem->property("width").toInt();
-  auto pluginHeight = this->dataPtr->height > 0 ?
-      this->dataPtr->height :
-      (this->dataPtr->pluginItem->property("height").toInt() +
-       cardToolbarItem->property("height").toInt());
-
   cardItem->setProperty("pluginName",
       QString::fromStdString(this->Title()));
-  cardItem->setProperty("showTitleBar", this->dataPtr->showTitleBar);
-  cardItem->setProperty("showDockButton", this->dataPtr->showDockButton);
-  cardItem->setProperty("showCloseButton", this->dataPtr->showCloseButton);
-  cardItem->setProperty("resizable", this->dataPtr->resizable);
-  cardItem->setProperty("width", pluginWidth);
-  cardItem->setProperty("height", pluginHeight);
-  if (this->dataPtr->x >= 0)
-    cardItem->setProperty("x", this->dataPtr->x);
-  if (this->dataPtr->y >= 0)
-    cardItem->setProperty("y", this->dataPtr->y);
-  if (this->dataPtr->z >= 0)
-    cardItem->setProperty("z", this->dataPtr->z);
+
+  for (auto prop : this->dataPtr->cardProperties)
+  {
+    cardItem->setProperty(prop.first.c_str(), prop.second);
+  }
+
+  // Adjust size to accomodate plugin if not explicitly set in config
+  if (this->dataPtr->cardProperties.find("width") ==
+      this->dataPtr->cardProperties.end())
+  {
+    cardItem->setProperty("width",
+        this->dataPtr->pluginItem->property("width").toInt());
+  }
+
+  if (this->dataPtr->cardProperties.find("height") ==
+      this->dataPtr->cardProperties.end())
+  {
+    cardItem->setProperty("height",
+        this->dataPtr->pluginItem->property("height").toInt());
+  }
 
   this->dataPtr->cardItem = cardItem;
 
