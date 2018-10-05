@@ -123,74 +123,78 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
-  // Keep card state to set when creating card
-  int x;
-  if (_pluginElem->QueryAttribute("x", &x) == tinyxml2::XML_SUCCESS)
-    this->dataPtr->x = x;
+  // Load common configuration
+  this->LoadCommonConfig(_pluginElem->FirstChildElement("ignition-gui"));
 
-  int y;
-  if (_pluginElem->QueryAttribute("y", &y) == tinyxml2::XML_SUCCESS)
-    this->dataPtr->y = y;
+  // Load custom configuration
+  this->LoadConfig(_pluginElem);
+}
 
-  int z;
-  if (_pluginElem->QueryAttribute("z", &z) == tinyxml2::XML_SUCCESS)
-    this->dataPtr->z = z;
+void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
+{
+  if (nullptr == _ignGuiElem)
+    return;
 
-  int height;
-  if (_pluginElem->QueryAttribute("height", &height) == tinyxml2::XML_SUCCESS)
-    this->dataPtr->height = height;
-
-  int width;
-  if (_pluginElem->QueryAttribute("width", &width) == tinyxml2::XML_SUCCESS)
-    this->dataPtr->width = width;
-
-  bool showTitleBar;
-  if (_pluginElem->QueryAttribute("show_title_bar", &showTitleBar) ==
-      tinyxml2::XML_SUCCESS)
+  if (auto elem = _ignGuiElem->FirstChildElement("x"))
   {
-    this->dataPtr->showTitleBar = showTitleBar;
+    elem->QueryIntText(&this->dataPtr->x);
   }
 
-  bool showDockButton;
-  if (_pluginElem->QueryAttribute("show_dock_button", &showDockButton) ==
-      tinyxml2::XML_SUCCESS)
+  if (auto elem = _ignGuiElem->FirstChildElement("y"))
   {
-    this->dataPtr->showDockButton = showDockButton;
+    elem->QueryIntText(&this->dataPtr->y);
   }
 
-  bool showCloseButton;
-  if (_pluginElem->QueryAttribute("show_close_button", &showCloseButton) ==
-      tinyxml2::XML_SUCCESS)
+  if (auto elem = _ignGuiElem->FirstChildElement("z"))
   {
-    this->dataPtr->showCloseButton = showCloseButton;
+    elem->QueryIntText(&this->dataPtr->z);
   }
 
-  bool resizable;
-  if (_pluginElem->QueryAttribute("resizable", &resizable) ==
-      tinyxml2::XML_SUCCESS)
+  if (auto elem = _ignGuiElem->FirstChildElement("width"))
   {
-    this->dataPtr->resizable = resizable;
+    elem->QueryIntText(&this->dataPtr->width);
   }
 
-  if (auto t = _pluginElem->Attribute("title"))
+  if (auto elem = _ignGuiElem->FirstChildElement("height"))
   {
-    this->title = t;
+    elem->QueryIntText(&this->dataPtr->height);
+  }
+
+  if (auto elem = _ignGuiElem->FirstChildElement("show_title_bar"))
+  {
+    elem->QueryBoolText(&this->dataPtr->showTitleBar);
+  }
+
+  if (auto elem = _ignGuiElem->FirstChildElement("show_dock_button"))
+  {
+    elem->QueryBoolText(&this->dataPtr->showDockButton);
+  }
+
+  if (auto elem = _ignGuiElem->FirstChildElement("show_close_button"))
+  {
+    elem->QueryBoolText(&this->dataPtr->showCloseButton);
+  }
+
+  if (auto elem = _ignGuiElem->FirstChildElement("resizable"))
+  {
+    elem->QueryBoolText(&this->dataPtr->resizable);
+  }
+
+  if (auto elem = _ignGuiElem->FirstChildElement("title"))
+  {
+    this->title = elem->GetText();
   }
 
   // Delete later
-  if (_pluginElem->Attribute("delete_later"))
+  if (auto elem = _ignGuiElem->FirstChildElement("delete_later"))
   {
     // Store param
-    _pluginElem->QueryBoolAttribute("delete_later",
-        &this->dataPtr->deleteLaterRequested);
+    elem->QueryBoolText(&this->dataPtr->deleteLaterRequested);
 
     // Use it
     if (this->dataPtr->deleteLaterRequested)
       this->DeleteLater();
   }
-
-  // Load custom configuration
-  this->LoadConfig(_pluginElem);
 }
 
 /////////////////////////////////////////////////
