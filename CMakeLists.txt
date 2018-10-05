@@ -48,6 +48,11 @@ ign_find_package(ignition-common3 REQUIRED)
 set(IGN_COMMON_VER ${ignition-common3_VERSION_MAJOR})
 
 #--------------------------------------
+# Find ignition-plugin
+ign_find_package(ignition-plugin1 REQUIRED COMPONENTS loader register)
+set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
+
+#--------------------------------------
 # Find ignition-transport
 ign_find_package(ignition-transport6 REQUIRED)
 set(IGN_TRANSPORT_VER ${ignition-transport6_VERSION_MAJOR})

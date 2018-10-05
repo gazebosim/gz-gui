@@ -21,8 +21,6 @@
 #include <memory>
 #include <string>
 
-#include <ignition/common/PluginMacros.hh>
-
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
@@ -49,8 +47,6 @@ namespace ignition
     class IGNITION_GUI_VISIBLE Plugin : public QObject
     {
       Q_OBJECT
-
-      public: IGN_COMMON_SPECIALIZE_INTERFACE(ignition::gui::Plugin)
 
       /// \brief Constructor
       public: Plugin();

@@ -18,7 +18,7 @@
 #include <map>
 #include <vector>
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "ignition/gui/EditableLabel.hh"
 #include "ignition/gui/plugins/plot/Curve.hh"
@@ -820,5 +820,5 @@ void Plot::OnExportCSV()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::plot::Plot,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::plot::Plot,
+                    ignition::gui::Plugin)

@@ -16,7 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "TestBadInheritancePlugin.hh"
 
@@ -35,5 +35,5 @@ TestBadInheritancePlugin::~TestBadInheritancePlugin()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::TestBadInheritancePlugin,
-                                  ignition::gui::MainWindow)
+IGNITION_ADD_PLUGIN(ignition::gui::TestBadInheritancePlugin,
+                    ignition::gui::MainWindow)

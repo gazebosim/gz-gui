@@ -27,12 +27,15 @@ foreach (src ${plugins})
     ${${src}_RCC}
   )
   target_link_libraries(${src}
+    PUBLIC
     ${IGNITION-COMMON_LIBRARIES}
     ${IGNITION-GUI_LIBRARIES}
     ${Qt5Core_LIBRARIES}
     ${Qt5Qml_LIBRARIES}
     ${Qt5Quick_LIBRARIES}
     ${Qt5QuickControls2_LIBRARIES}
+    PRIVATE
+    ignition-plugin${IGN_PLUGIN_VER}::register
   )
 endforeach (src ${qt_headers_local})
 
