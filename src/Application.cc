@@ -443,11 +443,15 @@ bool Application::AddPluginsToWindow()
     cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 
+    // Apply anchors now that it's attached to window
+    plugin->ApplyAnchors();
+
     // Signals
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
         this, SLOT(OnPluginClose()));
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(resized()),
         this->dataPtr->mainWin, SLOT(OnCardResized()));
+
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
