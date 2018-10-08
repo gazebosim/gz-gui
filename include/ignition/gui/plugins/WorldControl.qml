@@ -67,7 +67,7 @@ RowLayout {
     Layout.minimumWidth: width
     Layout.leftMargin: 10
     onClicked: {
-      if (checked)
+      if (paused)
         WorldControl.OnPlay()
       else
         WorldControl.OnPause()
