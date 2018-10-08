@@ -164,24 +164,24 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
     if (type == "bool")
     {
       bool value;
-      propElem->QueryBoolAttribute("value", &value);
+      propElem->QueryBoolText(&value);
       variant = QVariant(value);
     }
     else if (type == "int")
     {
       int value;
-      propElem->QueryIntAttribute("value", &value);
+      propElem->QueryIntText(&value);
       variant = QVariant(value);
     }
     else if (type == "double")
     {
       double value;
-      propElem->QueryDoubleAttribute("value", &value);
+      propElem->QueryDoubleText(&value);
       variant = QVariant(value);
     }
     else if (type == "string")
     {
-      std::string value = propElem->Attribute("value");
+      std::string value = propElem->GetText();
       variant = QVariant(QString::fromStdString(value));
     }
     else
@@ -274,7 +274,7 @@ std::string Plugin::ConfigStr()
     auto elem = doc.NewElement("property");
     elem->SetAttribute("key", key);
     elem->SetAttribute("type", type.c_str());
-    elem->SetAttribute("value", value.c_str());
+    elem->SetText(value.c_str());
     ignGuiElem->InsertEndChild(elem);
   }
 
