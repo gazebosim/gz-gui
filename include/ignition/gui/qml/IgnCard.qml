@@ -69,13 +69,6 @@ Pane {
    */
   signal close()
 
-  /**
-   * Resized signal
-   */
-  signal resized()
-  onWidthChanged: resized()
-  onHeightChanged: resized()
-
   Material.onBackgroundChanged: {
     titleLabel.color = Material.background
   }

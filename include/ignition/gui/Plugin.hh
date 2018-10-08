@@ -78,6 +78,8 @@ namespace ignition
       /// \return Pointer to plugin item.
       public: QQuickItem *PluginItem() const;
 
+      /// \brief Apply any anchors which may have been specified on the config
+      /// through the <anchor> tag.
       public: void ApplyAnchors();
 
       /// \brief Load the plugin with a configuration file. Override this
