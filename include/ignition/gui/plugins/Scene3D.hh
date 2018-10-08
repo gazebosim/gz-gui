@@ -175,8 +175,7 @@ namespace plugins
     public slots: void ShutDown();
 
     /// \brief Slot called to update render texture size
-    /// \param[in] _size New texture size
-    public slots: void SizeChanged(const QSize &_size);
+    public slots: void SizeChanged();
 
     /// \brief Signal to indicate that a frame has been rendered and ready
     /// to be displayed

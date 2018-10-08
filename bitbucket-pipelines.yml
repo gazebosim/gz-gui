@@ -35,12 +35,13 @@ pipelines:
           # Dependency: Ignition packages
           - apt-get -y install
             libignition-cmake2-dev
-            libignition-tools-dev
             libignition-common3-dev
             libignition-math6-dev
             libignition-msgs3-dev
-            libignition-transport6-dev
+            libignition-plugin-dev
             libignition-rendering-dev
+            libignition-tools-dev
+            libignition-transport6-dev
           # Ignition rendering (uncomment if a specific branch is needed)
           # - apt install -y
           #   libogre-1.9-dev

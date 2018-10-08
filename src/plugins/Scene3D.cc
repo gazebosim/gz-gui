@@ -22,7 +22,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 #include <ignition/common/MeshManager.hh>
 
 #include <ignition/math/Vector2.hh>
@@ -684,9 +684,16 @@ void RenderThread::ShutDown()
 
 
 /////////////////////////////////////////////////
-void RenderThread::SizeChanged(const QSize &_size)
+void RenderThread::SizeChanged()
 {
-  this->ignRenderer.textureSize = _size;
+  auto item = qobject_cast<QQuickItem *>(this->sender());
+  if (!item)
+  {
+    ignerr << "Internal error, sender is not QQuickItem." << std::endl;
+    return;
+  }
+
+  this->ignRenderer.textureSize = QSize(item->width(), item->height());
   this->ignRenderer.textureDirty = true;
 }
 
@@ -769,9 +776,14 @@ void RenderWindowItem::Ready()
 
   this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 
-  connect(this, &QObject::destroyed,
+  this->connect(this, &QObject::destroyed,
       this->dataPtr->renderThread, &RenderThread::ShutDown,
       Qt::QueuedConnection);
+
+  this->connect(this, &QQuickItem::widthChanged,
+      this->dataPtr->renderThread, &RenderThread::SizeChanged);
+  this->connect(this, &QQuickItem::heightChanged,
+      this->dataPtr->renderThread, &RenderThread::SizeChanged);
 
   this->dataPtr->renderThread->start();
   this->update();
@@ -1031,6 +1043,6 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 //
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Scene3D,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::Scene3D,
+                    ignition::gui::Plugin)
 
