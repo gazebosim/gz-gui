@@ -226,7 +226,7 @@ std::string Plugin::ConfigStr()
     auto elem = doc.NewElement("property");
     elem->SetAttribute("key", key);
     elem->SetAttribute("type", type.c_str());
-    elem->SetAttribute("value", value.c_str());
+    elem->SetText(value.c_str());
     ignGuiElem->InsertEndChild(elem);
   }
 
