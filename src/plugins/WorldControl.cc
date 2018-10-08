@@ -146,6 +146,7 @@ void WorldControl::ProcessMsg()
     this->paused();
   else if (this->dataPtr->pause && !this->dataPtr->msg.paused())
     this->playing();
+  this->dataPtr->pause = this->dataPtr->msg.paused();
 }
 
 /////////////////////////////////////////////////
