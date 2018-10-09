@@ -6,18 +6,18 @@ Rectangle {
   width: 1000
   height: 800
 
-  Connections {
-    target: MainWindow
-    onCardResized: {
-      width = parent.width
-      height = parent.height
-    }
-  }
-
   RenderWindow {
     id: renderWindow
     objectName: "rw"
     anchors.fill: parent
+  }
+
+  onParentChanged: {
+    if (undefined === parent)
+      return;
+
+      width = Qt.binding(function() {return parent.parent.width})
+      height = Qt.binding(function() {return parent.parent.height})
   }
 }
 

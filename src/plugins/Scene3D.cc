@@ -693,6 +693,9 @@ void RenderThread::SizeChanged()
     return;
   }
 
+  if (item->width() <= 0 || item->height() <= 0)
+    return;
+
   this->ignRenderer.textureSize = QSize(item->width(), item->height());
   this->ignRenderer.textureDirty = true;
 }
@@ -772,7 +775,7 @@ void RenderWindowItem::Ready()
   this->dataPtr->renderThread->surface->create();
 
   this->dataPtr->renderThread->ignRenderer.textureSize =
-      QSize(this->width(), this->height());
+      QSize(std::max({this->width(), 1.0}), std::max({this->height(), 1.0}));
 
   this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 

@@ -15,9 +15,28 @@
  *
  */
 
+#include <unordered_set>
+
 #include <ignition/common/Console.hh>
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
+
+struct Anchor
+{
+  std::string line;
+  std::string target;
+  std::string targetLine;
+};
+
+static const std::unordered_set<std::string> kAnchorLineSet{
+    "top",
+    "bottom",
+    "left",
+    "right",
+    "horizontalCenter",
+    "verticalCenter",
+    "baseline"};
 
 class ignition::gui::PluginPrivate
 {
@@ -40,6 +59,9 @@ class ignition::gui::PluginPrivate
   /// Accepts all QML Pane properties plus custom Igntiion GUI properties.
   /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
   public: std::map<std::string, QVariant> cardProperties;
+
+  /// \brief Vector of anchors.
+  public: std::vector<Anchor> anchors;
 };
 
 using namespace ignition;
@@ -169,6 +191,32 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
     }
 
     this->dataPtr->cardProperties[key] = variant;
+  }
+
+  // Anchors
+  for (auto anchorElem = _ignGuiElem->FirstChildElement("anchor");
+      anchorElem != nullptr;
+      anchorElem = anchorElem->NextSiblingElement("anchor"))
+  {
+    Anchor anchor;
+    anchor.line = anchorElem->Attribute("line");
+    anchor.target = anchorElem->Attribute("target");
+    anchor.targetLine = anchorElem->Attribute("target_line");
+
+    if (kAnchorLineSet.find(anchor.line) == kAnchorLineSet.end())
+    {
+      ignwarn << "Invalid anchor line [" << anchor.line << "]" << std::endl;
+      continue;
+    }
+
+    if (kAnchorLineSet.find(anchor.targetLine) == kAnchorLineSet.end())
+    {
+      ignwarn << "Invalid anchor target line [" << anchor.line << "]"
+              << std::endl;
+      continue;
+    }
+
+    this->dataPtr->anchors.push_back(anchor);
   }
 }
 
@@ -351,5 +399,43 @@ QQuickItem *Plugin::CardItem() const
   this->dataPtr->cardItem = cardItem;
 
   return cardItem;
+}
+
+/////////////////////////////////////////////////
+void Plugin::ApplyAnchors()
+{
+  if (this->dataPtr->anchors.empty())
+    return;
+
+  // For now, only support attaching to the main window (i.e. background item)
+  auto win = App()->findChild<MainWindow *>();
+  if (!win)
+  {
+    ignerr << "Internal error: missing window" << std::endl;
+    return;
+  }
+
+  auto bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
+  if (!bgItem)
+  {
+    ignerr << "Internal error: missing background item" << std::endl;
+    return;
+  }
+
+  auto cardAnchors = qvariant_cast<QObject *>(
+      this->CardItem()->property("anchors"));
+
+  for (auto anchor : this->dataPtr->anchors)
+  {
+    if (anchor.target != "window")
+    {
+      ignwarn << "Invalid target [" << anchor.target
+              << "]. Currently only support anchoring to window." << std::endl;
+      continue;
+    }
+
+    cardAnchors->setProperty(anchor.line.c_str(),
+        bgItem->property(anchor.targetLine.c_str()));
+  }
 }
 
