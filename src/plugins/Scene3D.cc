@@ -152,6 +152,9 @@ namespace plugins
 
     /// \brief Scene requester to get scene info
     public: SceneManager sceneManager;
+
+    /// \brief View control focus target
+    public: math::Vector3d target;
   };
 
   /// \brief Private data class for RenderWindowItem
@@ -485,21 +488,26 @@ void IgnRenderer::HandleMouseEvent()
   if (!this->dataPtr->mouseDirty)
     return;
 
-  math::Vector3d target;
   this->dataPtr->viewControl.SetCamera(this->dataPtr->camera);
 
   if (this->dataPtr->mouseEvent.Type() == common::MouseEvent::SCROLL)
   {
-    target = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
-    this->dataPtr->viewControl.SetTarget(target);
-    double distance = this->dataPtr->camera->WorldPosition().Distance(target);
+    this->dataPtr->target =
+        this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+    this->dataPtr->viewControl.SetTarget(this->dataPtr->target);
+    double distance = this->dataPtr->camera->WorldPosition().Distance(
+        this->dataPtr->target);
     double amount = -this->dataPtr->drag.Y() * distance / 5.0;
     this->dataPtr->viewControl.Zoom(amount);
   }
   else
   {
-    target = this->ScreenToScene(this->dataPtr->mouseEvent.PressPos());
-    this->dataPtr->viewControl.SetTarget(target);
+    if (this->dataPtr->drag == math::Vector2d::Zero)
+    {
+      this->dataPtr->target = this->ScreenToScene(
+          this->dataPtr->mouseEvent.PressPos());
+      this->dataPtr->viewControl.SetTarget(this->dataPtr->target);
+    }
 
     // Pan with left button
     if (this->dataPtr->mouseEvent.Buttons() & common::MouseEvent::LEFT)
@@ -516,7 +524,8 @@ void IgnRenderer::HandleMouseEvent()
       double hfov = this->dataPtr->camera->HFOV().Radian();
       double vfov = 2.0f * atan(tan(hfov / 2.0f) /
           this->dataPtr->camera->AspectRatio());
-      double distance = this->dataPtr->camera->WorldPosition().Distance(target);
+      double distance = this->dataPtr->camera->WorldPosition().Distance(
+          this->dataPtr->target);
       double amount = ((-this->dataPtr->drag.Y() /
           static_cast<double>(this->dataPtr->camera->ImageHeight()))
           * distance * tan(vfov/2.0) * 6.0);
