@@ -93,7 +93,7 @@ namespace ignition
       /// \return Plugin title.
       public: virtual std::string Title() const {return this->title;}
 
-      /// \brief Get the value of the the `delete_later` attribute from the
+      /// \brief Get the value of the the `delete_later` element from the
       /// configuration file, which defaults to false.
       /// \return The value of `delete_later`.
       public: bool DeleteLaterRequested() const;
@@ -110,6 +110,15 @@ namespace ignition
 
       /// \brief XML configuration
       protected: std::string configStr;
+
+      /// \brief Load configuration which is common to all plugins and handled
+      /// by Ignition GUI.
+      /// \details Called when a plugin is first created.
+      /// \sa LoadConfig
+      /// \param[in] _ignGuiElem <ignition-gui> element within the <plugin>.
+      /// Will be nullptr if not present in the SDF.
+      private: virtual void LoadCommonConfig(
+          const tinyxml2::XMLElement *_ignGuiElem);
 
       /// \internal
       /// \brief Pointer to private data

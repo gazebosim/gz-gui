@@ -67,10 +67,10 @@ TEST(WorldControlTest, WorldControl)
 
   // Load plugin
   const char *pluginStr =
-    "<plugin "
-      "filename=\"WorldControl\" "
-      "title=\"World Control!\""
-    ">"
+    "<plugin filename=\"WorldControl\">"
+      "<ignition-gui>"
+        "<title>World Control!</title>"
+      "</ignition-gui>"
       "<play_pause>true</play_pause>"
       "<service>/world_control_test</service>"
     "</plugin>";

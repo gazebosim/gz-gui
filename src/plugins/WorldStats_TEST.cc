@@ -67,10 +67,10 @@ TEST(WorldStatsTest, WorldStats)
 
   // Load plugin
   const char *pluginStr =
-    "<plugin "
-      "filename=\"WorldStats\" "
-      "title=\"World Stats!\""
-    ">"
+    "<plugin filename=\"WorldStats\">"
+      "<ignition-gui>"
+        "<title>World Stats!</title>"
+      "</ignition-gui>"
       "<sim_time>true</sim_time>"
       "<real_time>true</real_time>"
       "<real_time_factor>true</real_time_factor>"
