@@ -13,8 +13,8 @@ SplitView {
   id: background
   objectName: "background"
 
-  property variant childItems: []
-  property variant childSplits: []
+  property variant childItems: new Object()
+  property variant childSplits: new Object()
 
   Rectangle {
     visible: MainWindow.pluginCount === 0
@@ -41,35 +41,27 @@ SplitView {
    */
   function addSplitItem()
   {
-    var item = undefined;
+    var itemName = "";
 
     // First section goes in the top level SplitView, which is Qt.Horizontal
     if (MainWindow.pluginCount == 0)
     {
-      item = addNewItem(background);
+      itemName = addNewItem(background);
     }
     // The next one adds a Qt.Vertical split to the right
     else if (MainWindow.pluginCount == 1)
     {
       var split = addNewSplit(background);
       split.orientation = Qt.Vertical;
-      item = addNewItem(split);
+      itemName = addNewItem(split);
     }
     // All subsequent ones are added to the vertical child split on the right
-    else if (childSplits.length > 0)
+    else if (Object.keys(childSplits).length > 0)
     {
-      item = addNewItem(childSplits[0]);
+      var firstChildSplit = childSplits[Object.keys(childSplits)[0]];
+      itemName = addNewItem(firstChildSplit);
     }
 
-    if (item == undefined)
-    {
-      console.error("Failed to create split item");
-      return "";
-    }
-
-    // Unique name
-    var itemName = "split_item_" + Math.floor(Math.random() * 100000)
-    item.objectName = itemName;
     return itemName
   }
 
@@ -77,34 +69,29 @@ SplitView {
    */
   function removeSplitItem(_name)
   {
-    for (var i = 0; i < childItems.length; i++)
-    {
-      var item = childItems[i];
-      if (item.objectName === _name)
-      {
-        // Remove from split
-        removeFromSplits(item);
+    // Remove from split
+    removeFromSplits(childItems[_name]);
 
-        // Remove from array
-        removeFromArray(childItems, item);
-
-        // Destroy
-        item.destroy();
-
-        break;
-      }
-    }
+    // Remove from dictionary and destroy
+    delete childItems[_name];
   }
 
   /**
    * Create a new item and add it to the parent split.
    * @param Parent split
+   * @return Item name
    */
   function addNewItem(_parentSplit)
   {
     // Create item
     var item = newItem.createObject(_parentSplit);
-    childItems.push(item);
+
+    // Unique name
+    var itemName = "split_item_" + Math.floor(Math.random() * 100000)
+    item.objectName = itemName;
+
+    // Add to dictionary
+    childItems[itemName] = item;
 
     // Add to parent
     _parentSplit.addItem(item);
@@ -112,7 +99,7 @@ SplitView {
     // TODO(louise) Find a way to sync item's minimum size with the split's
     // minimum size. Must keep track of several children and be aware of timing.
 
-    return item;
+    return itemName;
   }
 
   /**
@@ -123,7 +110,13 @@ SplitView {
   {
     // Create split
     var split = newSplit.createObject(_parentSplit);
-    childSplits.push(split);
+
+    // Unique name
+    var splitName = "split_" + Math.floor(Math.random() * 100000)
+    split.objectName = splitName;
+
+    // Add to dictionary
+    childSplits[splitName] = split;
 
     // Add to parent
     _parentSplit.addItem(split);
@@ -143,9 +136,9 @@ SplitView {
     background.removeItem(_item);
 
     // Try removing from all splits
-    for (var s = 0; s < childSplits.length; s++)
+    Object.keys(childSplits).forEach(function(key)
     {
-      var split = childSplits[s];
+      var split = childSplits[key];
 
       split.removeItem(_item);
 
@@ -153,17 +146,15 @@ SplitView {
       if (split.__items.length === 0 && split !== background)
       {
         // Remove from array
-        removeFromArray(childSplits, split);
+        delete childSplits[key]
 
         // Remove from parent split
         removeFromSplits(split);
 
         // Destroy
         split.destroy();
-
-        break;
       }
-    }
+    });
   }
 
   /**
