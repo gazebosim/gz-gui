@@ -1,10 +1,12 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 
 Rectangle {
   id: topicEcho
-  width: 300
-  height: 410
+  objectName: "topicEcho"
+  Layout.minimumWidth: 300
+  Layout.minimumHeight: 1000
   color: "transparent"
 
   property int tooltipDelay: 500

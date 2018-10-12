@@ -438,8 +438,22 @@ bool Application::AddPluginsToWindow()
     if (!cardItem)
       continue;
 
+    // Add split
+    QVariant splitName;
+    QMetaObject::invokeMethod(this->dataPtr->mainWin->QuickWindow(),
+        "addSplit", Q_RETURN_ARG(QVariant, splitName));
+
+    auto splitItem = bgItem->findChild<QQuickItem *>(
+        splitName.toString());
+    if (!splitItem)
+    {
+      ignerr << "Internal error: failed to create split ["
+             << splitName.toString().toStdString() << "]" << std::endl;
+      return false;
+    }
+
     // Add card to main window
-    cardItem->setParentItem(bgItem);
+    cardItem->setParentItem(splitItem);
     cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 
