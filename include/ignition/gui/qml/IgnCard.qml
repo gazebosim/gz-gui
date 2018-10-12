@@ -164,7 +164,12 @@ Pane {
 
   function enterDockedState()
   {
-    console.log("enter docked")
+    // Add new split
+    var splitName = backgroundItem.addSplitItem();
+    var splitItem = backgroundItem.childItems[splitName];
+
+    // Reparent to split
+    card.parent = splitItem;
   }
 
   function enterFloatingState()
@@ -193,7 +198,6 @@ Pane {
 
   function leaveFloatingState()
   {
-    console.log("leave floating")
   }
 
 //  /**

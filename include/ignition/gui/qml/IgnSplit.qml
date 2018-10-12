@@ -49,14 +49,14 @@ SplitView {
       itemName = addNewItem(background);
     }
     // The next one adds a Qt.Vertical split to the right
-    else if (MainWindow.pluginCount == 1)
+    else if (Object.keys(childSplits).length == 0)
     {
       var split = addNewSplit(background);
       split.orientation = Qt.Vertical;
       itemName = addNewItem(split);
     }
     // All subsequent ones are added to the vertical child split on the right
-    else if (Object.keys(childSplits).length > 0)
+    else
     {
       var firstChildSplit = childSplits[Object.keys(childSplits)[0]];
       itemName = addNewItem(firstChildSplit);
