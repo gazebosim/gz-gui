@@ -8,21 +8,15 @@ import "qrc:/qml"
 
 // TODO: don't use "parent"
 Pane {
+  /**
+   * Minimum length of each dimension
+   */
+  property int minSize: 50
 
-//  /**
-//   * Thickness of rulers used to resize card
-//   */
-//  property int rulersThickness: 25
-//
-//  /**
-//   * Minimum length of each dimension
-//   */
-//  property int minSize: 50
-//
-//  /**
-//   * True to have a dock button
-//   */
-//  property bool showDockButton: true
+  /**
+   * True to have a dock button
+   */
+  property bool showDockButton: true
 
   /**
    * True to have a close button
@@ -49,20 +43,25 @@ Pane {
    */
   property alias pluginName: titleLabel.text
 
-//  /**
-//   * ▁
-//   */
-//  property string dockIcon: "\u2581"
-//
-//  /**
-//   * □
-//   */
-//  property string undockIcon: "\u25A1"
+  /**
+   * ▁
+   */
+  property string dockIcon: "\u2581"
+
+  /**
+   * □
+   */
+  property string floatIcon: "\u25A1"
 
   /**
    * ✕
    */
   property string closeIcon: "\u2715"
+
+  /**
+   *
+   */
+  property var backgroundItem: null
 
   /**
    * Close signal
@@ -118,30 +117,85 @@ Pane {
   background: Rectangle {
     color: "transparent"
   }
+
   padding: 0
-//  y: 50
-//  state: "docked"
-//
-//  states: [
+
+  state: "docked"
+
+  states: [
 //    State {
-//      name: "undocked"
+//      name: "cardWindow"
 //      ParentChange {
 //        target: card;
-//        parent: undockedWindowContent;
+//        parent: cardWindowContent;
 //        x: 0
 //        y: 0
-//        width: undockedWindowContent.width
-//        height: undockedWindowContent.height
+//        width: cardWindowContent.width
+//        height: cardWindowContent.height
 //      }
 //    },
-//    State {
-//      name: "docked"
-//      ParentChange {
-//        target: card;
-//      }
-//    }
-//  ]
-//
+    State {
+      name: "docked"
+    },
+
+    State {
+      name: "floating"
+    }
+  ]
+
+  transitions: [
+    Transition {
+      from: "docked"
+      to: "floating"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+      }
+    },
+    Transition {
+      from: "floating"
+      to: "docked"
+      SequentialAnimation {
+        ScriptAction {script: leaveFloatingState()}
+        ScriptAction {script: enterDockedState()}
+      }
+    }
+  ]
+
+  function enterDockedState()
+  {
+    console.log("enter docked")
+  }
+
+  function enterFloatingState()
+  {
+    // Reparent to main window's background
+    card.parent = backgroundItem
+
+    // Resize to minimum size
+    card.anchors.right = undefined
+    card.anchors.left = undefined
+    card.anchors.top = undefined
+    card.anchors.bottom = undefined
+    card.anchors.fill = undefined
+    card.width = content.children[0].Layout.minimumWidth;
+    card.height = content.children[0].Layout.minimumHeight;
+  }
+
+  function leaveDockedState()
+  {
+    // Keep a reference to the background
+    backgroundItem = ancestorByName("background")
+
+    // Remove from split (delete split if needed)
+    backgroundItem.removeSplitItem(ancestorByName(/^split_item/).objectName)
+  }
+
+  function leaveFloatingState()
+  {
+    console.log("leave floating")
+  }
+
 //  /**
 //   * Show settings dialog
 //   */
@@ -157,10 +211,10 @@ Pane {
 //    width: card.width;
 //    height: card.height;
 //    visible: false;
-//    id: undockedWindow
+//    id: cardWindow
 //
 //    Rectangle {
-//      id: undockedWindowContent
+//      id: cardWindowContent
 //      anchors.fill: parent
 //    }
 //
@@ -181,21 +235,20 @@ Pane {
     width: card.width
     height: card.showTitleBar ? 50 : 0
     x: 0
-//    y: -50
     z: 100
 
-//    // For drag
-//    MouseArea {
-//      anchors.fill: parent
-//      drag{
-//        target: card
-//        minimumX: 0
-//        minimumY: 0
-//        maximumX: card.parent ? card.parent.width - card.width : card.width
-//        maximumY: card.parent ? card.parent.height - card.height : card.height
-//        smoothed: true
-//      }
-//    }
+    // For drag
+    MouseArea {
+      anchors.fill: parent
+      drag {
+        target: card
+        minimumX: 0
+        minimumY: 0
+        maximumX: card.parent ? card.parent.width - card.width : card.width
+        maximumY: card.parent ? card.parent.height - card.height : card.height
+        smoothed: true
+      }
+    }
 
     /**
      * The toolbar contents
@@ -215,26 +268,27 @@ Pane {
         Layout.fillWidth: true
       }
 
-//      // Dock / undock button
-//      ToolButton {
-//        id: dockButton
-//        text: card.state === "docked" ? undockIcon : dockIcon
-//        contentItem: Text {
-//          text: dockButton.text
-//          font: dockButton.font
-//          opacity: enabled ? 1.0 : 0.3
-//          color: card.Material.background
-//          horizontalAlignment: Text.AlignHCenter
-//          verticalAlignment: Text.AlignVCenter
-//        }
-//        visible: card.showDockButton && !card.standalone
-//        onClicked: {
-//          const docked = card.state === "docked"
-//          card.state = docked ? "undocked" : "docked"
-//          undockedWindow.visible = docked
-//        }
-//      }
-//
+      // Dock / floating button
+      // TODO(louise) support window state
+      ToolButton {
+        id: dockButton
+        text: card.state === "docked" ? floatIcon : dockIcon
+        contentItem: Text {
+          text: dockButton.text
+          font: dockButton.font
+          opacity: enabled ? 1.0 : 0.3
+          color: card.Material.background
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
+        visible: card.showDockButton && !card.standalone
+        onClicked: {
+          const docked = card.state === "docked"
+          card.state = docked ? "floating" : "docked"
+//          cardWindow.visible = docked
+        }
+      }
+
       // Close button
       ToolButton {
         id: closeButton
@@ -439,110 +493,24 @@ Pane {
     }
   }
 
-//  // Left ruler
-//  Rectangle {
-//    width: rulersThickness
-//    height: parent.parent.height
-//    visible: card.resizable
-//    color: "transparent"
-//    anchors.horizontalCenter: parent.left
-//    anchors.verticalCenter: parent.verticalCenter
-//
-//    MouseArea {
-//      anchors.fill: parent
-//      cursorShape: Qt.SplitHCursor
-//      drag{ target: parent; axis: Drag.XAxis }
-//      onMouseXChanged: {
-//        if(drag.active){
-//          var newCardX = Math.max(card.x + mouseX, 0)
-//          var newCardWidth = Math.max(card.width + (card.x - newCardX), minSize)
-//          if (newCardWidth === card.width)
-//            return;
-//          card.x = newCardX
-//          card.width = newCardWidth
-//        }
-//      }
-//    }
-//  }
-//
-//  // Right ruler
-//  Rectangle {
-//    width: rulersThickness
-//    height: parent.parent.height
-//    visible: card.resizable
-//    color: "transparent"
-//    anchors.horizontalCenter: parent.right
-//    anchors.verticalCenter: parent.verticalCenter
-//
-//    MouseArea {
-//      anchors.fill: parent
-//      cursorShape: Qt.SplitHCursor
-//      drag{ target: parent; axis: Drag.XAxis }
-//      onMouseXChanged: {
-//        if(drag.active){
-//
-//          card.width = Math.max(card.width + mouseX, minSize)
-//
-//          if (card.width + card.x > card.parent.width)
-//            card.width = card.parent.width - card.x
-//        }
-//      }
-//    }
-//  }
-//
-//  // Top ruler
-//  Rectangle {
-//    parent: showTitleBar ? cardToolbar : card
-//    width: parent.width
-//    height: rulersThickness
-//    visible: card.resizable
-//    x: parent.x / 2
-//    y: 0
-//    color: "transparent"
-//    anchors.horizontalCenter: parent.horizontalCenter
-//    anchors.verticalCenter: parent.top
-//
-//    MouseArea {
-//      anchors.fill: parent
-//      cursorShape: Qt.SplitVCursor
-//      drag{ target: parent; axis: Drag.YAxis }
-//      onMouseYChanged: {
-//        if(drag.active){
-//          var newCardY = Math.max(card.y + mouseY, 0)
-//          var newCardHeight = Math.max(card.height + (card.y - newCardY), minSize)
-//          if (newCardHeight === card.height)
-//            return;
-//          card.y = newCardY
-//          card.height = newCardHeight
-//        }
-//      }
-//    }
-//  }
-//
-//  // Bottom ruler
-//  Rectangle {
-//    width: parent.parent.width
-//    height: rulersThickness
-//    visible: card.resizable
-//    x: parent.x / 2
-//    y: parent.y
-//    color: "transparent"
-//    anchors.horizontalCenter: parent.horizontalCenter
-//    anchors.verticalCenter: parent.bottom
-//
-//    MouseArea {
-//      anchors.fill: parent
-//      cursorShape: Qt.SplitVCursor
-//      drag{ target: parent; axis: Drag.YAxis }
-//      onMouseYChanged: {
-//        if(drag.active){
-//
-//          card.height = Math.max(card.height + mouseY, minSize)
-//
-//          if (card.height + card.y > card.parent.height)
-//            card.height = card.parent.height - card.y
-//        }
-//      }
-//    }
-//  }
+  IgnRulers {
+    anchors.fill: parent
+    enabled: card.state === "floating"
+    minSize: card.minSize
+    target: card
+  }
+
+  function ancestorByName(_name)
+  {
+    var result = parent;
+    while (result)
+    {
+      if (result.objectName.match(_name) !== null)
+        break;
+
+      result = result.parent;
+    }
+
+    return result;
+  }
 }
