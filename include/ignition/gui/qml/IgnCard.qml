@@ -23,11 +23,11 @@ Pane {
 //   * True to have a dock button
 //   */
 //  property bool showDockButton: true
-//
-//  /**
-//   * True to have a close button
-//   */
-//  property bool showCloseButton: true
+
+  /**
+   * True to have a close button
+   */
+  property bool showCloseButton: true
 
   /**
    * True to have a title bar
@@ -38,11 +38,11 @@ Pane {
 //   * True to have draggable rulers for resizing
 //   */
 //  property bool resizable: true
-//
-//  /**
-//   * True if plugin is in a standalone dialog
-//   */
-//  property bool standalone: false
+
+  /**
+   * True if plugin is in a standalone dialog
+   */
+  property bool standalone: false
 
   /**
    * The plugin name, which goes on the toolbar
@@ -58,11 +58,11 @@ Pane {
 //   * □
 //   */
 //  property string undockIcon: "\u25A1"
-//
-//  /**
-//   * ✕
-//   */
-//  property string closeIcon: "\u2715"
+
+  /**
+   * ✕
+   */
+  property string closeIcon: "\u2715"
 
   /**
    * Close signal
@@ -235,23 +235,23 @@ Pane {
 //        }
 //      }
 //
-//      // Close button
-//      ToolButton {
-//        id: closeButton
-//        visible: card.showCloseButton && !card.standalone
-//        text: closeIcon
-//        contentItem: Text {
-//          text: closeButton.text
-//          font: closeButton.font
-//          opacity: enabled ? 1.0 : 0.3
-//          color: card.Material.background
-//          horizontalAlignment: Text.AlignHCenter
-//          verticalAlignment: Text.AlignVCenter
-//        }
-//        onClicked: {
-//          card.close();
-//        }
-//      }
+      // Close button
+      ToolButton {
+        id: closeButton
+        visible: card.showCloseButton && !card.standalone
+        text: closeIcon
+        contentItem: Text {
+          text: closeButton.text
+          font: closeButton.font
+          opacity: enabled ? 1.0 : 0.3
+          color: card.Material.background
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
+        onClicked: {
+          card.close();
+        }
+      }
     }
   }
 //

@@ -192,6 +192,15 @@ bool Application::RemovePlugin(const std::string &_pluginName)
       // Remove on QML
       cardItem->deleteLater();
 
+      // Remove split on QML
+      auto bgItem = this->dataPtr->mainWin->QuickWindow()
+          ->findChild<QQuickItem *>("background");
+      if (bgItem)
+      {
+        QMetaObject::invokeMethod(bgItem, "removeSplitItem",
+            Q_ARG(QVariant, cardItem->parentItem()->objectName()));
+      }
+
       // Unload shared library
       this->RemovePlugin(plugin);
 
@@ -461,8 +470,8 @@ bool Application::AddPluginsToWindow()
     plugin->ApplyAnchors();
 
     // Signals
-    this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
-        this, SLOT(OnPluginClose()));
+   this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
+       this, SLOT(OnPluginClose()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;

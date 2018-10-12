@@ -13,6 +13,7 @@ SplitView {
   id: background
   objectName: "background"
 
+  property variant childItems: []
   property variant childSplits: []
 
   Rectangle {
@@ -73,6 +74,29 @@ SplitView {
   }
 
   /**
+   */
+  function removeSplitItem(_name)
+  {
+    for (var i = 0; i < childItems.length; i++)
+    {
+      var item = childItems[i];
+      if (item.objectName === _name)
+      {
+        // Remove from split
+        removeFromSplits(item);
+
+        // Remove from array
+        removeFromArray(childItems, item);
+
+        // Destroy
+        item.destroy();
+
+        break;
+      }
+    }
+  }
+
+  /**
    * Create a new item and add it to the parent split.
    * @param Parent split
    */
@@ -80,6 +104,7 @@ SplitView {
   {
     // Create item
     var item = newItem.createObject(_parentSplit);
+    childItems.push(item);
 
     // Add to parent
     _parentSplit.addItem(item);
@@ -98,13 +123,61 @@ SplitView {
   {
     // Create split
     var split = newSplit.createObject(_parentSplit);
-
     childSplits.push(split);
 
     // Add to parent
     _parentSplit.addItem(split);
 
     return split;
+  }
+
+  /**
+   * Removes item from its parent split and removes the split if that was
+   * the last item in it.
+   * TODO(louise) Actually find the parent split instead of trying to remove
+   *              from every single split
+   */
+  function removeFromSplits(_item)
+  {
+    // Try removing from top-level split
+    background.removeItem(_item);
+
+    // Try removing from all splits
+    for (var s = 0; s < childSplits.length; s++)
+    {
+      var split = childSplits[s];
+
+      split.removeItem(_item);
+
+      // Is split is now empty, remove split
+      if (split.__items.length === 0 && split !== background)
+      {
+        // Remove from array
+        removeFromArray(childSplits, split);
+
+        // Remove from parent split
+        removeFromSplits(split);
+
+        // Destroy
+        split.destroy();
+
+        break;
+      }
+    }
+  }
+
+  /**
+   * Helper function to remove from array by value
+   * @param Array
+   * @param Value to remove
+   */
+  function removeFromArray(_array, _value) {
+    var id;
+    while ((id = _array.indexOf(_value)) !== -1)
+    {
+      _array.splice(id, 1);
+    }
+    return _array;
   }
 
   /**
