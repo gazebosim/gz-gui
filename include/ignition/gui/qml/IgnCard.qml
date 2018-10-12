@@ -84,7 +84,7 @@ Pane {
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
   onParentChanged: {
-    if (undefined === parent)
+    if (undefined === parent || null === parent)
       return;
 
     anchors.fill = Qt.binding(function() {return parent})

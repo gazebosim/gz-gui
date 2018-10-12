@@ -438,10 +438,10 @@ bool Application::AddPluginsToWindow()
     if (!cardItem)
       continue;
 
-    // Add split
+    // Add split item
     QVariant splitName;
-    QMetaObject::invokeMethod(this->dataPtr->mainWin->QuickWindow(),
-        "addSplit", Q_RETURN_ARG(QVariant, splitName));
+    QMetaObject::invokeMethod(bgItem, "addSplitItem",
+        Q_RETURN_ARG(QVariant, splitName));
 
     auto splitItem = bgItem->findChild<QQuickItem *>(
         splitName.toString());

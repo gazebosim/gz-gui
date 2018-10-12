@@ -1,5 +1,4 @@
 import QtQuick 2.9
-import QtQuick.Controls 1.1
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.0
@@ -156,53 +155,11 @@ ApplicationWindow
     }
   }
 
-  function addSplit() {
-
-    // Unique name
-    var splitName = "split_" + Math.floor(Math.random() * 100000)
-
-    // Create item
-    var item = newSplit.createObject(background)
-    item.objectName = splitName
-
-    // Add to bg
-    background.addItem(item)
-
-    return splitName
-  }
-  Component {
-    id: newSplit
-
-    Rectangle {
-      Layout.minimumWidth: 100
-      Layout.minimumHeight: 100
-      Layout.fillHeight: true
-      Layout.fillWidth: true
-    }
-  }
-
   /**
    * Background
    */
-  SplitView {
-    objectName: "background"
-    id: background
+  IgnSplit {
     anchors.fill: parent
-
-    Rectangle {
-      visible: MainWindow.pluginCount === 0
-      anchors.fill: parent
-      color: Material.background
-      Label {
-        id: startLabel;
-        text: "Insert plugins to start!"
-        anchors.fill: parent
-        font.pointSize: 24
-        horizontalAlignment: Label.AlignHCenter
-        verticalAlignment: Label.AlignVCenter
-        wrapMode: Label.Wrap
-      }
-    }
   }
 
   /**
