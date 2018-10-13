@@ -28,10 +28,10 @@ Pane {
    */
   property bool showTitleBar: true
 
-//  /**
-//   * True to have draggable rulers for resizing
-//   */
-//  property bool resizable: true
+  /**
+   * True to have draggable rulers for resizing
+   */
+  property bool resizable: true
 
   /**
    * True if plugin is in a standalone dialog
@@ -201,13 +201,6 @@ Pane {
   }
 
 //  /**
-//   * Show settings dialog
-//   */
-//  function showSettingsDialog() {
-//    settingsDialog.open()
-//  }
-//
-//  /**
 //   * Window for undocking
 //   */
 //  Window {
@@ -312,167 +305,176 @@ Pane {
       }
     }
   }
-//
-//  // For context menu
-//  MouseArea {
-//    anchors.fill: content
-//    acceptedButtons: Qt.RightButton
-//    onClicked: {
-//      contextMenu.x = mouseX
-//      contextMenu.y = mouseY
-//      contextMenu.open()
-//    }
-//  }
-//
-//  Menu {
-//    id: contextMenu
-//    transformOrigin: Menu.TopRight
-//    MenuItem {
-//      text: "Settings"
-//      onTriggered: card.showSettingsDialog();
-//    }
-//    MenuItem {
-//      text: "Close"
-//      onTriggered: card.close();
-//    }
-//  }
-//
-//  Dialog {
-//    id: settingsDialog
-//    modal: false
-//    focus: true
-//    title: pluginName + " settings"
-//    parent: card.parent
-//    x: parent ? (parent.width - width) / 2 : 0
-//    y: parent ? (parent.height - height) / 2 : 0
-//
-//    Column {
-//      id: settingsColumn
-//      anchors.horizontalCenter: settingsDialog.horizontalCenter
-//      width: settingsDialog.width * 0.6
-//
-//      Switch {
-//        id: titleSwitch
-//        text: "Show title bar"
-//        checked: card.showTitleBar
-//        onToggled: {
-//          card.showTitleBar = checked
-//          // why is binding not working?
-//          closeSwitch.enabled = checked
-//          dockSwitch.enabled = checked
-//        }
-//      }
-//
-//      Switch {
-//        id: closeSwitch
-//        text: "Show close button"
-//        visible: !card.standalone
-//        enabled: card.showTitleBar
-//        checked: card.showCloseButton
-//        onToggled: {
-//          card.showCloseButton = checked
-//        }
-//      }
-//
-//      Switch {
-//        id: dockSwitch
-//        text: "Show dock button"
-//        visible: !card.standalone
-//        enabled: card.showTitleBar
-//        checked: card.showDockButton
-//        onToggled: {
-//          card.showDockButton = checked
-//        }
-//      }
-//
-//      Switch {
-//        id: resizableSwitch
-//        text: "Resizable"
-//        checked: card.resizable
-//        onToggled: {
-//          card.resizable = checked
-//        }
-//      }
-//
-//      GridLayout {
-//        width: parent.width
-//        columns: 2
-//
-//        Label {
-//          text: "Position"
-//          font.weight: Font.DemiBold
-//        }
-//
-//        Text {
-//          text: ""
-//        }
-//
-//        IgnSpinBox {
-//          maximumValue: card.parent ? card.parent.width - card.width : minSize
-//          onVisibleChanged: value = card.x
-//          onValueChanged: {
-//            card.x = value;
-//          }
-//        }
-//        Label {
-//          text: "X"
-//        }
-//        IgnSpinBox {
-//          maximumValue: card.parent ? card.parent.height - card.height : minSize
-//          onVisibleChanged: value = card.y
-//          onValueChanged: {
-//            card.y = value;
-//          }
-//        }
-//        Label {
-//          text: "Y"
-//        }
-//        IgnSpinBox {
-//          maximumValue: 10000
-//          onVisibleChanged: value = card.z
-//          onValueChanged: {
-//            card.z = value;
-//          }
-//        }
-//        Label {
-//          text: "Z"
-//        }
-//        Label {
-//          text: "Size"
-//          font.weight: Font.DemiBold
-//        }
-//        Text {
-//          text: ""
-//        }
-//        IgnSpinBox {
-//          maximumValue: card.parent ? card.parent.width : minSize
-//          onVisibleChanged: {
-//            if (card)
-//              value = card.width
-//          }
-//          onValueChanged: {
-//            card.width = value;
-//          }
-//        }
-//        Label {
-//          text: "Width"
-//        }
-//        IgnSpinBox {
-//          maximumValue: card.parent ? card.parent.height : minSize
-//          onVisibleChanged: {
-//            if (card)
-//              value = card.height
-//          }
-//          onValueChanged: {
-//            card.height = value;
-//          }
-//        }
-//        Label {
-//          text: "Height"
-//        }
-//      }
-//    }
-//  }
+
+  // For context menu
+  MouseArea {
+    anchors.fill: content
+    acceptedButtons: Qt.RightButton
+    onClicked: {
+      contextMenu.x = mouseX
+      contextMenu.y = mouseY
+      contextMenu.open()
+    }
+  }
+
+  Menu {
+    id: contextMenu
+    transformOrigin: Menu.TopRight
+    MenuItem {
+      text: "Settings"
+      onTriggered: card.showSettingsDialog();
+    }
+    MenuItem {
+      text: "Close"
+      onTriggered: card.close();
+    }
+  }
+
+  /**
+   * Show settings dialog
+   */
+  function showSettingsDialog() {
+    settingsDialog.open()
+  }
+
+  Dialog {
+    id: settingsDialog
+    modal: false
+    focus: true
+    title: pluginName + " settings"
+    parent: card.parent
+    x: parent ? (parent.width - width) / 2 : 0
+    y: parent ? (parent.height - height) / 2 : 0
+
+    Column {
+      id: settingsColumn
+      anchors.horizontalCenter: settingsDialog.horizontalCenter
+      width: settingsDialog.width * 0.6
+
+      Switch {
+        id: titleSwitch
+        text: "Show title bar"
+        checked: card.showTitleBar
+        onToggled: {
+          card.showTitleBar = checked
+          // why is binding not working?
+          closeSwitch.enabled = checked
+          dockSwitch.enabled = checked
+        }
+      }
+
+      Switch {
+        id: closeSwitch
+        text: "Show close button"
+        visible: !card.standalone
+        enabled: card.showTitleBar
+        checked: card.showCloseButton
+        onToggled: {
+          card.showCloseButton = checked
+        }
+      }
+
+      Switch {
+        id: dockSwitch
+        text: "Show dock button"
+        visible: !card.standalone
+        enabled: card.showTitleBar
+        checked: card.showDockButton
+        onToggled: {
+          card.showDockButton = checked
+        }
+      }
+
+      Switch {
+        id: resizableSwitch
+        text: "Resizable"
+        visible: card.state === "floating"
+        checked: card.resizable
+        onToggled: {
+          card.resizable = checked
+        }
+      }
+
+      GridLayout {
+        width: parent.width
+        columns: 2
+        visible: card.state === "floating"
+
+        Label {
+          text: "Position"
+          font.weight: Font.DemiBold
+        }
+
+        Text {
+          text: ""
+        }
+
+        IgnSpinBox {
+          maximumValue: card.parent ? card.parent.width - card.width : minSize
+          onVisibleChanged: value = card.x
+          onValueChanged: {
+            card.x = value;
+          }
+        }
+        Label {
+          text: "X"
+        }
+        IgnSpinBox {
+          maximumValue: card.parent ? card.parent.height - card.height : minSize
+          onVisibleChanged: value = card.y
+          onValueChanged: {
+            card.y = value;
+          }
+        }
+        Label {
+          text: "Y"
+        }
+        IgnSpinBox {
+          maximumValue: 10000
+          onVisibleChanged: value = card.z
+          onValueChanged: {
+            card.z = value;
+          }
+        }
+        Label {
+          text: "Z"
+        }
+        Label {
+          text: "Size"
+          font.weight: Font.DemiBold
+        }
+        Text {
+          text: ""
+        }
+        IgnSpinBox {
+          maximumValue: card.parent ? card.parent.width : minSize
+          onVisibleChanged: {
+            if (card)
+              value = card.width
+          }
+          onValueChanged: {
+            card.width = value;
+          }
+        }
+        Label {
+          text: "Width"
+        }
+        IgnSpinBox {
+          maximumValue: card.parent ? card.parent.height : minSize
+          onVisibleChanged: {
+            if (card)
+              value = card.height
+          }
+          onValueChanged: {
+            card.height = value;
+          }
+        }
+        Label {
+          text: "Height"
+        }
+      }
+    }
+  }
 
   /**
    * Card contents
@@ -499,7 +501,7 @@ Pane {
 
   IgnRulers {
     anchors.fill: parent
-    enabled: card.state === "floating"
+    enabled: card.state === "floating" && resizable
     minSize: card.minSize
     target: card
   }
