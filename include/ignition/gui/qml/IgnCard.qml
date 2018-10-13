@@ -192,6 +192,12 @@ Pane {
     // Keep a reference to the background
     backgroundItem = ancestorByName("background")
 
+    if (null == backgroundItem)
+    {
+      console.error("Failed to get background item");
+      return;
+    }
+
     // Remove from split (delete split if needed)
     backgroundItem.removeSplitItem(ancestorByName(/^split_item/).objectName)
   }
