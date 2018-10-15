@@ -378,6 +378,10 @@ QQuickItem *Plugin::CardItem() const
 
   for (auto prop : this->dataPtr->cardProperties)
   {
+    // Skip and only apply once it's reparented
+    if (prop.first == "state")
+      continue;
+
     cardItem->setProperty(prop.first.c_str(), prop.second);
   }
 
@@ -402,8 +406,25 @@ QQuickItem *Plugin::CardItem() const
 }
 
 /////////////////////////////////////////////////
-void Plugin::ApplyAnchors()
+void Plugin::PostParentChanges()
 {
+  // Change state now that we have a parent
+  if (this->dataPtr->cardProperties.find("state") !=
+      this->dataPtr->cardProperties.end())
+  {
+    this->CardItem()->setProperty("state",
+        this->dataPtr->cardProperties["state"]);
+
+    // Re-apply other properties like size and position if present
+    for (auto prop : this->dataPtr->cardProperties)
+    {
+      if (prop.first == "state")
+        continue;
+
+      this->CardItem()->setProperty(prop.first.c_str(), prop.second);
+    }
+  }
+
   if (this->dataPtr->anchors.empty())
     return;
 

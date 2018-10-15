@@ -466,8 +466,8 @@ bool Application::AddPluginsToWindow()
     cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 
-    // Apply anchors now that it's attached to window
-    plugin->ApplyAnchors();
+    // Apply anchors and state changes now that it's attached to window
+    plugin->PostParentChanges();
 
     // Signals
    this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),

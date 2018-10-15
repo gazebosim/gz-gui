@@ -91,6 +91,11 @@ Pane {
     parent.height = Qt.binding(function() {return height})
     parent.width = Qt.binding(function() {return width})
 
+    // Keep a reference to the background
+    var bgItemTemp = ancestorByName("background")
+    if (bgItemTemp)
+      backgroundItem = bgItemTemp;
+
     this.syncTheFamily();
   }
 
