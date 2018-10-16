@@ -19,16 +19,22 @@
 
 #include <ignition/common/Console.hh>
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
-struct Anchor
+struct Anchors
 {
-  std::string line;
+  /// \brief Name of target item, which can be "window" or the
+  /// title of another plugin.
   std::string target;
-  std::string targetLine;
+
+  /// \brief Vector of anchor lines, where the first is the plugin's own line
+  /// and the second is the line on the target.
+  std::vector<std::pair<std::string, std::string>> lines;
 };
 
+/// \brief Set of all possible lines.
 static const std::unordered_set<std::string> kAnchorLineSet{
     "top",
     "bottom",
@@ -60,8 +66,8 @@ class ignition::gui::PluginPrivate
   /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
   public: std::map<std::string, QVariant> cardProperties;
 
-  /// \brief Vector of anchors.
-  public: std::vector<Anchor> anchors;
+  /// \brief Holds all anchor information
+  public: Anchors anchors;
 };
 
 using namespace ignition;
@@ -194,29 +200,35 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
   }
 
   // Anchors
-  for (auto anchorElem = _ignGuiElem->FirstChildElement("anchor");
-      anchorElem != nullptr;
-      anchorElem = anchorElem->NextSiblingElement("anchor"))
+  if (auto anchorElem = _ignGuiElem->FirstChildElement("anchors"))
   {
-    Anchor anchor;
-    anchor.line = anchorElem->Attribute("line");
-    anchor.target = anchorElem->Attribute("target");
-    anchor.targetLine = anchorElem->Attribute("target_line");
+    Anchors anchors;
+    anchors.target = anchorElem->Attribute("target");
 
-    if (kAnchorLineSet.find(anchor.line) == kAnchorLineSet.end())
+    for (auto lineElem = anchorElem->FirstChildElement("line");
+        lineElem != nullptr;
+        lineElem = lineElem->NextSiblingElement("line"))
     {
-      ignwarn << "Invalid anchor line [" << anchor.line << "]" << std::endl;
-      continue;
+      auto ownLine = lineElem->Attribute("own");
+      auto targetLine = lineElem->Attribute("target");
+
+      if (kAnchorLineSet.find(ownLine) == kAnchorLineSet.end())
+      {
+        ignwarn << "Invalid anchor line [" << ownLine << "]" << std::endl;
+        continue;
+      }
+
+      if (kAnchorLineSet.find(targetLine) == kAnchorLineSet.end())
+      {
+        ignwarn << "Invalid anchor target line [" << targetLine << "]"
+                << std::endl;
+        continue;
+      }
+
+      anchors.lines.push_back(std::make_pair(ownLine, targetLine));
     }
 
-    if (kAnchorLineSet.find(anchor.targetLine) == kAnchorLineSet.end())
-    {
-      ignwarn << "Invalid anchor target line [" << anchor.line << "]"
-              << std::endl;
-      continue;
-    }
-
-    this->dataPtr->anchors.push_back(anchor);
+    this->dataPtr->anchors = anchors;
   }
 }
 
@@ -404,38 +416,68 @@ QQuickItem *Plugin::CardItem() const
 /////////////////////////////////////////////////
 void Plugin::ApplyAnchors()
 {
-  if (this->dataPtr->anchors.empty())
+  if (this->dataPtr->anchors.target.empty())
     return;
 
-  // For now, only support attaching to the main window (i.e. background item)
-  auto win = App()->findChild<MainWindow *>();
-  if (!win)
+  // Get target
+  QQuickItem *target = nullptr;
+
+  if (this->dataPtr->anchors.target == "window")
   {
-    ignerr << "Internal error: missing window" << std::endl;
+    auto win = App()->findChild<MainWindow *>();
+    if (!win)
+    {
+      ignerr << "Internal error: missing window" << std::endl;
+      return;
+    }
+
+    auto bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
+    if (!bgItem)
+    {
+      ignerr << "Internal error: missing background item" << std::endl;
+      return;
+    }
+
+    target = bgItem;
+  }
+  else
+  {
+    // See if there's a plugin with that name
+    target =
+        findFirstByProperty(App()->Engine()->findChildren<QQuickItem *>(),
+        "pluginName", QString::fromStdString(this->dataPtr->anchors.target));
+  }
+
+  if (!target)
+  {
+    ignwarn << "Failed to find anchor target [" << this->dataPtr->anchors.target
+            << "]" << std::endl;
     return;
   }
 
-  auto bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
-  if (!bgItem)
-  {
-    ignerr << "Internal error: missing background item" << std::endl;
-    return;
-  }
+  // Reparent so it can be anchored
+  this->CardItem()->setParentItem(target);
 
+  // Clear previous anchors
   auto cardAnchors = qvariant_cast<QObject *>(
       this->CardItem()->property("anchors"));
 
-  for (auto anchor : this->dataPtr->anchors)
+  for (auto prop : {"top", "bottom", "right", "left", "fill"})
   {
-    if (anchor.target != "window")
-    {
-      ignwarn << "Invalid target [" << anchor.target
-              << "]. Currently only support anchoring to window." << std::endl;
-      continue;
-    }
+    cardAnchors->setProperty(prop, QVariant());
+  }
 
-    cardAnchors->setProperty(anchor.line.c_str(),
-        bgItem->property(anchor.targetLine.c_str()));
+  // Set anchors
+  for (auto line : this->dataPtr->anchors.lines)
+  {
+    cardAnchors->setProperty(line.first.c_str(),
+        target->property(line.second.c_str()));
+  }
+
+  // Re-apply other properties like size and position if present
+  for (auto prop : this->dataPtr->cardProperties)
+  {
+    this->CardItem()->setProperty(prop.first.c_str(), prop.second);
   }
 }
 
