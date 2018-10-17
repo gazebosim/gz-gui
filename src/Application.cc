@@ -470,8 +470,8 @@ bool Application::AddPluginsToWindow()
     plugin->PostParentChanges();
 
     // Signals
-   this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
-       this, SLOT(OnPluginClose()));
+    this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
+        this, SLOT(OnPluginClose()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
