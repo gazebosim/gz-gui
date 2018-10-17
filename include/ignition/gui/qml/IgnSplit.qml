@@ -17,11 +17,11 @@ SplitView {
   property variant childSplits: new Object()
 
   Rectangle {
+    id: startLabel;
     visible: MainWindow.pluginCount === 0
     anchors.fill: parent
     color: Material.background
     Label {
-      id: startLabel;
       text: "Insert plugins to start!"
       anchors.fill: parent
       font.pointSize: 24
@@ -44,33 +44,36 @@ SplitView {
     var itemName = "";
 
     // First section goes in the top level SplitView, which is Qt.Horizontal
-    if (MainWindow.pluginCount == 0)
+    if (background.__items.length === 0 ||
+       (background.__items.length == 1 && background.__items[0] === startLabel))
     {
-      itemName = addNewItem(background);
+      itemName = _addNewItem(background);
     }
     // The next one adds a Qt.Vertical split to the right
-    else if (Object.keys(childSplits).length == 0)
+    else if (Object.keys(childSplits).length === 0)
     {
-      var split = addNewSplit(background);
+      var split = _addNewSplit(background);
       split.orientation = Qt.Vertical;
-      itemName = addNewItem(split);
+      itemName = _addNewItem(split);
     }
     // All subsequent ones are added to the vertical child split on the right
     else
     {
       var firstChildSplit = childSplits[Object.keys(childSplits)[0]];
-      itemName = addNewItem(firstChildSplit);
+      itemName = _addNewItem(firstChildSplit);
     }
 
     return itemName
   }
 
   /**
+   * Remove a split item according to its name.
+   * @param Name of item.
    */
   function removeSplitItem(_name)
   {
     // Remove from split
-    removeFromSplits(childItems[_name]);
+    _removeFromSplits(childItems[_name]);
 
     // Remove from dictionary and destroy
     delete childItems[_name];
@@ -78,10 +81,11 @@ SplitView {
 
   /**
    * Create a new item and add it to the parent split.
+   * Meant for internal use.
    * @param Parent split
    * @return Item name
    */
-  function addNewItem(_parentSplit)
+  function _addNewItem(_parentSplit)
   {
     // Create item
     var item = newItem.createObject(_parentSplit);
@@ -96,17 +100,22 @@ SplitView {
     // Add to parent
     _parentSplit.addItem(item);
 
-    // TODO(louise) Find a way to sync item's minimum size with the split's
-    // minimum size. Must keep track of several children and be aware of timing.
+    if (_parentSplit !== background)
+    {
+      item.minimumSizeChanged.connect(function(){
+        _parentSplit.recalculateMinimumSize()
+      });
+    }
 
     return itemName;
   }
 
   /**
    * Create a new split and add it to the parent split.
+   * Meant for internal use.
    * @param Parent split
    */
-  function addNewSplit(_parentSplit)
+  function _addNewSplit(_parentSplit)
   {
     // Create split
     var split = newSplit.createObject(_parentSplit);
@@ -127,10 +136,11 @@ SplitView {
   /**
    * Removes item from its parent split and removes the split if that was
    * the last item in it.
+   * Meant for internal use.
    * TODO(louise) Actually find the parent split instead of trying to remove
    *              from every single split
    */
-  function removeFromSplits(_item)
+  function _removeFromSplits(_item)
   {
     // Try removing from top-level split
     background.removeItem(_item);
@@ -149,26 +159,12 @@ SplitView {
         delete childSplits[key]
 
         // Remove from parent split
-        removeFromSplits(split);
+        _removeFromSplits(split);
 
         // Destroy
         split.destroy();
       }
     });
-  }
-
-  /**
-   * Helper function to remove from array by value
-   * @param Array
-   * @param Value to remove
-   */
-  function removeFromArray(_array, _value) {
-    var id;
-    while ((id = _array.indexOf(_value)) !== -1)
-    {
-      _array.splice(id, 1);
-    }
-    return _array;
   }
 
   /**
@@ -182,6 +178,27 @@ SplitView {
       Layout.minimumHeight: 100
       Layout.fillHeight: true
       Layout.fillWidth: true
+
+      signal minimumSizeChanged();
+
+      Layout.onMinimumWidthChanged: {
+        minimumSizeChanged();
+      }
+      Layout.onMinimumHeightChanged: {
+        minimumSizeChanged();
+      }
+
+      onChildrenChanged: {
+        if (children.length === 0)
+          return;
+
+        Layout.minimumWidth = Qt.binding(function() {
+          return children[0].Layout.minimumWidth
+        });
+        Layout.minimumHeight = Qt.binding(function() {
+          return children[0].Layout.minimumHeight
+        });
+      }
     }
   }
 
@@ -192,6 +209,22 @@ SplitView {
     id: newSplit
 
     SplitView {
+      Layout.minimumWidth: 100
+      Layout.minimumHeight: 100
+
+      function recalculateMinimumSize()
+      {
+        // Sync minimum sizes
+        for (var i = 0; i < __items.length; i++)
+        {
+          var child = __items[i];
+
+          if (child.Layout.minimumWidth > Layout.minimumWidth)
+          {
+            Layout.minimumWidth = child.Layout.minimumWidth;
+          }
+        }
+      }
     }
   }
 }

@@ -103,21 +103,42 @@ Pane {
    *
    */
   function syncTheFamily() {
-    if (undefined == parent)
+    var parentSplit = ancestorByName(/^split_item/);
+
+    if (undefined == parentSplit)
       return;
 
     if (content.children.length != 1)
       return;
 
-    parent.Layout.minimumWidth = content.children[0].Layout.minimumWidth;
-    parent.Layout.minimumHeight = content.children[0].Layout.minimumHeight;
+    parentSplit.Layout.minimumWidth = content.children[0].Layout.minimumWidth;
+    parentSplit.Layout.minimumHeight = content.children[0].Layout.minimumHeight;
   }
 
+  /**
+   * Helper function to get an item's ancestor by name.
+   * @param _name Name to look for, accepts regex.
+   * TODO(louise) Move this to a more global place. So far, had no luck with
+   * moving to Main or to a singleton file.
+   */
+  function ancestorByName(_name)
+  {
+    var result = parent;
+    while (result)
+    {
+      if (result.objectName.match(_name) !== null)
+        break;
 
-//  // TODO(louise) Support choosing between:
-//  // * a transparent background
-//  // * a custom color, in which case there will be elevation
-//  // Elevation only works if background is not transparent.
+      result = result.parent;
+    }
+
+    return result;
+  }
+
+  // TODO(louise) Support choosing between:
+  // * a transparent background
+  // * a custom color, in which case there will be elevation
+  // Elevation only works if background is not transparent.
 //  Material.elevation: 6
   background: Rectangle {
     color: "transparent"
@@ -386,19 +407,5 @@ Pane {
     enabled: card.state === "floating" && resizable
     minSize: card.minSize
     target: card
-  }
-
-  function ancestorByName(_name)
-  {
-    var result = parent;
-    while (result)
-    {
-      if (result.objectName.match(_name) !== null)
-        break;
-
-      result = result.parent;
-    }
-
-    return result;
   }
 }
