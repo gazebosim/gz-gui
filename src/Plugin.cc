@@ -434,9 +434,7 @@ void Plugin::PostParentChanges()
 
   // Anchor
   if (this->dataPtr->anchors.target.empty())
-  {
     return;
-  }
 
   // Only floating plugins can be anchored
   if (this->CardItem()->property("state") != "floating")
