@@ -64,6 +64,13 @@ Pane {
   property var backgroundItem: null
 
   /**
+   * True if there's at least one anchor set for the card.
+   * There's no way to check the anchors themselves, so we need
+   * to keep track of this ourselves.
+   */
+  property bool anchored: false
+
+  /**
    * Close signal
    */
   signal close()
@@ -92,7 +99,7 @@ Pane {
     parent.width = Qt.binding(function() {return width})
 
     // Keep a reference to the background
-    var bgItemTemp = ancestorByName("background")
+    var bgItemTemp = helpers.ancestorByName(card, "background")
     if (bgItemTemp)
       backgroundItem = bgItemTemp;
 
@@ -103,7 +110,7 @@ Pane {
    *
    */
   function syncTheFamily() {
-    var parentSplit = ancestorByName(/^split_item/);
+    var parentSplit = helpers.ancestorByName(card, /^split_item/);
 
     if (undefined == parentSplit)
       return;
@@ -116,23 +123,23 @@ Pane {
   }
 
   /**
-   * Helper function to get an item's ancestor by name.
-   * @param _name Name to look for, accepts regex.
-   * TODO(louise) Move this to a more global place. So far, had no luck with
-   * moving to Main or to a singleton file.
+   * Clear all anchors
    */
-  function ancestorByName(_name)
-  {
-    var result = parent;
-    while (result)
-    {
-      if (result.objectName.match(_name) !== null)
-        break;
+  function clearAnchors() {
+    card.anchors.right = undefined
+    card.anchors.left = undefined
+    card.anchors.top = undefined
+    card.anchors.bottom = undefined
+    card.anchors.fill = undefined
+    card.anchors.horizontalCenter = undefined
+    card.anchors.verticalCenter = undefined
+    card.anchors.baseline = undefined
 
-      result = result.parent;
-    }
+    anchored = false
+  }
 
-    return result;
+  IgnHelpers {
+    id: helpers
   }
 
   // TODO(louise) Support choosing between:
@@ -204,11 +211,7 @@ Pane {
     card.parent = backgroundItem
 
     // Resize to minimum size
-    card.anchors.right = undefined
-    card.anchors.left = undefined
-    card.anchors.top = undefined
-    card.anchors.bottom = undefined
-    card.anchors.fill = undefined
+    card.clearAnchors();
     card.width = content.children[0].Layout.minimumWidth;
     card.height = content.children[0].Layout.minimumHeight;
   }
@@ -216,7 +219,7 @@ Pane {
   function leaveDockedState()
   {
     // Keep a reference to the background
-    backgroundItem = ancestorByName("background")
+    backgroundItem = helpers.ancestorByName(card, "background")
 
     if (null == backgroundItem)
     {
@@ -225,7 +228,7 @@ Pane {
     }
 
     // Remove from split (delete split if needed)
-    backgroundItem.removeSplitItem(ancestorByName(/^split_item/).objectName)
+    backgroundItem.removeSplitItem(helpers.ancestorByName(card, /^split_item/).objectName)
   }
 
   function leaveFloatingState()

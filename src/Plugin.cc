@@ -433,8 +433,11 @@ void Plugin::PostParentChanges()
   }
 
   // Anchor
-  if (this->dataPtr->anchors.target.empty())
+  if (this->dataPtr->anchors.target.empty() ||
+      this->dataPtr->anchors.lines.empty())
+  {
     return;
+  }
 
   // Only floating plugins can be anchored
   if (this->CardItem()->property("state") != "floating")
@@ -483,13 +486,10 @@ void Plugin::PostParentChanges()
   this->CardItem()->setParentItem(target);
 
   // Clear previous anchors
+  QMetaObject::invokeMethod(this->CardItem(), "clearAnchors");
+
   auto cardAnchors = qvariant_cast<QObject *>(
       this->CardItem()->property("anchors"));
-
-  for (auto prop : {"top", "bottom", "right", "left", "fill"})
-  {
-    cardAnchors->setProperty(prop, QVariant());
-  }
 
   // Set anchors
   for (auto line : this->dataPtr->anchors.lines)
@@ -497,6 +497,7 @@ void Plugin::PostParentChanges()
     cardAnchors->setProperty(line.first.c_str(),
         target->property(line.second.c_str()));
   }
+  this->CardItem()->setProperty("anchored", true);
 
   // Re-apply other properties like size and position if present
   for (auto prop : this->dataPtr->cardProperties)
