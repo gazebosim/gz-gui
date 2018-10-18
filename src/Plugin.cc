@@ -44,6 +44,12 @@ static const std::unordered_set<std::string> kAnchorLineSet{
     "verticalCenter",
     "baseline"};
 
+/// \brief Properties which shouldn't be saved or loaded
+static const std::unordered_set<std::string> kIgnoredProps{
+    "objectName",
+    "pluginName",
+    "anchored"};
+
 class ignition::gui::PluginPrivate
 {
   /// \brief Set this to true if the plugin should be deleted as soon as it has
@@ -261,10 +267,11 @@ std::string Plugin::ConfigStr()
 
   // Clean <property>s
   for (auto propElem = ignGuiElem->FirstChildElement("property");
-      propElem != nullptr;
-      propElem = propElem->NextSiblingElement("property"))
+      propElem != nullptr;)
   {
+    auto nextProp = propElem->NextSiblingElement("property");
     ignGuiElem->DeleteChild(propElem);
+    propElem = nextProp;
   }
 
   // Add <property>s
@@ -274,8 +281,16 @@ std::string Plugin::ConfigStr()
     auto key = meta->property(i).name();
     auto type = std::string(meta->property(i).typeName());
 
+    // Explicitly skip some keys
+    if (kIgnoredProps.find(key) != kAnchorLineSet.end())
+      continue;
+
+    // When setting, it will need to be string
+    if (type == "QString")
+      type = "string";
+
     std::string value;
-    if (type != "double" && type != "int" && type != "bool")
+    if (type != "double" && type != "int" && type != "bool" && type != "string")
     {
       continue;
     }
@@ -288,6 +303,20 @@ std::string Plugin::ConfigStr()
     elem->SetAttribute("type", type.c_str());
     elem->SetText(value.c_str());
     ignGuiElem->InsertEndChild(elem);
+  }
+
+  // Remove <anchors> if needed
+  // TODO(louise) Support setting anchors from UI and then saving it.
+  auto anchored = this->CardItem()->property("anchored").toBool();
+  if (!anchored)
+  {
+    for (auto anchorElem = ignGuiElem->FirstChildElement("anchors");
+        anchorElem != nullptr;)
+    {
+      auto nextAnchor = anchorElem->NextSiblingElement("anchors");
+      ignGuiElem->DeleteChild(anchorElem);
+      anchorElem = nextAnchor;
+    }
   }
 
   // Then convert XML back to string
@@ -433,6 +462,21 @@ void Plugin::PostParentChanges()
   }
 
   // Anchor
+  this->ApplyAnchors();
+
+  // Re-apply other properties like size and position if present
+  for (auto prop : this->dataPtr->cardProperties)
+  {
+    if (prop.first == "state")
+      continue;
+
+    this->CardItem()->setProperty(prop.first.c_str(), prop.second);
+  }
+}
+
+/////////////////////////////////////////////////
+void Plugin::ApplyAnchors()
+{
   if (this->dataPtr->anchors.target.empty() ||
       this->dataPtr->anchors.lines.empty())
   {
@@ -498,14 +542,5 @@ void Plugin::PostParentChanges()
         target->property(line.second.c_str()));
   }
   this->CardItem()->setProperty("anchored", true);
-
-  // Re-apply other properties like size and position if present
-  for (auto prop : this->dataPtr->cardProperties)
-  {
-    if (prop.first == "state")
-      continue;
-
-    this->CardItem()->setProperty(prop.first.c_str(), prop.second);
-  }
 }
 
