@@ -23,6 +23,7 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
+/// \brief Used to store information about anchors set by the user.
 struct Anchors
 {
   /// \brief Name of target item, which can be "window" or the
@@ -208,8 +209,8 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
   // Anchors
   if (auto anchorElem = _ignGuiElem->FirstChildElement("anchors"))
   {
-    Anchors anchors;
-    anchors.target = anchorElem->Attribute("target");
+    this->dataPtr->anchors.target = anchorElem->Attribute("target");
+    this->dataPtr->anchors.lines.clear();
 
     for (auto lineElem = anchorElem->FirstChildElement("line");
         lineElem != nullptr;
@@ -231,10 +232,9 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
         continue;
       }
 
-      anchors.lines.push_back(std::make_pair(ownLine, targetLine));
+      this->dataPtr->anchors.lines.push_back(
+          std::make_pair(ownLine, targetLine));
     }
-
-    this->dataPtr->anchors = anchors;
   }
 }
 
@@ -532,10 +532,9 @@ void Plugin::ApplyAnchors()
   // Clear previous anchors
   QMetaObject::invokeMethod(this->CardItem(), "clearAnchors");
 
+  // Set anchors
   auto cardAnchors = qvariant_cast<QObject *>(
       this->CardItem()->property("anchors"));
-
-  // Set anchors
   for (auto line : this->dataPtr->anchors.lines)
   {
     cardAnchors->setProperty(line.first.c_str(),
