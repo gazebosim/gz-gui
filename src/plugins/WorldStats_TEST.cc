@@ -20,6 +20,7 @@
 #include <ignition/common/Console.hh>
 #include <ignition/transport/Node.hh>
 
+#include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
@@ -37,6 +38,7 @@ TEST(WorldStatsTest, Load)
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   EXPECT_TRUE(app.LoadPlugin("WorldStats"));
 
@@ -61,13 +63,14 @@ TEST(WorldStatsTest, WorldStats)
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load plugin
   const char *pluginStr =
-    "<plugin "
-      "filename=\"WorldStats\" "
-      "title=\"World Stats!\""
-    ">"
+    "<plugin filename=\"WorldStats\">"
+      "<ignition-gui>"
+        "<title>World Stats!</title>"
+      "</ignition-gui>"
       "<sim_time>true</sim_time>"
       "<real_time>true</real_time>"
       "<real_time_factor>true</real_time_factor>"

@@ -23,7 +23,8 @@ foreach(src ${gtest_local_sources})
 endforeach()
 
 ign_build_tests(TYPE UNIT
-  SOURCES ${gtest_local_cc}
+  SOURCES
+    ${gtest_local_cc}
   LIB_DEPS
     ${IGNITION-RENDERING_LIBRARIES}
     TINYXML2::TINYXML2

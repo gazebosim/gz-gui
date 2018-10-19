@@ -16,7 +16,7 @@
 */
 
 #include <iostream>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "CustomContext.hh"
 
@@ -35,5 +35,5 @@ CustomContext::~CustomContext()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::CustomContext,
-                                  ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(ignition::gui::CustomContext,
+                    ignition::gui::Plugin);

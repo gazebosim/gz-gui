@@ -20,6 +20,7 @@
 #include <ignition/common/Console.hh>
 #include <ignition/transport/Node.hh>
 
+#include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
@@ -37,6 +38,7 @@ TEST(WorldControlTest, Load)
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   EXPECT_TRUE(app.LoadPlugin("WorldControl"));
 
@@ -61,13 +63,14 @@ TEST(WorldControlTest, WorldControl)
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load plugin
   const char *pluginStr =
-    "<plugin "
-      "filename=\"WorldControl\" "
-      "title=\"World Control!\""
-    ">"
+    "<plugin filename=\"WorldControl\">"
+      "<ignition-gui>"
+        "<title>World Control!</title>"
+      "</ignition-gui>"
       "<play_pause>true</play_pause>"
       "<service>/world_control_test</service>"
     "</plugin>";

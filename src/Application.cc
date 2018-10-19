@@ -19,10 +19,11 @@
 #include <queue>
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginLoader.hh>
 #include <ignition/common/SignalHandler.hh>
 #include <ignition/common/SystemPaths.hh>
 #include <ignition/common/Util.hh>
+
+#include <ignition/plugin/Loader.hh>
 
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/config.hh"
@@ -316,7 +317,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   }
 
   // Load plugin
-  common::PluginLoader pluginLoader;
+  plugin::Loader pluginLoader;
 
   auto pluginNames = pluginLoader.LoadLibrary(pathToLib);
   if (pluginNames.empty())
@@ -442,11 +443,12 @@ bool Application::AddPluginsToWindow()
     cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 
+    // Apply anchors now that it's attached to window
+    plugin->ApplyAnchors();
+
     // Signals
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
         this, SLOT(OnPluginClose()));
-    this->dataPtr->mainWin->connect(cardItem, SIGNAL(resized()),
-        this->dataPtr->mainWin, SLOT(OnCardResized()));
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;

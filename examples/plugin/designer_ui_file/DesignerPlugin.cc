@@ -16,7 +16,7 @@
 */
 
 #include <iostream>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "DesignerPlugin.hh"
 #include "ui_DesignerPlugin.h"
@@ -43,5 +43,5 @@ void DesignerPlugin::on_helloButton_clicked()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::DesignerPlugin,
-                                  ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(ignition::gui::DesignerPlugin,
+                    ignition::gui::Plugin);

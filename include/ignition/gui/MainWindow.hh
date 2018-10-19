@@ -229,10 +229,6 @@ namespace ignition
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
 
-      /// \brief
-      signals: void cardResized();
-      public slots: void OnCardResized() {this->cardResized();}
-
       // Documentation inherited
 //      protected: void paintEvent(QPaintEvent *_event) override;
 

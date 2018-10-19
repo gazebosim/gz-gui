@@ -18,7 +18,7 @@
 #include <iostream>
 #include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/plugins/ImageDisplay.hh"
@@ -232,5 +232,5 @@ void ImageDisplay::UpdateFromRgbInt8()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::ImageDisplay,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::ImageDisplay,
+                    ignition::gui::Plugin)

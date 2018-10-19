@@ -50,7 +50,10 @@ TEST(PluginTest, DeleteLater)
 
   // Load plugin to be deleted
   pluginStr =
-    "<plugin filename=\"TestPlugin\" delete_later=\"true\">"
+    "<plugin filename=\"TestPlugin\">"
+      "<ignition-gui>"
+        "<delete_later>true</delete_later>"
+      "</ignition-gui>"
     "</plugin>";
 
   pluginDoc.Parse(pluginStr);

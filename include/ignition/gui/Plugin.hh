@@ -21,8 +21,6 @@
 #include <memory>
 #include <string>
 
-#include <ignition/common/PluginMacros.hh>
-
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
@@ -49,8 +47,6 @@ namespace ignition
     class IGNITION_GUI_VISIBLE Plugin : public QObject
     {
       Q_OBJECT
-
-      public: IGN_COMMON_SPECIALIZE_INTERFACE(ignition::gui::Plugin)
 
       /// \brief Constructor
       public: Plugin();
@@ -82,6 +78,10 @@ namespace ignition
       /// \return Pointer to plugin item.
       public: QQuickItem *PluginItem() const;
 
+      /// \brief Apply any anchors which may have been specified on the config
+      /// through the <anchor> tag.
+      public: void ApplyAnchors();
+
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.
       ///
@@ -97,7 +97,7 @@ namespace ignition
       /// \return Plugin title.
       public: virtual std::string Title() const {return this->title;}
 
-      /// \brief Get the value of the the `delete_later` attribute from the
+      /// \brief Get the value of the the `delete_later` element from the
       /// configuration file, which defaults to false.
       /// \return The value of `delete_later`.
       public: bool DeleteLaterRequested() const;
@@ -114,6 +114,15 @@ namespace ignition
 
       /// \brief XML configuration
       protected: std::string configStr;
+
+      /// \brief Load configuration which is common to all plugins and handled
+      /// by Ignition GUI.
+      /// \details Called when a plugin is first created.
+      /// \sa LoadConfig
+      /// \param[in] _ignGuiElem <ignition-gui> element within the <plugin>.
+      /// Will be nullptr if not present in the SDF.
+      private: virtual void LoadCommonConfig(
+          const tinyxml2::XMLElement *_ignGuiElem);
 
       /// \internal
       /// \brief Pointer to private data

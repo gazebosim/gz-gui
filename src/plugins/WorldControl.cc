@@ -16,7 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 #include <ignition/common/Time.hh>
 
 #include "ignition/gui/plugins/WorldControl.hh"
@@ -43,6 +43,9 @@ namespace plugins
 
     /// \brief The multi step value
     public: unsigned int multiStep = 1u;
+
+    /// \brief True for paused
+    public: bool pause{true};
   };
 }
 }
@@ -97,11 +100,12 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     if (has)
     {
-      auto startPaused = false;
+      auto startPaused = this->dataPtr->pause;
       if (auto pausedElem = _pluginElem->FirstChildElement("start_paused"))
       {
         pausedElem->QueryBoolText(&startPaused);
       }
+      this->dataPtr->pause = startPaused;
       if (startPaused)
         this->paused();
       else
@@ -138,10 +142,11 @@ void WorldControl::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  if (this->dataPtr->msg.paused())
+  if (!this->dataPtr->pause && this->dataPtr->msg.paused())
     this->paused();
-  else
+  else if (this->dataPtr->pause && !this->dataPtr->msg.paused())
     this->playing();
+  this->dataPtr->pause = this->dataPtr->msg.paused();
 }
 
 /////////////////////////////////////////////////
@@ -165,6 +170,7 @@ void WorldControl::OnPlay()
 
   ignition::msgs::WorldControl req;
   req.set_pause(false);
+  this->dataPtr->pause = false;
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
@@ -180,6 +186,7 @@ void WorldControl::OnPause()
 
   ignition::msgs::WorldControl req;
   req.set_pause(true);
+  this->dataPtr->pause = true;
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
@@ -198,10 +205,11 @@ void WorldControl::OnStep()
   };
 
   ignition::msgs::WorldControl req;
+  req.set_pause(this->dataPtr->pause);
   req.set_multi_step(this->dataPtr->multiStep);
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::WorldControl,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::WorldControl,
+                    ignition::gui::Plugin)
