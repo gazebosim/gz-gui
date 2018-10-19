@@ -75,10 +75,6 @@ Pane {
    */
   signal close()
 
-//  Material.onBackgroundChanged: {
-//    titleLabel.color = Material.background
-//  }
-
   /**
    * ID within QML
    */
@@ -89,16 +85,24 @@ Pane {
    */
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
+  /**
+   * Callback when the parent has changed.
+   */
   onParentChanged: {
     if (undefined === parent || null === parent)
       return;
 
+    // Bind anchors
     anchors.fill = Qt.binding(function() {return parent})
     anchors.fill = Qt.binding(function() {return parent})
     parent.height = Qt.binding(function() {return height})
     parent.width = Qt.binding(function() {return width})
 
     // Keep a reference to the background
+    // TODO(louise) This feels hacky, the card shouldn't care about the background,
+    // but I haven't figured out yet how the card can tell IgnSplit to create
+    // a new split and add the card to it. There must be a way using signals, events
+    // or global functions...?
     var bgItemTemp = helpers.ancestorByName(card, "background")
     if (bgItemTemp)
       backgroundItem = bgItemTemp;
@@ -107,7 +111,9 @@ Pane {
   }
 
   /**
-   *
+   * Forward the child content's size preferences to the parent split's layout
+   * TODO(louise) This looks really clunky, ideally the card shouldn't need
+   * any knowledge of splits
    */
   function syncTheFamily() {
     var parentSplit = helpers.ancestorByName(card, /^split_item/);
@@ -195,6 +201,9 @@ Pane {
     }
   ]
 
+  /**
+   * Called when the docked state is entered.
+   */
   function enterDockedState()
   {
     // Add new split
@@ -205,6 +214,9 @@ Pane {
     card.parent = splitItem;
   }
 
+  /**
+   * Called when the floating state is entered.
+   */
   function enterFloatingState()
   {
     // Reparent to main window's background
@@ -216,23 +228,22 @@ Pane {
     card.height = content.children[0].Layout.minimumHeight;
   }
 
+  /**
+   * Called when the docked state is left.
+   */
   function leaveDockedState()
   {
-    // Keep a reference to the background
-    backgroundItem = helpers.ancestorByName(card, "background")
-
-    if (null == backgroundItem)
-    {
-      console.error("Failed to get background item");
-      return;
-    }
-
     // Remove from split (delete split if needed)
-    backgroundItem.removeSplitItem(helpers.ancestorByName(card, /^split_item/).objectName)
+    backgroundItem.removeSplitItem(helpers.ancestorByName(card,
+        /^split_item/).objectName)
   }
 
+  /**
+   * Called when the floating state is left.
+   */
   function leaveFloatingState()
   {
+    // Do nothing
   }
 
 //  /**
