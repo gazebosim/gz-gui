@@ -95,9 +95,11 @@ namespace plugins
     /// \brief Load a geometry from a geometry msg
     /// \param[in] _msg Geometry msg
     /// \param[out] _scale Geometry scale that will be set based on msg param
+    /// \param[out] _localPose Additional local pose to be applied after the
+    /// visual's pose
     /// \return Geometry object created from the msg
     private: rendering::GeometryPtr LoadGeometry(const msgs::Geometry &_msg,
-        math::Vector3d &_scale);
+        math::Vector3d &_scale, math::Pose3d &_localPose);
 
     /// \brief Load a material from a material msg
     /// \param[in] _msg Material msg
@@ -116,8 +118,14 @@ namespace plugins
     //// \brief Mutex to protect the pose msgs
     private: std::mutex mutex;
 
-    /// \brief Map of entity id to pose msg
-    private: std::map<unsigned int, msgs::Pose> poses;
+    /// \brief Map of entity id to pose
+    private: std::map<unsigned int, math::Pose3d> poses;
+
+    /// \brief Map of entity id to initial local poses
+    /// This is currently used to handle the normal vector in plane visuals. In
+    /// general, this can be used to store any local transforms between the
+    /// parent Visual and geometry.
+    private: std::map<unsigned int, math::Pose3d> localPoses;
 
     /// \brief Map of entity id to pose msg
     private: std::map<unsigned int, rendering::VisualPtr> visuals;
@@ -235,7 +243,16 @@ void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
   std::lock_guard<std::mutex> lock(this->mutex);
   for (int i = 0; i < _msg.pose_size(); ++i)
   {
-    this->poses[_msg.pose(i).id()] = _msg.pose(i);
+    math::Pose3d pose = msgs::Convert(_msg.pose(i));
+
+    // apply additional local poses if available
+    const auto it = this->localPoses.find(_msg.pose(i).id());
+    if (it != this->localPoses.end())
+    {
+      pose = pose * it->second;
+    }
+
+    this->poses[_msg.pose(i).id()] = pose;
   }
 }
 
@@ -250,7 +267,7 @@ void SceneManager::Update()
     auto vIt = this->visuals.find(pIt->first);
     if (vIt != this->visuals.end())
     {
-      vIt->second->SetLocalPose(msgs::Convert(pIt->second));
+      vIt->second->SetLocalPose(pIt->second);
       this->poses.erase(pIt++);
     }
     else
@@ -324,14 +341,23 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
     return rendering::VisualPtr();
 
   rendering::VisualPtr visualVis = this->scene->CreateVisual();
-  if (_msg.has_pose())
-    visualVis->SetLocalPose(msgs::Convert(_msg.pose()));
   this->visuals[_msg.id()] = visualVis;
 
   math::Vector3d scale = math::Vector3d::One;
-  rendering::GeometryPtr geom = this->LoadGeometry(_msg.geometry(), scale);
+  math::Pose3d localPose;
+  rendering::GeometryPtr geom =
+      this->LoadGeometry(_msg.geometry(), scale, localPose);
+
+  if (_msg.has_pose())
+    visualVis->SetLocalPose(msgs::Convert(_msg.pose()) * localPose);
+  else
+    visualVis->SetLocalPose(localPose);
+
   if (geom)
   {
+    // store the local pose
+    this->localPoses[_msg.id()] = localPose;
+
     visualVis->AddGeometry(geom);
     visualVis->SetLocalScale(scale);
 
@@ -368,9 +394,10 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
 
 /////////////////////////////////////////////////
 rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
-    math::Vector3d &_scale)
+    math::Vector3d &_scale, math::Pose3d &_localPose)
 {
   math::Vector3d scale = math::Vector3d::One;
+  math::Pose3d localPose = math::Pose3d::Zero;
   rendering::GeometryPtr geom{nullptr};
   if (_msg.has_box())
   {
@@ -384,6 +411,25 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     scale.X() = _msg.cylinder().radius() * 2;
     scale.Y() = scale.X();
     scale.Z() = _msg.cylinder().length();
+  }
+  else if (_msg.has_plane())
+  {
+    geom = this->scene->CreatePlane();
+
+    if (_msg.plane().has_size())
+    {
+      scale.X() = _msg.plane().size().x();
+      scale.Y() = _msg.plane().size().y();
+    }
+
+    if (_msg.plane().has_normal())
+    {
+      // Create a rotation for the plane mesh to account for the normal vector.
+      // The rotation is the angle between the +z(0,0,1) vector and the
+      // normal, which are both expressed in the local (Visual) frame.
+      math::Vector3d normal = msgs::Convert(_msg.plane().normal());
+      localPose.Rot().From2Axes(math::Vector3d::UnitZ, normal.Normalized());
+    }
   }
   else if (_msg.has_sphere())
   {
@@ -414,6 +460,7 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     ignerr << "Unsupported geometry type" << std::endl;
   }
   _scale = scale;
+  _localPose = localPose;
   return geom;
 }
 
@@ -1045,4 +1092,3 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 // Register this plugin
 IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::Scene3D,
                                   ignition::gui::Plugin)
-
