@@ -750,7 +750,8 @@ void TextureNode::PrepareNode()
     delete this->texture;
     // note: include QQuickWindow::TextureHasAlphaChannel if the rendered
     // content has alpha.
-    this->texture = this->window->createTextureFromId(newId, sz);
+    this->texture = this->window->createTextureFromId(
+        newId, sz, QQuickWindow::TextureIsOpaque);
     this->setTexture(this->texture);
 
     this->markDirty(DirtyMaterial);
@@ -779,7 +780,10 @@ RenderWindowItem::~RenderWindowItem()
 void RenderWindowItem::Ready()
 {
   this->dataPtr->renderThread->surface = new QOffscreenSurface();
+//  auto f = this->dataPtr->renderThread->context->format();
+//  f.setColorSpace(QSurfaceFormat::sRGBColorSpace);
   this->dataPtr->renderThread->surface->setFormat(
+//      f);
       this->dataPtr->renderThread->context->format());
   this->dataPtr->renderThread->surface->create();
 
@@ -805,6 +809,8 @@ void RenderWindowItem::Ready()
 QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     QQuickItem::UpdatePaintNodeData */*_data*/)
 {
+  glEnable(GL_FRAMEBUFFER_SRGB);
+//  glDisable(GL_FRAMEBUFFER_SRGB);
   TextureNode *node = static_cast<TextureNode *>(_node);
 
   if (!this->dataPtr->renderThread->context)
@@ -816,17 +822,27 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     current->doneCurrent();
 
     this->dataPtr->renderThread->context = new QOpenGLContext();
+//    auto f = current->format();
+//    f.setColorSpace(QSurfaceFormat::sRGBColorSpace);
     this->dataPtr->renderThread->context->setFormat(current->format());
+//    this->dataPtr->renderThread->context->setFormat(f);
     this->dataPtr->renderThread->context->setShareContext(current);
     this->dataPtr->renderThread->context->create();
     this->dataPtr->renderThread->context->moveToThread(
         this->dataPtr->renderThread);
+
 
     current->makeCurrent(this->window());
 
     QMetaObject::invokeMethod(this, "Ready");
     return nullptr;
   }
+
+//    QOpenGLContext *current = this->window()->openglContext();
+//    auto f = current->format();
+//    QSurfaceFormat f;
+//    f.setColorSpace(QSurfaceFormat::sRGBColorSpace);
+//    this->window()->setFormat(f);
 
   if (!node)
   {
@@ -864,6 +880,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
   }
 
   node->setRect(this->boundingRect());
+  glDisable(GL_FRAMEBUFFER_SRGB);
 
   return node;
 }
