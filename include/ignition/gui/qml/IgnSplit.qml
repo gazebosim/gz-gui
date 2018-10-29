@@ -67,7 +67,7 @@ SplitView {
     {
       // Add the split
       var split = _addNewSplit(background);
-      split.orientation = Qt.Vertical;
+      split.split.orientation = Qt.Vertical;
 
       // Then add a new item to the newly created split
       itemName = _addNewItem(split);
@@ -117,14 +117,18 @@ SplitView {
     childItems[itemName] = item;
 
     // Add to parent
-    _split.addItem(item);
-
-    // Make sure that changes to the item's minimum size get propagated to the
-    // split.
-    if (_split !== background)
+    if (_split === background)
     {
+      _split.addItem(item);
+    }
+    else
+    {
+      _split.split.addItem(item);
+
+      // Make sure that changes to the item's minimum size get propagated to the
+      // split.
       item.minimumSizeChanged.connect(function(){
-        _split.recalculateMinimumSize()
+        _split.split.recalculateMinimumSize()
       });
     }
 
@@ -140,19 +144,19 @@ SplitView {
   function _addNewSplit(_parentSplit)
   {
     // Create split
-    var split = newSplit.createObject(_parentSplit);
+    var splitWrapper = newSplit.createObject(_parentSplit);
 
     // Unique name
     var splitName = "split_" + Math.floor(Math.random() * 100000)
-    split.objectName = splitName;
+    splitWrapper.objectName = splitName;
 
     // Add to dictionary
-    childSplits[splitName] = split;
+    childSplits[splitName] = splitWrapper;
 
     // Add to parent
-    _parentSplit.addItem(split);
+    _parentSplit.addItem(splitWrapper);
 
-    return split;
+    return splitWrapper;
   }
 
   /**
@@ -174,19 +178,26 @@ SplitView {
       return;
     }
 
-    split.removeItem(_item);
-
-    // If split is now empty, remove split
-    if (split.__items.length === 0 && split !== background)
+    if (split === background)
     {
-      // Remove from array
-      delete childSplits[split.objectName]
+      split.removeItem(_item);
+    }
+    else
+    {
+      split.split.removeItem(_item);
 
-      // Remove from parent split
-      _removeFromSplits(split);
+      // If split is now empty, remove split
+      if (split.split.__items.length === 0)
+      {
+        // Remove from array
+        delete childSplits[split.objectName]
 
-      // Destroy
-      split.destroy();
+        // Remove from parent split
+        _removeFromSplits(split);
+
+        // Destroy
+        split.destroy();
+      }
     }
   }
 
@@ -245,24 +256,50 @@ SplitView {
   Component {
     id: newSplit
 
-    SplitView {
-      Layout.minimumWidth: 100
-      Layout.minimumHeight: 100
+    /**
+     * For some reason, the scroll view doesn't work well within a split view,
+     * so we wrap it in a rectangle.
+    */
+    Rectangle {
+      id: splitWrapper
 
       /**
-       * Iterate over all current child items and update the split's minimum
-       * width accordingly.
+       * Expose the split view.
        */
-      function recalculateMinimumSize()
-      {
-        // Sync minimum sizes
-        for (var i = 0; i < __items.length; i++)
-        {
-          var child = __items[i];
+      property var split: split
 
-          if (child.Layout.minimumWidth > Layout.minimumWidth)
+      Layout.minimumWidth: split.Layout.minimumWidth
+      Layout.minimumHeight: split.Layout.minimumHeight
+
+      ScrollView {
+        anchors.fill: parent
+
+        contentHeight: split.implicitHeight
+        contentWidth: split.implicitWidth
+
+        SplitView {
+          id: split
+
+          implicitWidth: splitWrapper.width
+          implicitHeight: splitWrapper.height
+
+          /**
+           * Iterate over all current child items and update the split's minimum
+           * width accordingly.
+           * TODO(louise): generalize to support horizontal splits
+           */
+          function recalculateMinimumSize()
           {
-            Layout.minimumWidth = child.Layout.minimumWidth;
+            // Sync minimum sizes
+            for (var i = 0; i < __items.length; i++)
+            {
+              var child = __items[i];
+
+              if (child.Layout.minimumWidth > Layout.minimumWidth)
+              {
+                Layout.minimumWidth = child.Layout.minimumWidth;
+              }
+            }
           }
         }
       }
