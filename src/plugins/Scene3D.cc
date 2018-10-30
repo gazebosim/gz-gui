@@ -132,10 +132,10 @@ namespace plugins
     /// parent Visual and geometry.
     private: std::map<unsigned int, math::Pose3d> localPoses;
 
-    /// \brief Map of visual id to pose msg
+    /// \brief Map of visual id to visual pointers.
     private: std::map<unsigned int, rendering::VisualPtr> visuals;
 
-    /// \brief Map of light id to pose msg
+    /// \brief Map of light id to light pointers.
     private: std::map<unsigned int, rendering::LightPtr> lights;
 
     /// \brief Transport node for making service request and subscribing to
