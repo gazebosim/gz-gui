@@ -108,7 +108,6 @@ namespace plugins
 
     /// \brief Load a light from a light msg
     /// \param[in] _msg Light msg
-    /// visual's pose
     /// \return Light object created from the msg
     private: rendering::LightPtr LoadLight(const msgs::Light &_msg);
 
@@ -133,13 +132,14 @@ namespace plugins
     /// parent Visual and geometry.
     private: std::map<unsigned int, math::Pose3d> localPoses;
 
-    /// \brief Map of entity id to pose msg
+    /// \brief Map of visual id to pose msg
     private: std::map<unsigned int, rendering::VisualPtr> visuals;
 
-    /// \brief Map of entity id to pose msg
+    /// \brief Map of light id to pose msg
     private: std::map<unsigned int, rendering::LightPtr> lights;
 
-    // Transport node for making service request and subscribing to pose topic
+    /// \brief Transport node for making service request and subscribing to
+    /// pose topic
     private: ignition::transport::Node node;
   };
 
