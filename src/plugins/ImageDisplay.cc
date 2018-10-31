@@ -204,23 +204,10 @@ void ImageDisplay::OnRefresh()
 /////////////////////////////////////////////////
 void ImageDisplay::UpdateFromRgbInt8()
 {
-  QImage i(this->dataPtr->imageMsg.width(), this->dataPtr->imageMsg.height(),
-      QImage::Format_RGB888);
-
-  auto const &d = this->dataPtr->imageMsg.data();
-  for (unsigned int y_pixel = 0; y_pixel < this->dataPtr->imageMsg.height();
-      ++y_pixel)
-  {
-    for (unsigned int x_pixel = 0; x_pixel < this->dataPtr->imageMsg.width();
-        ++x_pixel)
-    {
-      int idx = x_pixel + y_pixel * this->dataPtr->imageMsg.width();
-      unsigned char red = d[3 * idx];
-      unsigned char green = d[3 * idx + 1];
-      unsigned char blue = d[3 * idx + 2];
-      i.setPixel(x_pixel, y_pixel, qRgb(red, green, blue));
-    }
-  }
+  QImage i(
+    reinterpret_cast<const uchar*>(this->dataPtr->imageMsg.data().c_str()),
+    this->dataPtr->imageMsg.width(), this->dataPtr->imageMsg.height(),
+    QImage::Format_RGB888);
 
   QPixmap pixmap;
   pixmap.convertFromImage(i);
