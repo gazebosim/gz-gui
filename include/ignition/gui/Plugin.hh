@@ -78,9 +78,9 @@ namespace ignition
       /// \return Pointer to plugin item.
       public: QQuickItem *PluginItem() const;
 
-      /// \brief Apply any anchors which may have been specified on the config
-      /// through the <anchor> tag.
-      public: void ApplyAnchors();
+      /// \brief Apply changes which should come after the plugin already
+      /// has a parent.
+      public: void PostParentChanges();
 
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.
@@ -123,6 +123,10 @@ namespace ignition
       /// Will be nullptr if not present in the SDF.
       private: virtual void LoadCommonConfig(
           const tinyxml2::XMLElement *_ignGuiElem);
+
+      /// \brief Apply any anchors which may have been specified on the config
+      /// through the <anchor> tag and any state properties.
+      private: void ApplyAnchors();
 
       /// \internal
       /// \brief Pointer to private data

@@ -49,6 +49,7 @@ Dialog {
     Switch {
       id: resizableSwitch
       text: "Resizable"
+      visible: card.state === "floating"
       checked: card.resizable
       onToggled: {
         card.resizable = checked
@@ -58,6 +59,7 @@ Dialog {
     GridLayout {
       width: parent.width
       columns: 2
+      visible: card.state === "floating"
 
       Label {
         text: "Position"
@@ -68,7 +70,18 @@ Dialog {
         text: ""
       }
 
+      // TODO(louise) Support setting anchors from the dialog
+      Button {
+        visible: card.anchored
+        text: "Clear anchors"
+        Layout.columnSpan: 2
+        onClicked: {
+          card.clearAnchors()
+        }
+      }
+
       IgnSpinBox {
+        visible: !card.anchored
         maximumValue: card.parent ? card.parent.width - card.width : minSize
         onVisibleChanged: value = card.x
         onValueChanged: {
@@ -76,9 +89,11 @@ Dialog {
         }
       }
       Label {
+        visible: !card.anchored
         text: "X"
       }
       IgnSpinBox {
+        visible: !card.anchored
         maximumValue: card.parent ? card.parent.height - card.height : minSize
         onVisibleChanged: value = card.y
         onValueChanged: {
@@ -86,9 +101,11 @@ Dialog {
         }
       }
       Label {
+        visible: !card.anchored
         text: "Y"
       }
       IgnSpinBox {
+        visible: !card.anchored
         maximumValue: 10000
         onVisibleChanged: value = card.z
         onValueChanged: {
@@ -96,6 +113,7 @@ Dialog {
         }
       }
       Label {
+        visible: !card.anchored
         text: "Z"
       }
       Label {

@@ -192,6 +192,15 @@ bool Application::RemovePlugin(const std::string &_pluginName)
       // Remove on QML
       cardItem->deleteLater();
 
+      // Remove split on QML
+      auto bgItem = this->dataPtr->mainWin->QuickWindow()
+          ->findChild<QQuickItem *>("background");
+      if (bgItem)
+      {
+        QMetaObject::invokeMethod(bgItem, "removeSplitItem",
+            Q_ARG(QVariant, cardItem->parentItem()->objectName()));
+      }
+
       // Unload shared library
       this->RemovePlugin(plugin);
 
@@ -438,13 +447,27 @@ bool Application::AddPluginsToWindow()
     if (!cardItem)
       continue;
 
+    // Add split item
+    QVariant splitName;
+    QMetaObject::invokeMethod(bgItem, "addSplitItem",
+        Q_RETURN_ARG(QVariant, splitName));
+
+    auto splitItem = bgItem->findChild<QQuickItem *>(
+        splitName.toString());
+    if (!splitItem)
+    {
+      ignerr << "Internal error: failed to create split ["
+             << splitName.toString().toStdString() << "]" << std::endl;
+      return false;
+    }
+
     // Add card to main window
-    cardItem->setParentItem(bgItem);
+    cardItem->setParentItem(splitItem);
     cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 
-    // Apply anchors now that it's attached to window
-    plugin->ApplyAnchors();
+    // Apply anchors and state changes now that it's attached to window
+    plugin->PostParentChanges();
 
     // Signals
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),

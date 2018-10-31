@@ -10,8 +10,11 @@ ApplicationWindow
   title: qsTr("Ignition GUI")
   width: 1200
   height: 1000
+  minimumWidth: 300
+  minimumHeight: 300
   visible: true
   id: window
+  objectName: "window"
   font.family: "Roboto"
 
   // Expose material properties to C++
@@ -158,22 +161,8 @@ ApplicationWindow
   /**
    * Background
    */
-  Rectangle {
-    objectName: "background"
-    id: background
+  IgnSplit {
     anchors.fill: parent
-    color: Material.background
-
-    Label {
-      id: startLabel;
-      visible: MainWindow.pluginCount === 0
-      text: "Insert plugins to start!"
-      anchors.fill: parent
-      font.pointSize: 24
-      horizontalAlignment: Label.AlignHCenter
-      verticalAlignment: Label.AlignVCenter
-      wrapMode: Label.Wrap
-    }
   }
 
   /**

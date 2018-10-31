@@ -6,8 +6,10 @@
 
   <file>qml/IgnCard.qml</file>
   <file>qml/IgnCardSettings.qml</file>
+  <file>qml/IgnHelpers.qml</file>
   <file>qml/IgnRulers.qml</file>
   <file>qml/IgnSpinBox.qml</file>
+  <file>qml/IgnSplit.qml</file>
   <file>qml/Main.qml</file>
   <file>qml/PluginMenu.qml</file>
   <file>qml/SideDrawer.qml</file>

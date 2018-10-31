@@ -1,11 +1,12 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 
 Rectangle {
   id: publisher
   color: "transparent"
-  width: 250
-  height: 350
+  Layout.minimumWidth: 250
+  Layout.minimumHeight: 375
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
