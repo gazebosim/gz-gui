@@ -246,6 +246,7 @@ Pane {
     // Do nothing
   }
 
+// TODO(louise): re-enable window state support
 //  /**
 //   * Window for undocking
 //   */
@@ -328,7 +329,6 @@ Pane {
         onClicked: {
           const docked = card.state === "docked"
           card.state = docked ? "floating" : "docked"
-//          cardWindow.visible = docked
         }
       }
 
