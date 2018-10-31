@@ -198,6 +198,10 @@ SplitView {
         // Destroy
         split.destroy();
       }
+      else
+      {
+        split.split.recalculateMinimumSize();
+      }
     }
   }
 
@@ -272,34 +276,46 @@ SplitView {
       Layout.minimumHeight: split.Layout.minimumHeight
 
       ScrollView {
-        anchors.fill: parent
+        contentHeight: split.height
+        contentWidth: split.width
 
-        contentHeight: split.implicitHeight
-        contentWidth: split.implicitWidth
+        // TODO(louise) This only works for a very specific split
+        height: window.height - window.header.height
 
         SplitView {
           id: split
-
-          implicitWidth: splitWrapper.width
-          implicitHeight: splitWrapper.height
+          width: splitWrapper.width
+          height: Math.max(childItems[Object.keys(childItems)[0]].height,
+                      split.Layout.minimumHeight)
 
           /**
            * Iterate over all current child items and update the split's minimum
            * width accordingly.
-           * TODO(louise): generalize to support horizontal splits
            */
           function recalculateMinimumSize()
           {
+            // TODO(louise): generalize to support horizontal splits
+            if (orientation === Qt.Horizontal)
+            {
+              return;
+            }
+
             // Sync minimum sizes
+            var heightSum = 0;
             for (var i = 0; i < __items.length; i++)
             {
               var child = __items[i];
 
+              // Minimum width matches the largest minimum width among children
               if (child.Layout.minimumWidth > Layout.minimumWidth)
               {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
+
+              // Minimum height is the sum of all children's minimum heights
+              heightSum += child.Layout.minimumHeight;
             }
+            Layout.minimumHeight = heightSum;
           }
         }
       }

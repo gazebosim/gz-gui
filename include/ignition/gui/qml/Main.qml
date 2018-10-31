@@ -10,6 +10,8 @@ ApplicationWindow
   title: qsTr("Ignition GUI")
   width: 1200
   height: 1000
+  minimumWidth: 300
+  minimumHeight: 300
   visible: true
   id: window
   objectName: "window"
