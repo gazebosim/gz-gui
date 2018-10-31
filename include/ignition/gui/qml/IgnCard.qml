@@ -77,6 +77,20 @@ Pane {
    */
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
+  /**
+   * Clear all anchors
+   */
+  function clearAnchors() {
+    card.anchors.right = undefined
+    card.anchors.left = undefined
+    card.anchors.top = undefined
+    card.anchors.bottom = undefined
+    card.anchors.fill = undefined
+    card.anchors.horizontalCenter = undefined
+    card.anchors.verticalCenter = undefined
+    card.anchors.baseline = undefined
+  }
+
   // TODO(louise) Support choosing between:
   // * a transparent background
   // * a custom color, in which case there will be elevation
