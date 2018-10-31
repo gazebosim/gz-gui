@@ -6,7 +6,7 @@ Rectangle {
   id: publisher
   color: "transparent"
   Layout.minimumWidth: 250
-  Layout.minimumHeight: 350
+  Layout.minimumHeight: 375
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
