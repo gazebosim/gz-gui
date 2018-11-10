@@ -19,6 +19,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
@@ -75,7 +76,7 @@ namespace plugins
 
     /// \brief Load the scene from a scene msg
     /// \param[in] _msg Scene msg
-    private: void LoadScene(const msgs::Scene &_msg);
+    private: void OnSceneSrvMsg(const msgs::Scene &_msg, const bool result);
 
     /// \brief Load the model from a model msg
     /// \param[in] _msg Model msg
@@ -225,25 +226,19 @@ void SceneManager::Load(const std::string &_service,
 /////////////////////////////////////////////////
 void SceneManager::Request()
 {
-  bool result{false};
-  unsigned int timeout{5000};
-
-  msgs::Scene res;
-
-  // \todo(anyone) Look into using an asynchronous request, or an
-  // alternative Request function that is asynchronous. This could be used
-  // to make `Initialize` non-blocking.
-  if (this->node.Request(this->service, timeout, res, result) && result)
-  {
-    this->LoadScene(res);
-    if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
-    {
-      ignerr << "Error subscribing to pose topic: " << this->poseTopic
-             << std::endl;
-    }
+  // wait for the service to be advertized
+  std::vector<transport::ServicePublisher> publishers;
+  const common::Time sleepDuration {1.0};
+  const std::size_t timeout = 5;
+  for (std::size_t i = 0; i < timeout; ++i) {
+    this->node.ServiceInfo(this->service, publishers);
+    if (publishers.size() > 0)
+      break;
+    common::Time::Sleep(sleepDuration);
   }
-  else
-  {
+
+  if (publishers.empty() ||
+      !this->node.Request(this->service, &SceneManager::OnSceneSrvMsg, this)) {
     ignerr << "Error making service request to " << this->service
            << std::endl;
   }
@@ -303,8 +298,15 @@ void SceneManager::Update()
 }
 
 /////////////////////////////////////////////////
-void SceneManager::LoadScene(const msgs::Scene &_msg)
+void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
 {
+  if (!result)
+  {
+    ignerr << "Error making service request to " << this->service
+           << std::endl;
+    return;
+  }
+
   rendering::VisualPtr rootVis = this->scene->RootVisual();
 
   // load models
@@ -325,6 +327,12 @@ void SceneManager::LoadScene(const msgs::Scene &_msg)
       rootVis->AddChild(light);
     else
       ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+  }
+
+  if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
+  {
+    ignerr << "Error subscribing to pose topic: " << this->poseTopic
+        << std::endl;
   }
 }
 
@@ -1208,4 +1216,3 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 // Register this plugin
 IGNITION_ADD_PLUGIN(ignition::gui::plugins::Scene3D,
                     ignition::gui::Plugin)
-
