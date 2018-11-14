@@ -28,15 +28,8 @@ foreach (src ${qt_headers_local})
   )
   target_link_libraries(${src}
     PUBLIC
-      ${IGNITION-COMMON_LIBRARIES}
-      ${IGNITION-GUI_LIBRARIES}
-      ${IGNITION-MSGS_LIBRARIES}
+      ${PROJECT_LIBRARY_TARGET_NAME}
       ${IGNITION-RENDERING_LIBRARIES}
-      ${IGNITION-TRANSPORT_LIBRARIES}
-      ${Qt5Core_LIBRARIES}
-      ${Qt5Qml_LIBRARIES}
-      ${Qt5Quick_LIBRARIES}
-      ${Qt5QuickControls2_LIBRARIES}
     PRIVATE
       ignition-plugin${IGN_PLUGIN_VER}::register
   )
