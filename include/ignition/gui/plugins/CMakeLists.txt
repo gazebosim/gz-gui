@@ -30,6 +30,7 @@ foreach (src ${qt_headers_local})
     PUBLIC
       ${PROJECT_LIBRARY_TARGET_NAME}
       ${IGNITION-RENDERING_LIBRARIES}
+      TINYXML2::TINYXML2
     PRIVATE
       ignition-plugin${IGN_PLUGIN_VER}::register
   )
