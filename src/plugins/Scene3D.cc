@@ -55,14 +55,18 @@ namespace plugins
     /// \param[in] _poseTopic Ign transport pose topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: SceneManager(const std::string &_service,
-        const std::string &_poseTopic, rendering::ScenePtr _scene);
+                         const std::string &_poseTopic,
+                         const std::string &_visibilityTopic,
+                         rendering::ScenePtr _scene);
 
     /// \brief Load the scene manager
     /// \param[in] _service Ign transport service name
     /// \param[in] _poseTopic Ign transport pose topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: void Load(const std::string &_service,
-        const std::string &_poseTopic, rendering::ScenePtr _scene);
+                      const std::string &_poseTopic,
+                      const std::string &_visibilityTopic,
+                      rendering::ScenePtr _scene);
 
     /// \brief Make the scene service request and populate the scene
     public: void Request();
@@ -70,9 +74,16 @@ namespace plugins
     /// \brief Update the scene based on pose msgs received
     public: void Update();
 
+    /// \brief Load/Remove entities based on the active status
+    public: void ManageActiveEntities();
+
     /// \brief Callback function for the pose topic
     /// \param[in] _msg Pose vector msg
     private: void OnPoseVMsg(const msgs::Pose_V &_msg);
+
+    /// \brief Callback function for the pose topic
+    /// \param[in] _msg Pose vector msg
+    private: void OnVisibilityMsg(const msgs::UInt32_V &_msg);
 
     /// \brief Load the scene from a scene msg
     /// \param[in] _msg Scene msg
@@ -112,11 +123,30 @@ namespace plugins
     /// \return Light object created from the msg
     private: rendering::LightPtr LoadLight(const msgs::Light &_msg);
 
+    /// \brief Remove the model
+    /// \param[in] _msg Model msg
+    private: void RemoveModel(const msgs::Model &_msg);
+
+    /// \brief Remove a link
+    /// \param[in] _msg Link msg
+    private: void RemoveLink(const msgs::Link &_msg);
+
+    /// \brief Remove a visual
+    /// \param[in] _msg Visual msg
+    private: void RemoveVisual(const msgs::Visual &_msg);
+
+    /// \brief Remove a light
+    /// \param[in] _msg Light msg
+    private: void RemoveLight(const msgs::Light &_msg);
+
     //// \brief Ign-transport scene service name
     private: std::string service;
 
     //// \brief Ign-transport pose topic name
     private: std::string poseTopic;
+
+    //// \brief Ign-transport pose topic name
+    private: std::string visibilityTopic;
 
     //// \brief Pointer to the rendering scene
     private: rendering::ScenePtr scene;
@@ -139,9 +169,17 @@ namespace plugins
     /// \brief Map of light id to light pointers.
     private: std::map<unsigned int, rendering::LightPtr> lights;
 
+    private: std::unordered_set<unsigned int> activeEntities;
+
     /// \brief Transport node for making service request and subscribing to
     /// pose topic
     private: ignition::transport::Node node;
+
+    /// \brief Keeps the last scene message received
+    private: msgs::Scene lastMsg;
+
+    /// \brief Counter to be used for determining when to load/unload resources
+    private: uint64_t updateCounter{0};
   };
 
   /// \brief Private data class for IgnRenderer
@@ -209,17 +247,22 @@ SceneManager::SceneManager()
 
 /////////////////////////////////////////////////
 SceneManager::SceneManager(const std::string &_service,
-    const std::string &_poseTopic, rendering::ScenePtr _scene)
+                           const std::string &_poseTopic,
+                           const std::string &_visibilityTopic,
+                           rendering::ScenePtr _scene)
 {
-  this->Load(_service, _poseTopic, _scene);
+  this->Load(_service, _poseTopic, _visibilityTopic, _scene);
 }
 
 /////////////////////////////////////////////////
 void SceneManager::Load(const std::string &_service,
-    const std::string &_poseTopic, rendering::ScenePtr _scene)
+                        const std::string &_poseTopic,
+                        const std::string &_visibilityTopic,
+                        rendering::ScenePtr _scene)
 {
   this->service = _service;
   this->poseTopic = _poseTopic;
+  this->visibilityTopic = _visibilityTopic;
   this->scene = _scene;
 }
 
@@ -264,6 +307,16 @@ void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
 }
 
 /////////////////////////////////////////////////
+void SceneManager::OnVisibilityMsg(const msgs::UInt32_V &_msg)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  for (int i = 0; i < _msg.data_size(); ++i)
+  {
+    this->activeEntities.insert(_msg.data(i));
+  }
+}
+
+/////////////////////////////////////////////////
 void SceneManager::Update()
 {
   // process msgs
@@ -298,6 +351,60 @@ void SceneManager::Update()
 }
 
 /////////////////////////////////////////////////
+void SceneManager::ManageActiveEntities()
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+
+  if ((++this->updateCounter)%10 == 0)
+  {
+    igndbg << this->updateCounter << "\n";
+    rendering::VisualPtr rootVis = this->scene->RootVisual();
+    for (int i = 0; i < this->lastMsg.model_size(); ++i)
+    {
+      auto modelId = this->lastMsg.model(i).id();
+      if (this->activeEntities.find(modelId) == this->activeEntities.end())
+      {
+        // Remove the visuals
+        this->RemoveModel(this->lastMsg.model(i));
+      }
+      else
+      {
+        // Load if it the entity is active but it has previously been removed
+        // from the scene
+        if (this->visuals.find(modelId) == this->visuals.end())
+        {
+          auto modelVis = this->LoadModel(this->lastMsg.model(i));
+          if (modelVis)
+            rootVis->AddChild(modelVis);
+        }
+      }
+    }
+
+    for (int i = 0; i < this->lastMsg.light_size(); ++i)
+    {
+      auto lightId = this->lastMsg.light(i).id();
+      if (this->activeEntities.find(lightId) == this->activeEntities.end())
+      {
+        this->RemoveLight(this->lastMsg.light(i));
+      }
+      else
+      {
+        // Load if it the entity is active but it has previously been removed
+        // from the scene
+        if (this->lights.find(lightId) == this->lights.end())
+        {
+          auto light = this->LoadLight(this->lastMsg.light(i));
+          if (light)
+            rootVis->AddChild(light);
+        }
+      }
+    }
+
+    this->activeEntities.clear();
+  }
+}
+
+/////////////////////////////////////////////////
 void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
 {
   if (!result)
@@ -307,8 +414,13 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     return;
   }
 
-  rendering::VisualPtr rootVis = this->scene->RootVisual();
+  // Save msg for later use
+  {
+    std::lock_guard<std::mutex> lock(this->mutex);
+    this->lastMsg = _msg;
+  }
 
+  rendering::VisualPtr rootVis = this->scene->RootVisual();
   // load models
   for (int i = 0; i < _msg.model_size(); ++i)
   {
@@ -333,6 +445,11 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
   {
     ignerr << "Error subscribing to pose topic: " << this->poseTopic
         << std::endl;
+  }
+  if (!this->node.Subscribe(this->visibilityTopic,
+                            &SceneManager::OnVisibilityMsg, this)) {
+    ignerr << "Error subscribing to visibility topic: " << this->visibilityTopic
+           << std::endl;
   }
 }
 
@@ -608,6 +725,72 @@ rendering::LightPtr SceneManager::LoadLight(const msgs::Light &_msg)
   return light;
 }
 
+/////////////////////////////////////////////////
+void SceneManager::RemoveModel(const msgs::Model &_msg)
+{
+  if (this->visuals.find(_msg.id()) != this->visuals.end())
+  {
+    // remove links
+    for (int i = 0; i < _msg.link_size(); ++i)
+    {
+      if (this->visuals.find(_msg.link(i).id()) != this->visuals.end())
+      {
+        this->RemoveLink(_msg.link(i));
+      }
+    }
+    if (this->visuals.find(_msg.id()) != this->visuals.end())
+    {
+      this->scene->DestroyVisual(this->visuals[_msg.id()], true);
+      this->visuals.erase(_msg.id());
+      // \todo(addisu) Handle  nested models
+    }
+  }
+}
+
+/////////////////////////////////////////////////
+void SceneManager::RemoveLink(const msgs::Link &_msg)
+{
+  if (this->visuals.find(_msg.id()) != this->visuals.end())
+  {
+    // remove visuals
+    for (int i = 0; i < _msg.visual_size(); ++i)
+    {
+      if (this->visuals.find(_msg.visual(i).id()) != this->visuals.end())
+      {
+        this->RemoveVisual(_msg.visual(i));
+      }
+    }
+
+    // remove lights
+    for (int i = 0; i < _msg.light_size(); ++i)
+    {
+      if (this->visuals.find(_msg.light(i).id()) != this->visuals.end())
+      {
+        this->RemoveLight(_msg.light(i));
+      }
+    }
+
+    this->visuals.erase(_msg.id());
+  }
+}
+
+/////////////////////////////////////////////////
+void SceneManager::RemoveVisual(const msgs::Visual &_msg)
+{
+  if (this->visuals.find(_msg.id()) != this->visuals.end())
+  {
+    this->visuals.erase(_msg.id());
+  }
+}
+
+/////////////////////////////////////////////////
+void SceneManager::RemoveLight(const msgs::Light &_msg)
+{
+  if (this->lights.find(_msg.id()) != this->lights.end())
+  {
+    this->lights.erase(_msg.id());
+  }
+}
 
 /////////////////////////////////////////////////
 IgnRenderer::IgnRenderer()
@@ -637,6 +820,7 @@ void IgnRenderer::Render()
   }
 
   // update the scene
+  this->dataPtr->sceneManager.ManageActiveEntities();
   this->dataPtr->sceneManager.Update();
 
   // view control
@@ -746,7 +930,7 @@ void IgnRenderer::Initialize()
   if (!this->sceneService.empty())
   {
     this->dataPtr->sceneManager.Load(
-        this->sceneService, this->poseTopic, scene);
+        this->sceneService, this->poseTopic, this->visibilityTopic, scene);
     this->dataPtr->sceneManager.Request();
   }
 
@@ -1070,6 +1254,12 @@ void RenderWindowItem::SetPoseTopic(const std::string &_topic)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetVisibilityTopic(const std::string &_topic)
+{
+  this->dataPtr->renderThread->ignRenderer.visibilityTopic = _topic;
+}
+
+/////////////////////////////////////////////////
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
@@ -1143,6 +1333,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       std::string topic = elem->GetText();
       renderWindow->SetPoseTopic(topic);
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("visibility_topic"))
+    {
+      std::string topic = elem->GetText();
+      renderWindow->SetVisibilityTopic(topic);
     }
   }
 }
