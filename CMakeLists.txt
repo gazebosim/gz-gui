@@ -76,12 +76,13 @@ endif()
 
 #--------------------------------------
 # Find QT
-find_package (Qt5
+ign_find_package (Qt5
   COMPONENTS
     Core
     Quick
     QuickControls2
   REQUIRED
+  PKGCONFIG "Qt5Core Qt5Quick Qt5QuickControls2"
 )
 
 #--------------------------------------
