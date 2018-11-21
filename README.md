@@ -1,6 +1,6 @@
 # Ignition GUI : Graphical interfaces for robotics applications
 
-**Maintainer:** louise@openrobotics.org
+**Maintainer:** louise [AT] openrobotics [DOT] org
 
 [![Bitbucket open issues](https://img.shields.io/bitbucket/issues-raw/ignitionrobotics/ign-gui.svg)](https://bitbucket.org/ignitionrobotics/ign-gui/issues)
 [![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/ignitionrobotics/ign-gui.svg)](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests)
@@ -208,12 +208,12 @@ further instructions on how to disable testing, run test coverage, etc.
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/CONTRIBUTING.md).
+[CONTRIBUTING.md](https://bitbucket.org/ignitionrobotics/ign-gazebo/src/default/CONTRIBUTING.md).
 
 # Code of Conduct
 
 Please see
-[CODE_OF_CONDUCT.md](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/CODE_OF_CONDUCT.md).
+[CODE_OF_CONDUCT.md](https://bitbucket.org/ignitionrobotics/ign-gazebo/src/default/CODE_OF_CONDUCT.md).
 
 # Versioning
 
