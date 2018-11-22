@@ -73,8 +73,8 @@ On Ubuntu Bionic, it's possible to install Ignition GUI's version 1 pre-releases
 
 Add OSRF packages:
 
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable xenial main" > /etc/apt/sources.list.d/gazebo-stable.list
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease xenial main" > /etc/apt/sources.list.d/gazebo-prerelease.list
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable bionic main" > /etc/apt/sources.list.d/gazebo-stable.list
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease bionic main" > /etc/apt/sources.list.d/gazebo-prerelease.list
     sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
     sudo apt update
 
@@ -99,6 +99,12 @@ There are currently two versions under active development:
 
 Install dependencies:
 
+    sudo apt update
+    sudo apt -y install wget lsb-release gnupg
+    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
+    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+    sudo apt update
     sudo apt install -y
         build-essential
         cmake
@@ -123,6 +129,12 @@ Clone source code, note you'll need the `default` branch:
 
 Install dependencies:
 
+    sudo apt update
+    sudo apt -y install wget lsb-release gnupg
+    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
+    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+    sudo apt update
     sudo apt install -y
         g++-8
         libignition-cmake2-dev
@@ -144,6 +156,7 @@ Install dependencies:
         qml-module-qtquick-layouts
         qml-module-qt-labs-folderlistmodel
         qml-module-qt-labs-settings
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
 Clone source code, note you'll need the `gz11` branch:
 
