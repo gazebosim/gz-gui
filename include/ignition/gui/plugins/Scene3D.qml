@@ -13,11 +13,19 @@ Rectangle {
     anchors.fill: parent
   }
 
-  GammaAdjust {
-      anchors.fill: renderWindow
-      source: renderWindow
-      gamma: 2.2
+/*  Component {
+    id: gammaCorrect
+    GammaAdjust {
+        anchors.fill: renderWindow
+        source: renderWindow
+        gamma: 2.2
+    }
   }
+
+  Loader {
+    id: loader
+  }
+*/
 
   onParentChanged: {
     if (undefined === parent)
@@ -25,6 +33,8 @@ Rectangle {
 
       width = Qt.binding(function() {return parent.parent.width})
       height = Qt.binding(function() {return parent.parent.height})
+
+//      loader.sourceComponent = gammaCorrect
   }
 }
 

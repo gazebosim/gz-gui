@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 
+#include <ignition/gui/Application.hh>
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/plugin/Register.hh>
@@ -959,7 +960,39 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("engine"))
+    {
+      std::cerr << " loading engine " << elem->GetText() << std::endl;
       renderWindow->SetEngineName(elem->GetText());
+      // there is a problem with displaying ogre2 render textures that are in
+      // sRGB format. Workaround for now is to apply gamma correction manually.
+      // There maybe a better way to solve the problem by making OpenGL calls..
+      if (elem->GetText() == std::string("ogre2"))
+      {
+/*        // Instantiate a card
+        std::string qmlFile(":qml/GammaAdjust.qml");
+        QQmlComponent cardComp(App()->Engine(),
+            QString(QString::fromStdString(qmlFile)));
+        auto cardItem = qobject_cast<QQuickItem *>(cardComp.create());
+        if (!cardItem)
+        {
+          ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+                 << "]" << std::endl;
+          return;
+        }
+        // C++ ownership
+        QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
+        // Get card parts
+        auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
+        if (!cardContentItem)
+        {
+          ignerr << "Null card content QQuickItem!" << std::endl;
+          return;
+        }
+*/
+        std::cerr << " done loading engine " << elem->GetText() << std::endl;
+      }
+
+    }
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
       renderWindow->SetSceneName(elem->GetText());
