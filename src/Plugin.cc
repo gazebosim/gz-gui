@@ -19,16 +19,23 @@
 
 #include <ignition/common/Console.hh>
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
-struct Anchor
+/// \brief Used to store information about anchors set by the user.
+struct Anchors
 {
-  std::string line;
+  /// \brief Name of target item, which can be "window" or the
+  /// title of another plugin.
   std::string target;
-  std::string targetLine;
+
+  /// \brief Vector of anchor lines, where the first is the plugin's own line
+  /// and the second is the line on the target.
+  std::vector<std::pair<std::string, std::string>> lines;
 };
 
+/// \brief Set of all possible lines.
 static const std::unordered_set<std::string> kAnchorLineSet{
     "top",
     "bottom",
@@ -37,6 +44,12 @@ static const std::unordered_set<std::string> kAnchorLineSet{
     "horizontalCenter",
     "verticalCenter",
     "baseline"};
+
+/// \brief Properties which shouldn't be saved or loaded
+static const std::unordered_set<std::string> kIgnoredProps{
+    "objectName",
+    "pluginName",
+    "anchored"};
 
 class ignition::gui::PluginPrivate
 {
@@ -60,8 +73,8 @@ class ignition::gui::PluginPrivate
   /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
   public: std::map<std::string, QVariant> cardProperties;
 
-  /// \brief Vector of anchors.
-  public: std::vector<Anchor> anchors;
+  /// \brief Holds all anchor information
+  public: Anchors anchors;
 };
 
 using namespace ignition;
@@ -194,29 +207,34 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
   }
 
   // Anchors
-  for (auto anchorElem = _ignGuiElem->FirstChildElement("anchor");
-      anchorElem != nullptr;
-      anchorElem = anchorElem->NextSiblingElement("anchor"))
+  if (auto anchorElem = _ignGuiElem->FirstChildElement("anchors"))
   {
-    Anchor anchor;
-    anchor.line = anchorElem->Attribute("line");
-    anchor.target = anchorElem->Attribute("target");
-    anchor.targetLine = anchorElem->Attribute("target_line");
+    this->dataPtr->anchors.target = anchorElem->Attribute("target");
+    this->dataPtr->anchors.lines.clear();
 
-    if (kAnchorLineSet.find(anchor.line) == kAnchorLineSet.end())
+    for (auto lineElem = anchorElem->FirstChildElement("line");
+        lineElem != nullptr;
+        lineElem = lineElem->NextSiblingElement("line"))
     {
-      ignwarn << "Invalid anchor line [" << anchor.line << "]" << std::endl;
-      continue;
-    }
+      auto ownLine = lineElem->Attribute("own");
+      auto targetLine = lineElem->Attribute("target");
 
-    if (kAnchorLineSet.find(anchor.targetLine) == kAnchorLineSet.end())
-    {
-      ignwarn << "Invalid anchor target line [" << anchor.line << "]"
-              << std::endl;
-      continue;
-    }
+      if (kAnchorLineSet.find(ownLine) == kAnchorLineSet.end())
+      {
+        ignwarn << "Invalid anchor line [" << ownLine << "]" << std::endl;
+        continue;
+      }
 
-    this->dataPtr->anchors.push_back(anchor);
+      if (kAnchorLineSet.find(targetLine) == kAnchorLineSet.end())
+      {
+        ignwarn << "Invalid anchor target line [" << targetLine << "]"
+                << std::endl;
+        continue;
+      }
+
+      this->dataPtr->anchors.lines.push_back(
+          std::make_pair(ownLine, targetLine));
+    }
   }
 }
 
@@ -249,10 +267,11 @@ std::string Plugin::ConfigStr()
 
   // Clean <property>s
   for (auto propElem = ignGuiElem->FirstChildElement("property");
-      propElem != nullptr;
-      propElem = propElem->NextSiblingElement("property"))
+      propElem != nullptr;)
   {
+    auto nextProp = propElem->NextSiblingElement("property");
     ignGuiElem->DeleteChild(propElem);
+    propElem = nextProp;
   }
 
   // Add <property>s
@@ -262,8 +281,16 @@ std::string Plugin::ConfigStr()
     auto key = meta->property(i).name();
     auto type = std::string(meta->property(i).typeName());
 
+    // Explicitly skip some keys
+    if (kIgnoredProps.find(key) != kAnchorLineSet.end())
+      continue;
+
+    // When setting, it will need to be string
+    if (type == "QString")
+      type = "string";
+
     std::string value;
-    if (type != "double" && type != "int" && type != "bool")
+    if (type != "double" && type != "int" && type != "bool" && type != "string")
     {
       continue;
     }
@@ -276,6 +303,20 @@ std::string Plugin::ConfigStr()
     elem->SetAttribute("type", type.c_str());
     elem->SetText(value.c_str());
     ignGuiElem->InsertEndChild(elem);
+  }
+
+  // Remove <anchors> if needed
+  // TODO(louise) Support setting anchors from UI and then saving it.
+  auto anchored = this->CardItem()->property("anchored").toBool();
+  if (!anchored)
+  {
+    for (auto anchorElem = ignGuiElem->FirstChildElement("anchors");
+        anchorElem != nullptr;)
+    {
+      auto nextAnchor = anchorElem->NextSiblingElement("anchors");
+      ignGuiElem->DeleteChild(anchorElem);
+      anchorElem = nextAnchor;
+    }
   }
 
   // Then convert XML back to string
@@ -378,6 +419,10 @@ QQuickItem *Plugin::CardItem() const
 
   for (auto prop : this->dataPtr->cardProperties)
   {
+    // Skip and only apply once it's reparented
+    if (prop.first == "state")
+      continue;
+
     cardItem->setProperty(prop.first.c_str(), prop.second);
   }
 
@@ -402,40 +447,99 @@ QQuickItem *Plugin::CardItem() const
 }
 
 /////////////////////////////////////////////////
+void Plugin::PostParentChanges()
+{
+  // TODO(louise) Test more configuration combinations, the order of operations
+  // may be messing up some use cases.
+
+  // State
+  // Change state now that we have a parent
+  if (this->dataPtr->cardProperties.find("state") !=
+      this->dataPtr->cardProperties.end())
+  {
+    this->CardItem()->setProperty("state",
+        this->dataPtr->cardProperties["state"]);
+  }
+
+  // Anchor
+  this->ApplyAnchors();
+
+  // Re-apply other properties like size and position if present
+  for (auto prop : this->dataPtr->cardProperties)
+  {
+    if (prop.first == "state")
+      continue;
+
+    this->CardItem()->setProperty(prop.first.c_str(), prop.second);
+  }
+}
+
+/////////////////////////////////////////////////
 void Plugin::ApplyAnchors()
 {
-  if (this->dataPtr->anchors.empty())
-    return;
-
-  // For now, only support attaching to the main window (i.e. background item)
-  auto win = App()->findChild<MainWindow *>();
-  if (!win)
+  if (this->dataPtr->anchors.target.empty() ||
+      this->dataPtr->anchors.lines.empty())
   {
-    ignerr << "Internal error: missing window" << std::endl;
     return;
   }
 
-  auto bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
-  if (!bgItem)
+  // Only floating plugins can be anchored
+  if (this->CardItem()->property("state") != "floating")
   {
-    ignerr << "Internal error: missing background item" << std::endl;
+    ignwarn << "Anchors can only be applied on floating state." << std::endl;
     return;
   }
 
-  auto cardAnchors = qvariant_cast<QObject *>(
-      this->CardItem()->property("anchors"));
+  // Get target
+  QQuickItem *target = nullptr;
 
-  for (auto anchor : this->dataPtr->anchors)
+  if (this->dataPtr->anchors.target == "window")
   {
-    if (anchor.target != "window")
+    auto win = App()->findChild<MainWindow *>();
+    if (!win)
     {
-      ignwarn << "Invalid target [" << anchor.target
-              << "]. Currently only support anchoring to window." << std::endl;
-      continue;
+      ignerr << "Internal error: missing window" << std::endl;
+      return;
     }
 
-    cardAnchors->setProperty(anchor.line.c_str(),
-        bgItem->property(anchor.targetLine.c_str()));
+    auto bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
+    if (!bgItem)
+    {
+      ignerr << "Internal error: missing background item" << std::endl;
+      return;
+    }
+
+    target = bgItem;
   }
+  else
+  {
+    // See if there's a plugin with that name
+    target =
+        findFirstByProperty(App()->Engine()->findChildren<QQuickItem *>(),
+        "pluginName", QString::fromStdString(this->dataPtr->anchors.target));
+  }
+
+  if (!target)
+  {
+    ignwarn << "Failed to find anchor target [" << this->dataPtr->anchors.target
+            << "]" << std::endl;
+    return;
+  }
+
+  // Reparent so it can be anchored
+  this->CardItem()->setParentItem(target);
+
+  // Clear previous anchors
+  QMetaObject::invokeMethod(this->CardItem(), "clearAnchors");
+
+  // Set anchors
+  auto cardAnchors = qvariant_cast<QObject *>(
+      this->CardItem()->property("anchors"));
+  for (auto line : this->dataPtr->anchors.lines)
+  {
+    cardAnchors->setProperty(line.first.c_str(),
+        target->property(line.second.c_str()));
+  }
+  this->CardItem()->setProperty("anchored", true);
 }
 

@@ -96,14 +96,21 @@ namespace plugins
     /// \brief Load a geometry from a geometry msg
     /// \param[in] _msg Geometry msg
     /// \param[out] _scale Geometry scale that will be set based on msg param
+    /// \param[out] _localPose Additional local pose to be applied after the
+    /// visual's pose
     /// \return Geometry object created from the msg
     private: rendering::GeometryPtr LoadGeometry(const msgs::Geometry &_msg,
-        math::Vector3d &_scale);
+        math::Vector3d &_scale, math::Pose3d &_localPose);
 
     /// \brief Load a material from a material msg
     /// \param[in] _msg Material msg
     /// \return Material object created from the msg
     private: rendering::MaterialPtr LoadMaterial(const msgs::Material &_msg);
+
+    /// \brief Load a light from a light msg
+    /// \param[in] _msg Light msg
+    /// \return Light object created from the msg
+    private: rendering::LightPtr LoadLight(const msgs::Light &_msg);
 
     //// \brief Ign-transport scene service name
     private: std::string service;
@@ -117,13 +124,23 @@ namespace plugins
     //// \brief Mutex to protect the pose msgs
     private: std::mutex mutex;
 
-    /// \brief Map of entity id to pose msg
-    private: std::map<unsigned int, msgs::Pose> poses;
+    /// \brief Map of entity id to pose
+    private: std::map<unsigned int, math::Pose3d> poses;
 
-    /// \brief Map of entity id to pose msg
+    /// \brief Map of entity id to initial local poses
+    /// This is currently used to handle the normal vector in plane visuals. In
+    /// general, this can be used to store any local transforms between the
+    /// parent Visual and geometry.
+    private: std::map<unsigned int, math::Pose3d> localPoses;
+
+    /// \brief Map of visual id to visual pointers.
     private: std::map<unsigned int, rendering::VisualPtr> visuals;
 
-    // Transport node for making service request and subscribing to pose topic
+    /// \brief Map of light id to light pointers.
+    private: std::map<unsigned int, rendering::LightPtr> lights;
+
+    /// \brief Transport node for making service request and subscribing to
+    /// pose topic
     private: ignition::transport::Node node;
   };
 
@@ -239,7 +256,16 @@ void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
   std::lock_guard<std::mutex> lock(this->mutex);
   for (int i = 0; i < _msg.pose_size(); ++i)
   {
-    this->poses[_msg.pose(i).id()] = _msg.pose(i);
+    math::Pose3d pose = msgs::Convert(_msg.pose(i));
+
+    // apply additional local poses if available
+    const auto it = this->localPoses.find(_msg.pose(i).id());
+    if (it != this->localPoses.end())
+    {
+      pose = pose * it->second;
+    }
+
+    this->poses[_msg.pose(i).id()] = pose;
   }
 }
 
@@ -254,17 +280,26 @@ void SceneManager::Update()
     auto vIt = this->visuals.find(pIt->first);
     if (vIt != this->visuals.end())
     {
-      vIt->second->SetLocalPose(msgs::Convert(pIt->second));
+      vIt->second->SetLocalPose(pIt->second);
       this->poses.erase(pIt++);
     }
     else
     {
-      ++pIt;
+      auto lIt = this->lights.find(pIt->first);
+      if (lIt != this->lights.end())
+      {
+        lIt->second->SetLocalPose(pIt->second);
+        this->poses.erase(pIt++);
+      }
+      else
+      {
+        ++pIt;
+      }
     }
   }
 
   // Note we are clearing the pose msgs here but later on we may need to
-  // consider the case where pose msgs before scene/visual msgs
+  // consider the case where pose msgs arrive before scene/visual msgs
   this->poses.clear();
 }
 
@@ -273,6 +308,7 @@ void SceneManager::LoadScene(const msgs::Scene &_msg)
 {
   rendering::VisualPtr rootVis = this->scene->RootVisual();
 
+  // load models
   for (int i = 0; i < _msg.model_size(); ++i)
   {
     rendering::VisualPtr modelVis = this->LoadModel(_msg.model(i));
@@ -280,6 +316,16 @@ void SceneManager::LoadScene(const msgs::Scene &_msg)
       rootVis->AddChild(modelVis);
     else
       ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+  }
+
+  // load lights
+  for (int i = 0; i < _msg.light_size(); ++i)
+  {
+    rendering::LightPtr light = this->LoadLight(_msg.light(i));
+    if (light)
+      rootVis->AddChild(light);
+    else
+      ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
   }
 }
 
@@ -291,6 +337,7 @@ rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
     modelVis->SetLocalPose(msgs::Convert(_msg.pose()));
   this->visuals[_msg.id()] = modelVis;
 
+  // load links
   for (int i = 0; i < _msg.link_size(); ++i)
   {
     rendering::VisualPtr linkVis = this->LoadLink(_msg.link(i));
@@ -299,6 +346,18 @@ rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
     else
       ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
+
+  // load nested models
+  for (int i = 0; i < _msg.model_size(); ++i)
+  {
+    rendering::VisualPtr nestedModelVis = this->LoadModel(_msg.model(i));
+    if (nestedModelVis)
+      modelVis->AddChild(nestedModelVis);
+    else
+      ignerr << "Failed to load nested model: " << _msg.model(i).name()
+             << std::endl;
+  }
+
   return modelVis;
 }
 
@@ -310,6 +369,7 @@ rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
     linkVis->SetLocalPose(msgs::Convert(_msg.pose()));
   this->visuals[_msg.id()] = linkVis;
 
+  // load visuals
   for (int i = 0; i < _msg.visual_size(); ++i)
   {
     rendering::VisualPtr visualVis = this->LoadVisual(_msg.visual(i));
@@ -318,6 +378,17 @@ rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
     else
       ignerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
   }
+
+  // load lights
+  for (int i = 0; i < _msg.light_size(); ++i)
+  {
+    rendering::LightPtr light = this->LoadLight(_msg.light(i));
+    if (light)
+      linkVis->AddChild(light);
+    else
+      ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+  }
+
   return linkVis;
 }
 
@@ -328,14 +399,23 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
     return rendering::VisualPtr();
 
   rendering::VisualPtr visualVis = this->scene->CreateVisual();
-  if (_msg.has_pose())
-    visualVis->SetLocalPose(msgs::Convert(_msg.pose()));
   this->visuals[_msg.id()] = visualVis;
 
   math::Vector3d scale = math::Vector3d::One;
-  rendering::GeometryPtr geom = this->LoadGeometry(_msg.geometry(), scale);
+  math::Pose3d localPose;
+  rendering::GeometryPtr geom =
+      this->LoadGeometry(_msg.geometry(), scale, localPose);
+
+  if (_msg.has_pose())
+    visualVis->SetLocalPose(msgs::Convert(_msg.pose()) * localPose);
+  else
+    visualVis->SetLocalPose(localPose);
+
   if (geom)
   {
+    // store the local pose
+    this->localPoses[_msg.id()] = localPose;
+
     visualVis->AddGeometry(geom);
     visualVis->SetLocalScale(scale);
 
@@ -372,9 +452,10 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
 
 /////////////////////////////////////////////////
 rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
-    math::Vector3d &_scale)
+    math::Vector3d &_scale, math::Pose3d &_localPose)
 {
   math::Vector3d scale = math::Vector3d::One;
+  math::Pose3d localPose = math::Pose3d::Zero;
   rendering::GeometryPtr geom{nullptr};
   if (_msg.has_box())
   {
@@ -388,6 +469,25 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     scale.X() = _msg.cylinder().radius() * 2;
     scale.Y() = scale.X();
     scale.Z() = _msg.cylinder().length();
+  }
+  else if (_msg.has_plane())
+  {
+    geom = this->scene->CreatePlane();
+
+    if (_msg.plane().has_size())
+    {
+      scale.X() = _msg.plane().size().x();
+      scale.Y() = _msg.plane().size().y();
+    }
+
+    if (_msg.plane().has_normal())
+    {
+      // Create a rotation for the plane mesh to account for the normal vector.
+      // The rotation is the angle between the +z(0,0,1) vector and the
+      // normal, which are both expressed in the local (Visual) frame.
+      math::Vector3d normal = msgs::Convert(_msg.plane().normal());
+      localPose.Rot().From2Axes(math::Vector3d::UnitZ, normal.Normalized());
+    }
   }
   else if (_msg.has_sphere())
   {
@@ -418,6 +518,7 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     ignerr << "Unsupported geometry type" << std::endl;
   }
   _scale = scale;
+  _localPose = localPose;
   return geom;
 }
 
@@ -444,6 +545,62 @@ rendering::MaterialPtr SceneManager::LoadMaterial(const msgs::Material &_msg)
 
   return material;
 }
+
+/////////////////////////////////////////////////
+rendering::LightPtr SceneManager::LoadLight(const msgs::Light &_msg)
+{
+  rendering::LightPtr light;
+
+  switch (_msg.type())
+  {
+    case msgs::Light_LightType_POINT:
+      light = this->scene->CreatePointLight();
+      break;
+    case msgs::Light_LightType_SPOT:
+    {
+      light = this->scene->CreateSpotLight();
+      rendering::SpotLightPtr spotLight =
+          std::dynamic_pointer_cast<rendering::SpotLight>(light);
+      spotLight->SetInnerAngle(_msg.spot_inner_angle());
+      spotLight->SetOuterAngle(_msg.spot_outer_angle());
+      spotLight->SetFalloff(_msg.spot_falloff());
+      break;
+    }
+    case msgs::Light_LightType_DIRECTIONAL:
+    {
+      light = this->scene->CreateDirectionalLight();
+      rendering::DirectionalLightPtr dirLight =
+          std::dynamic_pointer_cast<rendering::DirectionalLight>(light);
+
+      if (_msg.has_direction())
+        dirLight->SetDirection(msgs::Convert(_msg.direction()));
+      break;
+    }
+    default:
+      ignerr << "Light type not supported" << std::endl;
+      return light;
+  }
+
+  if (_msg.has_pose())
+    light->SetLocalPose(msgs::Convert(_msg.pose()));
+
+  if (_msg.has_diffuse())
+    light->SetDiffuseColor(msgs::Convert(_msg.diffuse()));
+
+  if (_msg.has_specular())
+    light->SetSpecularColor(msgs::Convert(_msg.specular()));
+
+  light->SetAttenuationConstant(_msg.attenuation_constant());
+  light->SetAttenuationLinear(_msg.attenuation_linear());
+  light->SetAttenuationQuadratic(_msg.attenuation_quadratic());
+  light->SetAttenuationRange(_msg.range());
+
+  light->SetCastShadows(_msg.cast_shadows());
+
+  this->lights[_msg.id()] = light;
+  return light;
+}
+
 
 /////////////////////////////////////////////////
 IgnRenderer::IgnRenderer()
@@ -577,12 +734,6 @@ void IgnRenderer::Initialize()
   //  be rebuilt
   this->dataPtr->camera->PreRender();
   this->textureId = this->dataPtr->camera->RenderTextureGLId();
-
-  rendering::DirectionalLightPtr light0 = scene->CreateDirectionalLight();
-  light0->SetDirection(-0.5, 0.5, -1);
-  light0->SetDiffuseColor(0.5, 0.5, 0.5);
-  light0->SetSpecularColor(0.5, 0.5, 0.5);
-  root->AddChild(light0);
 
   // Make service call to populate scene
   if (!this->sceneService.empty())
@@ -961,37 +1112,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("engine"))
     {
-      std::cerr << " loading engine " << elem->GetText() << std::endl;
       renderWindow->SetEngineName(elem->GetText());
       // there is a problem with displaying ogre2 render textures that are in
       // sRGB format. Workaround for now is to apply gamma correction manually.
       // There maybe a better way to solve the problem by making OpenGL calls..
       if (elem->GetText() == std::string("ogre2"))
-      {
-/*        // Instantiate a card
-        std::string qmlFile(":qml/GammaAdjust.qml");
-        QQmlComponent cardComp(App()->Engine(),
-            QString(QString::fromStdString(qmlFile)));
-        auto cardItem = qobject_cast<QQuickItem *>(cardComp.create());
-        if (!cardItem)
-        {
-          ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
-                 << "]" << std::endl;
-          return;
-        }
-        // C++ ownership
-        QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
-        // Get card parts
-        auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
-        if (!cardContentItem)
-        {
-          ignerr << "Null card content QQuickItem!" << std::endl;
-          return;
-        }
-*/
-        std::cerr << " done loading engine " << elem->GetText() << std::endl;
-      }
-
+        this->PluginItem()->setProperty("gammaCorrect", true);
     }
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))

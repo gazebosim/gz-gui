@@ -8,6 +8,8 @@ Rectangle {
   width: panel.implicitWidth + hideToolButton.width + 20
   height: panel.implicitHeight + 10
   color: "transparent"
+  Layout.minimumWidth: 290
+  Layout.minimumHeight: 110
 
   /**
    * True to show sim time

@@ -8,12 +8,6 @@ import "qrc:/qml"
 
 // TODO: don't use "parent"
 Pane {
-
-  /**
-   * Thickness of rulers used to resize card
-   */
-  property int rulersThickness: 25
-
   /**
    * Minimum length of each dimension
    */
@@ -57,7 +51,7 @@ Pane {
   /**
    * □
    */
-  property string undockIcon: "\u25A1"
+  property string floatIcon: "\u25A1"
 
   /**
    * ✕
@@ -65,13 +59,21 @@ Pane {
   property string closeIcon: "\u2715"
 
   /**
+   *
+   */
+  property var backgroundItem: null
+
+  /**
+   * True if there's at least one anchor set for the card.
+   * There's no way to check the anchors themselves, so we need
+   * to keep track of this ourselves.
+   */
+  property bool anchored: false
+
+  /**
    * Close signal
    */
   signal close()
-
-  Material.onBackgroundChanged: {
-    titleLabel.color = Material.background
-  }
 
   /**
    * ID within QML
@@ -83,64 +85,187 @@ Pane {
    */
   objectName: "plugin_" + Math.floor(Math.random() * 100000);
 
+  /**
+   * Callback when the parent has changed.
+   */
+  onParentChanged: {
+    if (undefined === parent || null === parent)
+      return;
+
+    // Bind anchors
+    anchors.fill = Qt.binding(function() {return parent})
+    anchors.fill = Qt.binding(function() {return parent})
+    parent.height = Qt.binding(function() {return height})
+    parent.width = Qt.binding(function() {return width})
+
+    // Keep a reference to the background
+    // TODO(louise) This feels hacky, the card shouldn't care about the background,
+    // but I haven't figured out yet how the card can tell IgnSplit to create
+    // a new split and add the card to it. There must be a way using signals, events
+    // or global functions...?
+    var bgItemTemp = helpers.ancestorByName(card, "background")
+    if (bgItemTemp)
+      backgroundItem = bgItemTemp;
+
+    this.syncTheFamily();
+  }
+
+  /**
+   * Forward the child content's size preferences to the parent split's layout
+   * TODO(louise) This looks really clunky, ideally the card shouldn't need
+   * any knowledge of splits
+   */
+  function syncTheFamily() {
+    var parentSplit = helpers.ancestorByName(card, /^split_item/);
+
+    if (undefined == parentSplit)
+      return;
+
+    if (content.children.length != 1)
+      return;
+
+    parentSplit.Layout.minimumWidth = content.children[0].Layout.minimumWidth;
+    parentSplit.Layout.minimumHeight = content.children[0].Layout.minimumHeight;
+  }
+
+  /**
+   * Clear all anchors
+   */
+  function clearAnchors() {
+    card.anchors.right = undefined
+    card.anchors.left = undefined
+    card.anchors.top = undefined
+    card.anchors.bottom = undefined
+    card.anchors.fill = undefined
+    card.anchors.horizontalCenter = undefined
+    card.anchors.verticalCenter = undefined
+    card.anchors.baseline = undefined
+
+    anchored = false
+  }
+
+  IgnHelpers {
+    id: helpers
+  }
+
   // TODO(louise) Support choosing between:
   // * a transparent background
   // * a custom color, in which case there will be elevation
   // Elevation only works if background is not transparent.
-  Material.elevation: 6
+//  Material.elevation: 6
   background: Rectangle {
     color: "transparent"
   }
+
   padding: 0
-  y: 50
+
   state: "docked"
 
   states: [
-    State {
-      name: "undocked"
-      ParentChange {
-        target: card;
-        parent: undockedWindowContent;
-        x: 0
-        y: 0
-        width: undockedWindowContent.width
-        height: undockedWindowContent.height
-      }
-    },
+//    State {
+//      name: "cardWindow"
+//      ParentChange {
+//        target: card;
+//        parent: cardWindowContent;
+//        x: 0
+//        y: 0
+//        width: cardWindowContent.width
+//        height: cardWindowContent.height
+//      }
+//    },
     State {
       name: "docked"
-      ParentChange {
-        target: card;
+    },
+
+    State {
+      name: "floating"
+    }
+  ]
+
+  transitions: [
+    Transition {
+      from: "docked"
+      to: "floating"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+      }
+    },
+    Transition {
+      from: "floating"
+      to: "docked"
+      SequentialAnimation {
+        ScriptAction {script: leaveFloatingState()}
+        ScriptAction {script: enterDockedState()}
       }
     }
   ]
 
   /**
-   * Show settings dialog
+   * Called when the docked state is entered.
    */
-  function showSettingsDialog() {
-    settingsDialog.open()
+  function enterDockedState()
+  {
+    // Add new split
+    var splitName = backgroundItem.addSplitItem();
+    var splitItem = backgroundItem.childItems[splitName];
+
+    // Reparent to split
+    card.parent = splitItem;
   }
 
   /**
-   * Window for undocking
+   * Called when the floating state is entered.
    */
-  Window {
-    // TODO: resize
-    width: card.width;
-    height: card.height;
-    visible: false;
-    id: undockedWindow
+  function enterFloatingState()
+  {
+    // Reparent to main window's background
+    card.parent = backgroundItem
 
-    Rectangle {
-      id: undockedWindowContent
-      anchors.fill: parent
-    }
-
-    onClosing: {
-      card.state = "docked"
-    }
+    // Resize to minimum size
+    card.clearAnchors();
+    card.width = content.children[0].Layout.minimumWidth;
+    card.height = content.children[0].Layout.minimumHeight;
   }
+
+  /**
+   * Called when the docked state is left.
+   */
+  function leaveDockedState()
+  {
+    // Remove from split (delete split if needed)
+    backgroundItem.removeSplitItem(helpers.ancestorByName(card,
+        /^split_item/).objectName)
+  }
+
+  /**
+   * Called when the floating state is left.
+   */
+  function leaveFloatingState()
+  {
+    // Do nothing
+  }
+
+// TODO(louise): re-enable window state support
+//  /**
+//   * Window for undocking
+//   */
+//  Window {
+//    // TODO: resize
+//    width: card.width;
+//    height: card.height;
+//    visible: false;
+//    id: cardWindow
+//
+//    Rectangle {
+//      id: cardWindowContent
+//      anchors.fill: parent
+//    }
+//
+//    onClosing: {
+//      card.state = "docked"
+//    }
+//  }
 
   /**
    * Top toolbar
@@ -154,13 +279,12 @@ Pane {
     width: card.width
     height: card.showTitleBar ? 50 : 0
     x: 0
-    y: -50
     z: 100
 
     // For drag
     MouseArea {
       anchors.fill: parent
-      drag{
+      drag {
         target: card
         minimumX: 0
         minimumY: 0
@@ -188,10 +312,11 @@ Pane {
         Layout.fillWidth: true
       }
 
-      // Dock / undock button
+      // Dock / floating button
+      // TODO(louise) support window state
       ToolButton {
         id: dockButton
-        text: card.state === "docked" ? undockIcon : dockIcon
+        text: card.state === "docked" ? floatIcon : dockIcon
         contentItem: Text {
           text: dockButton.text
           font: dockButton.font
@@ -203,8 +328,7 @@ Pane {
         visible: card.showDockButton && !card.standalone
         onClicked: {
           const docked = card.state === "docked"
-          card.state = docked ? "undocked" : "docked"
-          undockedWindow.visible = docked
+          card.state = docked ? "floating" : "docked"
         }
       }
 
@@ -252,7 +376,14 @@ Pane {
     }
   }
 
-  Dialog {
+  /**
+   * Show settings dialog
+   */
+  function showSettingsDialog() {
+    settingsDialog.open()
+  }
+
+  IgnCardSettings {
     id: settingsDialog
     modal: false
     focus: true
@@ -260,133 +391,6 @@ Pane {
     parent: card.parent
     x: parent ? (parent.width - width) / 2 : 0
     y: parent ? (parent.height - height) / 2 : 0
-
-    Column {
-      id: settingsColumn
-      anchors.horizontalCenter: settingsDialog.horizontalCenter
-      width: settingsDialog.width * 0.6
-
-      Switch {
-        id: titleSwitch
-        text: "Show title bar"
-        checked: card.showTitleBar
-        onToggled: {
-          card.showTitleBar = checked
-          // why is binding not working?
-          closeSwitch.enabled = checked
-          dockSwitch.enabled = checked
-        }
-      }
-
-      Switch {
-        id: closeSwitch
-        text: "Show close button"
-        visible: !card.standalone
-        enabled: card.showTitleBar
-        checked: card.showCloseButton
-        onToggled: {
-          card.showCloseButton = checked
-        }
-      }
-
-      Switch {
-        id: dockSwitch
-        text: "Show dock button"
-        visible: !card.standalone
-        enabled: card.showTitleBar
-        checked: card.showDockButton
-        onToggled: {
-          card.showDockButton = checked
-        }
-      }
-
-      Switch {
-        id: resizableSwitch
-        text: "Resizable"
-        checked: card.resizable
-        onToggled: {
-          card.resizable = checked
-        }
-      }
-
-      GridLayout {
-        width: parent.width
-        columns: 2
-
-        Label {
-          text: "Position"
-          font.weight: Font.DemiBold
-        }
-
-        Text {
-          text: ""
-        }
-
-        IgnSpinBox {
-          maximumValue: card.parent ? card.parent.width - card.width : minSize
-          onVisibleChanged: value = card.x
-          onValueChanged: {
-            card.x = value;
-          }
-        }
-        Label {
-          text: "X"
-        }
-        IgnSpinBox {
-          maximumValue: card.parent ? card.parent.height - card.height : minSize
-          onVisibleChanged: value = card.y
-          onValueChanged: {
-            card.y = value;
-          }
-        }
-        Label {
-          text: "Y"
-        }
-        IgnSpinBox {
-          maximumValue: 10000
-          onVisibleChanged: value = card.z
-          onValueChanged: {
-            card.z = value;
-          }
-        }
-        Label {
-          text: "Z"
-        }
-        Label {
-          text: "Size"
-          font.weight: Font.DemiBold
-        }
-        Text {
-          text: ""
-        }
-        IgnSpinBox {
-          maximumValue: card.parent ? card.parent.width : minSize
-          onVisibleChanged: {
-            if (card)
-              value = card.width
-          }
-          onValueChanged: {
-            card.width = value;
-          }
-        }
-        Label {
-          text: "Width"
-        }
-        IgnSpinBox {
-          maximumValue: card.parent ? card.parent.height : minSize
-          onVisibleChanged: {
-            if (card)
-              value = card.height
-          }
-          onValueChanged: {
-            card.height = value;
-          }
-        }
-        Label {
-          text: "Height"
-        }
-      }
-    }
   }
 
   /**
@@ -396,8 +400,13 @@ Pane {
     objectName: "content"
     id: content
     anchors.fill: parent
+    anchors.topMargin: card.showTitleBar ? 50 : 0
     clip: true
     color: "transparent"
+
+    onChildrenChanged: {
+      card.syncTheFamily()
+    }
 
     /**
      * Conveniently expose card to children
@@ -407,110 +416,10 @@ Pane {
     }
   }
 
-  // Left ruler
-  Rectangle {
-    width: rulersThickness
-    height: parent.parent.height
-    visible: card.resizable
-    color: "transparent"
-    anchors.horizontalCenter: parent.left
-    anchors.verticalCenter: parent.verticalCenter
-
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.SplitHCursor
-      drag{ target: parent; axis: Drag.XAxis }
-      onMouseXChanged: {
-        if(drag.active){
-          var newCardX = Math.max(card.x + mouseX, 0)
-          var newCardWidth = Math.max(card.width + (card.x - newCardX), minSize)
-          if (newCardWidth === card.width)
-            return;
-          card.x = newCardX
-          card.width = newCardWidth
-        }
-      }
-    }
-  }
-
-  // Right ruler
-  Rectangle {
-    width: rulersThickness
-    height: parent.parent.height
-    visible: card.resizable
-    color: "transparent"
-    anchors.horizontalCenter: parent.right
-    anchors.verticalCenter: parent.verticalCenter
-
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.SplitHCursor
-      drag{ target: parent; axis: Drag.XAxis }
-      onMouseXChanged: {
-        if(drag.active){
-
-          card.width = Math.max(card.width + mouseX, minSize)
-
-          if (card.width + card.x > card.parent.width)
-            card.width = card.parent.width - card.x
-        }
-      }
-    }
-  }
-
-  // Top ruler
-  Rectangle {
-    parent: showTitleBar ? cardToolbar : card
-    width: parent.width
-    height: rulersThickness
-    visible: card.resizable
-    x: parent.x / 2
-    y: 0
-    color: "transparent"
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.verticalCenter: parent.top
-
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.SplitVCursor
-      drag{ target: parent; axis: Drag.YAxis }
-      onMouseYChanged: {
-        if(drag.active){
-          var newCardY = Math.max(card.y + mouseY, 0)
-          var newCardHeight = Math.max(card.height + (card.y - newCardY), minSize)
-          if (newCardHeight === card.height)
-            return;
-          card.y = newCardY
-          card.height = newCardHeight
-        }
-      }
-    }
-  }
-
-  // Bottom ruler
-  Rectangle {
-    width: parent.parent.width
-    height: rulersThickness
-    visible: card.resizable
-    x: parent.x / 2
-    y: parent.y
-    color: "transparent"
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.verticalCenter: parent.bottom
-
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.SplitVCursor
-      drag{ target: parent; axis: Drag.YAxis }
-      onMouseYChanged: {
-        if(drag.active){
-
-          card.height = Math.max(card.height + mouseY, minSize)
-
-          if (card.height + card.y > card.parent.height)
-            card.height = card.parent.height - card.y
-        }
-      }
-    }
+  IgnRulers {
+    anchors.fill: parent
+    enabled: card.state === "floating" && resizable
+    minSize: card.minSize
+    target: card
   }
 }

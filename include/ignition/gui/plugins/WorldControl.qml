@@ -8,7 +8,8 @@ RowLayout {
   id: worldControl
   width: 200
   spacing: 2
-  anchors.fill: parent ? parent : null
+  Layout.minimumWidth: 121
+  Layout.minimumHeight: 72
 
   Connections {
     target: WorldControl

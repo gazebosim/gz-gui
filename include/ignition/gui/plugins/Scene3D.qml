@@ -7,25 +7,28 @@ Rectangle {
   width: 1000
   height: 800
 
+  /**
+   * True to enable gamma correction
+   */
+  property bool gammaCorrect: false
+
+
   RenderWindow {
     id: renderWindow
     objectName: "rw"
     anchors.fill: parent
   }
 
-/*  Component {
-    id: gammaCorrect
-    GammaAdjust {
-        anchors.fill: renderWindow
-        source: renderWindow
-        gamma: 2.2
-    }
+  /*
+   * Gamma correction for sRGB output. Enabled when engine is set to ogre2
+   */
+  GammaAdjust {
+      anchors.fill: renderWindow
+      source: renderWindow
+      gamma: 2.4
+      enabled: gammaCorrect
+      visible: gammaCorrect
   }
-
-  Loader {
-    id: loader
-  }
-*/
 
   onParentChanged: {
     if (undefined === parent)
@@ -34,7 +37,6 @@ Rectangle {
       width = Qt.binding(function() {return parent.parent.width})
       height = Qt.binding(function() {return parent.parent.height})
 
-//      loader.sourceComponent = gammaCorrect
   }
 }
 

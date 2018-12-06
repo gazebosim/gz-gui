@@ -43,6 +43,16 @@ pipelines:
             libignition-rendering-dev
             libignition-tools-dev
             libignition-transport6-dev
+          # Ignition msgs (uncomment if a specific branch is needed)
+          - apt install -y
+            libprotobuf-dev protobuf-compiler libprotoc-dev
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b gz11
+          - cd ign-msgs
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
           # Ignition rendering (uncomment if a specific branch is needed)
           # - apt install -y
           #   libogre-1.9-dev
