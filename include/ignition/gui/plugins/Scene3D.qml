@@ -36,7 +36,6 @@ Rectangle {
 
       width = Qt.binding(function() {return parent.parent.width})
       height = Qt.binding(function() {return parent.parent.height})
-
   }
 }
 

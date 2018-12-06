@@ -89,12 +89,6 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   // Configure console
   common::Console::SetPrefix("[GUI] ");
 
-/*
-  QSurfaceFormat f;
-  f.setColorSpace(QSurfaceFormat::sRGBColorSpace);
-  QSurfaceFormat::setDefaultFormat(f);
-*/
-
   // QML engine
   this->dataPtr->engine = new QQmlApplicationEngine();
 
