@@ -820,6 +820,13 @@ void RenderThread::RenderNext()
     this->ignRenderer.Initialize();
   }
 
+  // check if engine has been successfully initialized
+  if (!this->ignRenderer.initialized)
+  {
+    ignerr << "Unable to initialize renderer" << std::endl;
+    return;
+  }
+
   this->ignRenderer.Render();
 
   emit TextureReady(this->ignRenderer.textureId, this->ignRenderer.textureSize);
