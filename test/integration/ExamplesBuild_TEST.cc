@@ -182,7 +182,7 @@ TEST_P(ExamplesBuild, Build)
 INSTANTIATE_TEST_CASE_P(Plugins, ExamplesBuild, ::testing::Values(
   "plugin",
   "standalone"
-));
+),);  // NOLINT
 
 //////////////////////////////////////////////////
 int main(int argc, char **argv)
