@@ -155,8 +155,8 @@ namespace plugins
     /// topic to get pose updates of objects in the scene
     public: std::string poseTopic;
 
-    /// \brief Topic for which objects are currently visible
-    public: std::string visibilityTopic;
+    //// \brief Ign-transport request topic name
+    public: std::string requestTopic;
 
     /// \internal
     /// \brief Pointer to private data.
@@ -241,11 +241,11 @@ namespace plugins
     /// \param[in] _topic Pose topic
     public: void SetPoseTopic(const std::string &_topic);
 
-    /// \brief Set the visiblity topic.
-    /// The renderer will subscribe to this topic to get a list of ids of the
-    /// visuals that are currently visible (active) in the scene
-    /// \param[in] _topic Visibility topic
-    public: void SetVisibilityTopic(const std::string &_topic);
+    /// \brief Set request topic to use for updating objects in the scene
+    /// The renderer will subscribe to this topic to get request messages of
+    /// visuals in the scene
+    /// \param[in] _topic Pose topic
+    public: void SetRequestTopic(const std::string &_topic);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
