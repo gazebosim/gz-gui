@@ -419,12 +419,15 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
     visualVis->SetLocalScale(scale);
 
     // set material
-    rendering::MaterialPtr material;
+    rendering::MaterialPtr material{nullptr};
     if (_msg.has_material())
     {
       material = this->LoadMaterial(_msg.material());
     }
-    else
+    // Don't set a default material for meshes because they
+    // may have their own
+    // TODO(anyone) support overriding mesh material
+    else if (!_msg.geometry().has_mesh())
     {
       // create default material
       material = this->scene->Material("ign-grey");
@@ -436,9 +439,12 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
         material->SetSpecular(0.4, 0.4, 0.4);
       }
     }
-    material->SetTransparency(_msg.transparency());
 
-    geom->SetMaterial(material);
+    if (nullptr != material)
+    {
+      material->SetTransparency(_msg.transparency());
+      geom->SetMaterial(material);
+    }
   }
   else
   {
