@@ -53,19 +53,25 @@ namespace plugins
     /// \brief Constructor
     /// \param[in] _service Ign transport scene service name
     /// \param[in] _poseTopic Ign transport pose topic name
+    /// \param[in] _requestTopic Ign transport request topic name
+    /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: SceneManager(const std::string &_service,
                          const std::string &_poseTopic,
                          const std::string &_requestTopic,
+                         const std::string &_sceneTopic,
                          rendering::ScenePtr _scene);
 
     /// \brief Load the scene manager
     /// \param[in] _service Ign transport service name
     /// \param[in] _poseTopic Ign transport pose topic name
+    /// \param[in] _requestTopic Ign transport request topic name
+    /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: void Load(const std::string &_service,
                       const std::string &_poseTopic,
                       const std::string &_requestTopic,
+                      const std::string &_sceneTopic,
                       rendering::ScenePtr _scene);
 
     /// \brief Make the scene service request and populate the scene
@@ -140,6 +146,9 @@ namespace plugins
 
     //// \brief Ign-transport request topic name
     private: std::string requestTopic;
+
+    //// \brief Ign-transport scene topic name
+    private: std::string sceneTopic;
 
     //// \brief Pointer to the rendering scene
     private: rendering::ScenePtr scene;
@@ -240,20 +249,23 @@ SceneManager::SceneManager()
 SceneManager::SceneManager(const std::string &_service,
                            const std::string &_poseTopic,
                            const std::string &_requestTopic,
+                           const std::string &_sceneTopic,
                            rendering::ScenePtr _scene)
 {
-  this->Load(_service, _poseTopic, _requestTopic, _scene);
+  this->Load(_service, _poseTopic, _requestTopic, _sceneTopic, _scene);
 }
 
 /////////////////////////////////////////////////
 void SceneManager::Load(const std::string &_service,
                         const std::string &_poseTopic,
                         const std::string &_requestTopic,
+                        const std::string &_sceneTopic,
                         rendering::ScenePtr _scene)
 {
   this->service = _service;
   this->poseTopic = _poseTopic;
   this->requestTopic = _requestTopic;
+  this->sceneTopic = _sceneTopic;
   this->scene = _scene;
 }
 
@@ -406,11 +418,9 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     ignerr << "Error subscribing to request topic: " << this->requestTopic
            << std::endl;
   }
-  // TODO(addisu): Parse topic from plugin xml
-  std::string sceneTopic = "/world/default/scene";
-  if (!this->node.Subscribe(sceneTopic, &SceneManager::OnSceneMsg, this))
+  if (!this->node.Subscribe(this->sceneTopic, &SceneManager::OnSceneMsg, this))
   {
-    ignerr << "Error subscribing to request topic: " << sceneTopic
+    ignerr << "Error subscribing to request topic: " << this->sceneTopic
            << std::endl;
   }
 }
@@ -892,8 +902,9 @@ void IgnRenderer::Initialize()
   // Make service call to populate scene
   if (!this->sceneService.empty())
   {
-    this->dataPtr->sceneManager.Load(
-        this->sceneService, this->poseTopic, this->requestTopic, scene);
+    this->dataPtr->sceneManager.Load(this->sceneService, this->poseTopic,
+                                     this->requestTopic, this->sceneTopic,
+                                     scene);
     this->dataPtr->sceneManager.Request();
   }
 
@@ -1231,6 +1242,12 @@ void RenderWindowItem::SetRequestTopic(const std::string &_topic)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetSceneTopic(const std::string &_topic)
+{
+  this->dataPtr->renderThread->ignRenderer.sceneTopic = _topic;
+}
+
+/////////////////////////////////////////////////
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
@@ -1317,6 +1334,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       std::string topic = elem->GetText();
       renderWindow->SetRequestTopic(topic);
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("scene_topic"))
+    {
+      std::string topic = elem->GetText();
+      renderWindow->SetSceneTopic(topic);
     }
   }
 }

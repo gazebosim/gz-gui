@@ -155,8 +155,12 @@ namespace plugins
     /// topic to get pose updates of objects in the scene
     public: std::string poseTopic;
 
-    //// \brief Ign-transport request topic name
+    /// \brief Ign-transport request topic name
     public: std::string requestTopic;
+
+    /// \brief Ign-transport scene topic name
+    /// New scene will be published to this topic when an entities are added
+    public: std::string sceneTopic;
 
     /// \internal
     /// \brief Pointer to private data.
@@ -244,8 +248,13 @@ namespace plugins
     /// \brief Set request topic to use for updating objects in the scene
     /// The renderer will subscribe to this topic to get request messages of
     /// visuals in the scene
-    /// \param[in] _topic Pose topic
+    /// \param[in] _topic Request topic
     public: void SetRequestTopic(const std::string &_topic);
+
+    /// \brief Set the scene topic to use for updating objects in the scene
+    /// The renderer will subscribe to this topic to get updates scene messages
+    /// \param[in] _topic Scene topic
+    public: void SetSceneTopic(const std::string &_topic);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
