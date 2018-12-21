@@ -22,7 +22,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-#if defined(Publisher_EXPORTS)
+#ifdef _WIN32 && defined(Publisher_EXPORTS)
 #  define Publisher_EXPORTS __declspec(dllexport)
 #else
 #  define Publisher_EXPORTS __declspec(dllimport)

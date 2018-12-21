@@ -25,7 +25,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-#ifdef _WIN32 || defined(WorldControl_EXPORTS)
+#ifdef _WIN32 && defined(WorldControl_EXPORTS)
 #  define WorldControl_EXPORTS __declspec(dllexport)
 #else
 #  define WorldControl_EXPORTS __declspec(dllimport)

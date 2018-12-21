@@ -25,7 +25,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-#ifdef _WIN32 || defined(WorldStats_EXPORTS)
+#ifdef _WIN32 && defined(WorldStats_EXPORTS)
 #  define WorldStats_EXPORTS __declspec(dllexport)
 #else
 #  define WorldStats_EXPORTS __declspec(dllimport)
