@@ -128,22 +128,6 @@ namespace plugins
     /// \return Light object created from the msg
     private: rendering::LightPtr LoadLight(const msgs::Light &_msg);
 
-    /// \brief Remove the model
-    /// \param[in] _msg Model msg
-    private: void RemoveModel(const msgs::Model &_msg);
-
-    /// \brief Remove a link
-    /// \param[in] _msg Link msg
-    private: void RemoveLink(const msgs::Link &_msg);
-
-    /// \brief Remove a visual
-    /// \param[in] _msg Visual msg
-    private: void RemoveVisual(const msgs::Visual &_msg);
-
-    /// \brief Remove a light
-    /// \param[in] _msg Light msg
-    private: void RemoveLight(const msgs::Light &_msg);
-
     /// \brief Delete an entity
     /// \param[in] _entity Entity to delete
     private: void DeleteEntity(const unsigned int _entity);
@@ -735,74 +719,6 @@ rendering::LightPtr SceneManager::LoadLight(const msgs::Light &_msg)
   this->lights[_msg.id()] = light;
   return light;
 }
-
-/////////////////////////////////////////////////
-void SceneManager::RemoveModel(const msgs::Model &_msg)
-{
-  if (this->visuals.find(_msg.id()) != this->visuals.end())
-  {
-    // remove links
-    for (int i = 0; i < _msg.link_size(); ++i)
-    {
-      if (this->visuals.find(_msg.link(i).id()) != this->visuals.end())
-      {
-        this->RemoveLink(_msg.link(i));
-      }
-    }
-    if (this->visuals.find(_msg.id()) != this->visuals.end())
-    {
-      // this->scene->DestroyVisual(this->visuals[_msg.id()], true);
-      this->visuals.erase(_msg.id());
-      // \todo(addisu) Handle  nested models
-    }
-  }
-}
-
-/////////////////////////////////////////////////
-void SceneManager::RemoveLink(const msgs::Link &_msg)
-{
-  if (this->visuals.find(_msg.id()) != this->visuals.end())
-  {
-    // remove visuals
-    for (int i = 0; i < _msg.visual_size(); ++i)
-    {
-      if (this->visuals.find(_msg.visual(i).id()) != this->visuals.end())
-      {
-        this->RemoveVisual(_msg.visual(i));
-      }
-    }
-
-    // remove lights
-    for (int i = 0; i < _msg.light_size(); ++i)
-    {
-      if (this->visuals.find(_msg.light(i).id()) != this->visuals.end())
-      {
-        this->RemoveLight(_msg.light(i));
-      }
-    }
-
-    this->visuals.erase(_msg.id());
-  }
-}
-
-/////////////////////////////////////////////////
-void SceneManager::RemoveVisual(const msgs::Visual &_msg)
-{
-  if (this->visuals.find(_msg.id()) != this->visuals.end())
-  {
-    this->visuals.erase(_msg.id());
-  }
-}
-
-/////////////////////////////////////////////////
-void SceneManager::RemoveLight(const msgs::Light &_msg)
-{
-  if (this->lights.find(_msg.id()) != this->lights.end())
-  {
-    this->lights.erase(_msg.id());
-  }
-}
-
 
 /////////////////////////////////////////////////
 void SceneManager::DeleteEntity(const unsigned int _entity)
