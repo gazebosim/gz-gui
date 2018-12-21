@@ -427,7 +427,11 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
     // Don't set a default material for meshes because they
     // may have their own
     // TODO(anyone) support overriding mesh material
-    else if (!_msg.geometry().has_mesh())
+    else if (_msg.geometry().has_mesh())
+    {
+      material = geom->Material();
+    }
+    else
     {
       // create default material
       material = this->scene->Material("ign-grey");
@@ -436,15 +440,20 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
         material = this->scene->CreateMaterial("ign-grey");
         material->SetAmbient(0.3, 0.3, 0.3);
         material->SetDiffuse(0.7, 0.7, 0.7);
-        material->SetSpecular(0.4, 0.4, 0.4);
+        material->SetSpecular(1.0, 1.0, 1.0);
+        material->SetRoughness(0.2);
+        material->SetMetalness(1.0);
       }
     }
 
-    if (nullptr != material)
-    {
-      material->SetTransparency(_msg.transparency());
-      geom->SetMaterial(material);
-    }
+    material->SetTransparency(_msg.transparency());
+
+    // TODO(anyone) Get roughness and metalness from message instead
+    // of giving a default value.
+    material->SetRoughness(0.3);
+    material->SetMetalness(0.3);
+
+    geom->SetMaterial(material);
   }
   else
   {
