@@ -1059,6 +1059,13 @@ void RenderThread::RenderNext()
     this->ignRenderer.Initialize();
   }
 
+  // check if engine has been successfully initialized
+  if (!this->ignRenderer.initialized)
+  {
+    ignerr << "Unable to initialize renderer" << std::endl;
+    return;
+  }
+
   this->ignRenderer.Render();
 
   emit TextureReady(this->ignRenderer.textureId, this->ignRenderer.textureSize);
@@ -1140,7 +1147,8 @@ void TextureNode::PrepareNode()
     delete this->texture;
     // note: include QQuickWindow::TextureHasAlphaChannel if the rendered
     // content has alpha.
-    this->texture = this->window->createTextureFromId(newId, sz);
+    this->texture = this->window->createTextureFromId(
+        newId, sz, QQuickWindow::TextureIsOpaque);
     this->setTexture(this->texture);
 
     this->markDirty(DirtyMaterial);
@@ -1338,7 +1346,14 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("engine"))
+    {
       renderWindow->SetEngineName(elem->GetText());
+      // there is a problem with displaying ogre2 render textures that are in
+      // sRGB format. Workaround for now is to apply gamma correction manually.
+      // There maybe a better way to solve the problem by making OpenGL calls..
+      if (elem->GetText() == std::string("ogre2"))
+        this->PluginItem()->setProperty("gammaCorrect", true);
+    }
 
     if (auto elem = _pluginElem->FirstChildElement("scene"))
       renderWindow->SetSceneName(elem->GetText());
