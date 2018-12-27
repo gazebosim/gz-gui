@@ -23,6 +23,11 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 
+#ifdef _MSC_VER
+#    define popen _popen
+#    define pclose _pclose
+#endif
+
 /////////////////////////////////////////////////
 std::string custom_exec_str(std::string _cmd)
 {

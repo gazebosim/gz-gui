@@ -27,6 +27,7 @@ ign_build_tests(TYPE UNIT
     ${gtest_local_cc}
   LIB_DEPS
     ${IGNITION-RENDERING_LIBRARIES}
+    ${IGNITION-GUI_LIBRARIES}
     TINYXML2::TINYXML2
     ${gtest_local_sources}
   INCLUDE_DIRS

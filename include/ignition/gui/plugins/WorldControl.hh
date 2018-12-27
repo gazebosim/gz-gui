@@ -43,7 +43,7 @@ namespace plugins
   /// * \<start_paused\> : Set to false to start playing, false by default.
   /// * \<service\> : Service for world control, required.
   /// * \<stats_topic\> : Topic to receive world statistics, optional.
-  class WorldControl: public ignition::gui::Plugin
+  class IGNITION_GUI_VISIBLE WorldControl: public ignition::gui::Plugin
   {
     Q_OBJECT
 
