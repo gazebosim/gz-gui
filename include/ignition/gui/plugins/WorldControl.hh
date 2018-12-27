@@ -26,9 +26,9 @@
 #include "ignition/gui/Plugin.hh"
 
 #ifdef _WIN32 && defined(WorldControl_EXPORTS)
-#  define WorldControl_EXPORTS __declspec(dllexport)
+#  define WorldControl_EXPORTS_API __declspec(dllimport)
 #else
-#  define WorldControl_EXPORTS __declspec(dllimport)
+#  define WorldControl_EXPORTS_API __declspec(dllexport)
 #endif
 
 namespace ignition
@@ -49,7 +49,7 @@ namespace plugins
   /// * \<start_paused\> : Set to false to start playing, false by default.
   /// * \<service\> : Service for world control, required.
   /// * \<stats_topic\> : Topic to receive world statistics, optional.
-  class WorldControl_EXPORTS WorldControl: public ignition::gui::Plugin
+  class WorldControl_EXPORTS_API WorldControl: public ignition::gui::Plugin
   {
     Q_OBJECT
 

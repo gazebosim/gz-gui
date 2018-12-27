@@ -23,13 +23,8 @@
 #include <ignition/msgs.hh>
 #include <ignition/transport.hh>
 
+#include "ignition/gui/Export.hh"
 #include "ignition/gui/Plugin.hh"
-
-#ifdef _WIN32 && defined(WorldStats_EXPORTS)
-#  define WorldStats_EXPORTS __declspec(dllexport)
-#else
-#  define WorldStats_EXPORTS __declspec(dllimport)
-#endif
 
 namespace ignition
 {
@@ -52,7 +47,7 @@ namespace plugins
   /// * \<real_time_factor\> : True to display a real time factor widget,
   ///                          false by default.
   /// * \<topic\> : Topic to receive world statistics, required.
-  class WorldStats_EXPORTS WorldStats: public ignition::gui::Plugin
+  class IGNITION_GUI_VISIBLE WorldStats: public ignition::gui::Plugin
   {
     Q_OBJECT
 
