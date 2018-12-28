@@ -155,11 +155,12 @@ namespace plugins
     /// topic to get pose updates of objects in the scene
     public: std::string poseTopic;
 
-    /// \brief Ign-transport request topic name
-    public: std::string requestTopic;
+    /// \brief Ign-transport deletion topic name
+    public: std::string deletionTopic;
 
     /// \brief Ign-transport scene topic name
-    /// New scene will be published to this topic when an entities are added
+    /// New scene messages will be published to this topic when an entities are
+    /// added
     public: std::string sceneTopic;
 
     /// \internal
@@ -245,11 +246,11 @@ namespace plugins
     /// \param[in] _topic Pose topic
     public: void SetPoseTopic(const std::string &_topic);
 
-    /// \brief Set request topic to use for updating objects in the scene
-    /// The renderer will subscribe to this topic to get request messages of
-    /// visuals in the scene
-    /// \param[in] _topic Request topic
-    public: void SetRequestTopic(const std::string &_topic);
+    /// \brief Set deletion topic to use for deleting objects from the scene
+    /// The renderer will subscribe to this topic to get notified when entities
+    /// in the scene get deleted
+    /// \param[in] _topic Deletion topic
+    public: void SetDeletionTopic(const std::string &_topic);
 
     /// \brief Set the scene topic to use for updating objects in the scene
     /// The renderer will subscribe to this topic to get updates scene messages

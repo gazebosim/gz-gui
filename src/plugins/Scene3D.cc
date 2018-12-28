@@ -53,24 +53,24 @@ namespace plugins
     /// \brief Constructor
     /// \param[in] _service Ign transport scene service name
     /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _requestTopic Ign transport request topic name
+    /// \param[in] _deletionTopic Ign transport deletion topic name
     /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: SceneManager(const std::string &_service,
                          const std::string &_poseTopic,
-                         const std::string &_requestTopic,
+                         const std::string &_deletionTopic,
                          const std::string &_sceneTopic,
                          rendering::ScenePtr _scene);
 
     /// \brief Load the scene manager
     /// \param[in] _service Ign transport service name
     /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _requestTopic Ign transport request topic name
+    /// \param[in] _deletionTopic Ign transport deletion topic name
     /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: void Load(const std::string &_service,
                       const std::string &_poseTopic,
-                      const std::string &_requestTopic,
+                      const std::string &_deletionTopic,
                       const std::string &_sceneTopic,
                       rendering::ScenePtr _scene);
 
@@ -89,8 +89,8 @@ namespace plugins
     private: void LoadScene(const msgs::Scene &_msg);
 
     /// \brief Callback function for the request topic
-    /// \param[in] _msg Request message
-    private: void OnRequestMsg(const msgs::Request &_msg);
+    /// \param[in] _msg Deletion message
+    private: void OnDeletionMsg(const msgs::UInt32_V &_msg);
 
     /// \brief Load the scene from a scene msg
     /// \param[in] _msg Scene msg
@@ -144,8 +144,8 @@ namespace plugins
     //// \brief Ign-transport pose topic name
     private: std::string poseTopic;
 
-    //// \brief Ign-transport request topic name
-    private: std::string requestTopic;
+    //// \brief Ign-transport deletion topic name
+    private: std::string deletionTopic;
 
     //// \brief Ign-transport scene topic name
     private: std::string sceneTopic;
@@ -248,23 +248,23 @@ SceneManager::SceneManager()
 /////////////////////////////////////////////////
 SceneManager::SceneManager(const std::string &_service,
                            const std::string &_poseTopic,
-                           const std::string &_requestTopic,
+                           const std::string &_deletionTopic,
                            const std::string &_sceneTopic,
                            rendering::ScenePtr _scene)
 {
-  this->Load(_service, _poseTopic, _requestTopic, _sceneTopic, _scene);
+  this->Load(_service, _poseTopic, _deletionTopic, _sceneTopic, _scene);
 }
 
 /////////////////////////////////////////////////
 void SceneManager::Load(const std::string &_service,
                         const std::string &_poseTopic,
-                        const std::string &_requestTopic,
+                        const std::string &_deletionTopic,
                         const std::string &_sceneTopic,
                         rendering::ScenePtr _scene)
 {
   this->service = _service;
   this->poseTopic = _poseTopic;
-  this->requestTopic = _requestTopic;
+  this->deletionTopic = _deletionTopic;
   this->sceneTopic = _sceneTopic;
   this->scene = _scene;
 }
@@ -312,13 +312,11 @@ void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
 }
 
 /////////////////////////////////////////////////
-void SceneManager::OnRequestMsg(const msgs::Request &_msg)
+void SceneManager::OnDeletionMsg(const msgs::UInt32_V &_msg)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
-  if (_msg.request() == "delete_entity")
-  {
-    this->toDeleteEntities.push_back(_msg.id());
-  }
+  std::copy(_msg.data().begin(), _msg.data().end(),
+            std::back_inserter(this->toDeleteEntities));
 }
 
 /////////////////////////////////////////////////
@@ -412,15 +410,15 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     ignerr << "Error subscribing to pose topic: " << this->poseTopic
         << std::endl;
   }
-  if (!this->node.Subscribe(this->requestTopic, &SceneManager::OnRequestMsg,
+  if (!this->node.Subscribe(this->deletionTopic, &SceneManager::OnDeletionMsg,
                             this))
   {
-    ignerr << "Error subscribing to request topic: " << this->requestTopic
+    ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
            << std::endl;
   }
   if (!this->node.Subscribe(this->sceneTopic, &SceneManager::OnSceneMsg, this))
   {
-    ignerr << "Error subscribing to request topic: " << this->sceneTopic
+    ignerr << "Error subscribing to scene topic: " << this->sceneTopic
            << std::endl;
   }
 }
@@ -903,7 +901,7 @@ void IgnRenderer::Initialize()
   if (!this->sceneService.empty())
   {
     this->dataPtr->sceneManager.Load(this->sceneService, this->poseTopic,
-                                     this->requestTopic, this->sceneTopic,
+                                     this->deletionTopic, this->sceneTopic,
                                      scene);
     this->dataPtr->sceneManager.Request();
   }
@@ -1236,9 +1234,9 @@ void RenderWindowItem::SetPoseTopic(const std::string &_topic)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::SetRequestTopic(const std::string &_topic)
+void RenderWindowItem::SetDeletionTopic(const std::string &_topic)
 {
-  this->dataPtr->renderThread->ignRenderer.requestTopic = _topic;
+  this->dataPtr->renderThread->ignRenderer.deletionTopic = _topic;
 }
 
 /////////////////////////////////////////////////
@@ -1330,10 +1328,10 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       renderWindow->SetPoseTopic(topic);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("request_topic"))
+    if (auto elem = _pluginElem->FirstChildElement("deletion_topic"))
     {
       std::string topic = elem->GetText();
-      renderWindow->SetRequestTopic(topic);
+      renderWindow->SetDeletionTopic(topic);
     }
 
     if (auto elem = _pluginElem->FirstChildElement("scene_topic"))
