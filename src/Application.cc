@@ -328,7 +328,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Load plugin
   plugin::Loader pluginLoader;
 
-  auto pluginNames = pluginLoader.LoadLibrary(pathToLib);
+  auto pluginNames = pluginLoader.LoadLib(pathToLib);
   if (pluginNames.empty())
   {
     ignerr << "Failed to load plugin [" << _filename <<

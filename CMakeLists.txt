@@ -13,7 +13,7 @@ find_package(ignition-cmake2 REQUIRED)
 #============================================================================
 # Configure the project
 #============================================================================
-ign_configure_project(VERSION_SUFFIX pre2)
+ign_configure_project(VERSION_SUFFIX pre3)
 
 #============================================================================
 # Set project-specific options
@@ -59,7 +59,7 @@ set(IGN_TRANSPORT_VER ${ignition-transport6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering1 REQUIRED)
+ign_find_package(ignition-rendering1 REQUIRED COMPONENTS ogre)
 set(IGN_RENDERING_VER ${ignition-rendering1_VERSION_MAJOR})
 
 #--------------------------------------
