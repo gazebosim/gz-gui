@@ -34,7 +34,7 @@ namespace plugins
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class Publisher : public Plugin
+  class IGNITION_GUI_VISIBLE Publisher : public Plugin
   {
     Q_OBJECT
 
