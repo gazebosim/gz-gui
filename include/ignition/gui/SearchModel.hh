@@ -17,6 +17,7 @@
 #ifndef IGNITION_GUI_SEARCHMODEL_HH_
 #define IGNITION_GUI_SEARCHMODEL_HH_
 
+#include "ignition/gui/Export.hh"
 #include "ignition/gui/qt.h"
 
 namespace ignition
