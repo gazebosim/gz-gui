@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="ImageDisplay/">
+  <file>ImageDisplay.qml</file>
+</qresource>
+</RCC>
