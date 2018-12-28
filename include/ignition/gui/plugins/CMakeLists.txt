@@ -26,7 +26,6 @@ foreach (src ${qt_headers_local})
     ${${src}_MOC}
     ${${src}_RCC}
   )
-
   target_link_libraries(${src}
     PUBLIC
       ${PROJECT_LIBRARY_TARGET_NAME}
