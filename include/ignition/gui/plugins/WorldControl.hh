@@ -25,10 +25,14 @@
 
 #include "ignition/gui/Plugin.hh"
 
-#ifdef _WIN32 && defined(WorldControl_EXPORTS)
-#  define WorldControl_EXPORTS_API __declspec(dllexport)
+#ifndef _WIN32
+#  define WorldControl_EXPORTS_API
 #else
-#  define WorldControl_EXPORTS_API __declspec(dllimport)
+#  if(defined(WorldControl_EXPORTS))
+#    define WorldControl_EXPORTS_API __declspec(dllexport)
+#  else
+#    define WorldControl_EXPORTS_API __declspec(dllimport)
+#  endif
 #endif
 
 namespace ignition
