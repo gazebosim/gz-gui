@@ -15,8 +15,8 @@
  *
 */
 
-#include <iostream>
 #include <QQuickImageProvider>
+#include <iostream>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
@@ -50,7 +50,9 @@ namespace plugins
       }
 
       // Placeholder in case we have no image yet
-      return QImage(400, 400, QImage::Format_RGB888);
+      QImage i(400, 400, QImage::Format_RGB888);
+      i.fill(QColor(128, 128, 128, 100));
+      return i;
     }
 
     public: void SetImage(const QImage &_image)
@@ -90,9 +92,6 @@ using namespace plugins;
 ImageDisplay::ImageDisplay()
   : Plugin(), dataPtr(new ImageDisplayPrivate)
 {
-  this->dataPtr->provider = new ImageProvider();
-  // TODO(louise) give provider a unique name
-  App()->Engine()->addImageProvider("provider", this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////
@@ -132,6 +131,10 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     this->OnTopic(QString::fromStdString(topic));
   else
     this->OnRefresh();
+
+  this->dataPtr->provider = new ImageProvider();
+  App()->Engine()->addImageProvider(
+      this->CardItem()->objectName() + "imagedisplay", this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////

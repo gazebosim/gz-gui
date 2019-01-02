@@ -4,6 +4,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 
 Rectangle {
+  id: "imageDisplay"
   color: "transparent"
   Layout.minimumWidth: 250
   Layout.minimumHeight: 375
@@ -13,8 +14,21 @@ Rectangle {
    */
   property bool showPicker: false
 
+  /**
+   * Unique name for this plugin instance
+   */
+  property string uniqueName: ""
+
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
+
+  onParentChanged: {
+    if (undefined === parent)
+      return;
+
+    uniqueName = parent.card().objectName + "imagedisplay";
+    image.reload();
+  }
 
   Connections {
     target: ImageDisplay
@@ -22,6 +36,7 @@ Rectangle {
   }
 
   Column {
+    id: imageDisplayColumn
     anchors.fill: parent
     anchors.margins: 10
 
@@ -57,10 +72,9 @@ Rectangle {
 
     Image {
       id: image
-      source: "image://provider/image"
       function reload() {
         // Force image request to C++
-        source = "image://provider/" + Math.random().toString(36).substr(2, 5);
+        source = "image://" + uniqueName + "/" + Math.random().toString(36).substr(2, 5);
       }
     }
   }
