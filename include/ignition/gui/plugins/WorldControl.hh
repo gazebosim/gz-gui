@@ -28,7 +28,7 @@
 #ifndef _WIN32
 #  define WorldControl_EXPORTS_API
 #else
-#  if(defined(WorldControl_EXPORTS))
+#  if (defined(WorldControl_EXPORTS))
 #    define WorldControl_EXPORTS_API __declspec(dllexport)
 #  else
 #    define WorldControl_EXPORTS_API __declspec(dllimport)

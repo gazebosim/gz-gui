@@ -29,7 +29,7 @@
 #ifndef _WIN32
 #  define WorldStats_EXPORTS_API
 #else
-#  if(defined(WorldStats_EXPORTS))
+#  if (defined(WorldStats_EXPORTS))
 #    define WorldStats_EXPORTS_API __declspec(dllexport)
 #  else
 #    define WorldStats_EXPORTS_API __declspec(dllimport)

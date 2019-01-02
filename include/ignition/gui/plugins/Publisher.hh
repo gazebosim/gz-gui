@@ -25,7 +25,7 @@
 #ifndef _WIN32
 #  define Publisher_EXPORTS_API
 #else
-#  if(defined(Publisher_EXPORTS))
+#  if (defined(Publisher_EXPORTS))
 #    define Publisher_EXPORTS_API __declspec(dllexport)
 #  else
 #    define Publisher_EXPORTS_API __declspec(dllimport)
