@@ -1,6 +1,6 @@
 set (qt_headers_local
   Grid3D
-#  ImageDisplay
+  ImageDisplay
   Publisher
 #  Requester
 #  Responder
