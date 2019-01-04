@@ -21,7 +21,6 @@
 #include <memory>
 #include <ignition/msgs.hh>
 
-#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
@@ -43,6 +42,14 @@ namespace plugins
   {
     Q_OBJECT
 
+    /// \brief Topic list
+    Q_PROPERTY(
+      QStringList topicList
+      READ TopicList
+      WRITE SetTopicList
+      NOTIFY TopicListChanged
+    )
+
     /// \brief Constructor
     public: ImageDisplay();
 
@@ -52,8 +59,30 @@ namespace plugins
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
+    /// \brief Callback when refresh button is pressed.
+    public slots: void OnRefresh();
+
+    /// \brief Callback when a new topic is chosen on the combo box.
+    public slots: void OnTopic(const QString _topic);
+
+    /// \brief Get the topic list as a string, for example
+    /// 'ignition.msgs.StringMsg'
+    /// \return Message type
+    public: Q_INVOKABLE QStringList TopicList() const;
+
+    /// \brief Set the topic list from a string, for example
+    /// 'ignition.msgs.StringMsg'
+    /// \param[in] _topicList Message type
+    public: Q_INVOKABLE void SetTopicList(const QStringList &_topicList);
+
+    /// \brief Notify that topic list has changed
+    signals: void TopicListChanged();
+
+    /// \brief Notify that a new image has been received.
+    signals: void newImage();
+
     /// \brief Callback in main thread when image changes
-    public slots: void ProcessImage();
+    private slots: void ProcessImage();
 
     /// \brief Update from rx'd RGB_INT8
     private: void UpdateFromRgbInt8();
@@ -61,12 +90,6 @@ namespace plugins
     /// \brief Subscriber callback when new image is received
     /// \param[in] _msg New image
     private: void OnImageMsg(const ignition::msgs::Image &_msg);
-
-    /// \brief Callback when refresh button is pressed.
-    private slots: void OnRefresh();
-
-    /// \brief Callback when a new topic is chosen on the combo box.
-    private slots: void OnTopic(const QString _topic);
 
     /// \internal
     /// \brief Pointer to private data.

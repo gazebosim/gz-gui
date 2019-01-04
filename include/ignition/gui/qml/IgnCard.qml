@@ -83,7 +83,7 @@ Pane {
   /**
    * Object name accessible from C++
    */
-  objectName: "plugin_" + Math.floor(Math.random() * 100000);
+  objectName: "plugin" + Math.floor(Math.random() * 100000);
 
   /**
    * Callback when the parent has changed.
