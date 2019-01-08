@@ -17,6 +17,7 @@
 #ifndef IGNITION_GUI_DRAGDROPMODEL_HH_
 #define IGNITION_GUI_DRAGDROPMODEL_HH_
 
+#include "ignition/gui/Export.hh"
 #include "ignition/gui/qt.h"
 
 namespace ignition
@@ -25,7 +26,7 @@ namespace gui
 {
   /// \brief Customized item model so that we can pass along an URI query as
   /// MIME information during a drag-drop.
-  class DragDropModel : public QStandardItemModel
+  class IGNITION_GUI_VISIBLE DragDropModel : public QStandardItemModel
   {
     /// \brief Overloaded from Qt. Custom MIME data function.
     /// \param[in] _indexes List of selected items.
