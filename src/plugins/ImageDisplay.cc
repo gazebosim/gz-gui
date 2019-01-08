@@ -15,12 +15,15 @@
  *
 */
 
+#include <QQuickImageProvider>
 #include <iostream>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
 #include <ignition/plugin/Register.hh>
 #include <ignition/transport/Node.hh>
 
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/plugins/ImageDisplay.hh"
 
 namespace ignition
@@ -29,10 +32,41 @@ namespace gui
 {
 namespace plugins
 {
+  class ImageProvider : public QQuickImageProvider
+  {
+    public: ImageProvider()
+       : QQuickImageProvider(QQuickImageProvider::Image)
+    {
+    }
+
+    public: QImage requestImage(const QString &, QSize *,
+        const QSize &) override
+    {
+      if (!this->img.isNull())
+      {
+        // Must return a copy
+        QImage copy(this->img);
+        return copy;
+      }
+
+      // Placeholder in case we have no image yet
+      QImage i(400, 400, QImage::Format_RGB888);
+      i.fill(QColor(128, 128, 128, 100));
+      return i;
+    }
+
+    public: void SetImage(const QImage &_image)
+    {
+      this->img = _image;
+    }
+
+    private: QImage img;
+  };
+
   class ImageDisplayPrivate
   {
-    /// \brief Topic dropdown
-    public: QComboBox *topicsCombo;
+    /// \brief List of topics publishing image messages.
+    public: QStringList topicList;
 
     /// \brief Holds data to set as the next image
     public: msgs::Image imageMsg;
@@ -42,6 +76,9 @@ namespace plugins
 
     /// \brief Mutex for accessing image data
     public: std::recursive_mutex imageMutex;
+
+    /// \brief To provide images for QML.
+    public: ImageProvider *provider{nullptr};
   };
 }
 }
@@ -88,47 +125,16 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     topicPicker = true;
   }
 
-  // Main layout
-  auto layout = new QVBoxLayout;
-
-  // If should show topic picker
-  if (topicPicker)
-  {
-    // Dropdown to choose ign topic
-    this->dataPtr->topicsCombo = new QComboBox();
-    this->dataPtr->topicsCombo->setObjectName("topicsCombo");
-    this->dataPtr->topicsCombo->setMinimumWidth(300);
-    this->dataPtr->topicsCombo->setToolTip(
-        "Ignition transport topics publishing Image messages.");
-    this->connect(this->dataPtr->topicsCombo,
-        SIGNAL(currentIndexChanged(const QString)), this,
-        SLOT(OnTopic(const QString)));
-
-    // Button to refresh topics
-    auto refreshButton = new QPushButton("Refresh");
-    refreshButton->setObjectName("refreshButton");
-    refreshButton->setToolTip("Refresh list of topics publishing images");
-    refreshButton->setMaximumWidth(80);
-    this->connect(refreshButton, SIGNAL(clicked()), this, SLOT(OnRefresh()));
-
-    // Layout
-    auto topicLayout = new QHBoxLayout;
-    topicLayout->addWidget(this->dataPtr->topicsCombo);
-    topicLayout->addWidget(refreshButton);
-
-    layout->addLayout(topicLayout);
-  }
-
-  // Label to hold the image
-  auto label = new QLabel("No image");
-
-  layout->addWidget(label);
-  this->setLayout(layout);
+  this->PluginItem()->setProperty("showPicker", topicPicker);
 
   if (!topic.empty())
     this->OnTopic(QString::fromStdString(topic));
   else
     this->OnRefresh();
+
+  this->dataPtr->provider = new ImageProvider();
+  App()->Engine()->addImageProvider(
+      this->CardItem()->objectName() + "imagedisplay", this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////
@@ -159,13 +165,16 @@ void ImageDisplay::OnImageMsg(const msgs::Image &_msg)
 /////////////////////////////////////////////////
 void ImageDisplay::OnTopic(const QString _topic)
 {
+  auto topic = _topic.toStdString();
+  if (topic.empty())
+    return;
+
   // Unsubscribe
   auto subs = this->dataPtr->node.SubscribedTopics();
   for (auto sub : subs)
     this->dataPtr->node.Unsubscribe(sub);
 
   // Subscribe to new topic
-  auto topic = _topic.toStdString();
   if (!this->dataPtr->node.Subscribe(topic, &ImageDisplay::OnImageMsg,
       this))
   {
@@ -177,7 +186,7 @@ void ImageDisplay::OnTopic(const QString _topic)
 void ImageDisplay::OnRefresh()
 {
   // Clear
-  this->dataPtr->topicsCombo->clear();
+  this->dataPtr->topicList.clear();
 
   // Get updated list
   std::vector<std::string> allTopics;
@@ -190,45 +199,41 @@ void ImageDisplay::OnRefresh()
     {
       if (pub.MsgTypeName() == "ignition.msgs.Image")
       {
-        this->dataPtr->topicsCombo->addItem(QString::fromStdString(topic));
+        this->dataPtr->topicList.push_back(QString::fromStdString(topic));
         break;
       }
     }
   }
 
   // Select first one
-  if (this->dataPtr->topicsCombo->count() > 0)
-    this->OnTopic(this->dataPtr->topicsCombo->itemText(0));
+  if (this->dataPtr->topicList.count() > 0)
+    this->OnTopic(this->dataPtr->topicList.at(0));
+  this->TopicListChanged();
 }
 
 /////////////////////////////////////////////////
 void ImageDisplay::UpdateFromRgbInt8()
 {
-  QImage i(this->dataPtr->imageMsg.width(), this->dataPtr->imageMsg.height(),
-      QImage::Format_RGB888);
+  QImage image(
+    reinterpret_cast<const uchar *>(this->dataPtr->imageMsg.data().c_str()),
+    this->dataPtr->imageMsg.width(), this->dataPtr->imageMsg.height(),
+    QImage::Format_RGB888);
 
-  auto const &d = this->dataPtr->imageMsg.data();
-  for (unsigned int y_pixel = 0; y_pixel < this->dataPtr->imageMsg.height();
-      ++y_pixel)
-  {
-    for (unsigned int x_pixel = 0; x_pixel < this->dataPtr->imageMsg.width();
-        ++x_pixel)
-    {
-      int idx = x_pixel + y_pixel * this->dataPtr->imageMsg.width();
-      unsigned char red = d[3 * idx];
-      unsigned char green = d[3 * idx + 1];
-      unsigned char blue = d[3 * idx + 2];
-      i.setPixel(x_pixel, y_pixel, qRgb(red, green, blue));
-    }
-  }
+  this->dataPtr->provider->SetImage(image);
+  this->newImage();
+}
 
-  QPixmap pixmap;
-  pixmap.convertFromImage(i);
+/////////////////////////////////////////////////
+QStringList ImageDisplay::TopicList() const
+{
+  return this->dataPtr->topicList;
+}
 
-  auto label = this->findChild<QLabel *>();
-
-  if (label)
-    label->setPixmap(pixmap);
+/////////////////////////////////////////////////
+void ImageDisplay::SetTopicList(const QStringList &_topicList)
+{
+  this->dataPtr->topicList = _topicList;
+  this->TopicListChanged();
 }
 
 // Register this plugin
