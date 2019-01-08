@@ -402,7 +402,7 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
 
   {
     std::lock_guard<std::mutex> lock(this->mutex);
-    this->LoadScene(_msg);
+    this->sceneMsgs.push_back(_msg);
   }
 
   if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
