@@ -748,32 +748,19 @@ void SceneManager::DeleteEntity(const unsigned int _entity)
 {
   if (this->visuals.find(_entity) != this->visuals.end())
   {
-    // TODO(anyone) Destroying visuals causes a segfault at a later time in
-    // the rendering pipeline. For now, just detach the nodes using Remove
-    // calls. The memory usage maybe a problem since removed nodes are still
-    // kept in memory.
-    // this->scene->DestroyVisual(this->visuals[_entity], true);
-
-    // Detaching this entity from its parent should prevent all its children
-    // from being rendered.
     auto visual = this->visuals[_entity].lock();
     if (visual)
     {
-      visual->RemoveParent();
-      this->scene->DestroyVisual(visual);
+      this->scene->DestroyVisual(visual, true);
     }
     this->visuals.erase(_entity);
   }
   else if (this->lights.find(_entity) != this->lights.end())
   {
-    // TODO(anyone) Destroying nodes causes a segfault at a later time. See
-    // comment about visuals
-    // this->scene->DestroyLight(this->lights[_entity], true);
-
     auto light = this->lights[_entity].lock();
     if (light)
     {
-      light->RemoveParent();
+      this->scene->DestroyLight(light, true);
     }
     this->lights.erase(_entity);
   }
