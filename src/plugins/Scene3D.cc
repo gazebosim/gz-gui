@@ -19,6 +19,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/MouseEvent.hh>
@@ -52,16 +53,26 @@ namespace plugins
     /// \brief Constructor
     /// \param[in] _service Ign transport scene service name
     /// \param[in] _poseTopic Ign transport pose topic name
+    /// \param[in] _deletionTopic Ign transport deletion topic name
+    /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: SceneManager(const std::string &_service,
-        const std::string &_poseTopic, rendering::ScenePtr _scene);
+                         const std::string &_poseTopic,
+                         const std::string &_deletionTopic,
+                         const std::string &_sceneTopic,
+                         rendering::ScenePtr _scene);
 
     /// \brief Load the scene manager
     /// \param[in] _service Ign transport service name
     /// \param[in] _poseTopic Ign transport pose topic name
+    /// \param[in] _deletionTopic Ign transport deletion topic name
+    /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: void Load(const std::string &_service,
-        const std::string &_poseTopic, rendering::ScenePtr _scene);
+                      const std::string &_poseTopic,
+                      const std::string &_deletionTopic,
+                      const std::string &_sceneTopic,
+                      rendering::ScenePtr _scene);
 
     /// \brief Make the scene service request and populate the scene
     public: void Request();
@@ -76,6 +87,18 @@ namespace plugins
     /// \brief Load the scene from a scene msg
     /// \param[in] _msg Scene msg
     private: void LoadScene(const msgs::Scene &_msg);
+
+    /// \brief Callback function for the request topic
+    /// \param[in] _msg Deletion message
+    private: void OnDeletionMsg(const msgs::UInt32_V &_msg);
+
+    /// \brief Load the scene from a scene msg
+    /// \param[in] _msg Scene msg
+    private: void OnSceneSrvMsg(const msgs::Scene &_msg, const bool result);
+
+    /// \brief Called when there's an entity is added to the scene
+    /// \param[in] _msg Scene msg
+    private: void OnSceneMsg(const msgs::Scene &_msg);
 
     /// \brief Load the model from a model msg
     /// \param[in] _msg Model msg
@@ -111,11 +134,21 @@ namespace plugins
     /// \return Light object created from the msg
     private: rendering::LightPtr LoadLight(const msgs::Light &_msg);
 
+    /// \brief Delete an entity
+    /// \param[in] _entity Entity to delete
+    private: void DeleteEntity(const unsigned int _entity);
+
     //// \brief Ign-transport scene service name
     private: std::string service;
 
     //// \brief Ign-transport pose topic name
     private: std::string poseTopic;
+
+    //// \brief Ign-transport deletion topic name
+    private: std::string deletionTopic;
+
+    //// \brief Ign-transport scene topic name
+    private: std::string sceneTopic;
 
     //// \brief Pointer to the rendering scene
     private: rendering::ScenePtr scene;
@@ -133,10 +166,16 @@ namespace plugins
     private: std::map<unsigned int, math::Pose3d> localPoses;
 
     /// \brief Map of visual id to visual pointers.
-    private: std::map<unsigned int, rendering::VisualPtr> visuals;
+    private: std::map<unsigned int, rendering::VisualPtr::weak_type> visuals;
 
     /// \brief Map of light id to light pointers.
-    private: std::map<unsigned int, rendering::LightPtr> lights;
+    private: std::map<unsigned int, rendering::LightPtr::weak_type> lights;
+
+    /// Entities to be deleted
+    private: std::vector<unsigned int> toDeleteEntities;
+
+    /// \brief Keeps the a list of unprocessed scene messages
+    private: std::vector<msgs::Scene> sceneMsgs;
 
     /// \brief Transport node for making service request and subscribing to
     /// pose topic
@@ -208,44 +247,48 @@ SceneManager::SceneManager()
 
 /////////////////////////////////////////////////
 SceneManager::SceneManager(const std::string &_service,
-    const std::string &_poseTopic, rendering::ScenePtr _scene)
+                           const std::string &_poseTopic,
+                           const std::string &_deletionTopic,
+                           const std::string &_sceneTopic,
+                           rendering::ScenePtr _scene)
 {
-  this->Load(_service, _poseTopic, _scene);
+  this->Load(_service, _poseTopic, _deletionTopic, _sceneTopic, _scene);
 }
 
 /////////////////////////////////////////////////
 void SceneManager::Load(const std::string &_service,
-    const std::string &_poseTopic, rendering::ScenePtr _scene)
+                        const std::string &_poseTopic,
+                        const std::string &_deletionTopic,
+                        const std::string &_sceneTopic,
+                        rendering::ScenePtr _scene)
 {
   this->service = _service;
   this->poseTopic = _poseTopic;
+  this->deletionTopic = _deletionTopic;
+  this->sceneTopic = _sceneTopic;
   this->scene = _scene;
 }
 
 /////////////////////////////////////////////////
 void SceneManager::Request()
 {
-  bool result{false};
-  unsigned int timeout{5000};
-
-  msgs::Scene res;
-
-  // \todo(anyone) Look into using an asynchronous request, or an
-  // alternative Request function that is asynchronous. This could be used
-  // to make `Initialize` non-blocking.
-  if (this->node.Request(this->service, timeout, res, result) && result)
+  // wait for the service to be advertized
+  std::vector<transport::ServicePublisher> publishers;
+  const std::chrono::duration<double> sleepDuration{1.0};
+  const std::size_t tries = 30;
+  for (std::size_t i = 0; i < tries; ++i)
   {
-    this->LoadScene(res);
-    if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
-    {
-      ignerr << "Error subscribing to pose topic: " << this->poseTopic
-             << std::endl;
-    }
+    this->node.ServiceInfo(this->service, publishers);
+    if (publishers.size() > 0)
+      break;
+    std::this_thread::sleep_for(sleepDuration);
+    igndbg << "Waiting for service " << this->service << "\n";
   }
-  else
+
+  if (publishers.empty() ||
+      !this->node.Request(this->service, &SceneManager::OnSceneSrvMsg, this))
   {
-    ignerr << "Error making service request to " << this->service
-           << std::endl;
+    ignerr << "Error making service request to " << this->service << std::endl;
   }
 }
 
@@ -269,17 +312,46 @@ void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
 }
 
 /////////////////////////////////////////////////
+void SceneManager::OnDeletionMsg(const msgs::UInt32_V &_msg)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  std::copy(_msg.data().begin(), _msg.data().end(),
+            std::back_inserter(this->toDeleteEntities));
+}
+
+/////////////////////////////////////////////////
 void SceneManager::Update()
 {
   // process msgs
   std::lock_guard<std::mutex> lock(this->mutex);
+
+  for (const auto &msg : this->sceneMsgs)
+  {
+    this->LoadScene(msg);
+  }
+  this->sceneMsgs.clear();
+
+  for (const auto &entity : this->toDeleteEntities)
+  {
+    this->DeleteEntity(entity);
+  }
+  this->toDeleteEntities.clear();
+
 
   for (auto pIt = this->poses.begin(); pIt != this->poses.end();)
   {
     auto vIt = this->visuals.find(pIt->first);
     if (vIt != this->visuals.end())
     {
-      vIt->second->SetLocalPose(pIt->second);
+      auto visual = vIt->second.lock();
+      if (visual)
+      {
+        visual->SetLocalPose(pIt->second);
+      }
+      else
+      {
+        this->visuals.erase(vIt);
+      }
       this->poses.erase(pIt++);
     }
     else
@@ -287,7 +359,15 @@ void SceneManager::Update()
       auto lIt = this->lights.find(pIt->first);
       if (lIt != this->lights.end())
       {
-        lIt->second->SetLocalPose(pIt->second);
+        auto light = lIt->second.lock();
+        if (light)
+        {
+          light->SetLocalPose(pIt->second);
+        }
+        else
+        {
+          this->lights.erase(lIt);
+        }
         this->poses.erase(pIt++);
       }
       else
@@ -302,29 +382,77 @@ void SceneManager::Update()
   this->poses.clear();
 }
 
+
 /////////////////////////////////////////////////
+void SceneManager::OnSceneMsg(const msgs::Scene &_msg)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  this->sceneMsgs.push_back(_msg);
+}
+
+/////////////////////////////////////////////////
+void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
+{
+  if (!result)
+  {
+    ignerr << "Error making service request to " << this->service
+           << std::endl;
+    return;
+  }
+
+  {
+    std::lock_guard<std::mutex> lock(this->mutex);
+    this->sceneMsgs.push_back(_msg);
+  }
+
+  if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
+  {
+    ignerr << "Error subscribing to pose topic: " << this->poseTopic
+        << std::endl;
+  }
+  if (!this->node.Subscribe(this->deletionTopic, &SceneManager::OnDeletionMsg,
+                            this))
+  {
+    ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
+           << std::endl;
+  }
+  if (!this->node.Subscribe(this->sceneTopic, &SceneManager::OnSceneMsg, this))
+  {
+    ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+           << std::endl;
+  }
+}
+
 void SceneManager::LoadScene(const msgs::Scene &_msg)
 {
   rendering::VisualPtr rootVis = this->scene->RootVisual();
 
+
   // load models
   for (int i = 0; i < _msg.model_size(); ++i)
   {
-    rendering::VisualPtr modelVis = this->LoadModel(_msg.model(i));
-    if (modelVis)
-      rootVis->AddChild(modelVis);
-    else
-      ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+    // Only add if it's not already loaded
+    if (this->visuals.find(_msg.model(i).id()) == this->visuals.end())
+    {
+      rendering::VisualPtr modelVis = this->LoadModel(_msg.model(i));
+      if (modelVis)
+        rootVis->AddChild(modelVis);
+      else
+        ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+    }
   }
 
   // load lights
   for (int i = 0; i < _msg.light_size(); ++i)
   {
-    rendering::LightPtr light = this->LoadLight(_msg.light(i));
-    if (light)
-      rootVis->AddChild(light);
-    else
-      ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+    if (this->lights.find(_msg.light(i).id()) == this->lights.end())
+    {
+      rendering::LightPtr light = this->LoadLight(_msg.light(i));
+      if (light)
+        rootVis->AddChild(light);
+      else
+        ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+    }
   }
 }
 
@@ -615,6 +743,28 @@ rendering::LightPtr SceneManager::LoadLight(const msgs::Light &_msg)
   return light;
 }
 
+/////////////////////////////////////////////////
+void SceneManager::DeleteEntity(const unsigned int _entity)
+{
+  if (this->visuals.find(_entity) != this->visuals.end())
+  {
+    auto visual = this->visuals[_entity].lock();
+    if (visual)
+    {
+      this->scene->DestroyVisual(visual, true);
+    }
+    this->visuals.erase(_entity);
+  }
+  else if (this->lights.find(_entity) != this->lights.end())
+  {
+    auto light = this->lights[_entity].lock();
+    if (light)
+    {
+      this->scene->DestroyLight(light, true);
+    }
+    this->lights.erase(_entity);
+  }
+}
 
 /////////////////////////////////////////////////
 IgnRenderer::IgnRenderer()
@@ -752,8 +902,9 @@ void IgnRenderer::Initialize()
   // Make service call to populate scene
   if (!this->sceneService.empty())
   {
-    this->dataPtr->sceneManager.Load(
-        this->sceneService, this->poseTopic, scene);
+    this->dataPtr->sceneManager.Load(this->sceneService, this->poseTopic,
+                                     this->deletionTopic, this->sceneTopic,
+                                     scene);
     this->dataPtr->sceneManager.Request();
   }
 
@@ -1085,6 +1236,18 @@ void RenderWindowItem::SetPoseTopic(const std::string &_topic)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetDeletionTopic(const std::string &_topic)
+{
+  this->dataPtr->renderThread->ignRenderer.deletionTopic = _topic;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetSceneTopic(const std::string &_topic)
+{
+  this->dataPtr->renderThread->ignRenderer.sceneTopic = _topic;
+}
+
+/////////////////////////////////////////////////
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
@@ -1166,6 +1329,18 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       std::string topic = elem->GetText();
       renderWindow->SetPoseTopic(topic);
     }
+
+    if (auto elem = _pluginElem->FirstChildElement("deletion_topic"))
+    {
+      std::string topic = elem->GetText();
+      renderWindow->SetDeletionTopic(topic);
+    }
+
+    if (auto elem = _pluginElem->FirstChildElement("scene_topic"))
+    {
+      std::string topic = elem->GetText();
+      renderWindow->SetSceneTopic(topic);
+    }
   }
 }
 
@@ -1238,4 +1413,3 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 // Register this plugin
 IGNITION_ADD_PLUGIN(ignition::gui::plugins::Scene3D,
                     ignition::gui::Plugin)
-
