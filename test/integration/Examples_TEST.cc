@@ -42,7 +42,7 @@ TEST(ExampleTest, Configs)
   {
     // TODO(louise) Investigate why TopicEcho crashes on shutdown
     if ((*file).find("pubsub") != std::string::npos)
-      return;
+      continue;
 
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
