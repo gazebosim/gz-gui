@@ -646,14 +646,16 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
       return geom;
     }
     rendering::MeshDescriptor descriptor;
-    // TODO(anyone) resolve filename path?
-    // currently assumes absolute path to mesh file
+
+    // Assume absolute path to mesh file
     descriptor.meshName = _msg.mesh().filename();
 
     ignition::common::MeshManager* meshManager =
         ignition::common::MeshManager::Instance();
     descriptor.mesh = meshManager->Load(descriptor.meshName);
     geom = this->scene->CreateMesh(descriptor);
+
+    scale = msgs::Convert(_msg.mesh().scale());
   }
   else
   {
