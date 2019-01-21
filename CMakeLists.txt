@@ -96,7 +96,7 @@ if (NOT QWT_INCLUDE_DIR)
   ign_build_error("qwt5 header file was not found")
 endif()
 
-if(APPLE)
+if(APPLE OR WIN32)
   find_library(QWT_LIBRARY NAMES qwt PATHS
     /usr/lib
     /usr/local/lib
