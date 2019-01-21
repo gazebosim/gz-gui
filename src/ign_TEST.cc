@@ -24,6 +24,11 @@
 #include "ignition/gui/config.hh"
 #include "test_config.h"  // NOLINT(build/include)
 
+#ifdef _MSC_VER
+#    define popen _popen
+#    define pclose _pclose
+#endif
+
 auto g_version = std::string(strdup(IGNITION_GUI_VERSION_FULL));
 
 /////////////////////////////////////////////////

@@ -18,6 +18,7 @@
 #define IGNITION_GUI_SEARCHMODEL_HH_
 
 #include "ignition/gui/qt.h"
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {
@@ -32,7 +33,7 @@ namespace gui
   ///   applicable
   /// * Items with DataRole::TYPE == "title" are ignored
   ///
-  class SearchModel : public QSortFilterProxyModel
+  class IGNITION_GUI_VISIBLE SearchModel : public QSortFilterProxyModel
   {
     /// \brief Overloaded Qt method. Customize so we accept rows where:
     /// 1. Each of the words can be found in its ancestors or itself, but not

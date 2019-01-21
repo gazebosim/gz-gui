@@ -248,7 +248,7 @@ class TreeItemDelegate : public QStyledItemDelegate
 std::string humanReadableKey(const std::string &_key)
 {
   std::string humanKey = _key;
-  humanKey[0] = std::toupper(humanKey[0]);
+  humanKey[0] = toupper(humanKey[0]);
   std::replace(humanKey.begin(), humanKey.end(), '_', ' ');
   return humanKey;
 }

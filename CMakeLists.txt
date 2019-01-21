@@ -63,7 +63,7 @@ set(IGN_TRANSPORT_VER ${ignition-transport5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering0 REQUIRED)
+ign_find_package(ignition-rendering0 REQUIRED COMPONENTS ogre)
 set(IGN_RENDERING_VER ${ignition-rendering0_VERSION_MAJOR})
 
 #--------------------------------------

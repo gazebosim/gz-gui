@@ -24,6 +24,7 @@ ign_build_tests(TYPE UNIT
   SOURCES ${gtest_local_cc}
   LIB_DEPS
     ${IGNITION-RENDERING_LIBRARIES}
+    ${IGNITION-GUI_LIBRARIES}
     TINYXML2::TINYXML2
   INCLUDE_DIRS
     # Used to make internal source file headers visible to the unit tests
