@@ -47,7 +47,7 @@ namespace display_plugins
   /// * \<cell_length\> : Length of each cell, defaults to 1.
   /// * \<pose\> : Grid pose, defaults to the origin.
   /// * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class GridDisplay : public DisplayPlugin
+  class IGNITION_GUI_VISIBLE GridDisplay : public DisplayPlugin
   {
     Q_OBJECT
 

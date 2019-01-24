@@ -34,7 +34,7 @@ namespace display_plugins
   class RealtimeFactorDisplayPrivate;
 
   /// \brief Display the realtime factor on an Ignition Rendering scene.
-  class RealtimeFactorDisplay : public DisplayPlugin
+  class IGNITION_GUI_VISIBLE RealtimeFactorDisplay : public DisplayPlugin
   {
     Q_OBJECT
 

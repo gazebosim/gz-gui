@@ -12,13 +12,10 @@ foreach (src ${qt_headers_local})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
   add_library(${src} SHARED ${PROJECT_SOURCE_DIR}/src/display_plugins/${src}.cc ${${src}_MOC})
   target_link_libraries(${src}
-    ${IGNITION-COMMON_LIBRARIES}
-    ${IGNITION-GUI_LIBRARIES}
-    ${IGNITION-MSGS_LIBRARIES}
-    ${IGNITION-RENDERING_LIBRARIES}
-    ${IGNITION-TRANSPORT_LIBRARIES}
-    ${Qt5Core_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES})
+    PUBLIC
+      ${PROJECT_LIBRARY_TARGET_NAME}
+      ${IGNITION-RENDERING_LIBRARIES}
+      TINYXML2::TINYXML2)
 endforeach (src ${qt_headers_local})
 
 foreach (src ${qt_headers_local})
