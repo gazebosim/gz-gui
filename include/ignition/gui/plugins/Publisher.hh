@@ -31,6 +31,7 @@
 #  else
 #    define Publisher_EXPORTS_API __declspec(dllimport)
 #  endif
+#endif
 
 namespace ignition
 {
