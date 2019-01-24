@@ -29,12 +29,12 @@
 #include "ignition/gui/Export.hh"
 
 #ifndef _WIN32
-#  define IncrementalPlot_EXPORTS_API
+#  define Plot_EXPORTS_API
 #else
-#  if (defined(IncrementalPlot_EXPORTS))
-#    define IncrementalPlot_EXPORTS_API __declspec(dllexport)
+#  if (defined(Plot_EXPORTS))
+#    define Plot_EXPORTS_API __declspec(dllexport)
 #  else
-#    define IncrementalPlot_EXPORTS_API __declspec(dllimport)
+#    define Plot_EXPORTS_API __declspec(dllimport)
 #  endif
 #endif
 
@@ -55,7 +55,7 @@ namespace plot
   class IncrementalPlotPrivate;
 
   /// \brief A plotting widget that handles incremental addition of data.
-  class IncrementalPlot_EXPORTS_API IncrementalPlot : public QwtPlot
+  class Plot_EXPORTS_API IncrementalPlot : public QwtPlot
   {
     Q_OBJECT
 
