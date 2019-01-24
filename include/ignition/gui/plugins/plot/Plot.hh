@@ -25,6 +25,16 @@
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/Export.hh"
 
+#ifndef _WIN32
+#  define Plot_EXPORTS_API
+#else
+#  if (defined(Plot_EXPORTS))
+#    define Plot_EXPORTS_API __declspec(dllexport)
+#  else
+#    define Plot_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 namespace ignition
 {
 namespace gui
@@ -49,7 +59,7 @@ namespace plot
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
   ///
-  class IGNITION_GUI_VISIBLE Plot : public Plugin
+  class Plot_EXPORTS_API Plot : public Plugin
   {
     Q_OBJECT
 

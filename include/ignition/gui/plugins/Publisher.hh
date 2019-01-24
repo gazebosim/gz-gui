@@ -23,6 +23,15 @@
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
+#ifndef _WIN32
+#  define Publisher_EXPORTS_API
+#else
+#  if (defined(Publisher_EXPORTS))
+#    define Publisher_EXPORTS_API __declspec(dllexport)
+#  else
+#    define Publisher_EXPORTS_API __declspec(dllimport)
+#  endif
+
 namespace ignition
 {
 namespace gui
@@ -35,7 +44,7 @@ namespace plugins
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class IGNITION_GUI_VISIBLE Publisher : public Plugin
+  class Publisher_EXPORTS_API Publisher : public Plugin
   {
     Q_OBJECT
 

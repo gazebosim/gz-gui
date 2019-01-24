@@ -23,6 +23,16 @@
 #include "ignition/gui/DisplayPlugin.hh"
 #include "ignition/gui/qt.h"
 
+#ifndef _WIN32
+#  define GridDisplay_EXPORTS_API
+#else
+#  if (defined(GridDisplay_EXPORTS))
+#    define GridDisplay_EXPORTS_API __declspec(dllexport)
+#  else
+#    define GridDisplay_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 namespace ignition
 {
 namespace gui
@@ -47,7 +57,7 @@ namespace display_plugins
   /// * \<cell_length\> : Length of each cell, defaults to 1.
   /// * \<pose\> : Grid pose, defaults to the origin.
   /// * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class IGNITION_GUI_VISIBLE GridDisplay : public DisplayPlugin
+  class GridDisplay_EXPORTS_API GridDisplay : public DisplayPlugin
   {
     Q_OBJECT
 

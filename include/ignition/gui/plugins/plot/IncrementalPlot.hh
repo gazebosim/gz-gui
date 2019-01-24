@@ -28,6 +28,16 @@
 #include "ignition/gui/plugins/plot/Types.hh"
 #include "ignition/gui/Export.hh"
 
+#ifndef _WIN32
+#  define IncrementalPlot_EXPORTS_API
+#else
+#  if (defined(IncrementalPlot_EXPORTS))
+#    define IncrementalPlot_EXPORTS_API __declspec(dllexport)
+#  else
+#    define IncrementalPlot_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 namespace ignition
 {
 namespace common
@@ -45,7 +55,7 @@ namespace plot
   class IncrementalPlotPrivate;
 
   /// \brief A plotting widget that handles incremental addition of data.
-  class IGNITION_GUI_VISIBLE IncrementalPlot : public QwtPlot
+  class IncrementalPlot_EXPORTS_API IncrementalPlot : public QwtPlot
   {
     Q_OBJECT
 
