@@ -465,6 +465,8 @@ WindowConfig MainWindow::CurrentWindowConfig() const
 /////////////////////////////////////////////////
 bool WindowConfig::MergeFromXML(const std::string &_windowXml)
 {
+  auto screenSize = QApplication::desktop()->screenGeometry().size();
+
   // TinyXml element from string
   tinyxml2::XMLDocument doc;
   doc.Parse(_windowXml.c_str());
@@ -482,10 +484,32 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
 
   // Size
   if (auto widthElem = winElem->FirstChildElement("width"))
-    widthElem->QueryIntText(&this->width);
+  {
+    int newWidth;
+    widthElem->QueryIntText(&newWidth);
+
+    if (newWidth > screenSize.width())
+    {
+      ignwarn << "Asked window width [" << newWidth << "] clamped to ["
+              << screenSize.width() << "] to fit screen." << std::endl;
+      newWidth = screenSize.width();
+    }
+    this->width = newWidth;
+  }
 
   if (auto heightElem = winElem->FirstChildElement("height"))
-    heightElem->QueryIntText(&this->height);
+  {
+    int newHeight;
+    heightElem->QueryIntText(&newHeight);
+
+    if (newHeight > screenSize.height())
+    {
+      ignwarn << "Asked window height [" << newHeight << "] clamped to ["
+              << screenSize.height() << "] to fit screen." << std::endl;
+      newHeight = screenSize.height();
+    }
+    this->height = newHeight;
+  }
 
   // Docks state
   if (auto stateElem = winElem->FirstChildElement("state"))
