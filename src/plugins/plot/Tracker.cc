@@ -25,15 +25,9 @@ using namespace gui;
 using namespace plugins;
 using namespace plot;
 
-/// \internal
-/// \brief Tracker private data.
-class ignition::gui::plugins::plot::TrackerPrivate
-{
-};
-
 /////////////////////////////////////////////////
 Tracker::Tracker(QWidget *_canvas)
-  : QwtPlotPicker(_canvas), dataPtr(new TrackerPrivate)
+  : QwtPlotPicker(_canvas)
 {
   this->setTrackerMode(QwtPlotPicker::AlwaysOn);
   this->setRubberBand(QwtPicker::VLineRubberBand);

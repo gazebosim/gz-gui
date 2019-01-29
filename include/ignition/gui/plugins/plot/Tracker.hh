@@ -32,9 +32,6 @@ namespace plugins
 {
 namespace plot
 {
-  // Forward declarations.
-  class TrackerPrivate;
-
   /// \brief Mouse hover tracking.
   class IGNITION_GUI_VISIBLE Tracker: public QwtPlotPicker
   {
@@ -80,10 +77,6 @@ namespace plot
     /// \return Sample index.
     private: int UpperSampleIndex(const QwtSeriesData<QPointF> &_series,
                                   const double _value) const;
-
-    /// \internal
-    /// \brief Private data pointer.
-    private: std::unique_ptr<TrackerPrivate> dataPtr;
   };
 }
 }
