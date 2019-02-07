@@ -436,7 +436,7 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
       << "the Scene3D can receive and process deletion information.\n";
   }
 
-  if (!this->deletionTopic.empty())
+  if (!this->sceneTopic.empty())
   {
     if (!this->node.Subscribe(
           this->sceneTopic, &SceneManager::OnSceneMsg, this))
@@ -456,7 +456,6 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
 void SceneManager::LoadScene(const msgs::Scene &_msg)
 {
   rendering::VisualPtr rootVis = this->scene->RootVisual();
-
 
   // load models
   for (int i = 0; i < _msg.model_size(); ++i)
