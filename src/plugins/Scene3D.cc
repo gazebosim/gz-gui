@@ -405,28 +405,57 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     this->sceneMsgs.push_back(_msg);
   }
 
-  if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
+  if (!this->poseTopic.empty())
   {
-    ignerr << "Error subscribing to pose topic: " << this->poseTopic
+    if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
+    {
+      ignerr << "Error subscribing to pose topic: " << this->poseTopic
         << std::endl;
+    }
   }
-  if (!this->node.Subscribe(this->deletionTopic, &SceneManager::OnDeletionMsg,
-                            this))
+  else
   {
-    ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
-           << std::endl;
+    ignwarn << "The pose topic, set via <pose_topic>, for the Scene3D plugin "
+      << "is missing or empty. Please set this topic so that the Scene3D "
+      << "can receive and process pose information.\n";
   }
-  if (!this->node.Subscribe(this->sceneTopic, &SceneManager::OnSceneMsg, this))
+
+  if (!this->deletionTopic.empty())
   {
-    ignerr << "Error subscribing to scene topic: " << this->sceneTopic
-           << std::endl;
+    if (!this->node.Subscribe(this->deletionTopic, &SceneManager::OnDeletionMsg,
+          this))
+    {
+      ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
+        << std::endl;
+    }
+  }
+  else
+  {
+    ignwarn << "The deletion topic, set via <deletion_topic>, for the "
+      << "Scene3D plugin is missing or empty. Please set this topic so that "
+      << "the Scene3D can receive and process deletion information.\n";
+  }
+
+  if (!this->sceneTopic.empty())
+  {
+    if (!this->node.Subscribe(
+          this->sceneTopic, &SceneManager::OnSceneMsg, this))
+    {
+      ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+             << std::endl;
+    }
+  }
+  else
+  {
+    ignwarn << "The scene topic, set via <scene_topic>, for the "
+      << "Scene3D plugin is missing or empty. Please set this topic so that "
+      << "the Scene3D can receive and process scene information.\n";
   }
 }
 
 void SceneManager::LoadScene(const msgs::Scene &_msg)
 {
   rendering::VisualPtr rootVis = this->scene->RootVisual();
-
 
   // load models
   for (int i = 0; i < _msg.model_size(); ++i)
