@@ -155,6 +155,14 @@ namespace plugins
     /// topic to get pose updates of objects in the scene
     public: std::string poseTopic;
 
+    /// \brief Ign-transport deletion topic name
+    public: std::string deletionTopic;
+
+    /// \brief Ign-transport scene topic name
+    /// New scene messages will be published to this topic when an entities are
+    /// added
+    public: std::string sceneTopic;
+
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<IgnRendererPrivate> dataPtr;
@@ -237,6 +245,17 @@ namespace plugins
     /// visuals in the scene
     /// \param[in] _topic Pose topic
     public: void SetPoseTopic(const std::string &_topic);
+
+    /// \brief Set deletion topic to use for deleting objects from the scene
+    /// The renderer will subscribe to this topic to get notified when entities
+    /// in the scene get deleted
+    /// \param[in] _topic Deletion topic
+    public: void SetDeletionTopic(const std::string &_topic);
+
+    /// \brief Set the scene topic to use for updating objects in the scene
+    /// The renderer will subscribe to this topic to get updates scene messages
+    /// \param[in] _topic Scene topic
+    public: void SetSceneTopic(const std::string &_topic);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
