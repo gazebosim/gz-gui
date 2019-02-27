@@ -22,7 +22,7 @@ pipelines:
           # Static checking before building
           - sh tools/code_check.sh
           # Ignition rendering
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b ign-rendering0
           - cd ign-rendering
           - mkdir build
           - cd build
