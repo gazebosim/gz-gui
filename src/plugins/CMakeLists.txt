@@ -2,29 +2,34 @@
 # shared libraries
 
 set (gtest_local_sources
-  Displays_TEST
-  Grid3D_TEST
-  ImageDisplay_TEST
-  Publisher_TEST
-  Requester_TEST
-  Responder_TEST
-  Scene3D_TEST
-  TimePanel_TEST
-  TopicEcho_TEST
-  TopicInterface_TEST
-  TopicsStats_TEST
-  TopicViewer_TEST
+#  Grid3D
+#  ImageDisplay
+#  Publisher
+#  Requester
+#  Responder
+#  Scene3D
+#  TopicEcho
+#  TopicInterface
+#  TopicsStats
+#  TopicViewer
+  WorldControl
+  WorldStats
 )
 
 foreach(src ${gtest_local_sources})
-  set(gtest_local_cc ${gtest_local_cc} ${src}.cc)
+  set(gtest_local_cc ${gtest_local_cc} ${src}_TEST.cc)
+  set(gtest_local_libs ${gtest_local_libs}
+      ${PROJECT_BINARY_DIR}/lib/lib${src}.so)
 endforeach()
 
 ign_build_tests(TYPE UNIT
-  SOURCES ${gtest_local_cc}
+  SOURCES
+    ${gtest_local_cc}
   LIB_DEPS
     ${IGNITION-RENDERING_LIBRARIES}
+    ${IGNITION-GUI_LIBRARIES}
     TINYXML2::TINYXML2
+    ${gtest_local_sources}
   INCLUDE_DIRS
     # Used to make internal source file headers visible to the unit tests
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -33,4 +38,4 @@ ign_build_tests(TYPE UNIT
     # Used to make test_config.h visible to the unit tests
     ${PROJECT_BINARY_DIR})
 
-add_subdirectory(plot)
+#add_subdirectory(plot)

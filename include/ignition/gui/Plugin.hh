@@ -21,8 +21,6 @@
 #include <memory>
 #include <string>
 
-#include <ignition/common/PluginMacros.hh>
-
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
@@ -32,12 +30,23 @@ namespace ignition
   {
     class PluginPrivate;
 
-    /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Plugin : public QWidget
+    /// \brief Base class for Ignition GUI plugins.
+    ///
+    /// When inheriting from this plugin, the following are assumed:
+    ///
+    /// * The derived class' name is the same as the generated shared library
+    ///   (i.e. if the Publisher class extends Plugin, the library file is
+    ///   libPublisher.so)
+    ///
+    /// * There is a QML file with the same name as the plugin's shared library
+    ///   name.
+    ///   (i.e. there must be a Publisher.qml)
+    ///
+    /// * The QML file is prefixed by the library's name in the QRC file
+    ///   (i.e. the file's resource is found at ':/Publisher/Publisher.qml')
+    class IGNITION_GUI_VISIBLE Plugin : public QObject
     {
       Q_OBJECT
-
-      public: IGN_COMMON_SPECIALIZE_INTERFACE(ignition::gui::Plugin)
 
       /// \brief Constructor
       public: Plugin();
@@ -58,7 +67,20 @@ namespace ignition
 
       /// \brief Get the configuration XML as a string
       /// \return Config element
-      public: virtual std::string ConfigStr() const;
+      public: virtual std::string ConfigStr();
+
+      /// \brief Get the card item which contains this plugin. The item is
+      /// generated the first time this function is run.
+      /// \return Pointer to card item.
+      public: QQuickItem *CardItem() const;
+
+      /// \brief Get the plugin item.
+      /// \return Pointer to plugin item.
+      public: QQuickItem *PluginItem() const;
+
+      /// \brief Apply changes which should come after the plugin already
+      /// has a parent.
+      public: void PostParentChanges();
 
       /// \brief Load the plugin with a configuration file. Override this
       /// on custom plugins to handle custom configurations.
@@ -69,27 +91,19 @@ namespace ignition
       /// \sa Load
       /// \param[in] _pluginElem Element containing configuration
       protected: virtual void LoadConfig(
-          const tinyxml2::XMLElement */*_pluginElem*/) {}
+          const tinyxml2::XMLElement * /*_pluginElem*/) {}
 
       /// \brief Get title
       /// \return Plugin title.
       public: virtual std::string Title() const {return this->title;}
 
-      /// \brief Get whether the title bar is displayed
-      /// \return True if it is displayed
-      public: virtual bool HasTitlebar() {return this->hasTitlebar;}
-
-      /// \brief Get the value of the the `delete_later` attribute from the
+      /// \brief Get the value of the the `delete_later` element from the
       /// configuration file, which defaults to false.
       /// \return The value of `delete_later`.
       public: bool DeleteLaterRequested() const;
 
-      /// \brief Show context menu
-      /// \param [in] _pos Click position
-      protected slots: virtual void ShowContextMenu(const QPoint &_pos);
-
       // Documentation inherited
-      protected: void changeEvent(QEvent *_e) override;
+//      protected: void changeEvent(QEvent *_e) override;
 
       /// \brief Wait until the plugin has a parent, then close and delete the
       /// parent.
@@ -98,11 +112,21 @@ namespace ignition
       /// \brief Title to be displayed on top of plugin.
       protected: std::string title = "";
 
-      /// \brief True if the plugin should have a title bar, false otherwise.
-      protected: bool hasTitlebar = true;
-
       /// \brief XML configuration
       protected: std::string configStr;
+
+      /// \brief Load configuration which is common to all plugins and handled
+      /// by Ignition GUI.
+      /// \details Called when a plugin is first created.
+      /// \sa LoadConfig
+      /// \param[in] _ignGuiElem <ignition-gui> element within the <plugin>.
+      /// Will be nullptr if not present in the SDF.
+      private: virtual void LoadCommonConfig(
+          const tinyxml2::XMLElement *_ignGuiElem);
+
+      /// \brief Apply any anchors which may have been specified on the config
+      /// through the <anchor> tag and any state properties.
+      private: void ApplyAnchors();
 
       /// \internal
       /// \brief Pointer to private data

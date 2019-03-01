@@ -16,7 +16,7 @@
 */
 
 #include <iostream>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "CustomContext.hh"
 
@@ -27,9 +27,6 @@ using namespace gui;
 CustomContext::CustomContext()
   : Plugin()
 {
-  auto layout = new QVBoxLayout();
-  layout->addWidget(new QLabel(tr("Right-click me!")));
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////
@@ -37,16 +34,6 @@ CustomContext::~CustomContext()
 {
 }
 
-/////////////////////////////////////////////////
-void CustomContext::ShowContextMenu(const QPoint &_pos)
-{
-  auto menu = new QMenu(tr("Context menu"), this);
-  menu->addAction(new QAction("Do something", this));
-  menu->addAction(new QAction("Do something else", this));
-  menu->addAction(new QAction("Do nothing", this));
-  menu->exec(this->mapToGlobal(_pos));
-}
-
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::CustomContext,
-                                  ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(ignition::gui::CustomContext,
+                    ignition::gui::Plugin);

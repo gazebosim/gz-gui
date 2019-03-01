@@ -18,8 +18,19 @@ set (plugins
 # Plugin shared libraries
 foreach (src ${plugins})
   QT5_WRAP_CPP(${src}_MOC ${src}.hh)
-  add_library(${src} SHARED ${src}.cc ${${src}_MOC})
+  if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${src}.qrc")
+    QT5_ADD_RESOURCES(${src}_RCC ${src}.qrc)
+  endif()
+  add_library(${src} SHARED
+    ${src}.cc
+    ${${src}_MOC}
+    ${${src}_RCC}
+  )
   target_link_libraries(${src}
-    ${PROJECT_LIBRARY_TARGET_NAME})
+    PUBLIC
+    ${PROJECT_LIBRARY_TARGET_NAME}
+    PRIVATE
+    ignition-plugin${IGN_PLUGIN_VER}::register
+  )
 endforeach (src ${qt_headers_local})
 

@@ -16,7 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "TestNotRegisteredPlugin.hh"
 
@@ -27,10 +27,6 @@ using namespace gui;
 TestNotRegisteredPlugin::TestNotRegisteredPlugin()
   : Plugin()
 {
-  auto layout = new QHBoxLayout;
-  layout->addWidget(new QLabel("Test plugin"));
-
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////

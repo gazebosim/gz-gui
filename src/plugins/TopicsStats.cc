@@ -27,7 +27,7 @@
 #include <string>
 #include <vector>
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/DragDropModel.hh"
@@ -533,5 +533,5 @@ void TopicsStats::UpdateSearch(const QString &_search)
 }
 
 // Register this plugin.
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::TopicsStats,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::TopicsStats,
+                    ignition::gui::Plugin)

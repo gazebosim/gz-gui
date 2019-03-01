@@ -16,7 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "TestPlugin.hh"
 
@@ -27,10 +27,6 @@ using namespace gui;
 TestPlugin::TestPlugin()
   : Plugin()
 {
-  auto layout = new QHBoxLayout;
-  layout->addWidget(new QLabel("Test plugin"));
-
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////
@@ -39,5 +35,5 @@ TestPlugin::~TestPlugin()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::TestPlugin,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::TestPlugin,
+                    ignition::gui::Plugin)

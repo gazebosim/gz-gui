@@ -1,6 +1,24 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
   <file>style.qss</file>
+
+  <file>qtquickcontrols2.conf</file>
+
+  <file>qml/IgnCard.qml</file>
+  <file>qml/IgnCardSettings.qml</file>
+  <file>qml/IgnHelpers.qml</file>
+  <file>qml/IgnRulers.qml</file>
+  <file>qml/IgnSpinBox.qml</file>
+  <file>qml/IgnSplit.qml</file>
+  <file>qml/Main.qml</file>
+  <file>qml/PluginMenu.qml</file>
+  <file>qml/SideDrawer.qml</file>
+  <file>qml/StandaloneDialog.qml</file>
+  <file>qml/StyleDialog.qml</file>
+
+  <file>qml/images/menu.png</file>
+  <file>qml/images/drawer.png</file>
+
   <file>images/branch-end.png</file>
   <file>images/branch-more.png</file>
   <file>images/close.svg</file>

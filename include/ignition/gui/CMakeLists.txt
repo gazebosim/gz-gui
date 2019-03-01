@@ -1,32 +1,39 @@
 include_directories(
   ${Qt5Core_INCLUDE_DIRS}
   ${tinyxml_INCLUDE_DIRS}
+  ${Qt5Qml_INCLUDE_DIRS}
+  ${Qt5Quick_INCLUDE_DIRS}
+  ${Qt5QuickControls2_INCLUDE_DIRS}
 )
 
 set (CMAKE_AUTOMOC ON)
 
-add_definitions(${Qt5Core_DEFINITIONS})
+add_definitions(
+  ${Qt5Core_DEFINITIONS}
+  ${Qt5Qml_DEFINITIONS}
+  ${Qt5Quick_DEFINITIONS}
+  ${Qt5QuickControls2_DEFINITIONS}
+)
 
 set (qt_headers
-  BoolWidget.hh
-  CollapsibleWidget.hh
-  ColorWidget.hh
+  Application.hh
+#  BoolWidget.hh
+#  CollapsibleWidget.hh
+#  ColorWidget.hh
   Dialog.hh
-  DisplayPlugin.hh
-  Dock.hh
-  EditableLabel.hh
-  EnumWidget.hh
-  GeometryWidget.hh
+#  EditableLabel.hh
+#  EnumWidget.hh
+#  GeometryWidget.hh
   MainWindow.hh
-  MessageWidget.hh
-  NumberWidget.hh
+#  MessageWidget.hh
+#  NumberWidget.hh
   Plugin.hh
-  Pose3dWidget.hh
-  PropertyWidget.hh
-  StringWidget.hh
-  VariablePill.hh
-  VariablePillContainer.hh
-  Vector3dWidget.hh
+#  Pose3dWidget.hh
+#  PropertyWidget.hh
+#  StringWidget.hh
+#  VariablePill.hh
+#  VariablePillContainer.hh
+#  Vector3dWidget.hh
 )
 
 set (headers
@@ -34,11 +41,10 @@ set (headers
   DragDropModel.hh
   Enums.hh
   Helpers.hh
-  Iface.hh
   ign.hh
   qt.h
-  qwt.h
-  QtMetatypes.hh
+#  qwt.h
+#  QtMetatypes.hh
   SearchModel.hh
   System.hh
 )
@@ -52,20 +58,23 @@ ign_create_core_library(SOURCES
   ${sources}
   ${headers_MOC}
   ${resources_RCC}
+  CXX_STANDARD 17
 )
 
 target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
-  ${IGNITION-COMMON_LIBRARIES}
-  ${IGNITION-MATH_LIBRARIES}
-  ${IGNITION-MSGS_LIBRARIES}
-  ${IGNITION-RENDERING_LIBRARIES}
-  ${IGNITION-TRANSPORT_LIBRARIES}
-  ${Qt5Core_LIBRARIES}
-  ${Qt5Widgets_LIBRARIES}
-  TINYXML2::TINYXML2
+  PUBLIC
+    ${IGNITION-COMMON_LIBRARIES}
+    ${IGNITION-MATH_LIBRARIES}
+    ${IGNITION-MSGS_LIBRARIES}
+    ignition-plugin${IGN_PLUGIN_VER}::loader
+    ${IGNITION-TRANSPORT_LIBRARIES}
+    ${Qt5Core_LIBRARIES}
+    ${Qt5Qml_LIBRARIES}
+    ${Qt5Quick_LIBRARIES}
+    ${Qt5QuickControls2_LIBRARIES}
+    TINYXML2::TINYXML2
 )
 
-add_subdirectory(display_plugins)
 add_subdirectory(plugins)
 
 #ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}.hh)

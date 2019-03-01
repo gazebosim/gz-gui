@@ -1,7 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-  <file>style.qss</file>
-  <file>images/undock.svg</file>
-  <file>images/close.svg</file>
-</qresource>
-</RCC>

@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 #include <ignition/common/Console.hh>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 #include <ignition/transport/Node.hh>
 
 #include "ignition/common/URI.hh"
@@ -57,7 +57,8 @@ class TreeItemDelegate : public QStyledItemDelegate
     QString topicName = qvariant_cast<QString>(_index.data(DISPLAY_NAME));
     QString typeName = qvariant_cast<QString>(_index.data(TYPE));
 
-    // TODO: Change to QApplication::font() once Roboto is used everywhere.
+    // TODO(anyone): Change to QApplication::font() once Roboto is used
+    // everywhere.
     QFont fontBold, fontRegular;
 
     // Create a bold font.
@@ -85,8 +86,8 @@ class TreeItemDelegate : public QStyledItemDelegate
     // Handle hover style.
     if (typeName != "title" && _opt.state & QStyle::State_MouseOver)
     {
-      _painter->setPen(QApplication::palette().highlight().color());
-      _painter->setBrush(QApplication::palette().highlight().color());
+      _painter->setPen(QPen(QColor(200, 200, 200, 0), 0));
+      _painter->setBrush(QColor(200, 200, 200));
       _painter->drawRect(_opt.rect);
     }
 
@@ -233,7 +234,8 @@ class TreeItemDelegate : public QStyledItemDelegate
   {
     QSize size = QStyledItemDelegate::sizeHint(_option, _index);
 
-    // TODO: Change to QApplication::font() once Roboto is used everywhere.
+    // TODO(anyone): Change to QApplication::font() once Roboto is used
+    // everywhere.
     QFont font("Roboto Regular");
     QFontMetrics fm(font);
 
@@ -248,7 +250,7 @@ class TreeItemDelegate : public QStyledItemDelegate
 std::string humanReadableKey(const std::string &_key)
 {
   std::string humanKey = _key;
-  humanKey[0] = std::toupper(humanKey[0]);
+  humanKey[0] = ::toupper(humanKey[0]);
   std::replace(humanKey.begin(), humanKey.end(), '_', ' ');
   return humanKey;
 }
@@ -615,5 +617,5 @@ void TopicViewer::ExpandTree(const QModelIndex &_index)
 }
 
 // Register this plugin.
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::plugins::TopicViewer,
-                                  ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::TopicViewer,
+                    ignition::gui::Plugin)

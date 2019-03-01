@@ -16,29 +16,62 @@
  */
 
 #include <ignition/common/Console.hh>
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
-#include "ignition/gui/Plugin.hh"
+
+namespace ignition
+{
+  namespace gui
+  {
+    class DialogPrivate
+    {
+      /// \brief Pointer to quick window
+      public: QQuickWindow *quickWindow{nullptr};
+    };
+  }
+}
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-void Dialog::reject()
+Dialog::Dialog()
+  : dataPtr(new DialogPrivate)
 {
-  // Set child free
-  auto plugin = this->findChild<Plugin *>();
-  if (!plugin)
-  {
-    ignerr << "I lost my child" << std::endl;
-  }
-  else
-  {
-    // Notify everyone so the one responsible for the plugin deletes it
-    this->Closing();
+  // Load QML and keep pointer to generated QQuickWindow
+  std::string qmlFile("qrc:qml/StandaloneDialog.qml");
+  App()->Engine()->load(QUrl(QString::fromStdString(qmlFile)));
 
-    // Set child free so we don't delete it with us
-    plugin->setParent(nullptr);
+  this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
+      App()->Engine()->rootObjects().value(0));
+  if (!this->dataPtr->quickWindow)
+  {
+    ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+           << "]" << std::endl;
+    return;
   }
-  QDialog::reject();
+}
+
+/////////////////////////////////////////////////
+Dialog::~Dialog()
+{
+}
+
+/////////////////////////////////////////////////
+QQuickWindow *Dialog::QuickWindow() const
+{
+  return this->dataPtr->quickWindow;
+}
+
+/////////////////////////////////////////////////
+QQuickItem *Dialog::RootItem() const
+{
+  auto dialogItem = this->dataPtr->quickWindow->findChild<QQuickItem *>();
+  if (!dialogItem)
+  {
+    ignerr << "Internal error: Null dialog root item!" << std::endl;
+  }
+
+  return dialogItem;
 }
 

@@ -17,9 +17,10 @@
 
 #include <gtest/gtest.h>
 
+#include <ignition/common/Console.hh>
+
 #include "test_config.h"  // NOLINT(build/include)
 
-#include "ignition/gui/Iface.hh"
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/SearchModel.hh"
 
@@ -42,7 +43,7 @@ int countRowsOfIndex(const QModelIndex &_index = QModelIndex())
 /////////////////////////////////////////////////
 TEST(SearchModelTest, FlatStructure)
 {
-  setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
   // A source model
   auto sourceModel = new QStandardItemModel();
@@ -98,7 +99,7 @@ TEST(SearchModelTest, FlatStructure)
 /////////////////////////////////////////////////
 TEST(SearchModelTest, NestedStructure)
 {
-  setVerbosity(4);
+  ignition::common::Console::SetVerbosity(4);
 
   // A source model
   auto sourceModel = new QStandardItemModel();

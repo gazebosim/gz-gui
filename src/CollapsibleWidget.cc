@@ -31,9 +31,6 @@ namespace ignition
 
       /// \brief Widget which holds the collapsible content.
       public: QWidget *content;
-
-      /// \brief Button that's pressed to show the collapsible content.
-      public: QPushButton *button;
     };
   }
 }
@@ -65,7 +62,6 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
   button->setLayout(buttonLayout);
   button->setCheckable(true);
   button->setObjectName("collapsibleButton");
-  this->dataPtr->button = button;
 
   this->connect(button, SIGNAL(toggled(bool)), this, SLOT(Toggle(bool)));
 
@@ -89,12 +85,6 @@ CollapsibleWidget::CollapsibleWidget(const std::string &_key)
 /////////////////////////////////////////////////
 CollapsibleWidget::~CollapsibleWidget()
 {
-}
-
-/////////////////////////////////////////////////
-QPushButton *CollapsibleWidget::Button() const
-{
-  return this->dataPtr->button;
 }
 
 /////////////////////////////////////////////////

@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_DIALOG_HH_
 #define IGNITION_GUI_DIALOG_HH_
 
+#include <memory>
+
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
@@ -25,16 +27,30 @@ namespace ignition
 {
   namespace gui
   {
+    class DialogPrivate;
+
     /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Dialog : public QDialog
+    class IGNITION_GUI_VISIBLE Dialog : public QObject
     {
       Q_OBJECT
 
-      /// \brief Signals that this dialog is about to be closed.
-      signals: void Closing();
+      /// \brief Constructor
+      public: Dialog();
 
-      // Documentation inherited
-      protected: void reject() override;
+      /// \brief Destructor
+      public: virtual ~Dialog();
+
+      /// \brief Get the QtQuick window created by this object
+      /// \return Pointer to the QtQuick window
+      public: QQuickWindow *QuickWindow() const;
+
+      /// \brief Get the root quick item of this window
+      /// \return Pointer to the item
+      public: QQuickItem *RootItem() const;
+
+      /// \internal
+      /// \brief Private data pointer
+      private: std::unique_ptr<DialogPrivate> dataPtr;
     };
   }
 }

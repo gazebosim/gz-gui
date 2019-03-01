@@ -22,10 +22,8 @@
 #include <ignition/common/Filesystem.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Iface.hh"
 
 using namespace ignition;
-using namespace gui;
 
 // Helper functions copied from
 // https://bitbucket.org/ignitionrobotics/ign-common/raw/default/src/Filesystem_TEST.cc
@@ -79,7 +77,6 @@ bool createAndSwitchToTempDir(std::string &_newTempPath)
 #include <windows.h>  // NOLINT(build/include_order)
 #include <winnt.h>  // NOLINT(build/include_order)
 #include <cstdint>
-#include <ignition/common/PrintWindowsSystemWarning.hh>
 
 /////////////////////////////////////////////////
 bool createAndSwitchToTempDir(std::string &_newTempPath)
@@ -132,7 +129,7 @@ class ExamplesBuild : public ::testing::TestWithParam<const char*>
 //////////////////////////////////////////////////
 void ExamplesBuild::Build(const std::string &_type)
 {
-  setVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   // Path to examples of the given type
   auto examplesDir = std::string(PROJECT_SOURCE_PATH) + "/examples/" + _type;
@@ -144,6 +141,13 @@ void ExamplesBuild::Build(const std::string &_type)
       dirIter != endIter; ++dirIter)
   {
     auto base = ignition::common::basename(*dirIter);
+
+    // TODO(louise) Migrate all examples to QtQuick
+    if (base == "designer_ui_file" ||
+        base == "save_on_close")
+    {
+      continue;
+    }
 
     // Source directory for this example
     auto sourceDir = examplesDir + "/" + base;
@@ -178,7 +182,7 @@ TEST_P(ExamplesBuild, Build)
 INSTANTIATE_TEST_CASE_P(Plugins, ExamplesBuild, ::testing::Values(
   "plugin",
   "standalone"
-));
+),);  // NOLINT
 
 //////////////////////////////////////////////////
 int main(int argc, char **argv)

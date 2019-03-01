@@ -310,7 +310,7 @@ QVariant MessageWidget::PropertyValue(const std::string &_name) const
   if (w)
     return w->Value();
 
-  // TODO: Take from msg in case widget is collapsed
+  // TODO(anyone): Take from msg in case widget is collapsed
 
   return QVariant();
 }

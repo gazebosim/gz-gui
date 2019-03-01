@@ -258,10 +258,7 @@ TEST(VariablePillContainerTest, VariablePillEvents)
   // Jenkins
   if (containerMoved)
   {
-  // \fixme And this fails on Bionic
-#if QT_VERSION < QT_VERSION_CHECK(5, 9, 0)
     EXPECT_EQ(1u, var02->VariablePillCount());
-#endif
   }
 
   EXPECT_TRUE(stop());

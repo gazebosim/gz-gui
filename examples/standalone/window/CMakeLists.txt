@@ -1,27 +1,42 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
 set (CMAKE_AUTOMOC ON)
 
 # Find Qt5
-find_package (Qt5Widgets REQUIRED)
-find_package (Qt5Core REQUIRED)
+find_package (Qt5
+  COMPONENTS
+    Core
+    Quick
+    QuickControls2
+  REQUIRED
+)
 
 # Find the Ignition gui library
-find_package(ignition-gui0 REQUIRED)
+find_package(ignition-gui1 REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
 
 include_directories(SYSTEM
-    ${IGNITION-GUI_INCLUDE_DIRS}
-    ${Qt5Core_INCLUDE_DIRS})
+  ${IGNITION-GUI_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Qml_INCLUDE_DIRS}
+  ${Qt5Quick_INCLUDE_DIRS}
+  ${Qt5QuickControls2_INCLUDE_DIRS}
+)
 
-link_directories(${IGNITION-GUI_LIBRARY_DIRS})
+link_directories(
+  ${IGNITION-GUI_LIBRARY_DIRS}
+)
 
-# Generate examples
-if (EXISTS "${CMAKE_SOURCE_DIR}/window.cc")
-  add_executable(window window.cc)
-  target_link_libraries(window
-    ${IGNITION-GUI_LIBRARIES}
-    ${Qt5Core_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES})
-endif()
+# Generate example
+add_executable(window
+  window.cc
+)
+target_link_libraries(window
+  ${IGNITION-GUI_LIBRARIES}
+  ${Qt5Core_LIBRARIES}
+  ${Qt5Qml_LIBRARIES}
+  ${Qt5Quick_LIBRARIES}
+  ${Qt5QuickControls2_LIBRARIES}
+)
+
