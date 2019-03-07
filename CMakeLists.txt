@@ -80,7 +80,13 @@ endif()
 
 #--------------------------------------
 # Find QT
-find_package (Qt5 COMPONENTS Core Widgets REQUIRED)
+ign_find_package (Qt5
+  COMPONENTS
+    Core
+    Widgets
+  REQUIRED
+  PKGCONFIG "Qt5Core Qt5Widgets"
+)
 
 #--------------------------------------
 # Find QWT (QT graphing library)
