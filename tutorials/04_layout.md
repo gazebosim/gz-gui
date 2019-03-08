@@ -7,14 +7,14 @@ Next Tutorial: \ref style
 It's possible to define the layout of various plugins loaded to the main window
 by adding a `<window>` element to the config file. The child elements are:
 
-* `<position_x>`: Horizontal position of window's top-left corner in pixels.
-* `<position_y>`: Vertical position of window's top-left corner in pixels.
+* `<position_x>`: **v0** Horizontal position of window's top-left corner in pixels.
+* `<position_y>`: **v0** Vertical position of window's top-left corner in pixels.
 * `<width>`: Window's width in pixels
 * `<height>`: Window's height in pixels
-* `<state>`: The state of the widow's docks and tabs, described as a Base64
+* `<state>`: **v0** The state of the widow's docks and tabs, described as a Base64
              encoded `QByteArray`. More information
              [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
-* `<menus>`: Configure menu options
+* `<menus>`: **v0** Configure menu options
     * `<file>`: File menu configuration.
         * `visible`: Set to false to hide the whole File menu.
     * `<plugins>`: Plugins menu configuration.
@@ -30,6 +30,8 @@ by adding a `<window>` element to the config file. The child elements are:
 
 ## Example layout
 
+**Not ported to version 1 yet**
+
 Try an example layout:
 
     ign gui -c examples/config/layout.config
@@ -39,6 +41,8 @@ Compare it to the same plugins loaded without a layout:
     ign gui -c examples/config/no_layout.config
 
 ## Create a new layout
+
+**Not ported to version 1 yet**
 
 You can start from an empty window and insert plugins, or from an existing
 config file. For example:
