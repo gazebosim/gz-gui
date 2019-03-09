@@ -15,10 +15,10 @@ by adding a `<window>` element to the config file. The child elements are:
              encoded `QByteArray`. More information
              [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
 * `<menus>`: **v0** Configure menu options
-    * `<file>`: File menu configuration.
-        * `visible`: Set to false to hide the whole File menu.
+    * `<drawer>`: Side drawer configuration.
+        * `visible`: Set to false to hide the drawer and the button to trigger it.
     * `<plugins>`: Plugins menu configuration.
-        * `visible`: Set to false to hide the whole Plugins menu.
+        * `visible`: Set to false to hide the plugins menu and the button to trigger it.
         * `from_paths`: Set to false to prevent filling the menu with all
                         plugins found on the paths. In that case, if no plugins
                         are given with `<show>` elements, the plugins menu will
@@ -30,8 +30,6 @@ by adding a `<window>` element to the config file. The child elements are:
 
 ## Example layout
 
-**Not ported to version 1 yet**
-
 Try an example layout:
 
     ign gui -c examples/config/layout.config
@@ -41,8 +39,6 @@ Compare it to the same plugins loaded without a layout:
     ign gui -c examples/config/no_layout.config
 
 ## Create a new layout
-
-**Not ported to version 1 yet**
 
 You can start from an empty window and insert plugins, or from an existing
 config file. For example:
