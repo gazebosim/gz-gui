@@ -12,7 +12,7 @@ find_package (Qt5
 )
 
 # Find the Ignition gui library
-find_package(ignition-gui1 REQUIRED)
+find_package(ignition-gui2 REQUIRED)
 
 QT5_ADD_RESOURCES(resources_RCC custom_drawer.qrc)
 
