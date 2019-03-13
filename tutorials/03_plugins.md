@@ -27,12 +27,10 @@ For example (`examples/config/image.config`):
 * Developers can read custom plugin configurations overriding the
   `Plugin::LoadConfig` function.
 
-* Ignition GUI processes a few default parameters before passing the config to
-  implemented plugins. These are the parameters handled:
-
-    * `<title>`: The title to be displayed on the plugin's title bar
-
-    * `<has_titlebar>`: Set this to false to remove the title bar
+* Ignition GUI processes the `<ignition-gui>` block before passing the config to
+  implemented plugins. See
+  [plugin_params.config](https://bitbucket.org/ignitionrobotics/ign-gui/src/ign-gui1/examples/config/plugin_params.config)
+  for an example.
 
 ## Built-in plugins
 
@@ -61,10 +59,10 @@ Publish messages on an Ignition Transport topic.
 1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
 
-### Time panel
+### World stats and control
 
-* Display sim / real time published on a topic
-* Buttons to make play / pause service requests
+* Stats: Display sim / real time published on a topic
+* Control: Buttons to make play / pause / step service requests
 
         ign gui -c examples/config/time.config
 
@@ -76,17 +74,23 @@ Echo messages from an Ignition Transport topic.
 
 ### Topic viewer
 
+**Not ported to version 1 yet**
+
 Discover all Ignition Transport topics and introspect its fields.
 
     ign gui -c examples/config/topicViewer.config
 
 ### Topics stats
 
+**Not ported to version 1 yet**
+
 Show basic stats of all Ignition Transport topics at the same time.
 
     ign gui -c examples/config/topicsStats.config
 
 ### Requester and Responder
+
+**Not ported to version 1 yet**
 
 Make custom service requests and serve custom services with these two
 plugins.
@@ -95,6 +99,8 @@ plugins.
 
 ### Displays {#display-plugins}
 
+**Not ported to version 1 yet**
+
 This is a container for various Display Plugins that each paint on a Scene.
 The following example includes the display plugins that are installed with
 Ignition GUI by default.
@@ -102,6 +108,8 @@ Ignition GUI by default.
     ign gui -c examples/config/display_plugins.config
 
 #### Finding display plugins
+
+**Not ported to version 1 yet**
 
 Ignition GUI will look for display plugins on the following paths, in this
 order:
