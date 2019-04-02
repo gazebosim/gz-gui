@@ -10,10 +10,9 @@
 Build | Status
 -- | --
 Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
-Ubuntu Xenial | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-xenial-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-xenial-amd64/)
 Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-bionic-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-homebrew-amd64)
-Windows 7     | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-windows7-amd64)
+Windows 7     | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-1-win)](https://build.osrfoundation.org/job/ign_gui-ign-1-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
@@ -67,14 +66,11 @@ The [Source Install](#markdown-header-source-install) instructions should be use
 
 ## Binary Install
 
-Ignition GUI's binary packages are still pre-releases and unstable.
-
-On Ubuntu Bionic, it's possible to install Ignition GUI's version 1 pre-releases as follows:
+On Ubuntu Bionic, it's possible to install Ignition GUI's version 1 as follows:
 
 Add OSRF packages:
 
     echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable bionic main" > /etc/apt/sources.list.d/gazebo-stable.list
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease bionic main" > /etc/apt/sources.list.d/gazebo-prerelease.list
     sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
     sudo apt update
 
@@ -160,7 +156,7 @@ Install dependencies:
 
 Clone source code, note you'll need the `gz11` branch:
 
-    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b gz11
+    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b ign-gui1
 
 ### Building from source
 
