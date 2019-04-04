@@ -56,6 +56,7 @@ pipelines:
           # Ignition rendering (uncomment if a specific branch is needed)
            - apt install -y
              libogre-1.9-dev
+             libogre-2.1-dev
              libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
            - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
            - cd ign-rendering
