@@ -337,30 +337,39 @@ bool Application::LoadPlugin(const std::string &_filename,
     return false;
   }
 
-  auto pluginName = *pluginNames.begin();
-  if (pluginName.empty())
+  // Go over all plugin names and get the first one that implements the
+  // ignition::gui::Plugin interface
+  plugin::PluginPtr commonPlugin;
+  std::shared_ptr<gui::Plugin> plugin{nullptr};
+  for (auto pluginName : pluginNames)
   {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't load library on path [" << pathToLib <<
-              "]." << std::endl;
-    return false;
+    commonPlugin = pluginLoader.Instantiate(pluginName);
+    if (!commonPlugin)
+      continue;
+
+    plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
+    if (plugin)
+      break;
   }
 
-  auto commonPlugin = pluginLoader.Instantiate(pluginName);
   if (!commonPlugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
               "] : couldn't instantiate plugin on path [" << pathToLib <<
-              "]." << std::endl;
+              "]. Tried plugin names: " << std::endl;
+
+    for (auto pluginName : pluginNames)
+    {
+      ignerr << " * " << pluginName << std::endl;
+    }
     return false;
   }
 
-  auto plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
   if (!plugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't get interface [" << pluginName <<
-              "]." << std::endl;
+              "] : couldn't get [ignition::gui::Plugin] interface."
+           << std::endl;
     return false;
   }
 
