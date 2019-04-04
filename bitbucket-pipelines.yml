@@ -42,7 +42,7 @@ pipelines:
             libignition-plugin-dev
             libignition-tools-dev
             libignition-transport6-dev
-          #  libignition-rendering-dev
+          # libignition-rendering-dev
           # Ignition msgs (uncomment if a specific branch is needed)
           # - apt install -y
           #   libprotobuf-dev protobuf-compiler libprotoc-dev
@@ -54,17 +54,17 @@ pipelines:
           # - make -j4 install
           # - cd ../..
           # Ignition rendering (uncomment if a specific branch is needed)
-           - apt install -y
-             libogre-1.9-dev
-             libogre-2.1-dev
-             libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
-           - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
-           - cd ign-rendering
-           - mkdir build
-           - cd build
-           - cmake ..
-           - make -j4 install
-           - cd ../..
+          - apt install -y
+            libogre-1.9-dev
+            libogre-2.1-dev
+            libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+          - cd ign-rendering
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make -j4 install
+          - cd ../..
           # Ignition GUI
           - mkdir build
           - cd build
