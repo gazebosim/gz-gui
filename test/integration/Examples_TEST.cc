@@ -40,9 +40,14 @@ TEST(ExampleTest, Configs)
   ignition::common::DirIter endIter;
   for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
   {
-    // TODO(louise) Investigate why TopicEcho crashes on shutdown
-    if ((*file).find("pubsub") != std::string::npos)
+    // pubsub.config is broken (issue #39)
+    // image.config is broken (issue #40)
+    if ((*file).find("pubsub") != std::string::npos ||
+        (*file).find("image") != std::string::npos)
+    {
+      ignerr << "skipping " << *file << std::endl;
       continue;
+    }
 
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");

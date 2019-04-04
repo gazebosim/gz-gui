@@ -87,6 +87,9 @@ namespace plugins
     /// \brief Update from rx'd RGB_INT8
     private: void UpdateFromRgbInt8();
 
+    /// \brief Update from rx'd R_FLOAT32
+    private: void UpdateFromFloat32();
+
     /// \brief Subscriber callback when new image is received
     /// \param[in] _msg New image
     private: void OnImageMsg(const ignition::msgs::Image &_msg);

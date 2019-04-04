@@ -148,6 +148,9 @@ void ImageDisplay::ProcessImage()
     case common::Image::RGB_INT8:
       this->UpdateFromRgbInt8();
       break;
+    case ignition::common::Image::R_FLOAT32:
+      this->UpdateFromFloat32();
+      break;
     default:
       ignerr << "Unsupported image type: " <<
           this->dataPtr->imageMsg.pixel_format() << std::endl;
@@ -223,6 +226,52 @@ void ImageDisplay::UpdateFromRgbInt8()
 
   this->dataPtr->provider->SetImage(image);
   this->newImage();
+}
+
+/////////////////////////////////////////////////
+void ImageDisplay::UpdateFromFloat32()
+{
+  unsigned int height = this->dataPtr->imageMsg.height();
+  unsigned int width = this->dataPtr->imageMsg.width();
+  QImage::Format qFormat = QImage::Format_RGB888;
+
+  QImage image = QImage(width, height, qFormat);
+
+  unsigned int depthSamples = width * height;
+  float f;
+  // cppchecker recommends using sizeof(varname)
+  unsigned int depthBufferSize = depthSamples * sizeof(f);
+
+  float * depthBuffer = new float[depthSamples];
+
+  memcpy(depthBuffer, this->dataPtr->imageMsg.data().c_str(),
+      depthBufferSize);
+
+  float maxDepth = 0;
+  for (unsigned int i = 0; i < depthSamples; ++i)
+  {
+    if (depthBuffer[i] > maxDepth && !std::isinf(depthBuffer[i]))
+    {
+      maxDepth = depthBuffer[i];
+    }
+  }
+  unsigned int idx = 0;
+  double factor = 255 / maxDepth;
+  for (unsigned int j = 0; j < height; ++j)
+  {
+    for (unsigned int i = 0; i < width; ++i)
+    {
+      float d = depthBuffer[idx++];
+      d = 255 - (d * factor);
+      QRgb value = qRgb(d, d, d);
+      image.setPixel(i, j, value);
+    }
+  }
+
+  this->dataPtr->provider->SetImage(image);
+  this->newImage();
+
+  delete[] depthBuffer;
 }
 
 /////////////////////////////////////////////////
