@@ -17,23 +17,9 @@ add_definitions(
 
 set (qt_headers
   Application.hh
-#  BoolWidget.hh
-#  CollapsibleWidget.hh
-#  ColorWidget.hh
   Dialog.hh
-#  EditableLabel.hh
-#  EnumWidget.hh
-#  GeometryWidget.hh
   MainWindow.hh
-#  MessageWidget.hh
-#  NumberWidget.hh
   Plugin.hh
-#  Pose3dWidget.hh
-#  PropertyWidget.hh
-#  StringWidget.hh
-#  VariablePill.hh
-#  VariablePillContainer.hh
-#  Vector3dWidget.hh
 )
 
 set (headers
@@ -43,8 +29,6 @@ set (headers
   Helpers.hh
   ign.hh
   qt.h
-#  qwt.h
-#  QtMetatypes.hh
   SearchModel.hh
   System.hh
 )
@@ -76,9 +60,6 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
 )
 
 add_subdirectory(plugins)
-
-#ign_install_includes("" ${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}.hh)
-#ign_install_includes(${IGN_DESIGNATION} ${headers} ${qt_headers})
 
 ign_install_all_headers()
 

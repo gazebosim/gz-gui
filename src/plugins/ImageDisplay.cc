@@ -97,6 +97,8 @@ ImageDisplay::ImageDisplay()
 /////////////////////////////////////////////////
 ImageDisplay::~ImageDisplay()
 {
+  App()->Engine()->removeImageProvider(
+      this->CardItem()->objectName() + "imagedisplay");
 }
 
 /////////////////////////////////////////////////
