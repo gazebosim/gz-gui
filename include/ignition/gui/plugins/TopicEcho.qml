@@ -68,8 +68,8 @@ Rectangle {
     }
 
     Rectangle {
-      width: 200
-      height: 300
+      width: topicEcho.parent.width - 20
+      height: topicEcho.parent.height - 200
       color: "transparent"
 
       ListView {
