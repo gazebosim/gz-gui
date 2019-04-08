@@ -200,7 +200,7 @@ void WorldControl::OnStepCount(const unsigned int _steps)
 void WorldControl::OnStep()
 {
   std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+      [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
   {
   };
 
