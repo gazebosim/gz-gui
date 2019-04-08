@@ -40,10 +40,8 @@ TEST(ExampleTest, Configs)
   ignition::common::DirIter endIter;
   for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
   {
-    // pubsub.config is broken (issue #39)
     // image.config is broken (issue #40)
-    if ((*file).find("pubsub") != std::string::npos ||
-        (*file).find("image") != std::string::npos)
+    if ((*file).find("image") != std::string::npos)
     {
       ignerr << "skipping " << *file << std::endl;
       continue;

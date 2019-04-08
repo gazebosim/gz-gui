@@ -54,14 +54,6 @@ namespace plugins
       NOTIFY TopicChanged
     )
 
-    /// \brief Buffer size
-    Q_PROPERTY(
-      int buffer
-      READ Buffer
-      WRITE SetBuffer
-      NOTIFY BufferChanged
-    )
-
     /// \brief Paused
     Q_PROPERTY(
       bool paused
@@ -92,16 +84,7 @@ namespace plugins
     /// \brief Notify that topic has changed
     signals: void TopicChanged();
 
-    /// \brief Get the number of messages to be buffered.
-    /// \return Buffer size
-    public: Q_INVOKABLE int Buffer() const;
-
-    /// \brief Set the number of messages to be buffered.
-    /// \param[in] _buffer Buffer size
-    public: Q_INVOKABLE void SetBuffer(const int &_buffer);
-
-    /// \brief Notify that buffer has changed
-    signals: void BufferChanged();
+    public slots: void OnBuffer(const unsigned int _steps);
 
     /// \brief Get whether it is paused
     /// \return True if paused
