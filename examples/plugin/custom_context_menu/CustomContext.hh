@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_HELLOPLUGIN_HH_
-#define IGNITION_GUI_HELLOPLUGIN_HH_
+#ifndef IGNITION_GUI_CUSTOMCONTEXTPLUGIN_HH_
+#define IGNITION_GUI_CUSTOMCONTEXTPLUGIN_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
@@ -32,14 +32,10 @@ namespace ignition
       Q_OBJECT
 
       /// \brief Constructor
-      /// \param[in] _parent Parent widget
       public: CustomContext();
 
       /// \brief Destructor
       public: virtual ~CustomContext();
-
-      // Documentation inherited
-      protected slots: void ShowContextMenu(const QPoint &_pos);
     };
   }
 }

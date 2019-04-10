@@ -28,7 +28,6 @@
 
 #include <memory>
 
-#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
@@ -47,6 +46,30 @@ namespace plugins
   {
     Q_OBJECT
 
+    /// \brief Topic
+    Q_PROPERTY(
+      QString topic
+      READ Topic
+      WRITE SetTopic
+      NOTIFY TopicChanged
+    )
+
+    /// \brief Buffer size
+    Q_PROPERTY(
+      int buffer
+      READ Buffer
+      WRITE SetBuffer
+      NOTIFY BufferChanged
+    )
+
+    /// \brief Paused
+    Q_PROPERTY(
+      bool paused
+      READ Paused
+      WRITE SetPaused
+      NOTIFY PausedChanged
+    )
+
     /// \brief Constructor
     public: TopicEcho();
 
@@ -55,6 +78,41 @@ namespace plugins
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
+
+    /// \brief Get the topic as a string, for example
+    /// '/echo'
+    /// \return Topic
+    public: Q_INVOKABLE QString Topic() const;
+
+    /// \brief Set the topic from a string, for example
+    /// '/echo'
+    /// \param[in] _topic Topic
+    public: Q_INVOKABLE void SetTopic(const QString &_topic);
+
+    /// \brief Notify that topic has changed
+    signals: void TopicChanged();
+
+    /// \brief Get the number of messages to be buffered.
+    /// \return Buffer size
+    public: Q_INVOKABLE int Buffer() const;
+
+    /// \brief Set the number of messages to be buffered.
+    /// \param[in] _buffer Buffer size
+    public: Q_INVOKABLE void SetBuffer(const int &_buffer);
+
+    /// \brief Notify that buffer has changed
+    signals: void BufferChanged();
+
+    /// \brief Get whether it is paused
+    /// \return True if paused
+    public: Q_INVOKABLE bool Paused() const;
+
+    /// \brief Set whether to be paused
+    /// \param[in] _paused True if paused
+    public: Q_INVOKABLE void SetPaused(const bool &_paused);
+
+    /// \brief Notify that paused has changed
+    signals: void PausedChanged();
 
     /// \brief Signal to add a message to the GUI list.
     /// \param[in] _msg Text message to add.
@@ -68,17 +126,9 @@ namespace plugins
     private: void Stop();
 
     /// \brief Callback when echo button is pressed
-    private slots: void OnEcho(const bool _checked);
+    public slots: void OnEcho(const bool _checked);
 
-    /// \brief QT callback when the buffer spin box has been changed.
-    /// \param[in] _value New value of the spin box.
-    private slots: void OnBuffer(int _value);
-
-    /// \brief QT callback when the pause check box has been changed.
-    /// \param[in] _value New value of the check box.
-    private slots: void OnPause(bool _value);
-
-    /// \brief Callback from the ::AddMsg function.
+    /// \brief Callback from the ::AddMsg signal.
     /// \param[in] _msg Message to add to the list.
     private slots: void OnAddMsg(QString _msg);
 

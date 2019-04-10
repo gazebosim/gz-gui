@@ -1,5 +1,8 @@
-Command line {#commandline}
-============
+\page commandline Command Line
+
+Next Tutorial: \ref plugins
+
+## Overview
 
 If you have Ignition Tools installed, you can use the `ign gui` command line tool:
 

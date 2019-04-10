@@ -114,6 +114,7 @@ TEST(PublisherTest, Publish)
   pubButton->click();
 
   sleep = 0;
+  // cppcheck-suppress knownConditionTrueFalse
   while (!received && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -146,6 +147,7 @@ TEST(PublisherTest, Publish)
   pubButton->click();
 
   sleep = 0;
+  // cppcheck-suppress knownConditionTrueFalse
   while (!received && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

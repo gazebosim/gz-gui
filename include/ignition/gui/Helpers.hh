@@ -77,7 +77,6 @@ namespace ignition
     /// \param[in] _value The property value.
     /// \return The first matching element.
     template<class T>
-    IGNITION_GUI_VISIBLE
     T findFirstByProperty(const QList<T> _list, const char *_key,
         QVariant _value)
     {

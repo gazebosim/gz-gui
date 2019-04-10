@@ -1,5 +1,10 @@
-Style {#style}
-=====
+\page style Style
+
+Next Tutorial: \ref examples
+
+**This tutorial applies to ignition-gui0**
+
+## Overview
 
 Ignition GUI comes with a reference style based on [material design](https://material.io/).
 

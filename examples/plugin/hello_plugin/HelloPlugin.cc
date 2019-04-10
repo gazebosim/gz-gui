@@ -16,7 +16,7 @@
 */
 
 #include <iostream>
-#include <ignition/common/PluginMacros.hh>
+#include <ignition/plugin/Register.hh>
 
 #include "HelloPlugin.hh"
 
@@ -27,16 +27,6 @@ using namespace gui;
 HelloPlugin::HelloPlugin()
   : Plugin()
 {
-  // Create a push button, and connect it to the OnButton function
-  auto button = new QPushButton(tr("Hello, plugin!"));
-  connect(button, SIGNAL(clicked()), this, SLOT(OnButton()));
-
-  // Create the layout to hold the button
-  auto layout = new QHBoxLayout;
-  layout->addWidget(button);
-
-  // Use the layout
-  this->setLayout(layout);
 }
 
 /////////////////////////////////////////////////
@@ -51,5 +41,5 @@ void HelloPlugin::OnButton()
 }
 
 // Register this plugin
-IGN_COMMON_REGISTER_SINGLE_PLUGIN(ignition::gui::HelloPlugin,
-                                  ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(ignition::gui::HelloPlugin,
+                    ignition::gui::Plugin);

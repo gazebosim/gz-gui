@@ -1,5 +1,8 @@
-Examples {#examples}
-========
+\page examples Examples
+
+Next Tutorial: \ref examples
+
+## Overview
 
 Ignition GUI comes with several examples of plugins and other files
 under the `examples` folder.
