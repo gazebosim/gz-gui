@@ -2,13 +2,8 @@ set (qt_headers_local
   Grid3D
   ImageDisplay
   Publisher
-#  Requester
-#  Responder
   Scene3D
   TopicEcho
-#  TopicInterface
-#  TopicsStats
-#  TopicViewer
   WorldControl
   WorldStats
 )
@@ -36,5 +31,3 @@ foreach (src ${qt_headers_local})
   )
   install (TARGETS ${src} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endforeach (src ${qt_headers_local})
-
-#add_subdirectory(plot)
