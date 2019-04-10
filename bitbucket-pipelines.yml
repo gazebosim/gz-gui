@@ -39,11 +39,11 @@ pipelines:
             libignition-cmake2-dev
             libignition-common3-dev
             libignition-math6-dev
-            libignition-msgs3-dev
+            libignition-msgs4-dev
             libignition-plugin-dev
             libignition-rendering2-dev
             libignition-tools-dev
-            libignition-transport6-dev
+            libignition-transport7-dev
           # Ignition msgs (uncomment if a specific branch is needed)
           # - apt install -y
           #   libprotobuf-dev protobuf-compiler libprotoc-dev
