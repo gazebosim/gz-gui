@@ -6,7 +6,7 @@ Rectangle {
   id: topicEcho
   objectName: "topicEcho"
   Layout.minimumWidth: 300
-  Layout.minimumHeight: 1000
+  Layout.minimumHeight: 300
   color: "transparent"
 
   property int tooltipDelay: 500
@@ -48,9 +48,9 @@ Rectangle {
 
     SpinBox {
       id: bufferField
-      value: TopicEcho.buffer
+      value: 10
       onValueChanged: {
-        TopicEcho.SetBuffer(value)
+        TopicEcho.OnBuffer(value)
       }
     }
 
@@ -68,8 +68,8 @@ Rectangle {
     }
 
     Rectangle {
-      width: (topicEcho.width - 2 * 10)
-      height: 200
+      width: topicEcho.parent.width - 20
+      height: topicEcho.parent.height - 200
       color: "transparent"
 
       ListView {

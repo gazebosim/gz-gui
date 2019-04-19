@@ -39,7 +39,7 @@ namespace plugins
 
     /// \brief Size of the text buffer. The size is the number of
     /// messages.
-    public: int buffer{10};
+    public: unsigned int buffer{10u};
 
     /// \brief Flag used to pause message parsing.
     public: bool paused{false};
@@ -158,24 +158,9 @@ void TopicEcho::SetTopic(const QString &_topic)
 }
 
 /////////////////////////////////////////////////
-int TopicEcho::Buffer() const
+void TopicEcho::OnBuffer(const unsigned int _buffer)
 {
-  return this->dataPtr->buffer;
-}
-
-/////////////////////////////////////////////////
-void TopicEcho::SetBuffer(const int &_buffer)
-{
-  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-
   this->dataPtr->buffer = _buffer;
-
-  // Remove an item if the list is too long.
-  auto diff = this->dataPtr->msgList.rowCount() -
-      this->dataPtr->buffer;
-  this->dataPtr->msgList.removeRows(0, diff);
-
-  this->BufferChanged();
 }
 
 /////////////////////////////////////////////////
