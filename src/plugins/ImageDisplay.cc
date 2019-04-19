@@ -155,7 +155,7 @@ void ImageDisplay::ProcessImage()
     {
       ignwarn << "Unsupported image type: " <<
           this->dataPtr->imageMsg.pixel_format_type() <<
-          " contained in msgs::Image::pixel_format_type. "
+          " contained in msgs::Image::pixel_format_type. " <<
           " Trying deprecated field msgs::Image::pixel_format." << std::endl;
       switch (this->dataPtr->imageMsg.pixel_format())
       {
