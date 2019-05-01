@@ -395,6 +395,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   else
     this->InitializeDialogs();
 
+  this->PluginAdded(plugin->objectName());
   ignmsg << "Loaded plugin [" << _filename << "] from path [" << pathToLib
          << "]" << std::endl;
 

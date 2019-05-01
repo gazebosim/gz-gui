@@ -147,6 +147,10 @@ namespace ignition
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
 
+      /// \brief Notify that a plugin has been added.
+      /// \param[in] _objectName Plugin's object name.
+      signals: void PluginAdded(const QString &_objectName);
+
       /// \brief Callback when user requests to close a plugin
       public slots: void OnPluginClose();
 
