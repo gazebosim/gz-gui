@@ -61,5 +61,5 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
 
 add_subdirectory(plugins)
 
-ign_install_all_headers()
+ign_install_all_headers(EXCLUDE_DIRS plugins)
 
