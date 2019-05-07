@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.1
 
 /**
  * Side menu
@@ -10,6 +11,7 @@ Drawer {
     objectName: "sideDrawer"
     id: sideDrawer
     anchors.fill: parent
+    color: Material.background
 
     function closeDrawer() {
       drawer.close();
