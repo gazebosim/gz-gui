@@ -85,6 +85,14 @@ Pane {
    */
   objectName: "plugin" + Math.floor(Math.random() * 100000);
 
+  // Stop scroll propagation to widgets below
+  MouseArea {
+    anchors.fill: parent
+    onWheel: {
+      wheel.accepted = true
+    }
+  }
+
   /**
    * Callback when the parent has changed.
    */
