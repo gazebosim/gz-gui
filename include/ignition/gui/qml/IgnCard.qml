@@ -85,6 +85,14 @@ Pane {
    */
   objectName: "plugin" + Math.floor(Math.random() * 100000);
 
+  // Stop scroll propagation to widgets below
+  MouseArea {
+    anchors.fill: parent
+    onWheel: {
+      wheel.accepted = true
+    }
+  }
+
   /**
    * Callback when the parent has changed.
    */
@@ -292,7 +300,6 @@ Pane {
         maximumY: card.parent ? card.parent.height - card.height : card.height
         smoothed: true
       }
-      onWheel: { wheel.accepted = true }
     }
 
     /**
