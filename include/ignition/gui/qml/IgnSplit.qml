@@ -216,6 +216,7 @@ SplitView {
       Layout.minimumHeight: 100
       Layout.fillHeight: true
       Layout.fillWidth: true
+      color: Material.background
 
       /**
        * Notifies that its minimum size has changed.
