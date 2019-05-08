@@ -1,7 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-  <file>style.qss</file>
-
   <file>qtquickcontrols2.conf</file>
 
   <file>qml/IgnCard.qml</file>
@@ -18,17 +16,5 @@
 
   <file>qml/images/menu.png</file>
   <file>qml/images/drawer.png</file>
-
-  <file>images/branch-end.png</file>
-  <file>images/branch-more.png</file>
-  <file>images/close.svg</file>
-  <file>images/down_arrow.png</file>
-  <file>images/graph_line.svg</file>
-  <file>images/right_arrow.png</file>
-  <file>images/search.svg</file>
-  <file>images/settings.png</file>
-  <file>images/settings.svg</file>
-  <file>images/undock.svg</file>
-  <file>images/vline.png</file>
 </qresource>
 </RCC>
