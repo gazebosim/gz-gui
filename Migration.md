@@ -11,5 +11,5 @@ release will remove the deprecated code.
 
 ## Ignition GUI 0.1.0 to 1.0.0
 
-* Ignition GUI v1 uses QtQuick and is is not compatible with v0, which uses QWidgets.
+* Ignition GUI v1 uses QtQuick and it is not compatible with v0, which uses QWidgets.
 
