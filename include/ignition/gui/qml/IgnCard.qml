@@ -292,6 +292,7 @@ Pane {
         maximumY: card.parent ? card.parent.height - card.height : card.height
         smoothed: true
       }
+      onWheel: { wheel.accepted = true }
     }
 
     /**
