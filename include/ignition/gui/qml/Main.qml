@@ -21,6 +21,14 @@ ApplicationWindow
   property string materialTheme: window.Material.theme
   property string materialPrimary: window.Material.primary
   property string materialAccent: window.Material.accent
+  property string toolBarColorLight: MainWindow.toolBarColorLight
+  property string toolBarTextColorLight: MainWindow.toolBarTextColorLight
+  property string toolBarColorDark: MainWindow.toolBarColorDark
+  property string toolBarTextColorDark: MainWindow.toolBarTextColorDark
+  property string pluginToolBarColorLight: MainWindow.pluginToolBarColorLight
+  property string pluginToolBarTextColorLight: MainWindow.pluginToolBarTextColorLight
+  property string pluginToolBarColorDark: MainWindow.pluginToolBarColorDark
+  property string pluginToolBarTextColorDark: MainWindow.pluginToolBarTextColorDark
 
   /**
    * Tool bar background color
