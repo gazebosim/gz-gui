@@ -32,7 +32,7 @@ namespace ignition
     class MainWindowPrivate
     {
       /// \brief Number of plugins on the window
-      public: int pluginCount;
+      public: int pluginCount{0};
 
       /// \brief Pointer to quick window
       public: QQuickWindow *quickWindow{nullptr};
