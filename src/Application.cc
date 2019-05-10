@@ -154,8 +154,7 @@ Application::~Application()
 
   if (this->dataPtr->engine)
   {
-    delete this->dataPtr->engine;
-    this->dataPtr->engine = nullptr;
+    this->dataPtr->engine->deleteLater();
   }
 
   std::queue<std::shared_ptr<Plugin>> empty;
