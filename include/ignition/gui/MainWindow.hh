@@ -74,6 +74,78 @@ namespace ignition
         NOTIFY MaterialAccentChanged
       )
 
+      /// \brief Top toolbar color for light theme (Pre-defined color name or
+      /// hex value). Defaults to material primary.
+      Q_PROPERTY(
+        QString toolBarColorLight
+        READ ToolBarColorLight
+        WRITE SetToolBarColorLight
+        NOTIFY ToolBarColorLightChanged
+      )
+
+      /// \brief Top toolbar text color for light theme (Pre-defined color name
+      /// or hex value). Defaults to material background.
+      Q_PROPERTY(
+        QString toolBarTextColorLight
+        READ ToolBarTextColorLight
+        WRITE SetToolBarTextColorLight
+        NOTIFY ToolBarTextColorLightChanged
+      )
+
+      /// \brief Top toolbar color for dark theme (Pre-defined color name or
+      /// hex value). Defaults to material primary.
+      Q_PROPERTY(
+        QString toolBarColorDark
+        READ ToolBarColorDark
+        WRITE SetToolBarColorDark
+        NOTIFY ToolBarColorDarkChanged
+      )
+
+      /// \brief Top toolbar text color for dark theme (Pre-defined color name
+      /// or hex value). Defaults to material background.
+      Q_PROPERTY(
+        QString toolBarTextColorDark
+        READ ToolBarTextColorDark
+        WRITE SetToolBarTextColorDark
+        NOTIFY ToolBarTextColorDarkChanged
+      )
+
+      /// \brief Plugin toolbar color for light theme (Pre-defined color name or
+      /// hex value). Defaults to material accent.
+      Q_PROPERTY(
+        QString pluginToolBarColorLight
+        READ PluginToolBarColorLight
+        WRITE SetPluginToolBarColorLight
+        NOTIFY PluginToolBarColorLightChanged
+      )
+
+      /// \brief Plugin toolbar text color for light theme (Pre-defined color
+      /// name or hex value). Defaults to material foreground.
+      Q_PROPERTY(
+        QString pluginToolBarTextColorLight
+        READ PluginToolBarTextColorLight
+        WRITE SetPluginToolBarTextColorLight
+        NOTIFY PluginToolBarTextColorLightChanged
+      )
+
+      /// \brief Plugin toolbar color for dark theme (Pre-defined color name or
+      /// hex value). Defaults to material accent.
+      Q_PROPERTY(
+        QString pluginToolBarColorDark
+        READ PluginToolBarColorDark
+        WRITE SetPluginToolBarColorDark
+        NOTIFY PluginToolBarColorDarkChanged
+      )
+
+      /// \brief Plugin toolbar text color for dark theme (Pre-defined color
+      /// name or hex value). Defaults to material foreground.
+      Q_PROPERTY(
+        QString pluginToolBarTextColorDark
+        READ PluginToolBarTextColorDark
+        WRITE SetPluginToolBarTextColorDark
+        NOTIFY PluginToolBarTextColorDarkChanged
+      )
+
       /// \brief Flag to show side drawer
       Q_PROPERTY(
         bool showDrawer
@@ -168,6 +240,78 @@ namespace ignition
       public: Q_INVOKABLE void SetMaterialAccent(
           const QString &_materialAccent);
 
+      /// \brief Returns the top toolbar color for light theme.
+      /// \return Toolbar color
+      public: Q_INVOKABLE QString ToolBarColorLight() const;
+
+      /// \brief Sets the top toolbar color for light theme.
+      /// \param[in] _toolBarColorLight Toolbar color
+      public: Q_INVOKABLE void SetToolBarColorLight(
+          const QString &_toolBarColorLight);
+
+      /// \brief Returns the top toolbar text color for light theme.
+      /// \return Toolbar text color
+      public: Q_INVOKABLE QString ToolBarTextColorLight() const;
+
+      /// \brief Sets the top toolbar text color for light theme.
+      /// \param[in] _toolBarTextColorLight Toolbar text color
+      public: Q_INVOKABLE void SetToolBarTextColorLight(
+          const QString &_toolBarTextColorLight);
+
+      /// \brief Returns the top toolbar color for dark theme.
+      /// \return Toolbar color
+      public: Q_INVOKABLE QString ToolBarColorDark() const;
+
+      /// \brief Sets the top toolbar color for dark theme.
+      /// \param[in] _toolBarColorDark Toolbar color
+      public: Q_INVOKABLE void SetToolBarColorDark(
+          const QString &_toolBarColorDark);
+
+      /// \brief Returns the top toolbar text color for dark theme.
+      /// \return Toolbar text color
+      public: Q_INVOKABLE QString ToolBarTextColorDark() const;
+
+      /// \brief Sets the top toolbar text color for dark theme.
+      /// \param[in] _toolBarTextColorDark Toolbar text color
+      public: Q_INVOKABLE void SetToolBarTextColorDark(
+          const QString &_toolBarTextColorDark);
+
+      /// \brief Returns the plugin toolbar color for light theme.
+      /// \return Toolbar color
+      public: Q_INVOKABLE QString PluginToolBarColorLight() const;
+
+      /// \brief Sets the plugin toolbar color for light theme.
+      /// \param[in] _pluginPluginToolBarColorLight Toolbar color
+      public: Q_INVOKABLE void SetPluginToolBarColorLight(
+          const QString &_pluginPluginToolBarColorLight);
+
+      /// \brief Returns the plugin toolbar text color for light theme.
+      /// \return Toolbar text color
+      public: Q_INVOKABLE QString PluginToolBarTextColorLight() const;
+
+      /// \brief Sets the plugin toolbar text color for light theme.
+      /// \param[in] _pluginPluginToolBarTextColorLight Toolbar text color
+      public: Q_INVOKABLE void SetPluginToolBarTextColorLight(
+          const QString &_pluginPluginToolBarTextColorLight);
+
+      /// \brief Returns the plugin toolbar color for dark theme.
+      /// \return Toolbar color
+      public: Q_INVOKABLE QString PluginToolBarColorDark() const;
+
+      /// \brief Sets the plugin toolbar color for dark theme.
+      /// \param[in] _pluginPluginToolBarColorDark Toolbar color
+      public: Q_INVOKABLE void SetPluginToolBarColorDark(
+          const QString &_pluginPluginToolBarColorDark);
+
+      /// \brief Returns the plugin toolbar text color for dark theme.
+      /// \return Toolbar text color
+      public: Q_INVOKABLE QString PluginToolBarTextColorDark() const;
+
+      /// \brief Sets the plugin toolbar text color for dark theme.
+      /// \param[in] _pluginPluginToolBarTextColorDark Toolbar text color
+      public: Q_INVOKABLE void SetPluginToolBarTextColorDark(
+          const QString &_pluginPluginToolBarTextColorDark);
+
       /// \brief Get the flag to show the side drawer.
       /// \return True to show.
       public: Q_INVOKABLE bool ShowDrawer() const;
@@ -213,6 +357,30 @@ namespace ignition
 
       /// \brief Notifies when the accent color has changed.
       signals: void MaterialAccentChanged();
+
+      /// \brief Notifies when the toolbar color light has changed.
+      signals: void ToolBarColorLightChanged();
+
+      /// \brief Notifies when the toolbar text color light has changed.
+      signals: void ToolBarTextColorLightChanged();
+
+      /// \brief Notifies when the toolbar color dark has changed.
+      signals: void ToolBarColorDarkChanged();
+
+      /// \brief Notifies when the toolbar text color dark has changed.
+      signals: void ToolBarTextColorDarkChanged();
+
+      /// \brief Notifies when the toolbar color light has changed.
+      signals: void PluginToolBarColorLightChanged();
+
+      /// \brief Notifies when the toolbar text color light has changed.
+      signals: void PluginToolBarTextColorLightChanged();
+
+      /// \brief Notifies when the toolbar color dark has changed.
+      signals: void PluginToolBarColorDarkChanged();
+
+      /// \brief Notifies when the toolbar text color dark has changed.
+      signals: void PluginToolBarTextColorDarkChanged();
 
       /// \brief Notifies when the show drawer flag has changed.
       signals: void ShowDrawerChanged();
@@ -281,6 +449,30 @@ namespace ignition
 
       /// \brief Material accent color
       std::string materialAccent{""};
+
+      /// \brief Top toolbar color light
+      std::string toolBarColorLight{""};
+
+      /// \brief Top toolbar text color light
+      std::string toolBarTextColorLight{""};
+
+      /// \brief Top toolbar color dark
+      std::string toolBarColorDark{""};
+
+      /// \brief Top toolbar text color dark
+      std::string toolBarTextColorDark{""};
+
+      /// \brief Plugin toolbar color light
+      std::string pluginToolBarColorLight{""};
+
+      /// \brief Plugin toolbar text color light
+      std::string pluginToolBarTextColorLight{""};
+
+      /// \brief Plugin toolbar color dark
+      std::string pluginToolBarColorDark{""};
+
+      /// \brief Plugin toolbar text color dark
+      std::string pluginToolBarTextColorDark{""};
 
       /// \brief
       bool showDrawer{true};
