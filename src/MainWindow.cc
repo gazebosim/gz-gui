@@ -301,15 +301,22 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
     this->SetMaterialPrimary(QString::fromStdString(_config.materialPrimary));
     this->SetMaterialAccent(QString::fromStdString(_config.materialAccent));
 
-    this->SetToolBarColorLight(QString::fromStdString(_config.toolBarColorLight));
-    this->SetToolBarTextColorLight(QString::fromStdString(_config.toolBarTextColorLight));
+    this->SetToolBarColorLight(QString::fromStdString(
+        _config.toolBarColorLight));
+    this->SetToolBarTextColorLight(QString::fromStdString(
+        _config.toolBarTextColorLight));
     this->SetToolBarColorDark(QString::fromStdString(_config.toolBarColorDark));
-    this->SetToolBarTextColorDark(QString::fromStdString(_config.toolBarTextColorDark));
+    this->SetToolBarTextColorDark(QString::fromStdString(
+        _config.toolBarTextColorDark));
 
-    this->SetPluginToolBarColorLight(QString::fromStdString(_config.pluginToolBarColorLight));
-    this->SetPluginToolBarTextColorLight(QString::fromStdString(_config.pluginToolBarTextColorLight));
-    this->SetPluginToolBarColorDark(QString::fromStdString(_config.pluginToolBarColorDark));
-    this->SetPluginToolBarTextColorDark(QString::fromStdString(_config.pluginToolBarTextColorDark));
+    this->SetPluginToolBarColorLight(QString::fromStdString(
+        _config.pluginToolBarColorLight));
+    this->SetPluginToolBarTextColorLight(QString::fromStdString(
+        _config.pluginToolBarTextColorLight));
+    this->SetPluginToolBarColorDark(QString::fromStdString(
+        _config.pluginToolBarColorDark));
+    this->SetPluginToolBarTextColorDark(QString::fromStdString(
+        _config.pluginToolBarTextColorDark));
   }
 
   // Menus
@@ -347,19 +354,19 @@ WindowConfig MainWindow::CurrentWindowConfig() const
 
   // Style
   config.materialTheme = this->QuickWindow()->property("materialTheme")
-      .toString().toStdString() == "0" ? "Light" : "Dark";
+    .toString().toStdString() == "0" ? "Light" : "Dark";
   config.materialPrimary = this->QuickWindow()->property("materialPrimary")
-      .toString().toStdString();
+    .toString().toStdString();
   config.materialAccent =
-      this->QuickWindow()->property("materialAccent").toString().toStdString();
+    this->QuickWindow()->property("materialAccent").toString().toStdString();
   config.toolBarColorLight =
-      this->QuickWindow()->property("toolBarColorLight").toString().toStdString();
-  config.toolBarTextColorLight =
-    this->QuickWindow()->property("toolBarTextColorLight").toString().toStdString();
+    this->QuickWindow()->property("toolBarColorLight").toString().toStdString();
+  config.toolBarTextColorLight = this->QuickWindow()->property(
+    "toolBarTextColorLight").toString().toStdString();
   config.toolBarColorDark =
-      this->QuickWindow()->property("toolBarColorDark").toString().toStdString();
-  config.toolBarTextColorDark =
-    this->QuickWindow()->property("toolBarTextColorDark").toString().toStdString();
+    this->QuickWindow()->property("toolBarColorDark").toString().toStdString();
+  config.toolBarTextColorDark = this->QuickWindow()->property(
+    "toolBarTextColorDark").toString().toStdString();
 
   // Menus configuration and ignored properties are kept the same as the
   // initial ones. They might have been changed programatically but we
@@ -450,12 +457,14 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
     {
       this->toolBarTextColorDark = tbTextColorDark;
     }
-    auto pluginTBColorLight = styleElem->Attribute("plugin_toolbar_color_light");
+    auto pluginTBColorLight =
+        styleElem->Attribute("plugin_toolbar_color_light");
     if (pluginTBColorLight)
     {
       this->pluginToolBarColorLight = pluginTBColorLight;
     }
-    auto pluginTBTextColorLight = styleElem->Attribute("plugin_toolbar_text_color_light");
+    auto pluginTBTextColorLight =
+        styleElem->Attribute("plugin_toolbar_text_color_light");
     if (pluginTBTextColorLight)
     {
       this->pluginToolBarTextColorLight = pluginTBTextColorLight;
@@ -465,7 +474,8 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
     {
       this->pluginToolBarColorDark = pluginTBColorDark;
     }
-    auto pluginTBTextColorDark = styleElem->Attribute("plugin_toolbar_text_color_dark");
+    auto pluginTBTextColorDark =
+        styleElem->Attribute("plugin_toolbar_text_color_dark");
     if (pluginTBTextColorDark)
     {
       this->pluginToolBarTextColorDark = pluginTBTextColorDark;
@@ -592,14 +602,20 @@ std::string WindowConfig::XMLString() const
     elem->SetAttribute("material_accent", this->materialAccent.c_str());
 
     elem->SetAttribute("toolbar_color_light", this->toolBarColorLight.c_str());
-    elem->SetAttribute("toolbar_text_color_light", this->toolBarTextColorLight.c_str());
+    elem->SetAttribute("toolbar_text_color_light",
+        this->toolBarTextColorLight.c_str());
     elem->SetAttribute("toolbar_color_dark", this->toolBarColorDark.c_str());
-    elem->SetAttribute("toolbar_text_color_dark", this->toolBarTextColorDark.c_str());
+    elem->SetAttribute("toolbar_text_color_dark",
+        this->toolBarTextColorDark.c_str());
 
-    elem->SetAttribute("plugin_toolbar_color_light", this->pluginToolBarColorLight.c_str());
-    elem->SetAttribute("plugin_toolbar_text_color_light", this->pluginToolBarTextColorLight.c_str());
-    elem->SetAttribute("plugin_toolbar_color_dark", this->pluginToolBarColorDark.c_str());
-    elem->SetAttribute("plugin_toolbar_text_color_dark", this->pluginToolBarTextColorDark.c_str());
+    elem->SetAttribute("plugin_toolbar_color_light",
+        this->pluginToolBarColorLight.c_str());
+    elem->SetAttribute("plugin_toolbar_text_color_light",
+        this->pluginToolBarTextColorLight.c_str());
+    elem->SetAttribute("plugin_toolbar_color_dark",
+        this->pluginToolBarColorDark.c_str());
+    elem->SetAttribute("plugin_toolbar_text_color_dark",
+        this->pluginToolBarTextColorDark.c_str());
 
     windowElem->InsertEndChild(elem);
   }
@@ -733,14 +749,16 @@ QString MainWindow::ToolBarColorLight() const
 /////////////////////////////////////////////////
 void MainWindow::SetToolBarColorLight(const QString &_toolBarColorLight)
 {
-  this->dataPtr->windowConfig.toolBarColorLight = _toolBarColorLight.toStdString();
+  this->dataPtr->windowConfig.toolBarColorLight =
+      _toolBarColorLight.toStdString();
   this->ToolBarColorLightChanged();
 }
 
 /////////////////////////////////////////////////
 QString MainWindow::ToolBarTextColorLight() const
 {
-  return QString::fromStdString(this->dataPtr->windowConfig.toolBarTextColorLight);
+  return QString::fromStdString(
+      this->dataPtr->windowConfig.toolBarTextColorLight);
 }
 
 /////////////////////////////////////////////////
@@ -761,14 +779,16 @@ QString MainWindow::ToolBarColorDark() const
 /////////////////////////////////////////////////
 void MainWindow::SetToolBarColorDark(const QString &_toolBarColorDark)
 {
-  this->dataPtr->windowConfig.toolBarColorDark = _toolBarColorDark.toStdString();
+  this->dataPtr->windowConfig.toolBarColorDark =
+      _toolBarColorDark.toStdString();
   this->ToolBarColorDarkChanged();
 }
 
 /////////////////////////////////////////////////
 QString MainWindow::ToolBarTextColorDark() const
 {
-  return QString::fromStdString(this->dataPtr->windowConfig.toolBarTextColorDark);
+  return QString::fromStdString(
+      this->dataPtr->windowConfig.toolBarTextColorDark);
 }
 
 /////////////////////////////////////////////////
@@ -782,25 +802,30 @@ void MainWindow::SetToolBarTextColorDark(const QString &_toolBarTextColorDark)
 /////////////////////////////////////////////////
 QString MainWindow::PluginToolBarColorLight() const
 {
-  return QString::fromStdString(this->dataPtr->windowConfig.pluginToolBarColorLight);
+  return QString::fromStdString(
+      this->dataPtr->windowConfig.pluginToolBarColorLight);
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SetPluginToolBarColorLight(const QString &_pluginToolBarColorLight)
+void MainWindow::SetPluginToolBarColorLight(
+    const QString &_pluginToolBarColorLight)
 {
   igndbg << "PLUGIN TEXT LIGHT" << std::endl;
-  this->dataPtr->windowConfig.pluginToolBarColorLight = _pluginToolBarColorLight.toStdString();
+  this->dataPtr->windowConfig.pluginToolBarColorLight =
+      _pluginToolBarColorLight.toStdString();
   this->PluginToolBarColorLightChanged();
 }
 
 /////////////////////////////////////////////////
 QString MainWindow::PluginToolBarTextColorLight() const
 {
-  return QString::fromStdString(this->dataPtr->windowConfig.pluginToolBarTextColorLight);
+  return QString::fromStdString(
+      this->dataPtr->windowConfig.pluginToolBarTextColorLight);
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SetPluginToolBarTextColorLight(const QString &_pluginToolBarTextColorLight)
+void MainWindow::SetPluginToolBarTextColorLight(
+    const QString &_pluginToolBarTextColorLight)
 {
   this->dataPtr->windowConfig.pluginToolBarTextColorLight =
       _pluginToolBarTextColorLight.toStdString();
@@ -810,24 +835,29 @@ void MainWindow::SetPluginToolBarTextColorLight(const QString &_pluginToolBarTex
 /////////////////////////////////////////////////
 QString MainWindow::PluginToolBarColorDark() const
 {
-  return QString::fromStdString(this->dataPtr->windowConfig.pluginToolBarColorDark);
+  return QString::fromStdString(
+      this->dataPtr->windowConfig.pluginToolBarColorDark);
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SetPluginToolBarColorDark(const QString &_pluginToolBarColorDark)
+void MainWindow::SetPluginToolBarColorDark(
+    const QString &_pluginToolBarColorDark)
 {
-  this->dataPtr->windowConfig.pluginToolBarColorDark = _pluginToolBarColorDark.toStdString();
+  this->dataPtr->windowConfig.pluginToolBarColorDark =
+      _pluginToolBarColorDark.toStdString();
   this->PluginToolBarColorDarkChanged();
 }
 
 /////////////////////////////////////////////////
 QString MainWindow::PluginToolBarTextColorDark() const
 {
-  return QString::fromStdString(this->dataPtr->windowConfig.pluginToolBarTextColorDark);
+  return QString::fromStdString(
+      this->dataPtr->windowConfig.pluginToolBarTextColorDark);
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SetPluginToolBarTextColorDark(const QString &_pluginToolBarTextColorDark)
+void MainWindow::SetPluginToolBarTextColorDark(
+    const QString &_pluginToolBarTextColorDark)
 {
   this->dataPtr->windowConfig.pluginToolBarTextColorDark =
       _pluginToolBarTextColorDark.toStdString();

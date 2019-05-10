@@ -119,8 +119,8 @@ namespace ignition
         NOTIFY PluginToolBarColorLightChanged
       )
 
-      /// \brief Plugin toolbar text color for light theme (Pre-defined color name
-      /// or hex value). Defaults to material foreground.
+      /// \brief Plugin toolbar text color for light theme (Pre-defined color
+      /// name or hex value). Defaults to material foreground.
       Q_PROPERTY(
         QString pluginToolBarTextColorLight
         READ PluginToolBarTextColorLight
@@ -137,8 +137,8 @@ namespace ignition
         NOTIFY PluginToolBarColorDarkChanged
       )
 
-      /// \brief Plugin toolbar text color for dark theme (Pre-defined color name
-      /// or hex value). Defaults to material foreground.
+      /// \brief Plugin toolbar text color for dark theme (Pre-defined color
+      /// name or hex value). Defaults to material foreground.
       Q_PROPERTY(
         QString pluginToolBarTextColorDark
         READ PluginToolBarTextColorDark
