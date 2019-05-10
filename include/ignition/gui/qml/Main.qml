@@ -22,13 +22,29 @@ ApplicationWindow
   property string materialPrimary: window.Material.primary
   property string materialAccent: window.Material.accent
 
+  /**
+   * Tool bar background color
+   */
+  property string toolBarColor:
+    MainWindow.toolBarColorLight === "" ||
+    MainWindow.toolBarColorDark === "" ?
+    Material.primary :
+    (Material.theme === Material.Light) ?
+    MainWindow.toolBarColorLight : MainWindow.toolBarColorDark
+
+  /**
+   * Tool bar text color
+   */
+  property string toolBarTextColor:
+    MainWindow.toolBarTextColorLight === "" ||
+    MainWindow.toolBarTextColorDark === "" ?
+    Material.background :
+    (Material.theme === Material.Light) ?
+    MainWindow.toolBarTextColorLight : MainWindow.toolBarTextColorDark
+
   // Not sure why the binding doesn't take care of this
   onTitleChanged: {
     titleLabel.text = window.title
-  }
-
-  Material.onBackgroundChanged: {
-    titleLabel.color = Material.background
   }
 
   // C++ signals to QML slots
@@ -86,6 +102,9 @@ ApplicationWindow
    * Top toolbar
    */
   header: ToolBar {
+    Material.background: toolBarColor
+    Material.foreground: Material.foreground
+
     MouseArea {
       anchors.fill: parent;
       property variant clickPos: "1,1"
@@ -130,7 +149,7 @@ ApplicationWindow
         id: titleLabel
         text: window.title
         font.pixelSize: 18
-        color: Material.background
+        color: toolBarTextColor
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter

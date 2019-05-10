@@ -71,6 +71,26 @@ Pane {
   property bool anchored: false
 
   /**
+   * Tool bar background color
+   */
+  property string pluginToolBarColor:
+    MainWindow.pluginToolBarColorLight === "" ||
+    MainWindow.pluginToolBarColorDark === "" ?
+    Material.accent :
+    (Material.theme === Material.Light) ?
+    MainWindow.pluginToolBarColorLight : MainWindow.pluginToolBarColorDark
+
+  /**
+   * Tool bar text color
+   */
+  property string pluginToolBarTextColor:
+    MainWindow.pluginToolBarTextColorLight === "" ||
+    MainWindow.pluginToolBarTextColorDark === "" ?
+    Material.background :
+    (Material.theme === Material.Light) ?
+    MainWindow.pluginToolBarTextColorLight : MainWindow.pluginToolBarTextColorDark
+
+  /**
    * Close signal
    */
   signal close()
@@ -283,7 +303,7 @@ Pane {
     objectName: "cardToolbar"
     visible: card.showTitleBar
     Material.foreground: Material.foreground
-    Material.background: Material.accent
+    Material.background: pluginToolBarColor
     width: card.width
     height: card.showTitleBar ? 50 : 0
     x: 0
@@ -313,7 +333,7 @@ Pane {
       Label {
         id: titleLabel
         font.pixelSize: 16
-        color: card.Material.background
+        color: pluginToolBarTextColor
         elide: Label.ElideRight
         horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
