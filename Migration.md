@@ -9,6 +9,8 @@ release will remove the deprecated code.
 
 * Plugin headers are no longer installed.
 
+* Use ignition msgs4, rendering2, and transport7.
+
 ## Ignition GUI 0.1.0 to 1.0.0
 
 * Ignition GUI v1 uses QtQuick and it is not compatible with v0, which uses QWidgets.
