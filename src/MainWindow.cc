@@ -764,7 +764,6 @@ QString MainWindow::ToolBarTextColorLight() const
 /////////////////////////////////////////////////
 void MainWindow::SetToolBarTextColorLight(const QString &_toolBarTextColorLight)
 {
-  igndbg << "TOP TEXT LIGHT" << std::endl;
   this->dataPtr->windowConfig.toolBarTextColorLight =
       _toolBarTextColorLight.toStdString();
   this->ToolBarTextColorLightChanged();
@@ -810,7 +809,6 @@ QString MainWindow::PluginToolBarColorLight() const
 void MainWindow::SetPluginToolBarColorLight(
     const QString &_pluginToolBarColorLight)
 {
-  igndbg << "PLUGIN TEXT LIGHT" << std::endl;
   this->dataPtr->windowConfig.pluginToolBarColorLight =
       _pluginToolBarColorLight.toStdString();
   this->PluginToolBarColorLightChanged();
