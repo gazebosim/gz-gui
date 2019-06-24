@@ -33,11 +33,10 @@ void Dock::closeEvent(QCloseEvent *_e)
   }
   else
   {
-    // Notify everyone so the one responsible for the plugin deletes it
-    this->Closing();
-
     // Set child free so we don't delete it with us
     plugin->setParent(nullptr);
+    // Notify everyone so the one responsible for the plugin deletes it
+    this->Closing();
   }
 
   QDockWidget::closeEvent(_e);
