@@ -341,7 +341,6 @@ bool ignition::gui::stop()
   for (auto dialog : g_dialogs)
   {
     dialog->close();
-    dialog->deleteLater();
   }
   g_dialogs.clear();
 
