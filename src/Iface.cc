@@ -696,7 +696,7 @@ bool ignition::gui::addPluginsToWindow()
 
     g_mainWin->connect(dock, &Dock::Closing, [weakPlugin]
     {
-      if(!weakPlugin.expired())
+      if (!weakPlugin.expired())
       {
         removeAddedPlugin(weakPlugin.lock());
       }
@@ -778,7 +778,7 @@ bool ignition::gui::runDialogs()
     std::weak_ptr<Plugin> weakPlugin(plugin);
     g_mainWin->connect(dialog, &Dialog::Closing, [weakPlugin]
     {
-      if(!weakPlugin.expired())
+      if (!weakPlugin.expired())
       {
         removeAddedPlugin(weakPlugin.lock());
       }
