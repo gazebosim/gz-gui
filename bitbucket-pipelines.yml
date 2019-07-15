@@ -1,34 +1,42 @@
-image: ubuntu:xenial
+image: ubuntu:bionic
 
 pipelines:
   default:
     - step:
         script:
           # Install dependencies
-          - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable xenial main" > /etc/apt/sources.list.d/gazebo-stable.list
-          - echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease xenial main" > /etc/apt/sources.list.d/gazebo-prerelease.list
-          - apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+          - apt update
+          - apt -y install wget lsb-release gnupg
+          - sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+          - wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
           - apt update
           - apt install -y
-            build-essential wget cmake cppcheck mercurial
+            build-essential wget cmake cppcheck git mercurial
             qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
             libignition-cmake1-dev
             libignition-common3-dev
             libignition-math6-dev
             libignition-msgs2-dev
+            libignition-rendering2-dev
             libignition-tools-dev
             libignition-transport5-dev
-            libogre-1.9-dev
-          # Static checking before building
-          - sh tools/code_check.sh
-          # Ignition rendering
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b ign-rendering0
-          - cd ign-rendering
+          # lcov
+          - git clone https://github.com/linux-test-project/lcov.git -b v1.14
+          - cd lcov
+          - make install
+          - cd ..
+          # Ignition msgs (uncomment if a specific branch is needed)
+          - apt install -y
+            libprotobuf-dev protobuf-compiler libprotoc-dev
+          - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b msgs2_use_math6
+          - cd ign-msgs
           - mkdir build
           - cd build
-          - cmake .. # -DENABLE_TESTS_COMPILATION=false
+          - cmake ..
           - make -j4 install
           - cd ../..
+          # Static checking before building
+          - sh tools/code_check.sh
           # Ignition GUI
           - mkdir build
           - cd build
