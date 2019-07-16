@@ -26,15 +26,15 @@ pipelines:
           - make install
           - cd ..
           # Ignition msgs (uncomment if a specific branch is needed)
-          - apt install -y
-            libprotobuf-dev protobuf-compiler libprotoc-dev
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b msgs2_use_math6
-          - cd ign-msgs
-          - mkdir build
-          - cd build
-          - cmake ..
-          - make -j4 install
-          - cd ../..
+          # - apt install -y
+          #   libprotobuf-dev protobuf-compiler libprotoc-dev
+          # - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b msgs2_use_math6
+          # - cd ign-msgs
+          # - mkdir build
+          # - cd build
+          # - cmake ..
+          # - make -j4 install
+          # - cd ../..
           # Static checking before building
           - sh tools/code_check.sh
           # Ignition GUI
