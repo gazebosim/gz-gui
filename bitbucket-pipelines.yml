@@ -14,7 +14,7 @@ pipelines:
             build-essential wget cmake cppcheck git mercurial
             qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
             libignition-cmake1-dev
-            libignition-common2-dev
+            libignition-common3-dev
             libignition-math6-dev
             libignition-msgs2-dev
             libignition-rendering2-dev

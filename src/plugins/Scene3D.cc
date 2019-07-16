@@ -84,6 +84,7 @@ Scene3D::~Scene3D()
          << std::endl;
   // Destroy camera
   auto scene = this->dataPtr->camera->Scene();
+  this->dataPtr->camera->RemoveChildren();
   scene->DestroyNode(this->dataPtr->camera);
   this->dataPtr->camera.reset();
 
