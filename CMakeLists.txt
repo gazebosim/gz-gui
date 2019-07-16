@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-gui0 VERSION 0.1.1)
+project(ignition-gui0 VERSION 0.2.0)
 
 #============================================================================
 # Find ignition-cmake
@@ -48,13 +48,13 @@ ign_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
 # Find ignition-math
-ign_find_package(ignition-math5 REQUIRED)
-set(IGN_MATH_VER ${ignition-math5_VERSION_MAJOR})
+ign_find_package(ignition-math6 REQUIRED)
+set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-common
-ign_find_package(ignition-common2 REQUIRED)
-set(IGN_COMMON_VER ${ignition-common2_VERSION_MAJOR})
+ign_find_package(ignition-common3 REQUIRED)
+set(IGN_COMMON_VER ${ignition-common3_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-transport
@@ -63,8 +63,8 @@ set(IGN_TRANSPORT_VER ${ignition-transport5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering0 REQUIRED)
-set(IGN_RENDERING_VER ${ignition-rendering0_VERSION_MAJOR})
+ign_find_package(ignition-rendering2 REQUIRED)
+set(IGN_RENDERING_VER ${ignition-rendering2_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-msgs

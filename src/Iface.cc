@@ -20,6 +20,7 @@
 #include <tinyxml2.h>
 
 #include <iostream>
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
@@ -340,7 +341,6 @@ bool ignition::gui::stop()
   for (auto dialog : g_dialogs)
   {
     dialog->close();
-    dialog->deleteLater();
   }
   g_dialogs.clear();
 
@@ -392,6 +392,7 @@ bool ignition::gui::loadConfig(const std::string &_config)
   ignmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Clear all previous plugins
+  g_mainWin->CloseAllDocks();
   g_pluginsAdded.clear();
 
   // Process each plugin
@@ -691,10 +692,14 @@ bool ignition::gui::addPluginsToWindow()
 
     ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
+    std::weak_ptr<Plugin> weakPlugin(plugin);
 
-    g_mainWin->connect(dock, &Dock::Closing, [plugin]
+    g_mainWin->connect(dock, &Dock::Closing, [weakPlugin]
     {
-      removeAddedPlugin(plugin);
+      if (!weakPlugin.expired())
+      {
+        removeAddedPlugin(weakPlugin.lock());
+      }
     });
 
     count++;
@@ -770,9 +775,13 @@ bool ignition::gui::runDialogs()
     g_pluginsAdded.push_back(plugin);
     g_pluginsToAdd.pop();
 
-    g_mainWin->connect(dialog, &Dialog::Closing, [plugin]
+    std::weak_ptr<Plugin> weakPlugin(plugin);
+    g_mainWin->connect(dialog, &Dialog::Closing, [weakPlugin]
     {
-      removeAddedPlugin(plugin);
+      if (!weakPlugin.expired())
+      {
+        removeAddedPlugin(weakPlugin.lock());
+      }
     });
 
     dialog->show();
