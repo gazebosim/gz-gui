@@ -275,7 +275,8 @@ void MainWindow::OnSaveConfig()
 void MainWindow::OnSaveConfigAs()
 {
   QFileDialog fileDialog(this, tr("Save configuration"), QDir::homePath(),
-      tr("*.config"));
+      "*.config");
+  fileDialog.setDefaultSuffix("config");
   fileDialog.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint |
       Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
   fileDialog.setAcceptMode(QFileDialog::AcceptSave);
