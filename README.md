@@ -131,26 +131,26 @@ Install dependencies:
     sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
     sudo apt update
-    sudo apt install -y
-        g++-8
-        libignition-cmake2-dev
-        libignition-common3-dev
-        libignition-math6-dev
-        libignition-msgs3-dev
-        libignition-plugin-dev
-        libignition-rendering-dev
-        libignition-tools-dev
-        libignition-transport6-dev
-        libtinyxml2-dev
-        qtbase5-dev
-        qtdeclarative5-dev
-        qtquickcontrols2-5-dev
-        qml-module-qtquick2
-        qml-module-qtquick-controls
-        qml-module-qtquick-controls2
-        qml-module-qtquick-dialogs
-        qml-module-qtquick-layouts
-        qml-module-qt-labs-folderlistmodel
+    sudo apt install -y \
+        g++-8 \
+        libignition-cmake2-dev \
+        libignition-common3-dev \
+        libignition-math6-dev \
+        libignition-msgs3-dev \
+        libignition-plugin-dev \
+        libignition-rendering-dev \
+        libignition-tools-dev \
+        libignition-transport6-dev \
+        libtinyxml2-dev \
+        qtbase5-dev \
+        qtdeclarative5-dev \
+        qtquickcontrols2-5-dev \
+        qml-module-qtquick2 \
+        qml-module-qtquick-controls \
+        qml-module-qtquick-controls2 \
+        qml-module-qtquick-dialogs \
+        qml-module-qtquick-layouts \
+        qml-module-qt-labs-folderlistmodel \
         qml-module-qt-labs-settings
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
