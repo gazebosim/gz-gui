@@ -5,6 +5,10 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Ignition GUI 2.x to 3.x
+
+* Use rendering3.
+
 ## Ignition GUI 1.x to 2.x
 
 * Plugin headers are no longer installed.
