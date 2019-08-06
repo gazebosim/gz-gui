@@ -81,6 +81,8 @@ MainWindow::MainWindow()
            << "]" << std::endl;
     return;
   }
+
+  App()->setWindowIcon(QIcon(":/qml/images/ignition_logo_50x50.png"));
 }
 
 /////////////////////////////////////////////////
