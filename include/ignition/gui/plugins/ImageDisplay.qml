@@ -13,7 +13,7 @@ Rectangle {
   /**
    * True to show topic picker
    */
-  property bool showPicker: true
+  property bool showPicker: false
 
   /**
    * Unique name for this plugin instance
