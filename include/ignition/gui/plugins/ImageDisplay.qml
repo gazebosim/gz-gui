@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.3
 Rectangle {
   id: "imageDisplay"
   color: "transparent"
+  anchors.fill: parent
   Layout.minimumWidth: 250
   Layout.minimumHeight: 375
 
@@ -35,12 +36,12 @@ Rectangle {
     onNewImage: image.reload();
   }
 
-  Column {
+  ColumnLayout {
     id: imageDisplayColumn
     anchors.fill: parent
     anchors.margins: 10
 
-    Row {
+    RowLayout {
       visible: showPicker
       RoundButton {
         text: "\u21bb"
@@ -69,9 +70,12 @@ Rectangle {
         ToolTip.text: qsTr("Ignition transport topics publishing Image messages")
       }
     }
-
     Image {
       id: image
+      fillMode: Image.PreserveAspectFit
+      Layout.fillHeight: true
+      Layout.fillWidth: true
+      verticalAlignment: Image.AlignTop
       function reload() {
         // Force image request to C++
         source = "image://" + uniqueName + "/" + Math.random().toString(36).substr(2, 5);
