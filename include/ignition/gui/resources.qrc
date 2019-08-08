@@ -14,7 +14,8 @@
   <file>qml/StandaloneDialog.qml</file>
   <file>qml/StyleDialog.qml</file>
 
-  <file>qml/images/menu.png</file>
+  <file>qml/images/ignition_logo_50x50.png</file>
   <file>qml/images/drawer.png</file>
+  <file>qml/images/menu.png</file>
 </qresource>
 </RCC>
