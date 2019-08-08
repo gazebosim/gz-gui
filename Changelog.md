@@ -1,6 +1,12 @@
 ## Ignition Gui 2
 
-### Ignition Gui 2.X.X
+### Ignition Gui 2.0.1
+
+1. Made image display responsive.
+    * [Pull request 223](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/223)
+
+1. Downstream applications can override this using MainWindow::setIcon once they get the window.
+    * [Pull request 222](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/222)
 
 ### Ignition Gui 2.0.0
 
