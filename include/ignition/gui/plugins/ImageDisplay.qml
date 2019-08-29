@@ -62,7 +62,7 @@ Rectangle {
           if (currentIndex < 0)
             return;
 
-          ImageDisplay.OnTopic(currentText);
+          ImageDisplay.OnTopic(textAt(currentIndex));
         }
         ToolTip.visible: hovered
         ToolTip.delay: tooltipDelay
