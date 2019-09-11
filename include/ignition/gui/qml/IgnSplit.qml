@@ -322,5 +322,32 @@ SplitView {
       }
     }
   }
+
+  /**
+   * Global key event handler. Propagates key event to IgnCard items until
+   * the event is accepted.
+   * \todo(anyone) Use FocusScope instead of a global handler?
+   */
+  function handleKeyEvent(event, type) {
+    for (var key in childItems) {
+      var obj = childItems[key];
+      obj.children[0].focus = true
+      if (type == "pressed")
+        obj.children[0].Keys.pressed(event)
+      else if (type == "released")
+        obj.children[0].Keys.released(event)
+      if (event.accepted)
+        break
+    }
+  }
+
+  focus: true
+  Keys.onPressed: {
+    handleKeyEvent(event, "pressed")
+  }
+  Keys.onReleased: {
+    handleKeyEvent(event, "released")
+  }
+
 }
 
