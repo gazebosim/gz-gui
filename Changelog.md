@@ -2,6 +2,9 @@
 
 ### Ignition Gui 3.X.X
 
+1. Depend on ign-transport8 and ign-msgs5
+    * [Pull request 225](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/225)
+
 1. Depend on ign-rendering3
     * [Pull request 221](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/221)
 

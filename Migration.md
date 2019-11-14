@@ -7,7 +7,7 @@ release will remove the deprecated code.
 
 ## Ignition GUI 2.x to 3.x
 
-* Use rendering3.
+* Use rendering3, transport8 and msgs5.
 
 ## Ignition GUI 1.x to 2.x
 

@@ -54,8 +54,8 @@ set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-transport
-ign_find_package(ignition-transport7 REQUIRED)
-set(IGN_TRANSPORT_VER ${ignition-transport7_VERSION_MAJOR})
+ign_find_package(ignition-transport8 REQUIRED)
+set(IGN_TRANSPORT_VER ${ignition-transport8_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
@@ -64,8 +64,8 @@ set(IGN_RENDERING_VER ${ignition-rendering3_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-msgs
-ign_find_package(ignition-msgs4 REQUIRED)
-set(IGN_MSGS_VER ${ignition-msgs4_VERSION_MAJOR})
+ign_find_package(ignition-msgs5 REQUIRED)
+set(IGN_MSGS_VER ${ignition-msgs5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-tools
