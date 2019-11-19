@@ -153,22 +153,8 @@ void ImageDisplay::ProcessImage()
       break;
     default:
     {
-      ignwarn << "Unsupported image type: " <<
-          this->dataPtr->imageMsg.pixel_format_type() <<
-          " contained in msgs::Image::pixel_format_type. " <<
-          " Trying deprecated field msgs::Image::pixel_format." << std::endl;
-      switch (this->dataPtr->imageMsg.pixel_format())
-      {
-        case common::Image::RGB_INT8:
-          this->UpdateFromRgbInt8();
-          break;
-        case common::Image::R_FLOAT32:
-          this->UpdateFromFloat32();
-          break;
-        default:
-          ignerr << "Unsupported image type: " <<
-            this->dataPtr->imageMsg.pixel_format() << std::endl;
-      }
+      ignwarn << "Unsupported image type: "
+              << this->dataPtr->imageMsg.pixel_format_type() << std::endl;
     }
   }
 }
