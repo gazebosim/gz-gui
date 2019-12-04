@@ -8,6 +8,7 @@ pipelines:
           - apt update
           - apt -y install wget lsb-release gnupg
           - sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+          - sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
           - wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
           - apt update
           - apt install -y
@@ -37,43 +38,43 @@ pipelines:
             libignition-cmake2-dev
             libignition-common3-dev
             libignition-math6-dev
+            libignition-msgs5-dev
             libignition-plugin-dev
+            libignition-rendering3-dev
             libignition-tools-dev
-            # libignition-msgs5-dev
-            # libignition-transport8-dev
-            # libignition-rendering3-dev
-          # Ignition msgs (uncomment if a specific branch is needed)
-          - apt install -y
-            libprotobuf-dev protobuf-compiler libprotoc-dev
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
-          - cd ign-msgs
-          - mkdir build
-          - cd build
-          - cmake ..
-          - make -j4 install
-          - cd ../..
-          # Ignition transport (uncomment if a specific branch is needed)
-          - apt install -y
-            libzmq3-dev uuid-dev libsqlite3-dev
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
-          - cd ign-transport
-          - mkdir build
-          - cd build
-          - cmake ..
-          - make -j4 install
-          - cd ../..
-          # Ignition rendering (uncomment if a specific branch is needed)
-          - apt install -y
-            libogre-1.9-dev
-            libogre-2.1-dev
-            libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
-          - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
-          - cd ign-rendering
-          - mkdir build
-          - cd build
-          - cmake ..
-          - make -j4 install
-          - cd ../..
+            libignition-transport8-dev
+          # # Ignition msgs (uncomment if a specific branch is needed)
+          # - apt install -y
+          #   libprotobuf-dev protobuf-compiler libprotoc-dev
+          # - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b default
+          # - cd ign-msgs
+          # - mkdir build
+          # - cd build
+          # - cmake ..
+          # - make -j4 install
+          # - cd ../..
+          # # Ignition transport (uncomment if a specific branch is needed)
+          # - apt install -y
+          #   libzmq3-dev uuid-dev libsqlite3-dev
+          # - hg clone http://bitbucket.org/ignitionrobotics/ign-transport -b default
+          # - cd ign-transport
+          # - mkdir build
+          # - cd build
+          # - cmake ..
+          # - make -j4 install
+          # - cd ../..
+          # # Ignition rendering (uncomment if a specific branch is needed)
+          # - apt install -y
+          #   libogre-1.9-dev
+          #   libogre-2.1-dev
+          #   libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
+          # - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+          # - cd ign-rendering
+          # - mkdir build
+          # - cd build
+          # - cmake ..
+          # - make -j4 install
+          # - cd ../..
           # Ignition GUI
           - mkdir build
           - cd build
