@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-homebrew-amd64)
-Windows 7     | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-1-win)](https://build.osrfoundation.org/job/ign_gui-ign-1-win)
+Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui3/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui3)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui3-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui3-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui3-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui3-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-3-win)](https://build.osrfoundation.org/job/ign_gui-ign-3-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
@@ -91,37 +91,7 @@ There are currently two versions under active development:
 
 ### Prerequisites
 
-#### Version 0
-
-Install dependencies:
-
-    sudo apt update
-    sudo apt -y install wget lsb-release gnupg
-    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
-    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-    sudo apt update
-    sudo apt install -y \
-        build-essential \
-        cmake \
-        qtbase5-dev \
-        libtinyxml2-dev \
-        libprotoc-dev \
-        libprotobuf-dev \
-        mercurial \
-        libignition-cmake1-dev \
-        libignition-common-dev \
-        libignition-math4-dev \
-        libignition-msgs-dev \
-        libignition-rendering-dev \
-        libignition-tools-dev \
-        libignition-transport4-dev
-
-Clone source code, note you'll need the `default` branch:
-
-    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b default
-
-#### Version 1
+#### Ubuntu Bionic 18.04 or above
 
 Install dependencies:
 
@@ -136,12 +106,14 @@ Install dependencies:
         libignition-cmake2-dev \
         libignition-common3-dev \
         libignition-math6-dev \
-        libignition-msgs3-dev \
+        libignition-msgs5-dev \
         libignition-plugin-dev \
-        libignition-rendering-dev \
+        libignition-rendering3-dev \
         libignition-tools-dev \
-        libignition-transport6-dev \
+        libignition-transport8-dev \
         libtinyxml2-dev \
+        libprotoc-dev \
+        libprotobuf-dev \
         qtbase5-dev \
         qtdeclarative5-dev \
         qtquickcontrols2-5-dev \
@@ -151,12 +123,14 @@ Install dependencies:
         qml-module-qtquick-dialogs \
         qml-module-qtquick-layouts \
         qml-module-qt-labs-folderlistmodel \
-        qml-module-qt-labs-settings
+        qml-module-qt-labs-settings \
+        qml-module-qtgraphicaleffects
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
-Clone source code, note you'll need the `gz11` branch:
+Clone source code:
 
-    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b ign-gui1
+    # This checks out the `default` branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
+    hg clone http://bitbucket.org/ignitionrobotics/ign-gui
 
 ### Building from source
 
@@ -172,9 +146,8 @@ Build and install as follows:
 # Usage
 
 Take a look at the
-[tutorials](https://ignitionrobotics.org/api/gui/1.0/tutorials.html)
+[tutorials](https://ignitionrobotics.org/api/gui/3.0/tutorials.html)
 for usage instructions and API documentation.
-
 
 # Testing
 
@@ -183,7 +156,7 @@ After building, to run all tests:
     cd build
     make test
 
-See [this tutorial](https://ignitionrobotics.org/api/gui/1.0/install.html) for
+See [this tutorial](https://ignitionrobotics.org/api/gui/3.0/install.html) for
 further instructions on how to disable testing, run test coverage, etc.
 
 # Folder Structure
