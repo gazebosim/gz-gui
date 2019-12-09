@@ -76,7 +76,7 @@ Add OSRF packages:
 
 Install Ignition GUI:
 
-    sudo apt install libignition-gui-dev
+    sudo apt install libignition-gui3-dev
 
 ## Source Install
 
@@ -101,30 +101,7 @@ Install dependencies:
     sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
     sudo apt update
-    sudo apt install -y \
-        g++-8 \
-        libignition-cmake2-dev \
-        libignition-common3-dev \
-        libignition-math6-dev \
-        libignition-msgs5-dev \
-        libignition-plugin-dev \
-        libignition-rendering3-dev \
-        libignition-tools-dev \
-        libignition-transport8-dev \
-        libtinyxml2-dev \
-        libprotoc-dev \
-        libprotobuf-dev \
-        qtbase5-dev \
-        qtdeclarative5-dev \
-        qtquickcontrols2-5-dev \
-        qml-module-qtquick2 \
-        qml-module-qtquick-controls \
-        qml-module-qtquick-controls2 \
-        qml-module-qtquick-dialogs \
-        qml-module-qtquick-layouts \
-        qml-module-qt-labs-folderlistmodel \
-        qml-module-qt-labs-settings \
-        qml-module-qtgraphicaleffects
+    sudo apt-get install build-dep -y ignition-gui3
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
 Clone source code:
@@ -204,4 +181,3 @@ This library uses [Semantic Versioning](https://semver.org/). Additionally, this
 # License
 
 This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/LICENSE) file.
-
