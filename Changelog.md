@@ -1,6 +1,6 @@
 ## Ignition Gui 3
 
-### Ignition Gui 3.X.X
+### Ignition Gui 3.0.0 (2019-12-10)
 
 1. Depend on ign-transport8 and ign-msgs5
     * [Pull request 225](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/225)
