@@ -82,6 +82,8 @@ You can try running the following command for example:
 
 > **Note** Toolbar colors can't be changed through environment variables yet.
 
+> **Note** A default saved configuration will take precedence over any custom set environment variables.
+
 ## Config files
 
 Styles can be set on a configuration file's `<window><style>` tag, using the following
