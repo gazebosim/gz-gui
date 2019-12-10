@@ -1,6 +1,7 @@
 \page examples Examples
 
 Next Tutorial: \ref examples
+Previous Tutorial: \ref style
 
 ## Overview
 

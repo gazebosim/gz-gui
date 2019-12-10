@@ -1,6 +1,7 @@
 \page plugins Plugins
 
 Next Tutorial: \ref layout
+Previous Tutorial: \ref commandline
 
 ## Finding plugins
 

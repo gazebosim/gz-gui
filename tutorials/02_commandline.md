@@ -1,7 +1,7 @@
 \page commandline Command Line
 
 Next Tutorial: \ref plugins
-
+Previous Tutorial: \ref install
 ## Overview
 
 If you have Ignition Tools installed, you can use the `ign gui` command line tool:
