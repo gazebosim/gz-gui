@@ -83,7 +83,7 @@ You can try running the following command for example:
 
 > **Note** Toolbar colors can't be changed through environment variables yet.
 
-> **Note** A default saved configuration will take precedence over any custom set environment variables.
+> **Note** Applications built on top of Ignition GUI may override custome environment variables.
 
 ## Config files
 
