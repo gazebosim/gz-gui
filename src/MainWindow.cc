@@ -16,6 +16,7 @@
  */
 
 #include <tinyxml2.h>
+#include <regex>
 #include <string>
 
 #include <ignition/common/Console.hh>
@@ -179,6 +180,10 @@ QStringList MainWindow::PluginListModel() const
       // Remove lib and .so
       auto pluginName = plugin.substr(3, plugin.find(".") - 3);
 
+      // Split WWWCamelCase3D -> WWW Camel Case 3D
+      std::regex reg("(\\B[A-Z][a-z])|(\\B[0-9])");
+      pluginName = std::regex_replace(pluginName, reg, " $&");
+
       // Show?
       if (this->dataPtr->windowConfig.pluginsFromPaths ||
           std::find(this->dataPtr->windowConfig.showPlugins.begin(),
@@ -260,6 +265,10 @@ void MainWindow::SaveConfig(const std::string &_path)
 void MainWindow::OnAddPlugin(QString _plugin)
 {
   auto plugin = _plugin.toStdString();
+
+  // Remove spaces
+  plugin.erase(remove_if(plugin.begin(), plugin.end(), isspace), plugin.end());
+
   ignlog << "Add [" << plugin << "] via menu" << std::endl;
 
   App()->LoadPlugin(plugin);
