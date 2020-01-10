@@ -1,0 +1,15 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <!--
+    Main entry point needs to be in the prefix which matches its name.
+  -->
+  <qresource prefix="MultipleQml/">
+    <file>MultipleQml.qml</file>
+  </qresource>
+  <!--
+    Other QMLs need to be in a different prefix, which will
+    be imported in the main file above.
+  -->
+  <qresource prefix="MultipleQml_qml">
+    <file>AnotherQml.qml</file>
+  </qresource>
+</RCC>
