@@ -10,10 +10,10 @@ Ignition @IGN_DESIGNATION_CAP@ library and how to use the library effectively.
 1. \subpage install "Installation"
 2. \subpage commandline "Command line usage"
 3. \subpage plugins "Plugins"
-3. \subpage config "Configuration files"
-4. \subpage layout "Layout"
-5. \subpage style "Style"
-6. \subpage examples "Examples"
+4. \subpage config "Configuration files"
+5. \subpage layout "Layout"
+6. \subpage style "Style"
+7. \subpage examples "Examples"
 
 ## License
 
