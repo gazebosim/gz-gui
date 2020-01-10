@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2018 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
@@ -6,6 +22,7 @@ import QtQuick.Layouts 1.3
 Rectangle {
   id: "imageDisplay"
   color: "transparent"
+  anchors.fill: parent
   Layout.minimumWidth: 250
   Layout.minimumHeight: 375
 
@@ -35,12 +52,12 @@ Rectangle {
     onNewImage: image.reload();
   }
 
-  Column {
+  ColumnLayout {
     id: imageDisplayColumn
     anchors.fill: parent
     anchors.margins: 10
 
-    Row {
+    RowLayout {
       visible: showPicker
       RoundButton {
         text: "\u21bb"
@@ -61,7 +78,7 @@ Rectangle {
           if (currentIndex < 0)
             return;
 
-          ImageDisplay.OnTopic(currentText);
+          ImageDisplay.OnTopic(textAt(currentIndex));
         }
         ToolTip.visible: hovered
         ToolTip.delay: tooltipDelay
@@ -69,9 +86,12 @@ Rectangle {
         ToolTip.text: qsTr("Ignition transport topics publishing Image messages")
       }
     }
-
     Image {
       id: image
+      fillMode: Image.PreserveAspectFit
+      Layout.fillHeight: true
+      Layout.fillWidth: true
+      verticalAlignment: Image.AlignTop
       function reload() {
         // Force image request to C++
         source = "image://" + uniqueName + "/" + Math.random().toString(36).substr(2, 5);
