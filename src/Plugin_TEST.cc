@@ -69,3 +69,33 @@ TEST(PluginTest, DeleteLater)
   EXPECT_EQ(1, win->findChildren<Plugin *>().size());
 }
 
+/////////////////////////////////////////////////
+TEST(PluginTest, InvalidXmlText)
+{
+  ignition::common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load plugin config that returns null GetText
+  const char *pluginStr =
+    "<plugin filename=\"TestPlugin\">"
+      "<ignition-gui>"
+        "<title><null>This results in null titleElem->GetText</null></title>"
+      "</ignition-gui>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("TestPlugin",
+      pluginDoc.FirstChildElement("plugin")));
+
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin was loaded and has empty title
+  auto plugins = win->findChildren<Plugin *>();
+  ASSERT_EQ(1, plugins.size());
+  EXPECT_TRUE(plugins[0]->Title().empty());
+}
+

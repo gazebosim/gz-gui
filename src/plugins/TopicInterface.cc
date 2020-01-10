@@ -87,7 +87,8 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Parameters from SDF
   if (_pluginElem)
   {
-    if (auto topicElem = _pluginElem->FirstChildElement("topic"))
+    auto topicElem = _pluginElem->FirstChildElement("topic");
+    if (nullptr != topicElem && nullptr != topicElem->GetText())
       this->dataPtr->topic = topicElem->GetText();
     if (this->dataPtr->topic.empty())
     {
@@ -95,7 +96,8 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
 
     std::string msgType;
-    if (auto typeElem = _pluginElem->FirstChildElement("message_type"))
+    auto typeElem = _pluginElem->FirstChildElement("message_type");
+    if (nullptr != typeElem && nullptr != typeElem->GetText())
       msgType = typeElem->GetText();
     if (msgType.empty())
     {
@@ -111,7 +113,7 @@ void TopicInterface::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     // Visibility per widget
     for (auto hideWidgetElem = _pluginElem->FirstChildElement("hide");
-        hideWidgetElem != nullptr;
+        hideWidgetElem != nullptr && hideWidgetElem->GetText() != nullptr;
         hideWidgetElem = hideWidgetElem->NextSiblingElement("hide"))
     {
       this->dataPtr->hideWidgets.push_back(hideWidgetElem->GetText());
