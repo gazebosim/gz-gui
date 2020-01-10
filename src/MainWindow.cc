@@ -418,7 +418,8 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   if (auto stateElem = winElem->FirstChildElement("state"))
   {
     auto text = stateElem->GetText();
-    this->state = QByteArray::fromBase64(text);
+    if (nullptr != text)
+      this->state = QByteArray::fromBase64(text);
   }
 
   // Style

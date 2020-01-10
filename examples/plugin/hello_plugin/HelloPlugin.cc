@@ -41,7 +41,8 @@ void HelloPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
 
   // Take parameters from XML at runtime
-  if (auto messageElem = _pluginElem->FirstChildElement("message"))
+  auto messageElem = _pluginElem->FirstChildElement("message");
+  if (nullptr != messageElem && nullptr != messageElem->GetText())
     this->message = messageElem->GetText();
 }
 
