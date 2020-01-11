@@ -1,6 +1,7 @@
 \page style Style
 
 Next Tutorial: \ref examples
+Previous Tutorial: \ref layout
 
 ## Overview
 
@@ -81,6 +82,8 @@ You can try running the following command for example:
     QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue ign gui -v 4
 
 > **Note** Toolbar colors can't be changed through environment variables yet.
+
+> **Note** Applications built on top of Ignition GUI may override custom environment variables.
 
 ## Config files
 

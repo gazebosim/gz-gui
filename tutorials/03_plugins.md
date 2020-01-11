@@ -1,6 +1,7 @@
 \page plugins Plugins
 
 Next Tutorial: \ref layout
+Previous Tutorial: \ref commandline
 
 ## Finding plugins
 
@@ -74,7 +75,7 @@ Echo messages from an Ignition Transport topic.
 
 ### Topic viewer
 
-**Not ported to version 1 yet**
+**Not ported to versions 1 or higher yet**
 
 Discover all Ignition Transport topics and introspect its fields.
 
@@ -82,7 +83,7 @@ Discover all Ignition Transport topics and introspect its fields.
 
 ### Topics stats
 
-**Not ported to version 1 yet**
+**Not ported to versions 1 or higher yet**
 
 Show basic stats of all Ignition Transport topics at the same time.
 
@@ -90,7 +91,7 @@ Show basic stats of all Ignition Transport topics at the same time.
 
 ### Requester and Responder
 
-**Not ported to version 1 yet**
+**Not ported to versions 1 or higher yet**
 
 Make custom service requests and serve custom services with these two
 plugins.
@@ -99,7 +100,7 @@ plugins.
 
 ### Displays {#display-plugins}
 
-**Not ported to version 1 yet**
+**Not ported to versions 1 or higher yet**
 
 This is a container for various Display Plugins that each paint on a Scene.
 The following example includes the display plugins that are installed with
@@ -109,7 +110,7 @@ Ignition GUI by default.
 
 #### Finding display plugins
 
-**Not ported to version 1 yet**
+**Not ported to versions 1 or higher yet**
 
 Ignition GUI will look for display plugins on the following paths, in this
 order:

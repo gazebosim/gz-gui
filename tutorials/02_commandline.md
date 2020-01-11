@@ -1,6 +1,7 @@
 \page commandline Command Line
 
 Next Tutorial: \ref plugins
+Previous Tutorial: \ref install
 
 ## Overview
 

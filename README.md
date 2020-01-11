@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-homebrew-amd64)
-Windows 7     | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-1-win)](https://build.osrfoundation.org/job/ign_gui-ign-1-win)
+Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui3/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui3)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui3-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui3-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui3-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui3-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-3-win)](https://build.osrfoundation.org/job/ign_gui-ign-3-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
@@ -76,7 +76,7 @@ Add OSRF packages:
 
 Install Ignition GUI:
 
-    sudo apt install libignition-gui-dev
+    sudo apt install libignition-gui3-dev
 
 ## Source Install
 
@@ -91,7 +91,7 @@ There are currently two versions under active development:
 
 ### Prerequisites
 
-#### Version 0
+#### Ubuntu Bionic 18.04 or above
 
 Install dependencies:
 
@@ -100,63 +100,14 @@ Install dependencies:
     sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
     sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-    sudo apt update
-    sudo apt install -y \
-        build-essential \
-        cmake \
-        qtbase5-dev \
-        libtinyxml2-dev \
-        libprotoc-dev \
-        libprotobuf-dev \
-        mercurial \
-        libignition-cmake1-dev \
-        libignition-common-dev \
-        libignition-math4-dev \
-        libignition-msgs-dev \
-        libignition-rendering-dev \
-        libignition-tools-dev \
-        libignition-transport4-dev
-
-Clone source code, note you'll need the `default` branch:
-
-    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b default
-
-#### Version 1
-
-Install dependencies:
-
-    sudo apt update
-    sudo apt -y install wget lsb-release gnupg
-    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
-    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-    sudo apt update
-    sudo apt install -y \
-        g++-8 \
-        libignition-cmake2-dev \
-        libignition-common3-dev \
-        libignition-math6-dev \
-        libignition-msgs3-dev \
-        libignition-plugin-dev \
-        libignition-rendering-dev \
-        libignition-tools-dev \
-        libignition-transport6-dev \
-        libtinyxml2-dev \
-        qtbase5-dev \
-        qtdeclarative5-dev \
-        qtquickcontrols2-5-dev \
-        qml-module-qtquick2 \
-        qml-module-qtquick-controls \
-        qml-module-qtquick-controls2 \
-        qml-module-qtquick-dialogs \
-        qml-module-qtquick-layouts \
-        qml-module-qt-labs-folderlistmodel \
-        qml-module-qt-labs-settings
+    sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -c -s) main"
+    sudo apt-get build-dep -y ignition-gui3
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
-Clone source code, note you'll need the `gz11` branch:
+Clone source code:
 
-    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b ign-gui1
+    # This checks out the `default` branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
+    hg clone http://bitbucket.org/ignitionrobotics/ign-gui
 
 ### Building from source
 
@@ -172,9 +123,37 @@ Build and install as follows:
 # Usage
 
 Take a look at the
-[tutorials](https://ignitionrobotics.org/api/gui/1.0/tutorials.html)
+[tutorials](https://ignitionrobotics.org/api/gui/3.0/tutorials.html)
 for usage instructions and API documentation.
 
+## Known issue of command line tools
+
+In the event that the installation is a mix of Debian and from source, command
+line tools from `ign-tools` may not work correctly.
+
+A workaround for a single package is to define the environment variable
+`IGN_CONFIG_PATH` to point to the location of the Ignition library installation,
+where the YAML file for the package is found, such as
+```
+export IGN_CONFIG_PATH=/usr/local/share/ignition
+```
+
+However, that environment variable only takes a single path, which means if the
+installations from source are in different locations, only one can be specified.
+
+Another workaround for working with multiple Ignition libraries on the command
+line is using symbolic links to each library's YAML file.
+```
+mkdir ~/.ignition/tools/configs -p
+cd ~/.ignition/tools/configs/
+ln -s /usr/local/share/ignition/fuel4.yaml .
+ln -s /usr/local/share/ignition/transport7.yaml .
+ln -s /usr/local/share/ignition/transportlog7.yaml .
+...
+export IGN_CONFIG_PATH=$HOME/.ignition/tools/configs
+```
+
+This issue is tracked [here](https://bitbucket.org/ignitionrobotics/ign-tools/issues/8/too-strict-looking-for-config-paths).
 
 # Testing
 
@@ -183,7 +162,7 @@ After building, to run all tests:
     cd build
     make test
 
-See [this tutorial](https://ignitionrobotics.org/api/gui/1.0/install.html) for
+See [this tutorial](https://ignitionrobotics.org/api/gui/3.0/install.html) for
 further instructions on how to disable testing, run test coverage, etc.
 
 # Folder Structure
@@ -231,4 +210,3 @@ This library uses [Semantic Versioning](https://semver.org/). Additionally, this
 # License
 
 This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/LICENSE) file.
-
