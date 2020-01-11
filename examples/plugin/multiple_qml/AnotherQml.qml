@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2020 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 Button {
-  text: qsTr("Hello, plugin!")
+  id: anotherButton
+  text: qsTr("Another QML!")
   highlighted: true
-  onClicked: { HelloPlugin.OnButton(); }
+  onClicked: { MultipleQml.OnButton(anotherButton.text); }
 }

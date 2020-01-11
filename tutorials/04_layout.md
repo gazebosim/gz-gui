@@ -1,6 +1,7 @@
 \page layout Layout
 
 Next Tutorial: \ref style
+Previous Tutorial: \ref plugins
 
 ## Overview
 

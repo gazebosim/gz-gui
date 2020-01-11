@@ -1,6 +1,7 @@
 \page examples Examples
 
 Next Tutorial: \ref examples
+Previous Tutorial: \ref style
 
 ## Overview
 
@@ -41,8 +42,9 @@ For example, we can build the `hello_plugin` example plugin:
     cmake ..
     make
 
-Then copy the generated library to a directory where Ignition GUI can find it:
+Then create the plugins directory and copy the generated library to it so that Ignition GUI can find the plugin:
 
+    mkdir -p ~/.ignition/gui/plugins
     cp libHelloPlugin.so ~/.ignition/gui/plugins/
 
 Now you can use the command line to open it:
@@ -53,7 +55,6 @@ Now you can use the command line to open it:
 
 * `hello_plugin`: A button that prints hello on click.
 * `custom_context_menu`: Overrides the default context menu.
-* `designer_ui_file`: Use a Qt Designer UI file for a plugin's appearance.
 
 ## Configuration files
 
