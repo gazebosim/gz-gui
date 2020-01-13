@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui3/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui3)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui3-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui3-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui3-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui3-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-3-win)](https://build.osrfoundation.org/job/ign_gui-ign-3-win)
+Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui4/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui4)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-4-win)](https://build.osrfoundation.org/job/ign_gui-ign-4-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
@@ -76,7 +76,7 @@ Add OSRF packages:
 
 Install Ignition GUI:
 
-    sudo apt install libignition-gui3-dev
+    sudo apt install libignition-gui4-dev
 
 ## Source Install
 
@@ -101,7 +101,7 @@ Install dependencies:
     sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
     sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -c -s) main"
-    sudo apt-get build-dep -y ignition-gui3
+    sudo apt-get build-dep -y ignition-gui4
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
 Clone source code:
@@ -123,7 +123,7 @@ Build and install as follows:
 # Usage
 
 Take a look at the
-[tutorials](https://ignitionrobotics.org/api/gui/3.0/tutorials.html)
+[tutorials](https://ignitionrobotics.org/api/gui/4.0/tutorials.html)
 for usage instructions and API documentation.
 
 ## Known issue of command line tools
@@ -162,7 +162,7 @@ After building, to run all tests:
     cd build
     make test
 
-See [this tutorial](https://ignitionrobotics.org/api/gui/3.0/install.html) for
+See [this tutorial](https://ignitionrobotics.org/api/gui/4.0/install.html) for
 further instructions on how to disable testing, run test coverage, etc.
 
 # Folder Structure

@@ -1,4 +1,12 @@
+## Ignition Gui 4
+
+### Ignition Gui 4.X.X
+
+### Ignition Gui 4.0.0 (20XX-XX-XX)
+
 ## Ignition Gui 3
+
+### Ignition Gui 3.X.X
 
 ### Ignition Gui 3.0.0 (2019-12-10)
 
