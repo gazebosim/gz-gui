@@ -1,6 +1,7 @@
 # No need to add plugins to sources, they will be found when building the
 # shared libraries
 
+# Tests
 set (gtest_local_sources
   WorldControl
   WorldStats

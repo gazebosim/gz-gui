@@ -149,13 +149,15 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
   if (nullptr == _ignGuiElem)
     return;
 
-  if (auto elem = _ignGuiElem->FirstChildElement("title"))
+  auto elem = _ignGuiElem->FirstChildElement("title");
+  if (nullptr != elem && nullptr != elem->GetText())
   {
     this->title = elem->GetText();
   }
 
   // Delete later
-  if (auto elem = _ignGuiElem->FirstChildElement("delete_later"))
+  elem = _ignGuiElem->FirstChildElement("delete_later");
+  if (nullptr != elem)
   {
     // Store param
     elem->QueryBoolText(&this->dataPtr->deleteLaterRequested);
@@ -194,6 +196,11 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
     }
     else if (type == "string")
     {
+      if (nullptr == propElem->GetText())
+      {
+        ignerr << "Invalid string inside [" << key << "]" << std::endl;
+        continue;
+      }
       std::string value = propElem->GetText();
       variant = QVariant(QString::fromStdString(value));
     }

@@ -125,10 +125,12 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (_pluginElem)
   {
     // All grids managed belong to the same engine and scene
-    if (auto elem = _pluginElem->FirstChildElement("engine"))
+    auto elem = _pluginElem->FirstChildElement("engine");
+    if (nullptr != elem && nullptr != elem->GetText())
       this->dataPtr->engineName = elem->GetText();
 
-    if (auto elem = _pluginElem->FirstChildElement("scene"))
+    elem = _pluginElem->FirstChildElement("scene");
+    if (nullptr != elem && nullptr != elem->GetText())
       this->dataPtr->sceneName = elem->GetText();
 
     // For grids to be inserted at startup
@@ -138,23 +140,25 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       GridInfo gridInfo;
 
-      if (auto elem = insertElem->FirstChildElement("cell_count"))
-        elem->QueryIntText(&gridInfo.cellCount);
+      if (auto cellCountElem = insertElem->FirstChildElement("cell_count"))
+        cellCountElem->QueryIntText(&gridInfo.cellCount);
 
-      if (auto elem = insertElem->FirstChildElement("vertical_cell_count"))
-        elem->QueryIntText(&gridInfo.vertCellCount);
+      if (auto vElem = insertElem->FirstChildElement("vertical_cell_count"))
+        vElem->QueryIntText(&gridInfo.vertCellCount);
 
-      if (auto elem = insertElem->FirstChildElement("cell_length"))
-        elem->QueryDoubleText(&gridInfo.cellLength);
+      if (auto lengthElem = insertElem->FirstChildElement("cell_length"))
+        lengthElem->QueryDoubleText(&gridInfo.cellLength);
 
-      if (auto elem = insertElem->FirstChildElement("pose"))
+      elem = insertElem->FirstChildElement("pose");
+      if (nullptr != elem && nullptr != elem->GetText())
       {
         std::stringstream poseStr;
         poseStr << std::string(elem->GetText());
         poseStr >> gridInfo.pose;
       }
 
-      if (auto elem = insertElem->FirstChildElement("color"))
+      elem = insertElem->FirstChildElement("color");
+      if (nullptr != elem && nullptr != elem->GetText())
       {
         std::stringstream colorStr;
         colorStr << std::string(elem->GetText());

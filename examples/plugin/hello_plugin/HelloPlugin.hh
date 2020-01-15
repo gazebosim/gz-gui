@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_HELLOPLUGIN_HH_
 #define IGNITION_GUI_HELLOPLUGIN_HH_
 
+#include <string>
+
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
   #include <ignition/gui/Plugin.hh>
@@ -37,8 +39,16 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~HelloPlugin();
 
+      /// \brief Called by Ignition GUI when plugin is instantiated.
+      /// \param[in] _pluginElem XML configuration for this plugin.
+      public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+          override;
+
       /// \brief Callback trigged when the button is pressed.
       protected slots: void OnButton();
+
+      /// \brief Message to be printed when button is pressed.
+      private: std::string message{"Hello, plugin!"};
     };
   }
 }

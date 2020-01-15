@@ -35,9 +35,21 @@ HelloPlugin::~HelloPlugin()
 }
 
 /////////////////////////////////////////////////
+void HelloPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+{
+  if (!_pluginElem)
+    return;
+
+  // Take parameters from XML at runtime
+  auto messageElem = _pluginElem->FirstChildElement("message");
+  if (nullptr != messageElem && nullptr != messageElem->GetText())
+    this->message = messageElem->GetText();
+}
+
+/////////////////////////////////////////////////
 void HelloPlugin::OnButton()
 {
-  std::cout << "Hello, plugin!" << std::endl;
+  std::cout << this->message << std::endl;
 }
 
 // Register this plugin
