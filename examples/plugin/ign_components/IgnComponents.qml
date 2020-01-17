@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2020 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,20 @@ Column {
 
   // Integer spin box
   IgnSpinBox {
+    minimumValue: -2
+    maximumValue: 19
+    decimals: 0
+    stepSize: 3
+    value: 5
   }
 
   // Double spin box
-  IgnDoubleSpinBox {
-//    from: -1.23
-//    to: 10
-    decimals: 6
-    stepSize: 2
+  IgnSpinBox {
+    minimumValue: -2.5
+    maximumValue: 19.3
+    decimals: 4
+    stepSize: 3.6
+    value: 5.8
+    width: 300
   }
 }
