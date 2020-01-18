@@ -1,5 +1,8 @@
 ## Ignition Gui 3
 
+1. Add support for visualizing int 16 bit images in ImageDisplay
+    * [Pull request 241](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/241)
+
 ### Ignition Gui 3.0.0 (2019-12-10)
 
 1. Depend on ign-transport8 and ign-msgs5
