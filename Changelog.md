@@ -5,7 +5,7 @@
 ### Ignition Gui 4.0.0 (20XX-XX-XX)
 
 1. Depend on ign-rendering4
-    * [Pull request xxx](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/xxx)
+    * [Pull request 243](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/243)
 
 ## Ignition Gui 3
 
