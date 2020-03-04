@@ -37,6 +37,16 @@ RowLayout {
     }
   }
 
+  Shortcut {
+    sequence: "Space"
+    onActivated: {
+      if (paused)
+        WorldControl.OnPlay()
+      else
+        WorldControl.OnPause()
+    }
+  }
+
   /**
    * True to show play/pause button
    */
