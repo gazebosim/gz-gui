@@ -78,6 +78,10 @@ namespace ignition
       /// \return Pointer to plugin item.
       public: QQuickItem *PluginItem() const;
 
+      /// \brief Get the QML context where the plugin was created.
+      /// \return Pointer context.
+      public: QQmlContext *Context() const;
+
       /// \brief Apply changes which should come after the plugin already
       /// has a parent.
       public: void PostParentChanges();

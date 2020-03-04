@@ -85,7 +85,8 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Subscribe
   std::string topic;
-  if (auto topicElem = _pluginElem->FirstChildElement("topic"))
+  auto topicElem = _pluginElem->FirstChildElement("topic");
+  if (nullptr != topicElem && nullptr != topicElem->GetText())
     topic = topicElem->GetText();
 
   if (topic.empty())
