@@ -99,3 +99,35 @@ TEST(PluginTest, InvalidXmlText)
   EXPECT_TRUE(plugins[0]->Title().empty());
 }
 
+/////////////////////////////////////////////////
+TEST(PluginTest, Getters)
+{
+  ignition::common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load normal plugin
+  const char *pluginStr =
+    "<plugin filename=\"TestPlugin\">"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("TestPlugin",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin count
+  EXPECT_EQ(1, win->findChildren<Plugin *>().size());
+
+  // Get pointers
+  auto plugin = win->findChildren<Plugin *>()[0];
+  ASSERT_NE(nullptr, plugin->PluginItem());
+  ASSERT_NE(nullptr, plugin->CardItem());
+  ASSERT_NE(nullptr, plugin->Context());
+}
+
