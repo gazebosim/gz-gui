@@ -13,8 +13,34 @@
 
 ## Ignition Gui 2
 
-
 ### Ignition Gui 2.X.X
+
+
+### Ignition Gui 2.1.0 (2020-03-04)
+
+1. Add space for pausing sim
+    * [Pull request 245](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/245)
+
+1. Expose QML context to plugins
+    * [Pull request 244](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/244)
+
+1. Prettify plugin menu
+    * [Pull request 231](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/231)
+
+1. Example opening a dialog and accessing main window from plugin
+    * [Pull request 242](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/242)
+
+1. Example using Ign\*.qml components
+    * [Pull request 240](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/240)
+
+1. Protect against null tinyxml GetText
+    * [Pull request 236](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/236)
+
+1. Config tutorial
+    * [Pull request 233](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/233)
+
+1. Add copyright to all QML files
+    * [Pull request 232](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/232)
 
 1. Fix changing topics in ImageDisplay
     * [Pull request 224](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests/224)
