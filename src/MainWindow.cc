@@ -269,7 +269,7 @@ void MainWindow::OnAddPlugin(QString _plugin)
   // Remove spaces
   plugin.erase(remove_if(plugin.begin(), plugin.end(), isspace), plugin.end());
 
-  ignlog << "Add [" << plugin << "] via menu" << std::endl;
+  ignmsg << "Add [" << plugin << "] via menu" << std::endl;
 
   App()->LoadPlugin(plugin);
 }

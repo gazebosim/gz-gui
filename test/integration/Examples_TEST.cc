@@ -50,6 +50,7 @@ TEST(ExampleTest, Configs)
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
+    igndbg << "Loading config [" << *file << "]" << std::endl;
     EXPECT_TRUE(app.LoadConfig(*file));
   }
 }
