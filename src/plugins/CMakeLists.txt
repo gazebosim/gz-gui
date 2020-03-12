@@ -25,4 +25,3 @@ foreach(src ${gtest_local_sources})
       ${PROJECT_BINARY_DIR})
 endforeach()
 
-#add_subdirectory(plot)
