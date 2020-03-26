@@ -157,7 +157,10 @@ void ImageDisplay::ProcessImage()
           this->dataPtr->imageMsg.pixel_format_type() <<
           " contained in msgs::Image::pixel_format_type. " <<
           " Trying deprecated field msgs::Image::pixel_format." << std::endl;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
       switch (this->dataPtr->imageMsg.pixel_format())
+#pragma GCC diagnostic pop
       {
         case common::Image::RGB_INT8:
           this->UpdateFromRgbInt8();
@@ -166,8 +169,11 @@ void ImageDisplay::ProcessImage()
           this->UpdateFromFloat32();
           break;
         default:
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
           ignerr << "Unsupported image type: " <<
             this->dataPtr->imageMsg.pixel_format() << std::endl;
+#pragma GCC diagnostic pop
       }
     }
   }
