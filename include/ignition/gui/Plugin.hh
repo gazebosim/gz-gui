@@ -106,9 +106,6 @@ namespace ignition
       /// \return The value of `delete_later`.
       public: bool DeleteLaterRequested() const;
 
-      // Documentation inherited
-//      protected: void changeEvent(QEvent *_e) override;
-
       /// \brief Wait until the plugin has a parent, then close and delete the
       /// parent.
       protected: void DeleteLater();
