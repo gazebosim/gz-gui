@@ -346,16 +346,6 @@ std::string Plugin::ConfigStr()
 }
 
 /////////////////////////////////////////////////
-// void Plugin::changeEvent(QEvent *_e)
-// {
-//   if (_e->type() == QEvent::ParentChange && this->parent() &&
-//       this->dataPtr->deleteLater)
-//   {
-//     qobject_cast<QWidget *>(this->parent())->close();
-//   }
-// }
-
-/////////////////////////////////////////////////
 void Plugin::DeleteLater()
 {
   this->dataPtr->deleteLaterRequested = true;
