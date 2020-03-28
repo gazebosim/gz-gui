@@ -6,6 +6,10 @@ include_directories(
   ${Qt5QuickControls2_INCLUDE_DIRS}
 )
 
+if(POLICY CMP0100)
+  cmake_policy(SET CMP0100 NEW)
+endif()
+
 set (CMAKE_AUTOMOC ON)
 
 add_definitions(
