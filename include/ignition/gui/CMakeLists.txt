@@ -4,6 +4,7 @@ include_directories(
   ${Qt5Qml_INCLUDE_DIRS}
   ${Qt5Quick_INCLUDE_DIRS}
   ${Qt5QuickControls2_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 set (CMAKE_AUTOMOC ON)
@@ -13,6 +14,7 @@ add_definitions(
   ${Qt5Qml_DEFINITIONS}
   ${Qt5Quick_DEFINITIONS}
   ${Qt5QuickControls2_DEFINITIONS}
+  ${Qt5Widgets_DEFINITIONS}
 )
 
 set (qt_headers
@@ -56,6 +58,7 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
     ${Qt5Qml_LIBRARIES}
     ${Qt5Quick_LIBRARIES}
     ${Qt5QuickControls2_LIBRARIES}
+    ${Qt5Widgets_LIBRARIES}
     TINYXML2::TINYXML2
 )
 

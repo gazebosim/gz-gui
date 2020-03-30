@@ -82,7 +82,7 @@ using namespace gui;
 
 /////////////////////////////////////////////////
 Application::Application(int &_argc, char **_argv, const WindowType _type)
-  : QGuiApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
+  : QApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
 {
   igndbg << "Initializing application." << std::endl;
 

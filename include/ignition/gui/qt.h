@@ -25,6 +25,7 @@
 #include <QtCore>
 
 #include <QGuiApplication>
+#include <QApplication>
 
 #include <QOffscreenSurface>
 #include <QOpenGLFunctions>
