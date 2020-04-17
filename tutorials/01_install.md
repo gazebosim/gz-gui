@@ -47,7 +47,7 @@ Install dependencies
 
 Clone and install
 
-    hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+    git clone http://github.com/ignitionrobotics/ign-rendering -b master
     cd ign-rendering
     mkdir build
     cd build
