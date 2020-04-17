@@ -30,7 +30,7 @@ For example (`examples/config/image.config`):
 
 * Ignition GUI processes the `<ignition-gui>` block before passing the config to
   implemented plugins. See
-  [plugin_params.config](https://bitbucket.org/ignitionrobotics/ign-gui/src/ign-gui1/examples/config/plugin_params.config)
+  [plugin_params.config](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui1/examples/config/plugin_params.config)
   for an example.
 
 ## Built-in plugins
