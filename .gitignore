@@ -1,8 +1,13 @@
-syntax: glob
-
+# CMake folders
 build
 build_*
+
+# OS generated files
 .DS_Store
 *.swp
+
+# Qt generated files
 *.qmlc
+
+# git mergetool generated files
 *.orig
