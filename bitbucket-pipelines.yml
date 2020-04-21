@@ -45,7 +45,7 @@ pipelines:
           # Ignition msgs (uncomment if a specific branch is needed)
           # - apt install -y
           #   libprotobuf-dev protobuf-compiler libprotoc-dev
-          # - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b ign-msgs3
+          # - git clone http://github.com/ignitionrobotics/ign-msgs -b ign-msgs3
           # - cd ign-msgs
           # - mkdir build
           # - cd build
@@ -57,7 +57,7 @@ pipelines:
           #   libogre-1.9-dev
           #   libogre-2.1-dev
           #   libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev
-          # - hg clone http://bitbucket.org/ignitionrobotics/ign-rendering -b default
+          # - git clone http://github.com/ignitionrobotics/ign-rendering -b master
           # - cd ign-rendering
           # - mkdir build
           # - cd build
