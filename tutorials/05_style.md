@@ -11,7 +11,7 @@ There are different ways to use custom [QSS](http://doc.qt.io/qt-5/stylesheet-sy
 ## Using cmake
 
 Take a look at the
-[style_cmake example](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/examples/standalone/style_cmake/)
+[style_cmake example](https://github.com/ignitionrobotics/ign-gui/blob/master/examples/standalone/style_cmake/)
 to see how downstream projects can load their own style by setting it in cmake.
 
 ## Command line

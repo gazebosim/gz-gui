@@ -28,7 +28,7 @@ pipelines:
           # Ignition msgs (uncomment if a specific branch is needed)
           # - apt install -y
           #   libprotobuf-dev protobuf-compiler libprotoc-dev
-          # - hg clone http://bitbucket.org/ignitionrobotics/ign-msgs -b msgs2_use_math6
+          # - git clone http://github.com/ignitionrobotics/ign-msgs -b msgs2_use_math6
           # - cd ign-msgs
           # - mkdir build
           # - cd build

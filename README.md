@@ -2,8 +2,8 @@
 
 **Maintainer:** louise [AT] openrobotics [DOT] org
 
-[![Bitbucket open issues](https://img.shields.io/bitbucket/issues-raw/ignitionrobotics/ign-gui.svg)](https://bitbucket.org/ignitionrobotics/ign-gui/issues)
-[![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/ignitionrobotics/ign-gui.svg)](https://bitbucket.org/ignitionrobotics/ign-gui/pull-requests)
+[![GitHub open issues](https://img.shields.io/github/issues-raw/ignitionrobotics/ign-gui.svg)](https://github.com/ignitionrobotics/ign-gui/issues)
+[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/ignitionrobotics/ign-gui.svg)](https://github.com/ignitionrobotics/ign-gui/pulls)
 [![Discourse topics](https://img.shields.io/discourse/https/community.gazebosim.org/topics.svg)](https://community.gazebosim.org)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -24,46 +24,46 @@ which can be used to add custom widgets.
 
 # Table of Contents
 
-[Features](#markdown-header-features)
+[Features](#features)
 
-[Install](#markdown-header-install)
+[Install](#install)
 
-* [Binary Install](#markdown-header-binary-install)
+* [Binary Install](#binary-install)
 
-* [Source Install](#markdown-header-source-install)
+* [Source Install](#source-install)
 
-    * [Prerequisites](#markdown-header-prerequisites)
+    * [Prerequisites](#prerequisites)
 
-    * [Building from Source](#markdown-header-building-from-source)
+    * [Building from Source](#building-from-source)
 
-[Usage](#markdown-header-usage)
+[Usage](#usage)
 
-[Documentation](#markdown-header-documentation)
+[Documentation](#documentation)
 
-[Testing](#markdown-header-testing)
+[Testing](#testing)
 
-[Folder Structure](#markdown-header-folder-structure)
+[Folder Structure](#folder-structure)
 
-[Code of Conduct](#markdown-header-code-of-conduct)
+[Code of Conduct](#code-of-conduct)
 
-[Contributing](#markdown-header-code-of-contributing)
+[Contributing](#code-of-contributing)
 
-[Versioning](#markdown-header-versioning)
+[Versioning](#versioning)
 
-[License](#markdown-header-license)
+[License](#license)
 
 # Features
 
 * Qt-based widgets, with support for both Qt5 widgets and QtQuick
 * Plugin-based interface, so it's easy to add new widgets
 * Several plugins ready to be used
-* 3D scene integration using [Ignition Rendering](https://bitbucket.org/ignitionrobotics/ign-rendering/)
+* 3D scene integration using [Ignition Rendering](https://github.com/ignitionrobotics/ign-rendering/)
 
 # Install
 
-We recommend following the [Binary Install](#markdown-header-binary-install) instructions to get up and running as quickly and painlessly as possible.
+We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
-The [Source Install](#markdown-header-source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
+The [Source Install](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
 
 ## Binary Install
 
@@ -121,11 +121,11 @@ Install dependencies:
         libignition-tools-dev \
         libignition-transport4-dev
 
-Clone source code, note you'll need the `default` branch:
+Clone source code, note you'll need the `ign-gui0` branch:
 
-    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b default
+    git clone http://github.com/ignitionrobotics/ign-gui -b ign-gui0
 
-#### Version 1
+#### Versions >= 1.0
 
 Install dependencies:
 
@@ -158,9 +158,10 @@ Install dependencies:
         qml-module-qt-labs-settings
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
-Clone source code, note you'll need the `gz11` branch:
+Clone source code
 
-    hg clone http://bitbucket.org/ignitionrobotics/ign-gui -b gz11
+    # This checks out the `master` branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
+    git clone http://github.com/ignitionrobotics/ign-gui
 
 ### Building from source
 
@@ -214,19 +215,19 @@ further instructions on how to disable testing, run test coverage, etc.
 
 * `tutorials`: Markdown files for the [tutorials](https://ignitionrobotics.org/api/gui/1.0/tutorials.html).
 
-* `conf`: Files needed by [ign-tools](https://bitbucket.org/ignitionrobotics/ign-tools).
+* `conf`: Files needed by [ign-tools](https://github.com/ignitionrobotics/ign-tools).
 
 * `doc`: Files used by Doxygen when generating documentation.
 
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://bitbucket.org/ignitionrobotics/ign-gazebo/src/default/CONTRIBUTING.md).
+[CONTRIBUTING.md](https://ignitionrobotics.org/docs/all/contributing).
 
 # Code of Conduct
 
 Please see
-[CODE_OF_CONDUCT.md](https://bitbucket.org/ignitionrobotics/ign-gazebo/src/default/CODE_OF_CONDUCT.md).
+[CODE_OF_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/master/CODE_OF_CONDUCT.md).
 
 # Versioning
 
@@ -234,5 +235,5 @@ This library uses [Semantic Versioning](https://semver.org/). Additionally, this
 
 # License
 
-This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://bitbucket.org/ignitionrobotics/ign-gui/src/default/LICENSE) file.
+This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-gui/blob/master/LICENSE) file.
 
