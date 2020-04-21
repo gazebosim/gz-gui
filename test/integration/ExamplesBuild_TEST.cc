@@ -26,7 +26,7 @@
 using namespace ignition;
 
 // Helper functions copied from
-// https://bitbucket.org/ignitionrobotics/ign-common/raw/default/src/Filesystem_TEST.cc
+// https://github.com/ignitionrobotics/ign-common/raw/master/src/Filesystem_TEST.cc
 
 #ifndef _WIN32
 #include <fcntl.h>  // NOLINT(build/include_order)
