@@ -11,7 +11,7 @@ pipelines:
           - wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
           - apt update
           - apt install -y
-            build-essential wget cmake cppcheck git mercurial
+            build-essential wget cmake cppcheck git
             qtbase5-dev libqwt-qt5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev
             libignition-cmake1-dev
             libignition-common3-dev
