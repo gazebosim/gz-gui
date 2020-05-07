@@ -9,11 +9,11 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/default)
-Ubuntu Xenial | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-xenial-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-xenial-amd64/)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-homebrew-amd64)
-Windows 7     | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-default-windows7-amd64)
+Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/master/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/default)
+Ubuntu Xenial | [![](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-xenial-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-xenial-amd64/)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-homebrew-amd64)
+Windows 7     | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-windows7-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-windows7-amd64)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
