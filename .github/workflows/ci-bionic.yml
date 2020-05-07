@@ -15,3 +15,4 @@ jobs:
         with:
           apt-dependencies: 'qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev qtdeclarative5-dev qtquickcontrols2-5-dev qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-layouts qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtgraphicaleffects libignition-cmake2-dev libignition-common3-dev libignition-math6-dev libignition-msgs5-dev libignition-plugin-dev libignition-rendering3-dev libignition-tools-dev libignition-transport8-dev'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          script-after-make: ../.github/ci-bionic/after_make.sh
