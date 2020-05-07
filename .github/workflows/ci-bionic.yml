@@ -13,5 +13,5 @@ jobs:
         id: ci
         uses: ignition-tooling/ubuntu-bionic-ci-action@master
         with:
-          apt-dependencies: 'qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev qtdeclarative5-dev qtquickcontrols2-5-dev qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-layouts qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtgraphicaleffects'
+          apt-dependencies: 'qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev qtdeclarative5-dev qtquickcontrols2-5-dev qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-layouts qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtgraphicaleffects libignition-cmake2-dev libignition-common3-dev libignition-math6-dev libignition-msgs4-dev libignition-plugin-dev libignition-rendering2-dev libignition-tools-dev libignition-transport7-dev'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
