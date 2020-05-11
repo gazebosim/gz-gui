@@ -38,6 +38,7 @@ Menu {
       onClicked: {
         MainWindow.OnAddPlugin(modelData);
         drawer.close()
+        pluginMenu.close()
       }
     }
 
