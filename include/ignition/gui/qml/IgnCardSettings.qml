@@ -90,7 +90,7 @@ Dialog {
           width: 50
           height: 30
           id: "bgColor"
-          color: "transparent"
+          color: cardBackground
           border.color: "#000000"
           border.width: 2
         }
@@ -201,6 +201,7 @@ Dialog {
     onAccepted: {
       content.color = colorDialog.color
       bgColor.color = colorDialog.color
+      cardBackground = colorDialog.color
     }
     onRejected: {
       console.log("Canceled")
