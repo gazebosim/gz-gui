@@ -13,7 +13,34 @@ jobs:
         id: ci
         uses: ignition-tooling/ubuntu-bionic-ci-action@ign_from_src
         with:
-          apt-dependencies: 'qtbase5-dev libtinyxml2-dev libprotoc-dev libprotobuf-dev qtdeclarative5-dev qtquickcontrols2-5-dev qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-layouts qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtgraphicaleffects libignition-cmake2-dev libignition-common3-dev libignition-math6-dev libignition-msgs5-dev libignition-plugin-dev libignition-tools-dev libignition-transport8-dev libogre-1.9-dev libogre-2.1-dev libglew-dev libfreeimage-dev freeglut3-dev libxmu-dev libxi-dev'
+          apt-dependencies: |
+            qtbase5-dev
+            libtinyxml2-dev
+            libprotoc-dev
+            libprotobuf-dev
+            qtdeclarative5-dev
+            qtquickcontrols2-5-dev
+            qml-module-qtquick2
+            qml-module-qtquick-controls
+            qml-module-qtquick-controls2
+            qml-module-qtquick-dialogs
+            qml-module-qtquick-layouts
+            qml-module-qt-labs-folderlistmodel
+            qml-module-qt-labs-settings
+            qml-module-qtgraphicaleffects
+            libignition-cmake2-dev
+            libignition-common3-dev
+            libignition-math6-dev
+            libignition-msgs5-dev
+            libignition-plugin-dev
+            libignition-tools-dev
+            libignition-transport8-dev
+            libogre-1.9-dev
+            libogre-2.1-dev
+            libglew-dev
+            libfreeimage-dev
+            freeglut3-dev
+            libxmu-dev
+            libxi-dev
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           script-after-make: ../.github/ci-bionic/after_make.sh
-          source-dependencies: ../.github/ci-bionic/deps.yaml
