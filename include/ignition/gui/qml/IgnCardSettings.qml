@@ -18,6 +18,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
+import QtQuick.Dialogs 1.0
 import "qrc:/qml"
 
 Dialog {
@@ -71,6 +72,31 @@ Dialog {
         card.resizable = checked
       }
     }
+
+    GridLayout {
+      width: parent.width
+      columns: 3
+      visible: !card.standalone
+
+      Label {
+        text: "Background Color "
+      }
+
+      Button {
+        Layout.preferredWidth: parent.width * 0.4
+        onClicked: colorDialog.open()
+        background: Rectangle {
+          y: 8
+          width: 50
+          height: 30
+          id: "bgColor"
+          color: cardBackground
+          border.color: "#000000"
+          border.width: 2
+        }
+      }
+    }
+
 
     GridLayout {
       width: parent.width
@@ -166,5 +192,20 @@ Dialog {
         text: "Height"
       }
     }
+  }
+
+  ColorDialog {
+    id: colorDialog
+    title: "Please choose a color"
+    showAlphaChannel : true
+    onAccepted: {
+      content.color = colorDialog.color
+      bgColor.color = colorDialog.color
+      cardBackground = colorDialog.color
+    }
+    onRejected: {
+      console.log("Canceled")
+    }
+    Component.onCompleted: visible = false
   }
 }
