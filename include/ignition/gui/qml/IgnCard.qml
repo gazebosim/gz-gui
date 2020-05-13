@@ -75,9 +75,9 @@ Pane {
   property string closeIcon: "\u2715"
 
   /**
-   * The plugin backgroung color
+   * The plugin backgroung color. Default: transparent
    */
-  property string cardBackground: "#ffffff"
+  property string cardBackground: "#00000000"
 
   /**
    *
