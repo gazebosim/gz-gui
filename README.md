@@ -9,9 +9,9 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui4/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-gui/branch/ign-gui4)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-homebrew-amd64)
+Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/master/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/master)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-4-win)](https://build.osrfoundation.org/job/ign_gui-ign-4-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
@@ -23,33 +23,33 @@ which can be used to add custom widgets.
 
 # Table of Contents
 
-[Features](#markdown-header-features)
+[Features](#features)
 
-[Install](#markdown-header-install)
+[Install](#install)
 
-* [Binary Install](#markdown-header-binary-install)
+* [Binary Install](#binary-install)
 
-* [Source Install](#markdown-header-source-install)
+* [Source Install](#source-install)
 
-    * [Prerequisites](#markdown-header-prerequisites)
+    * [Prerequisites](#prerequisites)
 
-    * [Building from Source](#markdown-header-building-from-source)
+    * [Building from Source](#building-from-source)
 
-[Usage](#markdown-header-usage)
+[Usage](#usage)
 
-[Documentation](#markdown-header-documentation)
+[Documentation](#documentation)
 
-[Testing](#markdown-header-testing)
+[Testing](#testing)
 
-[Folder Structure](#markdown-header-folder-structure)
+[Folder Structure](#folder-structure)
 
-[Code of Conduct](#markdown-header-code-of-conduct)
+[Code of Conduct](#code-of-conduct)
 
-[Contributing](#markdown-header-code-of-contributing)
+[Contributing](#code-of-contributing)
 
-[Versioning](#markdown-header-versioning)
+[Versioning](#versioning)
 
-[License](#markdown-header-license)
+[License](#license)
 
 # Features
 
@@ -60,9 +60,9 @@ which can be used to add custom widgets.
 
 # Install
 
-We recommend following the [Binary Install](#markdown-header-binary-install) instructions to get up and running as quickly and painlessly as possible.
+We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
-The [Source Install](#markdown-header-source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
+The [Source Install](#source-install) instructions should be used if you need the very latest software improvements, if you need to modify the code, or if you plan to make a contribution.
 
 ## Binary Install
 
