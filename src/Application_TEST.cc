@@ -261,10 +261,8 @@ TEST(ApplicationTest, Dialog)
     QTimer::singleShot(300, [&] {
       auto ds = app.allWindows();
 
-      // The main dialog
-      // Note: increase by 1 once the hidden undocked dialog from IgnCard.qml is
-      // restored
-      ASSERT_EQ(ds.size(), 1);
+      // The main dialog and 3 hidden QWidget windows
+      ASSERT_EQ(ds.size(), 4);
 
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
 
@@ -296,7 +294,7 @@ TEST(ApplicationTest, Dialog)
     auto closed = false;
     QTimer::singleShot(300, [&] {
       auto ds = app.allWindows();
-      EXPECT_EQ(ds.size(), 2);
+      EXPECT_EQ(ds.size(), 5);
 
       for (auto dialog : ds)
         dialog->close();
