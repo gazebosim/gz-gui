@@ -149,7 +149,7 @@ void SearchModel::SetSearch(const QString &_search)
   this->search = _search;
 
   // Trigger repaint on whole model
-  this->filterChanged();
+  this->invalidateFilter();
 
   // TODO(anyone): Figure out why filterChanged works for TopicViewer but not
   // TopicsStats

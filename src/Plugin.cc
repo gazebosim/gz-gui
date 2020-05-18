@@ -68,6 +68,9 @@ class ignition::gui::PluginPrivate
   /// \brief Pointer to wrapping card item
   public: QQuickItem *cardItem{nullptr};
 
+  /// \brief Context in which plugin item was cerated
+  public: QQmlContext *context{nullptr};
+
   /// \brief Map of card properties to be passed to QML card object.
   /// Accepts all QML Pane properties plus custom Igntiion GUI properties.
   /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
@@ -117,8 +120,9 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   std::string filename = _pluginElem->Attribute("filename");
 
   // This let's <filename>.qml use <pluginclass> functions and properties
-  auto context = new QQmlContext(App()->Engine()->rootContext());
-  context->setContextProperty(QString::fromStdString(filename), this);
+  this->dataPtr->context = new QQmlContext(App()->Engine()->rootContext());
+  this->dataPtr->context->setContextProperty(QString::fromStdString(filename),
+      this);
 
   // Instantiate plugin QML file into a component
   std::string qmlFile(":/" + filename + "/" + filename + ".qml");
@@ -126,7 +130,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 
   // Create an item for the plugin
   this->dataPtr->pluginItem =
-      qobject_cast<QQuickItem *>(component.create(context));
+      qobject_cast<QQuickItem *>(component.create(this->dataPtr->context));
   if (!this->dataPtr->pluginItem)
   {
     ignerr << "Failed to instantiate QML file [" << qmlFile << "]." << std::endl
@@ -149,13 +153,15 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
   if (nullptr == _ignGuiElem)
     return;
 
-  if (auto elem = _ignGuiElem->FirstChildElement("title"))
+  auto elem = _ignGuiElem->FirstChildElement("title");
+  if (nullptr != elem && nullptr != elem->GetText())
   {
     this->title = elem->GetText();
   }
 
   // Delete later
-  if (auto elem = _ignGuiElem->FirstChildElement("delete_later"))
+  elem = _ignGuiElem->FirstChildElement("delete_later");
+  if (nullptr != elem)
   {
     // Store param
     elem->QueryBoolText(&this->dataPtr->deleteLaterRequested);
@@ -194,6 +200,11 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
     }
     else if (type == "string")
     {
+      if (nullptr == propElem->GetText())
+      {
+        ignerr << "Invalid string inside [" << key << "]" << std::endl;
+        continue;
+      }
       std::string value = propElem->GetText();
       variant = QVariant(QString::fromStdString(value));
     }
@@ -335,16 +346,6 @@ std::string Plugin::ConfigStr()
 }
 
 /////////////////////////////////////////////////
-// void Plugin::changeEvent(QEvent *_e)
-// {
-//   if (_e->type() == QEvent::ParentChange && this->parent() &&
-//       this->dataPtr->deleteLater)
-//   {
-//     qobject_cast<QWidget *>(this->parent())->close();
-//   }
-// }
-
-/////////////////////////////////////////////////
 void Plugin::DeleteLater()
 {
   this->dataPtr->deleteLaterRequested = true;
@@ -444,6 +445,12 @@ QQuickItem *Plugin::CardItem() const
   this->dataPtr->cardItem = cardItem;
 
   return cardItem;
+}
+
+/////////////////////////////////////////////////
+QQmlContext *Plugin::Context() const
+{
+  return this->dataPtr->context;
 }
 
 /////////////////////////////////////////////////

@@ -142,13 +142,6 @@ void ExamplesBuild::Build(const std::string &_type)
   {
     auto base = ignition::common::basename(*dirIter);
 
-    // TODO(louise) Migrate all examples to QtQuick
-    if (base == "designer_ui_file" ||
-        base == "save_on_close")
-    {
-      continue;
-    }
-
     // Source directory for this example
     auto sourceDir = examplesDir + "/" + base;
     ASSERT_TRUE(ignition::common::exists(sourceDir));
@@ -165,7 +158,7 @@ void ExamplesBuild::Build(const std::string &_type)
     // cd build && cmake source
     snprintf(cmd, sizeof(cmd), "cd %s && cmake %s && make",
       tmpBuildDir.c_str(), sourceDir.c_str());
-    ASSERT_EQ(system(cmd), 0);
+    EXPECT_EQ(system(cmd), 0);
 
     // Remove temp dir
     EXPECT_TRUE(common::removeAll(tmpBuildDir));

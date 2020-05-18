@@ -1309,7 +1309,8 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Custom parameters
   if (_pluginElem)
   {
-    if (auto elem = _pluginElem->FirstChildElement("engine"))
+    auto elem = _pluginElem->FirstChildElement("engine");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       renderWindow->SetEngineName(elem->GetText());
       // there is a problem with displaying ogre2 render textures that are in
@@ -1319,10 +1320,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         this->PluginItem()->setProperty("gammaCorrect", true);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("scene"))
+    elem = _pluginElem->FirstChildElement("scene");
+    if (nullptr != elem && nullptr != elem->GetText())
       renderWindow->SetSceneName(elem->GetText());
 
-    if (auto elem = _pluginElem->FirstChildElement("ambient_light"))
+    elem = _pluginElem->FirstChildElement("ambient_light");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       math::Color ambient;
       std::stringstream colorStr;
@@ -1331,7 +1334,8 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       renderWindow->SetAmbientLight(ambient);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("background_color"))
+    elem = _pluginElem->FirstChildElement("background_color");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       math::Color bgColor;
       std::stringstream colorStr;
@@ -1340,7 +1344,8 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       renderWindow->SetBackgroundColor(bgColor);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("camera_pose"))
+    elem = _pluginElem->FirstChildElement("camera_pose");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       math::Pose3d pose;
       std::stringstream poseStr;
@@ -1349,25 +1354,29 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       renderWindow->SetCameraPose(pose);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("service"))
+    elem = _pluginElem->FirstChildElement("service");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       std::string service = elem->GetText();
       renderWindow->SetSceneService(service);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("pose_topic"))
+    elem = _pluginElem->FirstChildElement("pose_topic");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       std::string topic = elem->GetText();
       renderWindow->SetPoseTopic(topic);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("deletion_topic"))
+    elem = _pluginElem->FirstChildElement("deletion_topic");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       std::string topic = elem->GetText();
       renderWindow->SetDeletionTopic(topic);
     }
 
-    if (auto elem = _pluginElem->FirstChildElement("scene_topic"))
+    elem = _pluginElem->FirstChildElement("scene_topic");
+    if (nullptr != elem && nullptr != elem->GetText())
     {
       std::string topic = elem->GetText();
       renderWindow->SetSceneTopic(topic);

@@ -151,6 +151,9 @@ void ImageDisplay::ProcessImage()
     case msgs::PixelFormatType::R_FLOAT32:
       this->UpdateFromFloat32();
       break;
+    case msgs::PixelFormatType::L_INT16:
+      this->UpdateFromLInt16();
+      break;
     default:
     {
       ignwarn << "Unsupported image type: "
@@ -274,6 +277,60 @@ void ImageDisplay::UpdateFromFloat32()
   this->newImage();
 
   delete[] depthBuffer;
+}
+
+/////////////////////////////////////////////////
+void ImageDisplay::UpdateFromLInt16()
+{
+  unsigned int height = this->dataPtr->imageMsg.height();
+  unsigned int width = this->dataPtr->imageMsg.width();
+  QImage::Format qFormat = QImage::Format_RGB888;
+
+  QImage image = QImage(width, height, qFormat);
+
+  unsigned int samples = width * height;
+  uint16_t type;
+  // cppchecker recommends using sizeof(varname)
+  unsigned int bufferSize = samples * sizeof(type);
+
+  uint16_t *buffer = new uint16_t[samples];
+  memcpy(buffer, this->dataPtr->imageMsg.data().c_str(),
+      bufferSize);
+
+  // get min and max of temperature values
+  uint16_t min = std::numeric_limits<uint16_t>::max();
+  uint16_t max = 0;
+  for (unsigned int i = 0; i < samples; ++i)
+  {
+    uint16_t temp = buffer[i];
+    if (temp > max)
+      max = temp;
+    if (temp < min)
+      min = temp;
+  }
+
+  // convert temperature to grayscale image
+  double range = static_cast<double>(max - min);
+  if (ignition::math::equal(range, 0.0))
+    range = 1.0;
+  unsigned int idx = 0;
+  for (unsigned int j = 0; j < height; ++j)
+  {
+    for (unsigned int i = 0; i < width; ++i)
+    {
+      uint16_t temp = buffer[idx++];
+      double t = static_cast<double>(temp-min) / range;
+      int r = 255*t;
+      int g = r;
+      int b = r;
+      QRgb value = qRgb(r, g, b);
+      image.setPixel(i, j, value);
+    }
+  }
+  this->dataPtr->provider->SetImage(image);
+  this->newImage();
+
+  delete[] buffer;
 }
 
 /////////////////////////////////////////////////
