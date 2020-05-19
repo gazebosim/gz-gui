@@ -31,7 +31,7 @@
 // #include "ignition/gui/NumberWidget.hh"
 // #include "ignition/gui/Pose3dWidget.hh"
 // #include "ignition/gui/QtMetatypes.hh"
-#include "ignition/gui/plugins/Grid3D.hh"
+#include "Grid3D.hh"
 
 // Default cell count
 static const int kDefaultCellCount{20};
