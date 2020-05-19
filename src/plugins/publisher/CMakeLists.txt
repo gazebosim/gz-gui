@@ -4,6 +4,6 @@ ign_gui_add_plugin(Publisher
   QT_HEADERS
     Publisher.hh
   TEST_SOURCES
-    # Publisher_TEST.cc
+    Publisher_TEST.cc
 )
 
