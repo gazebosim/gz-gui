@@ -248,6 +248,7 @@ TEST(ApplicationTest, Dialog)
   // Single dialog
   {
     Application app(g_argc, g_argv, WindowType::kDialog);
+    EXPECT_EQ(app.allWindows().size(), 0);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -262,7 +263,8 @@ TEST(ApplicationTest, Dialog)
       auto ds = app.allWindows();
 
       // The main dialog and 3 hidden QWidget windows
-      ASSERT_EQ(ds.size(), 4);
+      ASSERT_GT(ds.size(), 1);
+      EXPECT_EQ(ds.size(), 4);
 
       EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
 
@@ -281,6 +283,7 @@ TEST(ApplicationTest, Dialog)
   // Multiple dialogs
   {
     Application app(g_argc, g_argv, WindowType::kDialog);
+    EXPECT_EQ(app.allWindows().size(), 0);
 
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -294,6 +297,7 @@ TEST(ApplicationTest, Dialog)
     auto closed = false;
     QTimer::singleShot(300, [&] {
       auto ds = app.allWindows();
+      ASSERT_GT(ds.size(), 1);
       EXPECT_EQ(ds.size(), 5);
 
       for (auto dialog : ds)
