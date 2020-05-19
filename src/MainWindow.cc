@@ -16,6 +16,7 @@
  */
 
 #include <tinyxml2.h>
+#include <regex>
 #include <string>
 
 #include <ignition/common/Console.hh>
@@ -91,83 +92,6 @@ MainWindow::~MainWindow()
 }
 
 /////////////////////////////////////////////////
-// void MainWindow::paintEvent(QPaintEvent *_event)
-// {
-//  this->dataPtr->paintCount++;
-//  if (this->dataPtr->paintCount == this->dataPtr->paintCountMin)
-//  {
-//    this->dataPtr->windowConfig = this->CurrentWindowConfig();
-//  }
-//  _event->accept();
-// }
-//
-///////////////////////////////////////////////////
-// void MainWindow::closeEvent(QCloseEvent *_event)
-// {
-//  if (this->dataPtr->paintCount < this->dataPtr->paintCountMin ||
-//      this->dataPtr->windowConfig.XMLString() ==
-//      this->CurrentWindowConfig().XMLString())
-//  {
-//    _event->accept();
-//    return;
-//  }
-//
-//  // Ask for confirmation
-//  std::string msg = "There are unsaved changes. \n\n";
-//
-//  QMessageBox msgBox(QMessageBox::Warning, QString("Save configuration?"),
-//      QString(msg.c_str()), QMessageBox::NoButton, this);
-//  msgBox.setWindowFlags(Qt::Window | Qt::WindowTitleHint |
-//      Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-//
-//  auto saveButton = msgBox.addButton("Save as default",
-//      QMessageBox::AcceptRole);
-//  saveButton->setObjectName("closeConfirmationDialogSaveButton");
-//  saveButton->setToolTip(QString::fromStdString(
-//      "Save to default config file \"" + defaultConfigPath() + "\""));
-//  msgBox.setDefaultButton(saveButton);
-//  saveButton->setMinimumWidth(160);
-//
-//  auto saveAsButton = msgBox.addButton("Save as...", QMessageBox::AcceptRole);
-//  saveAsButton->setObjectName("closeConfirmationDialogSaveAsButton");
-//  saveAsButton->setToolTip("Choose a file on your computer");
-//
-//  auto cancelButton = msgBox.addButton("Cancel", QMessageBox::AcceptRole);
-//  cancelButton->setObjectName("closeConfirmationDialogCancelButton");
-//  msgBox.setEscapeButton(cancelButton);
-//  cancelButton->setToolTip("Don't close window");
-//
-//  auto closeButton = msgBox.addButton("Close without saving",
-//      QMessageBox::AcceptRole);
-//  closeButton->setObjectName("closeConfirmationDialogCloseButton");
-//  closeButton->setToolTip("Close without saving");
-//  closeButton->setMinimumWidth(180);
-//
-//  msgBox.show();
-//  msgBox.exec();
-//
-//  // User doesn't want to close window anymore
-//  if (msgBox.clickedButton() == cancelButton)
-//  {
-//    _event->ignore();
-//    return;
-//  }
-//
-//  // Save to default config
-//  if (msgBox.clickedButton() == saveButton)
-//  {
-//    this->OnSaveConfig();
-//  }
-//
-//  // Save to custom file
-//  if (msgBox.clickedButton() == saveAsButton)
-//  {
-//    this->OnSaveConfigAs();
-//  }
-//  _event->accept();
-// }
-
-/////////////////////////////////////////////////
 QStringList MainWindow::PluginListModel() const
 {
   QStringList pluginNames;
@@ -178,6 +102,10 @@ QStringList MainWindow::PluginListModel() const
     {
       // Remove lib and .so
       auto pluginName = plugin.substr(3, plugin.find(".") - 3);
+
+      // Split WWWCamelCase3D -> WWW Camel Case 3D
+      std::regex reg("(\\B[A-Z][a-z])|(\\B[0-9])");
+      pluginName = std::regex_replace(pluginName, reg, " $&");
 
       // Show?
       if (this->dataPtr->windowConfig.pluginsFromPaths ||
@@ -260,6 +188,10 @@ void MainWindow::SaveConfig(const std::string &_path)
 void MainWindow::OnAddPlugin(QString _plugin)
 {
   auto plugin = _plugin.toStdString();
+
+  // Remove spaces
+  plugin.erase(remove_if(plugin.begin(), plugin.end(), isspace), plugin.end());
+
   ignlog << "Add [" << plugin << "] via menu" << std::endl;
 
   App()->LoadPlugin(plugin);
@@ -418,7 +350,8 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
   if (auto stateElem = winElem->FirstChildElement("state"))
   {
     auto text = stateElem->GetText();
-    this->state = QByteArray::fromBase64(text);
+    if (nullptr != text)
+      this->state = QByteArray::fromBase64(text);
   }
 
   // Style

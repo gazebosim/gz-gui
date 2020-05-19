@@ -80,13 +80,16 @@ void Publisher::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Parameters from SDF
   if (_pluginElem)
   {
-    if (auto typeElem = _pluginElem->FirstChildElement("message_type"))
+    auto typeElem = _pluginElem->FirstChildElement("message_type");
+    if (nullptr != typeElem && nullptr != typeElem->GetText())
       this->dataPtr->msgType = typeElem->GetText();
 
-    if (auto msgElem = _pluginElem->FirstChildElement("message"))
+    auto msgElem = _pluginElem->FirstChildElement("message");
+    if (nullptr != msgElem && nullptr != msgElem->GetText())
       this->dataPtr->msgData = msgElem->GetText();
 
-    if (auto topicElem = _pluginElem->FirstChildElement("topic"))
+    auto topicElem = _pluginElem->FirstChildElement("topic");
+    if (nullptr != topicElem && nullptr != topicElem->GetText())
       this->dataPtr->topic = topicElem->GetText();
 
     if (auto frequencyElem = _pluginElem->FirstChildElement("frequency"))

@@ -397,12 +397,6 @@ namespace ignition
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
 
-      // Documentation inherited
-//      protected: void paintEvent(QPaintEvent *_event) override;
-
-      // Documentation inherited
-//      protected: void closeEvent(QCloseEvent *_event) override;
-
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;
@@ -474,13 +468,13 @@ namespace ignition
       /// \brief Plugin toolbar text color dark
       std::string pluginToolBarTextColorDark{""};
 
-      /// \brief
+      /// \brief Show the side drawer
       bool showDrawer{true};
 
-      /// \brief
+      /// \brief Show the default options of the drawer
       bool showDefaultDrawerOpts{true};
 
-      /// \brief
+      /// \brief Show the plugins menu
       bool showPluginMenu{true};
 
       /// \brief True if plugins found in plugin paths should be listed under

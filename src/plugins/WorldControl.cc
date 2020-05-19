@@ -81,7 +81,8 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // For world control requests
-  if (auto serviceElem = _pluginElem->FirstChildElement("service"))
+  auto serviceElem = _pluginElem->FirstChildElement("service");
+  if (nullptr != serviceElem && nullptr != serviceElem->GetText())
     this->dataPtr->controlService = serviceElem->GetText();
 
   if (this->dataPtr->controlService.empty())
@@ -123,7 +124,8 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Subscribe to world stats
   std::string statsTopic;
-  if (auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic"))
+  auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
+  if (nullptr != statsTopicElem && nullptr != statsTopicElem->GetText())
     statsTopic = statsTopicElem->GetText();
 
   if (!statsTopic.empty())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2020 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_HELLOPLUGIN_HH_
-#define IGNITION_GUI_HELLOPLUGIN_HH_
-
-#include <string>
+#ifndef IGNITION_GUI_DIALOGFROMPLUGIN_HH_
+#define IGNITION_GUI_DIALOGFROMPLUGIN_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
@@ -29,26 +27,15 @@ namespace ignition
 {
   namespace gui
   {
-    class HelloPlugin : public Plugin
+    class DialogFromPlugin : public Plugin
     {
       Q_OBJECT
 
       /// \brief Constructor
-      public: HelloPlugin();
+      public: DialogFromPlugin();
 
       /// \brief Destructor
-      public: virtual ~HelloPlugin();
-
-      /// \brief Called by Ignition GUI when plugin is instantiated.
-      /// \param[in] _pluginElem XML configuration for this plugin.
-      public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-          override;
-
-      /// \brief Callback trigged when the button is pressed.
-      protected slots: void OnButton();
-
-      /// \brief Message to be printed when button is pressed.
-      private: std::string message{"Hello, plugin!"};
+      public: virtual ~DialogFromPlugin();
     };
   }
 }

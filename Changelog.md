@@ -9,7 +9,60 @@
 
 ## Ignition Gui 3
 
-### Ignition Gui 3.X.X
+### Ignition Gui 3.X.X (202X-XX-XX)
+
+### Ignition Gui 3.1.0 (2020-03-27)
+
+1. Remove old ign-gui0 stuff
+    * [BitBucket pull request 248](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/248)
+
+1. Fix homebrew warnings
+    * [BitBucket pull request 249](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/249)
+
+
+1. Add space for pausing sim
+    * [BitBucket pull request 245](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/245)
+
+1. Prettify plugin menu
+    * [BitBucket pull request 231](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/231)
+
+1. Expose QML context to plugins
+    * [BitBucket pull request 244](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/244)
+
+1. Fix changing topics in ImageDisplay
+    * [BitBucket pull request 224](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/224)
+
+1. Made image display responsive.
+    * [BitBucket pull request 223](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/223)
+
+1. Downstream applications can override icon using MainWindow::setIcon once they get the window.
+    * [BitBucket pull request 222](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/222)
+
+1. Add support for visualizing int 16 bit images in ImageDisplay
+    * [BitBucket pull request 241](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/241)
+
+1. Example opening a dialog and accessing main window from plugin
+    * [BitBucket pull request 242](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/242)
+
+1. Example composing one plugin with multiple QML files
+    * [BitBucket pull request 235](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/235)
+
+1. Protect against null tinyxml GetText
+    * [BitBucket pull request 236](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/236)
+
+1. Example using Ign\*.qml components
+    * [BitBucket pull request 240](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/240)
+
+1. Config tutorial
+    * [BitBucket pull request 233](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/233)
+
+1. Add copyright to all QML files
+    * [BitBucket pull request 232](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/232)
+
+1. Documentation updates
+    * [BitBucket pull request 229](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/229)
+    * [BitBucket pull request 228](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/228)
+    * [BitBucket pull request 230](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/230)
 
 ### Ignition Gui 3.0.0 (2019-12-10)
 
@@ -21,8 +74,34 @@
 
 ## Ignition Gui 2
 
-
 ### Ignition Gui 2.X.X
+
+
+### Ignition Gui 2.1.0 (2020-03-04)
+
+1. Add space for pausing sim
+    * [BitBucket pull request 245](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/245)
+
+1. Expose QML context to plugins
+    * [BitBucket pull request 244](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/244)
+
+1. Prettify plugin menu
+    * [BitBucket pull request 231](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/231)
+
+1. Example opening a dialog and accessing main window from plugin
+    * [BitBucket pull request 242](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/242)
+
+1. Example using Ign\*.qml components
+    * [BitBucket pull request 240](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/240)
+
+1. Protect against null tinyxml GetText
+    * [BitBucket pull request 236](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/236)
+
+1. Config tutorial
+    * [BitBucket pull request 233](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/233)
+
+1. Add copyright to all QML files
+    * [BitBucket pull request 232](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/232)
 
 1. Fix changing topics in ImageDisplay
     * [BitBucket pull request 224](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/224)

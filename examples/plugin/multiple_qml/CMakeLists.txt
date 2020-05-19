@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
+if(POLICY CMP0100)
+  cmake_policy(SET CMP0100 NEW)
+endif()
+
 set (CMAKE_AUTOMOC ON)
 
 # Find Qt5

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2020 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,40 +18,22 @@
 #include <iostream>
 #include <ignition/plugin/Register.hh>
 
-#include "HelloPlugin.hh"
+#include "DialogFromPlugin.hh"
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-HelloPlugin::HelloPlugin()
+DialogFromPlugin::DialogFromPlugin()
   : Plugin()
 {
 }
 
 /////////////////////////////////////////////////
-HelloPlugin::~HelloPlugin()
+DialogFromPlugin::~DialogFromPlugin()
 {
-}
-
-/////////////////////////////////////////////////
-void HelloPlugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-{
-  if (!_pluginElem)
-    return;
-
-  // Take parameters from XML at runtime
-  auto messageElem = _pluginElem->FirstChildElement("message");
-  if (nullptr != messageElem && nullptr != messageElem->GetText())
-    this->message = messageElem->GetText();
-}
-
-/////////////////////////////////////////////////
-void HelloPlugin::OnButton()
-{
-  std::cout << this->message << std::endl;
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::HelloPlugin,
+IGNITION_ADD_PLUGIN(ignition::gui::DialogFromPlugin,
                     ignition::gui::Plugin);

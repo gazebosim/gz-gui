@@ -1,7 +1,17 @@
 \page plugins Plugins
 
-Next Tutorial: \ref layout
+Next Tutorial: \ref config
 Previous Tutorial: \ref commandline
+
+## Writing plugins
+
+An Ignition GUI plugin is a shared library that defines a widget.
+The plugin contains [QML](https://doc.qt.io/qt-5/qtqml-index.html)
+code that specifies what the widget looks like, as well as C++ code
+that defines the plugin's behaviour and ties it to other libraries.
+
+See [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui2/examples/plugin/hello_plugin/)
+for an example.
 
 ## Finding plugins
 
@@ -12,26 +22,11 @@ Ignition GUI will look for plugins on the following paths, in this order:
 3. `~/.ignition/gui/plugins`
 4. [Plugins which are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1plugins.html)
 
-## Plugin configuration
+## Configuring plugins
 
-Ignition GUI supports loading configuration files (XML) which are passed to
-plugins and can be parsed using TinyXml2 (For now, see issue #7).
-
-For example (`examples/config/image.config`):
-
-    <plugin filename="ImageDisplay">
-      <title>Without picker</title>
-      <topic_picker>false</topic_picker>
-      <topic>/rendering/image</topic>
-    </plugin>
-
-* Developers can read custom plugin configurations overriding the
-  `Plugin::LoadConfig` function.
-
-* Ignition GUI processes the `<ignition-gui>` block before passing the config to
-  implemented plugins. See
-  [plugin_params.config](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui1/examples/config/plugin_params.config)
-  for an example.
+Ignition GUI supports loading XML configuration files, which may contain
+parameters to be passed directly to the plugin. See the \subpage config
+tutorial for more information.
 
 ## Built-in plugins
 
