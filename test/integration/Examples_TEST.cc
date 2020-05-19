@@ -40,6 +40,8 @@ TEST(ExampleTest, Configs)
   ignition::common::DirIter endIter;
   for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
   {
+    igndbg << *file << std::endl;
+
     // image.config is broken (issue #40)
     if ((*file).find("image") != std::string::npos)
     {
