@@ -1,27 +1,114 @@
-# No need to add plugins to sources, they will be found when building the
-# shared libraries
+#################################################
+# ign_gui_add_library (<library_name>
+#              SOURCES <sources>
+#              [PUBLIC_LINK_LIBS <libraries...>]
+#              [PRIVATE_LINK_LIBS <libraries...>])
+#
+# Add a plugin library to Ignition GUI.
+#
+# <library_name> Required. Name of the library
+#
+# [SOURCES]: Specify the source files for the plugin.
+#
+# [QT_HEADERS]: Qt headers that need to be MOC'ed
+#
+# [PUBLIC_LINK_LIBS]: Specify a list of libraries to be publicly linked.
+#
+# [PRIVATE_LINK_LIBS]: Specify a list of libraries to be privately linked.
+#
+function(ign_gui_add_library library_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs SOURCES QT_HEADERS PUBLIC_LINK_LIBS PRIVATE_LINK_LIBS)
 
-# Tests
-set (gtest_local_sources
-  WorldControl
-  WorldStats
-)
+  cmake_parse_arguments(ign_gui_add_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-foreach(src ${gtest_local_sources})
-  ign_build_tests(TYPE UNIT
-    SOURCES
-      ${src}_TEST.cc
-    LIB_DEPS
-      ${IGNITION-RENDERING_LIBRARIES}
-      ${IGNITION-GUI_LIBRARIES}
+  QT5_WRAP_CPP(${library_name}_headers_MOC ${ign_gui_add_library_QT_HEADERS})
+  QT5_ADD_RESOURCES(${library_name}_RCC ${library_name}.qrc)
+
+  add_library(${library_name} SHARED
+    ${ign_gui_add_library_SOURCES}
+    ${${library_name}_headers_MOC}
+    ${${library_name}_RCC}
+  )
+  target_link_libraries(${library_name}
+    PUBLIC
+      ${PROJECT_LIBRARY_TARGET_NAME}
       TINYXML2::TINYXML2
-      ${src}
-    INCLUDE_DIRS
-      # Used to make internal source file headers visible to the unit tests
-      ${CMAKE_CURRENT_SOURCE_DIR}
-      # Used to make test-directory headers visible to the unit tests
-      ${PROJECT_SOURCE_DIR}
-      # Used to make test_config.h visible to the unit tests
-      ${PROJECT_BINARY_DIR})
-endforeach()
+      ${ign_gui_add_library_PUBLIC_LINK_LIBS}
+    PRIVATE
+      ${ign_gui_add_library_PRIVATE_LINK_LIBS}
+  )
+endfunction()
 
+#################################################
+# ign_gui_add_plugin(<plugin_name>
+#              SOURCES <sources>
+#              [PUBLIC_LINK_LIBS <libraries...>]
+#              [PRIVATE_LINK_LIBS <libraries...>])
+#
+# Add a plugin to Ignition GUI.
+#
+# <plugin_name> Required. Name of the plugin.
+#
+# [SOURCES]: Specify the source files for the system.
+#
+# [QT_HEADERS]: Qt headers that need to be MOC'ed
+#
+# [TEST_SOURCES]: Source files for unit tests.
+#
+# [PUBLIC_LINK_LIBS]: Specify a list of libraries to be publicly linked.
+#
+# [PRIVATE_LINK_LIBS]: Specify a list of libraries to be privately linked.
+#
+function(ign_gui_add_plugin plugin_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs
+    SOURCES
+    QT_HEADERS
+    TEST_SOURCES
+    PUBLIC_LINK_LIBS
+    PRIVATE_LINK_LIBS
+  )
+
+  cmake_parse_arguments(ign_gui_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  ign_gui_add_library(${plugin_name}
+    SOURCES ${ign_gui_add_plugin_SOURCES}
+    QT_HEADERS ${ign_gui_add_plugin_QT_HEADERS}
+    PUBLIC_LINK_LIBS ${ign_gui_add_plugin_PUBLIC_LINK_LIBS}
+    PRIVATE_LINK_LIBS ${ign_gui_add_plugin_PRIVATE_LINK_LIBS} ignition-plugin${IGN_PLUGIN_VER}::register
+  )
+
+message(STATUS "ddddddddddddddddddddddddddddddddddddddddd")
+message(STATUS ${ign_gui_add_plugin_TEST_SOURCES})
+  if(ign_gui_add_plugin_TEST_SOURCES)
+message(STATUS "aaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    ign_build_tests(TYPE UNIT
+      SOURCES
+        ${ign_gui_add_plugin_TEST_SOURCES}
+      LIB_DEPS
+        ${IGNITION-GUI_LIBRARIES}
+        TINYXML2::TINYXML2
+        ${plugin_name}
+      INCLUDE_DIRS
+        # Used to make internal source file headers visible to the unit tests
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        # Used to make test-directory headers visible to the unit tests
+        ${PROJECT_SOURCE_DIR}
+        # Used to make test_config.h visible to the unit tests
+        ${PROJECT_BINARY_DIR})
+  endif()
+
+  install (TARGETS ${plugin_name} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
+endfunction()
+
+# Plugins
+add_subdirectory(grid_3d)
+add_subdirectory(image_display)
+add_subdirectory(publisher)
+add_subdirectory(scene3d)
+add_subdirectory(topic_echo)
+add_subdirectory(world_control)
+add_subdirectory(world_stats)

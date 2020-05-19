@@ -21,7 +21,7 @@
 #include <ignition/msgs.hh>
 #include <ignition/transport/Node.hh>
 
-#include "ignition/gui/plugins/Publisher.hh"
+#include "Publisher.hh"
 
 namespace ignition
 {
