@@ -24,23 +24,24 @@
 
 namespace ignition
 {
-namespace gui {
-/// \brief Namespace for all events.
-namespace events
-{
-  /// \brief Event called in the render thread of a 3D scene.
-  /// It's safe to make rendering calls in this event's callback.
-  class Render : public QEvent
+  namespace gui
   {
-    public: Render()
-        : QEvent(kType)
+    /// \brief Namespace for all events.
+    namespace events
     {
+      /// \brief Event called in the render thread of a 3D scene.
+      /// It's safe to make rendering calls in this event's callback.
+      class Render : public QEvent
+      {
+        public: Render()
+            : QEvent(kType)
+        {
+        }
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::User);
+      };
     }
-    /// \brief Unique type for this event.
-    static const QEvent::Type kType = QEvent::Type(QEvent::User);
-  };
-}  // namespace events
-}  // namespace gui
-}  // namespace ignition
+  }
+}
 
 #endif  // IGNITION_GUI_GUIEVENTS_HH_

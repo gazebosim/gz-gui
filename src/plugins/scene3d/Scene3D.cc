@@ -35,10 +35,10 @@
 
 #include <ignition/transport/Node.hh>
 
-#include "ignition/gui/Conversions.hh"
 #include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/Conversions.hh"
 #include "ignition/gui/GuiEvents.hh"
+#include "ignition/gui/MainWindow.hh"
 
 #include "Scene3D.hh"
 
