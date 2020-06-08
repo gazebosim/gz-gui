@@ -29,6 +29,9 @@ namespace ignition
     /// \brief Namespace for all events.
     namespace events
     {
+      /// User defined events should start from QEvent::MaxUser and
+      /// count down to avoid collision with ign-gazebo events
+
       /// \brief Event called in the render thread of a 3D scene.
       /// It's safe to make rendering calls in this event's callback.
       class Render : public QEvent
@@ -38,7 +41,7 @@ namespace ignition
         {
         }
         /// \brief Unique type for this event.
-        static const QEvent::Type kType = QEvent::Type(QEvent::User);
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser);
       };
     }
   }
