@@ -50,6 +50,8 @@ std::string custom_exec_str(std::string _cmd)
   return result;
 }
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
 TEST(CmdLine, list)
 {
@@ -57,4 +59,5 @@ TEST(CmdLine, list)
   EXPECT_NE(output.find("TopicEcho"), std::string::npos);
   EXPECT_NE(output.find("Publisher"), std::string::npos);
 }
+#endif
 

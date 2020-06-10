@@ -32,6 +32,8 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
 TEST(WorldControlTest, Load)
 {
@@ -124,4 +126,4 @@ TEST(WorldControlTest, WorldControl)
   // Cleanup
   plugins.clear();
 }
-
+#endif

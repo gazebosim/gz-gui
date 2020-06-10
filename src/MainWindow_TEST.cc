@@ -32,6 +32,8 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(_WIN32)
 /////////////////////////////////////////////////
 TEST(MainWindowTest, Constructor)
 {
@@ -160,6 +162,7 @@ TEST(MainWindowTest, OnLoadConfig)
   }
 }
 
+#if not defined(__APPLE__)
 /////////////////////////////////////////////////
 TEST(MainWindowTest, OnAddPlugin)
 {
@@ -191,6 +194,7 @@ TEST(MainWindowTest, OnAddPlugin)
   plugins = mainWindow->findChildren<Plugin *>();
   EXPECT_EQ(plugins.size(), 2);
 }
+#endif
 
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, defaultValues)
@@ -321,6 +325,7 @@ TEST(WindowConfigTest, IgnoreToString)
   EXPECT_NE(str.find("<ignore>size</ignore>"), std::string::npos) << str;
 }
 
+#if not defined(__APPLE__)
 /////////////////////////////////////////////////
 TEST(MainWindowTest, CloseWithoutSavingChanges)
 {
@@ -367,6 +372,7 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
 
   EXPECT_TRUE(closed);
 }
+#endif
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest, ApplyConfig)
@@ -429,4 +435,4 @@ TEST(MainWindowTest, ApplyConfig)
 
   delete mainWindow;
 }
-
+#endif

@@ -30,6 +30,8 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(_WIN32)
 /////////////////////////////////////////////////
 TEST(PluginTest, DeleteLater)
 {
@@ -130,4 +132,4 @@ TEST(PluginTest, Getters)
   ASSERT_NE(nullptr, plugin->CardItem());
   ASSERT_NE(nullptr, plugin->Context());
 }
-
+#endif
