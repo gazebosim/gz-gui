@@ -16,7 +16,7 @@
 */
 
 #include <gtest/gtest.h>
-#include <ignition/msgs.hh>
+#include <ignition/msgs/stringmsg.pb.h>
 #include <ignition/transport/Node.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
@@ -32,6 +32,8 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
 TEST(PublisherTest, Load)
 {
@@ -245,3 +247,4 @@ TEST(PublisherTest, ParamsFromSDF)
   // Frequency
   EXPECT_DOUBLE_EQ(plugin->Frequency(), 0.1);
 }
+#endif
