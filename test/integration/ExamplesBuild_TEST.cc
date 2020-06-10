@@ -178,11 +178,14 @@ TEST_P(ExamplesBuild, Build)
   Build(GetParam());
 }
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(__APPLE__) && not defined(_WIN32)
 //////////////////////////////////////////////////
 INSTANTIATE_TEST_CASE_P(Plugins, ExamplesBuild, ::testing::Values(
   "plugin",
   "standalone"
 ),);  // NOLINT
+#endif
 
 //////////////////////////////////////////////////
 int main(int argc, char **argv)
