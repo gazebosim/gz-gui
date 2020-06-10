@@ -35,7 +35,11 @@
 
 #include <ignition/transport/Node.hh>
 
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Conversions.hh"
+#include "ignition/gui/GuiEvents.hh"
+#include "ignition/gui/MainWindow.hh"
+
 #include "Scene3D.hh"
 
 namespace ignition
@@ -832,6 +836,13 @@ void IgnRenderer::Render()
 
   // update and render to texture
   this->dataPtr->camera->Update();
+
+  if (ignition::gui::App())
+  {
+    ignition::gui::App()->sendEvent(
+        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+        new gui::events::Render());
+  }
 }
 
 /////////////////////////////////////////////////
