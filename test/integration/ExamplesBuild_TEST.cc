@@ -179,7 +179,7 @@ TEST_P(ExamplesBuild, Build)
 }
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-#if not defined(_WIN32)
+#if not defined(__APPLE__) && not defined(_WIN32)
 //////////////////////////////////////////////////
 INSTANTIATE_TEST_CASE_P(Plugins, ExamplesBuild, ::testing::Values(
   "plugin",

@@ -1069,7 +1069,13 @@ TextureNode::TextureNode(QQuickWindow *_window)
     : window(_window)
 {
   // Our texture node must have a texture, so use the default 0 texture.
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
   this->texture = this->window->createTextureFromId(0, QSize(1, 1));
+#else
+  this->texture = this->window->createTextureFromNativeObject(
+      QQuickWindow::NativeObjectTexture, nullptr, 0, QSize(1, 1),
+      QQuickWindow::TextureIsOpaque);
+#endif
   this->setTexture(this->texture);
 }
 
@@ -1105,8 +1111,14 @@ void TextureNode::PrepareNode()
     delete this->texture;
     // note: include QQuickWindow::TextureHasAlphaChannel if the rendered
     // content has alpha.
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     this->texture = this->window->createTextureFromId(
         newId, sz, QQuickWindow::TextureIsOpaque);
+#else
+    // TODO(anyone) Use createTextureFromNativeObject
+    this->texture = this->window->createTextureFromId(
+        newId, sz, QQuickWindow::TextureIsOpaque);
+#endif
     this->setTexture(this->texture);
 
     this->markDirty(DirtyMaterial);
@@ -1425,7 +1437,7 @@ void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
 void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 {
   this->dataPtr->mouseEvent.SetType(common::MouseEvent::SCROLL);
-  this->dataPtr->mouseEvent.SetPos(_e->x(), _e->y());
+  this->dataPtr->mouseEvent.SetPos(_e->position().x(), _e->position.y());
   double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
