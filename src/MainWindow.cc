@@ -129,6 +129,7 @@ QStringList MainWindow::PluginListModel() const
     }
   }
 
+  pluginNames.sort();
   return pluginNames;
 }
 
