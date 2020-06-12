@@ -1,0 +1,188 @@
+load(
+    "//ign_bazel:cmake_configure_file.bzl",
+    "cmake_configure_file",
+)
+load(
+    "//ign_bazel:generate_include_header.bzl",
+    "generate_include_header",
+)
+load(
+    "//ign_bazel:generate_file.bzl",
+    "generate_file",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+PROJECT_NAME = "ignition-gui"
+PROJECT_MAJOR = 4
+PROJECT_MINOR = 0
+PROJECT_PATCH = 0
+IGN_DESIGNATION = "/tmp"
+CMAKE_INSTALL_PREFIX = "/tmp"
+IGN_LIB_INSTALL_DIR = "/tmp"
+
+# Generates config.hh based on the version numbers in CMake code.
+cmake_configure_file(
+    name = "config",
+    src = "include/ignition/gui/config.hh.in",
+    out = "include/ignition/gui/config.hh",
+    cmakelists = ["CMakeLists.txt"],
+    defines = [
+        "PROJECT_VERSION_MAJOR=%d" % (PROJECT_MAJOR),
+        "PROJECT_MAJOR_VERSION=%d" % (PROJECT_MAJOR),
+        "PROJECT_MINOR_VERSION=%d" % (PROJECT_MINOR),
+        "PROJECT_PATCH_VERSION=%d" % (PROJECT_PATCH),
+        "PROJECT_VERSION_PATCH=%d" % (PROJECT_PATCH),
+        "PROJECT_VERSION_MAJOR=%d" % (PROJECT_MAJOR),
+        "PROJECT_VERSION_MINOR=%d" % (PROJECT_MINOR),
+        "PROJECT_VERSION=%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR),
+        "PROJECT_VERSION_FULL=%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),  # noqa
+        "PROJECT_NAME_NO_VERSION=%s" % (PROJECT_NAME),
+        "PROJECT_NAME=%s" % (PROJECT_NAME),
+        "IGN_DESIGNATION=%s" % (IGN_DESIGNATION),
+        "CMAKE_INSTALL_PREFIX=%s" % (CMAKE_INSTALL_PREFIX),
+        "IGN_LIB_INSTALL_DIR=%s" % (IGN_LIB_INSTALL_DIR),
+    ],
+    visibility = ["//visibility:private"],
+)
+
+generate_file(
+    name = "include/ignition/gui/Export.hh",
+    content = """
+#pragma once
+// IGN_DEPRECATED is defined by all ignition libraries, but the version below
+// is a simplified version.  When mixing the regular ignition libraries and
+// the drake compiled ignition libraries, the compiler throws a warning about
+// the macro being multiply defined.  We undefine it before redefining it here
+// to work around that issue.  Note that the IGNITION_GUI_VISIBLE macro
+// shouldn't be defined multiple times, but we undefine it just in case.
+#ifdef IGNITION_GUI_VISIBLE
+#undef IGNITION_GUI_VISIBLE
+#endif
+#define IGNITION_GUI_VISIBLE __attribute__ ((visibility("default")))
+#ifdef IGN_DEPRECATED
+#undef IGN_DEPRECATED
+#endif
+#define IGN_DEPRECATED(version) __attribute__ ((__deprecated__))
+    """,
+    visibility = ["//visibility:private"],
+)
+
+public_headers_no_gen = [
+    "include/ignition/gui/Application.hh",
+    "include/ignition/gui/Conversions.hh",
+    "include/ignition/gui/Dialog.hh",
+    "include/ignition/gui/DragDropModel.hh",
+    "include/ignition/gui/Enums.hh",
+    "include/ignition/gui/GuiEvents.hh",
+    "include/ignition/gui/Helpers.hh",
+    "include/ignition/gui/ign.hh",
+    "include/ignition/gui/MainWindow.hh",
+    "include/ignition/gui/Plugin.hh",
+    "include/ignition/gui/SearchModel.hh",
+    "include/ignition/gui/qt.h",
+]
+
+private_headers = [
+]
+
+sources = [
+    "src/Application.cc",
+    "src/Conversions.cc",
+    "src/Dialog.cc",
+    "src/DragDropModel.cc",
+    "src/Helpers.cc",
+    "src/ign.cc",
+    "src/MainWindow.cc",
+    "src/Plugin.cc",
+    "src/SearchModel.cc",
+]
+
+test_sources = [
+    "src/Application_TEST.cc",
+    "src/Conversions_TEST.cc",
+    "src/DragDropModel_TEST.cc",
+    "src/Helpers_TEST.cc",
+    "src/ign_TEST.cc",
+    "src/MainWindow_TEST.cc",
+    "src/Plugin_TEST.cc",
+    "src/SearchModel_TEST.cc",
+]
+
+generate_include_header(
+    name = "guihh_genrule",
+    out = "include/ignition/gui.hh",
+    hdrs = public_headers_no_gen + [
+        "include/ignition/gui/config.hh",
+        "include/ignition/gui/Export.hh",
+    ],
+)
+
+public_headers = public_headers_no_gen + [
+    "include/ignition/gui/config.hh",
+    "include/ignition/gui/Export.hh",
+    "include/ignition/gui.hh",
+]
+
+cc_binary(
+    name = "libignition_gui.so",
+    srcs = sources + private_headers + public_headers,
+    includes = ["include"],
+    linkopts = ["-Wl,-soname,libignition_gui.so", "-ltinyxml2"],
+    linkshared = True,
+    visibility = [],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQml",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt",
+    ],
+    deps = [
+        "//ign_common/events:events",
+        "//ign_common",
+        "//ign_math",
+        "//ign_msgs",
+        "//ign_bazel:utilities",
+        "//ign_plugin/loader:loader",
+        "//ign_plugin/core:ign_plugin",
+        "@qt//:headers",
+    ],
+)
+
+cc_library(
+    name = "ign_gui",
+    srcs = ["libignition_gui.so"],
+    hdrs = public_headers,
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+)
+
+'''
+[cc_test(
+    name = src.replace("/", "_").replace(".cc", "").replace("src_", ""),
+    srcs = [src],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQml",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt",
+    ],
+    deps = [
+        "//ign_math",
+        "//ign_msgs",
+        "//ign_common",
+        "//ign_common/events:events",
+        "//ign_gui/test:test_utils",
+        "//ign_gui",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main",
+        "@qt//:headers",
+    ],
+) for src in test_sources]
+'''
