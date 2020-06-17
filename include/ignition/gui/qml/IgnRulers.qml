@@ -47,7 +47,7 @@ Rectangle {
   // Left ruler
   Rectangle {
     width: rulersThickness
-    height: parent.height
+    height: parent.height - 20
     visible: rulersRect.enabled
     color: "transparent"
     anchors.horizontalCenter: parent.left
@@ -60,13 +60,7 @@ Rectangle {
       onMouseXChanged: {
         if (drag.active)
         {
-          var newCardX = Math.max(target.x + mouseX, 0)
-          var newCardWidth = Math.max(target.width + (target.x - newCardX),
-                                      rulersRect.minSize)
-          if (newCardWidth === target.width)
-            return;
-          target.x = newCardX
-          target.width = newCardWidth
+          resizeLeft(target, mouseX);
         }
       }
     }
@@ -75,7 +69,7 @@ Rectangle {
   // Right ruler
   Rectangle {
     width: rulersThickness
-    height: parent.height
+    height: parent.height - 20
     visible: rulersRect.enabled
     color: "transparent"
     anchors.horizontalCenter: parent.right
@@ -88,10 +82,7 @@ Rectangle {
       onMouseXChanged: {
         if (drag.active)
         {
-          target.width = Math.max(target.width + mouseX, rulersRect.minSize)
-
-          if (target.width + target.x > target.parent.width)
-            target.width = target.parent.width - target.x
+          resizeRight(target, mouseX);
         }
       }
     }
@@ -99,7 +90,7 @@ Rectangle {
 
   // Top ruler
   Rectangle {
-    width: parent.width
+    width: parent.width - 20
     height: rulersThickness
     visible: rulersRect.enabled
     color: "transparent"
@@ -113,15 +104,7 @@ Rectangle {
       onMouseYChanged: {
         if (drag.active)
         {
-          var newCardY = Math.max(target.y + mouseY, 0)
-          var newCardHeight = Math.max(target.height + (target.y - newCardY),
-                                       rulersRect.minSize)
-
-          if (newCardHeight === target.height)
-            return;
-
-          target.y = newCardY
-          target.height = newCardHeight
+          resizeTop(target, mouseY);
         }
       }
     }
@@ -129,7 +112,7 @@ Rectangle {
 
   // Bottom ruler
   Rectangle {
-    width: parent.width
+    width: parent.width - 20
     height: rulersThickness
     visible: rulersRect.enabled
     color: "transparent"
@@ -143,12 +126,143 @@ Rectangle {
       onMouseYChanged: {
         if (drag.active)
         {
-          target.height = Math.max(target.height + mouseY, rulersRect.minSize)
-
-          if (target.height + target.y > target.parent.height)
-            target.height = target.parent.height - target.y
+          resizeBottom(target, mouseY);
         }
       }
     }
+  }
+
+  // Top-Left Ruler
+  Rectangle {
+    width: 25
+    height: 25
+    visible: rulersRect.enabled
+    color: "transparent"
+    anchors.horizontalCenter: parent.left
+    anchors.verticalCenter: parent.top
+
+    MouseArea {
+      anchors.fill: parent
+      cursorShape: Qt.SizeFDiagCursor
+      drag { target: parent; axis: Drag.XAndYAxis }
+      onMouseYChanged: {
+        if (drag.active)
+        {
+          resizeTop(target, mouseY);
+          resizeLeft(target, mouseX);
+        }
+      }
+    }
+  }
+
+  // Top-Right Ruler
+  Rectangle {
+    width: 25
+    height: 25
+    visible: rulersRect.enabled
+    color: "transparent"
+    anchors.horizontalCenter: parent.right
+    anchors.verticalCenter: parent.top
+
+    MouseArea {
+      anchors.fill: parent
+      cursorShape: Qt.SizeBDiagCursor
+      drag { target: parent; axis: Drag.XAndYAxis }
+      onMouseYChanged: {
+        if (drag.active)
+        {
+          resizeTop(target, mouseY);
+          resizeRight(target, mouseX);
+        }
+      }
+    }
+  }
+
+  // Bottom-Left Ruler
+  Rectangle {
+    width: 25
+    height: 25
+    visible: rulersRect.enabled
+    color: "transparent"
+    anchors.horizontalCenter: parent.left
+    anchors.verticalCenter: parent.bottom
+
+    MouseArea {
+      anchors.fill: parent
+      cursorShape: Qt.SizeBDiagCursor
+      drag { target: parent; axis: Drag.XAndYAxis }
+      onMouseYChanged: {
+        if (drag.active)
+        {
+          resizeBottom(target, mouseY);
+          resizeLeft(target, mouseX);
+        }
+      }
+    }
+  }
+
+  // Bottom-Right Ruler
+  Rectangle {
+    width: 25
+    height: 25
+    visible: rulersRect.enabled
+    color: "transparent"
+    anchors.horizontalCenter: parent.right
+    anchors.verticalCenter: parent.bottom
+
+    MouseArea {
+      anchors.fill: parent
+      cursorShape: Qt.SizeFDiagCursor
+      drag { target: parent; axis: Drag.XAndYAxis }
+      onMouseYChanged: {
+        if (drag.active)
+        {
+          resizeBottom(target, mouseY);
+          resizeRight(target, mouseX);
+        }
+      }
+    }
+  }
+
+  function resizeLeft(target, mouseX)
+  {
+    var newCardX = Math.max(target.x + mouseX, 0)
+    var newCardWidth = Math.max(target.width + (target.x - newCardX),
+                                rulersRect.minSize)
+
+    if (newCardWidth === target.width)
+      return;
+
+    target.x = newCardX
+    target.width = newCardWidth
+  }
+
+  function resizeRight(target, mouseX)
+  {
+    target.width = Math.max(target.width + mouseX, rulersRect.minSize)
+
+    if (target.width + target.x > target.parent.width)
+      target.width = target.parent.width - target.x
+  }
+
+  function resizeTop(target, mouseY)
+  {
+    var newCardY = Math.max(target.y + mouseY, 0)
+    var newCardHeight = Math.max(target.height + (target.y - newCardY),
+                                 rulersRect.minSize)
+
+    if (newCardHeight === target.height)
+      return;
+
+    target.y = newCardY
+    target.height = newCardHeight
+  }
+
+  function resizeBottom(target, mouseY)
+  {
+    target.height = Math.max(target.height + mouseY, rulersRect.minSize)
+
+    if (target.height + target.y > target.parent.height)
+      target.height = target.parent.height - target.y
   }
 }

@@ -75,6 +75,11 @@ Pane {
   property string closeIcon: "\u2715"
 
   /**
+   * The plugin backgroung color. Default: transparent
+   */
+  property string cardBackground: "#00000000"
+
+  /**
    *
    */
   property var backgroundItem: null
@@ -446,7 +451,7 @@ Pane {
     anchors.fill: parent
     anchors.topMargin: card.showTitleBar ? 50 : 0
     clip: true
-    color: "transparent"
+    color: cardBackground
 
     onChildrenChanged: {
       card.syncTheFamily()
