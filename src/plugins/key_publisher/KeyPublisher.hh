@@ -27,6 +27,8 @@ namespace ignition
 {
 namespace gui
 {
+  class KeyPublisherPrivate;
+
   class KeyPublisher : public ignition::gui::Plugin  //inherited from Qobject
   {
     Q_OBJECT
@@ -34,14 +36,12 @@ namespace gui
     public: KeyPublisher();    //constructor
     public: virtual ~KeyPublisher();   //destructor
     
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
+    public: virtual void LoadConfig(const tinyxml2::XMLElement *) override;
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
-    //Publish message
-    public: ignition::transport::Node node;
-    public: std::string topic = "/gazebo/keyboard/keypress";
-    public: ignition::transport::Node::Publisher pub ;
-    public: void KeyPub(QKeyEvent *key_press);
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<KeyPublisherPrivate> dataPtr;
   };
 }
 }

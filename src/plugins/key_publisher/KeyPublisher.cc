@@ -23,12 +23,31 @@
 #include <ignition/msgs/int32.pb.h>
 #include "ignition/gui/plugins/KeyPublisher.hh"
 
+namespace ignition
+{
+namespace gui
+{
+  class KeyPublisherPrivate
+  {
+    public: ignition::transport::Node node;
+    public: ignition::transport::Node::Publisher pub;
+    public: std::string topic = "keyboard/keypress";
+    public: void KeyPub(QKeyEvent *key_press)
+    {
+      ignition::msgs::Int32 Msg;
+      Msg.set_data(key_press->key());
+      pub.Publish(Msg);
+    }
+  };
+}
+}
+
 using namespace ignition;
 using namespace gui;
 
-KeyPublisher::KeyPublisher(): Plugin()
+KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
 {
-  pub = node.Advertise<ignition::msgs::Int32>(topic);
+  this->dataPtr->pub = this->dataPtr->node.Advertise<ignition::msgs::Int32>(this->dataPtr->topic);
 }
 
 
@@ -52,26 +71,26 @@ void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
 
 bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
 {
-    if (_event->type() == QEvent::KeyPress)
-    {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
-        KeyPublisher::KeyPub(keyEvent);
-        //return true;
-    }
-    return QObject::eventFilter(_obj, _event);
+  //dataPtr(new KeyPublisherPrivate)
+  if (_event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
+    this->dataPtr->KeyPub(keyEvent);
+  }
+  return QObject::eventFilter(_obj, _event);
 }
 
-
+/*
 void KeyPublisher::KeyPub(QKeyEvent *key_press)
 {
-  /*
+  
   https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/core/Qt.Key.html
-  */ 
+  
   ignition::msgs::Int32 Msg;
   Msg.set_data(key_press->key());
-  pub.Publish(Msg);
+  this->dataPtr->pub.Publish(Msg);
 }
-
+*/
 // Register this plugin
 IGNITION_ADD_PLUGIN(ignition::gui::KeyPublisher,
                     ignition::gui::Plugin)
