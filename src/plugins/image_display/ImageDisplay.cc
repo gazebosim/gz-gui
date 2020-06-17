@@ -24,7 +24,7 @@
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Application.hh"
-#include "ignition/gui/plugins/ImageDisplay.hh"
+#include "ImageDisplay.hh"
 
 namespace ignition
 {

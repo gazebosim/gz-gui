@@ -19,7 +19,7 @@
 #include <ignition/plugin/Register.hh>
 #include <ignition/common/Time.hh>
 
-#include "ignition/gui/plugins/WorldControl.hh"
+#include "WorldControl.hh"
 
 namespace ignition
 {

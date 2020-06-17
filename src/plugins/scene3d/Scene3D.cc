@@ -36,7 +36,7 @@
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Conversions.hh"
-#include "ignition/gui/plugins/Scene3D.hh"
+#include "Scene3D.hh"
 
 namespace ignition
 {

@@ -24,7 +24,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/plugins/WorldStats.hh"
+#include "WorldStats.hh"
 
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
