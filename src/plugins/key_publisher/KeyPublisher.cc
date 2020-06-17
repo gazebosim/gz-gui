@@ -37,7 +37,7 @@ KeyPublisher::~KeyPublisher()
 }
 
 
-void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
 {
   //it loads the XML file which contains the UI file of Qt
   if (this->title.empty())
@@ -56,7 +56,7 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
         KeyPublisher::KeyPub(keyEvent);
-        return true;
+        //return true;
     }
     return QObject::eventFilter(_obj, _event);
 }
