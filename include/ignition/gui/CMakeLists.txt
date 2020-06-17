@@ -63,7 +63,5 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
     TINYXML2::TINYXML2
 )
 
-add_subdirectory(plugins)
-
-ign_install_all_headers(EXCLUDE_DIRS plugins)
+ign_install_all_headers()
 

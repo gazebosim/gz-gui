@@ -21,7 +21,7 @@
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Application.hh"
-#include "ignition/gui/plugins/TopicEcho.hh"
+#include "TopicEcho.hh"
 
 namespace ignition
 {
