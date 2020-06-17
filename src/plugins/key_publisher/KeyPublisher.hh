@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2020 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
  *
 */
 
-#ifndef IGNITION_GUI_KEYPUBLISHER_HH_
-#define IGNITION_GUI_KEYPUBLISHER_HH_
+#ifndef IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
+#define IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
 
 #include <ignition/gui/qt.h>
 #include <ignition/gui/Plugin.hh>
 #include <ignition/transport/Node.hh>
-
 
 namespace ignition
 {
@@ -29,14 +28,26 @@ namespace gui
 {
   class KeyPublisherPrivate;
 
+  /// \brief Publish keyboard stokes to "keyboard/keypress" topic.
+  ///
+  /// ## Configuration
+  /// This plugin doesn't accept any custom configuration.
   class KeyPublisher : public ignition::gui::Plugin  //inherited from Qobject
   {
     Q_OBJECT
 
-    public: KeyPublisher();    //constructor
-    public: virtual ~KeyPublisher();   //destructor
+    /// \brief Constructor
+    public: KeyPublisher();
+
+    /// \brief Destructor
+    public: virtual ~KeyPublisher();
     
+    // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *) override;
+
+    /// \brief Filter events in Qt 
+    /// \param[in] _obj The watched object
+    /// \param[in] _event Event that happen in Qt
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
     /// \internal

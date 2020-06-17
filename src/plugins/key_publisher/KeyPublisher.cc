@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2020 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,17 @@ namespace gui
 {
   class KeyPublisherPrivate
   {
+    /// \brief Node for communication
     public: ignition::transport::Node node;
+
+    /// \brief Publisher
     public: ignition::transport::Node::Publisher pub;
+    
+    /// \brief Topic
     public: std::string topic = "keyboard/keypress";
+
+    /// \brief Publish keyboard strokes
+    /// \param[in] key_press Pointer to the keyevent
     public: void KeyPub(QKeyEvent *key_press)
     {
       ignition::msgs::Int32 Msg;
@@ -45,33 +53,31 @@ namespace gui
 using namespace ignition;
 using namespace gui;
 
+/////////////////////////////////////////////////
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
 {
+  // Advertise publisher node
   this->dataPtr->pub = this->dataPtr->node.Advertise<ignition::msgs::Int32>(this->dataPtr->topic);
 }
 
-
+/////////////////////////////////////////////////
 KeyPublisher::~KeyPublisher()
 {
 }
 
-
+/////////////////////////////////////////////////
 void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
 {
-  //it loads the XML file which contains the UI file of Qt
   if (this->title.empty())
-  {
     this->title = "Key tool";
-  }
+
   ignition::gui::App()->findChild
     <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
-
-
+/////////////////////////////////////////////////
 bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
 {
-  //dataPtr(new KeyPublisherPrivate)
   if (_event->type() == QEvent::KeyPress)
   {
     QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
@@ -80,17 +86,6 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
   return QObject::eventFilter(_obj, _event);
 }
 
-/*
-void KeyPublisher::KeyPub(QKeyEvent *key_press)
-{
-  
-  https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/core/Qt.Key.html
-  
-  ignition::msgs::Int32 Msg;
-  Msg.set_data(key_press->key());
-  this->dataPtr->pub.Publish(Msg);
-}
-*/
 // Register this plugin
 IGNITION_ADD_PLUGIN(ignition::gui::KeyPublisher,
                     ignition::gui::Plugin)
