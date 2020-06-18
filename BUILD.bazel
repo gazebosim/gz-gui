@@ -11,6 +11,10 @@ load(
     "generate_file",
 )
 load(
+    "//ign_bazel:generate_yaml.bzl",
+    "generate_yaml",
+)
+load(
     "@bazelruby_rules_ruby//ruby:defs.bzl",
     "ruby_binary",
     "ruby_library",
@@ -55,23 +59,19 @@ cmake_configure_file(
     visibility = ["//visibility:private"],
 )
 
-cmake_configure_file(
+cmds = "    - gui   : Launch graphical interfaces."
+
+generate_yaml(
     name = "yaml",
-    src = "conf/gui.yaml.in",
-    out = "conf/gui.yaml",
-    cmakelists = ["CMakeLists.txt"],
-    defines = [
-        "PROJECT_VERSION_FULL=%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),  # noqa
-        "PROJECT_NAME_NO_VERSION_LOWER=%s" % (PROJECT_NAME),
-        "ign_library_path=%s" % (IGN_LIBRARY_PATH),
-        "PROJECT_NAME_NO_VERSION=%s" % [PROJECT_NAME],
-    ],
-    visibility = ["//visibility:public"],
+    library_name = PROJECT_NAME, 
+    library_version = "%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),
+    commands = cmds,
+    ruby_target = "//ign_gui:cmdgui.rb",
 )
 
 # Generates config.hh based on the version numbers in CMake code.
 cmake_configure_file(
-    name = "ruby",
+    name = "cmdgui.rb",
     src = "src/cmd/cmdgui.rb.in",
     out = "src/cmd/cmdgui.rb",
     cmakelists = ["CMakeLists.txt"],
