@@ -40,6 +40,11 @@ Pane {
   property bool showCloseButton: true
 
   /**
+   * True to have a minimize button
+   */
+  property bool showMinimizeButton: true
+
+  /**
    * True to have a title bar
    */
   property bool showTitleBar: true
@@ -65,6 +70,16 @@ Pane {
   property string dockIcon: "\u2581"
 
   /**
+   * ▼
+   */
+  property string collapseIcon: "\u25B4"
+
+  /**
+   * ▲
+   */
+  property string expandIcon: "\u25BE"
+
+  /**
    * □
    */
   property string floatIcon: "\u25A1"
@@ -83,6 +98,11 @@ Pane {
    *
    */
   property var backgroundItem: null
+
+  /**
+   *
+   */
+  property int lastHeight: 50
 
   /**
    * True if there's at least one anchor set for the card.
@@ -225,9 +245,13 @@ Pane {
     State {
       name: "docked"
     },
-
+    // Floating state is also considered as expanded state
     State {
       name: "floating"
+    },
+
+    State {
+      name: "collapsed"
     }
   ]
 
@@ -242,6 +266,38 @@ Pane {
     },
     Transition {
       from: "floating"
+      to: "docked"
+      SequentialAnimation {
+        ScriptAction {script: leaveFloatingState()}
+        ScriptAction {script: enterDockedState()}
+      }
+    },
+    Transition {
+      from: "floating"
+      to: "collapsed"
+      NumberAnimation {
+        target: card
+        property: "height"
+        duration: 200
+        easing.type: Easing.OutCubic
+        from: card.height
+        to: 50
+      }
+    },
+    Transition {
+      from: "collapsed"
+      to: "floating"
+      NumberAnimation {
+        target: card
+        property: "height"
+        duration: 200
+        easing.type: Easing.InCubic
+        from: 50
+        to: lastHeight
+      }
+    },
+    Transition {
+      from: "collapsed"
       to: "docked"
       SequentialAnimation {
         ScriptAction {script: leaveFloatingState()}
@@ -378,6 +434,37 @@ Pane {
         onClicked: {
           const docked = card.state === "docked"
           card.state = docked ? "floating" : "docked"
+        }
+      }
+
+      // Minimize button
+      ToolButton {
+        id: minimizeButton
+        visible: card.showMinimizeButton && !card.standalone && !(card.state === "docked")
+        text: card.height === 50 ? expandIcon : collapseIcon;
+        contentItem: Text {
+          text: minimizeButton.text
+          font: minimizeButton.font
+          opacity: enabled ? 1.0 : 0.3
+          color: card.Material.background
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
+        onClicked: {
+          const minimized = card.height === 50;
+          if(minimized) {
+            // Explicitly set the state to collapsed for the scenario
+            // when user manually resized the plugin to size 50
+            card.state = "collapsed"
+
+            // Set card state to floating
+            card.state = "floating"
+          } else {
+            lastHeight = card.height
+
+            // Set card state to collapsed
+            card.state = "collapsed"
+          }
         }
       }
 
