@@ -32,7 +32,7 @@ namespace gui
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class KeyPublisher : public ignition::gui::Plugin  //inherited from Qobject
+  class KeyPublisher : public ignition::gui::Plugin
   {
     Q_OBJECT
 
@@ -41,11 +41,11 @@ namespace gui
 
     /// \brief Destructor
     public: virtual ~KeyPublisher();
-    
+
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *) override;
 
-    /// \brief Filter events in Qt 
+    /// \brief Filter events in Qt
     /// \param[in] _obj The watched object
     /// \param[in] _event Event that happen in Qt
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;

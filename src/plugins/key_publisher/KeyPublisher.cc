@@ -21,6 +21,7 @@
 #include <ignition/gui/MainWindow.hh>
 #include <ignition/plugin/Register.hh>
 #include <ignition/msgs/int32.pb.h>
+
 #include "KeyPublisher.hh"
 
 namespace ignition
@@ -34,7 +35,7 @@ namespace gui
 
     /// \brief Publisher
     public: ignition::transport::Node::Publisher pub;
-    
+
     /// \brief Topic
     public: std::string topic = "keyboard/keypress";
 
@@ -57,7 +58,8 @@ using namespace gui;
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
 {
   // Advertise publisher node
-  this->dataPtr->pub = this->dataPtr->node.Advertise<ignition::msgs::Int32>(this->dataPtr->topic);
+  this->dataPtr->pub = this->dataPtr->node.Advertise<ignition::msgs::Int32>
+    (this->dataPtr->topic);
 }
 
 /////////////////////////////////////////////////
