@@ -41,10 +41,10 @@ namespace gui
 
     /// \brief Publish keyboard strokes
     /// \param[in] key_press Pointer to the keyevent
-    public: void KeyPub(QKeyEvent *key_press)
+    public: void KeyPub(QKeyEvent *_keyPress)
     {
       ignition::msgs::Int32 Msg;
-      Msg.set_data(key_press->key());
+      Msg.set_data(_keyPress->key());
       pub.Publish(Msg);
     }
   };
