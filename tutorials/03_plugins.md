@@ -68,6 +68,14 @@ Echo messages from an Ignition Transport topic.
 
     ign gui -c examples/config/pubsub.config
 
+### Key publisher
+
+Publish key presses through Ignition Transport.
+
+    ign gui -c examples/config/keypublisher.config
+
+Change the topic to echo to `/keyboard/keypress`, echo, and start pressing keys.
+
 ### Topic viewer
 
 **Not ported to versions 1 or higher yet**
