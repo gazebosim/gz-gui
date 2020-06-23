@@ -63,27 +63,27 @@ Drawer {
 
       ListElement {
         title: "Load configuration"
-        action: "loadConfig"
+        actionElement: "loadConfig"
       }
       ListElement {
         title: "Save configuration"
-        action: "saveConfig"
+        actionElement: "saveConfig"
       }
       ListElement {
         title: "Save configuration as"
-        action: "saveConfigAs"
+        actionElement: "saveConfigAs"
       }
       ListElement {
         title: "Style settings"
-        action: "styleSettings"
+        actionElement: "styleSettings"
       }
       ListElement {
         title: "About"
-        action: "aboutDialog"
+        actionElement: "aboutDialog"
       }
       ListElement {
         title: "Quit"
-        action: "close"
+        actionElement: "close"
       }
     }
 
@@ -97,7 +97,7 @@ Drawer {
         text: title
         highlighted: ListView.isCurrentItem
         onClicked: {
-          sideDrawer.onAction(action)
+          sideDrawer.onAction(actionElement)
           sideDrawer.closeDrawer();
         }
       }
