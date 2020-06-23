@@ -2,6 +2,32 @@
 
 ### Ignition Gui 3.X.X (202X-XX-XX_
 
+### Ignition Gui 3.2.0 (2020-06-22)
+
+1. Sort GUI plugins alphabetically
+    * [Pull request 71](https://github.com/ignitionrobotics/ign-gui/pull/71)
+
+1. Add color palette to plugin settings to change background color
+    * [Pull request 62](https://github.com/ignitionrobotics/ign-gui/pull/62)
+
+1. Close plugin menu after a plugin has been added
+    * [Pull request 60](https://github.com/ignitionrobotics/ign-gui/pull/60)
+
+1. Resize undocked plugins by dragging corners
+    * [Pull request 78](https://github.com/ignitionrobotics/ign-gui/pull/78)
+
+1. Move each plugin to its own directory
+    * [Pull request 64](https://github.com/ignitionrobotics/ign-gui/pull/64)
+
+1. Add Key Publisher plugin
+    * [Pull request 81](https://github.com/ignitionrobotics/ign-gui/pull/81)
+
+1. GitHub migration
+    * [Pull request 46](https://github.com/ignitionrobotics/ign-gui/pull/46)
+    * [Pull request 47](https://github.com/ignitionrobotics/ign-gui/pull/47)
+    * [Pull request 56](https://github.com/ignitionrobotics/ign-gui/pull/56)
+    * [Pull request 57](https://github.com/ignitionrobotics/ign-gui/pull/57)
+
 ### Ignition Gui 3.1.0 (2020-03-27)
 
 1. Remove old ign-gui0 stuff
@@ -65,6 +91,30 @@
 ## Ignition Gui 2
 
 ### Ignition Gui 2.X.X
+
+### Ignition Gui 2.2.0 (2020-06-17)
+
+1. Sort GUI plugins alphabetically
+    * [Pull request 71](https://github.com/ignitionrobotics/ign-gui/pull/71)
+
+1. Add color palette to plugin settings to change background color
+    * [Pull request 62](https://github.com/ignitionrobotics/ign-gui/pull/62)
+
+1. Close plugin menu after a plugin has been added
+    * [Pull request 60](https://github.com/ignitionrobotics/ign-gui/pull/60)
+
+1. Resize undocked plugins by dragging corners
+    * [Pull request 78](https://github.com/ignitionrobotics/ign-gui/pull/78)
+
+1. Move each plugin to its own directory
+    * [Pull request 64](https://github.com/ignitionrobotics/ign-gui/pull/64)
+
+1. GitHub migration
+    * [Pull request 46](https://github.com/ignitionrobotics/ign-gui/pull/46)
+    * [Pull request 56](https://github.com/ignitionrobotics/ign-gui/pull/56)
+
+1. Fix homebrew warnings
+    * [BitBucket pull request 249](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/249)
 
 
 ### Ignition Gui 2.1.0 (2020-03-04)
