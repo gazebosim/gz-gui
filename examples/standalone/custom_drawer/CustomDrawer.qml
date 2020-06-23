@@ -47,18 +47,18 @@ Rectangle {
     // Custom action which calls custom C++ code
     ListElement {
       title: "Call C++ action"
-      action_element: "cppActionFromQml"
+      actionElement: "cppActionFromQml"
     }
 
     // Actions provided by Ignition GUI, with custom titles
     ListElement {
       title: "Call default action (Style)"
-      action_element: "styleSettings"
+      actionElement: "styleSettings"
     }
 
     ListElement {
       title: "Call default action (Quit)"
-      action_element: "close"
+      actionElement: "close"
     }
   }
 
@@ -73,7 +73,7 @@ Rectangle {
       text: title
       highlighted: ListView.isCurrentItem
       onClicked: {
-        customDrawer.onAction(action_element);
+        customDrawer.onAction(actionElement);
         customDrawer.parent.closeDrawer();
       }
     }
