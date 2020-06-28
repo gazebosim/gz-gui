@@ -7,8 +7,8 @@ load(
     "generate_include_header",
 )
 load(
-    "//ign_bazel:generate_file.bzl",
-    "generate_file",
+    "//ign_bazel:ign_export_header.bzl",
+    "ign_export_header",
 )
 load(
     "//ign_bazel:generate_yaml.bzl",
@@ -59,57 +59,10 @@ cmake_configure_file(
     visibility = ["//visibility:private"],
 )
 
-cmds = "    - gui   : Launch graphical interfaces."
-
-generate_yaml(
-    name = "yaml",
-    library_name = PROJECT_NAME, 
-    library_version = "%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),
-    commands = cmds,
-    ruby_target = "//ign_gui:cmdgui.rb",
-)
-
-# Generates config.hh based on the version numbers in CMake code.
-cmake_configure_file(
-    name = "cmdgui.rb",
-    src = "src/cmd/cmdgui.rb.in",
-    out = "src/cmd/cmdgui.rb",
-    cmakelists = ["CMakeLists.txt"],
-    defines = [
-        "library_location=%s" % [library_location],
-        "PROJECT_VERSION_FULL=%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),  # noqa
-        "IGN_LIBRARY_NAME=%s" % [PROJECT_NAME],
-    ],
-    visibility = ["//visibility:public"],
-)
-
-ruby_binary(
-    name = "gui-ruby",
-    srcs = ["src/cmd/cmdgui.rb"],
-    includes = ["src/cmd"],
-    main = "src/cmd/cmdgui.rb",
-    visibility = ["//visibility:public"],
-)
-
-generate_file(
+ign_export_header(
     name = "include/ignition/gui/Export.hh",
-    content = """
-#pragma once
-// IGN_DEPRECATED is defined by all ignition libraries, but the version below
-// is a simplified version.  When mixing the regular ignition libraries and
-// the drake compiled ignition libraries, the compiler throws a warning about
-// the macro being multiply defined.  We undefine it before redefining it here
-// to work around that issue.  Note that the IGNITION_GUI_VISIBLE macro
-// shouldn't be defined multiple times, but we undefine it just in case.
-#ifdef IGNITION_GUI_VISIBLE
-#undef IGNITION_GUI_VISIBLE
-#endif
-#define IGNITION_GUI_VISIBLE __attribute__ ((visibility("default")))
-#ifdef IGN_DEPRECATED
-#undef IGN_DEPRECATED
-#endif
-#define IGN_DEPRECATED(version) __attribute__ ((__deprecated__))
-    """,
+    lib_name = "ignition-gui",
+    export_base = "IGNITION_GUI",
     visibility = ["//visibility:private"],
 )
 
@@ -126,9 +79,6 @@ public_headers_no_gen = [
     "include/ignition/gui/Plugin.hh",
     "include/ignition/gui/SearchModel.hh",
     "include/ignition/gui/qt.h",
-]
-
-private_headers = [
 ]
 
 sources = [
@@ -148,7 +98,7 @@ test_sources = [
     "src/Conversions_TEST.cc",
     "src/DragDropModel_TEST.cc",
     "src/Helpers_TEST.cc",
-    "src/ign_TEST.cc",
+    # "src/ign_TEST.cc",
     "src/MainWindow_TEST.cc",
     "src/Plugin_TEST.cc",
     "src/SearchModel_TEST.cc",
@@ -170,19 +120,29 @@ public_headers = public_headers_no_gen + [
 ]
 
 cc_binary(
-    name = "libignition_gui.so",
-    srcs = sources + private_headers + public_headers,
+    name = "libignition-gui4.so",
+    srcs = sources + public_headers,
     includes = ["include"],
-    linkopts = ["-Wl,-soname,libignition_gui.so", "-ltinyxml2"],
+    linkopts = [
+        "-Wl,-soname,libignition-gui4.so",
+        "-ltinyxml2",
+        "-lQt5Core",
+        "-lQt5Quick",
+        "-lQt5QuickControls2",
+        "-lQt5Gui",
+        "-lQt5Qml",
+        "-lQt5Network",
+        "-lQt5Widgets",
+    ],
     linkshared = True,
     visibility = [],
     copts = [
-        "-Iexternal/qt/QtCore",
-        "-Iexternal/qt/QtGui",
-        "-Iexternal/qt/QtQml",
-        "-Iexternal/qt/QtQuick",
-        "-Iexternal/qt/QtQuickControls2",
-        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qtcore",
+        "-Iexternal/qtqml",
+        "-Iexternal/qtquick",
+        "-Iexternal/qtquickcontrols2",
+        "-Iexternal/qtwidgets",
+        "-Iexternal/qtgui",
         "-Iexternal/qt",
     ],
     deps = [
@@ -194,29 +154,94 @@ cc_binary(
         "//ign_plugin/loader:loader",
         "//ign_plugin/core:ign_plugin",
         "@qt//:headers",
+        "@qtcore//:headers",
+        "@qtgui//:headers",
+        "@qtqml//:headers",
+        "@qtquick//:headers",
+        "@qtquickcontrols2//:headers",
+        "@qtwidgets//:headers",
     ],
 )
-
+'''
+   "-Iexternal/qt/QtCore",
+   "-Iexternal/qt/QtGui",
+   "-Iexternal/qt/QtQml",
+   "-Iexternal/qt/QtQuick",
+   "-Iexternal/qt/QtQuickControls2",
+   "-Iexternal/qt/QtWidgets",
+        "-lQt5Core",
+        "-lQt5Quick",
+        "-lQt5QuickControls2",
+        "-lQt5Gui",
+        "-lQt5Qml",
+        "-lQt5Network",
+        "-lQt5Widgets",
+'''
 cc_library(
     name = "ign_gui",
-    srcs = ["libignition_gui.so"],
+    srcs = ["libignition-gui4.so"],
     hdrs = public_headers,
     includes = ["include"],
     visibility = ["//visibility:public"],
+    linkopts = [
+        "-Wl,-soname,libignition4-gui.so",
+        "-ltinyxml2",
+        "-lQt5Core",
+        "-lQt5Quick",
+        "-lQt5QuickControls2",
+        "-lQt5Gui",
+        "-lQt5Qml",
+        "-lQt5Network",
+        "-lQt5Widgets",
+    ],
+    copts = [
+        "-Iexternal/qtcore",
+        "-Iexternal/qtwidgets",
+        "-Iexternal/qtgui",
+        "-Iexternal/qt",
+        "-Iexternal/qtqml",
+        "-Iexternal/qtquick",
+        "-Iexternal/qtquickcontrols2",
+    ],
+    deps = [
+        "//ign_common/events:events",
+        "//ign_common",
+        "//ign_math",
+        "//ign_msgs",
+        "//ign_bazel:utilities",
+        "//ign_plugin/loader:loader",
+        "//ign_plugin/core:ign_plugin",
+        "@qtcore//:headers",
+        "@qtgui//:headers",
+        "@qt//:headers",
+        "@qtqml//:headers",
+        "@qtquick//:headers",
+        "@qtquickcontrols2//:headers",
+        "@qtwidgets//:headers",
+    ],
 )
-
-'''
 [cc_test(
     name = src.replace("/", "_").replace(".cc", "").replace("src_", ""),
     srcs = [src],
+    linkopts = [
+        "-Wl,-soname,libignition4-gui.so",
+        "-ltinyxml2",
+        "-lQt5Core",
+        "-lQt5Quick",
+        "-lQt5QuickControls2",
+        "-lQt5Gui",
+        "-lQt5Qml",
+        "-lQt5Network",
+        "-lQt5Widgets",
+    ],
     copts = [
-        "-Iexternal/qt/QtCore",
-        "-Iexternal/qt/QtGui",
-        "-Iexternal/qt/QtQml",
-        "-Iexternal/qt/QtQuick",
-        "-Iexternal/qt/QtQuickControls2",
-        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qtcore",
+        "-Iexternal/qtwidgets",
+        "-Iexternal/qtgui",
         "-Iexternal/qt",
+        "-Iexternal/qtqml",
+        "-Iexternal/qtquick",
+        "-Iexternal/qtquickcontrols2",
     ],
     deps = [
         "//ign_math",
@@ -228,6 +253,13 @@ cc_library(
         "@gtest//:gtest",
         "@gtest//:gtest_main",
         "@qt//:headers",
+        "@qtgui//:headers",
+        "@qtcore//:headers",
+        "@qtqml//:headers",
+        "@qtquick//:headers",
+        "@qtquickcontrols2//:headers",
+        "@qtwidgets//:headers",
     ],
 ) for src in test_sources]
-'''
+
+exports_files(["src/cmd/cmdgui.rb.in"])
