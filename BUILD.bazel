@@ -15,70 +15,27 @@ load(
     "generate_yaml",
 )
 load(
-    "@bazelruby_rules_ruby//ruby:defs.bzl",
-    "ruby_binary",
-    "ruby_library",
-    "ruby_test",
-    "ruby_rspec",
+    "//ign_bazel:qt.bzl",
+    "qt_resource",
+    "qt_cc_library",
+    "qt_cc_binary",
 )
 
 package(default_visibility = ["//visibility:public"])
 
-PROJECT_NAME = "ignition-gui"
-PROJECT_MAJOR = 4
-PROJECT_MINOR = 0
-PROJECT_PATCH = 0
-IGN_DESIGNATION = "/tmp"
-CMAKE_INSTALL_PREFIX = "/tmp"
-IGN_LIB_INSTALL_DIR = "/tmp"
-library_location = "/usr"
-IGN_LIBRARY_PATH = "/usr"
-
-# Generates config.hh based on the version numbers in CMake code.
-cmake_configure_file(
-    name = "config",
-    src = "include/ignition/gui/config.hh.in",
-    out = "include/ignition/gui/config.hh",
-    cmakelists = ["CMakeLists.txt"],
-    defines = [
-        "PROJECT_VERSION_MAJOR=%d" % (PROJECT_MAJOR),
-        "PROJECT_MAJOR_VERSION=%d" % (PROJECT_MAJOR),
-        "PROJECT_MINOR_VERSION=%d" % (PROJECT_MINOR),
-        "PROJECT_PATCH_VERSION=%d" % (PROJECT_PATCH),
-        "PROJECT_VERSION_PATCH=%d" % (PROJECT_PATCH),
-        "PROJECT_VERSION_MAJOR=%d" % (PROJECT_MAJOR),
-        "PROJECT_VERSION_MINOR=%d" % (PROJECT_MINOR),
-        "PROJECT_VERSION=%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR),
-        "PROJECT_VERSION_FULL=%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),  # noqa
-        "PROJECT_NAME_NO_VERSION=%s" % (PROJECT_NAME),
-        "PROJECT_NAME=%s" % (PROJECT_NAME),
-        "IGN_DESIGNATION=%s" % (IGN_DESIGNATION),
-        "CMAKE_INSTALL_PREFIX=%s" % (CMAKE_INSTALL_PREFIX),
-        "IGN_LIB_INSTALL_DIR=%s" % (IGN_LIB_INSTALL_DIR),
-    ],
-    visibility = ["//visibility:private"],
-)
-
-ign_export_header(
-    name = "include/ignition/gui/Export.hh",
-    lib_name = "ignition-gui",
-    export_base = "IGNITION_GUI",
-    visibility = ["//visibility:private"],
-)
-
 public_headers_no_gen = [
-    "include/ignition/gui/Application.hh",
-    "include/ignition/gui/Conversions.hh",
-    "include/ignition/gui/Dialog.hh",
-    "include/ignition/gui/DragDropModel.hh",
-    "include/ignition/gui/Enums.hh",
-    "include/ignition/gui/GuiEvents.hh",
-    "include/ignition/gui/Helpers.hh",
-    "include/ignition/gui/ign.hh",
-    "include/ignition/gui/MainWindow.hh",
-    "include/ignition/gui/Plugin.hh",
-    "include/ignition/gui/SearchModel.hh",
-    "include/ignition/gui/qt.h",
+    "//ign_gui/include/ignition/gui:Application.hh",
+    "//ign_gui/include/ignition/gui:Conversions.hh",
+    "//ign_gui/include/ignition/gui:Dialog.hh",
+    "//ign_gui/include/ignition/gui:DragDropModel.hh",
+    "//ign_gui/include/ignition/gui:Enums.hh",
+    "//ign_gui/include/ignition/gui:GuiEvents.hh",
+    "//ign_gui/include/ignition/gui:Helpers.hh",
+    "//ign_gui/include/ignition/gui:ign.hh",
+    "//ign_gui/include/ignition/gui:MainWindow.hh",
+    "//ign_gui/include/ignition/gui:Plugin.hh",
+    "//ign_gui/include/ignition/gui:SearchModel.hh",
+    "//ign_gui/include/ignition/gui:qt.h",
 ]
 
 sources = [
@@ -108,42 +65,102 @@ generate_include_header(
     name = "guihh_genrule",
     out = "include/ignition/gui.hh",
     hdrs = public_headers_no_gen + [
-        "include/ignition/gui/config.hh",
-        "include/ignition/gui/Export.hh",
+        "//ign_gui/include/ignition/gui:config",
+        "//ign_gui/include/ignition/gui:Export.hh",
     ],
 )
 
 public_headers = public_headers_no_gen + [
-    "include/ignition/gui/config.hh",
-    "include/ignition/gui/Export.hh",
+    "//ign_gui/include/ignition/gui:config",
+    "//ign_gui/include/ignition/gui:Export.hh",
     "include/ignition/gui.hh",
 ]
-
-cc_binary(
+resource_files = [
+        "//ign_gui/include/ignition/gui:qtquickcontrols2.conf",
+        "//ign_gui/include/ignition/gui:qml/IgnCard.qml",
+        "//ign_gui/include/ignition/gui:qml/IgnCardSettings.qml",
+        "//ign_gui/include/ignition/gui:qml/IgnHelpers.qml",
+        "//ign_gui/include/ignition/gui:qml/IgnRulers.qml",
+        "//ign_gui/include/ignition/gui:qml/IgnSpinBox.qml",
+        "//ign_gui/include/ignition/gui:qml/IgnSplit.qml",
+        "//ign_gui/include/ignition/gui:qml/Main.qml",
+        "//ign_gui/include/ignition/gui:qml/PluginMenu.qml",
+        "//ign_gui/include/ignition/gui:qml/SideDrawer.qml",
+        "//ign_gui/include/ignition/gui:qml/StandaloneDialog.qml",
+        "//ign_gui/include/ignition/gui:qml/StyleDialog.qml",
+        "//ign_gui/include/ignition/gui:qml/images/drawer.png",
+        "//ign_gui/include/ignition/gui:qml/images/ignition_logo_50x50.png",
+        "//ign_gui/include/ignition/gui:qml/images/menu.png",
+]
+'''
+qt_resource(
+    name = "main-resources",
+    files = resource_files,
+    includes = ["include/ignition/gui"],
+)
+'''
+qt_cc_binary(
     name = "libignition-gui4.so",
-    srcs = sources + public_headers,
-    includes = ["include"],
+    srcs = sources,
+    hdrs = public_headers,
+    qrc_files = resource_files,
     linkopts = [
         "-Wl,-soname,libignition-gui4.so",
         "-ltinyxml2",
-        "-lQt5Core",
-        "-lQt5Quick",
-        "-lQt5QuickControls2",
-        "-lQt5Gui",
-        "-lQt5Qml",
-        "-lQt5Network",
-        "-lQt5Widgets",
+        "-lX11",
+        "-lXext",
+        "-lXrandr",
+        "-lXaw",
+        "-lXt",
     ],
+    includes = ["include"],
     linkshared = True,
     visibility = [],
     copts = [
-        "-Iexternal/qtcore",
-        "-Iexternal/qtqml",
-        "-Iexternal/qtquick",
-        "-Iexternal/qtquickcontrols2",
-        "-Iexternal/qtwidgets",
-        "-Iexternal/qtgui",
-        "-Iexternal/qt",
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
+    ],
+    deps = [
+        "//ign_common/events",
+        "//ign_common",
+        "//ign_math",
+        "//ign_msgs",
+        "//ign_bazel:utilities",
+        "//ign_plugin/loader",
+        "//ign_plugin/core:ign_plugin",
+        "//ign_gui/include/ignition/gui:resources",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
+    ],
+    data = resource_files,
+)
+'''
+'''
+
+'''
+cc_library(
+    name = "ign_gui",
+    srcs = ["libignition-gui4.so"],
+    hdrs = public_headers,
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
     ],
     deps = [
         "//ign_common/events:events",
@@ -153,30 +170,96 @@ cc_binary(
         "//ign_bazel:utilities",
         "//ign_plugin/loader:loader",
         "//ign_plugin/core:ign_plugin",
-        "@qt//:headers",
-        "@qtcore//:headers",
-        "@qtgui//:headers",
-        "@qtqml//:headers",
-        "@qtquick//:headers",
-        "@qtquickcontrols2//:headers",
-        "@qtwidgets//:headers",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
     ],
 )
 '''
-   "-Iexternal/qt/QtCore",
-   "-Iexternal/qt/QtGui",
-   "-Iexternal/qt/QtQml",
-   "-Iexternal/qt/QtQuick",
-   "-Iexternal/qt/QtQuickControls2",
-   "-Iexternal/qt/QtWidgets",
-        "-lQt5Core",
-        "-lQt5Quick",
-        "-lQt5QuickControls2",
-        "-lQt5Gui",
-        "-lQt5Qml",
-        "-lQt5Network",
-        "-lQt5Widgets",
+
 '''
+qt_cc_library(
+    name = "ign_gui",
+    srcs = sources + public_headers,
+    hdrs = public_headers,
+    includes = ["include"],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
+    ],
+    deps = [
+        ":main-resources",
+        "//ign_common/events",
+        "//ign_common",
+        "//ign_math",
+        "//ign_msgs",
+        "//ign_bazel:utilities",
+        "//ign_plugin/loader",
+        "//ign_plugin/core:ign_plugin",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
+    ],
+)
+
+
+
+qt_cc_library(
+    name = "ign_gui",
+
+)
+
+
+cc_binary(
+    name = "libignition-gui4.so",
+    srcs = sources + public_headers,
+    includes = ["include"],
+    linkopts = [
+        "-Wl,-soname,libignition-gui4.so",
+        "-ltinyxml2",
+    ],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
+    ],
+    linkshared = True,
+    visibility = [],
+    deps = [
+        "//ign_common/events:events",
+        "//ign_common",
+        "//ign_math",
+        "//ign_msgs",
+        "//ign_bazel:utilities",
+        "//ign_plugin/loader:loader",
+        "//ign_plugin/core:ign_plugin",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
+    ],
+)
 cc_library(
     name = "ign_gui",
     srcs = ["libignition-gui4.so"],
@@ -186,22 +269,6 @@ cc_library(
     linkopts = [
         "-Wl,-soname,libignition4-gui.so",
         "-ltinyxml2",
-        "-lQt5Core",
-        "-lQt5Quick",
-        "-lQt5QuickControls2",
-        "-lQt5Gui",
-        "-lQt5Qml",
-        "-lQt5Network",
-        "-lQt5Widgets",
-    ],
-    copts = [
-        "-Iexternal/qtcore",
-        "-Iexternal/qtwidgets",
-        "-Iexternal/qtgui",
-        "-Iexternal/qt",
-        "-Iexternal/qtqml",
-        "-Iexternal/qtquick",
-        "-Iexternal/qtquickcontrols2",
     ],
     deps = [
         "//ign_common/events:events",
@@ -211,55 +278,55 @@ cc_library(
         "//ign_bazel:utilities",
         "//ign_plugin/loader:loader",
         "//ign_plugin/core:ign_plugin",
-        "@qtcore//:headers",
-        "@qtgui//:headers",
-        "@qt//:headers",
-        "@qtqml//:headers",
-        "@qtquick//:headers",
-        "@qtquickcontrols2//:headers",
-        "@qtwidgets//:headers",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
     ],
 )
 [cc_test(
     name = src.replace("/", "_").replace(".cc", "").replace("src_", ""),
     srcs = [src],
     linkopts = [
-        "-Wl,-soname,libignition4-gui.so",
         "-ltinyxml2",
-        "-lQt5Core",
-        "-lQt5Quick",
-        "-lQt5QuickControls2",
-        "-lQt5Gui",
-        "-lQt5Qml",
-        "-lQt5Network",
-        "-lQt5Widgets",
+        "-lX11",
+        "-lXext",
+        "-lXrandr",
+        "-lXaw",
+        "-lXt",
     ],
     copts = [
-        "-Iexternal/qtcore",
-        "-Iexternal/qtwidgets",
-        "-Iexternal/qtgui",
-        "-Iexternal/qt",
-        "-Iexternal/qtqml",
-        "-Iexternal/qtquick",
-        "-Iexternal/qtquickcontrols2",
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
     ],
     deps = [
+        ":ign_gui",
         "//ign_math",
         "//ign_msgs",
         "//ign_common",
         "//ign_common/events:events",
         "//ign_gui/test:test_utils",
-        "//ign_gui",
         "@gtest//:gtest",
         "@gtest//:gtest_main",
-        "@qt//:headers",
-        "@qtgui//:headers",
-        "@qtcore//:headers",
-        "@qtqml//:headers",
-        "@qtquick//:headers",
-        "@qtquickcontrols2//:headers",
-        "@qtwidgets//:headers",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
     ],
 ) for src in test_sources]
 
+'''
+exports_files(["CMakeLists.txt"])
 exports_files(["src/cmd/cmdgui.rb.in"])
