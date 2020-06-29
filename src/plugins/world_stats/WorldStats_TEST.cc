@@ -33,9 +33,8 @@ using namespace ignition;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, Load)
+TEST_DISABLED_ON_WIN32(WorldStatsTest, Load)
 {
   common::Console::SetVerbosity(4);
 
@@ -60,7 +59,7 @@ TEST(WorldStatsTest, Load)
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, WorldStats)
+TEST_DISABLED_ON_WIN32(WorldStatsTest, WorldStats)
 {
   common::Console::SetVerbosity(4);
 
@@ -170,4 +169,3 @@ TEST(WorldStatsTest, WorldStats)
   EXPECT_EQ(plugin->RealTime().toStdString(), "01 00:00:00.001");
   EXPECT_EQ(plugin->RealTimeFactor().toStdString(), "100.00 %");
 }
-#endif

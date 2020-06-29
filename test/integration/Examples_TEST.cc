@@ -30,9 +30,8 @@ using namespace ignition;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
-TEST(ExampleTest, Configs)
+TEST_ENABLE_ONLY_LINUX(ExampleTest, Configs)
 {
   common::Console::SetVerbosity(4);
   auto exampleConfigPath = common::joinPaths(std::string(PROJECT_SOURCE_PATH),
@@ -55,4 +54,3 @@ TEST(ExampleTest, Configs)
     EXPECT_TRUE(app.LoadConfig(*file));
   }
 }
-#endif

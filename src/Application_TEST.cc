@@ -32,9 +32,8 @@ using namespace ignition;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-#if not defined(_WIN32)
 //////////////////////////////////////////////////
-TEST(ApplicationTest, Constructor)
+TEST_DISABLED_ON_WIN32(ApplicationTest, Constructor)
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -328,4 +327,3 @@ TEST(ApplicationTest, messageHandler)
   qWarning("This came from qWarning");
   qCritical("This came from qCritical");
 }
-#endif

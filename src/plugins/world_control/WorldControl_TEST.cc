@@ -33,9 +33,8 @@ using namespace ignition;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
-TEST(WorldControlTest, Load)
+TEST_DISABLED_ON_WIN32(WorldControlTest, Load)
 {
   common::Console::SetVerbosity(4);
 
@@ -60,7 +59,7 @@ TEST(WorldControlTest, Load)
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, WorldControl)
+TEST_DISABLED_ON_WIN32(WorldControlTest, WorldControl)
 {
   common::Console::SetVerbosity(4);
 
@@ -126,4 +125,3 @@ TEST(WorldControlTest, WorldControl)
   // Cleanup
   plugins.clear();
 }
-#endif

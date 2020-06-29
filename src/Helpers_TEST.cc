@@ -116,10 +116,9 @@ TEST(HelpersTest, stringTypeFromKey)
   EXPECT_EQ(stringTypeFromKey("innerxml"), StringType::PLAIN_TEXT);
 }
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
-#if not defined(_WIN32)
 /////////////////////////////////////////////////
-TEST(HelpersTest, findFirstByProperty)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST_DISABLED_ON_WIN32(HelpersTest, findFirstByProperty)
 {
   Application app(gg_argc, gg_argv);
 
@@ -143,5 +142,3 @@ TEST(HelpersTest, findFirstByProperty)
   EXPECT_EQ(findFirstByProperty(list, "banana", 3.0), nullptr);
   EXPECT_EQ(findFirstByProperty(list, "acerola", 1.0), nullptr);
 }
-#endif
-
