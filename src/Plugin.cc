@@ -124,9 +124,21 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   this->dataPtr->context->setContextProperty(QString::fromStdString(filename),
       this);
 
+  QDirIterator it(":", QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+    std::cout << it.next().toStdString() << std::endl;
+  }
+
+  QResource::registerResource("/home/john/ign4-ws/src/bazel-out/k8-fastbuild/bin/ign_gui/src/plugins/publisher/qrc_Publisher.rcc");
+
+  QDirIterator it2(":", QDirIterator::Subdirectories);
+  while (it2.hasNext()) {
+    std::cout << it2.next().toStdString() << std::endl;
+  }
+
   // Instantiate plugin QML file into a component
-  std::string qmlFile(":/" + filename + "/" + filename + ".qml");
-  QQmlComponent component(App()->Engine(), QString::fromStdString(qmlFile));
+  std::string qmlFile("qrc:/" + filename + "/" + filename + ".qml");
+  QQmlComponent component(App()->Engine(), QUrl(QString::fromStdString(qmlFile)));
 
   // Create an item for the plugin
   this->dataPtr->pluginItem =
