@@ -103,7 +103,6 @@ qt_cc_binary(
     name = "libignition-gui4.so",
     srcs = sources,
     hdrs = public_headers,
-    qrc_files = resource_files,
     linkopts = [
         "-Wl,-soname,libignition-gui4.so",
         "-ltinyxml2",
@@ -142,12 +141,12 @@ qt_cc_binary(
         "@qt//:qt_gui",
         "@qt//:qt_opengl",
     ],
-    data = resource_files,
+    defines = [
+        "IGN_GUI_PLUGIN_PATH='\"ign_gui/src/plugins/\"'",
+        "HAVE_IFADDRS",
+    ],
 )
-'''
-'''
 
-'''
 cc_library(
     name = "ign_gui",
     srcs = ["libignition-gui4.so"],
@@ -179,8 +178,11 @@ cc_library(
         "@qt//:qt_gui",
         "@qt//:qt_opengl",
     ],
+    defines = select({
+       "//ign_transport:custom": ["HAVE_IFADDRS"],
+       "//conditions:default": []
+    }),
 )
-'''
 
 '''
 qt_cc_library(

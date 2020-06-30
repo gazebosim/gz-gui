@@ -1,0 +1,107 @@
+load(
+    "//ign_bazel:qt.bzl",
+    "qt_resource",
+    "qt_cc_library",
+    "qt_cc_binary",
+)
+
+files = [
+    "Publisher.qml",
+]
+
+qrc_file = "Publisher.qrc"
+
+sources = [
+    "Publisher.cc",
+]
+
+headers = [
+    "Publisher.hh",
+]
+
+name = "publisher"
+outfile = "qrc_Publisher.rcc"
+genrule(
+    name = "publisher_gen",
+    srcs = [qrc_file] + files,
+    outs = [outfile],
+    #cmd = "cd ign_gui/include/ignition/gui && touch %s && rcc --name %s --output $(OUTS) %s" % (outfile, rsrc_name, qrc_file),
+    cmd = "echo $(OUTS) && cd ign_gui/src/plugins/publisher && rcc --name name -binary %s -o %s && cp %s ../../../../$(OUTS)" % (qrc_file, outfile, outfile),
+)
+'''
+cc_library(
+    name = "publisher-resources",
+    srcs = [outfile],
+    alwayslink = 1,
+    visibility = ["//visibility:public"],
+)
+'''
+qt_cc_binary(
+    name = "libPublisher.so",
+    srcs = sources,
+    hdrs = headers,
+    linkshared = True,
+    includes = ["."],
+    linkopts = [
+        "-Wl,-soname,libPublisher.so",
+        "-ltinyxml2",
+    ],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
+    ],  
+    deps = [
+        "//ign_plugin/register",
+        "//ign_transport",
+        "//ign_gui",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
+    ],
+    data = files,
+    visibility = ["//visibility:public"],
+    defines = select({
+        "//ign_transport:custom": ["HAVE_IFADDRS"],
+        "//conditions:default": []
+    }),
+)
+
+cc_library(
+    name = "publisher",
+    srcs = ["libPublisher.so"],
+    hdrs = headers,
+    includes = ["."],
+    visibility = ["//visibility:public"],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
+    ],
+    deps = [
+        "//ign_plugin/register",
+        "//ign_transport",
+        "//ign_gui",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
+    ],
+)
+
+exports_files(["Publisher.qml"])
