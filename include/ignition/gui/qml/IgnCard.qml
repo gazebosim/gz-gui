@@ -119,7 +119,7 @@ Pane {
   /**
    * ID within QML
    */
-  id: card
+  id: cardPane
 
   /**
    * Object name accessible from C++
@@ -152,7 +152,7 @@ Pane {
     // but I haven't figured out yet how the card can tell IgnSplit to create
     // a new split and add the card to it. There must be a way using signals, events
     // or global functions...?
-    var bgItemTemp = helpers.ancestorByName(card, "background")
+    var bgItemTemp = helpers.ancestorByName(cardPane, "background")
     if (bgItemTemp)
       backgroundItem = bgItemTemp;
 
@@ -165,7 +165,7 @@ Pane {
    * any knowledge of splits
    */
   function syncTheFamily() {
-    var parentSplit = helpers.ancestorByName(card, /^split_item/);
+    var parentSplit = helpers.ancestorByName(cardPane, /^split_item/);
 
     if (undefined == parentSplit)
       return;
@@ -181,14 +181,14 @@ Pane {
    * Clear all anchors
    */
   function clearAnchors() {
-    card.anchors.right = undefined
-    card.anchors.left = undefined
-    card.anchors.top = undefined
-    card.anchors.bottom = undefined
-    card.anchors.fill = undefined
-    card.anchors.horizontalCenter = undefined
-    card.anchors.verticalCenter = undefined
-    card.anchors.baseline = undefined
+    cardPane.anchors.right = undefined
+    cardPane.anchors.left = undefined
+    cardPane.anchors.top = undefined
+    cardPane.anchors.bottom = undefined
+    cardPane.anchors.fill = undefined
+    cardPane.anchors.horizontalCenter = undefined
+    cardPane.anchors.verticalCenter = undefined
+    cardPane.anchors.baseline = undefined
 
     anchored = false
   }
@@ -260,7 +260,7 @@ Pane {
     var splitItem = backgroundItem.childItems[splitName];
 
     // Reparent to split
-    card.parent = splitItem;
+    cardPane.parent = splitItem;
   }
 
   /**
@@ -269,12 +269,12 @@ Pane {
   function enterFloatingState()
   {
     // Reparent to main window's background
-    card.parent = backgroundItem
+    cardPane.parent = backgroundItem
 
     // Resize to minimum size
-    card.clearAnchors();
-    card.width = content.children[0].Layout.minimumWidth;
-    card.height = content.children[0].Layout.minimumHeight;
+    cardPane.clearAnchors();
+    cardPane.width = content.children[0].Layout.minimumWidth;
+    cardPane.height = content.children[0].Layout.minimumHeight;
   }
 
   /**
@@ -283,7 +283,7 @@ Pane {
   function leaveDockedState()
   {
     // Remove from split (delete split if needed)
-    backgroundItem.removeSplitItem(helpers.ancestorByName(card,
+    backgroundItem.removeSplitItem(helpers.ancestorByName(cardPane,
         /^split_item/).objectName)
   }
 
@@ -301,8 +301,8 @@ Pane {
 //   */
 //  Window {
 //    // TODO: resize
-//    width: card.width;
-//    height: card.height;
+//    width: cardPane.width;
+//    height: cardPane.height;
 //    visible: false;
 //    id: cardWindow
 //
@@ -312,7 +312,7 @@ Pane {
 //    }
 //
 //    onClosing: {
-//      card.state = "docked"
+//      cardPane.state = "docked"
 //    }
 //  }
 
@@ -322,11 +322,11 @@ Pane {
   ToolBar {
     id: cardToolbar
     objectName: "cardToolbar"
-    visible: card.showTitleBar
+    visible: cardPane.showTitleBar
     Material.foreground: Material.foreground
     Material.background: pluginToolBarColor
-    width: card.width
-    height: card.showTitleBar ? 50 : 0
+    width: cardPane.width
+    height: cardPane.showTitleBar ? 50 : 0
     x: 0
     z: 100
 
@@ -334,11 +334,11 @@ Pane {
     MouseArea {
       anchors.fill: parent
       drag {
-        target: card
+        target: cardPane
         minimumX: 0
         minimumY: 0
-        maximumX: card.parent ? card.parent.width - card.width : card.width
-        maximumY: card.parent ? card.parent.height - card.height : card.height
+        maximumX: cardPane.parent ? cardPane.parent.width - cardPane.width : cardPane.width
+        maximumY: cardPane.parent ? cardPane.parent.height - cardPane.height : cardPane.height
         smoothed: true
       }
     }
@@ -365,37 +365,37 @@ Pane {
       // TODO(louise) support window state
       ToolButton {
         id: dockButton
-        text: card.state === "docked" ? floatIcon : dockIcon
+        text: cardPane.state === "docked" ? floatIcon : dockIcon
         contentItem: Text {
           text: dockButton.text
           font: dockButton.font
           opacity: enabled ? 1.0 : 0.3
-          color: card.Material.background
+          color: cardPane.Material.background
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
-        visible: card.showDockButton && !card.standalone
+        visible: cardPane.showDockButton && !cardPane.standalone
         onClicked: {
-          const docked = card.state === "docked"
-          card.state = docked ? "floating" : "docked"
+          const docked = cardPane.state === "docked"
+          cardPane.state = docked ? "floating" : "docked"
         }
       }
 
       // Close button
       ToolButton {
         id: closeButton
-        visible: card.showCloseButton && !card.standalone
+        visible: cardPane.showCloseButton && !cardPane.standalone
         text: closeIcon
         contentItem: Text {
           text: closeButton.text
           font: closeButton.font
           opacity: enabled ? 1.0 : 0.3
-          color: card.Material.background
+          color: cardPane.Material.background
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
         onClicked: {
-          card.close();
+          cardPane.close();
         }
       }
     }
@@ -417,11 +417,11 @@ Pane {
     transformOrigin: Menu.TopRight
     MenuItem {
       text: "Settings"
-      onTriggered: card.showSettingsDialog();
+      onTriggered: cardPane.showSettingsDialog();
     }
     MenuItem {
       text: "Close"
-      onTriggered: card.close();
+      onTriggered: cardPane.close();
     }
   }
 
@@ -437,7 +437,7 @@ Pane {
     modal: false
     focus: true
     title: pluginName + " settings"
-    parent: card.parent
+    parent: cardPane.parent
     x: parent ? (parent.width - width) / 2 : 0
     y: parent ? (parent.height - height) / 2 : 0
   }
@@ -449,26 +449,26 @@ Pane {
     objectName: "content"
     id: content
     anchors.fill: parent
-    anchors.topMargin: card.showTitleBar ? 50 : 0
+    anchors.topMargin: cardPane.showTitleBar ? 50 : 0
     clip: true
     color: cardBackground
 
     onChildrenChanged: {
-      card.syncTheFamily()
+      cardPane.syncTheFamily()
     }
 
     /**
      * Conveniently expose card to children
      */
     function card() {
-      return card;
+      return cardPane;
     }
   }
 
   IgnRulers {
     anchors.fill: parent
-    enabled: card.state === "floating" && resizable
-    minSize: card.minSize
-    target: card
+    enabled: cardPane.state === "floating" && resizable
+    minSize: cardPane.minSize
+    target: cardPane
   }
 }
