@@ -16,70 +16,95 @@
 */
 
 #include <gtest/gtest.h>
-#include <ignition/msgs.hh>
+#include <ignition/msgs/stringmsg.pb.h>
 #include <ignition/transport/Node.hh>
 
-#include "ignition/gui/Iface.hh"
+#include "test_config.h"  // NOLINT(build/include)
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
+
+#include "Publisher.hh"
+
+int g_argc = 1;
+char **g_argv = new char *[g_argc];
 
 using namespace ignition;
 using namespace gui;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
 TEST(PublisherTest, Load)
 {
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
 
-  EXPECT_TRUE(loadPlugin("Publisher"));
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  EXPECT_TRUE(stop());
+  EXPECT_TRUE(app.LoadPlugin("Publisher"));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "Publisher");
+
+  // Cleanup
+  plugins.clear();
 }
 
 /////////////////////////////////////////////////
 TEST(PublisherTest, Publish)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load plugin
-  EXPECT_TRUE(loadPlugin("Publisher"));
+  const char *pluginStr =
+    "<plugin filename=\"Publisher\">"
+      "<ignition-gui>"
+        "<title>Publisher!</title>"
+      "</ignition-gui>"
+    "</plugin>";
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
-  EXPECT_TRUE(win != nullptr);
+  tinyxml2::XMLDocument pluginDoc;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+  EXPECT_TRUE(app.LoadPlugin("Publisher",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
 
   // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
+  auto plugins = win->findChildren<plugins::Publisher *>();
   EXPECT_EQ(plugins.size(), 1);
+
   auto plugin = plugins[0];
-  EXPECT_EQ(plugin->Title(), "Publisher");
+  EXPECT_EQ(plugin->Title(), "Publisher!");
 
   // Message type
-  auto msgTypeEdit = plugin->findChild<QLineEdit *>("msgTypeEdit");
-  ASSERT_TRUE(msgTypeEdit != nullptr);
-  EXPECT_EQ(msgTypeEdit->text(), "ignition.msgs.StringMsg");
+  EXPECT_EQ(plugin->MsgType(), "ignition.msgs.StringMsg");
 
   // Message
-  auto msgEdit = plugin->findChild<QTextEdit *>("msgEdit");
-  ASSERT_TRUE(msgEdit != nullptr);
-  EXPECT_EQ(msgEdit->toPlainText(), "data: \"Hello\"");
+  EXPECT_EQ(plugin->MsgData(), "data: \"Hello\"");
 
   // Topic
-  auto topicEdit = plugin->findChild<QLineEdit *>("topicEdit");
-  ASSERT_TRUE(topicEdit != nullptr);
-  EXPECT_EQ(topicEdit->text(), "/echo");
+  EXPECT_EQ(plugin->Topic(), "/echo");
 
   // Frequency
-  auto freqSpin = plugin->findChild<QDoubleSpinBox *>("frequencySpinBox");
-  ASSERT_TRUE(freqSpin != nullptr);
-  EXPECT_DOUBLE_EQ(freqSpin->value(), 1.0);
-
-  // Button
-  auto pubButton = plugin->findChild<QPushButton *>("publishButton");
-  ASSERT_TRUE(pubButton != nullptr);
-  EXPECT_EQ(pubButton->text(), "Publish");
+  EXPECT_DOUBLE_EQ(plugin->Frequency(), 1.0);
 
   // Subscribe
   bool received = false;
@@ -95,7 +120,7 @@ TEST(PublisherTest, Publish)
   EXPECT_FALSE(received);
 
   // Publish
-  pubButton->click();
+  plugin->OnPublish(true);
 
   int sleep = 0;
   int maxSleep = 30;
@@ -106,12 +131,11 @@ TEST(PublisherTest, Publish)
     sleep++;
   }
 
-  EXPECT_EQ(pubButton->text(), "Stop publishing");
   EXPECT_TRUE(received);
   received = false;
 
   // Stop publishing
-  pubButton->click();
+  plugin->OnPublish(false);
 
   sleep = 0;
   // cppcheck-suppress knownConditionTrueFalse
@@ -122,12 +146,11 @@ TEST(PublisherTest, Publish)
     sleep++;
   }
 
-  EXPECT_EQ(pubButton->text(), "Publish");
   EXPECT_FALSE(received);
 
   // Publish once
-  freqSpin->setValue(0.0);
-  pubButton->click();
+  plugin->SetFrequency(0.0);
+  plugin->OnPublish(true);
 
   sleep = 0;
   while (!received && sleep < maxSleep)
@@ -137,14 +160,14 @@ TEST(PublisherTest, Publish)
     sleep++;
   }
 
-  EXPECT_EQ(pubButton->text(), "Publish");
   EXPECT_TRUE(received);
+  plugin->OnPublish(false);
   received = false;
 
   // Bad message type
-  freqSpin->setValue(1.0);
-  msgTypeEdit->setText("banana.message");
-  pubButton->click();
+  plugin->SetFrequency(1.0);
+  plugin->SetMsgType("banana.message");
+  plugin->OnPublish(true);
 
   sleep = 0;
   // cppcheck-suppress knownConditionTrueFalse
@@ -154,13 +177,13 @@ TEST(PublisherTest, Publish)
     QCoreApplication::processEvents();
     sleep++;
   }
-  EXPECT_EQ(pubButton->text(), "Publish");
   EXPECT_FALSE(received);
+  plugin->OnPublish(false);
 
   // Bad message type - msg combination
-  msgTypeEdit->setText("ignition.msgs.StringMsg");
-  msgEdit->setPlainText("banana: apple");
-  pubButton->click();
+  plugin->SetMsgType("ignition.msgs.StringMsg");
+  plugin->SetMsgData("banana: apple");
+  plugin->OnPublish(true);
 
   sleep = 0;
   while (!received && sleep < maxSleep)
@@ -169,19 +192,20 @@ TEST(PublisherTest, Publish)
     QCoreApplication::processEvents();
     sleep++;
   }
-  EXPECT_EQ(pubButton->text(), "Publish");
   EXPECT_FALSE(received);
+  plugin->OnPublish(false);
 
   // Cleanup
   plugins.clear();
-  EXPECT_TRUE(stop());
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
 TEST(PublisherTest, ParamsFromSDF)
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load plugin
   const char *pluginStr =
@@ -193,38 +217,34 @@ TEST(PublisherTest, ParamsFromSDF)
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
-  pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("Publisher",
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+  EXPECT_TRUE(app.LoadPlugin("Publisher",
       pluginDoc.FirstChildElement("plugin")));
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
 
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
   // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
+  auto plugins = win->findChildren<plugins::Publisher *>();
   EXPECT_EQ(plugins.size(), 1);
+
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Publisher");
 
   // Message type
-  auto msgTypeEdit = plugin->findChild<QLineEdit *>("msgTypeEdit");
-  ASSERT_NE(nullptr, msgTypeEdit);
-  EXPECT_EQ(msgTypeEdit->text(), "ignition.msgs.Fruits");
+  EXPECT_EQ(plugin->MsgType(), "ignition.msgs.Fruits");
 
   // Message
-  auto msgEdit = plugin->findChild<QTextEdit *>("msgEdit");
-  ASSERT_NE(nullptr, msgEdit);
-  EXPECT_EQ(msgEdit->toPlainText(), "number: 1 fruit {name:\"banana\"}");
+  EXPECT_EQ(plugin->MsgData(), "number: 1 fruit {name:\"banana\"}");
 
   // Topic
-  auto topicEdit = plugin->findChild<QLineEdit *>("topicEdit");
-  ASSERT_NE(nullptr, topicEdit);
-  EXPECT_EQ(topicEdit->text(), "/fruit");
+  EXPECT_EQ(plugin->Topic(), "/fruit");
 
   // Frequency
-  auto freqSpin = plugin->findChild<QDoubleSpinBox *>("frequencySpinBox");
-  ASSERT_NE(nullptr, freqSpin);
-  EXPECT_DOUBLE_EQ(freqSpin->value(), 0.1);
+  EXPECT_DOUBLE_EQ(plugin->Frequency(), 0.1);
 }
+#endif
