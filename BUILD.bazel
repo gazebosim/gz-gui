@@ -99,6 +99,10 @@ qt_resource(
     includes = ["include/ignition/gui"],
 )
 '''
+
+
+
+
 qt_cc_binary(
     name = "libignition-gui4.so",
     srcs = sources,
@@ -143,7 +147,6 @@ qt_cc_binary(
     ],
     defines = [
         "IGN_GUI_PLUGIN_PATH='\"ign_gui/src/plugins/\"'",
-        "HAVE_IFADDRS",
     ],
 )
 
