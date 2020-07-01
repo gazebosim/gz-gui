@@ -1437,7 +1437,11 @@ void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
 void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 {
   this->dataPtr->mouseEvent.SetType(common::MouseEvent::SCROLL);
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  this->dataPtr->mouseEvent.SetPos(_e->x(), _e->y());
+#else
   this->dataPtr->mouseEvent.SetPos(_e->position().x(), _e->position.y());
+#endif
   double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
