@@ -141,7 +141,7 @@ Pane {
   /**
    * ID within QML
    */
-  id: card
+  id: cardPane
 
   /**
    * Object name accessible from C++
@@ -174,7 +174,7 @@ Pane {
     // but I haven't figured out yet how the card can tell IgnSplit to create
     // a new split and add the card to it. There must be a way using signals, events
     // or global functions...?
-    var bgItemTemp = helpers.ancestorByName(card, "background")
+    var bgItemTemp = helpers.ancestorByName(cardPane, "background")
     if (bgItemTemp)
       backgroundItem = bgItemTemp;
 
@@ -187,7 +187,7 @@ Pane {
    * any knowledge of splits
    */
   function syncTheFamily() {
-    var parentSplit = helpers.ancestorByName(card, /^split_item/);
+    var parentSplit = helpers.ancestorByName(cardPane, /^split_item/);
 
     if (undefined == parentSplit)
       return;
@@ -203,14 +203,14 @@ Pane {
    * Clear all anchors
    */
   function clearAnchors() {
-    card.anchors.right = undefined
-    card.anchors.left = undefined
-    card.anchors.top = undefined
-    card.anchors.bottom = undefined
-    card.anchors.fill = undefined
-    card.anchors.horizontalCenter = undefined
-    card.anchors.verticalCenter = undefined
-    card.anchors.baseline = undefined
+    cardPane.anchors.right = undefined
+    cardPane.anchors.left = undefined
+    cardPane.anchors.top = undefined
+    cardPane.anchors.bottom = undefined
+    cardPane.anchors.fill = undefined
+    cardPane.anchors.horizontalCenter = undefined
+    cardPane.anchors.verticalCenter = undefined
+    cardPane.anchors.baseline = undefined
 
     anchored = false
   }
@@ -282,11 +282,11 @@ Pane {
       from: "floating"
       to: "floating_collapsed"
       NumberAnimation {
-        target: card
+        target: cardPane
         property: "height"
         duration: 200
         easing.type: Easing.OutCubic
-        from: card.height
+        from: cardPane.height
         to: 50
       }
     },
@@ -294,7 +294,7 @@ Pane {
       from: "floating_collapsed"
       to: "floating"
       NumberAnimation {
-        target: card
+        target: cardPane
         property: "height"
         duration: 200
         easing.type: Easing.InCubic
@@ -314,11 +314,11 @@ Pane {
       from: "docked"
       to: "docked_collapsed"
       NumberAnimation {
-        target: card
+        target: cardPane
         property: "parent.Layout.minimumHeight"
         duration: 200
         easing.type: Easing.OutCubic
-        from: card.height
+        from: cardPane.height
         to: 50
       }
     },
@@ -326,7 +326,7 @@ Pane {
       from: "docked_collapsed"
       to: "docked"
       NumberAnimation {
-        target: card
+        target: cardPane
         property: "parent.Layout.minimumHeight"
         duration: 200
         easing.type: Easing.InCubic
@@ -349,11 +349,11 @@ Pane {
         ScriptAction {script: leaveDockedState()}
         ScriptAction {script: enterFloatingState()}
         NumberAnimation {
-          target: card
+          target: cardPane
           property: "height"
           duration: 200
           easing.type: Easing.OutCubic
-          from: card.height
+          from: cardPane.height
           to: 50
         }
       }
@@ -385,13 +385,13 @@ Pane {
     var splitName = backgroundItem.addSplitItem();
     var splitItem = backgroundItem.childItems[splitName];
 
-    const collapsed = card.height === 50
+    const collapsed = cardPane.height === 50
 
     // Reparent to split
-    card.parent = splitItem;
+    cardPane.parent = splitItem;
 
     // Retain collapsed or expanded state
-    card.parent.Layout.minimumHeight = collapsed ? 50 : content.children[0].Layout.minimumHeight;
+    cardPane.parent.Layout.minimumHeight = collapsed ? 50 : content.children[0].Layout.minimumHeight;
   }
 
   /**
@@ -399,16 +399,16 @@ Pane {
    */
   function enterFloatingState()
   {
-    const collapsed = card.parent.Layout.minimumHeight === 50;
+    const collapsed = cardPane.parent.Layout.minimumHeight === 50;
     // Reparent to main window's background
-    card.parent = backgroundItem
+    cardPane.parent = backgroundItem
 
     // Resize to minimum size
-    card.clearAnchors();
-    card.width = content.children[0].Layout.minimumWidth;
+    cardPane.clearAnchors();
+    cardPane.width = content.children[0].Layout.minimumWidth;
 
     // Retain collapsed or expanded state
-    card.height = collapsed ? 50 : content.children[0].Layout.minimumHeight;
+    cardPane.height = collapsed ? 50 : content.children[0].Layout.minimumHeight;
     lastHeight = content.children[0].Layout.minimumHeight;
   }
 
@@ -418,7 +418,7 @@ Pane {
   function leaveDockedState()
   {
     // Remove from split (delete split if needed)
-    backgroundItem.removeSplitItem(helpers.ancestorByName(card,
+    backgroundItem.removeSplitItem(helpers.ancestorByName(cardPane,
         /^split_item/).objectName)
   }
 
@@ -436,8 +436,8 @@ Pane {
 //   */
 //  Window {
 //    // TODO: resize
-//    width: card.width;
-//    height: card.height;
+//    width: cardPane.width;
+//    height: cardPane.height;
 //    visible: false;
 //    id: cardWindow
 //
@@ -447,7 +447,7 @@ Pane {
 //    }
 //
 //    onClosing: {
-//      card.state = "docked"
+//      cardPane.state = "docked"
 //    }
 //  }
 
@@ -457,11 +457,11 @@ Pane {
   ToolBar {
     id: cardToolbar
     objectName: "cardToolbar"
-    visible: card.showTitleBar
+    visible: cardPane.showTitleBar
     Material.foreground: Material.foreground
     Material.background: pluginToolBarColor
-    width: card.width
-    height: card.showTitleBar ? 50 : 0
+    width: cardPane.width
+    height: cardPane.showTitleBar ? 50 : 0
     x: 0
     z: 100
 
@@ -469,11 +469,11 @@ Pane {
     MouseArea {
       anchors.fill: parent
       drag {
-        target: card
+        target: cardPane
         minimumX: 0
         minimumY: 0
-        maximumX: card.parent ? card.parent.width - card.width : card.width
-        maximumY: card.parent ? card.parent.height - card.height : card.height
+        maximumX: cardPane.parent ? cardPane.parent.width - cardPane.width : cardPane.width
+        maximumY: cardPane.parent ? cardPane.parent.height - cardPane.height : cardPane.height
         smoothed: true
       }
     }
@@ -500,101 +500,37 @@ Pane {
       // TODO(louise) support window state
       ToolButton {
         id: dockButton
-        text: (card.state === "docked" || card.state === "docked_collapsed") ? floatIcon : dockIcon
+        text: (cardPane.state === "docked" || cardPane.state === "docked_collapsed") ? floatIcon : dockIcon
         contentItem: Text {
           text: dockButton.text
           font: dockButton.font
           opacity: enabled ? 1.0 : 0.3
-          color: card.Material.background
+          color: cardPane.Material.background
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
-        visible: card.showDockButton && !card.standalone
+        visible: cardPane.showDockButton && !cardPane.standalone
         onClicked: {
-          switch(card.state) {
-            case "floating_collapsed": {
-              card.state = "docked_collapsed"
-              break;
-            }
-            case "floating": {
-              card.state = "docked"
-              break;
-            }
-            case "docked": {
-              card.state = "floating"
-              break;
-            }
-            case "docked_collapsed": {
-              card.state = "floating_collapsed"
-              break;
-            }
-          }
-        }
-      }
-
-      // Collapse button
-      ToolButton {
-        id: collapseButton
-        visible: card.showCollapseButton && !card.standalone
-        text: card.height <= 50.5 ? expandIcon : collapseIcon;
-        contentItem: Text {
-          text: collapseButton.text
-          font: collapseButton.font
-          opacity: enabled ? 1.0 : 0.3
-          color: card.Material.background
-          horizontalAlignment: Text.AlignHCenter
-          verticalAlignment: Text.AlignVCenter
-        }
-        onClicked: {
-          switch(card.state) {
-            case "floating_collapsed": {
-              card.state = "floating"
-              break;
-            }
-            case "floating": {
-              // When user manually minimized the plugin using resize
-              if(card.height === 50) {
-                // Handles the case when a floating plugin is loaded using config
-                if(lastHeight === 50) {
-                  lastHeight = content.children[0].Layout.minimumHeight;
-                }
-                // Set state to floating collapsed and then expand for animation
-                card.state = "floating_collapsed"
-                card.state = "floating"
-              } else {
-                lastHeight = card.height
-                // Set card state to collapsed
-                card.state = "floating_collapsed"
-              }
-              break;
-            }
-            case "docked": {
-              card.state = "docked_collapsed"
-              break;
-            }
-            case "docked_collapsed": {
-              card.state = "docked"
-              break;
-            }
-          }
+          const docked = cardPane.state === "docked"
+          cardPane.state = docked ? "floating" : "docked"
         }
       }
 
       // Close button
       ToolButton {
         id: closeButton
-        visible: card.showCloseButton && !card.standalone
+        visible: cardPane.showCloseButton && !cardPane.standalone
         text: closeIcon
         contentItem: Text {
           text: closeButton.text
           font: closeButton.font
           opacity: enabled ? 1.0 : 0.3
-          color: card.Material.background
+          color: cardPane.Material.background
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
         onClicked: {
-          card.close();
+          cardPane.close();
         }
       }
     }
@@ -616,11 +552,11 @@ Pane {
     transformOrigin: Menu.TopRight
     MenuItem {
       text: "Settings"
-      onTriggered: card.showSettingsDialog();
+      onTriggered: cardPane.showSettingsDialog();
     }
     MenuItem {
       text: "Close"
-      onTriggered: card.close();
+      onTriggered: cardPane.close();
     }
   }
 
@@ -636,7 +572,7 @@ Pane {
     modal: false
     focus: true
     title: pluginName + " settings"
-    parent: card.parent
+    parent: cardPane.parent
     x: parent ? (parent.width - width) / 2 : 0
     y: parent ? (parent.height - height) / 2 : 0
   }
@@ -648,26 +584,26 @@ Pane {
     objectName: "content"
     id: content
     anchors.fill: parent
-    anchors.topMargin: card.showTitleBar ? 50 : 0
+    anchors.topMargin: cardPane.showTitleBar ? 50 : 0
     clip: true
     color: cardBackground
 
     onChildrenChanged: {
-      card.syncTheFamily()
+      cardPane.syncTheFamily()
     }
 
     /**
      * Conveniently expose card to children
      */
     function card() {
-      return card;
+      return cardPane;
     }
   }
 
   IgnRulers {
     anchors.fill: parent
-    enabled: card.state === "floating" && resizable
-    minSize: card.minSize
-    target: card
+    enabled: cardPane.state === "floating" && resizable
+    minSize: cardPane.minSize
+    target: cardPane
   }
 }
