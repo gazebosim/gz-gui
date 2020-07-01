@@ -1,0 +1,150 @@
+load(
+    "//ign_bazel:qt.bzl",
+    "qt_resource",
+    "qt_cc_library",
+    "qt_cc_binary",
+)
+
+name = "publisher"
+outfile = "qrc_Publisher.rcc"
+
+qrc_file = "publisher/Publisher.qrc"
+qrc_filename = "Publisher.qrc"
+files = [
+    "publisher/Publisher.qml"
+]
+publisher_sources = [
+    "publisher/Publisher.cc",
+]
+publisher_headers = [
+    "publisher/Publisher.hh",
+]
+
+plugin_dirs = [
+    "grid_3d",
+    "image_display",
+    "publisher",
+    "scene3d",
+    "topic_echo",
+    "world_control",
+    "world_stats",
+]
+
+# NOTE the below names must correspond to the above directory names by index
+plugin_names = [
+    "Grid3D",
+    "ImageDisplay",
+    "Publisher",
+    "Scene3D",
+    "TopicEcho",
+    "WorldControl",
+    "WorldStats",
+]
+
+[
+# NOTE the below genrule and following binary generations make the assumption that
+# all files within the plugin directory are titled %s.* where %s = plugin namei
+genrule( 
+    name = "%s_gen" % plugin,
+    srcs = [
+        "%s/%s.qrc" % (plugin_dirs[index], plugin),
+        "%s/%s.qml" % (plugin_dirs[index], plugin),
+    ],
+    outs = [
+        "qrc_%s.rcc" % plugin,
+    ],
+    cmd = "echo $(OUTS) && cd ign_gui/src/plugins/%s && rcc --name name -binary %s.qrc -o qrc_%s.rcc && cp qrc_%s.rcc ../../../../$(OUTS)" % (plugin_dirs[index], plugin, plugin, plugin),
+) for index, plugin in enumerate(plugin_names)]
+
+[
+qt_cc_binary(
+    name = "lib%s.so" % plugin,
+    srcs = [
+        "%s/%s.cc" % (plugin_dirs[index], plugin),
+    ],
+    hdrs = [
+        "%s/%s.hh" % (plugin_dirs[index], plugin),
+    ],
+    linkshared = True,
+    includes = ["."],
+    linkopts = [
+        "-Wl,-soname,lib%s.so" % plugin,
+        "-ltinyxml2",
+        "-lGL",
+        "-lGLU",
+        "-lglut",
+    ],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
+    ],   
+    deps = [
+        "//ign_plugin/register",
+        "//ign_transport",
+        "//ign_rendering",
+        "//ign_gui",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
+    ],
+    data = [
+        "%s/%s.qml" % (plugin_dirs[index], plugin),
+        "qrc_%s.rcc" % plugin,
+        "//ign_rendering/ogre2",
+    ],
+    visibility = ["//visibility:public"],
+) for index, plugin in enumerate(plugin_names)]
+
+[
+cc_library(
+    name = "%s" % plugin_dirs[index],
+    srcs = ["lib%s.so" % plugin],
+    hdrs = ["%s/%s.hh" % (plugin_dirs[index], plugin)],
+    includes = ["."],
+    visibility = ["//visibility:public"],
+    linkopts = [
+        "-ltinyxml2",
+        "-lGL",
+        "-lGLU",
+        "-lglut",
+    ],
+    copts = [
+        "-Iexternal/qt/QtCore",
+        "-Iexternal/qt/QtGui",
+        "-Iexternal/qt/QtQuick",
+        "-Iexternal/qt/QtQuickControls2",
+        "-Iexternal/qt/QtWidgets",
+        "-Iexternal/qt/QtQml",
+    ],
+    deps = [
+        "//ign_plugin/register",
+        "//ign_transport",
+        "//ign_rendering",
+        "//ign_rendering/ogre2",
+        "//ign_gui",
+        "@qt//:qt_core",
+        "@qt//:qt_network",
+        "@qt//:qt_widgets",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_quick",
+        "@qt//:qt_qml",
+        "@qt//:qt_gui",
+        "@qt//:qt_opengl",
+    ],  
+) for index, plugin in enumerate(plugin_names)]
+
+
+cc_library(
+    name = "plugin-data",
+    data = [":%s" % plugin for plugin in plugin_dirs],
+    visibility = ["//visibility:public"],
+)
