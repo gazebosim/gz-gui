@@ -32,9 +32,9 @@ Dialog {
     Switch {
       id: titleSwitch
       text: "Show title bar"
-      checked: card.showTitleBar
+      checked: cardPane.showTitleBar
       onToggled: {
-        card.showTitleBar = checked
+        cardPane.showTitleBar = checked
         // why is binding not working?
         closeSwitch.enabled = checked
         dockSwitch.enabled = checked
@@ -44,39 +44,39 @@ Dialog {
     Switch {
       id: closeSwitch
       text: "Show close button"
-      visible: !card.standalone
-      enabled: card.showTitleBar
-      checked: card.showCloseButton
+      visible: !cardPane.standalone
+      enabled: cardPane.showTitleBar
+      checked: cardPane.showCloseButton
       onToggled: {
-        card.showCloseButton = checked
+        cardPane.showCloseButton = checked
       }
     }
 
     Switch {
       id: dockSwitch
       text: "Show dock button"
-      visible: !card.standalone
-      enabled: card.showTitleBar
-      checked: card.showDockButton
+      visible: !cardPane.standalone
+      enabled: cardPane.showTitleBar
+      checked: cardPane.showDockButton
       onToggled: {
-        card.showDockButton = checked
+        cardPane.showDockButton = checked
       }
     }
 
     Switch {
       id: resizableSwitch
       text: "Resizable"
-      visible: card.state === "floating"
-      checked: card.resizable
+      visible: cardPane.state === "floating"
+      checked: cardPane.resizable
       onToggled: {
-        card.resizable = checked
+        cardPane.resizable = checked
       }
     }
 
     GridLayout {
       width: parent.width
       columns: 3
-      visible: !card.standalone
+      visible: !cardPane.standalone
 
       Label {
         text: "Background Color "
@@ -101,7 +101,7 @@ Dialog {
     GridLayout {
       width: parent.width
       columns: 2
-      visible: card.state === "floating"
+      visible: cardPane.state === "floating"
 
       Label {
         text: "Position"
@@ -114,48 +114,48 @@ Dialog {
 
       // TODO(louise) Support setting anchors from the dialog
       Button {
-        visible: card.anchored
+        visible: cardPane.anchored
         text: "Clear anchors"
         Layout.columnSpan: 2
         onClicked: {
-          card.clearAnchors()
+          cardPane.clearAnchors()
         }
       }
 
       IgnSpinBox {
-        visible: !card.anchored
-        maximumValue: card.parent ? card.parent.width - card.width : minSize
-        onVisibleChanged: value = card.x
+        visible: !cardPane.anchored
+        maximumValue: cardPane.parent ? cardPane.parent.width - cardPane.width : minSize
+        onVisibleChanged: value = cardPane.x
         onValueChanged: {
-          card.x = value;
+          cardPane.x = value;
         }
       }
       Label {
-        visible: !card.anchored
+        visible: !cardPane.anchored
         text: "X"
       }
       IgnSpinBox {
-        visible: !card.anchored
-        maximumValue: card.parent ? card.parent.height - card.height : minSize
-        onVisibleChanged: value = card.y
+        visible: !cardPane.anchored
+        maximumValue: cardPane.parent ? cardPane.parent.height - cardPane.height : minSize
+        onVisibleChanged: value = cardPane.y
         onValueChanged: {
-          card.y = value;
+          cardPane.y = value;
         }
       }
       Label {
-        visible: !card.anchored
+        visible: !cardPane.anchored
         text: "Y"
       }
       IgnSpinBox {
-        visible: !card.anchored
+        visible: !cardPane.anchored
         maximumValue: 10000
-        onVisibleChanged: value = card.z
+        onVisibleChanged: value = cardPane.z
         onValueChanged: {
-          card.z = value;
+          cardPane.z = value;
         }
       }
       Label {
-        visible: !card.anchored
+        visible: !cardPane.anchored
         text: "Z"
       }
       Label {
@@ -166,26 +166,26 @@ Dialog {
         text: ""
       }
       IgnSpinBox {
-        maximumValue: card.parent ? card.parent.width : minSize
+        maximumValue: cardPane.parent ? cardPane.parent.width : minSize
         onVisibleChanged: {
-          if (card)
-            value = card.width
+          if (cardPane)
+            value = cardPane.width
         }
         onValueChanged: {
-          card.width = value;
+          cardPane.width = value;
         }
       }
       Label {
         text: "Width"
       }
       IgnSpinBox {
-        maximumValue: card.parent ? card.parent.height : minSize
+        maximumValue: cardPane.parent ? cardPane.parent.height : minSize
         onVisibleChanged: {
-          if (card)
-            value = card.height
+          if (cardPane)
+            value = cardPane.height
         }
         onValueChanged: {
-          card.height = value;
+          cardPane.height = value;
         }
       }
       Label {
