@@ -2,7 +2,7 @@
 #define PROJECT_BINARY_PATH "${CMAKE_BINARY_DIR}"
 
 #if defined(_WIN32)
-#define TEST_DISABLED_ON_WIN32(TestGroup,TestName) TEST(TestGroup, DISABLED_Testname)
+#define TEST_DISABLED_ON_WIN32(TestGroup,TestName) TEST(TestGroup, DISABLED_TestName)
 #else
 #define TEST_DISABLED_ON_WIN32(TestGroup, TestName) TEST(TestGroup, TestName)
 #endif
@@ -10,7 +10,7 @@
 #if defined(__linux__)
 #define TEST_ENABLE_ONLY_LINUX(TestGroup, TestName) TEST(TestGroup, TestName)
 #else
-#define TEST_ENABLE_ONLY_LINUX(TestGroup, TestName) TEST(TestGroup, DISABLED_Testname)
+#define TEST_ENABLE_ONLY_LINUX(TestGroup, TestName) TEST(TestGroup, DISABLED_TestName)
 #endif
 
 #if (_MSC_VER >= 1400) // Visual Studio 2005
