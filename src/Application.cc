@@ -85,6 +85,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   : QApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
 {
   igndbg << "Initializing application." << std::endl;
+
   // Configure console
   common::Console::SetPrefix("[GUI] ");
 
@@ -305,11 +306,10 @@ bool Application::LoadPlugin(const std::string &_filename,
 
   common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(this->dataPtr->pluginPathEnv);
-  for (const auto &path : this->dataPtr->pluginPaths)
-  {
-    systemPaths.AddPluginPaths(path);
-  }
   systemPaths.AddPluginPaths("./" + std::string(IGN_GUI_PLUGIN_PATH));
+
+  for (const auto &path : this->dataPtr->pluginPaths)
+    systemPaths.AddPluginPaths(path);
 
   // Add default folder and install folder
   std::string home;
@@ -317,8 +317,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
                             IGN_GUI_PLUGIN_INSTALL_DIR);
 
-  std::string filename = _filename;
-  auto pathToLib = systemPaths.FindSharedLibrary(filename);
+  auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
   {
     ignerr << "Failed to load plugin [" << _filename <<
@@ -565,9 +564,8 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 
   // 2. Paths added by calling addPluginPath
   for (auto const &path : this->dataPtr->pluginPaths)
-  {
     paths.push_back(path);
-  }
+
   // 3. ~/.ignition/gui/plugins
   std::string home;
   common::env(IGN_HOMEDIR, home);

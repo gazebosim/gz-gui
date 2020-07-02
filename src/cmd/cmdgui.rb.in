@@ -127,8 +127,8 @@ class Cmd
   def execute(args)
     options = parse(args)
 
-    puts 'Parsed:'
-    puts options
+    # puts 'Parsed:'
+    # puts options
 
     # Read the plugin that handles the command.
     if LIBRARY_NAME[0] == '/'
