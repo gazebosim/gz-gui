@@ -12,8 +12,6 @@ load(
 )
 load(
     "//ign_bazel:qt.bzl",
-    "qt_resource",
-    "qt_cc_library",
     "qt_cc_binary",
 )
 
@@ -60,36 +58,40 @@ ign_export_header(
     export_base = "IGNITION_GUI",
     visibility = ["//visibility:public"],
 )
-qt_resource(
-    name = "resources",
-    files = [
-        "qtquickcontrols2.conf",
-        "qml/IgnCard.qml",
-        "qml/IgnCardSettings.qml",
-        "qml/IgnHelpers.qml",
-        "qml/IgnRulers.qml",
-        "qml/IgnSpinBox.qml",
-        "qml/IgnSplit.qml",
-        "qml/Main.qml",
-        "qml/PluginMenu.qml",
-        "qml/SideDrawer.qml",
-        "qml/StandaloneDialog.qml",
-        "qml/StyleDialog.qml",
-        "qml/images/drawer.png",
-        "qml/images/ignition_logo_50x50.png",
-        "qml/images/menu.png",
-        ],
-    qrc_file = "resources.qrc",
-    visibility = ["//visibility:public"],
+
+name = "resources"
+outfile = "qrc_%s.cpp" % name
+qrc_file = "%s.qrc" % name
+files = [
+    "qtquickcontrols2.conf",
+    "qml/IgnCard.qml",
+    "qml/IgnCardSettings.qml",
+    "qml/IgnHelpers.qml",
+    "qml/IgnRulers.qml",
+    "qml/IgnSpinBox.qml",
+    "qml/IgnSplit.qml",
+    "qml/Main.qml",
+    "qml/PluginMenu.qml",
+    "qml/SideDrawer.qml",
+    "qml/StandaloneDialog.qml",
+    "qml/StyleDialog.qml",
+    "qml/images/drawer.png",
+    "qml/images/ignition_logo_50x50.png",
+    "qml/images/menu.png",
+]
+genrule(
+    name = name + "_gen",
+    srcs = [qrc_file] + files,
+    outs = [outfile],
+    cmd = "cd ign_gui/include/ignition/gui && rcc --name name --output %s %s && cp %s ../../../../$(OUTS)" % (outfile, qrc_file, outfile),
 )
-'''
 cc_library(
-    name = "resources",
-    srcs = ["qrc_resources.cpp"],
+    name = name,
+    srcs = [outfile],
     alwayslink = 1,
     visibility = ["//visibility:public"],
 )
-'''
+
 exports_files(["Application.hh"])
 exports_files(["Conversions.hh"])
 exports_files(["Dialog.hh"])
