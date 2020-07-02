@@ -92,31 +92,32 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
-exports_files(["Application.hh"])
-exports_files(["Conversions.hh"])
-exports_files(["Dialog.hh"])
-exports_files(["DragDropModel.hh"])
-exports_files(["Enums.hh"])
-exports_files(["GuiEvents.hh"])
-exports_files(["Helpers.hh"])
-exports_files(["ign.hh"])
-exports_files(["MainWindow.hh"])
-exports_files(["Plugin.hh"])
-exports_files(["SearchModel.hh"])
-exports_files(["qt.h"])
-
-exports_files(["qtquickcontrols2.conf"])
-exports_files(["qml/IgnCard.qml"])
-exports_files(["qml/IgnCardSettings.qml"])
-exports_files(["qml/IgnHelpers.qml"])
-exports_files(["qml/IgnRulers.qml"])
-exports_files(["qml/IgnSpinBox.qml"])
-exports_files(["qml/IgnSplit.qml"])
-exports_files(["qml/Main.qml"])
-exports_files(["qml/PluginMenu.qml"])
-exports_files(["qml/SideDrawer.qml"])
-exports_files(["qml/StandaloneDialog.qml"])
-exports_files(["qml/StyleDialog.qml"])
-exports_files(["qml/images/drawer.png"])
-exports_files(["qml/images/ignition_logo_50x50.png"])
-exports_files(["qml/images/menu.png"])
+exports_files([
+    "Application.hh",
+    "Conversions.hh",
+    "Dialog.hh",
+    "DragDropModel.hh",
+    "Enums.hh",
+    "GuiEvents.hh",
+    "Helpers.hh",
+    "ign.hh",
+    "MainWindow.hh",
+    "Plugin.hh",
+    "SearchModel.hh",
+    "qt.h",
+    "qtquickcontrols2.conf",
+    "qml/IgnCard.qml",
+    "qml/IgnCardSettings.qml",
+    "qml/IgnHelpers.qml",
+    "qml/IgnRulers.qml",
+    "qml/IgnSpinBox.qml",
+    "qml/IgnSplit.qml",
+    "qml/Main.qml",
+    "qml/PluginMenu.qml",
+    "qml/SideDrawer.qml",
+    "qml/StandaloneDialog.qml",
+    "qml/StyleDialog.qml",
+    "qml/images/drawer.png",
+    "qml/images/ignition_logo_50x50.png",
+    "qml/images/menu.png",
+])
