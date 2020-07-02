@@ -1,7 +1,5 @@
 load(
     "//ign_bazel:qt.bzl",
-    "qt_resource",
-    "qt_cc_library",
     "qt_cc_binary",
 )
 
