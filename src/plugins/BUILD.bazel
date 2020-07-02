@@ -41,7 +41,7 @@ plugin_names = [
 
 [
 # NOTE the below genrule and following binary generations make the assumption that
-# all files within the plugin directory are titled %s.* where %s = plugin namei
+# all files within the plugin directory are titled %s.* where %s = plugin name
 genrule( 
     name = "%s_gen" % plugin,
     srcs = [

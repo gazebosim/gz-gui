@@ -305,18 +305,11 @@ bool Application::LoadPlugin(const std::string &_filename,
 
   common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(this->dataPtr->pluginPathEnv);
-  std::cout << "plugin path env" << this->dataPtr->pluginPathEnv << std::endl;
-  std::cout << "paths are " << std::endl;
   for (const auto &path : this->dataPtr->pluginPaths)
   {
-    std::cout << path << std::endl;
     systemPaths.AddPluginPaths(path);
   }
-  std::cout << "ign gui plugin path " << std::string(IGN_GUI_PLUGIN_PATH) << std::endl;
-  std::cout << "cwd " << common::cwd() << std::endl;
   systemPaths.AddPluginPaths("./" + std::string(IGN_GUI_PLUGIN_PATH));
-
-  std::cout << "Adding " << ignition::common::cwd() + "/" + std::string(IGN_GUI_PLUGIN_PATH) << std::endl;
 
   // Add default folder and install folder
   std::string home;
@@ -324,7 +317,6 @@ bool Application::LoadPlugin(const std::string &_filename,
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
                             IGN_GUI_PLUGIN_INSTALL_DIR);
 
-  std::cout << "filename: " << _filename << std::endl;
   std::string filename = _filename;
   auto pathToLib = systemPaths.FindSharedLibrary(filename);
   if (pathToLib.empty())
@@ -334,7 +326,6 @@ bool Application::LoadPlugin(const std::string &_filename,
     return false;
   }
 
-  std::cout << "found lib" << std::endl;
   // Load plugin
   plugin::Loader pluginLoader;
 
@@ -562,7 +553,6 @@ void Application::SetPluginPathEnv(const std::string &_env)
 /////////////////////////////////////////////////
 void Application::AddPluginPath(const std::string &_path)
 {
-  std::cout << "Adding path " << _path << std::endl;
   this->dataPtr->pluginPaths.push_back(_path);
 }
 
@@ -576,10 +566,8 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   // 2. Paths added by calling addPluginPath
   for (auto const &path : this->dataPtr->pluginPaths)
   {
-    std::cout << "adding path " << path << std::endl;
     paths.push_back(path);
   }
-  std::cout << "Getting plugin list" << std::endl;
   // 3. ~/.ignition/gui/plugins
   std::string home;
   common::env(IGN_HOMEDIR, home);
