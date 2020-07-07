@@ -170,6 +170,12 @@ cc_library(
         "-lXaw",
         "-lXt",
     ],
+    data = [
+        "//ign_gui/test:config/ignore.config",
+        "//ign_gui/test:config/plugins_menu.config",
+        "//ign_gui/test:config/state.config",
+        "//ign_gui/test:config/test.config"
+    ],
     deps = [
         ":ign_gui",
         "//ign_math",
