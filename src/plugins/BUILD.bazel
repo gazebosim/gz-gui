@@ -72,14 +72,6 @@ qt_cc_binary(
         "-lGLU",
         "-lglut",
     ],
-    copts = [
-        "-Iexternal/qt/QtCore",
-        "-Iexternal/qt/QtGui",
-        "-Iexternal/qt/QtQuick",
-        "-Iexternal/qt/QtQuickControls2",
-        "-Iexternal/qt/QtWidgets",
-        "-Iexternal/qt/QtQml",
-    ],
     deps = [
         "//ign_plugin/register",
         "//ign_transport",
@@ -114,14 +106,6 @@ cc_library(
         "-lGL",
         "-lGLU",
         "-lglut",
-    ],
-    copts = [
-        "-Iexternal/qt/QtCore",
-        "-Iexternal/qt/QtGui",
-        "-Iexternal/qt/QtQuick",
-        "-Iexternal/qt/QtQuickControls2",
-        "-Iexternal/qt/QtWidgets",
-        "-Iexternal/qt/QtQml",
     ],
     deps = [
         "//ign_plugin/register",
