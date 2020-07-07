@@ -56,7 +56,7 @@ genrule(
 
 [
 qt_cc_binary(
-    name = "lib%s.so" % plugin,
+    name = "%s.so" % plugin,
     srcs = [
         "%s/%s.cc" % (plugin_dirs[index], plugin),
     ],
@@ -66,7 +66,6 @@ qt_cc_binary(
     linkshared = True,
     includes = ["."],
     linkopts = [
-        "-Wl,-soname,lib%s.so" % plugin,
         "-ltinyxml2",
         "-lGL",
         "-lGLU",
@@ -93,37 +92,6 @@ qt_cc_binary(
     ],
     visibility = ["//visibility:public"],
 ) for index, plugin in enumerate(plugin_names)]
-
-[
-cc_library(
-    name = "%s" % plugin_dirs[index],
-    srcs = ["lib%s.so" % plugin],
-    hdrs = ["%s/%s.hh" % (plugin_dirs[index], plugin)],
-    includes = ["."],
-    visibility = ["//visibility:public"],
-    linkopts = [
-        "-ltinyxml2",
-        "-lGL",
-        "-lGLU",
-        "-lglut",
-    ],
-    deps = [
-        "//ign_plugin/register",
-        "//ign_transport",
-        "//ign_rendering",
-        "//ign_rendering/ogre2",
-        "//ign_gui",
-        "@qt//:qt_core",
-        "@qt//:qt_network",
-        "@qt//:qt_widgets",
-        "@qt//:qt_quick_control",
-        "@qt//:qt_quick",
-        "@qt//:qt_qml",
-        "@qt//:qt_gui",
-        "@qt//:qt_opengl",
-    ],
-) for index, plugin in enumerate(plugin_names)]
-
 
 cc_library(
     name = "plugin-data",

@@ -82,17 +82,17 @@ TEST(ApplicationTest, LoadPlugin)
   // Plugin path added programmatically
   {
     Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
   }
 
   // Plugin path added by env var
   {
-    setenv("TEST_ENV_VAR",
-        (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
+    auto env_var = std::string(PROJECT_BINARY_PATH);
 
+    setenv("TEST_ENV_VAR", env_var.c_str(), 1);
     Application app(g_argc, g_argv);
     app.SetPluginPathEnv("TEST_ENV_VAR");
 
@@ -111,6 +111,7 @@ TEST(ApplicationTest, LoadPlugin)
   // Plugin which is not registered
   {
     Application app(g_argc, g_argv);
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_FALSE(app.LoadPlugin("TestNotRegisteredPlugin"));
@@ -137,6 +138,7 @@ TEST(ApplicationTest, LoadConfig)
 
     // Add test plugin to path (referenced in config)
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
     app.AddPluginPath(testBuildPath);
 
     // Load test config file
@@ -159,6 +161,7 @@ TEST(ApplicationTest, LoadDefaultConfig)
     // Add test plugin to path (referenced in config)
     auto testBuildPath = ignition::common::joinPaths(
       std::string(PROJECT_BINARY_PATH), "lib");
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
     app.AddPluginPath(testBuildPath);
 
     // Set default config file
@@ -220,6 +223,7 @@ TEST(ApplicationTest, InitializeMainWindow)
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
     app.AddPluginPath(testBuildPath);
 
     // Load test config file
@@ -255,6 +259,7 @@ TEST(ApplicationTest, Dialog)
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
 
     // Load plugin
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
@@ -289,6 +294,7 @@ TEST(ApplicationTest, Dialog)
     // Add test plugin to path
     auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
     app.AddPluginPath(testBuildPath);
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
 
     // Load plugins
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
