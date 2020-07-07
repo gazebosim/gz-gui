@@ -186,7 +186,7 @@ cc_library(
         "//ign_gui/test:TestPlugin.so",
         "//ign_gui/test:TestBadInheritancePlugin.so",
         "//ign_gui/test:TestNotRegisteredPlugin.so",
-        "//ign_gui/src/plugins:Publisher.so",
+        "//ign_gui/src/plugins:libPublisher.so",
         "@gtest//:gtest",
         "@gtest//:gtest_main",
         "@qt//:qt_core",
@@ -199,6 +199,18 @@ cc_library(
         "@qt//:qt_opengl",
     ],
 ) for src in test_sources]
+
+cc_binary(
+    name = "window",
+    srcs = [
+        "examples/standalone/window/window.cc",
+    ],
+    deps = [
+        ":ign_gui",
+        "//ign_gui/src/plugins:libScene3D.so",
+        "//ign_rendering/ogre2:libignition-rendering4-ogre2.so",
+    ],
+)
 
 exports_files(["CMakeLists.txt"])
 exports_files(["src/cmd/cmdgui.rb.in"])
