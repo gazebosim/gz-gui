@@ -84,7 +84,8 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadPlugin))
   // Plugin path added programmatically
   {
     Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
   }
@@ -103,6 +104,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadPlugin))
   // Plugin which doesn't inherit from ignition::gui::Plugin
   {
     Application app(g_argc, g_argv);
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_FALSE(app.LoadPlugin("TestBadInheritancePlugin"));
