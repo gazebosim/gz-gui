@@ -52,7 +52,7 @@ genrule(
 )
 
 qt_cc_binary(
-    name = "libTestPlugin.so",
+    name = "TestPlugin.so",
     srcs = ["plugins/TestPlugin.cc"],
     hdrs = ["plugins/TestPlugin.hh"],
     deps = [
@@ -70,10 +70,10 @@ qt_cc_binary(
     visibility = ["//visibility:public"]
 )
 
-cc_binary(
-    name = "libTestBadInheritancePlugin.so",
-    srcs = ["plugins/TestBadInheritancePlugin.cc",
-            "plugins/TestBadInheritancePlugin.hh"],
+qt_cc_binary(
+    name = "TestBadInheritancePlugin.so",
+    srcs = ["plugins/TestBadInheritancePlugin.cc"],
+    hdrs = ["plugins/TestBadInheritancePlugin.hh"],
     linkshared = True,
     linkopts = [],
     includes = ["."],
@@ -85,10 +85,10 @@ cc_binary(
     ],
 )
 
-cc_binary(
-    name = "libTestNotRegisteredPlugin.so",
-    srcs = ["plugins/TestNotRegisteredPlugin.cc",
-              "plugins/TestNotRegisteredPlugin.hh"],
+qt_cc_binary(
+    name = "TestNotRegisteredPlugin.so",
+    srcs = ["plugins/TestNotRegisteredPlugin.cc"],
+    hdrs = ["plugins/TestNotRegisteredPlugin.hh"],
     linkshared = True,
     linkopts = [],
     includes = ["."],
