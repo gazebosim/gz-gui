@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include <ignition/math/Helpers.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -118,7 +119,7 @@ TEST(HelpersTest, stringTypeFromKey)
 
 /////////////////////////////////////////////////
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-TEST_DISABLED_ON_WIN32(HelpersTest, findFirstByProperty)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(HelpersTest, findFirstByProperty)
 {
   Application app(gg_argc, gg_argv);
 

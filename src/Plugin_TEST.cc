@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 
 #include <ignition/common/Console.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -31,7 +32,7 @@ using namespace ignition;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-TEST_DISABLED_ON_WIN32(PluginTest, DeleteLater)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, DeleteLater)
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -70,7 +71,7 @@ TEST_DISABLED_ON_WIN32(PluginTest, DeleteLater)
 }
 
 /////////////////////////////////////////////////
-TEST_DISABLED_ON_WIN32(PluginTest, InvalidXmlText)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, InvalidXmlText)
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -100,7 +101,7 @@ TEST_DISABLED_ON_WIN32(PluginTest, InvalidXmlText)
 }
 
 /////////////////////////////////////////////////
-TEST_DISABLED_ON_WIN32(PluginTest, Getters)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, Getters)
 {
   ignition::common::Console::SetVerbosity(4);
 
