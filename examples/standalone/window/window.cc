@@ -35,7 +35,7 @@ int main(int _argc, char **_argv)
   ignition::gui::Application app(_argc, _argv);
 
   // Load plugins / config
-  if (!app.LoadPlugin("Publisher"))
+  if (!app.LoadPlugin("Scene3D"))
   {
     return 1;
   }
