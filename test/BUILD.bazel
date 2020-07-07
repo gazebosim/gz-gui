@@ -2,10 +2,14 @@ load(
     "//ign_bazel:cmake_configure_file.bzl",
     "cmake_configure_file",
 )
+load(
+    "//ign_bazel:qt.bzl",
+    "qt_cc_binary",
+)
 
 BINARY_DIR = "/tmp"
 SOURCE_DIR = "/tmp"
-CMAKE_BINARY_DIR = "/tmp"
+CMAKE_BINARY_DIR = "./ign_gui/test"
 IGNITION_TOOLS_BINARY_DIRS = "/tmp"
 PROJECT_NAME = "ignition-gui"
 PROJECT_MAJOR = 4
@@ -35,3 +39,33 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+genrule(
+    name = "TestPlugin_gen",
+    srcs = [
+        "plugins/TestPlugin.qrc",
+        "plugins/TestPlugin.qml",
+    ],
+    outs = [
+        "plugins/qrc_TestPlugin.rcc",
+    ],
+    cmd = "qtchooser -qt=5 -run-tool=rcc --name name -binary ign_gui/test/plugins/TestPlugin.qrc -o $(OUTS)",
+)
+
+qt_cc_binary(
+    name = "libTestPlugin.so",
+    srcs = ["plugins/TestPlugin.cc"],
+    hdrs = ["plugins/TestPlugin.hh"],
+    deps = [
+        "//ign_common",
+        "//ign_plugin/register",
+        "//ign_gui",
+    ],
+    data = [
+      "plugins/TestPlugin.qml",
+      "plugins/qrc_TestPlugin.rcc"
+    ],
+    linkshared = True,
+    linkopts = [],
+    includes = ["."],
+    visibility = ["//visibility:public"]
+)

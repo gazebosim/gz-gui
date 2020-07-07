@@ -177,6 +177,7 @@ cc_library(
         "//ign_common",
         "//ign_common/events:events",
         "//ign_gui/test:test_utils",
+        "//ign_gui/test:libTestPlugin.so",
         "@gtest//:gtest",
         "@gtest//:gtest_main",
         "@qt//:qt_core",
