@@ -205,6 +205,7 @@ cc_binary(
     srcs = [
         "examples/standalone/window/window.cc",
     ],
+    linkopts = ["-ltinyxml2"],
     deps = [
         ":ign_gui",
         "//ign_gui/src/plugins:libScene3D.so",
