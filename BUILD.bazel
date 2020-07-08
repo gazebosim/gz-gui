@@ -170,6 +170,12 @@ cc_library(
         "-lXaw",
         "-lXt",
     ],
+    data = [
+        "//ign_gui/test:config/ignore.config",
+        "//ign_gui/test:config/plugins_menu.config",
+        "//ign_gui/test:config/state.config",
+        "//ign_gui/test:config/test.config"
+    ],
     deps = [
         ":ign_gui",
         "//ign_math",
@@ -177,6 +183,10 @@ cc_library(
         "//ign_common",
         "//ign_common/events:events",
         "//ign_gui/test:test_utils",
+        "//ign_gui/test:TestPlugin.so",
+        "//ign_gui/test:TestBadInheritancePlugin.so",
+        "//ign_gui/test:TestNotRegisteredPlugin.so",
+        "//ign_gui/src/plugins:libPublisher.so",
         "@gtest//:gtest",
         "@gtest//:gtest_main",
         "@qt//:qt_core",
@@ -189,6 +199,19 @@ cc_library(
         "@qt//:qt_opengl",
     ],
 ) for src in test_sources]
+
+cc_binary(
+    name = "window",
+    srcs = [
+        "examples/standalone/window/window.cc",
+    ],
+    linkopts = ["-ltinyxml2"],
+    deps = [
+        ":ign_gui",
+        "//ign_gui/src/plugins:libScene3D.so",
+        "//ign_rendering/ogre2:libignition-rendering4-ogre2.so",
+    ],
+)
 
 exports_files(["CMakeLists.txt"])
 exports_files(["src/cmd/cmdgui.rb.in"])

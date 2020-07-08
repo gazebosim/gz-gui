@@ -2,10 +2,14 @@ load(
     "//ign_bazel:cmake_configure_file.bzl",
     "cmake_configure_file",
 )
+load(
+    "//ign_bazel:qt.bzl",
+    "qt_cc_binary",
+)
 
 BINARY_DIR = "/tmp"
-SOURCE_DIR = "/tmp"
-CMAKE_BINARY_DIR = "/tmp"
+SOURCE_DIR = "./ign_gui"
+CMAKE_BINARY_DIR = "./ign_gui/test"
 IGNITION_TOOLS_BINARY_DIRS = "/tmp"
 PROJECT_NAME = "ignition-gui"
 PROJECT_MAJOR = 4
@@ -35,3 +39,69 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+genrule(
+    name = "TestPlugin_gen",
+    srcs = [
+        "plugins/TestPlugin.qrc",
+        "plugins/TestPlugin.qml",
+    ],
+    outs = [
+        "plugins/qrc_TestPlugin.rcc",
+    ],
+    cmd = "qtchooser -qt=5 -run-tool=rcc --name name -binary ign_gui/test/plugins/TestPlugin.qrc -o $(OUTS)",
+)
+
+qt_cc_binary(
+    name = "TestPlugin.so",
+    srcs = ["plugins/TestPlugin.cc"],
+    hdrs = ["plugins/TestPlugin.hh"],
+    deps = [
+        "//ign_common",
+        "//ign_plugin/register",
+        "//ign_gui",
+    ],
+    data = [
+      "plugins/TestPlugin.qml",
+      "plugins/qrc_TestPlugin.rcc"
+    ],
+    linkshared = True,
+    linkopts = [],
+    includes = ["."],
+    visibility = ["//visibility:public"]
+)
+
+qt_cc_binary(
+    name = "TestBadInheritancePlugin.so",
+    srcs = ["plugins/TestBadInheritancePlugin.cc"],
+    hdrs = ["plugins/TestBadInheritancePlugin.hh"],
+    linkshared = True,
+    linkopts = [],
+    includes = ["."],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//ign_common",
+        "//ign_plugin/register",
+        "//ign_gui",
+    ],
+)
+
+qt_cc_binary(
+    name = "TestNotRegisteredPlugin.so",
+    srcs = ["plugins/TestNotRegisteredPlugin.cc"],
+    hdrs = ["plugins/TestNotRegisteredPlugin.hh"],
+    linkshared = True,
+    linkopts = [],
+    includes = ["."],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//ign_common",
+        "//ign_plugin/register",
+        "//ign_gui",
+    ],
+)
+
+exports_files([
+    "config/ignore.config",
+    "config/plugins_menu.config",
+    "config/state.config",
+    "config/test.config"])
