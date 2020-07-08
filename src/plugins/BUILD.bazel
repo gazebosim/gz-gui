@@ -51,7 +51,7 @@ genrule(
     outs = [
         "qrc_%s.rcc" % plugin,
     ],
-    cmd = "echo $(OUTS) && cd ign_gui/src/plugins/%s && qtchooser -qt=5 -run-tool=rcc --name name -binary %s.qrc -o qrc_%s.rcc && cp qrc_%s.rcc ../../../../$(OUTS)" % (plugin_dirs[index], plugin, plugin, plugin),
+    cmd = "cd ign_gui/src/plugins/%s && qtchooser -qt=5 -run-tool=rcc --name name -binary %s.qrc -o qrc_%s.rcc && cp qrc_%s.rcc ../../../../$(OUTS)" % (plugin_dirs[index], plugin, plugin, plugin),
 ) for index, plugin in enumerate(plugin_names)]
 
 [
