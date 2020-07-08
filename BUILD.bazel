@@ -107,14 +107,6 @@ qt_cc_binary(
     includes = ["include"],
     linkshared = True,
     visibility = [],
-    copts = [
-        "-Iexternal/qt/QtCore",
-        "-Iexternal/qt/QtGui",
-        "-Iexternal/qt/QtQuick",
-        "-Iexternal/qt/QtQuickControls2",
-        "-Iexternal/qt/QtWidgets",
-        "-Iexternal/qt/QtQml",
-    ],
     deps = [
         "//ign_common/events",
         "//ign_common",
@@ -144,14 +136,6 @@ cc_library(
     hdrs = public_headers,
     includes = ["include"],
     visibility = ["//visibility:public"],
-    copts = [
-        "-Iexternal/qt/QtCore",
-        "-Iexternal/qt/QtGui",
-        "-Iexternal/qt/QtQuick",
-        "-Iexternal/qt/QtQuickControls2",
-        "-Iexternal/qt/QtWidgets",
-        "-Iexternal/qt/QtQml",
-    ],
     deps = [
         "//ign_common/events:events",
         "//ign_common",
@@ -185,14 +169,6 @@ cc_library(
         "-lXrandr",
         "-lXaw",
         "-lXt",
-    ],
-    copts = [
-        "-Iexternal/qt/QtCore",
-        "-Iexternal/qt/QtGui",
-        "-Iexternal/qt/QtQuick",
-        "-Iexternal/qt/QtQuickControls2",
-        "-Iexternal/qt/QtWidgets",
-        "-Iexternal/qt/QtQml",
     ],
     deps = [
         ":ign_gui",

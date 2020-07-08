@@ -83,7 +83,7 @@ genrule(
     name = name + "_gen",
     srcs = [qrc_file] + files,
     outs = [outfile],
-    cmd = "cd ign_gui/include/ignition/gui && rcc --name name --output %s %s && cp %s ../../../../$(OUTS)" % (outfile, qrc_file, outfile),
+    cmd = "cd ign_gui/include/ignition/gui && qtchooser -qt=5 -run-tool=rcc --name name --output %s %s && cp %s ../../../../$(OUTS)" % (outfile, qrc_file, outfile),
 )
 cc_library(
     name = name,

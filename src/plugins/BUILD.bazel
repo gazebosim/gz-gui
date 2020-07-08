@@ -42,7 +42,7 @@ plugin_names = [
 [
 # NOTE the below genrule and following binary generations make the assumption that
 # all files within the plugin directory are titled %s.* where %s = plugin name
-genrule( 
+genrule(
     name = "%s_gen" % plugin,
     srcs = [
         "%s/%s.qrc" % (plugin_dirs[index], plugin),
@@ -51,7 +51,7 @@ genrule(
     outs = [
         "qrc_%s.rcc" % plugin,
     ],
-    cmd = "echo $(OUTS) && cd ign_gui/src/plugins/%s && rcc --name name -binary %s.qrc -o qrc_%s.rcc && cp qrc_%s.rcc ../../../../$(OUTS)" % (plugin_dirs[index], plugin, plugin, plugin),
+    cmd = "cd ign_gui/src/plugins/%s && qtchooser -qt=5 -run-tool=rcc --name name -binary %s.qrc -o qrc_%s.rcc && cp qrc_%s.rcc ../../../../$(OUTS)" % (plugin_dirs[index], plugin, plugin, plugin),
 ) for index, plugin in enumerate(plugin_names)]
 
 [
@@ -79,7 +79,7 @@ qt_cc_binary(
         "-Iexternal/qt/QtQuickControls2",
         "-Iexternal/qt/QtWidgets",
         "-Iexternal/qt/QtQml",
-    ],   
+    ],
     deps = [
         "//ign_plugin/register",
         "//ign_transport",
@@ -137,7 +137,7 @@ cc_library(
         "@qt//:qt_qml",
         "@qt//:qt_gui",
         "@qt//:qt_opengl",
-    ],  
+    ],
 ) for index, plugin in enumerate(plugin_names)]
 
 
