@@ -22,6 +22,7 @@ plugin_dirs = [
     "grid_3d",
     "image_display",
     "publisher",
+    "scene3d",
     "topic_echo",
     "world_control",
     "world_stats",
@@ -32,6 +33,7 @@ plugin_names = [
     "Grid3D",
     "ImageDisplay",
     "Publisher",
+    "Scene3D",
     "TopicEcho",
     "WorldControl",
     "WorldStats",
@@ -65,10 +67,14 @@ qt_cc_binary(
     includes = ["."],
     linkopts = [
         "-ltinyxml2",
+        "-lGL",
+        "-lGLU",
+        "-lglut",
     ],
     deps = [
         "//ign_plugin/register",
         "//ign_transport",
+        "//ign_rendering",
         "//ign_gui",
         "@qt//:qt_core",
         "@qt//:qt_network",
@@ -82,6 +88,7 @@ qt_cc_binary(
     data = [
         "%s/%s.qml" % (plugin_dirs[index], plugin),
         "qrc_%s.rcc" % plugin,
+        "//ign_rendering/ogre2",
     ],
     visibility = ["//visibility:public"],
 ) for index, plugin in enumerate(plugin_names)]
@@ -95,10 +102,15 @@ cc_library(
     visibility = ["//visibility:public"],
     linkopts = [
         "-ltinyxml2",
+        "-lGL",
+        "-lGLU",
+        "-lglut",
     ],
     deps = [
         "//ign_plugin/register",
         "//ign_transport",
+        "//ign_rendering",
+        "//ign_rendering/ogre2:libignition-rendering4-ogre2.so",
         "//ign_gui",
         "@qt//:qt_core",
         "@qt//:qt_network",
@@ -111,47 +123,9 @@ cc_library(
     ],
 ) for index, plugin in enumerate(plugin_names)]
 
-genrule(
-    name = "Scene3D_gen",
-    srcs = [
-        "scene3d/Scene3D.qrc",
-        "scene3d/Scene3D.qml"
-    ],
-    outs = [
-        "qrc_Scene3D.rcc",
-    ],
-    cmd = "echo $(OUTS) && cd ign_gui/src/plugins/scene3d && qtchooser -qt=5 -run-tool=rcc --name name -binary Scene3D.qrc -o qrc_Scene3D.rcc && cp qrc_Scene3D.rcc ../../../../$(OUTS)",
-)
-
-qt_cc_binary(
-    name = "libScene3D.so",
-    srcs = [
-        "scene3d/Scene3D.cc",
-    ],
-    hdrs = [
-        "scene3d/Scene3D.hh",
-    ],
-    linkshared = True,
-    includes = ["."],
-    linkopts = [],
-    deps = [
-        "//ign_plugin/register",
-        "//ign_gui",
-        "//ign_common",
-        "//ign_rendering",
-        "//ign_transport",
-    ],
-    data = [
-        "scene3d/Scene3D.qml",
-        "qrc_Scene3D.rcc",
-    ],
-    visibility = ["//visibility:public"],
-)
-
 
 cc_library(
     name = "plugin-data",
     data = [":%s" % plugin for plugin in plugin_dirs],
     visibility = ["//visibility:public"],
 )
-
