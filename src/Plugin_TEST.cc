@@ -36,6 +36,7 @@ TEST(PluginTest, DeleteLater)
   ignition::common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load normal plugin
@@ -75,6 +76,7 @@ TEST(PluginTest, InvalidXmlText)
   ignition::common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load plugin config that returns null GetText
@@ -105,6 +107,7 @@ TEST(PluginTest, Getters)
   ignition::common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH));
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load normal plugin
