@@ -118,7 +118,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadPlugin)
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, LoadConfig)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadConfig)
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -146,7 +146,7 @@ TEST(ApplicationTest, LoadConfig)
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, LoadDefaultConfig)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadDefaultConfig)
 {
   ignition::common::Console::SetVerbosity(4);
 
