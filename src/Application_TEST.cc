@@ -171,7 +171,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadDefaultConfig)
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, InitializeMainWindow)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, InitializeMainWindow)
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -241,7 +241,7 @@ TEST(ApplicationTest, InitializeMainWindow)
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, Dialog)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, Dialog)
 {
   ignition::common::Console::SetVerbosity(4);
 
