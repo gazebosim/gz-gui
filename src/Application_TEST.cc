@@ -60,7 +60,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, Constructor)
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, LoadPlugin)
+IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadPlugin)
 {
   ignition::common::Console::SetVerbosity(4);
 
