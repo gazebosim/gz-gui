@@ -242,16 +242,20 @@ Pane {
 //        height: cardWindowContent.height
 //      }
 //    },
+    // Floating and Docked state are the expanded states
     State {
       name: "docked"
     },
-    // Floating state is also considered as expanded state
     State {
       name: "floating"
     },
-
+    // Docked collapsed state
     State {
-      name: "collapsed"
+      name: "d_collapsed"
+    },
+    // Floating collapsed state
+    State {
+      name: "f_collapsed"
     }
   ]
 
@@ -274,7 +278,7 @@ Pane {
     },
     Transition {
       from: "floating"
-      to: "collapsed"
+      to: "f_collapsed"
       NumberAnimation {
         target: card
         property: "height"
@@ -285,7 +289,7 @@ Pane {
       }
     },
     Transition {
-      from: "collapsed"
+      from: "f_collapsed"
       to: "floating"
       NumberAnimation {
         target: card
@@ -297,11 +301,59 @@ Pane {
       }
     },
     Transition {
-      from: "collapsed"
+      from: "f_collapsed"
       to: "docked"
       SequentialAnimation {
         ScriptAction {script: leaveFloatingState()}
         ScriptAction {script: enterDockedState()}
+      }
+    },
+    Transition {
+      from: "docked"
+      to: "d_collapsed"
+      NumberAnimation {
+        target: card
+        property: "parent.Layout.minimumHeight"
+        duration: 200
+        easing.type: Easing.OutCubic
+        from: card.height
+        to: 50
+      }
+    },
+    Transition {
+      from: "d_collapsed"
+      to: "docked"
+      NumberAnimation {
+        target: card
+        property: "parent.Layout.minimumHeight"
+        duration: 200
+        easing.type: Easing.InCubic
+        from: 50
+        to: content.children[0].Layout.minimumHeight
+      }
+    },
+    Transition {
+      from: "d_collapsed"
+      to: "floating"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+      }
+    },
+    Transition {
+      from: "docked"
+      to: "f_collapsed"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+        NumberAnimation {
+          target: card
+          property: "height"
+          duration: 200
+          easing.type: Easing.OutCubic
+          from: card.height
+          to: 50
+        }
       }
     }
   ]
@@ -421,7 +473,7 @@ Pane {
       // TODO(louise) support window state
       ToolButton {
         id: dockButton
-        text: card.state === "docked" ? floatIcon : dockIcon
+        text: (card.state === "docked" || card.state === "d_collapsed") ? floatIcon : dockIcon
         contentItem: Text {
           text: dockButton.text
           font: dockButton.font
@@ -432,7 +484,7 @@ Pane {
         }
         visible: card.showDockButton && !card.standalone
         onClicked: {
-          const docked = card.state === "docked"
+          const docked = (card.state === "docked" || card.state === "d_collapsed")
           card.state = docked ? "floating" : "docked"
         }
       }
@@ -440,8 +492,8 @@ Pane {
       // Minimize button
       ToolButton {
         id: minimizeButton
-        visible: card.showMinimizeButton && !card.standalone && !(card.state === "docked")
-        text: card.height === 50 ? expandIcon : collapseIcon;
+        visible: card.showMinimizeButton && !card.standalone
+        text: card.height <= 50.5 ? expandIcon : collapseIcon;
         contentItem: Text {
           text: minimizeButton.text
           font: minimizeButton.font
@@ -451,19 +503,23 @@ Pane {
           verticalAlignment: Text.AlignVCenter
         }
         onClicked: {
-          const minimized = card.height === 50;
-          if(minimized) {
+          if(card.state == "f_collapsed") {
             // Explicitly set the state to collapsed for the scenario
             // when user manually resized the plugin to size 50
-            card.state = "collapsed"
+            card.state = "f_collapsed"
 
             // Set card state to floating
             card.state = "floating"
-          } else {
+          } else if(card.state == "floating") {
             lastHeight = card.height
 
             // Set card state to collapsed
-            card.state = "collapsed"
+            card.state = "f_collapsed"
+          } else if(card.state == "docked") {
+            card.state = "d_collapsed"
+          } else {
+            card.state = "d_collapsed"
+            card.state = "docked"
           }
         }
       }
