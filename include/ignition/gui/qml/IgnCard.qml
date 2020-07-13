@@ -100,7 +100,7 @@ Pane {
   property var backgroundItem: null
 
   /**
-   *
+   * Stores last height of plugin to expand to.
    */
   property int lastHeight: 50
 
@@ -383,6 +383,7 @@ Pane {
     card.clearAnchors();
     card.width = content.children[0].Layout.minimumWidth;
     card.height = content.children[0].Layout.minimumHeight;
+    lastHeight = content.children[0].Layout.minimumHeight;
   }
 
   /**
@@ -503,23 +504,36 @@ Pane {
           verticalAlignment: Text.AlignVCenter
         }
         onClicked: {
-          if(card.state == "f_collapsed") {
-            // Explicitly set the state to collapsed for the scenario
-            // when user manually resized the plugin to size 50
-            card.state = "f_collapsed"
-
-            // Set card state to floating
-            card.state = "floating"
-          } else if(card.state == "floating") {
-            lastHeight = card.height
-
-            // Set card state to collapsed
-            card.state = "f_collapsed"
-          } else if(card.state == "docked") {
-            card.state = "d_collapsed"
-          } else {
-            card.state = "d_collapsed"
-            card.state = "docked"
+          switch(card.state) {
+            case "f_collapsed": {
+              card.state = "floating"
+              break;
+            }
+            case "floating": {
+              // When user manually minimized the plugin using resize
+              if(card.height === 50) {
+                // Handles the case when a floating plugin is loaded using config
+                if(lastHeight === 50) {
+                  lastHeight = content.children[0].Layout.minimumHeight;
+                }
+                // Set state to floating collapsed and then expand for animation
+                card.state = "f_collapsed"
+                card.state = "floating"
+              } else {
+                lastHeight = card.height
+                // Set card state to collapsed
+                card.state = "f_collapsed"
+              }
+              break;
+            }
+            case "docked": {
+              card.state = "d_collapsed"
+              break;
+            }
+            case "d_collapsed": {
+              card.state = "docked"
+              break;
+            }
           }
         }
       }
