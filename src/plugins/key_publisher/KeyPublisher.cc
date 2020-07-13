@@ -69,7 +69,7 @@ KeyPublisher::~KeyPublisher()
 void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
 {
   if (this->title.empty())
-    this->title = "Key tool";
+    this->title = "Key publisher";
 
   ignition::gui::App()->findChild
     <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
