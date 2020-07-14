@@ -108,9 +108,14 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       }
       this->dataPtr->pause = startPaused;
       if (startPaused)
+      {
         this->paused();
+      }
       else
+      {
         this->playing();
+        this->OnPlay();
+      }
     }
   }
 
