@@ -32,7 +32,7 @@ using namespace ignition;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, DeleteLater)
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(DeleteLater))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -71,7 +71,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, DeleteLater)
 }
 
 /////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, InvalidXmlText)
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(InvalidXmlText))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -101,7 +101,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, InvalidXmlText)
 }
 
 /////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(PluginTest, Getters)
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Getters))
 {
   ignition::common::Console::SetVerbosity(4);
 

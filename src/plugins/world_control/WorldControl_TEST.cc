@@ -35,7 +35,7 @@ using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 /////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldControlTest, Load)
+TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -60,7 +60,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldControlTest, Load)
 }
 
 /////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldControlTest, WorldControl)
+TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldControl))
 {
   common::Console::SetVerbosity(4);
 

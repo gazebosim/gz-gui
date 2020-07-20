@@ -119,7 +119,7 @@ TEST(HelpersTest, stringTypeFromKey)
 
 /////////////////////////////////////////////////
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-IGN_UTILS_TEST_DISABLED_ON_WIN32(HelpersTest, findFirstByProperty)
+TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 {
   Application app(gg_argc, gg_argv);
 

@@ -34,7 +34,7 @@ using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 //////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, Constructor)
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Constructor))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -60,7 +60,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, Constructor)
 }
 
 //////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadPlugin)
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadPlugin))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -118,7 +118,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadPlugin)
 }
 
 //////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadConfig)
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadConfig))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -146,7 +146,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadConfig)
 }
 
 //////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadDefaultConfig)
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -171,7 +171,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, LoadDefaultConfig)
 }
 
 //////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, InitializeMainWindow)
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(InitializeMainWindow))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -241,7 +241,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, InitializeMainWindow)
 }
 
 //////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, Dialog)
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Dialog))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -314,7 +314,7 @@ IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, Dialog)
 }
 
 /////////////////////////////////////////////////
-IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplicationTest, messageHandler)
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(messageHandler))
 {
   ignition::common::Console::SetVerbosity(4);
 

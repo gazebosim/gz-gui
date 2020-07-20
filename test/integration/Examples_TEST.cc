@@ -32,7 +32,7 @@ using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 /////////////////////////////////////////////////
-IGN_UTILS_TEST_ENABLE_ONLY_LINUX(ExampleTest, Configs)
+TEST(ExampleTest, IGN_UTILS_TEST_ENABLE_ONLY_LINUX(Configs))
 {
   common::Console::SetVerbosity(4);
   auto exampleConfigPath = common::joinPaths(std::string(PROJECT_SOURCE_PATH),
