@@ -328,7 +328,7 @@ SplitView {
               {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
-              // Set child height to minimu height
+              // Set child height to minimum height
               child.height = child.Layout.minimumHeight;
 
               // Minimum height is the sum of all children's minimum heights

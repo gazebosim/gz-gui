@@ -40,9 +40,9 @@ Pane {
   property bool showCloseButton: true
 
   /**
-   * True to have a minimize button
+   * True to have a collapse button
    */
-  property bool showMinimizeButton: true
+  property bool showCollapseButton: true
 
   /**
    * True to have a title bar
@@ -251,11 +251,11 @@ Pane {
     },
     // Docked collapsed state
     State {
-      name: "d_collapsed"
+      name: "docked_collapsed"
     },
     // Floating collapsed state
     State {
-      name: "f_collapsed"
+      name: "floating_collapsed"
     }
   ]
 
@@ -278,7 +278,7 @@ Pane {
     },
     Transition {
       from: "floating"
-      to: "f_collapsed"
+      to: "floating_collapsed"
       NumberAnimation {
         target: card
         property: "height"
@@ -289,7 +289,7 @@ Pane {
       }
     },
     Transition {
-      from: "f_collapsed"
+      from: "floating_collapsed"
       to: "floating"
       NumberAnimation {
         target: card
@@ -301,7 +301,7 @@ Pane {
       }
     },
     Transition {
-      from: "f_collapsed"
+      from: "floating_collapsed"
       to: "docked"
       SequentialAnimation {
         ScriptAction {script: leaveFloatingState()}
@@ -310,7 +310,7 @@ Pane {
     },
     Transition {
       from: "docked"
-      to: "d_collapsed"
+      to: "docked_collapsed"
       NumberAnimation {
         target: card
         property: "parent.Layout.minimumHeight"
@@ -321,7 +321,7 @@ Pane {
       }
     },
     Transition {
-      from: "d_collapsed"
+      from: "docked_collapsed"
       to: "docked"
       NumberAnimation {
         target: card
@@ -333,7 +333,7 @@ Pane {
       }
     },
     Transition {
-      from: "d_collapsed"
+      from: "docked_collapsed"
       to: "floating"
       SequentialAnimation {
         ScriptAction {script: leaveDockedState()}
@@ -342,7 +342,7 @@ Pane {
     },
     Transition {
       from: "docked"
-      to: "f_collapsed"
+      to: "floating_collapsed"
       SequentialAnimation {
         ScriptAction {script: leaveDockedState()}
         ScriptAction {script: enterFloatingState()}
@@ -474,7 +474,7 @@ Pane {
       // TODO(louise) support window state
       ToolButton {
         id: dockButton
-        text: (card.state === "docked" || card.state === "d_collapsed") ? floatIcon : dockIcon
+        text: (card.state === "docked" || card.state === "docked_collapsed") ? floatIcon : dockIcon
         contentItem: Text {
           text: dockButton.text
           font: dockButton.font
@@ -485,19 +485,19 @@ Pane {
         }
         visible: card.showDockButton && !card.standalone
         onClicked: {
-          const docked = (card.state === "docked" || card.state === "d_collapsed")
+          const docked = (card.state === "docked" || card.state === "docked_collapsed")
           card.state = docked ? "floating" : "docked"
         }
       }
 
-      // Minimize button
+      // Collapse button
       ToolButton {
-        id: minimizeButton
-        visible: card.showMinimizeButton && !card.standalone
+        id: collapseButton
+        visible: card.showCollapseButton && !card.standalone
         text: card.height <= 50.5 ? expandIcon : collapseIcon;
         contentItem: Text {
-          text: minimizeButton.text
-          font: minimizeButton.font
+          text: collapseButton.text
+          font: collapseButton.font
           opacity: enabled ? 1.0 : 0.3
           color: card.Material.background
           horizontalAlignment: Text.AlignHCenter
@@ -505,7 +505,7 @@ Pane {
         }
         onClicked: {
           switch(card.state) {
-            case "f_collapsed": {
+            case "floating_collapsed": {
               card.state = "floating"
               break;
             }
@@ -517,20 +517,20 @@ Pane {
                   lastHeight = content.children[0].Layout.minimumHeight;
                 }
                 // Set state to floating collapsed and then expand for animation
-                card.state = "f_collapsed"
+                card.state = "floating_collapsed"
                 card.state = "floating"
               } else {
                 lastHeight = card.height
                 // Set card state to collapsed
-                card.state = "f_collapsed"
+                card.state = "floating_collapsed"
               }
               break;
             }
             case "docked": {
-              card.state = "d_collapsed"
+              card.state = "docked_collapsed"
               break;
             }
-            case "d_collapsed": {
+            case "docked_collapsed": {
               card.state = "docked"
               break;
             }

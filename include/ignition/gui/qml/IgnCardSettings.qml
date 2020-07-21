@@ -64,6 +64,17 @@ Dialog {
     }
 
     Switch {
+      id: collapseSwitch
+      text: "Show collapse button"
+      visible: !card.standalone
+      enabled: card.showTitleBar
+      checked: card.showCollapseButton
+      onToggled: {
+        card.showCollapseButton = checked
+      }
+    }
+
+    Switch {
       id: resizableSwitch
       text: "Resizable"
       visible: card.state === "floating"
