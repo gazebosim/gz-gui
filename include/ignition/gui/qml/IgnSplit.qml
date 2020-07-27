@@ -283,6 +283,7 @@ SplitView {
     */
     Rectangle {
       id: splitWrapper
+      color: "transparent"
 
       /**
        * Expose the split view.
@@ -335,6 +336,7 @@ SplitView {
               heightSum += child.Layout.minimumHeight;
             }
             Layout.minimumHeight = heightSum;
+            split.height = heightSum;
           }
         }
       }
