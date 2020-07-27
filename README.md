@@ -70,7 +70,8 @@ On Ubuntu Bionic, it's possible to install Ignition GUI's version 1 as follows:
 
 Add OSRF packages:
 
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable bionic main" > /etc/apt/sources.list.d/gazebo-stable.list
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list
     sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
     sudo apt update
 
@@ -147,8 +148,8 @@ line is using symbolic links to each library's YAML file.
 mkdir ~/.ignition/tools/configs -p
 cd ~/.ignition/tools/configs/
 ln -s /usr/local/share/ignition/fuel4.yaml .
-ln -s /usr/local/share/ignition/transport7.yaml .
-ln -s /usr/local/share/ignition/transportlog7.yaml .
+ln -s /usr/local/share/ignition/transport9.yaml .
+ln -s /usr/local/share/ignition/transportlog9.yaml .
 ...
 export IGN_CONFIG_PATH=$HOME/.ignition/tools/configs
 ```
