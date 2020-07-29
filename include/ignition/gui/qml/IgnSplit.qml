@@ -289,13 +289,17 @@ SplitView {
        */
       property var split: split
 
-      // Offset of 17 to accomodate for ScrollView scroll bar
-      Layout.minimumWidth: split.Layout.minimumWidth + 17
+      /**
+       * Offset of 17 to accommodate for ScrollView scroll bar
+       */
+      property var scrollBarWidth: 17
+
+      Layout.minimumWidth: split.Layout.minimumWidth + scrollBarWidth
       Layout.minimumHeight: split.Layout.minimumHeight
 
       ScrollView {
         contentHeight: split.height
-        contentWidth: split.width + 17
+        contentWidth: split.width + scrollBarWidth
 
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 
@@ -304,7 +308,7 @@ SplitView {
 
         SplitView {
           id: split
-          width: splitWrapper.width0
+          width: splitWrapper.width - scrollBarWidth
           height: Math.max(childItems[Object.keys(childItems)[0]].height,
                       split.Layout.minimumHeight)
 
