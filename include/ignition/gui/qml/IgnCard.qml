@@ -355,6 +355,22 @@ Pane {
           to: 50
         }
       }
+    },
+    Transition {
+      from: "docked_collapsed"
+      to: "floating_collapsed"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+      }
+    },
+    Transition {
+      from: "floating_collapsed"
+      to: "docked_collapsed"
+      SequentialAnimation {
+        ScriptAction {script: leaveFloatingState()}
+        ScriptAction {script: enterDockedState()}
+      }
     }
   ]
 
@@ -367,8 +383,13 @@ Pane {
     var splitName = backgroundItem.addSplitItem();
     var splitItem = backgroundItem.childItems[splitName];
 
+    const collapsed = card.height === 50
+
     // Reparent to split
     card.parent = splitItem;
+
+    // Retain collapsed or expanded state
+    card.parent.Layout.minimumHeight = collapsed ? 50 : content.children[0].Layout.minimumHeight;
   }
 
   /**
@@ -376,13 +397,16 @@ Pane {
    */
   function enterFloatingState()
   {
+    const collapsed = card.parent.Layout.minimumHeight === 50;
     // Reparent to main window's background
     card.parent = backgroundItem
 
     // Resize to minimum size
     card.clearAnchors();
     card.width = content.children[0].Layout.minimumWidth;
-    card.height = content.children[0].Layout.minimumHeight;
+
+    // Retain collapsed or expanded state
+    card.height = collapsed ? 50 : content.children[0].Layout.minimumHeight;
     lastHeight = content.children[0].Layout.minimumHeight;
   }
 
@@ -485,8 +509,24 @@ Pane {
         }
         visible: card.showDockButton && !card.standalone
         onClicked: {
-          const docked = (card.state === "docked" || card.state === "docked_collapsed")
-          card.state = docked ? "floating" : "docked"
+          switch(card.state) {
+            case "floating_collapsed": {
+              card.state = "docked_collapsed"
+              break;
+            }
+            case "floating": {
+              card.state = "docked"
+              break;
+            }
+            case "docked": {
+              card.state = "floating"
+              break;
+            }
+            case "docked_collapsed": {
+              card.state = "floating_collapsed"
+              break;
+            }
+          }
         }
       }
 
