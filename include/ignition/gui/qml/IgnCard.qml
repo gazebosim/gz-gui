@@ -329,7 +329,7 @@ Pane {
         duration: 200
         easing.type: Easing.InCubic
         from: 50
-        to: content.children[0].Layout.minimumHeight
+        to: content.children[0] === undefined ? 50 : content.children[0].Layout.minimumHeight
       }
     },
     Transition {
