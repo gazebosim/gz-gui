@@ -230,7 +230,7 @@ SplitView {
     Rectangle {
       Layout.minimumWidth: 100
       Layout.minimumHeight: 100
-      Layout.fillHeight: true
+      Layout.fillHeight: false
       Layout.fillWidth: true
       color: Material.background
 
@@ -283,6 +283,7 @@ SplitView {
     */
     Rectangle {
       id: splitWrapper
+      color: "transparent"
 
       /**
        * Expose the split view.
@@ -335,11 +336,14 @@ SplitView {
               {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
+              // Set child height to minimum height
+              child.height = child.Layout.minimumHeight;
 
               // Minimum height is the sum of all children's minimum heights
               heightSum += child.Layout.minimumHeight;
             }
             Layout.minimumHeight = heightSum;
+            split.height = heightSum;
           }
         }
       }
