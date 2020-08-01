@@ -81,10 +81,7 @@ function(ign_gui_add_plugin plugin_name)
     PRIVATE_LINK_LIBS ${ign_gui_add_plugin_PRIVATE_LINK_LIBS} ignition-plugin${IGN_PLUGIN_VER}::register
   )
 
-message(STATUS "ddddddddddddddddddddddddddddddddddddddddd")
-message(STATUS ${ign_gui_add_plugin_TEST_SOURCES})
   if(ign_gui_add_plugin_TEST_SOURCES)
-message(STATUS "aaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     ign_build_tests(TYPE UNIT
       SOURCES
         ${ign_gui_add_plugin_TEST_SOURCES}
