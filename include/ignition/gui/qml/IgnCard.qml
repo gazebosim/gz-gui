@@ -40,6 +40,11 @@ Pane {
   property bool showCloseButton: true
 
   /**
+   * True to have a collapse button
+   */
+  property bool showCollapseButton: true
+
+  /**
    * True to have a title bar
    */
   property bool showTitleBar: true
@@ -65,6 +70,16 @@ Pane {
   property string dockIcon: "\u2581"
 
   /**
+   * ▼
+   */
+  property string collapseIcon: "\u25B4"
+
+  /**
+   * ▲
+   */
+  property string expandIcon: "\u25BE"
+
+  /**
    * □
    */
   property string floatIcon: "\u25A1"
@@ -83,6 +98,11 @@ Pane {
    *
    */
   property var backgroundItem: null
+
+  /**
+   * Stores last height of plugin to expand to.
+   */
+  property int lastHeight: 50
 
   /**
    * True if there's at least one anchor set for the card.
@@ -222,12 +242,20 @@ Pane {
 //        height: cardWindowContent.height
 //      }
 //    },
+    // Floating and Docked state are the expanded states
     State {
       name: "docked"
     },
-
     State {
       name: "floating"
+    },
+    // Docked collapsed state
+    State {
+      name: "docked_collapsed"
+    },
+    // Floating collapsed state
+    State {
+      name: "floating_collapsed"
     }
   ]
 
@@ -247,6 +275,102 @@ Pane {
         ScriptAction {script: leaveFloatingState()}
         ScriptAction {script: enterDockedState()}
       }
+    },
+    Transition {
+      from: "floating"
+      to: "floating_collapsed"
+      NumberAnimation {
+        target: card
+        property: "height"
+        duration: 200
+        easing.type: Easing.OutCubic
+        from: card.height
+        to: 50
+      }
+    },
+    Transition {
+      from: "floating_collapsed"
+      to: "floating"
+      NumberAnimation {
+        target: card
+        property: "height"
+        duration: 200
+        easing.type: Easing.InCubic
+        from: 50
+        to: lastHeight
+      }
+    },
+    Transition {
+      from: "floating_collapsed"
+      to: "docked"
+      SequentialAnimation {
+        ScriptAction {script: leaveFloatingState()}
+        ScriptAction {script: enterDockedState()}
+      }
+    },
+    Transition {
+      from: "docked"
+      to: "docked_collapsed"
+      NumberAnimation {
+        target: card
+        property: "parent.Layout.minimumHeight"
+        duration: 200
+        easing.type: Easing.OutCubic
+        from: card.height
+        to: 50
+      }
+    },
+    Transition {
+      from: "docked_collapsed"
+      to: "docked"
+      NumberAnimation {
+        target: card
+        property: "parent.Layout.minimumHeight"
+        duration: 200
+        easing.type: Easing.InCubic
+        from: 50
+        to: content.children[0] === undefined ? 50 : content.children[0].Layout.minimumHeight
+      }
+    },
+    Transition {
+      from: "docked_collapsed"
+      to: "floating"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+      }
+    },
+    Transition {
+      from: "docked"
+      to: "floating_collapsed"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+        NumberAnimation {
+          target: card
+          property: "height"
+          duration: 200
+          easing.type: Easing.OutCubic
+          from: card.height
+          to: 50
+        }
+      }
+    },
+    Transition {
+      from: "docked_collapsed"
+      to: "floating_collapsed"
+      SequentialAnimation {
+        ScriptAction {script: leaveDockedState()}
+        ScriptAction {script: enterFloatingState()}
+      }
+    },
+    Transition {
+      from: "floating_collapsed"
+      to: "docked_collapsed"
+      SequentialAnimation {
+        ScriptAction {script: leaveFloatingState()}
+        ScriptAction {script: enterDockedState()}
+      }
     }
   ]
 
@@ -259,8 +383,13 @@ Pane {
     var splitName = backgroundItem.addSplitItem();
     var splitItem = backgroundItem.childItems[splitName];
 
+    const collapsed = card.height === 50
+
     // Reparent to split
     card.parent = splitItem;
+
+    // Retain collapsed or expanded state
+    card.parent.Layout.minimumHeight = collapsed ? 50 : content.children[0].Layout.minimumHeight;
   }
 
   /**
@@ -268,13 +397,17 @@ Pane {
    */
   function enterFloatingState()
   {
+    const collapsed = card.parent.Layout.minimumHeight === 50;
     // Reparent to main window's background
     card.parent = backgroundItem
 
     // Resize to minimum size
     card.clearAnchors();
     card.width = content.children[0].Layout.minimumWidth;
-    card.height = content.children[0].Layout.minimumHeight;
+
+    // Retain collapsed or expanded state
+    card.height = collapsed ? 50 : content.children[0].Layout.minimumHeight;
+    lastHeight = content.children[0].Layout.minimumHeight;
   }
 
   /**
@@ -365,7 +498,7 @@ Pane {
       // TODO(louise) support window state
       ToolButton {
         id: dockButton
-        text: card.state === "docked" ? floatIcon : dockIcon
+        text: (card.state === "docked" || card.state === "docked_collapsed") ? floatIcon : dockIcon
         contentItem: Text {
           text: dockButton.text
           font: dockButton.font
@@ -376,8 +509,72 @@ Pane {
         }
         visible: card.showDockButton && !card.standalone
         onClicked: {
-          const docked = card.state === "docked"
-          card.state = docked ? "floating" : "docked"
+          switch(card.state) {
+            case "floating_collapsed": {
+              card.state = "docked_collapsed"
+              break;
+            }
+            case "floating": {
+              card.state = "docked"
+              break;
+            }
+            case "docked": {
+              card.state = "floating"
+              break;
+            }
+            case "docked_collapsed": {
+              card.state = "floating_collapsed"
+              break;
+            }
+          }
+        }
+      }
+
+      // Collapse button
+      ToolButton {
+        id: collapseButton
+        visible: card.showCollapseButton && !card.standalone
+        text: card.height <= 50.5 ? expandIcon : collapseIcon;
+        contentItem: Text {
+          text: collapseButton.text
+          font: collapseButton.font
+          opacity: enabled ? 1.0 : 0.3
+          color: card.Material.background
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
+        onClicked: {
+          switch(card.state) {
+            case "floating_collapsed": {
+              card.state = "floating"
+              break;
+            }
+            case "floating": {
+              // When user manually minimized the plugin using resize
+              if(card.height === 50) {
+                // Handles the case when a floating plugin is loaded using config
+                if(lastHeight === 50) {
+                  lastHeight = content.children[0].Layout.minimumHeight;
+                }
+                // Set state to floating collapsed and then expand for animation
+                card.state = "floating_collapsed"
+                card.state = "floating"
+              } else {
+                lastHeight = card.height
+                // Set card state to collapsed
+                card.state = "floating_collapsed"
+              }
+              break;
+            }
+            case "docked": {
+              card.state = "docked_collapsed"
+              break;
+            }
+            case "docked_collapsed": {
+              card.state = "docked"
+              break;
+            }
+          }
         }
       }
 
