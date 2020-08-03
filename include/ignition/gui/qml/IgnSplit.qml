@@ -230,7 +230,7 @@ SplitView {
     Rectangle {
       Layout.minimumWidth: 100
       Layout.minimumHeight: 100
-      Layout.fillHeight: true
+      Layout.fillHeight: false
       Layout.fillWidth: true
       color: Material.background
 
@@ -283,25 +283,33 @@ SplitView {
     */
     Rectangle {
       id: splitWrapper
+      color: "transparent"
 
       /**
        * Expose the split view.
        */
       property var split: split
 
-      Layout.minimumWidth: split.Layout.minimumWidth
+      /**
+       * Offset of 17 to accommodate for ScrollView scroll bar
+       */
+      property var scrollBarWidth: 17
+
+      Layout.minimumWidth: split.Layout.minimumWidth + scrollBarWidth
       Layout.minimumHeight: split.Layout.minimumHeight
 
       ScrollView {
         contentHeight: split.height
-        contentWidth: split.width
+        contentWidth: split.width + scrollBarWidth
+
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 
         // TODO(louise) This only works for a very specific split
         height: window.height - window.header.height
 
         SplitView {
           id: split
-          width: splitWrapper.width
+          width: splitWrapper.width - scrollBarWidth
           height: Math.max(childItems[Object.keys(childItems)[0]].height,
                       split.Layout.minimumHeight)
 
@@ -328,11 +336,14 @@ SplitView {
               {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
+              // Set child height to minimum height
+              child.height = child.Layout.minimumHeight;
 
               // Minimum height is the sum of all children's minimum heights
               heightSum += child.Layout.minimumHeight;
             }
             Layout.minimumHeight = heightSum;
+            split.height = heightSum;
           }
         }
       }
