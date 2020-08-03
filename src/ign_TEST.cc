@@ -54,7 +54,7 @@ std::string custom_exec_str(std::string _cmd)
 TEST(CmdLine, list)
 {
   std::string output = custom_exec_str("ign gui -l");
-  EXPECT_NE(output.find("TopicEcho"), std::string::npos);
-  EXPECT_NE(output.find("Publisher"), std::string::npos);
+  EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
+  EXPECT_NE(output.find("Publisher"), std::string::npos) << output;
 }
 
