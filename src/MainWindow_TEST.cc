@@ -163,7 +163,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(OnLoadConfig))
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLE_ONLY_LINUX(OnAddPlugin))
+TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -324,7 +324,8 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(IgnoreToString))
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLE_ONLY_LINUX(CloseWithoutSavingChanges))
+TEST(MainWindowTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(CloseWithoutSavingChanges))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
