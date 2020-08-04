@@ -104,6 +104,7 @@ endfunction()
 # Plugins
 add_subdirectory(grid_3d)
 add_subdirectory(image_display)
+add_subdirectory(key_publisher)
 add_subdirectory(publisher)
 add_subdirectory(scene3d)
 add_subdirectory(topic_echo)
