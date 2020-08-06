@@ -37,6 +37,8 @@ using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
 TEST(TopicViewerTest, Load)
 {
@@ -191,3 +193,4 @@ TEST(TopicViewerTest, Model)
 
     EXPECT_EQ(root->rowCount(), 2);
 }
+#endif
