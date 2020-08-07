@@ -19,6 +19,9 @@
 #define IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
 
 #include <ignition/gui/qt.h>
+
+#include <memory>
+
 #include <ignition/gui/Plugin.hh>
 #include <ignition/transport/Node.hh>
 

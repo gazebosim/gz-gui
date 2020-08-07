@@ -115,6 +115,7 @@ Pane {
    * Tool bar background color
    */
   property string pluginToolBarColor:
+    typeof MainWindow === "undefined" ||
     MainWindow.pluginToolBarColorLight === "" ||
     MainWindow.pluginToolBarColorDark === "" ?
     Material.accent :
@@ -125,6 +126,7 @@ Pane {
    * Tool bar text color
    */
   property string pluginToolBarTextColor:
+    typeof MainWindow === "undefined" ||
     MainWindow.pluginToolBarTextColorLight === "" ||
     MainWindow.pluginToolBarTextColorDark === "" ?
     Material.background :
