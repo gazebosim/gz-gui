@@ -19,6 +19,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/transport/Node.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -32,8 +33,9 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
 /////////////////////////////////////////////////
-TEST(WorldControlTest, Load)
+TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -58,7 +60,7 @@ TEST(WorldControlTest, Load)
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, WorldControl)
+TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldControl))
 {
   common::Console::SetVerbosity(4);
 
@@ -124,4 +126,3 @@ TEST(WorldControlTest, WorldControl)
   // Cleanup
   plugins.clear();
 }
-

@@ -19,6 +19,7 @@
 #include <thread>
 
 #include <ignition/common/Console.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -33,7 +34,8 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, Constructor)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST(MainWindowTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Constructor))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -46,7 +48,7 @@ TEST(MainWindowTest, Constructor)
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, OnSaveConfig)
+TEST(MainWindowTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(OnSaveConfig))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -83,7 +85,7 @@ TEST(MainWindowTest, OnSaveConfig)
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, OnSaveConfigAs)
+TEST(MainWindowTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(SaveConfigAs))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -119,7 +121,7 @@ TEST(MainWindowTest, OnSaveConfigAs)
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, OnLoadConfig)
+TEST(MainWindowTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(OnLoadConfig))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -161,7 +163,7 @@ TEST(MainWindowTest, OnLoadConfig)
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, OnAddPlugin)
+TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -193,7 +195,7 @@ TEST(MainWindowTest, OnAddPlugin)
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, defaultValues)
+TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -228,7 +230,7 @@ TEST(WindowConfigTest, defaultValues)
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, mergeFromXML)
+TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -266,7 +268,7 @@ TEST(WindowConfigTest, mergeFromXML)
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, MenusToString)
+TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(MenusToString))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -296,7 +298,7 @@ TEST(WindowConfigTest, MenusToString)
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, IgnoreToString)
+TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(IgnoreToString))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -322,7 +324,8 @@ TEST(WindowConfigTest, IgnoreToString)
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, CloseWithoutSavingChanges)
+TEST(MainWindowTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(CloseWithoutSavingChanges))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -369,7 +372,7 @@ TEST(MainWindowTest, CloseWithoutSavingChanges)
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, ApplyConfig)
+TEST(MainWindowTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplyConfig))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -429,4 +432,3 @@ TEST(MainWindowTest, ApplyConfig)
 
   delete mainWindow;
 }
-
