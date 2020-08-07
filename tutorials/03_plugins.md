@@ -10,7 +10,7 @@ The plugin contains [QML](https://doc.qt.io/qt-5/qtqml-index.html)
 code that specifies what the widget looks like, as well as C++ code
 that defines the plugin's behaviour and ties it to other libraries.
 
-See [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui2/examples/plugin/hello_plugin/)
+See [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui3/examples/plugin/hello_plugin/)
 for an example.
 
 ## Finding plugins
@@ -67,6 +67,14 @@ Publish messages on an Ignition Transport topic.
 Echo messages from an Ignition Transport topic.
 
     ign gui -c examples/config/pubsub.config
+
+### Key publisher
+
+Publish key presses through Ignition Transport.
+
+    ign gui -c examples/config/keypublisher.config
+
+Change the topic to echo to `/keyboard/keypress`, echo, and start pressing keys.
 
 ### Topic viewer
 
