@@ -23,6 +23,7 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Helpers.hh"
 
 int gg_argc = 1;
@@ -142,4 +143,32 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
   EXPECT_EQ(findFirstByProperty(list, "banana", 2.0), o1);
   EXPECT_EQ(findFirstByProperty(list, "banana", 3.0), nullptr);
   EXPECT_EQ(findFirstByProperty(list, "acerola", 1.0), nullptr);
+}
+
+/////////////////////////////////////////////////
+TEST(HelpersTest, worldNames)
+{
+  // No app, no window, no names
+  EXPECT_TRUE(worldNames().empty());
+
+  Application app(gg_argc, gg_argv);
+  auto mainWindow = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  // No names by default
+  EXPECT_TRUE(worldNames().empty());
+
+  QStringList names{"banana", "grape"};
+  mainWindow->setProperty("worldNames", names);
+
+  // Has names
+  EXPECT_FALSE(worldNames().empty());
+  ASSERT_EQ(2, worldNames().size());
+  EXPECT_EQ("banana", worldNames()[0]);
+  EXPECT_EQ("grape", worldNames()[1]);
+
+  mainWindow->setProperty("worldNames", QStringList());
+
+  // No more names
+  EXPECT_TRUE(worldNames().empty());
 }

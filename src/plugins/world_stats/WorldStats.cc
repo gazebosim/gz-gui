@@ -16,8 +16,10 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
 #include <ignition/common/Time.hh>
+#include <ignition/plugin/Register.hh>
+
+#include "ignition/gui/Helpers.hh"
 
 #include "WorldStats.hh"
 
@@ -83,6 +85,12 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
+  // World name from window, to construct default topics and services
+  std::string worldName;
+  auto worldNames = gui::worldNames();
+  if (!worldNames.empty())
+    worldName = worldNames[0].toStdString();
+
   // Subscribe
   std::string topic;
   auto topicElem = _pluginElem->FirstChildElement("topic");
@@ -91,9 +99,14 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   if (topic.empty())
   {
-    ignerr << "Must specify a topic to subscribe to world statistics."
-           << std::endl;
-    return;
+    if (worldName.empty())
+    {
+      ignerr << "Must specify a <topic> to subscribe to world statistics, or "
+             << "set the MainWindow's [worldNames] property." << std::endl;
+      return;
+    }
+
+    topic = "/world/" + worldName + "/stats";
   }
 
   if (!this->dataPtr->node.Subscribe(topic, &WorldStats::OnWorldStatsMsg,
@@ -102,6 +115,8 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
     return;
   }
+
+  ignmsg << "Listening to stats on [" << topic << "]" << std::endl;
 
   // Sim time
   if (auto simTimeElem = _pluginElem->FirstChildElement("sim_time"))
