@@ -146,7 +146,8 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 }
 
 /////////////////////////////////////////////////
-TEST(HelpersTest, worldNames)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
 {
   // No app, no window, no names
   EXPECT_TRUE(worldNames().empty());
