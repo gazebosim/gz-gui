@@ -39,6 +39,9 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
+  // Qt auto scale factor for HiDPI displays
+  qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+
   ignition::gui::Application app(g_argc, g_argv);
 
   auto pluginsList = app.PluginList();
@@ -62,6 +65,9 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
+  // Qt auto scale factor for HiDPI displays
+  qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+
   ignition::gui::Application app(g_argc, g_argv,
       ignition::gui::WindowType::kDialog);
 
@@ -76,6 +82,9 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
+  // Qt auto scale factor for HiDPI displays
+  qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+
   ignition::gui::Application app(g_argc, g_argv);
 
   if (!app.findChild<ignition::gui::MainWindow *>())
@@ -100,6 +109,9 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
+  // Qt auto scale factor for HiDPI displays
+  qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+
   ignition::gui::Application app(g_argc, g_argv);
 
   if (!app.findChild<ignition::gui::MainWindow *>())
