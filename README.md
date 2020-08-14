@@ -52,7 +52,7 @@ which can be used to add custom widgets.
 
 # Install
 
-Review the [tutorial section](tutorials/01_install.md).
+Review the [tutorial section](https://ignitionrobotics.org/api/gui/3.2/install.html).
 
 # Usage
 
