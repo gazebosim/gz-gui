@@ -20,25 +20,24 @@ The [Source Install](#source-install) instructions should be used if you need th
 
 ## Binary Install
 
-On Ubuntu Bionic, it's possible to install Ignition GUI's version 1 as follows:
+On Ubuntu Bionic, it's possible to install Ignition GUI as follows:
 
 Add OSRF packages:
 
     echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list
     sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
     sudo apt update
 
 Install Ignition GUI:
 
-    sudo apt install libignition-gui4-dev
+    sudo apt install libignition-gui<#>-dev
+
+Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
+which version you need.
 
 ## Source Install
 
 There are currently two versions under active development:
-
-* **Version 0**: It makes use of `QWidgets`, which are common on traditional
-  desktop-oriented interfaces. Requires Ubuntu Xenial or Higher.
 
 * **Version 1**: It makes use of `QtQuick`, which allows developing more
   modern-looking apps with animations and a mobile/web feel. Requires Ubuntu
@@ -53,7 +52,6 @@ Install dependencies:
     sudo apt update
     sudo apt -y install wget lsb-release gnupg
     sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-prerelease.list'
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
     sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -c -s) main"
     sudo apt-get build-dep -y ignition-gui4
