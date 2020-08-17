@@ -171,7 +171,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     ignwarn << "Ignoring topic [" << statsTopic
             << "], world name different from [" << worldName
-            << "]. Fix or remove your <service> tag." << std::endl;
+            << "]. Fix or remove your <stats_topic> tag." << std::endl;
 
     statsTopic = "/world/" + worldName + "/stats";
   }
