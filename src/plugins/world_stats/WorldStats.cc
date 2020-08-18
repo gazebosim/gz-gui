@@ -16,6 +16,7 @@
 */
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/StringUtils.hh>
 #include <ignition/common/Time.hh>
 #include <ignition/plugin/Register.hh>
 
@@ -96,6 +97,21 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   auto topicElem = _pluginElem->FirstChildElement("topic");
   if (nullptr != topicElem && nullptr != topicElem->GetText())
     topic = topicElem->GetText();
+
+  // Service specified with different world name
+  auto parts = common::Split(topic, '/');
+  if (parts.size() == 4 &&
+      parts[0] == "" &&
+      parts[1] == "world" &&
+      parts[2] != worldName &&
+      parts[3] == "stats")
+  {
+    ignwarn << "Ignoring topic [" << topic
+            << "], world name different from [" << worldName
+            << "]. Fix or remove your <topic> tag." << std::endl;
+
+    topic = "/world/" + worldName + "/stats";
+  }
 
   if (topic.empty())
   {
