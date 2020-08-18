@@ -16,8 +16,11 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
 #include <ignition/common/Time.hh>
+#include <ignition/common/StringUtils.hh>
+#include <ignition/plugin/Register.hh>
+
+#include "ignition/gui/Helpers.hh"
 
 #include "WorldControl.hh"
 
@@ -80,17 +83,47 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
+  // World name from window, to construct default topics and services
+  std::string worldName;
+  auto worldNames = gui::worldNames();
+  if (!worldNames.empty())
+    worldName = worldNames[0].toStdString();
+
   // For world control requests
   auto serviceElem = _pluginElem->FirstChildElement("service");
   if (nullptr != serviceElem && nullptr != serviceElem->GetText())
     this->dataPtr->controlService = serviceElem->GetText();
 
+  // Service specified with different world name
+  auto parts = common::Split(this->dataPtr->controlService, '/');
+  if (parts.size() == 4 &&
+      parts[0] == "" &&
+      parts[1] == "world" &&
+      parts[2] != worldName &&
+      parts[3] == "control")
+  {
+    ignwarn << "Ignoring service [" << this->dataPtr->controlService
+            << "], world name different from [" << worldName
+            << "]. Fix or remove your <service> tag." << std::endl;
+
+    this->dataPtr->controlService = "/world/" + worldName + "/control";
+  }
+
+  // Service unspecified, use world name
   if (this->dataPtr->controlService.empty())
   {
-    ignerr << "Must specify a service for world control requests."
-           << std::endl;
-    return;
+    if (worldName.empty())
+    {
+      ignerr << "Must specify a <service> for world control requests, or set "
+             << "the MainWindow's [worldNames] property." << std::endl;
+      return;
+    }
+
+    this->dataPtr->controlService = "/world/" + worldName + "/control";
   }
+
+  ignmsg << "Using world control service [" << this->dataPtr->controlService
+         << "]" << std::endl;
 
   // Play / pause buttons
   if (auto playElem = _pluginElem->FirstChildElement("play_pause"))
@@ -128,6 +161,26 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (nullptr != statsTopicElem && nullptr != statsTopicElem->GetText())
     statsTopic = statsTopicElem->GetText();
 
+  // Service specified with different world name
+  parts = common::Split(statsTopic, '/');
+  if (parts.size() == 4 &&
+      parts[0] == "" &&
+      parts[1] == "world" &&
+      parts[2] != worldName &&
+      parts[3] == "stats")
+  {
+    ignwarn << "Ignoring topic [" << statsTopic
+            << "], world name different from [" << worldName
+            << "]. Fix or remove your <stats_topic> tag." << std::endl;
+
+    statsTopic = "/world/" + worldName + "/stats";
+  }
+
+  if (statsTopic.empty() && !worldName.empty())
+  {
+    statsTopic = "/world/" + worldName + "/stats";
+  }
+
   if (!statsTopic.empty())
   {
     // Subscribe to world_stats
@@ -135,6 +188,10 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         &WorldControl::OnWorldStatsMsg, this))
     {
       ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
+    }
+    else
+    {
+      ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
     }
   }
 }

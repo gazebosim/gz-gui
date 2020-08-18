@@ -16,8 +16,11 @@
 */
 
 #include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
+#include <ignition/common/StringUtils.hh>
 #include <ignition/common/Time.hh>
+#include <ignition/plugin/Register.hh>
+
+#include "ignition/gui/Helpers.hh"
 
 #include "WorldStats.hh"
 
@@ -83,17 +86,43 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
+  // World name from window, to construct default topics and services
+  std::string worldName;
+  auto worldNames = gui::worldNames();
+  if (!worldNames.empty())
+    worldName = worldNames[0].toStdString();
+
   // Subscribe
   std::string topic;
   auto topicElem = _pluginElem->FirstChildElement("topic");
   if (nullptr != topicElem && nullptr != topicElem->GetText())
     topic = topicElem->GetText();
 
+  // Service specified with different world name
+  auto parts = common::Split(topic, '/');
+  if (parts.size() == 4 &&
+      parts[0] == "" &&
+      parts[1] == "world" &&
+      parts[2] != worldName &&
+      parts[3] == "stats")
+  {
+    ignwarn << "Ignoring topic [" << topic
+            << "], world name different from [" << worldName
+            << "]. Fix or remove your <topic> tag." << std::endl;
+
+    topic = "/world/" + worldName + "/stats";
+  }
+
   if (topic.empty())
   {
-    ignerr << "Must specify a topic to subscribe to world statistics."
-           << std::endl;
-    return;
+    if (worldName.empty())
+    {
+      ignerr << "Must specify a <topic> to subscribe to world statistics, or "
+             << "set the MainWindow's [worldNames] property." << std::endl;
+      return;
+    }
+
+    topic = "/world/" + worldName + "/stats";
   }
 
   if (!this->dataPtr->node.Subscribe(topic, &WorldStats::OnWorldStatsMsg,
@@ -102,6 +131,8 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
     return;
   }
+
+  ignmsg << "Listening to stats on [" << topic << "]" << std::endl;
 
   // Sim time
   if (auto simTimeElem = _pluginElem->FirstChildElement("sim_time"))
