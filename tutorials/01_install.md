@@ -20,7 +20,7 @@ The [Source Install](#source-install) instructions should be used if you need th
 
 ## Binary Install
 
-On Ubuntu Bionic, it's possible to install Ignition GUI as follows:
+On Ubuntu, it's possible to install Ignition GUI as follows:
 
 Add OSRF packages:
 
@@ -36,12 +36,6 @@ Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
 which version you need.
 
 ## Source Install
-
-There are currently two versions under active development:
-
-* **Version 1**: It makes use of `QtQuick`, which allows developing more
-  modern-looking apps with animations and a mobile/web feel. Requires Ubuntu
-  Bionic or higher.
 
 ### Prerequisites
 
@@ -59,7 +53,7 @@ Install dependencies:
 
 Clone source code:
 
-    # This checks out the `default` branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
+    # This checks out the `master` branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
     git clone http://github.com/ignitionrobotics/ign-gui
 
 ### Building from source
