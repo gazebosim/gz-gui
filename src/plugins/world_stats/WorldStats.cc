@@ -100,7 +100,8 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Service specified with different world name
   auto parts = common::Split(topic, '/');
-  if (parts.size() == 4 &&
+  if (!worldName.empty() &&
+      parts.size() == 4 &&
       parts[0] == "" &&
       parts[1] == "world" &&
       parts[2] != worldName &&
