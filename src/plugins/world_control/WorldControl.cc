@@ -17,7 +17,6 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Time.hh>
-#include <ignition/common/StringUtils.hh>
 #include <ignition/plugin/Register.hh>
 
 #include "ignition/gui/Helpers.hh"
@@ -94,22 +93,6 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (nullptr != serviceElem && nullptr != serviceElem->GetText())
     this->dataPtr->controlService = serviceElem->GetText();
 
-  // Service specified with different world name
-  auto parts = common::Split(this->dataPtr->controlService, '/');
-  if (parts.size() == 4 &&
-      parts[0] == "" &&
-      parts[1] == "world" &&
-      parts[2] != worldName &&
-      parts[3] == "control")
-  {
-    ignwarn << "Ignoring service [" << this->dataPtr->controlService
-            << "], world name different from [" << worldName
-            << "]. Fix or remove your <service> tag." << std::endl;
-
-    this->dataPtr->controlService = "/world/" + worldName + "/control";
-  }
-
-  // Service unspecified, use world name
   if (this->dataPtr->controlService.empty())
   {
     if (worldName.empty())
@@ -160,21 +143,6 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
   if (nullptr != statsTopicElem && nullptr != statsTopicElem->GetText())
     statsTopic = statsTopicElem->GetText();
-
-  // Service specified with different world name
-  parts = common::Split(statsTopic, '/');
-  if (parts.size() == 4 &&
-      parts[0] == "" &&
-      parts[1] == "world" &&
-      parts[2] != worldName &&
-      parts[3] == "stats")
-  {
-    ignwarn << "Ignoring topic [" << statsTopic
-            << "], world name different from [" << worldName
-            << "]. Fix or remove your <stats_topic> tag." << std::endl;
-
-    statsTopic = "/world/" + worldName + "/stats";
-  }
 
   if (statsTopic.empty() && !worldName.empty())
   {
