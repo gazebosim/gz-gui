@@ -56,9 +56,6 @@ namespace plugins
   /// * \<real_time\> : True to display a real time widget, false by default.
   /// * \<real_time_factor\> : True to display a real time factor widget,
   ///                          false by default.
-  /// * \<topic\> : Topic to receive world statistics, optional. If not present,
-  ///               the plugin will attempt to create a topic with the main
-  ///               window's `worldName` property.
   class WorldStats_EXPORTS_API WorldStats: public ignition::gui::Plugin
   {
     Q_OBJECT
