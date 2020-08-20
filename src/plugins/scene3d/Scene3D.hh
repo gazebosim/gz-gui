@@ -135,7 +135,7 @@ namespace plugins
     public: math::Color backgroundColor = math::Color::Black;
 
     /// \brief Ambient color
-    public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3, 1.0);
+    public: math::Color ambientLight = math::Color(0.3f, 0.3f, 0.3f, 1.0f);
 
     /// \brief True if engine has been initialized;
     public: bool initialized = false;
