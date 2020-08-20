@@ -372,7 +372,7 @@ TEST(MainWindowTest,
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ApplyConfig))
+TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
