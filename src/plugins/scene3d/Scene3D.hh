@@ -29,9 +29,6 @@
 
 #include <ignition/common/MouseEvent.hh>
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/OrbitViewController.hh>
-
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 

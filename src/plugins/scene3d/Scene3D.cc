@@ -36,6 +36,8 @@
 #endif
 #include <ignition/msgs.hh>
 
+#include <ignition/rendering/Camera.hh>
+#include <ignition/rendering/OrbitViewController.hh>
 #include <ignition/rendering/RayQuery.hh>
 #include <ignition/rendering/RenderEngine.hh>
 #include <ignition/rendering/RenderingIface.hh>
