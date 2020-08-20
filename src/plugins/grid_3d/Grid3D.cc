@@ -21,16 +21,15 @@
 #include <vector>
 
 #include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
-#include <ignition/rendering.hh>
+#include <ignition/plugin/Register.hh>
+#include <ignition/rendering/Grid.hh>
+#include <ignition/rendering/RenderEngine.hh>
+#include <ignition/rendering/RenderingIface.hh>
+#include <ignition/rendering/Scene.hh>
+#include <ignition/rendering/Visual.hh>
 
-// #include "ignition/gui/CollapsibleWidget.hh"
-// #include "ignition/gui/ColorWidget.hh"
-// #include "ignition/gui/NumberWidget.hh"
-// #include "ignition/gui/Pose3dWidget.hh"
-// #include "ignition/gui/QtMetatypes.hh"
 #include "Grid3D.hh"
 
 // Default cell count
@@ -47,7 +46,7 @@ static const ignition::math::Pose3d kDefaultPose{ignition::math::Pose3d::Zero};
 
 // Default color
 static const ignition::math::Color kDefaultColor{
-    ignition::math::Color(0.7, 0.7, 0.7, 1.0)};
+    ignition::math::Color(0.7f, 0.7f, 0.7f, 1.0f)};
 
 namespace ignition
 {
