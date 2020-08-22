@@ -15,7 +15,14 @@
  *
 */
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs/int32.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/MainWindow.hh>
 #include <ignition/plugin/Register.hh>
