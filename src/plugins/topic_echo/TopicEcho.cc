@@ -73,7 +73,7 @@ TopicEcho::~TopicEcho()
 }
 
 /////////////////////////////////////////////////
-void TopicEcho::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
+void TopicEcho::LoadConfig(const tinyxml2::XMLElement * /*_pluginElem*/)
 {
   if (this->title.empty())
     this->title = "Topic echo";

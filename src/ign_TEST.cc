@@ -53,7 +53,7 @@ std::string custom_exec_str(std::string _cmd)
 }
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-TEST(CmdLine, IGN_UTILS_TEST_DISABLED_ON_WIN32(list))
+TEST(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 {
   std::string output = custom_exec_str("ign gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;

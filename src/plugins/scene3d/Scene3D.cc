@@ -29,9 +29,23 @@
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
+// TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
+// are disabling the warnings
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs.hh>
 
-#include <ignition/rendering.hh>
+#include <ignition/rendering/Camera.hh>
+#include <ignition/rendering/OrbitViewController.hh>
+#include <ignition/rendering/RayQuery.hh>
+#include <ignition/rendering/RenderEngine.hh>
+#include <ignition/rendering/RenderingIface.hh>
+#include <ignition/rendering/Scene.hh>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #include <ignition/transport/Node.hh>
 
@@ -598,8 +612,8 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
         material->SetAmbient(0.3, 0.3, 0.3);
         material->SetDiffuse(0.7, 0.7, 0.7);
         material->SetSpecular(1.0, 1.0, 1.0);
-        material->SetRoughness(0.2);
-        material->SetMetalness(1.0);
+        material->SetRoughness(0.2f);
+        material->SetMetalness(1.0f);
       }
     }
 
@@ -607,8 +621,8 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
 
     // TODO(anyone) Get roughness and metalness from message instead
     // of giving a default value.
-    material->SetRoughness(0.3);
-    material->SetMetalness(0.3);
+    material->SetRoughness(0.3f);
+    material->SetMetalness(0.3f);
 
     geom->SetMaterial(material);
   }
@@ -1119,8 +1133,17 @@ void TextureNode::PrepareNode()
         newId, sz, QQuickWindow::TextureIsOpaque);
 #else
     // TODO(anyone) Use createTextureFromNativeObject
+    // https://github.com/ignitionrobotics/ign-gui/issues/113
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
     this->texture = this->window->createTextureFromId(
         newId, sz, QQuickWindow::TextureIsOpaque);
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
+
 #endif
     this->setTexture(this->texture);
 
@@ -1174,7 +1197,7 @@ void RenderWindowItem::Ready()
 
 /////////////////////////////////////////////////
 QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
-    QQuickItem::UpdatePaintNodeData */*_data*/)
+    QQuickItem::UpdatePaintNodeData * /*_data*/)
 {
   TextureNode *node = static_cast<TextureNode *>(_node);
 

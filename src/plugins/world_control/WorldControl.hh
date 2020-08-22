@@ -20,7 +20,13 @@
 
 #include <memory>
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs.hh>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <ignition/transport.hh>
 
 #include "ignition/gui/Plugin.hh"
@@ -51,12 +57,6 @@ namespace plugins
   /// * \<play_pause\> : Set to true to see a play/pause and step buttons,
   ///                    false by default.
   /// * \<start_paused\> : Set to false to start playing, false by default.
-  /// * \<service\> : Service for world control, optional. If not presnt,
-  ///               the plugin will attempt to create a topic with the main
-  ///               window's `worldName` property.
-  /// * \<stats_topic\> : Topic to receive world statistics, optional. If not
-  ///               present, the plugin will attempt to create a topic with the
-  ///               main window's `worldName` property.
   class WorldControl_EXPORTS_API WorldControl: public ignition::gui::Plugin
   {
     Q_OBJECT

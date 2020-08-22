@@ -92,6 +92,16 @@
 
 ### Ignition Gui 2.X.X
 
+### Ignition Gui 2.3.2 (2020-08-19)
+
+1. Revert pull request #107
+    * [Pull request 110](https://github.com/ignitionrobotics/ign-gui/pull/110)
+
+### Ignition Gui 2.3.1 (2020-08-17)
+
+1. Fix running plugins with bad world name
+    * [Pull request 107](https://github.com/ignitionrobotics/ign-gui/pull/107)
+
 ### Ignition Gui 2.3.0 (2020-08-11)
 
 1. Add shift + drag to rotate camera

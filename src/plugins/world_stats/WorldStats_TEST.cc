@@ -35,7 +35,7 @@ using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Load))
+TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -60,7 +60,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Load))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldStats))
+TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
 {
   common::Console::SetVerbosity(4);
 
@@ -169,125 +169,4 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldStats))
   EXPECT_EQ(plugin->SimTime().toStdString(), "00 01:00:00.123");
   EXPECT_EQ(plugin->RealTime().toStdString(), "01 00:00:00.001");
   EXPECT_EQ(plugin->RealTimeFactor().toStdString(), "100.00 %");
-}
-
-/////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameNoTopic))
-{
-  common::Console::SetVerbosity(4);
-
-  Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-  // Get main window
-  auto win = app.findChild<MainWindow *>();
-  ASSERT_NE(nullptr, win);
-
-  QStringList names{"banana", "grape"};
-  win->setProperty("worldNames", names);
-
-  // Load plugin
-  const char *pluginStr =
-    "<plugin filename=\"WorldStats\">"
-    "  <sim_time>true</sim_time>"
-    "</plugin>";
-
-  tinyxml2::XMLDocument pluginDoc;
-  pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(app.LoadPlugin("WorldStats",
-      pluginDoc.FirstChildElement("plugin")));
-
-  // Show, but don't exec, so we don't block
-  win->QuickWindow()->show();
-
-  // Get plugin
-  auto plugin = win->findChild<plugins::WorldStats *>();
-  ASSERT_NE(nullptr, plugin);
-
-  // Publish stats
-  transport::Node node;
-  auto pub = node.Advertise<msgs::WorldStatistics>("/world/banana/stats");
-
-  // Sim time
-  {
-    msgs::WorldStatistics msg;
-    auto simTimeMsg = msg.mutable_sim_time();
-    simTimeMsg->set_sec(3600);
-    simTimeMsg->set_nsec(123456789);
-    msg.set_paused(true);
-    pub.Publish(msg);
-  }
-
-  // Give it time to be processed
-  int sleep = 0;
-  int maxSleep = 30;
-  while (plugin->SimTime() == "N/A" && sleep < maxSleep)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    QCoreApplication::processEvents();
-    sleep++;
-  }
-
-  EXPECT_EQ(plugin->SimTime().toStdString(), "00 01:00:00.123");
-}
-
-/////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameBadTopic))
-{
-  common::Console::SetVerbosity(4);
-
-  Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-  // Get main window
-  auto win = app.findChild<MainWindow *>();
-  ASSERT_NE(nullptr, win);
-
-  QStringList names{"banana", "grape"};
-  win->setProperty("worldNames", names);
-
-  // Load plugin
-  const char *pluginStr =
-    "<plugin filename=\"WorldStats\">"
-    "  <sim_time>true</sim_time>"
-    "  <topic>/world/watermelon/stats</topic>"
-    "</plugin>";
-
-  tinyxml2::XMLDocument pluginDoc;
-  pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(app.LoadPlugin("WorldStats",
-      pluginDoc.FirstChildElement("plugin")));
-
-  // Show, but don't exec, so we don't block
-  win->QuickWindow()->show();
-
-  // Get plugin
-  auto plugin = win->findChild<plugins::WorldStats *>();
-  ASSERT_NE(nullptr, plugin);
-
-  // Publish stats
-  transport::Node node;
-  auto pub = node.Advertise<msgs::WorldStatistics>("/world/banana/stats");
-
-  // Sim time
-  {
-    msgs::WorldStatistics msg;
-    auto simTimeMsg = msg.mutable_sim_time();
-    simTimeMsg->set_sec(3600);
-    simTimeMsg->set_nsec(123456789);
-    msg.set_paused(true);
-    pub.Publish(msg);
-  }
-
-  // Give it time to be processed
-  int sleep = 0;
-  int maxSleep = 30;
-  while (plugin->SimTime() == "N/A" && sleep < maxSleep)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    QCoreApplication::processEvents();
-    sleep++;
-  }
-
-  EXPECT_EQ(plugin->SimTime().toStdString(), "00 01:00:00.123");
 }

@@ -20,7 +20,13 @@
 
 #include <memory>
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs.hh>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <ignition/transport.hh>
 
 #include "ignition/gui/Export.hh"
@@ -56,9 +62,6 @@ namespace plugins
   /// * \<real_time\> : True to display a real time widget, false by default.
   /// * \<real_time_factor\> : True to display a real time factor widget,
   ///                          false by default.
-  /// * \<topic\> : Topic to receive world statistics, optional. If not present,
-  ///               the plugin will attempt to create a topic with the main
-  ///               window's `worldName` property.
   class WorldStats_EXPORTS_API WorldStats: public ignition::gui::Plugin
   {
     Q_OBJECT
