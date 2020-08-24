@@ -19,7 +19,13 @@
 #define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
 #include <memory>
-#include <ignition/msgs.hh>
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
+#include <ignition/msgs/image.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #include "ignition/gui/Plugin.hh"
 
