@@ -172,7 +172,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameNoTopic))
+TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoTopic))
 {
   common::Console::SetVerbosity(4);
 
@@ -232,7 +232,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameNoTopic))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameBadTopic))
+TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadTopic))
 {
   common::Console::SetVerbosity(4);
 
@@ -293,7 +293,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameBadTopic))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameNoProp))
+TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
 {
   common::Console::SetVerbosity(4);
 

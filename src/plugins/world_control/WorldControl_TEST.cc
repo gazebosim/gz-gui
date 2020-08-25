@@ -128,7 +128,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameNoService))
+TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
 {
   common::Console::SetVerbosity(4);
 
@@ -179,7 +179,8 @@ TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameNoService))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameBadService))
+TEST(WorldControlTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadService))
 {
   common::Console::SetVerbosity(4);
 
@@ -233,7 +234,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameBadService))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(WorldNameNoProp))
+TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
 {
   common::Console::SetVerbosity(4);
 
