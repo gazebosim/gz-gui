@@ -126,3 +126,160 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
   // Cleanup
   plugins.clear();
 }
+
+/////////////////////////////////////////////////
+TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  QStringList names{"banana", "grape"};
+  win->setProperty("worldNames", names);
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"WorldControl\">"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+  EXPECT_TRUE(app.LoadPlugin("WorldControl",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::WorldControl *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  // World control service
+  bool pauseCalled = false;
+  std::function<bool(const msgs::WorldControl &, msgs::Boolean &)> cb =
+      [&](const msgs::WorldControl &_req, msgs::Boolean &)
+  {
+    pauseCalled = _req.pause();
+    return true;
+  };
+  transport::Node node;
+  node.Advertise("/world/banana/control", cb);
+
+  // Pause
+  plugins[0]->OnPause();
+  EXPECT_TRUE(pauseCalled);
+
+  // Cleanup
+  plugins.clear();
+}
+
+/////////////////////////////////////////////////
+TEST(WorldControlTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadService))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  QStringList names{"banana", "grape"};
+  win->setProperty("worldNames", names);
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"WorldControl\">"
+    "  <service>/world/watermelon/control</service>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+  EXPECT_TRUE(app.LoadPlugin("WorldControl",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::WorldControl *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  // World control service
+  bool pauseCalled = false;
+  std::function<bool(const msgs::WorldControl &, msgs::Boolean &)> cb =
+      [&](const msgs::WorldControl &_req, msgs::Boolean &)
+  {
+    pauseCalled = _req.pause();
+    return true;
+  };
+  transport::Node node;
+
+  // banana, not watermelon
+  node.Advertise("/world/banana/control", cb);
+
+  // Pause
+  plugins[0]->OnPause();
+  EXPECT_TRUE(pauseCalled);
+
+  // Cleanup
+  plugins.clear();
+}
+
+/////////////////////////////////////////////////
+TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"WorldControl\">"
+    "  <service>/world/watermelon/control</service>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+  EXPECT_TRUE(app.LoadPlugin("WorldControl",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::WorldControl *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  // World control service
+  bool pauseCalled = false;
+  std::function<bool(const msgs::WorldControl &, msgs::Boolean &)> cb =
+      [&](const msgs::WorldControl &_req, msgs::Boolean &)
+  {
+    pauseCalled = _req.pause();
+    return true;
+  };
+  transport::Node node;
+
+  // banana, not watermelon
+  node.Advertise("/world/watermelon/control", cb);
+
+  // Pause
+  plugins[0]->OnPause();
+  EXPECT_TRUE(pauseCalled);
+
+  // Cleanup
+  plugins.clear();
+}
