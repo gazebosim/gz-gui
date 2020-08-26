@@ -92,6 +92,37 @@
 
 ### Ignition Gui 2.X.X
 
+### Ignition Gui 2.3.2 (2020-08-19)
+
+1. Revert pull request #107
+    * [Pull request 110](https://github.com/ignitionrobotics/ign-gui/pull/110)
+
+### Ignition Gui 2.3.1 (2020-08-17)
+
+1. Fix running plugins with bad world name
+    * [Pull request 107](https://github.com/ignitionrobotics/ign-gui/pull/107)
+
+### Ignition Gui 2.3.0 (2020-08-11)
+
+1. Add shift + drag to rotate camera
+    * [Pull request 96](https://github.com/ignitionrobotics/ign-gui/pull/96)
+
+1. Scroll bar adjustment
+    * [Pull request 97](https://github.com/ignitionrobotics/ign-gui/pull/97)
+
+1. Minimize GUI plugin
+    * [Pull request 84](https://github.com/ignitionrobotics/ign-gui/pull/84)
+    * [Pull request 99](https://github.com/ignitionrobotics/ign-gui/pull/99)
+
+1. Fix tests on actions
+    * [Pull request 98](https://github.com/ignitionrobotics/ign-gui/pull/98)
+
+1. Disable failing tests
+    * [Pull request 76](https://github.com/ignitionrobotics/ign-gui/pull/76)
+
+1. Use world name in default topics
+    * [Pull request 104](https://github.com/ignitionrobotics/ign-gui/pull/104)
+
 ### Ignition Gui 2.2.0 (2020-06-17)
 
 1. Sort GUI plugins alphabetically
