@@ -25,6 +25,7 @@ set (qt_headers
   Application.hh
   Dialog.hh
   MainWindow.hh
+  PlottingInterface.hh
   Plugin.hh
 )
 

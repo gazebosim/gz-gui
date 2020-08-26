@@ -8,6 +8,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/PlottingInterface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/SearchModel.cc
   PARENT_SCOPE
@@ -20,6 +21,7 @@ set (gtest_sources
   Helpers_TEST
   ign_TEST
   MainWindow_TEST
+  PlottingInterface_TEST
   Plugin_TEST
   SearchModel_TEST
 )
