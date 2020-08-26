@@ -151,22 +151,22 @@ void WorldStats::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  ignition::common::Time time;
+  std::chrono::system_clock::time_point time_point;
 
   if (this->dataPtr->msg.has_sim_time())
   {
-    time.sec = this->dataPtr->msg.sim_time().sec();
-    time.nsec = this->dataPtr->msg.sim_time().nsec();
-
-    this->SetSimTime(QString::fromStdString(time.FormattedString()));
+    time_point = math::secNsecToTimePoint(
+        this->dataPtr->msg.sim_time().sec(),
+        this->dataPtr->msg.sim_time().nsec());
+    this->SetSimTime(QString::fromStdString(math::timePointToString(time_point)));
   }
 
   if (this->dataPtr->msg.has_real_time())
   {
-    time.sec = this->dataPtr->msg.real_time().sec();
-    time.nsec = this->dataPtr->msg.real_time().nsec();
-
-    this->SetRealTime(QString::fromStdString(time.FormattedString()));
+    time_point = math::secNsecToTimePoint(
+        this->dataPtr->msg.real_time().sec(),
+        this->dataPtr->msg.real_time().nsec());
+    this->SetRealTime(QString::fromStdString(math::timePointToString(time_point)));
   }
 
   {
