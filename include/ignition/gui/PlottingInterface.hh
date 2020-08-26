@@ -20,14 +20,21 @@
 #include <QObject>
 #include <QString>
 #include <QMap>
-#include <QList>
 #include <QVariant>
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <map>
 #include <set>
 #include <string>
 #include <memory>
+
+#include "ignition/gui/Export.hh"
 
 namespace ignition
 {
@@ -35,7 +42,7 @@ namespace gui
 {
 class PlotDataPrivate;
 
-class PlotData
+class IGNITION_GUI_VISIBLE PlotData
 {
   /// \brief Constructor
   public: PlotData();
@@ -72,7 +79,7 @@ class PlotData
 
 class TopicPrivate;
 
-class Topic
+class IGNITION_GUI_VISIBLE Topic
 {
   /// \brief Constructor
   public: explicit Topic(const std::string &_name);
@@ -113,7 +120,7 @@ class Topic
 class TransportPrivate;
 
 /// \brief Handle transport topics subscribing for one object (Chart)
-class Transport
+class IGNITION_GUI_VISIBLE Transport
 {
   /// \brief Constructor
   public: Transport();
@@ -153,7 +160,7 @@ class PlottingIfacePrivate;
 /// Responsible for plotting transport msgs-fields
 /// Used by TransportPlotting Plugin & GazeboPlotting Plugin
 /// Accepts dragged items from TopicViewer Plugin & ComponentInspector Plugin
-class PlottingInterface : public QObject
+class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
 {
   Q_OBJECT
 
