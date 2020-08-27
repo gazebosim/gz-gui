@@ -482,7 +482,6 @@ Rectangle
         anchors.fill: parent
         id: exportWidget
 
-
         // make it scrolable
         ScrollView {
           width: parent.width
@@ -560,7 +559,6 @@ Rectangle
           }
         }
         onRejected: fileDialog.close();
-
       }
 
       /**

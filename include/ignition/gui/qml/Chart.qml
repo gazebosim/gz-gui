@@ -1,18 +1,18 @@
 /*
-* Copyright (C) 2020 Open Source Robotics Foundation
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
+ * Copyright (C) 2020 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
 */
 import QtQuick 2.9
 import QtCharts 2.2
@@ -54,7 +54,7 @@ Rectangle {
   */
   function moveChart()
   {
-    chart.scrollRight(chart.width/10);
+    chart.scrollRight(chart.width * shiftAmount.value);
   }
   /**
     change the PlotArea size to fill the chart or the reverse case
@@ -467,7 +467,10 @@ Rectangle {
     function appendPoint(_fieldID, _x, _y) {
       // expand the chart boundries if needed
       if (xAxis.max  < _x)
-        xAxis.max =_x ;
+      {
+        xAxis.max = _x;
+        // chart.scrollRight(_x - xAxis.max);
+      }
       if (yAxis.max  < _y )
         yAxis.max = _y ;
 
@@ -490,8 +493,8 @@ Rectangle {
     antialiasing: true
     opacity: 1
     backgroundRoundness: 10
-    animationDuration: 400
-    animationOptions: ChartView.SeriesAnimations
+    // animationDuration: 400
+    animationOptions: ChartView.NoAnimation
 
     theme: (Material.theme == Material.Light) ? ChartView.ChartThemeLight: ChartView.ChartThemeDark
 
@@ -535,7 +538,7 @@ Rectangle {
         chart.animationOptions = ChartView.NoAnimation
       }
       onReleased: {
-        chart.animationOptions = ChartView.SeriesAnimations
+        // chart.animationOptions = ChartView.SeriesAnimations
       }
 
       /**
@@ -567,7 +570,7 @@ Rectangle {
       /**
         zoom shift amount
       */
-      property double shift: 20
+      property double shift: 15
 
       /**
         Zoom

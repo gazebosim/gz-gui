@@ -58,6 +58,14 @@ class IGNITION_GUI_VISIBLE PlotData
   /// \return value of the field
   public: double Value() const;
 
+  /// \brief Set the field arrival time
+  /// \param[in] _value arrival time to set it
+  public: void SetTime(const double _time);
+
+  /// \brief Get the arrival time
+  /// \return arrival time
+  public: double Time() const;
+
   /// \brief Register a chart that plot that field
   /// \param[in] _chart chart ID to be registered
   public: void AddChart(int _chart);
@@ -79,8 +87,10 @@ class IGNITION_GUI_VISIBLE PlotData
 
 class TopicPrivate;
 
-class IGNITION_GUI_VISIBLE Topic
+class IGNITION_GUI_VISIBLE Topic : public QObject
 {
+  Q_OBJECT
+
   /// \brief Constructor
   public: explicit Topic(const std::string &_name);
 
@@ -113,6 +123,19 @@ class IGNITION_GUI_VISIBLE Topic
   /// \param[in] _msg the published msg from the topic
   public: void Callback(const google::protobuf::Message &_msg);
 
+  /// \brief Check if msg has header field and get its time
+  /// \param[in] _msg msg to check its header
+  /// \param[out] _headerTime header sim time
+  public: bool HasHeader(const google::protobuf::Message &_msg, double &_headerTime);
+
+  /// \brief update the plot
+  /// \param[in] _field field path or ID
+  public: void UpdateGui(const std::string &_field);
+
+  signals: void plot(int _chart, QString _fieldID, double _x, double _y);
+
+  public: void SetCurrentTime(const double &_time);
+
   /// \brief Private data member.
   private: std::unique_ptr<TopicPrivate> dataPtr;
 };
@@ -120,8 +143,10 @@ class IGNITION_GUI_VISIBLE Topic
 class TransportPrivate;
 
 /// \brief Handle transport topics subscribing for one object (Chart)
-class IGNITION_GUI_VISIBLE Transport
+class IGNITION_GUI_VISIBLE Transport : public QObject
 {
+  Q_OBJECT
+
   /// \brief Constructor
   public: Transport();
 
@@ -145,11 +170,14 @@ class IGNITION_GUI_VISIBLE Transport
                          int _chart);
 
   /// \brief Unsubscribe from non-exist topics in the transport
-  public: void UnsubscribeOutdatedTopics();
+  public slots: void UnsubscribeOutdatedTopics();
 
   /// \brief Get the registered topics
   /// \return Topics list
   public: const std::map<std::string, Topic*> &Topics();
+
+  public slots: void onPlot(int _chart, QString _fieldID, double _x, double _y);
+  signals: void plot(int _chart, QString _fieldID, double _x, double _y);
 
   private: std::unique_ptr<TransportPrivate> dataPtr;
 };
@@ -163,9 +191,6 @@ class PlottingIfacePrivate;
 class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
 {
   Q_OBJECT
-
-  /// \brief update the plotting each timeout of the timer
-  public slots: void UpdateGui();
 
   /// \brief Constructor
   public: explicit PlottingInterface();
@@ -195,7 +220,14 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
 
   /// \brief Get the Plotting Time
   /// \return Plotting Time
-  public: float Time() const;
+  public slots: double Time() const;
+
+  /// \brief slot to get triggered to plot a point and send its data to the UI
+  /// \param[in] _chart chart ID
+  /// \param[in] _fieldID field path ID
+  /// \param[in] _x x coordinates of the plot point
+  /// \param[in] _y y coordinates of the plot point
+  public slots: void onPlot(int _chart, QString _fieldID, double _x, double _y);
 
   /// \brief plot a point to a chart
   /// \param[in] _chart chart ID
@@ -203,9 +235,6 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
   /// \param[in] _x x coordinates of the plot point
   /// \param[in] _y y coordinates of the plot point
   signals: void plot(int _chart, QString _fieldID, double _x, double _y);
-
-  /// \brief signal to move the chart aka scroll it to the right
-  signals: void moveChart();
 
   /// \brief called by Qml to register a chart to a component attribute
   /// \param[in] _entity entity id which has the component
@@ -253,15 +282,12 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
                                      const std::string &_attribute,
                                      int _chart);
 
-  /// \brief slot to to lestin to a timer to emit moveChart signal
-  public slots: void moveCharts();
-
   /// \brief Create suitable file path with unique name and extention
   /// \param[in] _path path selected from the UI
   /// \param[in] _name file name
   /// \param[in] _extention file extention (csv or pdf)
   public slots: std::string FilePath(QString _path, std::string _name,
-                                        std::string _extention);
+                                     std::string _extention);
 
   /// \brief export plot graphs to csv files
   /// \param[in] _path path of folder to save the csv files
@@ -272,7 +298,10 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
                                QMap< QString, QVariant> _serieses);
 
   /// \brief configration of the timer
-  private: void InitTimer();
+  public: void InitTimer();
+
+  /// \brief update the plotting tool time
+  public slots: void UpdateTime();
 
   /// \brief Private data member.
   private: std::unique_ptr<PlottingIfacePrivate> dataPtr;

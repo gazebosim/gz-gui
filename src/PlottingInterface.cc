@@ -16,7 +16,6 @@
 */
 
 #include <sstream>
-
 #include <ignition/common/Console.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/transport/Node.hh>
@@ -26,6 +25,9 @@
 #include "ignition/gui/PlottingInterface.hh"
 #include "ignition/gui/Application.hh"
 
+#define DEFAULT_TIME -1
+#define MAX_TIME_DIFF 0.020
+
 namespace ignition
 {
 namespace gui
@@ -34,6 +36,9 @@ class PlotDataPrivate
 {
   /// \brief Value of that field
   public: double value;
+
+  /// \brief arrival time (header time)
+  public: double time = DEFAULT_TIME;
 
   /// \brief Registered Charts to that field
   public: std::set<int> charts;
@@ -51,6 +56,10 @@ class TopicPrivate
 
   /// \brief Topic name
   public: std::string name;
+
+  public: double plottingTime = 0;
+
+  public: double lastHeaderTime = 0;
 
   /// \brief Plotting fields to update its values
   public: std::map<std::string, ignition::gui::PlotData*> fields;
@@ -70,7 +79,7 @@ class PlottingIfacePrivate
   public: Transport *transport;
 
   /// \brief current plotting time
-  public: float time;
+  public: double time;
 
   /// \brief timeout to update the plot with the timer
   public: int timeout;
@@ -110,6 +119,18 @@ double PlotData::Value() const
 }
 
 //////////////////////////////////////////////////////
+void PlotData::SetTime(const double _time)
+{
+  this->dataPtr->time = _time;
+}
+
+//////////////////////////////////////////////////////
+double PlotData::Time() const
+{
+  return this->dataPtr->time;
+}
+
+//////////////////////////////////////////////////////
 void PlotData::AddChart(int _chart)
 {
   this->dataPtr->charts.insert(_chart);
@@ -136,17 +157,17 @@ std::set<int> &PlotData::Charts()
 }
 
 //////////////////////////////////////////////////////
-Topic::Topic(const std::string &_name) :
+Topic::Topic(const std::string &_name) : QObject(),
     dataPtr(std::make_unique<TopicPrivate>())
 {
-    this->dataPtr->name = _name;
+  this->dataPtr->name = _name;
 }
 
 //////////////////////////////////////////////////////
 Topic::~Topic()
 {
-    for (auto field : this->dataPtr->fields)
-        delete field.second;
+  for (auto field : this->dataPtr->fields)
+    delete field.second;
 }
 
 //////////////////////////////////////////////////////
@@ -190,6 +211,25 @@ std::map<std::string, PlotData*> &Topic::Fields()
 //////////////////////////////////////////////////////
 void Topic::Callback(const google::protobuf::Message &_msg)
 {
+  double headerTime;
+  if (!HasHeader(_msg, headerTime))
+  {
+    headerTime = DEFAULT_TIME;
+
+    if (this->dataPtr->plottingTime - this->dataPtr->lastHeaderTime
+          < MAX_TIME_DIFF)
+      return;
+
+    this->dataPtr->lastHeaderTime = this->dataPtr->plottingTime;
+  }
+  else
+  {
+    if (headerTime - this->dataPtr->lastHeaderTime < MAX_TIME_DIFF)
+        return;
+
+    this->dataPtr->lastHeaderTime = headerTime;
+  }
+
   for (auto fieldIt : this->dataPtr->fields)
   {
     auto msgDescriptor = _msg.GetDescriptor();
@@ -243,8 +283,68 @@ void Topic::Callback(const google::protobuf::Message &_msg)
       data = this->dataPtr->FieldData(_msg, field);
     }
 
+    // Field Arrival Time
+    fieldIt.second->SetTime(headerTime);
+
+    // Field Value
     fieldIt.second->SetValue(data);
+
+    // Update Field Charts UI
+    this->UpdateGui(fieldIt.first);
   }
+}
+
+//////////////////////////////////////////////////////
+bool Topic::HasHeader(const google::protobuf::Message &_msg, double &_headerTime)
+{
+    auto ref = _msg.GetReflection();
+    auto header = _msg.GetDescriptor()->FindFieldByName("header");
+    auto found = ref->HasField(_msg, header);
+
+    if (found)
+    {
+        auto stamp = header->message_type()->FindFieldByName("stamp");
+
+        auto headerMsg = ref->MutableMessage
+                (const_cast<google::protobuf::Message *>(&_msg), header);
+
+        ref = headerMsg->GetReflection();
+
+        auto stampMsg = ref->MutableMessage
+                (const_cast<google::protobuf::Message *>(headerMsg), stamp);
+
+        auto secField = stamp->message_type()->FindFieldByName("sec");
+        auto nsecField = stamp->message_type()->FindFieldByName("nsec");
+
+        auto sec = this->dataPtr->FieldData(*stampMsg, secField);
+        auto nsec = this->dataPtr->FieldData(*stampMsg, nsecField);
+
+        _headerTime = sec + nsec * std::pow(10, -9);
+    }
+
+    return found;
+}
+
+//////////////////////////////////////////////////////
+void Topic::UpdateGui(const std::string &_field)
+{
+  auto field = this->dataPtr->fields[_field];
+
+  auto x = field->Time();
+  auto y = field->Value();
+
+  QString fieldFullPath = QString::fromStdString
+          (this->dataPtr->name + "-" + _field);
+
+  auto charts = field->Charts();
+
+  for (auto const &chart : charts)
+    emit plot(chart, fieldFullPath, x, y);
+}
+
+void Topic::SetCurrentTime(const double &_time)
+{
+  this->dataPtr->plottingTime = _time;
 }
 
 //////////////////////////////////////////////////////
@@ -277,7 +377,13 @@ double TopicPrivate::FieldData(const google::protobuf::Message &_msg,
 }
 
 ////////////////////////////////////////////
-Transport::Transport() : dataPtr(std::make_unique<TransportPrivate>()) {}
+Transport::Transport() : dataPtr(std::make_unique<TransportPrivate>())
+{
+  auto topicsTimer = new QTimer();
+  topicsTimer->setInterval(100);
+  connect(topicsTimer, SIGNAL(timeout()), this, SLOT(UnsubscribeOutdatedTopics()));
+  topicsTimer->start();
+}
 
 ////////////////////////////////////////////
 Transport::~Transport()
@@ -318,6 +424,9 @@ void Transport::Subscribe(const std::string &_topic,
 
     topicHandler->Register(_fieldPath, _chart);
     this->dataPtr->node.Subscribe(_topic, &Topic::Callback, topicHandler);
+
+    connect(topicHandler, SIGNAL(plot(int, QString, double, double)),
+            this, SLOT(onPlot(int, QString, double, double)));
   }
   // already exist topic
   else
@@ -331,7 +440,13 @@ void Transport::Subscribe(const std::string &_topic,
 //////////////////////////////////////////////////////
 const std::map<std::string, Topic*> &Transport::Topics()
 {
-  return this->dataPtr->topics;
+    return this->dataPtr->topics;
+}
+
+//////////////////////////////////////////////////////
+void Transport::onPlot(int _chart, QString _fieldID, double _x, double _y)
+{
+    emit this->plot(_chart, _fieldID, _x, _y);
 }
 
 //////////////////////////////////////////////////////
@@ -358,7 +473,11 @@ PlottingInterface::PlottingInterface() : QObject(),
     dataPtr(std::make_unique<PlottingIfacePrivate>())
 {
   this->dataPtr->transport = new Transport();
-  this->dataPtr->timeout = 100;
+  connect(this->dataPtr->transport,
+          SIGNAL(plot(int, QString, double, double)), this,
+          SLOT(onPlot(int, QString, double, double)));
+
+  this->dataPtr->timeout = MAX_TIME_DIFF * 1000;
   this->InitTimer();
 
   App()->Engine()->rootContext()->setContextProperty("PlottingIface", this);
@@ -386,9 +505,9 @@ float PlottingInterface::Timeout() const
 }
 
 //////////////////////////////////////////////////////
-float PlottingInterface::Time() const
+double PlottingInterface::Time() const
 {
-  return this->dataPtr->time;
+    return this->dataPtr->time;
 }
 
 //////////////////////////////////////////////////////
@@ -437,50 +556,30 @@ void PlottingInterface::InitTimer()
 {
   this->dataPtr->timer = new QTimer();
   this->dataPtr->timer->setInterval(this->dataPtr->timeout);
-  connect(this->dataPtr->timer, SIGNAL(timeout()), this, SLOT(UpdateGui()));
+  connect(this->dataPtr->timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
   this->dataPtr->timer->start();
-
-  auto moveTimer = new QTimer();
-  moveTimer->setInterval(1000);
-  connect(moveTimer, SIGNAL(timeout()), this, SLOT(moveCharts()));
-}
-
-////////////////////////////////////////////
-void PlottingInterface::UpdateGui()
-{
-  this->dataPtr->transport->UnsubscribeOutdatedTopics();
-
-  auto topics = this->dataPtr->transport->Topics();
-
-  // Complexity O(Num of Dragged Items) or O(Num of Chart Value Axes)
-  for (auto const &topic : topics)
-  {
-    auto fields = topic.second->Fields();
-
-    for (auto const &field : fields)
-    {
-      auto charts = field.second->Charts();
-
-      for (auto const &chart : charts)
-      {
-        QString fieldFullPath = QString::fromStdString(
-          topic.first + "-" + field.first);
-        double x = this->dataPtr->time;
-        double y = field.second->Value();
-
-        emit plot(chart, fieldFullPath, x, y);
-      }
-    }
-  }
-  this->dataPtr->time += (this->Timeout()/1000);
 }
 
 //////////////////////////////////////////////////////
-void PlottingInterface::moveCharts()
+void PlottingInterface::onPlot(int _chart, QString _fieldID, double _x, double _y)
 {
-    emit this->moveChart();
+  if (int(_x) == DEFAULT_TIME)
+      _x = this->dataPtr->time;
+
+  emit this->plot(_chart, _fieldID, _x, _y);
 }
 
+//////////////////////////////////////////////////////
+void PlottingInterface::UpdateTime()
+{
+    this->dataPtr->time += float(this->dataPtr->timeout)/1000;
+
+    auto topics = this->dataPtr->transport->Topics();
+    for (auto topic : topics)
+        topic.second->SetCurrentTime(this->dataPtr->time);
+}
+
+//////////////////////////////////////////////////////
 std::string PlottingInterface::FilePath(QString _path, std::string _name,
                                         std::string _extention)
 {
@@ -503,6 +602,7 @@ std::string PlottingInterface::FilePath(QString _path, std::string _name,
     return _path.toStdString() + "/" + "\'" + _name + "." + _extention + "\'";
 }
 
+//////////////////////////////////////////////////////
 bool PlottingInterface::exportCSV(QString _path, int _chart,
                                   QMap< QString, QVariant> _serieses)
 {
