@@ -20,8 +20,10 @@
 #include <string>
 #include <ignition/math/Helpers.hh>
 
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/MainWindow.hh"
 
 /////////////////////////////////////////////////
 std::string ignition::gui::humanReadable(const std::string &_key)
@@ -163,4 +165,18 @@ std::string ignition::gui::uniqueFilePath(const std::string &_pathAndName,
   }
 
   return result;
+}
+
+/////////////////////////////////////////////////
+QStringList ignition::gui::worldNames()
+{
+  auto win = App()->findChild<MainWindow *>();
+  if (nullptr == win)
+    return {};
+
+  auto worldNamesVariant = win->property("worldNames");
+  if (!worldNamesVariant.isValid())
+    return {};
+
+  return worldNamesVariant.toStringList();
 }
