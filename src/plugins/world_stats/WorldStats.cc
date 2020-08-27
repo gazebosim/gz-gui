@@ -158,7 +158,8 @@ void WorldStats::ProcessMsg()
     time_point = math::secNsecToTimePoint(
         this->dataPtr->msg.sim_time().sec(),
         this->dataPtr->msg.sim_time().nsec());
-    this->SetSimTime(QString::fromStdString(math::timePointToString(time_point)));
+    this->SetSimTime(QString::fromStdString(
+      math::timePointToString(time_point)));
   }
 
   if (this->dataPtr->msg.has_real_time())
@@ -166,7 +167,8 @@ void WorldStats::ProcessMsg()
     time_point = math::secNsecToTimePoint(
         this->dataPtr->msg.real_time().sec(),
         this->dataPtr->msg.real_time().nsec());
-    this->SetRealTime(QString::fromStdString(math::timePointToString(time_point)));
+    this->SetRealTime(QString::fromStdString(
+      math::timePointToString(time_point)));
   }
 
   {
