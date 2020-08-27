@@ -2,6 +2,7 @@
 <qresource>
   <file>qtquickcontrols2.conf</file>
 
+  <file>qml/Chart.qml</file>
   <file>qml/IgnCard.qml</file>
   <file>qml/IgnCardSettings.qml</file>
   <file>qml/IgnHelpers.qml</file>
@@ -9,6 +10,7 @@
   <file>qml/IgnSpinBox.qml</file>
   <file>qml/IgnSplit.qml</file>
   <file>qml/Main.qml</file>
+  <file>qml/PlottingInterface.qml</file>
   <file>qml/PluginMenu.qml</file>
   <file>qml/SideDrawer.qml</file>
   <file>qml/StandaloneDialog.qml</file>
@@ -17,5 +19,6 @@
   <file>qml/images/ignition_logo_50x50.png</file>
   <file>qml/images/drawer.png</file>
   <file>qml/images/menu.png</file>
+  <file>qml/images/export_icon.png</file>
 </qresource>
 </RCC>
