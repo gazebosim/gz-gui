@@ -21,6 +21,8 @@
 
 #include <string>
 
+#include <ignition/utilities/ExtraTestMacros.hh>
+
 #include "test_config.h"  // NOLINT(build/include)
 
 #ifdef _MSC_VER
@@ -50,11 +52,10 @@ std::string custom_exec_str(std::string _cmd)
   return result;
 }
 
-/////////////////////////////////////////////////
-TEST(CmdLine, list)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 {
   std::string output = custom_exec_str("ign gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
   EXPECT_NE(output.find("Publisher"), std::string::npos) << output;
 }
-

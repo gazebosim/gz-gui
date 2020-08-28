@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 
 #include <ignition/common/Console.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -30,8 +31,8 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
-/////////////////////////////////////////////////
-TEST(PluginTest, DeleteLater)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(DeleteLater))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -70,7 +71,7 @@ TEST(PluginTest, DeleteLater)
 }
 
 /////////////////////////////////////////////////
-TEST(PluginTest, InvalidXmlText)
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(InvalidXmlText))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -100,7 +101,7 @@ TEST(PluginTest, InvalidXmlText)
 }
 
 /////////////////////////////////////////////////
-TEST(PluginTest, Getters)
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Getters))
 {
   ignition::common::Console::SetVerbosity(4);
 
@@ -130,4 +131,3 @@ TEST(PluginTest, Getters)
   ASSERT_NE(nullptr, plugin->CardItem());
   ASSERT_NE(nullptr, plugin->Context());
 }
-
