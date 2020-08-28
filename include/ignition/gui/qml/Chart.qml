@@ -465,15 +465,26 @@ Rectangle {
       _y y of the point
     */
     function appendPoint(_fieldID, _x, _y) {
+
+
+      if (chart.count === 2 && chart.serieses[_fieldID].count === 0)
+      {
+        xAxis.min = _x;
+        xAxis.max = _x + 10;
+        chart.serieses[_fieldID].append(_x, _y);
+        return;
+      }
+
       // expand the chart boundries if needed
       if (xAxis.max  < _x)
       {
         xAxis.max = _x;
-        // chart.scrollRight(_x - xAxis.max);
+        chart.scrollRight(2);
+        plotName.text = chart.serieses[_fieldID].count.toString();
       }
-      if (yAxis.max  < _y )
-        yAxis.max = _y ;
 
+      if (yAxis.max  < _y)
+        yAxis.max = _y ;
       if (yAxis.min > _y)
         yAxis.min = _y ;
       if (xAxis.min > _x)
@@ -481,6 +492,11 @@ Rectangle {
 
       // add the point
       chart.serieses[_fieldID].append(_x, _y);
+
+      // delete the oldest point to limit the points size
+      if (chart.serieses[_fieldID].count > 2500)
+          chart.serieses[_fieldID].removePoints(0,1)
+
 
       chart.updateHoverText();
     }
@@ -564,8 +580,6 @@ Rectangle {
       onClicked: {
         main.clicked(chartID);
       }
-      onDoubleClicked: chart.zoomReset();
-
 
       /**
         zoom shift amount

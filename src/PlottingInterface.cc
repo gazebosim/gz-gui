@@ -477,7 +477,7 @@ PlottingInterface::PlottingInterface() : QObject(),
           SIGNAL(plot(int, QString, double, double)), this,
           SLOT(onPlot(int, QString, double, double)));
 
-  this->dataPtr->timeout = MAX_TIME_DIFF * 1000;
+  this->dataPtr->timeout = MAX_TIME_DIFF/4 * 1000;
   this->InitTimer();
 
   App()->Engine()->rootContext()->setContextProperty("PlottingIface", this);
