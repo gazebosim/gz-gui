@@ -30,6 +30,7 @@ Rectangle {
   signal componentSubscribe(string entity, string typeId, string type, string attribute, real Id);
   signal componentUnSubscribe(string entity, string typeId, string attribute, real Id);
   signal clicked(real Id);
+  property int maxPoints: 10000
 
   /**
     add point to a field graph
@@ -440,6 +441,7 @@ Rectangle {
     */
     function addSeries(ID) {
       var newSeries = createSeries(ChartView.SeriesTypeLine, ID, xAxis, yAxis);
+      newSeries.useOpenGL = true;
       newSeries.width = 2;
       newSeries.color = chart.colors[chart.indexColor % chart.colors.length]
       serieses[ID] = newSeries;
@@ -479,7 +481,7 @@ Rectangle {
       if (xAxis.max  < _x)
       {
         xAxis.max = _x;
-        chart.scrollRight(2);
+        chart.scrollRight(1);
         plotName.text = chart.serieses[_fieldID].count.toString();
       }
 
@@ -494,7 +496,7 @@ Rectangle {
       chart.serieses[_fieldID].append(_x, _y);
 
       // delete the oldest point to limit the points size
-      if (chart.serieses[_fieldID].count > 2500)
+      if (chart.serieses[_fieldID].count > maxPoints)
           chart.serieses[_fieldID].removePoints(0,1)
 
 
