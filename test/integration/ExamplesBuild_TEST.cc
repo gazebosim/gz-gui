@@ -20,6 +20,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 
@@ -166,7 +167,8 @@ void ExamplesBuild::Build(const std::string &_type)
 }
 
 //////////////////////////////////////////////////
-TEST_P(ExamplesBuild, Build)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST_P(ExamplesBuild, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Build))
 {
   Build(GetParam());
 }

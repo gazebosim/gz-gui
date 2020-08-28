@@ -114,7 +114,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(
-    const char */*_filename*/)
+    const char * /*_filename*/)
 {
 //  ignition::gui::setStyleFromFile(std::string(_filename));
 }

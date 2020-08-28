@@ -16,8 +16,15 @@
 */
 
 #include <gtest/gtest.h>
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs/stringmsg.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <ignition/transport/Node.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -32,10 +39,9 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
-#if not defined(__APPLE__) && not defined(_WIN32)
 /////////////////////////////////////////////////
-TEST(PublisherTest, Load)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -60,7 +66,7 @@ TEST(PublisherTest, Load)
 }
 
 /////////////////////////////////////////////////
-TEST(PublisherTest, Publish)
+TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
 {
   common::Console::SetVerbosity(4);
 
@@ -200,7 +206,7 @@ TEST(PublisherTest, Publish)
 }
 
 //////////////////////////////////////////////////
-TEST(PublisherTest, ParamsFromSDF)
+TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ParamsFromSDF))
 {
   common::Console::SetVerbosity(4);
 
@@ -247,4 +253,3 @@ TEST(PublisherTest, ParamsFromSDF)
   // Frequency
   EXPECT_DOUBLE_EQ(plugin->Frequency(), 0.1);
 }
-#endif
