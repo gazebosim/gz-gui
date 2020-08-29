@@ -66,11 +66,11 @@ Dialog {
     Switch {
       id: collapseSwitch
       text: "Show collapse button"
-      visible: !card.standalone
-      enabled: card.showTitleBar
-      checked: card.showCollapseButton
+      visible: !cardPane.standalone
+      enabled: cardPane.showTitleBar
+      checked: cardPane.showCollapseButton
       onToggled: {
-        card.showCollapseButton = checked
+        cardPane.showCollapseButton = checked
       }
     }
 

@@ -236,7 +236,7 @@ Pane {
 //    State {
 //      name: "cardWindow"
 //      ParentChange {
-//        target: card;
+//        target: cardPane;
 //        parent: cardWindowContent;
 //        x: 0
 //        y: 0
@@ -511,8 +511,72 @@ Pane {
         }
         visible: cardPane.showDockButton && !cardPane.standalone
         onClicked: {
-          const docked = cardPane.state === "docked"
-          cardPane.state = docked ? "floating" : "docked"
+          switch(cardPane.state) {
+            case "floating_collapsed": {
+              cardPane.state = "docked_collapsed"
+              break;
+            }
+            case "floating": {
+              cardPane.state = "docked"
+              break;
+            }
+            case "docked": {
+              cardPane.state = "floating"
+              break;
+            }
+            case "docked_collapsed": {
+              cardPane.state = "floating_collapsed"
+              break;
+            }
+          }
+        }
+      }
+
+      // Collapse button
+      ToolButton {
+        id: collapseButton
+        visible: cardPane.showCollapseButton && !cardPane.standalone
+        text: cardPane.height <= 50.5 ? expandIcon : collapseIcon;
+        contentItem: Text {
+          text: collapseButton.text
+          font: collapseButton.font
+          opacity: enabled ? 1.0 : 0.3
+          color: cardPane.Material.background
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
+        onClicked: {
+          switch(cardPane.state) {
+            case "floating_collapsed": {
+              cardPane.state = "floating"
+              break;
+            }
+            case "floating": {
+              // When user manually minimized the plugin using resize
+              if(cardPane.height === 50) {
+                // Handles the case when a floating plugin is loaded using config
+                if(lastHeight === 50) {
+                  lastHeight = content.children[0].Layout.minimumHeight;
+                }
+                // Set state to floating collapsed and then expand for animation
+                cardPane.state = "floating_collapsed"
+                cardPane.state = "floating"
+              } else {
+                lastHeight = cardPane.height
+                // Set card state to collapsed
+                cardPane.state = "floating_collapsed"
+              }
+              break;
+            }
+            case "docked": {
+              cardPane.state = "docked_collapsed"
+              break;
+            }
+            case "docked_collapsed": {
+              cardPane.state = "docked"
+              break;
+            }
+          }
         }
       }
 
