@@ -14,17 +14,19 @@
  * limitations under the License.
  *
 */
-#include <deque>
 #include <memory>
-#include <string>
-#include <vector>
 
-#include <ignition/gui/Application.hh>
 #include <ignition/gui/Plugin.hh>
 
-#include <ignition/transport/MessageInfo.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/transport/Publisher.hh>
+#ifndef _WIN32
+#  define TopicViewer_EXPORTS_API
+#else
+#  if (defined(TopicViewer_EXPORTS))
+#    define TopicViewer_EXPORTS_API __declspec(dllexport)
+#  else
+#    define TopicViewer_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
 
 namespace ignition
 {
@@ -37,7 +39,7 @@ namespace plugins
 
   /// \brief a Plugin to view the topics and their msgs & fields
   /// Field's informations can be passed by dragging them via the UI
-  class TopicViewer : public Plugin
+  class TopicViewer_EXPORTS_API TopicViewer : public Plugin
   {
     Q_OBJECT
 

@@ -17,6 +17,9 @@
 #include <gtest/gtest.h>
 
 #include <ignition/common/Console.hh>
+#include <ignition/transport/Node.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
+
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
@@ -38,7 +41,8 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-TEST(TopicViewerTest, Load)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
     common::Console::SetVerbosity(4);
 
@@ -63,7 +67,8 @@ TEST(TopicViewerTest, Load)
 }
 
 /////////////////////////////////////////////////
-TEST(TopicViewerTest, Model)
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
 {
     setenv("IGN_PARTITION", "ign-gazebo-test", 1);
 
