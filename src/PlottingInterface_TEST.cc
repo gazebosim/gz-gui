@@ -83,6 +83,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   // =========== Callback Test ============
   topic.Register("pose-position-z", 1);
 
+  float currentTime = 10.0;
+  topic.SetCurrentTime(currentTime);
   // update the fields
   topic.Callback(msg);
 
@@ -90,6 +92,67 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
 
   EXPECT_EQ(static_cast<int>(fields["pose-position-x"]->Value()), 10);
   EXPECT_EQ(static_cast<int>(fields["pose-position-z"]->Value()), 15);
+
+  // ========== Callback Test with too small time diff ==========
+  vector3d->set_x(20);
+  vector3d->set_z(15);
+
+  // time diff < max diff
+  topic.SetCurrentTime(currentTime + 0.0001);
+  // update the fields
+  topic.Callback(msg);
+
+  fields = topic.Fields();
+
+  // will not be set to 20 because the too small time diff
+  EXPECT_NE(static_cast<int>(fields["pose-position-x"]->Value()), 20);
+}
+
+//////////////////////////////////////////////////
+// Disable test on windows until we fix "LNK2001 unresolved external symbol"
+// error
+TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(HeaderTime))
+{
+  common::Console::SetVerbosity(4);
+
+  // prepare the msg
+  msgs::Int32 msg;
+  msg.set_data(10);
+
+  auto topic = Topic("");
+
+  topic.Register("data", 1);
+
+  // set current time
+  float currentTime = 10.0;
+  auto header = new msgs::Header;
+  auto stamp = new msgs::Time;
+  stamp->set_sec(currentTime);
+  header->set_allocated_stamp(stamp);
+  msg.set_allocated_header(header);
+
+  // update the fields
+  topic.Callback(msg);
+
+  auto fields = topic.Fields();
+
+  EXPECT_EQ(static_cast<int>(fields["data"]->Value()), 10);
+
+  // ======== Header time with too small time diff ==========
+
+  msg.set_data(20);
+
+  // time diff < max diff
+  stamp->set_sec(currentTime);
+  stamp->set_nsec(1);
+
+  // update the fields
+  topic.Callback(msg);
+
+  fields = topic.Fields();
+
+  // will not be set to 20 because the too small time diff
+  EXPECT_NE(static_cast<int>(fields["data"]->Value()), 20);
 }
 
 //////////////////////////////////////////////////
@@ -126,6 +189,9 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
 
   node.Subscribe("collision_topic", cb);
 
+  auto topics = transport.Topics();
+  topics["/collision_topic"]->SetCurrentTime(10);
+
   // publish to call the topic::Callback
   pub.Publish(msg);
 
@@ -139,8 +205,6 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   }
 
   EXPECT_TRUE(received);
-
-  auto topics = transport.Topics();
 
   EXPECT_EQ(topics["/collision_topic"]->FieldCount(), 2);
 

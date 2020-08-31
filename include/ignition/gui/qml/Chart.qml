@@ -23,14 +23,26 @@ import QtQuick.Layouts 1.3
 
 Rectangle {
   id: main
-  property int chartID: -1
-  property bool multiChartsMode: false
+
   signal subscribe(real Id, string topic, string path);
   signal unSubscribe(real Id, string topic, string path);
   signal componentSubscribe(string entity, string typeId, string type, string attribute, real Id);
   signal componentUnSubscribe(string entity, string typeId, string attribute, real Id);
   signal clicked(real Id);
+
+  /**
+    Points Limitation: max points of each series
+    When points exceed that limit, some points from begining are deleted
+  */
   property int maxPoints: 10000
+  /**
+    Chart ID
+  */
+  property int chartID: -1
+  /**
+    True if the chart is a small chart in the multi charts mode
+  */
+  property bool multiChartsMode: false
 
   /**
     add point to a field graph
@@ -88,7 +100,18 @@ Rectangle {
     return chart;
   }
 
+  /**
+    fix OpenGL Disappear problem when the plugin is docked
+  */
+  function fixOpenGL()
+  {
+    lineSeries.useOpenGL = false;
+    lineSeries.useOpenGL = true;
+  }
+
+
   color: "transparent"
+
   // =============== Fields info Rectangle ================
   Rectangle {
     id: infoRect
@@ -393,7 +416,6 @@ Rectangle {
   // ================== Chart ============================
   ChartView {
     id : chart
-
     /**
       all serieses, field path is the key, series is the value
     */
@@ -482,7 +504,6 @@ Rectangle {
       {
         xAxis.max = _x;
         chart.scrollRight(1);
-        plotName.text = chart.serieses[_fieldID].count.toString();
       }
 
       if (yAxis.max  < _y)
@@ -499,7 +520,6 @@ Rectangle {
       if (chart.serieses[_fieldID].count > maxPoints)
           chart.serieses[_fieldID].removePoints(0,1)
 
-
       chart.updateHoverText();
     }
 
@@ -511,7 +531,6 @@ Rectangle {
     antialiasing: true
     opacity: 1
     backgroundRoundness: 10
-    // animationDuration: 400
     animationOptions: ChartView.NoAnimation
 
     theme: (Material.theme == Material.Light) ? ChartView.ChartThemeLight: ChartView.ChartThemeDark
@@ -553,10 +572,6 @@ Rectangle {
       onPressed: {
         xHold = mouseX;
         yHold = mouseY;
-        chart.animationOptions = ChartView.NoAnimation
-      }
-      onReleased: {
-        // chart.animationOptions = ChartView.SeriesAnimations
       }
 
       /**
@@ -629,6 +644,8 @@ Rectangle {
         chart.zoomIn(rect);
       }
 
+      onDoubleClicked: {
+      }
     }
 
     DropArea {
@@ -638,13 +655,6 @@ Rectangle {
         var text = drop.getDataAsString("text/plain");
         infoRect.onDrop(text);
       }
-    }
-
-    Text {
-      id : ray;
-      text: ""
-      x : chart.width/2
-      y: chart.height/2
     }
 
     ValueAxis {
@@ -667,6 +677,7 @@ Rectangle {
       axisX: xAxis
       axisY: yAxis
       visible: false
+      useOpenGL: true
     }
 
     Text {
