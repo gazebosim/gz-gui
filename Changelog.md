@@ -2,7 +2,7 @@
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
 
-### Ignition Gui 3.3.0 (202X-08-31)
+### Ignition Gui 3.3.0 (2020-08-31)
 
 1. rename key publisher plugin
     * [Pull request 93](https://github.com/ignitionrobotics/ign-gui/pull/93)
