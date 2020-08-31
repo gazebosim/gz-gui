@@ -21,16 +21,27 @@
 #include <vector>
 
 #include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
-#include <ignition/rendering.hh>
+#include <ignition/plugin/Register.hh>
 
-// #include "ignition/gui/CollapsibleWidget.hh"
-// #include "ignition/gui/ColorWidget.hh"
-// #include "ignition/gui/NumberWidget.hh"
-// #include "ignition/gui/Pose3dWidget.hh"
-// #include "ignition/gui/QtMetatypes.hh"
+// TODO(louise) Remove these pragmas once ign-rendering is disabling the
+// warnings
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+
+#include <ignition/rendering/Grid.hh>
+#include <ignition/rendering/RenderEngine.hh>
+#include <ignition/rendering/RenderingIface.hh>
+#include <ignition/rendering/Scene.hh>
+#include <ignition/rendering/Visual.hh>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include "Grid3D.hh"
 
 // Default cell count
@@ -47,7 +58,7 @@ static const ignition::math::Pose3d kDefaultPose{ignition::math::Pose3d::Zero};
 
 // Default color
 static const ignition::math::Color kDefaultColor{
-    ignition::math::Color(0.7, 0.7, 0.7, 1.0)};
+    ignition::math::Color(0.7f, 0.7f, 0.7f, 1.0f)};
 
 namespace ignition
 {

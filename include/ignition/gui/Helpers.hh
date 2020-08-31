@@ -70,6 +70,15 @@ namespace ignition
     std::string uniqueFilePath(const std::string &_pathAndName,
                                const std::string &_extension);
 
+    /// \brief The main window's "worldNames" property may be filled with a list
+    /// of the names of all worlds currently loaded. This information can be
+    /// used by plugins to choose which world to work with.
+    /// This helper function provides a handy access to the world names list.
+    /// \return List of world names, as stored in the `MainWindow`'s
+    /// "worldNames" property.
+    IGNITION_GUI_VISIBLE
+    QStringList worldNames();
+
     /// \brief Returns the first element on a QList which matches the given
     /// property.
     /// \param[in] _list The list to search through.

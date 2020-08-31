@@ -19,6 +19,16 @@
 #include <QStandardItem>
 #include <QString>
 
+#include <deque>
+#include <string>
+#include <vector>
+
+#include <ignition/gui/Application.hh>
+
+#include <ignition/transport/MessageInfo.hh>
+#include <ignition/transport/Node.hh>
+#include <ignition/transport/Publisher.hh>
+
 #include <ignition/common/Console.hh>
 #include <ignition/plugin/Register.hh>
 #include "TopicViewer.hh"

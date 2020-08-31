@@ -25,6 +25,13 @@
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
+#ifdef _WIN32
+// Disable warning C4251 which is triggered by
+// std::unique_ptr
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+
 namespace tinyxml2
 {
   class XMLElement;
@@ -195,4 +202,9 @@ namespace ignition
     Application *App();
   }
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #endif

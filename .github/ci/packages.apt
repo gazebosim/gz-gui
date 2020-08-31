@@ -10,6 +10,7 @@ libprotobuf-dev
 libprotoc-dev
 libtinyxml2-dev
 qml-module-qt-labs-folderlistmodel
+qml-module-qt-labs-platform
 qml-module-qt-labs-settings
 qml-module-qtgraphicaleffects
 qml-module-qtqml-models2
