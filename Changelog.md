@@ -1,6 +1,20 @@
 ## Ignition Gui 3
 
-### Ignition Gui 3.X.X (202X-XX-XX_
+### Ignition Gui 3.3.0 (2020-08-31)
+
+1. Rename key publisher plugin from "Key tool" to "Key publisher".
+    * [Pull request 93](https://github.com/ignitionrobotics/ign-gui/pull/93)
+
+1. Added RenderEvent that sends an evevent after each render call.
+    * [Pull request 70](https://github.com/ignitionrobotics/ign-gui/pull/70)
+
+1. Fixed left menu events on Ubuntu 20.04.
+    * [Pull request 85](https://github.com/ignitionrobotics/ign-gui/pull/85)
+
+1. Fixed image display Ubuntu 20.04.
+    * [Pull request 88](https://github.com/ignitionrobotics/ign-gui/pull/88)
+
+1. This version includes all features in version 2.3.3.
 
 ### Ignition Gui 3.2.0 (2020-06-22)
 
