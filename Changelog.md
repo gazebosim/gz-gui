@@ -1,6 +1,51 @@
 ## Ignition Gui 3
 
-### Ignition Gui 3.X.X (202X-XX-XX_
+### Ignition Gui 3.X.X (202X-XX-XX)
+
+### Ignition Gui 3.3.0 (2020-08-31)
+
+1. rename key publisher plugin
+    * [Pull request 93](https://github.com/ignitionrobotics/ign-gui/pull/93)
+
+1. Add shift + drag to rotate camera
+    * [Pull request 96](https://github.com/ignitionrobotics/ign-gui/pull/96)
+
+1. Scroll bar adjustment
+    * [Pull request 97](https://github.com/ignitionrobotics/ign-gui/pull/97)
+
+1. Minimize GUI plugin
+    * [Pull request 84](https://github.com/ignitionrobotics/ign-gui/pull/84)
+    * [Pull request 99](https://github.com/ignitionrobotics/ign-gui/pull/99)
+    * [Pull request 102](https://github.com/ignitionrobotics/ign-gui/pull/102)
+
+1. Fix tests on actions
+    * [Pull request 98](https://github.com/ignitionrobotics/ign-gui/pull/98)
+
+1. Disable failing tests
+    * [Pull request 76](https://github.com/ignitionrobotics/ign-gui/pull/76)
+
+1. Use world name in default topics
+    * [Pull request 104](https://github.com/ignitionrobotics/ign-gui/pull/104)
+
+1. Fix running plugins with bad world name
+    * [Pull request 107](https://github.com/ignitionrobotics/ign-gui/pull/107)
+    * [Pull request 110](https://github.com/ignitionrobotics/ign-gui/pull/110)
+    * [Pull request 111](https://github.com/ignitionrobotics/ign-gui/pull/111)
+
+1. Disable more tests known to fail on macOS and Windows
+    * [Pull request 112](https://github.com/ignitionrobotics/ign-gui/pull/112)
+
+1. Add render event
+    * [Pull request 70](https://github.com/ignitionrobotics/ign-gui/pull/70)
+
+1. Fixed left menu events
+    * [Pull request 85](https://github.com/ignitionrobotics/ign-gui/pull/85)
+
+1. Added Topic Viewer plugin, list all transport topics
+    * [Pull request 69](https://github.com/ignitionrobotics/ign-gui/pull/69)
+
+1. Fix ImageDisplay in Ubuntu 20.04
+    * [Pull request 96](https://github.com/ignitionrobotics/ign-gui/pull/96)
 
 ### Ignition Gui 3.2.0 (2020-06-22)
 
