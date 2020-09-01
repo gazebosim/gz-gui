@@ -16,7 +16,13 @@
 */
 
 #include <gtest/gtest.h>
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs.hh>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Iface.hh"

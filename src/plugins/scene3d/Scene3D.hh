@@ -29,9 +29,6 @@
 
 #include <ignition/common/MouseEvent.hh>
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/OrbitViewController.hh>
-
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
@@ -135,7 +132,7 @@ namespace plugins
     public: math::Color backgroundColor = math::Color::Black;
 
     /// \brief Ambient color
-    public: math::Color ambientLight = math::Color(0.3, 0.3, 0.3, 1.0);
+    public: math::Color ambientLight = math::Color(0.3f, 0.3f, 0.3f, 1.0f);
 
     /// \brief True if engine has been initialized;
     public: bool initialized = false;
