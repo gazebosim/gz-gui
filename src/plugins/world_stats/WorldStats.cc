@@ -151,7 +151,7 @@ void WorldStats::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  std::chrono::system_clock::time_point time_point;
+  std::chrono::steady_clock::time_point time_point;
 
   if (this->dataPtr->msg.has_sim_time())
   {
