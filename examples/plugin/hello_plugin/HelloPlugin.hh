@@ -20,10 +20,8 @@
 
 #include <string>
 
-#ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Plugin.hh>
-#endif
+#include <ignition/gui/qt.h>
+#include <ignition/gui/Plugin.hh>
 
 namespace ignition
 {

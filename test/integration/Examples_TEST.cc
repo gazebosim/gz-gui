@@ -19,6 +19,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -29,8 +30,9 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
 /////////////////////////////////////////////////
-TEST(ExampleTest, Configs)
+TEST(ExampleTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
 {
   common::Console::SetVerbosity(4);
   auto exampleConfigPath = common::joinPaths(std::string(PROJECT_SOURCE_PATH),
@@ -55,4 +57,3 @@ TEST(ExampleTest, Configs)
     EXPECT_TRUE(app.LoadConfig(*file));
   }
 }
-
