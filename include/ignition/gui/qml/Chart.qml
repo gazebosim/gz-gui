@@ -24,10 +24,27 @@ import QtQuick.Layouts 1.3
 Rectangle {
   id: main
 
+  /**
+    subscribe to a field || register the chart to the subscribed field
+  */
   signal subscribe(real Id, string topic, string path);
+  /**
+    unsubscribe from a field || unregister the chart from the subscribed field
+  */
   signal unSubscribe(real Id, string topic, string path);
+  /**
+    register the chart to the component attribute
+  */
   signal componentSubscribe(string entity, string typeId, string type, string attribute, real Id);
+  /**
+    unregister the chart from the component attribute
+  */
   signal componentUnSubscribe(string entity, string typeId, string attribute, real Id);
+  /**
+    chart is clicked to swap the chart mode
+    from small chart to the main chart in multi charts mode
+    Id: chartID
+  */
   signal clicked(real Id);
 
   /**
@@ -488,9 +505,12 @@ Rectangle {
       _x x of the point
       _y y of the point
     */
-    function appendPoint(_fieldID, _x, _y) {
+    function appendPoint(_fieldID, _x, _y)
+    {
 
-
+      // if this is the first point (if the chart is empty):
+      // set the min/max according to that point's coordinates
+      // note: count == 2: because chart has 1 series by default to show plotting grid
       if (chart.count === 2 && chart.serieses[_fieldID].count === 0)
       {
         xAxis.min = _x;
@@ -642,9 +662,6 @@ Rectangle {
                           );
 
         chart.zoomIn(rect);
-      }
-
-      onDoubleClicked: {
       }
     }
 

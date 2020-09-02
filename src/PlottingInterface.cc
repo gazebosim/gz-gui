@@ -25,8 +25,9 @@
 #include "ignition/gui/PlottingInterface.hh"
 #include "ignition/gui/Application.hh"
 
-#define DEFAULT_TIME -1
-#define MAX_TIME_DIFF 0.020
+#define DEFAULT_TIME (INT_MIN)
+// 1/60 Period like the GuiSystem frequency (60Hz)
+#define MAX_PERIOD_DIFF (0.0166666667)
 
 namespace ignition
 {
@@ -57,8 +58,10 @@ class TopicPrivate
   /// \brief Topic name
   public: std::string name;
 
+  /// \brief Default Plotting time
   public: double plottingTime = 0;
 
+  /// \brief Previous header time to limit the frequency of publishing
   public: double lastHeaderTime = 0;
 
   /// \brief Plotting fields to update its values
@@ -69,6 +72,7 @@ class TransportPrivate
 {
   /// \brief Node for Commincation
   public: ignition::transport::Node node;
+
   /// \brief subscribed topics
   public: std::map<std::string, ignition::gui::Topic*> topics;
 };
@@ -98,7 +102,7 @@ using namespace gui;
 PlotData::PlotData() :
     dataPtr(std::make_unique<PlotDataPrivate>())
 {
-    this->dataPtr->value = 0;
+  this->dataPtr->value = 0;
 }
 
 //////////////////////////////////////////////////////
@@ -212,24 +216,25 @@ std::map<std::string, PlotData*> &Topic::Fields()
 void Topic::Callback(const google::protobuf::Message &_msg)
 {
   double headerTime;
-  if (!HasHeader(_msg, headerTime))
+  if (!this->HasHeader(_msg, headerTime))
   {
     headerTime = DEFAULT_TIME;
 
     if (this->dataPtr->plottingTime - this->dataPtr->lastHeaderTime
-          < MAX_TIME_DIFF)
+          < MAX_PERIOD_DIFF)
       return;
 
     this->dataPtr->lastHeaderTime = this->dataPtr->plottingTime;
   }
   else
   {
-    if (headerTime - this->dataPtr->lastHeaderTime < MAX_TIME_DIFF)
+    if (headerTime - this->dataPtr->lastHeaderTime < MAX_PERIOD_DIFF)
         return;
 
     this->dataPtr->lastHeaderTime = headerTime;
   }
 
+  // loop over the registered fields and update them
   for (auto fieldIt : this->dataPtr->fields)
   {
     auto msgDescriptor = _msg.GetDescriptor();
@@ -283,6 +288,9 @@ void Topic::Callback(const google::protobuf::Message &_msg)
       data = this->dataPtr->FieldData(_msg, field);
     }
 
+    if (!fieldIt.second)
+        continue;
+
     // Field Arrival Time
     fieldIt.second->SetTime(headerTime);
 
@@ -295,34 +303,44 @@ void Topic::Callback(const google::protobuf::Message &_msg)
 }
 
 //////////////////////////////////////////////////////
-bool Topic::HasHeader(const google::protobuf::Message &_msg, double &_headerTime)
+bool Topic::HasHeader(const google::protobuf::Message &_msg,
+                      double &_headerTime)
 {
-    auto ref = _msg.GetReflection();
-    auto header = _msg.GetDescriptor()->FindFieldByName("header");
-    auto found = ref->HasField(_msg, header);
+  auto ref = _msg.GetReflection();
+  auto header = _msg.GetDescriptor()->FindFieldByName("header");
+  auto found = ref->HasField(_msg, header);
 
-    if (found)
-    {
-        auto stamp = header->message_type()->FindFieldByName("stamp");
+  if (!found)
+    return false;
 
-        auto headerMsg = ref->MutableMessage
-                (const_cast<google::protobuf::Message *>(&_msg), header);
+  auto stamp = header->message_type()->FindFieldByName("stamp");
 
-        ref = headerMsg->GetReflection();
+  if (!stamp)
+      return false;
 
-        auto stampMsg = ref->MutableMessage
-                (const_cast<google::protobuf::Message *>(headerMsg), stamp);
+  auto headerMsg = ref->MutableMessage
+          (const_cast<google::protobuf::Message *>(&_msg), header);
 
-        auto secField = stamp->message_type()->FindFieldByName("sec");
-        auto nsecField = stamp->message_type()->FindFieldByName("nsec");
+  if (!headerMsg)
+      return false;
 
-        auto sec = this->dataPtr->FieldData(*stampMsg, secField);
-        auto nsec = this->dataPtr->FieldData(*stampMsg, nsecField);
+  ref = headerMsg->GetReflection();
 
-        _headerTime = sec + nsec * std::pow(10, -9);
-    }
+  auto stampMsg = ref->MutableMessage
+          (const_cast<google::protobuf::Message *>(headerMsg), stamp);
 
-    return found;
+  if (!stampMsg)
+      return false;
+
+  auto secField = stamp->message_type()->FindFieldByName("sec");
+  auto nsecField = stamp->message_type()->FindFieldByName("nsec");
+
+  auto sec = this->dataPtr->FieldData(*stampMsg, secField);
+  auto nsec = this->dataPtr->FieldData(*stampMsg, nsecField);
+
+  _headerTime = sec + nsec * std::pow(10, -9);
+
+  return true;
 }
 
 //////////////////////////////////////////////////////
@@ -342,6 +360,7 @@ void Topic::UpdateGui(const std::string &_field)
     emit plot(chart, fieldFullPath, x, y);
 }
 
+//////////////////////////////////////////////////////
 void Topic::SetCurrentTime(const double &_time)
 {
   this->dataPtr->plottingTime = _time;
@@ -381,7 +400,8 @@ Transport::Transport() : dataPtr(std::make_unique<TransportPrivate>())
 {
   auto topicsTimer = new QTimer();
   topicsTimer->setInterval(100);
-  connect(topicsTimer, SIGNAL(timeout()), this, SLOT(UnsubscribeOutdatedTopics()));
+  connect(topicsTimer, SIGNAL(timeout()),
+          this, SLOT(UnsubscribeOutdatedTopics()));
   topicsTimer->start();
 }
 
@@ -440,13 +460,13 @@ void Transport::Subscribe(const std::string &_topic,
 //////////////////////////////////////////////////////
 const std::map<std::string, Topic*> &Transport::Topics()
 {
-    return this->dataPtr->topics;
+  return this->dataPtr->topics;
 }
 
 //////////////////////////////////////////////////////
 void Transport::onPlot(int _chart, QString _fieldID, double _x, double _y)
 {
-    emit this->plot(_chart, _fieldID, _x, _y);
+  emit this->plot(_chart, _fieldID, _x, _y);
 }
 
 //////////////////////////////////////////////////////
@@ -477,7 +497,7 @@ PlottingInterface::PlottingInterface() : QObject(),
           SIGNAL(plot(int, QString, double, double)), this,
           SLOT(onPlot(int, QString, double, double)));
 
-  this->dataPtr->timeout = MAX_TIME_DIFF/4 * 1000;
+  this->dataPtr->timeout = 1;
   this->InitTimer();
 
   App()->Engine()->rootContext()->setContextProperty("PlottingIface", this);
@@ -507,7 +527,7 @@ float PlottingInterface::Timeout() const
 //////////////////////////////////////////////////////
 double PlottingInterface::Time() const
 {
-    return this->dataPtr->time;
+  return this->dataPtr->time;
 }
 
 //////////////////////////////////////////////////////
@@ -561,9 +581,12 @@ void PlottingInterface::InitTimer()
 }
 
 //////////////////////////////////////////////////////
-void PlottingInterface::onPlot(int _chart, QString _fieldID, double _x, double _y)
+void PlottingInterface::onPlot(int _chart, QString _fieldID,
+                               double _x, double _y)
 {
-  if (int(_x) == DEFAULT_TIME)
+  // if _x == -1, then the msg has not header time
+  // so update x with the default plotting time that is handled by a timer
+  if (static_cast<int>(_x) == DEFAULT_TIME)
       _x = this->dataPtr->time;
 
   emit this->plot(_chart, _fieldID, _x, _y);
@@ -572,71 +595,71 @@ void PlottingInterface::onPlot(int _chart, QString _fieldID, double _x, double _
 //////////////////////////////////////////////////////
 void PlottingInterface::UpdateTime()
 {
-    this->dataPtr->time += float(this->dataPtr->timeout)/1000;
+  this->dataPtr->time += this->dataPtr->timeout * 0.001;
 
-    auto topics = this->dataPtr->transport->Topics();
-    for (auto topic : topics)
-        topic.second->SetCurrentTime(this->dataPtr->time);
+  auto topics = this->dataPtr->transport->Topics();
+  for (auto topic : topics)
+    topic.second->SetCurrentTime(this->dataPtr->time);
 }
 
 //////////////////////////////////////////////////////
 std::string PlottingInterface::FilePath(QString _path, std::string _name,
                                         std::string _extention)
 {
-    if (_extention != "csv" && _extention != "pdf")
-        return "";
+  if (_extention != "csv" && _extention != "pdf")
+    return "";
 
-    if (_path.toStdString().size() < 8)
-    {
-        ignwarn << "Couldn't parse file path" << std::endl;
-        return "";
-    }
-    else
-        // remove "file://" at the begin of the path
-        _path.remove(0, 7);
+  if (_path.toStdString().size() < 8)
+  {
+    ignwarn << "Couldn't parse file path" << std::endl;
+    return "";
+  }
+  else
+    // remove "file://" at the begin of the path
+    _path.remove(0, 7);
 
-    std::replace(_name.begin(), _name.end(), '/', '_');
-    std::replace(_name.begin(), _name.end(), '-', '_');
-    std::replace(_name.begin(), _name.end(), ',', '_');
+  std::replace(_name.begin(), _name.end(), '/', '_');
+  std::replace(_name.begin(), _name.end(), '-', '_');
+  std::replace(_name.begin(), _name.end(), ',', '_');
 
-    return _path.toStdString() + "/" + "\'" + _name + "." + _extention + "\'";
+  return _path.toStdString() + "/" + "\'" + _name + "." + _extention + "\'";
 }
 
 //////////////////////////////////////////////////////
 bool PlottingInterface::exportCSV(QString _path, int _chart,
                                   QMap< QString, QVariant> _serieses)
 {
-    std::string plotName = "Plot" + std::to_string(_chart);
+  std::string plotName = "Plot" + std::to_string(_chart);
 
-    std::ofstream file;
+  std::ofstream file;
 
-    QMap<QString, QVariant>::const_iterator series = _serieses.constBegin();
-    while (series != _serieses.constEnd())
+  QMap<QString, QVariant>::const_iterator series = _serieses.constBegin();
+  while (series != _serieses.constEnd())
+  {
+    auto name = plotName +  "_" + series.key().toStdString();
+    auto filePath = this->FilePath(_path , name, "csv");
+
+    if (!filePath.size())
     {
-        auto name = plotName +  "_" + series.key().toStdString();
-        auto filePath = this->FilePath(_path , name, "csv");
-
-        if (!filePath.size())
-        {
-            ignwarn << "[Couldn't parse file: " << filePath << "]" << std::endl;
-            return false;
-        }
-
-        file.open(filePath);
-        if (!file.is_open())
-            ignwarn << "[Couldn't open file: " << filePath << "]" << std::endl;
-
-        file << "time, " << series.key().toStdString() << std::endl;
-
-        auto points = series.value().toList();
-        for (int j = 0 ; j < points.size(); j++)
-        {
-            auto point = points.at(j).toPointF();
-            file << point.x() << ", " << point.y() << std::endl;
-        }
-
-        file.close();
-        ++series;
+        ignwarn << "[Couldn't parse file: " << filePath << "]" << std::endl;
+        return false;
     }
-    return true;
+
+    file.open(filePath);
+    if (!file.is_open())
+        ignwarn << "[Couldn't open file: " << filePath << "]" << std::endl;
+
+    file << "time, " << series.key().toStdString() << std::endl;
+
+    auto points = series.value().toList();
+    for (int j = 0 ; j < points.size(); j++)
+    {
+        auto point = points.at(j).toPointF();
+        file << point.x() << ", " << point.y() << std::endl;
+    }
+
+    file.close();
+    ++series;
+  }
+  return true;
 }

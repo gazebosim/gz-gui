@@ -33,6 +33,7 @@
 #include <set>
 #include <string>
 #include <memory>
+#include <limits>
 
 #include "ignition/gui/Export.hh"
 
@@ -42,6 +43,9 @@ namespace gui
 {
 class PlotDataPrivate;
 
+/// \brief Plot Data containter to hold value and registered charts
+/// Can be a Field or a PlotComponent
+/// Used by PlottingInterface and Gazebo Plotting
 class IGNITION_GUI_VISIBLE PlotData
 {
   /// \brief Constructor
@@ -87,6 +91,7 @@ class IGNITION_GUI_VISIBLE PlotData
 
 class TopicPrivate;
 
+/// \brief Plotting Topic to handle published topics & their registered fields
 class IGNITION_GUI_VISIBLE Topic : public QObject
 {
   Q_OBJECT
@@ -126,14 +131,22 @@ class IGNITION_GUI_VISIBLE Topic : public QObject
   /// \brief Check if msg has header field and get its time
   /// \param[in] _msg msg to check its header
   /// \param[out] _headerTime header sim time
-  public: bool HasHeader(const google::protobuf::Message &_msg, double &_headerTime);
+  public: bool HasHeader(const google::protobuf::Message &_msg,
+                         double &_headerTime);
 
   /// \brief update the plot
   /// \param[in] _field field path or ID
   public: void UpdateGui(const std::string &_field);
 
+  /// \brief update the GUI and plot the topic's fields values
+  /// \param[in] _chart chart ID
+  /// \param[in] _fieldID field path ID
+  /// \param[in] _x x coordinates of the plot point
+  /// \param[in] _y y coordinates of the plot point
   signals: void plot(int _chart, QString _fieldID, double _x, double _y);
 
+  /// \brief update the current time with the default time of the plotting timer
+  /// \param[in] _time current time of the plotting timer
   public: void SetCurrentTime(const double &_time);
 
   /// \brief Private data member.
@@ -179,6 +192,7 @@ class IGNITION_GUI_VISIBLE Transport : public QObject
   public slots: void onPlot(int _chart, QString _fieldID, double _x, double _y);
   signals: void plot(int _chart, QString _fieldID, double _x, double _y);
 
+  /// \brief Private data member.
   private: std::unique_ptr<TransportPrivate> dataPtr;
 };
 

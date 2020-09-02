@@ -325,7 +325,8 @@ Rectangle
       width: background.width * factor;
       height: background.height * factor;
       anchors.centerIn: background
-      sourceSize: {width: background.width * factor; height: background.height * factor}
+      sourceSize.width: background.width * factor;
+      sourceSize.height: background.height * factor;
       source: "images/export_icon.png"
     }
 
