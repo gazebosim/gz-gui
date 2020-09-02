@@ -523,7 +523,7 @@ Rectangle {
       if (xAxis.max  < _x)
       {
         xAxis.max = _x;
-        chart.scrollRight(1);
+        chart.scrollRight(chart.width * 0.0012);
       }
 
       if (yAxis.max  < _y)

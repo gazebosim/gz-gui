@@ -59,7 +59,7 @@ class TopicPrivate
   public: std::string name;
 
   /// \brief Default Plotting time
-  public: double plottingTime = 0;
+  public: const double *plottingTime = nullptr;
 
   /// \brief Previous header time to limit the frequency of publishing
   public: double lastHeaderTime = 0;
@@ -215,16 +215,20 @@ std::map<std::string, PlotData*> &Topic::Fields()
 //////////////////////////////////////////////////////
 void Topic::Callback(const google::protobuf::Message &_msg)
 {
+  // check for header time
   double headerTime;
   if (!this->HasHeader(_msg, headerTime))
   {
+    if (!this->dataPtr->plottingTime)
+        return;
+
     headerTime = DEFAULT_TIME;
 
-    if (this->dataPtr->plottingTime - this->dataPtr->lastHeaderTime
+    if (*this->dataPtr->plottingTime - this->dataPtr->lastHeaderTime
           < MAX_PERIOD_DIFF)
       return;
 
-    this->dataPtr->lastHeaderTime = this->dataPtr->plottingTime;
+    this->dataPtr->lastHeaderTime = *this->dataPtr->plottingTime;
   }
   else
   {
@@ -361,9 +365,10 @@ void Topic::UpdateGui(const std::string &_field)
 }
 
 //////////////////////////////////////////////////////
-void Topic::SetCurrentTime(const double &_time)
+void Topic::SetPlottingTimeRef(const double *_timePtr)
 {
-  this->dataPtr->plottingTime = _time;
+  if (!this->dataPtr->plottingTime)
+    this->dataPtr->plottingTime = _timePtr;
 }
 
 //////////////////////////////////////////////////////
@@ -432,7 +437,7 @@ void Transport::Unsubscribe(const std::string &_topic,
 }
 
 ////////////////////////////////////////////
-void Transport::Subscribe(const std::string &_topic,
+Topic *Transport::Subscribe(const std::string &_topic,
                           const std::string &_fieldPath,
                           int _chart)
 {
@@ -455,6 +460,7 @@ void Transport::Subscribe(const std::string &_topic,
     this->dataPtr->node.Subscribe(_topic, &Topic::Callback,
                                   this->dataPtr->topics[_topic]);
   }
+  return this->dataPtr->topics[_topic];
 }
 
 //////////////////////////////////////////////////////
@@ -566,9 +572,11 @@ void PlottingInterface::subscribe(int _chart,
                                   QString _topic,
                                   QString _fieldPath)
 {
-  this->dataPtr->transport->Subscribe(_topic.toStdString(),
-                                      _fieldPath.toStdString(),
-                                      _chart);
+  auto subscribedTopic =
+          this->dataPtr->transport->Subscribe(_topic.toStdString(),
+                                              _fieldPath.toStdString(),
+                                              _chart);
+  subscribedTopic->SetPlottingTimeRef(&this->dataPtr->time);
 }
 
 ////////////////////////////////////////////
@@ -596,10 +604,6 @@ void PlottingInterface::onPlot(int _chart, QString _fieldID,
 void PlottingInterface::UpdateTime()
 {
   this->dataPtr->time += this->dataPtr->timeout * 0.001;
-
-  auto topics = this->dataPtr->transport->Topics();
-  for (auto topic : topics)
-    topic.second->SetCurrentTime(this->dataPtr->time);
 }
 
 //////////////////////////////////////////////////////

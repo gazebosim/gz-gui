@@ -83,8 +83,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   // =========== Callback Test ============
   topic.Register("pose-position-z", 1);
 
-  float currentTime = 10.0;
-  topic.SetCurrentTime(currentTime);
+  double currentTime = 10.0;
+  topic.SetPlottingTimeRef(&currentTime);
   // update the fields
   topic.Callback(msg);
 
@@ -98,7 +98,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   vector3d->set_z(15);
 
   // time diff < max diff
-  topic.SetCurrentTime(currentTime + 0.0001);
+  currentTime += 0.0001;
+  topic.SetPlottingTimeRef(&currentTime);
   // update the fields
   topic.Callback(msg);
 
@@ -190,7 +191,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   node.Subscribe("collision_topic", cb);
 
   auto topics = transport.Topics();
-  topics["/collision_topic"]->SetCurrentTime(10);
+  double timeRef = 10;
+  topics["/collision_topic"]->SetPlottingTimeRef(&timeRef);
 
   // publish to call the topic::Callback
   pub.Publish(msg);
