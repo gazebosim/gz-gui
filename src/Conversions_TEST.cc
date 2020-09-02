@@ -159,8 +159,14 @@ TEST(ConversionsTest, Time)
     ignition::msgs::Time t;
     t.set_sec(s);
     t.set_nsec(ns);
-
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
     auto nt = convert(convert(t));
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
     EXPECT_DOUBLE_EQ(nt.sec(), t.sec());
     EXPECT_DOUBLE_EQ(nt.nsec(), t.nsec());
   }
@@ -168,7 +174,14 @@ TEST(ConversionsTest, Time)
   // Common to msgs to common
   {
     common::Time t(s, ns);
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
     EXPECT_EQ(convert(convert(t)), t);
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
   }
 }
 
