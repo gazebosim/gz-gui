@@ -151,8 +151,10 @@ Rectangle {
         var typeId = textList[2];
         var type = textList[3];
         var attribute = textList[4];
+        var typeName = textList[5];
 
         var componentID = entity + "," + typeId + "," + attribute;
+        var displayText = entity + "," + typeName + "," + attribute;
 
         componentSubscribe(entity, typeId, type, attribute, chartID);
 
@@ -160,8 +162,8 @@ Rectangle {
         if (componentID in chart.serieses)
           return;
 
-        chart.addSeries(componentID);
-        infoRect.addComponent(entity, typeId, type, attribute);
+        chart.addSeries(componentID, displayText);
+        infoRect.addComponent(entity, typeId, type, attribute, typeName, displayText);
       }
       // the dropped item is a field
       else
@@ -220,7 +222,7 @@ Rectangle {
       typeId type ID
       type type of the component attribute (Pose3d, Vector3d .. etc)
     */
-    function addComponent(entity, typeId, type, attribute)
+    function addComponent(entity, typeId, type, attribute, typeName, displayText)
     {
       var _component = fieldInfo.createObject(row);
       _component.width = 150;
@@ -238,6 +240,8 @@ Rectangle {
       _component.typeId = typeId;
       _component.componentType = type;
       _component.attribute = attribute;
+      _component.typeName = typeName;
+      _component.displayText = displayText;
 
       _component.type = "Component";
     }
@@ -249,7 +253,7 @@ Rectangle {
     function isComponentDrop(dropText)
     {
       var textList = dropText.split(",");
-      if (textList.length < 5)
+      if (textList.length < 6)
         return false;
       if (textList[0] !== "Component")
         return false;
@@ -325,7 +329,9 @@ Rectangle {
       property string typeId: ""
       property string componentType: ""
       property string attribute: ""
+      property string typeName: ""
       property string componentId: entity + "," + typeId + "," + attribute;
+      property string displayText: ""
 
       /**
         set the field name text
@@ -354,8 +360,8 @@ Rectangle {
         Text {
           id: fieldname
           text: (component.type === "Field") ? component.topic + "/"+ component.path :
-                (component.type === "Component") ? component.entity + "," + component.typeId.toString()
-                                                    + "," + component.attribute : ""
+                (component.type === "Component") ? component.entity + "," + component.typeName
+                                                   + "," + component.attribute : ""
           color: "white"
           elide: Text.ElideRight
           width: parent.width * 0.9
@@ -367,10 +373,11 @@ Rectangle {
           delay: 1000
           timeout: 2000
           text: (component.type === "Field" ) ? component.topic + "-"+ component.path :
-                (component.type === "Component") ? "entity:" + component.entity + "\n" +
-                                                    "typeId:" + component.typeId + "\n" +
-                                                    component.componentType + " " +
-                                                    component.attribute : ""
+                (component.type === "Component") ? "entity: " + component.entity + "\n" +
+                                                    "typeId: " + component.typeId + "\n" +
+                                                    "typeName: " + component.typeName + "\n" +
+                                                    "dataType: " + component.componentType + "\n" +
+                                                    "attribute: " + component.attribute : ""
           visible: fieldInfoMouse.containsMouse
           y: fieldInfoMouse.mouseY
           x: fieldInfoMouse.mouseX
@@ -407,7 +414,7 @@ Rectangle {
 
             // delete the series points and deattache it from the chart
             if (component.type === "Field")
-              chart.deleteSeries(component.topic + "-"+ component.path)
+              chart.deleteSeries(component.topic + "-" + component.path)
 
             else if (component.type === "Component")
               chart.deleteSeries(component.componentId);
@@ -478,8 +485,9 @@ Rectangle {
       add new series
       ID key of the series: path of the field of the series
     */
-    function addSeries(ID) {
-      var newSeries = createSeries(ChartView.SeriesTypeLine, ID, xAxis, yAxis);
+    function addSeries(ID, seriesDisplayText = "") {
+      var seriesName = (seriesDisplayText) ? seriesDisplayText : ID
+      var newSeries = createSeries(ChartView.SeriesTypeLine, seriesName, xAxis, yAxis);
       newSeries.useOpenGL = true;
       newSeries.width = 2;
       newSeries.color = chart.colors[chart.indexColor % chart.colors.length]
