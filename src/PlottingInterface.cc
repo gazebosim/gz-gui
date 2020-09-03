@@ -575,7 +575,7 @@ void PlottingInterface::onComponentUnSubscribe(QString _entity, QString _typeId,
 void PlottingInterface::subscribe(int _chart,
                                   QString _topic,
                                   QString _fieldPath)
-{    
+{
   this->dataPtr->transport->Subscribe(_topic.toStdString(),
                                       _fieldPath.toStdString(),
                                       _chart, this->dataPtr->plottingTimeRef);
@@ -642,7 +642,31 @@ bool PlottingInterface::exportCSV(QString _path, int _chart,
   QMap<QString, QVariant>::const_iterator series = _serieses.constBegin();
   while (series != _serieses.constEnd())
   {
-    auto name = plotName +  "_" + series.key().toStdString();
+    auto key = series.key().toStdString();
+
+    // check if it is a component
+    auto seriesKeys = ignition::common::Split(key, ',');
+    if (seriesKeys.size() == 3)
+    {
+      // convert from string to uint64_t
+      uint64_t typeId;
+      std::string typeIdString = seriesKeys[1];
+      std::istringstream issTypeId(typeIdString);
+      issTypeId >> typeId;
+
+      // replace the typeId num with the type name
+      auto typeName = emit ComponentName(typeId);
+      seriesKeys[1] = typeName;
+
+      // make the new series key
+      key = seriesKeys[0] + "_" + seriesKeys[1] + "_" + seriesKeys[2];
+    }
+    // if Field
+    else
+      std::replace(key.begin(), key.end(), '-', '/');
+
+    auto name = plotName +  "_" + key;
+
     auto filePath = this->FilePath(_path , name, "csv");
 
     if (!filePath.size())
@@ -655,7 +679,7 @@ bool PlottingInterface::exportCSV(QString _path, int _chart,
     if (!file.is_open())
         ignwarn << "[Couldn't open file: " << filePath << "]" << std::endl;
 
-    file << "time, " << series.key().toStdString() << std::endl;
+    file << "time, " << key << std::endl;
 
     auto points = series.value().toList();
     for (int j = 0 ; j < points.size(); j++)

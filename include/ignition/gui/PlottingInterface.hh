@@ -312,6 +312,11 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
   public slots: bool exportCSV(QString _path, int _chart,
                                QMap< QString, QVariant> _serieses);
 
+  /// \brief Get Component Name based on its type Id
+  /// \param[in] _typeId type Id of the component
+  /// \return Component name
+  signals: std::string ComponentName(uint64_t _typeId);
+
   /// \brief configration of the timer
   public: void InitTimer();
 
