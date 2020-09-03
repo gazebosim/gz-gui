@@ -147,7 +147,7 @@ class IGNITION_GUI_VISIBLE Topic : public QObject
 
   /// \brief update the current time with the default time of the plotting timer
   /// \param[in] _time current time of the plotting timer
-  public: void SetPlottingTimeRef(const double *_time);
+  public: void SetPlottingTimeRef(const std::shared_ptr<double> &_time);
 
   /// \brief Private data member.
   private: std::unique_ptr<TopicPrivate> dataPtr;
@@ -179,9 +179,9 @@ class IGNITION_GUI_VISIBLE Transport : public QObject
   /// \param[in] _fieldPath field path ID
   /// \param[in] _chart chart ID
   /// \return Topic Pointer to the subscribed topic
-  public: Topic *Subscribe(const std::string &_topic,
+  public: void Subscribe(const std::string &_topic,
                          const std::string &_fieldPath,
-                         int _chart);
+                         int _chart, const std::shared_ptr<double> &_time);
 
   /// \brief Unsubscribe from non-exist topics in the transport
   public slots: void UnsubscribeOutdatedTopics();

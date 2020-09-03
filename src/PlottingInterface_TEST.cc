@@ -52,7 +52,13 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   pose->set_allocated_position(vector3d);
   msg.set_allocated_pose(pose);
 
+  // plotting time for non-header msgs
+  double *time = new double;
+  *time = 10;
+  std::shared_ptr<double> timeRef (time);
+
   auto topic = Topic("");
+  topic.SetPlottingTimeRef(timeRef);
 
   topic.Register("pose-position-x", 1);
   topic.Register("pose-position-x", 2);
@@ -83,8 +89,6 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   // =========== Callback Test ============
   topic.Register("pose-position-z", 1);
 
-  double currentTime = 10.0;
-  topic.SetPlottingTimeRef(&currentTime);
   // update the fields
   topic.Callback(msg);
 
@@ -98,8 +102,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   vector3d->set_z(15);
 
   // time diff < max diff
-  currentTime += 0.0001;
-  topic.SetPlottingTimeRef(&currentTime);
+  *time += 0.0001;
+
   // update the fields
   topic.Callback(msg);
 
@@ -168,8 +172,12 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   auto transport = Transport();
-  transport.Subscribe("/collision_topic", "pose-position-x", 1);
-  transport.Subscribe("/collision_topic", "pose-position-z", 1);
+
+  double time = 10;
+  std::shared_ptr<double> timeRef (&time);
+
+  transport.Subscribe("/collision_topic", "pose-position-x", 1, timeRef);
+  transport.Subscribe("/collision_topic", "pose-position-z", 1, timeRef);
 
   // prepare the msg
   msgs::Collision msg;
@@ -191,8 +199,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   node.Subscribe("collision_topic", cb);
 
   auto topics = transport.Topics();
-  double timeRef = 10;
-  topics["/collision_topic"]->SetPlottingTimeRef(&timeRef);
+
+  topics["/collision_topic"]->SetPlottingTimeRef(timeRef);
 
   // publish to call the topic::Callback
   pub.Publish(msg);
@@ -219,7 +227,7 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   // =========== Many Topics Test =================
   // add another topic to the transport and subscribe to it
   node.Advertise<msgs::Int32> ("/test_topic");
-  transport.Subscribe("/test_topic", "data", 2);
+  transport.Subscribe("/test_topic", "data", 2, timeRef);
 
   topics = transport.Topics();
 

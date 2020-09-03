@@ -59,7 +59,7 @@ class TopicPrivate
   public: std::string name;
 
   /// \brief Default Plotting time
-  public: const double *plottingTime = nullptr;
+  public: std::shared_ptr<double> plottingTime;
 
   /// \brief Previous header time to limit the frequency of publishing
   public: double lastHeaderTime = 0;
@@ -84,6 +84,9 @@ class PlottingIfacePrivate
 
   /// \brief current plotting time
   public: double time;
+
+  /// \brief Plotting time pointer to give access to topics to read it
+  public: std::shared_ptr<double> plottingTimeRef {&time};
 
   /// \brief timeout to update the plot with the timer
   public: int timeout;
@@ -293,7 +296,7 @@ void Topic::Callback(const google::protobuf::Message &_msg)
     }
 
     if (!fieldIt.second)
-        continue;
+      continue;
 
     // Field Arrival Time
     fieldIt.second->SetTime(headerTime);
@@ -320,13 +323,13 @@ bool Topic::HasHeader(const google::protobuf::Message &_msg,
   auto stamp = header->message_type()->FindFieldByName("stamp");
 
   if (!stamp)
-      return false;
+    return false;
 
   auto headerMsg = ref->MutableMessage
           (const_cast<google::protobuf::Message *>(&_msg), header);
 
   if (!headerMsg)
-      return false;
+    return false;
 
   ref = headerMsg->GetReflection();
 
@@ -334,7 +337,7 @@ bool Topic::HasHeader(const google::protobuf::Message &_msg,
           (const_cast<google::protobuf::Message *>(headerMsg), stamp);
 
   if (!stampMsg)
-      return false;
+    return false;
 
   auto secField = stamp->message_type()->FindFieldByName("sec");
   auto nsecField = stamp->message_type()->FindFieldByName("nsec");
@@ -365,10 +368,10 @@ void Topic::UpdateGui(const std::string &_field)
 }
 
 //////////////////////////////////////////////////////
-void Topic::SetPlottingTimeRef(const double *_timePtr)
+void Topic::SetPlottingTimeRef(const std::shared_ptr<double> &_timeRef)
 {
   if (!this->dataPtr->plottingTime)
-    this->dataPtr->plottingTime = _timePtr;
+    this->dataPtr->plottingTime = _timeRef;
 }
 
 //////////////////////////////////////////////////////
@@ -437,9 +440,9 @@ void Transport::Unsubscribe(const std::string &_topic,
 }
 
 ////////////////////////////////////////////
-Topic *Transport::Subscribe(const std::string &_topic,
+void Transport::Subscribe(const std::string &_topic,
                           const std::string &_fieldPath,
-                          int _chart)
+                          int _chart, const std::shared_ptr<double> &_time)
 {
   // new topic
   if (this->dataPtr->topics.count(_topic) == 0)
@@ -449,6 +452,8 @@ Topic *Transport::Subscribe(const std::string &_topic,
 
     topicHandler->Register(_fieldPath, _chart);
     this->dataPtr->node.Subscribe(_topic, &Topic::Callback, topicHandler);
+
+    topicHandler->SetPlottingTimeRef(_time);
 
     connect(topicHandler, SIGNAL(plot(int, QString, double, double)),
             this, SLOT(onPlot(int, QString, double, double)));
@@ -460,7 +465,6 @@ Topic *Transport::Subscribe(const std::string &_topic,
     this->dataPtr->node.Subscribe(_topic, &Topic::Callback,
                                   this->dataPtr->topics[_topic]);
   }
-  return this->dataPtr->topics[_topic];
 }
 
 //////////////////////////////////////////////////////
@@ -571,12 +575,10 @@ void PlottingInterface::onComponentUnSubscribe(QString _entity, QString _typeId,
 void PlottingInterface::subscribe(int _chart,
                                   QString _topic,
                                   QString _fieldPath)
-{
-  auto subscribedTopic =
-          this->dataPtr->transport->Subscribe(_topic.toStdString(),
-                                              _fieldPath.toStdString(),
-                                              _chart);
-  subscribedTopic->SetPlottingTimeRef(&this->dataPtr->time);
+{    
+  this->dataPtr->transport->Subscribe(_topic.toStdString(),
+                                      _fieldPath.toStdString(),
+                                      _chart, this->dataPtr->plottingTimeRef);
 }
 
 ////////////////////////////////////////////
