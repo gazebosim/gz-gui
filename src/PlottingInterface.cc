@@ -406,11 +406,6 @@ double TopicPrivate::FieldData(const google::protobuf::Message &_msg,
 ////////////////////////////////////////////
 Transport::Transport() : dataPtr(std::make_unique<TransportPrivate>())
 {
-  auto topicsTimer = new QTimer();
-  topicsTimer->setInterval(100);
-  connect(topicsTimer, SIGNAL(timeout()),
-          this, SLOT(UnsubscribeOutdatedTopics()));
-  topicsTimer->start();
 }
 
 ////////////////////////////////////////////

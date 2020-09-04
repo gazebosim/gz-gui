@@ -183,7 +183,7 @@ Rectangle {
           return;
 
         // add axis series to plot the field
-        chart.addSeries(ID);
+        chart.addSeries(ID, "");
 
         // add field info component
         infoRect.addField(ID, topic, path);
@@ -485,7 +485,7 @@ Rectangle {
       add new series
       ID key of the series: path of the field of the series
     */
-    function addSeries(ID, seriesDisplayText = "") {
+    function addSeries(ID, seriesDisplayText) {
       var seriesName = (seriesDisplayText) ? seriesDisplayText : ID
       var newSeries = createSeries(ChartView.SeriesTypeLine, seriesName, xAxis, yAxis);
       newSeries.useOpenGL = true;

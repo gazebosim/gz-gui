@@ -178,7 +178,7 @@ class IGNITION_GUI_VISIBLE Transport : public QObject
   /// \param[in] _topic topic name
   /// \param[in] _fieldPath field path ID
   /// \param[in] _chart chart ID
-  /// \return Topic Pointer to the subscribed topic
+  /// \param[in] _time ref to current plotting time
   public: void Subscribe(const std::string &_topic,
                          const std::string &_fieldPath,
                          int _chart, const std::shared_ptr<double> &_time);
@@ -190,7 +190,18 @@ class IGNITION_GUI_VISIBLE Transport : public QObject
   /// \return Topics list
   public: const std::map<std::string, Topic*> &Topics();
 
+  /// \brief Slot for receiving topics signal at each topic callback to plot
+  /// \param[in] _chart chart ID
+  /// \param[in] _fieldID field path ID
+  /// \param[in] _x x coordinates of the plot point
+  /// \param[in] _y y coordinates of the plot point
   public slots: void onPlot(int _chart, QString _fieldID, double _x, double _y);
+
+  /// \brief notify the Plotting Interface to plot
+  /// \param[in] _chart chart ID
+  /// \param[in] _fieldID field path ID
+  /// \param[in] _x x coordinates of the plot point
+  /// \param[in] _y y coordinates of the plot point
   signals: void plot(int _chart, QString _fieldID, double _x, double _y);
 
   /// \brief Private data member.
