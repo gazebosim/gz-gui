@@ -55,7 +55,7 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   // plotting time for non-header msgs
   double *time = new double;
   *time = 10;
-  std::shared_ptr<double> timeRef (time);
+  std::shared_ptr<double> timeRef(time);
 
   auto topic = Topic("");
   topic.SetPlottingTimeRef(timeRef);
@@ -84,7 +84,6 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   // test the removing of the field if it has not attatched charts
   topic.UnRegister("pose-position-y", 1);
   EXPECT_EQ(topic.FieldCount(), 1);
-
 
   // =========== Callback Test ============
   topic.Register("pose-position-z", 1);
@@ -174,7 +173,7 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   auto transport = Transport();
 
   double time = 10;
-  std::shared_ptr<double> timeRef (&time);
+  std::shared_ptr<double> timeRef(&time);
 
   transport.Subscribe("/collision_topic", "pose-position-x", 1, timeRef);
   transport.Subscribe("/collision_topic", "pose-position-z", 1, timeRef);
@@ -192,8 +191,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   std::function<void(const msgs::Collision &)> cb =
       [&](const msgs::Collision &_msg)
   {
-      EXPECT_NEAR(_msg.pose().position().x(), 10, 1e-6);
-      received = true;
+    EXPECT_NEAR(_msg.pose().position().x(), 10, 1e-6);
+    received = true;
   };
 
   node.Subscribe("collision_topic", cb);
