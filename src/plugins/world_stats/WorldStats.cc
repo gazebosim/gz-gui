@@ -17,7 +17,6 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/StringUtils.hh>
-#include <ignition/common/Time.hh>
 #include <ignition/plugin/Register.hh>
 
 #include "ignition/gui/Helpers.hh"
@@ -183,24 +182,24 @@ void WorldStats::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  std::chrono::steady_clock::time_point time_point;
+  std::chrono::steady_clock::time_point timePoint;
 
   if (this->dataPtr->msg.has_sim_time())
   {
-    time_point = math::secNsecToTimePoint(
+    timePoint = math::secNsecToTimePoint(
         this->dataPtr->msg.sim_time().sec(),
         this->dataPtr->msg.sim_time().nsec());
     this->SetSimTime(QString::fromStdString(
-      math::timePointToString(time_point)));
+      math::timePointToString(timePoint)));
   }
 
   if (this->dataPtr->msg.has_real_time())
   {
-    time_point = math::secNsecToTimePoint(
+    timePoint = math::secNsecToTimePoint(
         this->dataPtr->msg.real_time().sec(),
         this->dataPtr->msg.real_time().nsec());
     this->SetRealTime(QString::fromStdString(
-      math::timePointToString(time_point)));
+      math::timePointToString(timePoint)));
   }
 
   {

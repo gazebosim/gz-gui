@@ -90,6 +90,8 @@ namespace ignition
     /// \brief Convert an ignition::msgs::Time to an ignition::common::Time
     /// \param[in] _t The time to convert
     /// \return An ignition::common::Time object
+    /// \deprecated Use ignition::msgs:Convert to
+    /// std::chrono::steady_clock::time_point
     IGNITION_GUI_VISIBLE
     IGN_DEPRECATED(4)
     common::Time convert(const msgs::Time &_t);
@@ -97,6 +99,8 @@ namespace ignition
     /// \brief Convert an ignition::common::Time to an ignition::msgs::Time
     /// \param[in] _t The time to convert
     /// \return An ignition::msgs::Time object
+    /// \deprecated Use ignition::msgs:Convert to
+    /// std::chrono::steady_clock::time_point
     IGNITION_GUI_VISIBLE
     IGN_DEPRECATED(4)
     msgs::Time convert(const common::Time &_t);
