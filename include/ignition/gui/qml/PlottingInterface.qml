@@ -163,6 +163,16 @@ Rectangle
   }
 
   /**
+    fix the OpenGL disappear problem when the plugin is docked
+  */
+  function fixOpenGL()
+  {
+    Object.keys(main.charts).forEach(function(key) {
+      main.charts[key].fixOpenGL();
+    });
+  }
+
+  /**
   plot point to a chart
   _chart: chart id
   _fieldID: field path or id
@@ -171,7 +181,7 @@ Rectangle
   */
   function handlePlot(_chart, _fieldID, _x, _y)
   {
-  charts[_chart].appendPoint(_fieldID, _x, _y);
+    charts[_chart].appendPoint(_fieldID, _x, _y);
   }
 
   Connections {
@@ -184,6 +194,11 @@ Rectangle
   Layout.minimumHeight: 600
   anchors.fill: parent
   color: (Material.theme == Material.Light) ? Material.color(Material.Grey,Material.Shade100) : Material.background
+
+  // when the chart is docked fix the OpenGL Disappear problem
+  onWidthChanged: {
+    main.fixOpenGL();
+  }
 
   // Horizonal Layout to hold multi charts (small charts)
   Rectangle {
@@ -310,7 +325,8 @@ Rectangle
       width: background.width * factor;
       height: background.height * factor;
       anchors.centerIn: background
-      sourceSize: {width: background.width * factor; height: background.height * factor}
+      sourceSize.width: background.width * factor;
+      sourceSize.height: background.height * factor;
       source: "images/export_icon.png"
     }
 
@@ -367,15 +383,6 @@ Rectangle
 
         chartImages.push(imageObject);
 
-        if (isSmallChart)
-        {
-        charts[index].width = 200;
-        charts[index].height = 135;
-        charts[index].multiChartsMode = true;
-        charts[index].fillPlotInOrOut();
-        isSmallChart = false;
-        }
-
         index++;
         continueCopy();
       }
@@ -398,23 +405,12 @@ Rectangle
 
       /**
       continue the process of the copy
-      this is because we should continue copying after the prev image is grabbed
+      Grabbing image takes time and we should continue after the image callback
       */
       function continueCopy()
       {
-
-        if (charts[index].multiChartsMode)
-        {
-        charts[index].getChart().animationOptions = ChartView.NoAnimation
-        charts[index].width  = 1270
-        charts[index].height = 720
-        charts[index].multiChartsMode = false;
-        charts[index].fillPlotInOrOut();
-        isSmallChart = true;
-        }
-
         if (index < charts.length)
-        charts[index].getChart().grabToImage(addChartCopy);
+          charts[index].getChart().grabToImage(addChartCopy);
       }
 
       /**
@@ -481,7 +477,6 @@ Rectangle
                               Material.color(Material.Grey, Material.Shade900)
         anchors.fill: parent
         id: exportWidget
-
 
         // make it scrolable
         ScrollView {
@@ -560,7 +555,6 @@ Rectangle
           }
         }
         onRejected: fileDialog.close();
-
       }
 
       /**

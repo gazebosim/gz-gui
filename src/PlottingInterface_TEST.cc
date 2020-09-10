@@ -52,7 +52,13 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   pose->set_allocated_position(vector3d);
   msg.set_allocated_pose(pose);
 
+  // plotting time for non-header msgs
+  double *time = new double;
+  *time = 10;
+  std::shared_ptr<double> timeRef(time);
+
   auto topic = Topic("");
+  topic.SetPlottingTimeRef(timeRef);
 
   topic.Register("pose-position-x", 1);
   topic.Register("pose-position-x", 2);
@@ -79,7 +85,6 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   topic.UnRegister("pose-position-y", 1);
   EXPECT_EQ(topic.FieldCount(), 1);
 
-
   // =========== Callback Test ============
   topic.Register("pose-position-z", 1);
 
@@ -90,6 +95,68 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
 
   EXPECT_EQ(static_cast<int>(fields["pose-position-x"]->Value()), 10);
   EXPECT_EQ(static_cast<int>(fields["pose-position-z"]->Value()), 15);
+
+  // ========== Callback Test with too small time diff ==========
+  vector3d->set_x(20);
+  vector3d->set_z(15);
+
+  // time diff < max diff
+  *time += 0.0001;
+
+  // update the fields
+  topic.Callback(msg);
+
+  fields = topic.Fields();
+
+  // will not be set to 20 because the too small time diff
+  EXPECT_NE(static_cast<int>(fields["pose-position-x"]->Value()), 20);
+}
+
+//////////////////////////////////////////////////
+// Disable test on windows until we fix "LNK2001 unresolved external symbol"
+// error
+TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(HeaderTime))
+{
+  common::Console::SetVerbosity(4);
+
+  // prepare the msg
+  msgs::Int32 msg;
+  msg.set_data(10);
+
+  auto topic = Topic("");
+
+  topic.Register("data", 1);
+
+  // set current time
+  float currentTime = 10.0;
+  auto header = new msgs::Header;
+  auto stamp = new msgs::Time;
+  stamp->set_sec(currentTime);
+  header->set_allocated_stamp(stamp);
+  msg.set_allocated_header(header);
+
+  // update the fields
+  topic.Callback(msg);
+
+  auto fields = topic.Fields();
+
+  EXPECT_EQ(static_cast<int>(fields["data"]->Value()), 10);
+
+  // ======== Header time with too small time diff ==========
+
+  msg.set_data(20);
+
+  // time diff < max diff
+  stamp->set_sec(currentTime);
+  stamp->set_nsec(1);
+
+  // update the fields
+  topic.Callback(msg);
+
+  fields = topic.Fields();
+
+  // will not be set to 20 because the too small time diff
+  EXPECT_NE(static_cast<int>(fields["data"]->Value()), 20);
 }
 
 //////////////////////////////////////////////////
@@ -104,8 +171,12 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   auto transport = Transport();
-  transport.Subscribe("/collision_topic", "pose-position-x", 1);
-  transport.Subscribe("/collision_topic", "pose-position-z", 1);
+
+  double time = 10;
+  std::shared_ptr<double> timeRef(&time);
+
+  transport.Subscribe("/collision_topic", "pose-position-x", 1, timeRef);
+  transport.Subscribe("/collision_topic", "pose-position-z", 1, timeRef);
 
   // prepare the msg
   msgs::Collision msg;
@@ -120,11 +191,15 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   std::function<void(const msgs::Collision &)> cb =
       [&](const msgs::Collision &_msg)
   {
-      EXPECT_NEAR(_msg.pose().position().x(), 10, 1e-6);
-      received = true;
+    EXPECT_NEAR(_msg.pose().position().x(), 10, 1e-6);
+    received = true;
   };
 
   node.Subscribe("collision_topic", cb);
+
+  auto topics = transport.Topics();
+
+  topics["/collision_topic"]->SetPlottingTimeRef(timeRef);
 
   // publish to call the topic::Callback
   pub.Publish(msg);
@@ -140,8 +215,6 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
 
   EXPECT_TRUE(received);
 
-  auto topics = transport.Topics();
-
   EXPECT_EQ(topics["/collision_topic"]->FieldCount(), 2);
 
   auto fields = topics["/collision_topic"]->Fields();
@@ -153,7 +226,7 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
   // =========== Many Topics Test =================
   // add another topic to the transport and subscribe to it
   node.Advertise<msgs::Int32> ("/test_topic");
-  transport.Subscribe("/test_topic", "data", 2);
+  transport.Subscribe("/test_topic", "data", 2, timeRef);
 
   topics = transport.Topics();
 
