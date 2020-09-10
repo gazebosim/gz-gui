@@ -236,7 +236,7 @@ Pane {
 //    State {
 //      name: "cardWindow"
 //      ParentChange {
-//        target: card;
+//        target: cardPane;
 //        parent: cardWindowContent;
 //        x: 0
 //        y: 0
