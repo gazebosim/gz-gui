@@ -80,19 +80,19 @@ class TransportPrivate
 class PlottingIfacePrivate
 {
   /// \brief Responsible for transport messages and topics
-  public: Transport *transport;
+  public: Transport transport;
 
   /// \brief current plotting time
-  public: double time;
+  public: double *time {new double};
 
   /// \brief Plotting time pointer to give access to topics to read it
-  public: std::shared_ptr<double> plottingTimeRef {&time};
+  public: std::shared_ptr<double> plottingTimeRef {time};
 
   /// \brief timeout to update the plot with the timer
   public: int timeout;
 
   /// \brief timer to update the plotting each time step
-  public: QTimer *timer;
+  public: QTimer timer;
 };
 
 }
@@ -497,8 +497,7 @@ void Transport::UnsubscribeOutdatedTopics()
 PlottingInterface::PlottingInterface() : QObject(),
     dataPtr(std::make_unique<PlottingIfacePrivate>())
 {
-  this->dataPtr->transport = new Transport();
-  connect(this->dataPtr->transport,
+  connect(&this->dataPtr->transport,
           SIGNAL(plot(int, QString, double, double)), this,
           SLOT(onPlot(int, QString, double, double)));
 
@@ -518,21 +517,15 @@ void PlottingInterface::unsubscribe(int _chart,
                                     QString _topic,
                                     QString _fieldPath)
 {
-  this->dataPtr->transport->Unsubscribe(_topic.toStdString(),
-                                        _fieldPath.toStdString(),
-                                        _chart);
+  this->dataPtr->transport.Unsubscribe(_topic.toStdString(),
+                                       _fieldPath.toStdString(),
+                                       _chart);
 }
 
 //////////////////////////////////////////////////////
 float PlottingInterface::Timeout() const
 {
-  return this->dataPtr->timer->interval();
-}
-
-//////////////////////////////////////////////////////
-double PlottingInterface::Time() const
-{
-  return this->dataPtr->time;
+  return this->dataPtr->timer.interval();
 }
 
 //////////////////////////////////////////////////////
@@ -571,18 +564,17 @@ void PlottingInterface::subscribe(int _chart,
                                   QString _topic,
                                   QString _fieldPath)
 {
-  this->dataPtr->transport->Subscribe(_topic.toStdString(),
-                                      _fieldPath.toStdString(),
-                                      _chart, this->dataPtr->plottingTimeRef);
+  this->dataPtr->transport.Subscribe(_topic.toStdString(),
+                                     _fieldPath.toStdString(),
+                                     _chart, this->dataPtr->plottingTimeRef);
 }
 
 ////////////////////////////////////////////
 void PlottingInterface::InitTimer()
 {
-  this->dataPtr->timer = new QTimer();
-  this->dataPtr->timer->setInterval(this->dataPtr->timeout);
-  connect(this->dataPtr->timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
-  this->dataPtr->timer->start();
+  this->dataPtr->timer.setInterval(this->dataPtr->timeout);
+  connect(&this->dataPtr->timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
+  this->dataPtr->timer.start();
 }
 
 //////////////////////////////////////////////////////
@@ -592,7 +584,7 @@ void PlottingInterface::onPlot(int _chart, QString _fieldID,
   // if _x == -1, then the msg has not header time
   // so update x with the default plotting time that is handled by a timer
   if (static_cast<int>(_x) == DEFAULT_TIME)
-      _x = this->dataPtr->time;
+      _x = *this->dataPtr->time;
 
   emit this->plot(_chart, _fieldID, _x, _y);
 }
@@ -600,7 +592,7 @@ void PlottingInterface::onPlot(int _chart, QString _fieldID,
 //////////////////////////////////////////////////////
 void PlottingInterface::UpdateTime()
 {
-  this->dataPtr->time += this->dataPtr->timeout * 0.001;
+  *this->dataPtr->time += this->dataPtr->timeout * 0.001;
 }
 
 //////////////////////////////////////////////////////
