@@ -244,10 +244,6 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
   /// \return updating plot timeout
   public: float Timeout() const;
 
-  /// \brief Get the Plotting Time
-  /// \return Plotting Time
-  public slots: double Time() const;
-
   /// \brief slot to get triggered to plot a point and send its data to the UI
   /// \param[in] _chart chart ID
   /// \param[in] _fieldID field path ID
