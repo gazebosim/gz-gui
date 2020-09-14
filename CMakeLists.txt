@@ -39,7 +39,7 @@ ign_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
 # Find ignition-math
-ign_find_package(ignition-math6 REQUIRED)
+ign_find_package(ignition-math6 REQUIRED VERSION 6.5)
 set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
 
 #--------------------------------------
