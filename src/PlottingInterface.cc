@@ -83,7 +83,7 @@ class PlottingIfacePrivate
   public: Transport transport;
 
   /// \brief Plotting time pointer to give access to topics to read it
-  public: std::shared_ptr<double> plottingTimeRef {new double};
+  public: std::shared_ptr<double> plottingTimeRef = std::make_shared<double>();
 
   /// \brief timeout to update the plot with the timer
   public: int timeout;
