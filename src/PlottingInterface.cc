@@ -82,11 +82,8 @@ class PlottingIfacePrivate
   /// \brief Responsible for transport messages and topics
   public: Transport transport;
 
-  /// \brief current plotting time
-  public: double *time {new double};
-
   /// \brief Plotting time pointer to give access to topics to read it
-  public: std::shared_ptr<double> plottingTimeRef {time};
+  public: std::shared_ptr<double> plottingTimeRef {new double};
 
   /// \brief timeout to update the plot with the timer
   public: int timeout;
@@ -584,7 +581,7 @@ void PlottingInterface::onPlot(int _chart, QString _fieldID,
   // if _x == -1, then the msg has not header time
   // so update x with the default plotting time that is handled by a timer
   if (static_cast<int>(_x) == DEFAULT_TIME)
-      _x = *this->dataPtr->time;
+      _x = *this->dataPtr->plottingTimeRef;
 
   emit this->plot(_chart, _fieldID, _x, _y);
 }
@@ -592,7 +589,7 @@ void PlottingInterface::onPlot(int _chart, QString _fieldID,
 //////////////////////////////////////////////////////
 void PlottingInterface::UpdateTime()
 {
-  *this->dataPtr->time += this->dataPtr->timeout * 0.001;
+  *this->dataPtr->plottingTimeRef += this->dataPtr->timeout * 0.001;
 }
 
 //////////////////////////////////////////////////////

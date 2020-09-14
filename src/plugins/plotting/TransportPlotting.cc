@@ -21,7 +21,8 @@ using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
-TransportPlotting::~TransportPlotting() {
+TransportPlotting::~TransportPlotting()
+{
 }
 
 //////////////////////////////////////////
