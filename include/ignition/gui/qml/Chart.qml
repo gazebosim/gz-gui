@@ -515,6 +515,8 @@ Rectangle {
     */
     function appendPoint(_fieldID, _x, _y)
     {
+      if (!chart.serieses[_fieldID])
+        return;
 
       // if this is the first point (if the chart is empty):
       // set the min/max according to that point's coordinates
