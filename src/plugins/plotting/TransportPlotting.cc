@@ -29,7 +29,7 @@ TransportPlotting::~TransportPlotting()
 void TransportPlotting::LoadConfig(const tinyxml2::XMLElement *)
 {
   if (this->title.empty())
-    this->title = "Plotting";
+    this->title = "Transport plotting";
 }
 
 //////////////////////////////////////////
