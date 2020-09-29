@@ -1,1 +1,1 @@
-See the [Ignition Robotics contributing guide](https://ignitionrobotics.org/docs/all/contributing).
+See the [Ignition contributing guide](https://ignitionrobotics.org/docs/all/contributing).

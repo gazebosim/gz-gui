@@ -31,8 +31,6 @@ which can be used to add custom widgets.
 
 [Documentation](#documentation)
 
-[Testing](#testing)
-
 [Folder Structure](#folder-structure)
 
 [Code of Conduct](#code-of-conduct)
@@ -52,7 +50,7 @@ which can be used to add custom widgets.
 
 # Install
 
-See the [installation tutorial](https://ignitionrobotics.org/api/gui/3.2/install.html).
+See the [installation tutorial](https://ignitionrobotics.org/api/gui/4.0/install.html).
 
 # Usage
 
@@ -88,16 +86,6 @@ export IGN_CONFIG_PATH=$HOME/.ignition/tools/configs
 ```
 
 This issue is tracked [here](https://github.com/ignitionrobotics/ign-tools/issues/8).
-
-# Testing
-
-After building, to run all tests:
-
-    cd build
-    make test
-
-See [this tutorial](https://ignitionrobotics.org/api/gui/4.0/install.html) for
-further instructions on how to disable testing, run test coverage, etc.
 
 # Folder Structure
 
@@ -139,7 +127,7 @@ Please see
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition Robotics project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Ignition Robotics website](https://ignitionrobotics.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Ignition website](https://ignitionrobotics.org) for version and release information.
 
 # License
 
