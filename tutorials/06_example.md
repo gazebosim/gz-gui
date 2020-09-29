@@ -45,7 +45,10 @@ For example, we can build the `hello_plugin` example plugin:
 Then create the plugins directory and copy the generated library to it so that Ignition GUI can find the plugin:
 
     mkdir -p ~/.ignition/gui/plugins
+    # Linux
     cp libHelloPlugin.so ~/.ignition/gui/plugins/
+    # MacOS
+    cp libHelloPlugin.dylib ~/.ignition/gui/plugins/
 
 Now you can use the command line to open it:
 
