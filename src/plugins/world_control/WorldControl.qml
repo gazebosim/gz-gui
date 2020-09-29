@@ -25,7 +25,7 @@ RowLayout {
   width: 200
   spacing: 2
   Layout.minimumWidth: 121
-  Layout.minimumHeight: 72
+  Layout.minimumHeight: 100
 
   Connections {
     target: WorldControl
