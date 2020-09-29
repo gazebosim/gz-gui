@@ -68,9 +68,9 @@ accent colors. From the color dropdown menu, it is possible to choose one of the
 [pre-defined material colors](https://doc.qt.io/qt-5.9/qtquickcontrols2-material.html#pre-defined-material-colors),
 and from the button next to it, it is possible to choose any custom color.
 
-> **Note**: Custom colors won't be automatically shaded based on the theme.
+\note Custom colors won't be automatically shaded based on the theme.
 
-> **Note** Toolbar colors can't be changed through the GUI yet.
+\note Toolbar colors can't be changed through the GUI yet.
 
 ## Environment variables
 
@@ -81,9 +81,12 @@ You can try running the following command for example:
 
     QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue ign gui -v 4
 
-> **Note** Toolbar colors can't be changed through environment variables yet.
+\note Any previously saved default configuration (usually stored in ~/.ignition/gui/default.config) will override
+these environment variable preferences.
 
-> **Note** Applications built on top of Ignition GUI may override custom environment variables.
+\note Toolbar colors can't be changed through environment variables yet.
+
+\note Applications built on top of Ignition GUI may override custom environment variables.
 
 ## Config files
 
@@ -110,6 +113,6 @@ And an example also configuring the toolbars:
 
     ign gui -c examples/config/style_toolbars.config
 
-> **Note**: When saving the configuration file through the GUI, the current style
+\note When saving the configuration file through the GUI, the current style
 will be saved as well.
 
