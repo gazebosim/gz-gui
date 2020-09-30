@@ -2,7 +2,44 @@
 
 ### Ignition Gui 4.X.X
 
-### Ignition Gui 4.0.0 (20XX-XX-XX)
+### Ignition Gui 4.X.X (20XX-XX-XX)
+
+### Ignition Gui 4.0.0 (2020-09-29)
+
+1. GitHub migration
+    * [Pull request 59](https://github.com/ignitionrobotics/ign-gui/pull/59)
+
+1. Fixed ImageDisplay in Ubuntu 20.04
+    * [Pull request 88](https://github.com/ignitionrobotics/ign-gui/pull/88)
+
+1. Re-enable publisher test
+    * [Pull request 85](https://github.com/ignitionrobotics/ign-gui/pull/85)
+
+1. Disable TopicViewer test on Windows and macOS
+    * [Pull request 85](https://github.com/ignitionrobotics/ign-gui/pull/85)
+
+1. Documentation updates
+    * [Pull request 106](https://github.com/ignitionrobotics/ign-gui/pull/106)
+    * [Pull request 130](https://github.com/ignitionrobotics/ign-gui/pull/130)
+    * [Pull request 127](https://github.com/ignitionrobotics/ign-gui/pull/127)
+
+1. Fix qt anchor warnings
+    * [Pull request 126](https://github.com/ignitionrobotics/ign-gui/pull/126)
+
+1. Plotting: transport plotting and interface
+    * [Pull request 115](https://github.com/ignitionrobotics/ign-gui/pull/115)
+    * [Pull request 125](https://github.com/ignitionrobotics/ign-gui/pull/125)
+    * [Pull request 124](https://github.com/ignitionrobotics/ign-gui/pull/124)
+    * [Pull request 89](https://github.com/ignitionrobotics/ign-gui/pull/89)
+
+1. Use std::chrono instead of common::Time
+    * [Pull request 116](https://github.com/ignitionrobotics/ign-gui/pull/116)
+
+1. Depend on QtCharts and change application base class to QApplication
+    * [BitBucket pull request 252](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/252)
+
+1. Depend on ign-msgs6 and ign-transport9
+    * [Pull request 92](https://github.com/ignitionrobotics/ign-gui/pull/92)
 
 1. Depend on ign-rendering4
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/243)
