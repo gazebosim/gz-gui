@@ -44,8 +44,10 @@ Menu {
 
     model: MainWindow.PluginListModel()
 
-    ScrollIndicator.vertical: ScrollIndicator {
+    ScrollBar.vertical: ScrollBar {
       active: true
+      width: 8
+      policy: ScrollBar.AlwaysOn
     }
   }
 }
