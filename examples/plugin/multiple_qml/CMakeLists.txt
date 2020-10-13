@@ -16,7 +16,7 @@ find_package (Qt5
 )
 
 # Find the Ignition gui library
-find_package(ignition-gui4 REQUIRED)
+find_package(ignition-gui5 REQUIRED)
 find_package(ignition-common3 REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
