@@ -12,7 +12,7 @@ Build | Status
 Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/master/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/master)
 Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-bionic-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-4-win)](https://build.osrfoundation.org/job/ign_gui-ign-4-win)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ci-win)](https://build.osrfoundation.org/job/ign_gui-ci-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
