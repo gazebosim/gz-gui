@@ -20,6 +20,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/SignalHandler.hh>
+#include <ignition/common/StringUtils.hh>
 #include <ignition/common/SystemPaths.hh>
 #include <ignition/common/Util.hh>
 
@@ -342,6 +343,12 @@ bool Application::LoadPlugin(const std::string &_filename,
   std::shared_ptr<gui::Plugin> plugin{nullptr};
   for (auto pluginName : pluginNames)
   {
+    auto parts = common::Split(pluginName, ':');
+    std::string gui_type = parts.back();
+
+    if (_filename.find(gui_type) == std::string::npos){
+      continue;
+    }
     commonPlugin = pluginLoader.Instantiate(pluginName);
     if (!commonPlugin)
       continue;
