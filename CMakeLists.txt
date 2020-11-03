@@ -59,8 +59,8 @@ set(IGN_TRANSPORT_VER ${ignition-transport9_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering4 REQUIRED COMPONENTS ogre)
-set(IGN_RENDERING_VER ${ignition-rendering4_VERSION_MAJOR})
+ign_find_package(ignition-rendering5 REQUIRED COMPONENTS ogre)
+set(IGN_RENDERING_VER ${ignition-rendering5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-msgs
