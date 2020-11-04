@@ -15,6 +15,9 @@
  *
 */
 
+#include "Scene3D.hh"
+
+#include <algorithm>
 #include <cmath>
 #include <map>
 #include <sstream>
@@ -50,7 +53,6 @@
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Conversions.hh"
-#include "Scene3D.hh"
 
 namespace ignition
 {

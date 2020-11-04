@@ -15,8 +15,14 @@
  *
 */
 
+#include "ImageDisplay.hh"
+
 #include <QQuickImageProvider>
+
+#include <algorithm>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
@@ -24,7 +30,6 @@
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Application.hh"
-#include "ImageDisplay.hh"
 
 namespace ignition
 {
