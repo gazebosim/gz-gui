@@ -17,12 +17,12 @@
 
 #include "ImageDisplay.hh"
 
+#include <QQuickImageProvider>
+
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <QQuickImageProvider>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
