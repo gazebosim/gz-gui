@@ -135,7 +135,13 @@
 
 ## Ignition Gui 2
 
-### Ignition Gui 2.X.X
+### Ignition Gui 2.3.3 (2020-08-31)
+
+1. Fix running plugins with bad world names.
+    * [Pull request 111](https://github.com/ignitionrobotics/ign-gui/pull/111)
+
+1. Disable more tests known to fail on macOS and Windows.
+    * [Pull request 112](https://github.com/ignitionrobotics/ign-gui/pull/112)
 
 ### Ignition Gui 2.3.2 (2020-08-19)
 

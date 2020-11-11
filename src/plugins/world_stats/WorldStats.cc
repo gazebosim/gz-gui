@@ -15,14 +15,16 @@
  *
 */
 
+#include "WorldStats.hh"
+
+#include <string>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/common/Time.hh>
 #include <ignition/plugin/Register.hh>
 
 #include "ignition/gui/Helpers.hh"
-
-#include "WorldStats.hh"
 
 namespace ignition
 {
