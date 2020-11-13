@@ -516,16 +516,16 @@ bool Application::InitializeDialogs()
 
     this->dataPtr->dialogs.push_back(dialog);
 
-    cardItem->setParentItem(dialog->RootItem());
-
     // Configure card
     cardItem->setProperty("standalone", true);
 
     // Configure dialog
     auto cardWidth = cardItem->property("width").toInt();
     auto cardHeight = cardItem->property("height").toInt();
-    dialog->QuickWindow()->setProperty("width", cardWidth);
-    dialog->QuickWindow()->setProperty("height", cardHeight);
+    dialog->QuickWindow()->setProperty("minimumWidth", cardWidth);
+    dialog->QuickWindow()->setProperty("minimumHeight", cardHeight);
+
+    cardItem->setParentItem(dialog->RootItem());
 
     // Signals
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),

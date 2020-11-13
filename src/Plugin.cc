@@ -411,9 +411,6 @@ QQuickItem *Plugin::CardItem() const
     return nullptr;
   }
 
-  // Add plugin to card content
-  this->dataPtr->pluginItem->setParentItem(cardContentItem);
-
   // Configure card
   cardItem->setProperty("pluginName",
       QString::fromStdString(this->Title()));
@@ -441,6 +438,9 @@ QQuickItem *Plugin::CardItem() const
     cardItem->setProperty("height",
         this->dataPtr->pluginItem->property("height").toInt());
   }
+
+  // Add plugin to card content
+  this->dataPtr->pluginItem->setParentItem(cardContentItem);
 
   this->dataPtr->cardItem = cardItem;
 

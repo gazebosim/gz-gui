@@ -15,14 +15,16 @@
  *
 */
 
+#include "WorldControl.hh"
+
+#include <string>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/Time.hh>
 #include <ignition/common/StringUtils.hh>
 #include <ignition/plugin/Register.hh>
 
 #include "ignition/gui/Helpers.hh"
-
-#include "WorldControl.hh"
 
 namespace ignition
 {
