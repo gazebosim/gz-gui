@@ -44,13 +44,6 @@ TEST(ExampleTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
   {
     igndbg << *file << std::endl;
 
-    // image.config is broken (issue #40)
-    if ((*file).find("image") != std::string::npos)
-    {
-      ignerr << "skipping " << *file << std::endl;
-      continue;
-    }
-
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
