@@ -45,6 +45,8 @@ namespace ignition
       };
 
       /// \brief The class for sending and receiving custom snap value events.
+      /// This event is used in the Transform Control plugin tool when the
+      /// user manually alters their snapping values.
       class SnapIntervals : public QEvent
       {
         /// \brief Constructor
@@ -81,7 +83,7 @@ namespace ignition
         }
   
         /// \brief The QEvent representing a snap event occurrence.
-        static const QEvent::Type kType = QEvent::Type(QEvent::User);
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 1);
   
         /// \brief XYZ snapping values in meters, these values must be positive.
         private: math::Vector3d xyz;
@@ -99,48 +101,48 @@ namespace ignition
       class SpawnPreviewModel : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _modelSdfString The model's SDF file as a string.
-        public: explicit SpawnPreviewModel(std::string &_modelSdfString)
-            : QEvent(kType), modelSdfString(_modelSdfString)
+        /// \param[in] _modelString The model's description as a string.
+        public: explicit SpawnPreviewModel(std::string &_modelString)
+            : QEvent(kType), modelString(_modelString)
         {
         }
   
         /// \brief Unique type for this event.
-        static const QEvent::Type kType = QEvent::Type(QEvent::User + 4);
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 2);
   
-        /// \brief Get the sdf string of the model.
-        /// \return The model sdf string
-        public: std::string ModelSdfString() const
+        /// \brief Get the string of the model.
+        /// \return The model string
+        public: std::string ModelString() const
         {
-          return this->modelSdfString;
+          return this->modelString;
         }
   
-        /// \brief The sdf string of the model to be previewed.
-        std::string modelSdfString;
+        /// \brief The string of the model to be previewed.
+        std::string modelString;
       };
   
       /// \brief Event called to spawn a preview resource, which takes the path
-      /// to the SDF file. Used by plugins that spawn resources.
+      /// to s file. Used by plugins that spawn resources.
       class SpawnPreviewPath : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _filePath The path to an SDF file.
+        /// \param[in] _filePath The path to a file.
         public: explicit SpawnPreviewPath(const std::string &_filePath)
             : QEvent(kType), filePath(_filePath)
         {
         }
   
         /// \brief Unique type for this event.
-        static const QEvent::Type kType = QEvent::Type(QEvent::User + 5);
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 3);
   
-        /// \brief Get the path of the SDF file.
+        /// \brief Get the path of the file.
         /// \return The file path.
         public: std::string FilePath() const
         {
           return this->filePath;
         }
   
-        /// \brief The path of SDF file to be previewed.
+        /// \brief The path of file to be previewed.
         std::string filePath;
       };
   
@@ -157,7 +159,7 @@ namespace ignition
         }
   
         /// \brief Unique type for this event.
-        static const QEvent::Type kType = QEvent::Type(QEvent::User + 6);
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 4);
   
         /// \brief Get the point within the scene over which the user is hovering.
         /// \return The 3D point
@@ -183,7 +185,7 @@ namespace ignition
         }
   
         /// \brief Unique type for this event.
-        static const QEvent::Type kType = QEvent::Type(QEvent::User + 7);
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 5);
   
         /// \brief Get the point within the scene that the user clicked.
         /// \return The 3D point.
