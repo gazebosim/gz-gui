@@ -228,7 +228,7 @@ Rectangle {
   {
     var newCardX = Math.max(target.x + mouseX, 0)
     var newCardWidth = Math.max(target.width + (target.x - newCardX),
-                                rulersRect.minSize)
+                                rulersRect.minSize, target.cardMinimumWidth)
 
     if (newCardWidth === target.width)
       return;
@@ -239,7 +239,8 @@ Rectangle {
 
   function resizeRight(target, mouseX)
   {
-    target.width = Math.max(target.width + mouseX, rulersRect.minSize)
+    target.width = Math.max(target.width + mouseX, rulersRect.minSize,
+                            target.cardMinimumWidth)
 
     if (target.width + target.x > target.parent.width)
       target.width = target.parent.width - target.x
@@ -249,7 +250,7 @@ Rectangle {
   {
     var newCardY = Math.max(target.y + mouseY, 0)
     var newCardHeight = Math.max(target.height + (target.y - newCardY),
-                                 rulersRect.minSize)
+                                 rulersRect.minSize, target.cardMinimumHeight)
 
     if (newCardHeight === target.height)
       return;
@@ -260,7 +261,8 @@ Rectangle {
 
   function resizeBottom(target, mouseY)
   {
-    target.height = Math.max(target.height + mouseY, rulersRect.minSize)
+    target.height = Math.max(target.height + mouseY, rulersRect.minSize,
+                             target.cardMinimumHeight)
 
     if (target.height + target.y > target.parent.height)
       target.height = target.parent.height - target.y

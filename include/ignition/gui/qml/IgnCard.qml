@@ -112,6 +112,16 @@ Pane {
   property bool anchored: false
 
   /**
+   * Minimum width of the card pane
+   */
+  property int cardMinimumWidth: 250;
+
+  /**
+   * Minimum height of the card pane
+   */
+  property int cardMinimumHeight: 250;
+
+  /**
    * Tool bar background color
    */
   property string pluginToolBarColor:
@@ -653,6 +663,14 @@ Pane {
     color: cardBackground
 
     onChildrenChanged: {
+      // Set the height and width of the cardPane when child plugin is attached
+      if (children.length > 0) {
+        cardMinimumWidth = content.children[0].Layout.minimumWidth;
+        cardMinimumHeight = content.children[0].Layout.minimumHeight;
+        cardPane.width = cardMinimumWidth
+        cardPane.height = cardMinimumHeight
+      }
+
       cardPane.syncTheFamily()
     }
 
