@@ -2,6 +2,38 @@
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
 
+### Ignition Gui 3.4.0 (2020-12-10)
+
+1. Publish plugin API docs
+    * [Pull request 128](https://github.com/ignitionrobotics/ign-gui/pull/128)
+
+1. Tutorial tweaks
+    * [Pull request 132](https://github.com/ignitionrobotics/ign-gui/pull/132)
+
+1. Floating and standalone plugins respect minimum dimensions
+    * [Pull request 135](https://github.com/ignitionrobotics/ign-gui/pull/135)
+
+1. Add scrollable indicator for plugin menu
+    * [Pull request 134](https://github.com/ignitionrobotics/ign-gui/pull/134)
+
+1. Re-enable image.config test
+    * [Pull request 148](https://github.com/ignitionrobotics/ign-gui/pull/148)
+
+1. Improve fork experience
+    * [Pull request 139](https://github.com/ignitionrobotics/ign-gui/pull/139)
+
+1. Resolve updated codecheck issues
+    * [Pull request 144](https://github.com/ignitionrobotics/ign-gui/pull/144)
+
+1. Port Gazebo GUI events to Ignition GUI
+    * [Pull request 148](https://github.com/ignitionrobotics/ign-gui/pull/148)
+
+1. Change deprecated Qt::MidButton
+    * [Pull request 153](https://github.com/ignitionrobotics/ign-gui/pull/153)
+
+1. Add right mouse events and tests
+    * [Pull request 154](https://github.com/ignitionrobotics/ign-gui/pull/154)
+
 ### Ignition Gui 3.3.0 (2020-08-31)
 
 1. rename key publisher plugin
