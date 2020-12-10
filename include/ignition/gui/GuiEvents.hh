@@ -18,6 +18,7 @@
 #define IGNITION_GUI_GUIEVENTS_HH_
 
 #include <QEvent>
+#include <string>
 #include <utility>
 #include <vector>
 #include <ignition/math/Vector3.hh>
