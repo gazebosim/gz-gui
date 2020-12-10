@@ -88,14 +88,14 @@ TEST(GuiEventsTest, RightClickToScene)
 }
 
 /////////////////////////////////////////////////
-TEST(GuiEventsTest, RightClickDropdownMenu)
+TEST(GuiEventsTest, DropdownMenuEnabled)
 {
-  events::RightClickDropdownMenu event(true);
+  events::DropdownMenuEnabled event(true);
 
   EXPECT_LT(QEvent::User, event.type());
   EXPECT_EQ(true, event.MenuEnabled());
 
-  events::RightClickDropdownMenu event2(false);
+  events::DropdownMenuEnabled event2(false);
 
   EXPECT_LT(QEvent::User, event2.type());
   EXPECT_EQ(false, event2.MenuEnabled());

@@ -228,15 +228,15 @@ namespace ignition
         private: math::Vector3d point;
       };
 
-      /// \brief Event which is called to enable or disable the right click
-      /// dropdown menu. This is primarily used by plugins which also use
-      /// the right click to cancel any actions currently in progress.
-      class RightClickDropdownMenu : public QEvent
+      /// \brief Event which is called to enable or disable the dropdown menu.
+      /// This is primarily used by plugins which also use the right click
+      /// mouse event to cancel any actions currently in progress.
+      class DropdownMenuEnabled : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _menuEnabled The boolean indicating whether the dropdown
         /// menu should be enabled or disabled.
-        public: explicit RightClickDropdownMenu(bool _menuEnabled)
+        public: explicit DropdownMenuEnabled(bool _menuEnabled)
             : QEvent(kType), menuEnabled(_menuEnabled)
         {
         }
