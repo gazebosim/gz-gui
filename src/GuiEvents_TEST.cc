@@ -78,3 +78,26 @@ TEST(GuiEventsTest, LeftClickToScene)
   EXPECT_EQ(math::Vector3d(1, 2, 3), event.Point());
 }
 
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, RightClickToScene)
+{
+  events::RightClickToScene event({1, 2, 3});
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_EQ(math::Vector3d(1, 2, 3), event.Point());
+}
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, RightClickDropdownMenu)
+{
+  events::RightClickDropdownMenu event(true);
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_EQ(true, event.MenuEnabled());
+
+  events::RightClickDropdownMenu event2(false);
+
+  EXPECT_LT(QEvent::User, event2.type());
+  EXPECT_EQ(false, event2.MenuEnabled());
+}
+
