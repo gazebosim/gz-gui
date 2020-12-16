@@ -19,6 +19,7 @@ set (gtest_sources
   Conversions_TEST
   DragDropModel_TEST
   Helpers_TEST
+  GuiEvents_TEST
   ign_TEST
   MainWindow_TEST
   PlottingInterface_TEST

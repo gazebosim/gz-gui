@@ -73,7 +73,7 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
     event.SetButton(common::MouseEvent::LEFT);
   else if (_e.button() == Qt::RightButton)
     event.SetButton(common::MouseEvent::RIGHT);
-  else if (_e.button() == Qt::MidButton)
+  else if (_e.button() == Qt::MiddleButton)
     event.SetButton(common::MouseEvent::MIDDLE);
 
   // Buttons
@@ -83,7 +83,7 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
   if (_e.buttons() & Qt::RightButton)
     event.SetButtons(event.Buttons() | common::MouseEvent::RIGHT);
 
-  if (_e.buttons() & Qt::MidButton)
+  if (_e.buttons() & Qt::MiddleButton)
     event.SetButtons(event.Buttons() | common::MouseEvent::MIDDLE);
 
   // Type
