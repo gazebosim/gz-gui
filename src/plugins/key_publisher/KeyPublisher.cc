@@ -23,6 +23,8 @@
 #pragma warning(pop)
 #endif
 
+#include <string>
+
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/MainWindow.hh>
 #include <ignition/plugin/Register.hh>
