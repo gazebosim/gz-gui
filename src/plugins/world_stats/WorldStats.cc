@@ -128,6 +128,14 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     topic = "/world/" + worldName + "/stats";
   }
 
+  topic = transport::TopicUtils::AsValidTopic(topic);
+  if (topic.empty())
+  {
+    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+           << std::endl;
+    return;
+  }
+
   if (!this->dataPtr->node.Subscribe(topic, &WorldStats::OnWorldStatsMsg,
       this))
   {
