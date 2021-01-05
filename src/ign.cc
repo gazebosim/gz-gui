@@ -28,7 +28,7 @@
 #include "ignition/gui/MainWindow.hh"
 
 int g_argc = 1;
-char **g_argv = new char *[g_argc];
+char **g_argv;
 
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
