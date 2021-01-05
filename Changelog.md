@@ -4,6 +4,14 @@
 
 ### Ignition Gui 4.X.X (20XX-XX-XX)
 
+### Ignition Gui 4.1.1 (2021-01-05)
+
+1. Use default value of double ptr argv for CLI
+    * [Pull request 165](https://github.com/ignitionrobotics/ign-gui/pull/165)
+
+1. Generate valid topics depending on world name
+    * [Pull request 164](https://github.com/ignitionrobotics/ign-gui/pull/164)
+
 ### Ignition Gui 4.1.0 (2020-12-18)
 
 1. Publish plugin API docs
