@@ -175,7 +175,6 @@ Pane {
 
     // Bind anchors
     anchors.fill = Qt.binding(function() {return parent})
-    anchors.fill = Qt.binding(function() {return parent})
     parent.height = Qt.binding(function() {return height})
     parent.width = Qt.binding(function() {return width})
 

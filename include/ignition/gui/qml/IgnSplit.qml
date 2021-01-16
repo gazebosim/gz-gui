@@ -43,6 +43,13 @@ SplitView {
    */
   property variant childSplits: new Object()
 
+  onHeightChanged: {
+    for (var name in childSplits)
+    {
+      childSplits[name].split.recalculateMinimumSize()
+    }
+  }
+
   Rectangle {
     id: startLabel;
     visible: MainWindow.pluginCount === 0
@@ -327,6 +334,7 @@ SplitView {
 
             // Sync minimum sizes
             var heightSum = 0;
+            var minHeightSum = 0;
             for (var i = 0; i < __items.length; i++)
             {
               var child = __items[i];
@@ -336,14 +344,23 @@ SplitView {
               {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
-              // Set child height to minimum height
-              child.height = child.Layout.minimumHeight;
-
-              // Minimum height is the sum of all children's minimum heights
-              heightSum += child.Layout.minimumHeight;
+              heightSum += child.height;
+              minHeightSum += child.Layout.minimumHeight;
             }
-            Layout.minimumHeight = heightSum;
-            split.height = heightSum;
+
+            // Minimum height to show all children
+            Layout.minimumHeight = minHeightSum;
+            split.height = Math.max(minHeightSum, background.height);
+
+            // Squish all children if there's no slack
+            if (heightSum > background.height)
+            {
+              for (var i = 0; i < __items.length; i++)
+              {
+                var child = __items[i];
+                child.height = child.Layout.minimumHeight;
+              }
+            }
           }
         }
       }
