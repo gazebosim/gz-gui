@@ -141,7 +141,7 @@ Before [ign-rendering](https://github.com/ignitionrobotics/ign-rendering) become
     cd build
     ```
 
-    Before ``ign-rendering`` becomes available on conda-forge, we need to build it from source and specify the path containing ``ignition-rendering<#>-config.cmake`` and ``ignition-rendering<#>-ogre-config.cmake`` in ``CMAKE_PREFIX_PATH``. That path could be ``ign-rendering-install-path\lib\cmake``, for example.
+    As ``ign-rendering`` is not yet available on conda-forge, we need to build it from source and specify the path containing ``ignition-rendering<#>-config.cmake`` and ``ignition-rendering<#>-ogre-config.cmake`` in ``CMAKE_PREFIX_PATH``. That path could be ``ign-rendering-install-path\lib\cmake``, for example.
 
     ```
     cmake .. -DBUILD_TESTING=OFF -DCMAKE_PREFIX_PATH=path\containing\ignition-rendering-config  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
