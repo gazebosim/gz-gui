@@ -192,7 +192,7 @@ You can also generate the documentation from a clone of this repository by follo
     cd ign-gui
     mkdir build
     cd build
-    cmake ../
+    cmake ..
     make doc
     ```
 

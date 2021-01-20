@@ -73,7 +73,7 @@ Clone source code:
 
 Install dependencies
 
-   sudo apt -y install $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
+    sudo apt -y install $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
 
 Only on Bionic, update the GCC compiler version:
 
@@ -148,7 +148,7 @@ Before [ign-rendering](https://github.com/ignitionrobotics/ign-rendering) become
     cmake --build . --config Release
     ```
 
-1. Optionally, install
+1. Optionally, install. You will likely need to run a terminal with admin privileges for this call to succeed.
 
     ```
     cmake --install . --config Release
