@@ -1,0 +1,6 @@
+ign_gui_add_plugin(Screenshot
+  SOURCES
+    Screenshot.cc
+  QT_HEADERS
+    Screenshot.hh
+)
