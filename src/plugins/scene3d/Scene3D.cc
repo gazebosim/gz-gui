@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/Image.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/plugin/Register.hh>
 #include <ignition/common/MeshManager.hh>
@@ -230,6 +231,9 @@ namespace plugins
 
     /// \brief View control focus target
     public: math::Vector3d target;
+
+    /// \brief Path to save the screenshot
+    public: std::string screenshotSavePath;
   };
 
   /// \brief Private data class for RenderWindowItem
@@ -248,6 +252,11 @@ namespace plugins
   /// \brief Private data class for Scene3D
   class Scene3DPrivate
   {
+    /// \brief Transport node
+    public: transport::Node node;
+
+    /// \brief Screenshot service
+    public: std::string screenshotService;
   };
 }
 }
@@ -852,12 +861,38 @@ void IgnRenderer::Render()
   // update and render to texture
   this->dataPtr->camera->Update();
 
+  // Save screenshot
+  {
+    if (!this->dataPtr->screenshotSavePath.empty())
+    {
+      unsigned int width = this->dataPtr->camera->ImageWidth();
+      unsigned int height = this->dataPtr->camera->ImageHeight();
+
+      auto cameraImage = this->dataPtr->camera->CreateImage();
+      this->dataPtr->camera->Copy(cameraImage);
+
+      common::Image image;
+      image.SetFromData(cameraImage.Data<unsigned char>(), width, height,
+          common::Image::RGB_INT8);
+      image.SavePNG(this->dataPtr->screenshotSavePath);
+
+      this->dataPtr->screenshotSavePath.clear();
+    }
+  }
+
   if (ignition::gui::App())
   {
     ignition::gui::App()->sendEvent(
         ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
         new gui::events::Render());
   }
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::SaveScreenshot(const std::string &_filename)
+{
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  this->dataPtr->screenshotSavePath = _filename;
 }
 
 /////////////////////////////////////////////////
@@ -1432,6 +1467,23 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       renderWindow->SetSceneTopic(topic);
     }
   }
+
+  // Screenshot service
+  this->dataPtr->screenshotService = "/gui/screenshot";
+  this->dataPtr->node.Advertise(this->dataPtr->screenshotService,
+      &Scene3D::OnScreenshot, this);
+  ignmsg << "Screenshot service on ["
+         << this->dataPtr->screenshotService << "]" << std::endl;
+}
+
+/////////////////////////////////////////////////
+bool Scene3D::OnScreenshot(const msgs::StringMsg &_msg,
+  msgs::Boolean &_res)
+{
+  auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+  renderWindow->SaveScreenshot(_msg.data());
+  _res.set_data(true);
+  return true;
 }
 
 
@@ -1483,6 +1535,12 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
   double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SaveScreenshot(const std::string &_filename)
+{
+  this->dataPtr->renderThread->ignRenderer.SaveScreenshot(_filename);
 }
 
 

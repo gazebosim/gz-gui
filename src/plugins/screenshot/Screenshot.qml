@@ -54,7 +54,7 @@ ToolBar {
 
     ToolButton {
       id: directory
-      ToolTip.text: ScreenshotDirectory
+      ToolTip.text: "Change directory\nCurrent: " + ScreenshotDirectory
       ToolTip.visible: hovered
       ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
       contentItem: Image {
@@ -72,7 +72,7 @@ ToolBar {
 
     FileDialog {
       id: fileDialog
-      title: "Save"
+      title: "Save screenshots"
       folder: ScreenshotDirectory
       selectExisting: false
       selectFolder: true
