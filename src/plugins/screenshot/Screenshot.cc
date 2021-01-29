@@ -152,10 +152,15 @@ void Screenshot::SaveScreenshot()
   auto cameraImage = this->dataPtr->userCamera->CreateImage();
   this->dataPtr->userCamera->Copy(cameraImage);
 
+  std::string time = common::systemTimeISO() + ".png";
+  std::string savePath = common::joinPaths(this->dataPtr->directory, time);
+
   common::Image image;
   image.SetFromData(cameraImage.Data<unsigned char>(), width, height,
       common::Image::RGB_INT8);
-  image.SavePNG(this->dataPtr->directory);
+  image.SavePNG(savePath);
+
+  igndbg << "Saved image to [" << savePath << "]" << std::endl;
 
   this->dataPtr->dirty = false;
 }
