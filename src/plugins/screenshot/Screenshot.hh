@@ -43,6 +43,14 @@ namespace plugins
   {
     Q_OBJECT
 
+    /// \brief Directory to save screenshots
+    Q_PROPERTY(
+      QString directory
+      READ Directory
+      WRITE SetDirectory
+      NOTIFY DirectoryChanged
+    )
+
     /// \brief Constructor
     public: Screenshot();
 
@@ -54,9 +62,6 @@ namespace plugins
 
     /// \brief Callback when screenshot is requested from the GUI.
     public slots: void OnScreenshot();
-
-    /// \brief Callback for changing the directory where screenshots are saved
-    public slots: void OnChangeDirectory(const QString &_dirUrl);
 
     /// \brief Callback for all installed event filders.
     /// \param[in] _obj Object that received the event
@@ -76,6 +81,18 @@ namespace plugins
 
     /// \brief Save a screenshot from the user camera
     private: void SaveScreenshot();
+
+    /// \brief Get the directory path as a string, for example '/home/Pictures'
+    /// \return Directory
+    public: Q_INVOKABLE QString Directory() const;
+
+    /// \brief Set the directory path from a string, for example
+    /// '/home/Pictures'
+    /// \param[in] _dirUrl The new directory path
+    public: Q_INVOKABLE void SetDirectory(const QString &_dirUrl);
+
+    /// \brief Notify that the directory path has changed
+    signals: void DirectoryChanged();
 
     /// \internal
     /// \brief Pointer to private data.

@@ -91,9 +91,7 @@ Screenshot::Screenshot()
     }
   }
 
-  // Update tooltip text
-  App()->Engine()->rootContext()->setContextProperty("ScreenshotDirectory",
-      QString::fromStdString(this->dataPtr->directory));
+  this->DirectoryChanged();
 }
 
 /////////////////////////////////////////////////
@@ -241,14 +239,17 @@ void Screenshot::OnScreenshot()
 }
 
 /////////////////////////////////////////////////
-void Screenshot::OnChangeDirectory(const QString &_dirUrl)
+QString Screenshot::Directory() const
+{
+  return QString::fromStdString(this->dataPtr->directory);
+}
+
+/////////////////////////////////////////////////
+void Screenshot::SetDirectory(const QString &_dirUrl)
 {
   QString newDir = QUrl(_dirUrl).toLocalFile();
   this->dataPtr->directory = newDir.toStdString();
-
-  // Update tooltip text
-  App()->Engine()->rootContext()->setContextProperty("ScreenshotDirectory",
-      newDir);
+  this->DirectoryChanged();
 }
 
 // Register this plugin
