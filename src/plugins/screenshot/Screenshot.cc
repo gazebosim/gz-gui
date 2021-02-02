@@ -57,6 +57,9 @@ namespace plugins
 
     /// \brief Pointer to the user camera.
     public: ignition::rendering::CameraPtr userCamera{nullptr};
+
+    /// \brief Saved screenshot filepath
+    public: QString savedScreenshotPath = "";
   };
 }
 }
@@ -163,6 +166,8 @@ void Screenshot::SaveScreenshot()
   igndbg << "Saved image to [" << savePath << "]" << std::endl;
 
   this->dataPtr->dirty = false;
+
+  this->SetSavedScreenshotPath(QString::fromStdString(savePath));
 }
 
 /////////////////////////////////////////////////
@@ -250,6 +255,20 @@ void Screenshot::SetDirectory(const QString &_dirUrl)
   QString newDir = QUrl(_dirUrl).toLocalFile();
   this->dataPtr->directory = newDir.toStdString();
   this->DirectoryChanged();
+}
+
+/////////////////////////////////////////////////
+QString Screenshot::SavedScreenshotPath() const
+{
+  return this->dataPtr->savedScreenshotPath;
+}
+
+/////////////////////////////////////////////////
+void Screenshot::SetSavedScreenshotPath(const QString &_filename)
+{
+  this->dataPtr->savedScreenshotPath = _filename;
+  this->SavedScreenshotPathChanged();
+  this->savedScreenshot();
 }
 
 // Register this plugin

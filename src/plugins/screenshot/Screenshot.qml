@@ -30,6 +30,11 @@ ToolBar {
     color: "transparent"
   }
 
+  Connections {
+    target: Screenshot
+    onSavedScreenshot: savedPathPopup.open()
+  }
+
   RowLayout {
     spacing: 2
 
@@ -48,7 +53,6 @@ ToolBar {
       }
       onClicked: {
         Screenshot.OnScreenshot()
-        savedPathPopup.open()
       }
     }
 
@@ -84,10 +88,11 @@ ToolBar {
 
     Popup {
       id: savedPathPopup
+      parent: ApplicationWindow.overlay
       x: 0
-      y: 50
+      y: 100
       Text {
-        text: "Screenshot saved in: " + Screenshot.directory
+        text: "Screenshot saved: " + Screenshot.savedScreenshotPath
       }
     }
 

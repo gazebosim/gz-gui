@@ -51,6 +51,14 @@ namespace plugins
       NOTIFY DirectoryChanged
     )
 
+    /// \brief Saved screenshot filepath
+    Q_PROPERTY(
+      QString savedScreenshotPath
+      READ SavedScreenshotPath
+      WRITE SetSavedScreenshotPath
+      NOTIFY SavedScreenshotPathChanged
+    )
+
     /// \brief Constructor
     public: Screenshot();
 
@@ -93,6 +101,22 @@ namespace plugins
 
     /// \brief Notify that the directory path has changed
     signals: void DirectoryChanged();
+
+    /// \brief Get the filepath of the saved screenshot as a string, for example
+    /// '/home/Pictures/[timestamp].png'
+    /// \return Saved screenshot filename
+    public: Q_INVOKABLE QString SavedScreenshotPath() const;
+
+    /// \brief Set the filepath of the saved screenshot from a string,
+    /// for example '/home/Pictures/[timestamp].png'
+    /// \param[in] _filename The filename (including path) of the screenshot
+    public: Q_INVOKABLE void SetSavedScreenshotPath(const QString &_filename);
+
+    /// \brief Notify that the screenshot filename has changed
+    signals: void SavedScreenshotPathChanged();
+
+    /// \brief Notify that the screenshot has been saved (opens popup)
+    signals: void savedScreenshot();
 
     /// \internal
     /// \brief Pointer to private data.
