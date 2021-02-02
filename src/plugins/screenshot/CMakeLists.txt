@@ -3,4 +3,6 @@ ign_gui_add_plugin(Screenshot
     Screenshot.cc
   QT_HEADERS
     Screenshot.hh
+  PUBLIC_LINK_LIBS
+   ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
 )

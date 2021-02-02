@@ -75,13 +75,6 @@ namespace plugins
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
-    /// \brief Callback for saving a screenshot (from the user camera) request
-    /// \param[in] _msg Request message of the saved file path
-    /// \param[in] _res Response data
-    /// \return True if the request is received
-    private: bool OnScreenshot(const msgs::StringMsg &_msg,
-        msgs::Boolean &_res);
-
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
@@ -125,10 +118,6 @@ namespace plugins
     /// \return 3D coordinates of a point in the 3D scene.
     private: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
         const;
-
-    /// \brief Save a screenshot from the user camera
-    /// \param[in] _filename The filename (including path) of the screenshot
-    public: void SaveScreenshot(const std::string &_filename);
 
     /// \brief Render texture id
     public: GLuint textureId = 0u;
@@ -270,10 +259,6 @@ namespace plugins
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
-
-    /// \brief Save a screenshot from the user camera
-    /// \param[in] _filename The filename (including path) of the screenshot
-    public: void SaveScreenshot(const std::string &_filename);
 
     // Documentation inherited
     protected: virtual void mousePressEvent(QMouseEvent *_e) override;

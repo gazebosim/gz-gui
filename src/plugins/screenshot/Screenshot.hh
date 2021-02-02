@@ -17,6 +17,9 @@
 #ifndef IGNITION_GUI_PLUGINS_SCREENSHOT_HH_
 #define IGNITION_GUI_PLUGINS_SCREENSHOT_HH_
 
+#include <ignition/msgs/boolean.pb.h>
+#include <ignition/msgs/stringmsg.pb.h>
+
 #include <memory>
 
 #include "ignition/gui/qt.h"
@@ -30,7 +33,12 @@ namespace plugins
 {
   class ScreenshotPrivate;
 
-  /// \brief Provides a button for taking a screenshot of current 3D scene
+  /// \brief Provides a button and a transport service for taking a screenshot
+  /// of current 3D scene.
+  ///
+  /// /gui/screenshot service:
+  ///     Data: Path to save to, leave empty to save to latest path.
+  ///     Response: True if screenshot has been queued succesfully.
   class Screenshot : public Plugin
   {
     Q_OBJECT
@@ -44,11 +52,30 @@ namespace plugins
     // Documentation inherited
     public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
 
-    /// \brief Callback when screenshot is requested
+    /// \brief Callback when screenshot is requested from the GUI.
     public slots: void OnScreenshot();
 
     /// \brief Callback for changing the directory where screenshots are saved
     public slots: void OnChangeDirectory(const QString &_dirUrl);
+
+    /// \brief Callback for all installed event filders.
+    /// \param[in] _obj Object that received the event
+    /// \param[in] _event Event
+    private: bool eventFilter(QObject *_obj, QEvent *_event) override;
+
+    /// \brief Callback for saving a screenshot (from the user camera) request
+    /// \param[in] _msg Request message of the saved file path
+    /// \param[in] _res Response data
+    /// \return True if the request is received
+    private: bool ScreenshotService(const msgs::StringMsg &_msg,
+        msgs::Boolean &_res);
+
+    /// \brief Encapsulates the logic to find the user camera through the
+    /// render engine singleton.
+    private: void FindUserCamera();
+
+    /// \brief Save a screenshot from the user camera
+    private: void SaveScreenshot();
 
     /// \internal
     /// \brief Pointer to private data.
