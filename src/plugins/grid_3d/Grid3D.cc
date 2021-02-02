@@ -96,10 +96,10 @@ namespace plugins
 
     /// \brief We keep the scene name rather than a shared pointer because we
     /// don't want to share ownership.
-    public: std::string sceneName{"scene"};
+    public: std::string sceneName{""};
 
     /// \brief Engine name received at startup
-    public: std::string engineName{"ogre"};
+    public: std::string engineName{""};
 
     /// \brief Grids received from config file on startup
     public: std::vector<GridInfo> startupGrids;
@@ -211,6 +211,14 @@ void Grid3D::Initialize()
   rendering::ScenePtr scene;
 
   // Render engine
+  if (this->dataPtr->engineName.empty())
+  {
+    auto loadedEngNames = rendering::loadedEngines();
+    if (!loadedEngNames.empty())
+    {
+      this->dataPtr->engineName = loadedEngNames[0];
+    }
+  }
   this->dataPtr->engine = rendering::engine(this->dataPtr->engineName);
   if (!this->dataPtr->engine)
   {
@@ -218,10 +226,23 @@ void Grid3D::Initialize()
            + "\" not supported, Grid plugin won't work.";
     ignwarn << error << std::endl;
   }
+  else if (this->dataPtr->engine->SceneCount() == 0)
+  {
+    error = "Engine \"" + this->dataPtr->engineName
+           + "\" has no scene, Grid plugin won't work.";
+    ignwarn << error << std::endl;
+  }
   else
   {
     // Scene
-    scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
+    if (!this->dataPtr->sceneName.empty())
+    {
+      scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
+    }
+    else
+    {
+      scene = this->dataPtr->engine->SceneByIndex(0);
+    }
     if (!scene)
     {
       error = "Scene \"" + this->dataPtr->sceneName
