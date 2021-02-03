@@ -204,91 +204,91 @@ void Grid3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void Grid3D::Initialize()
 {
-  this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
-      this, &Grid3D::Initialize);
-
-  std::string error{""};
-  rendering::ScenePtr scene;
-
   // Render engine
+  auto loadedEngNames = rendering::loadedEngines();
+  if (loadedEngNames.empty())
+  {
+    // Keep trying until an engine is loaded
+    return;
+  }
+
   if (this->dataPtr->engineName.empty())
   {
-    auto loadedEngNames = rendering::loadedEngines();
-    if (!loadedEngNames.empty())
-    {
-      this->dataPtr->engineName = loadedEngNames[0];
-    }
+    this->dataPtr->engineName = loadedEngNames[0];
   }
-  this->dataPtr->engine = rendering::engine(this->dataPtr->engineName);
-  if (!this->dataPtr->engine)
+
+  if (this->dataPtr->engineName != loadedEngNames[0])
   {
-    error = "Engine \"" + this->dataPtr->engineName
-           + "\" not supported, Grid plugin won't work.";
-    ignwarn << error << std::endl;
+    ignwarn << "Trying to load engine [" + this->dataPtr->engineName
+           + "] but [" + loadedEngNames[0]
+           + "] is already loaded." << std::endl;
+
+    this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
+        this, &Grid3D::Initialize);
+
+    return;
   }
-  else if (this->dataPtr->engine->SceneCount() == 0)
+
+  if (nullptr == this->dataPtr->engine)
+    this->dataPtr->engine = rendering::engine(this->dataPtr->engineName);
+
+  if (nullptr == this->dataPtr->engine)
   {
-    error = "Engine \"" + this->dataPtr->engineName
-           + "\" has no scene, Grid plugin won't work.";
-    ignwarn << error << std::endl;
+    ignwarn << "Failed to get engine [" + this->dataPtr->engineName
+           + "]" << std::endl;
+
+    this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
+        this, &Grid3D::Initialize);
+
+    return;
+  }
+
+  if (this->dataPtr->engine->SceneCount() == 0)
+  {
+    // Scene may not be loaded yet, keep trying
+    return;
+  }
+
+  // Scene
+  rendering::ScenePtr scene;
+  if (!this->dataPtr->sceneName.empty())
+  {
+    scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
   }
   else
   {
-    // Scene
-    if (!this->dataPtr->sceneName.empty())
-    {
-      scene = this->dataPtr->engine->SceneByName(this->dataPtr->sceneName);
-    }
-    else
-    {
-      scene = this->dataPtr->engine->SceneByIndex(0);
-    }
-    if (!scene)
-    {
-      error = "Scene \"" + this->dataPtr->sceneName
-             + "\" not found, Grid plugin won't work.";
-      ignwarn << error << std::endl;
-    }
-    else
-    {
-      auto root = scene->RootVisual();
-
-      // Initial grids
-      for (const auto &g : this->dataPtr->startupGrids)
-      {
-        auto grid = scene->CreateGrid();
-        grid->SetCellCount(g.cellCount);
-        grid->SetVerticalCellCount(g.vertCellCount);
-        grid->SetCellLength(g.cellLength);
-
-        auto gridVis = scene->CreateVisual();
-        root->AddChild(gridVis);
-        gridVis->SetLocalPose(g.pose);
-        gridVis->AddGeometry(grid);
-
-        auto mat = scene->CreateMaterial();
-        mat->SetAmbient(g.color);
-        gridVis->SetMaterial(mat);
-      }
-    }
+    scene = this->dataPtr->engine->SceneByIndex(0);
   }
-
-  // Don't waste time loading widgets if this will be deleted anyway
-  if (this->DeleteLaterRequested())
-    return;
-
-  if (!error.empty())
+  if (!scene)
   {
-//    // Add message
-//    auto msg = new QLabel(QString::fromStdString(error));
-//
-//    auto mainLayout = new QVBoxLayout();
-//    mainLayout->addWidget(msg);
-//    mainLayout->setAlignment(msg, Qt::AlignCenter);
-//    this->setLayout(mainLayout);
-
+    // Scene may not be loaded yet, keep trying
     return;
   }
+
+  auto root = scene->RootVisual();
+
+  // Initial grids
+  for (const auto &g : this->dataPtr->startupGrids)
+  {
+    auto grid = scene->CreateGrid();
+    grid->SetCellCount(g.cellCount);
+    grid->SetVerticalCellCount(g.vertCellCount);
+    grid->SetCellLength(g.cellLength);
+
+    auto gridVis = scene->CreateVisual();
+    root->AddChild(gridVis);
+    gridVis->SetLocalPose(g.pose);
+    gridVis->AddGeometry(grid);
+
+    auto mat = scene->CreateMaterial();
+    mat->SetAmbient(g.color);
+    gridVis->SetMaterial(mat);
+
+    igndbg << "Created grid [" << grid->Name() << "]" << std::endl;
+  }
+
+  this->disconnect(this->dataPtr->quickWindow, &QQuickWindow::beforeRendering,
+      this, &Grid3D::Initialize);
 
   this->Refresh();
 }
