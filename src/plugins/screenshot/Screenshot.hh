@@ -77,7 +77,8 @@ namespace plugins
     private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
     /// \brief Callback for saving a screenshot (from the user camera) request
-    /// \param[in] _msg Request message of the saved file path
+    /// \param[in] _msg Request message of the directory path to save
+    /// screenshots
     /// \param[in] _res Response data
     /// \return True if the request is received
     private: bool ScreenshotService(const msgs::StringMsg &_msg,
