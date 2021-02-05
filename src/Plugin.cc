@@ -126,7 +126,33 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 
   // Instantiate plugin QML file into a component
   std::string qmlFile(":/" + filename + "/" + filename + ".qml");
+  if (!QFile(QString::fromStdString(qmlFile)).exists())
+  {
+    ignerr << "Can't find [" << qmlFile
+           << "]. Are you sure it was added to the .qrc file?" << std::endl;
+    return;
+  }
+
   QQmlComponent component(App()->Engine(), QString::fromStdString(qmlFile));
+  if (component.isError())
+  {
+    std::stringstream errors;
+    errors << "Failed to instantiate QML file [" << qmlFile << "]."
+           << std::endl;
+    for (auto error : component.errors())
+    {
+      errors << "* " << error.toString().toStdString() << std::endl;
+    }
+    ignerr << errors.str();
+    return;
+  }
+  if (!component.isReady())
+  {
+    ignerr << "Component from QML file [" << qmlFile
+           << "] is not ready. Progress: " << component.progress()
+           << " / 1.0" << std::endl;
+    return;
+  }
 
   // Create an item for the plugin
   this->dataPtr->pluginItem =
@@ -134,8 +160,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   if (!this->dataPtr->pluginItem)
   {
     ignerr << "Failed to instantiate QML file [" << qmlFile << "]." << std::endl
-           << "* Are you sure it's been added to the .qrc file?" << std::endl
-           << "* Are you sure the file is valid QML? "
+           << "Are you sure the file is valid QML? "
            << "You can check with the `qmlscene` tool" << std::endl;
     return;
   }
