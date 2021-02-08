@@ -345,6 +345,8 @@ void ImageDisplay::UpdateFromLInt16()
 /////////////////////////////////////////////////
 void ImageDisplay::UpdateFromLInt8()
 {
+  // todo(anyone) the code in this function is very similar to
+  // UpdateFromInt16 and UpdateFromFloat32. Consider merging these functions.
   unsigned int height = this->dataPtr->imageMsg.height();
   unsigned int width = this->dataPtr->imageMsg.width();
   QImage::Format qFormat = QImage::Format_RGB888;
