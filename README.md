@@ -9,9 +9,9 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/master/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/master)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-master-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-master-homebrew-amd64)
+Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/ign-gui4/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/ign-gui4)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-4-win)](https://build.osrfoundation.org/job/ign_gui-ign-4-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
