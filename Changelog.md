@@ -4,6 +4,61 @@
 
 ### Ignition Gui 4.X.X (20XX-XX-XX)
 
+### Ignition Gui 4.2.0 (2021-02-09)
+
+1. Added issue and PR templates
+    * [Pull request 174](https://github.com/ignitionrobotics/ign-gui/pull/174)
+
+1. Visualize single channel 8 bit image data
+    * [Pull request 176](https://github.com/ignitionrobotics/ign-gui/pull/176)
+
+### Ignition Gui 4.1.1 (2021-01-05)
+
+1. Use default value of double ptr argv for CLI
+    * [Pull request 165](https://github.com/ignitionrobotics/ign-gui/pull/165)
+
+1. Generate valid topics depending on world name
+    * [Pull request 164](https://github.com/ignitionrobotics/ign-gui/pull/164)
+
+### Ignition Gui 4.1.0 (2020-12-18)
+
+1. Publish plugin API docs
+    * [Pull request 128](https://github.com/ignitionrobotics/ign-gui/pull/128)
+
+1. Tutorial tweaks
+    * [Pull request 132](https://github.com/ignitionrobotics/ign-gui/pull/132)
+
+1. Floating and standalone plugins respect minimum dimensions
+    * [Pull request 135](https://github.com/ignitionrobotics/ign-gui/pull/135)
+
+1. Add scrollable indicator for plugin menu
+    * [Pull request 134](https://github.com/ignitionrobotics/ign-gui/pull/134)
+
+1. Add qml-module-qtcharts dependency
+    * [Pull request 136](https://github.com/ignitionrobotics/ign-gui/pull/136)
+
+1. Re-enable image.config test
+    * [Pull request 140](https://github.com/ignitionrobotics/ign-gui/pull/140)
+
+1. Improve fork experience
+    * [Pull request 139](https://github.com/ignitionrobotics/ign-gui/pull/139)
+
+1. Resolve updated codecheck issues
+    * [Pull request 144](https://github.com/ignitionrobotics/ign-gui/pull/144)
+    * [Pull request 157](https://github.com/ignitionrobotics/ign-gui/pull/157)
+
+1. Port Gazebo GUI events to Ignition GUI
+    * [Pull request 148](https://github.com/ignitionrobotics/ign-gui/pull/148)
+
+1. Change deprecated Qt::MidButton
+    * [Pull request 153](https://github.com/ignitionrobotics/ign-gui/pull/153)
+
+1. Add right mouse events and tests
+    * [Pull request 154](https://github.com/ignitionrobotics/ign-gui/pull/154)
+
+1. Avoid crash on macOS
+    * [Pull request 155](https://github.com/ignitionrobotics/ign-gui/pull/155)
+
 ### Ignition Gui 4.0.0 (2020-09-29)
 
 1. GitHub migration
@@ -47,6 +102,38 @@
 ## Ignition Gui 3
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
+
+### Ignition Gui 3.4.0 (2020-12-10)
+
+1. Publish plugin API docs
+    * [Pull request 128](https://github.com/ignitionrobotics/ign-gui/pull/128)
+
+1. Tutorial tweaks
+    * [Pull request 132](https://github.com/ignitionrobotics/ign-gui/pull/132)
+
+1. Floating and standalone plugins respect minimum dimensions
+    * [Pull request 135](https://github.com/ignitionrobotics/ign-gui/pull/135)
+
+1. Add scrollable indicator for plugin menu
+    * [Pull request 134](https://github.com/ignitionrobotics/ign-gui/pull/134)
+
+1. Re-enable image.config test
+    * [Pull request 140](https://github.com/ignitionrobotics/ign-gui/pull/140)
+
+1. Improve fork experience
+    * [Pull request 139](https://github.com/ignitionrobotics/ign-gui/pull/139)
+
+1. Resolve updated codecheck issues
+    * [Pull request 144](https://github.com/ignitionrobotics/ign-gui/pull/144)
+
+1. Port Gazebo GUI events to Ignition GUI
+    * [Pull request 148](https://github.com/ignitionrobotics/ign-gui/pull/148)
+
+1. Change deprecated Qt::MidButton
+    * [Pull request 153](https://github.com/ignitionrobotics/ign-gui/pull/153)
+
+1. Add right mouse events and tests
+    * [Pull request 154](https://github.com/ignitionrobotics/ign-gui/pull/154)
 
 ### Ignition Gui 3.3.0 (2020-08-31)
 

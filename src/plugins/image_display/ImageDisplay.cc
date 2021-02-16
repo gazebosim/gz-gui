@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -158,6 +159,9 @@ void ImageDisplay::ProcessImage()
       break;
     case msgs::PixelFormatType::L_INT16:
       this->UpdateFromLInt16();
+      break;
+    case msgs::PixelFormatType::L_INT8:
+      this->UpdateFromLInt8();
       break;
     default:
     {
@@ -324,6 +328,62 @@ void ImageDisplay::UpdateFromLInt16()
     for (unsigned int i = 0; i < width; ++i)
     {
       uint16_t temp = buffer[idx++];
+      double t = static_cast<double>(temp-min) / range;
+      int r = 255*t;
+      int g = r;
+      int b = r;
+      QRgb value = qRgb(r, g, b);
+      image.setPixel(i, j, value);
+    }
+  }
+  this->dataPtr->provider->SetImage(image);
+  this->newImage();
+
+  delete[] buffer;
+}
+
+/////////////////////////////////////////////////
+void ImageDisplay::UpdateFromLInt8()
+{
+  // todo(anyone) the code in this function is very similar to
+  // UpdateFromInt16 and UpdateFromFloat32. Consider merging these functions.
+  unsigned int height = this->dataPtr->imageMsg.height();
+  unsigned int width = this->dataPtr->imageMsg.width();
+  QImage::Format qFormat = QImage::Format_RGB888;
+
+  QImage image = QImage(width, height, qFormat);
+
+  unsigned int samples = width * height;
+  unsigned char type;
+  // cppchecker recommends using sizeof(varname)
+  unsigned int bufferSize = samples * sizeof(type);
+
+  unsigned char *buffer = new unsigned char[samples];
+  memcpy(buffer, this->dataPtr->imageMsg.data().c_str(),
+      bufferSize);
+
+  // get min and max of temperature values
+  unsigned int min = 255;
+  unsigned int max = 0;
+  for (unsigned int i = 0; i < samples; ++i)
+  {
+    unsigned int temp = static_cast<unsigned int>(buffer[i]);
+    if (temp > max)
+      max = temp;
+    if (temp < min)
+      min = temp;
+  }
+
+  // convert temperature to grayscale image
+  double range = static_cast<double>(max - min);
+  if (ignition::math::equal(range, 0.0))
+    range = 1.0;
+  unsigned int idx = 0;
+  for (unsigned int j = 0; j < height; ++j)
+  {
+    for (unsigned int i = 0; i < width; ++i)
+    {
+      unsigned int temp = static_cast<unsigned int>(buffer[idx++]);
       double t = static_cast<double>(temp-min) / range;
       int r = 255*t;
       int g = r;
