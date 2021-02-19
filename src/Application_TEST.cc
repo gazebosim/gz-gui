@@ -171,7 +171,8 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
+TEST(ApplicationTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
 {
   ignition::common::Console::SetVerbosity(4);
 
