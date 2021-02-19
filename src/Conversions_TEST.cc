@@ -173,11 +173,11 @@ TEST(ConversionsTest, Time)
 
   // Common to msgs to common
   {
-    common::Time t(s, ns);
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
+    common::Time t(s, ns);
     EXPECT_EQ(convert(convert(t)), t);
 #ifndef _WIN32
 # pragma GCC diagnostic pop
