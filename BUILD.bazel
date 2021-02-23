@@ -5,6 +5,7 @@ load(
     "IGNITION_VISIBILITY",
     "cmake_configure_file",
     "generate_include_header",
+    "generate_yaml",
     "ign_config_header",
     "ign_export_header",
 )
@@ -143,13 +144,20 @@ cc_library(
         "@qt//:qt_network",
         "@qt//:qt_qml",
         "@qt//:qt_quick",
-        "@qt//:qt_quickcontrols2",
+        "@qt//:qt_quick_control",
         "@qt//:qt_widgets",
         IGNITION_ROOT + "ign_common",
         IGNITION_ROOT + "ign_common/events",
         IGNITION_ROOT + "ign_plugin/loader",
         IGNITION_ROOT + "ign_transport",
     ],
+)
+
+cc_binary(
+    name = "libignition-gui.so",
+    srcs = ["src/ign.cc"],
+    linkshared = True,
+    deps = [":ign_gui"],
 )
 
 cmake_configure_file(
@@ -308,4 +316,26 @@ cc_binary(
     deps = [
         ":ign_gui",
     ],
+)
+
+cmake_configure_file(
+    name = "gui.rb",
+    src = "src/cmd/cmdgui.rb.in",
+    out = "cmdgui.rb",
+    cmakelists = ["CMakeLists.txt"],
+    defines = [
+        "library_location=libignition-gui.so",
+        "PROJECT_VERSION_FULL=%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),  # noqa
+        "IGN_LIBRARY_NAME=%s" % PROJECT_NAME,
+    ],
+)
+
+CMDS = "    - gui   : Launch graphical interfaces."
+
+generate_yaml(
+    name = "gui",
+    commands = CMDS,
+    library_name = PROJECT_NAME,
+    library_version = "%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),
+    ruby_target = "gui.rb",
 )

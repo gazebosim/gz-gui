@@ -316,6 +316,8 @@ bool Application::LoadPlugin(const std::string &_filename,
   common::env(IGN_HOMEDIR, home);
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
                             IGN_GUI_PLUGIN_INSTALL_DIR);
+  systemPaths.AddPluginPaths("./ign_gui/src/plugins");
+  systemPaths.AddPluginPaths("./ign_gazebo/src/gui/plugins");
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())

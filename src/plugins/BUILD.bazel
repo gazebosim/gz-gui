@@ -77,3 +77,21 @@ plugins = {
     )
     for (folder, name) in plugins.items()
 ]
+
+cc_library(
+    name = "plugins",
+    deps = [
+        ":libGrid3D.so",
+        ":libImageDisplay.so",
+        ":libKeyPublisher.so",
+        ":libTransportPlotting.so",
+        ":libPublisher.so",
+        ":libScene3D.so",
+        ":libTopicEcho.so",
+        ":libTopicViewer.so",
+        ":libWorldControl.so",
+        ":libWorldStats.so",
+    ]
+)
+    
+
