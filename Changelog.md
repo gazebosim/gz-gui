@@ -4,6 +4,22 @@
 
 ### Ignition Gui 4.X.X (20XX-XX-XX)
 
+### Ignition Gui 4.2.0 (2021-02-09)
+
+1. Added issue and PR templates
+    * [Pull request 174](https://github.com/ignitionrobotics/ign-gui/pull/174)
+
+1. Visualize single channel 8 bit image data
+    * [Pull request 176](https://github.com/ignitionrobotics/ign-gui/pull/176)
+
+### Ignition Gui 4.1.1 (2021-01-05)
+
+1. Use default value of double ptr argv for CLI
+    * [Pull request 165](https://github.com/ignitionrobotics/ign-gui/pull/165)
+
+1. Generate valid topics depending on world name
+    * [Pull request 164](https://github.com/ignitionrobotics/ign-gui/pull/164)
+
 ### Ignition Gui 4.1.0 (2020-12-18)
 
 1. Publish plugin API docs

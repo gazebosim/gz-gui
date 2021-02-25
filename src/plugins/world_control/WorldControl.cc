@@ -124,6 +124,14 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     this->dataPtr->controlService = "/world/" + worldName + "/control";
   }
+  this->dataPtr->controlService = transport::TopicUtils::AsValidTopic(
+      this->dataPtr->controlService);
+
+  if (this->dataPtr->controlService.empty())
+  {
+    ignerr << "Failed to create valid control service for world [" << worldName
+           << "]" << std::endl;
+  }
 
   ignmsg << "Using world control service [" << this->dataPtr->controlService
          << "]" << std::endl;
@@ -185,6 +193,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     statsTopic = "/world/" + worldName + "/stats";
   }
 
+  statsTopic = transport::TopicUtils::AsValidTopic(statsTopic);
   if (!statsTopic.empty())
   {
     // Subscribe to world_stats
@@ -197,6 +206,11 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
     }
+  }
+  else
+  {
+    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+           << std::endl;
   }
 }
 

@@ -40,9 +40,9 @@ namespace plugins
   ///
   /// ## Configuration
   ///
-  /// * \<engine\> : Optional render engine name, defaults to 'ogre'.
-  /// * \<scene\> : Optional scene name, defaults to 'scene'. If a scene with
-  ///               the given name doesn't exist, the plugin is not initialized.
+  /// * \<engine\> : Optional render engine name, defaults to the first loaded
+  ///                engine.
+  /// * \<scene\> : Optional scene name, defaults to the first loaded scene.
   /// * \<auto_close\> : Set to true so the plugin closes after grids given by
   ///                    \<insert\> tags are added to the scene.
   /// * \<insert\> : One grid will be inserted at startup for each \<insert\>
