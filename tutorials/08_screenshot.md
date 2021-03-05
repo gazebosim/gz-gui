@@ -1,3 +1,6 @@
+\page screenshot Screenshot
+
+Previous Tutorial: \ref examples
 
 ## Overview
 
@@ -13,20 +16,20 @@ The same steps can be done using `ign gui` with a 3D scene.
 First, go to the plugins menu on the top right (vertical ellipsis) then select
 'Screenshot':
 
-![Screenshot from dropdown menu](images/screenshot_menu.png)
+@image html images/screenshot_menu.png
 
 The Screenshot plugin will appear in the right panel:
 
-![Screenshot from right panel](images/screenshot_plugin.png)
+@image html images/screenshot_plugin.png
 
 To take a screenshot of the 3D scene, click on the camera icon:
 
-![Hovered screenshot icon](images/screenshot_button.png)
+@image html images/screenshot_button.png
 
 The default location of saved screenshots is `~/.ignition/gui/pictures`, to change
 this click on the folder icon:
 
-![Hovered change directory icon](images/screenshot_change_directory.png)
+@image html images/screenshot_change_directory.png
 
 A file dialog menu will appear and a new save location can be selected.
 Once selected, all new screenshots will be saved in the chosen directory.

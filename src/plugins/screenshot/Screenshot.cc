@@ -16,9 +16,6 @@
 */
 #include "Screenshot.hh"
 
-#include <ignition/msgs/boolean.pb.h>
-#include <ignition/msgs/stringmsg.pb.h>
-
 #include <string>
 
 #include <ignition/common/Console.hh>

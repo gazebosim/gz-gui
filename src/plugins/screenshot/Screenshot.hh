@@ -17,8 +17,14 @@
 #ifndef IGNITION_GUI_PLUGINS_SCREENSHOT_HH_
 #define IGNITION_GUI_PLUGINS_SCREENSHOT_HH_
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs/boolean.pb.h>
 #include <ignition/msgs/stringmsg.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #include <memory>
 

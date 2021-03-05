@@ -18,9 +18,6 @@
 #ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
 #define IGNITION_GUI_PLUGINS_SCENE3D_HH_
 
-#include <ignition/msgs/boolean.pb.h>
-#include <ignition/msgs/stringmsg.pb.h>
-
 #include <string>
 #include <memory>
 #include <mutex>
