@@ -22,10 +22,18 @@
 #include <ignition/common/Filesystem.hh>
 #include <ignition/common/Image.hh>
 #include <ignition/plugin/Register.hh>
+
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/rendering/Camera.hh>
 #include <ignition/rendering/RenderEngine.hh>
 #include <ignition/rendering/RenderingIface.hh>
 #include <ignition/rendering/Scene.hh>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Application.hh"

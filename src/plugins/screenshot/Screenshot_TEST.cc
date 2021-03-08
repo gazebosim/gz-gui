@@ -19,6 +19,7 @@
 #endif
 #include <ignition/msgs/boolean.pb.h>
 #include <ignition/msgs/stringmsg.pb.h>
+#include <ignition/rendering.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -29,7 +30,6 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
 #include <ignition/transport/Node.hh>
-#include <ignition/rendering.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
