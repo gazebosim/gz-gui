@@ -98,6 +98,18 @@ function(ign_gui_add_plugin plugin_name)
         ${PROJECT_BINARY_DIR})
   endif()
 
+  if (MSVC)
+    # Warning #4251 is the "dll-interface" warning that tells you when types used
+    # by a class are not being exported. These generated source files have private
+    # members that don't get exported, so they trigger this warning. However, the
+    # warning is not important since those members do not need to be interfaced
+    # with.
+    set_source_files_properties(
+        ${ign_gui_add_plugin_SOURCES}
+        ${ign_gui_add_plugin_TEST_SOURCES}
+        COMPILE_FLAGS "/wd4251")
+  endif()
+
   install (TARGETS ${plugin_name} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endfunction()
 
@@ -107,6 +119,7 @@ add_subdirectory(image_display)
 add_subdirectory(key_publisher)
 add_subdirectory(publisher)
 add_subdirectory(scene3d)
+add_subdirectory(screenshot)
 add_subdirectory(topic_echo)
 add_subdirectory(topic_viewer)
 add_subdirectory(world_control)

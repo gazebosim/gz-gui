@@ -1434,7 +1434,6 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 }
 
-
 /////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
@@ -1484,7 +1483,6 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
 }
-
 
 ///////////////////////////////////////////////////
 // void Scene3D::resizeEvent(QResizeEvent *_e)
