@@ -30,6 +30,7 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
 #include <ignition/transport/Node.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
@@ -45,7 +46,7 @@ using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(ScreenshotTest, Screenshot)
+TEST(ScreenshotTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
 {
   common::Console::SetVerbosity(4);
 
