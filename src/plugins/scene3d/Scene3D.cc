@@ -631,7 +631,7 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
           double productAlpha = (1.0-_msg.transparency()) *
               (1.0 - submeshMat->Transparency());
           submeshMat->SetTransparency(1 - productAlpha);
-          submeshMat->SetCastShadows(_msg.transparency());
+          submeshMat->SetCastShadows(_msg.cast_shadows());
         }
       }
     }
@@ -642,7 +642,7 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
       material->SetTransparency(_msg.transparency());
 
       // cast shadows
-      material->SetCastShadows(_msg.transparency());
+      material->SetCastShadows(_msg.cast_shadows());
 
       geom->SetMaterial(material);
       // todo(anyone) SetMaterial function clones the input material.
