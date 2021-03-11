@@ -73,7 +73,7 @@ Add OSRF packages:
 
 Clone source code:
   ```
-  # This checks out the `master` branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
+  # This checks out the default branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
   git clone http://github.com/ignitionrobotics/ign-gui
   ```
 
