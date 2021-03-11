@@ -12,7 +12,7 @@ but it is also possible to use others such as Default and Universal. This tutori
 focuses on customizing the Material style.
 
 The default style is hardcoded into the
-[qtquickcontrols2.conf](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui3/include/ignition/gui/qtquickcontrols2.conf)
+[qtquickcontrols2.conf](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui4/include/ignition/gui/qtquickcontrols2.conf)
 file.
 
 There are a few ways to override the default style:
@@ -115,4 +115,3 @@ And an example also configuring the toolbars:
 
 \note When saving the configuration file through the GUI, the current style
 will be saved as well.
-
