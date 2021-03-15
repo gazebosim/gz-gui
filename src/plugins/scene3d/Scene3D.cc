@@ -603,11 +603,7 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
     // Don't set a default material for meshes because they
     // may have their own
     // TODO(anyone) support overriding mesh material
-    else if (_msg.geometry().has_mesh())
-    {
-      material = geom->Material();
-    }
-    else
+    else if (!_msg.geometry().has_mesh())
     {
       // create default material
       material = this->scene->Material("ign-grey");
@@ -621,15 +617,40 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
         material->SetMetalness(1.0f);
       }
     }
+    else
+    {
+      // meshes created by mesh loader may have their own materials
+      // update/override their properties based on input sdf element values
+      auto mesh = std::dynamic_pointer_cast<rendering::Mesh>(geom);
+      for (unsigned int i = 0; i < mesh->SubMeshCount(); ++i)
+      {
+        auto submesh = mesh->SubMeshByIndex(i);
+        auto submeshMat = submesh->Material();
+        if (submeshMat)
+        {
+          double productAlpha = (1.0-_msg.transparency()) *
+              (1.0 - submeshMat->Transparency());
+          submeshMat->SetTransparency(1 - productAlpha);
+          submeshMat->SetCastShadows(_msg.cast_shadows());
+        }
+      }
+    }
 
-    material->SetTransparency(_msg.transparency());
+    if (material)
+    {
+      // set transparency
+      material->SetTransparency(_msg.transparency());
 
-    // TODO(anyone) Get roughness and metalness from message instead
-    // of giving a default value.
-    material->SetRoughness(0.3f);
-    material->SetMetalness(0.3f);
+      // cast shadows
+      material->SetCastShadows(_msg.cast_shadows());
 
-    geom->SetMaterial(material);
+      geom->SetMaterial(material);
+      // todo(anyone) SetMaterial function clones the input material.
+      // but does not take ownership of it so we need to destroy it here.
+      // This is not ideal. We should let ign-rendering handle the lifetime
+      // of this material
+      this->scene->DestroyMaterial(material);
+    }
   }
   else
   {
@@ -1435,7 +1456,6 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 }
 
-
 /////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
@@ -1485,7 +1505,6 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
 }
-
 
 ///////////////////////////////////////////////////
 // void Scene3D::resizeEvent(QResizeEvent *_e)
