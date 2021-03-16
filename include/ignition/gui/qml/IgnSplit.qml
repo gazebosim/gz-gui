@@ -43,11 +43,12 @@ SplitView {
    */
   property variant childSplits: new Object()
 
-  onHeightChanged: {
-    for (var name in childSplits)
-    {
-      childSplits[name].split.recalculateMinimumSize()
-    }
+  /**
+   * Callback when the height changed.
+   */
+  onHeightChanged:
+  {
+    background.recalculateMinimumSizes();
   }
 
   Rectangle {
@@ -62,6 +63,17 @@ SplitView {
       horizontalAlignment: Label.AlignHCenter
       verticalAlignment: Label.AlignVCenter
       wrapMode: Label.Wrap
+    }
+  }
+
+  /**
+   * Recalculate minimum size for all splits
+   */
+  function recalculateMinimumSizes()
+  {
+    for (var name in childSplits)
+    {
+      childSplits[name].split.recalculateMinimumSize()
     }
   }
 
@@ -345,7 +357,8 @@ SplitView {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
               heightSum += child.height;
-              minHeightSum += child.Layout.minimumHeight;
+              minHeightSum += child.height < child.Layout.minimumHeight ?
+                  child.height : child.Layout.minimumHeight;
             }
 
             // Minimum height to show all children
