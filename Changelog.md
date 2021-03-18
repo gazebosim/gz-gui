@@ -2,6 +2,14 @@
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
 
+### Ignition Gui 3.5.1 (2021-03-18)
+
+1. Scene3D: port mesh material fixes from ign-gazebo
+    * [Pull request #191](https://github.com/ignitionrobotics/ign-gui/pull/191)
+
+1. Improve the height of plugins in the right split
+    * [Pull request #194](https://github.com/ignitionrobotics/ign-gui/pull/194)
+
 ### Ignition Gui 3.5.0 (2021-03-10)
 
 1. Screenshot plugin
