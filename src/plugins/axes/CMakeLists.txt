@@ -5,4 +5,6 @@ ign_gui_add_plugin(AxesConfig
     AxesConfig.hh
   PUBLIC_LINK_LIBS
     ${IGNITION-RENDERING_LIBRARIES}
+  TEST_SOURCES
+    AxesConfig_TEST.cc
 )
