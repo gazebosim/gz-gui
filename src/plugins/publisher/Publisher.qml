@@ -23,6 +23,7 @@ Rectangle {
   color: "transparent"
   Layout.minimumWidth: 250
   Layout.minimumHeight: 375
+  anchors.fill: parent
 
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
