@@ -50,6 +50,8 @@ GridLayout {
       roll.value = AxesConfig.axesRoll
       pitch.value = AxesConfig.axesPitch
       yaw.value = AxesConfig.axesYaw
+      showAxes.checkState = AxesConfig.showAxes
+      isArrow.checkState = AxesConfig.showArrow
     }
     onAccepted: {
          if (editableCombo.find(currentText) === -1) {
@@ -74,6 +76,7 @@ GridLayout {
   }
 
   CheckBox {
+    id: showAxes
     Layout.alignment: Qt.AlignHCenter
     Layout.columnSpan: 2
     text: qsTr("Show Axes")
@@ -98,6 +101,7 @@ GridLayout {
   }
 
   CheckBox {
+    id: isArrow
     Layout.alignment: Qt.AlignHCenter
     Layout.columnSpan: 2
     text: qsTr("Show arrows")

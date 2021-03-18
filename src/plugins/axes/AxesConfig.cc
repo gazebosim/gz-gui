@@ -34,6 +34,13 @@
 
 namespace ignition::gazebo
 {
+  /// \brief struct to save some data about the axes
+  struct AxesData_t {
+    math::Pose3d pose;
+    bool showAxes;
+    bool showArrow;
+  };
+
   class AxesConfigPrivate
   {
     /// \brief axes ptr in a scene
@@ -55,10 +62,10 @@ namespace ignition::gazebo
     rendering::ScenePtr scene;
 
     /// \brief name of the axes
-    public: std::string name_axes;
+    public: std::string nameAxes;
 
-    /// \brief structure to save active axes
-    public: std::map<std::string, math::Pose3d> activeAxesMap;
+    /// \brief structure to save data of the active axes
+    public: std::map<std::string, AxesData_t> activeAxesMap;
 
     /// \brief Flag that indicates whether there are new updates to be rendered.
     public: bool dirty{true};
@@ -72,7 +79,7 @@ using namespace gazebo;
 AxesConfig::AxesConfig()
   : ignition::gui::Plugin(), dataPtr(std::make_unique<AxesConfigPrivate>())
 {
-  this->dataPtr->name_axes = "";
+  this->dataPtr->nameAxes = "";
 }
 
 /////////////////////////////////////////////////
@@ -125,7 +132,7 @@ void AxesConfig::LoadConfig(const tinyxml2::XMLElement *)
     return;
   }
 
-  EntitiesInScene();
+  this->EntitiesInScene();
 }
 
 /////////////////////////////////////////////////
@@ -135,7 +142,7 @@ bool AxesConfig::eventFilter(QObject *_obj, QEvent *_event)
   {
     // This event is called in Scene3d's RenderThread, so it's safe to make
     // rendering calls here
-    UpdateOriginArrows();
+    this->UpdateOriginArrows();
   }
 
   // Standard event processing
@@ -150,13 +157,9 @@ void AxesConfig::UpdateActiveAxes()
     auto visAxes = std::dynamic_pointer_cast<rendering::AxisVisual>(
           this->dataPtr->scene->VisualByName(vis.first + "Axes"));
 
-    auto visEntity = std::dynamic_pointer_cast<rendering::Visual>(
-          this->dataPtr->scene->VisualByName(vis.first));
-
-    if (visEntity && visAxes)
+    if (visAxes)
     {
-      math::Pose3d pose_entity = visEntity->LocalPose();
-      visAxes->SetLocalPose(vis.second + pose_entity);
+      visAxes->SetLocalPose(vis.second.pose);
     }
   }
 }
@@ -164,11 +167,11 @@ void AxesConfig::UpdateActiveAxes()
 /////////////////////////////////////////////////
 void AxesConfig::UpdateOriginArrows()
 {
-  if (this->dataPtr->name_axes.empty())
+  if (this->dataPtr->nameAxes.empty())
     return;
 
   // Load axes if they don't already exist
-  this->LoadAxesbyName(this->dataPtr->name_axes);
+  this->LoadAxesbyName(this->dataPtr->nameAxes);
 
   // If axes were not loaded successfully, don't update
   if (!this->dataPtr->axes)
@@ -182,17 +185,25 @@ void AxesConfig::UpdateOriginArrows()
 
   // Save the axesVisual in the structure if it doesn't exist or
   // update the pose
-  auto it = this->dataPtr->activeAxesMap.find(this->dataPtr->name_axes);
+  auto it = this->dataPtr->activeAxesMap.find(this->dataPtr->nameAxes);
   if (it == this->dataPtr->activeAxesMap.end())
   {
+    ignition::gazebo::AxesData_t data;
+    data.pose = this->dataPtr->pose;
+    data.showAxes = true;
+    data.showArrow = true;
+    this->dataPtr->visible = true;
+    this->dataPtr->isArrow = true;
     this->dataPtr->activeAxesMap.insert(
-      std::pair<std::string, math::Pose3d>(
-        this->dataPtr->name_axes,
-        this->dataPtr->pose));
+      std::pair<std::string, ignition::gazebo::AxesData_t>(
+        this->dataPtr->nameAxes,
+        data));
   }
   else
   {
-    it->second = this->dataPtr->pose;
+    it->second.pose = this->dataPtr->pose;
+    it->second.showAxes = this->dataPtr->visible;
+    it->second.showArrow = this->dataPtr->isArrow;
   }
 
   // update visibility
@@ -217,68 +228,78 @@ const QStringList AxesConfig::comboList()
 /////////////////////////////////////////////////
 void AxesConfig::SetComboList(const QStringList &comboList)
 {
-  if (itemComboList != comboList)
+  if (this->itemComboList != comboList)
   {
     itemComboList = comboList;
-    if (itemComboList.size() > 0 && this->dataPtr->name_axes.empty()) {
-      this->dataPtr->name_axes = itemComboList[0].toStdString();
+    if (itemComboList.size() > 0 && this->dataPtr->nameAxes.empty())
+    {
+      this->dataPtr->nameAxes = itemComboList[0].toStdString();
     }
     emit ComboListChanged();
   }
 }
 
 /////////////////////////////////////////////////
-void AxesConfig::LoadAxesbyName(const std::string & name)
+void AxesConfig::LoadAxesbyName(const std::string &_name)
 {
-  if ((this->dataPtr->name_axes.compare(name) == 0 && this->dataPtr->axes)
+  if ((this->dataPtr->nameAxes.compare(_name) == 0 && this->dataPtr->axes)
       && !this->dataPtr->dirty)
     return;
 
-  this->dataPtr->name_axes = name;
+  this->dataPtr->nameAxes = _name;
   this->dataPtr->axes = std::dynamic_pointer_cast<rendering::AxisVisual>(
-    this->dataPtr->scene->VisualByName(this->dataPtr->name_axes + "Axes"));
+    this->dataPtr->scene->VisualByName(this->dataPtr->nameAxes + "Axes"));
 
   if (!this->dataPtr->axes)
   {
-    rendering::VisualPtr root = this->dataPtr->scene->RootVisual();
+    rendering::VisualPtr parentVisual =
+      std::dynamic_pointer_cast<rendering::Visual>(
+        this->dataPtr->scene->VisualByName(this->dataPtr->nameAxes));
 
     auto axes = this->dataPtr->scene->CreateAxisVisual(
-      this->dataPtr->name_axes + "Axes");
-    root->AddChild(axes);
+      this->dataPtr->nameAxes + "Axes");
+    parentVisual->AddChild(axes);
   }
 }
 
 /////////////////////////////////////////////////
 void AxesConfig::onCurrentIndexChanged(int _index)
 {
-  this->dataPtr->name_axes = itemComboList[_index].toStdString();
+  this->dataPtr->nameAxes = itemComboList[_index].toStdString();
   this->dataPtr->dirty = true;
   auto axes = std::dynamic_pointer_cast<rendering::AxisVisual>(
-    this->dataPtr->scene->VisualByName(this->dataPtr->name_axes + "Axes"));
+    this->dataPtr->scene->VisualByName(this->dataPtr->nameAxes + "Axes"));
   if (axes)
   {
     this->dataPtr->length = axes->LocalScale().Z() / 2.0;
     // Save the axesVisual in the structure if it doesn't exist or update
     // the pose
-    auto it = this->dataPtr->activeAxesMap.find(this->dataPtr->name_axes);
+    auto it = this->dataPtr->activeAxesMap.find(this->dataPtr->nameAxes);
     if (it != this->dataPtr->activeAxesMap.end())
     {
-      this->dataPtr->pose = it->second;
+      this->dataPtr->pose = it->second.pose;
+      this->dataPtr->visible = it->second.showAxes;
+      this->dataPtr->isArrow = it->second.showArrow;
     }
     else
     {
       this->dataPtr->pose = math::Pose3d(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+      this->dataPtr->visible = true;
+      this->dataPtr->isArrow = true;
     }
   }
   else
   {
     this->dataPtr->length = 1.0;
+    this->dataPtr->visible = true;
+    this->dataPtr->isArrow = true;
     this->dataPtr->pose = math::Pose3d(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }
 }
 
 /////////////////////////////////////////////////
-double AxesConfig::length() const {
+double AxesConfig::length() const
+{
   return this->dataPtr->length;
 }
 
@@ -316,6 +337,18 @@ double AxesConfig::axesPitch() const
 double AxesConfig::axesYaw() const
 {
   return this->dataPtr->pose.Rot().Euler().Z();
+}
+
+/////////////////////////////////////////////////
+int AxesConfig::showAxes() const
+{
+  return this->dataPtr->visible ? Qt::Checked : Qt::Unchecked;
+}
+
+/////////////////////////////////////////////////
+int AxesConfig::showArrow() const
+{
+  return this->dataPtr->isArrow ? Qt::Checked : Qt::Unchecked;
 }
 
 /////////////////////////////////////////////////

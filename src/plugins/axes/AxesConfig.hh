@@ -57,7 +57,7 @@ namespace gazebo
     public: void UpdateOriginArrows();
 
     /// \brief Loaded the AxesVisual based on the name
-    public: void LoadAxesbyName(const std::string & name);
+    public: void LoadAxesbyName(const std::string &_name);
 
     /// \brief update the active axes
     /// We need to do that in other to render the axes when moving
@@ -136,6 +136,15 @@ namespace gazebo
     Q_PROPERTY(double axesYaw READ axesYaw)
 
     /// \internal
+    /// \brief QProperty to udpate the show arrow of each axes on the GUI
+    Q_PROPERTY(int showArrow READ showArrow)
+
+    /// \internal
+    /// \brief QProperty to udpate the show axes of each axes on the GUI
+    Q_PROPERTY(int showAxes READ showAxes)
+
+
+    /// \internal
     /// \brief return length of the active axis
     private: double length() const;
 
@@ -162,6 +171,14 @@ namespace gazebo
     /// \internal
     /// \brief return yaw of the active axis
     private: double axesYaw() const;
+
+    /// \internal
+    /// \brief return if the axes are visible
+    private: int showAxes() const;
+
+    /// \internal
+    /// \brief return if the arrows are visible
+    private: int showArrow() const;
   };
 }
 }
