@@ -43,6 +43,14 @@ SplitView {
    */
   property variant childSplits: new Object()
 
+  /**
+   * Callback when the height changed.
+   */
+  onHeightChanged:
+  {
+    background.recalculateMinimumSizes();
+  }
+
   Rectangle {
     id: startLabel;
     visible: MainWindow.pluginCount === 0
@@ -55,6 +63,17 @@ SplitView {
       horizontalAlignment: Label.AlignHCenter
       verticalAlignment: Label.AlignVCenter
       wrapMode: Label.Wrap
+    }
+  }
+
+  /**
+   * Recalculate minimum size for all splits
+   */
+  function recalculateMinimumSizes()
+  {
+    for (var name in childSplits)
+    {
+      childSplits[name].split.recalculateMinimumSize()
     }
   }
 
@@ -327,6 +346,7 @@ SplitView {
 
             // Sync minimum sizes
             var heightSum = 0;
+            var minHeightSum = 0;
             for (var i = 0; i < __items.length; i++)
             {
               var child = __items[i];
@@ -336,14 +356,24 @@ SplitView {
               {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
-              // Set child height to minimum height
-              child.height = child.Layout.minimumHeight;
-
-              // Minimum height is the sum of all children's minimum heights
-              heightSum += child.Layout.minimumHeight;
+              heightSum += child.height;
+              minHeightSum += child.height < child.Layout.minimumHeight ?
+                  child.height : child.Layout.minimumHeight;
             }
-            Layout.minimumHeight = heightSum;
-            split.height = heightSum;
+
+            // Minimum height to show all children
+            Layout.minimumHeight = minHeightSum;
+            split.height = Math.max(minHeightSum, background.height);
+
+            // Squish all children if there's no slack
+            if (heightSum > background.height)
+            {
+              for (var i = 0; i < __items.length; i++)
+              {
+                var child = __items[i];
+                child.height = child.Layout.minimumHeight;
+              }
+            }
           }
         }
       }
