@@ -175,7 +175,6 @@ Pane {
 
     // Bind anchors
     anchors.fill = Qt.binding(function() {return parent})
-    anchors.fill = Qt.binding(function() {return parent})
     parent.height = Qt.binding(function() {return height})
     parent.width = Qt.binding(function() {return width})
 
@@ -323,25 +322,31 @@ Pane {
     Transition {
       from: "docked"
       to: "docked_collapsed"
-      NumberAnimation {
-        target: cardPane
-        property: "parent.Layout.minimumHeight"
-        duration: 200
-        easing.type: Easing.OutCubic
-        from: cardPane.height
-        to: 50
+      SequentialAnimation {
+        NumberAnimation {
+          target: cardPane
+          property: "parent.Layout.maximumHeight"
+          duration: 200
+          easing.type: Easing.OutCubic
+          from: cardPane.height
+          to: 50
+        }
+        ScriptAction {script: recalculateSplitSizes()}
       }
     },
     Transition {
       from: "docked_collapsed"
       to: "docked"
-      NumberAnimation {
-        target: cardPane
-        property: "parent.Layout.minimumHeight"
-        duration: 200
-        easing.type: Easing.InCubic
-        from: 50
-        to: content.children[0] === undefined ? 50 : content.children[0].Layout.minimumHeight
+      SequentialAnimation {
+        NumberAnimation {
+          target: cardPane
+          property: "parent.Layout.maximumHeight"
+          duration: 200
+          easing.type: Easing.InCubic
+          from: 50
+          to: backgroundItem.height
+        }
+        ScriptAction {script: recalculateSplitSizes()}
       }
     },
     Transition {
@@ -438,6 +443,14 @@ Pane {
   function leaveFloatingState()
   {
     // Do nothing
+  }
+
+  /**
+   * Recalculate split sizes
+   */
+  function recalculateSplitSizes()
+  {
+    backgroundItem.recalculateMinimumSizes();
   }
 
 // TODO(louise): re-enable window state support
