@@ -50,7 +50,7 @@ which can be used to add custom widgets.
 
 # Install
 
-See the [installation tutorial](https://ignitionrobotics.org/api/gui/4.0/install.html).
+See the [installation tutorial](https://ignitionrobotics.org/api/gui/5.0/install.html).
 
 # Usage
 
