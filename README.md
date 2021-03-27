@@ -55,7 +55,7 @@ See the [installation tutorial](https://ignitionrobotics.org/api/gui/5.0/install
 # Usage
 
 Take a look at the
-[tutorials](https://ignitionrobotics.org/api/gui/4.0/tutorials.html)
+[tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html)
 for usage instructions and API documentation.
 
 ## Known issue of command line tools
