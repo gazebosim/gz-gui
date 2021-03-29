@@ -12,7 +12,7 @@ but it is also possible to use others such as Default and Universal. This tutori
 focuses on customizing the Material style.
 
 The default style is hardcoded into the
-[qtquickcontrols2.conf](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui4/include/ignition/gui/qtquickcontrols2.conf)
+[qtquickcontrols2.conf](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui5/include/ignition/gui/qtquickcontrols2.conf)
 file.
 
 There are a few ways to override the default style:
@@ -21,7 +21,7 @@ There are a few ways to override the default style:
 * Setting environment variables (env)
 * Through Ignition GUI config files (config)
 
-If styles are set from multiple sources, this is the order in which they take precendence:
+If styles are set from multiple sources, this is the order in which they take precedence:
 
 **GUI > config > env**
 
@@ -45,7 +45,7 @@ On top of those, Ignition GUI also offers a few variables specific to customizin
 the top toolbar.
 
 By default, the top toolbar will use the primary color, while the plugin toolbars will
-use the accent color, according to the current theme. Users can override this behaviour
+use the accent color, according to the current theme. Users can override this behavior
 and decouple the toolbar colors from the rest of the controls with the following
 variables:
 
