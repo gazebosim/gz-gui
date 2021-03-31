@@ -13,6 +13,10 @@
 1. Bump in edifice: ign-rendering5
     * [Pull request #141](https://github.com/ignitionrobotics/ign-gui/pull/141)
 
+1. Documentation updates
+    * [Pull request #202](https://github.com/ignitionrobotics/ign-gui/pull/202)
+    * [Pull request #204](https://github.com/ignitionrobotics/ign-gui/pull/204)
+
 ## Ignition Gui 4
 
 ### Ignition Gui 4.X.X
