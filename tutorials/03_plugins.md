@@ -10,7 +10,7 @@ The plugin contains [QML](https://doc.qt.io/qt-5/qtqml-index.html)
 code that specifies what the widget looks like, as well as C++ code
 that defines the plugin's behavior and ties it to other libraries.
 
-See [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/ign-gui5/examples/plugin/hello_plugin/)
+See [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/main/examples/plugin/hello_plugin/)
 for an example.
 
 ## Finding plugins
@@ -20,7 +20,7 @@ Ignition GUI will look for plugins on the following paths, in this order:
 1. All paths set on the `IGN_GUI_PLUGIN_PATH` environment variable
 2. All paths added by calling `ignition::gui::addPluginPath`
 3. `~/.ignition/gui/plugins`
-4. [Plugins which are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/5.0/namespaceignition_1_1gui_1_1plugins.html)
+4. [Plugins which are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/6.0/namespaceignition_1_1gui_1_1plugins.html)
 
 ## Configuring plugins
 

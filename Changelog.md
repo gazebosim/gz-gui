@@ -1,3 +1,9 @@
+## Ignition Gui 6
+
+### Ignition Gui 6.X.X
+
+### Ignition Gui 6.0.0 (20XX-XX-XX)
+
 ## Ignition Gui 5
 
 ### Ignition Gui 5.X.X
