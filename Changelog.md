@@ -1,3 +1,22 @@
+## Ignition Gui 5
+
+### Ignition Gui 5.X.X
+
+### Ignition Gui 5.0.0 (20XX-XX-XX)
+
+1. Bump in edifice: ign-common4
+    * [Pull request #169](https://github.com/ignitionrobotics/ign-gui/pull/169)
+
+1. Bump in edifice: ign-msgs7 and ign-transport10
+    * [Pull request #167](https://github.com/ignitionrobotics/ign-gui/pull/167)
+
+1. Bump in edifice: ign-rendering5
+    * [Pull request #141](https://github.com/ignitionrobotics/ign-gui/pull/141)
+
+1. Documentation updates
+    * [Pull request #202](https://github.com/ignitionrobotics/ign-gui/pull/202)
+    * [Pull request #204](https://github.com/ignitionrobotics/ign-gui/pull/204)
+
 ## Ignition Gui 4
 
 ### Ignition Gui 4.X.X

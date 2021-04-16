@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-gui4 VERSION 4.3.0)
+project(ignition-gui5 VERSION 5.0.0)
 
 #============================================================================
 # Find ignition-cmake
@@ -44,8 +44,8 @@ set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-common
-ign_find_package(ignition-common3 REQUIRED)
-set(IGN_COMMON_VER ${ignition-common3_VERSION_MAJOR})
+ign_find_package(ignition-common4 REQUIRED)
+set(IGN_COMMON_VER ${ignition-common4_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-plugin
@@ -54,18 +54,18 @@ set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-transport
-ign_find_package(ignition-transport9 REQUIRED)
-set(IGN_TRANSPORT_VER ${ignition-transport9_VERSION_MAJOR})
+ign_find_package(ignition-transport10 REQUIRED)
+set(IGN_TRANSPORT_VER ${ignition-transport10_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering4 REQUIRED COMPONENTS ogre)
-set(IGN_RENDERING_VER ${ignition-rendering4_VERSION_MAJOR})
+ign_find_package(ignition-rendering5 REQUIRED COMPONENTS ogre)
+set(IGN_RENDERING_VER ${ignition-rendering5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-msgs
-ign_find_package(ignition-msgs6 REQUIRED)
-set(IGN_MSGS_VER ${ignition-msgs6_VERSION_MAJOR})
+ign_find_package(ignition-msgs7 REQUIRED)
+set(IGN_MSGS_VER ${ignition-msgs7_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-tools

@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/ign-gui4/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/ign-gui4)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui4-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui4-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-4-win)](https://build.osrfoundation.org/job/ign_gui-ign-4-win)
+Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/main/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/main)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-main-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-main-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-main-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ci-win)](https://build.osrfoundation.org/job/ign_gui-ci-win)
 
 Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
@@ -50,12 +50,12 @@ which can be used to add custom widgets.
 
 # Install
 
-See the [installation tutorial](https://ignitionrobotics.org/api/gui/4.0/install.html).
+See the [installation tutorial](https://ignitionrobotics.org/api/gui/5.0/install.html).
 
 # Usage
 
 Take a look at the
-[tutorials](https://ignitionrobotics.org/api/gui/4.0/tutorials.html)
+[tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html)
 for usage instructions and API documentation.
 
 ## Known issue of command line tools
@@ -70,22 +70,10 @@ where the YAML file for the package is found, such as
 export IGN_CONFIG_PATH=/usr/local/share/ignition
 ```
 
-However, that environment variable only takes a single path, which means if the
-installations from source are in different locations, only one can be specified.
-
-Another workaround for working with multiple Ignition libraries on the command
-line is using symbolic links to each library's YAML file.
+Multiple paths can be specified using the `:` delimiter. For example,
 ```
-mkdir ~/.ignition/tools/configs -p
-cd ~/.ignition/tools/configs/
-ln -s /usr/local/share/ignition/fuel4.yaml .
-ln -s /usr/local/share/ignition/transport9.yaml .
-ln -s /usr/local/share/ignition/transportlog9.yaml .
-...
-export IGN_CONFIG_PATH=$HOME/.ignition/tools/configs
+export IGN_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
 ```
-
-This issue is tracked [here](https://github.com/ignitionrobotics/ign-tools/issues/8).
 
 # Folder Structure
 
@@ -107,9 +95,9 @@ This issue is tracked [here](https://github.com/ignitionrobotics/ign-tools/issue
   `ign gui -c <path to file>`
 
 * `examples/plugin`: Example plugins which can be compiled and loaded as explained
-  in [this tutorial](https://ignitionrobotics.org/api/gui/1.0/plugins.html).
+  in [this tutorial](https://ignitionrobotics.org/api/gui/5.0/plugins.html).
 
-* `tutorials`: Markdown files for the [tutorials](https://ignitionrobotics.org/api/gui/1.0/tutorials.html).
+* `tutorials`: Markdown files for the [tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html).
 
 * `conf`: Files needed by [ign-tools](https://github.com/ignitionrobotics/ign-tools).
 

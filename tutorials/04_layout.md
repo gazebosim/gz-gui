@@ -8,14 +8,9 @@ Previous Tutorial: \ref plugins
 It's possible to define the layout of various plugins loaded to the main window
 by adding a `<window>` element to the config file. The child elements are:
 
-* `<position_x>`: **v0** Horizontal position of window's top-left corner in pixels.
-* `<position_y>`: **v0** Vertical position of window's top-left corner in pixels.
 * `<width>`: Window's width in pixels
 * `<height>`: Window's height in pixels
-* `<state>`: **v0** The state of the widow's docks and tabs, described as a Base64
-             encoded `QByteArray`. More information
-             [here](http://doc.qt.io/qt-5/qmainwindow.html#saveState).
-* `<menus>`: **v0** Configure menu options
+* `<menus>`: Configure menu options
     * `<drawer>`: Side drawer configuration.
         * `visible`: Set to false to hide the drawer and the button to trigger it.
     * `<plugins>`: Plugins menu configuration.

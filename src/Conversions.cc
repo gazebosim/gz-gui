@@ -116,8 +116,15 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
 /////////////////////////////////////////////////
 ignition::common::Time ignition::gui::convert(const ignition::msgs::Time &_t)
 {
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
   ignition::common::Time result(_t.sec(), _t.nsec());
   return result;
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
 }
 
 /////////////////////////////////////////////////
