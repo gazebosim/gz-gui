@@ -65,7 +65,7 @@ namespace ignition::gazebo
     public: std::string nameAxes;
 
     /// \brief structure to save data of the active axes
-    public: std::map<std::string, AxesData_t> activeAxesMap;
+    public: std::unordered_map<std::string, AxesData_t> activeAxesMap;
 
     /// \brief Flag that indicates whether there are new updates to be rendered.
     public: bool dirty{true};
@@ -86,13 +86,10 @@ AxesConfig::AxesConfig()
 AxesConfig::~AxesConfig() = default;
 
 /////////////////////////////////////////////////
-void AxesConfig::LoadConfig(const tinyxml2::XMLElement *)
+void AxesConfig::Initialize()
 {
-  if (this->title.empty())
-    this->title = "Axes";
-
-  ignition::gui::App()->findChild<
-      ignition::gui::MainWindow *>()->installEventFilter(this);
+  if (this->dataPtr->scene != nullptr)
+    return;
 
   auto loadedEngNames = rendering::loadedEngines();
   if (loadedEngNames.empty())
@@ -133,6 +130,17 @@ void AxesConfig::LoadConfig(const tinyxml2::XMLElement *)
   }
 
   this->EntitiesInScene();
+  this->RefreshComboBox();
+}
+
+/////////////////////////////////////////////////
+void AxesConfig::LoadConfig(const tinyxml2::XMLElement *)
+{
+  if (this->title.empty())
+    this->title = "Axes";
+
+  ignition::gui::App()->findChild<
+      ignition::gui::MainWindow *>()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
@@ -140,6 +148,7 @@ bool AxesConfig::eventFilter(QObject *_obj, QEvent *_event)
 {
   if (_event->type() == ignition::gui::events::Render::kType)
   {
+    this->Initialize();
     // This event is called in Scene3d's RenderThread, so it's safe to make
     // rendering calls here
     this->UpdateOriginArrows();
@@ -225,6 +234,13 @@ const QStringList AxesConfig::comboList()
   return itemComboList;
 }
 
+void AxesConfig::RefreshComboBox()
+{
+  this->EntitiesInScene();
+  emit ComboListChanged();
+  onCurrentIndexChanged(0);
+}
+
 /////////////////////////////////////////////////
 void AxesConfig::SetComboList(const QStringList &comboList)
 {
@@ -235,7 +251,6 @@ void AxesConfig::SetComboList(const QStringList &comboList)
     {
       this->dataPtr->nameAxes = itemComboList[0].toStdString();
     }
-    emit ComboListChanged();
   }
 }
 
@@ -365,7 +380,11 @@ void AxesConfig::EntitiesInScene()
     std::vector<std::string> tokens = ignition::common::split(vis_name, "::");
     if (tokens.size() == 1)
     {
-      setEntities.insert(tokens[0]);
+      std::size_t found = tokens[0].find("Axes");
+      if (found == std::string::npos)
+      {
+        setEntities.insert(tokens[0]);
+      }
     }
   }
 
@@ -394,6 +413,7 @@ void AxesConfig::SetPose(
   this->dataPtr->dirty = true;
 }
 
+/////////////////////////////////////////////////
 void AxesConfig::OnTypeAxes(bool _checked)
 {
   this->dataPtr->isArrow = _checked;

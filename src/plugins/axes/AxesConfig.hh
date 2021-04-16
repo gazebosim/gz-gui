@@ -47,6 +47,9 @@ namespace gazebo
     /// \brief Destructor
     public: ~AxesConfig() override;
 
+    /// Initilize plugin configuration
+    public: void Initialize();
+
     // Documentation inherited
     public: void LoadConfig(const tinyxml2::XMLElement *) override;
 
@@ -70,6 +73,9 @@ namespace gazebo
 
     /// \brief set a new combobox list and emit the signal ComboListChanged
     public: void SetComboList(const QStringList &comboList);
+
+    /// \brief emit the signal to update the combobox called from QML
+    public slots: void RefreshComboBox();
 
     /// \brief Callback to update the size of the arrows
     /// \param[in] _size size of the arrows in meters
@@ -102,10 +108,6 @@ namespace gazebo
     /// \internal
     /// \brief Return a Qt String list with the item of the combobox.
     private: const QStringList comboList();
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<AxesConfigPrivate> dataPtr;
 
     /// \internal
     /// \brief QProperty to udpate the length of each axes on the GUI
@@ -143,7 +145,6 @@ namespace gazebo
     /// \brief QProperty to udpate the show axes of each axes on the GUI
     Q_PROPERTY(int showAxes READ showAxes)
 
-
     /// \internal
     /// \brief return length of the active axis
     private: double length() const;
@@ -179,6 +180,10 @@ namespace gazebo
     /// \internal
     /// \brief return if the arrows are visible
     private: int showArrow() const;
+
+    /// \internal
+    /// \brief Pointer to private data.
+    private: std::unique_ptr<AxesConfigPrivate> dataPtr;
   };
 }
 }

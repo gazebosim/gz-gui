@@ -64,18 +64,6 @@ TEST(AxesConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Load))
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Axes");
 
-  // std::cerr << "size() " << plugin->children().size() << '\n';
-  //
-  // for (auto w: plugin->children())
-  // {
-  //   std::cerr << "w " << w->objectName().constData() << '\n';
-  // }
-  //
-  // // Has a entity picker
-  // auto axesCombo = plugin->findChild<QComboBox *>();
-  // ASSERT_NE(axesCombo, nullptr);
-  // EXPECT_EQ(axesCombo->count(), 0);
-
   // Cleanup
   plugins.clear();
 }

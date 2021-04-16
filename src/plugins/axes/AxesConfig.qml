@@ -29,16 +29,9 @@ GridLayout {
   anchors.leftMargin: 10
   anchors.rightMargin: 10
 
-  // Left spacer
-  Item {
-    Layout.columnSpan: 1
-    Layout.rowSpan: 1
-    Layout.fillWidth: true
-  }
-
   ComboBox {
-    Layout.alignment: Qt.AlignHCenter
-    Layout.columnSpan: 2
+    Layout.columnSpan: 3
+    Layout.fillWidth: true
     objectName: "ComboBoxEntities"
     model: AxesConfig.comboList
     onActivated: {
@@ -60,12 +53,15 @@ GridLayout {
          }
      }
   }
-
-  // Right spacer
-  Item {
-    Layout.columnSpan: 1
-    Layout.rowSpan: 1
-    Layout.fillWidth: true
+  RoundButton {
+    text: "\u21bb"
+    onClicked: {
+      AxesConfig.RefreshComboBox();
+    }
+    ToolTip.visible: hovered
+    ToolTip.delay: 500
+    ToolTip.timeout: 1000
+    ToolTip.text: qsTr("Refresh list of entities")
   }
 
   // Left spacer
