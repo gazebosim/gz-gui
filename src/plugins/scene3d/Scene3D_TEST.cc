@@ -19,64 +19,57 @@
 #include <ignition/common/Console.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
-#include <ignition/rendering.hh>
+#include <ignition/rendering/Camera.hh>
+#include <ignition/rendering/RenderEngine.hh>
+#include <ignition/rendering/RenderingIface.hh>
+#include <ignition/rendering/Scene.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "test_config.h"  // NOLINT(build/include)
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
+#include "ignition/gui/MainWindow.hh"
+
+#include "Scene3D.hh"
+
+int g_argc = 1;
+char **g_argv = new char *[g_argc];
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(Scene3DTest, Load)
+TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
 
-  EXPECT_TRUE(loadPlugin("Scene3D"));
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  EXPECT_TRUE(stop());
-}
+  EXPECT_TRUE(app.LoadPlugin("Scene3D"));
 
-/////////////////////////////////////////////////
-TEST(Scene3DTest, Resize)
-{
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
-
-  // Load plugin
-  EXPECT_TRUE(loadPlugin("Scene3D"));
-
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-
-  // Close window after some time
-  auto win = mainWindow();
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
 
-  QTimer::singleShot(300, [&win]()
-  {
-    // Check there are no segfaults when resizing
-    for (auto i : {100, 300, 200, 500, 400})
-    {
-      win->resize(i + (qrand() % 100), i + (qrand() % 100));
-      QCoreApplication::processEvents();
-    }
-    win->close();
-  });
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
 
-  // Show window
-  EXPECT_TRUE(runMainWindow());
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "3D Scene");
 
-  EXPECT_TRUE(stop());
+  // Cleanup
+  plugins.clear();
 }
 
 /////////////////////////////////////////////////
-TEST(Scene3DTest, Config)
+TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load plugin
   const char *pluginStr =
@@ -90,11 +83,15 @@ TEST(Scene3DTest, Config)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("Scene3D",
+  EXPECT_TRUE(app.LoadPlugin("Scene3D",
       pluginDoc.FirstChildElement("plugin")));
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
 
   // Check scene
   auto engine = rendering::engine("ogre");
@@ -116,7 +113,5 @@ TEST(Scene3DTest, Config)
   ASSERT_NE(nullptr, camera);
 
   EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
-
-  EXPECT_TRUE(stop());
 }
 

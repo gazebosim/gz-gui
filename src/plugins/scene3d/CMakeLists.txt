@@ -4,7 +4,7 @@ ign_gui_add_plugin(Scene3D
   QT_HEADERS
     Scene3D.hh
   TEST_SOURCES
-    # Scene3D_TEST.cc
+    Scene3D_TEST.cc
   PUBLIC_LINK_LIBS
    ${IGNITION-RENDERING_LIBRARIES}
 )
