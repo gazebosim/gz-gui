@@ -54,5 +54,3 @@ Rectangle {
       height = Qt.binding(function() {return parent.parent.height})
   }
 }
-
-

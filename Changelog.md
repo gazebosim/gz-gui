@@ -4,6 +4,35 @@
 
 ### Ignition Gui 4.X.X (20XX-XX-XX)
 
+### Ignition Gui 4.3.0 (2021-03-11)
+
+1. Screenshot plugin
+    * [Pull request #170](https://github.com/ignitionrobotics/ign-gui/pull/170)
+
+1. Master branch updates
+    * [Pull request #187](https://github.com/ignitionrobotics/ign-gui/pull/187)
+
+1. 👩‍🌾 Disable tests that initialize App on macOS: they're all flaky
+    * [Pull request #184](https://github.com/ignitionrobotics/ign-gui/pull/184)
+
+1. Remove issue & PR templates
+    * [Pull request #181](https://github.com/ignitionrobotics/ign-gui/pull/181)
+
+1. Backport Publisher test from v4
+    * [Pull request #173](https://github.com/ignitionrobotics/ign-gui/pull/173)
+
+1. Fix version number
+    * [Pull request #179](https://github.com/ignitionrobotics/ign-gui/pull/179)
+
+1. Better error messages when component can't be loaded
+    * [Pull request #175](https://github.com/ignitionrobotics/ign-gui/pull/175)
+
+1. Make Grid3D plugin more flexible
+    * [Pull request #172](https://github.com/ignitionrobotics/ign-gui/pull/172)
+
+1. Add Windows Installation
+    * [Pull request #168](https://github.com/ignitionrobotics/ign-gui/pull/168)
+
 ### Ignition Gui 4.2.0 (2021-02-09)
 
 1. Added issue and PR templates
@@ -102,6 +131,29 @@
 ## Ignition Gui 3
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
+
+### Ignition Gui 3.5.0 (2021-03-10)
+
+1. Screenshot plugin
+    * [Pull request #170](https://github.com/ignitionrobotics/ign-gui/pull/170)
+
+1. Master branch updates
+    * [Pull request #187](https://github.com/ignitionrobotics/ign-gui/pull/187)
+
+1. Backport Publisher test from v4
+    * [Pull request #173](https://github.com/ignitionrobotics/ign-gui/pull/173)
+
+1. Better error messages when component can't be loaded
+    * [Pull request #175](https://github.com/ignitionrobotics/ign-gui/pull/175)
+
+1. Make Grid3D plugin more flexible
+    * [Pull request #172](https://github.com/ignitionrobotics/ign-gui/pull/172)
+
+1. Add Windows Installation
+    * [Pull request #168](https://github.com/ignitionrobotics/ign-gui/pull/168)
+
+1. Fix codecheck
+    * [Pull request #157](https://github.com/ignitionrobotics/ign-gui/pull/157)
 
 ### Ignition Gui 3.4.0 (2020-12-10)
 

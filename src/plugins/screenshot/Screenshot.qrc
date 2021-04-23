@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="Screenshot/">
+  <file>Screenshot.qml</file>
+  <file>screenshot.png</file>
+  <file>folder.png</file>
+</qresource>
+</RCC>
