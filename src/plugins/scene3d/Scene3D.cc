@@ -689,6 +689,10 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     capsule->SetRadius(_msg.capsule().radius());
     capsule->SetLength(_msg.capsule().length());
     geom = capsule;
+
+    scale.X() = _msg.capsule().radius() * 2;
+    scale.Y() = scale.X();
+    scale.Z() = _msg.capsule().length() + scale.X();
   }
   else if (_msg.has_ellipsoid())
   {
