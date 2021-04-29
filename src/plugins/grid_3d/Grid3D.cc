@@ -92,7 +92,7 @@ namespace plugins
 
     /// \brief We keep a pointer to the engine and rely on it not being
     /// destroyed, since it is a singleton.
-    public: rendering::RenderEngine *engine;
+    public: rendering::RenderEngine *engine = nullptr;
 
     /// \brief We keep the scene name rather than a shared pointer because we
     /// don't want to share ownership.
