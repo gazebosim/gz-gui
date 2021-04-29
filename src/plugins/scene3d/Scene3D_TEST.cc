@@ -17,12 +17,6 @@
 
 #include <gtest/gtest.h>
 #include <ignition/common/Console.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
 #include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
@@ -61,57 +55,5 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 
   // Cleanup
   plugins.clear();
-}
-
-/////////////////////////////////////////////////
-TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
-{
-  common::Console::SetVerbosity(4);
-
-  Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-  // Load plugin
-  const char *pluginStr =
-    "<plugin filename=\"Scene3D\">"
-      "<engine>ogre</engine>"
-      "<scene>banana</scene>"
-      "<ambient_light>1.0 0 0</ambient_light>"
-      "<background_color>0 1 0</background_color>"
-      "<camera_pose>1 2 3 0 0 1.57</camera_pose>"
-    "</plugin>";
-
-  tinyxml2::XMLDocument pluginDoc;
-  pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(app.LoadPlugin("Scene3D",
-      pluginDoc.FirstChildElement("plugin")));
-
-  // Get main window
-  auto win = app.findChild<MainWindow *>();
-  ASSERT_NE(nullptr, win);
-
-  // Show, but don't exec, so we don't block
-  win->QuickWindow()->show();
-
-  // Check scene
-  auto engine = rendering::engine("ogre");
-  ASSERT_NE(nullptr, engine);
-
-  auto scene = engine->SceneByName("banana");
-  ASSERT_NE(nullptr, scene);
-
-  EXPECT_EQ(math::Color(0, 1, 0), scene->BackgroundColor());
-  EXPECT_EQ(math::Color(1, 0, 0), scene->AmbientLight());
-
-  auto root = scene->RootVisual();
-  ASSERT_NE(nullptr, root);
-  EXPECT_EQ(1u, root->ChildCount());
-
-  // Check camera
-  auto camera = std::dynamic_pointer_cast<rendering::Camera>(
-      root->ChildByIndex(0));
-  ASSERT_NE(nullptr, camera);
-
-  EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
 }
 
