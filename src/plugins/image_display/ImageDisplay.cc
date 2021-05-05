@@ -156,8 +156,6 @@ void ImageDisplay::ProcessImage()
 
   QImage image = QImage(width, height, qFormat);
 
-  common::Image::PixelFormatType pixelFormat =
-      common::Image::PixelFormatType::UNKNOWN_PIXEL_FORMAT;
   common::Image output;
   switch (this->dataPtr->imageMsg.pixel_format_type())
   {
@@ -189,7 +187,8 @@ void ImageDisplay::ProcessImage()
       return;
     }
   }
-  pixelFormat = common::Image::ConvertPixelFormat(
+  common::Image::PixelFormatType pixelFormat =
+      common::Image::ConvertPixelFormat(
       msgs::ConvertPixelFormatType(
       this->dataPtr->imageMsg.pixel_format_type()));
 
