@@ -17,13 +17,21 @@
 #ifndef IGNITION_GUI_SCENE3DINTERFACE_HH_
 #define IGNITION_GUI_SCENE3DINTERFACE_HH_
 
+#include "ignition/gui/Export.hh"
+
 #include <memory>
 #include <string>
 
-#include "ignition/gui/Export.hh"
-
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Color.hh>
+
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
+#include <ignition/msgs.hh>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #include <ignition/msgs/boolean.pb.h>
 #include <ignition/msgs/stringmsg.pb.h>
@@ -59,6 +67,8 @@ namespace gui
     /// \brief Destructor
     public: ~Scene3DInterface();
 
+    void Update();
+
     public: void SetPluginItem(QQuickItem * pluginItem);
     public: void SetFullScreen(bool _fullscreen);
     public: void SetEngineName(const std::string _name);
@@ -71,9 +81,18 @@ namespace gui
     public: void SetDeletionTopic(const std::string topic);
     public: void SetSceneTopic(const std::string topic);
     public: void SetSkyEnabled(const bool sky);
+    public: void SetShowGrid(const bool grid);
     public: void SetFollowPGain(const double gain);
     public: void SetFollowTarget(const std::string &_target,
         bool _waitForTarget = false);
+
+    public: void UpdatePoses(std::unordered_map<long unsigned int, math::Pose3d> &_poses);
+
+    public: bool IsSceneAvailable();
+
+    public: void SetScene(const msgs::Scene &_scene);
+
+    public: void SetModel(const msgs::Model &_model);
 
     /// \brief True to set the camera to follow the target in world frame,
     /// false to follow in target's local frame

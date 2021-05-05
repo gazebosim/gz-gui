@@ -63,6 +63,11 @@ Scene3DInterface::~Scene3DInterface()
 {
 }
 
+void Scene3DInterface::Update()
+{
+
+}
+
 void Scene3DInterface::SetPluginItem(QQuickItem * pluginItem)
 {
   this->dataPtr->pluginItem = pluginItem;
@@ -90,6 +95,21 @@ void Scene3DInterface::SetPluginItem(QQuickItem * pluginItem)
       &Scene3DInterface::OnFollow, this);
   ignmsg << "Follow service on ["
          << this->dataPtr->followService << "]" << std::endl;
+}
+
+void Scene3DInterface::SetScene(const msgs::Scene &_scene)
+{
+  this->dataPtr->renderWindow->SetScene(_scene);
+}
+
+void Scene3DInterface::SetModel(const msgs::Model &_model)
+{
+  this->dataPtr->renderWindow->SetModel(_model);
+}
+
+bool Scene3DInterface::IsSceneAvailable()
+{
+  return this->dataPtr->renderWindow->IsSceneAvailable();
 }
 
 /////////////////////////////////////////////////
@@ -120,6 +140,17 @@ void Scene3DInterface::SetFullScreen(bool _fullscreen)
     ignition::gui::App()->findChild
       <ignition::gui::MainWindow *>()->QuickWindow()->showFullScreen();
   }
+}
+
+void Scene3DInterface::SetShowGrid(const bool _grid)
+{
+  this->dataPtr->renderWindow->SetShowGrid(_grid);
+}
+
+void Scene3DInterface::UpdatePoses(
+  std::unordered_map<long unsigned int, math::Pose3d> &_poses)
+{
+  this->dataPtr->renderWindow->UpdatePoses(_poses);
 }
 
 /////////////////////////////////////////////////

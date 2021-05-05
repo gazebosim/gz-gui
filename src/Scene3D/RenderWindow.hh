@@ -33,6 +33,14 @@
 #include "ignition/gui/qt.h"
 #include "IgnRenderer.hh"
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
+#include <ignition/msgs.hh>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 namespace ignition
 {
 namespace gui
@@ -103,6 +111,12 @@ namespace gui
     /// \param[in] _sky True if enable, false otherwise
     public: void SetSkyEnabled(const bool &_sky);
 
+    public: void SetShowGrid(const bool grid);
+    public: void SetModel(const msgs::Model &_model);
+    public: void SetScene(const msgs::Scene &_scene);
+
+    public: bool IsSceneAvailable();
+
     /// \brief
     /// \param[in] _gain
     public: void SetFollowPGain(const double &_gain);
@@ -157,6 +171,8 @@ namespace gui
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
 
+    public: void UpdatePoses(std::unordered_map<long unsigned int, math::Pose3d> &_poses);
+
     // Documentation inherited
     protected: virtual void mousePressEvent(QMouseEvent *_e) override;
 
@@ -168,6 +184,11 @@ namespace gui
 
     // Documentation inherited
     protected: virtual void wheelEvent(QWheelEvent *_e) override;
+
+    protected: virtual void keyReleaseEvent(QKeyEvent *_e) override;
+    protected: virtual void keyPressEvent(QKeyEvent *_e) override;
+
+    // public: void keyReleaseEvent(QKeyEvent *_e);
 
     /// \brief Overrides the paint event to render the render engine
     /// camera view

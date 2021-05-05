@@ -17,6 +17,10 @@
 #include <string>
 
 #include "SceneManager.hh"
+#include "ignition/rendering/Capsule.hh"
+#include <ignition/rendering/Visual.hh>
+#include <ignition/rendering/Geometry.hh>
+#include <ignition/rendering/Grid.hh>
 
 using namespace ignition;
 using namespace gui;
@@ -27,27 +31,14 @@ SceneManager::SceneManager()
 }
 
 /////////////////////////////////////////////////
-SceneManager::SceneManager(const std::string &_service,
-                           const std::string &_poseTopic,
-                           const std::string &_deletionTopic,
-                           const std::string &_sceneTopic,
-                           rendering::ScenePtr _scene)
+SceneManager::SceneManager(rendering::ScenePtr _scene)
 {
-  igndbg << "Scene Manager service " << _service << "\tpose: " << _poseTopic  << '\n';
-  this->Load(_service, _poseTopic, _deletionTopic, _sceneTopic, _scene);
+  this->Load(_scene);
 }
 
 /////////////////////////////////////////////////
-void SceneManager::Load(const std::string &_service,
-                        const std::string &_poseTopic,
-                        const std::string &_deletionTopic,
-                        const std::string &_sceneTopic,
-                        rendering::ScenePtr _scene)
+void SceneManager::Load(rendering::ScenePtr _scene)
 {
-  this->service = _service;
-  this->poseTopic = _poseTopic;
-  this->deletionTopic = _deletionTopic;
-  this->sceneTopic = _sceneTopic;
   this->scene = _scene;
 }
 
@@ -57,60 +48,15 @@ rendering::ScenePtr SceneManager::GetScene()
 }
 
 /////////////////////////////////////////////////
-void SceneManager::Request()
-{
-  // wait for the service to be advertized
-  std::vector<transport::ServicePublisher> publishers;
-  const std::chrono::duration<double> sleepDuration{1.0};
-  const std::size_t tries = 30;
-  for (std::size_t i = 0; i < tries; ++i)
-  {
-    this->node.ServiceInfo(this->service, publishers);
-    if (publishers.size() > 0)
-      break;
-    std::this_thread::sleep_for(sleepDuration);
-    igndbg << "Waiting for service " << this->service << "\n";
-  }
-
-  if (publishers.empty() ||
-      !this->node.Request(this->service, &SceneManager::OnSceneSrvMsg, this))
-  {
-    ignerr << "Error making service request to " << this->service << std::endl;
-  }
-}
-
-/////////////////////////////////////////////////
-void SceneManager::OnPoseVMsg(const msgs::Pose_V &_msg)
-{
-  std::lock_guard<std::mutex> lock(this->mutex);
-  for (int i = 0; i < _msg.pose_size(); ++i)
-  {
-    math::Pose3d pose = msgs::Convert(_msg.pose(i));
-
-    // apply additional local poses if available
-    const auto it = this->localPoses.find(_msg.pose(i).id());
-    if (it != this->localPoses.end())
-    {
-      pose = pose * it->second;
-    }
-
-    this->poses[_msg.pose(i).id()] = pose;
-  }
-}
-
-/////////////////////////////////////////////////
-void SceneManager::OnDeletionMsg(const msgs::UInt32_V &_msg)
-{
-  std::lock_guard<std::mutex> lock(this->mutex);
-  std::copy(_msg.data().begin(), _msg.data().end(),
-            std::back_inserter(this->toDeleteEntities));
-}
-
-/////////////////////////////////////////////////
 void SceneManager::Update()
 {
   // process msgs
   std::lock_guard<std::mutex> lock(this->mutex);
+  if (!this->isgridactive && this->showGrid)
+  {
+    ShowGrid();
+    this->isgridactive = true;
+  }
 
   for (const auto &msg : this->sceneMsgs)
   {
@@ -118,130 +64,72 @@ void SceneManager::Update()
   }
   this->sceneMsgs.clear();
 
-  for (const auto &entity : this->toDeleteEntities)
+  for (const auto &pose : this->poses)
   {
-    this->DeleteEntity(entity);
-  }
-  this->toDeleteEntities.clear();
-
-
-  for (auto pIt = this->poses.begin(); pIt != this->poses.end();)
-  {
-    auto vIt = this->visuals.find(pIt->first);
-    if (vIt != this->visuals.end())
+    auto it = this->visuals.find(pose.first);
+    if (it != this->visuals.end())
     {
-      auto visual = vIt->second.lock();
-      if (visual)
-      {
-        visual->SetLocalPose(pIt->second);
-      }
-      else
-      {
-        this->visuals.erase(vIt);
-      }
-      this->poses.erase(pIt++);
-    }
-    else
-    {
-      auto lIt = this->lights.find(pIt->first);
-      if (lIt != this->lights.end())
-      {
-        auto light = lIt->second.lock();
-        if (light)
-        {
-          light->SetLocalPose(pIt->second);
-        }
-        else
-        {
-          this->lights.erase(lIt);
-        }
-        this->poses.erase(pIt++);
-      }
-      else
-      {
-        ++pIt;
-      }
+      it->second.lock()->SetLocalPose(pose.second);
     }
   }
 
-  // Note we are clearing the pose msgs here but later on we may need to
-  // consider the case where pose msgs arrive before scene/visual msgs
-  this->poses.clear();
+
 }
 
-
-/////////////////////////////////////////////////
-void SceneManager::OnSceneMsg(const msgs::Scene &_msg)
+void SceneManager::SetScene(const msgs::Scene &_scene)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
-  this->sceneMsgs.push_back(_msg);
+  this->sceneMsgs.push_back(_scene);
 }
 
-/////////////////////////////////////////////////
-void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
+void SceneManager::SetActiveGrid(bool _grid)
 {
-  if (!result)
+  this->showGrid = _grid;
+}
+
+void SceneManager::ShowGrid()
+{
+  if (!this->scene)
   {
-    ignerr << "Error making service request to " << this->service
-           << std::endl;
     return;
   }
 
-  {
-    std::lock_guard<std::mutex> lock(this->mutex);
-    this->sceneMsgs.push_back(_msg);
-  }
+  rendering::VisualPtr root = this->scene->RootVisual();
 
-  if (!this->poseTopic.empty())
-  {
-    if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
-    {
-      ignerr << "Error subscribing to pose topic: " << this->poseTopic
-        << std::endl;
-    }
-  }
-  else
-  {
-    ignwarn << "The pose topic, set via <pose_topic>, for the Scene3D plugin "
-      << "is missing or empty. Please set this topic so that the Scene3D "
-      << "can receive and process pose information.\n";
-  }
+  // create gray material
+  rendering::MaterialPtr gray = this->scene->CreateMaterial();
+  gray->SetAmbient(0.7, 0.7, 0.7);
+  gray->SetDiffuse(0.7, 0.7, 0.7);
+  gray->SetSpecular(0.7, 0.7, 0.7);
 
-  if (!this->deletionTopic.empty())
-  {
-    if (!this->node.Subscribe(this->deletionTopic, &SceneManager::OnDeletionMsg,
-          this))
-    {
-      ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
-        << std::endl;
-    }
-  }
-  else
-  {
-    ignwarn << "The deletion topic, set via <deletion_topic>, for the "
-      << "Scene3D plugin is missing or empty. Please set this topic so that "
-      << "the Scene3D can receive and process deletion information.\n";
-  }
+  // create grid visual
+  rendering::VisualPtr visual = this->scene->CreateVisual();
 
-  if (!this->sceneTopic.empty())
+  rendering::GridPtr gridGeom = this->scene->CreateGrid();
+
+  if (!gridGeom)
   {
-    if (!this->node.Subscribe(
-          this->sceneTopic, &SceneManager::OnSceneMsg, this))
-    {
-      ignerr << "Error subscribing to scene topic: " << this->sceneTopic
-             << std::endl;
-    }
+    ignwarn << "Failed to create grid for scene ["
+      << this->scene->Name() << "] on engine ["
+        << this->scene->Engine()->Name() << "]"
+          << std::endl;
+    return;
   }
-  else
-  {
-    ignwarn << "The scene topic, set via <scene_topic>, for the "
-      << "Scene3D plugin is missing or empty. Please set this topic so that "
-      << "the Scene3D can receive and process scene information.\n";
-  }
+  gridGeom->SetCellCount(20);
+  gridGeom->SetCellLength(1);
+  gridGeom->SetVerticalCellCount(0);
+  visual->AddGeometry(gridGeom);
+  visual->SetLocalPosition(0, 0, 0.015);
+  visual->SetMaterial(gray);
+  root->AddChild(visual);
 }
 
 void SceneManager::LoadScene(const msgs::Scene &_msg)
 {
+  if (!this->scene)
+  {
+    return;
+  }
   rendering::VisualPtr rootVis = this->scene->RootVisual();
 
   // load models
@@ -428,7 +316,6 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
 
   return visualVis;
 }
-#include "ignition/rendering/Capsule.hh"
 
 /////////////////////////////////////////////////
 rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
@@ -497,7 +384,6 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
   {
     if (_msg.mesh().filename().empty())
     {
-      ignerr << "Mesh geometry missing filename" << std::endl;
       return geom;
     }
     rendering::MeshDescriptor descriptor;
@@ -621,4 +507,10 @@ void SceneManager::DeleteEntity(const unsigned int _entity)
     }
     this->lights.erase(_entity);
   }
+}
+
+void SceneManager::UpdatePoses(std::unordered_map<long unsigned int, math::Pose3d> &_poses)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  this->poses = _poses;
 }

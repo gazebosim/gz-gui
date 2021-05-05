@@ -30,6 +30,14 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/qt.h"
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
+#include <ignition/msgs.hh>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 namespace ignition
 {
 namespace gui
@@ -81,8 +89,16 @@ class IgnRenderer : public QObject
   /// \brief Callback when a move to animation is complete
   private: void OnMoveToComplete();
 
+  public: std::string FollowTarget() const;
+
+  public: void UpdatePoses(std::unordered_map<long unsigned int, math::Pose3d> &_poses);
+
   public: void SetFollowTarget(const std::string &_target,
       bool _waitForTarget);
+
+  public: void SetShowGrid(bool _grid);
+  public: void SetModel(const msgs::Model &_model);
+  public: void SetScene(const msgs::Scene &_scene);
 
   /// \brief True to set the camera to follow the target in world frame,
   /// false to follow in target's local frame

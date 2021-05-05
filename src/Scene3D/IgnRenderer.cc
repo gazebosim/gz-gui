@@ -106,6 +106,8 @@ namespace gui
 
     /// \brief View control focus target
     public: math::Vector3d target;
+
+    public: bool showGrid = false;
   };
 }
 }
@@ -172,8 +174,6 @@ void IgnRenderer::Render()
       rendering::NodePtr target = this->dataPtr->sceneManager.GetScene()->NodeByName(
           this->dataPtr->moveToTarget);
 
-      ignerr << "this->dataPtr->moveToTarget " << this->dataPtr->moveToTarget << std::endl;
-
       if (target)
       {
         this->dataPtr->moveToHelper.MoveTo(this->dataPtr->camera, target, 0.5,
@@ -200,11 +200,6 @@ void IgnRenderer::Render()
   rendering::NodePtr followTarget = this->dataPtr->camera->FollowTarget();
   if (!this->dataPtr->followTarget.empty())
   {
-    // for (int i = 0; i < this->dataPtr->sceneManager.GetScene()->NodeCount(); i++)
-    // {
-    //   ignerr << this->dataPtr->sceneManager.GetScene()->NodeByIndex(i)->Name() << std::endl;;
-    // }
-
     rendering::NodePtr target = this->dataPtr->sceneManager.GetScene()->NodeByName(
         this->dataPtr->followTarget);
 
@@ -401,16 +396,7 @@ void IgnRenderer::Initialize()
   this->dataPtr->camera->PreRender();
   this->textureId = this->dataPtr->camera->RenderTextureGLId();
 
-  igndbg << "Service name [" << this->sceneService << "]" << std::endl;
-
-  // Make service call to populate scene
-  if (!this->sceneService.empty())
-  {
-    this->dataPtr->sceneManager.Load(this->sceneService, this->poseTopic,
-                                     this->deletionTopic, this->sceneTopic,
-                                     scene);
-    this->dataPtr->sceneManager.Request();
-  }
+  this->dataPtr->sceneManager.Load(scene);
 
   // Ray Query
   this->dataPtr->rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
@@ -468,11 +454,37 @@ void IgnRenderer::SetFollowTarget(const std::string &_target,
   this->dataPtr->followTargetWait = _waitForTarget;
 }
 
+std::string IgnRenderer::FollowTarget() const
+{
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  return this->dataPtr->followTarget;
+}
 /////////////////////////////////////////////////
 void IgnRenderer::SetFollowPGain(double _gain)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->dataPtr->followPGain = _gain;
+}
+
+void IgnRenderer::UpdatePoses(std::unordered_map<long unsigned int, math::Pose3d> &_poses)
+{
+  this->dataPtr->sceneManager.UpdatePoses(_poses);
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::SetShowGrid(bool _grid)
+{
+  this->dataPtr->sceneManager.SetActiveGrid(_grid);
+}
+
+void IgnRenderer::SetModel(const msgs::Model &_model)
+{
+  this->dataPtr->sceneManager.LoadModel(_model);
+}
+
+void IgnRenderer::SetScene(const msgs::Scene &_scene)
+{
+  this->dataPtr->sceneManager.SetScene(_scene);
 }
 
 /////////////////////////////////////////////////

@@ -41,8 +41,6 @@
 #pragma warning(pop)
 #endif
 
-#include <ignition/transport/Node.hh>
-
 namespace ignition
 {
 namespace gui
@@ -54,61 +52,28 @@ namespace gui
     public: SceneManager();
 
     /// \brief Constructor
-    /// \param[in] _service Ign transport scene service name
-    /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _deletionTopic Ign transport deletion topic name
-    /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
-    public: SceneManager(const std::string &_service,
-                         const std::string &_poseTopic,
-                         const std::string &_deletionTopic,
-                         const std::string &_sceneTopic,
-                         rendering::ScenePtr _scene);
+    public: SceneManager(rendering::ScenePtr _scene);
 
     /// \brief Load the scene manager
-    /// \param[in] _service Ign transport service name
-    /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _deletionTopic Ign transport deletion topic name
-    /// \param[in] _sceneTopic Ign transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
-    public: void Load(const std::string &_service,
-                      const std::string &_poseTopic,
-                      const std::string &_deletionTopic,
-                      const std::string &_sceneTopic,
-                      rendering::ScenePtr _scene);
-
-    /// \brief Make the scene service request and populate the scene
-    public: void Request();
+    public: void Load(rendering::ScenePtr _scene);
 
     /// \brief Update the scene based on pose msgs received
     public: void Update();
 
     public: rendering::ScenePtr GetScene();
 
-    /// \brief Callback function for the pose topic
-    /// \param[in] _msg Pose vector msg
-    private: void OnPoseVMsg(const msgs::Pose_V &_msg);
+    private: void ShowGrid();
 
-    /// \brief Load the scene from a scene msg
-    /// \param[in] _msg Scene msg
-    private: void LoadScene(const msgs::Scene &_msg);
+    public: void SetActiveGrid(bool _grid);
 
-    /// \brief Callback function for the request topic
-    /// \param[in] _msg Deletion message
-    private: void OnDeletionMsg(const msgs::UInt32_V &_msg);
-
-    /// \brief Load the scene from a scene msg
-    /// \param[in] _msg Scene msg
-    private: void OnSceneSrvMsg(const msgs::Scene &_msg, const bool result);
-
-    /// \brief Called when there's an entity is added to the scene
-    /// \param[in] _msg Scene msg
-    private: void OnSceneMsg(const msgs::Scene &_msg);
+    public: void LoadScene(const msgs::Scene &_msg);
 
     /// \brief Load the model from a model msg
     /// \param[in] _msg Model msg
     /// \return Model visual created from the msg
-    private: rendering::VisualPtr LoadModel(const msgs::Model &_msg);
+    public: rendering::VisualPtr LoadModel(const msgs::Model &_msg);
 
     /// \brief Load a link from a link msg
     /// \param[in] _msg Link msg
@@ -127,7 +92,7 @@ namespace gui
     /// visual's pose
     /// \return Geometry object created from the msg
     private: rendering::GeometryPtr LoadGeometry(const msgs::Geometry &_msg,
-        math::Vector3d &_scale, math::Pose3d &_localPose);
+       math::Vector3d &_scale, math::Pose3d &_localPose);
 
     /// \brief Load a material from a material msg
     /// \param[in] _msg Material msg
@@ -143,17 +108,11 @@ namespace gui
     /// \param[in] _entity Entity to delete
     private: void DeleteEntity(const unsigned int _entity);
 
-    //// \brief Ign-transport scene service name
-    private: std::string service;
+    /// \brief Set the scene from a scene msg
+    /// \param[in] _msg Scene msg
+    public: void SetScene(const msgs::Scene &_scene);
 
-    //// \brief Ign-transport pose topic name
-    private: std::string poseTopic;
-
-    //// \brief Ign-transport deletion topic name
-    private: std::string deletionTopic;
-
-    //// \brief Ign-transport scene topic name
-    private: std::string sceneTopic;
+    public: void UpdatePoses(std::unordered_map<long unsigned int, math::Pose3d> &_poses);
 
     //// \brief Pointer to the rendering scene
     private: rendering::ScenePtr scene;
@@ -162,7 +121,7 @@ namespace gui
     private: std::mutex mutex;
 
     /// \brief Map of entity id to pose
-    private: std::map<unsigned int, math::Pose3d> poses;
+    private: std::unordered_map<long unsigned int, math::Pose3d> poses;
 
     /// \brief Map of entity id to initial local poses
     /// This is currently used to handle the normal vector in plane visuals. In
@@ -182,9 +141,8 @@ namespace gui
     /// \brief Keeps the a list of unprocessed scene messages
     private: std::vector<msgs::Scene> sceneMsgs;
 
-    /// \brief Transport node for making service request and subscribing to
-    /// pose topic
-    private: ignition::transport::Node node;
+    private: bool isgridactive = false;
+    private: bool showGrid = false;
   };
 }
 }

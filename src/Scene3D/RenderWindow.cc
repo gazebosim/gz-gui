@@ -34,6 +34,8 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
   this->setAcceptedMouseButtons(Qt::AllButtons);
   this->setFlag(ItemHasContents);
   this->dataPtr->renderThread = new RenderThread();
+
+  this->forceActiveFocus();
 }
 
 /////////////////////////////////////////////////
@@ -224,6 +226,26 @@ void RenderWindowItem::SetSkyEnabled(const bool &_sky)
   this->dataPtr->renderThread->ignRenderer.sky = _sky;
 }
 
+void RenderWindowItem::SetShowGrid(const bool _grid)
+{
+  this->dataPtr->renderThread->ignRenderer.SetShowGrid(_grid);
+}
+
+void RenderWindowItem::SetModel(const msgs::Model &_model)
+{
+  this->dataPtr->renderThread->ignRenderer.SetModel(_model);
+}
+
+void RenderWindowItem::SetScene(const msgs::Scene &_scene)
+{
+  this->dataPtr->renderThread->ignRenderer.SetScene(_scene);
+}
+
+void RenderWindowItem::UpdatePoses(std::unordered_map<long unsigned int, math::Pose3d> &_poses)
+{
+  this->dataPtr->renderThread->ignRenderer.UpdatePoses(_poses);
+}
+
 void RenderWindowItem::SetFollowPGain(const double &_gain)
 {
   this->dataPtr->renderThread->ignRenderer.SetFollowPGain(_gain);
@@ -233,6 +255,11 @@ void RenderWindowItem::SetFollowPGain(const double &_gain)
 void RenderWindowItem::SetVisibilityMask(uint32_t _mask)
 {
   this->dataPtr->renderThread->ignRenderer.visibilityMask = _mask;
+}
+
+bool RenderWindowItem::IsSceneAvailable()
+{
+  return this->dataPtr->renderThread->ignRenderer.initialized;
 }
 
 /////////////////////////////////////////////////
@@ -246,9 +273,30 @@ void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
       this->dataPtr->mouseEvent);
 }
 
+void RenderWindowItem::keyPressEvent(QKeyEvent *_e)
+{
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::keyReleaseEvent(QKeyEvent *_e)
+{
+  if (_e->key() == Qt::Key_Escape)
+  {
+    if (!this->dataPtr->renderThread->ignRenderer.FollowTarget().empty())
+    {
+      this->dataPtr->renderThread->ignRenderer.SetFollowTarget(std::string(), false);
+      this->setProperty("message", "");
+
+      _e->accept();
+    }
+  }
+}
+
 ////////////////////////////////////////////////
 void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
+  this->forceActiveFocus();
+
   this->dataPtr->mouseEvent = convert(*_e);
 
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
@@ -258,6 +306,8 @@ void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 ////////////////////////////////////////////////
 void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
 {
+  this->forceActiveFocus();
+
   auto event = convert(*_e);
   event.SetPressPos(this->dataPtr->mouseEvent.PressPos());
 
