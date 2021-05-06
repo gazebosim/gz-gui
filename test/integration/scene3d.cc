@@ -30,8 +30,6 @@
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
 
-#include "Scene3D.hh"
-
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
 
@@ -97,6 +95,7 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   auto engine = rendering::engine("ogre");
   ASSERT_NE(nullptr, engine);
 
+  EXPECT_EQ(1u, engine->SceneCount());
   auto scene = engine->SceneByName("banana");
   ASSERT_NE(nullptr, scene);
 
