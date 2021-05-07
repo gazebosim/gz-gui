@@ -95,6 +95,15 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   auto engine = rendering::engine("ogre");
   ASSERT_NE(nullptr, engine);
 
+  int sleep = 0;
+  int maxSleep = 30;
+  while (0 == engine->SceneCount() && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
   EXPECT_EQ(1u, engine->SceneCount());
   auto scene = engine->SceneByName("banana");
   ASSERT_NE(nullptr, scene);
