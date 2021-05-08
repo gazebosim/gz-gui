@@ -759,7 +759,7 @@ rendering::MaterialPtr SceneManager::LoadMaterial(const msgs::Material &_msg)
   }
   if (_msg.has_specular())
   {
-    material->SetDiffuse(msgs::Convert(_msg.specular()));
+    material->SetSpecular(msgs::Convert(_msg.specular()));
   }
   if (_msg.has_emissive())
   {
