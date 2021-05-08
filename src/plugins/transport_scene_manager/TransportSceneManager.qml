@@ -19,6 +19,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 
+// TODO: remove invisible rectangle, see
+// https://github.com/ignitionrobotics/ign-gui/issues/220
 Rectangle {
   visible: false
   Layout.minimumWidth: 100
