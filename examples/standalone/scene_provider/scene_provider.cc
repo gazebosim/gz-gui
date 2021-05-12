@@ -70,5 +70,7 @@ int main(int argc, char **argv)
   // Scene service
   node.Advertise("/example/scene", sceneService);
 
+  // TODO: Add pose update publisher that moves the box periodically
+
   ignition::transport::waitForShutdown();
 }
