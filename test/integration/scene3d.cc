@@ -26,7 +26,9 @@
 #include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
+#include "../helpers/TestHelper.hh"
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/GuiEvents.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
 
@@ -122,4 +124,62 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
 }
+
+/////////////////////////////////////////////////
+TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"Scene3D\">"
+      "<engine>ogre</engine>"
+      "<scene>banana</scene>"
+      "<ambient_light>1.0 0 0</ambient_light>"
+      "<background_color>0 1 0</background_color>"
+      "<camera_pose>1 2 3 0 0 1.57</camera_pose>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("Scene3D",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
+  // Flags to check if events were received
+  bool receivedRenderEvent{false};
+
+  // Helper to filter events
+  auto testHelper = std::make_unique<TestHelper>();
+  testHelper->forwardEvent = [&](QEvent *_event)
+  {
+    if (_event->type() == events::Render::kType)
+    {
+      receivedRenderEvent = true;
+    }
+  };
+
+  int sleep = 0;
+  int maxSleep = 30;
+  while (!receivedRenderEvent && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(receivedRenderEvent);
+
+  // TODO(anyone) Test more events
+}
+
 
