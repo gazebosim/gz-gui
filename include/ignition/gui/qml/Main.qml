@@ -73,8 +73,10 @@ ApplicationWindow
 
   // Handler for window closing
   onClosing: {
-    close.accepted = false
-    confirmationDialogOnExit.open()
+    close.accepted = !MainWindow.showDialogOnExit
+    if(MainWindow.showDialogOnExit){
+      confirmationDialogOnExit.open()
+    }
   }
 
   // C++ signals to QML slots
