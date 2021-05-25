@@ -325,7 +325,7 @@ namespace plugins
     /// \param[in] _data The node transformation data.
     /// \return Updated node.
     private: QSGNode *updatePaintNode(QSGNode *_oldNode,
-        QQuickItem::UpdatePaintNodeData *_data) override;
+       QQuickItem::UpdatePaintNodeData *_data) override;
 
     /// \internal
     /// \brief Pointer to private data.
