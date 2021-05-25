@@ -16,6 +16,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <QtTest/QtTest>
 #include <ignition/common/Console.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
@@ -157,6 +158,9 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
 
   // Flags to check if events were received
   bool receivedRenderEvent{false};
+  bool receivedRightEvent{false};
+  bool receivedLeftEvent{false};
+  bool receivedHoverEvent{false};
 
   // Helper to filter events
   auto testHelper = std::make_unique<TestHelper>();
@@ -166,20 +170,45 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
     {
       receivedRenderEvent = true;
     }
+    else if (_event->type() == events::RightClickToScene::kType)
+    {
+      receivedRightEvent = true;
+    }
+    else if (_event->type() == events::LeftClickToScene::kType)
+    {
+      receivedLeftEvent = true;
+    }
+    else if (_event->type() == events::HoverToScene::kType)
+    {
+      receivedHoverEvent = true;
+    }
   };
 
   int sleep = 0;
   int maxSleep = 30;
-  while (!receivedRenderEvent && sleep < maxSleep)
+  while ((!receivedRenderEvent || !receivedRightEvent ||
+    !receivedLeftEvent || !receivedHoverEvent) && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
+
+    QTest::mouseMove(win->QuickWindow(), QPoint(70 + sleep, 100), -1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+
+    QTest::mouseClick(win->QuickWindow(), Qt::RightButton, Qt::NoModifier);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+
+    QTest::mouseClick(win->QuickWindow(), Qt::LeftButton, Qt::NoModifier);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+
     sleep++;
   }
 
   EXPECT_TRUE(receivedRenderEvent);
-
-  // TODO(anyone) Test more events
+  EXPECT_TRUE(receivedLeftEvent);
+  EXPECT_TRUE(receivedRightEvent);
+  EXPECT_TRUE(receivedHoverEvent);
 }
-
-
