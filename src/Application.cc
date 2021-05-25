@@ -85,6 +85,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   : QApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
 {
   igndbg << "Initializing application." << std::endl;
+  QCoreApplication::setOrganizationName("Ignition Robotics");
 
   // Configure console
   common::Console::SetPrefix("[GUI] ");

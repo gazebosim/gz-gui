@@ -1,33 +1,158 @@
+/* THIS HEADER WAS AUTOMATICALLY GENERATED
+ * AND SHOULD NOT BE DIRECTLY MODIFIED.
+ *
+ * See test/test_config.h.in in the ignition-common
+ * repo for the original source of this header.
+*/
+
+#ifndef IGNITION_TESTING__TEST_CONFIG_H_
+#define IGNITION_TESTING__TEST_CONFIG_H_
+
+#include <gtest/gtest.h>
+
+#include <string>
+#include "ignition/common/Console.hh"
+#include "ignition/common/Filesystem.hh"
+#include "ignition/common/Util.hh"
+
+#define PROJECT_BINARY_PATH "${PROJECT_BINARY_DIR}"
 #define PROJECT_SOURCE_PATH "${PROJECT_SOURCE_DIR}"
-#define PROJECT_BINARY_PATH "${CMAKE_BINARY_DIR}"
 
-#if (_MSC_VER >= 1400) // Visual Studio 2005
-  #include <sstream>
-
-  /// \brief setenv/unstenv are not present in Windows. Define them to make
-  /// the code portable.
-  /// \param[in] _name Variable name.
-  /// \param[in] _value Value.
-  /// \param[in] _rewrite If 'name' does exist in the environment, then its
-  /// value is changed to 'value' if 'rewrite' is nonzero. If overwrite is
-  /// zero, then the value of 'name' is not changed.
-  /// /return 0 on success or -1 on error.
-  int setenv(const char *_name, const char *_value, int /*_rewrite*/)
+namespace ignition
+{
+  namespace testing
   {
-    std::stringstream sstr;
-    std::string name = _name;
-    std::string value = _value;
-    sstr << name << '=' << value;
-    return _putenv(sstr.str().c_str());
-  }
+    /// \brief Method to retrieve root directory of project source
+    ///
+    /// This is used to get various test files
+    /// \param[inout] _sourceDir Full path to the source directory
+    /// \return True if directory is set correctly, false otherwise
+    bool ProjectSourcePath(std::string &_sourceDir)
+    {
+      // Bazel builds set TEST_SRCDIR
+      if (common::env("TEST_SRCDIR", _sourceDir))
+      {
+        _sourceDir = common::joinPaths(
+            _sourceDir, "__main__", "ign_gui");
+        return true;
+      }
+      else
+      {
+        // CMake builds set PROJECT_SOURCE_DIR
+        _sourceDir = "${PROJECT_SOURCE_DIR}";
+        return true;
+      }
+    }
 
-  /// \brief Deletes an environment variable.
-  /// \param[in] _name Variable name.
-  void unsetenv(const char *_name)
-  {
-    std::stringstream sstr;
-    std::string name = _name;
-    sstr << name << '=';
-    _putenv(sstr.str().c_str());
-  }
-#endif
+    /// \brief Method to retrieve root directory of project binary 
+    ///
+    /// \param[inout] _binaryDir Full path to the binary directory
+    /// \return True if directory is set correctly, false otherwise
+    bool ProjectBinaryPath(std::string &_binaryDir)
+    {
+      // Bazel builds set TEST_SRCDIR
+      if (common::env("TEST_SRCDIR", _binaryDir))
+      {
+        _binaryDir = common::joinPaths(
+            _binaryDir, "__main__", "ign_gui");
+        return true;
+      }
+      else
+      {
+        // CMake builds set PROJECT_BINARY_DIR
+        _binaryDir = "${PROJECT_BINARY_DIR}/lib";
+        return true;
+      }
+    }
+
+    /// \brief Method to retrieve temporary directory for test outputs
+    ///
+    /// \param[inout] _tmpDir Full path to the temp directory
+    /// \return True if directory is set correctly, false otherwise
+    bool TestTmpPath(std::string &_tmpDir)
+    {
+      // Bazel builds set TEST_UNDECLARED_OUTPUTS_DIR
+      if (common::env("TEST_UNDECLARED_OUTPUTS_DIR", _tmpDir))
+      {
+        return true;
+      }
+      else
+      {
+        _tmpDir = common::joinPaths("${PROJECT_BINARY_DIR}", "tmp");
+        return true;
+      }
+    }
+
+    /// \brief Method to retrieve temporary home directory for tests
+    ///
+    /// This will update the contents of the home directory path variable
+    /// (HOME on Linux/MacOS, HOMEPATH on Windows) to this newly-set
+    /// directory
+    /// This additionally sets the HOME and HOMEPATH environment variables
+    ///
+    /// \param[inout] _homeDir Full path to the home directory
+    /// \return True if directory is set correctly, false otherwise
+    bool TestSetHomePath(std::string &_homeDir)
+    {
+      if (common::env("TEST_UNDECLARED_OUTPUTS_DIR", _homeDir))
+      {
+        return ignition::common::setenv(IGN_HOMEDIR, _homeDir);
+      }
+      else
+      {
+        if (TestTmpPath(_homeDir))
+        {
+          // Set both for linux and windows
+          return ignition::common::setenv(IGN_HOMEDIR, _homeDir);
+        }
+        else
+        {
+          return false;
+        }
+      }
+    }
+
+    template <typename... Args>
+    std::string BinaryPath(Args const &... args)
+    {
+      std::string dataDir;
+      ProjectBinaryPath(dataDir);
+      return common::joinPaths(dataDir, args...);
+    }
+
+    /// \brief Retrieve a file from the project source directory
+    /// \param[in] variable length of arguments relative to the
+    ///   repository source directory
+    /// \return Full path to requested file
+    template <typename... Args>
+    std::string SourceFile(Args const &... args)
+    {
+      std::string dataDir;
+      ProjectSourcePath(dataDir);
+      return common::joinPaths(dataDir, args...);
+    }
+
+    /// \brief Retrieve a file from the test directory
+    /// \param[in] variable length of arguments relative to the
+    ///   repository test directory
+    /// \return Full path to requested test file
+    template <typename... Args>
+    std::string TestFile(Args const &... args)
+    {
+      return SourceFile("test", args...);
+    }
+
+    /// \brief Retrieve a file from the project temporary directory
+    /// \param[in] variable length of arguments relative to the
+    ///   temporary test directory
+    /// \return Full path to requested file
+    template <typename... Args>
+    std::string TempPath(Args const &... args)
+    {
+      std::string dataDir;
+      TestTmpPath(dataDir);
+      return common::joinPaths(dataDir, args...);
+    }
+  }  // namespace testing
+}  // namespace ignition
+#endif  // IGNITION_TESTING__TEST_CONFIG_H_

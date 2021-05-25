@@ -1,0 +1,203 @@
+load(
+    "//ign_bazel:build_defs.bzl",
+    "IGNITION_FEATURES",
+    "IGNITION_ROOT",
+    "IGNITION_VISIBILITY",
+    "cmake_configure_file",
+    "generate_include_header",
+    "generate_yaml",
+    "ign_config_header",
+    "ign_export_header",
+    "qt_cc_library",
+    "qt_resource",
+)
+
+package(
+    default_visibility = IGNITION_VISIBILITY,
+    features = IGNITION_FEATURES,
+)
+
+licenses(["notice"])
+
+exports_files(["LICENSE"])
+
+PROJECT_NAME = "ignition-gui"
+
+PROJECT_MAJOR = 4
+
+PROJECT_MINOR = 0
+
+PROJECT_PATCH = 0
+
+# Generates config.hh based on the version numbers in CMake code.
+ign_config_header(
+    name = "config",
+    src = "include/ignition/gui/config.hh.in",
+    cmakelists = ["CMakeLists.txt"],
+    extra_defines = [
+        "CMAKE_INSTALL_PREFIX=.",
+        "IGN_LIB_INSTALL_DIR=.",
+    ],
+    project_name = PROJECT_NAME,
+    project_version = (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),
+)
+
+# Generates test_config.hh based on the version numbers in CMake code.
+ign_config_header(
+    name = "test_config",
+    src = "test/test_config.h.in",
+    cmakelists = ["CMakeLists.txt"],
+    extra_defines = [
+        "PROJECT_SOURCE_DIR=.",
+        "CMAKE_BINARY_DIR=.",
+    ],
+    project_name = PROJECT_NAME,
+    project_version = (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),
+)
+
+ign_export_header(
+    name = "include/ignition/gui/Export.hh",
+    export_base = "IGNITION_GUI",
+    lib_name = "ignition-gui",
+    visibility = ["//visibility:private"],
+)
+
+qt_resource(
+    name="resources",
+    qrc_file= "include/ignition/gui/resources.qrc",
+    files=glob([
+      "include/ignition/gui/qtquickcontrols2.conf",
+      "include/ignition/gui/qml/*.qml",
+      "include/ignition/gui/qml/images/*.png"
+    ]),
+)
+
+qt_cc_library(
+    name="ign_gui",
+    srcs=[
+      "src/Application.cc",
+      "src/Conversions.cc",
+      "src/Dialog.cc",
+      "src/DragDropModel.cc",
+      "src/Helpers.cc",
+      "src/MainWindow.cc",
+      "src/PlottingInterface.cc",
+      "src/Plugin.cc",
+      "src/SearchModel.cc",
+    ],
+    hdrs=[
+        "include/ignition/gui/Application.hh",
+        "include/ignition/gui/Dialog.hh",
+        "include/ignition/gui/MainWindow.hh",
+        "include/ignition/gui/PlottingInterface.hh",
+        "include/ignition/gui/Plugin.hh",
+    ],
+    normal_hdrs=[
+        "include/ignition/gui/config.hh",
+        "include/ignition/gui/Export.hh",
+        "include/ignition/gui/Conversions.hh",
+        "include/ignition/gui/DragDropModel.hh",
+        "include/ignition/gui/Enums.hh",
+        "include/ignition/gui/GuiEvents.hh",
+        "include/ignition/gui/Helpers.hh",
+        "include/ignition/gui/qt.h",
+        "include/ignition/gui/SearchModel.hh",
+    ],
+    includes=["include"],
+    deps=[
+        "@qt//:qt_core",
+        "@qt//:qt_gui",
+        "@qt//:qt_qml",
+        "@qt//:qt_quick",
+        "@qt//:qt_quick_control",
+        "@qt//:qt_widgets",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_common/events",
+        IGNITION_ROOT + "ign_plugin/loader",
+        IGNITION_ROOT + "ign_transport",
+    ]
+)
+
+qt_resource(
+    name="test_resources",
+    qrc_file= "test/plugins/TestPlugin.qrc",
+    files=["test/plugins/TestPlugin.qml"],
+)
+
+qt_cc_library(
+    name="test_plugin",
+    srcs=["test/plugins/TestPlugin.cc"],
+    hdrs=["test/plugins/TestPlugin.hh"],
+    deps=[
+        ":ign_gui",
+        IGNITION_ROOT + "ign_plugin/register",
+    ]
+)
+
+cc_binary(
+    name="libTestPlugin.so",
+    srcs=[
+        ":test_plugin",
+    ],
+    linkshared=True
+)
+
+qt_cc_library(
+    name="test_bad_inheritance_plugin",
+    srcs=["test/plugins/TestBadInheritancePlugin.cc"],
+    hdrs=["test/plugins/TestBadInheritancePlugin.hh"],
+    deps=[
+        ":ign_gui",
+        IGNITION_ROOT + "ign_plugin/register",
+    ]
+)
+
+cc_binary(
+    name="libTestBadInheritancePlugin.so",
+    srcs=[":test_bad_inheritance_plugin"],
+    linkshared=True
+)
+
+qt_cc_library(
+    name="test_not_registered_plugin",
+    srcs=["test/plugins/TestNotRegisteredPlugin.cc"],
+    hdrs=["test/plugins/TestNotRegisteredPlugin.hh"],
+    deps=[
+        ":ign_gui",
+        IGNITION_ROOT + "ign_plugin/register",
+    ]
+)
+
+cc_binary(
+    name="libTestNotRegisteredPlugin.so",
+    srcs=[":test_not_registered_plugin"],
+    linkshared=True
+)
+
+test_data=[
+    "test/config", 
+    ":libTestPlugin.so",
+    ":libTestBadInheritancePlugin.so",
+    ":libTestNotRegisteredPlugin.so",
+]
+
+test_deps=[
+    "@gtest",
+    "@gtest//:gtest_main",
+    ":ign_gui",
+    ":resources",
+    ":test_resources",
+]
+
+test_srcs = glob(
+    ["src/*_TEST.cc"],
+    exclude = ["src/PluginLoader_TEST.cc"],
+)
+
+[cc_test(
+    name = src.replace("/", "_").replace(".cc", "").replace("src_", ""),
+    srcs = [src, "test/test_config.h"],
+    includes=["test"],
+    data = test_data,
+    deps= test_deps,
+) for src in test_srcs]

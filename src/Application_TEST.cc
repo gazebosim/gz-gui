@@ -26,6 +26,8 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
+#include <QDirIterator>
+
 int g_argc = 1;
 char **g_argv = new char *[g_argc];
 
@@ -84,16 +86,16 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
   // Plugin path added programmatically
   {
     Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+    app.AddPluginPath(ignition::testing::BinaryPath());
+    app.AddPluginPath(ignition::testing::SourceFile());
 
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
   }
 
   // Plugin path added by env var
   {
-    setenv("TEST_ENV_VAR",
-        (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
-
+    ignition::common::setenv(
+        "TEST_ENV_VAR", ignition::testing::BinaryPath());
     Application app(g_argc, g_argv);
     app.SetPluginPathEnv("TEST_ENV_VAR");
 
@@ -103,7 +105,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
   // Plugin which doesn't inherit from ignition::gui::Plugin
   {
     Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+    app.AddPluginPath(ignition::testing::BinaryPath());
 
     EXPECT_FALSE(app.LoadPlugin("TestBadInheritancePlugin"));
   }
@@ -111,7 +113,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
   // Plugin which is not registered
   {
     Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+    app.AddPluginPath(ignition::testing::BinaryPath());
 
     EXPECT_FALSE(app.LoadPlugin("TestNotRegisteredPlugin"));
   }
@@ -136,12 +138,11 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-    app.AddPluginPath(testBuildPath);
+    app.AddPluginPath(ignition::testing::BinaryPath());
 
     // Load test config file
-    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
+    EXPECT_TRUE(
+        app.LoadConfig(ignition::testing::TestFile("config", "test.config")));
   }
 }
 
@@ -157,13 +158,10 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
-    auto testBuildPath = ignition::common::joinPaths(
-      std::string(PROJECT_BINARY_PATH), "lib");
-    app.AddPluginPath(testBuildPath);
+    app.AddPluginPath(ignition::testing::BinaryPath());
 
     // Set default config file
-    auto configPath = ignition::common::joinPaths(
-      std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
+    auto configPath = ignition::testing::TestFile("config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
     EXPECT_EQ(app.DefaultConfigPath(), configPath);
@@ -212,19 +210,16 @@ TEST(ApplicationTest,
     app.exec();
   }
 
-  // Test config
-  auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-  auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-
   // Load config
   {
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
-    app.AddPluginPath(testBuildPath);
+    app.AddPluginPath(ignition::testing::BinaryPath());
 
     // Load test config file
-    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
+    EXPECT_TRUE(
+        app.LoadConfig(ignition::testing::TestFile("config", "test.config")));
 
     auto win = App()->findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
@@ -254,8 +249,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
     EXPECT_EQ(app.allWindows().size(), 0);
 
     // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-    app.AddPluginPath(testBuildPath);
+    app.AddPluginPath(ignition::testing::BinaryPath());
 
     // Load plugin
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
@@ -288,8 +282,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
     EXPECT_EQ(app.allWindows().size(), 0);
 
     // Add test plugin to path
-    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
-    app.AddPluginPath(testBuildPath);
+    app.AddPluginPath(ignition::testing::BinaryPath());
 
     // Load plugins
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));

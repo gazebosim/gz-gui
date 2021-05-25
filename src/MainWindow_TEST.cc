@@ -128,6 +128,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
 
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  App()->AddPluginPath(ignition::testing::SourceFile());
 
   // Get main window
   auto mainWindow = App()->findChild<MainWindow *>();
@@ -141,7 +142,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
   {
     // Trigger load
     auto path = QString::fromStdString(
-          std::string(PROJECT_SOURCE_PATH) + "/test/config/test.config");
+          ignition::testing::TestFile("config", "test.config"));
     mainWindow->OnLoadConfig(path);
 
     // Check window has 1 plugin
@@ -153,7 +154,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
   {
     // Trigger load
     auto path = QString::fromStdString(
-          std::string(PROJECT_SOURCE_PATH) + "/test/config/state.config");
+          ignition::testing::TestFile("config", "state.config"));
     mainWindow->OnLoadConfig(path);
 
     // Check window has 2 plugins
@@ -170,6 +171,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
 
   // Add test plugins to path
   App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  App()->AddPluginPath(ignition::testing::SourceFile());
 
   // Get window
   auto mainWindow = App()->findChild<MainWindow *>();
