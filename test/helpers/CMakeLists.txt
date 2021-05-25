@@ -5,6 +5,7 @@ set (qt_headers
 QT5_WRAP_CPP(headers_MOC ${qt_headers})
 
 add_library(${PROJECT_NAME}_test_helpers SHARED
+  TestHelper.cc
   ${headers_MOC}
 )
 target_link_libraries(${PROJECT_NAME}_test_helpers

@@ -14,34 +14,25 @@
  * limitations under the License.
  *
  */
-#ifndef IGNITION_GUI_TESTHELPER_HH_
-#define IGNITION_GUI_TESTHELPER_HH_
 
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/Export.hh>
-#include <ignition/gui/MainWindow.hh>
+#include "TestHelper.hh"
 
 namespace ignition
 {
 namespace gui
 {
-/// \brief
-class IGNITION_GUI_VISIBLE TestHelper : public QObject
+TestHelper::TestHelper()
 {
-  Q_OBJECT
-
-  /// \brief Constructor
-  public: TestHelper();
-
-  /// \brief Destructor
-  public: ~TestHelper() = default;
-
-  /// \brief Documentation inherited
-  public: bool eventFilter(QObject *_obj, QEvent *_event) override;
-
-  public: std::function<void (QEvent *)> forwardEvent;
-};
-}
+  App()->findChild<MainWindow *>()->installEventFilter(this);
 }
 
-#endif
+bool TestHelper::eventFilter(QObject *_obj, QEvent *_event)
+{
+  if (this->forwardEvent)
+    this->forwardEvent(_event);
+
+  // Standard event processing
+  return QObject::eventFilter(_obj, _event);
+}
+}
+}
