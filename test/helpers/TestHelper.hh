@@ -21,12 +21,22 @@
 #include <ignition/gui/Export.hh>
 #include <ignition/gui/MainWindow.hh>
 
+#ifndef _WIN32
+#  define TestHelper_EXPORTS_API
+#else
+#  if (defined(TestHelper_EXPORTS))
+#    define TestHelper_EXPORTS_API __declspec(dllexport)
+#  else
+#    define TestHelper_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 namespace ignition
 {
 namespace gui
 {
 /// \brief
-class IGNITION_GUI_VISIBLE TestHelper : public QObject
+class TestHelper_EXPORTS_API TestHelper : public QObject
 {
   Q_OBJECT
 
