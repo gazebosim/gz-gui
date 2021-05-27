@@ -188,7 +188,6 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
     else if (_event->type() == events::HoverToScene::kType)
     {
       receivedHoverEvent = true;
-      auto hoverToScene = static_cast<events::HoverToScene*>(_event);
     }
   };
 
