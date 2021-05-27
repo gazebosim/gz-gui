@@ -162,6 +162,9 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
   bool receivedLeftEvent{false};
   bool receivedHoverEvent{false};
 
+  // Position vectors reported by click events
+  math::Vector3d leftClickPoint, rightClickPoint;
+
   // Helper to filter events
   auto testHelper = std::make_unique<TestHelper>();
   testHelper->forwardEvent = [&](QEvent *_event)
@@ -173,14 +176,21 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
     else if (_event->type() == events::RightClickToScene::kType)
     {
       receivedRightEvent = true;
+      auto rightClickToScene = static_cast<events::RightClickToScene*>(_event);
+      rightClickPoint = rightClickToScene->Point();
     }
     else if (_event->type() == events::LeftClickToScene::kType)
     {
       receivedLeftEvent = true;
+      auto leftClickToScene = static_cast<events::LeftClickToScene*>(_event);
+      leftClickPoint = leftClickToScene->Point();
     }
     else if (_event->type() == events::HoverToScene::kType)
     {
       receivedHoverEvent = true;
+      auto hoverToScene = static_cast<events::HoverToScene*>(_event);
+      std::cerr << "hoverToScene point["
+                << hoverToScene->Point() << "]" << std::endl;
     }
   };
 
@@ -192,7 +202,7 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
 
-    QTest::mouseMove(win->QuickWindow(), QPoint(70 + sleep, 100), -1);
+    QTest::mouseMove(win->QuickWindow(), QPoint(70, 100), -1);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
 
@@ -211,4 +221,9 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
   EXPECT_TRUE(receivedLeftEvent);
   EXPECT_TRUE(receivedRightEvent);
   EXPECT_TRUE(receivedHoverEvent);
+
+  EXPECT_EQ(leftClickPoint, rightClickPoint);
+  EXPECT_NEAR(1.0, leftClickPoint.X(), 1e-4);
+  EXPECT_NEAR(11.942695, leftClickPoint.Y(), 1e-4);
+  EXPECT_NEAR(4.159424, leftClickPoint.Z(), 1e-4);
 }
