@@ -14,7 +14,7 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.0
+import QtQuick 2.9
 import QtQuick.Controls 2.0
 import RenderWindow 1.0
 import QtGraphicalEffects 1.0
@@ -28,6 +28,21 @@ Rectangle {
    */
   property bool gammaCorrect: false
 
+  /**
+   * Get mouse position on 3D widget
+   */
+  MouseArea {
+    id: mouseArea
+    anchors.fill: parent
+    hoverEnabled: true
+    acceptedButtons: Qt.NoButton
+    onEntered: {
+      Scene3D.OnFocusWindow()
+    }
+    onPositionChanged: {
+      Scene3D.OnHovered(mouseArea.mouseX, mouseArea.mouseY);
+    }
+  }
 
   RenderWindow {
     id: renderWindow
