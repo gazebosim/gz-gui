@@ -189,8 +189,6 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
     {
       receivedHoverEvent = true;
       auto hoverToScene = static_cast<events::HoverToScene*>(_event);
-      std::cerr << "hoverToScene point["
-                << hoverToScene->Point() << "]" << std::endl;
     }
   };
 
