@@ -211,7 +211,6 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
   EXPECT_TRUE(c.materialAccent.empty());
   EXPECT_TRUE(c.showDrawer);
   EXPECT_TRUE(c.showDefaultDrawerOpts);
-  EXPECT_FALSE(c.showDialogOnExit);
   EXPECT_TRUE(c.showPluginMenu);
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
@@ -226,7 +225,6 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
   EXPECT_NE(xml.find("<height>"), std::string::npos);
   EXPECT_NE(xml.find("<menus>"), std::string::npos);
   EXPECT_NE(xml.find("<drawer"), std::string::npos);
-  EXPECT_NE(xml.find("<dialog_on_exit>"), std::string::npos);
   EXPECT_NE(xml.find("<plugins"), std::string::npos);
   EXPECT_EQ(xml.find("<ignore>"), std::string::npos);
 }

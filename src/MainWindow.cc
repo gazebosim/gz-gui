@@ -47,6 +47,9 @@ namespace ignition
       /// \brief Minimum number of paint events to consider the window to be
       /// fully initialized.
       public: const unsigned int paintCountMin{20};
+
+      /// \brief Show the confirmation dialog on exit
+      public: bool showDialogOnExit{false};
     };
   }
 }
@@ -259,12 +262,6 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
   this->SetShowPluginMenu(_config.showPluginMenu);
 
-  // Confirmation dialog on exit
-  if (!_config.IsIgnoring("dialog_on_exit"))
-  {
-    this->SetShowDialogOnExit(_config.showDialogOnExit);
-  }
-
   // Keep a copy
   this->dataPtr->windowConfig = _config;
 
@@ -319,7 +316,6 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
   config.showPlugins = this->dataPtr->windowConfig.showPlugins;
   config.ignoredProps = this->dataPtr->windowConfig.ignoredProps;
-  config.showDialogOnExit = this->dataPtr->windowConfig.showDialogOnExit;
 
   // Plugins
   auto plugins = this->findChildren<Plugin *>();
@@ -477,12 +473,6 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
     }
   }
 
-  // Show dialog on exit
-  if (auto dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
-  {
-    dialogOnExitElem->QueryBoolText(&this->showDialogOnExit);
-  }
-
   // Ignore
   for (auto ignoreElem = winElem->FirstChildElement("ignore");
       ignoreElem != nullptr;
@@ -609,14 +599,6 @@ std::string WindowConfig::XMLString() const
     }
 
     windowElem->InsertEndChild(menusElem);
-  }
-
-  // Dialog on exit
-  if (!this->IsIgnoring("dialog_on_exit"))
-  {
-    auto elem = doc.NewElement("dialog_on_exit");
-    elem->SetText(this->showDialogOnExit ? "true" : "false");
-    windowElem->InsertEndChild(elem);
   }
 
   // Ignored properties
@@ -868,12 +850,12 @@ void MainWindow::SetShowPluginMenu(const bool _showPluginMenu)
 /////////////////////////////////////////////////
 bool MainWindow::ShowDialogOnExit() const
 {
-  return this->dataPtr->windowConfig.showDialogOnExit;
+  return this->dataPtr->showDialogOnExit;
 }
 
 /////////////////////////////////////////////////
 void MainWindow::SetShowDialogOnExit(bool _showDialogOnExit)
 {
-  this->dataPtr->windowConfig.showDialogOnExit = _showDialogOnExit;
+  this->dataPtr->showDialogOnExit = _showDialogOnExit;
   this->ShowDialogOnExitChanged();
 }

@@ -503,9 +503,6 @@ namespace ignition
       /// \brief Show the plugins menu
       bool showPluginMenu{true};
 
-      /// \brief Show the confirmation dialog on exit
-      bool showDialogOnExit{false};
-
       /// \brief True if plugins found in plugin paths should be listed under
       /// the Plugins menu. True by default.
       bool pluginsFromPaths{true};
