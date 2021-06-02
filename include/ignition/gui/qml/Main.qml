@@ -45,7 +45,7 @@ ApplicationWindow
   property string pluginToolBarTextColorLight: MainWindow.pluginToolBarTextColorLight
   property string pluginToolBarColorDark: MainWindow.pluginToolBarColorDark
   property string pluginToolBarTextColorDark: MainWindow.pluginToolBarTextColorDark
-
+  property bool showDialogOnExit: MainWindow.showDialogOnExit
   /**
    * Tool bar background color
    */
@@ -73,8 +73,8 @@ ApplicationWindow
 
   // Handler for window closing
   onClosing: {
-    close.accepted = !MainWindow.showDialogOnExit
-    if(MainWindow.showDialogOnExit){
+    close.accepted = !showDialogOnExit
+    if(showDialogOnExit){
       confirmationDialogOnExit.open()
     }
   }
