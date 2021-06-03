@@ -273,6 +273,14 @@ bool Application::LoadConfig(const std::string &_config)
       return false;
     }
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
+
+    // Closing behavior.
+    if (auto dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
+    {
+      bool showDialogOnExit{false};
+      dialogOnExitElem->QueryBoolText(&showDialogOnExit);
+      this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
+    }
   }
 
   this->ApplyConfig();
