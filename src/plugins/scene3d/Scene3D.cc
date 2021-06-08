@@ -137,9 +137,10 @@ void IgnRenderer::Render()
         this->textureSize.height());
     // setting the size should cause the render texture to be rebuilt
     this->dataPtr->camera->PreRender();
-    this->textureId = this->dataPtr->camera->RenderTextureGLId();
     this->textureDirty = false;
   }
+
+  this->textureId = this->dataPtr->camera->RenderTextureGLId();
 
   // view control
   this->HandleMouseEvent();
