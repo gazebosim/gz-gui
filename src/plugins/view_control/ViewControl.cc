@@ -42,6 +42,8 @@ class ignition::gui::plugins::ViewControlPrivate
   /// \brief Flag to indicate if mouse event is dirty
   public: bool mouseDirty = false;
 
+  public: bool blockOrbit = false;
+
   /// \brief Mouse event
   public: common::MouseEvent mouseEvent;
 
@@ -85,6 +87,12 @@ void ViewControlPrivate::OnRender()
       return;
     }
     this->rayQuery = this->camera->Scene()->CreateRayQuery();
+  }
+
+  if (this->blockOrbit)
+  {
+    this->drag = 0;
+    return;
   }
 
   if (!this->mouseDirty)
@@ -216,6 +224,12 @@ bool ViewControl::eventFilter(QObject *_obj, QEvent *_event)
     }
 
     this->dataPtr->mouseEvent = leftClickOnScene->Mouse();
+  }
+  else if (_event->type() == ignition::gui::events::BlockOrbit::kType)
+  {
+    auto blockOrbit = reinterpret_cast<ignition::gui::events::BlockOrbit *>(
+      _event);
+    this->dataPtr->blockOrbit = blockOrbit->Block();
   }
 
   // Standard event processing

@@ -255,6 +255,24 @@ namespace ignition
         /// for this event.
         private: bool menuEnabled;
       };
+
+      class BlockOrbit : public QEvent
+      {
+        public: explicit BlockOrbit(const bool &_block)
+            : QEvent(kType), block(_block)
+        {
+        }
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 12);
+
+        public: bool Block() const
+        {
+          return this->block;
+        }
+
+        private: bool block;
+      };
     }
   }
 }
