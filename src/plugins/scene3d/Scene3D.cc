@@ -240,6 +240,11 @@ void IgnRenderer::Initialize()
     scene->SetBackgroundColor(this->backgroundColor);
   }
 
+  if (this->skyEnable)
+  {
+    scene->SetSkyEnabled(true);
+  }
+
   auto root = scene->RootVisual();
 
   // Camera
@@ -617,6 +622,12 @@ void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetSkyEnabled(const bool &_sky)
+{
+  this->dataPtr->renderThread->ignRenderer.skyEnable = _sky;
+}
+
+/////////////////////////////////////////////////
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
@@ -718,6 +729,14 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       std::string topic = elem->GetText();
       renderWindow->SetSceneTopic(topic);
+    }
+
+    elem = _pluginElem->FirstChildElement("sky");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      renderWindow->SetSkyEnabled(true);
+      if (!elem->NoChildren())
+        ignwarn << "Child elements of <sky> are not supported yet" << std::endl;
     }
   }
 }

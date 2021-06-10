@@ -160,6 +160,9 @@ namespace plugins
     /// added
     public: std::string sceneTopic;
 
+    /// \brief True if sky is enabled;
+    public: bool skyEnable = false;
+
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<IgnRendererPrivate> dataPtr;
@@ -253,6 +256,10 @@ namespace plugins
     /// The renderer will subscribe to this topic to get updates scene messages
     /// \param[in] _topic Scene topic
     public: void SetSceneTopic(const std::string &_topic);
+
+    /// \brief Set if sky is enabled
+    /// \param[in] _sky True to enable the sky, false otherwise.
+    public: void SetSkyEnabled(const bool &_sky);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
