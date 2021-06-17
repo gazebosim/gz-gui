@@ -40,7 +40,7 @@ namespace plugins
 {
   class IgnRendererPrivate;
   class RenderWindowItemPrivate;
-  class Scene3DPrivate;
+  class MinimalScenePrivate;
 
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
@@ -58,15 +58,15 @@ namespace plugins
   ///                          (0.3, 0.3, 0.3, 1.0)
   /// * \<camera_pose\> : Optional starting pose for the camera, defaults to
   ///                     (0, 0, 5, 0, 0, 0)
-  class Scene3D : public Plugin
+  class MinimalScene : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: Scene3D();
+    public: MinimalScene();
 
     /// \brief Destructor
-    public: virtual ~Scene3D();
+    public: virtual ~MinimalScene();
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
@@ -74,7 +74,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<Scene3DPrivate> dataPtr;
+    private: std::unique_ptr<MinimalScenePrivate> dataPtr;
   };
 
   /// \brief Ign-rendering renderer.
@@ -159,6 +159,9 @@ namespace plugins
     /// New scene messages will be published to this topic when an entities are
     /// added
     public: std::string sceneTopic;
+
+    /// \brief True if sky is enabled;
+    public: bool skyEnable = false;
 
     /// \internal
     /// \brief Pointer to private data.
@@ -253,6 +256,10 @@ namespace plugins
     /// The renderer will subscribe to this topic to get updates scene messages
     /// \param[in] _topic Scene topic
     public: void SetSceneTopic(const std::string &_topic);
+
+    /// \brief Set if sky is enabled
+    /// \param[in] _sky True to enable the sky, false otherwise.
+    public: void SetSkyEnabled(const bool &_sky);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
