@@ -5,6 +5,11 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Ignition GUI 5.x to 6.x
+
+* The `Scene3D` plugin is deprecated, use `MinimalScene` with
+  `TransportSceneManager` instead.
+
 ## Ignition GUI 3.x to 4.x
 
 * Use rendering4, transport9 and msgs6.
