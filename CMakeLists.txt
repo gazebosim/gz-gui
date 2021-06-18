@@ -8,7 +8,7 @@ project(ignition-gui4 VERSION 4.3.0)
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake2 2.3 REQUIRED)
+find_package(ignition-cmake2 2.8.0 REQUIRED)
 
 #============================================================================
 # Configure the project
