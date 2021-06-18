@@ -102,12 +102,12 @@ namespace plugins
 
     /// \brief New mouse event triggered
     /// \param[in] _e New mouse event
-    /// \param[in] _drag Mouse move distance
-    public: void NewMouseEvent(const common::MouseEvent &_e,
-        const math::Vector2d &_drag = math::Vector2d::Zero);
+    public: void NewMouseEvent(const common::MouseEvent &_e);
 
     /// \brief Handle mouse event for view control
     private: void HandleMouseEvent();
+
+    public: void BroadcastLeftClick();
 
     /// \brief Retrieve the first point on a surface in the 3D scene hit by a
     /// ray cast from the given 2D screen coordinates.
