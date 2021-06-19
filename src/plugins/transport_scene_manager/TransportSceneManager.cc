@@ -250,8 +250,8 @@ void TransportSceneManagerPrivate::InitializeTransport()
   }
   else
   {
-    ignmsg << "Listening to deletion messages on [" << this->deletionTopic << "]"
-           << std::endl;
+    ignmsg << "Listening to deletion messages on [" << this->deletionTopic
+           << "]" << std::endl;
   }
 
   if (!this->node.Subscribe(this->sceneTopic,
