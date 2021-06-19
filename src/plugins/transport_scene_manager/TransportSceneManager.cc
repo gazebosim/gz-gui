@@ -236,6 +236,11 @@ void TransportSceneManagerPrivate::InitializeTransport()
     ignerr << "Error subscribing to pose topic: " << this->poseTopic
       << std::endl;
   }
+  else
+  {
+    ignmsg << "Listening to pose messages on [" << this->poseTopic << "]"
+           << std::endl;
+  }
 
   if (!this->node.Subscribe(this->deletionTopic,
       &TransportSceneManagerPrivate::OnDeletionMsg, this))
@@ -243,11 +248,21 @@ void TransportSceneManagerPrivate::InitializeTransport()
     ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
       << std::endl;
   }
+  else
+  {
+    ignmsg << "Listening to deletion messages on [" << this->deletionTopic << "]"
+           << std::endl;
+  }
 
   if (!this->node.Subscribe(this->sceneTopic,
       &TransportSceneManagerPrivate::OnSceneMsg, this))
   {
     ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+           << std::endl;
+  }
+  else
+  {
+    ignmsg << "Listening to scene messages on [" << this->sceneTopic << "]"
            << std::endl;
   }
 
