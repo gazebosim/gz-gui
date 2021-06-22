@@ -149,26 +149,73 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 void ImageDisplay::ProcessImage()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->imageMutex);
+
+  unsigned int height = this->dataPtr->imageMsg.height();
+  unsigned int width = this->dataPtr->imageMsg.width();
+  QImage::Format qFormat = QImage::Format_RGB888;
+
+  QImage image = QImage(width, height, qFormat);
+
+  common::Image output;
   switch (this->dataPtr->imageMsg.pixel_format_type())
   {
     case msgs::PixelFormatType::RGB_INT8:
-      this->UpdateFromRgbInt8();
+      // copy image data buffer directly to QImage
+      image = QImage(reinterpret_cast<const uchar *>(
+          this->dataPtr->imageMsg.data().c_str()), width, height, qFormat);
       break;
+    // for other cases, convert to RGB common::Image
     case msgs::PixelFormatType::R_FLOAT32:
-      this->UpdateFromFloat32();
+      // specify custom min max and also flip the pixel values
+      // i.e. darker pixels = higher values and brighter pixels = lower values
+      common::Image::ConvertToRGBImage<float>(
+          this->dataPtr->imageMsg.data().c_str(), width, height, output,
+          0.0f, std::numeric_limits<float>::lowest(), true);
       break;
     case msgs::PixelFormatType::L_INT16:
-      this->UpdateFromLInt16();
-      break;
+      common::Image::ConvertToRGBImage<uint16_t>(
+          this->dataPtr->imageMsg.data().c_str(), width, height, output);
+       break;
     case msgs::PixelFormatType::L_INT8:
-      this->UpdateFromLInt8();
+      common::Image::ConvertToRGBImage<uint8_t>(
+          this->dataPtr->imageMsg.data().c_str(), width, height, output);
       break;
     default:
     {
       ignwarn << "Unsupported image type: "
               << this->dataPtr->imageMsg.pixel_format_type() << std::endl;
+      return;
     }
   }
+  common::Image::PixelFormatType pixelFormat =
+      common::Image::ConvertPixelFormat(
+      msgs::ConvertPixelFormatType(
+      this->dataPtr->imageMsg.pixel_format_type()));
+
+
+  // if not rgb, copy values from common::Image to QImage
+  if (pixelFormat != common::Image::PixelFormatType::RGB_INT8)
+  {
+    unsigned int outputSize = 0;
+    unsigned char *data = nullptr;
+    output.Data(&data, outputSize);
+
+    for (unsigned int j = 0; j < height; ++j)
+    {
+      for (unsigned int i = 0; i < width; ++i)
+      {
+        unsigned int idx = j*width*3 + i * 3;
+        int r = data[idx];
+        int g = data[idx + 1];
+        int b = data[idx + 2];
+        QRgb value = qRgb(r, g, b);
+        image.setPixel(i, j, value);
+      }
+    }
+  }
+
+  this->dataPtr->provider->SetImage(image);
+  this->newImage();
 }
 
 /////////////////////////////////////////////////
@@ -228,174 +275,6 @@ void ImageDisplay::OnRefresh()
   if (this->dataPtr->topicList.count() > 0)
     this->OnTopic(this->dataPtr->topicList.at(0));
   this->TopicListChanged();
-}
-
-/////////////////////////////////////////////////
-void ImageDisplay::UpdateFromRgbInt8()
-{
-  QImage image(
-    reinterpret_cast<const uchar *>(this->dataPtr->imageMsg.data().c_str()),
-    this->dataPtr->imageMsg.width(), this->dataPtr->imageMsg.height(),
-    QImage::Format_RGB888);
-
-  this->dataPtr->provider->SetImage(image);
-  this->newImage();
-}
-
-/////////////////////////////////////////////////
-void ImageDisplay::UpdateFromFloat32()
-{
-  unsigned int height = this->dataPtr->imageMsg.height();
-  unsigned int width = this->dataPtr->imageMsg.width();
-  QImage::Format qFormat = QImage::Format_RGB888;
-
-  QImage image = QImage(width, height, qFormat);
-
-  unsigned int depthSamples = width * height;
-  float f;
-  // cppchecker recommends using sizeof(varname)
-  unsigned int depthBufferSize = depthSamples * sizeof(f);
-
-  float * depthBuffer = new float[depthSamples];
-
-  memcpy(depthBuffer, this->dataPtr->imageMsg.data().c_str(),
-      depthBufferSize);
-
-  float maxDepth = 0;
-  for (unsigned int i = 0; i < depthSamples; ++i)
-  {
-    if (depthBuffer[i] > maxDepth && !std::isinf(depthBuffer[i]))
-    {
-      maxDepth = depthBuffer[i];
-    }
-  }
-  unsigned int idx = 0;
-  double factor = 255 / maxDepth;
-  for (unsigned int j = 0; j < height; ++j)
-  {
-    for (unsigned int i = 0; i < width; ++i)
-    {
-      float d = depthBuffer[idx++];
-      d = 255 - (d * factor);
-      QRgb value = qRgb(d, d, d);
-      image.setPixel(i, j, value);
-    }
-  }
-
-  this->dataPtr->provider->SetImage(image);
-  this->newImage();
-
-  delete[] depthBuffer;
-}
-
-/////////////////////////////////////////////////
-void ImageDisplay::UpdateFromLInt16()
-{
-  unsigned int height = this->dataPtr->imageMsg.height();
-  unsigned int width = this->dataPtr->imageMsg.width();
-  QImage::Format qFormat = QImage::Format_RGB888;
-
-  QImage image = QImage(width, height, qFormat);
-
-  unsigned int samples = width * height;
-  uint16_t type;
-  // cppchecker recommends using sizeof(varname)
-  unsigned int bufferSize = samples * sizeof(type);
-
-  uint16_t *buffer = new uint16_t[samples];
-  memcpy(buffer, this->dataPtr->imageMsg.data().c_str(),
-      bufferSize);
-
-  // get min and max of temperature values
-  uint16_t min = std::numeric_limits<uint16_t>::max();
-  uint16_t max = 0;
-  for (unsigned int i = 0; i < samples; ++i)
-  {
-    uint16_t temp = buffer[i];
-    if (temp > max)
-      max = temp;
-    if (temp < min)
-      min = temp;
-  }
-
-  // convert temperature to grayscale image
-  double range = static_cast<double>(max - min);
-  if (ignition::math::equal(range, 0.0))
-    range = 1.0;
-  unsigned int idx = 0;
-  for (unsigned int j = 0; j < height; ++j)
-  {
-    for (unsigned int i = 0; i < width; ++i)
-    {
-      uint16_t temp = buffer[idx++];
-      double t = static_cast<double>(temp-min) / range;
-      int r = 255*t;
-      int g = r;
-      int b = r;
-      QRgb value = qRgb(r, g, b);
-      image.setPixel(i, j, value);
-    }
-  }
-  this->dataPtr->provider->SetImage(image);
-  this->newImage();
-
-  delete[] buffer;
-}
-
-/////////////////////////////////////////////////
-void ImageDisplay::UpdateFromLInt8()
-{
-  // todo(anyone) the code in this function is very similar to
-  // UpdateFromInt16 and UpdateFromFloat32. Consider merging these functions.
-  unsigned int height = this->dataPtr->imageMsg.height();
-  unsigned int width = this->dataPtr->imageMsg.width();
-  QImage::Format qFormat = QImage::Format_RGB888;
-
-  QImage image = QImage(width, height, qFormat);
-
-  unsigned int samples = width * height;
-  unsigned char type;
-  // cppchecker recommends using sizeof(varname)
-  unsigned int bufferSize = samples * sizeof(type);
-
-  unsigned char *buffer = new unsigned char[samples];
-  memcpy(buffer, this->dataPtr->imageMsg.data().c_str(),
-      bufferSize);
-
-  // get min and max of temperature values
-  unsigned int min = 255;
-  unsigned int max = 0;
-  for (unsigned int i = 0; i < samples; ++i)
-  {
-    unsigned int temp = static_cast<unsigned int>(buffer[i]);
-    if (temp > max)
-      max = temp;
-    if (temp < min)
-      min = temp;
-  }
-
-  // convert temperature to grayscale image
-  double range = static_cast<double>(max - min);
-  if (ignition::math::equal(range, 0.0))
-    range = 1.0;
-  unsigned int idx = 0;
-  for (unsigned int j = 0; j < height; ++j)
-  {
-    for (unsigned int i = 0; i < width; ++i)
-    {
-      unsigned int temp = static_cast<unsigned int>(buffer[idx++]);
-      double t = static_cast<double>(temp-min) / range;
-      int r = 255*t;
-      int g = r;
-      int b = r;
-      QRgb value = qRgb(r, g, b);
-      image.setPixel(i, j, value);
-    }
-  }
-  this->dataPtr->provider->SetImage(image);
-  this->newImage();
-
-  delete[] buffer;
 }
 
 /////////////////////////////////////////////////

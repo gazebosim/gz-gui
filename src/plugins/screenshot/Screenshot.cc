@@ -181,52 +181,8 @@ void Screenshot::FindUserCamera()
   if (nullptr != this->dataPtr->userCamera)
     return;
 
-  auto loadedEngNames = ignition::rendering::loadedEngines();
-  if (loadedEngNames.empty())
-  {
-    igndbg << "No rendering engine is loaded yet" << std::endl;
-    return;
-  }
-
-  // assume there is only one engine loaded
-  auto engineName = loadedEngNames[0];
-  if (loadedEngNames.size() > 1)
-  {
-    igndbg << "More than one engine is available. "
-      << "Using engine [" << engineName << "]" << std::endl;
-  }
-  auto engine = ignition::rendering::engine(engineName);
-  if (!engine)
-  {
-    ignerr << "Internal error: failed to load engine [" << engineName
-      << "]. Grid plugin won't work." << std::endl;
-    return;
-  }
-
-  if (engine->SceneCount() == 0)
-  {
-    igndbg << "No scene has been created yet" << std::endl;
-    return;
-  }
-
   // Get first scene
-  auto scene = engine->SceneByIndex(0);
-  if (nullptr == scene)
-  {
-    ignerr << "Internal error: scene is null." << std::endl;
-    return;
-  }
-
-  if (engine->SceneCount() > 1)
-  {
-    igndbg << "More than one scene is available. "
-      << "Using scene [" << scene->Name() << "]" << std::endl;
-  }
-
-  if (!scene->IsInitialized() || nullptr == scene->RootVisual())
-  {
-    return;
-  }
+  auto scene = rendering::sceneFromFirstRenderEngine();
 
   for (unsigned int i = 0; i < scene->NodeCount(); ++i)
   {
