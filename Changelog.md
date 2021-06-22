@@ -4,6 +4,44 @@
 
 ### Ignition Gui 4.X.X (20XX-XX-XX)
 
+### Ignition Gui 4.4.0 (2021-06-21)
+
+1. Bump required ign-rendering version to 4.8
+    * [Pull request #234](https://github.com/ignitionrobotics/ign-gui/pull/234)
+
+1. Update codeowners
+    * [Pull request #232](https://github.com/ignitionrobotics/ign-gui/pull/232)
+
+1. Confirmation dialog when closing main window
+    * [Pull request #225](https://github.com/ignitionrobotics/ign-gui/pull/225)
+
+1. Avoid grid3D crash
+    * [Pull request #227](https://github.com/ignitionrobotics/ign-gui/pull/227)
+
+1. Emit more events from Scene3D
+    * [Pull request #213](https://github.com/ignitionrobotics/ign-gui/pull/213)
+
+1. Removed duplicated code with rendering::sceneFromFirstRenderEngine
+    * [Pull request #223](https://github.com/ignitionrobotics/ign-gui/pull/223)
+
+1. Remove `tools/code_check` and update codecov
+    * [Pull request #222](https://github.com/ignitionrobotics/ign-gui/pull/222)
+
+1. Refactor Image Display to use ConvertToRGB function
+    * [Pull request #212](https://github.com/ignitionrobotics/ign-gui/pull/212)
+
+1. Fixed material specular in scene3D
+    * [Pull request #218](https://github.com/ignitionrobotics/ign-gui/pull/218)
+
+1. `check_test_ran.py`: remove grep/xsltproc
+    * [Pull request #203](https://github.com/ignitionrobotics/ign-gui/pull/203)
+
+1. Improve the height of plugins in the right split
+    * [Pull request #194](https://github.com/ignitionrobotics/ign-gui/pull/194)
+
+1. Scene3D: port mesh material fixes from ign-gazebo
+    * [Pull request #191](https://github.com/ignitionrobotics/ign-gui/pull/191)
+
 ### Ignition Gui 4.3.0 (2021-03-11)
 
 1. Screenshot plugin
