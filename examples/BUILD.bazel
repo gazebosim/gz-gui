@@ -1,0 +1,22 @@
+load(
+    "//ign_bazel:build_defs.bzl",
+    "IGNITION_ROOT",
+)
+
+cc_binary(
+    name = "standalone_window",
+    srcs = ["standalone/window/window.cc"],
+    deps = [
+        IGNITION_ROOT + "ign_gui:ign_gui",
+        IGNITION_ROOT + "ign_gui:ign_gui_resources",
+    ] 
+)
+
+cc_binary(
+    name = "standalone_dialogs",
+    srcs = ["standalone/dialogs/dialogs.cc"],
+    deps = [
+        IGNITION_ROOT + "ign_gui:ign_gui",
+        IGNITION_ROOT + "ign_gui:ign_gui_resources",
+    ] 
+)

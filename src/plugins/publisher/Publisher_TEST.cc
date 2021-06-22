@@ -46,7 +46,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(ignition::testing::BinaryPath());
 
   EXPECT_TRUE(app.LoadPlugin("Publisher"));
 
@@ -71,7 +71,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(ignition::testing::BinaryPath());
 
   // Load plugin
   const char *pluginStr =
@@ -211,7 +211,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ParamsFromSDF))
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(ignition::testing::BinaryPath());
 
   // Load plugin
   const char *pluginStr =

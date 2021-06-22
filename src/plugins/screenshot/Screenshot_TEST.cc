@@ -52,7 +52,7 @@ TEST(ScreenshotTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
 
   // Load the plugin
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(ignition::testing::BinaryPath());
 
   EXPECT_TRUE(app.LoadPlugin("Screenshot"));
 

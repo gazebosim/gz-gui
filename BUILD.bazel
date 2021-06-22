@@ -12,6 +12,11 @@ load(
     "qt_resource",
 )
 
+load(
+    ":ign_gui_plugin.bzl",
+    "ign_gui_plugin"
+)
+
 package(
     default_visibility = IGNITION_VISIBILITY,
     features = IGNITION_FEATURES,
@@ -81,16 +86,16 @@ qt_cc_library(
       "src/DragDropModel.cc",
       "src/Helpers.cc",
       "src/MainWindow.cc",
-      "src/PlottingInterface.cc",
       "src/Plugin.cc",
+      "src/PlottingInterface.cc",
       "src/SearchModel.cc",
     ],
     hdrs=[
         "include/ignition/gui/Application.hh",
         "include/ignition/gui/Dialog.hh",
         "include/ignition/gui/MainWindow.hh",
-        "include/ignition/gui/PlottingInterface.hh",
         "include/ignition/gui/Plugin.hh",
+        "include/ignition/gui/PlottingInterface.hh",
     ],
     normal_hdrs=[
         "include/ignition/gui/config.hh",
@@ -116,6 +121,200 @@ qt_cc_library(
         IGNITION_ROOT + "ign_plugin/loader",
         IGNITION_ROOT + "ign_transport",
     ]
+)
+
+cc_binary(
+    name = "libignition-gui.so",
+    srcs = ["src/ign.cc", "include/ignition/gui/ign.hh"],
+    includes = ["include"],
+    linkstatic = False,
+    linkshared = True,
+    deps = [
+        ":ign_gui"
+    ]
+)
+
+ign_gui_plugin(
+    folder_name="grid_3d",
+    plugin_name="Grid3D",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_plugin/register",
+        IGNITION_ROOT + "ign_rendering",
+    ],
+)
+    
+ign_gui_plugin(
+    folder_name="image_display",
+    plugin_name="ImageDisplay",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_common/graphics",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="key_publisher",
+    plugin_name="KeyPublisher",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_msgs",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="plotting",
+    plugin_name="TransportPlotting",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="publisher",
+    plugin_name="Publisher",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+    test_srcs = [
+        "src/plugins/publisher/Publisher_TEST.cc", 
+        "test/test_config.h"
+    ],
+    test_deps = [
+        ":resources",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="scene3d",
+    plugin_name="Scene3D",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_common/graphics",
+        IGNITION_ROOT + "ign_plugin/register",
+        IGNITION_ROOT + "ign_rendering",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="screenshot",
+    plugin_name="Screenshot",
+    qrc_resources = glob([
+        "src/plugins/screenshot/*.qml",
+        "src/plugins/screenshot/*.png"
+    ]),
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_plugin/register",
+        IGNITION_ROOT + "ign_rendering"
+    ],
+    test_srcs = ["src/plugins/screenshot/Screenshot_TEST.cc", "test/test_config.h"],
+    test_deps = [
+        ":resources",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="topic_echo",
+    plugin_name="TopicEcho",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="topic_viewer",
+    plugin_name="TopicViewer",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+    qrc_resources = glob([
+        "src/plugins/topic_viewer/*.qml",
+        "src/plugins/topic_viewer/*.png",
+        "src/plugins/topic_viewer/*.svg"
+    ]),
+)
+
+ign_gui_plugin(
+    folder_name="world_control",
+    plugin_name="WorldControl",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+)
+
+ign_gui_plugin(
+    folder_name="world_stats",
+    plugin_name="WorldStats",
+    deps = [
+        ":ign_gui",
+        IGNITION_ROOT + "ign_common",
+        IGNITION_ROOT + "ign_plugin/register",
+    ],
+)
+
+all_plugins = [
+  ":libGrid3D.so", 
+  ":libImageDisplay.so", 
+  ":libKeyPublisher.so", 
+  ":libTransportPlotting.so", 
+  ":libPublisher.so",
+  ":libScene3D.so",
+  ":libScreenshot.so",
+  ":libTopicEcho.so",
+  ":libTopicViewer.so",
+  ":libWorldControl.so",
+  ":libWorldStats.so",
+]
+
+all_resources = [
+    ":resources", 
+    ":grid_3d_resources",
+    ":image_display_resources",
+    ":key_publisher_resources",
+    ":plotting_resources",
+    ":publisher_resources",
+    ":scene3d_resources",
+    ":screenshot_resources",
+    ":topic_echo_resources",
+    ":topic_viewer_resources",
+    ":world_control_resources",
+    ":world_stats_resources",
+]
+
+cc_library(
+    name = "ign_gui_resources",
+    deps = all_resources,
+    data = all_plugins
+)
+
+cc_test(
+    name = "load_plugins_TEST",
+    srcs = ["src/plugins/load_plugins_TEST.cc", "test/test_config.h"],
+    includes = ["test"],
+    deps = [
+        ":ign_gui",
+        ":ign_gui_resources",
+        IGNITION_ROOT + "ign_common",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
 )
 
 qt_resource(
@@ -201,3 +400,25 @@ test_srcs = glob(
     data = test_data,
     deps= test_deps,
 ) for src in test_srcs]
+
+cmake_configure_file(
+    name = "gui.rb",
+    src = "src/cmd/cmdgui.rb.in",
+    out = "cmdgui.rb",
+    cmakelists = ["CMakeLists.txt"],
+    defines = [
+        "library_location=libignition-gui.so",
+        "PROJECT_VERSION_FULL=%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),  # noqa
+        "IGN_LIBRARY_NAME=%s" % PROJECT_NAME,
+    ],
+)
+
+CMDS = "    - gui   : Launch graphical interfaces."
+
+generate_yaml(
+    name = "gui",
+    commands = CMDS,
+    library_name = PROJECT_NAME,
+    library_version = "%d.%d.%d" % (PROJECT_MAJOR, PROJECT_MINOR, PROJECT_PATCH),
+    ruby_target = "gui.rb",
+)
