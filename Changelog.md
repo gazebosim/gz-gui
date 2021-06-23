@@ -1,8 +1,46 @@
 ## Ignition Gui 5
 
-### Ignition Gui 5.X.X
+### Ignition Gui 5.X.X (20XX-XX-XX)
 
-### Ignition Gui 5.0.0 (20XX-XX-XX)
+### Ignition Gui 5.1.0 (2021-06-23)
+
+1. Depend on common 4.1 and rendering 5.1
+    * [Pull request #238](https://github.com/ignitionrobotics/ign-gui/pull/238)
+
+1. Update codeowners
+    * [Pull request #232](https://github.com/ignitionrobotics/ign-gui/pull/232)
+
+1. Confirmation dialog when closing main window
+    * [Pull request #225](https://github.com/ignitionrobotics/ign-gui/pull/225)
+
+1. Avoid Grid3D crash
+    * [Pull request #227](https://github.com/ignitionrobotics/ign-gui/pull/227)
+
+1. Emit more events from Scene3D
+    * [Pull request #213](https://github.com/ignitionrobotics/ign-gui/pull/213)
+
+1. Removed duplicated code with `rendering::sceneFromFirstRenderEngine`
+    * [Pull request #223](https://github.com/ignitionrobotics/ign-gui/pull/223)
+
+1. Remove `tools/code_check` and update codecov
+    * [Pull request #222](https://github.com/ignitionrobotics/ign-gui/pull/222)
+
+1. Refactor Image Display to use ConvertToRGB function
+    * [Pull request #212](https://github.com/ignitionrobotics/ign-gui/pull/212)
+
+1. Fixed material specular in Scene3D
+    * [Pull request #218](https://github.com/ignitionrobotics/ign-gui/pull/218)
+
+1. Updated scale for capsule in Scene3D
+    * [Pull request #215](https://github.com/ignitionrobotics/ign-gui/pull/215)
+
+1. Support Capsule and Ellipsoid in Scene3D
+    * [Pull request #214](https://github.com/ignitionrobotics/ign-gui/pull/214)
+
+1. `check_test_ran.py`: remove grep/xsltproc
+    * [Pull request #203](https://github.com/ignitionrobotics/ign-gui/pull/203)
+
+### Ignition Gui 5.0.0 (2021-03-31)
 
 1. Bump in edifice: ign-common4
     * [Pull request #169](https://github.com/ignitionrobotics/ign-gui/pull/169)
