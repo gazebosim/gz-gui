@@ -45,7 +45,7 @@ ApplicationWindow
   property string pluginToolBarTextColorLight: MainWindow.pluginToolBarTextColorLight
   property string pluginToolBarColorDark: MainWindow.pluginToolBarColorDark
   property string pluginToolBarTextColorDark: MainWindow.pluginToolBarTextColorDark
-
+  property bool showDialogOnExit: MainWindow.showDialogOnExit
   /**
    * Tool bar background color
    */
@@ -69,6 +69,14 @@ ApplicationWindow
   // Not sure why the binding doesn't take care of this
   onTitleChanged: {
     titleLabel.text = window.title
+  }
+
+  // Handler for window closing
+  onClosing: {
+    close.accepted = !showDialogOnExit
+    if(showDialogOnExit){
+      confirmationDialogOnExit.open()
+    }
   }
 
   // C++ signals to QML slots
@@ -313,6 +321,27 @@ ApplicationWindow
         wrapMode: Label.Wrap
         font.pixelSize: 18
       }
+    }
+  }
+
+  /**
+   *  Confirmation dialog on close button
+   */
+  Dialog {
+    id: confirmationDialogOnExit
+    title: "Do you really want to exit?"
+
+    modal: true
+    focus: true
+    parent: ApplicationWindow.overlay
+    width: 300
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
+    closePolicy: Popup.CloseOnEscape
+    standardButtons: Dialog.Ok | Dialog.Cancel
+
+    onAccepted: {
+      Qt.quit()
     }
   }
 }

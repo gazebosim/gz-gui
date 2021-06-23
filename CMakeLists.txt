@@ -8,7 +8,7 @@ project(ignition-gui5 VERSION 5.0.0)
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake2 2.3 REQUIRED)
+find_package(ignition-cmake2 2.8.0 REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -44,7 +44,7 @@ set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-common
-ign_find_package(ignition-common4 REQUIRED)
+ign_find_package(ignition-common4 REQUIRED VERSION 4.1)
 set(IGN_COMMON_VER ${ignition-common4_VERSION_MAJOR})
 
 #--------------------------------------
@@ -59,7 +59,7 @@ set(IGN_TRANSPORT_VER ${ignition-transport10_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering5 REQUIRED COMPONENTS ogre)
+ign_find_package(ignition-rendering5 REQUIRED VERSION 5.1 COMPONENTS ogre)
 set(IGN_RENDERING_VER ${ignition-rendering5_VERSION_MAJOR})
 
 #--------------------------------------
