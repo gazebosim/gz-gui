@@ -68,6 +68,18 @@ namespace plugins
     /// \brief Destructor
     public: virtual ~Scene3D();
 
+    /// \brief Callback when the mouse hovers to a new position.
+    /// \param[in] _mouseX x coordinate of the hovered mouse position.
+    /// \param[in] _mouseY y coordinate of the hovered mouse position.
+    public slots: void OnHovered(int _mouseX, int _mouseY);
+
+    /// \brief Callback when the mouse enters the render window to
+    /// focus the window for mouse/key events
+    public slots: void OnFocusWindow();
+
+    // Documentation inherited
+    protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
+
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
@@ -106,8 +118,32 @@ namespace plugins
     public: void NewMouseEvent(const common::MouseEvent &_e,
         const math::Vector2d &_drag = math::Vector2d::Zero);
 
+    /// \brief New hover event triggered.
+    /// \param[in] _hoverPos Mouse hover screen position
+    public: void NewHoverEvent(const math::Vector2i &_hoverPos);
+
+    /// \brief Handle key press event for snapping
+    /// \param[in] _e The key event to process.
+    public: void HandleKeyPress(QKeyEvent *_e);
+
+    /// \brief Handle key release event for snapping
+    /// \param[in] _e The key event to process.
+    public: void HandleKeyRelease(QKeyEvent *_e);
+
     /// \brief Handle mouse event for view control
     private: void HandleMouseEvent();
+
+    /// \brief Handle mouse event for view control
+    private: void HandleMouseViewControl();
+
+    /// \brief Broadcasts the currently hovered 3d scene location.
+    private: void BroadcastHoverPos();
+
+    /// \brief Broadcasts a left click within the scene
+    private: void BroadcastLeftClick();
+
+    /// \brief Broadcasts a right click within the scene
+    private: void BroadcastRightClick();
 
     /// \brief Retrieve the first point on a surface in the 3D scene hit by a
     /// ray cast from the given 2D screen coordinates.
@@ -254,8 +290,21 @@ namespace plugins
     /// \param[in] _topic Scene topic
     public: void SetSceneTopic(const std::string &_topic);
 
+    /// \brief Called when the mouse hovers to a new position.
+    /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
+    /// the render window.
+    public: void OnHovered(const ignition::math::Vector2i &_hoverPos);
+
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
+
+    /// \brief Handle key press event for snapping
+    /// \param[in] _e The key event to process.
+    public: void HandleKeyPress(QKeyEvent *_e);
+
+    /// \brief Handle key release event for snapping
+    /// \param[in] _e The key event to process.
+    public: void HandleKeyRelease(QKeyEvent *_e);
 
     // Documentation inherited
     protected: virtual void mousePressEvent(QMouseEvent *_e) override;
@@ -276,7 +325,7 @@ namespace plugins
     /// \param[in] _data The node transformation data.
     /// \return Updated node.
     private: QSGNode *updatePaintNode(QSGNode *_oldNode,
-        QQuickItem::UpdatePaintNodeData *_data) override;
+       QQuickItem::UpdatePaintNodeData *_data) override;
 
     /// \internal
     /// \brief Pointer to private data.

@@ -23,6 +23,7 @@ by adding a `<window>` element to the config file. The child elements are:
                     the menu. If `from_paths` is true, all plugins will be shown
                     anyway, so adding `<show>` has no effect. For the plugin to
                     be shown, it must be on the path.
+* `<dialog_on_exit>`: If true, a confirmation dialog will show up when closing the window.
 
 ## Example layout
 
