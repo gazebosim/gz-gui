@@ -84,13 +84,23 @@ int main(int argc, char **argv)
   poseMsg->set_name("box_model");
   auto positionMsg = poseMsg->mutable_position();
 
+  const double change{0.1};
+
+  double x{0.0};
+  double y{0.0};
+  double z{0.0};
+
   while (true)
   {
-    std::this_thread::sleep_for(1s);
+    std::this_thread::sleep_for(100ms);
 
-    positionMsg->set_x(ignition::math::Rand::DblUniform(-3.0, 3.0));
-    positionMsg->set_y(ignition::math::Rand::DblUniform(-3.0, 3.0));
-    positionMsg->set_z(ignition::math::Rand::DblUniform(-3.0, 3.0));
+    x += ignition::math::Rand::DblUniform(-change, change);
+    y += ignition::math::Rand::DblUniform(-change, change);
+    z += ignition::math::Rand::DblUniform(-change, change);
+
+    positionMsg->set_x(x);
+    positionMsg->set_y(y);
+    positionMsg->set_z(z);
     posePub.Publish(poseVMsg);
   }
 

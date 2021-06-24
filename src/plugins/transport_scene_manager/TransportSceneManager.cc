@@ -28,6 +28,8 @@
 #include <ignition/plugin/Register.hh>
 #include <ignition/common/MeshManager.hh>
 
+#include <ignition/rendering/Capsule.hh>
+
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
@@ -639,6 +641,24 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
     scale.X() = _msg.cylinder().radius() * 2;
     scale.Y() = scale.X();
     scale.Z() = _msg.cylinder().length();
+  }
+  else if (_msg.has_capsule())
+  {
+    auto capsule = this->scene->CreateCapsule();
+    capsule->SetRadius(_msg.capsule().radius());
+    capsule->SetLength(_msg.capsule().length());
+    geom = capsule;
+
+    scale.X() = _msg.capsule().radius() * 2;
+    scale.Y() = scale.X();
+    scale.Z() = _msg.capsule().length() + scale.X();
+  }
+  else if (_msg.has_ellipsoid())
+  {
+    geom = this->scene->CreateSphere();
+    scale.X() = _msg.ellipsoid().radii().x() * 2;
+    scale.Y() = _msg.ellipsoid().radii().y() * 2;
+    scale.Z() = _msg.ellipsoid().radii().z() * 2;
   }
   else if (_msg.has_plane())
   {
