@@ -61,6 +61,8 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
   EXPECT_EQ(plugin->Title(), "3D Scene");
 
   // Cleanup
+  auto pluginName = plugin->CardItem()->objectName().toStdString();
+  EXPECT_TRUE(app.RemovePlugin(pluginName));
   plugins.clear();
 }
 
@@ -124,5 +126,17 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   ASSERT_NE(nullptr, camera);
 
   EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
+
+  // Cleanup
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(1, plugins.size());
+
+  auto pluginName = plugins[0]->CardItem()->objectName().toStdString();
+  EXPECT_TRUE(app.RemovePlugin(pluginName));
+  plugins.clear();
+
+  win->QuickWindow()->close();
+  engine->DestroyScene(scene);
+  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
 

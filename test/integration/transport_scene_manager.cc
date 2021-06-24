@@ -68,6 +68,11 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
   EXPECT_EQ(plugin->Title(), "Transport Scene Manager");
 
   // Cleanup
+  for (const auto &p : plugins)
+  {
+    auto pluginName = p->CardItem()->objectName().toStdString();
+    EXPECT_TRUE(app.RemovePlugin(pluginName));
+  }
   plugins.clear();
 }
 
@@ -229,5 +234,20 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
     sleep++;
   }
   EXPECT_EQ(1u, root->ChildCount());
+
+  // Cleanup
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 2);
+
+  for (const auto &p : plugins)
+  {
+    auto pluginName = p->CardItem()->objectName().toStdString();
+    EXPECT_TRUE(app.RemovePlugin(pluginName));
+  }
+  plugins.clear();
+
+  win->QuickWindow()->close();
+  engine->DestroyScene(scene);
+  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
 

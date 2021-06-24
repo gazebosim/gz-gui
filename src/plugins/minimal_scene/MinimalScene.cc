@@ -18,7 +18,6 @@
 #include "MinimalScene.hh"
 
 #include <algorithm>
-#include <cmath>
 #include <map>
 #include <sstream>
 #include <string>
@@ -27,17 +26,16 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/KeyEvent.hh>
 #include <ignition/common/MouseEvent.hh>
-#include <ignition/plugin/Register.hh>
-#include <ignition/common/MeshManager.hh>
-
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering
 // is disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
+
 #include <ignition/rendering/Camera.hh>
 #include <ignition/rendering/OrbitViewController.hh>
 #include <ignition/rendering/RayQuery.hh>
@@ -91,7 +89,7 @@ namespace plugins
     public: math::Vector2i mouseHoverPos{math::Vector2i::Zero};
 
     /// \brief Ray query for mouse clicks
-    public: rendering::RayQueryPtr rayQuery;
+    public: rendering::RayQueryPtr rayQuery{nullptr};
 
     /// \brief View control focus target
     public: math::Vector3d target;
@@ -375,7 +373,7 @@ void IgnRenderer::Initialize()
   this->dataPtr->camera->SetAntiAliasing(8);
   this->dataPtr->camera->SetHFOV(M_PI * 0.5);
   // setting the size and calling PreRender should cause the render texture to
-  //  be rebuilt
+  // be rebuilt
   this->dataPtr->camera->PreRender();
   this->textureId = this->dataPtr->camera->RenderTextureGLId();
 
@@ -493,7 +491,6 @@ void RenderThread::ShutDown()
   // Stop event processing, move the thread to GUI and make sure it is deleted.
   this->moveToThread(QGuiApplication::instance()->thread());
 }
-
 
 /////////////////////////////////////////////////
 void RenderThread::SizeChanged()
@@ -760,7 +757,6 @@ MinimalScene::MinimalScene()
 {
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
 }
-
 
 /////////////////////////////////////////////////
 MinimalScene::~MinimalScene()

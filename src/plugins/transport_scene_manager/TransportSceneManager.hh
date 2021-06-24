@@ -30,7 +30,16 @@ namespace plugins
 {
   class TransportSceneManagerPrivate;
 
-  /// \brief
+  /// \brief Provides an Ignition Transport interface to
+  /// `ignition::gui::plugins::MinimalScene`.
+  ///
+  /// ## Configuration
+  ///
+  /// * \<service\> : Name of service where this system will request a scene
+  ///                 message.
+  /// * \<pose_topic\> : Name of topic to subscribe to receive pose updates.
+  /// * \<deletion_topic\> : Name of topic to request entity deletions.
+  /// * \<scene_topic\> : Name of topic to receive scene updates.
   class TransportSceneManager : public Plugin
   {
     Q_OBJECT

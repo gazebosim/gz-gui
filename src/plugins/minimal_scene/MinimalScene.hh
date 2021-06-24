@@ -20,16 +20,12 @@
 
 #include <string>
 #include <memory>
-#include <mutex>
 
+#include <ignition/common/MouseEvent.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
-#include <ignition/math/Vector3.hh>
 
-#include <ignition/common/MouseEvent.hh>
-
-#include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
@@ -58,6 +54,7 @@ namespace plugins
   ///                          (0.3, 0.3, 0.3, 1.0)
   /// * \<camera_pose\> : Optional starting pose for the camera, defaults to
   ///                     (0, 0, 5, 0, 0, 0)
+  /// * \<sky\> : If present, sky is enabled.
   class MinimalScene : public Plugin
   {
     Q_OBJECT

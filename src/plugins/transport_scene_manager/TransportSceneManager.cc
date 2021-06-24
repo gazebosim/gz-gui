@@ -17,21 +17,16 @@
 
 
 #include <algorithm>
-#include <cmath>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/plugin/Register.hh>
 #include <ignition/common/MeshManager.hh>
-
-#include <ignition/rendering/Capsule.hh>
-
-#include <ignition/math/Vector2.hh>
+#include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
 // are disabling the warnings
@@ -40,9 +35,7 @@
 #endif
 #include <ignition/msgs.hh>
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/OrbitViewController.hh>
-#include <ignition/rendering/RayQuery.hh>
+#include <ignition/rendering/Capsule.hh>
 #include <ignition/rendering/RenderEngine.hh>
 #include <ignition/rendering/RenderingIface.hh>
 #include <ignition/rendering/Scene.hh>
@@ -144,7 +137,7 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
   public: std::string sceneTopic;
 
   //// \brief Pointer to the rendering scene
-  public: rendering::ScenePtr scene;
+  public: rendering::ScenePtr scene{nullptr};
 
   //// \brief Mutex to protect the msgs
   public: std::mutex msgMutex;
@@ -402,7 +395,6 @@ void TransportSceneManagerPrivate::OnRender()
   // consider the case where pose msgs arrive before scene/visual msgs
   this->poses.clear();
 }
-
 
 /////////////////////////////////////////////////
 void TransportSceneManagerPrivate::OnSceneMsg(const msgs::Scene &_msg)
