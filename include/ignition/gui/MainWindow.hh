@@ -44,7 +44,7 @@ namespace ignition
 
     /// \brief The main window class creates a QQuickWindow and acts as an
     /// interface which provides properties and functions which can be called
-    /// from MainWindow.qml
+    /// from Main.qml
     class IGNITION_GUI_VISIBLE MainWindow : public QObject
     {
       Q_OBJECT
@@ -175,6 +175,14 @@ namespace ignition
         READ ShowPluginMenu
         WRITE SetShowPluginMenu
         NOTIFY ShowPluginMenuChanged
+      )
+
+      /// \brief Flag to enable confirmation dialog on exit
+      Q_PROPERTY(
+        bool showDialogOnExit
+        READ ShowDialogOnExit
+        WRITE SetShowDialogOnExit
+        NOTIFY ShowDialogOnExitChanged
       )
 
       /// \brief Constructor
@@ -344,6 +352,14 @@ namespace ignition
       /// \param[in] _showPluginMenu True to show.
       public: Q_INVOKABLE void SetShowPluginMenu(const bool _showPluginMenu);
 
+      /// \brief Get the flag to show the plugin menu.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ShowDialogOnExit() const;
+
+      /// \brief Set the flag to show the confirmation dialog when exiting.
+      /// \param[in] _showDialogOnExit True to show.
+      public: Q_INVOKABLE void SetShowDialogOnExit(bool _showDialogOnExit);
+
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);
 
@@ -397,6 +413,9 @@ namespace ignition
 
       /// \brief Notifies when the show menu flag has changed.
       signals: void ShowPluginMenuChanged();
+
+      /// \brief Notifies when the showDialogOnExit flag has changed.
+      signals: void ShowDialogOnExitChanged();
 
       /// \brief Notifies when the window config has changed.
       signals: void configChanged();
