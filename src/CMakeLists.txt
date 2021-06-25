@@ -5,6 +5,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Dialog.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/GuiEvents.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc

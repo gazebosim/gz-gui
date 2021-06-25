@@ -18,6 +18,7 @@
 #define IGNITION_GUI_GUIEVENTS_HH_
 
 #include <QEvent>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -260,6 +261,9 @@ namespace ignition
         private: bool menuEnabled;
       };
 
+      // forward declaration
+      class ClickOnScenePrivate;
+
       /// \brief Event which is called to broadcast the left mouse click of a
       /// user's left click within the scene.
       class LeftClickOnScene : public QEvent
@@ -268,22 +272,20 @@ namespace ignition
         /// \param[in] _mouse The left mouse event
         /// the scene
         public: explicit LeftClickOnScene(
-          const ignition::common::MouseEvent &_mouse)
-            : QEvent(kType), mouse(_mouse)
-        {
-        }
+          const ignition::common::MouseEvent &_mouse);
+
+        /// \brief Destructor
+        public: ~LeftClickOnScene();
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 10);
 
         /// \brief Return the left mouse event
-        public: ignition::common::MouseEvent Mouse() const
-        {
-          return this->mouse;
-        }
+        public: ignition::common::MouseEvent Mouse() const;
 
-        /// \brief Left mouse event
-        private: ignition::common::MouseEvent mouse;
+        /// \internal
+        /// \brief Private data pointer
+        private: std::unique_ptr<ClickOnScenePrivate> dataPtr;
       };
 
       /// \brief Event which is called to broadcast the right mouse click of a
@@ -293,23 +295,21 @@ namespace ignition
         /// \brief Constructor
         /// \param[in] _mouse The right mouse event
         /// the scene
-        public: explicit RightClickOnScene(
-          const ignition::common::MouseEvent &_mouse)
-            : QEvent(kType), mouse(_mouse)
-        {
-        }
+        public: RightClickOnScene(
+          const ignition::common::MouseEvent &_mouse);
+
+        /// \brief Destructor
+        public: ~RightClickOnScene();
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 11);
 
         /// \brief Return the right mouse event
-        public: ignition::common::MouseEvent Mouse() const
-        {
-          return this->mouse;
-        }
+        public: ignition::common::MouseEvent Mouse() const;
 
-        /// \brief Right mouse event
-        private: ignition::common::MouseEvent mouse;
+        /// \internal
+        /// \brief Private data pointer
+        private: std::unique_ptr<ClickOnScenePrivate> dataPtr;
       };
     }
   }
