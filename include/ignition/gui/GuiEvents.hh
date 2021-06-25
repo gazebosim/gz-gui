@@ -267,13 +267,6 @@ namespace ignition
         private: bool menuEnabled;
       };
 
-      #ifdef _WIN32
-      // Disable warning C4251 which is triggered by
-      // std::unique_ptr
-      #pragma warning(push)
-      #pragma warning(disable: 4251)
-      #endif
-
       /// \brief Event which is called to broadcast information about left
       /// mouse clicks on the scene.
       /// For the 3D coordinates of that point on the scene, see
@@ -319,10 +312,6 @@ namespace ignition
         /// \brief Private data pointer
         IGN_UTILS_IMPL_PTR(dataPtr)
       };
-
-      #ifdef _MSC_VER
-      #pragma warning(pop)
-      #endif
     }
   }
 }
