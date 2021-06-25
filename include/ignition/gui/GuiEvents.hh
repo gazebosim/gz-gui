@@ -21,6 +21,10 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <ignition/common/MouseEvent.hh>
+
+#include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 
 namespace ignition
@@ -254,6 +258,58 @@ namespace ignition
         /// \brief The boolean indicating whether the menu is disabled or not
         /// for this event.
         private: bool menuEnabled;
+      };
+
+      /// \brief Event which is called to broadcast the left mouse click of a
+      /// user's left click within the scene.
+      class LeftClickOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _mouse The left mouse event
+        /// the scene
+        public: explicit LeftClickOnScene(
+          const ignition::common::MouseEvent &_mouse)
+            : QEvent(kType), mouse(_mouse)
+        {
+        }
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 10);
+
+        /// \brief Return the left mouse event
+        public: ignition::common::MouseEvent Mouse() const
+        {
+          return this->mouse;
+        }
+
+        /// \brief Left mouse event
+        private: ignition::common::MouseEvent mouse;
+      };
+
+      /// \brief Event which is called to broadcast the right mouse click of a
+      /// user's left click within the scene.
+      class RightClickOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _mouse The right mouse event
+        /// the scene
+        public: explicit RightClickOnScene(
+          const ignition::common::MouseEvent &_mouse)
+            : QEvent(kType), mouse(_mouse)
+        {
+        }
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 11);
+
+        /// \brief Return the right mouse event
+        public: ignition::common::MouseEvent Mouse() const
+        {
+          return this->mouse;
+        }
+
+        /// \brief Right mouse event
+        private: ignition::common::MouseEvent mouse;
       };
     }
   }
