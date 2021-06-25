@@ -24,9 +24,9 @@
 #include <vector>
 
 #include <ignition/common/MouseEvent.hh>
-
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/utils/ImplPtr.hh>
 
 #include "ignition/gui/Export.hh"
 
@@ -37,6 +37,8 @@ namespace ignition
     /// \brief Namespace for all events.
     namespace events
     {
+      class ClickOnScenePrivate;
+
       /// User defined events should start from QEvent::MaxUser and
       /// count down to avoid collision with ign-gazebo events
 
@@ -185,6 +187,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
       /// user's left click within the scene.
+      /// \sa LeftClickOnScene
       class LeftClickToScene : public QEvent
       {
         /// \brief Constructor
@@ -211,6 +214,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
       /// user's right click within the scene.
+      /// \sa RightClickOnScene
       class RightClickToScene : public QEvent
       {
         /// \brief Constructor
@@ -263,9 +267,6 @@ namespace ignition
         private: bool menuEnabled;
       };
 
-      // forward declaration
-      class ClickOnScenePrivate;
-
       #ifdef _WIN32
       // Disable warning C4251 which is triggered by
       // std::unique_ptr
@@ -273,52 +274,50 @@ namespace ignition
       #pragma warning(disable: 4251)
       #endif
 
-      /// \brief Event which is called to broadcast the left mouse click of a
-      /// user's left click within the scene.
+      /// \brief Event which is called to broadcast information about left
+      /// mouse clicks on the scene.
+      /// For the 3D coordinates of that point on the scene, see
+      /// `LeftClickToScene`.
+      /// \sa LeftClickToScene
       class IGNITION_GUI_VISIBLE LeftClickOnScene : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _mouse The left mouse event
-        /// the scene
+        /// \param[in] _mouse The left mouse event on the scene
         public: explicit LeftClickOnScene(
-          const ignition::common::MouseEvent &_mouse);
-
-        /// \brief Destructor
-        public: ~LeftClickOnScene();
+          const common::MouseEvent &_mouse);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 10);
 
         /// \brief Return the left mouse event
-        public: ignition::common::MouseEvent Mouse() const;
+        public: const common::MouseEvent &Mouse() const;
 
         /// \internal
         /// \brief Private data pointer
-        private: std::unique_ptr<ClickOnScenePrivate> dataPtr;
+        IGN_UTILS_IMPL_PTR(dataPtr)
       };
 
-      /// \brief Event which is called to broadcast the right mouse click of a
-      /// user's left click within the scene.
+      /// \brief Event which is called to broadcast information about right
+      /// mouse clicks on the scene.
+      /// For the 3D coordinates of that point on the scene, see
+      /// `RightClickToScene`.
+      /// \sa RightClickToScene
       class IGNITION_GUI_VISIBLE RightClickOnScene : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _mouse The right mouse event
-        /// the scene
+        /// \param[in] _mouse The right mouse event on the scene
         public: RightClickOnScene(
-          const ignition::common::MouseEvent &_mouse);
-
-        /// \brief Destructor
-        public: ~RightClickOnScene();
+          const common::MouseEvent &_mouse);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 11);
 
         /// \brief Return the right mouse event
-        public: ignition::common::MouseEvent Mouse() const;
+        public: const common::MouseEvent &Mouse() const;
 
         /// \internal
         /// \brief Private data pointer
-        private: std::unique_ptr<ClickOnScenePrivate> dataPtr;
+        IGN_UTILS_IMPL_PTR(dataPtr)
       };
 
       #ifdef _MSC_VER

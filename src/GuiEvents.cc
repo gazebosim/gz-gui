@@ -17,59 +17,45 @@
 
 #include "ignition/gui/GuiEvents.hh"
 
-namespace ignition
+class ignition::gui::events::LeftClickOnScene::Implementation
 {
-  namespace gui
-  {
-    namespace events
-    {
-      class ClickOnScenePrivate
-      {
-        /// \brief mouse event
-        public: ignition::common::MouseEvent mouse;
-      };
-    }
-  }
-}
+  /// \brief Mouse event
+  public: common::MouseEvent mouse;
+};
+
+class ignition::gui::events::RightClickOnScene::Implementation
+{
+  /// \brief Mouse event
+  public: common::MouseEvent mouse;
+};
 
 using namespace ignition;
 using namespace gui;
 using namespace events;
 
 /////////////////////////////////////////////////
-RightClickOnScene::RightClickOnScene(
-  const ignition::common::MouseEvent &_mouse)
-    : QEvent(kType), dataPtr(new ClickOnScenePrivate)
+RightClickOnScene::RightClickOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
   this->dataPtr->mouse = _mouse;
 }
 
 /////////////////////////////////////////////////
-RightClickOnScene::~RightClickOnScene()
-{
-}
-
-/////////////////////////////////////////////////
-ignition::common::MouseEvent RightClickOnScene::Mouse() const
+const common::MouseEvent &RightClickOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
 }
 
 /////////////////////////////////////////////////
-LeftClickOnScene::LeftClickOnScene(
-  const ignition::common::MouseEvent &_mouse)
-    : QEvent(kType), dataPtr(new ClickOnScenePrivate)
+LeftClickOnScene::LeftClickOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
   this->dataPtr->mouse = _mouse;
 }
 
 /////////////////////////////////////////////////
-LeftClickOnScene::~LeftClickOnScene()
-{
-}
-
-/////////////////////////////////////////////////
-ignition::common::MouseEvent LeftClickOnScene::Mouse() const
+const common::MouseEvent &LeftClickOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
 }
+
