@@ -79,12 +79,40 @@ TEST(GuiEventsTest, LeftClickToScene)
 }
 
 /////////////////////////////////////////////////
+TEST(GuiEventsTest, LeftClickOnScene)
+{
+  ignition::common::MouseEvent mouse;
+  mouse.SetAlt(true);
+  mouse.SetShift(true);
+  events::LeftClickOnScene event(mouse);
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_FALSE(event.Mouse().Control());
+  EXPECT_TRUE(event.Mouse().Alt());
+  EXPECT_TRUE(event.Mouse().Shift());
+}
+
+/////////////////////////////////////////////////
 TEST(GuiEventsTest, RightClickToScene)
 {
   events::RightClickToScene event({1, 2, 3});
 
   EXPECT_LT(QEvent::User, event.type());
   EXPECT_EQ(math::Vector3d(1, 2, 3), event.Point());
+}
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, RightClickOnScene)
+{
+  ignition::common::MouseEvent mouse;
+  mouse.SetControl(true);
+  mouse.SetAlt(true);
+  events::RightClickOnScene event(mouse);
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_TRUE(event.Mouse().Control());
+  EXPECT_TRUE(event.Mouse().Alt());
+  EXPECT_FALSE(event.Mouse().Shift());
 }
 
 /////////////////////////////////////////////////
@@ -100,4 +128,3 @@ TEST(GuiEventsTest, DropdownMenuEnabled)
   EXPECT_LT(QEvent::User, event2.type());
   EXPECT_EQ(false, event2.MenuEnabled());
 }
-
