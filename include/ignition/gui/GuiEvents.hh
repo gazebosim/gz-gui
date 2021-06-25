@@ -37,8 +37,6 @@ namespace ignition
     /// \brief Namespace for all events.
     namespace events
     {
-      class ClickOnScenePrivate;
-
       /// User defined events should start from QEvent::MaxUser and
       /// count down to avoid collision with ign-gazebo events
 
