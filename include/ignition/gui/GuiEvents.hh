@@ -263,9 +263,16 @@ namespace ignition
       // forward declaration
       class KeyOnScenePrivate;
 
+      #ifdef _WIN32
+      // Disable warning C4251 which is triggered by
+      // std::unique_ptr
+      #pragma warning(push)
+      #pragma warning(disable: 4251)
+      #endif
+
       /// \brief Event which is called to broadcast the key release within
       /// the scene.
-      class KeyReleaseOnScene : public QEvent
+      class IGNITION_GUI_VISIBLE KeyReleaseOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _key The key released event within the scene
@@ -289,7 +296,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the key press within
       /// the scene.
-      class KeyPressOnScene : public QEvent
+      class IGNITION_GUI_VISIBLE KeyPressOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _key The pressed key within the scene
@@ -310,6 +317,10 @@ namespace ignition
         /// \brief Private data pointer
         private: std::unique_ptr<KeyOnScenePrivate> dataPtr;
       };
+
+      #ifdef _MSC_VER
+      #pragma warning(pop)
+      #endif
     }
   }
 }
