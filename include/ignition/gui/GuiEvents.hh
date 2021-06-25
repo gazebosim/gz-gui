@@ -27,6 +27,8 @@
 
 #include <ignition/math/Vector3.hh>
 
+#include "ignition/gui/Export.hh"
+
 namespace ignition
 {
   namespace gui
