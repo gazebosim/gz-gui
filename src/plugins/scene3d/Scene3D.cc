@@ -918,6 +918,8 @@ void IgnRenderer::HandleMouseEvent()
   this->BroadcastHoverPos();
   this->BroadcastLeftClick();
   this->BroadcastRightClick();
+  this->BroadcastKeyPress();
+  this->BroadcastKeyRelease();
   this->HandleMouseViewControl();
 }
 
@@ -1010,7 +1012,7 @@ void IgnRenderer::HandleKeyRelease(QKeyEvent *_e)
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->dataPtr->keyEvent.SetKey(0);
+  this->dataPtr->keyEvent.SetKey(_e->key());
 
   this->dataPtr->keyEvent.SetControl(
     (_e->modifiers() & Qt::ControlModifier)
@@ -1076,6 +1078,28 @@ void IgnRenderer::BroadcastRightClick()
 
   events::RightClickToScene rightClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastKeyRelease()
+{
+  if (this->dataPtr->keyEvent.Type() == common::KeyEvent::RELEASE)
+  {
+    events::KeyReleaseOnScene keyRelease(this->dataPtr->keyEvent);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &keyRelease);
+    this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
+  }
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastKeyPress()
+{
+  if (this->dataPtr->keyEvent.Type() == common::KeyEvent::PRESS)
+  {
+    events::KeyPressOnScene keyPress(this->dataPtr->keyEvent);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &keyPress);
+    this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -1657,6 +1681,18 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
   double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::keyPressEvent(QKeyEvent *_event)
+{
+  this->HandleKeyPress(_event);
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::keyReleaseEvent(QKeyEvent *_event)
+{
+  this->HandleKeyRelease(_event);
 }
 
 ////////////////////////////////////////////////

@@ -21,6 +21,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <ignition/common/KeyEvent.hh>
+
 #include <ignition/math/Vector3.hh>
 
 namespace ignition
@@ -254,6 +257,57 @@ namespace ignition
         /// \brief The boolean indicating whether the menu is disabled or not
         /// for this event.
         private: bool menuEnabled;
+      };
+
+      // forward declaration
+      class KeyOnScenePrivate;
+
+      /// \brief Event which is called to broadcast the key release within
+      /// the scene.
+      class KeyReleaseOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _key The key released event within the scene
+        public: explicit KeyReleaseOnScene(
+          const ignition::common::KeyEvent &_key);
+
+        /// \brief Destructor
+        public: ~KeyReleaseOnScene();
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 8);
+
+        /// \brief Get the released key within the scene that the user released.
+        /// \return The key code.
+        public: ignition::common::KeyEvent Key() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        private: std::unique_ptr<KeyOnScenePrivate> dataPtr;
+      };
+
+      /// \brief Event which is called to broadcast the key press within
+      /// the scene.
+      class KeyPressOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _key The pressed key within the scene
+        public: explicit KeyPressOnScene(
+          const ignition::common::KeyEvent &_key);
+
+        /// \brief Destructor
+        public: ~KeyPressOnScene();
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 9);
+
+        /// \brief Get the key within the scene that the user pressed
+        /// \return The key code.
+        public: ignition::common::KeyEvent Key() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        private: std::unique_ptr<KeyOnScenePrivate> dataPtr;
       };
     }
   }
