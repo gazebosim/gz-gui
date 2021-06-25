@@ -264,9 +264,16 @@ namespace ignition
       // forward declaration
       class ClickOnScenePrivate;
 
+      #ifdef _WIN32
+      // Disable warning C4251 which is triggered by
+      // std::unique_ptr
+      #pragma warning(push)
+      #pragma warning(disable: 4251)
+      #endif
+
       /// \brief Event which is called to broadcast the left mouse click of a
       /// user's left click within the scene.
-      class LeftClickOnScene : public QEvent
+      class IGNITION_GUI_VISIBLE LeftClickOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The left mouse event
@@ -290,7 +297,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the right mouse click of a
       /// user's left click within the scene.
-      class RightClickOnScene : public QEvent
+      class IGNITION_GUI_VISIBLE RightClickOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The right mouse event
@@ -311,6 +318,10 @@ namespace ignition
         /// \brief Private data pointer
         private: std::unique_ptr<ClickOnScenePrivate> dataPtr;
       };
+
+      #ifdef _MSC_VER
+      #pragma warning(pop)
+      #endif
     }
   }
 }
