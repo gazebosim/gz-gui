@@ -128,7 +128,6 @@ IgnRenderer::IgnRenderer()
 {
 }
 
-
 /////////////////////////////////////////////////
 IgnRenderer::~IgnRenderer()
 {
