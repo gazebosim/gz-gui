@@ -24,6 +24,8 @@
 #include <vector>
 
 #include <ignition/common/KeyEvent.hh>
+#include <ignition/common/MouseEvent.hh>
+#include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/utils/ImplPtr.hh>
 
@@ -184,6 +186,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
       /// user's left click within the scene.
+      /// \sa LeftClickOnScene
       class LeftClickToScene : public QEvent
       {
         /// \brief Constructor
@@ -210,6 +213,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
       /// user's right click within the scene.
+      /// \sa RightClickOnScene
       class RightClickToScene : public QEvent
       {
         /// \brief Constructor
@@ -260,6 +264,52 @@ namespace ignition
         /// \brief The boolean indicating whether the menu is disabled or not
         /// for this event.
         private: bool menuEnabled;
+      };
+
+      /// \brief Event which is called to broadcast information about left
+      /// mouse clicks on the scene.
+      /// For the 3D coordinates of that point on the scene, see
+      /// `LeftClickToScene`.
+      /// \sa LeftClickToScene
+      class IGNITION_GUI_VISIBLE LeftClickOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _mouse The left mouse event on the scene
+        public: explicit LeftClickOnScene(
+          const common::MouseEvent &_mouse);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 10);
+
+        /// \brief Return the left mouse event
+        public: const common::MouseEvent &Mouse() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event which is called to broadcast information about right
+      /// mouse clicks on the scene.
+      /// For the 3D coordinates of that point on the scene, see
+      /// `RightClickToScene`.
+      /// \sa RightClickToScene
+      class IGNITION_GUI_VISIBLE RightClickOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _mouse The right mouse event on the scene
+        public: RightClickOnScene(
+          const common::MouseEvent &_mouse);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 11);
+
+        /// \brief Return the right mouse event
+        public: const common::MouseEvent &Mouse() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the key release within

@@ -17,6 +17,18 @@
 
 #include "ignition/gui/GuiEvents.hh"
 
+class ignition::gui::events::LeftClickOnScene::Implementation
+{
+  /// \brief Mouse event
+  public: common::MouseEvent mouse;
+};
+
+class ignition::gui::events::RightClickOnScene::Implementation
+{
+  /// \brief Mouse event
+  public: common::MouseEvent mouse;
+};
+
 class ignition::gui::events::KeyReleaseOnScene::Implementation
 {
   /// \brief Key event
@@ -32,6 +44,32 @@ class ignition::gui::events::KeyPressOnScene::Implementation
 using namespace ignition;
 using namespace gui;
 using namespace events;
+
+/////////////////////////////////////////////////
+RightClickOnScene::RightClickOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+}
+
+/////////////////////////////////////////////////
+const common::MouseEvent &RightClickOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+LeftClickOnScene::LeftClickOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+}
+
+/////////////////////////////////////////////////
+const common::MouseEvent &LeftClickOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
 
 /////////////////////////////////////////////////
 KeyReleaseOnScene::KeyReleaseOnScene(
