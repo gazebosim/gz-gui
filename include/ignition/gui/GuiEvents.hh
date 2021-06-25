@@ -24,8 +24,8 @@
 #include <vector>
 
 #include <ignition/common/KeyEvent.hh>
-
 #include <ignition/math/Vector3.hh>
+#include <ignition/utils/ImplPtr.hh>
 
 #include "ignition/gui/Export.hh"
 
@@ -262,38 +262,24 @@ namespace ignition
         private: bool menuEnabled;
       };
 
-      // forward declaration
-      class KeyOnScenePrivate;
-
-      #ifdef _WIN32
-      // Disable warning C4251 which is triggered by
-      // std::unique_ptr
-      #pragma warning(push)
-      #pragma warning(disable: 4251)
-      #endif
-
       /// \brief Event which is called to broadcast the key release within
       /// the scene.
       class IGNITION_GUI_VISIBLE KeyReleaseOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _key The key released event within the scene
-        public: explicit KeyReleaseOnScene(
-          const ignition::common::KeyEvent &_key);
-
-        /// \brief Destructor
-        public: ~KeyReleaseOnScene();
+        public: explicit KeyReleaseOnScene(const common::KeyEvent &_key);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 8);
 
         /// \brief Get the released key within the scene that the user released.
         /// \return The key code.
-        public: ignition::common::KeyEvent Key() const;
+        public: common::KeyEvent Key() const;
 
         /// \internal
         /// \brief Private data pointer
-        private: std::unique_ptr<KeyOnScenePrivate> dataPtr;
+        IGN_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the key press within
@@ -302,27 +288,19 @@ namespace ignition
       {
         /// \brief Constructor
         /// \param[in] _key The pressed key within the scene
-        public: explicit KeyPressOnScene(
-          const ignition::common::KeyEvent &_key);
-
-        /// \brief Destructor
-        public: ~KeyPressOnScene();
+        public: explicit KeyPressOnScene(const common::KeyEvent &_key);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 9);
 
         /// \brief Get the key within the scene that the user pressed
         /// \return The key code.
-        public: ignition::common::KeyEvent Key() const;
+        public: common::KeyEvent Key() const;
 
         /// \internal
         /// \brief Private data pointer
-        private: std::unique_ptr<KeyOnScenePrivate> dataPtr;
+        IGN_UTILS_IMPL_PTR(dataPtr)
       };
-
-      #ifdef _MSC_VER
-      #pragma warning(pop)
-      #endif
     }
   }
 }

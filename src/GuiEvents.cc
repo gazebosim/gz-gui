@@ -17,20 +17,17 @@
 
 #include "ignition/gui/GuiEvents.hh"
 
-namespace ignition
+class ignition::gui::events::KeyReleaseOnScene::Implementation
 {
-  namespace gui
-  {
-    namespace events
-    {
-      class KeyOnScenePrivate
-      {
-        /// \brief The key event that the user pressed within the scene.
-        public: ignition::common::KeyEvent key;
-      };
-    }
-  }
-}
+  /// \brief Key event
+  public: common::KeyEvent key;
+};
+
+class ignition::gui::events::KeyPressOnScene::Implementation
+{
+  /// \brief Key event
+  public: common::KeyEvent key;
+};
 
 using namespace ignition;
 using namespace gui;
@@ -38,38 +35,28 @@ using namespace events;
 
 /////////////////////////////////////////////////
 KeyReleaseOnScene::KeyReleaseOnScene(
-  const ignition::common::KeyEvent &_key)
-    : QEvent(kType), dataPtr(new KeyOnScenePrivate)
+  const common::KeyEvent &_key)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
   this->dataPtr->key = _key;
 }
 
 /////////////////////////////////////////////////
-KeyReleaseOnScene::~KeyReleaseOnScene()
-{
-}
-
-/////////////////////////////////////////////////
-ignition::common::KeyEvent KeyReleaseOnScene::Key() const
+common::KeyEvent KeyReleaseOnScene::Key() const
 {
   return this->dataPtr->key;
 }
 
 /////////////////////////////////////////////////
 KeyPressOnScene::KeyPressOnScene(
-  const ignition::common::KeyEvent &_key)
-    : QEvent(kType), dataPtr(new KeyOnScenePrivate)
+  const common::KeyEvent &_key)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
   this->dataPtr->key = _key;
 }
 
 /////////////////////////////////////////////////
-KeyPressOnScene::~KeyPressOnScene()
-{
-}
-
-/////////////////////////////////////////////////
-ignition::common::KeyEvent KeyPressOnScene::Key() const
+common::KeyEvent KeyPressOnScene::Key() const
 {
   return this->dataPtr->key;
 }
