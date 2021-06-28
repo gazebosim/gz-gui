@@ -28,7 +28,10 @@
 #include "WorldControl.hh"
 
 int g_argc = 1;
-char **g_argv = new char *[g_argc];
+char* g_argv[] =
+{
+    reinterpret_cast<char*>(const_cast<char*>("./WorldControl_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
