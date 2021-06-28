@@ -114,7 +114,7 @@ function(ign_gui_add_plugin plugin_name)
 endfunction()
 
 # Plugins
-add_subdirectory(camera_controller_manager)
+add_subdirectory(camera_tracking)
 add_subdirectory(grid_3d)
 add_subdirectory(grid_config)
 add_subdirectory(image_display)

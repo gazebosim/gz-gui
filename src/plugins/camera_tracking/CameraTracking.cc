@@ -26,7 +26,8 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
+#include <ignition/msgs/stringmsg.pb.h>
+#include <ignition/msgs/Utility.hh>
 
 #include <ignition/rendering/Camera.hh>
 #include <ignition/rendering/MoveToHelper.hh>
@@ -44,10 +45,10 @@
 
 #include <ignition/transport/Node.hh>
 
-#include "CameraControllerManager.hh"
+#include "CameraTracking.hh"
 
-/// \brief Private data class for CameraControllerManager
-class ignition::gui::plugins::CameraControllerManagerPrivate
+/// \brief Private data class for CameraTracking
+class ignition::gui::plugins::CameraTrackingPrivate
 {
   public: void OnRender();
 
@@ -74,13 +75,20 @@ class ignition::gui::plugins::CameraControllerManagerPrivate
   public: bool OnMoveToPose(const msgs::GUICamera &_msg,
                msgs::Boolean &_res);
 
+  /// \brief Callback for a follow offset request
+  /// \param[in] _msg Request message to set the camera's follow offset.
+  /// \param[in] _res Response data
+  /// \return True if the request is received
+  public: bool OnFollowOffset(const msgs::Vector3d &_msg,
+               msgs::Boolean &_res);
+
   /// \brief Callback when a move to animation is complete
   private: void OnMoveToComplete();
 
   /// \brief Callback when a move to  pose animation is complete
   private: void OnMoveToPoseComplete();
 
-  public: void HandleKeyRelease(events::KeyReleaseToScene *_e);
+  public: void HandleKeyRelease(events::KeyReleaseOnScene *_e);
 
   public: std::mutex mutex;
 
@@ -93,11 +101,14 @@ class ignition::gui::plugins::CameraControllerManagerPrivate
   /// \brief Wait for follow target
   public: bool followTargetWait = false;
 
-  /// \brief Offset of camera from taget being followed
+  /// \brief Offset of camera from target being followed
   public: math::Vector3d followOffset = math::Vector3d(-5, 0, 3);
 
   /// \brief Flag to indicate the follow offset needs to be updated
   public: bool followOffsetDirty = false;
+
+  /// \brief Flag to indicate the follow offset has been updated
+  public: bool newFollowOffset = true;
 
   /// \brief Follow P gain
   public: double followPGain = 0.01;
@@ -130,6 +141,9 @@ class ignition::gui::plugins::CameraControllerManagerPrivate
   /// \brief Follow service
   public: std::string followService;
 
+  /// \brief Follow offset service
+  public: std::string followOffsetService;
+
   /// \brief Camera pose topic
   public: std::string cameraPoseTopic;
 
@@ -148,9 +162,20 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-void CameraControllerManagerPrivate::Initialize()
+void CameraTrackingPrivate::Initialize()
 {
-  this->camera = std::dynamic_pointer_cast<rendering::Camera>(this->scene->SensorByName("Scene3DCamera"));
+  for (unsigned int i = 0; i < scene->NodeCount(); ++i)
+  {
+    auto cam = std::dynamic_pointer_cast<rendering::Camera>(
+      scene->NodeByIndex(i));
+    if (cam)
+    {
+      this->camera = cam;
+      igndbg << "CameraTrackingPrivate plugin is moving camera ["
+             << this->camera->Name() << "]" << std::endl;
+      break;
+    }
+  }
   if (!this->camera)
   {
     ignerr << "Camera is not available" << std::endl;
@@ -161,14 +186,14 @@ void CameraControllerManagerPrivate::Initialize()
   // move to
   this->moveToService = "/gui/move_to";
   this->node.Advertise(this->moveToService,
-      &CameraControllerManagerPrivate::OnMoveTo, this);
+      &CameraTrackingPrivate::OnMoveTo, this);
   ignmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
   // follow
   this->followService = "/gui/follow";
   this->node.Advertise(this->followService,
-      &CameraControllerManagerPrivate::OnFollow, this);
+      &CameraTrackingPrivate::OnFollow, this);
   ignmsg << "Follow service on ["
          << this->followService << "]" << std::endl;
 
@@ -176,7 +201,7 @@ void CameraControllerManagerPrivate::Initialize()
   this->moveToPoseService =
       "/gui/move_to/pose";
   this->node.Advertise(this->moveToPoseService,
-      &CameraControllerManagerPrivate::OnMoveToPose, this);
+      &CameraTrackingPrivate::OnMoveToPose, this);
   ignmsg << "Move to pose service on ["
          << this->moveToPoseService << "]" << std::endl;
 
@@ -186,10 +211,17 @@ void CameraControllerManagerPrivate::Initialize()
     this->node.Advertise<msgs::Pose>(this->cameraPoseTopic);
   ignmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
+
+   // follow offset
+   this->followOffsetService = "/gui/follow/offset";
+   this->node.Advertise(this->followOffsetService,
+       &CameraTrackingPrivate::OnFollowOffset, this);
+   ignmsg << "Follow offset service on ["
+          << this->followOffsetService << "]" << std::endl;
 }
 
 /////////////////////////////////////////////////
-bool CameraControllerManagerPrivate::OnMoveTo(const msgs::StringMsg &_msg,
+bool CameraTrackingPrivate::OnMoveTo(const msgs::StringMsg &_msg,
   msgs::Boolean &_res)
 {
   this->moveToTarget = _msg.data();
@@ -199,7 +231,7 @@ bool CameraControllerManagerPrivate::OnMoveTo(const msgs::StringMsg &_msg,
 }
 
 /////////////////////////////////////////////////
-bool CameraControllerManagerPrivate::OnFollow(const msgs::StringMsg &_msg,
+bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
   msgs::Boolean &_res)
 {
   this->followTarget = _msg.data();
@@ -209,21 +241,33 @@ bool CameraControllerManagerPrivate::OnFollow(const msgs::StringMsg &_msg,
 }
 
 /////////////////////////////////////////////////
-void CameraControllerManagerPrivate::OnMoveToComplete()
+void CameraTrackingPrivate::OnMoveToComplete()
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   this->moveToTarget.clear();
 }
 
 /////////////////////////////////////////////////
-void CameraControllerManagerPrivate::OnMoveToPoseComplete()
+void CameraTrackingPrivate::OnMoveToPoseComplete()
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   this->moveToPoseValue.reset();
 }
 
 /////////////////////////////////////////////////
-bool CameraControllerManagerPrivate::OnMoveToPose(const msgs::GUICamera &_msg, msgs::Boolean &_res)
+bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg, msgs::Boolean &_res)
+{
+  math::Vector3d offset = msgs::Convert(_msg);
+
+  if (!this->followTarget.empty())
+    this->newFollowOffset = true;
+
+  _res.set_data(true);
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool CameraTrackingPrivate::OnMoveToPose(const msgs::GUICamera &_msg, msgs::Boolean &_res)
 {
   math::Pose3d pose = msgs::Convert(_msg.pose());
 
@@ -248,7 +292,7 @@ bool CameraControllerManagerPrivate::OnMoveToPose(const msgs::GUICamera &_msg, m
 }
 
 /////////////////////////////////////////////////
-void CameraControllerManagerPrivate::OnRender()
+void CameraTrackingPrivate::OnRender()
 {
   if (nullptr == this->scene)
   {
@@ -261,7 +305,7 @@ void CameraControllerManagerPrivate::OnRender()
 
   // Move To
   {
-    IGN_PROFILE("CameraControllerManagerPrivate::OnRender MoveTo");
+    IGN_PROFILE("CameraTrackingPrivate::OnRender MoveTo");
     if (!this->moveToTarget.empty())
     {
       if (this->moveToHelper.Idle())
@@ -271,7 +315,7 @@ void CameraControllerManagerPrivate::OnRender()
         if (target)
         {
           this->moveToHelper.MoveTo(this->camera, target, 0.5,
-              std::bind(&CameraControllerManagerPrivate::OnMoveToComplete, this));
+              std::bind(&CameraTrackingPrivate::OnMoveToComplete, this));
           this->prevMoveToTime = std::chrono::system_clock::now();
         }
         else
@@ -293,14 +337,14 @@ void CameraControllerManagerPrivate::OnRender()
 
   // Move to pose
   {
-    IGN_PROFILE("CameraControllerManagerPrivate::OnRender MoveToPose");
+    IGN_PROFILE("CameraTrackingPrivate::OnRender MoveToPose");
     if (this->moveToPoseValue)
     {
       if (this->moveToHelper.Idle())
       {
         this->moveToHelper.MoveTo(this->camera,
             *(this->moveToPoseValue),
-            0.5, std::bind(&CameraControllerManagerPrivate::OnMoveToPoseComplete, this));
+            0.5, std::bind(&CameraTrackingPrivate::OnMoveToPoseComplete, this));
         this->prevMoveToTime = std::chrono::system_clock::now();
       }
       else
@@ -315,7 +359,7 @@ void CameraControllerManagerPrivate::OnRender()
 
   // Follow
   {
-    IGN_PROFILE("CameraControllerManagerPrivate::OnRender Follow");
+    IGN_PROFILE("CameraTrackingPrivate::OnRender Follow");
     // reset follow mode if target node got removed
     if (!this->followTarget.empty())
     {
@@ -337,7 +381,8 @@ void CameraControllerManagerPrivate::OnRender()
           this->followTarget);
       if (target)
       {
-        if (!followTargetTmp || target != followTargetTmp)
+        if (!followTargetTmp || target != followTargetTmp
+              || this->newFollowOffset)
         {
           this->camera->SetFollowTarget(target,
               this->followOffset,
@@ -346,6 +391,7 @@ void CameraControllerManagerPrivate::OnRender()
 
           this->camera->SetTrackTarget(target);
           // found target, no need to wait anymore
+          this->newFollowOffset = false;
           this->followTargetWait = false;
         }
         else if (this->followOffsetDirty)
@@ -376,8 +422,8 @@ void CameraControllerManagerPrivate::OnRender()
 }
 
 /////////////////////////////////////////////////
-CameraControllerManager::CameraControllerManager()
-  : Plugin(), dataPtr(new CameraControllerManagerPrivate)
+CameraTracking::CameraTracking()
+  : Plugin(), dataPtr(new CameraTrackingPrivate)
 {
   this->dataPtr->timer = new QTimer(this);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
@@ -395,12 +441,12 @@ CameraControllerManager::CameraControllerManager()
 }
 
 /////////////////////////////////////////////////
-CameraControllerManager::~CameraControllerManager()
+CameraTracking::~CameraTracking()
 {
 }
 
 /////////////////////////////////////////////////
-void CameraControllerManager::LoadConfig(const tinyxml2::XMLElement *)
+void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)
 {
   if (this->title.empty())
     this->title = "Camera Controller Manager";
@@ -409,9 +455,9 @@ void CameraControllerManager::LoadConfig(const tinyxml2::XMLElement *)
 }
 
 /////////////////////////////////////////////////
-void CameraControllerManagerPrivate::HandleKeyRelease(events::KeyReleaseToScene *_e)
+void CameraTrackingPrivate::HandleKeyRelease(events::KeyReleaseOnScene *_e)
 {
-  if (_e->Key() == Qt::Key_Escape)
+  if (_e->Key().Key() == Qt::Key_Escape)
   {
     if (!this->followTarget.empty())
     {
@@ -423,15 +469,15 @@ void CameraControllerManagerPrivate::HandleKeyRelease(events::KeyReleaseToScene 
 }
 
 /////////////////////////////////////////////////
-bool CameraControllerManager::eventFilter(QObject *_obj, QEvent *_event)
+bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
 {
   if (_event->type() == events::Render::kType)
   {
     this->dataPtr->OnRender();
   }
-  else if (_event->type() == events::KeyReleaseToScene::kType)
+  else if (_event->type() == events::KeyReleaseOnScene::kType)
   {
-    events::KeyReleaseToScene *keyEvent = static_cast<events::KeyReleaseToScene*>(_event);
+    events::KeyReleaseOnScene *keyEvent = static_cast<events::KeyReleaseOnScene*>(_event);
     if (keyEvent)
     {
       this->dataPtr->HandleKeyRelease(keyEvent);
@@ -442,5 +488,5 @@ bool CameraControllerManager::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::CameraControllerManager,
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::CameraTracking,
                     ignition::gui::Plugin)

@@ -28,17 +28,17 @@ namespace gui
 {
 namespace plugins
 {
-  class CameraControllerManagerPrivate;
+  class CameraTrackingPrivate;
 
-  class CameraControllerManager : public Plugin
+  class CameraTracking : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: CameraControllerManager();
+    public: CameraTracking();
 
     /// \brief Destructor
-    public: virtual ~CameraControllerManager();
+    public: virtual ~CameraTracking();
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
@@ -49,7 +49,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<CameraControllerManagerPrivate> dataPtr;
+    private: std::unique_ptr<CameraTrackingPrivate> dataPtr;
   };
 }
 }
