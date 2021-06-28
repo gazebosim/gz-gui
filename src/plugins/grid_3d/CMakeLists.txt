@@ -6,6 +6,6 @@ ign_gui_add_plugin(Grid3D
   TEST_SOURCES
     # Grid3D_TEST.cc
   PUBLIC_LINK_LIBS
-   ${IGNITION-RENDERING_LIBRARIES}
+    ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
 )
 

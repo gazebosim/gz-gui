@@ -47,6 +47,9 @@ namespace ignition
       /// \brief Minimum number of paint events to consider the window to be
       /// fully initialized.
       public: const unsigned int paintCountMin{20};
+
+      /// \brief Show the confirmation dialog on exit
+      public: bool showDialogOnExit{false};
     };
   }
 }
@@ -842,4 +845,17 @@ void MainWindow::SetShowPluginMenu(const bool _showPluginMenu)
 {
   this->dataPtr->windowConfig.showPluginMenu = _showPluginMenu;
   this->ShowPluginMenuChanged();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ShowDialogOnExit() const
+{
+  return this->dataPtr->showDialogOnExit;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetShowDialogOnExit(bool _showDialogOnExit)
+{
+  this->dataPtr->showDialogOnExit = _showDialogOnExit;
+  this->ShowDialogOnExitChanged();
 }

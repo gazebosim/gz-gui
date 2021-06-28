@@ -8,7 +8,7 @@ project(ignition-gui6 VERSION 6.0.0)
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake2 2.3 REQUIRED)
+find_package(ignition-cmake2 2.8.0 REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -44,7 +44,7 @@ set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-common
-ign_find_package(ignition-common4 REQUIRED COMPONENTS profiler)
+ign_find_package(ignition-common4 REQUIRED VERSION 4.1)
 set(IGN_COMMON_VER ${ignition-common4_VERSION_MAJOR})
 
 #--------------------------------------
@@ -116,8 +116,11 @@ ign_create_docs(
   "\"${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=http://doc.qt.io/qt-5/\" \
    \"${IGNITION-MATH_DOXYGEN_TAGFILE} = ${IGNITION-MATH_API_URL}\" \
    \"${IGNITION-MSGS_DOXYGEN_TAGFILE} = ${IGNITION-MSGS_API_URL}\" \
+   \"${IGNITION-RENDERING_DOXYGEN_TAGFILE} = ${IGNITION-RENDERING_API_URL}\" \
    \"${IGNITION-TRANSPORT_DOXYGEN_TAGFILE} = ${IGNITION-TRANSPORT_API_URL}\" \
    \"${IGNITION-COMMON_DOXYGEN_TAGFILE} = ${IGNITION-COMMON_API_URL}\""
   )
 
-file(COPY ${CMAKE_SOURCE_DIR}/tutorials/images/ DESTINATION ${CMAKE_BINARY_DIR}/doxygen/html/images/)
+if(TARGET doc)
+  file(COPY ${CMAKE_SOURCE_DIR}/tutorials/images/ DESTINATION ${CMAKE_BINARY_DIR}/doxygen/html/images/)
+endif()

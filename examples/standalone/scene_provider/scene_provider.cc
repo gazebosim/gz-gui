@@ -15,10 +15,15 @@
  *
 */
 
+#include <chrono>
 #include <iostream>
 #include <string>
+#include <ignition/math/Rand.hh>
+#include <ignition/msgs/pose_v.pb.h>
 #include <ignition/msgs/scene.pb.h>
 #include <ignition/transport/Node.hh>
+
+using namespace std::chrono_literals;
 
 //////////////////////////////////////////////////
 bool sceneService(ignition::msgs::Scene &_rep)
@@ -70,7 +75,34 @@ int main(int argc, char **argv)
   // Scene service
   node.Advertise("/example/scene", sceneService);
 
-  // TODO: Add pose update publisher that moves the box periodically
+  // Periodic pose updated
+  auto posePub = node.Advertise<ignition::msgs::Pose_V>("/example/pose");
+
+  ignition::msgs::Pose_V poseVMsg;
+  auto poseMsg = poseVMsg.add_pose();
+  poseMsg->set_id(1);
+  poseMsg->set_name("box_model");
+  auto positionMsg = poseMsg->mutable_position();
+
+  const double change{0.1};
+
+  double x{0.0};
+  double y{0.0};
+  double z{0.0};
+
+  while (true)
+  {
+    std::this_thread::sleep_for(100ms);
+
+    x += ignition::math::Rand::DblUniform(-change, change);
+    y += ignition::math::Rand::DblUniform(-change, change);
+    z += ignition::math::Rand::DblUniform(-change, change);
+
+    positionMsg->set_x(x);
+    positionMsg->set_y(y);
+    positionMsg->set_z(z);
+    posePub.Publish(poseVMsg);
+  }
 
   ignition::transport::waitForShutdown();
 }

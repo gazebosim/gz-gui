@@ -29,6 +29,8 @@ cd examples/standalone/scene_provider/build
 On another terminal, start the example config:
 
 ```
-
+ign gui -c examples/config/scene3d.config
 ```
+
+You should see a black box moving around the scene.
 

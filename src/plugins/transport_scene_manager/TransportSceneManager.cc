@@ -15,21 +15,17 @@
  *
 */
 
-
 #include <algorithm>
-#include <cmath>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/plugin/Register.hh>
 #include <ignition/common/MeshManager.hh>
-
-#include <ignition/math/Vector2.hh>
+#include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
 // are disabling the warnings
@@ -38,9 +34,7 @@
 #endif
 #include <ignition/msgs.hh>
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/OrbitViewController.hh>
-#include <ignition/rendering/RayQuery.hh>
+#include <ignition/rendering/Capsule.hh>
 #include <ignition/rendering/RenderEngine.hh>
 #include <ignition/rendering/RenderingIface.hh>
 #include <ignition/rendering/Scene.hh>
@@ -142,7 +136,7 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
   public: std::string sceneTopic;
 
   //// \brief Pointer to the rendering scene
-  public: rendering::ScenePtr scene;
+  public: rendering::ScenePtr scene{nullptr};
 
   //// \brief Mutex to protect the msgs
   public: std::mutex msgMutex;
@@ -236,6 +230,11 @@ void TransportSceneManagerPrivate::InitializeTransport()
     ignerr << "Error subscribing to pose topic: " << this->poseTopic
       << std::endl;
   }
+  else
+  {
+    ignmsg << "Listening to pose messages on [" << this->poseTopic << "]"
+           << std::endl;
+  }
 
   if (!this->node.Subscribe(this->deletionTopic,
       &TransportSceneManagerPrivate::OnDeletionMsg, this))
@@ -243,11 +242,21 @@ void TransportSceneManagerPrivate::InitializeTransport()
     ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
       << std::endl;
   }
+  else
+  {
+    ignmsg << "Listening to deletion messages on [" << this->deletionTopic
+           << "]" << std::endl;
+  }
 
   if (!this->node.Subscribe(this->sceneTopic,
       &TransportSceneManagerPrivate::OnSceneMsg, this))
   {
     ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+           << std::endl;
+  }
+  else
+  {
+    ignmsg << "Listening to scene messages on [" << this->sceneTopic << "]"
            << std::endl;
   }
 
@@ -385,7 +394,6 @@ void TransportSceneManagerPrivate::OnRender()
   // consider the case where pose msgs arrive before scene/visual msgs
   this->poses.clear();
 }
-
 
 /////////////////////////////////////////////////
 void TransportSceneManagerPrivate::OnSceneMsg(const msgs::Scene &_msg)
@@ -624,6 +632,24 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
     scale.X() = _msg.cylinder().radius() * 2;
     scale.Y() = scale.X();
     scale.Z() = _msg.cylinder().length();
+  }
+  else if (_msg.has_capsule())
+  {
+    auto capsule = this->scene->CreateCapsule();
+    capsule->SetRadius(_msg.capsule().radius());
+    capsule->SetLength(_msg.capsule().length());
+    geom = capsule;
+
+    scale.X() = _msg.capsule().radius() * 2;
+    scale.Y() = scale.X();
+    scale.Z() = _msg.capsule().length() + scale.X();
+  }
+  else if (_msg.has_ellipsoid())
+  {
+    geom = this->scene->CreateSphere();
+    scale.X() = _msg.ellipsoid().radii().x() * 2;
+    scale.Y() = _msg.ellipsoid().radii().y() * 2;
+    scale.Z() = _msg.ellipsoid().radii().z() * 2;
   }
   else if (_msg.has_plane())
   {
