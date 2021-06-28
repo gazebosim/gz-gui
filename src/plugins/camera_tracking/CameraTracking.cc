@@ -16,6 +16,7 @@
 */
 
 #include <mutex>
+#include <string>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Profiler.hh>
@@ -255,7 +256,8 @@ void CameraTrackingPrivate::OnMoveToPoseComplete()
 }
 
 /////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg, msgs::Boolean &_res)
+bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
+  msgs::Boolean &_res)
 {
   math::Vector3d offset = msgs::Convert(_msg);
 
@@ -267,7 +269,8 @@ bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg, msgs::Boo
 }
 
 /////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnMoveToPose(const msgs::GUICamera &_msg, msgs::Boolean &_res)
+bool CameraTrackingPrivate::OnMoveToPose(const msgs::GUICamera &_msg,
+  msgs::Boolean &_res)
 {
   math::Pose3d pose = msgs::Convert(_msg.pose());
 
@@ -477,7 +480,8 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
   }
   else if (_event->type() == events::KeyReleaseOnScene::kType)
   {
-    events::KeyReleaseOnScene *keyEvent = static_cast<events::KeyReleaseOnScene*>(_event);
+    events::KeyReleaseOnScene *keyEvent =
+      static_cast<events::KeyReleaseOnScene*>(_event);
     if (keyEvent)
     {
       this->dataPtr->HandleKeyRelease(keyEvent);
