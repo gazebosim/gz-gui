@@ -1056,7 +1056,10 @@ void IgnRenderer::BroadcastLeftClick()
   auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
 
   events::LeftClickToScene leftClickToSceneEvent(pos);
+  events::LeftClickOnScene leftClickOnSceneEvent(this->dataPtr->mouseEvent);
+
   App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickToSceneEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickOnSceneEvent);
 }
 
 /////////////////////////////////////////////////
@@ -1075,7 +1078,10 @@ void IgnRenderer::BroadcastRightClick()
   auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
 
   events::RightClickToScene rightClickToSceneEvent(pos);
+  events::RightClickOnScene rightClickOnSceneEvent(this->dataPtr->mouseEvent);
+
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickOnSceneEvent);
 }
 
 /////////////////////////////////////////////////
