@@ -191,7 +191,7 @@ void Screenshot::FindUserCamera()
     if (nullptr != cam)
     {
       this->dataPtr->userCamera = cam;
-      igndbg << "Screnshot plugin taking pictures of camera ["
+      igndbg << "Screenshot plugin taking pictures of camera ["
              << this->dataPtr->userCamera->Name() << "]" << std::endl;
       break;
     }
