@@ -36,7 +36,7 @@
 int g_argc = 1;
 char* g_argv[] =
 {
-    reinterpret_cast<char*>(const_cast<char*>("./Scene3d_TEST")),
+  reinterpret_cast<char*>(const_cast<char*>("./Scene3d_TEST")),
 };
 
 using namespace ignition;

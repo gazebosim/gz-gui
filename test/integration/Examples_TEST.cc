@@ -27,7 +27,7 @@
 int g_argc = 1;
 char* g_argv[] =
 {
-    reinterpret_cast<char*>(const_cast<char*>("./Examples_TEST")),
+  reinterpret_cast<char*>(const_cast<char*>("./Examples_TEST")),
 };
 
 using namespace ignition;

@@ -30,7 +30,7 @@ std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char* g_argv[] =
 {
-    reinterpret_cast<char*>(const_cast<char*>("./MainWindow_TEST")),
+  reinterpret_cast<char*>(const_cast<char*>("./MainWindow_TEST")),
 };
 
 using namespace ignition;
