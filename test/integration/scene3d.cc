@@ -253,33 +253,50 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
 
   int sleep = 0;
   int maxSleep = 30;
-  while ((!receivedRenderEvent || !receivedRightEvent ||
-    !receivedLeftEvent || !receivedHoverEvent || !receivedKeyReleaseEvent ||
-    !receivedKeyPressEvent) && sleep < maxSleep)
+  while (!receivedRenderEvent && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedHoverEvent && sleep < maxSleep)
+  {
     QTest::mouseMove(win->QuickWindow(), QPoint(70, 100), -1);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedRightEvent && sleep < maxSleep)
+  {
     QTest::mouseClick(win->QuickWindow(), Qt::RightButton, Qt::ShiftModifier);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedLeftEvent && sleep < maxSleep)
+  {
     QTest::mouseClick(win->QuickWindow(), Qt::LeftButton, Qt::AltModifier);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedKeyPressEvent && sleep < maxSleep)
+  {
     QTest::keyPress(win->QuickWindow(), Qt::Key_A, Qt::AltModifier);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedKeyReleaseEvent && sleep < maxSleep)
+  {
     QTest::keyRelease(win->QuickWindow(), Qt::Key_Escape, Qt::NoModifier);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
     sleep++;
   }
 
