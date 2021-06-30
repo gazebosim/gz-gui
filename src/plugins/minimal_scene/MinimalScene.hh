@@ -25,6 +25,7 @@
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
+#include <ignition/utils/ImplPtr.hh>
 
 #include "ignition/gui/Plugin.hh"
 
@@ -34,10 +35,6 @@ namespace gui
 {
 namespace plugins
 {
-  class IgnRendererPrivate;
-  class RenderWindowItemPrivate;
-  class MinimalScenePrivate;
-
   /// \brief Creates a new ignition rendering scene or adds a user-camera to an
   /// existing scene. It is possible to orbit the camera around the scene with
   /// the mouse. Use other plugins to manage objects in the scene.
@@ -62,9 +59,6 @@ namespace plugins
     /// \brief Constructor
     public: MinimalScene();
 
-    /// \brief Destructor
-    public: virtual ~MinimalScene();
-
     /// \brief Callback when the mouse hovers to a new position.
     /// \param[in] _mouseX x coordinate of the hovered mouse position.
     /// \param[in] _mouseY y coordinate of the hovered mouse position.
@@ -83,7 +77,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<MinimalScenePrivate> dataPtr;
+    IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
   /// \brief Ign-rendering renderer.
@@ -96,9 +90,6 @@ namespace plugins
   {
     ///  \brief Constructor
     public: IgnRenderer();
-
-    ///  \brief Destructor
-    public: ~IgnRenderer();
 
     ///  \brief Main render function
     public: void Render();
@@ -198,7 +189,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<IgnRendererPrivate> dataPtr;
+    IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
   /// \brief Rendering thread
@@ -242,9 +233,6 @@ namespace plugins
     /// \brief Constructor
     /// \param[in] _parent Parent item
     public: explicit RenderWindowItem(QQuickItem *_parent = nullptr);
-
-    /// \brief Destructor
-    public: virtual ~RenderWindowItem();
 
     /// \brief Set background color of render window
     /// \param[in] _color Color of render window background
@@ -332,7 +320,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
+    IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
   /// \brief Texture node for displaying the render texture from ign-renderer
