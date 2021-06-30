@@ -145,6 +145,12 @@ namespace plugins
     /// \brief Broadcasts a right click within the scene
     private: void BroadcastRightClick();
 
+    /// \brief Broadcasts the current key release
+    private: void BroadcastKeyRelease();
+
+    /// \brief Broadcasts the current key press
+    private: void BroadcastKeyPress();
+
     /// \brief Retrieve the first point on a surface in the 3D scene hit by a
     /// ray cast from the given 2D screen coordinates.
     /// \param[in] _screenPos 2D coordinates on the screen, in pixels.
@@ -317,6 +323,12 @@ namespace plugins
 
     // Documentation inherited
     protected: virtual void wheelEvent(QWheelEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void keyPressEvent(QKeyEvent *_event) override;
+
+    // Documentation inherited
+    protected: virtual void keyReleaseEvent(QKeyEvent *_event) override;
 
     /// \brief Overrides the paint event to render the render engine
     /// camera view

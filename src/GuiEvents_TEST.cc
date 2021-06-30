@@ -116,6 +116,40 @@ TEST(GuiEventsTest, RightClickOnScene)
 }
 
 /////////////////////////////////////////////////
+TEST(GuiEventsTest, KeyPressOnScene)
+{
+  ignition::common::KeyEvent key;
+  key.SetKey(49);
+  key.SetControl(true);
+  key.SetAlt(false);
+  key.SetShift(false);
+  events::KeyPressOnScene event(key);
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_EQ(49, event.Key().Key());
+  EXPECT_TRUE(event.Key().Control());
+  EXPECT_FALSE(event.Key().Shift());
+  EXPECT_FALSE(event.Key().Alt());
+}
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, KeyReleaseOnScene)
+{
+  ignition::common::KeyEvent key;
+  key.SetKey(49);
+  key.SetControl(true);
+  key.SetAlt(true);
+  key.SetShift(true);
+  events::KeyReleaseOnScene event(key);
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_EQ(49, event.Key().Key());
+  EXPECT_TRUE(event.Key().Control());
+  EXPECT_TRUE(event.Key().Shift());
+  EXPECT_TRUE(event.Key().Alt());
+}
+
+/////////////////////////////////////////////////
 TEST(GuiEventsTest, DropdownMenuEnabled)
 {
   events::DropdownMenuEnabled event(true);
