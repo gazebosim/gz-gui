@@ -179,9 +179,19 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
   bool receivedLeftControlEvent{false};
   bool receivedLeftShiftEvent{false};
   bool receivedHoverEvent{false};
+  bool receivedKeyPressEvent{false};
+  bool receivedKeyPressEventAlt{false};
+  bool receivedKeyPressEventControl{false};
+  bool receivedKeyPressEventShift{false};
+  bool receivedKeyReleaseEvent{false};
+  bool receivedKeyReleaseEventAlt{false};
+  bool receivedKeyReleaseEventControl{false};
+  bool receivedKeyReleaseEventShift{false};
 
   // Position vectors reported by click events
   math::Vector3d leftClickPoint, rightClickPoint;
+  // key pressed or released
+  int keyPressedValue, keyReleasedValue;
 
   // Helper to filter events
   auto testHelper = std::make_unique<TestHelper>();
@@ -221,28 +231,72 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
     {
       receivedHoverEvent = true;
     }
+    else if (_event->type() == events::KeyReleaseOnScene::kType)
+    {
+      receivedKeyReleaseEvent = true;
+      auto keyReleased = static_cast<events::KeyReleaseOnScene*>(_event);
+      keyReleasedValue = keyReleased->Key().Key();
+      receivedKeyReleaseEventAlt = keyReleased->Key().Alt();
+      receivedKeyReleaseEventControl = keyReleased->Key().Control();
+      receivedKeyReleaseEventShift = keyReleased->Key().Shift();
+    }
+    else if (_event->type() == events::KeyPressOnScene::kType)
+    {
+      receivedKeyPressEvent = true;
+      auto keyPress = static_cast<events::KeyPressOnScene*>(_event);
+      keyPressedValue = keyPress->Key().Key();
+      receivedKeyPressEventAlt = keyPress->Key().Alt();
+      receivedKeyPressEventControl = keyPress->Key().Control();
+      receivedKeyPressEventShift = keyPress->Key().Shift();
+    }
   };
 
   int sleep = 0;
   int maxSleep = 30;
-  while ((!receivedRenderEvent || !receivedRightEvent ||
-    !receivedLeftEvent || !receivedHoverEvent) && sleep < maxSleep)
+  while (!receivedRenderEvent && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedHoverEvent && sleep < maxSleep)
+  {
     QTest::mouseMove(win->QuickWindow(), QPoint(70, 100), -1);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedRightEvent && sleep < maxSleep)
+  {
     QTest::mouseClick(win->QuickWindow(), Qt::RightButton, Qt::ShiftModifier);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedLeftEvent && sleep < maxSleep)
+  {
     QTest::mouseClick(win->QuickWindow(), Qt::LeftButton, Qt::AltModifier);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedKeyPressEvent && sleep < maxSleep)
+  {
+    QTest::keyPress(win->QuickWindow(), Qt::Key_A, Qt::AltModifier);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+  sleep = 0;
+  while (!receivedKeyReleaseEvent && sleep < maxSleep)
+  {
+    QTest::keyRelease(win->QuickWindow(), Qt::Key_Escape, Qt::NoModifier);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
     sleep++;
   }
 
@@ -261,6 +315,17 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
   EXPECT_NEAR(1.0, leftClickPoint.X(), 1e-4);
   EXPECT_NEAR(11.942695, leftClickPoint.Y(), 1e-4);
   EXPECT_NEAR(4.159424, leftClickPoint.Z(), 1e-4);
+
+  EXPECT_TRUE(receivedKeyReleaseEvent);
+  EXPECT_FALSE(receivedKeyReleaseEventAlt);
+  EXPECT_FALSE(receivedKeyReleaseEventControl);
+  EXPECT_FALSE(receivedKeyReleaseEventShift);
+  EXPECT_EQ(Qt::Key_Escape, keyReleasedValue);
+  EXPECT_TRUE(receivedKeyPressEvent);
+  EXPECT_TRUE(receivedKeyPressEventAlt);
+  EXPECT_FALSE(receivedKeyPressEventControl);
+  EXPECT_FALSE(receivedKeyPressEventShift);
+  EXPECT_EQ(Qt::Key_A, keyPressedValue);
 
   // Cleanups
   auto plugins = win->findChildren<Plugin *>();

@@ -23,6 +23,7 @@
 #include <utility>
 #include <vector>
 
+#include <ignition/common/KeyEvent.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
@@ -305,6 +306,46 @@ namespace ignition
 
         /// \brief Return the right mouse event
         public: const common::MouseEvent &Mouse() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event which is called to broadcast the key release within
+      /// the scene.
+      class IGNITION_GUI_VISIBLE KeyReleaseOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _key The key released event within the scene
+        public: explicit KeyReleaseOnScene(const common::KeyEvent &_key);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 8);
+
+        /// \brief Get the released key within the scene that the user released.
+        /// \return The key code.
+        public: common::KeyEvent Key() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event which is called to broadcast the key press within
+      /// the scene.
+      class IGNITION_GUI_VISIBLE KeyPressOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _key The pressed key within the scene
+        public: explicit KeyPressOnScene(const common::KeyEvent &_key);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 9);
+
+        /// \brief Get the key within the scene that the user pressed
+        /// \return The key code.
+        public: common::KeyEvent Key() const;
 
         /// \internal
         /// \brief Private data pointer

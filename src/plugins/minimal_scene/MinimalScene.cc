@@ -52,84 +52,70 @@
 #include "ignition/gui/GuiEvents.hh"
 #include "ignition/gui/MainWindow.hh"
 
-namespace ignition
+/// \brief Private data class for IgnRenderer
+class ignition::gui::plugins::IgnRenderer::Implementation
 {
-namespace gui
+  /// \brief Flag to indicate if mouse event is dirty
+  public: bool mouseDirty{false};
+
+  /// \brief Flag to indicate if hover event is dirty
+  public: bool hoverDirty{false};
+
+  /// \brief Mouse event
+  public: common::MouseEvent mouseEvent;
+
+  /// \brief Key event
+  public: common::KeyEvent keyEvent;
+
+  /// \brief Mouse move distance since last event.
+  public: math::Vector2d drag;
+
+  /// \brief Mutex to protect mouse events
+  public: std::mutex mutex;
+
+  /// \brief User camera
+  public: rendering::CameraPtr camera{nullptr};
+
+  /// \brief Camera orbit controller
+  public: rendering::OrbitViewController viewControl;
+
+  /// \brief The currently hovered mouse position in screen coordinates
+  public: math::Vector2i mouseHoverPos{math::Vector2i::Zero};
+
+  /// \brief Ray query for mouse clicks
+  public: rendering::RayQueryPtr rayQuery{nullptr};
+
+  /// \brief View control focus target
+  public: math::Vector3d target;
+};
+
+/// \brief Private data class for RenderWindowItem
+class ignition::gui::plugins::RenderWindowItem::Implementation
 {
-namespace plugins
+  /// \brief Keep latest mouse event
+  public: common::MouseEvent mouseEvent;
+
+  /// \brief Render thread
+  public : RenderThread *renderThread = nullptr;
+
+  //// \brief List of threads
+  public: static QList<QThread *> threads;
+};
+
+/// \brief Private data class for MinimalScene
+class ignition::gui::plugins::MinimalScene::Implementation
 {
-  /// \brief Private data class for IgnRenderer
-  class IgnRendererPrivate
-  {
-    /// \brief Flag to indicate if mouse event is dirty
-    public: bool mouseDirty = false;
-
-    /// \brief Flag to indicate if hover event is dirty
-    public: bool hoverDirty = false;
-
-    /// \brief Mouse event
-    public: common::MouseEvent mouseEvent;
-
-    /// \brief Key event
-    public: common::KeyEvent keyEvent;
-
-    /// \brief Mouse move distance since last event.
-    public: math::Vector2d drag;
-
-    /// \brief Mutex to protect mouse events
-    public: std::mutex mutex;
-
-    /// \brief User camera
-    public: rendering::CameraPtr camera;
-
-    /// \brief Camera orbit controller
-    public: rendering::OrbitViewController viewControl;
-
-    /// \brief The currently hovered mouse position in screen coordinates
-    public: math::Vector2i mouseHoverPos{math::Vector2i::Zero};
-
-    /// \brief Ray query for mouse clicks
-    public: rendering::RayQueryPtr rayQuery{nullptr};
-
-    /// \brief View control focus target
-    public: math::Vector3d target;
-  };
-
-  /// \brief Private data class for RenderWindowItem
-  class RenderWindowItemPrivate
-  {
-    /// \brief Keep latest mouse event
-    public: common::MouseEvent mouseEvent;
-
-    /// \brief Render thread
-    public : RenderThread *renderThread = nullptr;
-
-    //// \brief List of threads
-    public: static QList<QThread *> threads;
-  };
-
-  /// \brief Private data class for MinimalScene
-  class MinimalScenePrivate
-  {
-  };
-}
-}
-}
+};
 
 using namespace ignition;
 using namespace gui;
 using namespace plugins;
 
-QList<QThread *> RenderWindowItemPrivate::threads;
+QList<QThread *> RenderWindowItem::Implementation::threads;
 
 /////////////////////////////////////////////////
 IgnRenderer::IgnRenderer()
-  : dataPtr(new IgnRendererPrivate)
-{
-}
-
-/////////////////////////////////////////////////
-IgnRenderer::~IgnRenderer()
+  : dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -448,7 +434,7 @@ math::Vector3d IgnRenderer::ScreenToScene(
 /////////////////////////////////////////////////
 RenderThread::RenderThread()
 {
-  RenderWindowItemPrivate::threads << this;
+  RenderWindowItem::Implementation::threads << this;
 }
 
 /////////////////////////////////////////////////
@@ -585,16 +571,11 @@ void TextureNode::PrepareNode()
 
 /////////////////////////////////////////////////
 RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
-  : QQuickItem(_parent), dataPtr(new RenderWindowItemPrivate)
+  : QQuickItem(_parent), dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
   this->setAcceptedMouseButtons(Qt::AllButtons);
   this->setFlag(ItemHasContents);
   this->dataPtr->renderThread = new RenderThread();
-}
-
-/////////////////////////////////////////////////
-RenderWindowItem::~RenderWindowItem()
-{
 }
 
 /////////////////////////////////////////////////
@@ -752,14 +733,9 @@ void RenderWindowItem::SetSkyEnabled(const bool &_sky)
 
 /////////////////////////////////////////////////
 MinimalScene::MinimalScene()
-  : Plugin(), dataPtr(new MinimalScenePrivate)
+  : Plugin(), dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
-}
-
-/////////////////////////////////////////////////
-MinimalScene::~MinimalScene()
-{
 }
 
 /////////////////////////////////////////////////
