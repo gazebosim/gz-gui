@@ -171,10 +171,13 @@ void CameraTrackingPrivate::Initialize()
       scene->NodeByIndex(i));
     if (cam)
     {
-      this->camera = cam;
-      igndbg << "CameraTrackingPrivate plugin is moving camera ["
-             << this->camera->Name() << "]" << std::endl;
-      break;
+      if (cam->Name().find("scene::Camera") != std::string::npos)
+      {
+        this->camera = cam;
+        igndbg << "CameraTrackingPrivate plugin is moving camera ["
+               << this->camera->Name() << "]" << std::endl;
+        break;
+      }
     }
   }
   if (!this->camera)
@@ -258,8 +261,6 @@ void CameraTrackingPrivate::OnMoveToPoseComplete()
 bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
   msgs::Boolean &_res)
 {
-  math::Vector3d offset = msgs::Convert(_msg);
-
   if (!this->followTarget.empty())
   {
     this->newFollowOffset = true;
