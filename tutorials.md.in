@@ -5,16 +5,20 @@ will guide you through the process of understanding the capabilities of the
 Ignition @IGN_DESIGNATION_CAP@ library and how to use the library effectively.
 
 
-**The tutorials**
+**General**
 
 1. \subpage install "Installation"
-2. \subpage commandline "Command line usage"
-3. \subpage plugins "Plugins"
-4. \subpage config "Configuration files"
-5. \subpage layout "Layout"
-6. \subpage style "Style"
-7. \subpage examples "Examples"
-8. \subpage screenshot "Screenshot"
+2. \subpage commandline "Command line usage": Learn to use `ign gui`
+3. \subpage plugins "Plugins": Introduction to writing and loading plugins
+4. \subpage config "Configuration files": Load and find config files
+5. \subpage layout "Layout": Arrange plugins on the application
+6. \subpage style "Style": Customize the application's look
+7. \subpage examples "Examples": Navigate the examples folder
+
+**Plugins**
+
+1. \subpage scene "3D Scene": How to use the rendering scene
+2. \subpage screenshot "Screenshot": Save screenshots of the 3D scene
 
 ## License
 

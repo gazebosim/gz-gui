@@ -1531,6 +1531,10 @@ void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
+  ignwarn << "This plugin is deprecated on ign-gui v6 and will be removed on "
+          << "ign-gui v7. Use MinimalScene + TransportSceneManager instead."
+          << std::endl;
+
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
 }
 
