@@ -456,7 +456,16 @@ void TransportSceneManagerPrivate::LoadScene(const msgs::Scene &_msg)
 rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
     const msgs::Model &_msg)
 {
-  rendering::VisualPtr modelVis = this->scene->CreateVisual();
+  rendering::VisualPtr modelVis;
+  if (!_msg.name().empty() && !this->scene->HasVisualName(_msg.name()))
+  {
+    modelVis = this->scene->CreateVisual(_msg.name());
+  }
+  else
+  {
+    modelVis = this->scene->CreateVisual();
+  }
+
   if (_msg.has_pose())
     modelVis->SetLocalPose(msgs::Convert(_msg.pose()));
   this->visuals[_msg.id()] = modelVis;
@@ -489,7 +498,16 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
 rendering::VisualPtr TransportSceneManagerPrivate::LoadLink(
     const msgs::Link &_msg)
 {
-  rendering::VisualPtr linkVis = this->scene->CreateVisual();
+  rendering::VisualPtr linkVis;
+  if (!_msg.name().empty() && !this->scene->HasVisualName(_msg.name()))
+  {
+    linkVis = this->scene->CreateVisual(_msg.name());
+  }
+  else
+  {
+    linkVis = this->scene->CreateVisual();
+  }
+
   if (_msg.has_pose())
     linkVis->SetLocalPose(msgs::Convert(_msg.pose()));
   this->visuals[_msg.id()] = linkVis;
@@ -524,7 +542,16 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
   if (!_msg.has_geometry())
     return rendering::VisualPtr();
 
-  rendering::VisualPtr visualVis = this->scene->CreateVisual();
+  rendering::VisualPtr visualVis;
+  if (!_msg.name().empty() && !this->scene->HasVisualName(_msg.name()))
+  {
+    visualVis = this->scene->CreateVisual(_msg.name());
+  }
+  else
+  {
+    visualVis = this->scene->CreateVisual();
+  }
+
   this->visuals[_msg.id()] = visualVis;
 
   math::Vector3d scale = math::Vector3d::One;
