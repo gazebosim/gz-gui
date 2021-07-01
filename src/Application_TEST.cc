@@ -27,7 +27,10 @@
 #include "ignition/gui/Plugin.hh"
 
 int g_argc = 1;
-char **g_argv = new char *[g_argc];
+char* g_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./Application_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
