@@ -182,7 +182,6 @@ void CameraTrackingPrivate::Initialize()
     ignerr << "Camera is not available" << std::endl;
     return;
   }
-  ignerr << "Camera is available!!" << std::endl;
 
   // move to
   this->moveToService = "/gui/move_to";
@@ -262,7 +261,10 @@ bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
   math::Vector3d offset = msgs::Convert(_msg);
 
   if (!this->followTarget.empty())
+  {
     this->newFollowOffset = true;
+    this->followOffset = msgs::Convert(_msg);
+  }
 
   _res.set_data(true);
   return true;
