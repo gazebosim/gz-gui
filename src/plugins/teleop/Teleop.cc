@@ -15,6 +15,7 @@
  *
 */
 
+#include <iostream>
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
@@ -34,6 +35,8 @@
 namespace ignition
 {
 namespace gui
+{
+namespace plugins
 {
   enum class keyLinear{
     forward,
@@ -79,9 +82,11 @@ namespace gui
   };
 }
 }
+}
 
 using namespace ignition;
 using namespace gui;
+using namespace plugins;
 
 /////////////////////////////////////////////////
 Teleop::Teleop(): Plugin(), dataPtr(new TeleopPrivate)
@@ -94,7 +99,7 @@ Teleop::~Teleop()
 }
 
 /////////////////////////////////////////////////
-void Teleop::LoadConfig(const tinyxml2::XMLElement *)
+void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElement)
 {
   if (this->title.empty())
     this->title = "Teleop";
@@ -265,5 +270,5 @@ void Teleop::setAngularDirection(int _angularDir)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::Teleop,
+IGNITION_ADD_PLUGIN(ignition::gui::plugins::Teleop,
                     ignition::gui::Plugin)

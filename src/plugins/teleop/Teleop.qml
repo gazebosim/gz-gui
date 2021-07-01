@@ -112,7 +112,6 @@ Rectangle {
       checkable: true
       Layout.row: 0
       Layout.column: 1
-      checked: false
       onClicked: {
         Teleop.linearDir = forwardButton.checked ? 1 : 0
         if(backwardButton.checked)
@@ -138,7 +137,6 @@ Rectangle {
       checkable: true
       Layout.row: 1
       Layout.column: 0
-      checked: false
       onClicked: {
         Teleop.angularDir = leftButton.checked ? 1 : 0
         if(rightButton.checked)
@@ -162,7 +160,6 @@ Rectangle {
       checkable: true
       Layout.row: 1
       Layout.column: 2
-      checked: false
       onClicked: {
         Teleop.angularDir = rightButton.checked ? -1 : 0
         if(leftButton.checked)
@@ -186,7 +183,6 @@ Rectangle {
       checkable: true
       Layout.row: 2
       Layout.column: 1
-      checked: false
       onClicked: {
         Teleop.linearDir = backwardButton.checked ? -1 : 0
         if(forwardButton.checked)

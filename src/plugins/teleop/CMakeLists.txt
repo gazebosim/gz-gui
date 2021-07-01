@@ -4,5 +4,5 @@ ign_gui_add_plugin(Teleop
   QT_HEADERS
     Teleop.hh
   TEST_SOURCES # todo
-    #Teleop_TEST.cc
+    Teleop_TEST.cc
 )

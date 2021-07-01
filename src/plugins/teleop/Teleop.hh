@@ -29,13 +29,15 @@ namespace ignition
 {
 namespace gui
 {
+namespace plugins
+{
   class TeleopPrivate;
 
   /// \brief Publish teleop stokes to a user selected topic,
   /// or to '/cmd_vel' if no topic is selected.
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class Teleop : public ignition::gui::Plugin
+  class Teleop : public Plugin
   {
     Q_OBJECT
 
@@ -119,6 +121,7 @@ namespace gui
     private: std::unique_ptr<TeleopPrivate> dataPtr;
 
   };
+}
 }
 }
 
