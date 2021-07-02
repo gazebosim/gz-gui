@@ -51,8 +51,10 @@
 /// \brief Private data class for CameraTracking
 class ignition::gui::plugins::CameraTrackingPrivate
 {
+  /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
 
+  /// \brief Initialize transport
   public: void Initialize();
 
   /// \brief Callback for a move to request
@@ -89,8 +91,11 @@ class ignition::gui::plugins::CameraTrackingPrivate
   /// \brief Callback when a move to  pose animation is complete
   private: void OnMoveToPoseComplete();
 
+  /// \brief Process key releases
+  /// \param[in] _e Key release event
   public: void HandleKeyRelease(events::KeyReleaseOnScene *_e);
 
+  /// \brief Protects variable changed through services.
   public: std::mutex mutex;
 
   //// \brief Pointer to the rendering scene
@@ -122,7 +127,7 @@ class ignition::gui::plugins::CameraTrackingPrivate
   public: std::chrono::time_point<std::chrono::system_clock> prevMoveToTime;
 
   /// \brief User camera
-  public: rendering::CameraPtr camera;
+  public: rendering::CameraPtr camera{nullptr};
 
   /// \brief Target to move the user camera to
   public: std::string moveToTarget;
@@ -154,8 +159,8 @@ class ignition::gui::plugins::CameraTrackingPrivate
   /// \brief Camera pose publisher
   public: transport::Node::Publisher cameraPosePub;
 
-  /// \brief Timer to keep publishing
-  public: QTimer *timer;
+  /// \brief Timer to keep publishing camera poses.
+  public: QTimer *timer{nullptr};
 };
 
 using namespace ignition;
@@ -165,19 +170,17 @@ using namespace plugins;
 /////////////////////////////////////////////////
 void CameraTrackingPrivate::Initialize()
 {
+  // Attach to the first camera we find
   for (unsigned int i = 0; i < scene->NodeCount(); ++i)
   {
     auto cam = std::dynamic_pointer_cast<rendering::Camera>(
       scene->NodeByIndex(i));
     if (cam)
     {
-      if (cam->Name().find("scene::Camera") != std::string::npos)
-      {
-        this->camera = cam;
-        igndbg << "CameraTrackingPrivate plugin is moving camera ["
-               << this->camera->Name() << "]" << std::endl;
-        break;
-      }
+      this->camera = cam;
+      igndbg << "CameraTrackingPrivate plugin is moving camera ["
+             << this->camera->Name() << "]" << std::endl;
+      break;
     }
   }
   if (!this->camera)
@@ -227,6 +230,7 @@ void CameraTrackingPrivate::Initialize()
 bool CameraTrackingPrivate::OnMoveTo(const msgs::StringMsg &_msg,
   msgs::Boolean &_res)
 {
+  std::lock_guard<std::mutex> lock(this->mutex);
   this->moveToTarget = _msg.data();
 
   _res.set_data(true);
@@ -237,6 +241,7 @@ bool CameraTrackingPrivate::OnMoveTo(const msgs::StringMsg &_msg,
 bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
   msgs::Boolean &_res)
 {
+  std::lock_guard<std::mutex> lock(this->mutex);
   this->followTarget = _msg.data();
 
   _res.set_data(true);
@@ -261,6 +266,7 @@ void CameraTrackingPrivate::OnMoveToPoseComplete()
 bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
   msgs::Boolean &_res)
 {
+  std::lock_guard<std::mutex> lock(this->mutex);
   if (!this->followTarget.empty())
   {
     this->newFollowOffset = true;
@@ -275,6 +281,7 @@ bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
 bool CameraTrackingPrivate::OnMoveToPose(const msgs::GUICamera &_msg,
   msgs::Boolean &_res)
 {
+  std::lock_guard<std::mutex> lock(this->mutex);
   math::Pose3d pose = msgs::Convert(_msg.pose());
 
   // If there is no orientation in the message, then set a Rot value in the
@@ -308,6 +315,9 @@ void CameraTrackingPrivate::OnRender()
 
     this->Initialize();
   }
+
+  if (!this->camera)
+    return;
 
   // Move To
   {
@@ -455,7 +465,7 @@ CameraTracking::~CameraTracking()
 void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)
 {
   if (this->title.empty())
-    this->title = "Camera Controller Manager";
+    this->title = "Camera tracking";
 
   App()->findChild<MainWindow *>()->installEventFilter(this);
 }
