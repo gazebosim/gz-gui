@@ -44,7 +44,7 @@ set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-common
-ign_find_package(ignition-common4 REQUIRED VERSION 4.1)
+ign_find_package(ignition-common4 REQUIRED COMPONENTS profiler VERSION 4.1)
 set(IGN_COMMON_VER ${ignition-common4_VERSION_MAJOR})
 
 #--------------------------------------
