@@ -24,13 +24,14 @@
 #pragma warning(pop)
 #endif
 
+#include "Teleop.hh"
+
 #include <string>
+
+#include <ignition/plugin/Register.hh>
 
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/MainWindow.hh>
-#include <ignition/plugin/Register.hh>
-
-#include "Teleop.hh"
 
 namespace ignition
 {
@@ -39,15 +40,15 @@ namespace gui
 namespace plugins
 {
   enum class keyLinear{
-    forward,
-    backward,
-    stop,
+    kforward,
+    kbackward,
+    kstop,
   };
 
   enum class keyAngular{
-    left,
-    right,
-    stop,
+    kleft,
+    kright,
+    kstop,
   };
 
   class TeleopPrivate
@@ -59,12 +60,12 @@ namespace plugins
     public: std::string topic = "/cmd_vel";
 
     /// \brief Publisher.
-    ignition::transport::Node::Publisher cmdVelPub;
+    public: ignition::transport::Node::Publisher cmdVelPub;
 
     /// \brief Linear velocity.
-    public: float linearVel = 0;
+    public: double linearVel = 0;
     /// \brief Angular velocity.
-    public: float angularVel = 0;
+    public: double angularVel = 0;
 
     /// \brief Linear direction.
     public: int linearDir = 0;
@@ -72,9 +73,9 @@ namespace plugins
     public: int angularDir = 0;
 
     /// \brief Linear state setted by keyboard input.
-    public: keyLinear linearState = keyLinear::stop;
+    public: keyLinear linearState = keyLinear::kstop;
     /// \brief Angular state setted by keyboard input.
-    public: keyAngular angularState = keyAngular::stop;
+    public: keyAngular angularState = keyAngular::kstop;
 
     public: bool keyEnable = false;
     public: bool newTopic = true;
@@ -123,6 +124,7 @@ void Teleop::OnTeleopTwist()
     this->dataPtr->cmdVelPub =
     this->dataPtr->node.Advertise<ignition::msgs::Twist>(this->dataPtr->topic);
     this->dataPtr->newTopic = false;
+    this->dataPtr->cmdVelPub.Publish(cmdVelMsg);
   }
 
   this->dataPtr->cmdVelPub.Publish(cmdVelMsg);
@@ -133,8 +135,8 @@ void Teleop::OnTopicSelection(const QString& _topic)
 {
   this->dataPtr->newTopic = true;
   this->dataPtr->topic = _topic.toStdString();
-  ignmsg << "[OnTopicSelection]: topic: " << this->dataPtr->topic << std::endl;
-
+  ignmsg << "A new topic has been entered: '" <<
+      this->dataPtr->topic << " ' " <<std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -174,53 +176,55 @@ void Teleop::OnSlidersSwitch(bool _checked)
 /////////////////////////////////////////////////
 bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if(_event->type() == QEvent::KeyPress && this->dataPtr->keyEnable == true)
+  if(this->dataPtr->keyEnable == true)
   {
-    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
-    switch(keyEvent->key())
+    if(_event->type() == QEvent::KeyPress)
     {
-      case Qt::Key_W:
-        this->dataPtr->linearState = keyLinear::forward;
-        break;
-      case Qt::Key_A:
-        this->dataPtr->angularState = keyAngular::left;
-        break;
-      case Qt::Key_D:
-        this->dataPtr->angularState = keyAngular::right;
-        break;
-      case Qt::Key_X:
-        this->dataPtr->linearState = keyLinear::backward;
-        break;
-      default:
-        ignmsg << "A non valid key was pressed" << std::endl;
-        break;
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
+      switch(keyEvent->key())
+      {
+        case Qt::Key_W:
+          this->dataPtr->linearState = keyLinear::kforward;
+          break;
+        case Qt::Key_A:
+          this->dataPtr->angularState = keyAngular::kleft;
+          break;
+        case Qt::Key_D:
+          this->dataPtr->angularState = keyAngular::kright;
+          break;
+        case Qt::Key_X:
+          this->dataPtr->linearState = keyLinear::kbackward;
+          break;
+        default:
+          break;
+      }
+      setKeyDirection();
+      OnTeleopTwist();
     }
-    setKeyDirection();
-    OnTeleopTwist();
-  }
-  if(_event->type() == QEvent::KeyRelease && this->dataPtr->keyEnable == true)
-  {
-    QKeyEvent *keyEvent1 = static_cast<QKeyEvent*>(_event);
-    switch(keyEvent1->key())
+
+    if(_event->type() == QEvent::KeyRelease)
     {
-      case Qt::Key_W:
-        this->dataPtr->linearState = keyLinear::stop;
-        break;
-      case Qt::Key_A:
-        this->dataPtr->angularState = keyAngular::stop;
-        break;
-      case Qt::Key_D:
-        this->dataPtr->angularState = keyAngular::stop;
-        break;
-      case Qt::Key_X:
-        this->dataPtr->linearState = keyLinear::stop;
-        break;
-      default:
-        ignmsg << "A non valid key was pressed" << std::endl;
-        break;
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
+      switch(keyEvent->key())
+      {
+        case Qt::Key_W:
+          this->dataPtr->linearState = keyLinear::kstop;
+          break;
+        case Qt::Key_A:
+          this->dataPtr->angularState = keyAngular::kstop;
+          break;
+        case Qt::Key_D:
+          this->dataPtr->angularState = keyAngular::kstop;
+          break;
+        case Qt::Key_X:
+          this->dataPtr->linearState = keyLinear::kstop;
+          break;
+        default:
+          break;
+      }
+      setKeyDirection();
+      OnTeleopTwist();
     }
-    setKeyDirection();
-    OnTeleopTwist();
   }
   return QObject::eventFilter(_obj, _event);
 }
@@ -228,19 +232,13 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
 /////////////////////////////////////////////////
 void Teleop::setKeyDirection()
 {
-  if(this->dataPtr->linearState == keyLinear::forward)
-    this->dataPtr->linearDir = 1;
-  else if(this->dataPtr->linearState == keyLinear::backward)
-    this->dataPtr->linearDir = -1;
-  else
-    this->dataPtr->linearDir = 0;
+  this->dataPtr->linearDir = this->dataPtr->linearState ==
+      keyLinear::kforward ? 1 : this->dataPtr->linearState ==
+      keyLinear::kbackward ? -1 : 0;
 
-  if(this->dataPtr->angularState == keyAngular::left)
-    this->dataPtr->angularDir = 1;
-  else if(this->dataPtr->angularState == keyAngular::right)
-    this->dataPtr->angularDir = -1;
-  else
-    this->dataPtr->angularDir = 0;
+  this->dataPtr->angularDir = this->dataPtr->angularState ==
+      keyAngular::kleft ? 1 : this->dataPtr->angularState ==
+      keyAngular::kright ? -1 : 0;
 }
 
 /////////////////////////////////////////////////

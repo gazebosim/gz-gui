@@ -23,7 +23,7 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-#include <ignition/transport/Node.hh>
+
 #include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
