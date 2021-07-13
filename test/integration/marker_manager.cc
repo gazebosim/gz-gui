@@ -37,7 +37,6 @@
 #include "ignition/gui/GuiEvents.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
-#include "MarkerManager.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -95,7 +94,6 @@ TEST_F(MarkerManagerTestFixture,
   // Load the plugin
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"MarkerManager\">"
