@@ -179,36 +179,30 @@ Application *ignition::gui::App()
 /////////////////////////////////////////////////
 bool Application::RemovePlugin(const std::string &_pluginName)
 {
-  bool found{false};
-  for (auto plugin : this->dataPtr->pluginsAdded)
+  auto plugin = this->PluginByName(_pluginName);
+  if (nullptr == plugin)
+    return false;
+
+  auto cardItem = plugin->CardItem();
+  if (nullptr == cardItem)
+    return false;
+
+  // Remove on QML
+  cardItem->deleteLater();
+
+  // Remove split on QML
+  auto bgItem = this->dataPtr->mainWin->QuickWindow()
+      ->findChild<QQuickItem *>("background");
+  if (bgItem)
   {
-    auto cardItem = plugin->CardItem();
-    if (!cardItem)
-      continue;
-
-    if (cardItem->objectName().toStdString() == _pluginName)
-    {
-      // Remove on QML
-      cardItem->deleteLater();
-
-      // Remove split on QML
-      auto bgItem = this->dataPtr->mainWin->QuickWindow()
-          ->findChild<QQuickItem *>("background");
-      if (bgItem)
-      {
-        QMetaObject::invokeMethod(bgItem, "removeSplitItem",
-            Q_ARG(QVariant, cardItem->parentItem()->objectName()));
-      }
-
-      // Unload shared library
-      this->RemovePlugin(plugin);
-
-      found = true;
-      break;
-    }
+    QMetaObject::invokeMethod(bgItem, "removeSplitItem",
+        Q_ARG(QVariant, cardItem->parentItem()->objectName()));
   }
 
-  return found;
+  // Unload shared library
+  this->RemovePlugin(plugin);
+
+  return true;
 }
 
 /////////////////////////////////////////////////
@@ -273,6 +267,14 @@ bool Application::LoadConfig(const std::string &_config)
       return false;
     }
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
+
+    // Closing behavior.
+    if (auto dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
+    {
+      bool showDialogOnExit{false};
+      dialogOnExitElem->QueryBoolText(&showDialogOnExit);
+      this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
+    }
   }
 
   this->ApplyConfig();
@@ -394,11 +396,29 @@ bool Application::LoadPlugin(const std::string &_filename,
   else
     this->InitializeDialogs();
 
-  this->PluginAdded(plugin->objectName());
+  this->PluginAdded(plugin->CardItem()->objectName());
   ignmsg << "Loaded plugin [" << _filename << "] from path [" << pathToLib
          << "]" << std::endl;
 
   return true;
+}
+
+/////////////////////////////////////////////////
+std::shared_ptr<Plugin> Application::PluginByName(
+    const std::string &_pluginName) const
+{
+  for (auto &plugin : this->dataPtr->pluginsAdded)
+  {
+    auto cardItem = plugin->CardItem();
+    if (!cardItem)
+      continue;
+
+    if (cardItem->objectName().toStdString() != _pluginName)
+      continue;
+
+    return plugin;
+  }
+  return nullptr;
 }
 
 /////////////////////////////////////////////////

@@ -27,7 +27,10 @@
 #include "ignition/gui/Plugin.hh"
 
 int g_argc = 1;
-char **g_argv = new char *[g_argc];
+char* g_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./Application_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
@@ -79,14 +82,32 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadPlugin))
     Application app(g_argc, g_argv);
 
     EXPECT_FALSE(app.LoadPlugin("_doesnt_exist"));
+    EXPECT_FALSE(app.RemovePlugin("_doesnt_exist"));
   }
 
   // Plugin path added programmatically
   {
     Application app(g_argc, g_argv);
+
+    std::string pluginName;
+    app.connect(&app, &Application::PluginAdded, [&pluginName](
+        const QString &_pluginName)
+    {
+      pluginName = _pluginName.toStdString();
+    });
+
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
+    EXPECT_EQ(0u, pluginName.find("plugin"));
+
+    auto plugin = app.PluginByName(pluginName);
+    ASSERT_NE(nullptr, plugin);
+    ASSERT_NE(nullptr, plugin->CardItem());
+
+    EXPECT_EQ(pluginName, plugin->CardItem()->objectName().toStdString());
+
+    EXPECT_TRUE(app.RemovePlugin(pluginName));
   }
 
   // Plugin path added by env var

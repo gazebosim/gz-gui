@@ -3,12 +3,12 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-gui3 VERSION 3.5.1)
+project(ignition-gui3 VERSION 3.6.0)
 
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake2 2.3 REQUIRED)
+find_package(ignition-cmake2 2.8.0 REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -68,11 +68,8 @@ ign_find_package(ignition-msgs5 REQUIRED)
 set(IGN_MSGS_VER ${ignition-msgs5_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-tools
-ign_find_package(ignition-tools QUIET)
-if (ignition-tools_FOUND)
-  set (HAVE_IGN_TOOLS TRUE)
-endif()
+# Find if ign command is available
+find_program(HAVE_IGN_TOOLS ign)
 
 #--------------------------------------
 # Find QT

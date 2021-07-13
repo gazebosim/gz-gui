@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/KeyEvent.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/plugin/Register.hh>
 #include <ignition/common/MeshManager.hh>
@@ -207,8 +208,14 @@ namespace plugins
     /// \brief Flag to indicate if mouse event is dirty
     public: bool mouseDirty = false;
 
+    /// \brief Flag to indicate if hover event is dirty
+    public: bool hoverDirty = false;
+
     /// \brief Mouse event
     public: common::MouseEvent mouseEvent;
+
+    /// \brief Key event
+    public: common::KeyEvent keyEvent;
 
     /// \brief Mouse move distance since last event.
     public: math::Vector2d drag;
@@ -221,6 +228,9 @@ namespace plugins
 
     /// \brief Camera orbit controller
     public: rendering::OrbitViewController viewControl;
+
+    /// \brief The currently hovered mouse position in screen coordinates
+    public: math::Vector2i mouseHoverPos{math::Vector2i::Zero};
 
     /// \brief Ray query for mouse clicks
     public: rendering::RayQueryPtr rayQuery;
@@ -749,7 +759,7 @@ rendering::MaterialPtr SceneManager::LoadMaterial(const msgs::Material &_msg)
   }
   if (_msg.has_specular())
   {
-    material->SetDiffuse(msgs::Convert(_msg.specular()));
+    material->SetSpecular(msgs::Convert(_msg.specular()));
   }
   if (_msg.has_emissive())
   {
@@ -885,6 +895,15 @@ void IgnRenderer::Render()
 void IgnRenderer::HandleMouseEvent()
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  this->BroadcastHoverPos();
+  this->BroadcastLeftClick();
+  this->BroadcastRightClick();
+  this->HandleMouseViewControl();
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::HandleMouseViewControl()
+{
   if (!this->dataPtr->mouseDirty)
     return;
 
@@ -937,6 +956,106 @@ void IgnRenderer::HandleMouseEvent()
   }
   this->dataPtr->drag = 0;
   this->dataPtr->mouseDirty = false;
+}
+
+////////////////////////////////////////////////
+void IgnRenderer::HandleKeyPress(QKeyEvent *_e)
+{
+  if (_e->isAutoRepeat())
+    return;
+
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+
+  this->dataPtr->keyEvent.SetKey(_e->key());
+  this->dataPtr->keyEvent.SetText(_e->text().toStdString());
+
+  this->dataPtr->keyEvent.SetControl(
+    (_e->modifiers() & Qt::ControlModifier));
+  this->dataPtr->keyEvent.SetShift(
+    (_e->modifiers() & Qt::ShiftModifier));
+  this->dataPtr->keyEvent.SetAlt(
+    (_e->modifiers() & Qt::AltModifier));
+
+  this->dataPtr->mouseEvent.SetControl(this->dataPtr->keyEvent.Control());
+  this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
+  this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
+  this->dataPtr->keyEvent.SetType(common::KeyEvent::PRESS);
+}
+
+////////////////////////////////////////////////
+void IgnRenderer::HandleKeyRelease(QKeyEvent *_e)
+{
+  if (_e->isAutoRepeat())
+    return;
+
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+
+  this->dataPtr->keyEvent.SetKey(0);
+
+  this->dataPtr->keyEvent.SetControl(
+    (_e->modifiers() & Qt::ControlModifier)
+    && (_e->key() != Qt::Key_Control));
+  this->dataPtr->keyEvent.SetShift(
+    (_e->modifiers() & Qt::ShiftModifier)
+    && (_e->key() != Qt::Key_Shift));
+  this->dataPtr->keyEvent.SetAlt(
+    (_e->modifiers() & Qt::AltModifier)
+    && (_e->key() != Qt::Key_Alt));
+
+  this->dataPtr->mouseEvent.SetControl(this->dataPtr->keyEvent.Control());
+  this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
+  this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
+  this->dataPtr->keyEvent.SetType(common::KeyEvent::RELEASE);
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastHoverPos()
+{
+  if (!this->dataPtr->hoverDirty)
+    return;
+
+  auto pos = this->ScreenToScene(this->dataPtr->mouseHoverPos);
+
+  events::HoverToScene hoverToSceneEvent(pos);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &hoverToSceneEvent);
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastLeftClick()
+{
+  if (!this->dataPtr->mouseDirty)
+    return;
+
+  if (this->dataPtr->mouseEvent.Dragging())
+    return;
+
+  if (this->dataPtr->mouseEvent.Button() != common::MouseEvent::LEFT ||
+      this->dataPtr->mouseEvent.Type() != common::MouseEvent::RELEASE)
+    return;
+
+  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+
+  events::LeftClickToScene leftClickToSceneEvent(pos);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickToSceneEvent);
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastRightClick()
+{
+  if (!this->dataPtr->mouseDirty)
+    return;
+
+  if (this->dataPtr->mouseEvent.Dragging())
+    return;
+
+  if (this->dataPtr->mouseEvent.Button() != common::MouseEvent::RIGHT ||
+      this->dataPtr->mouseEvent.Type() != common::MouseEvent::RELEASE)
+    return;
+
+  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+
+  events::RightClickToScene rightClickToSceneEvent(pos);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
 }
 
 /////////////////////////////////////////////////
@@ -1014,6 +1133,14 @@ void IgnRenderer::Destroy()
 
     // TODO(anyone) If that was the last scene, terminate engine?
   }
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::NewHoverEvent(const math::Vector2i &_hoverPos)
+{
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  this->dataPtr->mouseHoverPos = _hoverPos;
+  this->dataPtr->hoverDirty = true;
 }
 
 /////////////////////////////////////////////////
@@ -1456,6 +1583,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
+{
+  this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
+}
+
+/////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
   auto event = convert(*_e);
@@ -1505,23 +1638,57 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
 }
 
-///////////////////////////////////////////////////
-// void Scene3D::resizeEvent(QResizeEvent *_e)
-// {
-//  if (this->dataPtr->renderWindow)
-//  {
-//    this->dataPtr->renderWindow->OnResize(_e->size().width(),
-//                                          _e->size().height());
-//  }
-//
-//  if (this->dataPtr->camera)
-//  {
-//    this->dataPtr->camera->SetAspectRatio(
-//        static_cast<double>(this->width()) / this->height());
-//    this->dataPtr->camera->SetHFOV(M_PI * 0.5);
-//  }
-// }
-//
+////////////////////////////////////////////////
+void RenderWindowItem::HandleKeyPress(QKeyEvent *_e)
+{
+  this->dataPtr->renderThread->ignRenderer.HandleKeyPress(_e);
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::HandleKeyRelease(QKeyEvent *_e)
+{
+  this->dataPtr->renderThread->ignRenderer.HandleKeyRelease(_e);
+}
+
+/////////////////////////////////////////////////
+bool Scene3D::eventFilter(QObject *_obj, QEvent *_event)
+{
+  if (_event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
+    if (keyEvent)
+    {
+      auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+      renderWindow->HandleKeyPress(keyEvent);
+    }
+  }
+  else if (_event->type() == QEvent::KeyRelease)
+  {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
+    if (keyEvent)
+    {
+      auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+      renderWindow->HandleKeyRelease(keyEvent);
+    }
+  }
+
+  // Standard event processing
+  return QObject::eventFilter(_obj, _event);
+}
+
+/////////////////////////////////////////////////
+void Scene3D::OnHovered(int _mouseX, int _mouseY)
+{
+  auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+  renderWindow->OnHovered({_mouseX, _mouseY});
+}
+
+/////////////////////////////////////////////////
+void Scene3D::OnFocusWindow()
+{
+  auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+  renderWindow->forceActiveFocus();
+}
 
 // Register this plugin
 IGNITION_ADD_PLUGIN(ignition::gui::plugins::Scene3D,
