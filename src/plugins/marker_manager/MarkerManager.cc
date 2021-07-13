@@ -22,6 +22,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/Profiler.hh>
+#include <ignition/common/StringUtils.hh>
 
 #include <ignition/math/Rand.hh>
 
@@ -79,7 +80,7 @@ class ignition::gui::plugins::MarkerManagerPrivate
               ignition::msgs::Boolean &_res);
 
   /// \brief Subscriber callback when new world statistics are received
-  private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
+  public: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
 
   /// \brief Sets Visual from marker message.
   /// \param[in] _msg The message data.
@@ -184,30 +185,6 @@ void MarkerManagerPrivate::Initialize()
   }
 
   igndbg << "Advertise " << this->topicName << "_array.\n";
-
-  // World name from window, to construct default topics and services
-  std::string worldName = "example";
-  auto worldNames = gui::worldNames();
-  if (!worldNames.empty())
-    worldName = worldNames[0].toStdString();
-
-  std::string topic = "/world/" + worldName + "/stats";
-
-  topic = transport::TopicUtils::AsValidTopic(topic);
-  if (topic.empty())
-  {
-    ignerr << "Failed to create valid topic for world [" << worldName << "]"
-           << std::endl;
-    return;
-  }
-
-  if (!this->node.Subscribe(topic, &MarkerManagerPrivate::OnWorldStatsMsg,
-      this))
-  {
-    ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
-    return;
-  }
-  igndbg << "Subscribed to " << topic << "\n";
 }
 
 /////////////////////////////////////////////////
@@ -700,6 +677,59 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
         ignerr << "the provided topic is no allowed. Using default ["
                << this->dataPtr->topicName << "]"<<  std::endl;
       }
+    }
+
+    // World name from window, to construct default topics and services
+    std::string worldName = "example";
+    auto worldNames = gui::worldNames();
+    if (!worldNames.empty())
+      worldName = worldNames[0].toStdString();
+
+    // Subscribe to world stats
+    std::string statsTopic;
+    auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
+    if (nullptr != statsTopicElem && nullptr != statsTopicElem->GetText())
+      statsTopic = statsTopicElem->GetText();
+
+    // Service specified with different world name
+    auto parts = common::Split(statsTopic, '/');
+    if (!worldName.empty() &&
+        parts.size() == 4 &&
+        parts[0] == "" &&
+        parts[1] == "world" &&
+        parts[2] != worldName &&
+        parts[3] == "stats")
+    {
+      ignwarn << "Ignoring topic [" << statsTopic
+              << "], world name different from [" << worldName
+              << "]. Fix or remove your <stats_topic> tag." << std::endl;
+
+      statsTopic = "/world/" + worldName + "/stats";
+    }
+
+    if (statsTopic.empty() && !worldName.empty())
+    {
+      statsTopic = "/world/" + worldName + "/stats";
+    }
+
+    statsTopic = transport::TopicUtils::AsValidTopic(statsTopic);
+    if (!statsTopic.empty())
+    {
+      // Subscribe to world_stats
+      if (!this->dataPtr->node.Subscribe(statsTopic,
+          &MarkerManagerPrivate::OnWorldStatsMsg, this->dataPtr.get()))
+      {
+        ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
+      }
+      else
+      {
+        ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
+      }
+    }
+    else
+    {
+      ignerr << "Failed to create valid topic for world [" << worldName << "]"
+             << std::endl;
     }
   }
 

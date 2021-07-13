@@ -60,9 +60,9 @@ class MarkerManagerTestFixture : public ::testing::Test
       std::chrono::steady_clock::duration &timePoint, int maxSleep)
   {
     ignition::msgs::WorldStatistics msgWorldStatistics;
-    // Periodic pose updated
+    // Periodic world statistics
     auto statsPub =
-      node.Advertise<ignition::msgs::WorldStatistics>("/world/example/stats");
+      node.Advertise<ignition::msgs::WorldStatistics>("/example/stats");
 
     // Give it time to be processed
     int sleep = 0;
@@ -96,8 +96,18 @@ TEST_F(MarkerManagerTestFixture,
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"MarkerManager\">"
+      "<stats_topic>/example/stats</stats_topic>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+
+  EXPECT_TRUE(app.LoadPlugin("MarkerManager",
+      pluginDoc.FirstChildElement("plugin")));
   EXPECT_TRUE(app.LoadPlugin("MinimalScene"));
-  EXPECT_TRUE(app.LoadPlugin("MarkerManager"));
 
   // Get main window
   auto window = app.findChild<MainWindow *>();

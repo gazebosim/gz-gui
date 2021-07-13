@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   // Periodic pose updated
   auto statsPub =
-    node.Advertise<ignition::msgs::WorldStatistics>("/world/example/stats");
+    node.Advertise<ignition::msgs::WorldStatistics>("/example/stats");
 
   // Periodic pose updated
   auto posePub = node.Advertise<ignition::msgs::Pose_V>("/example/pose");
