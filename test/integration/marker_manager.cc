@@ -57,7 +57,9 @@ class MarkerManagerTestFixture : public ::testing::Test
     rendering::ScenePtr scene;
 
     void waitAndSendStatsMsgs(
-      std::chrono::steady_clock::duration &timePoint, uint expectedValue, int maxSleep)
+      std::chrono::steady_clock::duration &timePoint,
+      uint expectedValue,
+      int maxSleep)
   {
     ignition::msgs::WorldStatistics msgWorldStatistics;
     // Periodic world statistics
@@ -104,9 +106,9 @@ TEST_F(MarkerManagerTestFixture,
   tinyxml2::XMLDocument pluginDoc;
   EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
 
+  EXPECT_TRUE(app.LoadPlugin("MinimalScene"));
   EXPECT_TRUE(app.LoadPlugin("MarkerManager",
       pluginDoc.FirstChildElement("plugin")));
-  EXPECT_TRUE(app.LoadPlugin("MinimalScene"));
 
   // Get main window
   auto window = app.findChild<MainWindow *>();
@@ -165,12 +167,19 @@ TEST_F(MarkerManagerTestFixture,
   ignition::msgs::Set(markerMsg.mutable_pose(),
                       ignition::math::Pose3d(2, 2, 0, 0, 0, 0));
   EXPECT_EQ(0u, scene->VisualCount());
-  node.Request("/marker", markerMsg);
+  bool executed = node.Request("/marker", markerMsg);
 
-  waitAndSendStatsMsgs(timePoint, 1, 40);
-  EXPECT_EQ(1u, scene->VisualCount());
-  waitAndSendStatsMsgs(timePoint, 0, 60);
-  EXPECT_EQ(0u, scene->VisualCount());
+  if (executed)
+  {
+    waitAndSendStatsMsgs(timePoint, 1, 40);
+    EXPECT_EQ(1u, scene->VisualCount());
+    waitAndSendStatsMsgs(timePoint, 0, 60);
+    EXPECT_EQ(0u, scene->VisualCount());
+  }
+  else
+  {
+    FAIL();
+  }
 
   // Cleanup
   plugins.clear();
