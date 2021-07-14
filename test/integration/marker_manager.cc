@@ -54,9 +54,10 @@ class MarkerManagerTestFixture : public ::testing::Test
 
   public:
     ignition::transport::Node node;
+    rendering::ScenePtr scene;
 
     void waitAndSendStatsMsgs(
-      std::chrono::steady_clock::duration &timePoint, int maxSleep)
+      std::chrono::steady_clock::duration &timePoint, uint expectedValue, int maxSleep)
   {
     ignition::msgs::WorldStatistics msgWorldStatistics;
     // Periodic world statistics
@@ -65,7 +66,7 @@ class MarkerManagerTestFixture : public ::testing::Test
 
     // Give it time to be processed
     int sleep = 0;
-    while (sleep < maxSleep)
+    while (scene->VisualCount() != expectedValue && sleep < maxSleep)
     {
       timePoint += 100ms;
       msgWorldStatistics.set_real_time_factor(1);
@@ -87,7 +88,7 @@ class MarkerManagerTestFixture : public ::testing::Test
 
 /////////////////////////////////////////////////
 TEST_F(MarkerManagerTestFixture,
-  IGN_UTILS_TEST_DISABLED_ON_WIN32(MarkerManager))
+  IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(MarkerManager))
 {
   common::Console::SetVerbosity(4);
 
@@ -132,7 +133,7 @@ TEST_F(MarkerManagerTestFixture,
   }
 
   EXPECT_EQ(1u, engine->SceneCount());
-  auto scene = engine->SceneByName("scene");
+  scene = engine->SceneByName("scene");
   ASSERT_NE(nullptr, scene);
 
   std::chrono::steady_clock::duration timePoint =
@@ -166,9 +167,9 @@ TEST_F(MarkerManagerTestFixture,
   EXPECT_EQ(0u, scene->VisualCount());
   node.Request("/marker", markerMsg);
 
-  waitAndSendStatsMsgs(timePoint, 38);
+  waitAndSendStatsMsgs(timePoint, 1, 40);
   EXPECT_EQ(1u, scene->VisualCount());
-  waitAndSendStatsMsgs(timePoint, 20);
+  waitAndSendStatsMsgs(timePoint, 0, 60);
   EXPECT_EQ(0u, scene->VisualCount());
 
   // Cleanup
