@@ -156,7 +156,7 @@ TEST_F(MarkerManagerTestFixture,
   markerMsg.mutable_material()->mutable_diffuse()->set_g(0);
   markerMsg.mutable_material()->mutable_diffuse()->set_b(1);
   markerMsg.mutable_material()->mutable_diffuse()->set_a(1);
-  markerMsg.mutable_lifetime()->set_sec(2);
+  markerMsg.mutable_lifetime()->set_sec(4);
   markerMsg.mutable_lifetime()->set_nsec(0);
   ignition::msgs::Set(markerMsg.mutable_scale(),
                     ignition::math::Vector3d(1.0, 1.0, 1.0));
@@ -166,7 +166,7 @@ TEST_F(MarkerManagerTestFixture,
   EXPECT_EQ(0u, scene->VisualCount());
   node.Request("/marker", markerMsg);
 
-  waitAndSendStatsMsgs(timePoint, 10);
+  waitAndSendStatsMsgs(timePoint, 38);
   EXPECT_EQ(1u, scene->VisualCount());
   waitAndSendStatsMsgs(timePoint, 20);
   EXPECT_EQ(0u, scene->VisualCount());
