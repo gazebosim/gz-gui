@@ -159,7 +159,7 @@ TEST_F(MarkerManagerTestFixture,
   markerMsg.mutable_material()->mutable_diffuse()->set_g(0);
   markerMsg.mutable_material()->mutable_diffuse()->set_b(1);
   markerMsg.mutable_material()->mutable_diffuse()->set_a(1);
-  markerMsg.mutable_lifetime()->set_sec(20);
+  markerMsg.mutable_lifetime()->set_sec(10);
   markerMsg.mutable_lifetime()->set_nsec(0);
   ignition::msgs::Set(markerMsg.mutable_scale(),
                     ignition::math::Vector3d(1.0, 1.0, 1.0));
@@ -173,7 +173,7 @@ TEST_F(MarkerManagerTestFixture,
   {
     waitAndSendStatsMsgs(timePoint, 1, 200);
     EXPECT_EQ(1u, scene->VisualCount());
-    waitAndSendStatsMsgs(timePoint, 0, 200);
+    waitAndSendStatsMsgs(timePoint, 0, 400);
     EXPECT_EQ(0u, scene->VisualCount());
   }
   else
