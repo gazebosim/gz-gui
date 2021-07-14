@@ -31,7 +31,6 @@
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
 #include <ignition/gui/qt.h>
-#include <QtTest/QTest>
 
 #include "Teleop.hh"
 

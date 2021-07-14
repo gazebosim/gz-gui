@@ -124,7 +124,7 @@ namespace plugins
     public slots: void OnSlidersSwitch(bool _checked);
 
     /// \brief Sets the movement direction when the keyboard is used.
-    public: void setKeyDirection();
+    public: void SetKeyDirection();
 
     /// \internal
     /// \brief Pointer to private data.

@@ -77,9 +77,12 @@ namespace plugins
     /// \brief Angular state setted by keyboard input.
     public: keyAngular angularState = keyAngular::kstop;
 
+    /// \brief Indicates if the keyboard is enabled or
+    /// disabled.
     public: bool keyEnable = false;
+    /// \brief Indicates if a new topic has been
+    /// selected.
     public: bool newTopic = true;
-
   };
 }
 }
@@ -100,7 +103,7 @@ Teleop::~Teleop()
 }
 
 /////////////////////////////////////////////////
-void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElement)
+void Teleop::LoadConfig(const tinyxml2::XMLElement *)
 {
   if (this->title.empty())
     this->title = "Teleop";
@@ -119,19 +122,20 @@ void Teleop::OnTeleopTwist()
   cmdVelMsg.mutable_angular()->set_z(
       this->dataPtr->angularDir * this->dataPtr->angularVel);
 
-  if (this->dataPtr->newTopic){
+  if (this->dataPtr->newTopic)
+  {
     this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
     this->dataPtr->cmdVelPub =
-    this->dataPtr->node.Advertise<ignition::msgs::Twist>(this->dataPtr->topic);
+        this->dataPtr->node.Advertise<ignition::msgs::Twist>
+        (this->dataPtr->topic);
     this->dataPtr->newTopic = false;
-    this->dataPtr->cmdVelPub.Publish(cmdVelMsg);
   }
 
   this->dataPtr->cmdVelPub.Publish(cmdVelMsg);
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnTopicSelection(const QString& _topic)
+void Teleop::OnTopicSelection(const QString & _topic)
 {
   this->dataPtr->newTopic = true;
   this->dataPtr->topic = _topic.toStdString();
@@ -140,7 +144,7 @@ void Teleop::OnTopicSelection(const QString& _topic)
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnLinearVelSelection(const QString& _velocity)
+void Teleop::OnLinearVelSelection(const QString & _velocity)
 {
   this->dataPtr->linearVel = _velocity.toDouble();
   ignmsg << "[OnlinearVelSelection]: linear velocity: "
@@ -148,7 +152,7 @@ void Teleop::OnLinearVelSelection(const QString& _velocity)
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnAngularVelSelection(const QString& _velocity)
+void Teleop::OnAngularVelSelection(const QString & _velocity)
 {
   this->dataPtr->angularVel = _velocity.toDouble();
   ignmsg << "[OnlinearVelSelection]: angular velocity: "
@@ -166,10 +170,11 @@ void Teleop::OnKeySwitch(bool _checked)
 /////////////////////////////////////////////////
 void Teleop::OnSlidersSwitch(bool _checked)
 {
-  if(_checked){
+  if(_checked)
+  {
     this->dataPtr->linearDir = 1;
     this->dataPtr->angularDir = 1;
-    OnTeleopTwist();
+    this->OnTeleopTwist();
   }
 }
 
@@ -192,14 +197,14 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
         case Qt::Key_D:
           this->dataPtr->angularState = keyAngular::kright;
           break;
-        case Qt::Key_X:
+        case Qt::Key_S:
           this->dataPtr->linearState = keyLinear::kbackward;
           break;
         default:
           break;
       }
-      setKeyDirection();
-      OnTeleopTwist();
+      this->SetKeyDirection();
+      this->OnTeleopTwist();
     }
 
     if(_event->type() == QEvent::KeyRelease)
@@ -216,21 +221,21 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
         case Qt::Key_D:
           this->dataPtr->angularState = keyAngular::kstop;
           break;
-        case Qt::Key_X:
+        case Qt::Key_S:
           this->dataPtr->linearState = keyLinear::kstop;
           break;
         default:
           break;
       }
-      setKeyDirection();
-      OnTeleopTwist();
+      this->SetKeyDirection();
+      this->OnTeleopTwist();
     }
   }
   return QObject::eventFilter(_obj, _event);
 }
 
 /////////////////////////////////////////////////
-void Teleop::setKeyDirection()
+void Teleop::SetKeyDirection()
 {
   this->dataPtr->linearDir = this->dataPtr->linearState ==
       keyLinear::kforward ? 1 : this->dataPtr->linearState ==

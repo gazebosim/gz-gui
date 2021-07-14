@@ -20,6 +20,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
+import "qrc:/qml"
 
 Rectangle {
   color:"transparent"
@@ -51,50 +52,67 @@ Rectangle {
     }
   }
 
-  // Linear velocity input
+  // Velocity input
   Label {
-    id: linearVelLabel
-    text: "Linear:"
+    id: velocityLabel
+    text: "Velocity:"
     anchors.top: topicField.bottom
     anchors.topMargin: 10
     anchors.left: parent.left
     anchors.leftMargin: 5
   }
-  TextField {
-    id: linearVelField
-    anchors.top: linearVelLabel.bottom
-    anchors.topMargin: 5
+  // Linear velocity input
+  Label {
+    id: linearVelLabel
+    text: "Linear"
+    color: "dimgrey"
+    anchors.top: velocityLabel.bottom
+    anchors.topMargin: 15
     anchors.left: parent.left
     anchors.leftMargin: 5
+  }
+  IgnSpinBox {
+    id: linearVelField
+    anchors.top: velocityLabel.bottom
+    anchors.topMargin: 5
+    anchors.left: linearVelLabel.right
+    anchors.leftMargin: 5
     Layout.fillWidth: true
-    text:"0.0"
-    placeholderText: qsTr("Linear velocity...")
-    onEditingFinished: {
-      Teleop.OnLinearVelSelection(text)
-    }
+    value: 0.0
+    maximumValue: 10.0
+    minimumValue: 0.0
+    decimals: 2
+    stepSize: 0.10
+    onEditingFinished:{
+      Teleop.OnLinearVelSelection(value)
+    } 
   }
   
   // Angular velocity input
   Label {
     id: angularVelLabel
-    text: "Angular:"
-    anchors.top: linearVelField.bottom
-    anchors.topMargin: 10
-    anchors.left: parent.left
-    anchors.leftMargin: 5
+    text: "Angular"
+    color: "dimgrey"
+    anchors.top: velocityLabel.bottom
+    anchors.topMargin: 15
+    anchors.left: linearVelField.right
+    anchors.leftMargin: 10
   }
-  TextField {
+  IgnSpinBox {
     id: angularVelField
-    anchors.top: angularVelLabel.bottom
+    anchors.top: velocityLabel.bottom
     anchors.topMargin: 5
-    anchors.left: parent.left
+    anchors.left: angularVelLabel.right
     anchors.leftMargin: 5
     Layout.fillWidth: true
-    text:"0.0"
-    placeholderText: qsTr("Angular velocity...")
-    onEditingFinished: {
-      Teleop.OnAngularVelSelection(text)
-    }
+    value: 0.0
+    maximumValue: 2.0
+    minimumValue: 0.0
+    decimals: 2
+    stepSize: 0.10
+    onEditingFinished:{
+      Teleop.OnAngularVelSelection(value)
+    } 
   }
 
   // Button grid
@@ -116,6 +134,7 @@ Rectangle {
         Teleop.linearDir = forwardButton.checked ? 1 : 0
         if(backwardButton.checked)
           backwardButton.checked = false
+        slidersSwitch.checked = false
         Teleop.OnTeleopTwist()
       }
       ToolTip.visible: hovered
@@ -141,6 +160,7 @@ Rectangle {
         Teleop.angularDir = leftButton.checked ? 1 : 0
         if(rightButton.checked)
           rightButton.checked = false
+        slidersSwitch.checked = false
         Teleop.OnTeleopTwist()
       }
       Material.background: Material.primary
@@ -164,6 +184,7 @@ Rectangle {
         Teleop.angularDir = rightButton.checked ? -1 : 0
         if(leftButton.checked)
           leftButton.checked = false
+        slidersSwitch.checked = false
         Teleop.OnTeleopTwist()
       }
       Material.background: Material.primary
@@ -187,6 +208,7 @@ Rectangle {
         Teleop.linearDir = backwardButton.checked ? -1 : 0
         if(forwardButton.checked)
           forwardButton.checked = false
+        slidersSwitch.checked = false
         Teleop.OnTeleopTwist()
       }
       Material.background: Material.primary
@@ -250,7 +272,7 @@ Rectangle {
   }
   Label {
     id: keyboardSwitchLabel
-    text: "Input from keyboard"
+    text: "Input from keyboard (WASD)"
     anchors.horizontalCenter : keySwitch.horizontalCenter
     anchors.verticalCenter : keySwitch.verticalCenter
     anchors.left: keySwitch.right
@@ -280,7 +302,6 @@ Rectangle {
     ToolTip.visible: hovered
     ToolTip.text: checked ? qsTr("Disable sliders") : qsTr("Enable sliders")
   }
-
   Label {
     id: slidersSwitchLabel
     text: "Input from sliders"
@@ -322,7 +343,7 @@ Rectangle {
     stepSize: 0.01
 
     onMoved: {
-      linearVelField.text = linearVelSlider.value.toFixed(2)
+      linearVelField.value = linearVelSlider.value.toFixed(2)
       Teleop.OnLinearVelSelection(linearVelSlider.value)
       Teleop.OnTeleopTwist()
     }
@@ -375,7 +396,7 @@ Rectangle {
     stepSize: 0.01
 
     onMoved: {
-      angularVelField.text = angularVelSlider.value.toFixed(2)
+      angularVelField.value = angularVelSlider.value.toFixed(2)
       Teleop.OnAngularVelSelection(angularVelSlider.value)
       Teleop.OnTeleopTwist()
     }
