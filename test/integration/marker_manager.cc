@@ -173,7 +173,7 @@ TEST_F(MarkerManagerTestFixture,
   {
     waitAndSendStatsMsgs(timePoint, 1, 200);
     EXPECT_EQ(1u, scene->VisualCount());
-    waitAndSendStatsMsgs(timePoint, 0, 60);
+    waitAndSendStatsMsgs(timePoint, 0, 200);
     EXPECT_EQ(0u, scene->VisualCount());
   }
   else
