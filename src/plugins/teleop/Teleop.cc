@@ -80,9 +80,6 @@ namespace plugins
     /// \brief Indicates if the keyboard is enabled or
     /// disabled.
     public: bool keyEnable = false;
-    /// \brief Indicates if a new topic has been
-    /// selected.
-    public: bool newTopic = true;
   };
 }
 }
@@ -95,6 +92,11 @@ using namespace plugins;
 /////////////////////////////////////////////////
 Teleop::Teleop(): Plugin(), dataPtr(new TeleopPrivate)
 {
+  // Initialize publisher using default topic.
+  this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub =
+      this->dataPtr->node.Advertise<ignition::msgs::Twist>
+      (this->dataPtr->topic);
 }
 
 /////////////////////////////////////////////////
@@ -122,25 +124,26 @@ void Teleop::OnTeleopTwist()
   cmdVelMsg.mutable_angular()->set_z(
       this->dataPtr->angularDir * this->dataPtr->angularVel);
 
-  if (this->dataPtr->newTopic)
-  {
-    this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
-    this->dataPtr->cmdVelPub =
-        this->dataPtr->node.Advertise<ignition::msgs::Twist>
-        (this->dataPtr->topic);
-    this->dataPtr->newTopic = false;
-  }
-
-  this->dataPtr->cmdVelPub.Publish(cmdVelMsg);
+  if (!this->dataPtr->cmdVelPub.Publish(cmdVelMsg))
+    ignerr << "ignition::msgs::Twist message couldn't be published at topic: "
+      << this->dataPtr->topic << std::endl;
 }
 
 /////////////////////////////////////////////////
 void Teleop::OnTopicSelection(const QString & _topic)
 {
-  this->dataPtr->newTopic = true;
   this->dataPtr->topic = _topic.toStdString();
   ignmsg << "A new topic has been entered: '" <<
       this->dataPtr->topic << " ' " <<std::endl;
+
+  // Update publisher with new topic.
+  this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub =
+      this->dataPtr->node.Advertise<ignition::msgs::Twist>
+      (this->dataPtr->topic);
+  if(!this->dataPtr->cmdVelPub)
+      ignerr << "Error when advertising topic: " <<
+        this->dataPtr->topic << std::endl;
 }
 
 /////////////////////////////////////////////////

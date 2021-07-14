@@ -292,8 +292,8 @@ Rectangle {
         leftButton.checked = false
         rightButton.checked = false
         backwardButton.checked = false
-        linearVelField.text = linearVelSlider.value.toFixed(2)
-        angularVelField.text = angularVelSlider.value.toFixed(2)
+        linearVelField.value = linearVelSlider.value.toFixed(2)
+        angularVelField.value = angularVelSlider.value.toFixed(2)
         Teleop.OnLinearVelSelection(linearVelSlider.value)
         Teleop.OnAngularVelSelection(angularVelSlider.value)
         Teleop.OnTeleopTwist()
