@@ -55,24 +55,20 @@ class MarkerManagerTestFixture : public ::testing::Test
   public:
     ignition::transport::Node node;
     rendering::ScenePtr scene;
+    ignition::transport::Node::Publisher statsPub;
 
-    void waitAndSendStatsMsgs(
-      std::chrono::steady_clock::duration &timePoint,
-      uint expectedValue,
-      int maxSleep)
-  {
-    ignition::msgs::WorldStatistics msgWorldStatistics;
-    // Periodic world statistics
-    auto statsPub =
-      node.Advertise<ignition::msgs::WorldStatistics>("/example/stats");
-
-    // Give it time to be processed
-    int sleep = 0;
-    while (scene->VisualCount() != expectedValue && sleep < maxSleep)
+    MarkerManagerTestFixture()
     {
-      timePoint += 100ms;
-      msgWorldStatistics.set_real_time_factor(1);
+      // Periodic world statistics
+      statsPub =
+        node.Advertise<ignition::msgs::WorldStatistics>("/example/stats");
+    }
 
+    void sendWorldStatisticsMsg(std::chrono::steady_clock::duration &timePoint)
+    {
+      ignition::msgs::WorldStatistics msgWorldStatistics;
+
+      msgWorldStatistics.set_real_time_factor(1);
       auto s = std::chrono::duration_cast<std::chrono::seconds>(timePoint);
       auto ns =
         std::chrono::duration_cast<std::chrono::nanoseconds>(timePoint-s);
@@ -80,6 +76,21 @@ class MarkerManagerTestFixture : public ::testing::Test
       msgWorldStatistics.mutable_sim_time()->set_sec(s.count());
       msgWorldStatistics.mutable_sim_time()->set_nsec(ns.count());
       statsPub.Publish(msgWorldStatistics);
+    }
+
+    void waitAndSendStatsMsgs(
+      std::chrono::steady_clock::duration &timePoint,
+      uint expectedValue,
+      int maxSleep)
+  {
+
+    // Give it time to be processed
+    int sleep = 0;
+    while (scene->VisualCount() != expectedValue && sleep < maxSleep)
+    {
+      timePoint += 100ms;
+
+      sendWorldStatisticsMsg(timePoint);
 
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       QCoreApplication::processEvents();
@@ -106,9 +117,9 @@ TEST_F(MarkerManagerTestFixture,
   tinyxml2::XMLDocument pluginDoc;
   EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
 
-  EXPECT_TRUE(app.LoadPlugin("MinimalScene"));
   EXPECT_TRUE(app.LoadPlugin("MarkerManager",
       pluginDoc.FirstChildElement("plugin")));
+  EXPECT_TRUE(app.LoadPlugin("MinimalScene"));
 
   // Get main window
   auto window = app.findChild<MainWindow *>();
@@ -167,12 +178,19 @@ TEST_F(MarkerManagerTestFixture,
   ignition::msgs::Set(markerMsg.mutable_pose(),
                       ignition::math::Pose3d(2, 2, 0, 0, 0, 0));
   EXPECT_EQ(0u, scene->VisualCount());
-  bool executed = node.Request("/marker", markerMsg);
 
+  // Wait 2 seconds, plugins need to be initialized
+  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+  bool executed = node.Request("/marker", markerMsg);
   if (executed)
   {
     waitAndSendStatsMsgs(timePoint, 1, 200);
     EXPECT_EQ(1u, scene->VisualCount());
+
+    timePoint += 10s;
+    sendWorldStatisticsMsg(timePoint);
+
     waitAndSendStatsMsgs(timePoint, 0, 400);
     EXPECT_EQ(0u, scene->VisualCount());
   }
