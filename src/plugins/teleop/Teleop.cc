@@ -39,16 +39,16 @@ namespace gui
 {
 namespace plugins
 {
-  enum class keyLinear{
-    kforward,
-    kbackward,
-    kstop,
+  enum class KeyLinear{
+    kForward,
+    kBackward,
+    kStop,
   };
 
-  enum class keyAngular{
-    kleft,
-    kright,
-    kstop,
+  enum class KeyAngular{
+    kLeft,
+    kRight,
+    kStop,
   };
 
   class TeleopPrivate
@@ -73,9 +73,9 @@ namespace plugins
     public: int angularDir = 0;
 
     /// \brief Linear state setted by keyboard input.
-    public: keyLinear linearState = keyLinear::kstop;
+    public: KeyLinear linearState = KeyLinear::kStop;
     /// \brief Angular state setted by keyboard input.
-    public: keyAngular angularState = keyAngular::kstop;
+    public: KeyAngular angularState = KeyAngular::kStop;
 
     /// \brief Indicates if the keyboard is enabled or
     /// disabled.
@@ -192,16 +192,16 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearState = keyLinear::kforward;
+          this->dataPtr->linearState = KeyLinear::kForward;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularState = keyAngular::kleft;
+          this->dataPtr->angularState = KeyAngular::kLeft;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularState = keyAngular::kright;
+          this->dataPtr->angularState = KeyAngular::kRight;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearState = keyLinear::kbackward;
+          this->dataPtr->linearState = KeyLinear::kBackward;
           break;
         default:
           break;
@@ -216,16 +216,16 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearState = keyLinear::kstop;
+          this->dataPtr->linearState = KeyLinear::kStop;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularState = keyAngular::kstop;
+          this->dataPtr->angularState = KeyAngular::kStop;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularState = keyAngular::kstop;
+          this->dataPtr->angularState = KeyAngular::kStop;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearState = keyLinear::kstop;
+          this->dataPtr->linearState = KeyLinear::kStop;
           break;
         default:
           break;
@@ -241,12 +241,12 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
 void Teleop::SetKeyDirection()
 {
   this->dataPtr->linearDir = this->dataPtr->linearState ==
-      keyLinear::kforward ? 1 : this->dataPtr->linearState ==
-      keyLinear::kbackward ? -1 : 0;
+      KeyLinear::kForward ? 1 : this->dataPtr->linearState ==
+      KeyLinear::kBackward ? -1 : 0;
 
   this->dataPtr->angularDir = this->dataPtr->angularState ==
-      keyAngular::kleft ? 1 : this->dataPtr->angularState ==
-      keyAngular::kright ? -1 : 0;
+      KeyAngular::kLeft ? 1 : this->dataPtr->angularState ==
+      KeyAngular::kRight ? -1 : 0;
 }
 
 /////////////////////////////////////////////////

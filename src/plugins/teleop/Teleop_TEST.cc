@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2021 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
-#include <ignition/gui/qt.h>
+#include "ignition/gui/qt.h"
 
 #include "Teleop.hh"
 
@@ -40,403 +40,315 @@ char **g_argv = new char *[g_argc];
 using namespace ignition;
 using namespace gui;
 
-class TeleopTest : public ::testing::Test {
+class TeleopTest : public ::testing::Test
+{
+  // Provides an API to load plugins and configuration files.
+  protected: Application app{g_argc, g_argv};
 
- protected:
-  void SetUp() override {
-    common::Console::SetVerbosity(4);
-  }
+  // List of plugins.
+  protected: QList<plugins::Teleop *> plugins;
+  protected: plugins::Teleop * plugin;
 
-  /// \param[in] _topic Topic to publish twist messages.
-  protected: void TestButtons(const std::string &_topic)
-  {
-    Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  // Instance of the main window.
+  protected: MainWindow * win;
 
-    // Load plugin
-    const char *pluginStr =
-      "<plugin filename=\"Teleop\">"
-        "<ignition-gui>"
-          "<title>Teleop!</title>"
-        "</ignition-gui>"
-      "</plugin>";
+  // Checks if a new command has been received.
+  protected: bool received = false;
+  protected: transport::Node node;
 
-    tinyxml2::XMLDocument pluginDoc;
-    EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
-    EXPECT_TRUE(app.LoadPlugin("Teleop",
-        pluginDoc.FirstChildElement("plugin")));
+  // Define velocity values.
+  protected: const double linearVel = 1.0;
+  protected: const double angularVel = 0.5;
 
-    // Get main window
-    auto win = app.findChild<MainWindow *>();
-    ASSERT_NE(nullptr, win);
+  // Set up function.
+  protected:
+    void SetUp() override
+    {
+      common::Console::SetVerbosity(4);
 
-    // Show, but don't exec, so we don't block
-    win->QuickWindow()->show();
+      this->app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-    // Get plugin
-    auto plugins = win->findChildren<plugins::Teleop *>();
-    EXPECT_EQ(plugins.size(), 1);
+      // Load plugin
+      const char *pluginStr =
+        "<plugin filename=\"Teleop\">"
+          "<ignition-gui>"
+            "<title>Teleop!</title>"
+          "</ignition-gui>"
+        "</plugin>";
 
-    auto plugin = plugins[0];
-    EXPECT_EQ(plugin->Title(), "Teleop!");
+      tinyxml2::XMLDocument pluginDoc;
+      EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+      EXPECT_TRUE(this->app.LoadPlugin("Teleop",
+          pluginDoc.FirstChildElement("plugin")));
 
-    plugin->OnTopicSelection(QString::fromStdString(_topic));
+      // Get main window
+      win = this->app.findChild<MainWindow *>();
+      ASSERT_NE(nullptr, win);
 
-    // Checks if the directions of the movement are set
-    // with the default value.
-    EXPECT_EQ(plugin->LinearDirection(), 0);
-    EXPECT_EQ(plugin->AngularDirection(), 0);
+      // Show, but don't exec, so we don't block
+      win->QuickWindow()->show();
 
-    // Define velocity values.
-    double linearVel = 1.0;
-    double angularVel = 0.5;
+      // Get plugin
+      plugins = win->findChildren<plugins::Teleop *>();
+      EXPECT_EQ(plugins.size(), 1);
 
-    // Set velocity value and movement direction.
-    // Forward and left movement.
-    plugin->OnLinearVelSelection(QString::number(linearVel));
-    plugin->OnAngularVelSelection(QString::number(angularVel));
-    plugin->setLinearDirection(1);
-    plugin->setAngularDirection(1);
+      plugin = plugins[0];
+      EXPECT_EQ(plugin->Title(), "Teleop!");
 
-    // Subscribe to the 'cmd_vel' topic
-    bool received = false;
-    std::function<void(const msgs::Twist &)> cb =
-        [&](const msgs::Twist &_msg)
+      // Subcribes to the command velocity topic.
+      node.Subscribe("/model/vehicle_blue/cmd_vel",
+          &TeleopTest::CallBack, this);
+
+      // Sets topic. This must be the same as the
+      // one the node is subscribed to.
+      plugin->OnTopicSelection(
+          QString::fromStdString("/model/vehicle_blue/cmd_vel"));
+
+      // Checks if the directions of the movement are set
+      // with the default value '0'.
+      EXPECT_EQ(plugin->LinearDirection(), 0);
+      EXPECT_EQ(plugin->AngularDirection(), 0);
+
+      // Set velocity value and movement direction.
+      plugin->OnLinearVelSelection(QString::number(linearVel));
+      plugin->OnAngularVelSelection(QString::number(angularVel));
+    }
+
+  // Subscriber call back function. Verifies if the Twist message is
+  // sent correctly.
+  protected:
+    void CallBack(const msgs::Twist &_msg)
     {
       EXPECT_DOUBLE_EQ(_msg.linear().x(),
-        plugin->LinearDirection() * linearVel);
+          plugin->LinearDirection() * linearVel);
       EXPECT_DOUBLE_EQ(_msg.angular().z(),
-        plugin->AngularDirection() * angularVel);
+          plugin->AngularDirection() * angularVel);
       received = true;
-    };
-
-    transport::Node node;
-    node.Subscribe(_topic, cb);
-    plugin->OnTeleopTwist();
-
-    int sleep = 0;
-    int maxSleep = 30;
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
     }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Change movement direction.
-    // Backward and right movement.
-    plugin->setLinearDirection(-1);
-    plugin->setAngularDirection(-1);
-    plugin->OnTeleopTwist();
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Stops angular movement.
-    plugin->setAngularDirection(0);
-    plugin->OnTeleopTwist();
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Stops linear movement.
-    // Starts angular movement.
-    plugin->setLinearDirection(0);
-    plugin->setAngularDirection(1);
-    plugin->OnTeleopTwist();
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Stops movement.
-    plugin->setAngularDirection(0);
-    plugin->setLinearDirection(0);
-    plugin->OnTeleopTwist();
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-
-    // Cleanup
-    plugins.clear();
-  };
-
-  /// \param[in] _topic Topic to publish twist messages.
-  protected: void TestKeys(const std::string &_topic)
-  {
-    Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-    // Load plugin
-    const char *pluginStr =
-      "<plugin filename=\"Teleop\">"
-        "<ignition-gui>"
-          "<title>Teleop!</title>"
-        "</ignition-gui>"
-      "</plugin>";
-
-    tinyxml2::XMLDocument pluginDoc;
-    EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
-    EXPECT_TRUE(app.LoadPlugin("Teleop",
-        pluginDoc.FirstChildElement("plugin")));
-
-    // Get main window
-    auto win = app.findChild<MainWindow *>();
-    ASSERT_NE(nullptr, win);
-
-    // Show, but don't exec, so we don't block
-    win->QuickWindow()->show();
-
-    // Get plugin
-    auto plugins = win->findChildren<plugins::Teleop *>();
-    EXPECT_EQ(plugins.size(), 1);
-
-    auto plugin = plugins[0];
-    EXPECT_EQ(plugin->Title(), "Teleop!");
-
-    // Set desire topic.
-    plugin->OnTopicSelection(QString::fromStdString(_topic));
-
-    // Movement direction
-    EXPECT_EQ(plugin->LinearDirection(), 0);
-    EXPECT_EQ(plugin->AngularDirection(), 0);
-
-    // Define velocity values.
-    double linearVel = 1.0;
-    double angularVel = 0.5;
-
-    // Set velocity value and movement direction.
-    plugin->OnLinearVelSelection(QString::number(linearVel));
-    plugin->OnAngularVelSelection(QString::number(angularVel));
-
-    // Subscribe
-    bool received = false;
-    std::function<void(const msgs::Twist &)> cb =
-        [&](const msgs::Twist &_msg)
-    {
-      EXPECT_DOUBLE_EQ(_msg.linear().x(),
-        plugin->LinearDirection() * linearVel);
-      EXPECT_DOUBLE_EQ(_msg.angular().z(),
-        plugin->AngularDirection() * angularVel);
-      received = true;
-    };
-
-    transport::Node node;
-    node.Subscribe(_topic, cb);
-
-    // Generates a key press event on the main window.
-    QKeyEvent *keypress_W = new QKeyEvent(QKeyEvent::KeyPress,
-      Qt::Key_W, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keypress_W);
-    QCoreApplication::processEvents();
-
-    EXPECT_FALSE(received);
-
-    // Enables key input.
-    plugin->OnKeySwitch(true);
-    app.sendEvent(win->QuickWindow(), keypress_W);
-
-    int sleep = 0;
-    int maxSleep = 30;
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Generates a key press event on the main window.
-    QKeyEvent *keypress_D = new QKeyEvent(QKeyEvent::KeyPress,
-      Qt::Key_D, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keypress_D);
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Generates a key release event on the main window.
-    QKeyEvent *keyrelease_D = new QKeyEvent(QKeyEvent::KeyRelease,
-      Qt::Key_D, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keyrelease_D);
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Generates a key press event on the main window.
-    QKeyEvent *keypress_A = new QKeyEvent(QKeyEvent::KeyPress,
-      Qt::Key_A, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keypress_A);
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-
-    // Generates a key release event on the main window.
-    QKeyEvent *keyrelease_A = new QKeyEvent(QKeyEvent::KeyRelease,
-      Qt::Key_A, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keyrelease_A);
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-    // Generates a key release event on the main window.
-    QKeyEvent *keyrelease_W = new QKeyEvent(QKeyEvent::KeyRelease,
-      Qt::Key_W, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keyrelease_W);
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-    // Generates a key press event on the main window.
-    QKeyEvent *keypress_X = new QKeyEvent(QKeyEvent::KeyPress,
-      Qt::Key_X, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keypress_X);
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    EXPECT_TRUE(received);
-    received = false;
-    // Generates a key release event on the main window.
-    QKeyEvent *keyrelease_X = new QKeyEvent(QKeyEvent::KeyRelease,
-      Qt::Key_X, Qt::NoModifier);
-    app.sendEvent(win->QuickWindow(), keyrelease_X);
-
-    sleep = 0;
-    // cppcheck-suppress knownConditionTrueFalse
-    while (!received && sleep < maxSleep)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      QCoreApplication::processEvents();
-      sleep++;
-    }
-
-    // Cleanup
-    plugins.clear();
-  };
-
 };
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, Load)
+TEST_F(TeleopTest, ButtonCommand)
 {
-  Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  // Forward movement.
+  plugin->setLinearDirection(1);
+  // Counterclockwise movement.
+  plugin->setAngularDirection(1);
+  plugin->OnTeleopTwist();
 
-  EXPECT_TRUE(app.LoadPlugin("Teleop"));
+  int sleep = 0;
+  const int maxSleep = 30;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
 
-  // Get main window
-  auto win = app.findChild<MainWindow *>();
-  ASSERT_NE(nullptr, win);
+  EXPECT_TRUE(received);
+  received = false;
 
-  // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
-  EXPECT_EQ(plugins.size(), 1);
+  // Change movement direction.
+  // Backward movement.
+  plugin->setLinearDirection(-1);
+  // Clockwise direction.
+  plugin->setAngularDirection(-1);
+  plugin->OnTeleopTwist();
 
-  auto plugin = plugins[0];
-  EXPECT_EQ(plugin->Title(), "Teleop");
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+
+  // Stops angular movement.
+  plugin->setAngularDirection(0);
+  plugin->OnTeleopTwist();
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+  EXPECT_TRUE(received);
+  received = false;
+
+  // Stops linear movement.
+  // Starts angular movement.
+  plugin->setLinearDirection(0);
+  plugin->setAngularDirection(1);
+  plugin->OnTeleopTwist();
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+
+  // Stops movement.
+  plugin->setAngularDirection(0);
+  plugin->setLinearDirection(0);
+  plugin->OnTeleopTwist();
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
 
   // Cleanup
   plugins.clear();
 }
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, ButtonCommand)
-{
-  TestButtons("/cmd_vel");
-  TestButtons("/model/vehicle_blue/cmd_vel");
-}
-
-/////////////////////////////////////////////////
 TEST_F(TeleopTest, KeyboardCommand)
 {
-  TestKeys("/cmd_vel");
-  TestKeys("/model/vehicle_blue/cmd_vel");
+  // Generates a key press event on the main window.
+  QKeyEvent *keypress_W = new QKeyEvent(QKeyEvent::KeyPress,
+    Qt::Key_W, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keypress_W);
+  QCoreApplication::processEvents();
+
+  EXPECT_FALSE(received);
+
+  // Enables key input.
+  plugin->OnKeySwitch(true);
+  app.sendEvent(win->QuickWindow(), keypress_W);
+
+  int sleep = 0;
+  const int maxSleep = 30;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+
+  // Generates a key press event on the main window.
+  QKeyEvent *keypress_D = new QKeyEvent(QKeyEvent::KeyPress,
+    Qt::Key_D, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keypress_D);
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+
+  // Generates a key release event on the main window.
+  QKeyEvent *keyrelease_D = new QKeyEvent(QKeyEvent::KeyRelease,
+    Qt::Key_D, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keyrelease_D);
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+
+  // Generates a key press event on the main window.
+  QKeyEvent *keypress_A = new QKeyEvent(QKeyEvent::KeyPress,
+    Qt::Key_A, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keypress_A);
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+
+  // Generates a key release event on the main window.
+  QKeyEvent *keyrelease_A = new QKeyEvent(QKeyEvent::KeyRelease,
+    Qt::Key_A, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keyrelease_A);
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+  // Generates a key release event on the main window.
+  QKeyEvent *keyrelease_W = new QKeyEvent(QKeyEvent::KeyRelease,
+    Qt::Key_W, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keyrelease_W);
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+  // Generates a key press event on the main window.
+  QKeyEvent *keypress_X = new QKeyEvent(QKeyEvent::KeyPress,
+    Qt::Key_X, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keypress_X);
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  EXPECT_TRUE(received);
+  received = false;
+  // Generates a key release event on the main window.
+  QKeyEvent *keyrelease_X = new QKeyEvent(QKeyEvent::KeyRelease,
+    Qt::Key_X, Qt::NoModifier);
+  app.sendEvent(win->QuickWindow(), keyrelease_X);
+
+  sleep = 0;
+  while (!received && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    sleep++;
+  }
+
+  // Cleanup
+  plugins.clear();
 }
