@@ -839,4 +839,3 @@ void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
 // Register this plugin
 IGNITION_ADD_PLUGIN(ignition::gui::plugins::TransportSceneManager,
                     ignition::gui::Plugin)
-

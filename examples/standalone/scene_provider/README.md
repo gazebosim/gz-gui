@@ -34,3 +34,32 @@ ign gui -c examples/config/scene3d.config
 
 You should see a black box moving around the scene.
 
+## Testing other plugins
+
+### Camera tracking
+
+Some commands to test camera tracking with this demo:
+
+Move to box:
+
+```
+ign service -s /gui/move_to --reqtype ignition.msgs.StringMsg --reptype ignition.msgs.Boolean --timeout 2000 --req 'data: "box_model"'
+```
+
+Echo camera pose:
+
+```
+ign topic -e -t /gui/camera/pose
+```
+
+Follow box:
+
+```
+ign service -s /gui/follow --reqtype ignition.msgs.StringMsg --reptype ignition.msgs.Boolean --timeout 2000 --req 'data: "box_model"'
+```
+
+Update follow offset:
+
+```
+ign service -s /gui/follow/offset --reqtype ignition.msgs.Vector3d --reptype ignition.msgs.Boolean --timeout 2000 --req 'x: 5, y: 5, z: 5'
+```
