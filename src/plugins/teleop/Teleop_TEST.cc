@@ -42,27 +42,8 @@ using namespace gui;
 
 class TeleopTest : public ::testing::Test
 {
-  // Provides an API to load plugins and configuration files.
-  protected: Application app{g_argc, g_argv};
-
-  // List of plugins.
-  protected: QList<plugins::Teleop *> plugins;
-  protected: plugins::Teleop * plugin;
-
-  // Instance of the main window.
-  protected: MainWindow * win;
-
-  // Checks if a new command has been received.
-  protected: bool received = false;
-  protected: transport::Node node;
-
-  // Define velocity values.
-  protected: const double linearVel = 1.0;
-  protected: const double angularVel = 0.5;
-
   // Set up function.
-  protected:
-    void SetUp() override
+  protected: void SetUp() override
     {
       common::Console::SetVerbosity(4);
 
@@ -95,9 +76,9 @@ class TeleopTest : public ::testing::Test
       plugin = plugins[0];
       EXPECT_EQ(plugin->Title(), "Teleop!");
 
-      // Subcribes to the command velocity topic.
+      // Subscribes to the command velocity topic.
       node.Subscribe("/model/vehicle_blue/cmd_vel",
-          &TeleopTest::CallBack, this);
+          &TeleopTest::VerifyTwistMsgCb, this);
 
       // Sets topic. This must be the same as the
       // one the node is subscribed to.
@@ -116,8 +97,7 @@ class TeleopTest : public ::testing::Test
 
   // Subscriber call back function. Verifies if the Twist message is
   // sent correctly.
-  protected:
-    void CallBack(const msgs::Twist &_msg)
+  protected: void VerifyTwistMsgCb(const msgs::Twist &_msg)
     {
       EXPECT_DOUBLE_EQ(_msg.linear().x(),
           plugin->LinearDirection() * linearVel);
@@ -125,6 +105,24 @@ class TeleopTest : public ::testing::Test
           plugin->AngularDirection() * angularVel);
       received = true;
     }
+
+  // Provides an API to load plugins and configuration files.
+  protected: Application app{g_argc, g_argv};
+
+  // List of plugins.
+  protected: QList<plugins::Teleop *> plugins;
+  protected: plugins::Teleop * plugin;
+
+  // Instance of the main window.
+  protected: MainWindow * win;
+
+  // Checks if a new command has been received.
+  protected: bool received = false;
+  protected: transport::Node node;
+
+  // Define velocity values.
+  protected: const double linearVel = 1.0;
+  protected: const double angularVel = 0.5;
 };
 
 /////////////////////////////////////////////////
