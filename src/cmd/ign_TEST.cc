@@ -64,7 +64,7 @@ TEST(CmdLine, list)
 #else
   std::string ign = std::string(IGN_PATH) + "/ign.rb";
   std::string cmd = std::string("set IGN_CONFIG_PATH=") + ignConfigPath +
-    " && " + ign + " gui -l";
+    " && " + ign + " gui -l -v 4";
 #endif
   std::string output = custom_exec_str(cmd);
   std::cerr << "output " << output << std::endl;

@@ -66,7 +66,13 @@ extern "C" void cmdPluginList()
     }
 
     if (path.second.empty())
+    {
+#ifndef _WIN32
       std::cout << "└── No plugins" << std::endl;
+#else
+      std::cout << " -- No plugins" << std::endl;
+#endif
+    }
   }
 }
 
