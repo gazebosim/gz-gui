@@ -19,7 +19,15 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/math/Pose3.hh>
+
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs/pose.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include <ignition/rendering/Camera.hh>
 #include <ignition/rendering/RenderEngine.hh>
 #include <ignition/rendering/RenderingIface.hh>
@@ -202,4 +210,3 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
     EXPECT_GT(10, abs(camera->WorldPose().Pos().Z() - it));
   }
 }
-
