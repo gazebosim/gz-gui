@@ -105,15 +105,15 @@ namespace plugins
     /// \brief Callback in Qt thread when the topic changes.
     /// \param[in] _topic variable to indicate the topic to
     /// publish the Twist commands.
-    public slots: void OnTopicSelection(const QString& _topic);
+    public slots: void OnTopicSelection(const QString &_topic);
 
     /// \brief Callback in Qt thread when the linear velocity changes.
     /// \param[in] _velocity variable to indicate the linear velocity.
-    public slots: void OnLinearVelSelection(const QString& _velocity);
+    public slots: void OnLinearVelSelection(double _velocity);
 
     /// \brief Callback in Qt thread when the angular velocity changes.
     /// \param[in] _velocity variable to indicate the angular velocity.
-    public slots: void OnAngularVelSelection(const QString& _velocity);
+    public slots: void OnAngularVelSelection(double _velocity);
 
     /// \brief Callback in Qt thread when the keyboard is enabled or disabled.
     /// \param[in] _checked variable to indicate the state of the switch.

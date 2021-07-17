@@ -35,7 +35,10 @@
 #include "Teleop.hh"
 
 int g_argc = 1;
-char **g_argv = new char *[g_argc];
+char* g_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./Teleop_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
@@ -91,8 +94,8 @@ class TeleopTest : public ::testing::Test
       EXPECT_EQ(plugin->AngularDirection(), 0);
 
       // Set velocity value and movement direction.
-      plugin->OnLinearVelSelection(QString::number(linearVel));
-      plugin->OnAngularVelSelection(QString::number(angularVel));
+      plugin->OnLinearVelSelection(linearVel);
+      plugin->OnAngularVelSelection(angularVel);
     }
 
   // Subscriber call back function. Verifies if the Twist message is
@@ -126,7 +129,7 @@ class TeleopTest : public ::testing::Test
 };
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, ButtonCommand)
+TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
 {
   // Forward movement.
   plugin->setLinearDirection(1);
@@ -215,7 +218,7 @@ TEST_F(TeleopTest, ButtonCommand)
 }
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, KeyboardCommand)
+TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
 {
   // Generates a key press event on the main window.
   QKeyEvent *keypress_W = new QKeyEvent(QKeyEvent::KeyPress,

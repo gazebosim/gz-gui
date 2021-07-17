@@ -90,7 +90,7 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-Teleop::Teleop(): Plugin(), dataPtr(new TeleopPrivate)
+Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
 {
   // Initialize publisher using default topic.
   this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
@@ -100,9 +100,7 @@ Teleop::Teleop(): Plugin(), dataPtr(new TeleopPrivate)
 }
 
 /////////////////////////////////////////////////
-Teleop::~Teleop()
-{
-}
+Teleop::~Teleop() = default;
 
 /////////////////////////////////////////////////
 void Teleop::LoadConfig(const tinyxml2::XMLElement *)
@@ -130,7 +128,7 @@ void Teleop::OnTeleopTwist()
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnTopicSelection(const QString & _topic)
+void Teleop::OnTopicSelection(const QString &_topic)
 {
   this->dataPtr->topic = _topic.toStdString();
   ignmsg << "A new topic has been entered: '" <<
@@ -147,19 +145,15 @@ void Teleop::OnTopicSelection(const QString & _topic)
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnLinearVelSelection(const QString & _velocity)
+void Teleop::OnLinearVelSelection(double _velocity)
 {
-  this->dataPtr->linearVel = _velocity.toDouble();
-  ignmsg << "[OnlinearVelSelection]: linear velocity: "
-      << this->dataPtr->linearVel << std::endl;
+  this->dataPtr->linearVel = _velocity;
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnAngularVelSelection(const QString & _velocity)
+void Teleop::OnAngularVelSelection(double _velocity)
 {
-  this->dataPtr->angularVel = _velocity.toDouble();
-  ignmsg << "[OnlinearVelSelection]: angular velocity: "
-      << this->dataPtr->angularVel << std::endl;
+  this->dataPtr->angularVel = _velocity;
 }
 
 /////////////////////////////////////////////////
