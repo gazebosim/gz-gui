@@ -2,6 +2,23 @@
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
 
+### Ignition Gui 3.7.0 (2021-07-14)
+
+1. Fix codeowners
+    * [Pull request #251](https://github.com/ignitionrobotics/ign-gui/pull/251)
+
+1. Fix plugin added signal, add PluginByName
+    * [Pull request #249](https://github.com/ignitionrobotics/ign-gui/pull/249)
+
+1. Fixed tests by passing valid argv
+    * [Pull request #244](https://github.com/ignitionrobotics/ign-gui/pull/244)
+
+1. Screenshot plugin fixed dbg message
+    * [Pull request #246](https://github.com/ignitionrobotics/ign-gui/pull/246)
+
+1. Detect ign instead of using cmake module to check for ignition-tools
+    * [Pull request #240](https://github.com/ignitionrobotics/ign-gui/pull/240)
+
 ### Ignition Gui 3.6.0 (2021-06-17)
 
 1. Update codeowners
