@@ -123,7 +123,7 @@ if (TARGET UNIT_ign_TEST)
 
   set(_env_vars)
   if(WIN32)
-    list(APPEND _env_vars "PATH=${CMAKE_INSTALL_PREFIX}/bin:$ENV{PATH}")
+    list(APPEND _env_vars "PATH=${CMAKE_INSTALL_PREFIX}/bin;$ENV{PATH}")
   endif()
   list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>")
 
