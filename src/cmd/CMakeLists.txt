@@ -121,11 +121,17 @@ if (TARGET UNIT_ign_TEST)
 	  OUTPUT "${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>/${IGN_DESIGNATION}${PROJECT_VERSION_MAJOR}.yaml"
 	  INPUT "${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}${PROJECT_VERSION_MAJOR}.yaml.configured")
 
+  set(_env_vars)
+  if(WIN32)
+    list(APPEND _env_vars "PATH=${CMAKE_INSTALL_PREFIX}/bin:$ENV{PATH}")
+  endif()
+  list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>")
+
   set_tests_properties(
     UNIT_ign_TEST
     PROPERTIES
     ENVIRONMENT
-      "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>"
+      ${_env_vars}
   )
 endif()
 
