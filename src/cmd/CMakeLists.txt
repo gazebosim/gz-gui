@@ -131,7 +131,7 @@ if (TARGET UNIT_ign_TEST)
     UNIT_ign_TEST
     PROPERTIES
     ENVIRONMENT
-      ${_env_vars}
+      "${_env_vars}"
   )
 endif()
 
