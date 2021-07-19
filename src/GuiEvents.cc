@@ -17,6 +17,57 @@
 
 #include "ignition/gui/GuiEvents.hh"
 
+class ignition::gui::events::SnapIntervals::Implementation
+{
+  /// \brief XYZ snapping values in meters, these values must be positive.
+  public: math::Vector3d xyz;
+
+  /// \brief RPY snapping values in degrees, these values must be
+  /// positive.
+  public: math::Vector3d rpy;
+
+  /// \brief Scale snapping values - a multiplier of the current size,
+  /// these values must be positive.
+  public: math::Vector3d scale;
+};
+
+class ignition::gui::events::SpawnFromDescription::Implementation
+{
+  /// \brief The string of the resource to be spawned.
+  public: std::string description;
+};
+
+class ignition::gui::events::SpawnFromPath::Implementation
+{
+  /// \brief The path of file to be previewed.
+  public: std::string filePath;
+};
+
+class ignition::gui::events::HoverToScene::Implementation
+{
+  /// \brief The 3D point over which the user is hovering.
+  public: math::Vector3d point;
+};
+
+class ignition::gui::events::LeftClickToScene::Implementation
+{
+  /// \brief The 3D point that the user clicked within the scene.
+  public: math::Vector3d point;
+};
+
+class ignition::gui::events::RightClickToScene::Implementation
+{
+  /// \brief The 3D point that the user clicked within the scene.
+  public: math::Vector3d point;
+};
+
+class ignition::gui::events::DropdownMenuEnabled::Implementation
+{
+  /// \brief The boolean indicating whether the menu is disabled or not
+  /// for this event.
+  public: bool menuEnabled;
+};
+
 class ignition::gui::events::LeftClickOnScene::Implementation
 {
   /// \brief Mouse event
@@ -49,6 +100,114 @@ class ignition::gui::events::KeyPressOnScene::Implementation
 using namespace ignition;
 using namespace gui;
 using namespace events;
+
+/////////////////////////////////////////////////
+SnapIntervals::SnapIntervals(
+            const math::Vector3d &_xyz,
+            const math::Vector3d &_rpy,
+            const math::Vector3d &_scale)
+  : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->xyz = _xyz;
+  this->dataPtr->rpy = _rpy;
+  this->dataPtr->scale = _scale;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d SnapIntervals::Position() const
+{
+  return this->dataPtr->xyz;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d SnapIntervals::Rotation() const
+{
+  return this->dataPtr->rpy;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d SnapIntervals::Scale() const
+{
+  return this->dataPtr->scale;
+}
+
+/////////////////////////////////////////////////
+SpawnFromDescription::SpawnFromDescription(const std::string &_description)
+  : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->description = _description;
+}
+
+/////////////////////////////////////////////////
+const std::string &SpawnFromDescription::Description() const
+{
+  return this->dataPtr->description;
+}
+
+/////////////////////////////////////////////////
+SpawnFromPath::SpawnFromPath(const std::string &_filePath)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->filePath = _filePath;
+}
+
+/////////////////////////////////////////////////
+const std::string &SpawnFromPath::FilePath() const
+{
+  return this->dataPtr->filePath;
+}
+
+/////////////////////////////////////////////////
+HoverToScene::HoverToScene(const math::Vector3d &_point)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->point = _point;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d HoverToScene::Point() const
+{
+  return this->dataPtr->point;
+}
+
+/////////////////////////////////////////////////
+LeftClickToScene::LeftClickToScene(const math::Vector3d &_point)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->point = _point;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d LeftClickToScene::Point() const
+{
+  return this->dataPtr->point;
+}
+
+/////////////////////////////////////////////////
+RightClickToScene::RightClickToScene(const math::Vector3d &_point)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->point = _point;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d RightClickToScene::Point() const
+{
+  return this->dataPtr->point;
+}
+
+/////////////////////////////////////////////////
+DropdownMenuEnabled::DropdownMenuEnabled(bool _menuEnabled)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->menuEnabled = _menuEnabled;
+}
+
+/////////////////////////////////////////////////
+bool DropdownMenuEnabled::MenuEnabled() const
+{
+  return this->dataPtr->menuEnabled;
+}
 
 /////////////////////////////////////////////////
 RightClickOnScene::RightClickOnScene(const common::MouseEvent &_mouse)
