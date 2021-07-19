@@ -25,6 +25,16 @@
 #include <ignition/gui/Plugin.hh>
 #include <ignition/gui/qt.h>
 
+#ifndef _WIN32
+#  define Teleop_EXPORTS_API
+#else
+#  if (defined(Teleop_EXPORTS))
+#    define Teleop_EXPORTS_API __declspec(dllexport)
+#  else
+#    define Teleop_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 namespace ignition
 {
 namespace gui
@@ -39,7 +49,7 @@ namespace plugins
   /// vehicle load to the world.
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class Teleop : public Plugin
+  class Teleop_EXPORTS_API Teleop : public Plugin
   {
     Q_OBJECT
 
