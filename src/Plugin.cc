@@ -91,7 +91,8 @@ Plugin::Plugin() : dataPtr(new PluginPrivate)
 /////////////////////////////////////////////////
 Plugin::~Plugin()
 {
-  delete this->dataPtr->pluginItem;
+  if (this->dataPtr->pluginItem)
+    delete this->dataPtr->pluginItem;
 }
 
 /////////////////////////////////////////////////
