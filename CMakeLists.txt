@@ -68,11 +68,8 @@ ign_find_package(ignition-msgs7 REQUIRED)
 set(IGN_MSGS_VER ${ignition-msgs7_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-tools
-ign_find_package(ignition-tools QUIET)
-if (ignition-tools_FOUND)
-  set (HAVE_IGN_TOOLS TRUE)
-endif()
+# Find if ign command is available
+find_program(HAVE_IGN_TOOLS ign)
 
 #--------------------------------------
 # Find QT
