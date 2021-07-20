@@ -121,12 +121,13 @@ if (TARGET UNIT_ign_TEST)
 	  OUTPUT "${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>/${IGN_DESIGNATION}${PROJECT_VERSION_MAJOR}.yaml"
 	  INPUT "${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}${PROJECT_VERSION_MAJOR}.yaml.configured")
 
-  if(WIN32)
+  if(NOT WIN32)
+    set(NEWPATH $ENV{PATH})
+  else()
     STRING(REPLACE ";" "\\;" NEWPATH "$ENV{PATH}")
     set(NEWPATH ${CMAKE_INSTALL_PREFIX}/bin\\;${NEWPATH})
     STRING(REPLACE ";" "\\;" NEWPATH "${NEWPATH}")
-  else()
-    set(NEWPATH $ENV{PATH})
+    message("PATH CMAKE: " ${NEWPATH})
   endif()
 
   set_tests_properties(
