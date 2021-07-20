@@ -126,6 +126,8 @@ if (TARGET UNIT_ign_TEST)
     STRING(REPLACE ";" "\\;" NEWPATH "$ENV{PATH}")
     set(NEWPATH ${CMAKE_INSTALL_PREFIX}/bin\\;${NEWPATH})
     STRING(REPLACE ";" "\\;" NEWPATH "${NEWPATH}")
+  else()
+    set(NEWPATH $ENV{PATH})
   endif()
 
   set_tests_properties(
