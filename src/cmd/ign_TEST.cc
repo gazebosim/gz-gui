@@ -67,6 +67,7 @@ TEST(CmdLine, list)
   ignition::common::env("PATH", pathstr, true);
   std::string cmd = std::string("set IGN_CONFIG_PATH=") + ignConfigPath +
     " && set PATH=" + pathstr + " && " + ign + " gui -l -v 4";
+  std::cerr << "cmd: " << cmd << '\n';
 #endif
   std::string output = custom_exec_str(cmd);
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
