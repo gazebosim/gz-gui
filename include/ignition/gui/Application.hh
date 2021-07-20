@@ -150,9 +150,17 @@ namespace ignition
       /// \brief Remove plugin by name. The plugin is removed from the
       /// application and its shared library unloaded if this was its last
       /// instance.
-      /// \param[in] _pluginName Plugn instance's unique name
+      /// \param[in] _pluginName Plugn instance's unique name. This is the
+      /// plugin card's object name.
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
+
+      /// \brief Get a plugin by its unique name.
+      /// \param[in] _pluginName Plugn instance's unique name. This is the
+      /// plugin card's object name.
+      /// \return Pointer to plugin object, null if not found.
+      public: std::shared_ptr<Plugin> PluginByName(
+          const std::string &_pluginName) const;
 
       /// \brief Notify that a plugin has been added.
       /// \param[in] _objectName Plugin's object name.
