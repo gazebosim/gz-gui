@@ -12,6 +12,11 @@ release will remove the deprecated code.
   Use `ignition::msgs::Convert` to `std::chrono::steady_clock::time_point`
   instead.
 
+## Ignition GUI 3.6 to 3.7
+
+* The `Application::PluginAdded` signal used to send empty strings. Now it
+  sends the plugin's unique name.
+
 ## Ignition GUI 2.x to 3.x
 
 * Use rendering3, transport8 and msgs5.
