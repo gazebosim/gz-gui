@@ -92,7 +92,7 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   public: std::string cameraViewControlService;
 
   /// \brief Ray query for mouse clicks
-  public: rendering::RayQueryPtr rayQuery;
+  public: rendering::RayQueryPtr rayQuery{nullptr};
 
   //// \brief Pointer to the rendering scene
   public: rendering::ScenePtr scene{nullptr};
@@ -114,10 +114,10 @@ void InteractiveViewControlPrivate::OnRender()
     if (!this->scene)
       return;
 
-    for (unsigned int i = 0; i < scene->NodeCount(); ++i)
+    for (unsigned int i = 0; i < this->scene->NodeCount(); ++i)
     {
       auto cam = std::dynamic_pointer_cast<rendering::Camera>(
-        scene->NodeByIndex(i));
+        this->scene->NodeByIndex(i));
       if (cam)
       {
         bool isUserCamera = false;
@@ -156,6 +156,9 @@ void InteractiveViewControlPrivate::OnRender()
   if (!this->mouseDirty)
     return;
 
+  if (!this->camera)
+    return;
+
   std::lock_guard<std::mutex> lock(this->mutex);
 
   if (this->viewController == "ortho")
@@ -177,8 +180,7 @@ void InteractiveViewControlPrivate::OnRender()
 
   if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
   {
-    this->target =
-        this->ScreenToScene(this->mouseEvent.Pos());
+    this->target = this->ScreenToScene(this->mouseEvent.Pos());
     this->viewControl->SetTarget(this->target);
     double distance = this->camera->WorldPosition().Distance(
         this->target);
@@ -189,8 +191,7 @@ void InteractiveViewControlPrivate::OnRender()
   {
     if (this->drag == math::Vector2d::Zero)
     {
-      this->target = this->ScreenToScene(
-          this->mouseEvent.PressPos());
+      this->target = this->ScreenToScene(this->mouseEvent.PressPos());
       this->viewControl->SetTarget(this->target);
     }
 
@@ -207,13 +208,12 @@ void InteractiveViewControlPrivate::OnRender()
     {
       this->viewControl->Orbit(this->drag);
     }
+    // Zoom with right button
     else if (this->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
     {
       double hfov = this->camera->HFOV().Radian();
-      double vfov = 2.0f * atan(tan(hfov / 2.0f) /
-          this->camera->AspectRatio());
-      double distance = this->camera->WorldPosition().Distance(
-          this->target);
+      double vfov = 2.0f * atan(tan(hfov / 2.0f) / this->camera->AspectRatio());
+      double distance = this->camera->WorldPosition().Distance(this->target);
       double amount = ((-this->drag.Y() /
           static_cast<double>(this->camera->ImageHeight()))
           * distance * tan(vfov/2.0) * 6.0);
@@ -253,6 +253,15 @@ bool InteractiveViewControlPrivate::OnViewControl(const msgs::StringMsg &_msg,
   msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
+
+  if (_msg.data() != "orbit" && _msg.data() != "ortho")
+  {
+    ignwarn << "View controller type not supported [" << _msg.data() << "]"
+            << std::endl;
+    _res.set_data(false);
+    return true;
+  }
+
   this->viewController = _msg.data();
 
   // mark mouse dirty to trigger HandleMouseEvent call and
@@ -270,9 +279,7 @@ InteractiveViewControl::InteractiveViewControl()
 }
 
 /////////////////////////////////////////////////
-InteractiveViewControl::~InteractiveViewControl()
-{
-}
+InteractiveViewControl::~InteractiveViewControl() = default;
 
 /////////////////////////////////////////////////
 void InteractiveViewControl::LoadConfig(

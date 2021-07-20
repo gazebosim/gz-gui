@@ -30,8 +30,25 @@ namespace plugins
 {
   class InteractiveViewControlPrivate;
 
-  /// \brief This Plugin allows to control the scene3D camera
-  /// with the mouse
+  /// \brief This Plugin allows to control a user camera with the mouse:
+  ///
+  /// * Drag left button to pan
+  /// * Drag middle button to orbit
+  /// * Drag right button or scroll wheel to zoom
+  ///
+  /// This plugin also supports changing between perspective and orthographic
+  /// projections through the `/gui/camera/view_control` service. Perspective
+  /// projection is used by default. For example:
+  ///
+  ///     ign service -s /gui/camera/view_control
+  ///         --reqtype ignition.msgs.StringMsg
+  ///         --reptype ignition.msgs.Boolean
+  ///         --timeout 2000 --req 'data: "ortho"'
+  ///
+  /// Supported options are:
+  ///
+  /// * `orbit`: perspective projection
+  /// * `ortho`: orthographic projection
   class InteractiveViewControl : public Plugin
   {
     Q_OBJECT
