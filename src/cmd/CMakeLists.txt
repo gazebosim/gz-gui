@@ -123,15 +123,16 @@ if (TARGET UNIT_ign_TEST)
 
   set(_env_vars)
   if(WIN32)
-    list(APPEND _env_vars "PATH=${CMAKE_INSTALL_PREFIX}/bin;$ENV{PATH}")
+    STRING(REPLACE ";" "\\;" NEWPATH "$ENV{PATH}")
+    set(NEWPATH ${CMAKE_INSTALL_PREFIX}/bin\\;${NEWPATH})
+    STRING(REPLACE ";" "\\;" NEWPATH "${NEWPATH}")
   endif()
-  list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>")
 
   set_tests_properties(
     UNIT_ign_TEST
     PROPERTIES
     ENVIRONMENT
-      "${_env_vars}"
+      "PATH=${NEWPATH};IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>"
   )
 endif()
 
