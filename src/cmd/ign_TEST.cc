@@ -66,7 +66,8 @@ TEST(CmdLine, list)
   std::string ign = std::string(IGN_PATH) + "/ign.rb";
   ignition::common::env("PATH", pathstr, true);
   std::string cmd = std::string("set IGN_CONFIG_PATH=") + ignConfigPath +
-    " && set \"PATH=" + pathstr + "\" && " + ign + " gui -l -v 4";
+    " && set \"PATH=" + pathstr + "\" && set QT_QPA_PLATFORM_PLUGIN_PATH=C:/vcpkg/installed/x64-windows/plugins/platforms && set QT_QPA_PLATFORM=offscreen "
+    + "&& " + ign + " gui -l -v 4";
   std::cerr << "cmd: " << cmd << '\n';
 #endif
   std::string output = custom_exec_str(cmd);
