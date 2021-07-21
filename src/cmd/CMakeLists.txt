@@ -133,7 +133,7 @@ if (TARGET UNIT_ign_TEST)
     UNIT_ign_TEST
     PROPERTIES
     ENVIRONMENT
-      "PATH=${additional_path}\\;${NEWPATH};IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>\\;QT_QPA_PLATFORM_PLUGIN_PATH=C:\vcpkg\installed\x64-windows\plugins\platforms\\;QT_QPA_PLATFORM=offscreen"
+      "PATH=${additional_path}\\;${NEWPATH};IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>\\;QT_QPA_PLATFORM_PLUGIN_PATH=C:/vcpkg/installed/x64-windows/plugins/platforms\\;QT_QPA_PLATFORM=offscreen"
   )
 endif()
 
