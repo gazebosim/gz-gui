@@ -62,7 +62,10 @@ TEST(CmdLine, version)
 
 TEST(CmdLine, list2)
 {
-  std::string cmd = "C:/Jenkins/workspace/ign_gui-pr-win/ws/install/ignition-gui5/lib/ignition/gui5/ign-gui.exe -v 4 -l";
+  std::string pathstr;
+  ignition::common::env("PATH", pathstr, true);
+  std::string cmd = "set \"PATH=" + pathstr + "\" && set QT_QPA_PLATFORM_PLUGIN_PATH=C:/vcpkg/installed/x64-windows/plugins/platforms && set QT_QPA_PLATFORM=offscreen " +
+    " && C:/Jenkins/workspace/ign_gui-pr-win/ws/install/ignition-gui5/lib/ignition/gui5/ign-gui.exe -v 4 -l";
   std::string output = custom_exec_str(cmd);
   std::cerr << "List2: " << output << '\n';
 }
