@@ -53,6 +53,20 @@ std::string custom_exec_str(std::string _cmd)
   return result;
 }
 
+TEST(CmdLine, version)
+{
+  std::string cmd = "C:/Jenkins/workspace/ign_gui-pr-win/ws/install/ignition-gui5/lib/ignition/gui5/ign-gui.exe --version -v 4";
+  std::string output = custom_exec_str(cmd);
+  std::cerr << "Version: " << output << '\n';
+}
+
+TEST(CmdLine, list2)
+{
+  std::string cmd = "C:/Jenkins/workspace/ign_gui-pr-win/ws/install/ignition-gui5/lib/ignition/gui5/ign-gui.exe -v 4 -l";
+  std::string output = custom_exec_str(cmd);
+  std::cerr << "List2: " << output << '\n';
+}
+
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 TEST(CmdLine, list)
 {
