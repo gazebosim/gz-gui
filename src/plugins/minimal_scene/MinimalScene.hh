@@ -27,8 +27,11 @@
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/utils/ImplPtr.hh>
+#include <ignition/rendering/GraphicsAPI.hh>
 
 #include "ignition/gui/Plugin.hh"
+
+#include "MinimalSceneRhi.hh"
 
 namespace ignition
 {
@@ -105,8 +108,13 @@ namespace plugins
     /// synchronize Qt and worker thread (this)
     public: void Render(RenderSync *_renderSync);
 
-    /// \brief Initialize the render engine
+    /// \brief Initialize the render engine and scene.
+    /// On macOS this must be called on the main thread.
     public: void Initialize();
+
+    /// \brief Set the graphics API
+    /// \param[in] _graphicsApi The type of graphics API
+    public: void SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI);
 
     /// \brief Destroy camera associated with this renderer
     public: void Destroy();
@@ -173,7 +181,8 @@ namespace plugins
     /// Values is constantly constantly cycled/swapped/changed
     /// from a worker thread
     /// Don't read this directly
-    public: GLuint textureId;
+    /// \param[out] _texturePtr Pointer to a texture Id
+    public: void TextureId(void* _texturePtr);
 
     /// \brief Render engine to use
     public: std::string engineName = "ogre";
@@ -203,7 +212,7 @@ namespace plugins
     public: QSize textureSize = QSize(1024, 1024);
 
     /// \brief Flag to indicate texture size has changed.
-    public: bool textureDirty = false;
+    public: bool textureDirty = true;
 
     /// \brief Scene service. If not empty, a request will be made to get the
     /// scene information using this service and the renderer will populate the
@@ -251,18 +260,40 @@ namespace plugins
 
     /// \brief Signal to indicate that a frame has been rendered and ready
     /// to be displayed
-    /// \param[in] _id GLuid of the opengl texture
+    /// \param[in] _texturePtr Pointer to a texture Id
     /// \param[in] _size Size of the texture
-    signals: void TextureReady(uint _id, const QSize &_size);
+    signals: void TextureReady(void* _texturePtr, const QSize &_size);
 
     /// \brief Offscreen surface to render to
-    public: QOffscreenSurface *surface = nullptr;
+    public: QOffscreenSurface *Surface() const;
+
+    /// \brief Set the offscreen surface to render to
+    //
+    /// \param[in] _surface Off-screen surface format
+    public: void SetSurface(QOffscreenSurface *_surface);
 
     /// \brief OpenGL context to be passed to the render engine
-    public: QOpenGLContext *context = nullptr;
+    public: QOpenGLContext *Context() const;
+
+    /// \brief Set the OpenGL context to be passed to the render engine
+    //
+    /// \param[in] _context OpenGL context
+    public: void SetContext(QOpenGLContext *_context);
+
+    /// \brief Set the graphics API
+    /// \param[in] _graphicsApi The type of graphics API
+    public: void SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsApi);
+
+    /// \brief Carry out initialisation.
+    //
+    /// On macOS this must be run on the main thread
+    public: void Initialize();
 
     /// \brief Ign-rendering renderer
     public: IgnRenderer ignRenderer;
+
+    /// \brief Pointer to render interface to handle OpenGL/Metal compatibility
+    private: std::unique_ptr<RenderThreadRhi> rhi;
   };
 
   /// \brief A QQUickItem that manages the render window
@@ -342,6 +373,10 @@ namespace plugins
     /// \param[in] _sky True to enable the sky, false otherwise.
     public: void SetSkyEnabled(const bool &_sky);
 
+    /// \brief Set the graphics API
+    /// \param[in] _graphicsApi The type of graphics API
+    public: void SetGraphicsAPI(const rendering::GraphicsAPI& _graphicsAPI);
+
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
 
@@ -394,17 +429,20 @@ namespace plugins
     /// \param[in] _window Window to display the texture
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt (this) and worker thread
+    /// \param[in] _graphicsAPI The type of graphics API
     public: explicit TextureNode(QQuickWindow *_window,
-                                 RenderSync &_renderSync);
+                                 RenderSync &_renderSync,
+                                 const rendering::GraphicsAPI &_graphicsAPI);
 
     /// \brief Destructor
     public: ~TextureNode() override;
 
     /// \brief This function gets called on the FBO rendering thread and will
     ///  store the texture id and size and schedule an update on the window.
-    /// \param[in] _id OpenGL render texture Id
+    /// \param[in] _texturePtr Pointer to a texture Id
     /// \param[in] _size Texture size
-    public slots: void NewTexture(uint _id, const QSize &_size);
+    // public slots: void NewTexture(uint _id, const QSize &_size);
+    public slots: void NewTexture(void* _texturePtr, const QSize &_size);
 
     /// \brief Before the scene graph starts to render, we update to the
     /// pending texture
@@ -417,9 +455,6 @@ namespace plugins
     /// update
     signals: void PendingNewTexture();
 
-    /// \brief OpenGL texture id
-    public: uint id = 0;
-
     /// \brief Texture size
     public: QSize size = QSize(0, 0);
 
@@ -429,12 +464,12 @@ namespace plugins
     /// \brief See RenderSync
     public: RenderSync &renderSync;
 
-    /// \brief Qt's scene graph texture
-    public: QSGTexture *texture = nullptr;
-
     /// \brief Qt quick window
     public: QQuickWindow *window = nullptr;
-  };
+
+    /// \brief Pointer to render interface to handle OpenGL/Metal compatibility
+    private: std::unique_ptr<TextureNodeRhi> rhi;
+   };
 }
 }
 }

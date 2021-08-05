@@ -87,6 +87,29 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 {
   igndbg << "Initializing application." << std::endl;
 
+#if __APPLE__
+  // Use the Metal graphics API on macOS.
+  igndbg << "Qt using Metal graphics interface" << std::endl;
+  QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
+
+  // TODO(srmainwaring): implement facility for overriding the default
+  //    graphics API in macOS, in which case there are restrictions on
+  //    the version of OpenGL used.
+  //
+  // macOS only supports OpenGL <= 4.1.
+  // This must be called before the main window is shown.
+  // QSurfaceFormat format(QSurfaceFormat::DeprecatedFunctions);
+  // format.setDepthBufferSize(24);
+  // format.setStencilBufferSize(8);
+  // format.setVersion(4, 1);
+  // format.setProfile(QSurfaceFormat::CoreProfile);
+  // format.setRenderableType(QSurfaceFormat::OpenGL);
+  // QSurfaceFormat::setDefaultFormat(format);
+#else
+  // Otherwise use OpenGL
+  igndbg << "Qt using OpenGL graphics interface" << std::endl;
+#endif
+
   // Configure console
   common::Console::SetPrefix("[GUI] ");
 

@@ -16,6 +16,9 @@
 */
 
 #include "MinimalScene.hh"
+#include "MinimalSceneRhi.hh"
+#include "MinimalSceneRhiMetal.hh"
+#include "MinimalSceneRhiOpenGL.hh"
 
 #include <algorithm>
 #include <map>
@@ -92,6 +95,12 @@ class ignition::gui::plugins::IgnRenderer::Implementation
 
   /// \brief View control focus target
   public: math::Vector3d target;
+
+  /// \brief Render system parameters
+  public: std::map<std::string, std::string> rhiParams;
+
+  /// \brief Render hardware interface for the texture
+  public: std::unique_ptr<IgnCameraTextureRhi> rhi;
 };
 
 /// \brief Qt and Ogre rendering is happening in different threads
@@ -183,6 +192,16 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
   /// \brief Keep latest mouse event
   public: common::MouseEvent mouseEvent;
 
+  /// \brief True if initialized
+  public: bool initialized = false;
+
+  /// \brief True if initializing (started but not complete)
+  public: bool initializing = false;
+
+  /// \brief Graphics API
+  public: ignition::rendering::GraphicsAPI graphicsAPI =
+      rendering::GraphicsAPI::OPENGL;
+
   /// \brief Render thread
   public: RenderThread *renderThread = nullptr;
 
@@ -239,7 +258,6 @@ void RenderSync::WaitForWorkerThread()
 
   // Worker thread asked us to wait!
   this->renderStallState = RenderStallState::WorkerCanProceed;
-
   lock.unlock();
   // Wake up worker thread
   this->cv.notify_one();
@@ -270,6 +288,8 @@ void RenderSync::Shutdown()
 IgnRenderer::IgnRenderer()
   : dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
+  // Set default graphics API to OpenGL
+  this->SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
 }
 
 /////////////////////////////////////////////////
@@ -300,7 +320,8 @@ void IgnRenderer::Render(RenderSync *_renderSync)
     // _renderSync->ReleaseQtThreadFromBlock(lock);
   }
 
-  this->textureId = this->dataPtr->camera->RenderTextureGLId();
+  // Update the render interface (texture)
+  this->dataPtr->rhi->Update(this->dataPtr->camera);
 
   // view control
   this->HandleMouseEvent();
@@ -514,12 +535,11 @@ void IgnRenderer::Initialize()
   if (this->initialized)
     return;
 
-  std::map<std::string, std::string> params;
-  params["useCurrentGLContext"] = "1";
-  params["winID"] = std::to_string(
+  this->dataPtr->rhiParams["winID"] = std::to_string(
     ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
       QuickWindow()->winId());
-  auto engine = rendering::engine(this->engineName, params);
+  auto engine = rendering::engine(
+      this->engineName, this->dataPtr->rhiParams);
   if (!engine)
   {
     ignerr << "Engine [" << this->engineName << "] is not supported"
@@ -558,12 +578,36 @@ void IgnRenderer::Initialize()
   // setting the size and calling PreRender should cause the render texture to
   // be rebuilt
   this->dataPtr->camera->PreRender();
-  this->textureId = this->dataPtr->camera->RenderTextureGLId();
+
+  // Update the render interface (texture)
+  this->dataPtr->rhi->Update(this->dataPtr->camera);
 
   // Ray Query
   this->dataPtr->rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
 
   this->initialized = true;
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
+{
+  // Create render interface and reset params
+  this->dataPtr->rhiParams.clear();
+
+  if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
+  {
+    qDebug().nospace() << "Creating ign-renderering interface for OpenGL";
+    this->dataPtr->rhiParams["useCurrentGLContext"] = "1";
+    this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiOpenGL>();
+  }
+#ifdef __APPLE__
+  else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
+  {
+    qDebug().nospace() << "Creating ign-renderering interface for Metal";
+    this->dataPtr->rhiParams["metal"] = "1";
+    this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiMetal>();
+  }
+#endif
 }
 
 /////////////////////////////////////////////////
@@ -643,8 +687,17 @@ math::Vector3d IgnRenderer::ScreenToScene(
 }
 
 /////////////////////////////////////////////////
+void IgnRenderer::TextureId(void* _texturePtr)
+{
+  this->dataPtr->rhi->TextureId(_texturePtr);
+}
+
+/////////////////////////////////////////////////
 RenderThread::RenderThread()
 {
+  // Set default graphics API to OpenGL
+  this->SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
+
   RenderWindowItem::Implementation::threads << this;
   qRegisterMetaType<RenderSync*>("RenderSync*");
 }
@@ -652,38 +705,17 @@ RenderThread::RenderThread()
 /////////////////////////////////////////////////
 void RenderThread::RenderNext(RenderSync *_renderSync)
 {
-  this->context->makeCurrent(this->surface);
-
-  if (!this->ignRenderer.initialized)
-  {
-    // Initialize renderer
-    this->ignRenderer.Initialize();
-  }
-
-  // check if engine has been successfully initialized
-  if (!this->ignRenderer.initialized)
-  {
-    ignerr << "Unable to initialize renderer" << std::endl;
-    return;
-  }
-
-  this->ignRenderer.Render(_renderSync);
-
-  emit TextureReady(this->ignRenderer.textureId, this->ignRenderer.textureSize);
+  this->rhi->RenderNext(_renderSync);
+  emit this->TextureReady(
+    this->rhi->TexturePtr(),
+    this->rhi->TextureSize());
 }
 
 /////////////////////////////////////////////////
 void RenderThread::ShutDown()
 {
-  this->context->makeCurrent(this->surface);
-
-  this->ignRenderer.Destroy();
-
-  this->context->doneCurrent();
-  delete this->context;
-
-  // schedule this to be deleted only after we're done cleaning up
-  this->surface->deleteLater();
+  // The render interface calls Destroy on IgnRendering
+  this->rhi->ShutDown();
 
   // Stop event processing, move the thread to GUI and make sure it is deleted.
   this->exit();
@@ -708,34 +740,87 @@ void RenderThread::SizeChanged()
 }
 
 /////////////////////////////////////////////////
-TextureNode::TextureNode(QQuickWindow *_window, RenderSync &_renderSync)
-    : renderSync(_renderSync), window(_window)
+QOffscreenSurface *RenderThread::Surface() const
 {
-  // Our texture node must have a texture, so use the default 0 texture.
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-  this->texture = this->window->createTextureFromId(0, QSize(1, 1));
-#else
-  void * nativeLayout;
-  this->texture = this->window->createTextureFromNativeObject(
-      QQuickWindow::NativeObjectTexture, &nativeLayout, 0, QSize(1, 1),
-      QQuickWindow::TextureIsOpaque);
+  return this->rhi->Surface();
+}
+
+/////////////////////////////////////////////////
+void RenderThread::SetSurface(QOffscreenSurface *_surface)
+{
+  this->rhi->SetSurface(_surface);
+}
+
+/////////////////////////////////////////////////
+QOpenGLContext *RenderThread::Context() const
+{
+  return this->rhi->Context();
+}
+
+/////////////////////////////////////////////////
+void RenderThread::SetContext(QOpenGLContext *_context)
+{
+  this->rhi->SetContext(_context);
+}
+
+/////////////////////////////////////////////////
+void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
+{
+  // Set the graphics API for the IgnRenderer
+  this->ignRenderer.SetGraphicsAPI(_graphicsAPI);
+
+  // Create the render interface
+  if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
+  {
+    qDebug().nospace() << "Creating render thread interface for OpenGL";
+    this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->ignRenderer);
+  }
+#ifdef __APPLE__
+  else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
+  {
+    qDebug().nospace() << "Creating render thread interface for Metal";
+    this->rhi = std::make_unique<RenderThreadRhiMetal>(&this->ignRenderer);
+  }
 #endif
-  this->setTexture(this->texture);
 }
 
 /////////////////////////////////////////////////
-TextureNode::~TextureNode()
+void RenderThread::Initialize()
 {
-  delete this->texture;
+  this->rhi->Initialize();
 }
 
 /////////////////////////////////////////////////
-void TextureNode::NewTexture(uint _id, const QSize &_size)
+TextureNode::TextureNode(
+    QQuickWindow *_window,
+    RenderSync &_renderSync,
+    const rendering::GraphicsAPI &_graphicsAPI)
+    : renderSync(_renderSync)
+    , window(_window)
 {
-  this->mutex.lock();
-  this->id = _id;
-  this->size = _size;
-  this->mutex.unlock();
+  if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
+  {
+    qDebug().nospace() << "Creating texture node render interface for OpenGL";
+    this->rhi = std::make_unique<TextureNodeRhiOpenGL>(_window);
+  }
+#ifdef __APPLE__
+  else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
+  {
+    qDebug().nospace() << "Creating texture node render interface for Metal";
+    this->rhi = std::make_unique<TextureNodeRhiMetal>(_window);
+  }
+#endif
+
+  this->setTexture(this->rhi->Texture());
+}
+
+/////////////////////////////////////////////////
+TextureNode::~TextureNode() = default;
+
+/////////////////////////////////////////////////
+void TextureNode::NewTexture(void* _texturePtr, const QSize &_size)
+{
+  this->rhi->NewTexture(_texturePtr, _size);
 
   // We cannot call QQuickWindow::update directly here, as this is only allowed
   // from the rendering thread or GUI thread.
@@ -745,34 +830,11 @@ void TextureNode::NewTexture(uint _id, const QSize &_size)
 /////////////////////////////////////////////////
 void TextureNode::PrepareNode()
 {
-  this->mutex.lock();
-  uint newId = this->id;
-  QSize sz = this->size;
-  this->id = 0;
-  this->mutex.unlock();
-  if (newId)
-  {
-    delete this->texture;
-    // note: include QQuickWindow::TextureHasAlphaChannel if the rendered
-    // content has alpha.
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-    this->texture = this->window->createTextureFromId(
-        newId, sz, QQuickWindow::TextureIsOpaque);
-#else
-    // TODO(anyone) Use createTextureFromNativeObject
-    // https://github.com/ignitionrobotics/ign-gui/issues/113
-#ifndef _WIN32
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-    this->texture = this->window->createTextureFromId(
-        newId, sz, QQuickWindow::TextureIsOpaque);
-#ifndef _WIN32
-# pragma GCC diagnostic pop
-#endif
+  this->rhi->PrepareNode();
 
-#endif
-    this->setTexture(this->texture);
+  if (this->rhi->HasNewTexture())
+  {
+    this->setTexture(this->rhi->Texture());
 
     this->markDirty(DirtyMaterial);
 
@@ -830,17 +892,31 @@ RenderWindowItem::~RenderWindowItem()
 }
 
 /////////////////////////////////////////////////
+// This slot will run on the main thread
 void RenderWindowItem::Ready()
 {
-  this->dataPtr->renderThread->surface = new QOffscreenSurface();
-  this->dataPtr->renderThread->surface->setFormat(
-      this->dataPtr->renderThread->context->format());
-  this->dataPtr->renderThread->surface->create();
+  if (this->dataPtr->graphicsAPI == rendering::GraphicsAPI::OPENGL)
+  {
+    this->dataPtr->renderThread->SetSurface(new QOffscreenSurface());
+    this->dataPtr->renderThread->Surface()->setFormat(
+        this->dataPtr->renderThread->Context()->format());
+    this->dataPtr->renderThread->Surface()->create();
+  }
+
+  // Carry out initialization on main thread before moving to render thread
+  this->dataPtr->renderThread->Initialize();
+
+  if (this->dataPtr->graphicsAPI == rendering::GraphicsAPI::OPENGL)
+  {
+    // Move context to the render thread
+    this->dataPtr->renderThread->Context()->moveToThread(
+        this->dataPtr->renderThread);
+  }
+
+  this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 
   this->dataPtr->renderThread->ignRenderer.textureSize =
       QSize(std::max({this->width(), 1.0}), std::max({this->height(), 1.0}));
-
-  this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 
   this->connect(this, &QQuickItem::widthChanged,
       this->dataPtr->renderThread, &RenderThread::SizeChanged);
@@ -848,6 +924,8 @@ void RenderWindowItem::Ready()
       this->dataPtr->renderThread, &RenderThread::SizeChanged);
 
   this->dataPtr->renderThread->start();
+  this->dataPtr->initializing = false;
+  this->dataPtr->initialized = true;
   this->update();
 }
 
@@ -857,30 +935,57 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 {
   TextureNode *node = static_cast<TextureNode *>(_node);
 
-  if (!this->dataPtr->renderThread->context)
+  if (!this->dataPtr->initialized)
   {
-    QOpenGLContext *current = this->window()->openglContext();
-    // Some GL implementations require that the currently bound context is
-    // made non-current before we set up sharing, so we doneCurrent here
-    // and makeCurrent down below while setting up our own context.
-    current->doneCurrent();
+    // Exit immediately if still initializing
+    if (this->dataPtr->initializing)
+    {
+      return nullptr;
+    }
+    this->dataPtr->initializing = true;
 
-    this->dataPtr->renderThread->context = new QOpenGLContext();
-    this->dataPtr->renderThread->context->setFormat(current->format());
-    this->dataPtr->renderThread->context->setShareContext(current);
-    this->dataPtr->renderThread->context->create();
-    this->dataPtr->renderThread->context->moveToThread(
-        this->dataPtr->renderThread);
+    // Set the render thread's render system
+    this->dataPtr->renderThread->SetGraphicsAPI(
+        this->dataPtr->graphicsAPI);
 
-    current->makeCurrent(this->window());
+    if (this->dataPtr->graphicsAPI == rendering::GraphicsAPI::OPENGL)
+    {
+      QOpenGLContext *current = this->window()->openglContext();
+      // Some GL implementations require that the currently bound context is
+      // made non-current before we set up sharing, so we doneCurrent here
+      // and makeCurrent down below while setting up our own context.
+      current->doneCurrent();
 
-    QMetaObject::invokeMethod(this, "Ready");
+      this->dataPtr->renderThread->SetContext(new QOpenGLContext());
+      this->dataPtr->renderThread->Context()->setFormat(current->format());
+      this->dataPtr->renderThread->Context()->setShareContext(current);
+      this->dataPtr->renderThread->Context()->create();
+
+      // The slot "Ready" runs on the main thread, move the context to match
+      this->dataPtr->renderThread->Context()->moveToThread(
+          QApplication::instance()->thread());
+
+      current->makeCurrent(this->window());
+
+      // Initialize on main thread
+      QMetaObject::invokeMethod(this, "Ready", Qt::QueuedConnection);
+    }
+    else if (this->dataPtr->graphicsAPI == rendering::GraphicsAPI::METAL)
+    {
+      // Initialize on main thread
+      QMetaObject::invokeMethod(this, "Ready", Qt::QueuedConnection);
+    }
+    else
+    {
+      // invalid render system
+    }
     return nullptr;
   }
 
   if (!node)
   {
-    node = new TextureNode(this->window(), this->dataPtr->renderSync);
+    node = new TextureNode(this->window(), this->dataPtr->renderSync,
+        this->dataPtr->graphicsAPI);
 
     // Set up connections to get the production of render texture in sync with
     // vsync on the rendering thread.
@@ -993,6 +1098,14 @@ void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 void RenderWindowItem::SetSkyEnabled(const bool &_sky)
 {
   this->dataPtr->renderThread->ignRenderer.skyEnable = _sky;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetGraphicsAPI(
+    const rendering::GraphicsAPI &_graphicsAPI)
+{
+  this->dataPtr->graphicsAPI = _graphicsAPI;
+  this->dataPtr->renderThread->SetGraphicsAPI(_graphicsAPI);
 }
 
 /////////////////////////////////////////////////
@@ -1138,7 +1251,16 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       renderWindow->SetSkyEnabled(true);
       if (!elem->NoChildren())
-        ignwarn << "Child elements of <sky> are not supported yet" << std::endl;
+        ignwarn << "Child elements of <sky> are not supported yet"
+            << std::endl;
+    }
+
+    elem = _pluginElem->FirstChildElement("graphics_api");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      rendering::GraphicsAPI graphicsAPI =
+          rendering::GraphicsAPIUtils::Set(elem->GetText());
+      renderWindow->SetGraphicsAPI(graphicsAPI);
     }
   }
 
