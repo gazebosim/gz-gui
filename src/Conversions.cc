@@ -15,6 +15,7 @@
  *
 */
 
+#include <ignition/common/KeyEvent.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/math/Color.hh>
 
@@ -113,3 +114,22 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
   return event;
 }
 
+//////////////////////////////////////////////////
+ignition::common::KeyEvent ignition::gui::convert(const QKeyEvent &_e)
+{
+  common::KeyEvent event;
+  event.SetKey(_e.key());
+  event.SetText(_e.text().toStdString());
+
+  event.SetControl(
+    (_e.modifiers() & Qt::ControlModifier)
+    && (_e.key() == Qt::Key_Control));
+  event.SetShift(
+    (_e.modifiers() & Qt::ShiftModifier)
+    && (_e.key() == Qt::Key_Shift));
+  event.SetAlt(
+    (_e.modifiers() & Qt::AltModifier)
+    && (_e.key() == Qt::Key_Alt));
+
+  return event;
+}

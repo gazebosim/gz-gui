@@ -149,6 +149,8 @@ void IgnRenderer::HandleMouseEvent()
   this->BroadcastHoverPos();
   this->BroadcastLeftClick();
   this->BroadcastRightClick();
+  this->BroadcastKeyPress();
+  this->BroadcastKeyRelease();
   this->HandleMouseViewControl();
   this->dataPtr->mouseDirty = false;
 }
@@ -168,53 +170,44 @@ void IgnRenderer::HandleMouseViewControl()
 }
 
 ////////////////////////////////////////////////
-void IgnRenderer::HandleKeyPress(QKeyEvent *_e)
+void IgnRenderer::HandleKeyPress(common::KeyEvent &_e)
 {
-  if (_e->isAutoRepeat())
-    return;
-
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->dataPtr->keyEvent.SetKey(_e->key());
-  this->dataPtr->keyEvent.SetText(_e->text().toStdString());
+  this->dataPtr->keyEvent.SetKey(_e.Key());
+  this->dataPtr->keyEvent.SetText(_e.Text());
 
-  this->dataPtr->keyEvent.SetControl(
-    (_e->modifiers() & Qt::ControlModifier));
-  this->dataPtr->keyEvent.SetShift(
-    (_e->modifiers() & Qt::ShiftModifier));
-  this->dataPtr->keyEvent.SetAlt(
-    (_e->modifiers() & Qt::AltModifier));
+  this->dataPtr->keyEvent.SetControl(_e.Control());
+  this->dataPtr->keyEvent.SetShift(_e.Shift());
+  this->dataPtr->keyEvent.SetAlt(_e.Alt());
 
   this->dataPtr->mouseEvent.SetControl(this->dataPtr->keyEvent.Control());
   this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
   this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
-  this->dataPtr->keyEvent.SetType(common::KeyEvent::PRESS);
+  this->dataPtr->keyEvent.SetType(_e.Type());
+
+  events::KeyPressOnScene keyReleaseOnSceneEvent(this->dataPtr->keyEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &keyReleaseOnSceneEvent);
 }
 
 ////////////////////////////////////////////////
-void IgnRenderer::HandleKeyRelease(QKeyEvent *_e)
+void IgnRenderer::HandleKeyRelease(common::KeyEvent &_e)
 {
-  if (_e->isAutoRepeat())
-    return;
-
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->dataPtr->keyEvent.SetKey(0);
+  this->dataPtr->keyEvent.SetKey(_e.Key());
 
-  this->dataPtr->keyEvent.SetControl(
-    (_e->modifiers() & Qt::ControlModifier)
-    && (_e->key() != Qt::Key_Control));
-  this->dataPtr->keyEvent.SetShift(
-    (_e->modifiers() & Qt::ShiftModifier)
-    && (_e->key() != Qt::Key_Shift));
-  this->dataPtr->keyEvent.SetAlt(
-    (_e->modifiers() & Qt::AltModifier)
-    && (_e->key() != Qt::Key_Alt));
+  this->dataPtr->keyEvent.SetControl(_e.Control());
+  this->dataPtr->keyEvent.SetShift(_e.Shift());
+  this->dataPtr->keyEvent.SetAlt(_e.Alt());
 
   this->dataPtr->mouseEvent.SetControl(this->dataPtr->keyEvent.Control());
   this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
   this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
-  this->dataPtr->keyEvent.SetType(common::KeyEvent::RELEASE);
+  this->dataPtr->keyEvent.SetType(_e.Type());
+
+  events::KeyPressOnScene keyPressOnSceneEvent(this->dataPtr->keyEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &keyPressOnSceneEvent);
 }
 
 /////////////////////////////////////////////////
@@ -265,6 +258,29 @@ void IgnRenderer::BroadcastRightClick()
 
   events::RightClickToScene rightClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
+}
+
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastKeyRelease()
+{
+  if (this->dataPtr->keyEvent.Type() == common::KeyEvent::RELEASE)
+  {
+    events::KeyReleaseOnScene keyRelease(this->dataPtr->keyEvent);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &keyRelease);
+    this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
+  }
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastKeyPress()
+{
+  if (this->dataPtr->keyEvent.Type() == common::KeyEvent::PRESS)
+  {
+    events::KeyPressOnScene keyPress(this->dataPtr->keyEvent);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &keyPress);
+    this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -361,6 +377,11 @@ void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e)
 math::Vector3d IgnRenderer::ScreenToScene(
     const math::Vector2i &_screenPos) const
 {
+  // TODO(ahcorde): Replace this code with function in ign-rendering
+  // Require this commit
+  // https://github.com/ignitionrobotics/ign-rendering/pull/363
+  // in ign-rendering6
+
   // Normalize point on the image
   double width = this->dataPtr->camera->ImageWidth();
   double height = this->dataPtr->camera->ImageHeight();
@@ -807,6 +828,29 @@ void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 }
 
 ////////////////////////////////////////////////
+void RenderWindowItem::keyPressEvent(QKeyEvent *_e)
+{
+  if (_e->isAutoRepeat())
+    return;
+
+  auto event = convert(*_e);
+  event.SetType(common::KeyEvent::PRESS);
+  std::cerr << "control Pressed " << event.Control() << '\n';
+  this->HandleKeyPress(event);
+}
+
+////////////////////////////////////////////////
+void RenderWindowItem::keyReleaseEvent(QKeyEvent *_e)
+{
+  if (_e->isAutoRepeat())
+    return;
+
+  auto event = convert(*_e);
+  event.SetType(common::KeyEvent::RELEASE);
+  this->HandleKeyPress(event);
+}
+
+////////////////////////////////////////////////
 void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
@@ -844,13 +888,13 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 }
 
 ////////////////////////////////////////////////
-void RenderWindowItem::HandleKeyPress(QKeyEvent *_e)
+void RenderWindowItem::HandleKeyPress(common::KeyEvent &_e)
 {
   this->dataPtr->renderThread->ignRenderer.HandleKeyPress(_e);
 }
 
 ////////////////////////////////////////////////
-void RenderWindowItem::HandleKeyRelease(QKeyEvent *_e)
+void RenderWindowItem::HandleKeyRelease(common::KeyEvent &_e)
 {
   this->dataPtr->renderThread->ignRenderer.HandleKeyRelease(_e);
 }
@@ -858,25 +902,6 @@ void RenderWindowItem::HandleKeyRelease(QKeyEvent *_e)
 /////////////////////////////////////////////////
 bool MinimalScene::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if (_event->type() == QEvent::KeyPress)
-  {
-    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
-    if (keyEvent)
-    {
-      auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
-      renderWindow->HandleKeyPress(keyEvent);
-    }
-  }
-  else if (_event->type() == QEvent::KeyRelease)
-  {
-    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
-    if (keyEvent)
-    {
-      auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
-      renderWindow->HandleKeyRelease(keyEvent);
-    }
-  }
-
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
 }

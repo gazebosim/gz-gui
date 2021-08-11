@@ -21,6 +21,7 @@
 #include <string>
 #include <memory>
 
+#include <ignition/common/KeyEvent.hh>
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Pose3.hh>
@@ -110,11 +111,11 @@ namespace plugins
 
     /// \brief Handle key press event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyPress(QKeyEvent *_e);
+    public: void HandleKeyPress(ignition::common::KeyEvent &_e);
 
     /// \brief Handle key release event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyRelease(QKeyEvent *_e);
+    public: void HandleKeyRelease(ignition::common::KeyEvent &_e);
 
     /// \brief Handle mouse event for view control
     private: void HandleMouseEvent();
@@ -130,6 +131,12 @@ namespace plugins
 
     /// \brief Broadcasts a right click within the scene
     private: void BroadcastRightClick();
+
+    /// \brief Broadcasts a key release event within the scene
+    private: void BroadcastKeyRelease();
+
+    /// \brief Broadcasts a key press event within the scene
+    private: void BroadcastKeyPress();
 
     /// \brief Retrieve the first point on a surface in the 3D scene hit by a
     /// ray cast from the given 2D screen coordinates.
@@ -289,11 +296,11 @@ namespace plugins
 
     /// \brief Handle key press event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyPress(QKeyEvent *_e);
+    public: void HandleKeyPress(ignition::common::KeyEvent &_e);
 
     /// \brief Handle key release event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyRelease(QKeyEvent *_e);
+    public: void HandleKeyRelease(ignition::common::KeyEvent &_e);
 
     // Documentation inherited
     protected: virtual void mousePressEvent(QMouseEvent *_e) override;
@@ -303,6 +310,12 @@ namespace plugins
 
     // Documentation inherited
     protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
+
+    // Documentation inherited
+    protected: virtual void keyPressEvent(QKeyEvent *event);
+
+    // Documentation inherited
+    protected: virtual void keyReleaseEvent(QKeyEvent *event);
 
     // Documentation inherited
     protected: virtual void wheelEvent(QWheelEvent *_e) override;
