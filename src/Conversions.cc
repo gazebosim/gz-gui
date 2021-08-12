@@ -134,15 +134,9 @@ ignition::common::KeyEvent ignition::gui::convert(const QKeyEvent &_e)
     event.SetType(common::KeyEvent::NO_EVENT);
   }
 
-  event.SetControl(
-    (_e.modifiers() & Qt::ControlModifier)
-    && (_e.key() == Qt::Key_Control));
-  event.SetShift(
-    (_e.modifiers() & Qt::ShiftModifier)
-    && (_e.key() == Qt::Key_Shift));
-  event.SetAlt(
-    (_e.modifiers() & Qt::AltModifier)
-    && (_e.key() == Qt::Key_Alt));
+  event.SetControl(_e.modifiers() & Qt::ControlModifier);
+  event.SetShift(_e.modifiers() & Qt::ShiftModifier);
+  event.SetAlt(_e.modifiers() & Qt::AltModifier);
 
   return event;
 }
