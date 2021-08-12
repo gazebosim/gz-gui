@@ -185,9 +185,6 @@ void IgnRenderer::HandleKeyPress(common::KeyEvent &_e)
   this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
   this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
   this->dataPtr->keyEvent.SetType(_e.Type());
-
-  events::KeyPressOnScene keyReleaseOnSceneEvent(this->dataPtr->keyEvent);
-  App()->sendEvent(App()->findChild<MainWindow *>(), &keyReleaseOnSceneEvent);
 }
 
 ////////////////////////////////////////////////
@@ -205,9 +202,6 @@ void IgnRenderer::HandleKeyRelease(common::KeyEvent &_e)
   this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
   this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
   this->dataPtr->keyEvent.SetType(_e.Type());
-
-  events::KeyPressOnScene keyPressOnSceneEvent(this->dataPtr->keyEvent);
-  App()->sendEvent(App()->findChild<MainWindow *>(), &keyPressOnSceneEvent);
 }
 
 /////////////////////////////////////////////////
@@ -834,8 +828,6 @@ void RenderWindowItem::keyPressEvent(QKeyEvent *_e)
     return;
 
   auto event = convert(*_e);
-  event.SetType(common::KeyEvent::PRESS);
-  std::cerr << "control Pressed " << event.Control() << '\n';
   this->HandleKeyPress(event);
 }
 
@@ -846,7 +838,6 @@ void RenderWindowItem::keyReleaseEvent(QKeyEvent *_e)
     return;
 
   auto event = convert(*_e);
-  event.SetType(common::KeyEvent::RELEASE);
   this->HandleKeyPress(event);
 }
 
@@ -897,13 +888,6 @@ void RenderWindowItem::HandleKeyPress(common::KeyEvent &_e)
 void RenderWindowItem::HandleKeyRelease(common::KeyEvent &_e)
 {
   this->dataPtr->renderThread->ignRenderer.HandleKeyRelease(_e);
-}
-
-/////////////////////////////////////////////////
-bool MinimalScene::eventFilter(QObject *_obj, QEvent *_event)
-{
-  // Standard event processing
-  return QObject::eventFilter(_obj, _event);
 }
 
 /////////////////////////////////////////////////

@@ -70,9 +70,6 @@ namespace plugins
     public slots: void OnFocusWindow();
 
     // Documentation inherited
-    protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
-
-    // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
@@ -312,10 +309,10 @@ namespace plugins
     protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
 
     // Documentation inherited
-    protected: virtual void keyPressEvent(QKeyEvent *event);
+    protected: virtual void keyPressEvent(QKeyEvent *event) override;
 
     // Documentation inherited
-    protected: virtual void keyReleaseEvent(QKeyEvent *event);
+    protected: virtual void keyReleaseEvent(QKeyEvent *event) override;
 
     // Documentation inherited
     protected: virtual void wheelEvent(QWheelEvent *_e) override;
