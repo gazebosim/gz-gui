@@ -25,6 +25,8 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+#include <ignition/common/KeyEvent.hh>
+#include <ignition/common/MouseEvent.hh>
 #include <ignition/common/Time.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
@@ -86,6 +88,13 @@ namespace ignition
     /// \return Ignition mouse event
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QMouseEvent &_e);
+
+    /// \brief Return the equivalent ignition key event.
+    ///
+    /// \param[in] _e Qt key event
+    /// \return Ignition key event
+    IGNITION_GUI_VISIBLE
+    common::KeyEvent convert(const QKeyEvent &_e);
   }
 }
 #endif
