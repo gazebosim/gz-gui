@@ -152,13 +152,14 @@ TEST(ConversionsTest, MouseEvent)
 TEST(ConversionsTest, KeyEvent)
 {
   {
-    QKeyEvent qtEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QKeyEvent qtEvent(QEvent::KeyPress, Qt::Key_Escape,
+        Qt::ShiftModifier | Qt::ControlModifier);
     auto ignEvent = convert(qtEvent);
 
     EXPECT_EQ(ignEvent.Type(), common::KeyEvent::PRESS);
     EXPECT_EQ(ignEvent.Key(), Qt::Key_Escape);
-    EXPECT_FALSE(ignEvent.Control());
-    EXPECT_FALSE(ignEvent.Shift());
+    EXPECT_TRUE(ignEvent.Control());
+    EXPECT_TRUE(ignEvent.Shift());
     EXPECT_FALSE(ignEvent.Alt());
   }
   {
@@ -170,5 +171,15 @@ TEST(ConversionsTest, KeyEvent)
     EXPECT_TRUE(ignEvent.Control());
     EXPECT_FALSE(ignEvent.Shift());
     EXPECT_FALSE(ignEvent.Alt());
+  }
+  {
+    QKeyEvent qtEvent(QEvent::None, Qt::Key_R, Qt::AltModifier);
+    auto ignEvent = convert(qtEvent);
+
+    EXPECT_EQ(ignEvent.Type(), common::KeyEvent::NO_EVENT);
+    EXPECT_EQ(ignEvent.Key(), Qt::Key_R);
+    EXPECT_FALSE(ignEvent.Control());
+    EXPECT_FALSE(ignEvent.Shift());
+    EXPECT_TRUE(ignEvent.Alt());
   }
 }

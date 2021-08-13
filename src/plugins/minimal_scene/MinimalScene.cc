@@ -170,38 +170,27 @@ void IgnRenderer::HandleMouseViewControl()
 }
 
 ////////////////////////////////////////////////
-void IgnRenderer::HandleKeyPress(common::KeyEvent &_e)
+void IgnRenderer::HandleKeyPress(const common::KeyEvent &_e)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->dataPtr->keyEvent.SetKey(_e.Key());
-  this->dataPtr->keyEvent.SetText(_e.Text());
-
-  this->dataPtr->keyEvent.SetControl(_e.Control());
-  this->dataPtr->keyEvent.SetShift(_e.Shift());
-  this->dataPtr->keyEvent.SetAlt(_e.Alt());
+  this->dataPtr->keyEvent = _e;
 
   this->dataPtr->mouseEvent.SetControl(this->dataPtr->keyEvent.Control());
   this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
   this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
-  this->dataPtr->keyEvent.SetType(_e.Type());
 }
 
 ////////////////////////////////////////////////
-void IgnRenderer::HandleKeyRelease(common::KeyEvent &_e)
+void IgnRenderer::HandleKeyRelease(const common::KeyEvent &_e)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->dataPtr->keyEvent.SetKey(_e.Key());
-
-  this->dataPtr->keyEvent.SetControl(_e.Control());
-  this->dataPtr->keyEvent.SetShift(_e.Shift());
-  this->dataPtr->keyEvent.SetAlt(_e.Alt());
+  this->dataPtr->keyEvent = _e;
 
   this->dataPtr->mouseEvent.SetControl(this->dataPtr->keyEvent.Control());
   this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
   this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
-  this->dataPtr->keyEvent.SetType(_e.Type());
 }
 
 /////////////////////////////////////////////////
@@ -879,13 +868,13 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 }
 
 ////////////////////////////////////////////////
-void RenderWindowItem::HandleKeyPress(common::KeyEvent &_e)
+void RenderWindowItem::HandleKeyPress(const common::KeyEvent &_e)
 {
   this->dataPtr->renderThread->ignRenderer.HandleKeyPress(_e);
 }
 
 ////////////////////////////////////////////////
-void RenderWindowItem::HandleKeyRelease(common::KeyEvent &_e)
+void RenderWindowItem::HandleKeyRelease(const common::KeyEvent &_e)
 {
   this->dataPtr->renderThread->ignRenderer.HandleKeyRelease(_e);
 }

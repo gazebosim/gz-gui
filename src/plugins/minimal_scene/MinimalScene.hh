@@ -108,11 +108,11 @@ namespace plugins
 
     /// \brief Handle key press event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyPress(ignition::common::KeyEvent &_e);
+    public: void HandleKeyPress(const common::KeyEvent &_e);
 
     /// \brief Handle key release event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyRelease(ignition::common::KeyEvent &_e);
+    public: void HandleKeyRelease(const common::KeyEvent &_e);
 
     /// \brief Handle mouse event for view control
     private: void HandleMouseEvent();
@@ -293,11 +293,11 @@ namespace plugins
 
     /// \brief Handle key press event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyPress(ignition::common::KeyEvent &_e);
+    public: void HandleKeyPress(const common::KeyEvent &_e);
 
     /// \brief Handle key release event for snapping
     /// \param[in] _e The key event to process.
-    public: void HandleKeyRelease(ignition::common::KeyEvent &_e);
+    public: void HandleKeyRelease(const common::KeyEvent &_e);
 
     // Documentation inherited
     protected: virtual void mousePressEvent(QMouseEvent *_e) override;
@@ -309,10 +309,10 @@ namespace plugins
     protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
 
     // Documentation inherited
-    protected: virtual void keyPressEvent(QKeyEvent *event) override;
+    protected: virtual void keyPressEvent(QKeyEvent *_e) override;
 
     // Documentation inherited
-    protected: virtual void keyReleaseEvent(QKeyEvent *event) override;
+    protected: virtual void keyReleaseEvent(QKeyEvent *_e) override;
 
     // Documentation inherited
     protected: virtual void wheelEvent(QWheelEvent *_e) override;
