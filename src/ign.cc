@@ -36,6 +36,14 @@ char* g_argv[] =
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 {
+  
+  std::string home;
+  ignition::common::env(IGN_HOMEDIR, home);
+
+  std::string recordPathMod = ignition::common::joinPaths(home,
+        ".ignition", "gazebo", "log",ignition::common::timeToIso(IGN_SYSTEM_TIME()));
+  ignLogInit(recordPathMod, "gui_console.log");
+
   return strdup(IGNITION_GUI_VERSION_FULL);
 }
 
