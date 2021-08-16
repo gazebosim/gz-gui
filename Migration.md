@@ -5,6 +5,16 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Ignition GUI 5.1 to 5.2
+
+* The `Application::PluginAdded` signal used to send empty strings. Now it
+  sends the plugin's unique name.
+
+## Ignition GUI 4.4 to 4.5
+
+* The `Application::PluginAdded` signal used to send empty strings. Now it
+  sends the plugin's unique name.
+
 ## Ignition GUI 3.x to 4.x
 
 * Use rendering4, transport9 and msgs6.
