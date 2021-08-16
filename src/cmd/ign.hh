@@ -15,30 +15,9 @@
  *
 */
 
-#ifndef IGNITION_GUI_IGN_HH_
-#define IGNITION_GUI_IGN_HH_
+#ifndef IGNITION_GUI_SRC_CMD_IGN_HH_
+#define IGNITION_GUI_SRC_CMD_IGN_HH_
 
-/// \brief External hook to read the library version.
-/// \return C-string representing the version. Ex.: 0.1.2
-extern "C" char *ignitionVersion();
-
-/// \brief External hook to execute 'ign gui -l' from the command line.
-extern "C" void cmdPluginList();
-
-/// \brief External hook to execute 'ign gui -s' from the command line.
-/// \param[in] _filename Name of a plugin file.
-extern "C" void cmdStandalone(const char *_filename);
-
-/// \brief External hook to execute 'ign gui -c' from the command line.
-/// \param[in] _config Path to a config file.
-extern "C" void cmdConfig(const char *_config);
-
-/// \brief External hook to execute 'ign gui' from the command line.
-extern "C" void cmdEmptyWindow();
-
-/// \brief External hook when executing 'ign gui -t' from the command line.
-/// \param[in] _filename Path to a QSS file.
-extern "C" void cmdSetStyleFromFile(const char *_filename);
 
 /// \brief Set the verbosity level
 /// \param[in] _verbosity Verbosity level
