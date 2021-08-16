@@ -316,10 +316,10 @@ bool Application::LoadPlugin(const std::string &_filename,
   std::string home;
   common::env(IGN_HOMEDIR, home);
 
-#ifndef _WIN32
-  std::string delimiter = ":";
-#else
+#ifdef _WIN32
   std::string delimiter = ";";
+#else
+  std::string delimiter = ":";
 #endif
 
   systemPaths.AddPluginPaths(
