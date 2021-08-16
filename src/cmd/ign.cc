@@ -24,8 +24,9 @@
 
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/config.hh"
-#include "ign.hh"
+#include "ignition/gui/ign.hh"
 #include "ignition/gui/MainWindow.hh"
+#include "ign.hh"
 
 int g_argc = 1;
 char* g_argv[] =
