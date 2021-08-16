@@ -21,6 +21,7 @@
 #include <ignition/utils/cli/CLI.hpp>
 
 #include "ignition/gui/config.hh"
+#include "ignition/gui/ign.hh"
 #include "ign.hh"
 
 //////////////////////////////////////////////////
