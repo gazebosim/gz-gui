@@ -49,6 +49,12 @@ class ignition::gui::events::HoverToScene::Implementation
   public: math::Vector3d point;
 };
 
+class ignition::gui::events::HoverOnScene::Implementation
+{
+  /// \brief The 2D point over which the user is hovering.
+  public: math::Vector2i point;
+};
+
 class ignition::gui::events::LeftClickToScene::Implementation
 {
   /// \brief The 3D point that the user clicked within the scene.
@@ -166,6 +172,19 @@ HoverToScene::HoverToScene(const math::Vector3d &_point)
 
 /////////////////////////////////////////////////
 math::Vector3d HoverToScene::Point() const
+{
+  return this->dataPtr->point;
+}
+
+/////////////////////////////////////////////////
+HoverOnScene::HoverOnScene(const math::Vector2i &_point)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->point = _point;
+}
+
+/////////////////////////////////////////////////
+math::Vector2i HoverOnScene::Point() const
 {
   return this->dataPtr->point;
 }

@@ -203,6 +203,8 @@ void IgnRenderer::BroadcastHoverPos()
 
   events::HoverToScene hoverToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &hoverToSceneEvent);
+  events::HoverOnScene hoverOnSceneEvent(this->dataPtr->mouseHoverPos);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &hoverOnSceneEvent);
 }
 
 /////////////////////////////////////////////////

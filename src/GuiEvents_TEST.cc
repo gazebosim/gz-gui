@@ -70,6 +70,15 @@ TEST(GuiEventsTest, HoverToScene)
 }
 
 /////////////////////////////////////////////////
+TEST(GuiEventsTest, HoverOnScene)
+{
+  events::HoverOnScene event({1, 2});
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_EQ(math::Vector2i(1, 2), event.Point());
+}
+
+/////////////////////////////////////////////////
 TEST(GuiEventsTest, LeftClickToScene)
 {
   events::LeftClickToScene event({1, 2, 3});

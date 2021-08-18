@@ -323,6 +323,29 @@ namespace ignition
         /// \brief Private data pointer
         IGN_UTILS_IMPL_PTR(dataPtr)
       };
+
+      /// \brief Event which is called to broadcast the 2D coordinates of a
+      /// user's mouse hover within the scene.
+      class IGNITION_GUI_VISIBLE HoverOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _point The point at which the mouse is hovering within
+        /// the scene
+        public: explicit HoverOnScene(const math::Vector2i &_point);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 13);
+
+        /// \brief Get the point within the scene over which the user is
+        /// hovering.
+        /// \return The 2D point
+        public: math::Vector2i Point() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
     }
   }
 }
