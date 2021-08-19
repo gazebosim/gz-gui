@@ -203,7 +203,12 @@ void IgnRenderer::BroadcastHoverPos()
 
   events::HoverToScene hoverToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &hoverToSceneEvent);
-  events::HoverOnScene hoverOnSceneEvent(this->dataPtr->mouseHoverPos);
+
+  common::MouseEvent hoverMouseEvent = this->dataPtr->mouseEvent;
+  hoverMouseEvent.SetPos(this->dataPtr->mouseHoverPos);
+  hoverMouseEvent.SetDragging(false);
+  hoverMouseEvent.SetType(common::MouseEvent::MOVE);
+  events::HoverOnScene hoverOnSceneEvent(hoverMouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &hoverOnSceneEvent);
 }
 

@@ -72,10 +72,20 @@ TEST(GuiEventsTest, HoverToScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, HoverOnScene)
 {
-  events::HoverOnScene event({1, 2});
+
+  ignition::common::MouseEvent mouse;
+  mouse.SetAlt(true);
+  mouse.SetShift(true);
+  mouse.SetDragging(false);
+  mouse.SetType(common::MouseEvent::MOVE);
+  events::HoverOnScene event(mouse);
 
   EXPECT_LT(QEvent::User, event.type());
-  EXPECT_EQ(math::Vector2i(1, 2), event.Point());
+  EXPECT_FALSE(event.Mouse().Control());
+  EXPECT_FALSE(event.Mouse().Dragging());
+  EXPECT_EQ(event.Mouse().Type(), common::MouseEvent::MOVE);
+  EXPECT_TRUE(event.Mouse().Alt());
+  EXPECT_TRUE(event.Mouse().Shift());
 }
 
 /////////////////////////////////////////////////

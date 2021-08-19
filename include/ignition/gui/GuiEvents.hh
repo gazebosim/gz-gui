@@ -331,7 +331,7 @@ namespace ignition
         /// \brief Constructor
         /// \param[in] _point The point at which the mouse is hovering within
         /// the scene
-        public: explicit HoverOnScene(const math::Vector2i &_point);
+        public: explicit HoverOnScene(const common::MouseEvent &_mouse);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 13);
@@ -339,7 +339,7 @@ namespace ignition
         /// \brief Get the point within the scene over which the user is
         /// hovering.
         /// \return The 2D point
-        public: math::Vector2i Point() const;
+        public: common::MouseEvent Mouse() const;
 
         /// \internal
         /// \brief Private data pointer
