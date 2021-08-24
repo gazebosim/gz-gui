@@ -53,24 +53,6 @@ std::string custom_exec_str(std::string _cmd)
   return result;
 }
 
-TEST(CmdLine, version)
-{
-  std::string cmd = "C:/Jenkins/workspace/ign_gui-pr-win/ws/install/ignition-gui5/lib/ignition/gui5/ign-gui.exe --version -v 4";
-  std::string output = custom_exec_str(cmd);
-  std::cerr << "Version: " << output << '\n';
-}
-
-TEST(CmdLine, list2)
-{
-  std::string pathstr;
-  ignition::common::env("PATH", pathstr, true);
-  std::string cmd = "set \"PATH=" + pathstr + "\" && set QT_QPA_PLATFORM_PLUGIN_PATH=C:/vcpkg/installed/x64-windows/plugins/platforms && set QT_QPA_PLATFORM=offscreen " +
-    " && C:/Jenkins/workspace/ign_gui-pr-win/ws/install/ignition-gui5/lib/ignition/gui5/ign-gui.exe -v 4 -l";
-  std::cerr << "cmd list2 " << cmd << '\n';
-  std::string output = custom_exec_str(cmd);
-  std::cerr << "List2: " << output << '\n';
-}
-
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 TEST(CmdLine, list)
 {
@@ -84,9 +66,7 @@ TEST(CmdLine, list)
   std::string ign = std::string(IGN_PATH) + "/ign.rb";
   ignition::common::env("PATH", pathstr, true);
   std::string cmd = std::string("set IGN_CONFIG_PATH=") + ignConfigPath +
-    " && set \"PATH=" + pathstr + "\" && set QT_QPA_PLATFORM_PLUGIN_PATH=C:/vcpkg/installed/x64-windows/plugins/platforms && set QT_QPA_PLATFORM=offscreen "
-    + "&& " + ign + " gui -l -v 4";
-  std::cerr << "cmd: " << cmd << '\n';
+    " && set \"PATH=" + pathstr + "\" && " + ign + " gui -l -v 4";
 #endif
   std::string output = custom_exec_str(cmd);
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
