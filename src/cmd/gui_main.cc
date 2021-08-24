@@ -15,6 +15,8 @@
  *
  */
 
+#include <string.h>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/Util.hh>
 
