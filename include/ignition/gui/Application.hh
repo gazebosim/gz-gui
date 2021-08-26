@@ -96,11 +96,11 @@ namespace ignition
       /// and plugins. This function doesn't instantiate the plugins, it just
       /// keeps them in memory and they can be applied later by either
       /// instantiating a window or several dialogs.
-      /// \param[in] _config Full path to configuration file.
+      /// \param[in] _pluginElem Full path to configuration file.
       /// \return True if successful
       /// \sa InitializeMainWindow
       /// \sa InitializeDialogs
-      public: bool LoadConfig(const std::string &_config);
+      public: bool LoadConfig(const std::string &_pluginElem);
 
       /// \brief Load the configuration from the default config file.
       /// \return True if successful
