@@ -68,8 +68,9 @@ TEST(CmdLine, list)
   std::string cmd = std::string("set IGN_CONFIG_PATH=") + ignConfigPath +
     " && set \"PATH=" + pathstr + "\" && " + ign + " gui -l -v 4";
 #endif
+  std::cout << "CMD: " << cmd << std::endl;
   std::string output = custom_exec_str(cmd);
+  std::cout << "OUTPUT: " << output << std::endl;
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
   EXPECT_NE(output.find("Publisher"), std::string::npos) << output;
-
 }
