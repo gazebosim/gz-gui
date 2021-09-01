@@ -76,7 +76,7 @@ Popup {
 
     ListView {
       id: pluginMenuListView
-      height: pluginMenu.height - 50
+      Layout.fillHeight: true
       width: parent.width
       clip: true
 
