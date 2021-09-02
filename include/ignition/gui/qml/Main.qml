@@ -201,9 +201,10 @@ ApplicationWindow
 
         PluginMenu {
           id: pluginMenu
+          width: 200
           x: parent.width - width
           height: window.height * 0.3
-          transformOrigin: Menu.TopRight
+          transformOrigin: Popup.TopRight
         }
       }
     }

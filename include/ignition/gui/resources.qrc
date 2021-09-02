@@ -6,6 +6,7 @@
   <file>qml/IgnCardSettings.qml</file>
   <file>qml/IgnHelpers.qml</file>
   <file>qml/IgnRulers.qml</file>
+  <file>qml/IgnSortFilterModel.qml</file>
   <file>qml/IgnSpinBox.qml</file>
   <file>qml/IgnSplit.qml</file>
   <file>qml/Main.qml</file>
@@ -17,5 +18,6 @@
   <file>qml/images/ignition_logo_50x50.png</file>
   <file>qml/images/drawer.png</file>
   <file>qml/images/menu.png</file>
+  <file>qml/images/search.svg</file>
 </qresource>
 </RCC>
