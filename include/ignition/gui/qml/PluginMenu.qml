@@ -38,6 +38,8 @@ Popup {
       Material.color(Material.Grey, Material.Shade200):
       Material.color(Material.Grey, Material.Shade900);
 
+  onOpened: searchField.forceActiveFocus()
+
   ColumnLayout {
     anchors.fill: parent
     spacing: 0
