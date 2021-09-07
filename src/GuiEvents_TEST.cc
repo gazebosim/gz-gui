@@ -193,3 +193,12 @@ TEST(GuiEventsTest, BlockOrbit)
   EXPECT_LT(QEvent::User, event2.type());
   EXPECT_FALSE(event2.Block());
 }
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, SpawnCloneFromName)
+{
+  events::SpawnCloneFromName toCloneName("thingToClone");
+
+  EXPECT_LT(QEvent::User, toCloneName.type());
+  EXPECT_EQ("thingToClone", toCloneName.Name());
+}

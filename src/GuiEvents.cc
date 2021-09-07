@@ -103,6 +103,12 @@ class ignition::gui::events::KeyPressOnScene::Implementation
   public: common::KeyEvent key;
 };
 
+class ignition::gui::events::SpawnCloneFromName::Implementation
+{
+  /// \brief The name of the resource to be cloned
+  public: std::string name;
+};
+
 using namespace ignition;
 using namespace gui;
 using namespace events;
@@ -293,4 +299,18 @@ KeyPressOnScene::KeyPressOnScene(
 common::KeyEvent KeyPressOnScene::Key() const
 {
   return this->dataPtr->key;
+}
+
+/////////////////////////////////////////////////
+SpawnCloneFromName::SpawnCloneFromName(
+  const std::string &_name)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->name = _name;
+}
+
+/////////////////////////////////////////////////
+const std::string &SpawnCloneFromName::Name() const
+{
+  return this->dataPtr->name;
 }
