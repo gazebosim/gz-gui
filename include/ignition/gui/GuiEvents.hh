@@ -216,6 +216,46 @@ namespace ignition
         IGN_UTILS_IMPL_PTR(dataPtr)
       };
 
+      /// \brief Event which is called to broadcast the key release within
+      /// the scene.
+      class IGNITION_GUI_VISIBLE KeyReleaseOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _key The key released event within the scene
+        public: explicit KeyReleaseOnScene(const common::KeyEvent &_key);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 8);
+
+        /// \brief Get the released key within the scene that the user released.
+        /// \return The key code.
+        public: common::KeyEvent Key() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event which is called to broadcast the key press within
+      /// the scene.
+      class IGNITION_GUI_VISIBLE KeyPressOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _key The pressed key within the scene
+        public: explicit KeyPressOnScene(const common::KeyEvent &_key);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 9);
+
+        /// \brief Get the key within the scene that the user pressed
+        /// \return The key code.
+        public: common::KeyEvent Key() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
       /// \brief Event which is called to broadcast information about left
       /// mouse clicks on the scene.
       /// For the 3D coordinates of that point on the scene, see
@@ -256,46 +296,6 @@ namespace ignition
 
         /// \brief Return the right mouse event
         public: const common::MouseEvent &Mouse() const;
-
-        /// \internal
-        /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
-      };
-
-      /// \brief Event which is called to broadcast the key release within
-      /// the scene.
-      class IGNITION_GUI_VISIBLE KeyReleaseOnScene : public QEvent
-      {
-        /// \brief Constructor
-        /// \param[in] _key The key released event within the scene
-        public: explicit KeyReleaseOnScene(const common::KeyEvent &_key);
-
-        /// \brief Unique type for this event.
-        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 8);
-
-        /// \brief Get the released key within the scene that the user released.
-        /// \return The key code.
-        public: common::KeyEvent Key() const;
-
-        /// \internal
-        /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
-      };
-
-      /// \brief Event which is called to broadcast the key press within
-      /// the scene.
-      class IGNITION_GUI_VISIBLE KeyPressOnScene : public QEvent
-      {
-        /// \brief Constructor
-        /// \param[in] _key The pressed key within the scene
-        public: explicit KeyPressOnScene(const common::KeyEvent &_key);
-
-        /// \brief Unique type for this event.
-        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 9);
-
-        /// \brief Get the key within the scene that the user pressed
-        /// \return The key code.
-        public: common::KeyEvent Key() const;
 
         /// \internal
         /// \brief Private data pointer
@@ -346,6 +346,24 @@ namespace ignition
         IGN_UTILS_IMPL_PTR(dataPtr)
       };
 
+      /// \brief Event called to clone a resource, given its name as a string.
+      class IGNITION_GUI_VISIBLE SpawnCloneFromName : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _name The name of the resource to clone
+        public: explicit SpawnCloneFromName(const std::string &_name);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 14);
+
+        /// \brief Get the name of the resource to be cloned
+        /// \return The name of the resource to be cloned
+        public: const std::string &Name() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
     }
   }
 }
