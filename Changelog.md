@@ -8,6 +8,23 @@
 
 ### Ignition Gui 5.X.X (20XX-XX-XX)
 
+### Ignition Gui 5.2.0 (2021-07-27)
+
+1. New teleop plugin implementation.
+    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
+
+1. Fix plugin added signal, add PluginByName
+    * [Pull request #249](https://github.com/ignitionrobotics/ign-gui/pull/249)
+
+1. Fixed tests by passing valid argv
+    * [Pull request #244](https://github.com/ignitionrobotics/ign-gui/pull/244)
+
+1. Screenshot plugin fixed dbg message
+    * [Pull request #246](https://github.com/ignitionrobotics/ign-gui/pull/246)
+
+1. Detect ign instead of using cmake module to check for ignition-tools
+    * [Pull request #240](https://github.com/ignitionrobotics/ign-gui/pull/240)
+
 ### Ignition Gui 5.1.0 (2021-06-23)
 
 1. Depend on common 4.1 and rendering 5.1
@@ -66,6 +83,27 @@
 ### Ignition Gui 4.X.X
 
 ### Ignition Gui 4.X.X (20XX-XX-XX)
+
+
+### Ignition Gui 4.5.0 (2021-07-26)
+
+1. New teleop plugin implementation.
+    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
+
+1. Fix codeowners
+    * [Pull request #251](https://github.com/ignitionrobotics/ign-gui/pull/251)
+
+1. Fix plugin added signal, add PluginByName
+    * [Pull request #249](https://github.com/ignitionrobotics/ign-gui/pull/249)
+
+1. Fixed tests by passing valid argv
+    * [Pull request #244](https://github.com/ignitionrobotics/ign-gui/pull/244)
+
+1. Screenshot plugin fixed dbg message
+    * [Pull request #246](https://github.com/ignitionrobotics/ign-gui/pull/246)
+
+1. Detect ign instead of using cmake module to check for ignition-tools
+    * [Pull request #240](https://github.com/ignitionrobotics/ign-gui/pull/240)
 
 ### Ignition Gui 4.4.0 (2021-06-21)
 
