@@ -118,6 +118,6 @@ Ignition GUI by default.
 Ignition GUI will look for display plugins on the following paths, in this
 order:
 
-1. All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
-1. `~/.ignition/gui/display_plugins`
-1. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
+ - All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
+ - `~/.ignition/gui/display_plugins`
+ - [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
