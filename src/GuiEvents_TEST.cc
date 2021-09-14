@@ -202,3 +202,13 @@ TEST(GuiEventsTest, SpawnCloneFromName)
   EXPECT_LT(QEvent::User, toCloneName.type());
   EXPECT_EQ("thingToClone", toCloneName.Name());
 }
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, DropOnScene)
+{
+  events::DropOnScene dropOnScene("text", ignition::math::Vector2i(3, 100));
+
+  EXPECT_LT(QEvent::User, dropOnScene.type());
+  EXPECT_EQ(ignition::math::Vector2i(3, 100), dropOnScene.Mouse());
+  EXPECT_EQ("text", dropOnScene.DropName());
+}

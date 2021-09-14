@@ -60,6 +60,9 @@ class ignition::gui::plugins::IgnRenderer::Implementation
   /// \brief Flag to indicate if hover event is dirty
   public: bool hoverDirty{false};
 
+  /// \brief Flag to indicate if drop event is dirty
+  public: bool dropDirty{false};
+
   /// \brief Mouse event
   public: common::MouseEvent mouseEvent;
 
@@ -74,6 +77,12 @@ class ignition::gui::plugins::IgnRenderer::Implementation
 
   /// \brief The currently hovered mouse position in screen coordinates
   public: math::Vector2i mouseHoverPos{math::Vector2i::Zero};
+
+  /// \brief The currently drop mouse position in screen coordinates
+  public: math::Vector2i mouseDropPos{math::Vector2i::Zero};
+
+  /// \brief The dropped text in the scene
+  public: std::string dropText{""};
 
   /// \brief Ray query for mouse clicks
   public: rendering::RayQueryPtr rayQuery{nullptr};
@@ -151,6 +160,7 @@ void IgnRenderer::HandleMouseEvent()
   this->BroadcastRightClick();
   this->BroadcastKeyPress();
   this->BroadcastKeyRelease();
+  this->BroadcastDrop();
   this->HandleMouseViewControl();
   this->dataPtr->mouseDirty = false;
 }
@@ -191,6 +201,17 @@ void IgnRenderer::HandleKeyRelease(const common::KeyEvent &_e)
   this->dataPtr->mouseEvent.SetControl(this->dataPtr->keyEvent.Control());
   this->dataPtr->mouseEvent.SetShift(this->dataPtr->keyEvent.Shift());
   this->dataPtr->mouseEvent.SetAlt(this->dataPtr->keyEvent.Alt());
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastDrop()
+{
+  if (!this->dataPtr->dropDirty)
+    return;
+  events::DropOnScene dropOnSceneEvent(
+    this->dataPtr->dropText, this->dataPtr->mouseDropPos);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &dropOnSceneEvent);
+  this->dataPtr->dropDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -353,6 +374,16 @@ void IgnRenderer::NewHoverEvent(const math::Vector2i &_hoverPos)
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->dataPtr->mouseHoverPos = _hoverPos;
   this->dataPtr->hoverDirty = true;
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::NewDropEvent(const std::string &_dropText,
+  const math::Vector2i &_dropPos)
+{
+  std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  this->dataPtr->dropText = _dropText;
+  this->dataPtr->mouseDropPos = _dropPos;
+  this->dataPtr->dropDirty = true;
 }
 
 /////////////////////////////////////////////////
@@ -807,6 +838,14 @@ void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::OnDropped(const QString &_drop,
+    const ignition::math::Vector2i &_dropPos)
+{
+  this->dataPtr->renderThread->ignRenderer.NewDropEvent(
+    _drop.toStdString(), _dropPos);
+}
+
+/////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
   auto event = convert(*_e);
@@ -891,6 +930,13 @@ void MinimalScene::OnHovered(int _mouseX, int _mouseY)
 {
   auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
   renderWindow->OnHovered({_mouseX, _mouseY});
+}
+
+/////////////////////////////////////////////////
+void MinimalScene::OnDropped(const QString &_drop, int _mouseX, int _mouseY)
+{
+  auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+  renderWindow->OnDropped(_drop, {_mouseX, _mouseY});
 }
 
 /////////////////////////////////////////////////

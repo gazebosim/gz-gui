@@ -69,6 +69,13 @@ namespace plugins
     /// focus the window for mouse/key events
     public slots: void OnFocusWindow();
 
+    /// \brief Callback when receives a drop event.
+    /// \param[in] _drop Dropped string.
+    /// \param[in] _mouseX x coordinate of mouse position.
+    /// \param[in] _mouseY y coordinate of mouse position.
+    public slots: void OnDropped(const QString &_drop,
+        int _mouseX, int _mouseY);
+
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
@@ -106,6 +113,12 @@ namespace plugins
     /// \param[in] _hoverPos Mouse hover screen position
     public: void NewHoverEvent(const math::Vector2i &_hoverPos);
 
+    /// \brief New hover event triggered.
+    /// \param[in] _dropText Text dropped on the scene
+    /// \param[in] _dropPos Mouse drop screen position
+    public: void NewDropEvent(const std::string &_dropText,
+      const math::Vector2i &_dropPos);
+
     /// \brief Handle key press event for snapping
     /// \param[in] _e The key event to process.
     public: void HandleKeyPress(const common::KeyEvent &_e);
@@ -131,6 +144,9 @@ namespace plugins
 
     /// \brief Broadcasts a key release event within the scene
     private: void BroadcastKeyRelease();
+
+    /// \brief Broadcasts a drop event within the scene
+    private: void BroadcastDrop();
 
     /// \brief Broadcasts a key press event within the scene
     private: void BroadcastKeyPress();
@@ -283,6 +299,12 @@ namespace plugins
     /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
     /// the render window.
     public: void OnHovered(const ignition::math::Vector2i &_hoverPos);
+
+    /// \brief Callback when receives a drop event.
+    /// \param[in] _drop Dropped string.
+    /// \param[in] _dropPos x coordinate of mouse position.
+    public: void OnDropped(const QString &_drop,
+        const ignition::math::Vector2i &_dropPos);
 
     /// \brief Set if sky is enabled
     /// \param[in] _sky True to enable the sky, false otherwise.

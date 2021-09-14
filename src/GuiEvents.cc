@@ -109,6 +109,15 @@ class ignition::gui::events::SpawnCloneFromName::Implementation
   public: std::string name;
 };
 
+class ignition::gui::events::DropOnScene::Implementation
+{
+  /// \brief The name of the dropped thing
+  public: std::string dropName;
+
+  /// \brief X and Y position of the mouse
+  public: ignition::math::Vector2i mouse;
+};
+
 using namespace ignition;
 using namespace gui;
 using namespace events;
@@ -313,4 +322,25 @@ SpawnCloneFromName::SpawnCloneFromName(
 const std::string &SpawnCloneFromName::Name() const
 {
   return this->dataPtr->name;
+}
+
+/////////////////////////////////////////////////
+DropOnScene::DropOnScene(
+  const std::string &_drop, const ignition::math::Vector2i &_dropMouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->dropName = _drop;
+  this->dataPtr->mouse = _dropMouse;
+}
+
+/////////////////////////////////////////////////
+const std::string &DropOnScene::DropName() const
+{
+  return this->dataPtr->dropName;
+}
+
+/////////////////////////////////////////////////
+const ignition::math::Vector2i &DropOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
 }
