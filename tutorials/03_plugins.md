@@ -101,7 +101,7 @@ plugins.
 
     ign gui -c examples/config/reqres.config
 
-### Displays {#display-plugins}
+### Displays
 
 **Not ported to versions 1 or higher yet**
 
@@ -118,6 +118,6 @@ Ignition GUI by default.
 Ignition GUI will look for display plugins on the following paths, in this
 order:
 
- - All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
- - `~/.ignition/gui/display_plugins`
- - [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
+1. All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
+2. `~/.ignition/gui/display_plugins`
+3. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
