@@ -1,0 +1,6 @@
+module IgnGui
+
+plugin EntityContextMenu
+
+EntityContextMenu 1.0 qrc:/IgnGui/EntityContextMenu.qml
+TypeIcon 1.0 qrc:/IgnGui/TypeIcon.qml

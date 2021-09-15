@@ -152,7 +152,44 @@ void IgnRenderer::HandleMouseEvent()
   this->BroadcastKeyPress();
   this->BroadcastKeyRelease();
   this->HandleMouseViewControl();
+  this->HandleMouseContextMenu();
   this->dataPtr->mouseDirty = false;
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::HandleMouseContextMenu()
+{
+  if (!this->dataPtr->mouseDirty)
+    return;
+
+  if (!this->dataPtr->mouseEvent.Dragging() &&
+      this->dataPtr->mouseEvent.Type() == common::MouseEvent::RELEASE &&
+      this->dataPtr->mouseEvent.Button() == common::MouseEvent::RIGHT)
+  {
+    math::Vector2i dt =
+      this->dataPtr->mouseEvent.PressPos() - this->dataPtr->mouseEvent.Pos();
+
+    // check for click with some tol for mouse movement
+    if (dt.Length() > 5.0)
+      return;
+
+    rendering::VisualPtr visual = this->dataPtr->camera->Scene()->VisualAt(
+          this->dataPtr->camera,
+          this->dataPtr->mouseEvent.Pos());
+
+    if (!visual)
+      return;
+
+    // get model visual
+    while (visual->HasParent() && visual->Parent() !=
+        visual->Scene()->RootVisual())
+    {
+      visual = std::dynamic_pointer_cast<rendering::Visual>(visual->Parent());
+    }
+
+    emit ContextMenuRequested(visual->Name().c_str());
+    this->dataPtr->mouseDirty = false;
+  }
 }
 
 /////////////////////////////////////////////////
@@ -552,6 +589,10 @@ void RenderWindowItem::Ready()
 
   this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
 
+  this->connect(&this->dataPtr->renderThread->ignRenderer,
+      &IgnRenderer::ContextMenuRequested,
+      this, &RenderWindowItem::OnContextMenuRequested, Qt::QueuedConnection);
+
   this->connect(this, &QObject::destroyed,
       this->dataPtr->renderThread, &RenderThread::ShutDown,
       Qt::QueuedConnection);
@@ -563,6 +604,12 @@ void RenderWindowItem::Ready()
 
   this->dataPtr->renderThread->start();
   this->update();
+}
+
+///////////////////////////////////////////////////
+void RenderWindowItem::OnContextMenuRequested(QString _entity)
+{
+  emit openContextMenu(std::move(_entity));
 }
 
 /////////////////////////////////////////////////
@@ -841,6 +888,7 @@ void RenderWindowItem::keyReleaseEvent(QKeyEvent *_e)
 void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
+  this->dataPtr->mouseEvent.SetPressPos(_e->pos().x(), _e->pos().y());
 
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);

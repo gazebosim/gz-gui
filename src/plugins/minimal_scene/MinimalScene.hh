@@ -84,8 +84,10 @@ namespace plugins
   /// with QtQuick's opengl render operations. The main Render function will
   /// render to an offscreen texture and notify via signal and slots when it's
   /// ready to be displayed.
-  class IgnRenderer
+  class IgnRenderer : public QObject
   {
+    Q_OBJECT
+
     ///  \brief Constructor
     public: IgnRenderer();
 
@@ -120,6 +122,9 @@ namespace plugins
     /// \brief Handle mouse event for view control
     private: void HandleMouseViewControl();
 
+    /// \brief Handle mouse event for context menu
+    private: void HandleMouseContextMenu();
+
     /// \brief Broadcasts the currently hovered 3d scene location.
     private: void BroadcastHoverPos();
 
@@ -141,6 +146,9 @@ namespace plugins
     /// \return 3D coordinates of a point in the 3D scene.
     private: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
         const;
+
+    /// \brief Signal fired when context menu event is triggered
+    signals: void ContextMenuRequested(QString _entity);
 
     /// \brief Render texture id
     public: GLuint textureId = 0u;
@@ -298,6 +306,16 @@ namespace plugins
     /// \brief Handle key release event for snapping
     /// \param[in] _e The key event to process.
     public: void HandleKeyRelease(const common::KeyEvent &_e);
+
+    /// \brief Signal fired to open context menu
+    /// Note that the function name needs to start with lowercase in order for
+    /// the connection to work on the QML side
+    /// \param[in] _entity Scoped name of entity.
+    signals: void openContextMenu(QString _entity); // NOLINT
+
+    /// \brief Qt callback when context menu request is received
+    /// \param[in] _entity Scoped name of entity.
+    public slots: void OnContextMenuRequested(QString _entity);
 
     // Documentation inherited
     protected: virtual void mousePressEvent(QMouseEvent *_e) override;

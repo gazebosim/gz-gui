@@ -18,6 +18,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.0
 import RenderWindow 1.0
 import QtGraphicalEffects 1.0
+import IgnGui 1.0 as IgnGui
 
 Rectangle {
   width: 1000
@@ -48,6 +49,12 @@ Rectangle {
     id: renderWindow
     objectName: "rw"
     anchors.fill: parent
+
+    Connections {
+      target: renderWindow
+      onOpenContextMenu: entityContextMenu.open(_entity, "model",
+          mouseArea.mouseX, mouseArea.mouseY);
+    }
   }
 
   /*
@@ -67,5 +74,10 @@ Rectangle {
 
       width = Qt.binding(function() {return parent.parent.width})
       height = Qt.binding(function() {return parent.parent.height})
+  }
+
+  IgnGui.EntityContextMenu {
+    id: entityContextMenu
+    anchors.fill: parent
   }
 }

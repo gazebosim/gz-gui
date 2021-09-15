@@ -113,6 +113,8 @@ function(ign_gui_add_plugin plugin_name)
   install (TARGETS ${plugin_name} DESTINATION ${IGNITION_GUI_PLUGIN_INSTALL_DIR})
 endfunction()
 
+add_subdirectory(modules)
+
 # Plugins
 add_subdirectory(camera_tracking)
 add_subdirectory(grid_3d)
