@@ -248,6 +248,8 @@ void IgnRenderer::BroadcastRightClick()
 
   events::RightClickToScene rightClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
+  events::RightClickOnScene rightClickOnSceneEvent(this->dataPtr->mouseEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickOnSceneEvent);
 }
 
 
@@ -841,6 +843,7 @@ void RenderWindowItem::keyReleaseEvent(QKeyEvent *_e)
 void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
+  this->dataPtr->mouseEvent.SetPressPos(_e->pos().x(), _e->pos().y());
 
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
