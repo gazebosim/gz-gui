@@ -180,3 +180,17 @@ QStringList ignition::gui::worldNames()
 
   return worldNamesVariant.toStringList();
 }
+
+/////////////////////////////////////////////////
+std::string ignition::gui::renderEngineName()
+{
+  auto win = App()->findChild<MainWindow *>();
+  if (nullptr == win)
+    return {};
+
+  auto renderEngineNameVariant = win->property("renderEngineGUI");
+  if (!renderEngineNameVariant.isValid())
+    return {};
+
+  return renderEngineNameVariant.toString().toStdString();
+}

@@ -49,6 +49,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/GuiEvents.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MainWindow.hh"
 
 /// \brief Private data class for IgnRenderer
@@ -714,18 +715,26 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "3D Scene";
 
+  std::string cmdRenderEngineGUI = gui::renderEngineName();
   // Custom parameters
   if (_pluginElem)
   {
     auto elem = _pluginElem->FirstChildElement("engine");
-    if (nullptr != elem && nullptr != elem->GetText())
+    if (cmdRenderEngineGUI.empty())
     {
-      renderWindow->SetEngineName(elem->GetText());
-      // there is a problem with displaying ogre2 render textures that are in
-      // sRGB format. Workaround for now is to apply gamma correction manually.
-      // There maybe a better way to solve the problem by making OpenGL calls..
-      if (elem->GetText() == std::string("ogre2"))
-        this->PluginItem()->setProperty("gammaCorrect", true);
+      if (nullptr != elem && nullptr != elem->GetText())
+      {
+        renderWindow->SetEngineName(elem->GetText());
+        // there is a problem with displaying ogre2 render textures that are in
+        // sRGB format. Workaround for now is to apply gamma correction manually.
+        // There maybe a better way to solve the problem by making OpenGL calls..
+        if (elem->GetText() == std::string("ogre2"))
+          this->PluginItem()->setProperty("gammaCorrect", true);
+      }
+    }
+    else
+    {
+      renderWindow->SetEngineName(cmdRenderEngineGUI);
     }
 
     elem = _pluginElem->FirstChildElement("scene");
