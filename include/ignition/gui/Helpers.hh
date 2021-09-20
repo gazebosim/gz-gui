@@ -84,8 +84,8 @@ namespace ignition
     /// used by plugins to set the GUI render engine
     /// This helper function provides a handy access to the render engine GUI
     /// name
-    /// \return Name of render engine used on the GUI, as stored in the `MainWindow`'s
-    /// "renderEngine" property.
+    /// \return Name of render engine used on the GUI, as stored in the
+    /// `MainWindow`'s "renderEngine" property.
     IGNITION_GUI_VISIBLE
     std::string renderEngineName();
 
