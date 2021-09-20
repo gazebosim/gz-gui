@@ -724,19 +724,21 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       if (nullptr != elem && nullptr != elem->GetText())
       {
-        renderWindow->SetEngineName(elem->GetText());
-        // there is a problem with displaying ogre2 render textures that are in
-        // sRGB format. Workaround for now is to apply gamma correction
-        // manually.
-        // There maybe a better way to solve the problem by making OpenGL calls.
-        if (elem->GetText() == std::string("ogre2"))
-          this->PluginItem()->setProperty("gammaCorrect", true);
+        cmdRenderEngineGUI = elem->GetText();
+        renderWindow->SetEngineName(cmdRenderEngineGUI);
       }
     }
     else
     {
       renderWindow->SetEngineName(cmdRenderEngineGUI);
     }
+
+    // there is a problem with displaying ogre2 render textures that are in
+    // sRGB format. Workaround for now is to apply gamma correction
+    // manually.
+    // There maybe a better way to solve the problem by making OpenGL calls.
+    if (cmdRenderEngineGUI == std::string("ogre2"))
+      this->PluginItem()->setProperty("gammaCorrect", true);
 
     elem = _pluginElem->FirstChildElement("scene");
     if (nullptr != elem && nullptr != elem->GetText())

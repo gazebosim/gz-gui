@@ -79,12 +79,13 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     QStringList worldNames();
 
-    /// \brief The main window's "renderEngineGUI" property may be filled with
+    /// \brief The main window's "renderEngine" property may be filled with
     /// a string of the render engine gui name. This information can be
     /// used by plugins to set the GUI render engine
     /// This helper function provides a handy access to the render engine GUI
     /// name
-    /// \return rneder engine GUI name, as stored in the `MainWindow`'s
+    /// \return Name of render engine used on the GUI, as stored in the `MainWindow`'s
+    /// "renderEngine" property.
     IGNITION_GUI_VISIBLE
     std::string renderEngineName();
 

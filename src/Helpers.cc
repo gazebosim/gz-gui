@@ -188,7 +188,7 @@ std::string ignition::gui::renderEngineName()
   if (nullptr == win)
     return {};
 
-  auto renderEngineNameVariant = win->property("renderEngineGUI");
+  auto renderEngineNameVariant = win->property("renderEngine");
   if (!renderEngineNameVariant.isValid())
     return {};
 
