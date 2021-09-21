@@ -173,3 +173,30 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
   // No more names
   EXPECT_TRUE(worldNames().empty());
 }
+
+/////////////////////////////////////////////////
+TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(renderEngine))
+{
+  // No app, no window, no render engine
+  EXPECT_TRUE(renderEngineName().empty());
+
+  Application app(gg_argc, gg_argv);
+  auto mainWindow = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  // No render engine by default
+  EXPECT_TRUE(renderEngineName().empty());
+
+  // Set the render engine GUI name
+  mainWindow->SetRenderEngine("ogre");
+
+  // Has render engine
+  EXPECT_FALSE(renderEngineName().empty());
+  EXPECT_EQ("ogre", renderEngineName());
+
+  // Set no render engine
+  mainWindow->SetRenderEngine({});
+
+  // No render engine set
+  EXPECT_TRUE(renderEngineName().empty());
+}

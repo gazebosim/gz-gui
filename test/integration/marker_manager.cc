@@ -114,12 +114,23 @@ TEST_F(MarkerManagerTestFixture,
       "<stats_topic>/example/stats</stats_topic>"
     "</plugin>";
 
+  const char *pluginMinimalSceneStr =
+    "<plugin filename=\"MinimalScene\">"
+      "<engine>ogre</engine>"
+      "<scene>scene</scene>"
+    "</plugin>";
+
   tinyxml2::XMLDocument pluginDoc;
   EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
 
+  tinyxml2::XMLDocument pluginDocMinimalScene;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS,
+    pluginDocMinimalScene.Parse(pluginMinimalSceneStr));
+
+  EXPECT_TRUE(app.LoadPlugin("MinimalScene",
+      pluginDocMinimalScene.FirstChildElement("plugin")));
   EXPECT_TRUE(app.LoadPlugin("MarkerManager",
       pluginDoc.FirstChildElement("plugin")));
-  EXPECT_TRUE(app.LoadPlugin("MinimalScene"));
 
   // Get main window
   auto window = app.findChild<MainWindow *>();

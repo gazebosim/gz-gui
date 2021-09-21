@@ -49,6 +49,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Conversions.hh"
 #include "ignition/gui/GuiEvents.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MainWindow.hh"
 
 Q_DECLARE_METATYPE(ignition::gui::plugins::RenderSync*)
@@ -941,21 +942,21 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "3D Scene";
 
+  std::string cmdRenderEngine = gui::renderEngineName();
   // Custom parameters
   if (_pluginElem)
   {
-    auto elem = _pluginElem->FirstChildElement("engine");
-    if (nullptr != elem && nullptr != elem->GetText())
+    // Only pick engine from XML if none is set on the Window
+    if (cmdRenderEngine.empty())
     {
-      renderWindow->SetEngineName(elem->GetText());
-      // there is a problem with displaying ogre2 render textures that are in
-      // sRGB format. Workaround for now is to apply gamma correction manually.
-      // There maybe a better way to solve the problem by making OpenGL calls..
-      if (elem->GetText() == std::string("ogre2"))
-        this->PluginItem()->setProperty("gammaCorrect", true);
+      auto elem = _pluginElem->FirstChildElement("engine");
+      if (nullptr != elem && nullptr != elem->GetText())
+      {
+        cmdRenderEngine = elem->GetText();
+      }
     }
 
-    elem = _pluginElem->FirstChildElement("scene");
+    auto elem = _pluginElem->FirstChildElement("scene");
     if (nullptr != elem && nullptr != elem->GetText())
       renderWindow->SetSceneName(elem->GetText());
 
@@ -1025,6 +1026,14 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         ignwarn << "Child elements of <sky> are not supported yet" << std::endl;
     }
   }
+
+  renderWindow->SetEngineName(cmdRenderEngine);
+  // there is a problem with displaying ogre2 render textures that are in
+  // sRGB format. Workaround for now is to apply gamma correction
+  // manually.
+  // There maybe a better way to solve the problem by making OpenGL calls.
+  if (cmdRenderEngine == std::string("ogre2"))
+    this->PluginItem()->setProperty("gammaCorrect", true);
 }
 
 /////////////////////////////////////////////////
