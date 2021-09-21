@@ -9,28 +9,28 @@
 
 1. New events
 
-  1. Drop
-      * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
+    1. Drop
+        * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
 
-  1. SpawnCloneFromName
-      * [Pull request #278](https://github.com/ignitionrobotics/ign-gui/pull/278)
+    1. SpawnCloneFromName
+        * [Pull request #278](https://github.com/ignitionrobotics/ign-gui/pull/278)
 
-  1. HoverOnScene
-      * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
+    1. HoverOnScene
+        * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
 
-  1. Mouse Events based on ignition::common
-      * [Pull request #228](https://github.com/ignitionrobotics/ign-gui/pull/228)
+    1. Mouse Events based on ignition::common
+        * [Pull request #228](https://github.com/ignitionrobotics/ign-gui/pull/228)
 
 1. New plugins
 
-  1. Interactive view control
-      * [Pull request #231](https://github.com/ignitionrobotics/ign-gui/pull/231)
+    1. Interactive view control
+        * [Pull request #231](https://github.com/ignitionrobotics/ign-gui/pull/231)
 
-  1. Marker Manager
-      * [Pull request #247](https://github.com/ignitionrobotics/ign-gui/pull/247)
+    1. Marker Manager
+        * [Pull request #247](https://github.com/ignitionrobotics/ign-gui/pull/247)
 
-  1. Moved tape measure and grid config from ign-gazebo to ign-gui
-      * [Pull request #236](https://github.com/ignitionrobotics/ign-gui/pull/236)
+    1. Moved tape measure and grid config from ign-gazebo to ign-gui
+        * [Pull request #236](https://github.com/ignitionrobotics/ign-gui/pull/236)
 
 1. PIMPL GUI events
     * [Pull request #253](https://github.com/ignitionrobotics/ign-gui/pull/253)
