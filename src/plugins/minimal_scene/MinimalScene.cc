@@ -1044,9 +1044,9 @@ void RenderWindowItem::OnDropped(const QString &_drop,
 /////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
-  auto event = convert(*_e);
-  event.SetPressPos(event.Pos());
-  this->dataPtr->mouseEvent = event;
+  auto pressPos = this->dataPtr->mouseEvent.PressPos();
+  this->dataPtr->mouseEvent = convert(*_e);
+  this->dataPtr->mouseEvent.SetPressPos(pressPos);
 
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
