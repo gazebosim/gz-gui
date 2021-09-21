@@ -364,6 +364,32 @@ namespace ignition
         /// \brief Private data pointer
         IGN_UTILS_IMPL_PTR(dataPtr)
       };
+
+      /// \brief Event called to clone a resource, given its name as a string.
+      class IGNITION_GUI_VISIBLE DropOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _drop Dropped string.
+        /// \param[in] _dropMouse x and y  coordinate of mouse position.
+        public: explicit DropOnScene(
+          const std::string &_dropText,
+          const ignition::math::Vector2i &_dropMouse);
+
+        /// \brief Get the text of the dropped thing on the scene
+        /// \return The name of the dropped thing on the scene
+        public: const std::string &DropText() const;
+
+        /// \brief Get X and Y position
+        /// \return Get X and Y position
+        public: const ignition::math::Vector2i &Mouse() const;
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 15);
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
     }
   }
 }
