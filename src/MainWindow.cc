@@ -859,3 +859,9 @@ void MainWindow::SetShowDialogOnExit(bool _showDialogOnExit)
   this->dataPtr->showDialogOnExit = _showDialogOnExit;
   this->ShowDialogOnExitChanged();
 }
+
+/////////////////////////////////////////////////
+void MainWindow::SetRenderEngine(const std::string &_renderEngine)
+{
+  this->setProperty("renderEngine", _renderEngine.c_str());
+}
