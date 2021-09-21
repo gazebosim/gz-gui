@@ -211,8 +211,8 @@ namespace ignition
       public: WindowConfig CurrentWindowConfig() const;
 
       /// \brief Set the Render engine GUI name passed by the command line
-      /// \param[in] _renderEngineGUI name of the GUI render engine
-      public: void SetRenderEngineGUI(const std::string &_renderEngineGUI);
+      /// \param[in] _renderEngine name of the render engine to use
+      public: void SetRenderEngine(const std::string &_renderEngine);
 
       /// \brief Add a plugin to the window.
       /// \param [in] _plugin Plugin filename

@@ -175,7 +175,7 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
 }
 
 /////////////////////////////////////////////////
-TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(renderEngineGUI))
+TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(renderEngine))
 {
   // No app, no window, no render engine
   EXPECT_TRUE(renderEngineName().empty());
@@ -188,15 +188,15 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(renderEngineGUI))
   EXPECT_TRUE(renderEngineName().empty());
 
   // Set the render engine GUI name
-  mainWindow->SetRenderEngineGUI("ogre");
+  mainWindow->SetRenderEngine("ogre");
 
   // Has render engine
   EXPECT_FALSE(renderEngineName().empty());
   EXPECT_EQ("ogre", renderEngineName());
 
   // Set no render engine
-  mainWindow->SetRenderEngineGUI({});
+  mainWindow->SetRenderEngine({});
 
-  // No render engine setted
+  // No render engine set
   EXPECT_TRUE(renderEngineName().empty());
 }

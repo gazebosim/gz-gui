@@ -909,32 +909,21 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (this->title.empty())
     this->title = "3D Scene";
 
-  std::string cmdRenderEngineGUI = gui::renderEngineName();
+  std::string cmdRenderEngine = gui::renderEngineName();
   // Custom parameters
   if (_pluginElem)
   {
-    auto elem = _pluginElem->FirstChildElement("engine");
-    if (cmdRenderEngineGUI.empty())
+    // Only pick engine from XML if none is set on the Window
+    if (cmdRenderEngine.empty())
     {
+      auto elem = _pluginElem->FirstChildElement("engine");
       if (nullptr != elem && nullptr != elem->GetText())
       {
-        cmdRenderEngineGUI = elem->GetText();
-        renderWindow->SetEngineName(cmdRenderEngineGUI);
+        cmdRenderEngine = elem->GetText();
       }
     }
-    else
-    {
-      renderWindow->SetEngineName(cmdRenderEngineGUI);
-    }
 
-    // there is a problem with displaying ogre2 render textures that are in
-    // sRGB format. Workaround for now is to apply gamma correction
-    // manually.
-    // There maybe a better way to solve the problem by making OpenGL calls.
-    if (cmdRenderEngineGUI == std::string("ogre2"))
-      this->PluginItem()->setProperty("gammaCorrect", true);
-
-    elem = _pluginElem->FirstChildElement("scene");
+    auto elem = _pluginElem->FirstChildElement("scene");
     if (nullptr != elem && nullptr != elem->GetText())
       renderWindow->SetSceneName(elem->GetText());
 
@@ -1004,6 +993,14 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         ignwarn << "Child elements of <sky> are not supported yet" << std::endl;
     }
   }
+
+  renderWindow->SetEngineName(cmdRenderEngine);
+  // there is a problem with displaying ogre2 render textures that are in
+  // sRGB format. Workaround for now is to apply gamma correction
+  // manually.
+  // There maybe a better way to solve the problem by making OpenGL calls.
+  if (cmdRenderEngine == std::string("ogre2"))
+    this->PluginItem()->setProperty("gammaCorrect", true);
 }
 
 /////////////////////////////////////////////////
