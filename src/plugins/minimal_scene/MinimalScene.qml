@@ -68,4 +68,12 @@ Rectangle {
       width = Qt.binding(function() {return parent.parent.width})
       height = Qt.binding(function() {return parent.parent.height})
   }
+
+  DropArea {
+  anchors.fill: renderWindow
+
+  onDropped: {
+    MinimalScene.OnDropped(drop.text, drag.x, drag.y)
+  }
+}
 }
