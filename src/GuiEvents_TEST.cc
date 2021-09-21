@@ -210,5 +210,5 @@ TEST(GuiEventsTest, DropOnScene)
 
   EXPECT_LT(QEvent::User, dropOnScene.type());
   EXPECT_EQ(ignition::math::Vector2i(3, 100), dropOnScene.Mouse());
-  EXPECT_EQ("text", dropOnScene.DropName());
+  EXPECT_EQ("text", dropOnScene.DropText());
 }

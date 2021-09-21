@@ -372,11 +372,12 @@ namespace ignition
         /// \param[in] _drop Dropped string.
         /// \param[in] _dropMouse x and y  coordinate of mouse position.
         public: explicit DropOnScene(
-          const std::string &_drop, const ignition::math::Vector2i &_dropMouse);
+          const std::string &_dropText,
+          const ignition::math::Vector2i &_dropMouse);
 
         /// \brief Get the text of the dropped thing on the scene
         /// \return The name of the dropped thing on the scene
-        public: const std::string &DropName() const;
+        public: const std::string &DropText() const;
 
         /// \brief Get X and Y position
         /// \return Get X and Y position
