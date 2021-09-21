@@ -2,7 +2,61 @@
 
 ### Ignition Gui 6.X.X
 
-### Ignition Gui 6.0.0 (20XX-XX-XX)
+### Ignition Gui 6.0.0 (2021-09-XX)
+
+1. Render engine GUI name argument to be set in the minimal scene
+    * [Pull request #286](https://github.com/ignitionrobotics/ign-gui/pull/286)
+
+1. New events
+
+    1. Drop
+        * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
+
+    1. SpawnCloneFromName
+        * [Pull request #278](https://github.com/ignitionrobotics/ign-gui/pull/278)
+
+    1. HoverOnScene
+        * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
+
+    1. Mouse Events based on ignition::common
+        * [Pull request #228](https://github.com/ignitionrobotics/ign-gui/pull/228)
+
+1. New plugins
+
+    1. Interactive view control
+        * [Pull request #231](https://github.com/ignitionrobotics/ign-gui/pull/231)
+
+    1. Marker Manager
+        * [Pull request #247](https://github.com/ignitionrobotics/ign-gui/pull/247)
+
+    1. Moved tape measure and grid config from ign-gazebo to ign-gui
+        * [Pull request #236](https://github.com/ignitionrobotics/ign-gui/pull/236)
+
+1. PIMPL GUI events
+    * [Pull request #253](https://github.com/ignitionrobotics/ign-gui/pull/253)
+
+1. Added camera tracking
+    * [Pull request #226](https://github.com/ignitionrobotics/ign-gui/pull/226)
+    * [Pull request #254](https://github.com/ignitionrobotics/ign-gui/pull/254)
+
+1. Split transport scene manager into a plugin outside Scene3D. Adds MinimalScene
+    * [Pull request #221](https://github.com/ignitionrobotics/ign-gui/pull/221)
+    * [Pull request #284](https://github.com/ignitionrobotics/ign-gui/pull/284)
+    * [Pull request #285](https://github.com/ignitionrobotics/ign-gui/pull/285)
+    * [Pull request #268](https://github.com/ignitionrobotics/ign-gui/pull/268)
+    * [Pull request #224](https://github.com/ignitionrobotics/ign-gui/pull/224)
+
+1. Remove deprecations: tock
+    * [Pull request #243](https://github.com/ignitionrobotics/ign-gui/pull/243)
+
+1. Depend on ign-msgs8, ign-transport11, ign-rendering6
+    * [Pull request #210](https://github.com/ignitionrobotics/ign-gui/pull/210)
+
+1. Infrastructure
+    * [Pull request #207](https://github.com/ignitionrobotics/ign-gui/pull/207)
+    * [Pull request #219](https://github.com/ignitionrobotics/ign-gui/pull/219)
+    * [Pull request #266](https://github.com/ignitionrobotics/ign-gui/pull/266)
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
 
 ## Ignition Gui 5
 
