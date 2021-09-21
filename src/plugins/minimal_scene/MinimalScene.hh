@@ -85,6 +85,8 @@ namespace plugins
     IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
+  class RenderSync;
+
   /// \brief Ign-rendering renderer.
   /// All ign-rendering calls should be performed inside this class as it makes
   /// sure that opengl calls in the underlying render engine do not interfere
@@ -96,8 +98,9 @@ namespace plugins
     ///  \brief Constructor
     public: IgnRenderer();
 
-    ///  \brief Main render function
-    public: void Render();
+    /// \param[in] _renderSync RenderSync to safely
+    /// synchronize Qt and worker thread (this)
+    public: void Render(RenderSync *_renderSync);
 
     /// \brief Initialize the render engine
     public: void Initialize();
@@ -158,8 +161,10 @@ namespace plugins
     private: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos)
         const;
 
-    /// \brief Render texture id
-    public: GLuint textureId = 0u;
+    /// Values is constantly constantly cycled/swapped/changed
+    /// from a worker thread
+    /// Don't read this directly
+    public: GLuint textureId;
 
     /// \brief Render engine to use
     public: std::string engineName = "ogre";
@@ -218,8 +223,9 @@ namespace plugins
     /// \brief Constructor
     public: RenderThread();
 
-    /// \brief Render the next frame
-    public slots: void RenderNext();
+    /// \param[in] _renderSync RenderSync to safely
+    /// synchronize Qt and worker thread (this)
+    public slots: void RenderNext(RenderSync *renderSync);
 
     /// \brief Shutdown the thread and the render engine
     public slots: void ShutDown();
@@ -231,7 +237,7 @@ namespace plugins
     /// to be displayed
     /// \param[in] _id GLuid of the opengl texture
     /// \param[in] _size Size of the texture
-    signals: void TextureReady(int _id, const QSize &_size);
+    signals: void TextureReady(uint _id, const QSize &_size);
 
     /// \brief Offscreen surface to render to
     public: QOffscreenSurface *surface = nullptr;
@@ -251,6 +257,8 @@ namespace plugins
     /// \brief Constructor
     /// \param[in] _parent Parent item
     public: explicit RenderWindowItem(QQuickItem *_parent = nullptr);
+
+    public: ~RenderWindowItem();
 
     /// \brief Set background color of render window
     /// \param[in] _color Color of render window background
@@ -358,9 +366,10 @@ namespace plugins
   {
     Q_OBJECT
 
-    /// \brief Constructor
-    /// \param[in] _window Parent window
-    public: explicit TextureNode(QQuickWindow *_window);
+    /// \param[in] _renderSync RenderSync to safely
+    /// synchronize Qt (this) and worker thread
+    public: explicit TextureNode(QQuickWindow *_window,
+                                 RenderSync &_renderSync);
 
     /// \brief Destructor
     public: ~TextureNode() override;
@@ -369,28 +378,30 @@ namespace plugins
     ///  store the texture id and size and schedule an update on the window.
     /// \param[in] _id OpenGL render texture Id
     /// \param[in] _size Texture size
-    public slots: void NewTexture(int _id, const QSize &_size);
+    public slots: void NewTexture(uint _id, const QSize &_size);
 
     /// \brief Before the scene graph starts to render, we update to the
     /// pending texture
     public slots: void PrepareNode();
 
-    /// \brief Signal emitted when the texture is being rendered and renderer
-    /// can start rendering next frame
-    signals: void TextureInUse();
+    /// \param[in] _renderSync RenderSync to send to the worker thread
+    signals: void TextureInUse(RenderSync *_renderSync);
 
     /// \brief Signal emitted when a new texture is ready to trigger window
     /// update
     signals: void PendingNewTexture();
 
     /// \brief OpenGL texture id
-    public: int id = 0;
+    public: uint id = 0;
 
     /// \brief Texture size
     public: QSize size = QSize(0, 0);
 
     /// \brief Mutex to protect the texture variables
     public: QMutex mutex;
+
+    /// \brief See RenderSync
+    public: RenderSync &renderSync;
 
     /// \brief Qt's scene graph texture
     public: QSGTexture *texture = nullptr;
