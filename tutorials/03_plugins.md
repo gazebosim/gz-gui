@@ -48,11 +48,11 @@ Publish messages on an Ignition Transport topic.
 
         ign topic -e -t /echo
 
-1. On a new terminal, open the publisher GUI:
+2. On a new terminal, open the publisher GUI:
 
         ign gui -s Publisher
 
-1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
+3. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
 
 ### World stats and control
