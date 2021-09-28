@@ -146,6 +146,22 @@ TEST(ConversionsTest, MouseEvent)
     EXPECT_TRUE(ignEvent.Dragging());
     EXPECT_TRUE(ignEvent.Alt());
   }
+
+  // Scroll
+  {
+    QWheelEvent qtEvent(QPointF(123, 456), QPointF(1000, 2000), QPoint(2, 3),
+        QPoint(1, 4), Qt::LeftButton, Qt::ShiftModifier, Qt::ScrollUpdate,
+        true);
+
+    auto ignEvent = convert(qtEvent);
+
+    EXPECT_EQ(ignEvent.Type(), common::MouseEvent::SCROLL);
+    EXPECT_EQ(ignEvent.Pos(), math::Vector2i(123, 456));
+    EXPECT_EQ(ignEvent.Scroll(), math::Vector2i(-1, -1));
+    EXPECT_EQ(ignEvent.Buttons(), common::MouseEvent::LEFT);
+    EXPECT_FALSE(ignEvent.Dragging());
+    EXPECT_TRUE(ignEvent.Shift());
+  }
 }
 
 /////////////////////////////////////////////////

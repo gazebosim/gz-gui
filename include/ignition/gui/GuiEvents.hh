@@ -151,7 +151,7 @@ namespace ignition
       };
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
-      /// user's left click within the scene.
+      /// user's releasing the left button within the scene.
       /// \sa LeftClickOnScene
       class IGNITION_GUI_VISIBLE LeftClickToScene : public QEvent
       {
@@ -173,7 +173,7 @@ namespace ignition
       };
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
-      /// user's right click within the scene.
+      /// user's releasing the right button within the scene.
       /// \sa RightClickOnScene
       class IGNITION_GUI_VISIBLE RightClickToScene : public QEvent
       {
@@ -257,7 +257,7 @@ namespace ignition
       };
 
       /// \brief Event which is called to broadcast information about left
-      /// mouse clicks on the scene.
+      /// mouse releases on the scene.
       /// For the 3D coordinates of that point on the scene, see
       /// `LeftClickToScene`.
       /// \sa LeftClickToScene
@@ -280,7 +280,7 @@ namespace ignition
       };
 
       /// \brief Event which is called to broadcast information about right
-      /// mouse clicks on the scene.
+      /// mouse releases on the scene.
       /// For the 3D coordinates of that point on the scene, see
       /// `RightClickToScene`.
       /// \sa RightClickToScene
@@ -329,8 +329,7 @@ namespace ignition
       class IGNITION_GUI_VISIBLE HoverOnScene : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _point The point at which the mouse is hovering within
-        /// the scene
+        /// \param[in] _mouse The hover mouse event on the scene
         public: explicit HoverOnScene(const common::MouseEvent &_mouse);
 
         /// \brief Unique type for this event.
@@ -385,6 +384,54 @@ namespace ignition
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 15);
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event which is called to broadcast information about mouse
+      /// scrolls on the scene.
+      /// Includes the 3D coordinates of that point on the scene.
+      class IGNITION_GUI_VISIBLE ScrollOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _mouse The scroll mouse event on the scene
+        /// \param[in] _point 3D point being scrolled over.
+        public: explicit ScrollOnScene(
+          const common::MouseEvent &_mouse, const math::Vector3d &_point);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 16);
+
+        /// \brief Return the left mouse event
+        public: const common::MouseEvent &Mouse() const;
+
+        /// \brief Get the point within the scene over which the user is
+        /// scrolling.
+        /// \return The 3D point
+        public: math::Vector3d Point() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event which is called to broadcast information about mouse
+      /// drags on the scene.
+      class IGNITION_GUI_VISIBLE DragOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _mouse The scroll mouse event on the scene
+        public: explicit DragOnScene(const common::MouseEvent &_mouse);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 17);
+
+        /// \brief Get the point within the scene over which the user is
+        /// dragging.
+        /// \return The 2D point
+        public: common::MouseEvent Mouse() const;
 
         /// \internal
         /// \brief Private data pointer

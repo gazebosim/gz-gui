@@ -118,6 +118,21 @@ class ignition::gui::events::DropOnScene::Implementation
   public: ignition::math::Vector2i mouse;
 };
 
+class ignition::gui::events::ScrollOnScene::Implementation
+{
+  /// \brief Mouse event
+  public: common::MouseEvent mouse;
+
+  /// \brief The 3D point that the user scrolled within the scene.
+  public: math::Vector3d point;
+};
+
+class ignition::gui::events::DragOnScene::Implementation
+{
+  /// \brief The 2D point over which the user is hovering.
+  public: common::MouseEvent mouse;
+};
+
 using namespace ignition;
 using namespace gui;
 using namespace events;
@@ -341,6 +356,40 @@ const std::string &DropOnScene::DropText() const
 
 /////////////////////////////////////////////////
 const ignition::math::Vector2i &DropOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+ScrollOnScene::ScrollOnScene(const common::MouseEvent &_mouse,
+    const math::Vector3d &_point)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+  this->dataPtr->point = _point;
+}
+
+/////////////////////////////////////////////////
+const common::MouseEvent &ScrollOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+math::Vector3d ScrollOnScene::Point() const
+{
+  return this->dataPtr->point;
+}
+
+/////////////////////////////////////////////////
+DragOnScene::DragOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+}
+
+/////////////////////////////////////////////////
+common::MouseEvent DragOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
 }

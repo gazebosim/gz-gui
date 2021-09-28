@@ -115,6 +115,43 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
 }
 
 //////////////////////////////////////////////////
+ignition::common::MouseEvent ignition::gui::convert(const QWheelEvent &_e)
+{
+  common::MouseEvent event;
+
+  event.SetType(common::MouseEvent::SCROLL);
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  event.SetPos(_e.x(), _e.y());
+#else
+  event.SetPos(_e.position().x(), _e.position().y());
+#endif
+  double scroll = (_e.angleDelta().y() > 0) ? -1.0 : 1.0;
+  event.SetScroll(scroll, scroll);
+
+  // Buttons
+  if (_e.buttons() & Qt::LeftButton)
+    event.SetButtons(event.Buttons() | common::MouseEvent::LEFT);
+
+  if (_e.buttons() & Qt::RightButton)
+    event.SetButtons(event.Buttons() | common::MouseEvent::RIGHT);
+
+  if (_e.buttons() & Qt::MiddleButton)
+    event.SetButtons(event.Buttons() | common::MouseEvent::MIDDLE);
+
+  // Modifiers
+  if (_e.modifiers() & Qt::ShiftModifier)
+    event.SetShift(true);
+
+  if (_e.modifiers() & Qt::ControlModifier)
+    event.SetControl(true);
+
+  if (_e.modifiers() & Qt::AltModifier)
+    event.SetAlt(true);
+
+  return event;
+}
+
+//////////////////////////////////////////////////
 ignition::common::KeyEvent ignition::gui::convert(const QKeyEvent &_e)
 {
   common::KeyEvent event;

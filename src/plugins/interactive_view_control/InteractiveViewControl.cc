@@ -149,7 +149,7 @@ void InteractiveViewControlPrivate::OnRender()
 
   if (this->blockOrbit)
   {
-    this->drag = 0;
+    this->drag = {0, 0};
     return;
   }
 
@@ -309,26 +309,40 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
       reinterpret_cast<ignition::gui::events::LeftClickOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
-    auto dragInt =
-      leftClickOnScene->Mouse().Pos() - this->dataPtr->mouseEvent.Pos();
+    this->dataPtr->drag = math::Vector2d::Zero;
+    this->dataPtr->mouseEvent = leftClickOnScene->Mouse();
+  }
+  else if (_event->type() == events::DragOnScene::kType)
+  {
+    auto dragOnScene =
+      reinterpret_cast<ignition::gui::events::DragOnScene *>(_event);
+    this->dataPtr->mouseDirty = true;
+
+    auto dragStart = this->dataPtr->mouseEvent.Pos();
+//    // Just started dragging, compare to event's press pos
+//    if (this->dataPtr->drag == math::Vector2d::Zero)
+//    {
+//      dragStart = dragOnScene->Mouse().PressPos();
+//    }
+    auto dragInt = dragOnScene->Mouse().Pos() - dragStart;
     auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
 
-    if (leftClickOnScene->Mouse().Dragging()) {
-      this->dataPtr->drag += dragDistance;
-    }
-    else if (leftClickOnScene->Mouse().Type() ==
-      ignition::common::MouseEvent::SCROLL)
-    {
-      this->dataPtr->drag += math::Vector2d(
-        leftClickOnScene->Mouse().Scroll().X(),
-        leftClickOnScene->Mouse().Scroll().Y());
-    }
-    else
-    {
-      this->dataPtr->drag += 0;
-    }
 
-    this->dataPtr->mouseEvent = leftClickOnScene->Mouse();
+    this->dataPtr->drag += dragDistance;
+
+    this->dataPtr->mouseEvent = dragOnScene->Mouse();
+  }
+  else if (_event->type() == events::ScrollOnScene::kType)
+  {
+    auto scrollOnScene =
+      reinterpret_cast<ignition::gui::events::ScrollOnScene *>(_event);
+    this->dataPtr->mouseDirty = true;
+
+    this->dataPtr->drag += math::Vector2d(
+      scrollOnScene->Mouse().Scroll().X(),
+      scrollOnScene->Mouse().Scroll().Y());
+
+    this->dataPtr->mouseEvent = scrollOnScene->Mouse();
   }
   else if (_event->type() == ignition::gui::events::BlockOrbit::kType)
   {
