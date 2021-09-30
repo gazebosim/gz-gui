@@ -31,6 +31,7 @@
 #include <ignition/rendering/OrthoViewController.hh>
 #include <ignition/rendering/RenderingIface.hh>
 #include <ignition/rendering/RayQuery.hh>
+#include <ignition/rendering/Utils.hh>
 
 #include <ignition/transport/Node.hh>
 
@@ -41,12 +42,6 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
-
-  /// \brief Transform a position on screen to the first point that's hit on
-  /// the 3D scene
-  /// \param[in] _screenPos Position on 2D screen within the 3D scene
-  /// \return First point hit on the 3D scene.
-  public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos) const;
 
   /// \brief Callback for camera view controller request
   /// \param[in] _msg Request message to set the camera view controller
@@ -180,7 +175,9 @@ void InteractiveViewControlPrivate::OnRender()
 
   if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
   {
-    this->target = this->ScreenToScene(this->mouseEvent.Pos());
+    this->target = rendering::screenToScene(
+      this->mouseEvent.Pos(), this->camera, this->rayQuery);
+
     this->viewControl->SetTarget(this->target);
     double distance = this->camera->WorldPosition().Distance(
         this->target);
@@ -191,7 +188,8 @@ void InteractiveViewControlPrivate::OnRender()
   {
     if (this->drag == math::Vector2d::Zero)
     {
-      this->target = this->ScreenToScene(this->mouseEvent.PressPos());
+      this->target = rendering::screenToScene(
+        this->mouseEvent.PressPos(), this->camera, this->rayQuery);
       this->viewControl->SetTarget(this->target);
     }
 
@@ -222,30 +220,6 @@ void InteractiveViewControlPrivate::OnRender()
   }
   this->drag = 0;
   this->mouseDirty = false;
-}
-
-/////////////////////////////////////////////////
-math::Vector3d InteractiveViewControlPrivate::ScreenToScene(
-    const math::Vector2i &_screenPos) const
-{
-  // Normalize point on the image
-  double width = this->camera->ImageWidth();
-  double height = this->camera->ImageHeight();
-
-  double nx = 2.0 * _screenPos.X() / width - 1.0;
-  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
-
-  // Make a ray query
-  this->rayQuery->SetFromCamera(
-      this->camera, math::Vector2d(nx, ny));
-
-  auto result = this->rayQuery->ClosestPoint();
-  if (result)
-    return result.point;
-
-  // Set point to be 10m away if no intersection found
-  return this->rayQuery->Origin() +
-      this->rayQuery->Direction() * 10;
 }
 
 /////////////////////////////////////////////////
