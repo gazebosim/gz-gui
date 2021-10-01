@@ -120,19 +120,19 @@ class ignition::gui::events::DropOnScene::Implementation
 
 class ignition::gui::events::ScrollOnScene::Implementation
 {
-  /// \brief Mouse event
+  /// \brief Mouse event with scroll information.
   public: common::MouseEvent mouse;
 };
 
 class ignition::gui::events::DragOnScene::Implementation
 {
-  /// \brief The 2D point over which the user is hovering.
+  /// \brief Mouse event with drag information.
   public: common::MouseEvent mouse;
 };
 
 class ignition::gui::events::MousePressOnScene::Implementation
 {
-  /// \brief Mouse event
+  /// \brief Mouse event with press information.
   public: common::MouseEvent mouse;
 };
 

@@ -488,7 +488,7 @@ void IgnRenderer::BroadcastKeyRelease()
 /////////////////////////////////////////////////
 void IgnRenderer::BroadcastKeyPress()
 {
-  if (this->dataPtr->keyEvent.Type() == common::KeyEvent::PRESS)
+  if (this->dataPtr->keyEvent.Type() != common::KeyEvent::PRESS)
     return;
 
   events::KeyPressOnScene keyPress(this->dataPtr->keyEvent);
