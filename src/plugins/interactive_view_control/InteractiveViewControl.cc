@@ -184,15 +184,14 @@ void InteractiveViewControlPrivate::OnRender()
     double amount = -this->drag.Y() * distance / 5.0;
     this->viewControl->Zoom(amount);
   }
+  else if (this->mouseEvent.Type() == common::MouseEvent::PRESS)
+  {
+    this->target = rendering::screenToScene(
+      this->mouseEvent.PressPos(), this->camera, this->rayQuery);
+    this->viewControl->SetTarget(this->target);
+  }
   else
   {
-    if (this->drag == math::Vector2d::Zero)
-    {
-      this->target = rendering::screenToScene(
-        this->mouseEvent.PressPos(), this->camera, this->rayQuery);
-      this->viewControl->SetTarget(this->target);
-    }
-
     // Pan with left button
     if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
     {
@@ -286,6 +285,15 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
     this->dataPtr->drag = math::Vector2d::Zero;
     this->dataPtr->mouseEvent = leftClickOnScene->Mouse();
   }
+  else if (_event->type() == events::MousePressOnScene::kType)
+  {
+    auto pressOnScene =
+      reinterpret_cast<ignition::gui::events::MousePressOnScene *>(_event);
+    this->dataPtr->mouseDirty = true;
+
+    this->dataPtr->drag = math::Vector2d::Zero;
+    this->dataPtr->mouseEvent = pressOnScene->Mouse();
+  }
   else if (_event->type() == events::DragOnScene::kType)
   {
     auto dragOnScene =
@@ -293,14 +301,8 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
     this->dataPtr->mouseDirty = true;
 
     auto dragStart = this->dataPtr->mouseEvent.Pos();
-//    // Just started dragging, compare to event's press pos
-//    if (this->dataPtr->drag == math::Vector2d::Zero)
-//    {
-//      dragStart = dragOnScene->Mouse().PressPos();
-//    }
     auto dragInt = dragOnScene->Mouse().Pos() - dragStart;
     auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
-
 
     this->dataPtr->drag += dragDistance;
 

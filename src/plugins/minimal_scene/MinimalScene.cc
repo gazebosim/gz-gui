@@ -319,6 +319,7 @@ void IgnRenderer::HandleMouseEvent()
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->BroadcastHoverPos();
   this->BroadcastDrag();
+  this->BroadcastMousePress();
   this->BroadcastLeftClick();
   this->BroadcastRightClick();
   this->BroadcastScroll();
@@ -367,11 +368,6 @@ void IgnRenderer::BroadcastDrop()
 void IgnRenderer::BroadcastHoverPos()
 {
   if (!this->dataPtr->hoverDirty)
-    return;
-
-  // Only broadcast hover if not dragging
-  // FIXME mixing mouseEvent with hoverEvent
-  if (this->dataPtr->mouseEvent.Dragging())
     return;
 
   auto pos = this->ScreenToScene(this->dataPtr->mouseHoverPos);
@@ -443,6 +439,21 @@ void IgnRenderer::BroadcastRightClick()
 
   events::RightClickOnScene rightClickOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickOnSceneEvent);
+
+  this->dataPtr->mouseDirty = false;
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastMousePress()
+{
+  if (!this->dataPtr->mouseDirty)
+    return;
+
+  if (this->dataPtr->mouseEvent.Type() != common::MouseEvent::PRESS)
+    return;
+
+  events::MousePressOnScene event(this->dataPtr->mouseEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
 
   this->dataPtr->mouseDirty = false;
 }

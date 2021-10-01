@@ -133,6 +133,12 @@ class ignition::gui::events::DragOnScene::Implementation
   public: common::MouseEvent mouse;
 };
 
+class ignition::gui::events::MousePressOnScene::Implementation
+{
+  /// \brief Mouse event
+  public: common::MouseEvent mouse;
+};
+
 using namespace ignition;
 using namespace gui;
 using namespace events;
@@ -390,6 +396,19 @@ DragOnScene::DragOnScene(const common::MouseEvent &_mouse)
 
 /////////////////////////////////////////////////
 common::MouseEvent DragOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+MousePressOnScene::MousePressOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+}
+
+/////////////////////////////////////////////////
+const common::MouseEvent &MousePressOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
 }

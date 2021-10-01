@@ -437,6 +437,26 @@ namespace ignition
         /// \brief Private data pointer
         IGN_UTILS_IMPL_PTR(dataPtr)
       };
+
+      /// \brief Event which is called to broadcast information about mouse
+      /// presses on the scene, with right, left or middle buttons.
+      class IGNITION_GUI_VISIBLE MousePressOnScene : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _mouse The mouse event on the scene
+        public: MousePressOnScene(
+          const common::MouseEvent &_mouse);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 18);
+
+        /// \brief Return the right mouse event
+        public: const common::MouseEvent &Mouse() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
     }
   }
 }

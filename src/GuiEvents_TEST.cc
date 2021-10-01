@@ -212,3 +212,17 @@ TEST(GuiEventsTest, DropOnScene)
   EXPECT_EQ(ignition::math::Vector2i(3, 100), dropOnScene.Mouse());
   EXPECT_EQ("text", dropOnScene.DropText());
 }
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, MousePressOnScene)
+{
+  ignition::common::MouseEvent mouse;
+  mouse.SetControl(true);
+  mouse.SetAlt(true);
+  events::MousePressOnScene event(mouse);
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_TRUE(event.Mouse().Control());
+  EXPECT_TRUE(event.Mouse().Alt());
+  EXPECT_FALSE(event.Mouse().Shift());
+}
