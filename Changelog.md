@@ -35,6 +35,9 @@
 1. PIMPL GUI events
     * [Pull request #253](https://github.com/ignitionrobotics/ign-gui/pull/253)
 
+1. Added winID to fix second windows in OGRE2.2
+    * [Pull request #292](https://github.com/ignitionrobotics/ign-gui/pull/292)
+
 1. Added camera tracking
     * [Pull request #226](https://github.com/ignitionrobotics/ign-gui/pull/226)
     * [Pull request #254](https://github.com/ignitionrobotics/ign-gui/pull/254)
@@ -48,6 +51,7 @@
     * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
     * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
     * [Pull request #286](https://github.com/ignitionrobotics/ign-gui/pull/286)
+    * [Pull request #295](https://github.com/ignitionrobotics/ign-gui/pull/295)
 
 1. Remove deprecations: tock
     * [Pull request #243](https://github.com/ignitionrobotics/ign-gui/pull/243)
