@@ -149,16 +149,22 @@ TEST(ConversionsTest, MouseEvent)
 
   // Scroll
   {
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
     QWheelEvent qtEvent(QPointF(123, 456), QPointF(1000, 2000), QPoint(2, 3),
-        QPoint(1, 4), Qt::LeftButton, Qt::ShiftModifier, Qt::ScrollUpdate,
-        true);
+        QPoint(1, 4), -1, Qt::Horizontal, Qt::MiddleButton, Qt::ShiftModifier,
+        Qt::ScrollUpdate, Qt::MouseEventNotSynthesized, false);
+#else
+    QWheelEvent qtEvent(QPointF(123, 456), QPointF(1000, 2000), QPoint(2, 3),
+        QPoint(1, 4), Qt::MiddleButton, Qt::ShiftModifier, Qt::ScrollUpdate,
+        false);
+#endif
 
     auto ignEvent = convert(qtEvent);
 
     EXPECT_EQ(ignEvent.Type(), common::MouseEvent::SCROLL);
     EXPECT_EQ(ignEvent.Pos(), math::Vector2i(123, 456));
     EXPECT_EQ(ignEvent.Scroll(), math::Vector2i(-1, -1));
-    EXPECT_EQ(ignEvent.Buttons(), common::MouseEvent::LEFT);
+    EXPECT_EQ(ignEvent.Buttons(), common::MouseEvent::MIDDLE);
     EXPECT_FALSE(ignEvent.Dragging());
     EXPECT_TRUE(ignEvent.Shift());
   }
