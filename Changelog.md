@@ -4,8 +4,8 @@
 
 ### Ignition Gui 6.0.0 (2021-09-XX)
 
-1. Render engine GUI name argument to be set in the minimal scene
-    * [Pull request #286](https://github.com/ignitionrobotics/ign-gui/pull/286)
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
 
 1. New events
 
@@ -45,6 +45,9 @@
     * [Pull request #285](https://github.com/ignitionrobotics/ign-gui/pull/285)
     * [Pull request #268](https://github.com/ignitionrobotics/ign-gui/pull/268)
     * [Pull request #224](https://github.com/ignitionrobotics/ign-gui/pull/224)
+    * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
+    * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
+    * [Pull request #286](https://github.com/ignitionrobotics/ign-gui/pull/286)
 
 1. Remove deprecations: tock
     * [Pull request #243](https://github.com/ignitionrobotics/ign-gui/pull/243)
