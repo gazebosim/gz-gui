@@ -31,6 +31,7 @@
 #include <ignition/rendering/OrthoViewController.hh>
 #include <ignition/rendering/RenderingIface.hh>
 #include <ignition/rendering/RayQuery.hh>
+#include <ignition/rendering/Utils.hh>
 
 #include <ignition/transport/Node.hh>
 
@@ -41,12 +42,6 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
-
-  /// \brief Transform a position on screen to the first point that's hit on
-  /// the 3D scene
-  /// \param[in] _screenPos Position on 2D screen within the 3D scene
-  /// \return First point hit on the 3D scene.
-  public: math::Vector3d ScreenToScene(const math::Vector2i &_screenPos) const;
 
   /// \brief Callback for camera view controller request
   /// \param[in] _msg Request message to set the camera view controller
@@ -149,7 +144,7 @@ void InteractiveViewControlPrivate::OnRender()
 
   if (this->blockOrbit)
   {
-    this->drag = 0;
+    this->drag = {0, 0};
     return;
   }
 
@@ -180,21 +175,23 @@ void InteractiveViewControlPrivate::OnRender()
 
   if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
   {
-    this->target = this->ScreenToScene(this->mouseEvent.Pos());
+    this->target = rendering::screenToScene(
+      this->mouseEvent.Pos(), this->camera, this->rayQuery);
+
     this->viewControl->SetTarget(this->target);
     double distance = this->camera->WorldPosition().Distance(
         this->target);
     double amount = -this->drag.Y() * distance / 5.0;
     this->viewControl->Zoom(amount);
   }
+  else if (this->mouseEvent.Type() == common::MouseEvent::PRESS)
+  {
+    this->target = rendering::screenToScene(
+      this->mouseEvent.PressPos(), this->camera, this->rayQuery);
+    this->viewControl->SetTarget(this->target);
+  }
   else
   {
-    if (this->drag == math::Vector2d::Zero)
-    {
-      this->target = this->ScreenToScene(this->mouseEvent.PressPos());
-      this->viewControl->SetTarget(this->target);
-    }
-
     // Pan with left button
     if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
     {
@@ -222,30 +219,6 @@ void InteractiveViewControlPrivate::OnRender()
   }
   this->drag = 0;
   this->mouseDirty = false;
-}
-
-/////////////////////////////////////////////////
-math::Vector3d InteractiveViewControlPrivate::ScreenToScene(
-    const math::Vector2i &_screenPos) const
-{
-  // Normalize point on the image
-  double width = this->camera->ImageWidth();
-  double height = this->camera->ImageHeight();
-
-  double nx = 2.0 * _screenPos.X() / width - 1.0;
-  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
-
-  // Make a ray query
-  this->rayQuery->SetFromCamera(
-      this->camera, math::Vector2d(nx, ny));
-
-  auto result = this->rayQuery->ClosestPoint();
-  if (result)
-    return result.point;
-
-  // Set point to be 10m away if no intersection found
-  return this->rayQuery->Origin() +
-      this->rayQuery->Direction() * 10;
 }
 
 /////////////////////////////////////////////////
@@ -309,26 +282,43 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
       reinterpret_cast<ignition::gui::events::LeftClickOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
-    auto dragInt =
-      leftClickOnScene->Mouse().Pos() - this->dataPtr->mouseEvent.Pos();
+    this->dataPtr->drag = math::Vector2d::Zero;
+    this->dataPtr->mouseEvent = leftClickOnScene->Mouse();
+  }
+  else if (_event->type() == events::MousePressOnScene::kType)
+  {
+    auto pressOnScene =
+      reinterpret_cast<ignition::gui::events::MousePressOnScene *>(_event);
+    this->dataPtr->mouseDirty = true;
+
+    this->dataPtr->drag = math::Vector2d::Zero;
+    this->dataPtr->mouseEvent = pressOnScene->Mouse();
+  }
+  else if (_event->type() == events::DragOnScene::kType)
+  {
+    auto dragOnScene =
+      reinterpret_cast<ignition::gui::events::DragOnScene *>(_event);
+    this->dataPtr->mouseDirty = true;
+
+    auto dragStart = this->dataPtr->mouseEvent.Pos();
+    auto dragInt = dragOnScene->Mouse().Pos() - dragStart;
     auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
 
-    if (leftClickOnScene->Mouse().Dragging()) {
-      this->dataPtr->drag += dragDistance;
-    }
-    else if (leftClickOnScene->Mouse().Type() ==
-      ignition::common::MouseEvent::SCROLL)
-    {
-      this->dataPtr->drag += math::Vector2d(
-        leftClickOnScene->Mouse().Scroll().X(),
-        leftClickOnScene->Mouse().Scroll().Y());
-    }
-    else
-    {
-      this->dataPtr->drag += 0;
-    }
+    this->dataPtr->drag += dragDistance;
 
-    this->dataPtr->mouseEvent = leftClickOnScene->Mouse();
+    this->dataPtr->mouseEvent = dragOnScene->Mouse();
+  }
+  else if (_event->type() == events::ScrollOnScene::kType)
+  {
+    auto scrollOnScene =
+      reinterpret_cast<ignition::gui::events::ScrollOnScene *>(_event);
+    this->dataPtr->mouseDirty = true;
+
+    this->dataPtr->drag += math::Vector2d(
+      scrollOnScene->Mouse().Scroll().X(),
+      scrollOnScene->Mouse().Scroll().Y());
+
+    this->dataPtr->mouseEvent = scrollOnScene->Mouse();
   }
   else if (_event->type() == ignition::gui::events::BlockOrbit::kType)
   {

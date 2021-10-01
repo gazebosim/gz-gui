@@ -133,17 +133,23 @@ namespace plugins
     /// \brief Handle mouse event for view control
     private: void HandleMouseEvent();
 
-    /// \brief Handle mouse event for view control
-    private: void HandleMouseViewControl();
-
     /// \brief Broadcasts the currently hovered 3d scene location.
     private: void BroadcastHoverPos();
 
-    /// \brief Broadcasts a left click within the scene
+    /// \brief Broadcasts drag events.
+    private: void BroadcastDrag();
+
+    /// \brief Broadcasts a left click (release) within the scene
     private: void BroadcastLeftClick();
 
-    /// \brief Broadcasts a right click within the scene
+    /// \brief Broadcasts a right click (release) within the scene
     private: void BroadcastRightClick();
+
+    /// \brief Broadcasts a mouse press within the scene
+    private: void BroadcastMousePress();
+
+    /// \brief Broadcasts a scroll event within the scene.
+    private: void BroadcastScroll();
 
     /// \brief Broadcasts a key release event within the scene
     private: void BroadcastKeyRelease();

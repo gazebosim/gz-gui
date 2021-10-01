@@ -118,6 +118,24 @@ class ignition::gui::events::DropOnScene::Implementation
   public: ignition::math::Vector2i mouse;
 };
 
+class ignition::gui::events::ScrollOnScene::Implementation
+{
+  /// \brief Mouse event with scroll information.
+  public: common::MouseEvent mouse;
+};
+
+class ignition::gui::events::DragOnScene::Implementation
+{
+  /// \brief Mouse event with drag information.
+  public: common::MouseEvent mouse;
+};
+
+class ignition::gui::events::MousePressOnScene::Implementation
+{
+  /// \brief Mouse event with press information.
+  public: common::MouseEvent mouse;
+};
+
 using namespace ignition;
 using namespace gui;
 using namespace events;
@@ -341,6 +359,45 @@ const std::string &DropOnScene::DropText() const
 
 /////////////////////////////////////////////////
 const ignition::math::Vector2i &DropOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+ScrollOnScene::ScrollOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+}
+
+/////////////////////////////////////////////////
+const common::MouseEvent &ScrollOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+DragOnScene::DragOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+}
+
+/////////////////////////////////////////////////
+common::MouseEvent DragOnScene::Mouse() const
+{
+  return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+MousePressOnScene::MousePressOnScene(const common::MouseEvent &_mouse)
+    : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->mouse = _mouse;
+}
+
+/////////////////////////////////////////////////
+const common::MouseEvent &MousePressOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
 }

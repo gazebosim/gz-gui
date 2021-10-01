@@ -318,27 +318,15 @@ void IgnRenderer::HandleMouseEvent()
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->BroadcastHoverPos();
+  this->BroadcastDrag();
+  this->BroadcastMousePress();
   this->BroadcastLeftClick();
   this->BroadcastRightClick();
+  this->BroadcastScroll();
   this->BroadcastKeyPress();
   this->BroadcastKeyRelease();
   this->BroadcastDrop();
-  this->HandleMouseViewControl();
   this->dataPtr->mouseDirty = false;
-}
-
-/////////////////////////////////////////////////
-void IgnRenderer::HandleMouseViewControl()
-{
-  if (!this->dataPtr->mouseDirty)
-    return;
-
-  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
-
-  events::LeftClickOnScene leftClickOnSceneEvent(this->dataPtr->mouseEvent);
-  events::LeftClickToScene leftClickToSceneEvent(pos);
-  App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickOnSceneEvent);
-  App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickToSceneEvent);
 }
 
 ////////////////////////////////////////////////
@@ -393,15 +381,30 @@ void IgnRenderer::BroadcastHoverPos()
   hoverMouseEvent.SetType(common::MouseEvent::MOVE);
   events::HoverOnScene hoverOnSceneEvent(hoverMouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &hoverOnSceneEvent);
+
+  this->dataPtr->hoverDirty = false;
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastDrag()
+{
+  if (!this->dataPtr->mouseDirty)
+    return;
+
+  // Only broadcast drag if dragging
+  if (!this->dataPtr->mouseEvent.Dragging())
+    return;
+
+  events::DragOnScene dragEvent(this->dataPtr->mouseEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &dragEvent);
+
+  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
 void IgnRenderer::BroadcastLeftClick()
 {
   if (!this->dataPtr->mouseDirty)
-    return;
-
-  if (this->dataPtr->mouseEvent.Dragging())
     return;
 
   if (this->dataPtr->mouseEvent.Button() != common::MouseEvent::LEFT ||
@@ -412,15 +415,17 @@ void IgnRenderer::BroadcastLeftClick()
 
   events::LeftClickToScene leftClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickToSceneEvent);
+
+  events::LeftClickOnScene leftClickOnSceneEvent(this->dataPtr->mouseEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickOnSceneEvent);
+
+  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
 void IgnRenderer::BroadcastRightClick()
 {
   if (!this->dataPtr->mouseDirty)
-    return;
-
-  if (this->dataPtr->mouseEvent.Dragging())
     return;
 
   if (this->dataPtr->mouseEvent.Button() != common::MouseEvent::RIGHT ||
@@ -431,31 +436,65 @@ void IgnRenderer::BroadcastRightClick()
 
   events::RightClickToScene rightClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
+
   events::RightClickOnScene rightClickOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickOnSceneEvent);
+
+  this->dataPtr->mouseDirty = false;
 }
 
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastMousePress()
+{
+  if (!this->dataPtr->mouseDirty)
+    return;
+
+  if (this->dataPtr->mouseEvent.Type() != common::MouseEvent::PRESS)
+    return;
+
+  events::MousePressOnScene event(this->dataPtr->mouseEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+
+  this->dataPtr->mouseDirty = false;
+}
+
+/////////////////////////////////////////////////
+void IgnRenderer::BroadcastScroll()
+{
+  if (!this->dataPtr->mouseDirty)
+    return;
+
+  if (this->dataPtr->mouseEvent.Type() != common::MouseEvent::SCROLL)
+    return;
+
+  events::ScrollOnScene scrollOnSceneEvent(this->dataPtr->mouseEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &scrollOnSceneEvent);
+
+  this->dataPtr->mouseDirty = false;
+}
 
 /////////////////////////////////////////////////
 void IgnRenderer::BroadcastKeyRelease()
 {
-  if (this->dataPtr->keyEvent.Type() == common::KeyEvent::RELEASE)
-  {
-    events::KeyReleaseOnScene keyRelease(this->dataPtr->keyEvent);
-    App()->sendEvent(App()->findChild<MainWindow *>(), &keyRelease);
-    this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
-  }
+  if (this->dataPtr->keyEvent.Type() != common::KeyEvent::RELEASE)
+    return;
+
+  events::KeyReleaseOnScene keyRelease(this->dataPtr->keyEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &keyRelease);
+
+  this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
 }
 
 /////////////////////////////////////////////////
 void IgnRenderer::BroadcastKeyPress()
 {
-  if (this->dataPtr->keyEvent.Type() == common::KeyEvent::PRESS)
-  {
-    events::KeyPressOnScene keyPress(this->dataPtr->keyEvent);
-    App()->sendEvent(App()->findChild<MainWindow *>(), &keyPress);
-    this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
-  }
+  if (this->dataPtr->keyEvent.Type() != common::KeyEvent::PRESS)
+    return;
+
+  events::KeyPressOnScene keyPress(this->dataPtr->keyEvent);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &keyPress);
+
+  this->dataPtr->keyEvent.SetType(common::KeyEvent::NO_EVENT);
 }
 
 /////////////////////////////////////////////////
@@ -1056,9 +1095,8 @@ void RenderWindowItem::OnDropped(const QString &_drop,
 /////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
-  auto pressPos = this->dataPtr->mouseEvent.PressPos();
   this->dataPtr->mouseEvent = convert(*_e);
-  this->dataPtr->mouseEvent.SetPressPos(pressPos);
+  this->dataPtr->mouseEvent.SetPressPos(this->dataPtr->mouseEvent.Pos());
 
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
@@ -1087,8 +1125,13 @@ void RenderWindowItem::keyReleaseEvent(QKeyEvent *_e)
 ////////////////////////////////////////////////
 void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
+  // Store values that depend on previous events
+  auto pressPos = this->dataPtr->mouseEvent.PressPos();
+  auto dragging = this->dataPtr->mouseEvent.Dragging();
+
   this->dataPtr->mouseEvent = convert(*_e);
-  this->dataPtr->mouseEvent.SetPressPos(_e->pos().x(), _e->pos().y());
+  this->dataPtr->mouseEvent.SetPressPos(pressPos);
+  this->dataPtr->mouseEvent.SetDragging(dragging);
 
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
@@ -1097,29 +1140,26 @@ void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 ////////////////////////////////////////////////
 void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
 {
-  auto event = convert(*_e);
-  event.SetPressPos(this->dataPtr->mouseEvent.PressPos());
+  // Store values that depend on previous events
+  auto pressPos = this->dataPtr->mouseEvent.PressPos();
 
-  if (!event.Dragging())
-    return;
+  this->dataPtr->mouseEvent = convert(*_e);
 
-  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(event);
-  this->dataPtr->mouseEvent = event;
+  if (this->dataPtr->mouseEvent.Dragging())
+    this->dataPtr->mouseEvent.SetPressPos(pressPos);
+
+  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
+      this->dataPtr->mouseEvent);
 }
 
 ////////////////////////////////////////////////
 void RenderWindowItem::wheelEvent(QWheelEvent *_e)
 {
-  this->dataPtr->mouseEvent.SetType(common::MouseEvent::SCROLL);
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-  this->dataPtr->mouseEvent.SetPos(_e->x(), _e->y());
-#else
-  this->dataPtr->mouseEvent.SetPos(_e->position().x(), _e->position().y());
-#endif
-  double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
+  this->forceActiveFocus();
+
+  this->dataPtr->mouseEvent = convert(*_e);
   this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
     this->dataPtr->mouseEvent);
-  this->dataPtr->mouseEvent.SetScroll(scroll, scroll);
 }
 
 ////////////////////////////////////////////////
