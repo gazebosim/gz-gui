@@ -392,25 +392,17 @@ namespace ignition
 
       /// \brief Event which is called to broadcast information about mouse
       /// scrolls on the scene.
-      /// Includes the 3D coordinates of that point on the scene.
       class IGNITION_GUI_VISIBLE ScrollOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The scroll mouse event on the scene
-        /// \param[in] _point 3D point being scrolled over.
-        public: explicit ScrollOnScene(
-          const common::MouseEvent &_mouse, const math::Vector3d &_point);
+        public: explicit ScrollOnScene(const common::MouseEvent &_mouse);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 16);
 
         /// \brief Return the left mouse event
         public: const common::MouseEvent &Mouse() const;
-
-        /// \brief Get the point within the scene over which the user is
-        /// scrolling.
-        /// \return The 3D point
-        public: math::Vector3d Point() const;
 
         /// \internal
         /// \brief Private data pointer

@@ -204,6 +204,20 @@ TEST(GuiEventsTest, SpawnCloneFromName)
 }
 
 /////////////////////////////////////////////////
+TEST(GuiEventsTest, ScrollOnScene)
+{
+  ignition::common::MouseEvent mouse;
+  mouse.SetControl(true);
+  mouse.SetAlt(true);
+  events::ScrollOnScene event(mouse);
+
+  EXPECT_LT(QEvent::User, event.type());
+  EXPECT_TRUE(event.Mouse().Control());
+  EXPECT_TRUE(event.Mouse().Alt());
+  EXPECT_FALSE(event.Mouse().Shift());
+}
+
+/////////////////////////////////////////////////
 TEST(GuiEventsTest, DropOnScene)
 {
   events::DropOnScene dropOnScene("text", ignition::math::Vector2i(3, 100));

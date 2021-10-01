@@ -467,9 +467,7 @@ void IgnRenderer::BroadcastScroll()
   if (this->dataPtr->mouseEvent.Type() != common::MouseEvent::SCROLL)
     return;
 
-  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
-
-  events::ScrollOnScene scrollOnSceneEvent(this->dataPtr->mouseEvent, pos);
+  events::ScrollOnScene scrollOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &scrollOnSceneEvent);
 
   this->dataPtr->mouseDirty = false;

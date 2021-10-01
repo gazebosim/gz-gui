@@ -122,9 +122,6 @@ class ignition::gui::events::ScrollOnScene::Implementation
 {
   /// \brief Mouse event
   public: common::MouseEvent mouse;
-
-  /// \brief The 3D point that the user scrolled within the scene.
-  public: math::Vector3d point;
 };
 
 class ignition::gui::events::DragOnScene::Implementation
@@ -367,24 +364,16 @@ const ignition::math::Vector2i &DropOnScene::Mouse() const
 }
 
 /////////////////////////////////////////////////
-ScrollOnScene::ScrollOnScene(const common::MouseEvent &_mouse,
-    const math::Vector3d &_point)
+ScrollOnScene::ScrollOnScene(const common::MouseEvent &_mouse)
     : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
   this->dataPtr->mouse = _mouse;
-  this->dataPtr->point = _point;
 }
 
 /////////////////////////////////////////////////
 const common::MouseEvent &ScrollOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
-}
-
-/////////////////////////////////////////////////
-math::Vector3d ScrollOnScene::Point() const
-{
-  return this->dataPtr->point;
 }
 
 /////////////////////////////////////////////////
