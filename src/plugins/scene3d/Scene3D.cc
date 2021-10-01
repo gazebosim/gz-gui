@@ -1116,6 +1116,10 @@ void IgnRenderer::Initialize()
 
   std::map<std::string, std::string> params;
   params["useCurrentGLContext"] = "1";
+  params["winID"] = std::to_string(
+    ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+      QuickWindow()->winId());
+
   auto engine = rendering::engine(this->engineName, params);
   if (!engine)
   {
