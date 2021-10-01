@@ -401,7 +401,7 @@ namespace ignition
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 16);
 
-        /// \brief Return the left mouse event
+        /// \brief Return the scroll mouse event
         public: const common::MouseEvent &Mouse() const;
 
         /// \internal
@@ -414,7 +414,7 @@ namespace ignition
       class IGNITION_GUI_VISIBLE DragOnScene : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _mouse The scroll mouse event on the scene
+        /// \param[in] _mouse The drag mouse event on the scene
         public: explicit DragOnScene(const common::MouseEvent &_mouse);
 
         /// \brief Unique type for this event.
@@ -442,7 +442,7 @@ namespace ignition
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 18);
 
-        /// \brief Return the right mouse event
+        /// \brief Return the button press mouse event
         public: const common::MouseEvent &Mouse() const;
 
         /// \internal
