@@ -809,7 +809,7 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 RenderWindowItem::~RenderWindowItem()
 {
   // Disconnect our QT connections.
-  for(auto conn: this->dataPtr->connections)
+  for(auto conn : this->dataPtr->connections)
     QObject::disconnect(conn);
 
   this->dataPtr->renderSync.Shutdown();
