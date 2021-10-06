@@ -189,8 +189,11 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
   /// \brief See RenderSync
   public: RenderSync renderSync;
 
-  //// \brief List of threads
+  /// \brief List of threads
   public: static QList<QThread *> threads;
+
+  /// \brief List of our QT connections.
+  public: QList<QMetaObject::Connection> connections;
 };
 
 /// \brief Private data class for MinimalScene
@@ -236,6 +239,7 @@ void RenderSync::WaitForWorkerThread()
 
   // Worker thread asked us to wait!
   this->renderStallState = RenderStallState::WorkerCanProceed;
+
   lock.unlock();
   // Wake up worker thread
   this->cv.notify_one();
@@ -804,6 +808,10 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 /////////////////////////////////////////////////
 RenderWindowItem::~RenderWindowItem()
 {
+  // Disconnect our QT connections.
+  for(auto conn: this->dataPtr->connections)
+    QObject::disconnect(conn);
+
   this->dataPtr->renderSync.Shutdown();
   QMetaObject::invokeMethod(this->dataPtr->renderThread,
                             "ShutDown",
@@ -882,13 +890,17 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // This rendering pipeline is throttled by vsync on the scene graph
     // rendering thread.
 
-    this->connect(this->dataPtr->renderThread, &RenderThread::TextureReady,
-        node, &TextureNode::NewTexture, Qt::DirectConnection);
-    this->connect(node, &TextureNode::PendingNewTexture, this->window(),
+    this->dataPtr->connections << this->connect(this->dataPtr->renderThread,
+        &RenderThread::TextureReady, node, &TextureNode::NewTexture,
+        Qt::DirectConnection);
+    this->dataPtr->connections << this->connect(node,
+        &TextureNode::PendingNewTexture, this->window(),
         &QQuickWindow::update, Qt::QueuedConnection);
-    this->connect(this->window(), &QQuickWindow::beforeRendering, node,
-        &TextureNode::PrepareNode, Qt::DirectConnection);
-    this->connect(node, &TextureNode::TextureInUse, this->dataPtr->renderThread,
+    this->dataPtr->connections << this->connect(this->window(),
+        &QQuickWindow::beforeRendering, node, &TextureNode::PrepareNode,
+        Qt::DirectConnection);
+    this->dataPtr->connections << this->connect(node,
+        &TextureNode::TextureInUse, this->dataPtr->renderThread,
         &RenderThread::RenderNext, Qt::QueuedConnection);
 
     // Get the production of FBO textures started..
