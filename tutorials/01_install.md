@@ -99,6 +99,36 @@ Build and install as follows:
   sudo make install
   ```
 
+### macOS
+
+1. Clone the repository
+  ```
+  git clone https://github.com/ignitionrobotics/ign-gui -b ign-gui<#>
+  ```
+  Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
+  which version you need.
+
+2. Install dependencies
+  ```
+  brew install --only-dependencies ignition-gui<#>
+  ```
+  Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
+  which version you need.
+
+3. Configure and build
+  ```
+  cd ign-gui
+  mkdir build
+  cd build
+  cmake ..
+  make
+  ```
+
+4. Optionally, install
+  ```
+  sudo make install
+  ```
+
 ### Windows
 
 #### Install Prerequisites
@@ -204,4 +234,3 @@ Follow these steps to run tests and static code analysis in your clone of this r
   ```
 
 See the [Writing Tests section of the contributor guide](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
-
