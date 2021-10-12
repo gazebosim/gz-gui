@@ -191,6 +191,23 @@
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
 
+### Ignition Gui 3.8.0 (2021-10-12)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+
+1. 👩‍🌾 Remove bitbucket-pipelines.yml
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+
+1. Require ign-rendering 3.5
+    * [Pull request #264](https://github.com/ignitionrobotics/ign-gui/pull/264)
+
+1. New teleop plugin implementation.
+    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
+
 ### Ignition Gui 3.7.0 (2021-07-14)
 
 1. Fix codeowners
