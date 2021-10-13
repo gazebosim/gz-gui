@@ -48,11 +48,11 @@ Publish messages on an Ignition Transport topic.
 
         ign topic -e -t /echo
 
-1. On a new terminal, open the publisher GUI:
+2. On a new terminal, open the publisher GUI:
 
         ign gui -s Publisher
 
-1. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
+3. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
 
 ### World stats and control
@@ -101,7 +101,7 @@ plugins.
 
     ign gui -c examples/config/reqres.config
 
-### Displays {#display-plugins}
+### Displays
 
 **Not ported to versions 1 or higher yet**
 
@@ -119,5 +119,5 @@ Ignition GUI will look for display plugins on the following paths, in this
 order:
 
 1. All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
-1. `~/.ignition/gui/display_plugins`
-1. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
+2. `~/.ignition/gui/display_plugins`
+3. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
