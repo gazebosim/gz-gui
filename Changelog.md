@@ -19,9 +19,6 @@
 1. Fix doc build error
     * [Pull request #266](https://github.com/ignitionrobotics/ign-gui/pull/266)
 
-1. Require ign-rendering 3.5
-    * [Pull request #264](https://github.com/ignitionrobotics/ign-gui/pull/264)
-
 ### Ignition Gui 5.2.0 (2021-07-27)
 
 1. New teleop plugin implementation.
