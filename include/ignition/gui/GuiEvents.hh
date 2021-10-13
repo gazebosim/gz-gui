@@ -103,7 +103,7 @@ namespace ignition
       class SpawnFromDescription : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _string The resource's description as a string, such
+        /// \param[in] _description The resource's description as a string, such
         /// as an SDF file.
         public: explicit SpawnFromDescription(const std::string &_description)
             : QEvent(kType), description(_description)
