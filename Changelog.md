@@ -2,6 +2,23 @@
 
 ### Ignition Gui 5.X.X (20XX-XX-XX)
 
+### Ignition Gui 5.3.0 (2021-10-13)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Fix memory leak
+    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+
+1. 👩‍🌾 Remove bitbucket-pipelines.yml
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+
+1. Fix doc build error
+    * [Pull request #266](https://github.com/ignitionrobotics/ign-gui/pull/266)
+
 ### Ignition Gui 5.2.0 (2021-07-27)
 
 1. New teleop plugin implementation.
