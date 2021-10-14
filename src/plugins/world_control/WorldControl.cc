@@ -22,6 +22,7 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/Time.hh>
 #include <ignition/common/StringUtils.hh>
+#include <ignition/msgs.hh>
 #include <ignition/plugin/Register.hh>
 
 #include "ignition/gui/Helpers.hh"
@@ -51,6 +52,12 @@ namespace plugins
 
     /// \brief True for paused
     public: bool pause{true};
+
+    /// \brief A list of ECM states that represent the state of the ECM
+    /// after a GUI action performed by users while simulation is paused.
+    /// The order of the states in the list is the order in which user
+    /// actions were taken
+    public: ignition::msgs::SerializedState_V ecmStatesMsg;
   };
 }
 }
@@ -212,6 +219,26 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     ignerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
   }
+
+  // advertise a service that allows other processes to notify WorldControl
+  // that a change to the GUI's ECM took place
+  const std::string guiEcmChangesService = "guiEcmChanges";
+  std::function<bool(const msgs::SerializedState_V &, msgs::Boolean &)> cb =
+    [this](const msgs::SerializedState_V &_req, msgs::Boolean &_res)
+    {
+      // save the ECM change that took place
+      auto nextEcmChange = this->dataPtr->ecmStatesMsg.add_state();
+      nextEcmChange->CopyFrom(_req);
+
+      _res.set_data(true);
+      return true;
+    };
+
+  if (!this->dataPtr->node.Advertise(guiEcmChangesService, cb))
+  {
+    ignerr << "failed to advertise the [" << guiEcmChangesService
+           << "] service.\n";
+  }
 }
 
 /////////////////////////////////////////////////
@@ -245,9 +272,21 @@ void WorldControl::OnPlay()
       QMetaObject::invokeMethod(this, "playing");
   };
 
-  ignition::msgs::WorldControl req;
-  req.set_pause(false);
+  ignition::msgs::WorldControlState req;
+
+  // set the world control information
+  req.mutable_worldcontrol()->set_pause(false);
   this->dataPtr->pause = false;
+
+  // set the ecm state information, if any ECM changes took place in the GUI
+  for (int i = 0; i < this->dataPtr->ecmStatesMsg.state_size(); ++i)
+  {
+    auto ecmState = req.mutable_state()->add_state();
+    ecmState->CopyFrom(this->dataPtr->ecmStatesMsg.state(i));
+  }
+  this->dataPtr->ecmStatesMsg.Clear();
+
+  // share this information with the server
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
@@ -261,8 +300,8 @@ void WorldControl::OnPause()
       QMetaObject::invokeMethod(this, "paused");
   };
 
-  ignition::msgs::WorldControl req;
-  req.set_pause(true);
+  ignition::msgs::WorldControlState req;
+  req.mutable_worldcontrol()->set_pause(true);
   this->dataPtr->pause = true;
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
@@ -281,9 +320,9 @@ void WorldControl::OnStep()
   {
   };
 
-  ignition::msgs::WorldControl req;
-  req.set_pause(this->dataPtr->pause);
-  req.set_multi_step(this->dataPtr->multiStep);
+  ignition::msgs::WorldControlState req;
+  req.mutable_worldcontrol()->set_pause(this->dataPtr->pause);
+  req.mutable_worldcontrol()->set_multi_step(this->dataPtr->multiStep);
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
