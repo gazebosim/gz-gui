@@ -53,10 +53,10 @@ namespace plugins
     /// \brief True for paused
     public: bool pause{true};
 
-    /// \brief A list of ECM states that represent the state of the ECM
-    /// after a GUI action performed by users while simulation is paused.
-    /// The order of the states in the list is the order in which user
-    /// actions were taken
+    /// \brief A list of ECM states. Each state represents the state of the ECM
+    /// after a user-performed GUI action that modified the GUI's ECM, which
+    /// took place while simulation was paused. The order of the states in the
+    /// list is the order in which user actions were taken
     public: ignition::msgs::SerializedState_V ecmStatesMsg;
   };
 }
@@ -223,8 +223,8 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // advertise a service that allows other processes to notify WorldControl
   // that a change to the GUI's ECM took place
   const std::string guiEcmChangesService = "guiEcmChanges";
-  std::function<bool(const msgs::SerializedState_V &, msgs::Boolean &)> cb =
-    [this](const msgs::SerializedState_V &_req, msgs::Boolean &_res)
+  std::function<bool(const msgs::SerializedState &, msgs::Boolean &)> cb =
+    [this](const msgs::SerializedState &_req, msgs::Boolean &_res)
     {
       // save the ECM change that took place
       auto nextEcmChange = this->dataPtr->ecmStatesMsg.add_state();
