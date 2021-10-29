@@ -22,10 +22,12 @@
 #include <ignition/common/Console.hh>
 #include <ignition/common/Time.hh>
 #include <ignition/common/StringUtils.hh>
-#include <ignition/msgs.hh>
 #include <ignition/plugin/Register.hh>
 
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/GuiEvents.hh"
+#include "ignition/gui/MainWindow.hh"
 
 namespace ignition
 {
@@ -53,11 +55,9 @@ namespace plugins
     /// \brief True for paused
     public: bool pause{true};
 
-    /// \brief A list of ECM states. Each state represents the state of the ECM
-    /// after a user-performed GUI action that modified the GUI's ECM, which
-    /// took place while simulation was paused. The order of the states in the
-    /// list is the order in which user actions were taken
-    public: ignition::msgs::SerializedState_V ecmStatesMsg;
+    /// \brief The paused state of the most recently received world stats msg
+    /// (true for paused)
+    public: bool lastStatsMsgPaused{true};
   };
 }
 }
@@ -158,6 +158,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         pausedElem->QueryBoolText(&startPaused);
       }
       this->dataPtr->pause = startPaused;
+      this->dataPtr->lastStatsMsgPaused = startPaused;
       if (startPaused)
         this->paused();
       else
@@ -219,26 +220,6 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     ignerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
   }
-
-  // advertise a service that allows other processes to notify WorldControl
-  // that a change to the GUI's ECM took place
-  const std::string guiEcmChangesService = "guiEcmChanges";
-  std::function<bool(const msgs::SerializedState &, msgs::Boolean &)> cb =
-    [this](const msgs::SerializedState &_req, msgs::Boolean &_res)
-    {
-      // save the ECM change that took place
-      auto nextEcmChange = this->dataPtr->ecmStatesMsg.add_state();
-      nextEcmChange->CopyFrom(_req);
-
-      _res.set_data(true);
-      return true;
-    };
-
-  if (!this->dataPtr->node.Advertise(guiEcmChangesService, cb))
-  {
-    ignerr << "failed to advertise the [" << guiEcmChangesService
-           << "] service.\n";
-  }
 }
 
 /////////////////////////////////////////////////
@@ -246,11 +227,21 @@ void WorldControl::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  if (!this->dataPtr->pause && this->dataPtr->msg.paused())
+  // If the pause state of the message doesn't match the pause state of this
+  // plugin, then play/pause must have occurred elsewhere (for example, the
+  // command line). If the pause state of the message matches the pause state
+  // of this plugin, but the pause state of the message differs from the
+  // previous message's pause state, this means that a pause/play request from
+  // this plugin has been registered by the server
+  if ((!this->dataPtr->pause && this->dataPtr->msg.paused()) ||
+      (!this->dataPtr->lastStatsMsgPaused && this->dataPtr->msg.paused()))
     this->paused();
-  else if (this->dataPtr->pause && !this->dataPtr->msg.paused())
+  else if ((this->dataPtr->pause && !this->dataPtr->msg.paused()) ||
+      (this->dataPtr->lastStatsMsgPaused && !this->dataPtr->msg.paused()))
     this->playing();
+
   this->dataPtr->pause = this->dataPtr->msg.paused();
+  this->dataPtr->lastStatsMsgPaused = this->dataPtr->msg.paused();
 }
 
 /////////////////////////////////////////////////
@@ -265,45 +256,21 @@ void WorldControl::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 /////////////////////////////////////////////////
 void WorldControl::OnPlay()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
-  {
-    if (_result)
-      QMetaObject::invokeMethod(this, "playing");
-  };
-
-  ignition::msgs::WorldControlState req;
-
-  // set the world control information
-  req.mutable_worldcontrol()->set_pause(false);
+  ignition::msgs::WorldControl msg;
+  msg.set_pause(false);
   this->dataPtr->pause = false;
-
-  // set the ecm state information, if any ECM changes took place in the GUI
-  for (int i = 0; i < this->dataPtr->ecmStatesMsg.state_size(); ++i)
-  {
-    auto ecmState = req.mutable_state()->add_state();
-    ecmState->CopyFrom(this->dataPtr->ecmStatesMsg.state(i));
-  }
-  this->dataPtr->ecmStatesMsg.Clear();
-
-  // share this information with the server
-  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+  gui::events::WorldControl event(msg, true);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
 }
 
 /////////////////////////////////////////////////
 void WorldControl::OnPause()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
-  {
-    if (_result)
-      QMetaObject::invokeMethod(this, "paused");
-  };
-
-  ignition::msgs::WorldControlState req;
-  req.mutable_worldcontrol()->set_pause(true);
+  ignition::msgs::WorldControl msg;
+  msg.set_pause(true);
   this->dataPtr->pause = true;
-  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+  gui::events::WorldControl event(msg, false);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
 }
 
 /////////////////////////////////////////////////
@@ -315,15 +282,11 @@ void WorldControl::OnStepCount(const unsigned int _steps)
 /////////////////////////////////////////////////
 void WorldControl::OnStep()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
-  {
-  };
-
-  ignition::msgs::WorldControlState req;
-  req.mutable_worldcontrol()->set_pause(this->dataPtr->pause);
-  req.mutable_worldcontrol()->set_multi_step(this->dataPtr->multiStep);
-  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+  ignition::msgs::WorldControl msg;
+  msg.set_pause(this->dataPtr->pause);
+  msg.set_multi_step(this->dataPtr->multiStep);
+  gui::events::WorldControl event(msg, false);
+  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
 }
 
 // Register this plugin

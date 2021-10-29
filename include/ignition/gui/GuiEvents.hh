@@ -27,6 +27,7 @@
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/msgs.hh>
 #include <ignition/utils/ImplPtr.hh>
 
 #include "ignition/gui/Export.hh"
@@ -444,6 +445,34 @@ namespace ignition
 
         /// \brief Return the button press mouse event
         public: const common::MouseEvent &Mouse() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event which is called to share WorldControl information.
+      class IGNITION_GUI_VISIBLE WorldControl : public QEvent
+      {
+        /// \brief Constructor
+        /// \param[in] _worldControl The WorldControl information
+        /// \param[in] _play Whether the event is associated with a user
+        /// pressing play (true) or not (false)
+        public: WorldControl(const msgs::WorldControl &_worldControl,
+                    bool _play);
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 19);
+
+        /// \brief Get the WorldControl information
+        /// \return The WorldControl information
+        public: const msgs::WorldControl &WorldControlInfo() const;
+
+        /// \brief Get whether the event is associated with
+        /// a user selecting "play" or not
+        /// \return True if the event is associated with a user selection play.
+        /// False otherwise
+        public: bool Play() const;
 
         /// \internal
         /// \brief Private data pointer
