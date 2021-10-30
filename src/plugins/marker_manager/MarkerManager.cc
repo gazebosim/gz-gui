@@ -117,8 +117,8 @@ class ignition::gui::plugins::MarkerManagerPrivate
   public: std::list<ignition::msgs::Marker> markerMsgs;
 
   /// \brief Map of visuals
-  public: std::map<std::string,
-      std::map<uint64_t, ignition::rendering::VisualPtr>> visuals;
+  public: std::unordered_map<std::string,
+            std::unordered_map<uint64_t, ignition::rendering::VisualPtr>> visuals;
 
   /// \brief Ignition node
   public: ignition::transport::Node node;
@@ -200,6 +200,7 @@ void MarkerManagerPrivate::OnRender()
   }
 
   std::lock_guard<std::mutex> lock(this->mutex);
+
   // Process the marker messages.
   for (auto markerIter = this->markerMsgs.begin();
        markerIter != this->markerMsgs.end();)
@@ -208,6 +209,7 @@ void MarkerManagerPrivate::OnRender()
     this->markerMsgs.erase(markerIter++);
   }
 
+  
   // Erase any markers that have a lifetime.
   for (auto mit = this->visuals.begin();
        mit != this->visuals.end();)
@@ -314,7 +316,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
   }
 
   // Get visual for this namespace and id
-  std::map<uint64_t, rendering::VisualPtr>::iterator visualIter;
+  std::unordered_map<uint64_t, rendering::VisualPtr>::iterator visualIter;
   if (nsIter != this->visuals.end())
     visualIter = nsIter->second.find(id);
 
