@@ -456,7 +456,7 @@ namespace ignition
       {
         /// \brief Constructor
         /// \param[in] _worldControl The WorldControl information
-        public: WorldControl(const msgs::WorldControl &_worldControl);
+        public: explicit WorldControl(const msgs::WorldControl &_worldControl);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 19);
