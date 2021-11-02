@@ -60,8 +60,12 @@ namespace plugins
     public: bool lastStatsMsgPaused{true};
 
     /// \brief Whether server communication should occur through an event (true)
-    /// or service (false). Event is used by default.
-    public: bool useEvent{true};
+    /// or service (false). The service option is used by default for
+    /// ign-gui6, and should be changed to use the event by default in
+    /// ign-gui7.
+    /// \todo(anyone) Add a deprecation notice in ign-gui7, and remove this
+    /// in ign-gui8.
+    public: bool useEvent{false};
   };
 }
 }
