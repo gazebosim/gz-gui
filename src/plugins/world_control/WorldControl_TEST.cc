@@ -78,6 +78,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
       "</ignition-gui>"
       "<play_pause>true</play_pause>"
       "<service>/world_control_test</service>"
+      "<use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -148,6 +149,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
+    "  <use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -201,6 +203,7 @@ TEST(WorldControlTest,
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
     "  <service>/world/watermelon/control</service>"
+    "  <use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -252,6 +255,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
     "  <service>/world/watermelon/control</service>"
+    "  <use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
