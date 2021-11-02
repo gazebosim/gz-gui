@@ -58,6 +58,10 @@ namespace plugins
     /// \brief The paused state of the most recently received world stats msg
     /// (true for paused)
     public: bool lastStatsMsgPaused{true};
+
+    /// \brief Whether server communication should occur through an event (true)
+    /// or service (false). Event is used by default.
+    public: bool useEvent{true};
   };
 }
 }
@@ -220,6 +224,17 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     ignerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
   }
+
+  // TODO(anyone) remove the option to use a service in ign-gui7 and use an
+  // event only to communicate with the server (ign-gazebo7 will not support
+  // the service option, only the event)
+  if (auto elem = _pluginElem->FirstChildElement("use_event"))
+    elem->QueryBoolText(&this->dataPtr->useEvent);
+
+  if (this->dataPtr->useEvent)
+    igndbg << "Using an event to share WorldControl msgs with the server\n";
+  else
+    igndbg << "Using a service to share WorldControl msgs with the server\n";
 }
 
 /////////////////////////////////////////////////
@@ -233,11 +248,11 @@ void WorldControl::ProcessMsg()
   // of this plugin, but the pause state of the message differs from the
   // previous message's pause state, this means that a pause/play request from
   // this plugin has been registered by the server
-  if ((!this->dataPtr->pause && this->dataPtr->msg.paused()) ||
-      (!this->dataPtr->lastStatsMsgPaused && this->dataPtr->msg.paused()))
+  if (this->dataPtr->msg.paused() &&
+      (!this->dataPtr->pause || !this->dataPtr->lastStatsMsgPaused))
     this->paused();
-  else if ((this->dataPtr->pause && !this->dataPtr->msg.paused()) ||
-      (this->dataPtr->lastStatsMsgPaused && !this->dataPtr->msg.paused()))
+  else if (!this->dataPtr->msg.paused() &&
+      (this->dataPtr->pause || this->dataPtr->lastStatsMsgPaused))
     this->playing();
 
   this->dataPtr->pause = this->dataPtr->msg.paused();
@@ -259,8 +274,21 @@ void WorldControl::OnPlay()
   ignition::msgs::WorldControl msg;
   msg.set_pause(false);
   this->dataPtr->pause = false;
-  gui::events::WorldControl event(msg, true);
-  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+  if (this->dataPtr->useEvent)
+  {
+    gui::events::WorldControl event(msg);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+  }
+  else
+  {
+    std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+        [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+    {
+      // the service CB is empty because updates are handled in
+      // WorldControl::ProcessMsg
+    };
+    this->dataPtr->node.Request(this->dataPtr->controlService, msg, cb);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -269,8 +297,21 @@ void WorldControl::OnPause()
   ignition::msgs::WorldControl msg;
   msg.set_pause(true);
   this->dataPtr->pause = true;
-  gui::events::WorldControl event(msg, false);
-  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+  if (this->dataPtr->useEvent)
+  {
+    gui::events::WorldControl event(msg);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+  }
+  else
+  {
+    std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+        [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+    {
+      // the service CB is empty because updates are handled in
+      // WorldControl::ProcessMsg
+    };
+    this->dataPtr->node.Request(this->dataPtr->controlService, msg, cb);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -285,8 +326,21 @@ void WorldControl::OnStep()
   ignition::msgs::WorldControl msg;
   msg.set_pause(this->dataPtr->pause);
   msg.set_multi_step(this->dataPtr->multiStep);
-  gui::events::WorldControl event(msg, false);
-  App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+  if (this->dataPtr->useEvent)
+  {
+    gui::events::WorldControl event(msg);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+  }
+  else
+  {
+    std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+        [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+    {
+      // the service CB is empty because updates are handled in
+      // WorldControl::ProcessMsg
+    };
+    this->dataPtr->node.Request(this->dataPtr->controlService, msg, cb);
+  }
 }
 
 // Register this plugin

@@ -140,9 +140,6 @@ class ignition::gui::events::WorldControl::Implementation
 {
   /// \brief WorldControl information.
   public: msgs::WorldControl worldControl;
-
-  /// \brief Whether a user selected "play" or not
-  public: bool play;
 };
 
 using namespace ignition;
@@ -412,21 +409,14 @@ const common::MouseEvent &MousePressOnScene::Mouse() const
 }
 
 /////////////////////////////////////////////////
-WorldControl::WorldControl(const msgs::WorldControl &_worldControl, bool _play)
+WorldControl::WorldControl(const msgs::WorldControl &_worldControl)
   : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
   this->dataPtr->worldControl = _worldControl;
-  this->dataPtr->play = _play;
 }
 
 /////////////////////////////////////////////////
 const msgs::WorldControl &WorldControl::WorldControlInfo() const
 {
   return this->dataPtr->worldControl;
-}
-
-/////////////////////////////////////////////////
-bool WorldControl::Play() const
-{
-  return this->dataPtr->play;
 }

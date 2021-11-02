@@ -268,7 +268,7 @@ TEST(GuiEventsTest, WorldControl)
   worldControl.set_seed(10u);
   worldControl.mutable_run_to_sim_time()->set_sec(2);
   worldControl.mutable_run_to_sim_time()->set_nsec(3);
-  events::WorldControl playEvent(worldControl, true);
+  events::WorldControl playEvent(worldControl);
 
   EXPECT_LT(QEvent::User, playEvent.type());
   EXPECT_FALSE(playEvent.WorldControlInfo().has_header());
@@ -282,8 +282,4 @@ TEST(GuiEventsTest, WorldControl)
   EXPECT_EQ(10u, playEvent.WorldControlInfo().seed());
   EXPECT_EQ(2, playEvent.WorldControlInfo().run_to_sim_time().sec());
   EXPECT_EQ(3, playEvent.WorldControlInfo().run_to_sim_time().nsec());
-  EXPECT_TRUE(playEvent.Play());
-
-  events::WorldControl pauseEvent(worldControl, false);
-  EXPECT_FALSE(pauseEvent.Play());
 }

@@ -456,10 +456,7 @@ namespace ignition
       {
         /// \brief Constructor
         /// \param[in] _worldControl The WorldControl information
-        /// \param[in] _play Whether the event is associated with a user
-        /// pressing play (true) or not (false)
-        public: WorldControl(const msgs::WorldControl &_worldControl,
-                    bool _play);
+        public: WorldControl(const msgs::WorldControl &_worldControl);
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 19);
@@ -467,12 +464,6 @@ namespace ignition
         /// \brief Get the WorldControl information
         /// \return The WorldControl information
         public: const msgs::WorldControl &WorldControlInfo() const;
-
-        /// \brief Get whether the event is associated with
-        /// a user selecting "play" or not
-        /// \return True if the event is associated with a user selection play.
-        /// False otherwise
-        public: bool Play() const;
 
         /// \internal
         /// \brief Private data pointer
