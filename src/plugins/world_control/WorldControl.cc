@@ -246,6 +246,11 @@ void WorldControl::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
+  // ignore the message if it's associated with a step
+  const auto &header = this->dataPtr->msg.header();
+  if ((header.data_size() > 0) && (header.data(0).key() == "step"))
+    return;
+
   // If the pause state of the message doesn't match the pause state of this
   // plugin, then play/pause must have occurred elsewhere (for example, the
   // command line). If the pause state of the message matches the pause state
