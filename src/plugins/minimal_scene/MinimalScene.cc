@@ -1064,10 +1064,10 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       auto child = elem->FirstChildElement("near");
       if (nullptr != child && nullptr != child->GetText())
       {
-        double near;
+        double n;
         std::stringstream nearStr;
         nearStr << std::string(child->GetText());
-        nearStr >> near;
+        nearStr >> n;
         if (nearStr.fail())
         {
           ignerr << "Unable to set <near> to '" << nearStr.str()
@@ -1075,17 +1075,17 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         }
         else
         {
-          renderWindow->SetCameraNearClip(near);
+          renderWindow->SetCameraNearClip(n);
         }
       }
 
       child = elem->FirstChildElement("far");
       if (nullptr != child && nullptr != child->GetText())
       {
-        double far;
+        double f;
         std::stringstream farStr;
         farStr << std::string(child->GetText());
-        farStr >> far;
+        farStr >> f;
         if (farStr.fail())
         {
           ignerr << "Unable to set <far> to '" << farStr.str()
@@ -1093,7 +1093,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         }
         else
         {
-          renderWindow->SetCameraFarClip(far);
+          renderWindow->SetCameraFarClip(f);
         }
       }
     }
