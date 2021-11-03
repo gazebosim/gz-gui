@@ -947,13 +947,13 @@ void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::SetCameraNearClip(const double &_near)
+void RenderWindowItem::SetCameraNearClip(double _near)
 {
   this->dataPtr->renderThread->ignRenderer.cameraNearClip = _near;
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::SetCameraFarClip(const double &_far)
+void RenderWindowItem::SetCameraFarClip(double _far)
 {
   this->dataPtr->renderThread->ignRenderer.cameraFarClip = _far;
 }

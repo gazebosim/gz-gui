@@ -297,11 +297,11 @@ namespace plugins
 
     /// \brief Set the render window camera's near clipping plane distance
     /// \param[in] _near Near clipping plane distance
-    public: void SetCameraNearClip(const double &_near);
+    public: void SetCameraNearClip(double _near);
 
     /// \brief Set the render window camera's far clipping plane distance
     /// \param[in] _far Far clipping plane distance
-    public: void SetCameraFarClip(const double &_far);
+    public: void SetCameraFarClip(double _far);
 
     /// \brief Set scene service to use in this render window
     /// A service call will be made using ign-transport to get scene
