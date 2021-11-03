@@ -85,7 +85,7 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       "<camera_clip>"
       "  <near>0.1</near>"
       "  <far>5000</far>"
-      "/<camera_clip>"
+      "</camera_clip>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
