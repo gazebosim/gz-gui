@@ -61,10 +61,7 @@ namespace plugins
 
     /// \brief Whether server communication should occur through an event (true)
     /// or service (false). The service option is used by default for
-    /// ign-gui6, and should be changed to use the event by default in
-    /// ign-gui7.
-    /// \todo(anyone) Add a deprecation notice in ign-gui7, and remove this
-    /// in ign-gui8.
+    /// ign-gui6, and should be changed to use the event by default in ign-gui7.
     public: bool useEvent{false};
   };
 }
@@ -229,9 +226,6 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
            << std::endl;
   }
 
-  // TODO(anyone) remove the option to use a service in ign-gui7 and use an
-  // event only to communicate with the server (ign-gazebo7 will not support
-  // the service option, only the event)
   if (auto elem = _pluginElem->FirstChildElement("use_event"))
     elem->QueryBoolText(&this->dataPtr->useEvent);
 
