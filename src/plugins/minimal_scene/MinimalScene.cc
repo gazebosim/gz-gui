@@ -542,6 +542,8 @@ void IgnRenderer::Initialize()
   this->dataPtr->camera->SetUserData("user-camera", true);
   root->AddChild(this->dataPtr->camera);
   this->dataPtr->camera->SetLocalPose(this->cameraPose);
+  this->dataPtr->camera->SetNearClipPlane(this->cameraNearClip);
+  this->dataPtr->camera->SetFarClipPlane(this->cameraFarClip);
   this->dataPtr->camera->SetImageWidth(this->textureSize.width());
   this->dataPtr->camera->SetImageHeight(this->textureSize.height());
   this->dataPtr->camera->SetAntiAliasing(8);
@@ -945,6 +947,18 @@ void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetCameraNearClip(const double &_near)
+{
+  this->dataPtr->renderThread->ignRenderer.cameraNearClip = _near;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetCameraFarClip(const double &_far)
+{
+  this->dataPtr->renderThread->ignRenderer.cameraFarClip = _far;
+}
+
+/////////////////////////////////////////////////
 void RenderWindowItem::SetSceneService(const std::string &_service)
 {
   this->dataPtr->renderThread->ignRenderer.sceneService = _service;
@@ -1042,6 +1056,44 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       poseStr << std::string(elem->GetText());
       poseStr >> pose;
       renderWindow->SetCameraPose(pose);
+    }
+
+    elem = _pluginElem->FirstChildElement("camera_clip");
+    if (nullptr != elem && !elem->NoChildren())
+    {
+      auto child = elem->FirstChildElement("near");
+      if (nullptr != child && nullptr != child->GetText())
+      {
+        double near;
+        std::stringstream nearStr;
+        nearStr << std::string(child->GetText());
+        if (nearStr >> near)
+        {
+          renderWindow->SetCameraNearClip(near);
+        }
+        else
+        {
+          ignerr << "Unable to set <near> to '" << nearStr.str()
+                 << "' using default near clip distance" << std::endl;
+        }
+      }
+
+      child = elem->FirstChildElement("far");
+      if (nullptr != child && nullptr != child->GetText())
+      {
+        double far;
+        std::stringstream farStr;
+        farStr << std::string(child->GetText());
+        if (farStr >> far)
+        {
+          renderWindow->SetCameraFarClip(far);
+        }
+        else
+        {
+          ignerr << "Unable to set <far> to '" << farStr.str()
+                 << "' using default far clip distance" << std::endl;
+        }
+      }
     }
 
     elem = _pluginElem->FirstChildElement("service");
