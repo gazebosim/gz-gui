@@ -23,6 +23,16 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/qt.h"
 
+#ifndef _WIN32
+#  define WorldControlEventListener_EXPORTS_API
+#else
+#  if (defined(WorldControlEventListener_EXPORTS))
+#    define WorldControlEventListener_EXPORTS_API __declspec(dllexport)
+#  else
+#    define WorldControlEventListener_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 namespace ignition
 {
 namespace gui
@@ -30,7 +40,8 @@ namespace gui
   /// \brief Helper class for testing listening to events emitted by the
   /// WorldControl plugin. This is used for testing the event behavior of
   /// the WorldControl plugin.
-  class WorldControlEventListener : public QObject
+  class WorldControlEventListener_EXPORTS_API WorldControlEventListener :
+    public QObject
   {
     Q_OBJECT
 
