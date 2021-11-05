@@ -212,6 +212,8 @@ void ImageDisplay::ProcessImage()
         image.setPixel(i, j, value);
       }
     }
+
+    delete [] data;
   }
 
   this->dataPtr->provider->SetImage(image);

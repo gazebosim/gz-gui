@@ -46,7 +46,8 @@ namespace gui
     public: virtual ~KeyPublisher();
 
     // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *) override;
+    public: virtual void LoadConfig(
+      const tinyxml2::XMLElement *_pluginElem) override;
 
     /// \brief Filter events in Qt
     /// \param[in] _obj The watched object
