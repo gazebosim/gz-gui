@@ -27,7 +27,7 @@
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
-#include <ignition/msgs.hh>
+#include <ignition/msgs/world_control.pb.h>
 #include <ignition/utils/ImplPtr.hh>
 
 #include "ignition/gui/Export.hh"

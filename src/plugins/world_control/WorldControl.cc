@@ -37,6 +37,10 @@ namespace plugins
 {
   class WorldControlPrivate
   {
+    /// \brief Send the world control event or call the control service.
+    /// \param[in] _msg Message to send.
+    public: void SendEventMsg(const ignition::msgs::WorldControl &_msg);
+
     /// \brief Message holding latest world statistics
     public: ignition::msgs::WorldStatistics msg;
 
@@ -277,21 +281,7 @@ void WorldControl::OnPlay()
   ignition::msgs::WorldControl msg;
   msg.set_pause(false);
   this->dataPtr->pause = false;
-  if (this->dataPtr->useEvent)
-  {
-    gui::events::WorldControl event(msg);
-    App()->sendEvent(App()->findChild<MainWindow *>(), &event);
-  }
-  else
-  {
-    std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-        [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
-    {
-      // the service CB is empty because updates are handled in
-      // WorldControl::ProcessMsg
-    };
-    this->dataPtr->node.Request(this->dataPtr->controlService, msg, cb);
-  }
+  this->dataPtr->SendEventMsg(msg);
 }
 
 /////////////////////////////////////////////////
@@ -300,21 +290,8 @@ void WorldControl::OnPause()
   ignition::msgs::WorldControl msg;
   msg.set_pause(true);
   this->dataPtr->pause = true;
-  if (this->dataPtr->useEvent)
-  {
-    gui::events::WorldControl event(msg);
-    App()->sendEvent(App()->findChild<MainWindow *>(), &event);
-  }
-  else
-  {
-    std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-        [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
-    {
-      // the service CB is empty because updates are handled in
-      // WorldControl::ProcessMsg
-    };
-    this->dataPtr->node.Request(this->dataPtr->controlService, msg, cb);
-  }
+
+  this->dataPtr->SendEventMsg(msg);
 }
 
 /////////////////////////////////////////////////
@@ -329,9 +306,16 @@ void WorldControl::OnStep()
   ignition::msgs::WorldControl msg;
   msg.set_pause(this->dataPtr->pause);
   msg.set_multi_step(this->dataPtr->multiStep);
-  if (this->dataPtr->useEvent)
+
+  this->dataPtr->SendEventMsg(msg);
+}
+
+/////////////////////////////////////////////////
+void WorldControlPrivate::SendEventMsg(const ignition::msgs::WorldControl &_msg)
+{
+  if (this->useEvent)
   {
-    gui::events::WorldControl event(msg);
+    gui::events::WorldControl event(_msg);
     App()->sendEvent(App()->findChild<MainWindow *>(), &event);
   }
   else
@@ -342,7 +326,7 @@ void WorldControl::OnStep()
       // the service CB is empty because updates are handled in
       // WorldControl::ProcessMsg
     };
-    this->dataPtr->node.Request(this->dataPtr->controlService, msg, cb);
+    this->node.Request(this->controlService, _msg, cb);
   }
 }
 
