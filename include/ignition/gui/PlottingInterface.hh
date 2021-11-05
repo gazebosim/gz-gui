@@ -63,7 +63,7 @@ class IGNITION_GUI_VISIBLE PlotData
   public: double Value() const;
 
   /// \brief Set the field arrival time
-  /// \param[in] _value arrival time to set it
+  /// \param[in] _time arrival time to set it
   public: void SetTime(const double _time);
 
   /// \brief Get the arrival time
@@ -273,7 +273,6 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
   /// \brief called by Qml to remove a chart from a component attribute
   /// \param[in] _entity entity id which has the component
   /// \param[in] _typeId component type id
-  /// \param[in] _type component data type
   /// \param[in] _attribute component specefice attribte
   /// \param[in] _chart chart id
   public slots: void onComponentUnSubscribe(QString _entity,
@@ -296,7 +295,6 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
   /// \brief Notify the gazebo plugin to unsubscribe a component data
   /// \param[in] _entity entity id which has the component
   /// \param[in] _typeId component type id
-  /// \param[in] _type component data type
   /// \param[in] _attribute component specefice attribte
   /// \param[in] _chart chart id
   signals: void ComponentUnSubscribe(uint64_t _entity,
@@ -338,4 +336,3 @@ class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
 }
 
 #endif
-
