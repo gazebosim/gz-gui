@@ -1,6 +1,21 @@
 ## Ignition Gui 6
 
-### Ignition Gui 6.X.X
+### Ignition Gui 6.1.0 (2021-11-05)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Fix mimimal scene deadlock on shutdown
+    * [Pull request #300](https://github.com/ignitionrobotics/ign-gui/pull/300)
+
+1. Fix memory leak
+    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+
+1. Set near/far camera clipping distance
+    * [Pull request #309](https://github.com/ignitionrobotics/ign-gui/pull/309)
+
+1. Support emitting an event on play/pause/step
+    * [Pull request #306](https://github.com/ignitionrobotics/ign-gui/pull/306)
 
 ### Ignition Gui 6.0.0 (2021-09-XX)
 
