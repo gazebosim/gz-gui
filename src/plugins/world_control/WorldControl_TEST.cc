@@ -23,9 +23,10 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Application.hh"
-#include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/Plugin.hh"
 #include "WorldControl.hh"
+#include "WorldControlEventListener.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -53,7 +54,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 
   // Get plugin
   auto plugins = win->findChildren<Plugin *>();
-  EXPECT_EQ(plugins.size(), 1);
+  ASSERT_EQ(plugins.size(), 1);
 
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "World control");
@@ -78,6 +79,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
       "</ignition-gui>"
       "<play_pause>true</play_pause>"
       "<service>/world_control_test</service>"
+      "<use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -94,7 +96,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
 
   // Get plugin
   auto plugins = win->findChildren<plugins::WorldControl *>();
-  EXPECT_EQ(plugins.size(), 1);
+  ASSERT_EQ(plugins.size(), 1);
 
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "World Control!");
@@ -148,6 +150,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
+    "  <use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -160,7 +163,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
 
   // Get plugin
   auto plugins = win->findChildren<plugins::WorldControl *>();
-  EXPECT_EQ(plugins.size(), 1);
+  ASSERT_EQ(plugins.size(), 1);
 
   // World control service
   bool pauseCalled = false;
@@ -201,6 +204,7 @@ TEST(WorldControlTest,
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
     "  <service>/world/watermelon/control</service>"
+    "  <use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -213,7 +217,7 @@ TEST(WorldControlTest,
 
   // Get plugin
   auto plugins = win->findChildren<plugins::WorldControl *>();
-  EXPECT_EQ(plugins.size(), 1);
+  ASSERT_EQ(plugins.size(), 1);
 
   // World control service
   bool pauseCalled = false;
@@ -252,6 +256,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
     "  <service>/world/watermelon/control</service>"
+    "  <use_event>false</use_event>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -264,7 +269,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
 
   // Get plugin
   auto plugins = win->findChildren<plugins::WorldControl *>();
-  EXPECT_EQ(plugins.size(), 1);
+  ASSERT_EQ(plugins.size(), 1);
 
   // World control service
   bool pauseCalled = false;
@@ -276,12 +281,71 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
   };
   transport::Node node;
 
-  // banana, not watermelon
   node.Advertise("/world/watermelon/control", cb);
 
   // Pause
   plugins[0]->OnPause();
   EXPECT_TRUE(pauseCalled);
+
+  // Cleanup
+  plugins.clear();
+}
+
+/////////////////////////////////////////////////
+TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControlEvent))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"WorldControl\">"
+      "<ignition-gui>"
+        "<title>World Control!</title>"
+      "</ignition-gui>"
+      "<play_pause>true</play_pause>"
+      "<service>/world_control_test</service>"
+      "<use_event>true</use_event>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+  EXPECT_TRUE(app.LoadPlugin("WorldControl",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::WorldControl *>();
+  ASSERT_EQ(plugins.size(), 1);
+
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "World Control!");
+
+  // World control event listener
+  ignition::gui::WorldControlEventListener eventListener;
+  EXPECT_FALSE(eventListener.listenedToPause);
+  EXPECT_FALSE(eventListener.listenedToStep);
+  EXPECT_FALSE(eventListener.listenedToPlay);
+
+  // Pause
+  plugin->OnPause();
+  EXPECT_TRUE(eventListener.listenedToPause);
+
+  // Step
+  plugin->OnStep();
+  EXPECT_TRUE(eventListener.listenedToStep);
+
+  // Play
+  plugin->OnPlay();
+  EXPECT_TRUE(eventListener.listenedToPlay);
 
   // Cleanup
   plugins.clear();
