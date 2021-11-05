@@ -238,9 +238,10 @@ namespace plugins
     /// \brief Constructor
     public: RenderThread();
 
+    /// \brief Render when safe
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt and worker thread (this)
-    public slots: void RenderNext(RenderSync *renderSync);
+    public slots: void RenderNext(RenderSync *_renderSync);
 
     /// \brief Shutdown the thread and the render engine
     public slots: void ShutDown();
@@ -389,6 +390,8 @@ namespace plugins
   {
     Q_OBJECT
 
+    /// \brief Constructor
+    /// \param[in] _window Window to display the texture
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt (this) and worker thread
     public: explicit TextureNode(QQuickWindow *_window,

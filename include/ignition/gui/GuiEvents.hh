@@ -93,7 +93,7 @@ namespace ignition
       class IGNITION_GUI_VISIBLE SpawnFromDescription : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _string The resource's description as a string, such
+        /// \param[in] _description The resource's description as a string, such
         /// as an SDF file.
         public: explicit SpawnFromDescription(const std::string &_description);
 
@@ -369,7 +369,7 @@ namespace ignition
       class IGNITION_GUI_VISIBLE DropOnScene : public QEvent
       {
         /// \brief Constructor
-        /// \param[in] _drop Dropped string.
+        /// \param[in] _dropText Dropped string.
         /// \param[in] _dropMouse x and y  coordinate of mouse position.
         public: explicit DropOnScene(
           const std::string &_dropText,
