@@ -49,7 +49,6 @@ namespace gui
     public: void UpdateGrid();
 
     /// \brief Callback to retrieve existing grid or create a new one.
-    /// \param[in] _scene Scene to look for grid.
     public: void LoadGrid();
 
     /// \brief Callback to update vertical cell count
