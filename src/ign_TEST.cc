@@ -84,7 +84,9 @@ class CmdLine : public ::testing::Test
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 {
-  EXPECT_TRUE(common::removeAll(this->kFakeHome));
+  // Clear home if it exists
+  common::removeAll(this->kFakeHome);
+
   EXPECT_FALSE(common::exists(this->kFakeHome));
 
   std::string output = custom_exec_str("ign gui -l");
