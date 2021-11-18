@@ -607,7 +607,7 @@ math::Vector3d IgnRenderer::ScreenToScene(
   // TODO(ahcorde): Replace this code with function in ign-rendering
   // Require this commit
   // https://github.com/ignitionrobotics/ign-rendering/pull/363
-  // in ign-rendering6
+  // in ign-rendering7
 
   // Normalize point on the image
   double width = this->dataPtr->camera->ImageWidth();
