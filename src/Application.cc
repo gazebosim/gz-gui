@@ -387,6 +387,9 @@ bool Application::LoadPlugin(const std::string &_filename,
   else
     plugin->Load(_pluginElem);
 
+  if (nullptr == plugin->CardItem())
+    return false;
+
   // Store plugin in queue to be added to the window
   this->dataPtr->pluginsToAdd.push(plugin);
 
