@@ -254,3 +254,32 @@ TEST(GuiEventsTest, MousePressOnScene)
   EXPECT_TRUE(event.Mouse().Alt());
   EXPECT_FALSE(event.Mouse().Shift());
 }
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, WorldControl)
+{
+  ignition::msgs::WorldControl worldControl;
+  worldControl.set_pause(true);
+  worldControl.set_step(true);
+  worldControl.set_multi_step(5u);
+  worldControl.mutable_reset()->set_all(true);
+  worldControl.mutable_reset()->set_time_only(true);
+  worldControl.mutable_reset()->set_model_only(false);
+  worldControl.set_seed(10u);
+  worldControl.mutable_run_to_sim_time()->set_sec(2);
+  worldControl.mutable_run_to_sim_time()->set_nsec(3);
+  events::WorldControl playEvent(worldControl);
+
+  EXPECT_LT(QEvent::User, playEvent.type());
+  EXPECT_FALSE(playEvent.WorldControlInfo().has_header());
+  EXPECT_TRUE(playEvent.WorldControlInfo().pause());
+  EXPECT_TRUE(playEvent.WorldControlInfo().step());
+  EXPECT_EQ(5u, playEvent.WorldControlInfo().multi_step());
+  EXPECT_FALSE(playEvent.WorldControlInfo().reset().has_header());
+  EXPECT_TRUE(playEvent.WorldControlInfo().reset().all());
+  EXPECT_TRUE(playEvent.WorldControlInfo().reset().time_only());
+  EXPECT_FALSE(playEvent.WorldControlInfo().reset().model_only());
+  EXPECT_EQ(10u, playEvent.WorldControlInfo().seed());
+  EXPECT_EQ(2, playEvent.WorldControlInfo().run_to_sim_time().sec());
+  EXPECT_EQ(3, playEvent.WorldControlInfo().run_to_sim_time().nsec());
+}

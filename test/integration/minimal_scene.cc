@@ -82,6 +82,10 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       "<ambient_light>1.0 0 0</ambient_light>"
       "<background_color>0 1 0</background_color>"
       "<camera_pose>1 2 3 0 0 1.57</camera_pose>"
+      "<camera_clip>"
+      "  <near>0.1</near>"
+      "  <far>5000</far>"
+      "</camera_clip>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -126,6 +130,8 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   ASSERT_NE(nullptr, camera);
 
   EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
+  EXPECT_DOUBLE_EQ(0.1, camera->NearClipPlane());
+  EXPECT_DOUBLE_EQ(5000.0, camera->FarClipPlane());
 
   // Cleanup
   auto plugins = win->findChildren<Plugin *>();
@@ -139,4 +145,3 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   engine->DestroyScene(scene);
   EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
-

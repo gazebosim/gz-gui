@@ -102,7 +102,10 @@ namespace ignition
       /// \sa Load
       /// \param[in] _pluginElem Element containing configuration
       protected: virtual void LoadConfig(
-          const tinyxml2::XMLElement * /*_pluginElem*/) {}
+          const tinyxml2::XMLElement *_pluginElem)
+          {
+            (void)_pluginElem;
+          }
 
       /// \brief Get title
       /// \return Plugin title.

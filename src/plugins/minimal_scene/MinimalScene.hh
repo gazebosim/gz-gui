@@ -52,6 +52,9 @@ namespace plugins
   ///                          (0.3, 0.3, 0.3, 1.0)
   /// * \<camera_pose\> : Optional starting pose for the camera, defaults to
   ///                     (0, 0, 5, 0, 0, 0)
+  /// * \<camera_clip\> : Optional near/far clipping distance for camera
+  ///     * \<near\> : Camera's near clipping plane distance, defaults to 0.01
+  ///     * \<far\> : Camera's far clipping plane distance, defaults to 1000.0
   /// * \<sky\> : If present, sky is enabled.
   class MinimalScene : public Plugin
   {
@@ -181,6 +184,12 @@ namespace plugins
     /// \brief Initial Camera pose
     public: math::Pose3d cameraPose = math::Pose3d(0, 0, 2, 0, 0.4, 0);
 
+    /// \brief Default camera near clipping plane distance
+    public: double cameraNearClip = 0.01;
+
+    /// \brief Default camera far clipping plane distance
+    public: double cameraFarClip = 1000.0;
+
     /// \brief Scene background color
     public: math::Color backgroundColor = math::Color::Black;
 
@@ -229,9 +238,10 @@ namespace plugins
     /// \brief Constructor
     public: RenderThread();
 
+    /// \brief Render when safe
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt and worker thread (this)
-    public slots: void RenderNext(RenderSync *renderSync);
+    public slots: void RenderNext(RenderSync *_renderSync);
 
     /// \brief Shutdown the thread and the render engine
     public slots: void ShutDown();
@@ -283,8 +293,16 @@ namespace plugins
     public: void SetSceneName(const std::string &_name);
 
     /// \brief Set the initial pose the render window camera
-    /// \param[in] _pose Initical camera pose
+    /// \param[in] _pose Initial camera pose
     public: void SetCameraPose(const math::Pose3d &_pose);
+
+    /// \brief Set the render window camera's near clipping plane distance
+    /// \param[in] _near Near clipping plane distance
+    public: void SetCameraNearClip(double _near);
+
+    /// \brief Set the render window camera's far clipping plane distance
+    /// \param[in] _far Far clipping plane distance
+    public: void SetCameraFarClip(double _far);
 
     /// \brief Set scene service to use in this render window
     /// A service call will be made using ign-transport to get scene
@@ -372,6 +390,8 @@ namespace plugins
   {
     Q_OBJECT
 
+    /// \brief Constructor
+    /// \param[in] _window Window to display the texture
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt (this) and worker thread
     public: explicit TextureNode(QQuickWindow *_window,

@@ -136,6 +136,12 @@ class ignition::gui::events::MousePressOnScene::Implementation
   public: common::MouseEvent mouse;
 };
 
+class ignition::gui::events::WorldControl::Implementation
+{
+  /// \brief WorldControl information.
+  public: msgs::WorldControl worldControl;
+};
+
 using namespace ignition;
 using namespace gui;
 using namespace events;
@@ -400,4 +406,17 @@ MousePressOnScene::MousePressOnScene(const common::MouseEvent &_mouse)
 const common::MouseEvent &MousePressOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
+}
+
+/////////////////////////////////////////////////
+WorldControl::WorldControl(const msgs::WorldControl &_worldControl)
+  : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
+  this->dataPtr->worldControl = _worldControl;
+}
+
+/////////////////////////////////////////////////
+const msgs::WorldControl &WorldControl::WorldControlInfo() const
+{
+  return this->dataPtr->worldControl;
 }
