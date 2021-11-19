@@ -189,8 +189,11 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
   /// \brief See RenderSync
   public: RenderSync renderSync;
 
-  //// \brief List of threads
+  /// \brief List of threads
   public: static QList<QThread *> threads;
+
+  /// \brief List of our QT connections.
+  public: QList<QMetaObject::Connection> connections;
 };
 
 /// \brief Private data class for MinimalScene
@@ -236,6 +239,7 @@ void RenderSync::WaitForWorkerThread()
 
   // Worker thread asked us to wait!
   this->renderStallState = RenderStallState::WorkerCanProceed;
+
   lock.unlock();
   // Wake up worker thread
   this->cv.notify_one();
@@ -538,6 +542,8 @@ void IgnRenderer::Initialize()
   this->dataPtr->camera->SetUserData("user-camera", true);
   root->AddChild(this->dataPtr->camera);
   this->dataPtr->camera->SetLocalPose(this->cameraPose);
+  this->dataPtr->camera->SetNearClipPlane(this->cameraNearClip);
+  this->dataPtr->camera->SetFarClipPlane(this->cameraFarClip);
   this->dataPtr->camera->SetImageWidth(this->textureSize.width());
   this->dataPtr->camera->SetImageHeight(this->textureSize.height());
   this->dataPtr->camera->SetAntiAliasing(8);
@@ -804,6 +810,10 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 /////////////////////////////////////////////////
 RenderWindowItem::~RenderWindowItem()
 {
+  // Disconnect our QT connections.
+  for(auto conn : this->dataPtr->connections)
+    QObject::disconnect(conn);
+
   this->dataPtr->renderSync.Shutdown();
   QMetaObject::invokeMethod(this->dataPtr->renderThread,
                             "ShutDown",
@@ -882,13 +892,17 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // This rendering pipeline is throttled by vsync on the scene graph
     // rendering thread.
 
-    this->connect(this->dataPtr->renderThread, &RenderThread::TextureReady,
-        node, &TextureNode::NewTexture, Qt::DirectConnection);
-    this->connect(node, &TextureNode::PendingNewTexture, this->window(),
+    this->dataPtr->connections << this->connect(this->dataPtr->renderThread,
+        &RenderThread::TextureReady, node, &TextureNode::NewTexture,
+        Qt::DirectConnection);
+    this->dataPtr->connections << this->connect(node,
+        &TextureNode::PendingNewTexture, this->window(),
         &QQuickWindow::update, Qt::QueuedConnection);
-    this->connect(this->window(), &QQuickWindow::beforeRendering, node,
-        &TextureNode::PrepareNode, Qt::DirectConnection);
-    this->connect(node, &TextureNode::TextureInUse, this->dataPtr->renderThread,
+    this->dataPtr->connections << this->connect(this->window(),
+        &QQuickWindow::beforeRendering, node, &TextureNode::PrepareNode,
+        Qt::DirectConnection);
+    this->dataPtr->connections << this->connect(node,
+        &TextureNode::TextureInUse, this->dataPtr->renderThread,
         &RenderThread::RenderNext, Qt::QueuedConnection);
 
     // Get the production of FBO textures started..
@@ -930,6 +944,18 @@ void RenderWindowItem::SetSceneName(const std::string &_name)
 void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 {
   this->dataPtr->renderThread->ignRenderer.cameraPose = _pose;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetCameraNearClip(double _near)
+{
+  this->dataPtr->renderThread->ignRenderer.cameraNearClip = _near;
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetCameraFarClip(double _far)
+{
+  this->dataPtr->renderThread->ignRenderer.cameraFarClip = _far;
 }
 
 /////////////////////////////////////////////////
@@ -1030,6 +1056,46 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       poseStr << std::string(elem->GetText());
       poseStr >> pose;
       renderWindow->SetCameraPose(pose);
+    }
+
+    elem = _pluginElem->FirstChildElement("camera_clip");
+    if (nullptr != elem && !elem->NoChildren())
+    {
+      auto child = elem->FirstChildElement("near");
+      if (nullptr != child && nullptr != child->GetText())
+      {
+        double n;
+        std::stringstream nearStr;
+        nearStr << std::string(child->GetText());
+        nearStr >> n;
+        if (nearStr.fail())
+        {
+          ignerr << "Unable to set <near> to '" << nearStr.str()
+                 << "' using default near clip distance" << std::endl;
+        }
+        else
+        {
+          renderWindow->SetCameraNearClip(n);
+        }
+      }
+
+      child = elem->FirstChildElement("far");
+      if (nullptr != child && nullptr != child->GetText())
+      {
+        double f;
+        std::stringstream farStr;
+        farStr << std::string(child->GetText());
+        farStr >> f;
+        if (farStr.fail())
+        {
+          ignerr << "Unable to set <far> to '" << farStr.str()
+                 << "' using default far clip distance" << std::endl;
+        }
+        else
+        {
+          renderWindow->SetCameraFarClip(f);
+        }
+      }
     }
 
     elem = _pluginElem->FirstChildElement("service");

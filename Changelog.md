@@ -1,15 +1,32 @@
-## Ignition Gui 6
+## Ignition Gui 7
 
 ### Ignition Gui 7.X.X
 
 ### Ignition Gui 7.0.0 (202X-XX-XX)
 
-### Ignition Gui 6.X.X
+## Ignition Gui 6
+
+### Ignition Gui 6.1.0 (2021-11-05)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Fix mimimal scene deadlock on shutdown
+    * [Pull request #300](https://github.com/ignitionrobotics/ign-gui/pull/300)
+
+1. Fix memory leak
+    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+
+1. Set near/far camera clipping distance
+    * [Pull request #309](https://github.com/ignitionrobotics/ign-gui/pull/309)
+
+1. Support emitting an event on play/pause/step
+    * [Pull request #306](https://github.com/ignitionrobotics/ign-gui/pull/306)
 
 ### Ignition Gui 6.0.0 (2021-09-XX)
 
-1. Render engine GUI name argument to be set in the minimal scene
-    * [Pull request #286](https://github.com/ignitionrobotics/ign-gui/pull/286)
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
 
 1. New events
 
@@ -39,6 +56,9 @@
 1. PIMPL GUI events
     * [Pull request #253](https://github.com/ignitionrobotics/ign-gui/pull/253)
 
+1. Added winID to fix second windows in OGRE2.2
+    * [Pull request #292](https://github.com/ignitionrobotics/ign-gui/pull/292)
+
 1. Added camera tracking
     * [Pull request #226](https://github.com/ignitionrobotics/ign-gui/pull/226)
     * [Pull request #254](https://github.com/ignitionrobotics/ign-gui/pull/254)
@@ -49,6 +69,10 @@
     * [Pull request #285](https://github.com/ignitionrobotics/ign-gui/pull/285)
     * [Pull request #268](https://github.com/ignitionrobotics/ign-gui/pull/268)
     * [Pull request #224](https://github.com/ignitionrobotics/ign-gui/pull/224)
+    * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
+    * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
+    * [Pull request #286](https://github.com/ignitionrobotics/ign-gui/pull/286)
+    * [Pull request #295](https://github.com/ignitionrobotics/ign-gui/pull/295)
 
 1. Remove deprecations: tock
     * [Pull request #243](https://github.com/ignitionrobotics/ign-gui/pull/243)
@@ -65,6 +89,23 @@
 ## Ignition Gui 5
 
 ### Ignition Gui 5.X.X (20XX-XX-XX)
+
+### Ignition Gui 5.3.0 (2021-10-13)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Fix memory leak
+    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+
+1. 👩‍🌾 Remove bitbucket-pipelines.yml
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+
+1. Fix doc build error
+    * [Pull request #266](https://github.com/ignitionrobotics/ign-gui/pull/266)
 
 ### Ignition Gui 5.2.0 (2021-07-27)
 
@@ -328,6 +369,23 @@
 ## Ignition Gui 3
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
+
+### Ignition Gui 3.8.0 (2021-10-12)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+
+1. 👩‍🌾 Remove bitbucket-pipelines.yml
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+
+1. Require ign-rendering 3.5
+    * [Pull request #264](https://github.com/ignitionrobotics/ign-gui/pull/264)
+
+1. New teleop plugin implementation.
+    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
 
 ### Ignition Gui 3.7.0 (2021-07-14)
 
