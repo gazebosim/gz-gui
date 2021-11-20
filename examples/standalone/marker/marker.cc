@@ -121,6 +121,8 @@ int main(int _argc, char **_argv)
   markerMsg.set_id(3);
   ignition::msgs::Set(markerMsg.mutable_pose(),
                     ignition::math::Pose3d(0, 0, 0, 0, 0, 0));
+  ignition::msgs::Set(markerMsg.mutable_scale(),
+                    ignition::math::Vector3d(1.0, 1.0, 1.0));
   markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
   markerMsg.set_type(ignition::msgs::Marker::LINE_LIST);
   ignition::msgs::Set(markerMsg.add_point(),
@@ -146,11 +148,13 @@ int main(int _argc, char **_argv)
       ignition::math::Vector3d(0.5, 0.5, 0.05));
   node.Request("/marker", markerMsg);
 
-  std::cout << "Adding 100 points inside the square\n";
+  std::cout << "Adding 100 green points inside the square\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(5);
   markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
   markerMsg.set_type(ignition::msgs::Marker::POINTS);
+  ignition::msgs::Set(markerMsg.mutable_scale(),
+                    ignition::math::Vector3d(5.0, 1.0, 1.0));
   markerMsg.clear_point();
   for (int i = 0; i < 100; ++i)
   {
@@ -162,9 +166,30 @@ int main(int _argc, char **_argv)
   }
   node.Request("/marker", markerMsg);
 
-  std::cout << "Adding a semi-circular triangle fan\n";
+  std::cout << "Adding 100 colored points next to the square\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(6);
+  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(ignition::msgs::Marker::POINTS);
+  markerMsg.clear_point();
+  for (int i = 0; i < 100; ++i)
+  {
+    ignition::msgs::Set(markerMsg.add_point(),
+        ignition::math::Vector3d(
+          ignition::math::Rand::DblUniform(-1.0, 1.0),
+          ignition::math::Rand::DblUniform(0.5, 1.0),
+          0.05));
+    ignition::msgs::Set(markerMsg.add_materials()->mutable_diffuse(),
+        ignition::math::Color(
+          ignition::math::Rand::DblUniform(0.0, 1.0),
+          ignition::math::Rand::DblUniform(0.0, 1.0),
+          ignition::math::Rand::DblUniform(0.0, 1.0)));
+  }
+  node.Request("/marker", markerMsg);
+
+  std::cout << "Adding a semi-circular triangle fan\n";
+  std::this_thread::sleep_for(std::chrono::seconds(4));
+  markerMsg.set_id(7);
   markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
   markerMsg.set_type(ignition::msgs::Marker::TRIANGLE_FAN);
   markerMsg.clear_point();
@@ -182,7 +207,7 @@ int main(int _argc, char **_argv)
 
   std::cout << "Adding two triangles using a triangle list\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
-  markerMsg.set_id(7);
+  markerMsg.set_id(8);
   markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
   markerMsg.set_type(ignition::msgs::Marker::TRIANGLE_LIST);
   markerMsg.clear_point();
@@ -206,7 +231,7 @@ int main(int _argc, char **_argv)
 
   std::cout << "Adding a rectangular triangle strip\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
-  markerMsg.set_id(8);
+  markerMsg.set_id(9);
   markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
   markerMsg.set_type(ignition::msgs::Marker::TRIANGLE_STRIP);
   markerMsg.clear_point();
