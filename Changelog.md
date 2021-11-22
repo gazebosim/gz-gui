@@ -1,6 +1,21 @@
 ## Ignition Gui 6
 
-### Ignition Gui 6.X.X
+### Ignition Gui 6.1.0 (2021-11-05)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Fix mimimal scene deadlock on shutdown
+    * [Pull request #300](https://github.com/ignitionrobotics/ign-gui/pull/300)
+
+1. Fix memory leak
+    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+
+1. Set near/far camera clipping distance
+    * [Pull request #309](https://github.com/ignitionrobotics/ign-gui/pull/309)
+
+1. Support emitting an event on play/pause/step
+    * [Pull request #306](https://github.com/ignitionrobotics/ign-gui/pull/306)
 
 ### Ignition Gui 6.0.0 (2021-09-XX)
 
@@ -68,6 +83,23 @@
 ## Ignition Gui 5
 
 ### Ignition Gui 5.X.X (20XX-XX-XX)
+
+### Ignition Gui 5.3.0 (2021-10-13)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Fix memory leak
+    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+
+1. 👩‍🌾 Remove bitbucket-pipelines.yml
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+
+1. Fix doc build error
+    * [Pull request #266](https://github.com/ignitionrobotics/ign-gui/pull/266)
 
 ### Ignition Gui 5.2.0 (2021-07-27)
 
@@ -331,6 +363,23 @@
 ## Ignition Gui 3
 
 ### Ignition Gui 3.X.X (202X-XX-XX)
+
+### Ignition Gui 3.8.0 (2021-10-12)
+
+1. Improved doxygen
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+
+1. 👩‍🌾 Remove bitbucket-pipelines.yml
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+
+1. Require ign-rendering 3.5
+    * [Pull request #264](https://github.com/ignitionrobotics/ign-gui/pull/264)
+
+1. New teleop plugin implementation.
+    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
 
 ### Ignition Gui 3.7.0 (2021-07-14)
 

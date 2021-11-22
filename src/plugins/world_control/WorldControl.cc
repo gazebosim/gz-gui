@@ -24,7 +24,10 @@
 #include <ignition/common/StringUtils.hh>
 #include <ignition/plugin/Register.hh>
 
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/Helpers.hh"
+#include "ignition/gui/GuiEvents.hh"
+#include "ignition/gui/MainWindow.hh"
 
 namespace ignition
 {
@@ -34,6 +37,10 @@ namespace plugins
 {
   class WorldControlPrivate
   {
+    /// \brief Send the world control event or call the control service.
+    /// \param[in] _msg Message to send.
+    public: void SendEventMsg(const ignition::msgs::WorldControl &_msg);
+
     /// \brief Message holding latest world statistics
     public: ignition::msgs::WorldStatistics msg;
 
@@ -51,6 +58,15 @@ namespace plugins
 
     /// \brief True for paused
     public: bool pause{true};
+
+    /// \brief The paused state of the most recently received world stats msg
+    /// (true for paused)
+    public: bool lastStatsMsgPaused{true};
+
+    /// \brief Whether server communication should occur through an event (true)
+    /// or service (false). The service option is used by default for
+    /// ign-gui6, and should be changed to use the event by default in ign-gui7.
+    public: bool useEvent{false};
   };
 }
 }
@@ -151,6 +167,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         pausedElem->QueryBoolText(&startPaused);
       }
       this->dataPtr->pause = startPaused;
+      this->dataPtr->lastStatsMsgPaused = startPaused;
       if (startPaused)
         this->paused();
       else
@@ -212,6 +229,14 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     ignerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
   }
+
+  if (auto elem = _pluginElem->FirstChildElement("use_event"))
+    elem->QueryBoolText(&this->dataPtr->useEvent);
+
+  if (this->dataPtr->useEvent)
+    igndbg << "Using an event to share WorldControl msgs with the server\n";
+  else
+    igndbg << "Using a service to share WorldControl msgs with the server\n";
 }
 
 /////////////////////////////////////////////////
@@ -219,11 +244,26 @@ void WorldControl::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  if (!this->dataPtr->pause && this->dataPtr->msg.paused())
+  // ignore the message if it's associated with a step
+  const auto &header = this->dataPtr->msg.header();
+  if ((header.data_size() > 0) && (header.data(0).key() == "step"))
+    return;
+
+  // If the pause state of the message doesn't match the pause state of this
+  // plugin, then play/pause must have occurred elsewhere (for example, the
+  // command line). If the pause state of the message matches the pause state
+  // of this plugin, but the pause state of the message differs from the
+  // previous message's pause state, this means that a pause/play request from
+  // this plugin has been registered by the server
+  if (this->dataPtr->msg.paused() &&
+      (!this->dataPtr->pause || !this->dataPtr->lastStatsMsgPaused))
     this->paused();
-  else if (this->dataPtr->pause && !this->dataPtr->msg.paused())
+  else if (!this->dataPtr->msg.paused() &&
+      (this->dataPtr->pause || this->dataPtr->lastStatsMsgPaused))
     this->playing();
+
   this->dataPtr->pause = this->dataPtr->msg.paused();
+  this->dataPtr->lastStatsMsgPaused = this->dataPtr->msg.paused();
 }
 
 /////////////////////////////////////////////////
@@ -238,33 +278,20 @@ void WorldControl::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 /////////////////////////////////////////////////
 void WorldControl::OnPlay()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
-  {
-    if (_result)
-      QMetaObject::invokeMethod(this, "playing");
-  };
-
-  ignition::msgs::WorldControl req;
-  req.set_pause(false);
+  ignition::msgs::WorldControl msg;
+  msg.set_pause(false);
   this->dataPtr->pause = false;
-  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+  this->dataPtr->SendEventMsg(msg);
 }
 
 /////////////////////////////////////////////////
 void WorldControl::OnPause()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
-  {
-    if (_result)
-      QMetaObject::invokeMethod(this, "paused");
-  };
-
-  ignition::msgs::WorldControl req;
-  req.set_pause(true);
+  ignition::msgs::WorldControl msg;
+  msg.set_pause(true);
   this->dataPtr->pause = true;
-  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+
+  this->dataPtr->SendEventMsg(msg);
 }
 
 /////////////////////////////////////////////////
@@ -276,15 +303,31 @@ void WorldControl::OnStepCount(const unsigned int _steps)
 /////////////////////////////////////////////////
 void WorldControl::OnStep()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
-  {
-  };
+  ignition::msgs::WorldControl msg;
+  msg.set_pause(this->dataPtr->pause);
+  msg.set_multi_step(this->dataPtr->multiStep);
 
-  ignition::msgs::WorldControl req;
-  req.set_pause(this->dataPtr->pause);
-  req.set_multi_step(this->dataPtr->multiStep);
-  this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
+  this->dataPtr->SendEventMsg(msg);
+}
+
+/////////////////////////////////////////////////
+void WorldControlPrivate::SendEventMsg(const ignition::msgs::WorldControl &_msg)
+{
+  if (this->useEvent)
+  {
+    gui::events::WorldControl event(_msg);
+    App()->sendEvent(App()->findChild<MainWindow *>(), &event);
+  }
+  else
+  {
+    std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+        [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+    {
+      // the service CB is empty because updates are handled in
+      // WorldControl::ProcessMsg
+    };
+    this->node.Request(this->controlService, _msg, cb);
+  }
 }
 
 // Register this plugin
