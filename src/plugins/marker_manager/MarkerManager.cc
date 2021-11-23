@@ -544,6 +544,10 @@ void MarkerManagerPrivate::SetMarker(const ignition::msgs::Marker &_msg,
 
     _markerPtr->AddPoint(vector, color);
   }
+  if (_msg.has_scale())
+  {
+    _markerPtr->SetSize(_msg.scale().x());
+  }
 }
 
 /////////////////////////////////////////////////
