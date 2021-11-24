@@ -20,4 +20,8 @@
   <file>qml/images/menu.png</file>
   <file>qml/images/search.svg</file>
 </qresource>
+<qresource prefix="ign-gui-qml/ignition/gui">
+    <file alias="IgnSpinBox.qml">qml/IgnSpinBox.qml</file>
+    <file alias="qmldir">qml/qmldir</file>
+</qresource>
 </RCC>

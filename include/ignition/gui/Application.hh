@@ -46,6 +46,10 @@ namespace ignition
     class MainWindow;
     class Plugin;
 
+
+    /// /brief Import path for ign-gui QML modules added to the Qt resource system
+    const char *const QML_QRC_IMPORT_PATH = "qrc:/ign-gui-qml/";
+
     /// \brief Type of window which the application will display
     enum class WindowType : int
     {

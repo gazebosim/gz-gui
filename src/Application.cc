@@ -91,6 +91,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 
   // QML engine
   this->dataPtr->engine = new QQmlApplicationEngine();
+  this->dataPtr->engine->addImportPath(QML_QRC_IMPORT_PATH);
 
   // Install signal handler for graceful shutdown
   this->dataPtr->signalHandler.AddCallback(
