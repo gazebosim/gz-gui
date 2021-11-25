@@ -445,7 +445,8 @@ void MarkerManagerPrivate::SetVisual(const ignition::msgs::Marker &_msg,
                            const rendering::VisualPtr &_visualPtr)
 {
   // Set Visual Scale
-  if (_msg.has_scale())
+  // The scale for points is used as the size of each point, so skip it here.
+  if (_msg.has_scale() && _msg.type() != ignition::msgs::Marker::POINTS)
   {
     _visualPtr->SetLocalScale(_msg.scale().x(),
                               _msg.scale().y(),
