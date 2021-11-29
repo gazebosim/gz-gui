@@ -28,6 +28,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/config.hh"
 #include "ignition/gui/Dialog.hh"
+#include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
@@ -91,7 +92,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 
   // QML engine
   this->dataPtr->engine = new QQmlApplicationEngine();
-  this->dataPtr->engine->addImportPath(QML_QRC_IMPORT_PATH);
+  this->dataPtr->engine->addImportPath(qmlQrcImportPath());
 
   // Install signal handler for graceful shutdown
   this->dataPtr->signalHandler.AddCallback(
