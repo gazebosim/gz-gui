@@ -77,6 +77,25 @@ namespace gui
     /// \param[in] _checked indicates show or hide grid
     public slots: void OnShow(bool _checked);
 
+    /// \brief Notify QML that grid values have changed.
+    /// \param[in] _hCellCount Horizontal cell count
+    /// \param[in] _vCellCount Vertical cell count
+    /// \param[in] _cellLength Cell length
+    /// \param[in] _x X position
+    /// \param[in] _y Y position
+    /// \param[in] _z Z position
+    /// \param[in] _roll Orientation's roll
+    /// \param[in] _pitch Orientation's pitch
+    /// \param[in] _yaw Orientation's yaw
+    /// \param[in] _color Grid color
+    signals: void newParams(
+        int _hCellCount,
+        int _vCellCount,
+        double _cellLength,
+        QVector3D _pos,
+        QVector3D _rot,
+        QColor _color);
+
     /// \internal
     /// \brief Pointer to private data.
     private: std::unique_ptr<GridConfigPrivate> dataPtr;

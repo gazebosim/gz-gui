@@ -17,6 +17,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/gui/Application.hh>
+#include <ignition/gui/Conversions.hh>
 #include <ignition/gui/GuiEvents.hh>
 #include <ignition/gui/MainWindow.hh>
 #include <ignition/plugin/Register.hh>
@@ -75,10 +76,48 @@ GridConfig::GridConfig()
 GridConfig::~GridConfig() = default;
 
 /////////////////////////////////////////////////
-void GridConfig::LoadConfig(const tinyxml2::XMLElement *)
+void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Grid config";
+
+  // Configuration
+  if (_pluginElem)
+  {
+    // For grid to be configured at startup
+    if (auto cellCountElem = _pluginElem->FirstChildElement("cell_count"))
+      cellCountElem->QueryIntText(&this->dataPtr->gridParam.hCellCount);
+
+    if (auto vElem = _pluginElem->FirstChildElement("vertical_cell_count"))
+      vElem->QueryIntText(&this->dataPtr->gridParam.vCellCount);
+
+    if (auto lengthElem = _pluginElem->FirstChildElement("cell_length"))
+      lengthElem->QueryDoubleText(&this->dataPtr->gridParam.cellLength);
+
+    auto elem = _pluginElem->FirstChildElement("pose");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      std::stringstream poseStr;
+      poseStr << std::string(elem->GetText());
+      poseStr >> this->dataPtr->gridParam.pose;
+    }
+
+    elem = _pluginElem->FirstChildElement("color");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      std::stringstream colorStr;
+      colorStr << std::string(elem->GetText());
+      colorStr >> this->dataPtr->gridParam.color;
+    }
+    this->newParams(
+        this->dataPtr->gridParam.hCellCount,
+        this->dataPtr->gridParam.vCellCount,
+        this->dataPtr->gridParam.cellLength,
+        convert(this->dataPtr->gridParam.pose.Pos()),
+        convert(this->dataPtr->gridParam.pose.Rot().Euler()),
+        convert(this->dataPtr->gridParam.color));
+    this->dataPtr->dirty = true;
+  }
 
   ignition::gui::App()->findChild<
       ignition::gui::MainWindow *>()->installEventFilter(this);
@@ -149,42 +188,9 @@ void GridConfig::UpdateGrid()
 /////////////////////////////////////////////////
 void GridConfig::LoadGrid()
 {
-  auto loadedEngNames = rendering::loadedEngines();
-  if (loadedEngNames.empty())
+  auto scene = rendering::sceneFromFirstRenderEngine();
+  if (nullptr == scene)
     return;
-
-  // assume there is only one engine loaded
-  auto engineName = loadedEngNames[0];
-  if (loadedEngNames.size() > 1)
-  {
-    igndbg << "More than one engine is available. "
-      << "Grid config plugin will use engine ["
-        << engineName << "]" << std::endl;
-  }
-  auto engine = rendering::engine(engineName);
-  if (!engine)
-  {
-    ignerr << "Internal error: failed to load engine [" << engineName
-      << "]. Grid plugin won't work." << std::endl;
-    return;
-  }
-
-  if (engine->SceneCount() == 0)
-    return;
-
-  // assume there is only one scene
-  // load scene
-  auto scene = engine->SceneByIndex(0);
-  if (!scene)
-  {
-    ignerr << "Internal error: scene is null." << std::endl;
-    return;
-  }
-
-  if (!scene->IsInitialized() || nullptr == scene->RootVisual())
-  {
-    return;
-  }
 
   // load grid
   // if gridPtr found, load the existing gridPtr to class
