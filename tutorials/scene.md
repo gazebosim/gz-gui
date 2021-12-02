@@ -56,7 +56,8 @@ every iteration until it succeeds. This way, it can find a 3D scene even if
 Rendering operations aren't thread-safe. To make sure there are no race
 conditions, all rendering operations should happen in the same thread, the
 "render thread". In order to access that thread from a custom plugin, it's
-necessary to listen to the `ignition::gui::events::Render` event, which is
+necessary to listen to the `ignition::gui::events::Render` or
+`ignition::gui::events::PreRender` events, which are
 emitted by the `MinimalScene`.
 
 See how the `TransportSceneManager` installs an event filter with
