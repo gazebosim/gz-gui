@@ -100,18 +100,36 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   // Show, but don't exec, so we don't block
   win->QuickWindow()->show();
 
+  // Filter events
+  bool receivedPreRenderEvent{false};
+  bool receivedRenderEvent{false};
+  auto testHelper = std::make_unique<TestHelper>();
+  testHelper->forwardEvent = [&](QEvent *_event)
+  {
+    if (_event->type() == events::PreRender::kType)
+    {
+      receivedPreRenderEvent = true;
+    }
+    if (_event->type() == events::Render::kType)
+    {
+      receivedRenderEvent = true;
+    }
+  };
+
   // Check scene
   auto engine = rendering::engine("ogre");
   ASSERT_NE(nullptr, engine);
 
   int sleep = 0;
   int maxSleep = 30;
-  while (0 == engine->SceneCount() && sleep < maxSleep)
+  while (!receivedRenderEvent && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
     sleep++;
   }
+  EXPECT_TRUE(receivedPreRenderEvent);
+  EXPECT_TRUE(receivedRenderEvent);
 
   EXPECT_EQ(1u, engine->SceneCount());
   auto scene = engine->SceneByName("banana");
