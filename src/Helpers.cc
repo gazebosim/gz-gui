@@ -180,3 +180,9 @@ QStringList ignition::gui::worldNames()
 
   return worldNamesVariant.toStringList();
 }
+
+/////////////////////////////////////////////////
+const QString ignition::gui::qmlQrcImportPath()
+{
+  return "qrc:/ign-gui-qml/";
+}
