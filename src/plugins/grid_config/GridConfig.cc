@@ -15,6 +15,8 @@
  *
 */
 
+#include <string>
+
 #include <ignition/common/Console.hh>
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/Conversions.hh>
