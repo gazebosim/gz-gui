@@ -142,6 +142,10 @@ class ignition::gui::events::WorldControl::Implementation
   public: msgs::WorldControl worldControl;
 };
 
+class ignition::gui::events::PreRender::Implementation
+{
+};
+
 using namespace ignition;
 using namespace gui;
 using namespace events;
@@ -419,4 +423,10 @@ WorldControl::WorldControl(const msgs::WorldControl &_worldControl)
 const msgs::WorldControl &WorldControl::WorldControlInfo() const
 {
   return this->dataPtr->worldControl;
+}
+
+/////////////////////////////////////////////////
+PreRender::PreRender()
+  : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
+{
 }

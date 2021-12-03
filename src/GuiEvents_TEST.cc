@@ -283,3 +283,11 @@ TEST(GuiEventsTest, WorldControl)
   EXPECT_EQ(2, playEvent.WorldControlInfo().run_to_sim_time().sec());
   EXPECT_EQ(3, playEvent.WorldControlInfo().run_to_sim_time().nsec());
 }
+
+/////////////////////////////////////////////////
+TEST(GuiEventsTest, PreRender)
+{
+  events::PreRender event;
+
+  EXPECT_LT(QEvent::User, event.type());
+}
