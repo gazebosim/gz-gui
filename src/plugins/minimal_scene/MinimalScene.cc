@@ -305,6 +305,13 @@ void IgnRenderer::Render(RenderSync *_renderSync)
   // view control
   this->HandleMouseEvent();
 
+  if (ignition::gui::App())
+  {
+    ignition::gui::App()->sendEvent(
+        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+        new gui::events::PreRender());
+  }
+
   // update and render to texture
   this->dataPtr->camera->Update();
 
