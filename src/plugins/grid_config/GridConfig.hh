@@ -81,12 +81,8 @@ namespace gui
     /// \param[in] _hCellCount Horizontal cell count
     /// \param[in] _vCellCount Vertical cell count
     /// \param[in] _cellLength Cell length
-    /// \param[in] _x X position
-    /// \param[in] _y Y position
-    /// \param[in] _z Z position
-    /// \param[in] _roll Orientation's roll
-    /// \param[in] _pitch Orientation's pitch
-    /// \param[in] _yaw Orientation's yaw
+    /// \param[in] _pos XYZ Position
+    /// \param[in] _rot RPY orientation
     /// \param[in] _color Grid color
     signals: void newParams(
         int _hCellCount,
