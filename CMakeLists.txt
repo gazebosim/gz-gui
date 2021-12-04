@@ -54,8 +54,8 @@ set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-transport
-ign_find_package(ignition-transport11 REQUIRED)
-set(IGN_TRANSPORT_VER ${ignition-transport11_VERSION_MAJOR})
+ign_find_package(ignition-transport12 REQUIRED)
+set(IGN_TRANSPORT_VER ${ignition-transport12_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
@@ -64,8 +64,8 @@ set(IGN_RENDERING_VER ${ignition-rendering7_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-msgs
-ign_find_package(ignition-msgs8 REQUIRED)
-set(IGN_MSGS_VER ${ignition-msgs8_VERSION_MAJOR})
+ign_find_package(ignition-msgs9 REQUIRED)
+set(IGN_MSGS_VER ${ignition-msgs9_VERSION_MAJOR})
 
 #--------------------------------------
 # Find if ign command is available
