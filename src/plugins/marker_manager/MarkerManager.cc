@@ -399,7 +399,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
       if (this->warnOnActionFailure)
       {
         ignwarn << "Unable to delete marker with id[" << id << "] "
-          << "in namespace[" << ns << "]" << std::endl;
+                << "in namespace[" << ns << "]" << std::endl;
       }
       return false;
     }
@@ -412,8 +412,8 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
     {
       if (this->warnOnActionFailure)
       {
-        ignwarn << "Unable to delete all markers in namespace[" << ns <<
-           "], namespace can't be found." << std::endl;
+        ignwarn << "Unable to delete all markers in namespace[" << ns 
+                << "], namespace can't be found." << std::endl;
       }
       return false;
     }
