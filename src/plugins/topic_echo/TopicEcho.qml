@@ -97,8 +97,8 @@ Rectangle {
         currentIndex: -1
 
         delegate: ItemDelegate {
-          width: parent.width
-          text: display
+          width: listView.width
+          text: model.display
         }
 
         model: TopicEchoMsgList
