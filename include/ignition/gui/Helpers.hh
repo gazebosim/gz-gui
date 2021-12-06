@@ -80,11 +80,11 @@ namespace ignition
     QStringList worldNames();
 
 
-    /// \brief Import path for ign-gui QML modules added to the Qt resource system
-    /// This helper function returns the QRC resource path where custom ignition QML
-    /// modules can be imported from. To import an ignition QML module, add this path
-    /// to the QML engine's import path list before attempting to load a QML file
-    /// that imports ignition QML modules.
+    /// \brief Import path for ign-gui QML modules added to the Qt resource
+    /// system. This helper function returns the QRC resource path where custom
+    /// ignition QML modules can be imported from. To import an ignition QML
+    /// module, add this path to the QML engine's import path list before
+    /// attempting to load a QML file that imports ignition QML modules.
     /// \return Resousrce path prefix as a string
     IGNITION_GUI_VISIBLE
     const QString qmlQrcImportPath();
