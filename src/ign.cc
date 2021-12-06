@@ -34,6 +34,18 @@ char* g_argv[] =
 };
 
 //////////////////////////////////////////////////
+void startConsoleLog()
+{
+  std::string home;
+  ignition::common::env(IGN_HOMEDIR, home);
+
+  std::string logPathMod = ignition::common::joinPaths(home,
+      ".ignition", "gui", "log",
+      ignition::common::timeToIso(IGN_SYSTEM_TIME()));
+  ignLogInit(logPathMod, "console.log");
+}
+
+//////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 {
   return strdup(IGNITION_GUI_VERSION_FULL);
@@ -42,6 +54,8 @@ extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
+  startConsoleLog();
+
   ignition::gui::Application app(g_argc, g_argv);
 
   auto pluginsList = app.PluginList();
@@ -65,6 +79,8 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
+  startConsoleLog();
+
   ignition::gui::Application app(g_argc, g_argv,
       ignition::gui::WindowType::kDialog);
 
@@ -79,6 +95,8 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
+  startConsoleLog();
+
   ignition::gui::Application app(g_argc, g_argv);
 
   if (!app.findChild<ignition::gui::MainWindow *>())
@@ -103,6 +121,8 @@ extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
+  startConsoleLog();
+
   ignition::gui::Application app(g_argc, g_argv);
 
   if (!app.findChild<ignition::gui::MainWindow *>())

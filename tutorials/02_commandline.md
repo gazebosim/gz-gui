@@ -32,3 +32,6 @@ If you have Ignition Tools installed, you can use the `ign gui` command line too
       --force-version <VERSION>  Use a specific library version.
 
       --versions                 Show the available versions.
+
+When using the command line tool, all console messages are logged to
+`$HOME/.ignition/gui/log/<timestamp>`.
