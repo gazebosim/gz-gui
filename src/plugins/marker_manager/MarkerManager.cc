@@ -134,6 +134,10 @@ class ignition::gui::plugins::MarkerManagerPrivate
 
   /// \brief The last marker message received
   public: ignition::msgs::Marker msg;
+
+  /// \brief True to print console warnings if the user tries to perform an
+  /// action with an inexistent marker.
+  public: bool warnOnActionFailure{true};
 };
 
 using namespace ignition;
@@ -392,8 +396,11 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
     }
     else
     {
-      ignwarn << "Unable to delete marker with id[" << id << "] "
-        << "in namespace[" << ns << "]" << std::endl;
+      if (this->warnOnActionFailure)
+      {
+        ignwarn << "Unable to delete marker with id[" << id << "] "
+                << "in namespace[" << ns << "]" << std::endl;
+      }
       return false;
     }
   }
@@ -403,8 +410,11 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
     // If given namespace doesn't exist
     if (!ns.empty() && nsIter == this->visuals.end())
     {
-      ignwarn << "Unable to delete all markers in namespace[" << ns <<
-          "], namespace can't be found." << std::endl;
+      if (this->warnOnActionFailure)
+      {
+        ignwarn << "Unable to delete all markers in namespace[" << ns 
+                << "], namespace can't be found." << std::endl;
+      }
       return false;
     }
     // Remove all markers in the specified namespace
@@ -681,6 +691,16 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       {
         ignerr << "the provided topic is no allowed. Using default ["
                << this->dataPtr->topicName << "]"<<  std::endl;
+      }
+    }
+
+    if ((elem = _pluginElem->FirstChildElement("warn_on_action_failure")))
+    {
+      if (elem->QueryBoolText(&this->dataPtr->warnOnActionFailure) !=
+          tinyxml2::XML_SUCCESS)
+      {
+        ignerr << "Faild to parse <warn_on_action_failure> value: "
+               << elem->GetText() << std::endl;
       }
     }
 
