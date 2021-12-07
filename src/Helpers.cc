@@ -194,3 +194,9 @@ std::string ignition::gui::renderEngineName()
 
   return renderEngineNameVariant.toString().toStdString();
 }
+
+/////////////////////////////////////////////////
+const QString ignition::gui::qmlQrcImportPath()
+{
+  return "qrc:/ign-gui-qml/";
+}
