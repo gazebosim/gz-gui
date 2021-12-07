@@ -136,6 +136,14 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 
     EXPECT_FALSE(app.LoadPlugin("TestNotRegisteredPlugin"));
   }
+
+  // Plugin with invalid QML
+  {
+    Application app(g_argc, g_argv);
+    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+    EXPECT_FALSE(app.LoadPlugin("TestInvalidQmlPlugin"));
+  }
 }
 
 //////////////////////////////////////////////////
