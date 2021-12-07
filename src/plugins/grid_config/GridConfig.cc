@@ -16,6 +16,7 @@
 */
 
 #include <string>
+#include <vector>
 
 #include <ignition/common/Console.hh>
 #include <ignition/gui/Application.hh>
@@ -108,13 +109,16 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       GridParam gridParam;
 
-      // Both cell_count and horizontal_cell_count apply to horizontal for backwards
-      // compatibility
+      // Both cell_count and horizontal_cell_count apply to horizontal for
+      // backwards compatibility
       if (auto cellCountElem = insertElem->FirstChildElement("cell_count"))
         cellCountElem->QueryIntText(&gridParam.hCellCount);
 
-      if (auto cellCountElem = insertElem->FirstChildElement("horizontal_cell_count"))
+      if (auto cellCountElem = insertElem->FirstChildElement(
+          "horizontal_cell_count"))
+      {
         cellCountElem->QueryIntText(&gridParam.hCellCount);
+      }
 
       if (auto vElem = insertElem->FirstChildElement("vertical_cell_count"))
         vElem->QueryIntText(&gridParam.vCellCount);
