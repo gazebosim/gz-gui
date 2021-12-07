@@ -11,6 +11,7 @@ link_directories(
 
 set (plugins
   TestBadInheritancePlugin
+  TestInvalidQmlPlugin
   TestNotRegisteredPlugin
   TestPlugin
 )
