@@ -29,9 +29,33 @@ namespace gui
 {
   class GridConfigPrivate;
 
+  /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
+  /// used for:
+  /// * Introspecting grids
+  /// * Editing grids
+  ///
+  /// ## Configuration
+  ///
+  /// * \<insert\> : One grid will be inserted at startup for each \<insert\>
+  ///                tag.
+  ///   * \<horizontal_cell_count\> : Number of cells in the horizontal
+  ///                                 direction, defaults to 20.
+  ///   * \<vertical_cell_count\> : Number of cells in the vertical direction,
+  ///                               defaults to 0;
+  ///   * \<cell_length\> : Length of each cell, defaults to 1.
+  ///   * \<pose\> : Grid pose, defaults to the origin.
+  ///   * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
   class GridConfig : public ignition::gui::Plugin
   {
     Q_OBJECT
+
+    /// \brief Name list
+    Q_PROPERTY(
+      QStringList nameList
+      READ NameList
+      WRITE SetNameList
+      NOTIFY NameListChanged
+    )
 
     /// \brief Constructor
     public: GridConfig();
@@ -45,11 +69,35 @@ namespace gui
     // Documentation inherited
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
+    /// \brief Create grids defined at startup
+    public: void CreateGrids();
+
     /// \brief Update grid
     public: void UpdateGrid();
 
-    /// \brief Callback to retrieve existing grid or create a new one.
-    public: void LoadGrid();
+    /// \brief Callback to retrieve existing grid.
+    public: void ConnectToGrid();
+
+    /// \brief Refresh list of grids. This is called in the rendering thread.
+    public: void RefreshList();
+
+    /// \brief Callback when refresh button is pressed.
+    public slots: void OnRefresh();
+
+    /// \brief Callback when a new name is chosen on the combo box.
+    /// \param[in] _name Grid name
+    public slots: void OnName(const QString &_name);
+
+    /// \brief Get the list of grid names
+    /// \return List of grids.
+    public slots: QStringList NameList() const;
+
+    /// \brief Set the list of names
+    /// \param[in] _nameList List of names
+    public slots: void SetNameList(const QStringList &_nameList);
+
+    /// \brief Notify that name list has changed
+    signals: void NameListChanged();
 
     /// \brief Callback to update vertical cell count
     /// \param[in] _cellCount new vertical cell count

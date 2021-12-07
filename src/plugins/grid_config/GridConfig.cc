@@ -33,35 +33,50 @@ namespace ignition::gui
 {
   struct GridParam
   {
-    /// \brief Default horizontal cell count
+    /// \brief Horizontal cell count
     int hCellCount{20};
 
-    /// \brief Default vertical cell count
+    /// \brief Vertical cell count
     int vCellCount{0};
 
-    /// \brief Default cell length
+    /// \brief Cell length
     double cellLength{1.0};
 
-    /// \brief Default pose of grid
+    /// \brief 3D pose
     math::Pose3d pose{math::Pose3d::Zero};
 
-    /// \brief Default color of grid
+    /// \brief Grid color
     math::Color color{math::Color(0.7f, 0.7f, 0.7f, 1.0f)};
-
-    /// \brief Default visible state
-    bool visible{true};
   };
 
   class GridConfigPrivate
   {
-    /// \brief Assume only one gridptr in a scene
-    public: rendering::GridPtr grid;
+    /// \brief List of grid names.
+    public: QStringList nameList;
 
-    /// \brief Default grid parameters
+    /// \brief
+    std::string name;
+
+    /// \brief Grid parameters
     public: GridParam gridParam;
+
+    /// \brief Grids to add at startup
+    public: std::vector<GridParam> startupGrids;
+
+    /// \brief Pointer to selected grid
+    rendering::GridPtr grid{nullptr};
+
+    /// \brief Pointer to scene
+    rendering::ScenePtr scene{nullptr};
 
     /// \brief Flag that indicates whether there are new updates to be rendered.
     public: bool dirty{false};
+
+    /// \brief True if name list needs to be refreshed.
+    public: bool refreshList{true};
+
+    /// \brief Visible state
+    bool visible{true};
   };
 }
 
@@ -86,39 +101,45 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Configuration
   if (_pluginElem)
   {
-    // For grid to be configured at startup
-    if (auto cellCountElem = _pluginElem->FirstChildElement("cell_count"))
-      cellCountElem->QueryIntText(&this->dataPtr->gridParam.hCellCount);
-
-    if (auto vElem = _pluginElem->FirstChildElement("vertical_cell_count"))
-      vElem->QueryIntText(&this->dataPtr->gridParam.vCellCount);
-
-    if (auto lengthElem = _pluginElem->FirstChildElement("cell_length"))
-      lengthElem->QueryDoubleText(&this->dataPtr->gridParam.cellLength);
-
-    auto elem = _pluginElem->FirstChildElement("pose");
-    if (nullptr != elem && nullptr != elem->GetText())
+    // For grids to be inserted at startup
+    for (auto insertElem = _pluginElem->FirstChildElement("insert");
+         insertElem != nullptr;
+         insertElem = insertElem->NextSiblingElement("insert"))
     {
-      std::stringstream poseStr;
-      poseStr << std::string(elem->GetText());
-      poseStr >> this->dataPtr->gridParam.pose;
-    }
+      GridParam gridParam;
 
-    elem = _pluginElem->FirstChildElement("color");
-    if (nullptr != elem && nullptr != elem->GetText())
-    {
-      std::stringstream colorStr;
-      colorStr << std::string(elem->GetText());
-      colorStr >> this->dataPtr->gridParam.color;
+      // Both cell_count and horizontal_cell_count apply to horizontal for backwards
+      // compatibility
+      if (auto cellCountElem = insertElem->FirstChildElement("cell_count"))
+        cellCountElem->QueryIntText(&gridParam.hCellCount);
+
+      if (auto cellCountElem = insertElem->FirstChildElement("horizontal_cell_count"))
+        cellCountElem->QueryIntText(&gridParam.hCellCount);
+
+      if (auto vElem = insertElem->FirstChildElement("vertical_cell_count"))
+        vElem->QueryIntText(&gridParam.vCellCount);
+
+      if (auto lengthElem = insertElem->FirstChildElement("cell_length"))
+        lengthElem->QueryDoubleText(&gridParam.cellLength);
+
+      auto elem = insertElem->FirstChildElement("pose");
+      if (nullptr != elem && nullptr != elem->GetText())
+      {
+        std::stringstream poseStr;
+        poseStr << std::string(elem->GetText());
+        poseStr >> gridParam.pose;
+      }
+
+      elem = insertElem->FirstChildElement("color");
+      if (nullptr != elem && nullptr != elem->GetText())
+      {
+        std::stringstream colorStr;
+        colorStr << std::string(elem->GetText());
+        colorStr >> gridParam.color;
+      }
+
+      this->dataPtr->startupGrids.push_back(gridParam);
     }
-    this->newParams(
-        this->dataPtr->gridParam.hCellCount,
-        this->dataPtr->gridParam.vCellCount,
-        this->dataPtr->gridParam.cellLength,
-        convert(this->dataPtr->gridParam.pose.Pos()),
-        convert(this->dataPtr->gridParam.pose.Rot().Euler()),
-        convert(this->dataPtr->gridParam.color));
-    this->dataPtr->dirty = true;
   }
 
   ignition::gui::App()->findChild<
@@ -130,9 +151,20 @@ bool GridConfig::eventFilter(QObject *_obj, QEvent *_event)
 {
   if (_event->type() == ignition::gui::events::Render::kType)
   {
-    // This event is called in Scene3d's RenderThread, so it's safe to make
-    // rendering calls here
-    this->UpdateGrid();
+    if (nullptr == this->dataPtr->scene)
+      this->dataPtr->scene = rendering::sceneFromFirstRenderEngine();
+
+    if (nullptr != this->dataPtr->scene)
+    {
+      // Create grid setup at startup
+      this->CreateGrids();
+
+      // Update combo box
+      this->RefreshList();
+
+      // Update selected grid
+      this->UpdateGrid();
+    }
   }
 
   // Standard event processing
@@ -140,13 +172,44 @@ bool GridConfig::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 /////////////////////////////////////////////////
+void GridConfig::CreateGrids()
+{
+  if (this->dataPtr->startupGrids.empty())
+    return;
+
+  for (const auto &gridParam : this->dataPtr->startupGrids)
+  {
+    auto grid = this->dataPtr->scene->CreateGrid();
+    grid->SetCellCount(gridParam.hCellCount);
+    grid->SetVerticalCellCount(gridParam.vCellCount);
+    grid->SetCellLength(gridParam.cellLength);
+
+    auto gridVis = this->dataPtr->scene->CreateVisual();
+    this->dataPtr->scene->RootVisual()->AddChild(gridVis);
+    gridVis->SetLocalPose(gridParam.pose);
+    gridVis->AddGeometry(grid);
+
+    auto mat = this->dataPtr->scene->CreateMaterial();
+    mat->SetAmbient(gridParam.color);
+    mat->SetDiffuse(gridParam.color);
+    mat->SetSpecular(gridParam.color);
+    gridVis->SetMaterial(mat);
+
+    this->dataPtr->dirty = true;
+
+    igndbg << "Created grid [" << grid->Name() << "]" << std::endl;
+  }
+  this->dataPtr->startupGrids.clear();
+}
+
+/////////////////////////////////////////////////
 void GridConfig::UpdateGrid()
 {
-  // Load grid if it doesn't already exist
+  // Connect to a grid
   if (!this->dataPtr->grid)
-    this->LoadGrid();
+    this->ConnectToGrid();
 
-  // If grid was not loaded successfully, don't update
+  // If not connected, don't update
   if (!this->dataPtr->grid)
     return;
 
@@ -177,7 +240,7 @@ void GridConfig::UpdateGrid()
       ignerr << "Grid visual missing material" << std::endl;
     }
 
-    visual->SetVisible(this->dataPtr->gridParam.visible);
+    visual->SetVisible(this->dataPtr->visible);
   }
   else
   {
@@ -188,69 +251,74 @@ void GridConfig::UpdateGrid()
 }
 
 /////////////////////////////////////////////////
-void GridConfig::LoadGrid()
+void GridConfig::ConnectToGrid()
 {
-  auto scene = rendering::sceneFromFirstRenderEngine();
-  if (nullptr == scene)
+  if (this->dataPtr->name.empty())
     return;
 
-  // load grid
-  // if gridPtr found, load the existing gridPtr to class
-  for (unsigned int i = 0; i < scene->VisualCount(); ++i)
+  if (this->dataPtr->grid)
+    return;
+
+  for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
   {
-    auto vis = scene->VisualByIndex(i);
+    auto vis = this->dataPtr->scene->VisualByIndex(i);
     if (!vis || vis->GeometryCount() == 0)
       continue;
     for (unsigned int j = 0; j < vis->GeometryCount(); ++j)
     {
       auto grid = std::dynamic_pointer_cast<rendering::Grid>(
             vis->GeometryByIndex(j));
-      if (grid)
+      if (grid && grid->Name() == this->dataPtr->name)
       {
-        igndbg << "Attaching to existing grid" << std::endl;
         this->dataPtr->grid = grid;
-        return;
+
+        igndbg << "Connected to grid [" << grid->Name() << "]" << std::endl;
+
+        // TODO(chapulina) Set to the grid's visible state when that's available
+        // through ign-rendering's API
+        this->dataPtr->visible = true;
+        grid->Parent()->SetVisible(true);
+
+        this->dataPtr->gridParam.hCellCount = grid->CellCount();
+        this->dataPtr->gridParam.vCellCount = grid->VerticalCellCount();
+        this->dataPtr->gridParam.cellLength = grid->CellLength();
+        this->dataPtr->gridParam.pose = grid->Parent()->LocalPose();
+        this->dataPtr->gridParam.color = grid->Parent()->Material()->Ambient();
+        this->newParams(
+            grid->CellCount(),
+            grid->VerticalCellCount(),
+            grid->CellLength(),
+            convert(grid->Parent()->LocalPose().Pos()),
+            convert(grid->Parent()->LocalPose().Rot().Euler()),
+            convert(grid->Parent()->Material()->Ambient()));
       }
     }
   }
+}
 
-  if (this->dataPtr->grid)
-    return;
+/////////////////////////////////////////////////
+void GridConfig::OnName(const QString &_name)
+{
+  this->dataPtr->name = _name.toStdString();
 
-  // Create grid
-  igndbg << "Creating grid" << std::endl;
+  // Set it to null so we load the new grid
+  this->dataPtr->grid = nullptr;
 
-  auto root = scene->RootVisual();
-  this->dataPtr->grid = scene->CreateGrid();
-  if (!this->dataPtr->grid)
-  {
-    ignwarn << "Failed to create grid, grid config plugin won't work."
-            << std::endl;
+  // Don't change the grid we're about to connected to
+  this->dataPtr->dirty = false;
+}
 
-    // If we get here, most likely the render engine and scene are fully loaded,
-    // but they don't support grids. So stop trying.
-    ignition::gui::App()->findChild<
-        ignition::gui::MainWindow *>()->removeEventFilter(this);
-    return;
-  }
+/////////////////////////////////////////////////
+QStringList GridConfig::NameList() const
+{
+  return this->dataPtr->nameList;
+}
 
-  this->dataPtr->grid->SetCellCount(
-    this->dataPtr->gridParam.hCellCount);
-  this->dataPtr->grid->SetVerticalCellCount(
-    this->dataPtr->gridParam.vCellCount);
-  this->dataPtr->grid->SetCellLength(
-    this->dataPtr->gridParam.cellLength);
-
-  auto vis = scene->CreateVisual();
-  root->AddChild(vis);
-  vis->SetLocalPose(this->dataPtr->gridParam.pose);
-  vis->AddGeometry(this->dataPtr->grid);
-
-  auto mat = scene->CreateMaterial();
-  mat->SetAmbient(this->dataPtr->gridParam.color);
-  mat->SetDiffuse(this->dataPtr->gridParam.color);
-  mat->SetSpecular(this->dataPtr->gridParam.color);
-  vis->SetMaterial(mat);
+/////////////////////////////////////////////////
+void GridConfig::SetNameList(const QStringList &_nameList)
+{
+  this->dataPtr->nameList = _nameList;
+  this->NameListChanged();
 }
 
 /////////////////////////////////////////////////
@@ -293,8 +361,47 @@ void GridConfig::SetColor(double _r, double _g, double _b, double _a)
 /////////////////////////////////////////////////
 void GridConfig::OnShow(bool _checked)
 {
-  this->dataPtr->gridParam.visible = _checked;
+  this->dataPtr->visible = _checked;
   this->dataPtr->dirty = true;
+}
+
+/////////////////////////////////////////////////
+void GridConfig::OnRefresh()
+{
+  this->dataPtr->refreshList = true;
+}
+
+/////////////////////////////////////////////////
+void GridConfig::RefreshList()
+{
+  if (!this->dataPtr->refreshList)
+    return;
+  this->dataPtr->refreshList = false;
+
+  // Clear
+  this->dataPtr->nameList.clear();
+
+  // Get updated list
+  for (unsigned int i = 0; i < this->dataPtr->scene->VisualCount(); ++i)
+  {
+    auto vis = this->dataPtr->scene->VisualByIndex(i);
+    if (!vis || vis->GeometryCount() == 0)
+      continue;
+    for (unsigned int j = 0; j < vis->GeometryCount(); ++j)
+    {
+      auto grid = std::dynamic_pointer_cast<rendering::Grid>(
+            vis->GeometryByIndex(j));
+      if (grid)
+      {
+        this->dataPtr->nameList.push_back(QString::fromStdString(grid->Name()));
+      }
+    }
+  }
+
+  // Select first one
+  if (this->dataPtr->nameList.count() > 0)
+    this->OnName(this->dataPtr->nameList.at(0));
+  this->NameListChanged();
 }
 
 // Register this plugin

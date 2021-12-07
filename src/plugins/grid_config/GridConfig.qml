@@ -16,6 +16,7 @@
 */
 import QtQuick 2.9
 import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 import "qrc:/qml"
@@ -58,11 +59,40 @@ GridLayout {
     }
   }
 
+  ComboBox {
+    id: combo
+    Layout.columnSpan: 2
+    Layout.fillWidth: true
+    model: GridConfig.nameList
+    onCurrentIndexChanged: {
+      if (currentIndex < 0)
+        return;
+
+      GridConfig.OnName(textAt(currentIndex));
+    }
+    popup.width: parent.width
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: qsTr("Grids in the scene")
+  }
+
+  RoundButton {
+    text: "\u21bb"
+    Layout.columnSpan: 1
+    Material.background: Material.primary
+    onClicked: {
+      GridConfig.OnRefresh();
+    }
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: qsTr("Refresh list of grids")
+  }
+
   CheckBox {
     Layout.alignment: Qt.AlignHCenter
     id: showgrid
-    Layout.columnSpan: 4
-    text: qsTr("Show/Hide Grid")
+    Layout.columnSpan: 1
+    text: qsTr("Show")
     checked: true
     onClicked: {
       GridConfig.OnShow(checked)
