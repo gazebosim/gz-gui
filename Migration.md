@@ -5,6 +5,13 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Ignition GUI 6.1 to 6.2
+
+* All features from `Grid3D` have been incorportated into `GridConfig`. The code
+  for the original `Grid3D` has been removed and now the installed library is
+  just a copy of `GridConfig`. Existing `Grid3D` users shouldn't be affected and
+  may continue to use `Grid3D` as before.
+
 ## Ignition GUI 5.x to 6.x
 
 * The `Scene3D` plugin is deprecated, use `MinimalScene` with
