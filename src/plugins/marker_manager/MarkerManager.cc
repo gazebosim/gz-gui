@@ -286,7 +286,8 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
 {
   // Get the namespace, if it exists. Otherwise, use the global namespace
   std::string ns;
-  if (!_msg.ns().empty()) {
+  if (!_msg.ns().empty())
+  {
     ns = _msg.ns();
   }
 
@@ -528,12 +529,6 @@ void MarkerManagerPrivate::SetMarker(const ignition::msgs::Marker &_msg,
     _markerPtr->ClearPoints();
   }
 
-  math::Color color(
-      _msg.material().diffuse().r(),
-      _msg.material().diffuse().g(),
-      _msg.material().diffuse().b(),
-      _msg.material().diffuse().a());
-
   // Set Marker Points
   for (int i = 0; i < _msg.point().size(); ++i)
   {
@@ -542,6 +537,11 @@ void MarkerManagerPrivate::SetMarker(const ignition::msgs::Marker &_msg,
         _msg.point(i).y(),
         _msg.point(i).z());
 
+    math::Color color = msgs::Convert(_msg.material().diffuse());
+    if (i < _msg.materials().size())
+    {
+      color = msgs::Convert(_msg.materials(i).diffuse());
+    }
     _markerPtr->AddPoint(vector, color);
   }
 }
