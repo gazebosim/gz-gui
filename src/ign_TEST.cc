@@ -21,6 +21,8 @@
 
 #include <string>
 
+#include <ignition/common/Filesystem.hh>
+#include <ignition/common/Util.hh>
 #include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
@@ -52,10 +54,45 @@ std::string custom_exec_str(std::string _cmd)
   return result;
 }
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
-TEST(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
+using namespace ignition;
+
+class CmdLine : public ::testing::Test
 {
+  // Documentation inherited
+  protected: void SetUp() override
+  {
+    // Change environment variable so that test files aren't written to $HOME
+    common::env(IGN_HOMEDIR, this->realHome);
+    EXPECT_TRUE(common::setenv(IGN_HOMEDIR, this->kFakeHome.c_str()));
+  }
+
+  // Documentation inherited
+  protected: void TearDown() override
+  {
+    // Restore $HOME
+    EXPECT_TRUE(common::setenv(IGN_HOMEDIR, this->realHome.c_str()));
+  }
+
+  /// \brief Directory to act as $HOME for tests
+  public: const std::string kFakeHome = common::joinPaths(PROJECT_BINARY_PATH,
+      "test", "fake_home");
+
+  /// \brief Store user's real $HOME to set it back at the end of tests.
+  public: std::string realHome;
+};
+
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
+{
+  // Clear home if it exists
+  common::removeAll(this->kFakeHome);
+
+  EXPECT_FALSE(common::exists(this->kFakeHome));
+
   std::string output = custom_exec_str("ign gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
   EXPECT_NE(output.find("Publisher"), std::string::npos) << output;
+
+  EXPECT_TRUE(common::exists(common::joinPaths(this->kFakeHome, ".ignition",
+      "gui")));
 }

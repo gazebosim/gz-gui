@@ -42,7 +42,8 @@ namespace ignition
       /// User defined events should start from QEvent::MaxUser and
       /// count down to avoid collision with ign-gazebo events
 
-      /// \brief Event called in the render thread of a 3D scene.
+      /// \brief Event called in the render thread of a 3D scene after the user
+      /// camera has rendered.
       /// It's safe to make rendering calls in this event's callback.
       class Render : public QEvent
       {
@@ -464,6 +465,22 @@ namespace ignition
         /// \brief Get the WorldControl information
         /// \return The WorldControl information
         public: const msgs::WorldControl &WorldControlInfo() const;
+
+        /// \internal
+        /// \brief Private data pointer
+        IGN_UTILS_IMPL_PTR(dataPtr)
+      };
+
+      /// \brief Event called in the render thread of a 3D scene, before the
+      /// user camera is rendered.
+      /// It's safe to make rendering calls in this event's callback.
+      class IGNITION_GUI_VISIBLE PreRender : public QEvent
+      {
+        /// \brief Constructor
+        public: PreRender();
+
+        /// \brief Unique type for this event.
+        static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 20);
 
         /// \internal
         /// \brief Private data pointer

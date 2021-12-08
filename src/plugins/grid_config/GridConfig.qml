@@ -16,12 +16,13 @@
 */
 import QtQuick 2.9
 import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 import "qrc:/qml"
 
 GridLayout {
-  columns: 6
+  columns: 4
   columnSpacing: 10
   Layout.minimumWidth: 300
   Layout.minimumHeight: 625
@@ -29,29 +30,73 @@ GridLayout {
   anchors.leftMargin: 10
   anchors.rightMargin: 10
 
-  // Left spacer
-  Item {
-    Layout.columnSpan: 1
-    Layout.rowSpan: 15
+  // Get number of decimal digits based on a widget's width
+  // TODO(chapulina) Move this to a common place so all widgets can use it
+  function getDecimals(_width) {
+    if (_width <= 80)
+      return 2;
+    else if (_width <= 100)
+      return 4;
+    return 6;
+  }
+
+  Connections {
+    target: GridConfig
+    onNewParams: {
+      horizontalCellCount.value = _hCellCount;
+      verticalCellCount.value = _vCellCount;
+      cellLength.value = _cellLength;
+      x.value = _pos.x;
+      y.value = _pos.y;
+      z.value = _pos.z;
+      roll.value = _rot.x;
+      pitch.value = _rot.y;
+      yaw.value = _rot.z;
+      r.value = _color.r;
+      g.value = _color.g;
+      b.value = _color.b;
+      a.value = _color.a;
+    }
+  }
+
+  ComboBox {
+    id: combo
+    Layout.columnSpan: 2
     Layout.fillWidth: true
+    model: GridConfig.nameList
+    onCurrentIndexChanged: {
+      if (currentIndex < 0)
+        return;
+
+      GridConfig.OnName(textAt(currentIndex));
+    }
+    popup.width: parent.width
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: qsTr("Grids in the scene")
+  }
+
+  RoundButton {
+    text: "\u21bb"
+    Layout.columnSpan: 1
+    Material.background: Material.primary
+    onClicked: {
+      GridConfig.OnRefresh();
+    }
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: qsTr("Refresh list of grids")
   }
 
   CheckBox {
     Layout.alignment: Qt.AlignHCenter
     id: showgrid
-    Layout.columnSpan: 4
-    text: qsTr("Show/Hide Grid")
+    Layout.columnSpan: 1
+    text: qsTr("Show")
     checked: true
     onClicked: {
       GridConfig.OnShow(checked)
     }
-  }
-
-  // Right spacer
-  Item {
-    Layout.columnSpan: 1
-    Layout.rowSpan: 15
-    Layout.fillWidth: true
   }
 
   Text {
@@ -70,8 +115,9 @@ GridLayout {
 
   IgnSpinBox {
     Layout.columnSpan: 2
+    Layout.fillWidth: true
     id: verticalCellCount
-    maximumValue: 1000
+    maximumValue: Number.MAX_VALUE
     minimumValue: 0
     value: 0
     onEditingFinished: GridConfig.UpdateVCellCount(verticalCellCount.value)
@@ -86,8 +132,9 @@ GridLayout {
 
   IgnSpinBox {
     Layout.columnSpan: 2
+    Layout.fillWidth: true
     id: horizontalCellCount
-    maximumValue: 1000
+    maximumValue: Number.MAX_VALUE
     minimumValue: 1
     value: 20
     onEditingFinished: GridConfig.UpdateHCellCount(horizontalCellCount.value)
@@ -109,11 +156,12 @@ GridLayout {
   }
   IgnSpinBox {
     Layout.columnSpan: 2
+    Layout.fillWidth: true
     id: cellLength
-    maximumValue: 1000.00
-    minimumValue: 0.01
+    maximumValue: Number.MAX_VALUE
+    minimumValue: 0.0000001
     value: 1.00
-    decimals: 2
+    decimals: getDecimals(cellLength.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.UpdateCellLength(cellLength.value)
   }
@@ -140,11 +188,12 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: x
     value: 0.00
-    maximumValue: 1000.00
-    minimumValue: -1000.00
-    decimals: 2
+    maximumValue: Number.MAX_VALUE
+    minimumValue: -Number.MAX_VALUE
+    decimals: getDecimals(x.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
   }
@@ -155,11 +204,12 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: roll
     maximumValue: 6.28
     minimumValue: 0.00
     value: 0.00
-    decimals: 2
+    decimals: getDecimals(roll.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
   }
@@ -170,11 +220,12 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: y
     value: 0.00
-    maximumValue: 1000.00
-    minimumValue: -1000.00
-    decimals: 2
+    maximumValue: Number.MAX_VALUE
+    minimumValue: -Number.MAX_VALUE
+    decimals: getDecimals(y.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
   }
@@ -185,11 +236,12 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: pitch
     maximumValue: 6.28
     minimumValue: 0.00
     value: 0.00
-    decimals: 2
+    decimals: getDecimals(pitch.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
   }
@@ -200,11 +252,12 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: z
     value: 0.00
-    maximumValue: 1000.00
-    minimumValue: -1000.00
-    decimals: 2
+    maximumValue: Number.MAX_VALUE
+    minimumValue: -Number.MAX_VALUE
+    decimals: getDecimals(z.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
   }
@@ -215,11 +268,12 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: yaw
     maximumValue: 6.28
     minimumValue: 0.00
     value: 0.00
-    decimals: 2
+    decimals: getDecimals(yaw.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
   }
@@ -237,12 +291,13 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: r
     maximumValue: 1.00
     minimumValue: 0.00
     value: 0.7
     stepSize: 0.01
-    decimals: 2
+    decimals: getDecimals(r.width)
     onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
   }
 
@@ -252,12 +307,13 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: g
     maximumValue: 1.00
     minimumValue: 0.00
     value: 0.7
     stepSize: 0.01
-    decimals: 2
+    decimals: getDecimals(g.width)
     onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
   }
 
@@ -267,12 +323,13 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: b
     maximumValue: 1.00
     minimumValue: 0.00
     value: 0.7
     stepSize: 0.01
-    decimals: 2
+    decimals: getDecimals(b.width)
     onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
   }
 
@@ -282,12 +339,13 @@ GridLayout {
   }
 
   IgnSpinBox {
+    Layout.fillWidth: true
     id: a
     maximumValue: 1.00
     minimumValue: 0.00
     value: 1.0
     stepSize: 0.01
-    decimals: 2
+    decimals: getDecimals(a.width)
     onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
   }
 
