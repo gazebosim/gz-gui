@@ -1,5 +1,38 @@
 ## Ignition Gui 6
 
+### Ignition Gui 6.2.0 (2021-12-08)
+
+1. Grid config: set values from startup and improve layout
+    * [Pull request #324](https://github.com/ignitionrobotics/ign-gui/pull/324)
+
+1. Fix codecheck
+    * [Pull request #332](https://github.com/ignitionrobotics/ign-gui/pull/332)
+    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
+
+1. Offer a way to disable warnings on marker manager
+    * [Pull request #326](https://github.com/ignitionrobotics/ign-gui/pull/326)
+
+1. Add PreRender event to MinimalScene
+    * [Pull request #325](https://github.com/ignitionrobotics/ign-gui/pull/325)
+
+1. Use qmldir to define QML module with IgnSpinBox
+    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+
+1. Fix TopicEcho plugin message display
+    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+
+1. Don't set visual scale for point markers
+    * [Pull request #321](https://github.com/ignitionrobotics/ign-gui/pull/321)
+
+1. Set marker point size from message
+    * [Pull request #317](https://github.com/ignitionrobotics/ign-gui/pull/317)
+
+1. Don't crash if a plugin has invalid QML
+    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+
+1. Added log storing for ign-gui
+    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
+
 ### Ignition Gui 6.1.0 (2021-11-05)
 
 1. Improved doxygen
