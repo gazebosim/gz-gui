@@ -199,17 +199,24 @@ void MarkerManagerPrivate::OnRender()
     this->Initialize();
   }
 
+  using namespace std::literals::chrono_literals;
+  auto startTime = std::chrono::system_clock::now();
   std::lock_guard<std::mutex> lock(this->mutex);
-
   // Process the marker messages.
+  // Place an upper limit on the time spent processing commands so that the
+  // system remains responsive. TODO(arjo): Move this to a bacground thread.
   for (auto markerIter = this->markerMsgs.begin();
-       markerIter != this->markerMsgs.end();)
+      markerIter != this->markerMsgs.end()
+      && std::chrono::system_clock::now() - startTime < 100ms;)
   {
     this->ProcessMarkerMsg(*markerIter);
     this->markerMsgs.erase(markerIter++);
   }
 
-  
+  if (this->markerMsgs.size() != 0)
+    ignwarn << "Too  many markers to process skipping render of "
+      << this->markerMsgs.size() << " marker requests" << std::endl;
+
   // Erase any markers that have a lifetime.
   for (auto mit = this->visuals.begin();
        mit != this->visuals.end();)
