@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2021 Open Robotics
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+#include <gtest/gtest.h>
+
+#include <ignition/common/Console.hh>
+#include <ignition/transport/Node.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
+
+#include "test_config.h"  // NOLINT(build/include)
+#include "ignition/gui/Application.hh"
+#include "ignition/gui/Plugin.hh"
+#include "ignition/gui/MainWindow.hh"
+#include "ShutdownButton.hh"
+
+int g_argc = 1;
+char* g_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./ShutdownButton_TEST")),
+};
+
+using namespace ignition;
+using namespace gui;
+
+// See https://github.com/ignitionrobotics/ign-gui/issues/75
+/////////////////////////////////////////////////
+TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  EXPECT_TRUE(app.LoadPlugin("ShutdownButton"));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Get plugin
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "Shutdown");
+
+  // Cleanup
+  plugins.clear();
+}
+
+/////////////////////////////////////////////////
+TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownButton))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"ShutdownButton\">"
+      "<ignition-gui>"
+        "<title>Shutdown!</title>"
+      "</ignition-gui>"
+      "<service>/server_control_test</service>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+  EXPECT_TRUE(app.LoadPlugin("ShutdownButton",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::ShutdownButton *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "Shutdown!");
+
+  // World control service
+  bool stopCalled = false;
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)> cb =
+      [&](const msgs::ServerControl &_req, msgs::Boolean &)
+  {
+    stopCalled = _req.stop();
+    return true;
+  };
+  transport::Node node;
+  node.Advertise("/server_control_test", cb);
+
+  plugin->OnStop();
+  EXPECT_TRUE(stopCalled);
+
+  // Cleanup
+  plugins.clear();
+}
