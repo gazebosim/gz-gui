@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Open Robotics
+ * Copyright (C) 2021 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@
 #include <string>
 
 #include <ignition/common/Console.hh>
-#include <ignition/common/Time.hh>
 #include <ignition/common/StringUtils.hh>
+#include <ignition/common/Time.hh>
 #include <ignition/plugin/Register.hh>
 
 #include "ignition/gui/Helpers.hh"
@@ -74,7 +74,7 @@ void ShutdownButton::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
-  // For world control requests
+  // For server control requests
   this->dataPtr->controlService = "/server_control";
   auto serviceElem = _pluginElem->FirstChildElement("service");
   if (nullptr != serviceElem && nullptr != serviceElem->GetText())
@@ -99,7 +99,7 @@ void ShutdownButton::OnStop()
   std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
       [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
   {
-    ignlog << "Request to shutdown the simulation server sent. Stopping client "
+    ignmsg << "Request to shutdown the simulation server sent. Stopping client "
            << "now." << std::endl;
     std::raise(SIGTERM);
   };
