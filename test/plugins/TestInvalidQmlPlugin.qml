@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2021 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,8 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.0
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
+import QtQuick 2.9
 
 Rectangle {
-  Layout.minimumWidth: 100
-  Layout.minimumHeight: 100
+  banana: fail
 }
-
-

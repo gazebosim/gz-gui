@@ -32,6 +32,13 @@ namespace plugins
 
   /// \brief This plugin will be in charge of handeling the markers in the
   /// scene. It will allow to add, modify or remove markers.
+  ///
+  /// ## Parameters
+  ///
+  /// * `<topic_name>`: Options. Name of topic for marker service. Defaults
+  /// to `/marker`.
+  /// * `<warn_on_action_failure>`: True to display warnings if the user
+  /// attempts to perform an invalid action. Defaults to true.
   class MarkerManager : public Plugin
   {
     Q_OBJECT
