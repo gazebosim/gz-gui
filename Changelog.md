@@ -2,8 +2,30 @@
 
 ### Ignition Gui 4.X.X
 
-### Ignition Gui 4.X.X (20XX-XX-XX)
+### Ignition Gui 4.6.0 (2021-12-20)
 
+1. Use `qmldir` to define QML module with `IgnSpinBox`
+    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+
+1. Fix `TopicEcho` plugin message display
+    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+
+1. Don't crash if a plugin has invalid QML
+    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+
+1. Added log storing for ign-gui under `~/.ignition/gui`
+    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
+
+1. Fix memory leak
+    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+
+1. Add a filter to the plugin menu
+    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+
+1. Infrastructure
+    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
 
 ### Ignition Gui 4.5.0 (2021-07-26)
 
