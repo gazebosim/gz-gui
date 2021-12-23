@@ -14,6 +14,8 @@ qml-module-qt-labs-platform
 qml-module-qt-labs-settings
 qml-module-qtcharts
 qml-module-qtgraphicaleffects
+qml-module-qtlocation
+qml-module-qtpositioning
 qml-module-qtqml-models2
 qml-module-qtquick-controls
 qml-module-qtquick-controls2
