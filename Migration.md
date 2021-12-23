@@ -5,6 +5,10 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Ignition GUI 6.2 to 6.3
+
+* New QML dependencies, only needed for the NavSatMap plugin: `qml-module-qtlocation`, `qml-module-qtpositioning`
+
 ## Ignition GUI 6.1 to 6.2
 
 * All features from `Grid3D` have been incorportated into `GridConfig`. The code
