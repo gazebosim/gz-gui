@@ -694,7 +694,7 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
       // The rotation is the angle between the +z(0,0,1) vector and the
       // normal, which are both expressed in the local (Visual) frame.
       math::Vector3d normal = msgs::Convert(_msg.plane().normal());
-      localPose.Rot().From2Axes(math::Vector3d::UnitZ, normal.Normalized());
+      localPose.Rot().SetFrom2Axes(math::Vector3d::UnitZ, normal.Normalized());
     }
   }
   else if (_msg.has_sphere())
