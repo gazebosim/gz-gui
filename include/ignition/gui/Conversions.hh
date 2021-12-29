@@ -27,7 +27,6 @@
 #endif
 #include <ignition/common/KeyEvent.hh>
 #include <ignition/common/MouseEvent.hh>
-#include <ignition/common/Time.hh>
 #include <ignition/math/Color.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>

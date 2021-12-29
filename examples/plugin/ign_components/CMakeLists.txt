@@ -15,7 +15,7 @@ find_package (Qt5
 )
 
 find_package(ignition-gui7 REQUIRED)
-find_package(ignition-common4 REQUIRED)
+find_package(ignition-common5 REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
 
