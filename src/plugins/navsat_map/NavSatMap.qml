@@ -154,7 +154,7 @@ Item {
 
     ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
     ToolTip.visible: hovered
-    ToolTip.text: qsTr("Keep point on center")
+    ToolTip.text: qsTr("Track position")
   }
 
   Connections {

@@ -73,7 +73,7 @@ void NavSatMap::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   // Default name in case user didn't define one
   if (this->title.empty())
-    this->title = "Message display";
+    this->title = "Navigation satellite map";
 
   std::string topic;
   bool topicPicker = true;
