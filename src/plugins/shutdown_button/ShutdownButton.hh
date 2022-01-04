@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Open Robotics
+ * Copyright (C) 2021 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,6 @@
 
 #include <memory>
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <ignition/msgs.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-#include <ignition/transport.hh>
-
 #include "ignition/gui/Plugin.hh"
 
 #ifndef _WIN32
@@ -47,8 +38,6 @@ namespace gui
 {
 namespace plugins
 {
-  class ShutdownButtonPrivate;
-
   /// \brief This plugin provides a shutdown button.
   ///
   /// ## Configuration
@@ -70,9 +59,6 @@ namespace plugins
 
     /// \brief Callback in Qt thread when close button is clicked.
     public slots: void OnStop();
-
-    // Private data
-    private: std::unique_ptr<ShutdownButtonPrivate> dataPtr;
   };
 }
 }

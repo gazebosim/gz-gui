@@ -32,6 +32,8 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 
+#include "ignition/transport/TopicUtils.hh"
+
 namespace ignition
 {
   namespace gui
@@ -271,11 +273,95 @@ bool Application::LoadConfig(const std::string &_config)
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
 
     // Closing behavior.
+    if (auto defaultExitActionElem =
+      winElem->FirstChildElement("default_exit_action"))
+    {
+      ExitAction action{ExitAction::CLOSE_GUI};
+      const std::string value{defaultExitActionElem->GetText()};
+      if (value == "SHUTDOWN_SERVER")
+      {
+        action = ExitAction::SHUTDOWN_SERVER;
+      }
+      else if (value != "CLOSE_GUI" && !value.empty())
+      {
+        ignwarn << "Value '" << value << "' of <default_exit_action> is "
+                << "invalid. Allowed values are CLOSE_GUI and SHUTDOWN_SERVER. "
+                << "Selecting CLOSE_GUI as fallback." << std::endl;
+      }
+      this->dataPtr->mainWin->SetDefaultExitAction(action);
+    }
+
+    // Dialog on exit
     if (auto dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
     {
       bool showDialogOnExit{false};
-      dialogOnExitElem->QueryBoolText(&showDialogOnExit);
+      if (dialogOnExitElem->FirstChildElement() == nullptr)
+      {
+        // Simple variant with <dialog_on_exit>true</dialog_on_exit>
+        dialogOnExitElem->QueryBoolText(&showDialogOnExit);
+      }
+      else
+      {
+        // Advanced variant with XML content
+        if (auto showElem = dialogOnExitElem->FirstChildElement("show"))
+        {
+          showElem->QueryBoolText(&showDialogOnExit);
+        }
+        if (auto promptElem =
+          dialogOnExitElem->FirstChildElement("prompt_text"))
+        {
+          this->dataPtr->mainWin->SetDialogOnExitText(
+            QString::fromStdString(promptElem->GetText()));
+        }
+        if (auto showShutdownElem =
+          dialogOnExitElem->FirstChildElement("show_shutdown_button"))
+        {
+          bool showShutdownButton{false};
+          showShutdownElem->QueryBoolText(&showShutdownButton);
+          this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
+        }
+        if (auto showCloseGuiElem =
+          dialogOnExitElem->FirstChildElement("show_close_gui_button"))
+        {
+          bool showCloseGuiButton{false};
+          showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
+          this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
+        }
+        if (auto shutdownTextElem =
+          dialogOnExitElem->FirstChildElement("shutdown_button_text"))
+        {
+          this->dataPtr->mainWin->SetExitDialogShutdownText(
+            QString::fromStdString(shutdownTextElem->GetText()));
+        }
+        if (auto closeGuiTextElem =
+          dialogOnExitElem->FirstChildElement("close_gui_button_text"))
+        {
+          this->dataPtr->mainWin->SetExitDialogCloseGuiText(
+            QString::fromStdString(closeGuiTextElem->GetText()));
+        }
+      }
       this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
+    }
+
+    // Server control service topic
+    std::string serverControlService{"/server_control"};
+    auto serverControlElem =
+      winElem->FirstChildElement("server_control_service");
+    if (nullptr != serverControlElem && nullptr != serverControlElem->GetText())
+    {
+      serverControlService = transport::TopicUtils::AsValidTopic(
+        serverControlElem->GetText());
+    }
+
+    if (serverControlService.empty())
+    {
+      ignerr << "Failed to create valid server control service" << std::endl;
+    }
+    else
+    {
+      ignmsg << "Using server control service [" << serverControlService
+             << "]" << std::endl;
+      this->dataPtr->mainWin->SetServerControlService(serverControlService);
     }
   }
 

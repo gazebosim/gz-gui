@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Open Robotics
+ * Copyright (C) 2021 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,20 +69,8 @@ TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownButton))
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-  // Load plugin
-  const char *pluginStr =
-    "<plugin filename=\"ShutdownButton\">"
-      "<ignition-gui>"
-        "<title>Shutdown!</title>"
-      "</ignition-gui>"
-      "<service>/server_control_test</service>"
-    "</plugin>";
-
-  tinyxml2::XMLDocument pluginDoc;
-  EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
-  EXPECT_TRUE(app.LoadPlugin("ShutdownButton",
-      pluginDoc.FirstChildElement("plugin")));
+  app.LoadConfig(common::joinPaths(PROJECT_SOURCE_PATH,
+    "src", "plugins", "shutdown_button", "test.config"));
 
   // Get main window
   auto win = app.findChild<MainWindow *>();
@@ -101,16 +89,70 @@ TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownButton))
   // World control service
   bool stopCalled = false;
   std::function<bool(const msgs::ServerControl &, msgs::Boolean &)> cb =
-      [&](const msgs::ServerControl &_req, msgs::Boolean &)
+      [&](const msgs::ServerControl &_req, msgs::Boolean &_resp)
   {
     stopCalled = _req.stop();
+    _resp.set_data(true);
     return true;
   };
   transport::Node node;
   node.Advertise("/server_control_test", cb);
 
+  EXPECT_TRUE(win->QuickWindow()->isVisible());
+
   plugin->OnStop();
   EXPECT_TRUE(stopCalled);
+
+  EXPECT_FALSE(win->QuickWindow()->isVisible());
+
+  // Cleanup
+  plugins.clear();
+}
+
+/////////////////////////////////////////////////
+TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownGuiOnly))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.LoadConfig(common::joinPaths(PROJECT_SOURCE_PATH,
+    "src", "plugins", "shutdown_button", "test.config"));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // override the SHUTDOWN_SERVER value from the test config
+  win->SetDefaultExitAction(ExitAction::CLOSE_GUI);
+
+  // Show, but don't exec, so we don't block
+  win->QuickWindow()->show();
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::ShutdownButton *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  auto plugin = plugins[0];
+
+  // World control service
+  bool stopCalled = false;
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)> cb =
+      [&](const msgs::ServerControl &_req, msgs::Boolean &_resp)
+  {
+    stopCalled = _req.stop();
+    _resp.set_data(true);
+    return true;
+  };
+  transport::Node node;
+  node.Advertise("/server_control_test", cb);
+
+  EXPECT_TRUE(win->QuickWindow()->isVisible());
+
+  plugin->OnStop();
+  EXPECT_FALSE(stopCalled);
+
+  EXPECT_FALSE(win->QuickWindow()->isVisible());
 
   // Cleanup
   plugins.clear();

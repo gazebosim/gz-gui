@@ -25,6 +25,9 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/qt.h"
+#include "ignition/msgs/boolean.pb.h"
+#include "ignition/msgs/server_control.pb.h"
+#include "ignition/transport/Node.hh"
 
 namespace ignition
 {
@@ -48,8 +51,35 @@ namespace ignition
       /// fully initialized.
       public: const unsigned int paintCountMin{20};
 
+      /// \brief The action executed when GUI is closed without prompt.
+      public: ExitAction defaultExitAction{ExitAction::CLOSE_GUI};
+
       /// \brief Show the confirmation dialog on exit
       public: bool showDialogOnExit{false};
+
+      /// \brief Text of the prompt in the confirmation dialog on exit
+      public: QString dialogOnExitText{
+        QString::fromStdString("Do you really want to exit?")};
+
+      /// \brief Show "shutdown" button in exit dialog
+      public: bool exitDialogShowShutdown{false};
+
+      /// \brief Show "Close GUI" button in exit dialog
+      public: bool exitDialogShowCloseGui{true};
+
+      /// \brief Text of "shutdown" button in exit dialog
+      public: QString exitDialogShutdownText{
+        QString::fromStdString("Shutdown simulation")};
+
+      /// \brief Text of "Close GUI" button in exit dialog
+      public: QString exitDialogCloseGuiText{
+        QString::fromStdString("Close GUI")};
+
+      /// \brief Service to send server control requests
+      public: std::string controlService{"/server_control"};
+
+      /// \brief Communication node
+      public: ignition::transport::Node node;
     };
   }
 }
@@ -70,6 +100,11 @@ std::string dirName(const std::string &_path)
 MainWindow::MainWindow()
   : dataPtr(new MainWindowPrivate)
 {
+  // Expose the ExitAction enum to QML via ExitAction 1.0 module
+  qRegisterMetaType<ExitAction>("ExitAction");
+  qmlRegisterUncreatableMetaObject(ignition::gui::staticMetaObject,
+    "ExitAction", 1, 0, "ExitAction", "Error: namespace enum");
+
   // Make MainWindow functions available from all QML files (using root)
   App()->Engine()->rootContext()->setContextProperty("MainWindow", this);
 
@@ -159,6 +194,45 @@ void MainWindow::OnSaveConfigAs(const QString &_path)
   if (localPath.isEmpty())
     localPath = _path;
   this->SaveConfig(localPath.toStdString());
+}
+
+/////////////////////////////////////////////////
+void MainWindow::OnStopServer()
+{
+  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
+    [](const ignition::msgs::Boolean &_rep, const bool _result)
+    {
+      if (_rep.data() && _result)
+      {
+        ignlog << "Simulation server acknowledged to be shut down."
+               << std::endl;
+      }
+      else
+      {
+        ignerr << "There was a problem instructing the simulation server to "
+               << "shut down. It may keep running." << std::endl;
+      }
+    };
+
+  ignition::msgs::ServerControl req;
+  req.set_stop(true);
+  const auto success = this->dataPtr->node.Request(
+    this->dataPtr->controlService, req, cb);
+
+  if (success)
+  {
+    ignlog << "Request to shutdown the simulation server sent. "
+              "Stopping client now." << std::endl;
+  }
+  else
+  {
+    ignerr << "Calling service [" << this->dataPtr->controlService << "] to "
+           << "stop the server failed. Please check that the "
+           << "<server_control_service> of the GUI is configured correctly and "
+           << "that the server is running in the same IGN_PARTITION and with "
+           << "the same configuration of IGN_TRANSPORT_TOPIC_STATISTICS."
+           << std::endl;
+  }
 }
 
 /////////////////////////////////////////////////
@@ -848,6 +922,19 @@ void MainWindow::SetShowPluginMenu(const bool _showPluginMenu)
 }
 
 /////////////////////////////////////////////////
+ExitAction MainWindow::DefaultExitAction() const
+{
+  return this->dataPtr->defaultExitAction;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetDefaultExitAction(ExitAction _defaultExitAction)
+{
+  this->dataPtr->defaultExitAction = _defaultExitAction;
+  this->DefaultExitActionChanged();
+}
+
+/////////////////////////////////////////////////
 bool MainWindow::ShowDialogOnExit() const
 {
   return this->dataPtr->showDialogOnExit;
@@ -858,4 +945,84 @@ void MainWindow::SetShowDialogOnExit(bool _showDialogOnExit)
 {
   this->dataPtr->showDialogOnExit = _showDialogOnExit;
   this->ShowDialogOnExitChanged();
+}
+
+/////////////////////////////////////////////////
+QString MainWindow::DialogOnExitText() const
+{
+  return this->dataPtr->dialogOnExitText;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetDialogOnExitText(
+  const QString& _dialogOnExitText)
+{
+  this->dataPtr->dialogOnExitText = _dialogOnExitText;
+  this->DialogOnExitTextChanged();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ExitDialogShowShutdown() const
+{
+  return this->dataPtr->exitDialogShowShutdown;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetExitDialogShowShutdown(bool _exitDialogShowShutdown)
+{
+  this->dataPtr->exitDialogShowShutdown = _exitDialogShowShutdown;
+  this->ExitDialogShowShutdownChanged();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ExitDialogShowCloseGui() const
+{
+  return this->dataPtr->exitDialogShowCloseGui;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetExitDialogShowCloseGui(bool _exitDialogShowCloseGui)
+{
+  this->dataPtr->exitDialogShowCloseGui = _exitDialogShowCloseGui;
+  this->ExitDialogShowCloseGuiChanged();
+}
+
+/////////////////////////////////////////////////
+QString MainWindow::ExitDialogShutdownText() const
+{
+  return this->dataPtr->exitDialogShutdownText;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetExitDialogShutdownText(
+  const QString& _exitDialogShutdownText)
+{
+  this->dataPtr->exitDialogShutdownText = _exitDialogShutdownText;
+  this->ExitDialogShutdownTextChanged();
+}
+
+/////////////////////////////////////////////////
+QString MainWindow::ExitDialogCloseGuiText() const
+{
+  return this->dataPtr->exitDialogCloseGuiText;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetExitDialogCloseGuiText(
+  const QString& _exitDialogCloseGuiText)
+{
+  this->dataPtr->exitDialogCloseGuiText = _exitDialogCloseGuiText;
+  this->ExitDialogCloseGuiTextChanged();
+}
+
+/////////////////////////////////////////////////
+std::string MainWindow::ServerControlService() const
+{
+  return this->dataPtr->controlService;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetServerControlService(const std::string& _service)
+{
+  this->dataPtr->controlService = _service;
 }
