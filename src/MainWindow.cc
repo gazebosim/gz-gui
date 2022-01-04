@@ -204,7 +204,7 @@ void MainWindow::OnStopServer()
     {
       if (_rep.data() && _result)
       {
-        ignlog << "Simulation server acknowledged to be shut down."
+        ignmsg << "Simulation server acknowledged to be shut down."
                << std::endl;
       }
       else
@@ -221,7 +221,7 @@ void MainWindow::OnStopServer()
 
   if (success)
   {
-    ignlog << "Request to shutdown the simulation server sent. "
+    ignmsg << "Request to shutdown the simulation server sent. "
               "Stopping client now." << std::endl;
   }
   else
