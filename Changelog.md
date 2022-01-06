@@ -1,5 +1,10 @@
 ## Ignition Gui 6
 
+### Ignition Gui 6.3.0 (2022-01-06)
+
+1. NavSat (GPS) map plugin
+    * [Pull request #342](https://github.com/ignitionrobotics/ign-gui/pull/342)
+
 ### Ignition Gui 6.2.0 (2021-12-08)
 
 1. Grid config: set values from startup and improve layout
