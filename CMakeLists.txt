@@ -59,6 +59,11 @@ set(IGN_TRANSPORT_VER ${ignition-transport8_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
+# TODO(chapulina) Remove this once ign-rendering exports the variable
+# https://github.com/ignitionrobotics/ign-rendering/issues/360
+if ((NOT ${CMAKE_VERSION} VERSION_LESS 3.11) AND (NOT OpenGL_GL_PREFERENCE))
+  set(OpenGL_GL_PREFERENCE "GLVND")
+endif()
 ign_find_package(ignition-rendering3 REQUIRED COMPONENTS ogre VERSION 3.5.0)
 set(IGN_RENDERING_VER ${ignition-rendering3_VERSION_MAJOR})
 
