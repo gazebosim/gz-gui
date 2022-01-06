@@ -23,9 +23,10 @@
 #ifndef IGNITION_GUI_PLUGINS_POINTCLOUD_HH_
 #define IGNITION_GUI_PLUGINS_POINTCLOUD_HH_
 
+#include <memory>
+
 #include <ignition/msgs/float_v.pb.h>
 #include <ignition/msgs/pointcloud_packed.pb.h>
-#include <ignition/utils/ImplPtr.hh>
 
 #include "ignition/gui/Plugin.hh"
 
@@ -35,6 +36,8 @@ namespace gui
 {
 namespace plugins
 {
+  class PointCloudPrivate;
+
   /// \brief Visualize PointCloudPacked messages in the 3D scene.
   /// By default, the whole cloud is displayed using a single color. Users
   /// can optionally choose a topic publishing FloatV messages which will be
@@ -231,7 +234,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data
-    IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
+    private: std::unique_ptr<PointCloudPrivate> dataPtr;
   };
 }
 }

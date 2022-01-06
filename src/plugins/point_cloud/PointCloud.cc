@@ -48,7 +48,7 @@
 #include <ignition/gui/MainWindow.hh>
 
 /// \brief Private data class for PointCloud
-class ignition::gui::plugins::PointCloud::Implementation
+class ignition::gui::plugins::PointCloudPrivate
 {
   /// \brief Transport node
   public: ignition::transport::Node node;
@@ -100,7 +100,7 @@ using namespace plugins;
 /////////////////////////////////////////////////
 PointCloud::PointCloud()
   : ignition::gui::Plugin(),
-    dataPtr(utils::MakeUniqueImpl<Implementation>())
+    dataPtr(std::make_unique<PointCloudPrivate>())
 {
 }
 
