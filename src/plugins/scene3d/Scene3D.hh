@@ -255,10 +255,10 @@ namespace plugins
 
     /// \brief Set a callback to be called in case there are errors.
     /// \param[in] _cb Error callback
-    public: void SetErrorCb(std::function<void(const QString&)> _cb);
+    public: void SetErrorCb(std::function<void(const QString &)> _cb);
 
     /// \brief Function to be called if there are errors.
-    public: std::function<void(const QString&)> errorCb;
+    public: std::function<void(const QString &)> errorCb;
 
     /// \brief Offscreen surface to render to
     public: QOffscreenSurface *surface = nullptr;
@@ -365,7 +365,7 @@ namespace plugins
 
     /// \brief Set a callback to be called in case there are errors.
     /// \param[in] _cb Error callback
-    public: void SetErrorCb(std::function<void(const QString&)> _cb);
+    public: void SetErrorCb(std::function<void(const QString &)> _cb);
 
     /// \internal
     /// \brief Pointer to private data.
