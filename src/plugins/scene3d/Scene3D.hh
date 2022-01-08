@@ -51,7 +51,9 @@ namespace plugins
   ///
   /// ## Configuration
   ///
-  /// * \<engine\> : Optional render engine name, defaults to 'ogre'.
+  /// * \<engine\> : Optional render engine name, defaults to 'ogre'. If another
+  ///                engine is already loaded, that will be used, because only
+  ///                one engine is supported at a time currently.
   /// * \<scene\> : Optional scene name, defaults to 'scene'. The plugin will
   ///               create a scene with this name if there isn't one yet. If
   ///               there is already one, a new camera is added to it.

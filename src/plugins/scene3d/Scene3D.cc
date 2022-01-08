@@ -1064,17 +1064,29 @@ std::string IgnRenderer::Initialize()
   if (this->initialized)
     return std::string();
 
-  // Only one engine / scene / user camera is currently supported.
-  // Fail gracefully.
-  if (!rendering::loadedEngines().empty())
+  // Currently only support one engine at a time
+  rendering::RenderEngine *engine{nullptr};
+  auto loadedEngines = rendering::loadedEngines();
+
+  // Load engine if there's no engine yet
+  if (loadedEngines.empty())
   {
-    return "Currently only one plugin providing a 3D scene is supported at a "
-            "time.";
+    std::map<std::string, std::string> params;
+    params["useCurrentGLContext"] = "1";
+    engine = rendering::engine(this->engineName, params);
+  }
+  else
+  {
+    if (loadedEngines.front() != this->engineName)
+    {
+      ignwarn << "Failed to load engine [" << this->engineName
+              << "]. Using engine [" << loadedEngines.front()
+              << "], which is already loaded. Currently only one engine is "
+              << "supported at a time." << std::endl;
+    }
+    engine = rendering::engine(loadedEngines.front());
   }
 
-  std::map<std::string, std::string> params;
-  params["useCurrentGLContext"] = "1";
-  auto engine = rendering::engine(this->engineName, params);
   if (!engine)
   {
     return "Engine [" + this->engineName + "] is not supported";
@@ -1088,6 +1100,11 @@ std::string IgnRenderer::Initialize()
     scene = engine->CreateScene(this->sceneName);
     scene->SetAmbientLight(this->ambientLight);
     scene->SetBackgroundColor(this->backgroundColor);
+  }
+  else
+  {
+    return "Currently only one plugin providing a 3D scene is supported at a "
+            "time.";
   }
 
   auto root = scene->RootVisual();
