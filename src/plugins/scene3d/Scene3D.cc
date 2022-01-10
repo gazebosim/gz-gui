@@ -1059,19 +1059,37 @@ void IgnRenderer::BroadcastRightClick()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::Initialize()
+std::string IgnRenderer::Initialize()
 {
   if (this->initialized)
-    return;
+    return std::string();
 
-  std::map<std::string, std::string> params;
-  params["useCurrentGLContext"] = "1";
-  auto engine = rendering::engine(this->engineName, params);
+  // Currently only support one engine at a time
+  rendering::RenderEngine *engine{nullptr};
+  auto loadedEngines = rendering::loadedEngines();
+
+  // Load engine if there's no engine yet
+  if (loadedEngines.empty())
+  {
+    std::map<std::string, std::string> params;
+    params["useCurrentGLContext"] = "1";
+    engine = rendering::engine(this->engineName, params);
+  }
+  else
+  {
+    if (loadedEngines.front() != this->engineName)
+    {
+      ignwarn << "Failed to load engine [" << this->engineName
+              << "]. Using engine [" << loadedEngines.front()
+              << "], which is already loaded. Currently only one engine is "
+              << "supported at a time." << std::endl;
+    }
+    engine = rendering::engine(loadedEngines.front());
+  }
+
   if (!engine)
   {
-    ignerr << "Engine [" << this->engineName << "] is not supported"
-           << std::endl;
-    return;
+    return "Engine [" + this->engineName + "] is not supported";
   }
 
   // Scene
@@ -1082,6 +1100,11 @@ void IgnRenderer::Initialize()
     scene = engine->CreateScene(this->sceneName);
     scene->SetAmbientLight(this->ambientLight);
     scene->SetBackgroundColor(this->backgroundColor);
+  }
+  else
+  {
+    return "Currently only one plugin providing a 3D scene is supported at a "
+            "time.";
   }
 
   auto root = scene->RootVisual();
@@ -1112,6 +1135,7 @@ void IgnRenderer::Initialize()
   this->dataPtr->rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
 
   this->initialized = true;
+  return std::string();
 }
 
 /////////////////////////////////////////////////
@@ -1184,6 +1208,12 @@ RenderThread::RenderThread()
 }
 
 /////////////////////////////////////////////////
+void RenderThread::SetErrorCb(std::function<void(const QString&)> _cb)
+{
+  this->errorCb = _cb;
+}
+
+/////////////////////////////////////////////////
 void RenderThread::RenderNext()
 {
   this->context->makeCurrent(this->surface);
@@ -1191,7 +1221,12 @@ void RenderThread::RenderNext()
   if (!this->ignRenderer.initialized)
   {
     // Initialize renderer
-    this->ignRenderer.Initialize();
+    auto loadingError = this->ignRenderer.Initialize();
+    if (!loadingError.empty())
+    {
+      this->errorCb(QString::fromStdString(loadingError));
+      return;
+    }
   }
 
   // check if engine has been successfully initialized
@@ -1209,18 +1244,24 @@ void RenderThread::RenderNext()
 /////////////////////////////////////////////////
 void RenderThread::ShutDown()
 {
-  this->context->makeCurrent(this->surface);
+  if (this->context && this->surface)
+    this->context->makeCurrent(this->surface);
 
   this->ignRenderer.Destroy();
 
-  this->context->doneCurrent();
-  delete this->context;
+  if (this->context)
+  {
+    this->context->doneCurrent();
+    delete this->context;
+  }
 
   // schedule this to be deleted only after we're done cleaning up
-  this->surface->deleteLater();
+  if (this->surface)
+    this->surface->deleteLater();
 
   // Stop event processing, move the thread to GUI and make sure it is deleted.
-  this->moveToThread(QGuiApplication::instance()->thread());
+  if (this->ignRenderer.initialized)
+    this->moveToThread(QGuiApplication::instance()->thread());
 }
 
 
@@ -1500,6 +1541,8 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
            << "Render window will not be created" << std::endl;
     return;
   }
+  renderWindow->SetErrorCb(std::bind(&Scene3D::SetLoadingError, this,
+      std::placeholders::_1));
 
   if (this->title.empty())
     this->title = "3D Scene";
@@ -1586,6 +1629,12 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetErrorCb(std::function<void(const QString&)> _cb)
+{
+  this->dataPtr->renderThread->SetErrorCb(_cb);
 }
 
 /////////////////////////////////////////////////
@@ -1688,6 +1737,19 @@ void Scene3D::OnFocusWindow()
 {
   auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
   renderWindow->forceActiveFocus();
+}
+
+/////////////////////////////////////////////////
+QString Scene3D::LoadingError() const
+{
+  return this->loadingError;
+}
+
+/////////////////////////////////////////////////
+void Scene3D::SetLoadingError(const QString &_loadingError)
+{
+  this->loadingError = _loadingError;
+  this->LoadingErrorChanged();
 }
 
 // Register this plugin
