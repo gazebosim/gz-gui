@@ -295,52 +295,44 @@ bool Application::LoadConfig(const std::string &_config)
     if (auto dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
     {
       bool showDialogOnExit{false};
-      if (dialogOnExitElem->FirstChildElement() == nullptr)
-      {
-        // Simple variant with <dialog_on_exit>true</dialog_on_exit>
-        dialogOnExitElem->QueryBoolText(&showDialogOnExit);
-      }
-      else
-      {
-        // Advanced variant with XML content
-        if (auto showElem = dialogOnExitElem->FirstChildElement("show"))
-        {
-          showElem->QueryBoolText(&showDialogOnExit);
-        }
-        if (auto promptElem =
-          dialogOnExitElem->FirstChildElement("prompt_text"))
-        {
-          this->dataPtr->mainWin->SetDialogOnExitText(
-            QString::fromStdString(promptElem->GetText()));
-        }
-        if (auto showShutdownElem =
-          dialogOnExitElem->FirstChildElement("show_shutdown_button"))
-        {
-          bool showShutdownButton{false};
-          showShutdownElem->QueryBoolText(&showShutdownButton);
-          this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
-        }
-        if (auto showCloseGuiElem =
-          dialogOnExitElem->FirstChildElement("show_close_gui_button"))
-        {
-          bool showCloseGuiButton{false};
-          showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
-          this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
-        }
-        if (auto shutdownTextElem =
-          dialogOnExitElem->FirstChildElement("shutdown_button_text"))
-        {
-          this->dataPtr->mainWin->SetExitDialogShutdownText(
-            QString::fromStdString(shutdownTextElem->GetText()));
-        }
-        if (auto closeGuiTextElem =
-          dialogOnExitElem->FirstChildElement("close_gui_button_text"))
-        {
-          this->dataPtr->mainWin->SetExitDialogCloseGuiText(
-            QString::fromStdString(closeGuiTextElem->GetText()));
-        }
-      }
+      dialogOnExitElem->QueryBoolText(&showDialogOnExit);
       this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
+    }
+
+    if (auto dialogOnExitOptionsElem = winElem->FirstChildElement("dialog_on_exit_options"))
+    {
+      if (auto promptElem =
+        dialogOnExitOptionsElem->FirstChildElement("prompt_text"))
+      {
+        this->dataPtr->mainWin->SetDialogOnExitText(
+          QString::fromStdString(promptElem->GetText()));
+      }
+      if (auto showShutdownElem =
+        dialogOnExitOptionsElem->FirstChildElement("show_shutdown_button"))
+      {
+        bool showShutdownButton{false};
+        showShutdownElem->QueryBoolText(&showShutdownButton);
+        this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
+      }
+      if (auto showCloseGuiElem =
+        dialogOnExitOptionsElem->FirstChildElement("show_close_gui_button"))
+      {
+        bool showCloseGuiButton{false};
+        showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
+        this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
+      }
+      if (auto shutdownTextElem =
+        dialogOnExitOptionsElem->FirstChildElement("shutdown_button_text"))
+      {
+        this->dataPtr->mainWin->SetExitDialogShutdownText(
+          QString::fromStdString(shutdownTextElem->GetText()));
+      }
+      if (auto closeGuiTextElem =
+        dialogOnExitOptionsElem->FirstChildElement("close_gui_button_text"))
+      {
+        this->dataPtr->mainWin->SetExitDialogCloseGuiText(
+          QString::fromStdString(closeGuiTextElem->GetText()));
+      }
     }
 
     // Server control service topic

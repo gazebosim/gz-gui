@@ -35,21 +35,17 @@ by adding a `<window>` element to the config file. The child elements are:
 * `<server_control_service>`: Default `/server_control`. This is the name of `msgs::ServerControl`
                               service that allows e.g. stopping the server. It is usually not needed
                               to alter this value.
-* `<dialog_on_exit>`: In simple mode, this can contain `true`/`false`. If `true`, 
-                      a confirmation dialog will show up when closing the window. If confirmed, the
-                      GUI is closed and the server is left running (if it runs in a different
-                      process).
-* `<dialog_on_exit>`: In advanced mode, this is the following XML structure (with all elements
-                      optional).
-    * `<show>`: Default `false`. If `true`, a confirmation dialog will show up when
-                closing the window.
+* `<dialog_on_exit>`: If `true`, a confirmation dialog will show up when closing the window.
+* `<dialog_on_exit_options>`: Configuration of the dialog shown before exit (with all elements
+                              optional).
     * `<prompt_text>`: Text of the prompt in the confirmation dialog.
     * `<show_shutdown_button>`: Default `false`. If `true`, display a "Shutdown simulation"
                                 button in the confirmation dialog, which shuts down the server, too.
-    * `<shutdown_button_text>`: Text of the "Shutdown simulation" button.
+    * `<shutdown_button_text>`: Text of the "Shutdown simulation" button. If empty, a default text
+                                is used.
     * `<show_close_gui_button>`: Default `true`. If `true`, display a "Close GUI" button in
                                  the confirmation dialog, which leaves server running.
-    * `<close_gui_button_text>`: Text of the "Close GUI" button.
+    * `<close_gui_button_text>`: Text of the "Close GUI" button. If empty, a default text is used.
 
 ## Example layout
 

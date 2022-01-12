@@ -344,7 +344,7 @@ ApplicationWindow
    */
   Dialog {
     id: confirmationDialogOnExit
-    title: dialogOnExitText
+    title: (dialogOnExitText ? dialogOnExitText : "Do you really want to exit?")
 
     modal: true
     focus: true
@@ -358,9 +358,9 @@ ApplicationWindow
     // The button texts need to be changed later than in onCompleted as standardButtons change later
     onAboutToShow: function () {
       if (exitDialogShowCloseGui)
-        footer.standardButton(Dialog.Ok).text = exitDialogCloseGuiText
+        footer.standardButton(Dialog.Ok).text = (exitDialogCloseGuiText ? exitDialogCloseGuiText : "Close GUI")
       if (exitDialogShowShutdown)
-        footer.standardButton(Dialog.Discard).text = exitDialogShutdownText
+        footer.standardButton(Dialog.Discard).text = (exitDialogShutdownText ? exitDialogShutdownText : "Shutdown simulation")
     }
 
     footer:

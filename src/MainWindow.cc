@@ -58,8 +58,7 @@ namespace ignition
       public: bool showDialogOnExit{false};
 
       /// \brief Text of the prompt in the confirmation dialog on exit
-      public: QString dialogOnExitText{
-        QString::fromStdString("Do you really want to exit?")};
+      public: QString dialogOnExitText;
 
       /// \brief Show "shutdown" button in exit dialog
       public: bool exitDialogShowShutdown{false};
@@ -68,12 +67,10 @@ namespace ignition
       public: bool exitDialogShowCloseGui{true};
 
       /// \brief Text of "shutdown" button in exit dialog
-      public: QString exitDialogShutdownText{
-        QString::fromStdString("Shutdown simulation")};
+      public: QString exitDialogShutdownText;
 
       /// \brief Text of "Close GUI" button in exit dialog
-      public: QString exitDialogCloseGuiText{
-        QString::fromStdString("Close GUI")};
+      public: QString exitDialogCloseGuiText;
 
       /// \brief Service to send server control requests
       public: std::string controlService{"/server_control"};
