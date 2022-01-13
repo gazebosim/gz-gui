@@ -14,14 +14,16 @@
  * limitations under the License.
  *
 */
+import QtGraphicalEffects 1.0
 import QtQuick 2.9
 import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.3
 import RenderWindow 1.0
-import QtGraphicalEffects 1.0
 
 Rectangle {
-  width: 1000
-  height: 800
+  Layout.minimumWidth: 200
+  Layout.minimumHeight: 200
+  anchors.fill: parent
 
   /**
    * True to enable gamma correction
@@ -36,6 +38,7 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.NoButton
+    visible: Scene3D.loadingError.length == 0
     onEntered: {
       Scene3D.OnFocusWindow()
     }
@@ -48,6 +51,7 @@ Rectangle {
     id: renderWindow
     objectName: "rw"
     anchors.fill: parent
+    visible: Scene3D.loadingError.length == 0
   }
 
   /*
@@ -67,5 +71,13 @@ Rectangle {
 
       width = Qt.binding(function() {return parent.parent.width})
       height = Qt.binding(function() {return parent.parent.height})
+  }
+
+  Label {
+    anchors.fill: parent
+    anchors.margins: 10
+    text: Scene3D.loadingError
+    visible: (Scene3D.loadingError.length > 0);
+    wrapMode: Text.WordWrap
   }
 }
