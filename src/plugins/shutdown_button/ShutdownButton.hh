@@ -18,8 +18,6 @@
 #ifndef IGNITION_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
 #define IGNITION_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
 
-#include <memory>
-
 #include "ignition/gui/Plugin.hh"
 
 #ifndef _WIN32
@@ -39,11 +37,6 @@ namespace gui
 namespace plugins
 {
   /// \brief This plugin provides a shutdown button.
-  ///
-  /// ## Configuration
-  ///
-  /// * \<service\> : Service for server control, optional. If not present,
-  ///               the plugin will use /server_control
   class ShutdownButton_EXPORTS_API ShutdownButton: public ignition::gui::Plugin
   {
     Q_OBJECT

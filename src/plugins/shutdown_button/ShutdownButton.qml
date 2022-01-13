@@ -30,6 +30,9 @@ RowLayout {
    * Close icon
    */
   property string closeIcon: "\u2A2F"
+  
+  property int tooltipDelay: 500
+  property int tooltipTimeout: 1000
 
   /**
    * Close button
@@ -46,5 +49,9 @@ RowLayout {
       ShutdownButton.OnStop()
     }
     Material.background: Material.primary
+    ToolTip.visible: hovered
+    ToolTip.delay: tooltipDelay
+    ToolTip.timeout: tooltipTimeout
+    ToolTip.text: qsTr("Quit")
   }
 }

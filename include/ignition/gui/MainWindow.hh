@@ -46,11 +46,14 @@ namespace ignition
     /// \brief The action executed when GUI is closed without prompt.
     enum class ExitAction
     {
-      CLOSE_GUI,  //! \brief Close GUI and leave server running
+      /// \brief Close GUI and leave server running
+      CLOSE_GUI,
       /// \brief Close GUI and shutdown server
-      SHUTDOWN_SERVER,  
+      SHUTDOWN_SERVER,
     };
+    /// \cond DO_NOT_DOCUMENT
     Q_ENUM_NS(ExitAction)
+    /// \endcond
 
     /// \brief The main window class creates a QQuickWindow and acts as an
     /// interface which provides properties and functions which can be called

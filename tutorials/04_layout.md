@@ -28,10 +28,13 @@ by adding a `<window>` element to the config file. The child elements are:
                     the menu. If `from_paths` is true, all plugins will be shown
                     anyway, so adding `<show>` has no effect. For the plugin to
                     be shown, it must be on the path.
-* `<default_exit_action>`: Default `CLOSE_GUI`. If set to `SHUTDOWN_SERVER` and `<dialog_on_exit>`
-                           is `false`, closing the simulation window will stop the server even if it
-                           runs in a different process or even on a different machine. If the GUI
-                           crashes, the server should keep running.
+* `<default_exit_action>`: Default `CLOSE_GUI`. If set to `SHUTDOWN_SERVER` and
+                           `<dialog_on_exit>` is `false`, closing the window will
+                           emit a server shutdown request with `stop = true` to the
+                           `<server_control_service>` topic. This can be used
+                           in applications like Ignition Gazebo which can run a
+                           server in a process separate from the GUI to stop both
+                           the GUI and the server when the window is closed.
 * `<server_control_service>`: Default `/server_control`. This is the name of `msgs::ServerControl`
                               service that allows e.g. stopping the server. It is usually not needed
                               to alter this value.

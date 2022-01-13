@@ -353,14 +353,19 @@ ApplicationWindow
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
     closePolicy: Popup.CloseOnEscape
-    standardButtons: (exitDialogShowCloseGui ? Dialog.Ok : Dialog.NoButton) | (exitDialogShowShutdown ? Dialog.Discard : Dialog.NoButton) | Dialog.Cancel
+    standardButtons:
+      (exitDialogShowCloseGui ? Dialog.Ok : Dialog.NoButton) |
+      (exitDialogShowShutdown ? Dialog.Discard : Dialog.NoButton) |
+      Dialog.Cancel
 
     // The button texts need to be changed later than in onCompleted as standardButtons change later
     onAboutToShow: function () {
       if (exitDialogShowCloseGui)
-        footer.standardButton(Dialog.Ok).text = (exitDialogCloseGuiText ? exitDialogCloseGuiText : "Close GUI")
+        footer.standardButton(Dialog.Ok).text =
+          (exitDialogCloseGuiText ? exitDialogCloseGuiText : "Close GUI")
       if (exitDialogShowShutdown)
-        footer.standardButton(Dialog.Discard).text = (exitDialogShutdownText ? exitDialogShutdownText : "Shutdown simulation")
+        footer.standardButton(Dialog.Discard).text =
+          (exitDialogShutdownText ? exitDialogShutdownText : "Shutdown server and GUI")
     }
 
     footer:

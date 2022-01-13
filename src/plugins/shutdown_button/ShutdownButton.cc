@@ -33,8 +33,6 @@ ShutdownButton::ShutdownButton() : Plugin()
 
 /////////////////////////////////////////////////
 ShutdownButton::~ShutdownButton() = default;
-{
-}
 
 /////////////////////////////////////////////////
 void ShutdownButton::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
