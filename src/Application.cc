@@ -299,7 +299,8 @@ bool Application::LoadConfig(const std::string &_config)
       this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
     }
 
-    if (auto dialogOnExitOptionsElem = winElem->FirstChildElement("dialog_on_exit_options"))
+    if (auto dialogOnExitOptionsElem =
+      winElem->FirstChildElement("dialog_on_exit_options"))
     {
       if (auto promptElem =
         dialogOnExitOptionsElem->FirstChildElement("prompt_text"))
