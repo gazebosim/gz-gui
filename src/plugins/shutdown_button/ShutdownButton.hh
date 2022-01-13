@@ -55,7 +55,7 @@ namespace plugins
     public: virtual ~ShutdownButton();
 
     // Documentation inherited
-    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
+    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
 
     /// \brief Callback in Qt thread when close button is clicked.
     public slots: void OnStop();

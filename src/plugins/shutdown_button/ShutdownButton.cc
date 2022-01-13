@@ -32,7 +32,7 @@ ShutdownButton::ShutdownButton() : Plugin()
 }
 
 /////////////////////////////////////////////////
-ShutdownButton::~ShutdownButton()
+ShutdownButton::~ShutdownButton() = default;
 {
 }
 

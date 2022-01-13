@@ -47,7 +47,8 @@ namespace ignition
     enum class ExitAction
     {
       CLOSE_GUI,  //! \brief Close GUI and leave server running
-      SHUTDOWN_SERVER,  //! \brief Close GUI and shutdown server
+      /// \brief Close GUI and shutdown server
+      SHUTDOWN_SERVER,  
     };
     Q_ENUM_NS(ExitAction)
 
