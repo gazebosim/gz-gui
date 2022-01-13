@@ -345,6 +345,7 @@ ApplicationWindow
   Dialog {
     id: confirmationDialogOnExit
     title: (dialogOnExitText ? dialogOnExitText : "Do you really want to exit?")
+    objectName: "confirmationDialogOnExit"
 
     modal: true
     focus: true

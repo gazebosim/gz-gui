@@ -18,7 +18,12 @@
 #include <gtest/gtest.h>
 #include <thread>
 
+#include <QQmlProperty>
+
 #include <ignition/common/Console.hh>
+#include <ignition/msgs/boolean.pb.h>
+#include <ignition/msgs/server_control.pb.h>
+#include <ignition/transport/Node.hh>
 #include <ignition/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
@@ -372,6 +377,335 @@ TEST(MainWindowTest,
   App()->exec();
 
   EXPECT_TRUE(closed);
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest,
+     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoShutdown))
+{
+  ignition::common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv);
+
+  app.LoadConfig(common::joinPaths(
+    PROJECT_SOURCE_PATH, "test", "config",
+    "close_dialog_auto_shutdown.config"));
+  // Get main window
+  auto mainWindow = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  bool shutdownCalled{false};
+  transport::Node node;
+  std::string serverControlService{"/server_control"};
+  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
+  cb = [&](const ignition::msgs::ServerControl &_req, msgs::Boolean &_rep) {
+    shutdownCalled = _req.stop();
+    _rep.set_data(true);
+    return true;
+  };
+  node.Advertise(serverControlService, cb);
+
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  mainWindow->QuickWindow()->close();
+  EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
+
+  EXPECT_TRUE(shutdownCalled);
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest,
+     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitActionCustomShutdownService))
+{
+  ignition::common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv);
+
+  app.LoadConfig(common::joinPaths(
+    PROJECT_SOURCE_PATH, "test", "config",
+    "close_dialog_custom_shutdown_service.config"));
+  // Get main window
+  auto mainWindow = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  bool shutdownCalled{false};
+  bool wrongShutdownCalled{false};
+
+  transport::Node node;
+
+  std::string serverControlService{"/test_service"};
+  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
+  cb = [&](const ignition::msgs::ServerControl &_req, msgs::Boolean &_rep) {
+    shutdownCalled = _req.stop();
+    _rep.set_data(true);
+    return true;
+  };
+  node.Advertise(serverControlService, cb);
+
+  std::string wrongServerControlService{"/server_control"};
+  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
+  cb2 = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+    wrongShutdownCalled = true;
+    _rep.set_data(true);
+    return true;
+  };
+  node.Advertise(wrongServerControlService, cb2);
+
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  mainWindow->QuickWindow()->close();
+  EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
+
+  EXPECT_TRUE(shutdownCalled);
+  EXPECT_FALSE(wrongShutdownCalled);
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest,
+     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoCloseGui))
+{
+  ignition::common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv);
+
+  // Add test plugins to path
+  app.AddPluginPath(common::joinPaths(PROJECT_BINARY_PATH, "lib"));
+  app.LoadConfig(common::joinPaths(
+    PROJECT_SOURCE_PATH, "test", "config",
+    "close_dialog_auto_gui_only.config"));
+  // Get main window
+  auto mainWindow = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  bool shutdownCalled{false};
+  transport::Node node;
+  std::string serverControlService{"/server_control"};
+  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
+  cb = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+    shutdownCalled = true;
+    _rep.set_data(true);
+    return true;
+  };
+  node.Advertise(serverControlService, cb);
+
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  mainWindow->QuickWindow()->close();
+  EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
+
+  EXPECT_FALSE(shutdownCalled);
+}
+
+/////////////////////////////////////////////////
+// Copied from private QPlatformDialogHelper::ButtonRole
+enum ButtonRole {
+  InvalidRole = -1,
+  AcceptRole,
+  RejectRole,
+  DestructiveRole,
+  ActionRole,
+  HelpRole,
+  YesRole,
+  NoRole,
+  ResetRole,
+  ApplyRole,
+  NRoles
+};
+
+/////////////////////////////////////////////////
+void FindExitDialogButtons(
+  MainWindow *_mainWindow,
+  std::unordered_set<ButtonRole> &_roles,
+  std::unordered_map<ButtonRole, QQuickItem*> &_buttonRoles)
+{
+  auto dialog = _mainWindow->QuickWindow()->findChild<QObject*>(
+    "confirmationDialogOnExit");
+  ASSERT_NE(nullptr, dialog);
+
+  QObject* buttonBox{nullptr};
+  for (const auto& c : dialog->findChildren<QObject*>())
+  {
+    if (c->metaObject()->className() == std::string("QQuickDialogButtonBox"))
+    {
+      const auto& p = c->property("standardButtons");
+      if (p.isValid() && p.toInt() != 0)
+      {
+        buttonBox = c;
+        break;
+      }
+    }
+  }
+  ASSERT_NE(nullptr, buttonBox);
+
+  const auto buttonCount = buttonBox->property("count").toInt();
+
+  std::vector<QQuickItem*> buttons;
+  for (int index = 0; index < buttonCount; ++index)
+  {
+    QQuickItem* button;
+    QMetaObject::invokeMethod(buttonBox, "itemAt", Qt::DirectConnection,
+                              Q_RETURN_ARG(QQuickItem*, button),
+                              Q_ARG(int, index));
+
+    ASSERT_STREQ("QQuickButton", button->metaObject()->className());
+    buttons.push_back(button);
+  }
+
+  EXPECT_EQ(static_cast<size_t>(buttonCount), buttons.size());
+
+  for (const auto& button : buttons)
+  {
+    QQmlProperty prop(button, "DialogButtonBox.buttonRole", qmlContext(button));
+    const auto role = static_cast<ButtonRole>(prop.read().toInt());
+    _roles.insert(role);
+    _buttonRoles[role] = button;
+  }
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest,
+     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogShutdownButton))
+{
+  ignition::common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv);
+
+  app.LoadConfig(common::joinPaths(
+    PROJECT_SOURCE_PATH, "test", "config",
+    "close_dialog_buttons.config"));
+  // Get main window
+  auto mainWindow = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  // Trigger the closing behavior
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  mainWindow->QuickWindow()->close();
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+
+  QCoreApplication::processEvents();
+
+  std::unordered_set<ButtonRole> roles;
+  std::unordered_map<ButtonRole, QQuickItem*> buttonRoles;
+  FindExitDialogButtons(mainWindow, roles, buttonRoles);
+
+  auto expectedRoles =
+    std::unordered_set<ButtonRole>({
+      ButtonRole::AcceptRole,
+      ButtonRole::DestructiveRole,
+      ButtonRole::RejectRole
+    });
+  ASSERT_EQ(expectedRoles, roles);
+
+  bool shutdownCalled{false};
+  transport::Node node;
+  std::string serverControlService{"/server_control"};
+  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
+    cb = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+    shutdownCalled = true;
+    _rep.set_data(true);
+    return true;
+  };
+  node.Advertise(serverControlService, cb);
+
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  QMetaObject::invokeMethod(
+    buttonRoles[ButtonRole::DestructiveRole], "clicked");
+  QCoreApplication::processEvents();
+  std::this_thread::sleep_for(std::chrono::milliseconds(150));
+  QCoreApplication::processEvents();
+  EXPECT_TRUE(shutdownCalled);
+  // TODO(peci1) Could not get this to work, probably some more event processing
+  //  is needed
+  // EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest,
+     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogDefaultButtons))
+{
+  ignition::common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv);
+
+  app.LoadConfig(common::joinPaths(
+    PROJECT_SOURCE_PATH, "test", "config",
+    "close_dialog_default_buttons.config"));
+  // Get main window
+  auto mainWindow = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  // Trigger the closing behavior
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  mainWindow->QuickWindow()->close();
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+
+  QCoreApplication::processEvents();
+
+  std::unordered_set<ButtonRole> roles;
+  std::unordered_map<ButtonRole, QQuickItem*> buttonRoles;
+  FindExitDialogButtons(mainWindow, roles, buttonRoles);
+
+  auto expectedRoles =
+    std::unordered_set<ButtonRole>({
+      ButtonRole::AcceptRole,
+      ButtonRole::RejectRole
+    });
+  ASSERT_EQ(expectedRoles, roles);
+
+  bool shutdownCalled{false};
+  transport::Node node;
+  std::string serverControlService{"/server_control"};
+  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
+    cb = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+    shutdownCalled = true;
+    _rep.set_data(true);
+    return true;
+  };
+  node.Advertise(serverControlService, cb);
+
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  QMetaObject::invokeMethod(buttonRoles[ButtonRole::AcceptRole], "clicked");
+  QCoreApplication::processEvents();
+  std::this_thread::sleep_for(std::chrono::milliseconds(150));
+  QCoreApplication::processEvents();
+  EXPECT_FALSE(shutdownCalled);
+  // TODO(peci1) Could not get this to work, probably some more event processing
+  //  is needed
+  // EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
+}
+
+/////////////////////////////////////////////////
+TEST(MainWindowTest,
+     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogButtonsText))
+{
+  ignition::common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv);
+
+  app.LoadConfig(common::joinPaths(
+    PROJECT_SOURCE_PATH, "test", "config",
+    "close_dialog_buttons_text.config"));
+  // Get main window
+  auto mainWindow = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, mainWindow);
+
+  // Trigger the closing behavior
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+  mainWindow->QuickWindow()->close();
+  EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
+
+  QCoreApplication::processEvents();
+
+  std::unordered_set<ButtonRole> roles;
+  std::unordered_map<ButtonRole, QQuickItem*> buttonRoles;
+  FindExitDialogButtons(mainWindow, roles, buttonRoles);
+
+  auto expectedRoles =
+    std::unordered_set<ButtonRole>({
+      ButtonRole::AcceptRole,
+      ButtonRole::DestructiveRole,
+      ButtonRole::RejectRole
+    });
+  ASSERT_EQ(expectedRoles, roles);
+
+  auto closeGui = buttonRoles[ButtonRole::AcceptRole];
+  EXPECT_EQ("close_gui",
+    closeGui->property("text").toString().toStdString());
+
+  auto shutdown = buttonRoles[ButtonRole::DestructiveRole];
+  EXPECT_EQ("shutdown",
+    shutdown->property("text").toString().toStdString());
 }
 
 /////////////////////////////////////////////////

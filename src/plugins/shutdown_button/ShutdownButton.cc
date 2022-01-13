@@ -35,7 +35,7 @@ ShutdownButton::ShutdownButton() : Plugin()
 ShutdownButton::~ShutdownButton() = default;
 
 /////////////////////////////////////////////////
-void ShutdownButton::LoadConfig(const tinyxml2::XMLElement */*_pluginElem*/)
+void ShutdownButton::LoadConfig(const tinyxml2::XMLElement * /*_pluginElem*/)
 {
   // Default name in case user didn't define one
   if (this->title.empty())
