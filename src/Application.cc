@@ -277,12 +277,12 @@ bool Application::LoadConfig(const std::string &_config)
       winElem->FirstChildElement("default_exit_action"))
     {
       ExitAction action{ExitAction::CLOSE_GUI};
-      const std::string value{defaultExitActionElem->GetText()};
-      if (value == "SHUTDOWN_SERVER")
+      const auto value = common::lowercase(defaultExitActionElem->GetText());
+      if (value == "shutdown_server")
       {
         action = ExitAction::SHUTDOWN_SERVER;
       }
-      else if (value != "CLOSE_GUI" && !value.empty())
+      else if (value != "close_gui" && !value.empty())
       {
         ignwarn << "Value '" << value << "' of <default_exit_action> is "
                 << "invalid. Allowed values are CLOSE_GUI and SHUTDOWN_SERVER. "

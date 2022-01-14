@@ -437,7 +437,7 @@ namespace ignition
       /// \brief Set the text of the prompt in exit dialog.
       /// \param[in] _dialogOnExitText Prompt text.
       public: Q_INVOKABLE void SetDialogOnExitText(
-        const QString& _dialogOnExitText);
+        const QString &_dialogOnExitText);
 
       /// \brief Get the flag to show "shutdown" button in exit dialog.
       /// \return True to show.
@@ -464,7 +464,7 @@ namespace ignition
       /// \brief Set the text of the "shutdown" button in exit dialog.
       /// \param[in] _exitDialogShutdownText Button text.
       public: Q_INVOKABLE void SetExitDialogShutdownText(
-        const QString& _exitDialogShutdownText);
+        const QString &_exitDialogShutdownText);
 
       /// \brief Get the text of the "Close GUI" button in exit dialog.
       /// \return Button text.
@@ -473,7 +473,7 @@ namespace ignition
       /// \brief Set the text of the "Close GUI" button in exit dialog.
       /// \param[in] _exitDialogCloseGuiText Button text.
       public: Q_INVOKABLE void SetExitDialogCloseGuiText(
-        const QString& _exitDialogCloseGuiText);
+        const QString &_exitDialogCloseGuiText);
 
       /// \brief Get the topic of the server control service.
       /// \return The service topic.
@@ -482,7 +482,7 @@ namespace ignition
       /// \brief Set the topic of the server control service.
       /// \param[in] _service The service topic.
       public: Q_INVOKABLE void SetServerControlService(
-        const std::string& _service);
+        const std::string &_service);
 
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);

@@ -34,7 +34,8 @@ by adding a `<window>` element to the config file. The child elements are:
                            `<server_control_service>` topic. This can be used
                            in applications like Ignition Gazebo which can run a
                            server in a process separate from the GUI to stop both
-                           the GUI and the server when the window is closed.
+                           the GUI and the server when the window is closed. The value is
+                           case-insensitive.
 * `<server_control_service>`: Default `/server_control`. This is the name of `msgs::ServerControl`
                               service that allows e.g. stopping the server. It is usually not needed
                               to alter this value.
@@ -44,11 +45,18 @@ by adding a `<window>` element to the config file. The child elements are:
     * `<prompt_text>`: Text of the prompt in the confirmation dialog.
     * `<show_shutdown_button>`: Default `false`. If `true`, display a "Shutdown simulation"
                                 button in the confirmation dialog, which shuts down the server, too.
+                                Always set `<close_gui_button_text>` to a different string than "OK"
+                                if both close GUI and shutdown buttons are shown, otherwise there
+                                would be a dialog with options "OK", "Cancel" and "shutdown", which
+                                is bad UX.
     * `<shutdown_button_text>`: Text of the "Shutdown simulation" button. If empty, a default text
                                 is used.
     * `<show_close_gui_button>`: Default `true`. If `true`, display a "Close GUI" button in
                                  the confirmation dialog, which leaves server running.
     * `<close_gui_button_text>`: Text of the "Close GUI" button. If empty, a default text is used.
+                                 When both shutdown and close GUI buttons are shown, always change
+                                 the text of the close GUI button, otherwise there would be a dialog
+                                 with options "OK", "Cancel" and "shutdown", which is bad UX.
 
 ## Example layout
 

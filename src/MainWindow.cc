@@ -201,13 +201,13 @@ void MainWindow::OnStopServer()
     {
       if (_rep.data() && _result)
       {
-        ignmsg << "Simulation server acknowledged to be shut down."
+        ignmsg << "Simulation server received shutdown request."
                << std::endl;
       }
       else
       {
         ignerr << "There was a problem instructing the simulation server to "
-               << "shut down. It may keep running." << std::endl;
+               << "shutdown. It may keep running." << std::endl;
       }
     };
 
@@ -952,7 +952,7 @@ QString MainWindow::DialogOnExitText() const
 
 /////////////////////////////////////////////////
 void MainWindow::SetDialogOnExitText(
-  const QString& _dialogOnExitText)
+  const QString &_dialogOnExitText)
 {
   this->dataPtr->dialogOnExitText = _dialogOnExitText;
   this->DialogOnExitTextChanged();
@@ -992,7 +992,7 @@ QString MainWindow::ExitDialogShutdownText() const
 
 /////////////////////////////////////////////////
 void MainWindow::SetExitDialogShutdownText(
-  const QString& _exitDialogShutdownText)
+  const QString &_exitDialogShutdownText)
 {
   this->dataPtr->exitDialogShutdownText = _exitDialogShutdownText;
   this->ExitDialogShutdownTextChanged();
@@ -1006,7 +1006,7 @@ QString MainWindow::ExitDialogCloseGuiText() const
 
 /////////////////////////////////////////////////
 void MainWindow::SetExitDialogCloseGuiText(
-  const QString& _exitDialogCloseGuiText)
+  const QString &_exitDialogCloseGuiText)
 {
   this->dataPtr->exitDialogCloseGuiText = _exitDialogCloseGuiText;
   this->ExitDialogCloseGuiTextChanged();
@@ -1019,7 +1019,7 @@ std::string MainWindow::ServerControlService() const
 }
 
 /////////////////////////////////////////////////
-void MainWindow::SetServerControlService(const std::string& _service)
+void MainWindow::SetServerControlService(const std::string &_service)
 {
   this->dataPtr->controlService = _service;
 }
