@@ -85,6 +85,15 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
+  // If no elements were set, show all buttons. We assume that the user never
+  // wants to hide all buttons. This happens for example when the plugin is
+  // inserted from the menu.
+  if (_pluginElem->NoChildren())
+  {
+    this->PluginItem()->setProperty("showPlay", true);
+    this->PluginItem()->setProperty("showStep", true);
+  }
+
   // World name from window, to construct default topics and services
   std::string worldName;
   auto worldNames = gui::worldNames();
@@ -156,15 +165,6 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto has = false;
     stepElem->QueryBoolText(&has);
     this->PluginItem()->setProperty("showStep", has);
-  }
-
-  // If no elements were set, show all buttons. We assume that the user never
-  // wants to hide all buttons. This happens for example when the plugin is
-  // inserted from the menu.
-  if (_pluginElem->NoChildren())
-  {
-    this->PluginItem()->setProperty("showPlay", true);
-    this->PluginItem()->setProperty("showStep", true);
   }
 
   // Subscribe to world stats

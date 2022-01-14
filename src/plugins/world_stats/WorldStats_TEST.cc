@@ -58,6 +58,19 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "World stats");
 
+  // Check that everything is visible
+  for (auto name : {
+      "realTimeFactorValue",
+      "simTimeValue",
+      "realTimeValue",
+      "iterationsValue",
+    })
+  {
+    auto obj = plugin->PluginItem()->findChild<QObject *>(name);
+    ASSERT_NE(nullptr, obj) << name;
+    EXPECT_TRUE(obj->property("visible").toBool()) << name;
+  }
+
   // Cleanup
   plugins.clear();
 }
