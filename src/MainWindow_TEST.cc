@@ -512,14 +512,14 @@ enum ButtonRole {
 void FindExitDialogButtons(
   MainWindow *_mainWindow,
   std::unordered_set<ButtonRole> &_roles,
-  std::unordered_map<ButtonRole, QQuickItem*> &_buttonRoles)
+  std::unordered_map<ButtonRole, QQuickItem *> &_buttonRoles)
 {
-  auto dialog = _mainWindow->QuickWindow()->findChild<QObject*>(
+  auto dialog = _mainWindow->QuickWindow()->findChild<QObject *>(
     "confirmationDialogOnExit");
   ASSERT_NE(nullptr, dialog);
 
-  QObject* buttonBox{nullptr};
-  for (const auto& c : dialog->findChildren<QObject*>())
+  QObject *buttonBox{nullptr};
+  for (const auto& c : dialog->findChildren<QObject *>())
   {
     if (c->metaObject()->className() == std::string("QQuickDialogButtonBox"))
     {
@@ -535,12 +535,12 @@ void FindExitDialogButtons(
 
   const auto buttonCount = buttonBox->property("count").toInt();
 
-  std::vector<QQuickItem*> buttons;
+  std::vector<QQuickItem *> buttons;
   for (int index = 0; index < buttonCount; ++index)
   {
-    QQuickItem* button;
+    QQuickItem *button;
     QMetaObject::invokeMethod(buttonBox, "itemAt", Qt::DirectConnection,
-                              Q_RETURN_ARG(QQuickItem*, button),
+                              Q_RETURN_ARG(QQuickItem *, button),
                               Q_ARG(int, index));
 
     ASSERT_STREQ("QQuickButton", button->metaObject()->className());
@@ -580,7 +580,7 @@ TEST(MainWindowTest,
   QCoreApplication::processEvents();
 
   std::unordered_set<ButtonRole> roles;
-  std::unordered_map<ButtonRole, QQuickItem*> buttonRoles;
+  std::unordered_map<ButtonRole, QQuickItem *> buttonRoles;
   FindExitDialogButtons(mainWindow, roles, buttonRoles);
 
   auto expectedRoles =
@@ -640,7 +640,7 @@ TEST(MainWindowTest,
   QCoreApplication::processEvents();
 
   std::unordered_set<ButtonRole> roles;
-  std::unordered_map<ButtonRole, QQuickItem*> buttonRoles;
+  std::unordered_map<ButtonRole, QQuickItem *> buttonRoles;
   FindExitDialogButtons(mainWindow, roles, buttonRoles);
 
   auto expectedRoles =
@@ -688,7 +688,7 @@ TEST(MainWindowTest,
   QCoreApplication::processEvents();
 
   std::unordered_set<ButtonRole> roles;
-  std::unordered_map<ButtonRole, QQuickItem*> buttonRoles;
+  std::unordered_map<ButtonRole, QQuickItem *> buttonRoles;
   FindExitDialogButtons(mainWindow, roles, buttonRoles);
 
   auto expectedRoles =
