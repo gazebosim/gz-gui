@@ -55,6 +55,11 @@ ApplicationWindow
   property string exitDialogShutdownText: MainWindow.exitDialogShutdownText
   property string exitDialogCloseGuiText: MainWindow.exitDialogCloseGuiText
   /**
+   * Flag to indicate if the close event was triggered by the close dialog.
+   */
+  property bool closingFromDialog: false
+
+  /**
    * Tool bar background color
    */
   property string toolBarColor:
@@ -83,7 +88,11 @@ ApplicationWindow
   onClosing: {
     close.accepted = !showDialogOnExit
     if(showDialogOnExit){
-      confirmationDialogOnExit.open()
+      if (closingFromDialog) {
+        close.accepted = true;
+      } else {
+        confirmationDialogOnExit.open()
+      }
     } else if (defaultExitAction == ExitAction.SHUTDOWN_SERVER) {
       MainWindow.OnStopServer()
     }
@@ -373,7 +382,8 @@ ApplicationWindow
       DialogButtonBox {
         onClicked: function (btn) {
           if (btn == this.standardButton(Dialog.Ok)) {
-            Qt.quit()
+            closingFromDialog = true;
+            window.close();
           }
           else if (btn == this.standardButton(Dialog.Discard)) {
             MainWindow.OnStopServer()
@@ -381,7 +391,8 @@ ApplicationWindow
             timer.interval = 100;
             timer.repeat = false;
             timer.triggered.connect(function() {
-              Qt.quit()
+              closingFromDialog = true;
+              window.close();
             });
             timer.start();
           }

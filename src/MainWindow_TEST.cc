@@ -16,6 +16,7 @@
 */
 
 #include <gtest/gtest.h>
+#include <chrono>
 #include <thread>
 
 #include <QQmlProperty>
@@ -40,6 +41,7 @@ char* g_argv[] =
 
 using namespace ignition;
 using namespace gui;
+using namespace std::chrono_literals;
 
 /////////////////////////////////////////////////
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
@@ -603,13 +605,17 @@ TEST(MainWindowTest,
   EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
   QMetaObject::invokeMethod(
     buttonRoles[ButtonRole::DestructiveRole], "clicked");
-  QCoreApplication::processEvents();
-  std::this_thread::sleep_for(std::chrono::milliseconds(150));
-  QCoreApplication::processEvents();
+
+  // Wait until the window closes (it may take some time, but not > 1 second)
+  int sleep = 0;
+  for (; mainWindow->QuickWindow()->isVisible() && sleep < 10; ++sleep)
+  {
+    std::this_thread::sleep_for(100ms);
+    QCoreApplication::processEvents();
+  }
+
   EXPECT_TRUE(shutdownCalled);
-  // TODO(peci1) Could not get this to work, probably some more event processing
-  //  is needed
-  // EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
+  EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
 }
 
 /////////////////////////////////////////////////
@@ -657,13 +663,7 @@ TEST(MainWindowTest,
 
   EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
   QMetaObject::invokeMethod(buttonRoles[ButtonRole::AcceptRole], "clicked");
-  QCoreApplication::processEvents();
-  std::this_thread::sleep_for(std::chrono::milliseconds(150));
-  QCoreApplication::processEvents();
-  EXPECT_FALSE(shutdownCalled);
-  // TODO(peci1) Could not get this to work, probably some more event processing
-  //  is needed
-  // EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
+  EXPECT_FALSE(mainWindow->QuickWindow()->isVisible());
 }
 
 /////////////////////////////////////////////////
