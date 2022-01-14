@@ -158,6 +158,15 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     this->PluginItem()->setProperty("showStep", has);
   }
 
+  // If no elements were set, show all buttons. We assume that the user never
+  // wants to hide all buttons. This happens for example when the plugin is
+  // inserted from the menu.
+  if (_pluginElem->NoChildren())
+  {
+    this->PluginItem()->setProperty("showPlay", true);
+    this->PluginItem()->setProperty("showStep", true);
+  }
+
   // Subscribe to world stats
   std::string statsTopic;
   auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
