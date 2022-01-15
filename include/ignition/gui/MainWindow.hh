@@ -39,8 +39,21 @@ namespace ignition
 {
   namespace gui
   {
+    Q_NAMESPACE
     class MainWindowPrivate;
     struct WindowConfig;
+
+    /// \brief The action executed when GUI is closed without prompt.
+    enum class ExitAction
+    {
+      /// \brief Close GUI and leave server running
+      CLOSE_GUI,
+      /// \brief Close GUI and shutdown server
+      SHUTDOWN_SERVER,
+    };
+    /// \cond DO_NOT_DOCUMENT
+    Q_ENUM_NS(ExitAction)
+    /// \endcond
 
     /// \brief The main window class creates a QQuickWindow and acts as an
     /// interface which provides properties and functions which can be called
@@ -179,10 +192,58 @@ namespace ignition
 
       /// \brief Flag to enable confirmation dialog on exit
       Q_PROPERTY(
+        ExitAction defaultExitAction
+        READ DefaultExitAction
+        WRITE SetDefaultExitAction
+        NOTIFY DefaultExitActionChanged
+      )
+
+      /// \brief Flag to enable confirmation dialog on exit
+      Q_PROPERTY(
         bool showDialogOnExit
         READ ShowDialogOnExit
         WRITE SetShowDialogOnExit
         NOTIFY ShowDialogOnExitChanged
+      )
+
+      /// \brief Text of the prompt in confirmation dialog on exit
+      Q_PROPERTY(
+        QString dialogOnExitText
+        READ DialogOnExitText
+        WRITE SetDialogOnExitText
+        NOTIFY DialogOnExitTextChanged
+      )
+
+      /// \brief Flag to show "shutdown" button in confirmation dialog on exit
+      Q_PROPERTY(
+        bool exitDialogShowShutdown
+        READ ExitDialogShowShutdown
+        WRITE SetExitDialogShowShutdown
+        NOTIFY ExitDialogShowShutdownChanged
+      )
+
+      /// \brief Flag to show "close GUI" button in confirmation dialog on exit
+      Q_PROPERTY(
+        bool exitDialogShowCloseGui
+        READ ExitDialogShowCloseGui
+        WRITE SetExitDialogShowCloseGui
+        NOTIFY ExitDialogShowCloseGuiChanged
+      )
+
+      /// \brief Text of the "shutdown" button in confirmation dialog on exit
+      Q_PROPERTY(
+        QString exitDialogShutdownText
+        READ ExitDialogShutdownText
+        WRITE SetExitDialogShutdownText
+        NOTIFY ExitDialogShutdownTextChanged
+      )
+
+      /// \brief Text of the "Close GUI" button in confirmation dialog on exit
+      Q_PROPERTY(
+        QString exitDialogCloseGuiText
+        READ ExitDialogCloseGuiText
+        WRITE SetExitDialogCloseGuiText
+        NOTIFY ExitDialogCloseGuiTextChanged
       )
 
       /// \brief Constructor
@@ -352,6 +413,15 @@ namespace ignition
       /// \param[in] _showPluginMenu True to show.
       public: Q_INVOKABLE void SetShowPluginMenu(const bool _showPluginMenu);
 
+      /// \brief Get the action performed when GUI closes without prompt.
+      /// \return The action.
+      public: Q_INVOKABLE ExitAction DefaultExitAction() const;
+
+      /// \brief Set the action performed when GUI closes without prompt.
+      /// \param[in] _defaultExitAction The action.
+      public: Q_INVOKABLE void SetDefaultExitAction(
+        enum ExitAction _defaultExitAction);
+
       /// \brief Get the flag to show the plugin menu.
       /// \return True to show.
       public: Q_INVOKABLE bool ShowDialogOnExit() const;
@@ -359,6 +429,60 @@ namespace ignition
       /// \brief Set the flag to show the confirmation dialog when exiting.
       /// \param[in] _showDialogOnExit True to show.
       public: Q_INVOKABLE void SetShowDialogOnExit(bool _showDialogOnExit);
+
+      /// \brief Get the text of prompt in exit dialog.
+      /// \return Prompt text.
+      public: Q_INVOKABLE QString DialogOnExitText() const;
+
+      /// \brief Set the text of the prompt in exit dialog.
+      /// \param[in] _dialogOnExitText Prompt text.
+      public: Q_INVOKABLE void SetDialogOnExitText(
+        const QString &_dialogOnExitText);
+
+      /// \brief Get the flag to show "shutdown" button in exit dialog.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ExitDialogShowShutdown() const;
+
+      /// \brief Set the flag to show "shutdown" button in exit dialog.
+      /// \param[in] _exitDialogShowShutdown True to show.
+      public: Q_INVOKABLE void SetExitDialogShowShutdown(
+        bool _exitDialogShowShutdown);
+
+      /// \brief Get the flag to show "Close GUI" button in exit dialog.
+      /// \return True to show.
+      public: Q_INVOKABLE bool ExitDialogShowCloseGui() const;
+
+      /// \brief Set the flag to show "Close GUI" button in exit dialog.
+      /// \param[in] _exitDialogShowCloseGui True to show.
+      public: Q_INVOKABLE void SetExitDialogShowCloseGui(
+        bool _exitDialogShowCloseGui);
+
+      /// \brief Get the text of the "shutdown" button in exit dialog.
+      /// \return Button text.
+      public: Q_INVOKABLE QString ExitDialogShutdownText() const;
+
+      /// \brief Set the text of the "shutdown" button in exit dialog.
+      /// \param[in] _exitDialogShutdownText Button text.
+      public: Q_INVOKABLE void SetExitDialogShutdownText(
+        const QString &_exitDialogShutdownText);
+
+      /// \brief Get the text of the "Close GUI" button in exit dialog.
+      /// \return Button text.
+      public: Q_INVOKABLE QString ExitDialogCloseGuiText() const;
+
+      /// \brief Set the text of the "Close GUI" button in exit dialog.
+      /// \param[in] _exitDialogCloseGuiText Button text.
+      public: Q_INVOKABLE void SetExitDialogCloseGuiText(
+        const QString &_exitDialogCloseGuiText);
+
+      /// \brief Get the topic of the server control service.
+      /// \return The service topic.
+      public: Q_INVOKABLE std::string ServerControlService() const;
+
+      /// \brief Set the topic of the server control service.
+      /// \param[in] _service The service topic.
+      public: Q_INVOKABLE void SetServerControlService(
+        const std::string &_service);
 
       /// \brief Callback when load configuration is selected
       public slots: void OnLoadConfig(const QString &_path);
@@ -368,6 +492,9 @@ namespace ignition
 
       /// \brief Callback when "save configuration as" is selected
       public slots: void OnSaveConfigAs(const QString &_path);
+
+      /// \brief Callback when "shutdown simulation" is called
+      public slots: void OnStopServer();
 
       /// \brief Notifies when the number of plugins has changed.
       signals: void PluginCountChanged();
@@ -414,8 +541,26 @@ namespace ignition
       /// \brief Notifies when the show menu flag has changed.
       signals: void ShowPluginMenuChanged();
 
+      /// \brief Notifies when the defaultExitAction has changed.
+      signals: void DefaultExitActionChanged();
+
       /// \brief Notifies when the showDialogOnExit flag has changed.
       signals: void ShowDialogOnExitChanged();
+
+      /// \brief Notifies when dialogOnExitText has changed.
+      signals: void DialogOnExitTextChanged();
+
+      /// \brief Notifies when the exitDialogShowShutdown flag has changed.
+      signals: void ExitDialogShowShutdownChanged();
+
+      /// \brief Notifies when the exitDialogShowCloseGui flag has changed.
+      signals: void ExitDialogShowCloseGuiChanged();
+
+      /// \brief Notifies when exitDialogShutdownText has changed.
+      signals: void ExitDialogShutdownTextChanged();
+
+      /// \brief Notifies when exitDialogCloseGuiText has changed.
+      signals: void ExitDialogCloseGuiTextChanged();
 
       /// \brief Notifies when the window config has changed.
       signals: void configChanged();

@@ -28,7 +28,35 @@ by adding a `<window>` element to the config file. The child elements are:
                     the menu. If `from_paths` is true, all plugins will be shown
                     anyway, so adding `<show>` has no effect. For the plugin to
                     be shown, it must be on the path.
-* `<dialog_on_exit>`: If true, a confirmation dialog will show up when closing the window.
+* `<default_exit_action>`: Default `CLOSE_GUI`. If set to `SHUTDOWN_SERVER` and
+                           `<dialog_on_exit>` is `false`, closing the window will
+                           emit a server shutdown request with `stop = true` to the
+                           `<server_control_service>` topic. This can be used
+                           in applications like Ignition Gazebo which can run a
+                           server in a process separate from the GUI to stop both
+                           the GUI and the server when the window is closed. The value is
+                           case-insensitive.
+* `<server_control_service>`: Default `/server_control`. This is the name of `msgs::ServerControl`
+                              service that allows e.g. stopping the server. It is usually not needed
+                              to alter this value.
+* `<dialog_on_exit>`: If `true`, a confirmation dialog will show up when closing the window.
+* `<dialog_on_exit_options>`: Configuration of the dialog shown before exit (with all elements
+                              optional).
+    * `<prompt_text>`: Text of the prompt in the confirmation dialog.
+    * `<show_shutdown_button>`: Default `false`. If `true`, display a "Shutdown simulation"
+                                button in the confirmation dialog, which shuts down the server, too.
+                                Always set `<close_gui_button_text>` to a different string than "OK"
+                                if both close GUI and shutdown buttons are shown, otherwise there
+                                would be a dialog with options "OK", "Cancel" and "shutdown", which
+                                is bad UX.
+    * `<shutdown_button_text>`: Text of the "Shutdown simulation" button. If empty, a default text
+                                is used.
+    * `<show_close_gui_button>`: Default `true`. If `true`, display a "Close GUI" button in
+                                 the confirmation dialog, which leaves server running.
+    * `<close_gui_button_text>`: Text of the "Close GUI" button. If empty, a default text is used.
+                                 When both shutdown and close GUI buttons are shown, always change
+                                 the text of the close GUI button, otherwise there would be a dialog
+                                 with options "OK", "Cancel" and "shutdown", which is bad UX.
 
 ## Example layout
 
