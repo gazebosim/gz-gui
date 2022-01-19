@@ -87,6 +87,7 @@ RowLayout {
    */
   RoundButton {
     id: playButton
+    objectName: "playButton"
     visible: showPlay
     text: paused ? playIcon : pauseIcon
     checkable: true
@@ -123,6 +124,7 @@ RowLayout {
 
     RoundButton {
       id: stepButton
+      objectName: "stepButton"
       text: stepIcon
       visible: showStep
       height: playButton.height * 0.8

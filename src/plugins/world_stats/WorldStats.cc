@@ -88,6 +88,17 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     return;
   }
 
+  // If no elements were set, show everything. We assume that the user never
+  // wants to hide everything. This happens for example when the plugin is
+  // inserted from the menu.
+  if (_pluginElem->NoChildren())
+  {
+    this->PluginItem()->setProperty("showSimTime", true);
+    this->PluginItem()->setProperty("showRealTime", true);
+    this->PluginItem()->setProperty("showRealTimeFactor", true);
+    this->PluginItem()->setProperty("showIterations", true);
+  }
+
   // World name from window, to construct default topics and services
   std::string worldName;
   auto worldNames = gui::worldNames();
