@@ -15,11 +15,6 @@
  *
  */
 
-/*
- * Development of this module has been funded by the Monterey Bay Aquarium
- * Research Institute (MBARI) and the David and Lucile Packard Foundation
- */
-
 #ifndef IGNITION_GUI_PLUGINS_POINTCLOUD_HH_
 #define IGNITION_GUI_PLUGINS_POINTCLOUD_HH_
 
@@ -225,12 +220,6 @@ namespace plugins
 
     /// \brief Callback when refresh button is pressed.
     public: Q_INVOKABLE void OnRefresh();
-
-    /// \brief Makes a request to populate the scene with markers
-    private: void PublishMarkers();
-
-    /// \brief Makes a request to delete all markers related to the point cloud.
-    private: void ClearMarkers();
 
     /// \internal
     /// \brief Pointer to private data

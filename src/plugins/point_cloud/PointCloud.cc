@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2022 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- */
-
-/*
- * Development of this module has been funded by the Monterey Bay Aquarium
- * Research Institute (MBARI) and the David and Lucile Packard Foundation
  */
 
 #include "ignition/msgs/pointcloud_packed.pb.h"
@@ -50,6 +45,12 @@
 /// \brief Private data class for PointCloud
 class ignition::gui::plugins::PointCloudPrivate
 {
+  /// \brief Makes a request to populate the scene with markers
+  public: void PublishMarkers();
+
+  /// \brief Makes a request to delete all markers related to the point cloud.
+  public: void ClearMarkers();
+
   /// \brief Transport node
   public: ignition::transport::Node node;
 
@@ -68,7 +69,7 @@ class ignition::gui::plugins::PointCloudPrivate
   /// \brief Protect variables changed from transport and the user
   public: std::recursive_mutex mutex;
 
-  /// \brief Point cloud message containing location of data
+  /// \brief Point cloud message containing XYZ positions
   public: ignition::msgs::PointCloudPacked pointCloudMsg;
 
   /// \brief Message holding a float vector.
@@ -80,16 +81,16 @@ class ignition::gui::plugins::PointCloudPrivate
   /// \brief Maximum value in latest float vector
   public: float maxFloatV{-std::numeric_limits<float>::max()};
 
-  /// \brief Color for minimum value
+  /// \brief Color for minimum value, changeable at runtime
   public: ignition::math::Color minColor{1.0f, 0.0f, 0.0f, 1.0f};
 
-  /// \brief Color for maximum value
+  /// \brief Color for maximum value, changeable at runtime
   public: ignition::math::Color maxColor{0.0f, 1.0f, 0.0f, 1.0f};
 
-  /// \brief Size of each point
+  /// \brief Size of each point, changeable at runtime
   public: float pointSize{20};
 
-  /// \brief True if showing
+  /// \brief True if showing, changeable at runtime
   public: bool showing{true};
 };
 
@@ -107,7 +108,7 @@ PointCloud::PointCloud()
 /////////////////////////////////////////////////
 PointCloud::~PointCloud()
 {
-  this->ClearMarkers();
+  this->dataPtr->ClearMarkers();
 }
 
 /////////////////////////////////////////////////
@@ -133,7 +134,7 @@ void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
   }
 
   // Clear visualization
-  this->ClearMarkers();
+  this->dataPtr->ClearMarkers();
 
   this->dataPtr->pointCloudTopic = _pointCloudTopic.toStdString();
 
@@ -165,7 +166,7 @@ void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
   }
 
   // Clear visualization
-  this->ClearMarkers();
+  this->dataPtr->ClearMarkers();
 
   this->dataPtr->floatVTopic = _floatVTopic.toStdString();
 
@@ -190,11 +191,11 @@ void PointCloud::Show(bool _show)
   this->dataPtr->showing = _show;
   if (_show)
   {
-    this->PublishMarkers();
+    this->dataPtr->PublishMarkers();
   }
   else
   {
-    this->ClearMarkers();
+    this->dataPtr->ClearMarkers();
   }
 }
 
@@ -276,7 +277,7 @@ void PointCloud::OnPointCloud(
 {
   std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
   this->dataPtr->pointCloudMsg = _msg;
-  this->PublishMarkers();
+  this->dataPtr->PublishMarkers();
 }
 
 //////////////////////////////////////////////////
@@ -301,7 +302,7 @@ void PointCloud::OnFloatV(const ignition::msgs::Float_V &_msg)
   // floatV is good in case these topics are out of sync. But here they're
   // synchronized, so in practice we're publishing markers twice for each
   // PC+float that we get.
-  this->PublishMarkers();
+  this->dataPtr->PublishMarkers();
 }
 
 //////////////////////////////////////////////////
@@ -329,43 +330,43 @@ void PointCloud::OnFloatVService(
 }
 
 //////////////////////////////////////////////////
-void PointCloud::PublishMarkers()
+void PointCloudPrivate::PublishMarkers()
 {
   IGN_PROFILE("PointCloud::PublishMarkers");
 
-  if (!this->dataPtr->showing)
+  if (!this->showing)
     return;
 
   // If point cloud empty, do nothing.
-  if (this->dataPtr->pointCloudMsg.height() == 0 &&
-      this->dataPtr->pointCloudMsg.width() == 0)
+  if (this->pointCloudMsg.height() == 0 &&
+      this->pointCloudMsg.width() == 0)
   {
     return;
   }
 
-  std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex>(this->mutex);
   ignition::msgs::Marker marker;
-  marker.set_ns(this->dataPtr->pointCloudTopic + this->dataPtr->floatVTopic);
+  marker.set_ns(this->pointCloudTopic + this->floatVTopic);
   marker.set_id(1);
   marker.set_action(ignition::msgs::Marker::ADD_MODIFY);
   marker.set_type(ignition::msgs::Marker::POINTS);
   marker.set_visibility(ignition::msgs::Marker::GUI);
 
   ignition::msgs::Set(marker.mutable_scale(),
-    ignition::math::Vector3d::One * this->dataPtr->pointSize);
+    ignition::math::Vector3d::One * this->pointSize);
 
   ignition::msgs::PointCloudPackedIterator<float>
-      iterX(this->dataPtr->pointCloudMsg, "x");
+      iterX(this->pointCloudMsg, "x");
   ignition::msgs::PointCloudPackedIterator<float>
-      iterY(this->dataPtr->pointCloudMsg, "y");
+      iterY(this->pointCloudMsg, "y");
   ignition::msgs::PointCloudPackedIterator<float>
-      iterZ(this->dataPtr->pointCloudMsg, "z");
+      iterZ(this->pointCloudMsg, "z");
 
   // Index of point in point cloud, visualized or not
   int ptIdx{0};
-  auto minC = this->dataPtr->minColor;
-  auto maxC = this->dataPtr->maxColor;
-  auto floatRange = this->dataPtr->maxFloatV - this->dataPtr->minFloatV;
+  auto minC = this->minColor;
+  auto maxC = this->maxColor;
+  auto floatRange = this->maxFloatV - this->minFloatV;
   for (;iterX != iterX.End() &&
         iterY != iterY.End() &&
         iterZ != iterZ.End(); ++iterX, ++iterY, ++iterZ, ++ptIdx)
@@ -373,9 +374,9 @@ void PointCloud::PublishMarkers()
     // Value from float vector, if available. Otherwise publish all data as
     // zeroes.
     float dataVal = 0.0;
-    if (this->dataPtr->floatVMsg.data().size() > ptIdx)
+    if (this->floatVMsg.data().size() > ptIdx)
     {
-      dataVal = this->dataPtr->floatVMsg.data(ptIdx);
+      dataVal = this->floatVMsg.data(ptIdx);
     }
 
     // Don't visualize NaN
@@ -383,7 +384,7 @@ void PointCloud::PublishMarkers()
       continue;
 
     auto ratio = floatRange > 0 ?
-        (dataVal - this->dataPtr->minFloatV) / floatRange : 0.0f;
+        (dataVal - this->minFloatV) / floatRange : 0.0f;
     ignition:: math::Color color{
       minC.R() + (maxC.R() - minC.R()) * ratio,
       minC.G() + (maxC.G() - minC.G()) * ratio,
@@ -401,26 +402,26 @@ void PointCloud::PublishMarkers()
   igndbg << "Visualizing " << marker.point_size() << " points"
     << std::endl;
 
-  this->dataPtr->node.Request("/marker", marker);
+  this->node.Request("/marker", marker);
 }
 
 //////////////////////////////////////////////////
-void PointCloud::ClearMarkers()
+void PointCloudPrivate::ClearMarkers()
 {
-  if (this->dataPtr->pointCloudTopic.empty())
+  if (this->pointCloudTopic.empty())
     return;
 
-  std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex>(this->mutex);
   ignition::msgs::Marker msg;
-  msg.set_ns(this->dataPtr->pointCloudTopic + this->dataPtr->floatVTopic);
+  msg.set_ns(this->pointCloudTopic + this->floatVTopic);
   msg.set_id(0);
   msg.set_action(ignition::msgs::Marker::DELETE_ALL);
 
   igndbg << "Clearing markers on "
-    << this->dataPtr->pointCloudTopic + this->dataPtr->floatVTopic
+    << this->pointCloudTopic + this->floatVTopic
     << std::endl;
 
-  this->dataPtr->node.Request("/marker", msg);
+  this->node.Request("/marker", msg);
 }
 
 /////////////////////////////////////////////////
@@ -434,7 +435,7 @@ void PointCloud::SetMinColor(const QColor &_minColor)
 {
   this->dataPtr->minColor = ignition::gui::convert(_minColor);
   this->MinColorChanged();
-  this->PublishMarkers();
+  this->dataPtr->PublishMarkers();
 }
 
 /////////////////////////////////////////////////
@@ -448,7 +449,7 @@ void PointCloud::SetMaxColor(const QColor &_maxColor)
 {
   this->dataPtr->maxColor = ignition::gui::convert(_maxColor);
   this->MaxColorChanged();
-  this->PublishMarkers();
+  this->dataPtr->PublishMarkers();
 }
 
 /////////////////////////////////////////////////
@@ -488,7 +489,7 @@ void PointCloud::SetPointSize(float _pointSize)
 {
   this->dataPtr->pointSize = _pointSize;
   this->PointSizeChanged();
-  this->PublishMarkers();
+  this->dataPtr->PublishMarkers();
 }
 
 // Register this plugin

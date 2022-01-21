@@ -15,11 +15,6 @@
  *
  */
 
-/*
- * Development of this module has been funded by the Monterey Bay Aquarium
- * Research Institute (MBARI) and the David and Lucile Packard Foundation
- */
-
 import QtQuick 2.9
 import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.0
