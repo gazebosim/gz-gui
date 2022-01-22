@@ -112,10 +112,33 @@ PointCloud::~PointCloud()
 }
 
 /////////////////////////////////////////////////
-void PointCloud::LoadConfig(const tinyxml2::XMLElement *)
+void PointCloud::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Point cloud";
+
+  // Parameters from XML
+  if (_pluginElem)
+  {
+    auto pointCloudTopicElem =
+        _pluginElem->FirstChildElement("point_cloud_topic");
+    if (nullptr != pointCloudTopicElem &&
+        nullptr != pointCloudTopicElem->GetText())
+    {
+      this->SetPointCloudTopicList({pointCloudTopicElem->GetText()});
+      this->OnPointCloudTopic(this->dataPtr->pointCloudTopicList.at(0));
+    }
+
+    auto floatVTopicElem =
+        _pluginElem->FirstChildElement("float_v_topic");
+    if (nullptr != floatVTopicElem &&
+        nullptr != floatVTopicElem->GetText())
+    {
+      this->SetFloatVTopicList({floatVTopicElem->GetText()});
+      this->OnFloatVTopic(this->dataPtr->floatVTopicList.at(0));
+    }
+
+  }
 
   ignition::gui::App()->findChild<
     ignition::gui::MainWindow *>()->installEventFilter(this);
@@ -398,9 +421,6 @@ void PointCloudPrivate::PublishMarkers()
       *iterY,
       *iterZ));
   }
-
-  igndbg << "Visualizing " << marker.point_size() << " points"
-    << std::endl;
 
   this->node.Request("/marker", marker);
 }

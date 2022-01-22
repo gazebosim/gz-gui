@@ -33,11 +33,25 @@ namespace plugins
 {
   class PointCloudPrivate;
 
-  /// \brief Visualize PointCloudPacked messages in the 3D scene.
+  /// \brief Visualize `ignition::msgs::PointCloudPacked` messages in a 3D
+  /// scene.
+  ///
   /// By default, the whole cloud is displayed using a single color. Users
-  /// can optionally choose a topic publishing FloatV messages which will be
-  /// used to color all points with a color gradient according to their values.
-  /// NaN values on the FloatV message aren't displayed.
+  /// can optionally choose a topic publishing `ignition::msgs::FloatV` messages
+  /// which will be used to color all points with a color gradient according to
+  /// their values. The float message must have the same number of elements as
+  /// the point cloud and be indexed the same way. NaN values on the FloatV
+  /// message aren't displayed.
+  ///
+  /// Requirements:
+  /// * A plugin that loads a 3D scene, such as `MinimalScene`
+  /// * The `MarkerManager` plugin
+  ///
+  /// Parameters:
+  ///
+  /// * `<point_cloud_topic>`: Topic to receive
+  ///      `ignition::msgs::PointCloudPacked` messages.
+  /// * `<float_v_topic>`: Topic to receive `ignition::msgs::FloatV` messages.
   class PointCloud : public ignition::gui::Plugin
   {
     Q_OBJECT
