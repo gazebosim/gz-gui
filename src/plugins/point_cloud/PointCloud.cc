@@ -17,6 +17,7 @@
 
 #include "ignition/msgs/pointcloud_packed.pb.h"
 
+#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
@@ -248,7 +249,8 @@ void PointCloud::OnRefresh()
       }
     }
   }
-  // Handle floats first, so by the time we get the point cloud it can be colored
+  // Handle floats first, so by the time we get the point cloud it can be
+  // colored
   if (this->dataPtr->floatVTopicList.size() > 0)
   {
     this->OnFloatVTopic(this->dataPtr->floatVTopicList.at(0));
@@ -386,9 +388,9 @@ void PointCloudPrivate::PublishMarkers()
   auto minC = this->minColor;
   auto maxC = this->maxColor;
   auto floatRange = this->maxFloatV - this->minFloatV;
-  for (;iterX != iterX.End() &&
-        iterY != iterY.End() &&
-        iterZ != iterZ.End(); ++iterX, ++iterY, ++iterZ, ++ptIdx)
+  for (; iterX != iterX.End() &&
+         iterY != iterY.End() &&
+         iterZ != iterZ.End(); ++iterX, ++iterY, ++iterZ, ++ptIdx)
   {
     // Value from float vector, if available. Otherwise publish all data as
     // zeroes.
