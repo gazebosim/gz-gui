@@ -21,26 +21,22 @@
 #include <utility>
 #include <vector>
 
-#include "PointCloud.hh"
-
 #include <ignition/common/Console.hh>
 #include <ignition/common/Profiler.hh>
-
-#include <ignition/plugin/Register.hh>
-
 #include <ignition/math/Color.hh>
-#include <ignition/math/Vector3.hh>
 #include <ignition/math/Pose3.hh>
-
+#include <ignition/math/Vector3.hh>
 #include <ignition/msgs/PointCloudPackedUtils.hh>
 #include <ignition/msgs/Utility.hh>
-
+#include <ignition/plugin/Register.hh>
 #include <ignition/transport/Node.hh>
 
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/Conversions.hh>
 #include <ignition/gui/GuiEvents.hh>
 #include <ignition/gui/MainWindow.hh>
+
+#include "PointCloud.hh"
 
 /// \brief Private data class for PointCloud
 class ignition::gui::plugins::PointCloudPrivate
