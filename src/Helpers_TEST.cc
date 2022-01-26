@@ -126,12 +126,15 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 
   // Construct a list
   auto o0 = new QObject();
+  ASSERT_NE(nullptr, o0)
   o0->setProperty("banana", 1.0);
 
   auto o1 = new QObject();
+  ASSERT_NE(nullptr, o1)
   o1->setProperty("banana", 2.0);
 
   auto o2 = new QObject();
+  ASSERT_NE(nullptr, o2)
   o2->setProperty("banana", 1.0);
 
   QList<QObject *> list;
