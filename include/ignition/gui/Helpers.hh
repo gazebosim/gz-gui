@@ -108,8 +108,14 @@ namespace ignition
     T findFirstByProperty(const QList<T> _list, const char *_key,
         QVariant _value)
     {
+      if (nullptr == _key)
+        return nullptr;
+
       for (const auto &w : _list)
       {
+        if (nullptr == w)
+          continue;
+
         if (w->property(_key) == _value)
           return w;
       }

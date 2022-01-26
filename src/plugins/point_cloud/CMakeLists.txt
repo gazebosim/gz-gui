@@ -1,0 +1,10 @@
+ign_gui_add_plugin(PointCloud
+  SOURCES
+    PointCloud.cc
+  QT_HEADERS
+    PointCloud.hh
+  PUBLIC_LINK_LIBS
+    ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
+  TEST_SOURCES
+    PointCloud_TEST.cc
+)
