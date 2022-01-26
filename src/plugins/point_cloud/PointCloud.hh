@@ -194,7 +194,7 @@ namespace plugins
     public: Q_INVOKABLE QColor MaxColor() const;
 
     /// \brief Set the maximum color
-    /// \param[ax] _maxColor Maximum color.
+    /// \param[in] _maxColor Maximum color.
     public: Q_INVOKABLE void SetMaxColor(const QColor &_maxColor);
 
     /// \brief Notify that maximum color has changed
@@ -216,7 +216,7 @@ namespace plugins
     public: Q_INVOKABLE float MaxFloatV() const;
 
     /// \brief Set the maximum value
-    /// \param[ax] _maxFloatV Maximum value.
+    /// \param[in] _maxFloatV Maximum value.
     public: Q_INVOKABLE void SetMaxFloatV(float _maxFloatV);
 
     /// \brief Notify that maximum value has changed
@@ -227,7 +227,7 @@ namespace plugins
     public: Q_INVOKABLE float PointSize() const;
 
     /// \brief Set the point size
-    /// \param[ax] _pointSize Maximum value.
+    /// \param[in] _pointSize Maximum value.
     public: Q_INVOKABLE void SetPointSize(float _pointSize);
 
     /// \brief Notify that point size has changed
