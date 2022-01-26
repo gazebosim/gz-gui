@@ -33,11 +33,11 @@ Build:
 
 1. Launch the example config file:
 
-        ign gui point_cloud.config
+        ign gui -c point_cloud.config
 
 3. From the build directory above, publish clouds to be visualized:
 
-    ./point_cloud
+        ./point_cloud
 
 4. Try out different options on the plugin.
 

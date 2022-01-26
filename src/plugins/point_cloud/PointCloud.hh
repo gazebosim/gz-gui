@@ -20,8 +20,14 @@
 
 #include <memory>
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <ignition/msgs/float_v.pb.h>
 #include <ignition/msgs/pointcloud_packed.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #include "ignition/gui/Plugin.hh"
 
@@ -123,13 +129,13 @@ namespace plugins
 
     /// \brief Callback function for point cloud topic.
     /// \param[in] _msg Point cloud message
-    public: void OnPointCloud(const ignition::msgs::PointCloudPacked &_msg);
+    public: void OnPointCloud(const msgs::PointCloudPacked &_msg);
 
     /// \brief Callback function for point cloud service
     /// \param[in] _msg Point cloud message
     /// \param[out] _result True on success.
-    public: void OnPointCloudService(
-        const ignition::msgs::PointCloudPacked &_msg, bool _result);
+    public: void OnPointCloudService(const msgs::PointCloudPacked &_msg,
+        bool _result);
 
     /// \brief Get the topic list
     /// \return List of topics
@@ -149,13 +155,12 @@ namespace plugins
 
     /// \brief Callback function for float vector topic.
     /// \param[in] _msg Float vector message
-    public: void OnFloatV(const ignition::msgs::Float_V &_msg);
+    public: void OnFloatV(const msgs::Float_V &_msg);
 
     /// \brief Callback function for point cloud service
     /// \param[in] _msg Float vector message
     /// \param[out] _result True on success.
-    public: void OnFloatVService(
-        const ignition::msgs::Float_V &_msg, bool _result);
+    public: void OnFloatVService(const msgs::Float_V &_msg, bool _result);
 
     /// \brief Get the topic list
     /// \return List of topics
