@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
+project(ignition-gui-scene-provider)
+
 find_package(ignition-msgs8 REQUIRED)
 find_package(ignition-transport11 REQUIRED)
 
