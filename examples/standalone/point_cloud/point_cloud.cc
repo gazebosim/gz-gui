@@ -27,19 +27,20 @@
 
 using namespace std::chrono_literals;
 
+// Set to true if a signal has been received to terminate publishing
 static std::atomic<bool> g_terminatePub(false);
 
 /////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
   // Install a signal handler for SIGINT and SIGTERM.
-  auto signal_handler = [](int _signal) -> void
+  auto signalHandler = [](int _signal) -> void
   {
     if (_signal == SIGINT || _signal == SIGTERM)
       g_terminatePub = true;
   };
-  std::signal(SIGINT,  signal_handler);
-  std::signal(SIGTERM, signal_handler);
+  std::signal(SIGINT,  signalHandler);
+  std::signal(SIGTERM, signalHandler);
 
   // Create messages
   ignition::msgs::PointCloudPacked pcMsg;
