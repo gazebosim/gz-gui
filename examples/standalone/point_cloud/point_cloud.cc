@@ -20,6 +20,7 @@
 
 #include <ignition/transport/Node.hh>
 
+#include <atomic>
 #include <chrono>
 #include <csignal>
 #include <iostream>
