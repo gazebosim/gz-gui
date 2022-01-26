@@ -54,8 +54,9 @@ namespace plugins
   ///
   /// ## Configuration
   ///
-  /// * \<play_pause\> : Set to true to see a play/pause and step buttons,
+  /// * \<play_pause\> : Set to true to see a play/pause button,
   ///                    false by default.
+  /// * \<step\> : Set to true to see a step button, false by default.
   /// * \<start_paused\> : Set to false to start playing, false by default.
   /// * \<service\> : Service for world control, optional. If not presnt,
   ///               the plugin will attempt to create a topic with the main
@@ -63,6 +64,9 @@ namespace plugins
   /// * \<stats_topic\> : Topic to receive world statistics, optional. If not
   ///               present, the plugin will attempt to create a topic with the
   ///               main window's `worldName` property.
+  ///
+  /// If no elements are filled for the plugin, both the play/pause and the
+  /// step buttons will be displayed.
   class WorldControl_EXPORTS_API WorldControl: public ignition::gui::Plugin
   {
     Q_OBJECT

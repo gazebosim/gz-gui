@@ -315,9 +315,9 @@ TEST(Scene3DTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
   EXPECT_TRUE(receivedRightShiftEvent);
 
   EXPECT_EQ(leftClickPoint, rightClickPoint);
-  EXPECT_NEAR(1.0, leftClickPoint.X(), 1e-4);
-  EXPECT_NEAR(11.942695, leftClickPoint.Y(), 1e-4);
-  EXPECT_NEAR(4.159424, leftClickPoint.Z(), 1e-4);
+  EXPECT_NEAR(1.0, leftClickPoint.X(), 1e-3);
+  EXPECT_NEAR(11.942695, leftClickPoint.Y(), 1e-1);
+  EXPECT_NEAR(4.159424, leftClickPoint.Z(), 0.5);
 
   EXPECT_TRUE(receivedKeyReleaseEvent);
   EXPECT_FALSE(receivedKeyReleaseEventAlt);
