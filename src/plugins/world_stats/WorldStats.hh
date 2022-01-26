@@ -50,10 +50,11 @@ namespace plugins
 {
   class WorldStatsPrivate;
 
-  /// \brief This plugin provides a time panel which may:
-  /// * Display simulation time
-  /// * Display real time
-  /// * Have a play / pause and step buttons
+  /// \brief This plugin provides a time panel which may display:
+  /// * Simulation time
+  /// * Real time
+  /// * Real time factor
+  /// * Iterations
   ///
   /// ## Configuration
   ///
@@ -62,9 +63,13 @@ namespace plugins
   /// * \<real_time\> : True to display a real time widget, false by default.
   /// * \<real_time_factor\> : True to display a real time factor widget,
   ///                          false by default.
+  /// * \<iterations\> : True to display an iterations widget, false by default.
   /// * \<topic\> : Topic to receive world statistics, optional. If not present,
   ///               the plugin will attempt to create a topic with the main
   ///               window's `worldName` property.
+  ///
+  /// If no elements are filled for the plugin, all properties will be
+  /// displayed.
   class WorldStats_EXPORTS_API WorldStats: public ignition::gui::Plugin
   {
     Q_OBJECT
