@@ -84,7 +84,7 @@ void IgnCameraTextureRhiOpenGL::Update(rendering::CameraPtr _camera)
 /////////////////////////////////////////////////
 void IgnCameraTextureRhiOpenGL::TextureId(void* _texturePtr)
 {
-  *reinterpret_cast<void**>(_texturePtr) = (void*)&this->dataPtr->textureId;
+  *reinterpret_cast<void**>(_texturePtr) = (void*)&this->dataPtr->textureId; //NOLINT
 }
 
 /////////////////////////////////////////////////

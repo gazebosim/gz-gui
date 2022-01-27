@@ -34,7 +34,7 @@ QOffscreenSurface *RenderThreadRhi::Surface() const
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhi::SetSurface(QOffscreenSurface *)
+void RenderThreadRhi::SetSurface(QOffscreenSurface *) //NOLINT 
 {
   /* no-op */
 }
@@ -46,7 +46,7 @@ QOpenGLContext *RenderThreadRhi::Context() const
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhi::SetContext(QOpenGLContext *)
+void RenderThreadRhi::SetContext(QOpenGLContext *) //NOLINT
 {
   /* no-op */
 }
