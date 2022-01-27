@@ -113,7 +113,7 @@ namespace plugins
     public: void Initialize();
 
     /// \brief Set the graphics API
-    /// \param[in] _graphicsApi The type of graphics API
+    /// \param[in] _graphicsAPI The type of graphics API
     public: void SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI);
 
     /// \brief Destroy camera associated with this renderer
@@ -281,8 +281,8 @@ namespace plugins
     public: void SetContext(QOpenGLContext *_context);
 
     /// \brief Set the graphics API
-    /// \param[in] _graphicsApi The type of graphics API
-    public: void SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsApi);
+    /// \param[in] _graphicsAPI The type of graphics API
+    public: void SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI);
 
     /// \brief Carry out initialisation.
     //
@@ -374,7 +374,7 @@ namespace plugins
     public: void SetSkyEnabled(const bool &_sky);
 
     /// \brief Set the graphics API
-    /// \param[in] _graphicsApi The type of graphics API
+    /// \param[in] _graphicsAPI The type of graphics API
     public: void SetGraphicsAPI(const rendering::GraphicsAPI& _graphicsAPI);
 
     /// \brief Slot called when thread is ready to be started
