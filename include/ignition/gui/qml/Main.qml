@@ -19,6 +19,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
+import ExitAction 1.0
 import "qrc:/qml"
 
 ApplicationWindow
@@ -45,7 +46,19 @@ ApplicationWindow
   property string pluginToolBarTextColorLight: MainWindow.pluginToolBarTextColorLight
   property string pluginToolBarColorDark: MainWindow.pluginToolBarColorDark
   property string pluginToolBarTextColorDark: MainWindow.pluginToolBarTextColorDark
+  // Expose config properties to C++
+  property int defaultExitAction: MainWindow.defaultExitAction
   property bool showDialogOnExit: MainWindow.showDialogOnExit
+  property string dialogOnExitText: MainWindow.dialogOnExitText
+  property bool exitDialogShowShutdown: MainWindow.exitDialogShowShutdown
+  property bool exitDialogShowCloseGui: MainWindow.exitDialogShowCloseGui
+  property string exitDialogShutdownText: MainWindow.exitDialogShutdownText
+  property string exitDialogCloseGuiText: MainWindow.exitDialogCloseGuiText
+  /**
+   * Flag to indicate if the close event was triggered by the close dialog.
+   */
+  property bool closingFromDialog: false
+
   /**
    * Tool bar background color
    */
@@ -75,7 +88,13 @@ ApplicationWindow
   onClosing: {
     close.accepted = !showDialogOnExit
     if(showDialogOnExit){
-      confirmationDialogOnExit.open()
+      if (closingFromDialog) {
+        close.accepted = true;
+      } else {
+        confirmationDialogOnExit.open()
+      }
+    } else if (defaultExitAction == ExitAction.SHUTDOWN_SERVER) {
+      MainWindow.OnStopServer()
     }
   }
 
@@ -325,24 +344,58 @@ ApplicationWindow
     }
   }
 
+  Timer {
+    id: timer
+  }
+
   /**
    *  Confirmation dialog on close button
    */
   Dialog {
     id: confirmationDialogOnExit
-    title: "Do you really want to exit?"
+    title: (dialogOnExitText ? dialogOnExitText : "Do you really want to exit?")
+    objectName: "confirmationDialogOnExit"
 
     modal: true
     focus: true
     parent: ApplicationWindow.overlay
-    width: 300
+    width: 500
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
     closePolicy: Popup.CloseOnEscape
-    standardButtons: Dialog.Ok | Dialog.Cancel
+    standardButtons:
+      (exitDialogShowCloseGui ? Dialog.Ok : Dialog.NoButton) |
+      (exitDialogShowShutdown ? Dialog.Discard : Dialog.NoButton) |
+      Dialog.Cancel
 
-    onAccepted: {
-      Qt.quit()
+    // The button texts need to be changed later than in onCompleted as standardButtons change later
+    onAboutToShow: function () {
+      if (exitDialogShowCloseGui && exitDialogCloseGuiText)
+        footer.standardButton(Dialog.Ok).text = exitDialogCloseGuiText
+      if (exitDialogShowShutdown)
+        footer.standardButton(Dialog.Discard).text =
+          (exitDialogShutdownText ? exitDialogShutdownText : "Shutdown server and GUI")
     }
+
+    footer:
+      DialogButtonBox {
+        onClicked: function (btn) {
+          if (btn == this.standardButton(Dialog.Ok)) {
+            closingFromDialog = true;
+            window.close();
+          }
+          else if (btn == this.standardButton(Dialog.Discard)) {
+            MainWindow.OnStopServer()
+            // if GUI and server run in the same process, give server opportunity to kill the GUI
+            timer.interval = 100;
+            timer.repeat = false;
+            timer.triggered.connect(function() {
+              closingFromDialog = true;
+              window.close();
+            });
+            timer.start();
+          }
+        }
+      }
   }
 }

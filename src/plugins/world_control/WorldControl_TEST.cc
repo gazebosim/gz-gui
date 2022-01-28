@@ -59,6 +59,14 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "World control");
 
+  // Check that all buttons are visible
+  for (auto name : {"playButton", "stepButton"})
+  {
+    auto obj = plugin->PluginItem()->findChild<QObject *>(name);
+    ASSERT_NE(nullptr, obj) << name;
+    EXPECT_TRUE(obj->property("visible").toBool()) << name;
+  }
+
   // Cleanup
   plugins.clear();
 }
