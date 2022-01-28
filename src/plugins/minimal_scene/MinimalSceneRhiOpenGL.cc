@@ -236,7 +236,7 @@ bool TextureNodeRhiOpenGL::HasNewTexture() const
 
 /////////////////////////////////////////////////
 void TextureNodeRhiOpenGL::NewTexture(
-    void* _texturePtr /*[in]*/, const QSize &_size)
+    void* _texturePtr, const QSize &_size)
 {
   this->dataPtr->mutex.lock();
   this->dataPtr->textureId = *static_cast<int*>(_texturePtr);

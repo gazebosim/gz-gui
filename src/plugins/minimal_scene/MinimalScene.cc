@@ -596,7 +596,7 @@ void IgnRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    qDebug().nospace() << "Creating ign-renderering interface for OpenGL";
+    qDebug().nospace() << "Creating ign-rendering interface for OpenGL";
     this->dataPtr->rhiParams["useCurrentGLContext"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiOpenGL>();
   }
@@ -977,7 +977,10 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     }
     else
     {
-      // invalid render system
+      ignerr << "GraphicsAPI ["
+             << rendering::GraphicsAPIUtils::Str(this->dataPtr->graphicsAPI)
+             << "] is not supported"
+             << std::endl;
     }
     return nullptr;
   }

@@ -59,6 +59,7 @@ namespace plugins
   ///     * \<near\> : Camera's near clipping plane distance, defaults to 0.01
   ///     * \<far\> : Camera's far clipping plane distance, defaults to 1000.0
   /// * \<sky\> : If present, sky is enabled.
+  /// * \<graphics_api\> : Optional graphics API name, defaults to 'opengl'.
   class MinimalScene : public Plugin
   {
     Q_OBJECT
