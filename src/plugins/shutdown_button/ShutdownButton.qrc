@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="ShutdownButton/">
+  <file>ShutdownButton.qml</file>
+</qresource>
+</RCC>
