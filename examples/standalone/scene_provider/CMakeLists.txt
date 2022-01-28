@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
+project(ignition-gui-scene-provider)
+
 find_package(ignition-msgs9 REQUIRED)
 find_package(ignition-transport12 REQUIRED)
 
@@ -10,4 +12,3 @@ target_link_libraries(scene_provider
   ignition-msgs9::core
   ignition-transport12::core
 )
-

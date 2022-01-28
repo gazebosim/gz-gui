@@ -6,6 +6,44 @@
 
 ## Ignition Gui 6
 
+### Ignition Gui 6.3.0 (2022-01-06)
+
+1. NavSat (GPS) map plugin
+    * [Pull request #342](https://github.com/ignitionrobotics/ign-gui/pull/342)
+
+### Ignition Gui 6.2.0 (2021-12-08)
+
+1. Grid config: set values from startup and improve layout
+    * [Pull request #324](https://github.com/ignitionrobotics/ign-gui/pull/324)
+
+1. Fix codecheck
+    * [Pull request #332](https://github.com/ignitionrobotics/ign-gui/pull/332)
+    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
+
+1. Offer a way to disable warnings on marker manager
+    * [Pull request #326](https://github.com/ignitionrobotics/ign-gui/pull/326)
+
+1. Add PreRender event to MinimalScene
+    * [Pull request #325](https://github.com/ignitionrobotics/ign-gui/pull/325)
+
+1. Use qmldir to define QML module with IgnSpinBox
+    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+
+1. Fix TopicEcho plugin message display
+    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+
+1. Don't set visual scale for point markers
+    * [Pull request #321](https://github.com/ignitionrobotics/ign-gui/pull/321)
+
+1. Set marker point size from message
+    * [Pull request #317](https://github.com/ignitionrobotics/ign-gui/pull/317)
+
+1. Don't crash if a plugin has invalid QML
+    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+
+1. Added log storing for ign-gui
+    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
+
 ### Ignition Gui 6.1.0 (2021-11-05)
 
 1. Improved doxygen
@@ -368,7 +406,31 @@
 
 ## Ignition Gui 3
 
-### Ignition Gui 3.X.X (202X-XX-XX)
+### Ignition Gui 3.9.0 (2022-01-14)
+
+1. Added a button that allows shutting down both the client and server.
+    * [Pull request #335](https://github.com/ignitionrobotics/ign-gui/pull/335)
+
+1. Prevent Scene3D 💥 if another scene is already loaded
+    * [Pull request #347](https://github.com/ignitionrobotics/ign-gui/pull/347)
+
+1. Add project() to examples and remove hard-dependency on Ogre1
+    * [Pull request #345](https://github.com/ignitionrobotics/ign-gui/pull/345)
+
+1. Fix codecheck
+    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
+
+1. Use `qmldir` to define QML module with `IgnSpinBox`
+    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+
+1. Fix `TopicEcho` plugin message display
+    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+
+1. Don't crash if a plugin has invalid QML
+    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+
+1. Added log storing for `ign gui` CLI
+    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
 
 ### Ignition Gui 3.8.0 (2021-10-12)
 
