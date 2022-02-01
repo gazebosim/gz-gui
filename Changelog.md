@@ -1,5 +1,19 @@
 ## Ignition Gui 6
 
+### Ignition Gui 6.4.0 (2022-02-01)
+
+1. Improve inserting WorldControl and WorldStats from menu
+    * [Pull request #349](https://github.com/ignitionrobotics/ign-gui/pull/349)
+
+1. Added a button that allows shutting down both the client and server.
+    * [Pull request #335](https://github.com/ignitionrobotics/ign-gui/pull/335)
+
+1. Prevent Scene3D 💥 if another scene is already loaded
+    * [Pull request #347](https://github.com/ignitionrobotics/ign-gui/pull/347)
+
+1. Add project() to examples and remove hard-dependency on Ogre1
+    * [Pull request #345](https://github.com/ignitionrobotics/ign-gui/pull/345)
+
 ### Ignition Gui 6.3.0 (2022-01-06)
 
 1. NavSat (GPS) map plugin
