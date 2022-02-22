@@ -205,23 +205,6 @@ namespace plugins
     /// \brief Flag to indicate texture size has changed.
     public: bool textureDirty = false;
 
-    /// \brief Scene service. If not empty, a request will be made to get the
-    /// scene information using this service and the renderer will populate the
-    /// scene based on the response data
-    public: std::string sceneService;
-
-    /// \brief Scene pose topic. If not empty, a node will subcribe to this
-    /// topic to get pose updates of objects in the scene
-    public: std::string poseTopic;
-
-    /// \brief Ign-transport deletion topic name
-    public: std::string deletionTopic;
-
-    /// \brief Ign-transport scene topic name
-    /// New scene messages will be published to this topic when an entities are
-    /// added
-    public: std::string sceneTopic;
-
     /// \brief True if sky is enabled;
     public: bool skyEnable = false;
 
@@ -303,29 +286,6 @@ namespace plugins
     /// \brief Set the render window camera's far clipping plane distance
     /// \param[in] _far Far clipping plane distance
     public: void SetCameraFarClip(double _far);
-
-    /// \brief Set scene service to use in this render window
-    /// A service call will be made using ign-transport to get scene
-    /// data using this service
-    /// \param[in] _service Scene service name
-    public: void SetSceneService(const std::string &_service);
-
-    /// \brief Set pose topic to use for updating objects in the scene
-    /// The renderer will subscribe to this topic to get pose messages of
-    /// visuals in the scene
-    /// \param[in] _topic Pose topic
-    public: void SetPoseTopic(const std::string &_topic);
-
-    /// \brief Set deletion topic to use for deleting objects from the scene
-    /// The renderer will subscribe to this topic to get notified when entities
-    /// in the scene get deleted
-    /// \param[in] _topic Deletion topic
-    public: void SetDeletionTopic(const std::string &_topic);
-
-    /// \brief Set the scene topic to use for updating objects in the scene
-    /// The renderer will subscribe to this topic to get updates scene messages
-    /// \param[in] _topic Scene topic
-    public: void SetSceneTopic(const std::string &_topic);
 
     /// \brief Called when the mouse hovers to a new position.
     /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
