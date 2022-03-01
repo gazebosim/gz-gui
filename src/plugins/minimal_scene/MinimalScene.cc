@@ -198,9 +198,13 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
   /// \brief True if initializing (started but not complete)
   public: bool initializing = false;
 
-  /// \brief Graphics API
+  /// \brief Graphics API. The default is platform specific.
   public: ignition::rendering::GraphicsAPI graphicsAPI =
+#ifdef __APPLE__
+      rendering::GraphicsAPI::METAL;
+#else
       rendering::GraphicsAPI::OPENGL;
+#endif
 
   /// \brief Render thread
   public: RenderThread *renderThread = nullptr;
