@@ -27,7 +27,10 @@
 #include "ignition/gui/Helpers.hh"
 
 int gg_argc = 1;
-char **gg_argv = new char *[gg_argc];
+char* gg_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./Helpers_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
