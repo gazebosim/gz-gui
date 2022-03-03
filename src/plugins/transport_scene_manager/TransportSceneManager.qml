@@ -15,14 +15,37 @@
  *
 */
 
-import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick 2.9
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
-// TODO: remove invisible rectangle, see
-// https://github.com/ignitionrobotics/ign-gui/issues/220
-Rectangle {
-  visible: false
-  Layout.minimumWidth: 100
-  Layout.minimumHeight: 100
+GridLayout {
+  columns: 1
+  columnSpacing: 10
+  Layout.minimumWidth: 350
+  Layout.minimumHeight: 200
+  anchors.fill: parent
+  anchors.margins: 10
+
+  property string service: 'N/A'
+  property string poseTopic: 'N/A'
+  property string deletionTopic: 'N/A'
+  property string sceneTopic: 'N/A'
+
+  Label {
+    Layout.columnSpan: 1
+    Layout.fillWidth: true
+    wrapMode: Text.WordWrap
+    text: "<b>Service</b>: " + service +
+          "<br><b>Pose topic</b>: " + poseTopic +
+          "<br><b>Deletion topic</b>: " + deletionTopic +
+          "<br><b>Scene topic</b>: " + sceneTopic
+  }
+
+
+  Item {
+    Layout.columnSpan: 1
+    width: 10
+    Layout.fillHeight: true
+  }
 }
