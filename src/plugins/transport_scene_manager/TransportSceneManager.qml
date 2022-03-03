@@ -36,10 +36,10 @@ GridLayout {
     Layout.columnSpan: 1
     Layout.fillWidth: true
     wrapMode: Text.WordWrap
-    text: "<b>Service</b>: " + service +
-          "<br><b>Pose topic</b>: " + poseTopic +
-          "<br><b>Deletion topic</b>: " + deletionTopic +
-          "<br><b>Scene topic</b>: " + sceneTopic
+    text: "<b>Service</b>: /" + service +
+          "<br><b>Pose topic</b>: /" + poseTopic +
+          "<br><b>Deletion topic</b>: /" + deletionTopic +
+          "<br><b>Scene topic</b>: /" + sceneTopic
   }
 
 
