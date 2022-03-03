@@ -385,6 +385,12 @@ std::string Application::DefaultConfigPath()
 bool Application::LoadPlugin(const std::string &_filename,
     const tinyxml2::XMLElement *_pluginElem)
 {
+  if (_filename.empty())
+  {
+    ignerr << "Trying to load plugin with empty filename." << std::endl;
+    return false;
+  }
+
   igndbg << "Loading plugin [" << _filename << "]" << std::endl;
 
   common::SystemPaths systemPaths;
