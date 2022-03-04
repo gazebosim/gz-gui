@@ -280,10 +280,10 @@ SplitView {
           return;
 
         // Propagate child's minimum size changes to the item.
-        Layout.minimumWidth = Qt.binding(function() {
+        newItem.Layout.minimumWidth = Qt.binding(function() {
           return children[0].Layout.minimumWidth
         });
-        Layout.minimumHeight = Qt.binding(function() {
+        newItem.Layout.minimumHeight = Qt.binding(function() {
           return children[0].Layout.minimumHeight
         });
       }
@@ -357,8 +357,9 @@ SplitView {
                 Layout.minimumWidth = child.Layout.minimumWidth;
               }
               heightSum += child.height;
-              minHeightSum += child.height < child.Layout.minimumHeight ?
-                  child.height : child.Layout.minimumHeight;
+
+              var collapsed = child.Layout.maximumHeight == 50
+              minHeightSum += collapsed ? child.height : child.Layout.minimumHeight
             }
 
             // Minimum height to show all children
