@@ -30,6 +30,19 @@ namespace plugins
 {
   class CameraTrackingPrivate;
 
+  /// \brief This plugin provides camera tracking capabilities such as "move to"
+  /// and "follow".
+  ///
+  /// Services:
+  /// * `/gui/move_to`: Move the user camera to look at a given target,
+  ///                   identified by name.
+  /// * `/gui/move_to/pose`: Move the user camera to a given pose.
+  /// * `/gui/follow`: Set the user camera to follow a given target,
+  ///                   identified by name.
+  /// * `/gui/follow/offset`: Set the offset for following.
+  ///
+  /// Topics:
+  /// * `/gui/camera/pose`: Publishes the current user camera pose.
   class CameraTracking : public Plugin
   {
     Q_OBJECT

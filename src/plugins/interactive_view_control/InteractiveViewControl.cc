@@ -258,6 +258,9 @@ InteractiveViewControl::~InteractiveViewControl() = default;
 void InteractiveViewControl::LoadConfig(
   const tinyxml2::XMLElement * /*_pluginElem*/)
 {
+  if (this->title.empty())
+    this->title = "Interactive view control";
+
   // camera view control mode
   this->dataPtr->cameraViewControlService = "/gui/camera/view_control";
   this->dataPtr->node.Advertise(this->dataPtr->cameraViewControlService,

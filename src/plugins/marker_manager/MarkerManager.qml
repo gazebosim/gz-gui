@@ -15,14 +15,33 @@
  *
 */
 
-import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick 2.9
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
-// TODO: remove invisible rectangle, see
-// https://github.com/ignitionrobotics/ign-gui/issues/220
-Rectangle {
-  visible: false
-  Layout.minimumWidth: 100
-  Layout.minimumHeight: 100
+ColumnLayout {
+  Layout.minimumWidth: 350
+  Layout.minimumHeight: 200
+  anchors.fill: parent
+  anchors.margins: 10
+
+  property string topicName: ''
+  property string statsTopic: ''
+
+  property string message: 'Services provided:<br><ul>' +
+      '<li>' + topicName + '</li>' +
+      '<li>' + topicName + '_array</li>' +
+      '<li>' + topicName + '/list</li></ul><br>Topics subscribed:<br><ul>' +
+      '<li>' + statsTopic + '</li></ul>'
+
+  Label {
+    Layout.fillWidth: true
+    wrapMode: Text.WordWrap
+    text: message
+  }
+
+  Item {
+    width: 10
+    Layout.fillHeight: true
+  }
 }
