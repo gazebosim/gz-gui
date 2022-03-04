@@ -799,8 +799,7 @@ TextureNode::TextureNode(
     QQuickWindow *_window,
     RenderSync &_renderSync,
     const rendering::GraphicsAPI &_graphicsAPI)
-    : renderSync(_renderSync)
-    , window(_window)
+    : renderSync(_renderSync) , window(_window)
 {
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
@@ -1259,7 +1258,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       renderWindow->SetSkyEnabled(true);
       if (!elem->NoChildren())
         ignwarn << "Child elements of <sky> are not supported yet"
-            << std::endl;
+                << std::endl;
     }
 
     elem = _pluginElem->FirstChildElement("graphics_api");

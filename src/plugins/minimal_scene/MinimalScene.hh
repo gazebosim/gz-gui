@@ -277,7 +277,6 @@ namespace plugins
     public: QOpenGLContext *Context() const;
 
     /// \brief Set the OpenGL context to be passed to the render engine
-    //
     /// \param[in] _context OpenGL context
     public: void SetContext(QOpenGLContext *_context);
 
@@ -286,7 +285,6 @@ namespace plugins
     public: void SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI);
 
     /// \brief Carry out initialisation.
-    //
     /// On macOS this must be run on the main thread
     public: void Initialize();
 
