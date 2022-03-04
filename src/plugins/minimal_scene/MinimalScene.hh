@@ -270,7 +270,6 @@ namespace plugins
     public: QOffscreenSurface *Surface() const;
 
     /// \brief Set the offscreen surface to render to
-    //
     /// \param[in] _surface Off-screen surface format
     public: void SetSurface(QOffscreenSurface *_surface);
 
