@@ -37,8 +37,8 @@ namespace plugins
   ///
   /// * `<topic_name>`: Optional. Name of topic for marker service. Defaults
   /// to `/marker`.
-  /// * `<stats_topic>`: Optional. Name of topic to receive world stats. Defaults
-  /// to `/world/[world name]/stats`.
+  /// * `<stats_topic>`: Optional. Name of topic to receive world stats.
+  /// Defaults to `/world/[world name]/stats`.
   /// * `<warn_on_action_failure>`: True to display warnings if the user
   /// attempts to perform an invalid action. Defaults to true.
   class MarkerManager : public Plugin
