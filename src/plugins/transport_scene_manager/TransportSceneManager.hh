@@ -36,10 +36,13 @@ namespace plugins
   /// ## Configuration
   ///
   /// * \<service\> : Name of service where this system will request a scene
-  ///                 message.
+  ///                 message. Optional, defaults to "/scene".
   /// * \<pose_topic\> : Name of topic to subscribe to receive pose updates.
+  ///                    Optional, defaults to "/pose".
   /// * \<deletion_topic\> : Name of topic to request entity deletions.
-  /// * \<scene_topic\> : Name of topic to receive scene updates.
+  ///                        Optional, defaults to "/delete".
+  /// * \<scene_topic\> : Name of topic to receive scene updates. Optional,
+  ///                     defaults to "/scene".
   class TransportSceneManager : public Plugin
   {
     Q_OBJECT
