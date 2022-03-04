@@ -509,33 +509,54 @@ void IgnRenderer::BroadcastKeyPress()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::Initialize()
+std::string IgnRenderer::Initialize()
 {
   if (this->initialized)
-    return;
+    return std::string();
 
-  std::map<std::string, std::string> params;
-  params["useCurrentGLContext"] = "1";
-  params["winID"] = std::to_string(
-    ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
-      QuickWindow()->winId());
-  auto engine = rendering::engine(this->engineName, params);
+  // Currently only support one engine at a time
+  rendering::RenderEngine *engine{nullptr};
+  auto loadedEngines = rendering::loadedEngines();
+
+  // Load engine if there's no engine yet
+  if (loadedEngines.empty())
+  {
+    std::map<std::string, std::string> params;
+    params["useCurrentGLContext"] = "1";
+    params["winID"] = std::to_string(
+        ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+        QuickWindow()->winId());
+    engine = rendering::engine(this->engineName, params);
+  }
+  else
+  {
+    if (!this->engineName.empty() && loadedEngines.front() != this->engineName)
+    {
+      ignwarn << "Failed to load engine [" << this->engineName
+              << "]. Using engine [" << loadedEngines.front()
+              << "], which is already loaded. Currently only one engine is "
+              << "supported at a time." << std::endl;
+    }
+    this->engineName = loadedEngines.front();
+    engine = rendering::engine(loadedEngines.front());
+  }
+
   if (!engine)
   {
-    ignerr << "Engine [" << this->engineName << "] is not supported"
-           << std::endl;
-    return;
+    return "Engine [" + this->engineName + "] is not supported";
   }
 
   // Scene
-  auto scene = engine->SceneByName(this->sceneName);
-  if (!scene)
+  if (engine->SceneCount() > 0)
   {
-    igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
-    scene = engine->CreateScene(this->sceneName);
-    scene->SetAmbientLight(this->ambientLight);
-    scene->SetBackgroundColor(this->backgroundColor);
+    return "Currently only one plugin providing a 3D scene is supported at a "
+            "time.";
   }
+
+  igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+  auto scene = engine->CreateScene(this->sceneName);
+  scene->SetAmbientLight(this->ambientLight);
+  scene->SetBackgroundColor(this->backgroundColor);
 
   if (this->skyEnable)
   {
@@ -564,6 +585,7 @@ void IgnRenderer::Initialize()
   this->dataPtr->rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
 
   this->initialized = true;
+  return std::string();
 }
 
 /////////////////////////////////////////////////
@@ -650,6 +672,12 @@ RenderThread::RenderThread()
 }
 
 /////////////////////////////////////////////////
+void RenderThread::SetErrorCb(std::function<void(const QString&)> _cb)
+{
+  this->errorCb = _cb;
+}
+
+/////////////////////////////////////////////////
 void RenderThread::RenderNext(RenderSync *_renderSync)
 {
   this->context->makeCurrent(this->surface);
@@ -657,7 +685,12 @@ void RenderThread::RenderNext(RenderSync *_renderSync)
   if (!this->ignRenderer.initialized)
   {
     // Initialize renderer
-    this->ignRenderer.Initialize();
+    auto loadingError = this->ignRenderer.Initialize();
+    if (!loadingError.empty())
+    {
+      this->errorCb(QString::fromStdString(loadingError));
+      return;
+    }
   }
 
   // check if engine has been successfully initialized
@@ -675,19 +708,25 @@ void RenderThread::RenderNext(RenderSync *_renderSync)
 /////////////////////////////////////////////////
 void RenderThread::ShutDown()
 {
-  this->context->makeCurrent(this->surface);
+  if (this->context && this->surface)
+    this->context->makeCurrent(this->surface);
 
   this->ignRenderer.Destroy();
 
-  this->context->doneCurrent();
-  delete this->context;
+  if (this->context)
+  {
+    this->context->doneCurrent();
+    delete this->context;
+  }
 
   // schedule this to be deleted only after we're done cleaning up
-  this->surface->deleteLater();
+  if (this->surface)
+    this->surface->deleteLater();
 
   // Stop event processing, move the thread to GUI and make sure it is deleted.
   this->exit();
-  this->moveToThread(QGuiApplication::instance()->thread());
+  if (this->ignRenderer.initialized)
+    this->moveToThread(QGuiApplication::instance()->thread());
 }
 
 /////////////////////////////////////////////////
@@ -816,6 +855,12 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 
 /////////////////////////////////////////////////
 RenderWindowItem::~RenderWindowItem()
+{
+  this->StopRendering();
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::StopRendering()
 {
   // Disconnect our QT connections.
   for(auto conn : this->dataPtr->connections)
@@ -989,6 +1034,8 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
            << "Render window will not be created" << std::endl;
     return;
   }
+  renderWindow->SetErrorCb(std::bind(&MinimalScene::SetLoadingError, this,
+      std::placeholders::_1));
 
   if (this->title.empty())
     this->title = "3D Scene";
@@ -1114,6 +1161,12 @@ void RenderWindowItem::OnDropped(const QString &_drop,
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetErrorCb(std::function<void(const QString&)> _cb)
+{
+  this->dataPtr->renderThread->SetErrorCb(_cb);
+}
+
+/////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
@@ -1214,6 +1267,25 @@ void MinimalScene::OnFocusWindow()
 {
   auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
   renderWindow->forceActiveFocus();
+}
+
+/////////////////////////////////////////////////
+QString MinimalScene::LoadingError() const
+{
+  return this->loadingError;
+}
+
+/////////////////////////////////////////////////
+void MinimalScene::SetLoadingError(const QString &_loadingError)
+{
+  if (!_loadingError.isEmpty())
+  {
+    auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+    if (nullptr != renderWindow)
+      renderWindow->StopRendering();
+  }
+  this->loadingError = _loadingError;
+  this->LoadingErrorChanged();
 }
 
 // Register this plugin
