@@ -187,6 +187,8 @@ TransportSceneManager::TransportSceneManager()
 /////////////////////////////////////////////////
 TransportSceneManager::~TransportSceneManager()
 {
+  if (this->dataPtr->initializeTransport.joinable())
+    this->dataPtr->initializeTransport.join();
 }
 
 /////////////////////////////////////////////////
