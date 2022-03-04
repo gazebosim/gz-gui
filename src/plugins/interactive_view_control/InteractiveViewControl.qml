@@ -21,7 +21,7 @@ import QtQuick.Layouts 1.3
 
 ColumnLayout {
   Layout.minimumWidth: 350
-  Layout.minimumHeight: 200
+  Layout.minimumHeight: 110
   anchors.fill: parent
   anchors.margins: 10
 
