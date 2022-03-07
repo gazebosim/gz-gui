@@ -568,6 +568,9 @@ namespace ignition
       /// \brief Displays a message to the user
       signals: void notify(const QString &_message);
 
+      /// \brief Displays a message to the user
+      signals: void notifyWithDuration(const QString &_message, int _duration);
+
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<MainWindowPrivate> dataPtr;

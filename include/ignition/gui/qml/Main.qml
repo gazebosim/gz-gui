@@ -102,7 +102,11 @@ ApplicationWindow
   Connections {
     target: MainWindow
     onNotify: {
-      notificationText.text = _message
+      notificationDialog.setText(_message)
+      notificationDialog.open()
+    }
+    onNotifyWithDuration: {
+      notificationDialog.setTextDuration(_message, _duration)
       notificationDialog.open()
     }
   }
@@ -319,29 +323,8 @@ ApplicationWindow
     }
   }
 
-  /**
-   * TODO: change to a snackbar / toast
-   */
-  Dialog {
+  IgnSnackBar {
     id: notificationDialog
-    modal: true
-    focus: true
-    x: (window.width - width) / 2
-    y: window.height / 6
-    width: Math.min(window.width, window.height) / 3 * 2
-    contentHeight: notificationColumn.height
-
-    Column {
-      id: notificationColumn
-      spacing: 20
-
-      Label {
-        id: notificationText
-        width: notificationDialog.availableWidth
-        wrapMode: Label.Wrap
-        font.pixelSize: 18
-      }
-    }
   }
 
   Timer {
