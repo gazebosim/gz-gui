@@ -276,14 +276,15 @@ SplitView {
        * Callback when the children array has been changed.
        */
       onChildrenChanged: {
-        if (children.length === 0)
-          return;
-
         // Propagate child's minimum size changes to the item.
         newItem.Layout.minimumWidth = Qt.binding(function() {
+          if (children.length === 0 || children[0] === undefined)
+            return 0;
           return children[0].Layout.minimumWidth
         });
         newItem.Layout.minimumHeight = Qt.binding(function() {
+          if (children.length === 0 || children[0] === undefined)
+            return 0;
           return children[0].Layout.minimumHeight
         });
       }
