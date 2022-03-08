@@ -20,15 +20,23 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.0
+import QtQuick.Controls.Material 2.2
 
 Popup {
   id: snackbar
-  modal: duration == 0
-  focus: duration == 0
   x: (window.width - width) / 2
   y: window.height - window.height / 6
   width: window.width - window.width / 6
   contentHeight: notificationColumn.height
+
+  closePolicy: Popup.CloseOnEscape
+
+  property var popupArray: []
+
+  onClosed: {
+    timer.stop()
+    checkArray();
+  }
 
   background: Rectangle {
     border.color: "#444"
@@ -40,20 +48,54 @@ Popup {
   property int duration: 4000
 
   function setText(_message) {
-    notificationText.text = _message
-    if (duration > 0)
+    popupArray.push({"text": _message, "duration": duration})
+    checkArray();
+  }
+
+  function checkArray()
+  {
+    if (popupArray.length == 0)
     {
-      timer.restart()
+      return
+    }
+
+    if(!timer.running)
+    {
+      if (popupArray.length > 0)
+      {
+        var values = popupArray[0]
+        notificationText.text = values.text
+        duration = values.duration
+        snackbar.open()
+
+        // Note that objects cannot be individually added to or removed from
+        // the list once created; to modify the contents of a list, it must be
+        // reassigned to a new list.
+        var newpopupArray = []
+        for (var i = 1; i < popupArray.length; i++)
+        {
+          newpopupArray.push(popupArray[i])
+        }
+
+        if (newpopupArray != undefined)
+        {
+          popupArray = newpopupArray
+        }
+        else
+        {
+          popupArray = []
+        }
+        if (duration > 0)
+        {
+          timer.restart()
+        }
+      }
     }
   }
 
   function setTextDuration(_message, _duration) {
-    notificationText.text = _message
-    duration = _duration
-    if (duration > 0)
-    {
-      timer.restart()
-    }
+    popupArray.push({"text": _message, "duration": _duration})
+    checkArray();
   }
 
   Column {
@@ -74,6 +116,7 @@ Popup {
           if (!running) {
               snackbar.close();
           }
+          checkArray();
       }
   }
 }

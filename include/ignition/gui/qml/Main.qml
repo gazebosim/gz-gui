@@ -103,11 +103,9 @@ ApplicationWindow
     target: MainWindow
     onNotify: {
       notificationDialog.setText(_message)
-      notificationDialog.open()
     }
     onNotifyWithDuration: {
       notificationDialog.setTextDuration(_message, _duration)
-      notificationDialog.open()
     }
   }
 
