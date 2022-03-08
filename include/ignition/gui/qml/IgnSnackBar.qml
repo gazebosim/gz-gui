@@ -32,12 +32,12 @@ Popup {
 
   background: Rectangle {
     border.color: "#444"
-    color: "#c9daf8"
+    color: Material.background
   }
 
   // Duration of the snackbar. If duration is equal to zero then
   // you should click somewhere in Ignition Gazebo to close it.
-  property int duration: 1000
+  property int duration: 4000
 
   function setText(_message) {
     notificationText.text = _message

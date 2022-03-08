@@ -143,15 +143,15 @@ void Teleop::OnTopicSelection(const QString &_topic)
   {
     App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Error when advertising topic: " +
-        this->dataPtr->topic), 1000);
+        this->dataPtr->topic), 4000);
     ignerr << "Error when advertising topic: " <<
       this->dataPtr->topic << std::endl;
   }
   else
   {
     App()->findChild<MainWindow *>()->notifyWithDuration(
-      QString::fromStdString("A new topic has been entered: '" +
-        this->dataPtr->topic + "'"), 1000);
+      QString::fromStdString("Subscribing to topic: '" +
+        this->dataPtr->topic + "'"), 4000);
   }
 }
 
