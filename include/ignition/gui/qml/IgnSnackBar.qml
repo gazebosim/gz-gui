@@ -15,6 +15,7 @@
  *
 */
 
+import QtGraphicalEffects 1.0
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
@@ -32,8 +33,14 @@ Popup {
   contentHeight: notificationColumn.height
 
   background: Rectangle {
-    border.color: "#444"
     color: Material.background
+    layer.enabled: true
+    layer.effect: DropShadow {
+      color: "#aa000000"
+      samples: 9
+      spread: 0
+      radius: 8.0
+    }
   }
 
   // Duration of the snackbar. If duration is equal to zero then
