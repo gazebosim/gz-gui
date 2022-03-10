@@ -199,7 +199,7 @@ void ImageDisplay::OnTopic(const QString _topic)
     return;
   }
   App()->findChild<MainWindow *>()->notifyWithDuration(
-    QString::fromStdString("Subscribed to: " + topic), 4000);
+    QString::fromStdString("Subscribed to: <b>" + topic + "</b>"), 4000);
 }
 
 /////////////////////////////////////////////////

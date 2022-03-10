@@ -175,7 +175,7 @@ void Screenshot::SaveScreenshot()
   this->SetSavedScreenshotPath(QString::fromStdString(savePath));
 
   App()->findChild<MainWindow *>()->notifyWithDuration(
-    QString::fromStdString("Saved image to:" + savePath), 4000);
+    QString::fromStdString("Saved image to: <b>" + savePath + "</b>"), 4000);
 }
 
 /////////////////////////////////////////////////

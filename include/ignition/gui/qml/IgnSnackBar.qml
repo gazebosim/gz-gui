@@ -15,21 +15,24 @@
  *
 */
 
+import QtGraphicalEffects 1.0
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
+import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.0
-import QtQuick.Controls.Material 2.2
 
 Popup {
   id: snackbar
+  modal: duration == 0
+  focus: duration == 0
   x: (window.width - width) / 2
   y: window.height - window.height / 6
   width: window.width - window.width / 6
   contentHeight: notificationColumn.height
 
-  closePolicy: Popup.CloseOnEscape
+  closePolicy: Popup.NoAutoClose
 
   property var popupArray: []
 
@@ -39,8 +42,14 @@ Popup {
   }
 
   background: Rectangle {
-    border.color: "#444"
     color: Material.background
+    layer.enabled: true
+    layer.effect: DropShadow {
+      color: "#aa000000"
+      samples: 9
+      spread: 0
+      radius: 8.0
+    }
   }
 
   // Duration of the snackbar. If duration is equal to zero then
@@ -98,25 +107,31 @@ Popup {
     checkArray();
   }
 
-  Column {
+  Row {
     id: notificationColumn
-    spacing: 20
 
     Label {
       id: notificationText
-      width: snackbar.availableWidth
+      width: snackbar.availableWidth * 6 / 8
       wrapMode: Label.Wrap
       font.pixelSize: 18
+      anchors.verticalCenter: parent.verticalCenter
+      horizontalAlignment: Label.AlignHCenter
+    }
+    Button {
+      text: "Dismiss"
+        onClicked: snackbar.close()
     }
   }
   Timer {
-      id: timer
-      interval: snackbar.duration
-      onTriggered: {
-          if (!running) {
-              snackbar.close();
-          }
-          checkArray();
-      }
+    id: timer
+    interval: snackbar.duration
+    onTriggered: {
+        if (!running) {
+            snackbar.close();
+        }
+        checkArray();
+    }
   }
+
 }
