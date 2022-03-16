@@ -41,6 +41,7 @@
 #include <ignition/rendering/RenderEngine.hh>
 #include <ignition/rendering/RenderingIface.hh>
 #include <ignition/rendering/Scene.hh>
+#include <ignition/rendering/Utils.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
@@ -381,7 +382,8 @@ void IgnRenderer::BroadcastHoverPos()
   if (!this->dataPtr->hoverDirty)
     return;
 
-  auto pos = this->ScreenToScene(this->dataPtr->mouseHoverPos);
+  auto pos = rendering::screenToScene(this->dataPtr->mouseHoverPos,
+      this->dataPtr->camera, this->dataPtr->rayQuery, 1000);
 
   events::HoverToScene hoverToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &hoverToSceneEvent);
@@ -422,7 +424,8 @@ void IgnRenderer::BroadcastLeftClick()
       this->dataPtr->mouseEvent.Type() != common::MouseEvent::RELEASE)
     return;
 
-  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+  auto pos = rendering::screenToScene(this->dataPtr->mouseEvent.Pos(),
+      this->dataPtr->camera, this->dataPtr->rayQuery, 1000);
 
   events::LeftClickToScene leftClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickToSceneEvent);
@@ -443,7 +446,8 @@ void IgnRenderer::BroadcastRightClick()
       this->dataPtr->mouseEvent.Type() != common::MouseEvent::RELEASE)
     return;
 
-  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+  auto pos = rendering::screenToScene(this->dataPtr->mouseEvent.Pos(),
+      this->dataPtr->camera, this->dataPtr->rayQuery, 1000);
 
   events::RightClickToScene rightClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
@@ -633,35 +637,6 @@ void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e)
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->dataPtr->mouseEvent = _e;
   this->dataPtr->mouseDirty = true;
-}
-
-/////////////////////////////////////////////////
-math::Vector3d IgnRenderer::ScreenToScene(
-    const math::Vector2i &_screenPos) const
-{
-  // TODO(ahcorde): Replace this code with function in ign-rendering
-  // Require this commit
-  // https://github.com/ignitionrobotics/ign-rendering/pull/363
-  // in ign-rendering6
-
-  // Normalize point on the image
-  double width = this->dataPtr->camera->ImageWidth();
-  double height = this->dataPtr->camera->ImageHeight();
-
-  double nx = 2.0 * _screenPos.X() / width - 1.0;
-  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
-
-  // Make a ray query
-  this->dataPtr->rayQuery->SetFromCamera(
-      this->dataPtr->camera, math::Vector2d(nx, ny));
-
-  auto result = this->dataPtr->rayQuery->ClosestPoint();
-  if (result)
-    return result.point;
-
-  // Set point to be 10m away if no intersection found
-  return this->dataPtr->rayQuery->Origin() +
-      this->dataPtr->rayQuery->Direction() * 10;
 }
 
 /////////////////////////////////////////////////
