@@ -144,7 +144,7 @@ void PointCloud::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 //////////////////////////////////////////////////
 void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
 {
-  std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
   // Unsubscribe from previous choice
   if (!this->dataPtr->pointCloudTopic.empty() &&
       !this->dataPtr->node.Unsubscribe(this->dataPtr->pointCloudTopic))
@@ -176,7 +176,7 @@ void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
 //////////////////////////////////////////////////
 void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
 {
-  std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
   // Unsubscribe from previous choice
   if (!this->dataPtr->floatVTopic.empty() &&
       !this->dataPtr->node.Unsubscribe(this->dataPtr->floatVTopic))
@@ -222,7 +222,7 @@ void PointCloud::Show(bool _show)
 /////////////////////////////////////////////////
 void PointCloud::OnRefresh()
 {
-  std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
   ignmsg << "Refreshing topic list for point cloud messages." << std::endl;
 
   // Clear
@@ -296,7 +296,7 @@ void PointCloud::SetFloatVTopicList(
 void PointCloud::OnPointCloud(
     const ignition::msgs::PointCloudPacked &_msg)
 {
-  std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
   this->dataPtr->pointCloudMsg = _msg;
   this->dataPtr->PublishMarkers();
 }
@@ -304,7 +304,7 @@ void PointCloud::OnPointCloud(
 //////////////////////////////////////////////////
 void PointCloud::OnFloatV(const ignition::msgs::Float_V &_msg)
 {
-  std::lock_guard<std::recursive_mutex>(this->dataPtr->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
   this->dataPtr->floatVMsg = _msg;
 
   this->dataPtr->minFloatV = std::numeric_limits<float>::max();
@@ -365,7 +365,7 @@ void PointCloudPrivate::PublishMarkers()
     return;
   }
 
-  std::lock_guard<std::recursive_mutex>(this->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->mutex);
   ignition::msgs::Marker marker;
   marker.set_ns(this->pointCloudTopic + this->floatVTopic);
   marker.set_id(1);
@@ -429,7 +429,7 @@ void PointCloudPrivate::ClearMarkers()
   if (this->pointCloudTopic.empty())
     return;
 
-  std::lock_guard<std::recursive_mutex>(this->mutex);
+  std::lock_guard<std::recursive_mutex> lock(this->mutex);
   ignition::msgs::Marker msg;
   msg.set_ns(this->pointCloudTopic + this->floatVTopic);
   msg.set_id(0);
