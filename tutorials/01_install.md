@@ -58,7 +58,7 @@ Binary install is pending `ignition-rendering` and `ignition-gui` being added to
 
 ## Source Install
 
-### Ubuntu Bionic 18.04 or above
+### Ubuntu Focal 20.04 or above
 
 #### Install Prerequisites
 
@@ -80,11 +80,6 @@ Clone source code:
 Install dependencies
   ```
   sudo apt -y install $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
-  ```
-
-Only on Bionic, update the GCC compiler version:
-  ```
-  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
   ```
 
 #### Build from source
