@@ -134,6 +134,11 @@ Popup {
     }
     Button {
       visible: duration == 0
+      flat: true
+      background: Rectangle {
+        color: parent.down ? "#cccccc" :
+                (parent.hovered ? "#d6d6d6" : "#f6f6f6")
+      }
       text: "Dismiss"
         onClicked: snackbar.close()
     }
