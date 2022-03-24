@@ -566,9 +566,13 @@ namespace ignition
       signals: void configChanged();
 
       /// \brief Displays a message to the user
+      /// The message will appear in a snackbar, this message requires to
+      /// click on the botton "Dismiss" to close the dialog.
       signals: void notify(const QString &_message);
 
       /// \brief Displays a message to the user
+      /// The message will appear in a snackbar, this message disappeared when
+      /// the duration is over
       /// \param[in] _message Message to show
       /// \param[in] _duration Time in milliseconds that the message will
       /// appear

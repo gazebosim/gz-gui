@@ -23,6 +23,20 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 
+/*
+ To use the snackbar you need to call the methods in the MainWindow class:
+  - notify()
+  - notifyWithDuration
+
+For example:
+  // This code will show the message "Message" during one second
+  App()->findChild<MainWindow *>()->notifyWithDuration("Message", 1000);
+
+  // This code will show the message "Message2" but the dialog will be there
+  // until you press the button "Dismiss"
+  App()->findChild<MainWindow *>()->notifyWithDuration("Message2", 1000);
+*/
+
 Popup {
   id: snackbar
   modal: duration == 0
@@ -34,8 +48,16 @@ Popup {
 
   closePolicy: Popup.NoAutoClose
 
+  // Array that contains a dictionary with two keys "text" and "duration"
+  // This structure keeps the message to show using FIFO
   property var popupArray: []
 
+  // Duration of the snackbar. If duration is equal to zero then
+  // you should click on the button "Dismiss" to close the dialog",
+  // otherwise you need to wait the duration defined.
+  property int duration: 0
+
+  // This method is called when the dialog is closed
   onClosed: {
     timer.stop()
     checkArray();
@@ -52,15 +74,13 @@ Popup {
     }
   }
 
-  // Duration of the snackbar. If duration is equal to zero then
-  // you should click somewhere in Ignition Gazebo to close it.
-  property int duration: 4000
-
-  function setText(_message) {
-    popupArray.push({"text": _message, "duration": duration})
+  // this function is called when notify() o notifyWithDuration() are called
+  function setTextDuration(_message, _duration) {
+    popupArray.push({"text": _message, "duration": _duration})
     checkArray();
   }
 
+  // This method check if the popupArray has remaining messages to show.
   function checkArray()
   {
     if (popupArray.length == 0)
@@ -102,11 +122,6 @@ Popup {
     }
   }
 
-  function setTextDuration(_message, _duration) {
-    popupArray.push({"text": _message, "duration": _duration})
-    checkArray();
-  }
-
   Row {
     id: notificationColumn
 
@@ -116,9 +131,9 @@ Popup {
       wrapMode: Label.Wrap
       font.pixelSize: 18
       anchors.verticalCenter: parent.verticalCenter
-      horizontalAlignment: Label.AlignHCenter
     }
     Button {
+      visible: duration == 0
       text: "Dismiss"
         onClicked: snackbar.close()
     }
