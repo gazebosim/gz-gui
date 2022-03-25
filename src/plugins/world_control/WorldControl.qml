@@ -91,7 +91,7 @@ RowLayout {
     visible: showPlay
     text: paused ? playIcon : pauseIcon
     checkable: true
-    anchors.verticalCenter: parent.verticalCenter
+    Layout.alignment : Qt.AlignVCenter
     Layout.minimumWidth: width
     Layout.leftMargin: 10
     onClicked: {
