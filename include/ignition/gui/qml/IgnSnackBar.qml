@@ -45,7 +45,7 @@ Popup {
   y: window.height - window.height / 6
   width: window.width - window.width / 6
   contentHeight: Math.max(dismissButton.height, notificationText.height)
-  horizontalPadding: 10
+  padding: 10
 
   // If the popup has a Dismiss button, only close by pressing that.
   // Otherwise, use the default behavior.
