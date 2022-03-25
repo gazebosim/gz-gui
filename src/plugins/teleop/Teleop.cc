@@ -150,8 +150,8 @@ void Teleop::OnTopicSelection(const QString &_topic)
   else
   {
     App()->findChild<MainWindow *>()->notifyWithDuration(
-      QString::fromStdString("Subscribing to topic: '" +
-        this->dataPtr->topic + "'"), 4000);
+      QString::fromStdString("Subscribing to topic: '<b>" +
+        this->dataPtr->topic + "</b>'"), 4000);
   }
 }
 

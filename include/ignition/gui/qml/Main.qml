@@ -102,12 +102,10 @@ ApplicationWindow
   Connections {
     target: MainWindow
     onNotify: {
-      notificationDialog.setText(_message)
-      notificationDialog.open()
+      notificationDialog.setTextDuration(_message, 0)
     }
     onNotifyWithDuration: {
       notificationDialog.setTextDuration(_message, _duration)
-      notificationDialog.open()
     }
   }
 
