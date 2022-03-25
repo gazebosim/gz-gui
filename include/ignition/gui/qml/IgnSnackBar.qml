@@ -25,8 +25,8 @@ import QtQuick.Window 2.2
 
 /*
  To use the snackbar you need to call the methods in the MainWindow class:
-  - notify()
-  - notifyWithDuration
+  - notify(message)
+  - notifyWithDuration(message, duration)
 
 For example:
   // This code will show the message "Message" during one second
@@ -34,7 +34,7 @@ For example:
 
   // This code will show the message "Message2" but the dialog will be there
   // until you press the button "Dismiss"
-  App()->findChild<MainWindow *>()->notifyWithDuration("Message2", 1000);
+  App()->findChild<MainWindow *>()->notifyWithDuration("Message2");
 */
 
 Popup {
@@ -44,9 +44,13 @@ Popup {
   x: (window.width - width) / 2
   y: window.height - window.height / 6
   width: window.width - window.width / 6
-  contentHeight: notificationColumn.height
+  contentHeight: Math.max(dismissButton.height, notificationText.height)
+  horizontalPadding: 10
 
-  closePolicy: Popup.NoAutoClose
+  // If the popup has a Dismiss button, only close by pressing that.
+  // Otherwise, use the default behavior.
+  closePolicy: duration == 0 ? Popup.NoAutoClose :
+      Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
   // Array that contains a dictionary with two keys "text" and "duration"
   // This structure keeps the message to show using FIFO
@@ -74,7 +78,7 @@ Popup {
     }
   }
 
-  // this function is called when notify() o notifyWithDuration() are called
+  // this function is called when notify() or notifyWithDuration() are called
   function setTextDuration(_message, _duration) {
     popupArray.push({"text": _message, "duration": _duration})
     checkArray();
@@ -122,25 +126,33 @@ Popup {
     }
   }
 
-  Row {
-    id: notificationColumn
+  contentItem: RowLayout {
+    id: contentLayout
+    height: dismissButton.height
+    anchors.verticalCenter: snackbar.verticalCenter
 
-    Label {
+    Text {
       id: notificationText
-      width: snackbar.availableWidth * 6 / 8
-      wrapMode: Label.Wrap
-      font.pixelSize: 18
-      anchors.verticalCenter: parent.verticalCenter
+      color: Material.theme == Material.Light ? "black" : "white"
+      wrapMode: Text.Wrap
+      font.pixelSize: 15
+      Layout.fillWidth: true
+      Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
     }
     Button {
+      id: dismissButton
       visible: duration == 0
       flat: true
+      Layout.margins: 0
+      Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
       background: Rectangle {
-        color: parent.down ? "#cccccc" :
-                (parent.hovered ? "#d6d6d6" : "#f6f6f6")
+        color: parent.down ? Material.color(Material.accent, Material.Shade400) :
+               (parent.hovered ? Material.color(Material.accent, Material.Shade200) :
+               "transparent")
       }
+      font.pixelSize: 12
       text: "Dismiss"
-        onClicked: snackbar.close()
+      onClicked: snackbar.close()
     }
   }
   Timer {

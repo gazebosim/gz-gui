@@ -571,8 +571,9 @@ namespace ignition
       signals: void notify(const QString &_message);
 
       /// \brief Displays a message to the user
-      /// The message will appear in a snackbar, this message disappeared when
-      /// the duration is over
+      /// The message will appear in a snackbar, this message disappear when
+      /// the duration is over, or if the user clicks outside or escape before
+      /// that.
       /// \param[in] _message Message to show
       /// \param[in] _duration Time in milliseconds that the message will
       /// appear
