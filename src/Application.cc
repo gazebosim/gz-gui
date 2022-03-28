@@ -89,6 +89,10 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 {
   igndbg << "Initializing application." << std::endl;
 
+  this->setOrganizationName("Ignition");
+  this->setOrganizationDomain("ignitionrobotics.org");
+  this->setApplicationName("Ignition GUI");
+
   // Configure console
   common::Console::SetPrefix("[GUI] ");
 
