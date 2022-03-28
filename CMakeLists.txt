@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-gui5 VERSION 5.4.0)
+project(ignition-gui5 VERSION 5.5.0)
 
 #============================================================================
 # Find ignition-cmake
