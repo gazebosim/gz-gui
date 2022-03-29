@@ -1,6 +1,22 @@
 ## Ignition Gui 5
 
-### Ignition Gui 5.X.X (20XX-XX-XX)
+### Ignition Gui 5.5.0 (2022-03-28)
+
+1. Fix some Qt warnings
+    * [Pull request #376](https://github.com/ignitionrobotics/ign-gui/pull/376)
+
+1. Added Snackbar QtQuick object
+    * [Pull request #369](https://github.com/ignitionrobotics/ign-gui/pull/369)
+    * [Pull request #370](https://github.com/ignitionrobotics/ign-gui/pull/370)
+
+1. Fix menu scrolling when a new plugin is added
+    * [Pull request #368](https://github.com/ignitionrobotics/ign-gui/pull/368)
+
+1. Improve KeyPublisher's usability
+    * [Pull request #362](https://github.com/ignitionrobotics/ign-gui/pull/362)
+
+1. Backport GridConfig improvements to Grid3D
+    * [Pull request #363](https://github.com/ignitionrobotics/ign-gui/pull/363)
 
 ### Ignition Gui 5.4.0 (2022-01-31)
 
