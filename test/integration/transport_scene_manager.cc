@@ -37,13 +37,16 @@
 #include "ignition/gui/MainWindow.hh"
 
 int g_argc = 1;
-char **g_argv = new char *[g_argc];
+char* g_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./TransportSceneManager_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
+TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -77,7 +80,7 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 }
 
 /////////////////////////////////////////////////
-TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
+TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 {
   bool sceneRequested{false};
   std::function<bool(msgs::Scene &)> sceneService =
