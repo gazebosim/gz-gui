@@ -559,6 +559,11 @@ std::string IgnRenderer::Initialize()
 
   igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
   auto scene = engine->CreateScene(this->sceneName);
+  if (nullptr == scene)
+  {
+    return "Failed to create scene [" + this->sceneName + "] for engine [" +
+        this->engineName + "]";
+  }
   scene->SetAmbientLight(this->ambientLight);
   scene->SetBackgroundColor(this->backgroundColor);
 
