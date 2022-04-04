@@ -19,7 +19,10 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
+
+#include <QQmlProperty>
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/MeshManager.hh>
@@ -44,6 +47,7 @@
 #endif
 
 #include <ignition/transport/Node.hh>
+#include <ignition/transport/TopicUtils.hh>
 
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Conversions.hh"
@@ -124,16 +128,16 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
   public: void DeleteEntity(const unsigned int _entity);
 
   //// \brief Ign-transport scene service name
-  public: std::string service;
+  public: std::string service{"scene"};
 
   //// \brief Ign-transport pose topic name
-  public: std::string poseTopic;
+  public: std::string poseTopic{"pose"};
 
   //// \brief Ign-transport deletion topic name
-  public: std::string deletionTopic;
+  public: std::string deletionTopic{"delete"};
 
   //// \brief Ign-transport scene topic name
-  public: std::string sceneTopic;
+  public: std::string sceneTopic{"scene"};
 
   //// \brief Pointer to the rendering scene
   public: rendering::ScenePtr scene{nullptr};
@@ -165,6 +169,9 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
   /// \brief Transport node for making service request and subscribing to
   /// pose topic
   public: ignition::transport::Node node;
+
+  /// \brief Thread to wait for transport initialization
+  public: std::thread initializeTransport;
 };
 
 using namespace ignition;
@@ -180,6 +187,8 @@ TransportSceneManager::TransportSceneManager()
 /////////////////////////////////////////////////
 TransportSceneManager::~TransportSceneManager()
 {
+  if (this->dataPtr->initializeTransport.joinable())
+    this->dataPtr->initializeTransport.join();
 }
 
 /////////////////////////////////////////////////
@@ -194,29 +203,56 @@ void TransportSceneManager::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto elem = _pluginElem->FirstChildElement("service");
     if (nullptr != elem && nullptr != elem->GetText())
     {
-      this->dataPtr->service = elem->GetText();
+      this->dataPtr->service =
+          transport::TopicUtils::AsValidTopic(elem->GetText());
     }
 
     elem = _pluginElem->FirstChildElement("pose_topic");
     if (nullptr != elem && nullptr != elem->GetText())
     {
-      this->dataPtr->poseTopic = elem->GetText();
+      this->dataPtr->poseTopic =
+          transport::TopicUtils::AsValidTopic(elem->GetText());
     }
 
     elem = _pluginElem->FirstChildElement("deletion_topic");
     if (nullptr != elem && nullptr != elem->GetText())
     {
-      this->dataPtr->deletionTopic = elem->GetText();
+      this->dataPtr->deletionTopic =
+          transport::TopicUtils::AsValidTopic(elem->GetText());
     }
 
     elem = _pluginElem->FirstChildElement("scene_topic");
     if (nullptr != elem && nullptr != elem->GetText())
     {
-      this->dataPtr->sceneTopic = elem->GetText();
+      this->dataPtr->sceneTopic =
+          transport::TopicUtils::AsValidTopic(elem->GetText());
     }
   }
 
-  App()->findChild<MainWindow *>()->installEventFilter(this);
+  QQmlProperty::write(this->PluginItem(), "service",
+      QString::fromStdString(this->dataPtr->service));
+  QQmlProperty::write(this->PluginItem(), "poseTopic",
+      QString::fromStdString(this->dataPtr->poseTopic));
+  QQmlProperty::write(this->PluginItem(), "deletionTopic",
+      QString::fromStdString(this->dataPtr->deletionTopic));
+  QQmlProperty::write(this->PluginItem(), "sceneTopic",
+      QString::fromStdString(this->dataPtr->sceneTopic));
+
+  if (this->dataPtr->service.empty() ||
+      this->dataPtr->poseTopic.empty() ||
+      this->dataPtr->deletionTopic.empty() ||
+      this->dataPtr->sceneTopic.empty())
+  {
+    ignerr << "One or more transport parameters invalid:" << std::endl
+        << "  * <service>: " << this->dataPtr->service << std::endl
+        << "  * <pose_topic>: " << this->dataPtr->poseTopic << std::endl
+        << "  * <deletion_topic>: " << this->dataPtr->deletionTopic << std::endl
+        << "  * <scene_topic>: " << this->dataPtr->sceneTopic << std::endl;
+  }
+  else
+  {
+    App()->findChild<MainWindow *>()->installEventFilter(this);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -288,13 +324,14 @@ void TransportSceneManagerPrivate::Request()
     if (publishers.size() > 0)
       break;
     std::this_thread::sleep_for(sleepDuration);
-    igndbg << "Waiting for service " << this->service << "\n";
+    igndbg << "Waiting for service [" << this->service << "]\n";
   }
 
   if (publishers.empty() || !this->node.Request(this->service,
       &TransportSceneManagerPrivate::OnSceneSrvMsg, this))
   {
-    ignerr << "Error making service request to " << this->service << std::endl;
+    ignerr << "Error making service request to [" << this->service << "]"
+           << std::endl;
   }
 }
 
@@ -334,7 +371,8 @@ void TransportSceneManagerPrivate::OnRender()
     if (nullptr == this->scene)
       return;
 
-    this->InitializeTransport();
+    this->initializeTransport = std::thread(
+        &TransportSceneManagerPrivate::InitializeTransport, this);
   }
 
   std::lock_guard<std::mutex> lock(this->msgMutex);

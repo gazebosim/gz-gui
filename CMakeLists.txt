@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-gui6 VERSION 6.3.0)
+project(ignition-gui6 VERSION 6.4.0)
 
 #============================================================================
 # Find ignition-cmake
@@ -59,7 +59,7 @@ set(IGN_TRANSPORT_VER ${ignition-transport11_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-rendering
-ign_find_package(ignition-rendering6 REQUIRED COMPONENTS ogre)
+ign_find_package(ignition-rendering6 REQUIRED)
 set(IGN_RENDERING_VER ${ignition-rendering6_VERSION_MAJOR})
 
 #--------------------------------------

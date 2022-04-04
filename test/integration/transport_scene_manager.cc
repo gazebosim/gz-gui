@@ -37,13 +37,16 @@
 #include "ignition/gui/MainWindow.hh"
 
 int g_argc = 1;
-char **g_argv = new char *[g_argc];
+char* g_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./TransportSceneManager_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
+TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -77,7 +80,7 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 }
 
 /////////////////////////////////////////////////
-TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
+TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 {
   bool sceneRequested{false};
   std::function<bool(msgs::Scene &)> sceneService =
@@ -162,6 +165,8 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
     QCoreApplication::processEvents();
     sleep++;
   }
+  EXPECT_TRUE(sceneRequested);
+  EXPECT_LT(sleep, maxSleep);
 
   auto scene = engine->SceneByName("banana");
   ASSERT_NE(nullptr, scene);
@@ -169,8 +174,15 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   auto root = scene->RootVisual();
   ASSERT_NE(nullptr, root);
 
+  for (sleep = 0; root->ChildCount() < 2 && sleep < maxSleep; ++sleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+  }
+  EXPECT_LT(sleep, maxSleep);
+
   // Check scene is populated
-  EXPECT_EQ(2u, root->ChildCount());
+  ASSERT_EQ(2u, root->ChildCount());
 
   // First child is user camera
   auto camera = std::dynamic_pointer_cast<rendering::Camera>(

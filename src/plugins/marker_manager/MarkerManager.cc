@@ -20,6 +20,8 @@
 #include <map>
 #include <string>
 
+#include <QQmlProperty>
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/Profiler.hh>
 #include <ignition/common/StringUtils.hh>
@@ -677,6 +679,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
     this->title = "Marker Manager";
 
   // Custom parameters
+  std::string statsTopic;
   if (_pluginElem)
   {
     auto elem = _pluginElem->FirstChildElement("topic_name");
@@ -704,59 +707,64 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       }
     }
 
-    // World name from window, to construct default topics and services
-    std::string worldName = "example";
-    auto worldNames = gui::worldNames();
-    if (!worldNames.empty())
-      worldName = worldNames[0].toStdString();
-
-    // Subscribe to world stats
-    std::string statsTopic;
+    // Stats topic
     auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
     if (nullptr != statsTopicElem && nullptr != statsTopicElem->GetText())
       statsTopic = statsTopicElem->GetText();
+  }
 
-    // Service specified with different world name
-    auto parts = common::Split(statsTopic, '/');
-    if (!worldName.empty() &&
-        parts.size() == 4 &&
-        parts[0] == "" &&
-        parts[1] == "world" &&
-        parts[2] != worldName &&
-        parts[3] == "stats")
+  // World name from window, to construct default topics and services
+  std::string worldName = "example";
+  auto worldNames = gui::worldNames();
+  if (!worldNames.empty())
+    worldName = worldNames[0].toStdString();
+
+  // Subscribe to world stats
+  // Service specified with different world name
+  auto parts = common::Split(statsTopic, '/');
+  if (!worldName.empty() &&
+      parts.size() == 4 &&
+      parts[0] == "" &&
+      parts[1] == "world" &&
+      parts[2] != worldName &&
+      parts[3] == "stats")
+  {
+    ignwarn << "Ignoring topic [" << statsTopic
+            << "], world name different from [" << worldName
+            << "]. Fix or remove your <stats_topic> tag." << std::endl;
+
+    statsTopic = "/world/" + worldName + "/stats";
+  }
+
+  if (statsTopic.empty() && !worldName.empty())
+  {
+    statsTopic = "/world/" + worldName + "/stats";
+  }
+
+  statsTopic = transport::TopicUtils::AsValidTopic(statsTopic);
+  if (!statsTopic.empty())
+  {
+    // Subscribe to world_stats
+    if (!this->dataPtr->node.Subscribe(statsTopic,
+        &MarkerManagerPrivate::OnWorldStatsMsg, this->dataPtr.get()))
     {
-      ignwarn << "Ignoring topic [" << statsTopic
-              << "], world name different from [" << worldName
-              << "]. Fix or remove your <stats_topic> tag." << std::endl;
-
-      statsTopic = "/world/" + worldName + "/stats";
-    }
-
-    if (statsTopic.empty() && !worldName.empty())
-    {
-      statsTopic = "/world/" + worldName + "/stats";
-    }
-
-    statsTopic = transport::TopicUtils::AsValidTopic(statsTopic);
-    if (!statsTopic.empty())
-    {
-      // Subscribe to world_stats
-      if (!this->dataPtr->node.Subscribe(statsTopic,
-          &MarkerManagerPrivate::OnWorldStatsMsg, this->dataPtr.get()))
-      {
-        ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
-      }
-      else
-      {
-        ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
-      }
+      ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
     }
     else
     {
-      ignerr << "Failed to create valid topic for world [" << worldName << "]"
-             << std::endl;
+      ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
     }
   }
+  else
+  {
+    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+           << std::endl;
+  }
+
+  QQmlProperty::write(this->PluginItem(), "topicName",
+      QString::fromStdString(this->dataPtr->topicName));
+  QQmlProperty::write(this->PluginItem(), "statsTopic",
+      QString::fromStdString(statsTopic));
 
   App()->findChild<MainWindow *>()->installEventFilter(this);
 }
