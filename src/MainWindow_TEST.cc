@@ -521,7 +521,8 @@ void FindExitDialogButtons(
   QObject *buttonBox{nullptr};
   for (const auto& c : dialog->findChildren<QObject *>())
   {
-    if (c->metaObject()->className() == std::string("QQuickDialogButtonBox"))
+    if (std::string(c->metaObject()->className()).find("ButtonBox") !=
+        std::string::npos)
     {
       const auto& p = c->property("standardButtons");
       if (p.isValid() && p.toInt() != 0)
@@ -543,7 +544,8 @@ void FindExitDialogButtons(
                               Q_RETURN_ARG(QQuickItem *, button),
                               Q_ARG(int, index));
 
-    ASSERT_STREQ("QQuickButton", button->metaObject()->className());
+    ASSERT_NE(std::string::npos,
+        std::string(button->metaObject()->className()).find("Button"));
     buttons.push_back(button);
   }
 

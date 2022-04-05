@@ -106,9 +106,9 @@ RenderThreadRhiMetal::RenderThreadRhiMetal(IgnRenderer *_renderer)
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhiMetal::Initialize()
+std::string RenderThreadRhiMetal::Initialize()
 {
-  this->dataPtr->renderer->Initialize();
+  return this->dataPtr->renderer->Initialize();
 }
 
 /////////////////////////////////////////////////
@@ -159,7 +159,7 @@ void RenderThreadRhiMetal::ShutDown()
 TextureNodeRhiMetal::~TextureNodeRhiMetal()
 {
   delete this->dataPtr->texture;
-  this->dataPtr->texture = nullptr; 
+  this->dataPtr->texture = nullptr;
 }
 
 /////////////////////////////////////////////////

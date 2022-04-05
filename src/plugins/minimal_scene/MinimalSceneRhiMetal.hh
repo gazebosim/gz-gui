@@ -69,7 +69,7 @@ namespace plugins
     public: RenderThreadRhiMetal(IgnRenderer *_renderer);
 
     // Documentation inherited
-    public: virtual void Initialize() override;
+    public: virtual std::string Initialize() override;
 
     // Documentation inherited
     public: virtual void RenderNext(RenderSync *_renderSync) override;

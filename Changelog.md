@@ -6,6 +6,20 @@
 
 ## Ignition Gui 6
 
+### Ignition Gui 6.4.0 (2022-02-01)
+
+1. Improve inserting WorldControl and WorldStats from menu
+    * [Pull request #349](https://github.com/ignitionrobotics/ign-gui/pull/349)
+
+1. Added a button that allows shutting down both the client and server.
+    * [Pull request #335](https://github.com/ignitionrobotics/ign-gui/pull/335)
+
+1. Prevent Scene3D 💥 if another scene is already loaded
+    * [Pull request #347](https://github.com/ignitionrobotics/ign-gui/pull/347)
+
+1. Add project() to examples and remove hard-dependency on Ogre1
+    * [Pull request #345](https://github.com/ignitionrobotics/ign-gui/pull/345)
+
 ### Ignition Gui 6.3.0 (2022-01-06)
 
 1. NavSat (GPS) map plugin
@@ -126,7 +140,53 @@
 
 ## Ignition Gui 5
 
-### Ignition Gui 5.X.X (20XX-XX-XX)
+### Ignition Gui 5.5.0 (2022-03-28)
+
+1. Fix some Qt warnings
+    * [Pull request #376](https://github.com/ignitionrobotics/ign-gui/pull/376)
+
+1. Added Snackbar QtQuick object
+    * [Pull request #369](https://github.com/ignitionrobotics/ign-gui/pull/369)
+    * [Pull request #370](https://github.com/ignitionrobotics/ign-gui/pull/370)
+
+1. Fix menu scrolling when a new plugin is added
+    * [Pull request #368](https://github.com/ignitionrobotics/ign-gui/pull/368)
+
+1. Improve KeyPublisher's usability
+    * [Pull request #362](https://github.com/ignitionrobotics/ign-gui/pull/362)
+
+1. Backport GridConfig improvements to Grid3D
+    * [Pull request #363](https://github.com/ignitionrobotics/ign-gui/pull/363)
+
+### Ignition Gui 5.4.0 (2022-01-31)
+
+1. Improve inserting WorldControl and WorldStats from menu
+    * [Pull request #349](https://github.com/ignitionrobotics/ign-gui/pull/349)
+
+1. Added a button that allows shutting down both the client and server.
+    * [Pull request #335](https://github.com/ignitionrobotics/ign-gui/pull/335)
+
+1. Prevent Scene3D 💥 if another scene is already loaded
+    * [Pull request #347](https://github.com/ignitionrobotics/ign-gui/pull/347)
+
+1. Add project() to examples and remove hard-dependency on Ogre1
+    * [Pull request #345](https://github.com/ignitionrobotics/ign-gui/pull/345)
+
+1. Fix codecheck
+    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
+
+1. Use qmldir to define QML module with IgnSpinBox
+    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+
+1. Fix TopicEcho plugin message display
+    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+
+1. Don't crash if a plugin has invalid QML
+    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+
+1. Added log storing for ign-gui
+    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
+
 
 ### Ignition Gui 5.3.0 (2021-10-13)
 

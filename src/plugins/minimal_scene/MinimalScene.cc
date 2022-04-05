@@ -44,6 +44,7 @@
 #include <ignition/rendering/RenderEngine.hh>
 #include <ignition/rendering/RenderingIface.hh>
 #include <ignition/rendering/Scene.hh>
+#include <ignition/rendering/Utils.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
@@ -406,7 +407,8 @@ void IgnRenderer::BroadcastHoverPos()
   if (!this->dataPtr->hoverDirty)
     return;
 
-  auto pos = this->ScreenToScene(this->dataPtr->mouseHoverPos);
+  auto pos = rendering::screenToScene(this->dataPtr->mouseHoverPos,
+      this->dataPtr->camera, this->dataPtr->rayQuery, 1000);
 
   events::HoverToScene hoverToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &hoverToSceneEvent);
@@ -447,7 +449,8 @@ void IgnRenderer::BroadcastLeftClick()
       this->dataPtr->mouseEvent.Type() != common::MouseEvent::RELEASE)
     return;
 
-  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+  auto pos = rendering::screenToScene(this->dataPtr->mouseEvent.Pos(),
+      this->dataPtr->camera, this->dataPtr->rayQuery, 1000);
 
   events::LeftClickToScene leftClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickToSceneEvent);
@@ -468,7 +471,8 @@ void IgnRenderer::BroadcastRightClick()
       this->dataPtr->mouseEvent.Type() != common::MouseEvent::RELEASE)
     return;
 
-  auto pos = this->ScreenToScene(this->dataPtr->mouseEvent.Pos());
+  auto pos = rendering::screenToScene(this->dataPtr->mouseEvent.Pos(),
+      this->dataPtr->camera, this->dataPtr->rayQuery, 1000);
 
   events::RightClickToScene rightClickToSceneEvent(pos);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickToSceneEvent);
@@ -534,32 +538,58 @@ void IgnRenderer::BroadcastKeyPress()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::Initialize()
+std::string IgnRenderer::Initialize()
 {
   if (this->initialized)
-    return;
+    return std::string();
 
-  this->dataPtr->rhiParams["winID"] = std::to_string(
-    ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
-      QuickWindow()->winId());
-  auto engine = rendering::engine(
-      this->engineName, this->dataPtr->rhiParams);
+  // Currently only support one engine at a time
+  rendering::RenderEngine *engine{nullptr};
+  auto loadedEngines = rendering::loadedEngines();
+
+  // Load engine if there's no engine yet
+  if (loadedEngines.empty())
+  {
+    this->dataPtr->rhiParams["winID"] = std::to_string(
+        ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+        QuickWindow()->winId());
+    engine = rendering::engine(this->engineName, this->dataPtr->rhiParams);
+  }
+  else
+  {
+    if (!this->engineName.empty() && loadedEngines.front() != this->engineName)
+    {
+      ignwarn << "Failed to load engine [" << this->engineName
+              << "]. Using engine [" << loadedEngines.front()
+              << "], which is already loaded. Currently only one engine is "
+              << "supported at a time." << std::endl;
+    }
+    this->engineName = loadedEngines.front();
+    engine = rendering::engine(loadedEngines.front());
+  }
+
   if (!engine)
   {
-    ignerr << "Engine [" << this->engineName << "] is not supported"
-           << std::endl;
-    return;
+    return "Engine [" + this->engineName + "] is not supported";
   }
 
   // Scene
-  auto scene = engine->SceneByName(this->sceneName);
-  if (!scene)
+  if (engine->SceneCount() > 0)
   {
-    igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
-    scene = engine->CreateScene(this->sceneName);
-    scene->SetAmbientLight(this->ambientLight);
-    scene->SetBackgroundColor(this->backgroundColor);
+    return "Currently only one plugin providing a 3D scene is supported at a "
+            "time.";
   }
+
+  igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+  auto scene = engine->CreateScene(this->sceneName);
+  if (nullptr == scene)
+  {
+    return "Failed to create scene [" + this->sceneName + "] for engine [" +
+        this->engineName + "]";
+  }
+  scene->SetAmbientLight(this->ambientLight);
+  scene->SetBackgroundColor(this->backgroundColor);
+  scene->SetCameraPassCountPerGpuFlush(6u);
 
   if (this->skyEnable)
   {
@@ -590,6 +620,7 @@ void IgnRenderer::Initialize()
   this->dataPtr->rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
 
   this->initialized = true;
+  return std::string();
 }
 
 /////////////////////////////////////////////////
@@ -600,14 +631,14 @@ void IgnRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    qDebug().nospace() << "Creating ign-rendering interface for OpenGL";
+    igndbg << "Creating ign-rendering interface for OpenGL" << std::endl;
     this->dataPtr->rhiParams["useCurrentGLContext"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiOpenGL>();
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    qDebug().nospace() << "Creating ign-renderering interface for Metal";
+    igndbg << "Creating ign-renderering interface for Metal" << std::endl;
     this->dataPtr->rhiParams["metal"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiMetal>();
   }
@@ -662,35 +693,6 @@ void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e)
 }
 
 /////////////////////////////////////////////////
-math::Vector3d IgnRenderer::ScreenToScene(
-    const math::Vector2i &_screenPos) const
-{
-  // TODO(ahcorde): Replace this code with function in ign-rendering
-  // Require this commit
-  // https://github.com/ignitionrobotics/ign-rendering/pull/363
-  // in ign-rendering7
-
-  // Normalize point on the image
-  double width = this->dataPtr->camera->ImageWidth();
-  double height = this->dataPtr->camera->ImageHeight();
-
-  double nx = 2.0 * _screenPos.X() / width - 1.0;
-  double ny = 1.0 - 2.0 * _screenPos.Y() / height;
-
-  // Make a ray query
-  this->dataPtr->rayQuery->SetFromCamera(
-      this->dataPtr->camera, math::Vector2d(nx, ny));
-
-  auto result = this->dataPtr->rayQuery->ClosestPoint();
-  if (result)
-    return result.point;
-
-  // Set point to be 10m away if no intersection found
-  return this->dataPtr->rayQuery->Origin() +
-      this->dataPtr->rayQuery->Direction() * 10;
-}
-
-/////////////////////////////////////////////////
 void IgnRenderer::TextureId(void* _texturePtr)
 {
   this->dataPtr->rhi->TextureId(_texturePtr);
@@ -704,6 +706,12 @@ RenderThread::RenderThread()
 
   RenderWindowItem::Implementation::threads << this;
   qRegisterMetaType<RenderSync*>("RenderSync*");
+}
+
+/////////////////////////////////////////////////
+void RenderThread::SetErrorCb(std::function<void(const QString&)> _cb)
+{
+  this->errorCb = _cb;
 }
 
 /////////////////////////////////////////////////
@@ -723,7 +731,8 @@ void RenderThread::ShutDown()
 
   // Stop event processing, move the thread to GUI and make sure it is deleted.
   this->exit();
-  this->moveToThread(QGuiApplication::instance()->thread());
+  if (this->ignRenderer.initialized)
+    this->moveToThread(QGuiApplication::instance()->thread());
 }
 
 /////////////////////////////////////////////////
@@ -776,22 +785,27 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
   // Create the render interface
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    qDebug().nospace() << "Creating render thread interface for OpenGL";
+    igndbg << "Creating render thread interface for OpenGL" << std::endl;
     this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->ignRenderer);
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    qDebug().nospace() << "Creating render thread interface for Metal";
+    igndbg << "Creating render thread interface for Metal" << std::endl;
     this->rhi = std::make_unique<RenderThreadRhiMetal>(&this->ignRenderer);
   }
 #endif
 }
 
 /////////////////////////////////////////////////
-void RenderThread::Initialize()
+std::string RenderThread::Initialize()
 {
-  this->rhi->Initialize();
+  auto loadingError = this->rhi->Initialize();
+  if (!loadingError.empty())
+  {
+    this->errorCb(QString::fromStdString(loadingError));
+  }
+  return loadingError;
 }
 
 /////////////////////////////////////////////////
@@ -803,13 +817,13 @@ TextureNode::TextureNode(
 {
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    qDebug().nospace() << "Creating texture node render interface for OpenGL";
+    igndbg << "Creating texture node render interface for OpenGL" << std::endl;
     this->rhi = std::make_unique<TextureNodeRhiOpenGL>(_window);
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    qDebug().nospace() << "Creating texture node render interface for Metal";
+    igndbg << "Creating texture node render interface for Metal" << std::endl;
     this->rhi = std::make_unique<TextureNodeRhiMetal>(_window);
   }
 #endif
@@ -882,6 +896,12 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 /////////////////////////////////////////////////
 RenderWindowItem::~RenderWindowItem()
 {
+  this->StopRendering();
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::StopRendering()
+{
   // Disconnect our QT connections.
   for(auto conn : this->dataPtr->connections)
     QObject::disconnect(conn);
@@ -907,7 +927,10 @@ void RenderWindowItem::Ready()
   }
 
   // Carry out initialization on main thread before moving to render thread
-  this->dataPtr->renderThread->Initialize();
+  if (!this->dataPtr->renderThread->Initialize().empty())
+  {
+    return;
+  }
 
   if (this->dataPtr->graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
@@ -1077,30 +1100,6 @@ void RenderWindowItem::SetCameraFarClip(double _far)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::SetSceneService(const std::string &_service)
-{
-  this->dataPtr->renderThread->ignRenderer.sceneService = _service;
-}
-
-/////////////////////////////////////////////////
-void RenderWindowItem::SetPoseTopic(const std::string &_topic)
-{
-  this->dataPtr->renderThread->ignRenderer.poseTopic = _topic;
-}
-
-/////////////////////////////////////////////////
-void RenderWindowItem::SetDeletionTopic(const std::string &_topic)
-{
-  this->dataPtr->renderThread->ignRenderer.deletionTopic = _topic;
-}
-
-/////////////////////////////////////////////////
-void RenderWindowItem::SetSceneTopic(const std::string &_topic)
-{
-  this->dataPtr->renderThread->ignRenderer.sceneTopic = _topic;
-}
-
-/////////////////////////////////////////////////
 void RenderWindowItem::SetSkyEnabled(const bool &_sky)
 {
   this->dataPtr->renderThread->ignRenderer.skyEnable = _sky;
@@ -1132,6 +1131,8 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
            << "Render window will not be created" << std::endl;
     return;
   }
+  renderWindow->SetErrorCb(std::bind(&MinimalScene::SetLoadingError, this,
+      std::placeholders::_1));
 
   if (this->title.empty())
     this->title = "3D Scene";
@@ -1224,34 +1225,6 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       }
     }
 
-    elem = _pluginElem->FirstChildElement("service");
-    if (nullptr != elem && nullptr != elem->GetText())
-    {
-      std::string service = elem->GetText();
-      renderWindow->SetSceneService(service);
-    }
-
-    elem = _pluginElem->FirstChildElement("pose_topic");
-    if (nullptr != elem && nullptr != elem->GetText())
-    {
-      std::string topic = elem->GetText();
-      renderWindow->SetPoseTopic(topic);
-    }
-
-    elem = _pluginElem->FirstChildElement("deletion_topic");
-    if (nullptr != elem && nullptr != elem->GetText())
-    {
-      std::string topic = elem->GetText();
-      renderWindow->SetDeletionTopic(topic);
-    }
-
-    elem = _pluginElem->FirstChildElement("scene_topic");
-    if (nullptr != elem && nullptr != elem->GetText())
-    {
-      std::string topic = elem->GetText();
-      renderWindow->SetSceneTopic(topic);
-    }
-
     elem = _pluginElem->FirstChildElement("sky");
     if (nullptr != elem && nullptr != elem->GetText())
     {
@@ -1291,6 +1264,12 @@ void RenderWindowItem::OnDropped(const QString &_drop,
 {
   this->dataPtr->renderThread->ignRenderer.NewDropEvent(
     _drop.toStdString(), _dropPos);
+}
+
+/////////////////////////////////////////////////
+void RenderWindowItem::SetErrorCb(std::function<void(const QString&)> _cb)
+{
+  this->dataPtr->renderThread->SetErrorCb(_cb);
 }
 
 /////////////////////////////////////////////////
@@ -1394,6 +1373,25 @@ void MinimalScene::OnFocusWindow()
 {
   auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
   renderWindow->forceActiveFocus();
+}
+
+/////////////////////////////////////////////////
+QString MinimalScene::LoadingError() const
+{
+  return this->loadingError;
+}
+
+/////////////////////////////////////////////////
+void MinimalScene::SetLoadingError(const QString &_loadingError)
+{
+  if (!_loadingError.isEmpty())
+  {
+    auto renderWindow = this->PluginItem()->findChild<RenderWindowItem *>();
+    if (nullptr != renderWindow)
+      renderWindow->StopRendering();
+  }
+  this->loadingError = _loadingError;
+  this->LoadingErrorChanged();
 }
 
 // Register this plugin

@@ -79,7 +79,9 @@ namespace plugins
     /// \brief Carry out initialization
     //
     /// On macOS this must be run on the main thread
-    public: virtual void Initialize() = 0;
+    /// \return Error message if initialization failed. If empty, no errors
+    /// occurred.
+    public: virtual std::string Initialize() = 0;
 
     /// \brief Render when safe
     /// \param[in] _renderSync RenderSync to safely

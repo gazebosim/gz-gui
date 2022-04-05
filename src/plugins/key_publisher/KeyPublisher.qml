@@ -15,13 +15,30 @@
  *
 */
 
-import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick 2.9
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
-Rectangle {
-    visible: false
-    Layout.minimumWidth: 100
-    Layout.minimumHeight: 100
+GridLayout {
+  columns: 1
+  columnSpacing: 10
+  Layout.minimumWidth: 350
+  Layout.minimumHeight: 200
+  anchors.fill: parent
+  anchors.margins: 10
+
+  Label {
+    Layout.columnSpan: 1
+    Layout.fillWidth: true
+    wrapMode: Text.WordWrap
+    text: "Keystrokes are being published to topic:\n'/keyboard/keypress'."
+  }
+
+
+  Item {
+    Layout.columnSpan: 1
+    width: 10
+    Layout.fillHeight: true
+  }
 }
 
