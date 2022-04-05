@@ -566,6 +566,7 @@ std::string IgnRenderer::Initialize()
   }
   scene->SetAmbientLight(this->ambientLight);
   scene->SetBackgroundColor(this->backgroundColor);
+  scene->SetCameraPassCountPerGpuFlush(6u);
 
   if (this->skyEnable)
   {
