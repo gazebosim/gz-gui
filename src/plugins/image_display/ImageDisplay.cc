@@ -31,6 +31,7 @@
 #include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Application.hh"
+#include "ignition/gui/MainWindow.hh"
 
 namespace ignition
 {
@@ -247,7 +248,10 @@ void ImageDisplay::OnTopic(const QString _topic)
       this))
   {
     ignerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
+    return;
   }
+  App()->findChild<MainWindow *>()->notifyWithDuration(
+    QString::fromStdString("Subscribed to: <b>" + topic + "</b>"), 4000);
 }
 
 /////////////////////////////////////////////////

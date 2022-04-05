@@ -140,8 +140,19 @@ void Teleop::OnTopicSelection(const QString &_topic)
       this->dataPtr->node.Advertise<ignition::msgs::Twist>
       (this->dataPtr->topic);
   if(!this->dataPtr->cmdVelPub)
-      ignerr << "Error when advertising topic: " <<
-        this->dataPtr->topic << std::endl;
+  {
+    App()->findChild<MainWindow *>()->notifyWithDuration(
+      QString::fromStdString("Error when advertising topic: " +
+        this->dataPtr->topic), 4000);
+    ignerr << "Error when advertising topic: " <<
+      this->dataPtr->topic << std::endl;
+  }
+  else
+  {
+    App()->findChild<MainWindow *>()->notifyWithDuration(
+      QString::fromStdString("Subscribing to topic: '<b>" +
+        this->dataPtr->topic + "</b>'"), 4000);
+  }
 }
 
 /////////////////////////////////////////////////

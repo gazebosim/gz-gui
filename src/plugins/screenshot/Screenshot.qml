@@ -30,11 +30,6 @@ ToolBar {
     color: "transparent"
   }
 
-  Connections {
-    target: Screenshot
-    onSavedScreenshot: savedPathPopup.open()
-  }
-
   RowLayout {
     spacing: 2
 
@@ -85,16 +80,5 @@ ToolBar {
         close()
       }
     }
-
-    Popup {
-      id: savedPathPopup
-      parent: ApplicationWindow.overlay
-      x: 0
-      y: 100
-      Text {
-        text: "Screenshot saved: " + Screenshot.savedScreenshotPath
-      }
-    }
-
   }
 }
