@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
 #define IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
 
+#include <string>
+
 #include "ignition/gui/Plugin.hh"
 #include "ignition/rendering/RenderTypes.hh"
 

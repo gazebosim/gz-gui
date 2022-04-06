@@ -26,6 +26,7 @@
 #include <QSize>
 
 #include <memory>
+#include <string>
 
 namespace ignition
 {
