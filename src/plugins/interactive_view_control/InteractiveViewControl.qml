@@ -15,14 +15,27 @@
  *
 */
 
-import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick 2.9
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
-// TODO: remove invisible rectangle, see
-// https://github.com/ignitionrobotics/ign-gui/issues/220
-Rectangle {
-  visible: false
-  Layout.minimumWidth: 100
-  Layout.minimumHeight: 100
+ColumnLayout {
+  Layout.minimumWidth: 350
+  Layout.minimumHeight: 110
+  anchors.fill: parent
+  anchors.margins: 10
+
+  property string message: '<ul><li>Adding mouse controls to the 3D scene.</li>' +
+      '<li>Providing the /gui/camera/view_control service</li></ul>'
+
+  Label {
+    Layout.fillWidth: true
+    wrapMode: Text.WordWrap
+    text: message
+  }
+
+  Item {
+    width: 10
+    Layout.fillHeight: true
+  }
 }

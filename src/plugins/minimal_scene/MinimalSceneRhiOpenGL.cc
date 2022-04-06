@@ -27,6 +27,7 @@
 #include <QSize>
 
 #include <memory>
+#include <string>
 
 /////////////////////////////////////////////////
 namespace ignition
@@ -123,13 +124,18 @@ void RenderThreadRhiOpenGL::SetContext(QOpenGLContext *_context)
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhiOpenGL::Initialize()
+std::string RenderThreadRhiOpenGL::Initialize()
 {
   this->dataPtr->context->makeCurrent(this->dataPtr->surface);
 
-  this->dataPtr->renderer->Initialize();
+  auto loadingError = this->dataPtr->renderer->Initialize();
+  if (!loadingError.empty())
+  {
+    return loadingError;
+  }
 
   this->dataPtr->context->doneCurrent();
+  return std::string();
 }
 
 /////////////////////////////////////////////////
@@ -139,7 +145,7 @@ void RenderThreadRhiOpenGL::RenderNext(RenderSync *_renderSync)
 
   if (!this->dataPtr->renderer->initialized)
   {
-    this->dataPtr->renderer->Initialize();
+    this->Initialize();
   }
 
   if (!this->dataPtr->renderer->initialized)
@@ -177,12 +183,18 @@ void RenderThreadRhiOpenGL::ShutDown()
 
   this->dataPtr->texturePtr = nullptr;
 
-  this->dataPtr->context->doneCurrent();
-  delete this->dataPtr->context;
-  this->dataPtr->context = nullptr;
+  if (this->dataPtr->context)
+  {
+    this->dataPtr->context->doneCurrent();
+    delete this->dataPtr->context;
+    this->dataPtr->context = nullptr;
+  }
 
   // Schedule this to be deleted only after we're done cleaning up
-  this->dataPtr->surface->deleteLater();
+  if (this->dataPtr->surface)
+  {
+    this->dataPtr->surface->deleteLater();
+  }
 }
 
 /////////////////////////////////////////////////

@@ -7,6 +7,7 @@
   <file>qml/IgnCardSettings.qml</file>
   <file>qml/IgnHelpers.qml</file>
   <file>qml/IgnRulers.qml</file>
+  <file>qml/IgnSnackBar.qml</file>
   <file>qml/IgnSortFilterModel.qml</file>
   <file>qml/IgnSpinBox.qml</file>
   <file>qml/IgnSplit.qml</file>
@@ -27,6 +28,7 @@
     <!-- This qmldir file defines a QML module that can be imported -->
     <file alias="qmldir">qml/qmldir</file>
     <!-- Add any QML components referenced in the qmldir file here -->
+    <file alias="IgnSnackBar.qml">qml/IgnSnackBar.qml</file>
     <file alias="IgnSpinBox.qml">qml/IgnSpinBox.qml</file>
 </qresource>
 </RCC>

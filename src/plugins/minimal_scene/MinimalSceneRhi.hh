@@ -18,6 +18,8 @@
 #ifndef IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
 #define IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
 
+#include <string>
+
 #include "ignition/gui/Plugin.hh"
 #include "ignition/rendering/RenderTypes.hh"
 
@@ -79,7 +81,9 @@ namespace plugins
     /// \brief Carry out initialization
     //
     /// On macOS this must be run on the main thread
-    public: virtual void Initialize() = 0;
+    /// \return Error message if initialization failed. If empty, no errors
+    /// occurred.
+    public: virtual std::string Initialize() = 0;
 
     /// \brief Render when safe
     /// \param[in] _renderSync RenderSync to safely
