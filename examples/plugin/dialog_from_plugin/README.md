@@ -13,10 +13,10 @@ a modal dialog attached to the main window from a plugin.
 Standalone
 
     cd build
-    export IGN_GUI_PLUGIN_PATH=`pwd`; ign gui -s DialogFromPlugin
+    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -s DialogFromPlugin
 
 Or open an empty window and insert from menu
 
     cd build
-    export IGN_GUI_PLUGIN_PATH=`pwd`; ign gui
+    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui
     # Choose DialogFromPlugin from menu
