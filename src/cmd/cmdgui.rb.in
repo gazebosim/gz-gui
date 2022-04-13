@@ -182,8 +182,48 @@ class Cmd
             Importer.extern 'void cmdStandalone(const char *)'
             Importer.cmdStandalone(options['standalone'])
           elsif options.key?('config')
+
+            # Check if the passed in config file exists.
+            if File.exists?(options['config'])
+              path = options['config']
+            # If not, then first check the IGN_GUI_CONFIG_PATH environment
+            # variable, then IGN_GUI_RESOURCES.
+            else
+              configPathEnv = ENV['IGN_GUI_CONFIG_PATH']
+              if !configPathEnv.nil?
+                configPaths = configPathEnv.split(':')
+                for configPath in configPaths
+                  filePath = File.join(configPath, options['config'])
+                  if File.exists?(filePath)
+                    path = filePath
+                    break
+                  end
+                end
+              end
+
+              if path.nil?
+                resourcePathEnv = ENV['IGN_GUI_RESOURCES']
+                if !resourcePathEnv.nil?
+                  resourcePaths = resourcePathEnv.split(':')
+                  for resourcePath in resourcePaths
+                    filePath = File.join(resourcePath, options['config'])
+                    if File.exists?(filePath)
+                      path = filePath
+                      break
+                    end
+                  end
+                end
+              end
+
+              if path.nil?
+                puts "Unable to find config file " + options['config']
+                exit(-1)
+              end
+            end
+
             Importer.extern 'void cmdConfig(const char *)'
-            Importer.cmdConfig(options['config'])
+            Importer.cmdConfig(path)
+
           elsif options.key?('emptywindow')
             Importer.extern 'void cmdEmptyWindow()'
             Importer.cmdEmptyWindow()
