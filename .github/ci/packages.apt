@@ -2,7 +2,7 @@ libignition-cmake2-dev
 libignition-common5-dev
 libignition-math7-dev
 libignition-msgs9-dev
-libignition-plugin-dev
+libignition-plugin2-dev
 libignition-rendering7-dev
 libignition-tools-dev
 libignition-transport12-dev
