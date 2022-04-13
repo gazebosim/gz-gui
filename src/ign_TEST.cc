@@ -96,3 +96,30 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
   EXPECT_TRUE(common::exists(common::joinPaths(this->kFakeHome, ".ignition",
       "gui")));
 }
+
+/////////////////////////////////////////////////
+TEST_F(CmdLine, ConfigPath)
+{
+  std::string cmd = "ign gui --config style.config";
+
+  // No path
+  std::string output = custom_exec_str(cmd);
+  EXPECT_NE(output.find("Unable to find config file style.config"),
+      std::string::npos) << output;
+
+  // Correct path
+  auto path = std::string("IGN_GUI_CONFIG_PATH=") +
+    PROJECT_SOURCE_PATH + "/examples/config ";
+
+  output = custom_exec_str(path + cmd);
+  EXPECT_EQ(output.find("Unable to find config file style.config"),
+      std::string::npos) << output;
+
+  // Several paths
+  path = std::string("IGN_GUI_RESOURCES=banana:") +
+    PROJECT_SOURCE_PATH + "/examples/config:orange ";
+
+  output = custom_exec_str(path + cmd);
+  EXPECT_EQ(output.find("Unable to find config file style.config"),
+      std::string::npos) << output;
+}
