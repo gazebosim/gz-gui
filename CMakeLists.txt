@@ -38,6 +38,11 @@ ign_find_package(IgnProtobuf
 ign_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
+# Find ignition-utils
+ign_find_package(ignition-utils2 REQUIRED)
+set(IGN_UTILS_VER ${ignition-utils2_VERSION_MAJOR})
+
+#--------------------------------------
 # Find ignition-math
 ign_find_package(ignition-math7 REQUIRED)
 set(IGN_MATH_VER ${ignition-math7_VERSION_MAJOR})
@@ -49,8 +54,8 @@ set(IGN_COMMON_VER ${ignition-common5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-plugin
-ign_find_package(ignition-plugin1 REQUIRED COMPONENTS loader register)
-set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
+ign_find_package(ignition-plugin2 REQUIRED COMPONENTS loader register)
+set(IGN_PLUGIN_VER ${ignition-plugin2_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-transport
