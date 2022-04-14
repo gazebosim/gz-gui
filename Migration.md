@@ -5,6 +5,10 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Ignition GUI 6.X to 7.X
+
+* The environment variable `IGN_GUI_PLUGIN_PATH` is deprecated. Use `GZ_GUI_PLUGIN_PATH` instead.
+
 ## Ignition GUI 6.2 to 6.3
 
 * New QML dependencies, only needed for the NavSatMap plugin: `qml-module-qtlocation`, `qml-module-qtpositioning`

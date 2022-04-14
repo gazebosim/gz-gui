@@ -13,11 +13,11 @@ useful for downstream developers.
 Standalone:
 
     cd build
-    export IGN_GUI_PLUGIN_PATH=`pwd`; ign gui -s IgnComponents
+    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -s IgnComponents
 
 Within a window where other plugins can also be inserted, using a custom
 configuration:
 
     cd build
-    export IGN_GUI_PLUGIN_PATH=`pwd`; ign gui -c ../IgnComponents.config
+    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -c ../IgnComponents.config
 
