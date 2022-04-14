@@ -6,6 +6,7 @@ libignition-plugin2-dev
 libignition-rendering7-dev
 libignition-tools-dev
 libignition-transport12-dev
+libignition-utils2-dev
 libprotobuf-dev
 libprotoc-dev
 libtinyxml2-dev

@@ -19,7 +19,7 @@
 
 #include <ignition/gui/Plugin.hh>
 #include <ignition/gui/PlottingInterface.hh>
-#include <ignition/utilities/SuppressWarning.hh>
+#include <ignition/utils/SuppressWarning.hh>
 
 #include <memory>
 

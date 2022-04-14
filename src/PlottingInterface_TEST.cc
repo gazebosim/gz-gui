@@ -26,7 +26,7 @@
 
 #include <ignition/transport.hh>
 #include <ignition/common/Console.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <ignition/utils/ExtraTestMacros.hh>
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/PlottingInterface.hh"

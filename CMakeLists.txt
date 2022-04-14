@@ -38,6 +38,11 @@ ign_find_package(IgnProtobuf
 ign_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
+# Find ignition-utils
+ign_find_package(ignition-utils2 REQUIRED)
+set(IGN_UTILS_VER ${ignition-utils2_VERSION_MAJOR})
+
+#--------------------------------------
 # Find ignition-math
 ign_find_package(ignition-math7 REQUIRED)
 set(IGN_MATH_VER ${ignition-math7_VERSION_MAJOR})
