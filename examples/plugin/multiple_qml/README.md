@@ -12,5 +12,5 @@ This example shows how to compose a single plugin from multiple QML files.
 Quickly check try your plugin as follows:
 
     cd build
-    export IGN_GUI_PLUGIN_PATH=`pwd`; ign gui -s MultipleQml
+    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -s MultipleQml
 
