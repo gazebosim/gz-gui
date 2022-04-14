@@ -180,16 +180,16 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadConfig))
     EXPECT_FALSE(app.LoadConfig("ignore.config"));
 
     // Invalid path
-    setenv("IGN_GUI_RESOURCE_PATH", "invalidPath", 1);
+    setenv("GZ_GUI_RESOURCE_PATH", "invalidPath", 1);
     EXPECT_FALSE(app.LoadConfig("ignore.config"));
 
     // Valid path
-    setenv("IGN_GUI_RESOURCE_PATH",
+    setenv("GZ_GUI_RESOURCE_PATH",
         (std::string(PROJECT_SOURCE_PATH) + "/test/config").c_str(), 1);
     EXPECT_TRUE(app.LoadConfig("ignore.config"));
 
     // Multiple paths, one valid
-    setenv("IGN_GUI_RESOURCE_PATH",
+    setenv("GZ_GUI_RESOURCE_PATH",
         ("banana:" + std::string(PROJECT_SOURCE_PATH) + "/test/config" +
         ":orange").c_str(), 1);
     EXPECT_TRUE(app.LoadConfig("ignore.config"));

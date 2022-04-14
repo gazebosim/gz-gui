@@ -231,9 +231,9 @@ bool Application::LoadConfig(const std::string &_config)
   // It will be created the first time the user presses "Save configuration".)
   if (!common::exists(configFull) && (configFull != this->DefaultConfigPath()))
   {
-    // If not, then check the IGN_GUI_RESOURCE_PATH environment variable
+    // If not, then check environment variable
     std::string configPathEnv;
-    common::env("IGN_GUI_RESOURCE_PATH", configPathEnv);
+    common::env("GZ_GUI_RESOURCE_PATH", configPathEnv);
 
     if (!configPathEnv.empty())
     {
