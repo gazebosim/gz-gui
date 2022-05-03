@@ -54,7 +54,7 @@ COMMANDS = {  'gui' =>
                        "\n" +
                        COMMON_OPTIONS + "\n\n" +
                        "Environment variables:                                                  \n"\
-                       "  IGN_GUI_RESOURCE_PATH    Colon separated paths used to locate GUI     \n"\
+                       "  GZ_GUI_RESOURCE_PATH    Colon separated paths used to locate GUI     \n"\
                        " resources such as configuration files.                                 \n"\
             }
 
