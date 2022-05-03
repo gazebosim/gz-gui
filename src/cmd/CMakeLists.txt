@@ -1,4 +1,4 @@
-# Generate a the ruby script.
+# Generate the ruby script.
 # Note that the major version of the library is included in the name.
 if (APPLE)
   set(IGN_LIBRARY_NAME lib${PROJECT_NAME_LOWER}.dylib)
@@ -11,3 +11,6 @@ configure_file(
 
 # Install the ruby command line library in an unversioned location.
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmdgui${PROJECT_VERSION_MAJOR}.rb DESTINATION lib/ruby/ignition)
+
+# Install the bash completion script in an unversioned location.
+install(FILES gui.bash_completion.sh DESTINATION share/ignition/ignition.completion.d)
