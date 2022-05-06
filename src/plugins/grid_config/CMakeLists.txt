@@ -1,4 +1,4 @@
-ign_gui_add_plugin(GridConfig
+gz_gui_add_plugin(GridConfig
   SOURCES
     GridConfig.cc
   QT_HEADERS

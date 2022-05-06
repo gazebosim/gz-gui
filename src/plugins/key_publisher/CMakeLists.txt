@@ -1,4 +1,4 @@
-ign_gui_add_plugin(KeyPublisher
+gz_gui_add_plugin(KeyPublisher
   SOURCES
     KeyPublisher.cc
   QT_HEADERS

@@ -1,4 +1,4 @@
-ign_gui_add_plugin(TopicViewer
+gz_gui_add_plugin(TopicViewer
   SOURCES
     TopicViewer.cc
   QT_HEADERS

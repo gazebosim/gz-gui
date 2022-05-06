@@ -1,4 +1,4 @@
-ign_gui_add_plugin(ImageDisplay
+gz_gui_add_plugin(ImageDisplay
   SOURCES
     ImageDisplay.cc
   QT_HEADERS

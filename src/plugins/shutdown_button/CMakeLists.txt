@@ -1,4 +1,4 @@
-ign_gui_add_plugin(ShutdownButton
+gz_gui_add_plugin(ShutdownButton
   SOURCES
     ShutdownButton.cc
   QT_HEADERS

@@ -1,5 +1,5 @@
 if (NOT MSVC)
-  ign_gui_add_plugin(WorldControl
+  gz_gui_add_plugin(WorldControl
     SOURCES
       WorldControl.cc
       WorldControlEventListener.cc
@@ -10,7 +10,7 @@ if (NOT MSVC)
       WorldControl_TEST.cc
   )
 else()
-  ign_gui_add_plugin(WorldControl
+  gz_gui_add_plugin(WorldControl
     SOURCES
       WorldControl.cc
     QT_HEADERS

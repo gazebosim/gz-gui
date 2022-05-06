@@ -1,4 +1,4 @@
-ign_gui_add_plugin(WorldStats
+gz_gui_add_plugin(WorldStats
   SOURCES
     WorldStats.cc
   QT_HEADERS

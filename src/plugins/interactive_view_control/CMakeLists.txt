@@ -1,4 +1,4 @@
-ign_gui_add_plugin(InteractiveViewControl
+gz_gui_add_plugin(InteractiveViewControl
   SOURCES
     InteractiveViewControl.cc
   QT_HEADERS

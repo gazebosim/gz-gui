@@ -1,5 +1,5 @@
 #################################################
-# ign_gui_add_library (<library_name>
+# gz_gui_add_library (<library_name>
 #              SOURCES <sources>
 #              [PUBLIC_LINK_LIBS <libraries...>]
 #              [PRIVATE_LINK_LIBS <libraries...>])
@@ -16,18 +16,17 @@
 #
 # [PRIVATE_LINK_LIBS]: Specify a list of libraries to be privately linked.
 #
-function(ign_gui_add_library library_name)
+function(gz_gui_add_library library_name)
   set(options)
   set(oneValueArgs)
   set(multiValueArgs SOURCES QT_HEADERS PUBLIC_LINK_LIBS PRIVATE_LINK_LIBS)
+  cmake_parse_arguments(gz_gui_add_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  cmake_parse_arguments(ign_gui_add_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  QT5_WRAP_CPP(${library_name}_headers_MOC ${ign_gui_add_library_QT_HEADERS})
+  QT5_WRAP_CPP(${library_name}_headers_MOC ${gz_gui_add_library_QT_HEADERS})
   QT5_ADD_RESOURCES(${library_name}_RCC ${library_name}.qrc)
 
   add_library(${library_name} SHARED
-    ${ign_gui_add_library_SOURCES}
+    ${gz_gui_add_library_SOURCES}
     ${${library_name}_headers_MOC}
     ${${library_name}_RCC}
   )
@@ -35,14 +34,14 @@ function(ign_gui_add_library library_name)
     PUBLIC
       ${PROJECT_LIBRARY_TARGET_NAME}
       TINYXML2::TINYXML2
-      ${ign_gui_add_library_PUBLIC_LINK_LIBS}
+      ${gz_gui_add_library_PUBLIC_LINK_LIBS}
     PRIVATE
-      ${ign_gui_add_library_PRIVATE_LINK_LIBS}
+      ${gz_gui_add_library_PRIVATE_LINK_LIBS}
   )
 endfunction()
 
 #################################################
-# ign_gui_add_plugin(<plugin_name>
+# gz_gui_add_plugin(<plugin_name>
 #              SOURCES <sources>
 #              [PUBLIC_LINK_LIBS <libraries...>]
 #              [PRIVATE_LINK_LIBS <libraries...>])
@@ -61,7 +60,7 @@ endfunction()
 #
 # [PRIVATE_LINK_LIBS]: Specify a list of libraries to be privately linked.
 #
-function(ign_gui_add_plugin plugin_name)
+function(gz_gui_add_plugin plugin_name)
   set(options)
   set(oneValueArgs)
   set(multiValueArgs
@@ -71,20 +70,19 @@ function(ign_gui_add_plugin plugin_name)
     PUBLIC_LINK_LIBS
     PRIVATE_LINK_LIBS
   )
+  cmake_parse_arguments(gz_gui_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  cmake_parse_arguments(ign_gui_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  ign_gui_add_library(${plugin_name}
-    SOURCES ${ign_gui_add_plugin_SOURCES}
-    QT_HEADERS ${ign_gui_add_plugin_QT_HEADERS}
-    PUBLIC_LINK_LIBS ${ign_gui_add_plugin_PUBLIC_LINK_LIBS}
-    PRIVATE_LINK_LIBS ${ign_gui_add_plugin_PRIVATE_LINK_LIBS} ignition-plugin${IGN_PLUGIN_VER}::register
+  gz_gui_add_library(${plugin_name}
+    SOURCES ${gz_gui_add_plugin_SOURCES}
+    QT_HEADERS ${gz_gui_add_plugin_QT_HEADERS}
+    PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
+    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} ignition-plugin${IGN_PLUGIN_VER}::register
   )
 
-  if(ign_gui_add_plugin_TEST_SOURCES)
+  if(gz_gui_add_plugin_TEST_SOURCES)
     ign_build_tests(TYPE UNIT
       SOURCES
-        ${ign_gui_add_plugin_TEST_SOURCES}
+        ${gz_gui_add_plugin_TEST_SOURCES}
       LIB_DEPS
         ${IGNITION-GUI_LIBRARIES}
         TINYXML2::TINYXML2
@@ -105,8 +103,8 @@ function(ign_gui_add_plugin plugin_name)
     # warning is not important since those members do not need to be interfaced
     # with.
     set_source_files_properties(
-        ${ign_gui_add_plugin_SOURCES}
-        ${ign_gui_add_plugin_TEST_SOURCES}
+        ${gz_gui_add_plugin_SOURCES}
+        ${gz_gui_add_plugin_TEST_SOURCES}
         COMPILE_FLAGS "/wd4251")
   endif()
 

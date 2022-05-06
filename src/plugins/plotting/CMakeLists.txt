@@ -1,4 +1,4 @@
-ign_gui_add_plugin(TransportPlotting
+gz_gui_add_plugin(TransportPlotting
   SOURCES
     TransportPlotting.cc
   QT_HEADERS

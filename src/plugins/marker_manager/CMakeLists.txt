@@ -1,4 +1,4 @@
-ign_gui_add_plugin(MarkerManager
+gz_gui_add_plugin(MarkerManager
   SOURCES
     MarkerManager.cc
   QT_HEADERS
