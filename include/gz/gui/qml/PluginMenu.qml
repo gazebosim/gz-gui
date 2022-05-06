@@ -92,7 +92,7 @@ Popup {
     }
   }
 
-  IgnSortFilterModel {
+  GzSortFilterModel {
     id: filteredModel
 
     filterAcceptsItem: function(item) {

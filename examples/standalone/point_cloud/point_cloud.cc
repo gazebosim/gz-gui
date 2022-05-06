@@ -15,10 +15,10 @@
  *
 */
 
-#include <ignition/msgs/float_v.pb.h>
-#include <ignition/msgs/pointcloud_packed.pb.h>
+#include <gz/msgs/float_v.pb.h>
+#include <gz/msgs/pointcloud_packed.pb.h>
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
 #include <atomic>
 #include <chrono>

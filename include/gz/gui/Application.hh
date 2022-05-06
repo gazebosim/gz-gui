@@ -14,16 +14,16 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_APPLICATION_HH_
-#define IGNITION_GUI_APPLICATION_HH_
+#ifndef GZ_GUI_APPLICATION_HH_
+#define GZ_GUI_APPLICATION_HH_
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "ignition/gui/qt.h"
-#include "ignition/gui/Export.hh"
+#include "gz/gui/qt.h"
+#include "gz/gui/Export.hh"
 
 #ifdef _WIN32
 // Disable warning C4251 which is triggered by
@@ -138,7 +138,7 @@ namespace ignition
       ///
       /// 1. Paths given by the environment variable
       /// 2. Paths added by calling addPluginPath
-      /// 3. Path ~/.ignition/gui/plugins
+      /// 3. Path ~/.gz/gui/plugins
       /// 4. The path where Ignition GUI plugins are installed
       ///
       /// \return A vector of pairs, where each pair contains:

@@ -234,7 +234,7 @@ ApplicationWindow
   /**
    * Background
    */
-  IgnSplit {
+  GzSplit {
     anchors.fill: parent
   }
 
@@ -321,7 +321,7 @@ ApplicationWindow
     }
   }
 
-  IgnSnackBar {
+  GzSnackBar {
     id: notificationDialog
   }
 

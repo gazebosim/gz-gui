@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLOTTINGINTERFACE_HH_
-#define IGNITION_GUI_PLOTTINGINTERFACE_HH_
+#ifndef GZ_GUI_PLOTTINGINTERFACE_HH_
+#define GZ_GUI_PLOTTINGINTERFACE_HH_
 
 #include <QObject>
 #include <QString>
@@ -35,7 +35,7 @@
 #include <memory>
 #include <limits>
 
-#include "ignition/gui/Export.hh"
+#include "gz/gui/Export.hh"
 
 namespace ignition
 {

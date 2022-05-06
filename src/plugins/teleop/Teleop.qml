@@ -71,7 +71,7 @@ Rectangle {
     anchors.left: parent.left
     anchors.leftMargin: 5
   }
-  IgnSpinBox {
+  GzSpinBox {
     id: linearVelField
     anchors.top: velocityLabel.bottom
     anchors.topMargin: 5
@@ -85,9 +85,9 @@ Rectangle {
     stepSize: 0.10
     onEditingFinished:{
       Teleop.OnLinearVelSelection(value)
-    } 
+    }
   }
-  
+
   // Angular velocity input
   Label {
     id: angularVelLabel
@@ -98,7 +98,7 @@ Rectangle {
     anchors.left: linearVelField.right
     anchors.leftMargin: 10
   }
-  IgnSpinBox {
+  GzSpinBox {
     id: angularVelField
     anchors.top: velocityLabel.bottom
     anchors.topMargin: 5
@@ -112,7 +112,7 @@ Rectangle {
     stepSize: 0.10
     onEditingFinished:{
       Teleop.OnAngularVelSelection(value)
-    } 
+    }
   }
 
   // Button grid

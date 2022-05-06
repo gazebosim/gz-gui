@@ -29,7 +29,7 @@ SplitView {
   id: background
   objectName: "background"
 
-  IgnHelpers {
+  GzHelpers {
     id: helpers
   }
 

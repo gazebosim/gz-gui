@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_GUIEVENTS_HH_
-#define IGNITION_GUI_GUIEVENTS_HH_
+#ifndef GZ_GUI_GUIEVENTS_HH_
+#define GZ_GUI_GUIEVENTS_HH_
 
 #include <QEvent>
 #include <memory>
@@ -23,14 +23,14 @@
 #include <utility>
 #include <vector>
 
-#include <ignition/common/KeyEvent.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Vector2.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/msgs/world_control.pb.h>
-#include <ignition/utils/ImplPtr.hh>
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/math/Vector3.hh>
+#include <gz/msgs/world_control.pb.h>
+#include <gz/utils/ImplPtr.hh>
 
-#include "ignition/gui/Export.hh"
+#include "gz/gui/Export.hh"
 
 namespace ignition
 {
@@ -490,4 +490,4 @@ namespace ignition
   }
 }
 
-#endif  // IGNITION_GUI_GUIEVENTS_HH_
+#endif  // GZ_GUI_GUIEVENTS_HH_
