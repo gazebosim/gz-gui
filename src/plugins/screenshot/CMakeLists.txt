@@ -1,4 +1,4 @@
-ign_gui_add_plugin(Screenshot
+gz_gui_add_plugin(Screenshot
   SOURCES
     Screenshot.cc
   QT_HEADERS

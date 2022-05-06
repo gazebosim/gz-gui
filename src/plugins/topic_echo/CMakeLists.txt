@@ -1,4 +1,4 @@
-ign_gui_add_plugin(TopicEcho
+gz_gui_add_plugin(TopicEcho
   SOURCES
     TopicEcho.cc
   QT_HEADERS

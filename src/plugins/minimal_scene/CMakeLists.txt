@@ -19,7 +19,7 @@ if (APPLE)
   )
 endif()
 
-ign_gui_add_plugin(MinimalScene
+gz_gui_add_plugin(MinimalScene
   SOURCES
     ${SOURCES}
   QT_HEADERS

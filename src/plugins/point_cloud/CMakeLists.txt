@@ -1,4 +1,4 @@
-ign_gui_add_plugin(PointCloud
+gz_gui_add_plugin(PointCloud
   SOURCES
     PointCloud.cc
   QT_HEADERS

@@ -1,4 +1,4 @@
-ign_gui_add_plugin(NavSatMap
+gz_gui_add_plugin(NavSatMap
   SOURCES
     NavSatMap.cc
   QT_HEADERS

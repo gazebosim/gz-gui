@@ -1,4 +1,4 @@
-ign_gui_add_plugin(TransportSceneManager
+gz_gui_add_plugin(TransportSceneManager
   SOURCES
     TransportSceneManager.cc
   QT_HEADERS

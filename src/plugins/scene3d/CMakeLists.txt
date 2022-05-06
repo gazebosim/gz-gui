@@ -1,4 +1,4 @@
-ign_gui_add_plugin(Scene3D
+gz_gui_add_plugin(Scene3D
   SOURCES
     Scene3D.cc
   QT_HEADERS

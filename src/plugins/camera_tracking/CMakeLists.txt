@@ -1,4 +1,4 @@
-ign_gui_add_plugin(CameraTracking
+gz_gui_add_plugin(CameraTracking
   SOURCES
     CameraTracking.cc
   QT_HEADERS

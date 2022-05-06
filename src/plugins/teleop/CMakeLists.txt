@@ -1,4 +1,4 @@
-ign_gui_add_plugin(Teleop
+gz_gui_add_plugin(Teleop
   SOURCES
     Teleop.cc
   QT_HEADERS
