@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_QT_H_
-#define IGNITION_GUI_QT_H_
+#ifndef GZ_GUI_QT_H_
+#define GZ_GUI_QT_H_
 
 #ifndef _MSC_VER
 #pragma GCC system_header
@@ -43,4 +43,4 @@
 #include <QStandardItemModel>
 
 
-#endif  // IGNITION_GUI_QT_H_
+#endif  // GZ_GUI_QT_H_

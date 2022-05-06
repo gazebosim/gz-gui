@@ -14,11 +14,11 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_SEARCHMODEL_HH_
-#define IGNITION_GUI_SEARCHMODEL_HH_
+#ifndef GZ_GUI_SEARCHMODEL_HH_
+#define GZ_GUI_SEARCHMODEL_HH_
 
-#include "ignition/gui/Export.hh"
-#include "ignition/gui/qt.h"
+#include "gz/gui/Export.hh"
+#include "gz/gui/qt.h"
 
 namespace ignition
 {

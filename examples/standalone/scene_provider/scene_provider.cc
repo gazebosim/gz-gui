@@ -18,12 +18,12 @@
 #include <chrono>
 #include <iostream>
 #include <string>
-#include <ignition/math/Rand.hh>
-#include <ignition/msgs/pose_v.pb.h>
-#include <ignition/msgs/scene.pb.h>
-#include <ignition/msgs/scene.pb.h>
-#include <ignition/msgs/world_stats.pb.h>
-#include <ignition/transport/Node.hh>
+#include <gz/math/Rand.hh>
+#include <gz/msgs/pose_v.pb.h>
+#include <gz/msgs/scene.pb.h>
+#include <gz/msgs/scene.pb.h>
+#include <gz/msgs/world_stats.pb.h>
+#include <gz/transport/Node.hh>
 
 using namespace std::chrono_literals;
 

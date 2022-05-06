@@ -133,7 +133,7 @@ Dialog {
         }
       }
 
-      IgnSpinBox {
+      GzSpinBox {
         visible: !cardPane.anchored
         maximumValue: cardPane.parent ? cardPane.parent.width - cardPane.width : minSize
         onVisibleChanged: value = cardPane.x
@@ -145,7 +145,7 @@ Dialog {
         visible: !cardPane.anchored
         text: "X"
       }
-      IgnSpinBox {
+      GzSpinBox {
         visible: !cardPane.anchored
         maximumValue: cardPane.parent ? cardPane.parent.height - cardPane.height : minSize
         onVisibleChanged: value = cardPane.y
@@ -157,7 +157,7 @@ Dialog {
         visible: !cardPane.anchored
         text: "Y"
       }
-      IgnSpinBox {
+      GzSpinBox {
         visible: !cardPane.anchored
         maximumValue: 10000
         onVisibleChanged: value = cardPane.z
@@ -176,7 +176,7 @@ Dialog {
       Text {
         text: ""
       }
-      IgnSpinBox {
+      GzSpinBox {
         maximumValue: cardPane.parent ? cardPane.parent.width : minSize
         onVisibleChanged: {
           if (cardPane)
@@ -189,7 +189,7 @@ Dialog {
       Label {
         text: "Width"
       }
-      IgnSpinBox {
+      GzSpinBox {
         maximumValue: cardPane.parent ? cardPane.parent.height : minSize
         onVisibleChanged: {
           if (cardPane)

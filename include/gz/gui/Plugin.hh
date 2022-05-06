@@ -14,15 +14,15 @@
  * limitations under the License.
  *
  */
-#ifndef IGNITION_GUI_PLUGIN_HH_
-#define IGNITION_GUI_PLUGIN_HH_
+#ifndef GZ_GUI_PLUGIN_HH_
+#define GZ_GUI_PLUGIN_HH_
 
 #include <tinyxml2.h>
 #include <memory>
 #include <string>
 
-#include "ignition/gui/qt.h"
-#include "ignition/gui/Export.hh"
+#include "gz/gui/qt.h"
+#include "gz/gui/Export.hh"
 
 #ifdef _WIN32
 // Disable warning C4251 which is triggered by

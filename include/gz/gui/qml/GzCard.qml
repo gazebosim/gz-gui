@@ -180,7 +180,7 @@ Pane {
 
     // Keep a reference to the background
     // TODO(louise) This feels hacky, the card shouldn't care about the background,
-    // but I haven't figured out yet how the card can tell IgnSplit to create
+    // but I haven't figured out yet how the card can tell GzSplit to create
     // a new split and add the card to it. There must be a way using signals, events
     // or global functions...?
     var bgItemTemp = helpers.ancestorByName(cardPane, "background")
@@ -224,7 +224,7 @@ Pane {
     anchored = false
   }
 
-  IgnHelpers {
+  GzHelpers {
     id: helpers
   }
 
@@ -654,7 +654,7 @@ Pane {
     settingsDialog.open()
   }
 
-  IgnCardSettings {
+  GzCardSettings {
     id: settingsDialog
     modal: false
     focus: true
@@ -695,7 +695,7 @@ Pane {
     }
   }
 
-  IgnRulers {
+  GzRulers {
     anchors.fill: parent
     enabled: cardPane.state === "floating" && resizable
     minSize: cardPane.minSize
