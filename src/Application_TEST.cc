@@ -172,6 +172,28 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadConfig))
     auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
     EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
   }
+
+  // Test environment variable and relative path
+  {
+    // Environment variable not set
+    Application app(g_argc, g_argv);
+    EXPECT_FALSE(app.LoadConfig("ignore.config"));
+
+    // Invalid path
+    setenv("GZ_GUI_RESOURCE_PATH", "invalidPath", 1);
+    EXPECT_FALSE(app.LoadConfig("ignore.config"));
+
+    // Valid path
+    setenv("GZ_GUI_RESOURCE_PATH",
+        (std::string(PROJECT_SOURCE_PATH) + "/test/config").c_str(), 1);
+    EXPECT_TRUE(app.LoadConfig("ignore.config"));
+
+    // Multiple paths, one valid
+    setenv("GZ_GUI_RESOURCE_PATH",
+        ("banana:" + std::string(PROJECT_SOURCE_PATH) + "/test/config" +
+        ":orange").c_str(), 1);
+    EXPECT_TRUE(app.LoadConfig("ignore.config"));
+  }
 }
 
 //////////////////////////////////////////////////
