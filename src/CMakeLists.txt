@@ -46,7 +46,14 @@ ign_build_tests(TYPE UNIT
                 LIB_DEPS
                   ${IGNITION-MATH_LIBRARIES}
                   TINYXML2::TINYXML2
+                TEST_LIST
+                  gtest_targets
 )
+
+foreach(test ${gtest_targets})
+  target_compile_definitions(${test} PRIVATE
+    "IGN_GUI_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
+endforeach()
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)

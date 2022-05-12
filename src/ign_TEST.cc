@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <fstream>
 #include <string>
 
 #include <ignition/common/Filesystem.hh>
@@ -95,4 +96,34 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 
   EXPECT_TRUE(common::exists(common::joinPaths(this->kFakeHome, ".ignition",
       "gui")));
+}
+
+//////////////////////////////////////////////////
+/// \brief Check --help message and bash completion script for consistent flags
+TEST(ignTest, GuiHelpVsCompletionFlags)
+{
+  // Flags in help message
+  std::string output = custom_exec_str("ign gui --help");
+  EXPECT_NE(std::string::npos, output.find("--list")) << output;
+  EXPECT_NE(std::string::npos, output.find("--standalone")) << output;
+  EXPECT_NE(std::string::npos, output.find("--config")) << output;
+  EXPECT_NE(std::string::npos, output.find("--verbose")) << output;
+  EXPECT_NE(std::string::npos, output.find("--help")) << output;
+  EXPECT_NE(std::string::npos, output.find("--force-version")) << output;
+  EXPECT_NE(std::string::npos, output.find("--versions")) << output;
+
+  // Flags in bash completion
+  std::string scriptPath = common::joinPaths(std::string(IGN_GUI_SOURCE_DIR),
+    "src", "cmd", "gui.bash_completion.sh");
+  std::ifstream scriptFile(scriptPath);
+  std::string script((std::istreambuf_iterator<char>(scriptFile)),
+      std::istreambuf_iterator<char>());
+
+  EXPECT_NE(std::string::npos, script.find("--list")) << script;
+  EXPECT_NE(std::string::npos, script.find("--standalone")) << script;
+  EXPECT_NE(std::string::npos, script.find("--config")) << script;
+  EXPECT_NE(std::string::npos, script.find("--verbose")) << script;
+  EXPECT_NE(std::string::npos, script.find("--help")) << script;
+  EXPECT_NE(std::string::npos, script.find("--force-version")) << script;
+  EXPECT_NE(std::string::npos, script.find("--versions")) << script;
 }
