@@ -30,7 +30,7 @@ namespace plugins
 {
   class TransportSceneManagerPrivate;
 
-  /// \brief Provides an Ignition Transport interface to
+  /// \brief Provides a Gazebo Transport interface to
   /// `ignition::gui::plugins::MinimalScene`.
   ///
   /// ## Configuration

@@ -37,7 +37,7 @@ namespace ignition
   {
     class PluginPrivate;
 
-    /// \brief Base class for Ignition GUI plugins.
+    /// \brief Base class for Gazebo GUI plugins.
     ///
     /// When inheriting from this plugin, the following are assumed:
     ///
@@ -127,7 +127,7 @@ namespace ignition
       protected: std::string configStr;
 
       /// \brief Load configuration which is common to all plugins and handled
-      /// by Ignition GUI.
+      /// by Gazebo GUI.
       /// \details Called when a plugin is first created.
       /// \sa LoadConfig
       /// \param[in] _ignGuiElem <ignition-gui> element within the <plugin>.

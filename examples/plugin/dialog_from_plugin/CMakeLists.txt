@@ -17,7 +17,7 @@ find_package (Qt5
   REQUIRED
 )
 
-# Find the Ignition gui library
+# Find the Gazebo GUI library
 find_package(ignition-gui7 REQUIRED)
 find_package(ignition-common5 REQUIRED)
 

@@ -44,62 +44,62 @@ namespace ignition
   namespace gui
   {
     /// \brief Return the equivalent Qt color
-    /// \param[in] _color Ignition color to convert
+    /// \param[in] _color Gazebo color to convert
     /// \return Qt color value
     IGNITION_GUI_VISIBLE
     QColor convert(const math::Color &_color);
 
-    /// \brief Return the equivalent Ignition color
+    /// \brief Return the equivalent Gazebo color
     /// \param[in] _color Qt color to convert
-    /// \return Ignition color value
+    /// \return Gazebo color value
     IGNITION_GUI_VISIBLE
     math::Color convert(const QColor &_color);
 
     /// \brief Return the equivalent QPointF.
-    /// \param[in] _pt Ignition vector to convert.
+    /// \param[in] _pt Gazebo vector to convert.
     /// \return QPointF.
     IGNITION_GUI_VISIBLE
     QPointF convert(const math::Vector2d &_pt);
 
-    /// \brief Return the equivalent Ignition vector.
+    /// \brief Return the equivalent Gazebo vector.
     /// \param[in] _pt QPointF to convert
-    /// \return Ignition Vector2d.
+    /// \return Gazebo Vector2d.
     IGNITION_GUI_VISIBLE
     math::Vector2d convert(const QPointF &_pt);
 
     /// \brief Return the equivalent Qt vector 3d.
-    /// \param[in] _vec Ignition vector 3d to convert.
+    /// \param[in] _vec Gazebo vector 3d to convert.
     /// \return Qt vector 3d value.
     IGNITION_GUI_VISIBLE
     QVector3D convert(const math::Vector3d &_vec);
 
-    /// \brief Return the equivalent Ignition vector 3d.
+    /// \brief Return the equivalent Gazebo vector 3d.
     /// \param[in] _vec Qt vector 3d to convert.
-    /// \return Ignition vector 3d value
+    /// \return Gazebo vector 3d value
     IGNITION_GUI_VISIBLE
     math::Vector3d convert(const QVector3D &_vec);
 
-    /// \brief Return the equivalent Ignition mouse event.
+    /// \brief Return the equivalent Gazebo mouse event.
     ///
     /// Note that there isn't a 1-1 mapping between these types, so fields such
     /// as common::MouseEvent::PressPos need to be set afterwards.
     /// \param[in] _e Qt mouse event
-    /// \return Ignition mouse event
+    /// \return Gazebo mouse event
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QMouseEvent &_e);
 
-    /// \brief Return the equivalent Ignition mouse event.
+    /// \brief Return the equivalent Gazebo mouse event.
     ///
     /// Note that there isn't a 1-1 mapping between these types.
     /// \param[in] _e Qt wheel event
-    /// \return Ignition mouse event
+    /// \return Gazebo mouse event
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QWheelEvent &_e);
 
     /// \brief Return the equivalent ignition key event.
     ///
     /// \param[in] _e Qt key event
-    /// \return Ignition key event
+    /// \return Gazebo key event
     IGNITION_GUI_VISIBLE
     common::KeyEvent convert(const QKeyEvent &_e);
   }

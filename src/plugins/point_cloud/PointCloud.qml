@@ -89,7 +89,7 @@ ColumnLayout {
       }
       ToolTip.visible: hovered
       ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
-      ToolTip.text: qsTr("Ignition transport topics publishing PointCloudPacked messages")
+      ToolTip.text: qsTr("Gazebo Transport topics publishing PointCloudPacked messages")
     }
 
     Label {
@@ -110,7 +110,7 @@ ColumnLayout {
       }
       ToolTip.visible: hovered
       ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
-      ToolTip.text: qsTr("Ignition transport topics publishing FloatV messages, used to color each point on the cloud")
+      ToolTip.text: qsTr("Gazebo Transport topics publishing FloatV messages, used to color each point on the cloud")
     }
 
     Label {

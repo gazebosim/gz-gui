@@ -37,7 +37,7 @@ namespace plugins
 {
   class NavSatMapPrivate;
 
-  /// \brief Display NavSat messages coming through an Ignition transport topic
+  /// \brief Display NavSat messages coming through an Gazebo Transport topic
   /// on top of a map.
   ///
   /// ## Configuration

@@ -37,7 +37,7 @@ COMMON_OPTIONS =
                "                                                    \n"        +
                '  --versions                 Show the available versions.'
 COMMANDS = {  'gui' =>
-                       "Ignition GUI tool.\n\n" +
+                       "Gazebo GUI tool.\n\n" +
                        "  ign gui [options]\n\n" +
                        "Options:\n\n" +
                        "  -l [ --list ]              List all available plugins.\n" +
@@ -56,7 +56,7 @@ COMMANDS = {  'gui' =>
             }
 
 #
-# Class for the Ignition gui command line tools.
+# Class for the Gazebo gui command line tools.
 #
 class Cmd
   #

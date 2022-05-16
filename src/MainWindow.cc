@@ -118,7 +118,7 @@ MainWindow::MainWindow()
     return;
   }
 
-  App()->setWindowIcon(QIcon(":/qml/images/ignition_logo_50x50.png"));
+  App()->setWindowIcon(QIcon(":/qml/images/gazebo_logo.png"));
 }
 
 /////////////////////////////////////////////////

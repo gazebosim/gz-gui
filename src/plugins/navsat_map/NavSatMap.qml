@@ -65,7 +65,7 @@ Item {
         }
         ToolTip.visible: hovered
         ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
-        ToolTip.text: qsTr("Ignition Transport topics publishing NavSat messages")
+        ToolTip.text: qsTr("Gazebo Transport topics publishing NavSat messages")
       }
     }
 

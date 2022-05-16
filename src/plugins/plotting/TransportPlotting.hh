@@ -30,7 +30,7 @@ namespace gui
 namespace plugins
 {
 
-/// \brief Plots fields from Ignition Transport topics.
+/// \brief Plots fields from Gazebo Transport topics.
 /// Fields can be dragged from the Topic Viewer or the Component Inspector.
 class TransportPlotting : public ignition::gui::Plugin
 {

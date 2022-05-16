@@ -40,7 +40,7 @@ namespace plugins
 {
   class PublisherPrivate;
 
-  /// \brief Widget which publishes a custom Ignition transport message.
+  /// \brief Widget which publishes a custom Gazebo Transport message.
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
