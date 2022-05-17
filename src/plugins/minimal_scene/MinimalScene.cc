@@ -585,7 +585,7 @@ std::string IgnRenderer::Initialize()
   this->dataPtr->camera->SetImageWidth(this->textureSize.width());
   this->dataPtr->camera->SetImageHeight(this->textureSize.height());
   this->dataPtr->camera->SetAntiAliasing(8);
-  this->dataPtr->camera->SetHFOV(M_PI * 0.5);
+  this->dataPtr->camera->SetHFOV(this->cameraHFOV);
   // setting the size and calling PreRender should cause the render texture to
   // be rebuilt
   this->dataPtr->camera->PreRender();
