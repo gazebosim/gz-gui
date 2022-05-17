@@ -236,7 +236,7 @@ namespace plugins
 
     /// \brief True if sky is enabled;
     public: bool skyEnable = false;
-    
+
     /// \brief Horizontal FOV of the camera;
     public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
 
