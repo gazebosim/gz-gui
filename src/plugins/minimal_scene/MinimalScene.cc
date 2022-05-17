@@ -1122,17 +1122,17 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       if (!elem->NoChildren())
         ignwarn << "Child elements of <sky> are not supported yet" << std::endl;
     }
-  
+
     elem = _pluginElem->FirstChildElement("fov");
     if (nullptr != elem && nullptr != elem->GetText())
     {
-	double fovDeg;
-	math::Angle fov;
-        std::stringstream fovStr;
-        fovStr << std::string(elem->GetText());
-        fovStr >> fovDeg;
-	fov.SetDegree(fovDeg);
-	renderWindow->SetCameraHFOV(fov);	
+      double fovDeg;
+      math::Angle fov;
+      std::stringstream fovStr;
+      fovStr << std::string(elem->GetText());
+      fovStr >> fovDeg;
+      fov.SetDegree(fovDeg);
+      renderWindow->SetCameraHFOV(fov);
     }
   }
 
