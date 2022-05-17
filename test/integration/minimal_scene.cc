@@ -89,7 +89,7 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       "  <near>0.1</near>"
       "  <far>5000</far>"
       "</camera_clip>"
-      "<fov>60</fov>"
+      "<horizontal_fov>60</horizontal_fov>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;

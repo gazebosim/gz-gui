@@ -1123,7 +1123,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         ignwarn << "Child elements of <sky> are not supported yet" << std::endl;
     }
 
-    elem = _pluginElem->FirstChildElement("fov");
+    elem = _pluginElem->FirstChildElement("horizontal_fov");
     if (nullptr != elem && nullptr != elem->GetText())
     {
       double fovDeg;
@@ -1133,8 +1133,8 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       fovStr >> fovDeg;
       if (fovStr.fail())
       {
-        ignerr << "Unable to set <fov> to '" << fovStr.str()
-               << "' using default fov 90" << std::endl;
+        ignerr << "Unable to set <horizontal_fov> to '" << fovStr.str()
+               << "' using default horizontal field of view" << std::endl;
       }
       else
       {
