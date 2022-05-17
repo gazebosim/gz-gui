@@ -1131,8 +1131,16 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       std::stringstream fovStr;
       fovStr << std::string(elem->GetText());
       fovStr >> fovDeg;
-      fov.SetDegree(fovDeg);
-      renderWindow->SetCameraHFOV(fov);
+      if (fovStr.fail())
+      {
+        ignerr << "Unable to set <fov> to '" << fovStr.str()
+               << "' using default fov 90" << std::endl;
+      }
+      else
+      {
+        fov.SetDegree(fovDeg);
+        renderWindow->SetCameraHFOV(fov);
+      }
     }
   }
 
