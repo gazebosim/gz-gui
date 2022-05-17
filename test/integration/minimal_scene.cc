@@ -89,6 +89,7 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       "  <near>0.1</near>"
       "  <far>5000</far>"
       "</camera_clip>"
+      "<fov>60</fov>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -153,6 +154,8 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
   EXPECT_DOUBLE_EQ(0.1, camera->NearClipPlane());
   EXPECT_DOUBLE_EQ(5000.0, camera->FarClipPlane());
+
+  EXPECT_DOUBLE_EQ(60, camera->HFOV().Degree());
 
   // Cleanup
   auto plugins = win->findChildren<Plugin *>();
