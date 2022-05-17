@@ -236,6 +236,9 @@ namespace plugins
 
     /// \brief True if sky is enabled;
     public: bool skyEnable = false;
+    
+    /// \brief Horizontal FOV of the camera;
+    public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
 
     /// \internal
     /// \brief Pointer to private data.
@@ -337,6 +340,10 @@ namespace plugins
     /// \brief Set if sky is enabled
     /// \param[in] _sky True to enable the sky, false otherwise.
     public: void SetSkyEnabled(const bool &_sky);
+
+    /// \brief Set the Horizontal FOV of the camera
+    /// \param[in] _fov FOV of the camera in degree
+    public: void SetCameraHFOV(const ignition::math::Angle &_fov);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
