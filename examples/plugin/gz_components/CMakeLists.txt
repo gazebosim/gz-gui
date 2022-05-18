@@ -21,7 +21,7 @@ find_package(ignition-common5 REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
 
-QT5_ADD_RESOURCES(resources_RCC IgnComponents.qrc)
+QT5_ADD_RESOURCES(resources_RCC GzComponents.qrc)
 
 include_directories(SYSTEM
   ${IGNITION-COMMON_INCLUDE_DIRS}
@@ -34,11 +34,11 @@ link_directories(
 )
 
 # Generate examples
-add_library(IgnComponents SHARED ${headers_MOC}
-  IgnComponents.cc
+add_library(GzComponents SHARED ${headers_MOC}
+  GzComponents.cc
   ${resources_RCC}
 )
-target_link_libraries(IgnComponents
+target_link_libraries(GzComponents
   ${IGNITION-GUI_LIBRARIES}
   ${Qt5Core_LIBRARIES}
   ${Qt5Qml_LIBRARIES}

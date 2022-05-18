@@ -14,30 +14,24 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.0
-import "qrc:/qml"
 
-Column {
-  anchors.fill: parent
-  spacing: 2
+#ifndef GZ_GUI_EXAMPLES_PLUGIN_GZCOMPONENTS_HH_
+#define GZ_GUI_EXAMPLES_PLUGIN_GZCOMPONENTS_HH_
 
-  // Integer spin box
-  IgnSpinBox {
-    minimumValue: -2
-    maximumValue: 19
-    decimals: 0
-    stepSize: 3
-    value: 5
-  }
+#include <gz/gui/Plugin.hh>
 
-  // Double spin box
-  IgnSpinBox {
-    minimumValue: -2.5
-    maximumValue: 19.3
-    decimals: 4
-    stepSize: 3.6
-    value: 5.8
-    width: 300
+namespace ignition
+{
+  namespace gui
+  {
+    class GzComponents : public Plugin
+    {
+      Q_OBJECT
+
+      /// \brief Constructor
+      public: GzComponents() = default;
+    };
   }
 }
+
+#endif
