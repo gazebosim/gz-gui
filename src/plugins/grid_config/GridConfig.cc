@@ -30,7 +30,7 @@
 
 #include "GridConfig.hh"
 
-namespace ignition::gui
+namespace gz::gui
 {
   struct GridParam
   {
@@ -81,12 +81,12 @@ namespace ignition::gui
   };
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
-  : ignition::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
+  : gz::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
 {
 }
 
@@ -146,14 +146,14 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  ignition::gui::App()->findChild<
-      ignition::gui::MainWindow *>()->installEventFilter(this);
+  gz::gui::App()->findChild<
+      gz::gui::MainWindow *>()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
 bool GridConfig::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if (_event->type() == ignition::gui::events::Render::kType)
+  if (_event->type() == gz::gui::events::Render::kType)
   {
     if (nullptr == this->dataPtr->scene)
       this->dataPtr->scene = rendering::sceneFromFirstRenderEngine();
@@ -409,5 +409,5 @@ void GridConfig::RefreshList()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::GridConfig,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::GridConfig,
+                    gz::gui::Plugin)

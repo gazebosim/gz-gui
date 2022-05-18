@@ -24,7 +24,7 @@
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/SearchModel.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -43,7 +43,7 @@ int countRowsOfIndex(const QModelIndex &_index = QModelIndex())
 /////////////////////////////////////////////////
 TEST(SearchModelTest, FlatStructure)
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // A source model
   auto sourceModel = new QStandardItemModel();
@@ -99,7 +99,7 @@ TEST(SearchModelTest, FlatStructure)
 /////////////////////////////////////////////////
 TEST(SearchModelTest, NestedStructure)
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // A source model
   auto sourceModel = new QStandardItemModel();

@@ -28,7 +28,7 @@
 #include <memory>
 #include <string>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

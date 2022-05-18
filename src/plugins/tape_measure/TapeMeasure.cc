@@ -33,7 +33,7 @@
 
 #include "TapeMeasure.hh"
 
-namespace ignition::gui
+namespace gz::gui
 {
   class TapeMeasurePrivate
   {
@@ -59,22 +59,22 @@ namespace ignition::gui
 
     /// \brief The location of the placed starting point of the tape measure
     /// tool, only set when the user clicks to set the point.
-    public: ignition::math::Vector3d startPoint =
-            ignition::math::Vector3d::Zero;
+    public: gz::math::Vector3d startPoint =
+            gz::math::Vector3d::Zero;
 
     /// \brief The location of the placed ending point of the tape measure
     /// tool, only set when the user clicks to set the point.
-    public: ignition::math::Vector3d endPoint = ignition::math::Vector3d::Zero;
+    public: gz::math::Vector3d endPoint = gz::math::Vector3d::Zero;
 
     /// \brief The color to set the marker when hovering the mouse over the
     /// scene.
-    public: ignition::math::Color
-            hoverColor{ignition::math::Color(0.2f, 0.2f, 0.2f, 0.5f)};
+    public: gz::math::Color
+            hoverColor{gz::math::Color(0.2f, 0.2f, 0.2f, 0.5f)};
 
     /// \brief The color to draw the marker when the user clicks to confirm
     /// its location.
-    public: ignition::math::Color
-            drawColor{ignition::math::Color(0.2f, 0.2f, 0.2f, 1.0f)};
+    public: gz::math::Color
+            drawColor{gz::math::Color(0.2f, 0.2f, 0.2f, 1.0f)};
 
     /// \brief A set of the currently placed markers.  Used to make sure a
     /// non-existent marker is not deleted.
@@ -89,12 +89,12 @@ namespace ignition::gui
   };
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
 TapeMeasure::TapeMeasure()
-  : ignition::gui::Plugin(),
+  : gz::gui::Plugin(),
   dataPtr(std::make_unique<TapeMeasurePrivate>())
 {
 }
@@ -108,9 +108,9 @@ void TapeMeasure::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Tape measure";
 
-  ignition::gui::App()->findChild<ignition::gui::MainWindow *>
+  gz::gui::App()->findChild<gz::gui::MainWindow *>
       ()->installEventFilter(this);
-  ignition::gui::App()->findChild<ignition::gui::MainWindow *>
+  gz::gui::App()->findChild<gz::gui::MainWindow *>
       ()->QuickWindow()->installEventFilter(this);
 }
 
@@ -129,9 +129,9 @@ void TapeMeasure::Measure()
 
   // Notify Scene3D to disable the right click menu while we use it to
   // cancel our current measuring action
-  ignition::gui::events::DropdownMenuEnabled dropdownMenuEnabledEvent(false);
-  ignition::gui::App()->sendEvent(
-      ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+  gz::gui::events::DropdownMenuEnabled dropdownMenuEnabledEvent(false);
+  gz::gui::App()->sendEvent(
+      gz::gui::App()->findChild<gz::gui::MainWindow *>(),
       &dropdownMenuEnabledEvent);
 }
 
@@ -149,8 +149,8 @@ void TapeMeasure::Reset()
   this->DeleteMarker(this->dataPtr->kLineId);
 
   this->dataPtr->currentId = this->dataPtr->kStartPointId;
-  this->dataPtr->startPoint = ignition::math::Vector3d::Zero;
-  this->dataPtr->endPoint = ignition::math::Vector3d::Zero;
+  this->dataPtr->startPoint = gz::math::Vector3d::Zero;
+  this->dataPtr->endPoint = gz::math::Vector3d::Zero;
   this->dataPtr->distance = 0.0;
   this->dataPtr->measure = false;
   this->newDistance();
@@ -158,9 +158,9 @@ void TapeMeasure::Reset()
 
   // Notify Scene3D that we are done using the right click, so it can
   // re-enable the settings menu
-  ignition::gui::events::DropdownMenuEnabled dropdownMenuEnabledEvent(true);
-  ignition::gui::App()->sendEvent(
-      ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+  gz::gui::events::DropdownMenuEnabled dropdownMenuEnabledEvent(true);
+  gz::gui::App()->sendEvent(
+      gz::gui::App()->findChild<gz::gui::MainWindow *>(),
       &dropdownMenuEnabledEvent);
 }
 
@@ -178,51 +178,51 @@ void TapeMeasure::DeleteMarker(int _id)
     return;
 
   // Delete the previously created marker
-  ignition::msgs::Marker markerMsg;
+  gz::msgs::Marker markerMsg;
   markerMsg.set_ns(this->dataPtr->ns);
   markerMsg.set_id(_id);
-  markerMsg.set_action(ignition::msgs::Marker::DELETE_MARKER);
+  markerMsg.set_action(gz::msgs::Marker::DELETE_MARKER);
   this->dataPtr->node.Request("/marker", markerMsg);
   this->dataPtr->placedMarkers.erase(_id);
 }
 
 /////////////////////////////////////////////////
 void TapeMeasure::DrawPoint(int _id,
-    ignition::math::Vector3d &_point, ignition::math::Color &_color)
+    gz::math::Vector3d &_point, gz::math::Color &_color)
 {
   this->DeleteMarker(_id);
 
-  ignition::msgs::Marker markerMsg;
+  gz::msgs::Marker markerMsg;
   markerMsg.set_ns(this->dataPtr->ns);
   markerMsg.set_id(_id);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::SPHERE);
-  ignition::msgs::Set(markerMsg.mutable_material()->mutable_ambient(), _color);
-  ignition::msgs::Set(markerMsg.mutable_material()->mutable_diffuse(), _color);
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-    ignition::math::Vector3d(0.1, 0.1, 0.1));
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-    ignition::math::Pose3d(_point.X(), _point.Y(), _point.Z(), 0, 0, 0));
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::SPHERE);
+  gz::msgs::Set(markerMsg.mutable_material()->mutable_ambient(), _color);
+  gz::msgs::Set(markerMsg.mutable_material()->mutable_diffuse(), _color);
+  gz::msgs::Set(markerMsg.mutable_scale(),
+    gz::math::Vector3d(0.1, 0.1, 0.1));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+    gz::math::Pose3d(_point.X(), _point.Y(), _point.Z(), 0, 0, 0));
 
   this->dataPtr->node.Request("/marker", markerMsg);
   this->dataPtr->placedMarkers.insert(_id);
 }
 
 /////////////////////////////////////////////////
-void TapeMeasure::DrawLine(int _id, ignition::math::Vector3d &_startPoint,
-    ignition::math::Vector3d &_endPoint, ignition::math::Color &_color)
+void TapeMeasure::DrawLine(int _id, gz::math::Vector3d &_startPoint,
+    gz::math::Vector3d &_endPoint, gz::math::Color &_color)
 {
   this->DeleteMarker(_id);
 
-  ignition::msgs::Marker markerMsg;
+  gz::msgs::Marker markerMsg;
   markerMsg.set_ns(this->dataPtr->ns);
   markerMsg.set_id(_id);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::LINE_LIST);
-  ignition::msgs::Set(markerMsg.mutable_material()->mutable_ambient(), _color);
-  ignition::msgs::Set(markerMsg.mutable_material()->mutable_diffuse(), _color);
-  ignition::msgs::Set(markerMsg.add_point(), _startPoint);
-  ignition::msgs::Set(markerMsg.add_point(), _endPoint);
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::LINE_LIST);
+  gz::msgs::Set(markerMsg.mutable_material()->mutable_ambient(), _color);
+  gz::msgs::Set(markerMsg.mutable_material()->mutable_diffuse(), _color);
+  gz::msgs::Set(markerMsg.add_point(), _startPoint);
+  gz::msgs::Set(markerMsg.add_point(), _endPoint);
 
   this->dataPtr->node.Request("/marker", markerMsg);
   this->dataPtr->placedMarkers.insert(_id);
@@ -231,16 +231,16 @@ void TapeMeasure::DrawLine(int _id, ignition::math::Vector3d &_startPoint,
 /////////////////////////////////////////////////
 bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if (_event->type() == ignition::gui::events::HoverToScene::kType)
+  if (_event->type() == gz::gui::events::HoverToScene::kType)
   {
     auto hoverToSceneEvent =
-        reinterpret_cast<ignition::gui::events::HoverToScene *>(_event);
+        reinterpret_cast<gz::gui::events::HoverToScene *>(_event);
 
     // This event is called in Scene3d's RenderThread, so it's safe to make
     // rendering calls here
     if (this->dataPtr->measure && hoverToSceneEvent)
     {
-      ignition::math::Vector3d point = hoverToSceneEvent->Point();
+      gz::math::Vector3d point = hoverToSceneEvent->Point();
       this->DrawPoint(this->dataPtr->currentId, point,
         this->dataPtr->hoverColor);
 
@@ -255,16 +255,16 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
       }
     }
   }
-  else if (_event->type() == ignition::gui::events::LeftClickToScene::kType)
+  else if (_event->type() == gz::gui::events::LeftClickToScene::kType)
   {
     auto leftClickToSceneEvent =
-        reinterpret_cast<ignition::gui::events::LeftClickToScene *>(_event);
+        reinterpret_cast<gz::gui::events::LeftClickToScene *>(_event);
 
     // This event is called in Scene3d's RenderThread, so it's safe to make
     // rendering calls here
     if (this->dataPtr->measure && leftClickToSceneEvent)
     {
-      ignition::math::Vector3d point = leftClickToSceneEvent->Point();
+      gz::math::Vector3d point = leftClickToSceneEvent->Point();
       this->DrawPoint(this->dataPtr->currentId, point,
         this->dataPtr->drawColor);
       // If the user is placing the start point, update its position
@@ -287,11 +287,11 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
 
         // Notify Scene3D that we are done using the right click, so it can
         // re-enable the settings menu
-        ignition::gui::events::DropdownMenuEnabled
+        gz::gui::events::DropdownMenuEnabled
           dropdownMenuEnabledEvent(true);
 
-        ignition::gui::App()->sendEvent(
-            ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+        gz::gui::App()->sendEvent(
+            gz::gui::App()->findChild<gz::gui::MainWindow *>(),
             &dropdownMenuEnabledEvent);
       }
       this->dataPtr->currentId = this->dataPtr->kEndPointId;
@@ -316,7 +316,7 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
     }
   }
   // Cancel the current action if a right click is detected
-  else if (_event->type() == ignition::gui::events::RightClickToScene::kType)
+  else if (_event->type() == gz::gui::events::RightClickToScene::kType)
   {
     if (this->dataPtr->measure)
     {
@@ -328,5 +328,5 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::TapeMeasure,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::TapeMeasure,
+                    gz::gui::Plugin)

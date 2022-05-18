@@ -20,7 +20,7 @@
 
 #include "HelloPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -53,5 +53,5 @@ void HelloPlugin::OnButton()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::HelloPlugin,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(gz::gui::HelloPlugin,
+                    gz::gui::Plugin);

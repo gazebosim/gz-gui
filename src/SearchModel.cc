@@ -20,7 +20,7 @@
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/SearchModel.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

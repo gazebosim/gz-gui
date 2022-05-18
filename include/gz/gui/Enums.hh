@@ -20,7 +20,7 @@
 
 #include "gz/gui/qt.h"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

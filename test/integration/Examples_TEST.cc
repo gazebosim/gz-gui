@@ -30,7 +30,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Examples_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
@@ -42,7 +42,7 @@ TEST(ExampleTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
       "examples", "config");
 
   // Load each config file
-  ignition::common::DirIter endIter;
+  gz::common::DirIter endIter;
   for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
   {
     igndbg << *file << std::endl;

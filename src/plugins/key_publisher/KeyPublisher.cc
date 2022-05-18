@@ -31,17 +31,17 @@
 
 #include "KeyPublisher.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
   class KeyPublisherPrivate
   {
     /// \brief Node for communication
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Publisher
-    public: ignition::transport::Node::Publisher pub;
+    public: gz::transport::Node::Publisher pub;
 
     /// \brief Topic
     public: std::string topic = "keyboard/keypress";
@@ -50,7 +50,7 @@ namespace gui
     /// \param[in] key_press Pointer to the keyevent
     public: void KeyPub(QKeyEvent *_keyPress)
     {
-      ignition::msgs::Int32 Msg;
+      gz::msgs::Int32 Msg;
       Msg.set_data(_keyPress->key());
       pub.Publish(Msg);
     }
@@ -58,14 +58,14 @@ namespace gui
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
 {
   // Advertise publisher node
-  this->dataPtr->pub = this->dataPtr->node.Advertise<ignition::msgs::Int32>
+  this->dataPtr->pub = this->dataPtr->node.Advertise<gz::msgs::Int32>
     (this->dataPtr->topic);
 }
 
@@ -80,8 +80,8 @@ void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Key publisher";
 
-  ignition::gui::App()->findChild
-    <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
+  gz::gui::App()->findChild
+    <gz::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
@@ -96,5 +96,5 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::KeyPublisher,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::KeyPublisher,
+                    gz::gui::Plugin)

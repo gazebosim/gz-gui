@@ -29,7 +29,7 @@
 
 #include "ignition/gui/Application.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -53,7 +53,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -187,5 +187,5 @@ void NavSatMap::SetTopicList(const QStringList &_topicList)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::NavSatMap,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::NavSatMap,
+                    gz::gui::Plugin)

@@ -39,7 +39,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Scene3d_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

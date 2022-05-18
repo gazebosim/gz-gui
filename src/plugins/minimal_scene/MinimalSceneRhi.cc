@@ -17,7 +17,7 @@
 
 #include "MinimalSceneRhi.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

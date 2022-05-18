@@ -37,7 +37,7 @@
 
 #include "gz/gui/Export.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

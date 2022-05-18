@@ -33,7 +33,7 @@
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/MainWindow.hh>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -54,13 +54,13 @@ namespace plugins
   class TeleopPrivate
   {
     /// \brief Node for communication.
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Topic. Set '/cmd_vel' as default.
     public: std::string topic = "/cmd_vel";
 
     /// \brief Publisher.
-    public: ignition::transport::Node::Publisher cmdVelPub;
+    public: gz::transport::Node::Publisher cmdVelPub;
 
     /// \brief Linear velocity.
     public: double linearVel = 0;
@@ -85,7 +85,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -93,9 +93,9 @@ using namespace plugins;
 Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
 {
   // Initialize publisher using default topic.
-  this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub = gz::transport::Node::Publisher();
   this->dataPtr->cmdVelPub =
-      this->dataPtr->node.Advertise<ignition::msgs::Twist>
+      this->dataPtr->node.Advertise<gz::msgs::Twist>
       (this->dataPtr->topic);
 }
 
@@ -108,14 +108,14 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Teleop";
 
-  ignition::gui::App()->findChild
-    <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
+  gz::gui::App()->findChild
+    <gz::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
 void Teleop::OnTeleopTwist()
 {
-  ignition::msgs::Twist cmdVelMsg;
+  gz::msgs::Twist cmdVelMsg;
 
   cmdVelMsg.mutable_linear()->set_x(
       this->dataPtr->linearDir * this->dataPtr->linearVel);
@@ -123,7 +123,7 @@ void Teleop::OnTeleopTwist()
       this->dataPtr->angularDir * this->dataPtr->angularVel);
 
   if (!this->dataPtr->cmdVelPub.Publish(cmdVelMsg))
-    ignerr << "ignition::msgs::Twist message couldn't be published at topic: "
+    ignerr << "gz::msgs::Twist message couldn't be published at topic: "
       << this->dataPtr->topic << std::endl;
 }
 
@@ -135,9 +135,9 @@ void Teleop::OnTopicSelection(const QString &_topic)
       this->dataPtr->topic << " ' " <<std::endl;
 
   // Update publisher with new topic.
-  this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub = gz::transport::Node::Publisher();
   this->dataPtr->cmdVelPub =
-      this->dataPtr->node.Advertise<ignition::msgs::Twist>
+      this->dataPtr->node.Advertise<gz::msgs::Twist>
       (this->dataPtr->topic);
   if(!this->dataPtr->cmdVelPub)
   {
@@ -281,5 +281,5 @@ void Teleop::setAngularDirection(int _angularDir)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Teleop,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::Teleop,
+                    gz::gui::Plugin)

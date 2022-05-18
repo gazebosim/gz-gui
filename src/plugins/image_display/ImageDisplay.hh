@@ -29,7 +29,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -92,7 +92,7 @@ namespace plugins
 
     /// \brief Subscriber callback when new image is received
     /// \param[in] _msg New image
-    private: void OnImageMsg(const ignition::msgs::Image &_msg);
+    private: void OnImageMsg(const gz::msgs::Image &_msg);
 
     /// \internal
     /// \brief Pointer to private data.

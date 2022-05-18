@@ -37,7 +37,7 @@ namespace tinyxml2
   class XMLElement;
 }
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

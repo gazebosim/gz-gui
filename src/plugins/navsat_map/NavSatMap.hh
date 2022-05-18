@@ -29,7 +29,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -93,7 +93,7 @@ namespace plugins
 
     /// \brief Subscriber callback when new message is received
     /// \param[in] _msg New message
-    private: void OnMessage(const ignition::msgs::NavSat &_msg);
+    private: void OnMessage(const gz::msgs::NavSat &_msg);
 
     /// \internal
     /// \brief Pointer to private data.

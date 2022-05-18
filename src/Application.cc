@@ -34,7 +34,7 @@
 
 #include "ignition/transport/TopicUtils.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -84,7 +84,7 @@ namespace ignition
   }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -206,7 +206,7 @@ QQmlApplicationEngine *Application::Engine() const
 }
 
 /////////////////////////////////////////////////
-Application *ignition::gui::App()
+Application *gz::gui::App()
 {
   return qobject_cast<Application *>(qGuiApp);
 }
@@ -471,7 +471,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   }
 
   // Go over all plugin names and get the first one that implements the
-  // ignition::gui::Plugin interface
+  // gz::gui::Plugin interface
   plugin::PluginPtr commonPlugin;
   std::shared_ptr<gui::Plugin> plugin{nullptr};
   for (auto pluginName : pluginNames)
@@ -480,7 +480,7 @@ bool Application::LoadPlugin(const std::string &_filename,
     if (!commonPlugin)
       continue;
 
-    plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
+    plugin = commonPlugin->QueryInterfaceSharedPtr<gz::gui::Plugin>();
     if (plugin)
       break;
   }
@@ -501,7 +501,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   if (!plugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't get [ignition::gui::Plugin] interface."
+              "] : couldn't get [gz::gui::Plugin] interface."
            << std::endl;
     return false;
   }

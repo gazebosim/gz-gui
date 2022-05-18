@@ -40,7 +40,7 @@
 #include "ignition/gui/GuiEvents.hh"
 #include "ignition/gui/MainWindow.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -49,7 +49,7 @@ namespace plugins
   class ScreenshotPrivate
   {
     /// \brief Node for communication
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Screenshot service name
     public: std::string screenshotService;
@@ -61,7 +61,7 @@ namespace plugins
     public: bool dirty{false};
 
     /// \brief Pointer to the user camera.
-    public: ignition::rendering::CameraPtr userCamera{nullptr};
+    public: gz::rendering::CameraPtr userCamera{nullptr};
 
     /// \brief Saved screenshot filepath
     public: QString savedScreenshotPath = "";
@@ -70,13 +70,13 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : ignition::gui::Plugin(),
+  : gz::gui::Plugin(),
   dataPtr(std::make_unique<ScreenshotPrivate>())
 {
   std::string home;
@@ -236,5 +236,5 @@ void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Screenshot,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::Screenshot,
+                    gz::gui::Plugin)

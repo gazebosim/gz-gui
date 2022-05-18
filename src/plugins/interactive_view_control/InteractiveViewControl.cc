@@ -38,7 +38,7 @@
 #include "InteractiveViewControl.hh"
 
 /// \brief Private data class for InteractiveViewControl
-class ignition::gui::plugins::InteractiveViewControlPrivate
+class gz::gui::plugins::InteractiveViewControlPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -96,7 +96,7 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   public: transport::Node node;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -268,8 +268,8 @@ void InteractiveViewControl::LoadConfig(
   ignmsg << "Camera view controller topic advertised on ["
          << this->dataPtr->cameraViewControlService << "]" << std::endl;
 
-  ignition::gui::App()->findChild<
-    ignition::gui::MainWindow *>()->installEventFilter(this);
+  gz::gui::App()->findChild<
+    gz::gui::MainWindow *>()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
@@ -282,7 +282,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::LeftClickOnScene::kType)
   {
     auto leftClickOnScene =
-      reinterpret_cast<ignition::gui::events::LeftClickOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::LeftClickOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     this->dataPtr->drag = math::Vector2d::Zero;
@@ -291,7 +291,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::MousePressOnScene::kType)
   {
     auto pressOnScene =
-      reinterpret_cast<ignition::gui::events::MousePressOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::MousePressOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     this->dataPtr->drag = math::Vector2d::Zero;
@@ -300,7 +300,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::DragOnScene::kType)
   {
     auto dragOnScene =
-      reinterpret_cast<ignition::gui::events::DragOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::DragOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     auto dragStart = this->dataPtr->mouseEvent.Pos();
@@ -314,7 +314,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::ScrollOnScene::kType)
   {
     auto scrollOnScene =
-      reinterpret_cast<ignition::gui::events::ScrollOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::ScrollOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     this->dataPtr->drag += math::Vector2d(
@@ -323,9 +323,9 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
 
     this->dataPtr->mouseEvent = scrollOnScene->Mouse();
   }
-  else if (_event->type() == ignition::gui::events::BlockOrbit::kType)
+  else if (_event->type() == gz::gui::events::BlockOrbit::kType)
   {
-    auto blockOrbit = reinterpret_cast<ignition::gui::events::BlockOrbit *>(
+    auto blockOrbit = reinterpret_cast<gz::gui::events::BlockOrbit *>(
       _event);
     this->dataPtr->blockOrbit = blockOrbit->Block();
   }
@@ -335,5 +335,5 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::InteractiveViewControl,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::InteractiveViewControl,
+                    gz::gui::Plugin)

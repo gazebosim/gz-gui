@@ -42,7 +42,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./TransportSceneManager_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -212,9 +212,9 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_EQ(1u, visualVis->GeometryCount());
 
   // Change model pose
-  auto posePub = node.Advertise<ignition::msgs::Pose_V>("/test/pose");
+  auto posePub = node.Advertise<gz::msgs::Pose_V>("/test/pose");
 
-  ignition::msgs::Pose_V poseVMsg;
+  gz::msgs::Pose_V poseVMsg;
   auto poseMsg = poseVMsg.add_pose();
   poseMsg->set_id(1);
   poseMsg->set_name("box_model");
@@ -232,9 +232,9 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_EQ(math::Pose3d(5, 0, 0, 0, 0, 0), modelVis->LocalPose());
 
   // Delete model
-  auto deletePub = node.Advertise<ignition::msgs::UInt32_V>("/test/delete");
+  auto deletePub = node.Advertise<gz::msgs::UInt32_V>("/test/delete");
 
-  ignition::msgs::UInt32_V entityVMsg;
+  gz::msgs::UInt32_V entityVMsg;
   entityVMsg.add_data(1);
   deletePub.Publish(entityVMsg);
 

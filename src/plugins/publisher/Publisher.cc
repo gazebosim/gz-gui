@@ -29,7 +29,7 @@
 
 #include "Publisher.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -53,16 +53,16 @@ namespace plugins
     public: QTimer *timer;
 
     /// \brief Node for communication
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Publisher
-    public: ignition::transport::Node::Publisher pub;
+    public: gz::transport::Node::Publisher pub;
   };
 }
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -115,7 +115,7 @@ void Publisher::OnPublish(const bool _checked)
       this->dataPtr->timer->stop();
       this->disconnect(this->dataPtr->timer, 0, 0, 0);
     }
-    this->dataPtr->pub = ignition::transport::Node::Publisher();
+    this->dataPtr->pub = gz::transport::Node::Publisher();
     return;
   }
 
@@ -124,7 +124,7 @@ void Publisher::OnPublish(const bool _checked)
   auto msgData = this->dataPtr->msgData.toStdString();
 
   // Check it's possible to create message
-  auto msg = ignition::msgs::Factory::New(msgType, msgData);
+  auto msg = gz::msgs::Factory::New(msgType, msgData);
   if (!msg || (msg->DebugString() == "" && msgData != ""))
   {
     ignerr << "Unable to create message of type[" << msgType << "] "
@@ -155,7 +155,7 @@ void Publisher::OnPublish(const bool _checked)
   this->dataPtr->timer->setInterval(1000/this->dataPtr->frequency);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
   {
-    auto newMsg = ignition::msgs::Factory::New(msgType, msgData);
+    auto newMsg = gz::msgs::Factory::New(msgType, msgData);
     this->dataPtr->pub.Publish(*newMsg);
   });
   this->dataPtr->timer->start();
@@ -214,5 +214,5 @@ void Publisher::SetFrequency(const double _frequency)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Publisher,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::Publisher,
+                    gz::gui::Plugin)

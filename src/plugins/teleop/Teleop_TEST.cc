@@ -40,7 +40,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Teleop_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 class TeleopTest : public ::testing::Test

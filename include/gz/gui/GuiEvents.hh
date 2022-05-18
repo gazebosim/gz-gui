@@ -32,7 +32,7 @@
 
 #include "gz/gui/Export.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -374,7 +374,7 @@ namespace ignition
         /// \param[in] _dropMouse x and y  coordinate of mouse position.
         public: explicit DropOnScene(
           const std::string &_dropText,
-          const ignition::math::Vector2i &_dropMouse);
+          const gz::math::Vector2i &_dropMouse);
 
         /// \brief Get the text of the dropped thing on the scene
         /// \return The name of the dropped thing on the scene
@@ -382,7 +382,7 @@ namespace ignition
 
         /// \brief Get X and Y position
         /// \return Get X and Y position
-        public: const ignition::math::Vector2i &Mouse() const;
+        public: const gz::math::Vector2i &Mouse() const;
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 15);

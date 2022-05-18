@@ -30,7 +30,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

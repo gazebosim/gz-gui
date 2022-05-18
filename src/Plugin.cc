@@ -51,7 +51,7 @@ static const std::unordered_set<std::string> kIgnoredProps{
     "pluginName",
     "anchored"};
 
-class ignition::gui::PluginPrivate
+class gz::gui::PluginPrivate
 {
   /// \brief Set this to true if the plugin should be deleted as soon as it has
   ///  a parent.
@@ -80,7 +80,7 @@ class ignition::gui::PluginPrivate
   public: Anchors anchors;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

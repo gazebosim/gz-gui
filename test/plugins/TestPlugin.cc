@@ -20,7 +20,7 @@
 
 #include "TestPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -35,5 +35,5 @@ TestPlugin::~TestPlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::TestPlugin,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::TestPlugin,
+                    gz::gui::Plugin)

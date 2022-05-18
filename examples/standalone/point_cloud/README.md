@@ -3,9 +3,9 @@
 This example publishes a point cloud that can be visualized with the
 `PointCloud` plugin. The example publishes:
 
-* `ignition::msgs::PointCloudPacked` messages on `/point_cloud` with XYZ
+* `gz::msgs::PointCloudPacked` messages on `/point_cloud` with XYZ
   positions of points.
-* `ignition::msgs::FloatV` messages on 3 different topics:
+* `gz::msgs::FloatV` messages on 3 different topics:
     * `/flat`: Array of 1s
     * `/sum`: Each value in the array corresponds to the sum of its point's
        coordinates (X + Y + Z).

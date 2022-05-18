@@ -24,7 +24,7 @@
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/Conversions.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

@@ -49,7 +49,7 @@
 #include "CameraTracking.hh"
 
 /// \brief Private data class for CameraTracking
-class ignition::gui::plugins::CameraTrackingPrivate
+class gz::gui::plugins::CameraTrackingPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -133,7 +133,7 @@ class ignition::gui::plugins::CameraTrackingPrivate
   public: std::string moveToTarget;
 
   /// \brief Helper object to move user camera
-  public: ignition::rendering::MoveToHelper moveToHelper;
+  public: gz::rendering::MoveToHelper moveToHelper;
 
   /// \brief Transport node
   public: transport::Node node;
@@ -163,7 +163,7 @@ class ignition::gui::plugins::CameraTrackingPrivate
   public: QTimer *timer{nullptr};
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -505,5 +505,5 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::CameraTracking,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::CameraTracking,
+                    gz::gui::Plugin)

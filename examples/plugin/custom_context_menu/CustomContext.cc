@@ -20,7 +20,7 @@
 
 #include "CustomContext.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -35,5 +35,5 @@ CustomContext::~CustomContext()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::CustomContext,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(gz::gui::CustomContext,
+                    gz::gui::Plugin);

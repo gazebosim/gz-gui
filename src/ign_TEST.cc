@@ -54,7 +54,7 @@ std::string custom_exec_str(std::string _cmd)
   return result;
 }
 
-using namespace ignition;
+using namespace gz;
 
 class CmdLine : public ::testing::Test
 {

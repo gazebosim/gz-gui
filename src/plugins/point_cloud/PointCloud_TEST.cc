@@ -34,7 +34,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./PointCloud_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

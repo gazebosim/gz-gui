@@ -23,7 +23,7 @@
 #include <ignition/gui/Plugin.hh>
 #include <ignition/rendering.hh>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -45,7 +45,7 @@ namespace gui
   ///   * \<cell_length\> : Length of each cell, defaults to 1.
   ///   * \<pose\> : Grid pose, defaults to the origin.
   ///   * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class GridConfig : public ignition::gui::Plugin
+  class GridConfig : public gz::gui::Plugin
   {
     Q_OBJECT
 

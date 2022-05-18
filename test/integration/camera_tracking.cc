@@ -47,7 +47,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./camera_tracking")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace std::chrono_literals;
 

@@ -24,7 +24,7 @@ updates the scene based on ROS 2 messages. Each of these applications provides
 custom plugins that update the 3D scene through events and the render thread.
 
 Ignition GUI ships with a plugin that updates the scene based on Ignition
-Transport messages, the `ignition::gui::plugins::TransportSceneManager`.
+Transport messages, the `gz::gui::plugins::TransportSceneManager`.
 Applications can use that directly, or use it as inspiration for developing
 their own scene managers.
 
@@ -41,9 +41,9 @@ and see visuals being added and moved on the 3D scene.
 
 ### Getting the scene
 
-After the `MinimalScene` instantiates an `ignition::rendering::Scene` pointer,
+After the `MinimalScene` instantiates an `gz::rendering::Scene` pointer,
 any plugin can get it using the rendering engine's singleton. The
-`ignition::rendering::sceneFromFirstRenderEngine()`
+`gz::rendering::sceneFromFirstRenderEngine()`
 function is a convenient way of getting the scene for applications that
 have a single scene loaded.
 
@@ -56,8 +56,8 @@ every iteration until it succeeds. This way, it can find a 3D scene even if
 Rendering operations aren't thread-safe. To make sure there are no race
 conditions, all rendering operations should happen in the same thread, the
 "render thread". In order to access that thread from a custom plugin, it's
-necessary to listen to the `ignition::gui::events::Render` or
-`ignition::gui::events::PreRender` events, which are
+necessary to listen to the `gz::gui::events::Render` or
+`gz::gui::events::PreRender` events, which are
 emitted by the `MinimalScene`.
 
 See how the `TransportSceneManager` installs an event filter with

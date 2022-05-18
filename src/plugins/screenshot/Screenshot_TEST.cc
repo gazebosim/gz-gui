@@ -45,7 +45,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Screenshot_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -82,8 +82,8 @@ TEST(ScreenshotTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
   // ASSERT_EQ(plugins.size(), 2);
   //
   // --- Screenshot request ---
-  // std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-  //   [](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
+  // std::function<void(const gz::msgs::Boolean &, const bool)> cb =
+  //   [](const gz::msgs::Boolean &/*_rep*/, const bool _result)
   // {
   //   if (!_result)
   //     ignerr << "Error saving screenshot" << std::endl;

@@ -30,14 +30,14 @@
 #  endif
 #endif
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
 namespace plugins
 {
   /// \brief This plugin provides a shutdown button.
-  class ShutdownButton_EXPORTS_API ShutdownButton: public ignition::gui::Plugin
+  class ShutdownButton_EXPORTS_API ShutdownButton: public gz::gui::Plugin
   {
     Q_OBJECT
 

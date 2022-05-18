@@ -18,7 +18,7 @@
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/DragDropModel.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

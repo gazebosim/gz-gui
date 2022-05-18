@@ -24,7 +24,7 @@
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/MainWindow.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

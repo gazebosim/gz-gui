@@ -56,10 +56,10 @@
 #include "ignition/gui/Helpers.hh"
 #include "ignition/gui/MainWindow.hh"
 
-Q_DECLARE_METATYPE(ignition::gui::plugins::RenderSync*)
+Q_DECLARE_METATYPE(gz::gui::plugins::RenderSync*)
 
 /// \brief Private data class for IgnRenderer
-class ignition::gui::plugins::IgnRenderer::Implementation
+class gz::gui::plugins::IgnRenderer::Implementation
 {
   /// \brief Flag to indicate if mouse event is dirty
   public: bool mouseDirty{false};
@@ -140,7 +140,7 @@ class ignition::gui::plugins::IgnRenderer::Implementation
 ///
 /// For more info see
 /// https://github.com/ignitionrobotics/ign-rendering/issues/304
-class ignition::gui::plugins::RenderSync
+class gz::gui::plugins::RenderSync
 {
   /// \brief Cond. variable to synchronize rendering on specific events
   /// (e.g. texture resize) or for debugging (e.g. keep
@@ -188,7 +188,7 @@ class ignition::gui::plugins::RenderSync
 };
 
 /// \brief Private data class for RenderWindowItem
-class ignition::gui::plugins::RenderWindowItem::Implementation
+class gz::gui::plugins::RenderWindowItem::Implementation
 {
   /// \brief Keep latest mouse event
   public: common::MouseEvent mouseEvent;
@@ -200,7 +200,7 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
   public: bool initializing = false;
 
   /// \brief Graphics API. The default is platform specific.
-  public: ignition::rendering::GraphicsAPI graphicsAPI =
+  public: gz::rendering::GraphicsAPI graphicsAPI =
 #ifdef __APPLE__
       rendering::GraphicsAPI::METAL;
 #else
@@ -221,11 +221,11 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
 };
 
 /// \brief Private data class for MinimalScene
-class ignition::gui::plugins::MinimalScene::Implementation
+class gz::gui::plugins::MinimalScene::Implementation
 {
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -331,20 +331,20 @@ void IgnRenderer::Render(RenderSync *_renderSync)
   // view control
   this->HandleMouseEvent();
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::PreRender());
   }
 
   // update and render to texture
   this->dataPtr->camera->Update();
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::Render());
   }
   _renderSync->ReleaseQtThreadFromBlock(lock);
@@ -551,7 +551,7 @@ std::string IgnRenderer::Initialize()
   if (loadedEngines.empty())
   {
     this->dataPtr->rhiParams["winID"] = std::to_string(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+        gz::gui::App()->findChild<gz::gui::MainWindow *>()->
         QuickWindow()->winId());
     engine = rendering::engine(this->engineName, this->dataPtr->rhiParams);
   }
@@ -1253,14 +1253,14 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
+void RenderWindowItem::OnHovered(const gz::math::Vector2i &_hoverPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::OnDropped(const QString &_drop,
-    const ignition::math::Vector2i &_dropPos)
+    const gz::math::Vector2i &_dropPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewDropEvent(
     _drop.toStdString(), _dropPos);
@@ -1395,5 +1395,5 @@ void MinimalScene::SetLoadingError(const QString &_loadingError)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::MinimalScene,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::MinimalScene,
+                    gz::gui::Plugin)

@@ -33,7 +33,7 @@
 
 #include "MinimalSceneRhi.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -349,13 +349,13 @@ namespace plugins
     /// \brief Called when the mouse hovers to a new position.
     /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
     /// the render window.
-    public: void OnHovered(const ignition::math::Vector2i &_hoverPos);
+    public: void OnHovered(const gz::math::Vector2i &_hoverPos);
 
     /// \brief Callback when receives a drop event.
     /// \param[in] _drop Dropped string.
     /// \param[in] _dropPos x coordinate of mouse position.
     public: void OnDropped(const QString &_drop,
-        const ignition::math::Vector2i &_dropPos);
+        const gz::math::Vector2i &_dropPos);
 
     /// \brief Set if sky is enabled
     /// \param[in] _sky True to enable the sky, false otherwise.

@@ -57,7 +57,7 @@
 #include "TransportSceneManager.hh"
 
 /// \brief Private data class for TransportSceneManager
-class ignition::gui::plugins::TransportSceneManagerPrivate
+class gz::gui::plugins::TransportSceneManagerPrivate
 {
   /// \brief Make the scene service request and populate the scene
   public: void Request();
@@ -168,13 +168,13 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
 
   /// \brief Transport node for making service request and subscribing to
   /// pose topic
-  public: ignition::transport::Node node;
+  public: gz::transport::Node node;
 
   /// \brief Thread to wait for transport initialization
   public: std::thread initializeTransport;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -754,8 +754,8 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
     // Assume absolute path to mesh file
     descriptor.meshName = _msg.mesh().filename();
 
-    ignition::common::MeshManager* meshManager =
-        ignition::common::MeshManager::Instance();
+    gz::common::MeshManager* meshManager =
+        gz::common::MeshManager::Instance();
     descriptor.mesh = meshManager->Load(descriptor.meshName);
     geom = this->scene->CreateMesh(descriptor);
 
@@ -875,5 +875,5 @@ void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::TransportSceneManager,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::TransportSceneManager,
+                    gz::gui::Plugin)

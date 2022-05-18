@@ -26,7 +26,7 @@
 #include <QSGTexture>
 #include <QSize>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

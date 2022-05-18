@@ -34,7 +34,7 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
 
-namespace ignition
+namespace gz
 {
   namespace common
   {

@@ -60,7 +60,7 @@
 #include "ignition/gui/GuiEvents.hh"
 #include "ignition/gui/MainWindow.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -201,7 +201,7 @@ namespace plugins
 
     /// \brief Transport node for making service request and subscribing to
     /// pose topic
-    private: ignition::transport::Node node;
+    private: gz::transport::Node node;
   };
 
   /// \brief Private data class for IgnRenderer
@@ -265,7 +265,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -749,8 +749,8 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     // Assume absolute path to mesh file
     descriptor.meshName = _msg.mesh().filename();
 
-    ignition::common::MeshManager* meshManager =
-        ignition::common::MeshManager::Instance();
+    gz::common::MeshManager* meshManager =
+        gz::common::MeshManager::Instance();
     descriptor.mesh = meshManager->Load(descriptor.meshName);
     geom = this->scene->CreateMesh(descriptor);
 
@@ -903,10 +903,10 @@ void IgnRenderer::Render()
   // update and render to texture
   this->dataPtr->camera->Update();
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::Render());
   }
 }
@@ -1124,7 +1124,7 @@ std::string IgnRenderer::Initialize()
     std::map<std::string, std::string> params;
     params["useCurrentGLContext"] = "1";
     params["winID"] = std::to_string(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+        gz::gui::App()->findChild<gz::gui::MainWindow *>()->
         QuickWindow()->winId());
     engine = rendering::engine(this->engineName, params);
   }
@@ -1684,7 +1684,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
+void RenderWindowItem::OnHovered(const gz::math::Vector2i &_hoverPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
 }
@@ -1823,5 +1823,5 @@ void Scene3D::SetLoadingError(const QString &_loadingError)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Scene3D,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::Scene3D,
+                    gz::gui::Plugin)

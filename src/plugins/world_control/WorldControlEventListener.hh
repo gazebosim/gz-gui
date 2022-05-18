@@ -23,7 +23,7 @@
 #include "ignition/gui/MainWindow.hh"
 #include "ignition/gui/qt.h"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

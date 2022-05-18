@@ -20,7 +20,7 @@
 
 #include "DialogFromPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -35,5 +35,5 @@ DialogFromPlugin::~DialogFromPlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::DialogFromPlugin,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(gz::gui::DialogFromPlugin,
+                    gz::gui::Plugin);

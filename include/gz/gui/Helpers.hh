@@ -22,7 +22,7 @@
 #include "gz/gui/Enums.hh"
 #include "gz/gui/Export.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

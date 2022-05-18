@@ -44,9 +44,9 @@ int main(int _argc, char **_argv)
   std::signal(SIGTERM, signalHandler);
 
   // Create messages
-  ignition::msgs::PointCloudPacked pcMsg;
-  ignition::msgs::InitPointCloudPacked(pcMsg, "some_frame", true,
-      {{"xyz", ignition::msgs::PointCloudPacked::Field::FLOAT32}});
+  gz::msgs::PointCloudPacked pcMsg;
+  gz::msgs::InitPointCloudPacked(pcMsg, "some_frame", true,
+      {{"xyz", gz::msgs::PointCloudPacked::Field::FLOAT32}});
 
   int numberOfPoints{1000};
   unsigned int dataSize{numberOfPoints * pcMsg.point_step()};
@@ -54,14 +54,14 @@ int main(int _argc, char **_argv)
   pcMsg.set_height(1);
   pcMsg.set_width(1000);
 
-  ignition::msgs::Float_V flatMsg;
-  ignition::msgs::Float_V sumMsg;
-  ignition::msgs::Float_V productMsg;
+  gz::msgs::Float_V flatMsg;
+  gz::msgs::Float_V sumMsg;
+  gz::msgs::Float_V productMsg;
 
   // Populate messages
-  ignition::msgs::PointCloudPackedIterator<float> xIter(pcMsg, "x");
-  ignition::msgs::PointCloudPackedIterator<float> yIter(pcMsg, "y");
-  ignition::msgs::PointCloudPackedIterator<float> zIter(pcMsg, "z");
+  gz::msgs::PointCloudPackedIterator<float> xIter(pcMsg, "x");
+  gz::msgs::PointCloudPackedIterator<float> yIter(pcMsg, "y");
+  gz::msgs::PointCloudPackedIterator<float> zIter(pcMsg, "z");
 
   for (float x = 0.0, y = 0.0, z = 0.0;
        xIter != xIter.End();
@@ -88,11 +88,11 @@ int main(int _argc, char **_argv)
   }
 
   // Publish messages at 1Hz until interrupted.
-  ignition::transport::Node node;
-  auto flatPub = node.Advertise<ignition::msgs::Float_V>("/flat");
-  auto sumPub = node.Advertise<ignition::msgs::Float_V>("/sum");
-  auto productPub = node.Advertise<ignition::msgs::Float_V>("/product");
-  auto pcPub = node.Advertise<ignition::msgs::PointCloudPacked>("/point_cloud");
+  gz::transport::Node node;
+  auto flatPub = node.Advertise<gz::msgs::Float_V>("/flat");
+  auto sumPub = node.Advertise<gz::msgs::Float_V>("/sum");
+  auto productPub = node.Advertise<gz::msgs::Float_V>("/product");
+  auto pcPub = node.Advertise<gz::msgs::PointCloudPacked>("/point_cloud");
 
   while (!g_terminatePub)
   {

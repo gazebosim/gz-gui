@@ -39,7 +39,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./TopicViewer_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

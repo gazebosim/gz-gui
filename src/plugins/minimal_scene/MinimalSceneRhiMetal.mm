@@ -35,7 +35,7 @@
 #endif
 
 /////////////////////////////////////////////////
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -66,7 +66,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

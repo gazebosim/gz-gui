@@ -22,7 +22,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -30,8 +30,8 @@ namespace plugins
 {
   class TransportSceneManagerPrivate;
 
-  /// \brief Provides a Gazebo Transport interface to
-  /// `ignition::gui::plugins::MinimalScene`.
+  /// \brief Provides an Ignition Transport interface to
+  /// `gz::gui::plugins::MinimalScene`.
   ///
   /// ## Configuration
   ///
