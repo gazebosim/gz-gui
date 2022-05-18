@@ -16,3 +16,4 @@
  */
 
 #include <gz/gui/GuiEvents.hh>
+#include <ignition/gui/config.hh>

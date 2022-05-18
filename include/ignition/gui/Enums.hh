@@ -16,3 +16,4 @@
  */
 
 #include <gz/gui/Enums.hh>
+#include <ignition/gui/config.hh>
