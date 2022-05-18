@@ -8,6 +8,7 @@ release will remove the deprecated code.
 ## Ignition GUI 6.X to 7.X
 
 * The environment variable `IGN_GUI_PLUGIN_PATH` is deprecated. Use `GZ_GUI_PLUGIN_PATH` instead.
+* The `ignition` namespace is deprecated and will be removed in future versions.  Use `gz` instead.
 
 ## Ignition GUI 6.2 to 6.3
 
