@@ -1,5 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-  <qresource prefix="IgnComponents/">
-    <file>IgnComponents.qml</file>
-  </qresource>
-</RCC>

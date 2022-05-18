@@ -15,23 +15,9 @@
  *
 */
 
-#ifndef GZ_GUI_EXAMPLES_PLUGIN_GZCOMPONENTS_HH_
-#define GZ_GUI_EXAMPLES_PLUGIN_GZCOMPONENTS_HH_
+#include <gz/plugin/Register.hh>
+#include "GzComponents.hh"
 
-#include <gz/gui/Plugin.hh>
-
-namespace ignition
-{
-  namespace gui
-  {
-    class IgnComponents : public Plugin
-    {
-      Q_OBJECT
-
-      /// \brief Constructor
-      public: IgnComponents() = default;
-    };
-  }
-}
-
-#endif
+// Register this plugin
+IGNITION_ADD_PLUGIN(ignition::gui::GzComponents,
+                    ignition::gui::Plugin);
