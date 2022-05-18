@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_TELEOP_HH_
-#define IGNITION_GUI_PLUGINS_TELEOP_HH_
+#ifndef GZ_GUI_PLUGINS_TELEOP_HH_
+#define GZ_GUI_PLUGINS_TELEOP_HH_
 
 #include <memory>
 

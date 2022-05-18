@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_WORLDCONTROLEVENTLISTENER_HH_
-#define IGNITION_GUI_WORLDCONTROLEVENTLISTENER_HH_
+#ifndef GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_
+#define GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_
 
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Export.hh"

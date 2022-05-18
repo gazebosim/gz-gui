@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
-#define IGNITION_GUI_PLUGINS_SCENE3D_HH_
+#ifndef GZ_GUI_PLUGINS_SCENE3D_HH_
+#define GZ_GUI_PLUGINS_SCENE3D_HH_
 
 #include <string>
 #include <memory>

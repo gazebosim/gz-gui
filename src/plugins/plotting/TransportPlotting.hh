@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
-#define IGNITION_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
+#ifndef GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
+#define GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 
 #include <ignition/gui/Plugin.hh>
 #include <ignition/gui/PlottingInterface.hh>

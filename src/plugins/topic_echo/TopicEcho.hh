@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_TOPICECHO_HH_
-#define IGNITION_GUI_PLUGINS_TOPICECHO_HH_
+#ifndef GZ_GUI_PLUGINS_TOPICECHO_HH_
+#define GZ_GUI_PLUGINS_TOPICECHO_HH_
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
