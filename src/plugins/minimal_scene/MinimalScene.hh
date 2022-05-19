@@ -61,6 +61,8 @@ namespace plugins
   ///     * \<near\> : Camera's near clipping plane distance, defaults to 0.01
   ///     * \<far\> : Camera's far clipping plane distance, defaults to 1000.0
   /// * \<sky\> : If present, sky is enabled.
+  /// * \<horizontal_fov\> : Horizontal FOV of the user camera in degrees,
+  ///                        defaults to 90
   class MinimalScene : public Plugin
   {
     Q_OBJECT
@@ -237,6 +239,9 @@ namespace plugins
     /// \brief True if sky is enabled;
     public: bool skyEnable = false;
 
+    /// \brief Horizontal FOV of the camera;
+    public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
+
     /// \internal
     /// \brief Pointer to private data.
     IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
@@ -337,6 +342,10 @@ namespace plugins
     /// \brief Set if sky is enabled
     /// \param[in] _sky True to enable the sky, false otherwise.
     public: void SetSkyEnabled(const bool &_sky);
+
+    /// \brief Set the Horizontal FOV of the camera
+    /// \param[in] _fov FOV of the camera in degree
+    public: void SetCameraHFOV(const ignition::math::Angle &_fov);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
