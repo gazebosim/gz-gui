@@ -39,7 +39,7 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Creates an ignition rendering scene and user camera.
+  /// \brief Creates a Gazebo rendering scene and user camera.
   /// It is possible to orbit the camera around the scene with
   /// the mouse. Use other plugins to manage objects in the scene.
   ///

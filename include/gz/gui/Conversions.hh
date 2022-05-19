@@ -96,7 +96,7 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QWheelEvent &_e);
 
-    /// \brief Return the equivalent ignition key event.
+    /// \brief Return the equivalent Gazebo key event.
     ///
     /// \param[in] _e Qt key event
     /// \return Gazebo key event
