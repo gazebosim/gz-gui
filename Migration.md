@@ -10,6 +10,9 @@ release will remove the deprecated code.
 * The environment variable `IGN_GUI_PLUGIN_PATH` is deprecated. Use `GZ_GUI_PLUGIN_PATH` instead.
 * The `ignition` namespace is deprecated and will be removed in future versions.  Use `gz` instead.
 
+* Header files under `ignition/...` are deprecated and will be removed in future versions.
+  Use `gz/...` instead.
+
 ## Ignition GUI 6.2 to 6.3
 
 * New QML dependencies, only needed for the NavSatMap plugin: `qml-module-qtlocation`, `qml-module-qtpositioning`
