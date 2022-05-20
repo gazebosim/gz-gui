@@ -32,12 +32,12 @@ Ignition GUI accepts the following top-level elements on a config file:
     * `filename`: This attribute specifies the plugin library to be loaded.
     * `<ignition-gui>`: Ignition GUI processes this block before passing the
       config to the plugin. See
-      [plugin_params.config](https://github.com/ignitionrobotics/ign-gui/blob/main/examples/config/plugin_params.config)
+      [plugin_params.config](https://github.com/gazebosim/gz-gui/blob/main/examples/config/plugin_params.config)
       for an example.
     * custom elements: Developers can read custom plugin configurations overriding the
       [Plugin::LoadConfig](https://ignitionrobotics.org/api/gui/6.0/classignition_1_1gui_1_1Plugin.html#a720646.0af4cd247b994b905559fd4ee)
       function, see the
-      [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/main/examples/plugin/hello_plugin/HelloPlugin.cc)
+      [HelloPlugin](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/HelloPlugin.cc)
       example.
 
 See the example plugin block below:

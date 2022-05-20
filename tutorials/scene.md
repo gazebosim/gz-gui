@@ -19,7 +19,7 @@ performed by other plugins that work alongside the minimal scene.
 Each application will have a different way of updating the 3D scene. For example,
 [Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo) updates the scene
 based on its entities and components, and
-[Ignition RViz](https://github.com/ignitionrobotics/ign-rviz/)
+[Ignition RViz](https://github.com/gazebosim/gz-rviz/)
 updates the scene based on ROS 2 messages. Each of these applications provides
 custom plugins that update the 3D scene through events and the render thread.
 
@@ -36,7 +36,7 @@ will process those and update the 3D scene, and then the `MinimalScene` will
 paint the scene to the window.
 
 Follow the instructions in the
-[scene_provider example](https://github.com/ignitionrobotics/ign-gui/tree/main/examples/standalone/scene_provider)
+[scene_provider example](https://github.com/gazebosim/gz-gui/tree/main/examples/standalone/scene_provider)
 and see visuals being added and moved on the 3D scene.
 
 ### Getting the scene

@@ -10,7 +10,7 @@ The plugin contains [QML](https://doc.qt.io/qt-5/qtqml-index.html)
 code that specifies what the widget looks like, as well as C++ code
 that defines the plugin's behavior and ties it to other libraries.
 
-See [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/main/examples/plugin/hello_plugin/)
+See [HelloPlugin](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/)
 for an example.
 
 ## Finding plugins

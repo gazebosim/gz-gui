@@ -2,14 +2,14 @@
 
 **Maintainer:** louise [AT] openrobotics [DOT] org
 
-[![GitHub open issues](https://img.shields.io/github/issues-raw/ignitionrobotics/ign-gui.svg)](https://github.com/ignitionrobotics/ign-gui/issues)
-[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/ignitionrobotics/ign-gui.svg)](https://github.com/ignitionrobotics/ign-gui/pulls)
+[![GitHub open issues](https://img.shields.io/github/issues-raw/gazebosim/gz-gui.svg)](https://github.com/gazebosim/gz-gui/issues)
+[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/gazebosim/gz-gui.svg)](https://github.com/gazebosim/gz-gui/pulls)
 [![Discourse topics](https://img.shields.io/discourse/https/community.gazebosim.org/topics.svg)](https://community.gazebosim.org)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/main/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/main)
+Test coverage | [![codecov](https://codecov.io/gh/gazebosim/gz-gui/branch/main/graph/badge.svg)](https://codecov.io/gh/gazebosim/gz-gui/branch/main)
 Ubuntu Focal | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-main-focal-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-main-focal-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-main-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ci-win)](https://build.osrfoundation.org/job/ign_gui-ci-win)
@@ -46,7 +46,7 @@ which can be used to add custom widgets.
 * Qt-based widgets, with support for both Qt5 widgets and QtQuick
 * Plugin-based interface, so it's easy to add new widgets
 * Several plugins ready to be used
-* 3D scene integration using [Ignition Rendering](https://github.com/ignitionrobotics/ign-rendering/)
+* 3D scene integration using [Ignition Rendering](https://github.com/gazebosim/gz-rendering/)
 
 # Install
 
@@ -99,7 +99,7 @@ export GZ_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
 
 * `tutorials`: Markdown files for the [tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html).
 
-* `conf`: Files needed by [ign-tools](https://github.com/ignitionrobotics/ign-tools).
+* `conf`: Files needed by [ign-tools](https://github.com/gazebosim/gz-tools).
 
 * `doc`: Files used by Doxygen when generating documentation.
 
@@ -111,7 +111,7 @@ Please see
 # Code of Conduct
 
 Please see
-[CODE\_OF\_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/main/CODE_OF_CONDUCT.md).
+[CODE\_OF\_CONDUCT.md](https://github.com/gazebosim/gz-sim/blob/main/CODE_OF_CONDUCT.md).
 
 # Versioning
 
@@ -119,4 +119,4 @@ This library uses [Semantic Versioning](https://semver.org/). Additionally, this
 
 # License
 
-This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-gui/blob/main/LICENSE) file.
+This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/gazebosim/gz-gui/blob/main/LICENSE) file.

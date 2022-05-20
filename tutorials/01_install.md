@@ -74,7 +74,7 @@ Add OSRF packages:
 Clone source code:
   ```
   # This checks out the default branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
-  git clone http://github.com/ignitionrobotics/ign-gui
+  git clone http://github.com/gazebosim/gz-gui
   ```
 
 Install dependencies
@@ -98,7 +98,7 @@ Build and install as follows:
 
 1. Clone the repository
   ```
-  git clone https://github.com/ignitionrobotics/ign-gui -b ign-gui<#>
+  git clone https://github.com/gazebosim/gz-gui -b ign-gui<#>
   ```
   Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
   which version you need.
@@ -128,7 +128,7 @@ Build and install as follows:
 
 #### Install Prerequisites
 
-First, follow the [ign-cmake](https://github.com/ignitionrobotics/ign-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
+First, follow the [ign-cmake](https://github.com/gazebosim/gz-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
 
 Navigate to `condabin` if necessary to use the `conda` command (i.e., if Conda is not in your `PATH` environment variable. You can find the location of `condabin` in Anaconda Prompt, `where conda`).
 
@@ -148,7 +148,7 @@ Install Ignition dependencies, replacing `<#>` with the desired versions:
 conda install libignition-cmake<#> libignition-common<#> libignition-math<#> libignition-transport<#> libignition-msgs<#> libignition-plugin<#> libignition-tools<#> --channel conda-forge
 ```
 
-Before [ign-rendering](https://github.com/ignitionrobotics/ign-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
+Before [ign-rendering](https://github.com/gazebosim/gz-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
 
 #### Build from source
 
@@ -160,7 +160,7 @@ Before [ign-rendering](https://github.com/ignitionrobotics/ign-rendering) become
 1. Navigate to where you would like to build the library, and clone the repository.
   ```
   # Optionally, append `-b ign-gui#` (replace # with a number) to check out a specific version
-  git clone https://github.com/ignitionrobotics/ign-gui.git
+  git clone https://github.com/gazebosim/gz-gui.git
   ```
 
 1. Configure and build
@@ -195,7 +195,7 @@ You can also generate the documentation from a clone of this repository by follo
 
 2. Clone the repository
   ```
-  git clone https://github.com/ignitionrobotics/ign-gui
+  git clone https://github.com/gazebosim/gz-gui
   ```
 
 3. Configure and build the documentation.

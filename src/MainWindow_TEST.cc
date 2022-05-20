@@ -44,7 +44,7 @@ using namespace gui;
 using namespace std::chrono_literals;
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
   gz::common::Console::SetVerbosity(4);

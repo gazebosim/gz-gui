@@ -139,7 +139,7 @@ class gz::gui::plugins::IgnRenderer::Implementation
 ///
 ///
 /// For more info see
-/// https://github.com/ignitionrobotics/ign-rendering/issues/304
+/// https://github.com/gazebosim/gz-rendering/issues/304
 class gz::gui::plugins::RenderSync
 {
   /// \brief Cond. variable to synchronize rendering on specific events
@@ -866,7 +866,7 @@ void TextureNode::PrepareNode()
   // However we need to synchronize the threads when resolution changes,
   // and we're also currently doing everything in lockstep (i.e. both Qt
   // and worker thread are serialized,
-  // see https://github.com/ignitionrobotics/ign-rendering/issues/304 )
+  // see https://github.com/gazebosim/gz-rendering/issues/304 )
   //
   // We need to emit even if newId == 0 because it's safe as long as both
   // threads are forcefully serialized and otherwise we may get a

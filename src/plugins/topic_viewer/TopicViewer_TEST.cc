@@ -44,7 +44,7 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
     common::Console::SetVerbosity(4);
@@ -70,7 +70,7 @@ TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 }
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
 {
     setenv("IGN_PARTITION", "ign-gazebo-test", 1);
