@@ -24,7 +24,7 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/config.hh"
 #include "gz/gui/Export.hh"
-#include "gz/gui/ign.hh"
+#include "gz/gui/gz.hh"
 #include "gz/gui/MainWindow.hh"
 
 int g_argc = 1;
@@ -48,7 +48,7 @@ void startConsoleLog()
 //////////////////////////////////////////////////
 extern "C" GZ_GUI_VISIBLE char *ignitionVersion()
 {
-  return strdup(IGNITION_GUI_VERSION_FULL);
+  return strdup(GZ_GUI_VERSION_FULL);
 }
 
 //////////////////////////////////////////////////

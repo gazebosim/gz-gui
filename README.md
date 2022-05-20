@@ -64,15 +64,15 @@ In the event that the installation is a mix of Debian and from source, command
 line tools from `ign-tools` may not work correctly.
 
 A workaround for a single package is to define the environment variable
-`IGN_CONFIG_PATH` to point to the location of the Ignition library installation,
+`GZ_CONFIG_PATH` to point to the location of the Ignition library installation,
 where the YAML file for the package is found, such as
 ```
-export IGN_CONFIG_PATH=/usr/local/share/ignition
+export GZ_CONFIG_PATH=/usr/local/share/ignition
 ```
 
 Multiple paths can be specified using the `:` delimiter. For example,
 ```
-export IGN_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
+export GZ_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
 ```
 
 # Folder Structure
