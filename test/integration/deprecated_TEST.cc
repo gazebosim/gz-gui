@@ -28,3 +28,5 @@ TEST(Deprecated, IgnitionNamespace)
 {
   ignition::gui::Dialog dialog;
 }
+
+#undef SUPPRESS_IGNITION_HEADER_DEPRECATION

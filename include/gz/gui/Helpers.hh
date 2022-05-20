@@ -30,7 +30,7 @@ namespace gz
     /// and removing characters like "_".
     /// \param[in] _key Non-human-readable key.
     /// \return Human-readable key.
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     std::string humanReadable(const std::string &_key);
 
     /// \brief Returns the unit for a given key. For example, the key "mass"
@@ -40,7 +40,7 @@ namespace gz
     /// must be given too. For example, a prismatic joint will have different
     /// units from a revolute joint.
     /// \return The unit.
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     std::string unitFromKey(const std::string &_key,
                             const std::string &_type = "");
 
@@ -49,14 +49,14 @@ namespace gz
     /// \param[in] _key The key.
     /// \param[out] _min The minimum value.
     /// \param[out] _max The maximum value.
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     void rangeFromKey(const std::string &_key, double &_min, double &_max);
 
     /// \brief Returns the string type for a given key. For example, the key
     /// "innerxml" has a PLAIN_TEXT type while "name" is a LINE.
     /// \param[in] _key The key.
     /// \return The string type.
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     StringType stringTypeFromKey(const std::string &_key);
 
     /// \brief Generates a path for a file which doesn't collide with existing
@@ -66,7 +66,7 @@ namespace gz
     /// \param[in] _extension File extension, such as "pdf".
     /// \return Full path, with name and extension, which doesn't collide with
     /// existing files
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     std::string uniqueFilePath(const std::string &_pathAndName,
                                const std::string &_extension);
 
@@ -76,7 +76,7 @@ namespace gz
     /// This helper function provides a handy access to the world names list.
     /// \return List of world names, as stored in the `MainWindow`'s
     /// "worldNames" property.
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     QStringList worldNames();
 
     /// \brief The main window's "renderEngine" property may be filled with
@@ -86,7 +86,7 @@ namespace gz
     /// name
     /// \return Name of render engine used on the GUI, as stored in the
     /// `MainWindow`'s "renderEngine" property.
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     std::string renderEngineName();
 
     /// \brief Import path for ign-gui QML modules added to the Qt resource
@@ -95,7 +95,7 @@ namespace gz
     /// module, add this path to the QML engine's import path list before
     /// attempting to load a QML file that imports Gazebo QML modules.
     /// \return Resousrce path prefix as a string
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     const QString qmlQrcImportPath();
 
     /// \brief Returns the first element on a QList which matches the given

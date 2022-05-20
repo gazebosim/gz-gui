@@ -46,7 +46,7 @@ class PlotDataPrivate;
 /// \brief Plot Data containter to hold value and registered charts
 /// Can be a Field or a PlotComponent
 /// Used by PlottingInterface and Gazebo Plotting
-class IGNITION_GUI_VISIBLE PlotData
+class GZ_GUI_VISIBLE PlotData
 {
   /// \brief Constructor
   public: PlotData();
@@ -92,7 +92,7 @@ class IGNITION_GUI_VISIBLE PlotData
 class TopicPrivate;
 
 /// \brief Plotting Topic to handle published topics & their registered fields
-class IGNITION_GUI_VISIBLE Topic : public QObject
+class GZ_GUI_VISIBLE Topic : public QObject
 {
   Q_OBJECT
 
@@ -156,7 +156,7 @@ class IGNITION_GUI_VISIBLE Topic : public QObject
 class TransportPrivate;
 
 /// \brief Handle transport topics subscribing for one object (Chart)
-class IGNITION_GUI_VISIBLE Transport : public QObject
+class GZ_GUI_VISIBLE Transport : public QObject
 {
   Q_OBJECT
 
@@ -214,7 +214,7 @@ class PlottingIfacePrivate;
 /// Responsible for plotting transport msgs-fields
 /// Used by TransportPlotting Plugin & GazeboPlotting Plugin
 /// Accepts dragged items from TopicViewer Plugin & ComponentInspector Plugin
-class IGNITION_GUI_VISIBLE PlottingInterface : public QObject
+class GZ_GUI_VISIBLE PlottingInterface : public QObject
 {
   Q_OBJECT
 

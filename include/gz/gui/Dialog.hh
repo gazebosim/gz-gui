@@ -37,7 +37,7 @@ namespace gz
     class DialogPrivate;
 
     /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Dialog : public QObject
+    class GZ_GUI_VISIBLE Dialog : public QObject
     {
       Q_OBJECT
 

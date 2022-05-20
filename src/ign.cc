@@ -46,13 +46,13 @@ void startConsoleLog()
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE char *ignitionVersion()
+extern "C" GZ_GUI_VISIBLE char *ignitionVersion()
 {
   return strdup(IGNITION_GUI_VERSION_FULL);
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
+extern "C" GZ_GUI_VISIBLE void cmdPluginList()
 {
   startConsoleLog();
 
@@ -77,7 +77,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
+extern "C" GZ_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
   startConsoleLog();
 
@@ -93,7 +93,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
+extern "C" GZ_GUI_VISIBLE void cmdConfig(const char *_config)
 {
   startConsoleLog();
 
@@ -113,13 +113,13 @@ extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
+extern "C" GZ_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 {
   gz::common::Console::SetVerbosity(std::atoi(_verbosity));
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
+extern "C" GZ_GUI_VISIBLE void cmdEmptyWindow()
 {
   startConsoleLog();
 
@@ -136,7 +136,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 }
 
 //////////////////////////////////////////////////
-extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(
+extern "C" GZ_GUI_VISIBLE void cmdSetStyleFromFile(
     const char * /*_filename*/)
 {
 //  gz::gui::setStyleFromFile(std::string(_filename));
