@@ -149,7 +149,7 @@ void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
   if (!this->dataPtr->pointCloudTopic.empty() &&
       !this->dataPtr->node.Unsubscribe(this->dataPtr->pointCloudTopic))
   {
-    ignerr << "Unable to unsubscribe from topic ["
+    gzerr << "Unable to unsubscribe from topic ["
            << this->dataPtr->pointCloudTopic <<"]" <<std::endl;
   }
 
@@ -166,11 +166,11 @@ void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
   if (!this->dataPtr->node.Subscribe(this->dataPtr->pointCloudTopic,
                             &PointCloud::OnPointCloud, this))
   {
-    ignerr << "Unable to subscribe to topic ["
+    gzerr << "Unable to subscribe to topic ["
            << this->dataPtr->pointCloudTopic << "]\n";
     return;
   }
-  ignmsg << "Subscribed to " << this->dataPtr->pointCloudTopic << std::endl;
+  gzmsg << "Subscribed to " << this->dataPtr->pointCloudTopic << std::endl;
 }
 
 //////////////////////////////////////////////////
@@ -181,7 +181,7 @@ void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
   if (!this->dataPtr->floatVTopic.empty() &&
       !this->dataPtr->node.Unsubscribe(this->dataPtr->floatVTopic))
   {
-    ignerr << "Unable to unsubscribe from topic ["
+    gzerr << "Unable to unsubscribe from topic ["
            << this->dataPtr->floatVTopic <<"]" <<std::endl;
   }
 
@@ -198,11 +198,11 @@ void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
   if (!this->dataPtr->node.Subscribe(this->dataPtr->floatVTopic,
                             &PointCloud::OnFloatV, this))
   {
-    ignerr << "Unable to subscribe to topic ["
+    gzerr << "Unable to subscribe to topic ["
            << this->dataPtr->floatVTopic << "]\n";
     return;
   }
-  ignmsg << "Subscribed to " << this->dataPtr->floatVTopic << std::endl;
+  gzmsg << "Subscribed to " << this->dataPtr->floatVTopic << std::endl;
 }
 
 //////////////////////////////////////////////////
@@ -223,7 +223,7 @@ void PointCloud::Show(bool _show)
 void PointCloud::OnRefresh()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
-  ignmsg << "Refreshing topic list for point cloud messages." << std::endl;
+  gzmsg << "Refreshing topic list for point cloud messages." << std::endl;
 
   // Clear
   this->dataPtr->pointCloudTopicList.clear();
@@ -332,7 +332,7 @@ void PointCloud::OnPointCloudService(
 {
   if (!_result)
   {
-    ignerr << "Service request failed." << std::endl;
+    gzerr << "Service request failed." << std::endl;
     return;
   }
   this->OnPointCloud(_msg);
@@ -344,7 +344,7 @@ void PointCloud::OnFloatVService(
 {
   if (!_result)
   {
-    ignerr << "Service request failed." << std::endl;
+    gzerr << "Service request failed." << std::endl;
     return;
   }
   this->OnFloatV(_msg);

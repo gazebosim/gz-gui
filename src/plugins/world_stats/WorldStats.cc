@@ -83,7 +83,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Create elements from configuration
   if (!_pluginElem)
   {
-    ignerr << "Null plugin element." << std::endl;
+    gzerr << "Null plugin element." << std::endl;
     return;
   }
 
@@ -119,7 +119,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       parts[2] != worldName &&
       parts[3] == "stats")
   {
-    ignwarn << "Ignoring topic [" << topic
+    gzwarn << "Ignoring topic [" << topic
             << "], world name different from [" << worldName
             << "]. Fix or remove your <topic> tag." << std::endl;
 
@@ -130,7 +130,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     if (worldName.empty())
     {
-      ignerr << "Must specify a <topic> to subscribe to world statistics, or "
+      gzerr << "Must specify a <topic> to subscribe to world statistics, or "
              << "set the MainWindow's [worldNames] property." << std::endl;
       return;
     }
@@ -141,7 +141,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   topic = transport::TopicUtils::AsValidTopic(topic);
   if (topic.empty())
   {
-    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+    gzerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
     return;
   }
@@ -149,11 +149,11 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (!this->dataPtr->node.Subscribe(topic, &WorldStats::OnWorldStatsMsg,
       this))
   {
-    ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
+    gzerr << "Failed to subscribe to [" << topic << "]" << std::endl;
     return;
   }
 
-  ignmsg << "Listening to stats on [" << topic << "]" << std::endl;
+  gzmsg << "Listening to stats on [" << topic << "]" << std::endl;
 
   // Sim time
   if (auto simTimeElem = _pluginElem->FirstChildElement("sim_time"))

@@ -127,7 +127,7 @@ void Publisher::OnPublish(const bool _checked)
   auto msg = gz::msgs::Factory::New(msgType, msgData);
   if (!msg || (msg->DebugString() == "" && msgData != ""))
   {
-    ignerr << "Unable to create message of type[" << msgType << "] "
+    gzerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";
     // TODO(anyone): notify error and uncheck switch
     return;
@@ -138,7 +138,7 @@ void Publisher::OnPublish(const bool _checked)
 
   if (!this->dataPtr->pub)
   {
-    ignerr << "Unable to publish on topic[" << topic << "] "
+    gzerr << "Unable to publish on topic[" << topic << "] "
       << "with message type[" << msgType << "].\n";
     // TODO(anyone): notify error and uncheck switch
     return;

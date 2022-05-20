@@ -273,7 +273,7 @@ void Topic::Callback(const google::protobuf::Message &_msg)
         ref = valueMsg->GetReflection();
       else
       {
-        ignwarn << "Invalid topic msg" << std::endl;
+        gzwarn << "Invalid topic msg" << std::endl;
         return;
       }
     }
@@ -395,7 +395,7 @@ double TopicPrivate::FieldData(const google::protobuf::Message &_msg,
     return ref->GetUInt64(_msg, _field);
   else
   {
-    ignwarn << "Non Plotting Type" << std::endl;
+    gzwarn << "Non Plotting Type" << std::endl;
     return 0;
   }
 }
@@ -601,7 +601,7 @@ std::string PlottingInterface::FilePath(QString _path, std::string _name,
 
   if (_path.toStdString().size() < 8)
   {
-    ignwarn << "Couldn't parse file path" << std::endl;
+    gzwarn << "Couldn't parse file path" << std::endl;
     return "";
   }
   else
@@ -655,13 +655,13 @@ bool PlottingInterface::exportCSV(QString _path, int _chart,
 
     if (!filePath.size())
     {
-        ignwarn << "[Couldn't parse file: " << filePath << "]" << std::endl;
+        gzwarn << "[Couldn't parse file: " << filePath << "]" << std::endl;
         return false;
     }
 
     file.open(filePath);
     if (!file.is_open())
-        ignwarn << "[Couldn't open file: " << filePath << "]" << std::endl;
+        gzwarn << "[Couldn't open file: " << filePath << "]" << std::endl;
 
     file << "time, " << key << std::endl;
 

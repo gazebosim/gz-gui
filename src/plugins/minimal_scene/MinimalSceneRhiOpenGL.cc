@@ -150,7 +150,7 @@ void RenderThreadRhiOpenGL::RenderNext(RenderSync *_renderSync)
 
   if (!this->dataPtr->renderer->initialized)
   {
-    ignerr << "Unable to initialize renderer" << std::endl;
+    gzerr << "Unable to initialize renderer" << std::endl;
     return;
   }
 

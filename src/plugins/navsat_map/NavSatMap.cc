@@ -90,7 +90,7 @@ void NavSatMap::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   if (topic.empty() && !topicPicker)
   {
-    ignwarn << "Can't hide topic picker without a default topic." << std::endl;
+    gzwarn << "Can't hide topic picker without a default topic." << std::endl;
     topicPicker = true;
   }
 
@@ -140,7 +140,7 @@ void NavSatMap::OnTopic(const QString _topic)
   if (!this->dataPtr->node.Subscribe(topic, &NavSatMap::OnMessage,
       this))
   {
-    ignerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
+    gzerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
   }
 }
 

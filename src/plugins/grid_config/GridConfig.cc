@@ -241,14 +241,14 @@ void GridConfig::UpdateGrid()
     }
     else
     {
-      ignerr << "Grid visual missing material" << std::endl;
+      gzerr << "Grid visual missing material" << std::endl;
     }
 
     visual->SetVisible(this->dataPtr->visible);
   }
   else
   {
-    ignerr << "Grid missing parent visual" << std::endl;
+    gzerr << "Grid missing parent visual" << std::endl;
   }
 
   this->dataPtr->dirty = false;

@@ -244,14 +244,14 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
   auto msg = gz::msgs::Factory::New(_msgType);
   if (!msg)
   {
-      ignwarn << "Null Msg: " << _msgType << std::endl;
+      gzwarn << "Null Msg: " << _msgType << std::endl;
       return;
   }
 
   auto msgDescriptor = msg->GetDescriptor();
   if (!msgDescriptor)
   {
-    ignwarn << "Null Descriptor of Msg: " << _msgType << std::endl;
+    gzwarn << "Null Descriptor of Msg: " << _msgType << std::endl;
     return;
   }
 

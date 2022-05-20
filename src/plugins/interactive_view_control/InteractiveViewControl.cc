@@ -136,7 +136,7 @@ void InteractiveViewControlPrivate::OnRender()
 
     if (!this->camera)
     {
-      ignerr << "InteractiveViewControl camera is not available" << std::endl;
+      gzerr << "InteractiveViewControl camera is not available" << std::endl;
       return;
     }
     this->rayQuery = this->camera->Scene()->CreateRayQuery();
@@ -166,7 +166,7 @@ void InteractiveViewControlPrivate::OnRender()
   }
   else
   {
-    ignerr << "Unknown view controller: " << this->viewController
+    gzerr << "Unknown view controller: " << this->viewController
            << ". Defaulting to orbit view controller" << std::endl;
     this->viewController = "orbit";
     this->viewControl = &this->orbitViewControl;
@@ -229,7 +229,7 @@ bool InteractiveViewControlPrivate::OnViewControl(const msgs::StringMsg &_msg,
 
   if (_msg.data() != "orbit" && _msg.data() != "ortho")
   {
-    ignwarn << "View controller type not supported [" << _msg.data() << "]"
+    gzwarn << "View controller type not supported [" << _msg.data() << "]"
             << std::endl;
     _res.set_data(false);
     return true;
@@ -265,7 +265,7 @@ void InteractiveViewControl::LoadConfig(
   this->dataPtr->cameraViewControlService = "/gui/camera/view_control";
   this->dataPtr->node.Advertise(this->dataPtr->cameraViewControlService,
       &InteractiveViewControlPrivate::OnViewControl, this->dataPtr.get());
-  ignmsg << "Camera view controller topic advertised on ["
+  gzmsg << "Camera view controller topic advertised on ["
          << this->dataPtr->cameraViewControlService << "]" << std::endl;
 
   gz::gui::App()->findChild<

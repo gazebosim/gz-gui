@@ -130,7 +130,7 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   if (topic.empty() && !topicPicker)
   {
-    ignwarn << "Can't hide topic picker without a default topic." << std::endl;
+    gzwarn << "Can't hide topic picker without a default topic." << std::endl;
     topicPicker = true;
   }
 
@@ -183,7 +183,7 @@ void ImageDisplay::ProcessImage()
       break;
     default:
     {
-      ignwarn << "Unsupported image type: "
+      gzwarn << "Unsupported image type: "
               << this->dataPtr->imageMsg.pixel_format_type() << std::endl;
       return;
     }
@@ -247,7 +247,7 @@ void ImageDisplay::OnTopic(const QString _topic)
   if (!this->dataPtr->node.Subscribe(topic, &ImageDisplay::OnImageMsg,
       this))
   {
-    ignerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
+    gzerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
     return;
   }
   App()->findChild<MainWindow *>()->notifyWithDuration(

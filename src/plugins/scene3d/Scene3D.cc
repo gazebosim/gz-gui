@@ -319,7 +319,7 @@ void SceneManager::Request()
   if (publishers.empty() ||
       !this->node.Request(this->service, &SceneManager::OnSceneSrvMsg, this))
   {
-    ignerr << "Error making service request to " << this->service << std::endl;
+    gzerr << "Error making service request to " << this->service << std::endl;
   }
 }
 
@@ -426,7 +426,7 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
 {
   if (!result)
   {
-    ignerr << "Error making service request to " << this->service
+    gzerr << "Error making service request to " << this->service
            << std::endl;
     return;
   }
@@ -440,13 +440,13 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
   {
     if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
     {
-      ignerr << "Error subscribing to pose topic: " << this->poseTopic
+      gzerr << "Error subscribing to pose topic: " << this->poseTopic
         << std::endl;
     }
   }
   else
   {
-    ignwarn << "The pose topic, set via <pose_topic>, for the Scene3D plugin "
+    gzwarn << "The pose topic, set via <pose_topic>, for the Scene3D plugin "
       << "is missing or empty. Please set this topic so that the Scene3D "
       << "can receive and process pose information.\n";
   }
@@ -456,13 +456,13 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     if (!this->node.Subscribe(this->deletionTopic, &SceneManager::OnDeletionMsg,
           this))
     {
-      ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
+      gzerr << "Error subscribing to deletion topic: " << this->deletionTopic
         << std::endl;
     }
   }
   else
   {
-    ignwarn << "The deletion topic, set via <deletion_topic>, for the "
+    gzwarn << "The deletion topic, set via <deletion_topic>, for the "
       << "Scene3D plugin is missing or empty. Please set this topic so that "
       << "the Scene3D can receive and process deletion information.\n";
   }
@@ -472,13 +472,13 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     if (!this->node.Subscribe(
           this->sceneTopic, &SceneManager::OnSceneMsg, this))
     {
-      ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+      gzerr << "Error subscribing to scene topic: " << this->sceneTopic
              << std::endl;
     }
   }
   else
   {
-    ignwarn << "The scene topic, set via <scene_topic>, for the "
+    gzwarn << "The scene topic, set via <scene_topic>, for the "
       << "Scene3D plugin is missing or empty. Please set this topic so that "
       << "the Scene3D can receive and process scene information.\n";
   }
@@ -498,7 +498,7 @@ void SceneManager::LoadScene(const msgs::Scene &_msg)
       if (modelVis)
         rootVis->AddChild(modelVis);
       else
-        ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+        gzerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
     }
   }
 
@@ -511,7 +511,7 @@ void SceneManager::LoadScene(const msgs::Scene &_msg)
       if (light)
         rootVis->AddChild(light);
       else
-        ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+        gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
     }
   }
 }
@@ -531,7 +531,7 @@ rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
     if (linkVis)
       modelVis->AddChild(linkVis);
     else
-      ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
+      gzerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
 
   // load nested models
@@ -541,7 +541,7 @@ rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
     if (nestedModelVis)
       modelVis->AddChild(nestedModelVis);
     else
-      ignerr << "Failed to load nested model: " << _msg.model(i).name()
+      gzerr << "Failed to load nested model: " << _msg.model(i).name()
              << std::endl;
   }
 
@@ -563,7 +563,7 @@ rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
     if (visualVis)
       linkVis->AddChild(visualVis);
     else
-      ignerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
+      gzerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
   }
 
   // load lights
@@ -573,7 +573,7 @@ rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
     if (light)
       linkVis->AddChild(light);
     else
-      ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+      gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
   }
 
   return linkVis;
@@ -666,7 +666,7 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
   }
   else
   {
-    ignerr << "Failed to load geometry for visual: " << _msg.name()
+    gzerr << "Failed to load geometry for visual: " << _msg.name()
            << std::endl;
   }
 
@@ -741,7 +741,7 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
   {
     if (_msg.mesh().filename().empty())
     {
-      ignerr << "Mesh geometry missing filename" << std::endl;
+      gzerr << "Mesh geometry missing filename" << std::endl;
       return geom;
     }
     rendering::MeshDescriptor descriptor;
@@ -758,7 +758,7 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
   }
   else
   {
-    ignerr << "Unsupported geometry type" << std::endl;
+    gzerr << "Unsupported geometry type" << std::endl;
   }
   _scale = scale;
   _localPose = localPose;
@@ -820,7 +820,7 @@ rendering::LightPtr SceneManager::LoadLight(const msgs::Light &_msg)
       break;
     }
     default:
-      ignerr << "Light type not supported" << std::endl;
+      gzerr << "Light type not supported" << std::endl;
       return light;
   }
 
@@ -1132,7 +1132,7 @@ std::string IgnRenderer::Initialize()
   {
     if (loadedEngines.front() != this->engineName)
     {
-      ignwarn << "Failed to load engine [" << this->engineName
+      gzwarn << "Failed to load engine [" << this->engineName
               << "]. Using engine [" << loadedEngines.front()
               << "], which is already loaded. Currently only one engine is "
               << "supported at a time." << std::endl;
@@ -1285,7 +1285,7 @@ void RenderThread::RenderNext()
   // check if engine has been successfully initialized
   if (!this->ignRenderer.initialized)
   {
-    ignerr << "Unable to initialize renderer" << std::endl;
+    gzerr << "Unable to initialize renderer" << std::endl;
     return;
   }
 
@@ -1324,7 +1324,7 @@ void RenderThread::SizeChanged()
   auto item = qobject_cast<QQuickItem *>(this->sender());
   if (!item)
   {
-    ignerr << "Internal error, sender is not QQuickItem." << std::endl;
+    gzerr << "Internal error, sender is not QQuickItem." << std::endl;
     return;
   }
 
@@ -1575,7 +1575,7 @@ void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
-  ignwarn << "This plugin is deprecated on ign-gui v6 and will be removed on "
+  gzwarn << "This plugin is deprecated on ign-gui v6 and will be removed on "
           << "ign-gui v7. Use MinimalScene + TransportSceneManager instead."
           << std::endl;
 
@@ -1595,7 +1595,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->PluginItem()->findChild<RenderWindowItem *>();
   if (!renderWindow)
   {
-    ignerr << "Unable to find Render Window item. "
+    gzerr << "Unable to find Render Window item. "
            << "Render window will not be created" << std::endl;
     return;
   }

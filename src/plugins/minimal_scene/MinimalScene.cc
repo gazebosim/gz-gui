@@ -559,7 +559,7 @@ std::string IgnRenderer::Initialize()
   {
     if (!this->engineName.empty() && loadedEngines.front() != this->engineName)
     {
-      ignwarn << "Failed to load engine [" << this->engineName
+      gzwarn << "Failed to load engine [" << this->engineName
               << "]. Using engine [" << loadedEngines.front()
               << "], which is already loaded. Currently only one engine is "
               << "supported at a time." << std::endl;
@@ -741,7 +741,7 @@ void RenderThread::SizeChanged()
   auto item = qobject_cast<QQuickItem *>(this->sender());
   if (!item)
   {
-    ignerr << "Internal error, sender is not QQuickItem." << std::endl;
+    gzerr << "Internal error, sender is not QQuickItem." << std::endl;
     return;
   }
 
@@ -1003,7 +1003,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     }
     else
     {
-      ignerr << "GraphicsAPI ["
+      gzerr << "GraphicsAPI ["
              << rendering::GraphicsAPIUtils::Str(this->dataPtr->graphicsAPI)
              << "] is not supported"
              << std::endl;
@@ -1127,7 +1127,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->PluginItem()->findChild<RenderWindowItem *>();
   if (!renderWindow)
   {
-    ignerr << "Unable to find Render Window item. "
+    gzerr << "Unable to find Render Window item. "
            << "Render window will not be created" << std::endl;
     return;
   }
@@ -1197,7 +1197,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         nearStr >> n;
         if (nearStr.fail())
         {
-          ignerr << "Unable to set <near> to '" << nearStr.str()
+          gzerr << "Unable to set <near> to '" << nearStr.str()
                  << "' using default near clip distance" << std::endl;
         }
         else
@@ -1215,7 +1215,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         farStr >> f;
         if (farStr.fail())
         {
-          ignerr << "Unable to set <far> to '" << farStr.str()
+          gzerr << "Unable to set <far> to '" << farStr.str()
                  << "' using default far clip distance" << std::endl;
         }
         else
@@ -1230,7 +1230,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       renderWindow->SetSkyEnabled(true);
       if (!elem->NoChildren())
-        ignwarn << "Child elements of <sky> are not supported yet"
+        gzwarn << "Child elements of <sky> are not supported yet"
                 << std::endl;
     }
 

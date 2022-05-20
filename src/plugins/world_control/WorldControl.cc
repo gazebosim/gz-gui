@@ -96,7 +96,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Create elements from configuration
   if (!_pluginElem)
   {
-    ignerr << "Null plugin element." << std::endl;
+    gzerr << "Null plugin element." << std::endl;
     return;
   }
 
@@ -129,7 +129,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       parts[2] != worldName &&
       parts[3] == "control")
   {
-    ignwarn << "Ignoring service [" << this->dataPtr->controlService
+    gzwarn << "Ignoring service [" << this->dataPtr->controlService
             << "], world name different from [" << worldName
             << "]. Fix or remove your <service> tag." << std::endl;
 
@@ -141,7 +141,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     if (worldName.empty())
     {
-      ignerr << "Must specify a <service> for world control requests, or set "
+      gzerr << "Must specify a <service> for world control requests, or set "
              << "the MainWindow's [worldNames] property." << std::endl;
       return;
     }
@@ -153,11 +153,11 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   if (this->dataPtr->controlService.empty())
   {
-    ignerr << "Failed to create valid control service for world [" << worldName
+    gzerr << "Failed to create valid control service for world [" << worldName
            << "]" << std::endl;
   }
 
-  ignmsg << "Using world control service [" << this->dataPtr->controlService
+  gzmsg << "Using world control service [" << this->dataPtr->controlService
          << "]" << std::endl;
 
   // Play / pause buttons
@@ -206,7 +206,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       parts[2] != worldName &&
       parts[3] == "stats")
   {
-    ignwarn << "Ignoring topic [" << statsTopic
+    gzwarn << "Ignoring topic [" << statsTopic
             << "], world name different from [" << worldName
             << "]. Fix or remove your <stats_topic> tag." << std::endl;
 
@@ -225,16 +225,16 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     if (!this->dataPtr->node.Subscribe(statsTopic,
         &WorldControl::OnWorldStatsMsg, this))
     {
-      ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
+      gzerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
     }
     else
     {
-      ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
+      gzmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
     }
   }
   else
   {
-    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+    gzerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
   }
 

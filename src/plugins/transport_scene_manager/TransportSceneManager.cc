@@ -243,7 +243,7 @@ void TransportSceneManager::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->dataPtr->deletionTopic.empty() ||
       this->dataPtr->sceneTopic.empty())
   {
-    ignerr << "One or more transport parameters invalid:" << std::endl
+    gzerr << "One or more transport parameters invalid:" << std::endl
         << "  * <service>: " << this->dataPtr->service << std::endl
         << "  * <pose_topic>: " << this->dataPtr->poseTopic << std::endl
         << "  * <deletion_topic>: " << this->dataPtr->deletionTopic << std::endl
@@ -263,40 +263,40 @@ void TransportSceneManagerPrivate::InitializeTransport()
   if (!this->node.Subscribe(this->poseTopic,
       &TransportSceneManagerPrivate::OnPoseVMsg, this))
   {
-    ignerr << "Error subscribing to pose topic: " << this->poseTopic
+    gzerr << "Error subscribing to pose topic: " << this->poseTopic
       << std::endl;
   }
   else
   {
-    ignmsg << "Listening to pose messages on [" << this->poseTopic << "]"
+    gzmsg << "Listening to pose messages on [" << this->poseTopic << "]"
            << std::endl;
   }
 
   if (!this->node.Subscribe(this->deletionTopic,
       &TransportSceneManagerPrivate::OnDeletionMsg, this))
   {
-    ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
+    gzerr << "Error subscribing to deletion topic: " << this->deletionTopic
       << std::endl;
   }
   else
   {
-    ignmsg << "Listening to deletion messages on [" << this->deletionTopic
+    gzmsg << "Listening to deletion messages on [" << this->deletionTopic
            << "]" << std::endl;
   }
 
   if (!this->node.Subscribe(this->sceneTopic,
       &TransportSceneManagerPrivate::OnSceneMsg, this))
   {
-    ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+    gzerr << "Error subscribing to scene topic: " << this->sceneTopic
            << std::endl;
   }
   else
   {
-    ignmsg << "Listening to scene messages on [" << this->sceneTopic << "]"
+    gzmsg << "Listening to scene messages on [" << this->sceneTopic << "]"
            << std::endl;
   }
 
-  ignmsg << "Transport initialized." << std::endl;
+  gzmsg << "Transport initialized." << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -330,7 +330,7 @@ void TransportSceneManagerPrivate::Request()
   if (publishers.empty() || !this->node.Request(this->service,
       &TransportSceneManagerPrivate::OnSceneSrvMsg, this))
   {
-    ignerr << "Error making service request to [" << this->service << "]"
+    gzerr << "Error making service request to [" << this->service << "]"
            << std::endl;
   }
 }
@@ -446,7 +446,7 @@ void TransportSceneManagerPrivate::OnSceneSrvMsg(const msgs::Scene &_msg,
 {
   if (!result)
   {
-    ignerr << "Error making service request to " << this->service
+    gzerr << "Error making service request to " << this->service
            << std::endl;
     return;
   }
@@ -472,7 +472,7 @@ void TransportSceneManagerPrivate::LoadScene(const msgs::Scene &_msg)
       if (modelVis)
         rootVis->AddChild(modelVis);
       else
-        ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+        gzerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
     }
   }
 
@@ -485,7 +485,7 @@ void TransportSceneManagerPrivate::LoadScene(const msgs::Scene &_msg)
       if (light)
         rootVis->AddChild(light);
       else
-        ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+        gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
     }
   }
 }
@@ -515,7 +515,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
     if (linkVis)
       modelVis->AddChild(linkVis);
     else
-      ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
+      gzerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
 
   // load nested models
@@ -525,7 +525,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
     if (nestedModelVis)
       modelVis->AddChild(nestedModelVis);
     else
-      ignerr << "Failed to load nested model: " << _msg.model(i).name()
+      gzerr << "Failed to load nested model: " << _msg.model(i).name()
              << std::endl;
   }
 
@@ -557,7 +557,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadLink(
     if (visualVis)
       linkVis->AddChild(visualVis);
     else
-      ignerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
+      gzerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
   }
 
   // load lights
@@ -567,7 +567,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadLink(
     if (light)
       linkVis->AddChild(light);
     else
-      ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+      gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
   }
 
   return linkVis;
@@ -670,7 +670,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
   }
   else
   {
-    ignerr << "Failed to load geometry for visual: " << _msg.name()
+    gzerr << "Failed to load geometry for visual: " << _msg.name()
            << std::endl;
   }
 
@@ -746,7 +746,7 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
   {
     if (_msg.mesh().filename().empty())
     {
-      ignerr << "Mesh geometry missing filename" << std::endl;
+      gzerr << "Mesh geometry missing filename" << std::endl;
       return geom;
     }
     rendering::MeshDescriptor descriptor;
@@ -763,7 +763,7 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
   }
   else
   {
-    ignerr << "Unsupported geometry type" << std::endl;
+    gzerr << "Unsupported geometry type" << std::endl;
   }
   _scale = scale;
   _localPose = localPose;
@@ -827,7 +827,7 @@ rendering::LightPtr TransportSceneManagerPrivate::LoadLight(
       break;
     }
     default:
-      ignerr << "Light type not supported" << std::endl;
+      gzerr << "Light type not supported" << std::endl;
       return light;
   }
 

@@ -46,7 +46,7 @@ int main(int _argc, char **_argv)
   auto item = qobject_cast<QQuickItem *>(component.create(context));
   if (!item)
   {
-    ignerr << "Failed to initialize custom panel" << std::endl;
+    gzerr << "Failed to initialize custom panel" << std::endl;
     return 1;
   }
 

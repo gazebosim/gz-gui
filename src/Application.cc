@@ -147,7 +147,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   if (_type == WindowType::kMainWindow)
   {
     if (!this->InitializeMainWindow())
-      ignerr << "Failed to initialize main window." << std::endl;
+      gzerr << "Failed to initialize main window." << std::endl;
   }
   else if (_type == WindowType::kDialog)
   {
@@ -155,7 +155,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   }
   else
   {
-    ignerr << "Unknown WindowType [" << static_cast<int>(_type) << "]\n";
+    gzerr << "Unknown WindowType [" << static_cast<int>(_type) << "]\n";
   }
 }
 
@@ -245,7 +245,7 @@ bool Application::LoadConfig(const std::string &_config)
 {
   if (_config.empty())
   {
-    ignerr << "Missing config file" << std::endl;
+    gzerr << "Missing config file" << std::endl;
     return false;
   }
 
@@ -259,14 +259,14 @@ bool Application::LoadConfig(const std::string &_config)
     // presses "Save configuration".
     if (_config != this->DefaultConfigPath())
     {
-      ignerr << "Failed to load file [" << _config << "]: XMLError"
+      gzerr << "Failed to load file [" << _config << "]: XMLError"
              << std::endl;
     }
 
     return false;
   }
 
-  ignmsg << "Loading config [" << _config << "]" << std::endl;
+  gzmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Clear all previous plugins
   auto plugins = this->dataPtr->mainWin->findChildren<Plugin *>();
@@ -277,7 +277,7 @@ bool Application::LoadConfig(const std::string &_config)
   }
   if (this->dataPtr->pluginsAdded.size() > 0)
   {
-    ignerr << "The plugin list was not properly cleaned up." << std::endl;
+    gzerr << "The plugin list was not properly cleaned up." << std::endl;
   }
   this->dataPtr->pluginsAdded.clear();
 
@@ -297,7 +297,7 @@ bool Application::LoadConfig(const std::string &_config)
     tinyxml2::XMLPrinter printer;
     if (!winElem->Accept(&printer))
     {
-      ignwarn << "There was an error parsing the <window> element"
+      gzwarn << "There was an error parsing the <window> element"
               << std::endl;
       return false;
     }
@@ -315,7 +315,7 @@ bool Application::LoadConfig(const std::string &_config)
       }
       else if (value != "close_gui" && !value.empty())
       {
-        ignwarn << "Value '" << value << "' of <default_exit_action> is "
+        gzwarn << "Value '" << value << "' of <default_exit_action> is "
                 << "invalid. Allowed values are CLOSE_GUI and SHUTDOWN_SERVER. "
                 << "Selecting CLOSE_GUI as fallback." << std::endl;
       }
@@ -379,11 +379,11 @@ bool Application::LoadConfig(const std::string &_config)
 
     if (serverControlService.empty())
     {
-      ignerr << "Failed to create valid server control service" << std::endl;
+      gzerr << "Failed to create valid server control service" << std::endl;
     }
     else
     {
-      ignmsg << "Using server control service [" << serverControlService
+      gzmsg << "Using server control service [" << serverControlService
              << "]" << std::endl;
       this->dataPtr->mainWin->SetServerControlService(serverControlService);
     }
@@ -418,7 +418,7 @@ bool Application::LoadPlugin(const std::string &_filename,
 {
   if (_filename.empty())
   {
-    ignerr << "Trying to load plugin with empty filename." << std::endl;
+    gzerr << "Trying to load plugin with empty filename." << std::endl;
     return false;
   }
 
@@ -445,13 +445,13 @@ bool Application::LoadPlugin(const std::string &_filename,
     pathToLib = systemPathsDep.FindSharedLibrary(_filename);
     if (pathToLib.empty())
     {
-      ignerr << "Failed to load plugin [" << _filename <<
+      gzerr << "Failed to load plugin [" << _filename <<
                 "] : couldn't find shared library." << std::endl;
       return false;
     }
     else
     {
-      ignwarn << "Found plugin [" << _filename
+      gzwarn << "Found plugin [" << _filename
               << "] using deprecated environment variable ["
               << this->dataPtr->pluginPathEnvDeprecated << "]. Please use ["
               << this->dataPtr->pluginPathEnv << "] instead." << std::endl;
@@ -464,7 +464,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   auto pluginNames = pluginLoader.LoadLib(pathToLib);
   if (pluginNames.empty())
   {
-    ignerr << "Failed to load plugin [" << _filename <<
+    gzerr << "Failed to load plugin [" << _filename <<
               "] : couldn't load library on path [" << pathToLib <<
               "]." << std::endl;
     return false;
@@ -487,20 +487,20 @@ bool Application::LoadPlugin(const std::string &_filename,
 
   if (!commonPlugin)
   {
-    ignerr << "Failed to load plugin [" << _filename <<
+    gzerr << "Failed to load plugin [" << _filename <<
               "] : couldn't instantiate plugin on path [" << pathToLib <<
               "]. Tried plugin names: " << std::endl;
 
     for (auto pluginName : pluginNames)
     {
-      ignerr << " * " << pluginName << std::endl;
+      gzerr << " * " << pluginName << std::endl;
     }
     return false;
   }
 
   if (!plugin)
   {
-    ignerr << "Failed to load plugin [" << _filename <<
+    gzerr << "Failed to load plugin [" << _filename <<
               "] : couldn't get [gz::gui::Plugin] interface."
            << std::endl;
     return false;
@@ -532,7 +532,7 @@ bool Application::LoadPlugin(const std::string &_filename,
     this->InitializeDialogs();
 
   this->PluginAdded(plugin->CardItem()->objectName());
-  ignmsg << "Loaded plugin [" << _filename << "] from path [" << pathToLib
+  gzmsg << "Loaded plugin [" << _filename << "] from path [" << pathToLib
          << "]" << std::endl;
 
   return true;
@@ -592,7 +592,7 @@ bool Application::AddPluginsToWindow()
       ->findChild<QQuickItem *>("background");
   if (!this->dataPtr->pluginsToAdd.empty() && !bgItem)
   {
-    ignerr << "Null background QQuickItem!" << std::endl;
+    gzerr << "Null background QQuickItem!" << std::endl;
     return false;
   }
 
@@ -623,7 +623,7 @@ bool Application::AddPluginsToWindow()
         splitName.toString());
     if (!splitItem)
     {
-      ignerr << "Internal error: failed to create split ["
+      gzerr << "Internal error: failed to create split ["
              << splitName.toString().toStdString() << "]" << std::endl;
       return false;
     }
@@ -640,7 +640,7 @@ bool Application::AddPluginsToWindow()
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
         this, SLOT(OnPluginClose()));
 
-    ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
+    gzmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
   }
 
@@ -805,17 +805,17 @@ void ApplicationPrivate::MessageHandler(QtMsgType _type,
       igndbg << msg << std::endl;
       break;
     case QtInfoMsg:
-      ignmsg << msg << std::endl;
+      gzmsg << msg << std::endl;
       break;
     case QtWarningMsg:
-      ignwarn << msg << std::endl;
+      gzwarn << msg << std::endl;
       break;
     case QtFatalMsg:
     case QtCriticalMsg:
-      ignerr << msg << std::endl;
+      gzerr << msg << std::endl;
       break;
     default:
-      ignwarn << "Unknown QT Message type[" << _type << "]: "
+      gzwarn << "Unknown QT Message type[" << _type << "]: "
         << msg << std::endl;
       break;
   }

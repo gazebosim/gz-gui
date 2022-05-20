@@ -110,7 +110,7 @@ void TopicEcho::OnEcho(const bool _checked)
   auto topic = this->dataPtr->topic.toStdString();
   if (!this->dataPtr->node.Subscribe(topic, &TopicEcho::OnMessage, this))
   {
-    ignerr << "Invalid topic [" << topic << "]" << std::endl;
+    gzerr << "Invalid topic [" << topic << "]" << std::endl;
   }
 }
 

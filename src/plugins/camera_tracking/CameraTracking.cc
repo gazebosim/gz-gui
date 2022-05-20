@@ -185,7 +185,7 @@ void CameraTrackingPrivate::Initialize()
   }
   if (!this->camera)
   {
-    ignerr << "Camera is not available" << std::endl;
+    gzerr << "Camera is not available" << std::endl;
     return;
   }
 
@@ -193,14 +193,14 @@ void CameraTrackingPrivate::Initialize()
   this->moveToService = "/gui/move_to";
   this->node.Advertise(this->moveToService,
       &CameraTrackingPrivate::OnMoveTo, this);
-  ignmsg << "Move to service on ["
+  gzmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
   // follow
   this->followService = "/gui/follow";
   this->node.Advertise(this->followService,
       &CameraTrackingPrivate::OnFollow, this);
-  ignmsg << "Follow service on ["
+  gzmsg << "Follow service on ["
          << this->followService << "]" << std::endl;
 
   // move to pose service
@@ -208,21 +208,21 @@ void CameraTrackingPrivate::Initialize()
       "/gui/move_to/pose";
   this->node.Advertise(this->moveToPoseService,
       &CameraTrackingPrivate::OnMoveToPose, this);
-  ignmsg << "Move to pose service on ["
+  gzmsg << "Move to pose service on ["
          << this->moveToPoseService << "]" << std::endl;
 
   // camera position topic
   this->cameraPoseTopic = "/gui/camera/pose";
   this->cameraPosePub =
     this->node.Advertise<msgs::Pose>(this->cameraPoseTopic);
-  ignmsg << "Camera pose topic advertised on ["
+  gzmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
 
    // follow offset
    this->followOffsetService = "/gui/follow/offset";
    this->node.Advertise(this->followOffsetService,
        &CameraTrackingPrivate::OnFollowOffset, this);
-   ignmsg << "Follow offset service on ["
+   gzmsg << "Follow offset service on ["
           << this->followOffsetService << "]" << std::endl;
 }
 
@@ -336,7 +336,7 @@ void CameraTrackingPrivate::OnRender()
         }
         else
         {
-          ignerr << "Unable to move to target. Target: '"
+          gzerr << "Unable to move to target. Target: '"
                  << this->moveToTarget << "' not found" << std::endl;
           this->moveToTarget.clear();
         }
@@ -424,7 +424,7 @@ void CameraTrackingPrivate::OnRender()
       }
       else if (!this->followTargetWait)
       {
-        ignerr << "Unable to follow target. Target: '"
+        gzerr << "Unable to follow target. Target: '"
                << this->followTarget << "' not found" << std::endl;
         this->followTarget.clear();
       }

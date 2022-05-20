@@ -46,7 +46,7 @@ Dialog::Dialog()
       App()->Engine()->rootObjects().value(0));
   if (!this->dataPtr->quickWindow)
   {
-    ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+    gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
            << "]" << std::endl;
     return;
   }
@@ -69,7 +69,7 @@ QQuickItem *Dialog::RootItem() const
   auto dialogItem = this->dataPtr->quickWindow->findChild<QQuickItem *>();
   if (!dialogItem)
   {
-    ignerr << "Internal error: Null dialog root item!" << std::endl;
+    gzerr << "Internal error: Null dialog root item!" << std::endl;
   }
 
   return dialogItem;

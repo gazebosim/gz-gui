@@ -123,7 +123,7 @@ void Teleop::OnTeleopTwist()
       this->dataPtr->angularDir * this->dataPtr->angularVel);
 
   if (!this->dataPtr->cmdVelPub.Publish(cmdVelMsg))
-    ignerr << "gz::msgs::Twist message couldn't be published at topic: "
+    gzerr << "gz::msgs::Twist message couldn't be published at topic: "
       << this->dataPtr->topic << std::endl;
 }
 
@@ -131,7 +131,7 @@ void Teleop::OnTeleopTwist()
 void Teleop::OnTopicSelection(const QString &_topic)
 {
   this->dataPtr->topic = _topic.toStdString();
-  ignmsg << "A new topic has been entered: '" <<
+  gzmsg << "A new topic has been entered: '" <<
       this->dataPtr->topic << " ' " <<std::endl;
 
   // Update publisher with new topic.
@@ -144,7 +144,7 @@ void Teleop::OnTopicSelection(const QString &_topic)
     App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Error when advertising topic: " +
         this->dataPtr->topic), 4000);
-    ignerr << "Error when advertising topic: " <<
+    gzerr << "Error when advertising topic: " <<
       this->dataPtr->topic << std::endl;
   }
   else

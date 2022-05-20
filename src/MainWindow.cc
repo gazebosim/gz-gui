@@ -113,7 +113,7 @@ MainWindow::MainWindow()
       App()->Engine()->rootObjects().value(0));
   if (!this->dataPtr->quickWindow)
   {
-    ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+    gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
            << "]" << std::endl;
     return;
   }
@@ -159,7 +159,7 @@ QStringList MainWindow::PluginListModel() const
   {
     if (!pluginNames.contains(QString::fromStdString(plugin)))
     {
-      ignwarn << "Requested to show plugin [" << plugin <<
+      gzwarn << "Requested to show plugin [" << plugin <<
           "] but it doesn't exist." << std::endl;
     }
   }
@@ -201,12 +201,12 @@ void MainWindow::OnStopServer()
     {
       if (_rep.data() && _result)
       {
-        ignmsg << "Simulation server received shutdown request."
+        gzmsg << "Simulation server received shutdown request."
                << std::endl;
       }
       else
       {
-        ignerr << "There was a problem instructing the simulation server to "
+        gzerr << "There was a problem instructing the simulation server to "
                << "shutdown. It may keep running." << std::endl;
       }
     };
@@ -218,12 +218,12 @@ void MainWindow::OnStopServer()
 
   if (success)
   {
-    ignmsg << "Request to shutdown the simulation server sent. "
+    gzmsg << "Request to shutdown the simulation server sent. "
               "Stopping client now." << std::endl;
   }
   else
   {
-    ignerr << "Calling service [" << this->dataPtr->controlService << "] to "
+    gzerr << "Calling service [" << this->dataPtr->controlService << "] to "
            << "stop the server failed. Please check that the "
            << "<server_control_service> of the GUI is configured correctly and "
            << "that the server is running in the same IGN_PARTITION and with "
@@ -256,7 +256,7 @@ void MainWindow::SaveConfig(const std::string &_path)
   std::string msg("Saved configuration to <b>" + _path + "</b>");
 
   this->notify(QString::fromStdString(msg));
-  ignmsg << msg << std::endl;
+  gzmsg << msg << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -267,7 +267,7 @@ void MainWindow::OnAddPlugin(QString _plugin)
   // Remove spaces
   plugin.erase(remove_if(plugin.begin(), plugin.end(), isspace), plugin.end());
 
-  ignlog << "Add [" << plugin << "] via menu" << std::endl;
+  gzlog << "Add [" << plugin << "] via menu" << std::endl;
 
   App()->LoadPlugin(plugin);
 }
@@ -300,7 +300,7 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   if (!_config.IsIgnoring("state") && !_config.state.isEmpty())
   {
 //    if (!this->restoreState(_config.state))
-//      ignwarn << "Failed to restore state" << std::endl;
+//      gzwarn << "Failed to restore state" << std::endl;
   }
 
   // Style

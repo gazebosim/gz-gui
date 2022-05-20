@@ -86,7 +86,7 @@ TEST(ScreenshotTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
   //   [](const gz::msgs::Boolean &/*_rep*/, const bool _result)
   // {
   //   if (!_result)
-  //     ignerr << "Error saving screenshot" << std::endl;
+  //     gzerr << "Error saving screenshot" << std::endl;
   // };
   //
   // std::string screenshotService = "/gui/screenshot";

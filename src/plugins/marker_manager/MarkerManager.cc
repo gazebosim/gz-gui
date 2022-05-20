@@ -151,13 +151,13 @@ void MarkerManagerPrivate::Initialize()
 {
   if (!this->scene)
   {
-    ignerr << "Scene pointer is invalid" << std::endl;
+    gzerr << "Scene pointer is invalid" << std::endl;
     return;
   }
 
   if (this->topicName.empty())
   {
-    ignerr << "Unable to advertise marker service. Topic name empty."
+    gzerr << "Unable to advertise marker service. Topic name empty."
            << std::endl;
     return;
   }
@@ -166,7 +166,7 @@ void MarkerManagerPrivate::Initialize()
   if (!this->node.Advertise(this->topicName + "/list",
       &MarkerManagerPrivate::OnList, this))
   {
-    ignerr << "Unable to advertise to the " << this->topicName
+    gzerr << "Unable to advertise to the " << this->topicName
            << "/list service.\n";
   }
 
@@ -176,7 +176,7 @@ void MarkerManagerPrivate::Initialize()
   if (!this->node.Advertise(this->topicName,
         &MarkerManagerPrivate::OnMarkerMsg, this))
   {
-    ignerr << "Unable to advertise to the " << this->topicName
+    gzerr << "Unable to advertise to the " << this->topicName
            << " service.\n";
   }
 
@@ -186,7 +186,7 @@ void MarkerManagerPrivate::Initialize()
   if (!this->node.Advertise(this->topicName + "_array",
         &MarkerManagerPrivate::OnMarkerMsgArray, this))
   {
-    ignerr << "Unable to advertise to the " << this->topicName
+    gzerr << "Unable to advertise to the " << this->topicName
            << "_array service.\n";
   }
 
@@ -401,7 +401,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
     {
       if (this->warnOnActionFailure)
       {
-        ignwarn << "Unable to delete marker with id[" << id << "] "
+        gzwarn << "Unable to delete marker with id[" << id << "] "
                 << "in namespace[" << ns << "]" << std::endl;
       }
       return false;
@@ -415,7 +415,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
     {
       if (this->warnOnActionFailure)
       {
-        ignwarn << "Unable to delete all markers in namespace[" << ns
+        gzwarn << "Unable to delete all markers in namespace[" << ns
                 << "], namespace can't be found." << std::endl;
       }
       return false;
@@ -446,7 +446,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
   }
   else
   {
-    ignerr << "Unknown marker action[" << _msg.action() << "]\n";
+    gzerr << "Unknown marker action[" << _msg.action() << "]\n";
     return false;
   }
 
@@ -496,7 +496,7 @@ void MarkerManagerPrivate::SetVisual(const gz::msgs::Marker &_msg,
     }
     else
     {
-      ignerr << "No visual with the name[" << _msg.parent() << "]\n";
+      gzerr << "No visual with the name[" << _msg.parent() << "]\n";
     }
   }
 
@@ -633,7 +633,7 @@ gz::rendering::MarkerType MarkerManagerPrivate::MsgToType(
     case gz::msgs::Marker::TRIANGLE_STRIP:
       return gz::rendering::MarkerType::MT_TRIANGLE_STRIP;
     default:
-      ignerr << "Unable to create marker of type[" << _msg.type() << "]\n";
+      gzerr << "Unable to create marker of type[" << _msg.type() << "]\n";
       break;
   }
   return gz::rendering::MarkerType::MT_NONE;
@@ -692,7 +692,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       }
       else
       {
-        ignerr << "the provided topic is no allowed. Using default ["
+        gzerr << "the provided topic is no allowed. Using default ["
                << this->dataPtr->topicName << "]"<<  std::endl;
       }
     }
@@ -702,7 +702,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       if (elem->QueryBoolText(&this->dataPtr->warnOnActionFailure) !=
           tinyxml2::XML_SUCCESS)
       {
-        ignerr << "Faild to parse <warn_on_action_failure> value: "
+        gzerr << "Faild to parse <warn_on_action_failure> value: "
                << elem->GetText() << std::endl;
       }
     }
@@ -729,7 +729,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       parts[2] != worldName &&
       parts[3] == "stats")
   {
-    ignwarn << "Ignoring topic [" << statsTopic
+    gzwarn << "Ignoring topic [" << statsTopic
             << "], world name different from [" << worldName
             << "]. Fix or remove your <stats_topic> tag." << std::endl;
 
@@ -748,16 +748,16 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
     if (!this->dataPtr->node.Subscribe(statsTopic,
         &MarkerManagerPrivate::OnWorldStatsMsg, this->dataPtr.get()))
     {
-      ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
+      gzerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
     }
     else
     {
-      ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
+      gzmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
     }
   }
   else
   {
-    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+    gzerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
   }
 

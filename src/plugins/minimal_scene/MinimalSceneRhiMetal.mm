@@ -122,7 +122,7 @@ void RenderThreadRhiMetal::RenderNext(RenderSync *_renderSync)
   // Check if engine has been successfully initialized
   if (!this->dataPtr->renderer->initialized)
   {
-    ignerr << "Unable to initialize renderer" << std::endl;
+    gzerr << "Unable to initialize renderer" << std::endl;
     return;
   }
 

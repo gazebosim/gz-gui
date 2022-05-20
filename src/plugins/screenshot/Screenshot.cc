@@ -91,7 +91,7 @@ Screenshot::Screenshot()
     if (!common::createDirectories(this->dataPtr->directory))
     {
       std::string defaultDir = common::joinPaths(home, ".ignition", "gui");
-      ignerr << "Unable to create directory [" << this->dataPtr->directory
+      gzerr << "Unable to create directory [" << this->dataPtr->directory
              << "]. Changing default directory to: " << defaultDir
              << std::endl;
 
@@ -115,7 +115,7 @@ void Screenshot::LoadConfig(const tinyxml2::XMLElement *)
   this->dataPtr->screenshotService = "/gui/screenshot";
   this->dataPtr->node.Advertise(this->dataPtr->screenshotService,
       &Screenshot::ScreenshotService, this);
-  ignmsg << "Screenshot service on ["
+  gzmsg << "Screenshot service on ["
          << this->dataPtr->screenshotService << "]" << std::endl;
 
   App()->findChild<MainWindow *>()->installEventFilter(this);
