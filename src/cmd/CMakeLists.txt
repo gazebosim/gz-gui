@@ -12,5 +12,14 @@ configure_file(
 # Install the ruby command line library in an unversioned location.
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmdgui${PROJECT_VERSION_MAJOR}.rb DESTINATION lib/ruby/ignition)
 
-# Install the bash completion script in an unversioned location.
-install(FILES gui.bash_completion.sh DESTINATION share/gz/gz.completion.d)
+# Tack version onto and install the bash completion script
+configure_file(
+  "gui.bash_completion.sh"
+    "${CMAKE_CURRENT_BINARY_DIR}/gui${PROJECT_VERSION_MAJOR}.bash_completion.sh" @ONLY)
+if (HAVE_IGN_TOOLS)
+  install(
+    FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/gui${PROJECT_VERSION_MAJOR}.bash_completion.sh
+    DESTINATION
+      ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/gz/gz${IGN_TOOLS_VER}.completion.d)
+endif()
