@@ -21,15 +21,15 @@
 #include <string>
 #include <memory>
 
-#include <ignition/common/KeyEvent.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector2.hh>
-#include <ignition/utils/ImplPtr.hh>
-#include <ignition/rendering/GraphicsAPI.hh>
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/utils/ImplPtr.hh>
+#include <gz/rendering/GraphicsAPI.hh>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 #include "MinimalSceneRhi.hh"
 

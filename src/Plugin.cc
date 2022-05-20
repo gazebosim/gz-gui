@@ -17,11 +17,11 @@
 
 #include <unordered_set>
 
-#include <ignition/common/Console.hh>
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include <gz/common/Console.hh>
+#include "gz/gui/Application.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
 /// \brief Used to store information about anchors set by the user.
 struct Anchors

@@ -17,9 +17,9 @@
 #ifndef GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 #define GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/gui/PlottingInterface.hh>
-#include <ignition/utils/SuppressWarning.hh>
+#include <gz/gui/Plugin.hh>
+#include <gz/gui/PlottingInterface.hh>
+#include <gz/utils/SuppressWarning.hh>
 
 #include <memory>
 

@@ -15,11 +15,11 @@
  *
 */
 
-#include <ignition/common/KeyEvent.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Color.hh>
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Color.hh>
 
-#include "ignition/gui/Conversions.hh"
+#include "gz/gui/Conversions.hh"
 
 //////////////////////////////////////////////////
 QColor gz::gui::convert(const gz::math::Color &_color)

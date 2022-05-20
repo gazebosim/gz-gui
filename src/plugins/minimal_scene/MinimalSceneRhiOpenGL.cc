@@ -18,8 +18,8 @@
 #include "MinimalSceneRhiOpenGL.hh"
 #include "MinimalScene.hh"
 
-#include <ignition/common/Console.hh>
-#include <ignition/rendering/Camera.hh>
+#include <gz/common/Console.hh>
+#include <gz/rendering/Camera.hh>
 
 #include <QMutex>
 #include <QQuickWindow>

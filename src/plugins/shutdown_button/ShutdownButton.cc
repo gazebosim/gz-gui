@@ -17,10 +17,10 @@
 
 #include "ShutdownButton.hh"
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
 
 using namespace gz;
 using namespace gui;

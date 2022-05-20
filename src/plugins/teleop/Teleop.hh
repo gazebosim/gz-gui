@@ -20,10 +20,10 @@
 
 #include <memory>
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/gui/qt.h>
+#include <gz/gui/Plugin.hh>
+#include <gz/gui/qt.h>
 
 #ifndef _WIN32
 #  define Teleop_EXPORTS_API

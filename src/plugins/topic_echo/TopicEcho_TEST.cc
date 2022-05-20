@@ -17,12 +17,12 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/msgs.hh>
-#include <ignition/transport/Node.hh>
+#include <gz/msgs.hh>
+#include <gz/transport/Node.hh>
 
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Iface.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/MainWindow.hh"
 
 using namespace gz;
 using namespace gui;

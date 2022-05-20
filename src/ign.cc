@@ -19,13 +19,13 @@
 
 #include <iostream>
 
-#include <ignition/common/Console.hh>
+#include <gz/common/Console.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/config.hh"
-#include "ignition/gui/Export.hh"
-#include "ignition/gui/ign.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/config.hh"
+#include "gz/gui/Export.hh"
+#include "gz/gui/ign.hh"
+#include "gz/gui/MainWindow.hh"
 
 int g_argc = 1;
 char* g_argv[] =

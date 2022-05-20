@@ -19,11 +19,11 @@
 
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/StringUtils.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/StringUtils.hh>
+#include <gz/plugin/Register.hh>
 
-#include "ignition/gui/Helpers.hh"
+#include "gz/gui/Helpers.hh"
 
 namespace gz
 {

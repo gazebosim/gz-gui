@@ -15,8 +15,8 @@
  *
 */
 
-#include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/plugin/Register.hh>
 
 #include "TestNotRegisteredPlugin.hh"
 

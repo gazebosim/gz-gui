@@ -20,8 +20,8 @@
 
 #include <string>
 
-#include "ignition/gui/Plugin.hh"
-#include "ignition/rendering/RenderTypes.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/rendering/RenderTypes.hh"
 
 #include <QSGTexture>
 #include <QSize>

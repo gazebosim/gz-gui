@@ -19,18 +19,18 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/stringmsg.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/qt.h"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/qt.h"
 
 #include "Teleop.hh"
 

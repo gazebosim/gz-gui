@@ -15,9 +15,9 @@
  *
  */
 
-#include <ignition/common/Console.hh>
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Dialog.hh"
+#include <gz/common/Console.hh>
+#include "gz/gui/Application.hh"
+#include "gz/gui/Dialog.hh"
 
 namespace gz
 {

@@ -14,7 +14,7 @@
  * limitations under the License.
  *
 */
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 #include "TransportPlotting.hh"
 
 using namespace gz;

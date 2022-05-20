@@ -16,14 +16,14 @@
 */
 
 #include <sstream>
-#include <ignition/common/Console.hh>
-#include <ignition/common/StringUtils.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/transport/MessageInfo.hh>
-#include <ignition/transport/Publisher.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/StringUtils.hh>
+#include <gz/transport/Node.hh>
+#include <gz/transport/MessageInfo.hh>
+#include <gz/transport/Publisher.hh>
 
-#include "ignition/gui/PlottingInterface.hh"
-#include "ignition/gui/Application.hh"
+#include "gz/gui/PlottingInterface.hh"
+#include "gz/gui/Application.hh"
 
 #define DEFAULT_TIME (INT_MIN)
 // 1/60 Period like the GuiSystem frequency (60Hz)

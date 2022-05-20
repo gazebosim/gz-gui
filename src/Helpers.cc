@@ -18,12 +18,12 @@
 #include <sys/stat.h>
 #include <algorithm>
 #include <string>
-#include <ignition/math/Helpers.hh>
+#include <gz/math/Helpers.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Enums.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Enums.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
 
 /////////////////////////////////////////////////
 std::string gz::gui::humanReadable(const std::string &_key)

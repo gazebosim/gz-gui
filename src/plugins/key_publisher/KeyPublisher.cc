@@ -18,16 +18,16 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/int32.pb.h>
+#include <gz/msgs/int32.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
 #include <string>
 
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/MainWindow.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/gui/Application.hh>
+#include <gz/gui/MainWindow.hh>
+#include <gz/plugin/Register.hh>
 
 #include "KeyPublisher.hh"
 
