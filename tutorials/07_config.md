@@ -4,12 +4,12 @@ Next Tutorial: \ref layout
 
 ## Configuration files
 
-Ignition GUI supports loading XML configuration files that define what
+Gazebo GUI supports loading XML configuration files that define what
 the window should look like and which plugins should be loaded.
 
 ### Loading
 
-By default, Ignition GUI will load the config file at
+By default, Gazebo GUI will load the config file at
 `$HOME/.ignition/gui/default.config`, if it exists.
 
 Configuration files can also be loaded from the command line or through the
@@ -24,13 +24,13 @@ From the C++ API, pass the file path to
 
 ### File structure
 
-Ignition GUI accepts the following top-level elements on a config file:
+Gazebo GUI accepts the following top-level elements on a config file:
 
 * `<window>`: Options related to the entire window's layout.
   See \subpage layout for more details.
 * `<plugin>`: Zero or more plugins to be loaded at startup.
     * `filename`: This attribute specifies the plugin library to be loaded.
-    * `<ignition-gui>`: Ignition GUI processes this block before passing the
+    * `<ignition-gui>`: Gazebo GUI processes this block before passing the
       config to the plugin. See
       [plugin_params.config](https://github.com/gazebosim/gz-gui/blob/main/examples/config/plugin_params.config)
       for an example.
@@ -49,6 +49,6 @@ See the example plugin block below:
       <topic>/camera</topic>
     </plugin>
 
-This will load the `libImageDisplay.so` plugin, Ignition GUI will set its
+This will load the `libImageDisplay.so` plugin, Gazebo GUI will set its
 `height` to `120` pixels, and the plugin-specific `<topic>` parameter will be
 handled within `ImageDisplay::LoadConfig`.

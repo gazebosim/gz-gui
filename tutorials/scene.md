@@ -2,28 +2,28 @@
 
 ## Overview
 
-Applications built on top of Ignition GUI can leverage Ignition Rendering
+Applications built on top of Gazebo GUI can leverage Gazebo Rendering
 to display interactive 3D scenes. This tutorial will help application developers
-leverage Ignition GUI's plugins to quickly develop plugins that interact with
+leverage Gazebo GUI's plugins to quickly develop plugins that interact with
 the 3D scene.
 
-> This tutorial applies for Ignition GUI version 6 (Fortress) and higher.
+> This tutorial applies for Gazebo GUI version 6 (Fortress) and higher.
 
 ## Minimal scene
 
-Ignition GUI ships with the `MinimalScene` plugin, which instantiates a 3D
+Gazebo GUI ships with the `MinimalScene` plugin, which instantiates a 3D
 scene and provides orbit controls, but doesn't do much else. Actions such as
 adding, modifying and removing rendering elements from the scene must be
 performed by other plugins that work alongside the minimal scene.
 
 Each application will have a different way of updating the 3D scene. For example,
-[Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo) updates the scene
+[Gazebo](https://ignitionrobotics.org/libs/gazebo) updates the scene
 based on its entities and components, and
-[Ignition RViz](https://github.com/gazebosim/gz-rviz/)
+[Gazebo RViz](https://github.com/gazebosim/gz-rviz/)
 updates the scene based on ROS 2 messages. Each of these applications provides
 custom plugins that update the 3D scene through events and the render thread.
 
-Ignition GUI ships with a plugin that updates the scene based on Ignition
+Gazebo GUI ships with a plugin that updates the scene based on Ignition
 Transport messages, the `gz::gui::plugins::TransportSceneManager`.
 Applications can use that directly, or use it as inspiration for developing
 their own scene managers.

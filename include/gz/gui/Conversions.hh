@@ -63,7 +63,7 @@ namespace gz
 
     /// \brief Return the equivalent Gazebo vector.
     /// \param[in] _pt QPointF to convert
-    /// \return Ignition Vector2d.
+    /// \return Gazebo Vector2d.
     GZ_GUI_VISIBLE
     math::Vector2d convert(const QPointF &_pt);
 

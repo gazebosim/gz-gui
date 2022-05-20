@@ -1,4 +1,4 @@
-# Ignition GUI : Graphical interfaces for robotics applications
+# Gazebo GUI : Graphical interfaces for robotics applications
 
 **Maintainer:** louise [AT] openrobotics [DOT] org
 
@@ -14,11 +14,11 @@ Ubuntu Focal | [![Build Status](https://build.osrfoundation.org/buildStatus/icon
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-main-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ci-win)](https://build.osrfoundation.org/job/ign_gui-ci-win)
 
-Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
+Gazebo GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
 and can be used together in a convenient unified interface.
 
-Ignition GUI ships with several widgets ready to use and offers a plugin interface
+Gazebo GUI ships with several widgets ready to use and offers a plugin interface
 which can be used to add custom widgets.
 
 # Table of Contents
@@ -46,7 +46,7 @@ which can be used to add custom widgets.
 * Qt-based widgets, with support for both Qt5 widgets and QtQuick
 * Plugin-based interface, so it's easy to add new widgets
 * Several plugins ready to be used
-* 3D scene integration using [Ignition Rendering](https://github.com/gazebosim/gz-rendering/)
+* 3D scene integration using [Gazebo Rendering](https://github.com/gazebosim/gz-rendering/)
 
 # Install
 
@@ -88,7 +88,7 @@ export GZ_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
 * `test`: All integration, performance and regression tests go here, under their
   specific folders.
 
-* `examples/standalone`: Example code for standalone applications using Ignition GUI
+* `examples/standalone`: Example code for standalone applications using Gazebo GUI
   as a library. Each example has instructions in a README file.
 
 * `examples/config`: Example configuration files which can be loaded using

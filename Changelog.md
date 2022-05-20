@@ -1,12 +1,12 @@
-## Ignition Gui 7
+## Gazebo Gui 7
 
-### Ignition Gui 7.X.X
+### Gazebo Gui 7.X.X
 
-### Ignition Gui 7.0.0 (202X-XX-XX)
+### Gazebo Gui 7.0.0 (202X-XX-XX)
 
-## Ignition Gui 6
+## Gazebo Gui 6
 
-### Ignition Gui 6.4.0 (2022-02-01)
+### Gazebo Gui 6.4.0 (2022-02-01)
 
 1. Improve inserting WorldControl and WorldStats from menu
     * [Pull request #349](https://github.com/gazebosim/gz-gui/pull/349)
@@ -20,12 +20,12 @@
 1. Add project() to examples and remove hard-dependency on Ogre1
     * [Pull request #345](https://github.com/gazebosim/gz-gui/pull/345)
 
-### Ignition Gui 6.3.0 (2022-01-06)
+### Gazebo Gui 6.3.0 (2022-01-06)
 
 1. NavSat (GPS) map plugin
     * [Pull request #342](https://github.com/gazebosim/gz-gui/pull/342)
 
-### Ignition Gui 6.2.0 (2021-12-08)
+### Gazebo Gui 6.2.0 (2021-12-08)
 
 1. Grid config: set values from startup and improve layout
     * [Pull request #324](https://github.com/gazebosim/gz-gui/pull/324)
@@ -58,7 +58,7 @@
 1. Added log storing for ign-gui
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
-### Ignition Gui 6.1.0 (2021-11-05)
+### Gazebo Gui 6.1.0 (2021-11-05)
 
 1. Improved doxygen
     * [Pull request #275](https://github.com/gazebosim/gz-gui/pull/275)
@@ -75,7 +75,7 @@
 1. Support emitting an event on play/pause/step
     * [Pull request #306](https://github.com/gazebosim/gz-gui/pull/306)
 
-### Ignition Gui 6.0.0 (2021-09-XX)
+### Gazebo Gui 6.0.0 (2021-09-XX)
 
 1. Add a filter to the plugin menu
     * [Pull request #277](https://github.com/gazebosim/gz-gui/pull/277)
@@ -138,9 +138,9 @@
     * [Pull request #266](https://github.com/gazebosim/gz-gui/pull/266)
     * [Pull request #274](https://github.com/gazebosim/gz-gui/pull/274)
 
-## Ignition Gui 5
+## Gazebo Gui 5
 
-### Ignition Gui 5.5.0 (2022-03-28)
+### Gazebo Gui 5.5.0 (2022-03-28)
 
 1. Fix some Qt warnings
     * [Pull request #376](https://github.com/gazebosim/gz-gui/pull/376)
@@ -158,7 +158,7 @@
 1. Backport GridConfig improvements to Grid3D
     * [Pull request #363](https://github.com/gazebosim/gz-gui/pull/363)
 
-### Ignition Gui 5.4.0 (2022-01-31)
+### Gazebo Gui 5.4.0 (2022-01-31)
 
 1. Improve inserting WorldControl and WorldStats from menu
     * [Pull request #349](https://github.com/gazebosim/gz-gui/pull/349)
@@ -188,7 +188,7 @@
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
 
-### Ignition Gui 5.3.0 (2021-10-13)
+### Gazebo Gui 5.3.0 (2021-10-13)
 
 1. Improved doxygen
     * [Pull request #275](https://github.com/gazebosim/gz-gui/pull/275)
@@ -205,7 +205,7 @@
 1. Fix doc build error
     * [Pull request #266](https://github.com/gazebosim/gz-gui/pull/266)
 
-### Ignition Gui 5.2.0 (2021-07-27)
+### Gazebo Gui 5.2.0 (2021-07-27)
 
 1. New teleop plugin implementation.
     * [Pull request #245](https://github.com/gazebosim/gz-gui/pull/245)
@@ -222,7 +222,7 @@
 1. Detect ign instead of using cmake module to check for ignition-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
-### Ignition Gui 5.1.0 (2021-06-23)
+### Gazebo Gui 5.1.0 (2021-06-23)
 
 1. Depend on common 4.1 and rendering 5.1
     * [Pull request #238](https://github.com/gazebosim/gz-gui/pull/238)
@@ -260,7 +260,7 @@
 1. `check_test_ran.py`: remove grep/xsltproc
     * [Pull request #203](https://github.com/gazebosim/gz-gui/pull/203)
 
-### Ignition Gui 5.0.0 (2021-03-31)
+### Gazebo Gui 5.0.0 (2021-03-31)
 
 1. Bump in edifice: ign-common4
     * [Pull request #169](https://github.com/gazebosim/gz-gui/pull/169)
@@ -275,14 +275,14 @@
     * [Pull request #202](https://github.com/gazebosim/gz-gui/pull/202)
     * [Pull request #204](https://github.com/gazebosim/gz-gui/pull/204)
 
-## Ignition Gui 4
+## Gazebo Gui 4
 
-### Ignition Gui 4.X.X
+### Gazebo Gui 4.X.X
 
-### Ignition Gui 4.X.X (20XX-XX-XX)
+### Gazebo Gui 4.X.X (20XX-XX-XX)
 
 
-### Ignition Gui 4.5.0 (2021-07-26)
+### Gazebo Gui 4.5.0 (2021-07-26)
 
 1. New teleop plugin implementation.
     * [Pull request #245](https://github.com/gazebosim/gz-gui/pull/245)
@@ -302,7 +302,7 @@
 1. Detect ign instead of using cmake module to check for ignition-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
-### Ignition Gui 4.4.0 (2021-06-21)
+### Gazebo Gui 4.4.0 (2021-06-21)
 
 1. Bump required ign-rendering version to 4.8
     * [Pull request #234](https://github.com/gazebosim/gz-gui/pull/234)
@@ -340,7 +340,7 @@
 1. Scene3D: port mesh material fixes from ign-gazebo
     * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
 
-### Ignition Gui 4.3.0 (2021-03-11)
+### Gazebo Gui 4.3.0 (2021-03-11)
 
 1. Screenshot plugin
     * [Pull request #170](https://github.com/gazebosim/gz-gui/pull/170)
@@ -369,7 +369,7 @@
 1. Add Windows Installation
     * [Pull request #168](https://github.com/gazebosim/gz-gui/pull/168)
 
-### Ignition Gui 4.2.0 (2021-02-09)
+### Gazebo Gui 4.2.0 (2021-02-09)
 
 1. Added issue and PR templates
     * [Pull request 174](https://github.com/gazebosim/gz-gui/pull/174)
@@ -377,7 +377,7 @@
 1. Visualize single channel 8 bit image data
     * [Pull request 176](https://github.com/gazebosim/gz-gui/pull/176)
 
-### Ignition Gui 4.1.1 (2021-01-05)
+### Gazebo Gui 4.1.1 (2021-01-05)
 
 1. Use default value of double ptr argv for CLI
     * [Pull request 165](https://github.com/gazebosim/gz-gui/pull/165)
@@ -385,7 +385,7 @@
 1. Generate valid topics depending on world name
     * [Pull request 164](https://github.com/gazebosim/gz-gui/pull/164)
 
-### Ignition Gui 4.1.0 (2020-12-18)
+### Gazebo Gui 4.1.0 (2020-12-18)
 
 1. Publish plugin API docs
     * [Pull request 128](https://github.com/gazebosim/gz-gui/pull/128)
@@ -412,7 +412,7 @@
     * [Pull request 144](https://github.com/gazebosim/gz-gui/pull/144)
     * [Pull request 157](https://github.com/gazebosim/gz-gui/pull/157)
 
-1. Port Gazebo GUI events to Ignition GUI
+1. Port Gazebo GUI events to Gazebo GUI
     * [Pull request 148](https://github.com/gazebosim/gz-gui/pull/148)
 
 1. Change deprecated Qt::MidButton
@@ -424,7 +424,7 @@
 1. Avoid crash on macOS
     * [Pull request 155](https://github.com/gazebosim/gz-gui/pull/155)
 
-### Ignition Gui 4.0.0 (2020-09-29)
+### Gazebo Gui 4.0.0 (2020-09-29)
 
 1. GitHub migration
     * [Pull request 59](https://github.com/gazebosim/gz-gui/pull/59)
@@ -464,9 +464,9 @@
 1. Depend on ign-rendering4
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/243)
 
-## Ignition Gui 3
+## Gazebo Gui 3
 
-### Ignition Gui 3.9.0 (2022-01-14)
+### Gazebo Gui 3.9.0 (2022-01-14)
 
 1. Added a button that allows shutting down both the client and server.
     * [Pull request #335](https://github.com/gazebosim/gz-gui/pull/335)
@@ -492,7 +492,7 @@
 1. Added log storing for `ign gui` CLI
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
-### Ignition Gui 3.8.0 (2021-10-12)
+### Gazebo Gui 3.8.0 (2021-10-12)
 
 1. Improved doxygen
     * [Pull request #275](https://github.com/gazebosim/gz-gui/pull/275)
@@ -509,7 +509,7 @@
 1. New teleop plugin implementation.
     * [Pull request #245](https://github.com/gazebosim/gz-gui/pull/245)
 
-### Ignition Gui 3.7.0 (2021-07-14)
+### Gazebo Gui 3.7.0 (2021-07-14)
 
 1. Fix codeowners
     * [Pull request #251](https://github.com/gazebosim/gz-gui/pull/251)
@@ -526,7 +526,7 @@
 1. Detect ign instead of using cmake module to check for ignition-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
-### Ignition Gui 3.6.0 (2021-06-17)
+### Gazebo Gui 3.6.0 (2021-06-17)
 
 1. Update codeowners
     * [Pull request #232](https://github.com/gazebosim/gz-gui/pull/232)
@@ -552,7 +552,7 @@
 1. `check_test_ran.py`: remove grep/xsltproc
     * [Pull request #203](https://github.com/gazebosim/gz-gui/pull/203)
 
-### Ignition Gui 3.5.1 (2021-03-18)
+### Gazebo Gui 3.5.1 (2021-03-18)
 
 1. Scene3D: port mesh material fixes from ign-gazebo
     * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
@@ -560,7 +560,7 @@
 1. Improve the height of plugins in the right split
     * [Pull request #194](https://github.com/gazebosim/gz-gui/pull/194)
 
-### Ignition Gui 3.5.0 (2021-03-10)
+### Gazebo Gui 3.5.0 (2021-03-10)
 
 1. Screenshot plugin
     * [Pull request #170](https://github.com/gazebosim/gz-gui/pull/170)
@@ -583,7 +583,7 @@
 1. Fix codecheck
     * [Pull request #157](https://github.com/gazebosim/gz-gui/pull/157)
 
-### Ignition Gui 3.4.0 (2020-12-10)
+### Gazebo Gui 3.4.0 (2020-12-10)
 
 1. Publish plugin API docs
     * [Pull request 128](https://github.com/gazebosim/gz-gui/pull/128)
@@ -606,7 +606,7 @@
 1. Resolve updated codecheck issues
     * [Pull request 144](https://github.com/gazebosim/gz-gui/pull/144)
 
-1. Port Gazebo GUI events to Ignition GUI
+1. Port Gazebo GUI events to Gazebo GUI
     * [Pull request 148](https://github.com/gazebosim/gz-gui/pull/148)
 
 1. Change deprecated Qt::MidButton
@@ -615,7 +615,7 @@
 1. Add right mouse events and tests
     * [Pull request 154](https://github.com/gazebosim/gz-gui/pull/154)
 
-### Ignition Gui 3.3.0 (2020-08-31)
+### Gazebo Gui 3.3.0 (2020-08-31)
 
 1. rename key publisher plugin
     * [Pull request 93](https://github.com/gazebosim/gz-gui/pull/93)
@@ -660,7 +660,7 @@
 1. Fix ImageDisplay in Ubuntu 20.04
     * [Pull request 96](https://github.com/gazebosim/gz-gui/pull/96)
 
-### Ignition Gui 3.2.0 (2020-06-22)
+### Gazebo Gui 3.2.0 (2020-06-22)
 
 1. Sort GUI plugins alphabetically
     * [Pull request 71](https://github.com/gazebosim/gz-gui/pull/71)
@@ -686,7 +686,7 @@
     * [Pull request 56](https://github.com/gazebosim/gz-gui/pull/56)
     * [Pull request 57](https://github.com/gazebosim/gz-gui/pull/57)
 
-### Ignition Gui 3.1.0 (2020-03-27)
+### Gazebo Gui 3.1.0 (2020-03-27)
 
 1. Remove old ign-gui0 stuff
     * [BitBucket pull request 248](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/248)
@@ -738,7 +738,7 @@
     * [BitBucket pull request 228](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/228)
     * [BitBucket pull request 230](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/230)
 
-### Ignition Gui 3.0.0 (2019-12-10)
+### Gazebo Gui 3.0.0 (2019-12-10)
 
 1. Depend on ign-transport8 and ign-msgs5
     * [BitBucket pull request 225](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/225)
@@ -746,9 +746,9 @@
 1. Depend on ign-rendering3
     * [BitBucket pull request 221](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/221)
 
-## Ignition Gui 2
+## Gazebo Gui 2
 
-### Ignition Gui 2.3.3 (2020-08-31)
+### Gazebo Gui 2.3.3 (2020-08-31)
 
 1. Fix running plugins with bad world names.
     * [Pull request 111](https://github.com/gazebosim/gz-gui/pull/111)
@@ -756,17 +756,17 @@
 1. Disable more tests known to fail on macOS and Windows.
     * [Pull request 112](https://github.com/gazebosim/gz-gui/pull/112)
 
-### Ignition Gui 2.3.2 (2020-08-19)
+### Gazebo Gui 2.3.2 (2020-08-19)
 
 1. Revert pull request #107
     * [Pull request 110](https://github.com/gazebosim/gz-gui/pull/110)
 
-### Ignition Gui 2.3.1 (2020-08-17)
+### Gazebo Gui 2.3.1 (2020-08-17)
 
 1. Fix running plugins with bad world name
     * [Pull request 107](https://github.com/gazebosim/gz-gui/pull/107)
 
-### Ignition Gui 2.3.0 (2020-08-11)
+### Gazebo Gui 2.3.0 (2020-08-11)
 
 1. Add shift + drag to rotate camera
     * [Pull request 96](https://github.com/gazebosim/gz-gui/pull/96)
@@ -787,7 +787,7 @@
 1. Use world name in default topics
     * [Pull request 104](https://github.com/gazebosim/gz-gui/pull/104)
 
-### Ignition Gui 2.2.0 (2020-06-17)
+### Gazebo Gui 2.2.0 (2020-06-17)
 
 1. Sort GUI plugins alphabetically
     * [Pull request 71](https://github.com/gazebosim/gz-gui/pull/71)
@@ -812,7 +812,7 @@
     * [BitBucket pull request 249](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/249)
 
 
-### Ignition Gui 2.1.0 (2020-03-04)
+### Gazebo Gui 2.1.0 (2020-03-04)
 
 1. Add space for pausing sim
     * [BitBucket pull request 245](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/245)
@@ -841,7 +841,7 @@
 1. Fix changing topics in ImageDisplay
     * [BitBucket pull request 224](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/224)
 
-### Ignition Gui 2.0.1
+### Gazebo Gui 2.0.1
 
 1. Made image display responsive.
     * [BitBucket pull request 223](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/223)
@@ -849,7 +849,7 @@
 1. Downstream applications can override this using MainWindow::setIcon once they get the window.
     * [BitBucket pull request 222](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/222)
 
-### Ignition Gui 2.0.0
+### Gazebo Gui 2.0.0
 
 1. Delete QmlApplicationEngine later.
     * [BitBucket pull request 209](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/209)
@@ -878,9 +878,9 @@
 1. Fix topic echo test and make msgs visible.
     * [BitBucket pull request 201](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/201)
 
-## Ignition Gui 1
+## Gazebo Gui 1
 
-### Ignition Gui 1.X.X
+### Gazebo Gui 1.X.X
 
 1. Move files not ported to v1 to a separate dir for clarity.
     * [BitBucket pull request 196](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/196)
@@ -888,4 +888,4 @@
 1. Get ign-gui plugin interface in case there are others.
     * [BitBucket pull request 186](https://osrf-migration.github.io/ignition-gh-pages/#!/gazebosim/gz-gui/pull-requests/186)
 
-### Ignition Gui 1.0.0
+### Gazebo Gui 1.0.0
