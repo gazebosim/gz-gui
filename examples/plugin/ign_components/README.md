@@ -1,4 +1,4 @@
-Demo of QML components provided by Ignition GUI which can be
+Demo of QML components provided by Gazebo GUI which can be
 useful for downstream developers.
 
 ## Build

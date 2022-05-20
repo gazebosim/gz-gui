@@ -122,7 +122,7 @@ class ignition::gui::plugins::MarkerManagerPrivate
   public: std::map<std::string,
       std::map<uint64_t, ignition::rendering::VisualPtr>> visuals;
 
-  /// \brief Ignition node
+  /// \brief Gazebo node
   public: ignition::transport::Node node;
 
   /// \brief Topic name for the marker service

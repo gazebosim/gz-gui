@@ -37,7 +37,7 @@ namespace ignition::gui
 {
   class TapeMeasurePrivate
   {
-    /// \brief Ignition communication node.
+    /// \brief Gazebo communication node.
     public: transport::Node node;
 
     /// \brief True if currently measuring, else false.

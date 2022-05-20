@@ -93,9 +93,9 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 {
   igndbg << "Initializing application." << std::endl;
 
-  this->setOrganizationName("Ignition");
-  this->setOrganizationDomain("ignitionrobotics.org");
-  this->setApplicationName("Ignition GUI");
+  this->setOrganizationName("Gazebo");
+  this->setOrganizationDomain("gazebosim.org");
+  this->setApplicationName("Gazebo GUI");
 
 #if __APPLE__
   // Use the Metal graphics API on macOS.

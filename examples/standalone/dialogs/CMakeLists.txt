@@ -17,7 +17,7 @@ find_package (Qt5
   REQUIRED
 )
 
-# Find the Ignition gui library
+# Find the Gazebo GUI library
 find_package(ignition-gui7 REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")

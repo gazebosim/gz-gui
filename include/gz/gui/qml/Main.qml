@@ -24,7 +24,7 @@ import "qrc:/qml"
 
 ApplicationWindow
 {
-  title: qsTr("Ignition GUI")
+  title: qsTr("Gazebo GUI")
   width: 1200
   height: 1000
   minimumWidth: 300
@@ -255,7 +255,7 @@ ApplicationWindow
     id: aboutDialog
     modal: true
     focus: true
-    title: "Ignition GUI"
+    title: "Gazebo GUI"
     x: (window.width - width) / 2
     y: window.height / 6
     width: Math.min(window.width, window.height) / 3 * 2

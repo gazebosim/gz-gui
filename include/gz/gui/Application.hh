@@ -57,7 +57,7 @@ namespace ignition
       kDialog = 1
     };
 
-    /// \brief An Ignition GUI application loads a QML engine and
+    /// \brief A Gazebo GUI application loads a QML engine and
     /// provides an API to load plugins and configuration files. The application
     /// supports either running a single main window or several plugins as
     /// standalone dialogs.
@@ -139,7 +139,7 @@ namespace ignition
       /// 1. Paths given by the environment variable
       /// 2. Paths added by calling addPluginPath
       /// 3. Path ~/.gz/gui/plugins
-      /// 4. The path where Ignition GUI plugins are installed
+      /// 4. The path where Gazebo GUI plugins are installed
       ///
       /// \return A vector of pairs, where each pair contains:
       /// * A path

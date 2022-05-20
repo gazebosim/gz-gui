@@ -29,7 +29,7 @@ namespace gui
 {
   class GridConfigPrivate;
 
-  /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
+  /// \brief Manages grids in an Gazebo Rendering scene. This plugin can be
   /// used for:
   /// * Introspecting grids
   /// * Editing grids
