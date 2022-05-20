@@ -31,6 +31,10 @@
 
 #define IGN_GUI_PLUGIN_INSTALL_DIR GZ_GUI_PLUGIN_INSTALL_DIR
 
+namespace gz
+{
+}
+
 namespace ignition
 {
   #ifndef SUPPRESS_IGNITION_HEADER_DEPRECATION
