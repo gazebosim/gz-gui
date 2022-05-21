@@ -238,12 +238,12 @@ void PointCloud::OnRefresh()
     this->dataPtr->node.TopicInfo(topic, publishers);
     for (auto pub : publishers)
     {
-      if (pub.MsgTypeName() == "ignition.msgs.PointCloudPacked")
+      if (pub.MsgTypeName() == "gz.msgs.PointCloudPacked")
       {
         this->dataPtr->pointCloudTopicList.push_back(
             QString::fromStdString(topic));
       }
-      else if (pub.MsgTypeName() == "ignition.msgs.Float_V")
+      else if (pub.MsgTypeName() == "gz.msgs.Float_V")
       {
         this->dataPtr->floatVTopicList.push_back(QString::fromStdString(topic));
       }

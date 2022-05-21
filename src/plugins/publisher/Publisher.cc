@@ -38,7 +38,7 @@ namespace plugins
   class PublisherPrivate
   {
     /// \brief Message type
-    public: QString msgType = "ignition.msgs.StringMsg";
+    public: QString msgType = "gz.msgs.StringMsg";
 
     /// \brief Message contents
     public: QString msgData = "data: \"Hello\"";

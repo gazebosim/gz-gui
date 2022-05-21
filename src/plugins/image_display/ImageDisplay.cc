@@ -269,7 +269,7 @@ void ImageDisplay::OnRefresh()
     this->dataPtr->node.TopicInfo(topic, publishers);
     for (auto pub : publishers)
     {
-      if (pub.MsgTypeName() == "ignition.msgs.Image")
+      if (pub.MsgTypeName() == "gz.msgs.Image")
       {
         this->dataPtr->topicList.push_back(QString::fromStdString(topic));
         break;

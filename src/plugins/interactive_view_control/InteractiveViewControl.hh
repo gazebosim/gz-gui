@@ -41,8 +41,8 @@ namespace plugins
   /// projection is used by default. For example:
   ///
   ///     ign service -s /gui/camera/view_control
-  ///         --reqtype ignition.msgs.StringMsg
-  ///         --reptype ignition.msgs.Boolean
+  ///         --reqtype gz.msgs.StringMsg
+  ///         --reptype gz.msgs.Boolean
   ///         --timeout 2000 --req 'data: "ortho"'
   ///
   /// Supported options are:

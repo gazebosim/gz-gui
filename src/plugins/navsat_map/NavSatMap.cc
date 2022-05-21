@@ -159,7 +159,7 @@ void NavSatMap::OnRefresh()
     this->dataPtr->node.TopicInfo(topic, publishers);
     for (auto pub : publishers)
     {
-      if (pub.MsgTypeName() == "ignition.msgs.NavSat")
+      if (pub.MsgTypeName() == "gz.msgs.NavSat")
       {
         this->dataPtr->topicList.push_back(QString::fromStdString(topic));
         break;

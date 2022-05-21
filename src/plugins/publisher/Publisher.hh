@@ -94,12 +94,12 @@ namespace plugins
     public slots: void OnPublish(const bool _checked);
 
     /// \brief Get the message type as a string, for example
-    /// 'ignition.msgs.StringMsg'
+    /// 'gz.msgs.StringMsg'
     /// \return Message type
     public: Q_INVOKABLE QString MsgType() const;
 
     /// \brief Set the message type from a string, for example
-    /// 'ignition.msgs.StringMsg'
+    /// 'gz.msgs.StringMsg'
     /// \param[in] _msgType Message type
     public: Q_INVOKABLE void SetMsgType(const QString &_msgType);
 
