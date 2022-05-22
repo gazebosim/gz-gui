@@ -16,3 +16,4 @@
  */
 
 #include <gz/gui/qt.h>
+#include <ignition/gui/config.hh>
