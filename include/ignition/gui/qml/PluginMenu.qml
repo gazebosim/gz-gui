@@ -78,6 +78,12 @@ Popup {
             drawer.close();
             pluginMenu.close();
           }
+          Keys.onDownPressed: {
+            pluginMenuListView.incrementCurrentIndex();
+          }
+          Keys.onUpPressed: {
+            pluginMenuListView.decrementCurrentIndex();
+          } 
         }
       }
     }
