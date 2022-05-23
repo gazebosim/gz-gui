@@ -20,7 +20,7 @@ From the command line, use the `--config` / `-c` option, for example:
 `ign gui -c path/to/example.config`
 
 From the C++ API, pass the file path to
-[Application::LoadConfig](https://ignitionrobotics.org/api/gui/6.0/classignition_1_1gui_1_1Application.html#a03c4c3a1b1e58cc4bff05658f21fff17).
+[Application::LoadConfig](https://gazebosim.org/api/gui/6.0/classignition_1_1gui_1_1Application.html#a03c4c3a1b1e58cc4bff05658f21fff17).
 
 ### File structure
 
@@ -35,7 +35,7 @@ Gazebo GUI accepts the following top-level elements on a config file:
       [plugin_params.config](https://github.com/gazebosim/gz-gui/blob/main/examples/config/plugin_params.config)
       for an example.
     * custom elements: Developers can read custom plugin configurations overriding the
-      [Plugin::LoadConfig](https://ignitionrobotics.org/api/gui/6.0/classignition_1_1gui_1_1Plugin.html#a720646.0af4cd247b994b905559fd4ee)
+      [Plugin::LoadConfig](https://gazebosim.org/api/gui/6.0/classignition_1_1gui_1_1Plugin.html#a720646.0af4cd247b994b905559fd4ee)
       function, see the
       [HelloPlugin](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/HelloPlugin.cc)
       example.

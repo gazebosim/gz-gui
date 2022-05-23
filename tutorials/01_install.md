@@ -6,7 +6,7 @@ Next Tutorial: \ref commandline
 
 These instructions are for installing only Gazebo GUI. If you're interested
 in using all the Ignition libraries, not only Igniton GUI, check out this
-[Ignition installation](https://ignitionrobotics.org/docs/latest/install).
+[Ignition installation](https://gazebosim.org/docs/latest/install).
 
 We recommend following the binary install instructions to get up and running as
 quickly and painlessly as possible.
@@ -184,7 +184,7 @@ Before [ign-rendering](https://github.com/gazebosim/gz-rendering) becomes availa
 # Documentation
 
 API documentation and tutorials can be accessed at
-[https://ignitionrobotics.org/libs/gui](https://ignitionrobotics.org/libs/gui)
+[https://gazebosim.org/libs/gui](https://gazebosim.org/libs/gui)
 
 You can also generate the documentation from a clone of this repository by following these steps.
 
@@ -228,4 +228,4 @@ Follow these steps to run tests and static code analysis in your clone of this r
   make codecheck
   ```
 
-See the [Writing Tests section of the contributor guide](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
+See the [Writing Tests section of the contributor guide](https://gazebosim.org/docs/all/contributing#writing-tests) for help creating or modifying tests.

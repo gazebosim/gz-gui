@@ -50,12 +50,12 @@ which can be used to add custom widgets.
 
 # Install
 
-See the [installation tutorial](https://ignitionrobotics.org/api/gui/5.0/install.html).
+See the [installation tutorial](https://gazebosim.org/api/gui/5.0/install.html).
 
 # Usage
 
 Take a look at the
-[tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html)
+[tutorials](https://gazebosim.org/api/gui/5.0/tutorials.html)
 for usage instructions and API documentation.
 
 ## Known issue of command line tools
@@ -95,9 +95,9 @@ export GZ_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
   `ign gui -c <path to file>`
 
 * `examples/plugin`: Example plugins which can be compiled and loaded as explained
-  in [this tutorial](https://ignitionrobotics.org/api/gui/5.0/plugins.html).
+  in [this tutorial](https://gazebosim.org/api/gui/5.0/plugins.html).
 
-* `tutorials`: Markdown files for the [tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html).
+* `tutorials`: Markdown files for the [tutorials](https://gazebosim.org/api/gui/5.0/tutorials.html).
 
 * `conf`: Files needed by [ign-tools](https://github.com/gazebosim/gz-tools).
 
@@ -106,7 +106,7 @@ export GZ_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://ignitionrobotics.org/docs/all/contributing).
+[CONTRIBUTING.md](https://gazebosim.org/docs/all/contributing).
 
 # Code of Conduct
 
@@ -115,7 +115,7 @@ Please see
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Ignition website](https://ignitionrobotics.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition project](https://gazebosim.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Ignition website](https://gazebosim.org) for version and release information.
 
 # License
 
