@@ -72,6 +72,12 @@ Popup {
           onTextEdited: {
             filteredModel.update();
           }
+          Keys.onReturnPressed: {
+            MainWindow.OnAddPlugin(
+              pluginMenuListView.currentItem.myData.modelData);
+            drawer.close();
+            pluginMenu.close();
+          }
         }
       }
     }
@@ -104,6 +110,7 @@ Popup {
     model: MainWindow.PluginListModel()
 
     delegate: ItemDelegate {
+      property variant myData: model
       width: parent.width
       text: modelData
       highlighted: ListView.isCurrentItem
