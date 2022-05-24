@@ -19,7 +19,7 @@ release will remove the deprecated code.
 
 ## Gazebo GUI 6.1 to 6.2
 
-* All features from `Grid3D` have been incorportated into `GridConfig`. The code
+* All features from `Grid3D` have been incorporated into `GridConfig`. The code
   for the original `Grid3D` has been removed and now the installed library is
   just a copy of `GridConfig`. Existing `Grid3D` users shouldn't be affected and
   may continue to use `Grid3D` as before.
@@ -64,4 +64,3 @@ release will remove the deprecated code.
 ## Gazebo GUI 0.1.0 to 1.0.0
 
 * Gazebo GUI v1 uses QtQuick and it is not compatible with v0, which uses QWidgets.
-
