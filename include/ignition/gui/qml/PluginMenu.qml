@@ -38,9 +38,14 @@ Popup {
       Material.color(Material.Grey, Material.Shade200):
       Material.color(Material.Grey, Material.Shade900);
 
+  property bool pluginAdded: false
+
   onOpened: {
     searchField.forceActiveFocus()
-    searchField.selectAll()
+    if (pluginAdded) {
+      searchField.selectAll()
+      pluginAdded = false;
+    }
   }
 
   ColumnLayout {
@@ -113,6 +118,7 @@ Popup {
       onClicked: {
         MainWindow.OnAddPlugin(modelData);
         drawer.close()
+        pluginAdded = true
         pluginMenu.close()
       }
     }
