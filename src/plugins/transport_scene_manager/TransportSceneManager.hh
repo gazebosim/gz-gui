@@ -30,7 +30,7 @@ namespace plugins
 {
   class TransportSceneManagerPrivate;
 
-  /// \brief Provides an Gazebo Transport interface to
+  /// \brief Provides a Gazebo Transport interface to
   /// `gz::gui::plugins::MinimalScene`.
   ///
   /// ## Configuration

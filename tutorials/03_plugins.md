@@ -5,7 +5,7 @@ Previous Tutorial: \ref commandline
 
 ## Writing plugins
 
-An Gazebo GUI plugin is a shared library that defines a widget.
+A Gazebo GUI plugin is a shared library that defines a widget.
 The plugin contains [QML](https://doc.qt.io/qt-5/qtqml-index.html)
 code that specifies what the widget looks like, as well as C++ code
 that defines the plugin's behavior and ties it to other libraries.
@@ -32,7 +32,7 @@ tutorial for more information.
 
 ### Image display
 
-Display images from an Gazebo Transport topic.
+Display images from a Gazebo Transport topic.
 
     ign gui -c examples/config/image.config
 
@@ -42,7 +42,7 @@ or
 
 ### Publisher
 
-Publish messages on an Gazebo Transport topic.
+Publish messages on a Gazebo Transport topic.
 
 1. Listen to string messages on the `/echo` topic:
 
@@ -64,7 +64,7 @@ Publish messages on an Gazebo Transport topic.
 
 ### Topic echo
 
-Echo messages from an Gazebo Transport topic.
+Echo messages from a Gazebo Transport topic.
 
     ign gui -c examples/config/pubsub.config
 

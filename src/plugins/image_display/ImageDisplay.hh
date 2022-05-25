@@ -37,7 +37,7 @@ namespace plugins
 {
   class ImageDisplayPrivate;
 
-  /// \brief Display images coming through an Gazebo Transport topic.
+  /// \brief Display images coming through a Gazebo Transport topic.
   ///
   /// ## Configuration
   ///

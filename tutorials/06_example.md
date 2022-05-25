@@ -61,7 +61,7 @@ Now you can use the command line to open it:
 
 ## Configuration files
 
-Configuration files are used to load an Gazebo GUI window with several
+Configuration files are used to load a Gazebo GUI window with several
 plugins and custom window configurations.
 
 Example configuration files are provided in the `/examples/config` folder.
