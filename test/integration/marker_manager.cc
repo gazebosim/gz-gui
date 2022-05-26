@@ -196,7 +196,7 @@ TEST_F(MarkerManagerTestFixture,
   bool executed = node.Request("/marker", markerMsg);
   if (executed)
   {
-    igndbg << "/marker request sent" << std::endl;
+    gzdbg << "/marker request sent" << std::endl;
     waitAndSendStatsMsgs(timePoint, 1, 200);
     EXPECT_EQ(1u, scene->VisualCount());
   }

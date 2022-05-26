@@ -242,9 +242,9 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     elem->QueryBoolText(&this->dataPtr->useEvent);
 
   if (this->dataPtr->useEvent)
-    igndbg << "Using an event to share WorldControl msgs with the server\n";
+    gzdbg << "Using an event to share WorldControl msgs with the server\n";
   else
-    igndbg << "Using a service to share WorldControl msgs with the server\n";
+    gzdbg << "Using a service to share WorldControl msgs with the server\n";
 }
 
 /////////////////////////////////////////////////

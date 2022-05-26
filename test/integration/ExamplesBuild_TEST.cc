@@ -146,13 +146,13 @@ void ExamplesBuild::Build(const std::string &_type)
     // Source directory for this example
     auto sourceDir = examplesDir + "/" + base;
     ASSERT_TRUE(gz::common::exists(sourceDir));
-    igndbg << "Source: " << sourceDir << std::endl;
+    gzdbg << "Source: " << sourceDir << std::endl;
 
     // Create a temp build directory
     std::string tmpBuildDir;
     ASSERT_TRUE(createAndSwitchToTempDir(tmpBuildDir));
     EXPECT_TRUE(gz::common::exists(tmpBuildDir));
-    igndbg << "Build directory: " << tmpBuildDir<< std::endl;
+    gzdbg << "Build directory: " << tmpBuildDir<< std::endl;
 
     char cmd[1024];
 

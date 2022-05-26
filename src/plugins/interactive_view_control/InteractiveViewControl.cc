@@ -127,7 +127,7 @@ void InteractiveViewControlPrivate::OnRender()
         if (isUserCamera)
         {
           this->camera = cam;
-          igndbg << "InteractiveViewControl plugin is moving camera ["
+          gzdbg << "InteractiveViewControl plugin is moving camera ["
                  << this->camera->Name() << "]" << std::endl;
           break;
         }

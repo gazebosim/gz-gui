@@ -178,7 +178,7 @@ void CameraTrackingPrivate::Initialize()
     if (cam)
     {
       this->camera = cam;
-      igndbg << "CameraTrackingPrivate plugin is moving camera ["
+      gzdbg << "CameraTrackingPrivate plugin is moving camera ["
              << this->camera->Name() << "]" << std::endl;
       break;
     }

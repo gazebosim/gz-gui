@@ -91,7 +91,7 @@ using namespace gui;
 Application::Application(int &_argc, char **_argv, const WindowType _type)
   : QApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
 {
-  igndbg << "Initializing application." << std::endl;
+  gzdbg << "Initializing application." << std::endl;
 
   this->setOrganizationName("Gazebo");
   this->setOrganizationDomain("gazebosim.org");
@@ -99,7 +99,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 
 #if __APPLE__
   // Use the Metal graphics API on macOS.
-  igndbg << "Qt using Metal graphics interface" << std::endl;
+  gzdbg << "Qt using Metal graphics interface" << std::endl;
   QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
 
   // TODO(srmainwaring): implement facility for overriding the default
@@ -117,7 +117,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   // QSurfaceFormat::setDefaultFormat(format);
 #else
   // Otherwise use OpenGL
-  igndbg << "Qt using OpenGL graphics interface" << std::endl;
+  gzdbg << "Qt using OpenGL graphics interface" << std::endl;
 #endif
 
   // Configure console
@@ -162,7 +162,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 /////////////////////////////////////////////////
 Application::~Application()
 {
-  igndbg << "Terminating application." << std::endl;
+  gzdbg << "Terminating application." << std::endl;
 
   if (this->dataPtr->mainWin && this->dataPtr->mainWin->QuickWindow())
   {
@@ -292,7 +292,7 @@ bool Application::LoadConfig(const std::string &_config)
   // Process window properties
   if (auto winElem = doc.FirstChildElement("window"))
   {
-    igndbg << "Loading window config" << std::endl;
+    gzdbg << "Loading window config" << std::endl;
 
     tinyxml2::XMLPrinter printer;
     if (!winElem->Accept(&printer))
@@ -422,7 +422,7 @@ bool Application::LoadPlugin(const std::string &_filename,
     return false;
   }
 
-  igndbg << "Loading plugin [" << _filename << "]" << std::endl;
+  gzdbg << "Loading plugin [" << _filename << "]" << std::endl;
 
   common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(this->dataPtr->pluginPathEnv);
@@ -559,7 +559,7 @@ std::shared_ptr<Plugin> Application::PluginByName(
 /////////////////////////////////////////////////
 bool Application::InitializeMainWindow()
 {
-  igndbg << "Create main window" << std::endl;
+  gzdbg << "Create main window" << std::endl;
 
   this->dataPtr->mainWin = new MainWindow();
   if (!this->dataPtr->mainWin->QuickWindow())
@@ -573,7 +573,7 @@ bool Application::InitializeMainWindow()
 /////////////////////////////////////////////////
 bool Application::ApplyConfig()
 {
-  igndbg << "Applying config" << std::endl;
+  gzdbg << "Applying config" << std::endl;
 
   if (!this->dataPtr->mainWin)
     return false;
@@ -652,7 +652,7 @@ bool Application::AddPluginsToWindow()
 /////////////////////////////////////////////////
 bool Application::InitializeDialogs()
 {
-  igndbg << "Initialize dialogs" << std::endl;
+  gzdbg << "Initialize dialogs" << std::endl;
 
   while (!this->dataPtr->pluginsToAdd.empty())
   {
@@ -689,7 +689,7 @@ bool Application::InitializeDialogs()
     this->dataPtr->pluginsAdded.push_back(plugin);
 
     auto title = QString::fromStdString(plugin->Title());
-    igndbg << "Initialized dialog [" << title.toStdString() << "]" << std::endl;
+    gzdbg << "Initialized dialog [" << title.toStdString() << "]" << std::endl;
   }
 
   if (this->dataPtr->pluginsAdded.empty())
@@ -802,7 +802,7 @@ void ApplicationPrivate::MessageHandler(QtMsgType _type,
   switch (_type)
   {
     case QtDebugMsg:
-      igndbg << msg << std::endl;
+      gzdbg << msg << std::endl;
       break;
     case QtInfoMsg:
       gzmsg << msg << std::endl;

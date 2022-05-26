@@ -45,7 +45,7 @@ TEST(ExampleTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
   gz::common::DirIter endIter;
   for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
   {
-    igndbg << *file << std::endl;
+    gzdbg << *file << std::endl;
 
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");

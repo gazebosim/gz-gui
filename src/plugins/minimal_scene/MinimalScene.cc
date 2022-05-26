@@ -580,7 +580,7 @@ std::string IgnRenderer::Initialize()
             "time.";
   }
 
-  igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+  gzdbg << "Create scene [" << this->sceneName << "]" << std::endl;
   auto scene = engine->CreateScene(this->sceneName);
   if (nullptr == scene)
   {
@@ -631,14 +631,14 @@ void IgnRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    igndbg << "Creating ign-rendering interface for OpenGL" << std::endl;
+    gzdbg << "Creating ign-rendering interface for OpenGL" << std::endl;
     this->dataPtr->rhiParams["useCurrentGLContext"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiOpenGL>();
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    igndbg << "Creating ign-renderering interface for Metal" << std::endl;
+    gzdbg << "Creating ign-renderering interface for Metal" << std::endl;
     this->dataPtr->rhiParams["metal"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiMetal>();
   }
@@ -659,7 +659,7 @@ void IgnRenderer::Destroy()
   // If that was the last sensor, destroy scene
   if (scene->SensorCount() == 0)
   {
-    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
+    gzdbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
     engine->DestroyScene(scene);
 
     // TODO(anyone) If that was the last scene, terminate engine?
@@ -785,13 +785,13 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
   // Create the render interface
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    igndbg << "Creating render thread interface for OpenGL" << std::endl;
+    gzdbg << "Creating render thread interface for OpenGL" << std::endl;
     this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->ignRenderer);
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    igndbg << "Creating render thread interface for Metal" << std::endl;
+    gzdbg << "Creating render thread interface for Metal" << std::endl;
     this->rhi = std::make_unique<RenderThreadRhiMetal>(&this->ignRenderer);
   }
 #endif
@@ -817,13 +817,13 @@ TextureNode::TextureNode(
 {
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    igndbg << "Creating texture node render interface for OpenGL" << std::endl;
+    gzdbg << "Creating texture node render interface for OpenGL" << std::endl;
     this->rhi = std::make_unique<TextureNodeRhiOpenGL>(_window);
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    igndbg << "Creating texture node render interface for Metal" << std::endl;
+    gzdbg << "Creating texture node render interface for Metal" << std::endl;
     this->rhi = std::make_unique<TextureNodeRhiMetal>(_window);
   }
 #endif

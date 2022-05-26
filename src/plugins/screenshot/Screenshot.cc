@@ -168,7 +168,7 @@ void Screenshot::SaveScreenshot()
   image.SetFromData(cameraImage.Data<unsigned char>(), width, height, format);
   image.SavePNG(savePath);
 
-  igndbg << "Saved image to [" << savePath << "]" << std::endl;
+  gzdbg << "Saved image to [" << savePath << "]" << std::endl;
 
   this->dataPtr->dirty = false;
 
@@ -194,7 +194,7 @@ void Screenshot::FindUserCamera()
     if (nullptr != cam)
     {
       this->dataPtr->userCamera = cam;
-      igndbg << "Screenshot plugin taking pictures of camera ["
+      gzdbg << "Screenshot plugin taking pictures of camera ["
              << this->dataPtr->userCamera->Name() << "]" << std::endl;
       break;
     }

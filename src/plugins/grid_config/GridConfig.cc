@@ -201,7 +201,7 @@ void GridConfig::CreateGrids()
 
     this->dataPtr->dirty = true;
 
-    igndbg << "Created grid [" << grid->Name() << "]" << std::endl;
+    gzdbg << "Created grid [" << grid->Name() << "]" << std::endl;
   }
   this->dataPtr->startupGrids.clear();
 }
@@ -276,7 +276,7 @@ void GridConfig::ConnectToGrid()
       {
         this->dataPtr->grid = grid;
 
-        igndbg << "Connected to grid [" << grid->Name() << "]" << std::endl;
+        gzdbg << "Connected to grid [" << grid->Name() << "]" << std::endl;
 
         // TODO(chapulina) Set to the grid's visible state when that's available
         // through ign-rendering's API

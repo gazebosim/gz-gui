@@ -313,7 +313,7 @@ void SceneManager::Request()
     if (publishers.size() > 0)
       break;
     std::this_thread::sleep_for(sleepDuration);
-    igndbg << "Waiting for service " << this->service << "\n";
+    gzdbg << "Waiting for service " << this->service << "\n";
   }
 
   if (publishers.empty() ||
@@ -1149,7 +1149,7 @@ std::string IgnRenderer::Initialize()
   auto scene = engine->SceneByName(this->sceneName);
   if (!scene)
   {
-    igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+    gzdbg << "Create scene [" << this->sceneName << "]" << std::endl;
     scene = engine->CreateScene(this->sceneName);
     scene->SetAmbientLight(this->ambientLight);
     scene->SetBackgroundColor(this->backgroundColor);
@@ -1205,7 +1205,7 @@ void IgnRenderer::Destroy()
   // If that was the last sensor, destroy scene
   if (scene->SensorCount() == 0)
   {
-    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
+    gzdbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
     engine->DestroyScene(scene);
 
     // TODO(anyone) If that was the last scene, terminate engine?

@@ -324,7 +324,7 @@ void TransportSceneManagerPrivate::Request()
     if (publishers.size() > 0)
       break;
     std::this_thread::sleep_for(sleepDuration);
-    igndbg << "Waiting for service [" << this->service << "]\n";
+    gzdbg << "Waiting for service [" << this->service << "]\n";
   }
 
   if (publishers.empty() || !this->node.Request(this->service,

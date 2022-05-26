@@ -435,7 +435,7 @@ void PointCloudPrivate::ClearMarkers()
   msg.set_id(0);
   msg.set_action(gz::msgs::Marker::DELETE_ALL);
 
-  igndbg << "Clearing markers on "
+  gzdbg << "Clearing markers on "
     << this->pointCloudTopic + this->floatVTopic
     << std::endl;
 

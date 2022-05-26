@@ -170,7 +170,7 @@ void MarkerManagerPrivate::Initialize()
            << "/list service.\n";
   }
 
-  igndbg << "Advertise " << this->topicName << "/list service.\n";
+  gzdbg << "Advertise " << this->topicName << "/list service.\n";
 
   // Advertise to the marker service
   if (!this->node.Advertise(this->topicName,
@@ -180,7 +180,7 @@ void MarkerManagerPrivate::Initialize()
            << " service.\n";
   }
 
-  igndbg << "Advertise " << this->topicName << "/list.\n";
+  gzdbg << "Advertise " << this->topicName << "/list.\n";
 
   // Advertise to the marker_array service
   if (!this->node.Advertise(this->topicName + "_array",
@@ -190,7 +190,7 @@ void MarkerManagerPrivate::Initialize()
            << "_array service.\n";
   }
 
-  igndbg << "Advertise " << this->topicName << "_array.\n";
+  gzdbg << "Advertise " << this->topicName << "_array.\n";
 }
 
 /////////////////////////////////////////////////
