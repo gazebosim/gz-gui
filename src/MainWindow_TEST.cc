@@ -54,7 +54,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }
 
 /////////////////////////////////////////////////
@@ -91,7 +91,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
     std::remove(kTestConfigFile.c_str());
   }
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }
 
 /////////////////////////////////////////////////
@@ -127,7 +127,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
     std::remove(kTestConfigFile.c_str());
   }
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }
 
 /////////////////////////////////////////////////
@@ -769,5 +769,5 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 //    EXPECT_EQ(c.ignoredProps.size(), 1u);
   }
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }
