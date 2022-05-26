@@ -20,150 +20,91 @@
 
 #include <gz/common/Console.hh>
 #include <gz/common/Filesystem.hh>
+#include <gz/common/TempDirectory.hh
 #include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.hh"  // NOLINT(build/include)
 
 using namespace gz;
 
-// Helper functions copied from
-// https://github.com/gazebosim/gz-common/raw/ign-common3/src/Filesystem_TEST.cc
-
-#ifndef _WIN32
-#include <fcntl.h>  // NOLINT(build/include_order)
-#include <limits.h>  // NOLINT(build/include_order)
-#include <stdlib.h>  // NOLINT(build/include_order)
-#include <sys/stat.h>  // NOLINT(build/include_order)
-#include <sys/types.h>  // NOLINT(build/include_order)
-#include <unistd.h>  // NOLINT(build/include_order)
-
-/////////////////////////////////////////////////
-bool createAndSwitchToTempDir(std::string &_newTempPath)
-{
-  std::string tmppath;
-  const char *tmp = std::getenv("TMPDIR");
-  if (tmp)
-  {
-    tmppath = std::string(tmp);
-  }
-  else
-  {
-    tmppath = std::string("/tmp");
-  }
-
-  tmppath += "/XXXXXX";
-
-  char *dtemp = mkdtemp(const_cast<char *>(tmppath.c_str()));
-  if (dtemp == nullptr)
-  {
-    return false;
-  }
-  if (chdir(dtemp) < 0)
-  {
-    return false;
-  }
-
-  char resolved[PATH_MAX];
-  if (realpath(dtemp, resolved) == nullptr)
-  {
-    return false;
-  }
-
-  _newTempPath = std::string(resolved);
-
-  return true;
-}
-
-#else
-#include <windows.h>  // NOLINT(build/include_order)
-#include <winnt.h>  // NOLINT(build/include_order)
-#include <cstdint>
-
-/////////////////////////////////////////////////
-bool createAndSwitchToTempDir(std::string &_newTempPath)
-{
-  char tempPath[MAX_PATH + 1];
-  DWORD pathLen = ::GetTempPathA(MAX_PATH, tempPath);
-  if (pathLen >= MAX_PATH || pathLen <= 0)
-  {
-    return false;
-  }
-  std::string pathToCreate(tempPath);
-  srand(static_cast<uint32_t>(time(nullptr)));
-
-  for (int count = 0; count < 50; ++count)
-  {
-    // Try creating a new temporary directory with a randomly generated name.
-    // If the one we chose exists, keep trying another path name until we reach
-    // some limit.
-    std::string newDirName;
-    newDirName.append(std::to_string(::GetCurrentProcessId()));
-    newDirName.push_back('_');
-    // On Windows, rand_r() doesn't exist as an alternative to rand(), so the
-    // cpplint warning is spurious.  This program is not multi-threaded, so
-    // it is safe to suppress the threadsafe_fn warning here.
-    newDirName.append(
-       std::to_string(rand()    // NOLINT(runtime/threadsafe_fn)
-                      % ((int16_t)0x7fff)));
-
-    pathToCreate += newDirName;
-    if (::CreateDirectoryA(pathToCreate.c_str(), nullptr))
-    {
-      _newTempPath = pathToCreate;
-      return ::SetCurrentDirectoryA(_newTempPath.c_str()) != 0;
-    }
-  }
-
-  return false;
-}
-
-#endif
+auto kExampleTypes = std::vector<std::string>{"plugin", "standalone"};
 
 //////////////////////////////////////////////////
-class ExamplesBuild : public ::testing::TestWithParam<const char*>
+struct ExampleEntry
 {
-  /// \brief Build code in a temporary build folder.
-  /// \param[in] _type Type of example to build (plugins, standalone).
-  public: void Build(const std::string &_type);
+  /// Type of example (eg plugin/standalone)
+  std::string type;
+
+  /// Example plugin directory name
+  std::string base;
+
+  /// Full path to the source directory of the example
+  std::string sourceDir;
+
+  /// Used to pretty print with gtest
+  /// \param[in] _os stream to print to
+  /// \param[in] _example Entry to print to the stream
+  friend std::ostream& operator<<(std::ostream &_os,
+                                  const ExampleEntry &_entry)
+  {
+    return _os << "[" << _entry.type << ", " << _entry.base << "]";
+  }
 };
 
 //////////////////////////////////////////////////
-void ExamplesBuild::Build(const std::string &_type)
+/// Generate a list of examples to be built.
+std::vector<ExampleEntry> GetExamples()
+{
+  std::vector<ExampleEntry> examples;
+  for (auto type : kExampleTypes)
+  {
+    auto examplesDir =
+      common::joinPaths(PROJECT_SOURCE_PATH, "/examples/", type);
+
+    // Iterate over directory
+    gz::common::DirIter endIter;
+    for (gz::common::DirIter dirIter(examplesDir);
+        dirIter != endIter; ++dirIter)
+    {
+      auto base = gz::common::basename(*dirIter);
+      auto sourceDir = common::joinPaths(examplesDir, base);
+      examples.push_back({ type, base, sourceDir });
+    }
+  }
+  return examples;
+}
+
+//////////////////////////////////////////////////
+class ExamplesBuild : public ::testing::TestWithParam<ExampleEntry>
+{
+  /// \brief Build code in a temporary build folder.
+  /// \param[in] _entry Example source code to build
+  public: void Build(const ExampleEntry &_entry);
+};
+
+//////////////////////////////////////////////////
+void ExamplesBuild::Build(const ExampleEntry &_entry)
 {
   common::Console::SetVerbosity(4);
 
   // Path to examples of the given type
-  auto examplesDir = std::string(PROJECT_SOURCE_PATH) + "/examples/" + _type;
-  ASSERT_TRUE(common::exists(examplesDir));
+  ASSERT_TRUE(gz::common::exists(_entry.sourceDir));
 
-  // Iterate over directory
-  common::DirIter endIter;
-  for (common::DirIter dirIter(examplesDir);
-      dirIter != endIter; ++dirIter)
-  {
-    auto base = common::basename(*dirIter);
+  igndbg << "Source: " << _entry.sourceDir << std::endl;
 
-    // Source directory for this example
-    auto sourceDir = examplesDir + "/" + base;
-    ASSERT_TRUE(common::exists(sourceDir));
-    gzdbg << "Source: " << sourceDir << std::endl;
+  // Create a temp build directory
+  common::TempDirectory tmpBuildDir;
+  ASSERT_TRUE(tmpBuildDir.Valid());
+  igndbg << "Build directory: " << tmpBuildDir.Path() << std::endl;
 
-    // Create a temp build directory
-    std::string tmpBuildDir;
-    ASSERT_TRUE(createAndSwitchToTempDir(tmpBuildDir));
-    EXPECT_TRUE(common::exists(tmpBuildDir));
-    gzdbg << "Build directory: " << tmpBuildDir<< std::endl;
+  char cmd[1024];
 
-    char cmd[1024];
+  // cd build && cmake source
+  snprintf(cmd, sizeof(cmd), "cd %s && cmake %s",
+    tmpBuildDir.Path().c_str(), _entry.sourceDir.c_str());
 
-    // cd build && cmake source
-    snprintf(cmd, sizeof(cmd), "cd %s && cmake %s && make",
-      tmpBuildDir.c_str(), sourceDir.c_str());
-    EXPECT_EQ(system(cmd), 0);
-
-    // Remove temp dir
-    EXPECT_TRUE(common::removeAll(tmpBuildDir));
-  }
+  ASSERT_EQ(system(cmd), 0);
+  ASSERT_EQ(system("make"), 0);
 }
 
 //////////////////////////////////////////////////

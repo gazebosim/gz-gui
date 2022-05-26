@@ -386,11 +386,20 @@ bool Application::LoadConfig(const std::string &_config)
   this->dataPtr->pluginsAdded.clear();
 
   // Process each plugin
+  bool successful = true;
   for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
     auto filename = pluginElem->Attribute("filename");
-    this->LoadPlugin(filename, pluginElem);
+    if (!this->LoadPlugin(filename, pluginElem))
+    {
+      successful = false;
+    }
+  }
+
+  if (!successful)
+  {
+    return false;
   }
 
   // Process window properties

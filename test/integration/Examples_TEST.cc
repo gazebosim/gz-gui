@@ -38,18 +38,16 @@ using namespace gui;
 TEST(ExampleTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
 {
   common::Console::SetVerbosity(4);
-  auto exampleConfigPath = common::joinPaths(std::string(PROJECT_SOURCE_PATH),
-      "examples", "config");
 
-  // Load each config file
-  common::DirIter endIter;
-  for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
-  {
-    gzdbg << *file << std::endl;
-
-    Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-    EXPECT_TRUE(app.LoadConfig(*file));
-  }
+  auto file = common::joinPaths(kExampleConfigPath, GetParam()) + ".config";
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(common::joinPaths(PROJECT_BINARY_PATH, "lib"));
+  EXPECT_TRUE(app.LoadConfig(file));
 }
+
+//////////////////////////////////////////////////
+INSTANTIATE_TEST_SUITE_P(Example, PluginsLoad,
+    ::testing::ValuesIn(GetExamples()),
+    [](const ::testing::TestParamInfo<PluginsLoad::ParamType>& param) {
+      return param.param;
+    });
