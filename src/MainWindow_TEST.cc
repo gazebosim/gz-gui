@@ -729,6 +729,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
     EXPECT_TRUE(c.pluginsFromPaths);
     EXPECT_TRUE(c.showPlugins.empty());
     EXPECT_TRUE(c.ignoredProps.empty());
+
   }
 
   // Apply a config
@@ -746,7 +747,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 //    c.showPlugins.push_back("watermelon");
 //    c.ignoredProps.insert("position");
 
-    mainWindow->ApplyConfig(c);
+    EXPECT_TRUE(mainWindow->ApplyConfig(c));
   }
 
   // Check applied config
