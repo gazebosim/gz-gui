@@ -750,6 +750,8 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
     EXPECT_TRUE(mainWindow->ApplyConfig(c));
   }
 
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
   // Check applied config
   {
     auto c = mainWindow->CurrentWindowConfig();
