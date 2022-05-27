@@ -720,6 +720,8 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
+  app.processEvents(QEventLoop::ExcludeUserInputEvents);
+
   // Default config
   {
     auto c = mainWindow->CurrentWindowConfig();
@@ -750,7 +752,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
     EXPECT_TRUE(mainWindow->ApplyConfig(c));
   }
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  app.processEvents(QEventLoop::ExcludeUserInputEvents);
 
   // Check applied config
   {
