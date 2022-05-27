@@ -38,7 +38,11 @@ Popup {
       Material.color(Material.Grey, Material.Shade200):
       Material.color(Material.Grey, Material.Shade900);
 
-  onOpened: searchField.forceActiveFocus()
+
+  onOpened: {
+    searchField.forceActiveFocus()
+    searchField.selectAll()
+  }
 
   ColumnLayout {
     anchors.fill: parent
