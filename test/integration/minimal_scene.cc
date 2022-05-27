@@ -150,4 +150,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   scene.reset();
   win->QuickWindow()->close();
+  engine->DestroyScene(scene);
+  // \TODO(mjcarroll) Re-enable unloadEngine when it works correctly
+  // EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
