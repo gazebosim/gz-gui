@@ -199,7 +199,8 @@ namespace ignition
       /// \return True if successful
       /// \sa LoadConfig
       /// \sa LoadPlugin
-      private: bool InitializeMainWindow();
+      // FIXME: this should be private and CreateMainWindow public
+      public: bool InitializeMainWindow();
 
       /// \brief Create individual dialogs for all previously loaded plugins.
       /// This has no effect if no plugins have been loaded.
