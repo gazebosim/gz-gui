@@ -15,4 +15,32 @@
  *
  */
 
+#ifndef IGNITION_GUI__CONFIG_HH_
+#define IGNITION_GUI__CONFIG_HH_
+
 #include <gz/gui/config.hh>
+
+#define IGNITION_GUI_MAJOR_VERSION GZ_GUI_MAJOR_VERSION
+#define IGNITION_GUI_MINOR_VERSION GZ_GUI_MINOR_VERSION
+#define IGNITION_GUI_PATCH_VERSION GZ_GUI_PATCH_VERSION
+
+#define IGNITION_GUI_VERSION GZ_GUI_VERSION
+#define IGNITION_GUI_VERSION_FULL GZ_GUI_VERSION_FULL
+
+#define IGNITION_GUI_VERSION_HEADER GZ_GUI_VERSION_HEADER
+
+#define IGN_GUI_PLUGIN_INSTALL_DIR GZ_GUI_PLUGIN_INSTALL_DIR
+
+namespace gz
+{
+}
+
+namespace ignition
+{
+  #ifndef SUPPRESS_IGNITION_HEADER_DEPRECATION
+    #pragma message("ignition namespace is deprecated! Use gz instead!")
+  #endif
+  using namespace gz;
+}
+
+#endif

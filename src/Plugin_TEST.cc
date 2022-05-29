@@ -17,13 +17,13 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -31,13 +31,13 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Plugin_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -76,7 +76,7 @@ TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 /////////////////////////////////////////////////
 TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -106,7 +106,7 @@ TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 /////////////////////////////////////////////////
 TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");

@@ -18,16 +18,16 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 
-using namespace ignition;
+using namespace gz;
 
 // Helper functions copied from
-// https://github.com/ignitionrobotics/ign-common/raw/ign-common3/src/Filesystem_TEST.cc
+// https://github.com/gazebosim/gz-common/raw/ign-common3/src/Filesystem_TEST.cc
 
 #ifndef _WIN32
 #include <fcntl.h>  // NOLINT(build/include_order)
@@ -134,25 +134,25 @@ void ExamplesBuild::Build(const std::string &_type)
 
   // Path to examples of the given type
   auto examplesDir = std::string(PROJECT_SOURCE_PATH) + "/examples/" + _type;
-  ASSERT_TRUE(ignition::common::exists(examplesDir));
+  ASSERT_TRUE(gz::common::exists(examplesDir));
 
   // Iterate over directory
-  ignition::common::DirIter endIter;
-  for (ignition::common::DirIter dirIter(examplesDir);
+  gz::common::DirIter endIter;
+  for (gz::common::DirIter dirIter(examplesDir);
       dirIter != endIter; ++dirIter)
   {
-    auto base = ignition::common::basename(*dirIter);
+    auto base = gz::common::basename(*dirIter);
 
     // Source directory for this example
     auto sourceDir = examplesDir + "/" + base;
-    ASSERT_TRUE(ignition::common::exists(sourceDir));
-    igndbg << "Source: " << sourceDir << std::endl;
+    ASSERT_TRUE(gz::common::exists(sourceDir));
+    gzdbg << "Source: " << sourceDir << std::endl;
 
     // Create a temp build directory
     std::string tmpBuildDir;
     ASSERT_TRUE(createAndSwitchToTempDir(tmpBuildDir));
-    EXPECT_TRUE(ignition::common::exists(tmpBuildDir));
-    igndbg << "Build directory: " << tmpBuildDir<< std::endl;
+    EXPECT_TRUE(gz::common::exists(tmpBuildDir));
+    gzdbg << "Build directory: " << tmpBuildDir<< std::endl;
 
     char cmd[1024];
 
@@ -167,7 +167,7 @@ void ExamplesBuild::Build(const std::string &_type)
 }
 
 //////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST_P(ExamplesBuild, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Build))
 {
   Build(GetParam());

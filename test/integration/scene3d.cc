@@ -17,21 +17,21 @@
 
 #include <gtest/gtest.h>
 #include <QtTest/QtTest>
-#include <ignition/common/Console.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "../helpers/TestHelper.hh"
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/MainWindow.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -39,7 +39,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Scene3d_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

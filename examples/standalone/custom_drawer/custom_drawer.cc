@@ -28,16 +28,16 @@
 int main(int _argc, char **_argv)
 {
   // Increase verboosity so we see all messages
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // Initialize app
-  ignition::gui::Application app(_argc, _argv);
+  gz::gui::Application app(_argc, _argv);
 
   // Hide original panel
   app.LoadConfig("../custom_drawer.config");
 
   // Let QML files use CustomActions' functions and properties
-  ignition::gui::CustomActions actions;
+  gz::gui::CustomActions actions;
   auto context = new QQmlContext(app.Engine()->rootContext());
   context->setContextProperty("CustomActions", &actions);
 
@@ -46,7 +46,7 @@ int main(int _argc, char **_argv)
   auto item = qobject_cast<QQuickItem *>(component.create(context));
   if (!item)
   {
-    ignerr << "Failed to initialize custom panel" << std::endl;
+    gzerr << "Failed to initialize custom panel" << std::endl;
     return 1;
   }
 
@@ -54,7 +54,7 @@ int main(int _argc, char **_argv)
   QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
 
   // Add to main window
-  auto win = app.findChild<ignition::gui::MainWindow *>()->QuickWindow();
+  auto win = app.findChild<gz::gui::MainWindow *>()->QuickWindow();
   auto drawerItem = win->findChild<QQuickItem *>("sideDrawer");
 
   item->setParentItem(drawerItem);

@@ -14,24 +14,24 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_SCREENSHOT_HH_
-#define IGNITION_GUI_PLUGINS_SCREENSHOT_HH_
+#ifndef GZ_GUI_PLUGINS_SCREENSHOT_HH_
+#define GZ_GUI_PLUGINS_SCREENSHOT_HH_
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/boolean.pb.h>
-#include <ignition/msgs/stringmsg.pb.h>
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
 #include <memory>
 
-#include "ignition/gui/qt.h"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/qt.h"
+#include "gz/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

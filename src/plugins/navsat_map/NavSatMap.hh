@@ -15,21 +15,21 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
-#define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
 #include <memory>
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/navsat.pb.h>
+#include <gz/msgs/navsat.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -37,7 +37,7 @@ namespace plugins
 {
   class NavSatMapPrivate;
 
-  /// \brief Display NavSat messages coming through an Gazebo Transport topic
+  /// \brief Display NavSat messages coming through a Gazebo Transport topic
   /// on top of a map.
   ///
   /// ## Configuration
@@ -93,7 +93,7 @@ namespace plugins
 
     /// \brief Subscriber callback when new message is received
     /// \param[in] _msg New message
-    private: void OnMessage(const ignition::msgs::NavSat &_msg);
+    private: void OnMessage(const gz::msgs::NavSat &_msg);
 
     /// \internal
     /// \brief Pointer to private data.

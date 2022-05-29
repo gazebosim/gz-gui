@@ -15,11 +15,11 @@
  *
 */
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
 #include "TestInvalidQmlPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -34,5 +34,5 @@ TestInvalidQmlPlugin::~TestInvalidQmlPlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::TestInvalidQmlPlugin,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::TestInvalidQmlPlugin,
+                    gz::gui::Plugin)

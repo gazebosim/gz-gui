@@ -18,8 +18,8 @@
 #include "MinimalSceneRhiOpenGL.hh"
 #include "MinimalScene.hh"
 
-#include <ignition/common/Console.hh>
-#include <ignition/rendering/Camera.hh>
+#include <gz/common/Console.hh>
+#include <gz/rendering/Camera.hh>
 
 #include <QMutex>
 #include <QQuickWindow>
@@ -30,7 +30,7 @@
 #include <string>
 
 /////////////////////////////////////////////////
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -63,7 +63,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -150,7 +150,7 @@ void RenderThreadRhiOpenGL::RenderNext(RenderSync *_renderSync)
 
   if (!this->dataPtr->renderer->initialized)
   {
-    ignerr << "Unable to initialize renderer" << std::endl;
+    gzerr << "Unable to initialize renderer" << std::endl;
     return;
   }
 

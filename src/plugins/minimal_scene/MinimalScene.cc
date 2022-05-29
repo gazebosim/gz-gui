@@ -26,12 +26,12 @@
 #include <string>
 #include <vector>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/KeyEvent.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Vector2.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/math/Vector3.hh>
+#include <gz/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering
 // is disabling the warnings
@@ -39,27 +39,27 @@
 #pragma warning(push, 0)
 #endif
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/RayQuery.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
-#include <ignition/rendering/Utils.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/RayQuery.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
+#include <gz/rendering/Utils.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Conversions.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Conversions.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
 
-Q_DECLARE_METATYPE(ignition::gui::plugins::RenderSync*)
+Q_DECLARE_METATYPE(gz::gui::plugins::RenderSync*)
 
 /// \brief Private data class for IgnRenderer
-class ignition::gui::plugins::IgnRenderer::Implementation
+class gz::gui::plugins::IgnRenderer::Implementation
 {
   /// \brief Flag to indicate if mouse event is dirty
   public: bool mouseDirty{false};
@@ -139,8 +139,8 @@ class ignition::gui::plugins::IgnRenderer::Implementation
 ///
 ///
 /// For more info see
-/// https://github.com/ignitionrobotics/ign-rendering/issues/304
-class ignition::gui::plugins::RenderSync
+/// https://github.com/gazebosim/gz-rendering/issues/304
+class gz::gui::plugins::RenderSync
 {
   /// \brief Cond. variable to synchronize rendering on specific events
   /// (e.g. texture resize) or for debugging (e.g. keep
@@ -188,7 +188,7 @@ class ignition::gui::plugins::RenderSync
 };
 
 /// \brief Private data class for RenderWindowItem
-class ignition::gui::plugins::RenderWindowItem::Implementation
+class gz::gui::plugins::RenderWindowItem::Implementation
 {
   /// \brief Keep latest mouse event
   public: common::MouseEvent mouseEvent;
@@ -200,7 +200,7 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
   public: bool initializing = false;
 
   /// \brief Graphics API. The default is platform specific.
-  public: ignition::rendering::GraphicsAPI graphicsAPI =
+  public: gz::rendering::GraphicsAPI graphicsAPI =
 #ifdef __APPLE__
       rendering::GraphicsAPI::METAL;
 #else
@@ -221,11 +221,11 @@ class ignition::gui::plugins::RenderWindowItem::Implementation
 };
 
 /// \brief Private data class for MinimalScene
-class ignition::gui::plugins::MinimalScene::Implementation
+class gz::gui::plugins::MinimalScene::Implementation
 {
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -331,20 +331,20 @@ void IgnRenderer::Render(RenderSync *_renderSync)
   // view control
   this->HandleMouseEvent();
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::PreRender());
   }
 
   // update and render to texture
   this->dataPtr->camera->Update();
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::Render());
   }
   _renderSync->ReleaseQtThreadFromBlock(lock);
@@ -551,7 +551,7 @@ std::string IgnRenderer::Initialize()
   if (loadedEngines.empty())
   {
     this->dataPtr->rhiParams["winID"] = std::to_string(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+        gz::gui::App()->findChild<gz::gui::MainWindow *>()->
         QuickWindow()->winId());
     engine = rendering::engine(this->engineName, this->dataPtr->rhiParams);
   }
@@ -559,7 +559,7 @@ std::string IgnRenderer::Initialize()
   {
     if (!this->engineName.empty() && loadedEngines.front() != this->engineName)
     {
-      ignwarn << "Failed to load engine [" << this->engineName
+      gzwarn << "Failed to load engine [" << this->engineName
               << "]. Using engine [" << loadedEngines.front()
               << "], which is already loaded. Currently only one engine is "
               << "supported at a time." << std::endl;
@@ -580,7 +580,7 @@ std::string IgnRenderer::Initialize()
             "time.";
   }
 
-  igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+  gzdbg << "Create scene [" << this->sceneName << "]" << std::endl;
   auto scene = engine->CreateScene(this->sceneName);
   if (nullptr == scene)
   {
@@ -631,14 +631,14 @@ void IgnRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    igndbg << "Creating ign-rendering interface for OpenGL" << std::endl;
+    gzdbg << "Creating ign-rendering interface for OpenGL" << std::endl;
     this->dataPtr->rhiParams["useCurrentGLContext"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiOpenGL>();
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    igndbg << "Creating ign-renderering interface for Metal" << std::endl;
+    gzdbg << "Creating ign-renderering interface for Metal" << std::endl;
     this->dataPtr->rhiParams["metal"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiMetal>();
   }
@@ -659,7 +659,7 @@ void IgnRenderer::Destroy()
   // If that was the last sensor, destroy scene
   if (scene->SensorCount() == 0)
   {
-    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
+    gzdbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
     engine->DestroyScene(scene);
 
     // TODO(anyone) If that was the last scene, terminate engine?
@@ -741,7 +741,7 @@ void RenderThread::SizeChanged()
   auto item = qobject_cast<QQuickItem *>(this->sender());
   if (!item)
   {
-    ignerr << "Internal error, sender is not QQuickItem." << std::endl;
+    gzerr << "Internal error, sender is not QQuickItem." << std::endl;
     return;
   }
 
@@ -785,13 +785,13 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
   // Create the render interface
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    igndbg << "Creating render thread interface for OpenGL" << std::endl;
+    gzdbg << "Creating render thread interface for OpenGL" << std::endl;
     this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->ignRenderer);
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    igndbg << "Creating render thread interface for Metal" << std::endl;
+    gzdbg << "Creating render thread interface for Metal" << std::endl;
     this->rhi = std::make_unique<RenderThreadRhiMetal>(&this->ignRenderer);
   }
 #endif
@@ -817,13 +817,13 @@ TextureNode::TextureNode(
 {
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    igndbg << "Creating texture node render interface for OpenGL" << std::endl;
+    gzdbg << "Creating texture node render interface for OpenGL" << std::endl;
     this->rhi = std::make_unique<TextureNodeRhiOpenGL>(_window);
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    igndbg << "Creating texture node render interface for Metal" << std::endl;
+    gzdbg << "Creating texture node render interface for Metal" << std::endl;
     this->rhi = std::make_unique<TextureNodeRhiMetal>(_window);
   }
 #endif
@@ -866,7 +866,7 @@ void TextureNode::PrepareNode()
   // However we need to synchronize the threads when resolution changes,
   // and we're also currently doing everything in lockstep (i.e. both Qt
   // and worker thread are serialized,
-  // see https://github.com/ignitionrobotics/ign-rendering/issues/304 )
+  // see https://github.com/gazebosim/gz-rendering/issues/304 )
   //
   // We need to emit even if newId == 0 because it's safe as long as both
   // threads are forcefully serialized and otherwise we may get a
@@ -1003,7 +1003,7 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     }
     else
     {
-      ignerr << "GraphicsAPI ["
+      gzerr << "GraphicsAPI ["
              << rendering::GraphicsAPIUtils::Str(this->dataPtr->graphicsAPI)
              << "] is not supported"
              << std::endl;
@@ -1127,7 +1127,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->PluginItem()->findChild<RenderWindowItem *>();
   if (!renderWindow)
   {
-    ignerr << "Unable to find Render Window item. "
+    gzerr << "Unable to find Render Window item. "
            << "Render window will not be created" << std::endl;
     return;
   }
@@ -1197,7 +1197,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         nearStr >> n;
         if (nearStr.fail())
         {
-          ignerr << "Unable to set <near> to '" << nearStr.str()
+          gzerr << "Unable to set <near> to '" << nearStr.str()
                  << "' using default near clip distance" << std::endl;
         }
         else
@@ -1215,7 +1215,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         farStr >> f;
         if (farStr.fail())
         {
-          ignerr << "Unable to set <far> to '" << farStr.str()
+          gzerr << "Unable to set <far> to '" << farStr.str()
                  << "' using default far clip distance" << std::endl;
         }
         else
@@ -1230,7 +1230,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       renderWindow->SetSkyEnabled(true);
       if (!elem->NoChildren())
-        ignwarn << "Child elements of <sky> are not supported yet"
+        gzwarn << "Child elements of <sky> are not supported yet"
                 << std::endl;
     }
 
@@ -1253,14 +1253,14 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
+void RenderWindowItem::OnHovered(const gz::math::Vector2i &_hoverPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::OnDropped(const QString &_drop,
-    const ignition::math::Vector2i &_dropPos)
+    const gz::math::Vector2i &_dropPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewDropEvent(
     _drop.toStdString(), _dropPos);
@@ -1395,5 +1395,5 @@ void MinimalScene::SetLoadingError(const QString &_loadingError)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::MinimalScene,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::MinimalScene,
+                    gz::gui::Plugin)

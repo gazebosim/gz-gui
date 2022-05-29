@@ -17,29 +17,29 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-#include <ignition/math/Pose3.hh>
+#include <gz/common/Console.hh>
+#include <gz/math/Pose3.hh>
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/pose.pb.h>
+#include <gz/msgs/pose.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/MainWindow.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -47,7 +47,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./camera_tracking")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace std::chrono_literals;
 

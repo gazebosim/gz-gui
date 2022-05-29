@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2022 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,18 @@
  *
 */
 
-#include <gz/common/Console.hh>
-#include <gz/plugin/Register.hh>
+#include <gtest/gtest.h>
 
-#include "TestNotRegisteredPlugin.hh"
+#define SUPPRESS_IGNITION_HEADER_DEPRECATION
 
-using namespace gz;
-using namespace gui;
-
-/////////////////////////////////////////////////
-TestNotRegisteredPlugin::TestNotRegisteredPlugin()
-  : Plugin()
-{
-}
+#include <ignition/gui/Plugin.hh>
+#include <ignition/utils/SuppressWarning.hh>
 
 /////////////////////////////////////////////////
-TestNotRegisteredPlugin::~TestNotRegisteredPlugin()
+// Make sure the ignition namespace still works
+TEST(Deprecated, IgnitionNamespace)
 {
+  ignition::gui::Plugin plugin;
 }
 
+#undef SUPPRESS_IGNITION_HEADER_DEPRECATION

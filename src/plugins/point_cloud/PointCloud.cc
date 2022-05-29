@@ -15,32 +15,32 @@
  *
  */
 
-#include "ignition/msgs/pointcloud_packed.pb.h"
+#include "gz/msgs/pointcloud_packed.pb.h"
 
 #include <limits>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Profiler.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/msgs/PointCloudPackedUtils.hh>
-#include <ignition/msgs/Utility.hh>
-#include <ignition/plugin/Register.hh>
-#include <ignition/transport/Node.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Profiler.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Vector3.hh>
+#include <gz/msgs/PointCloudPackedUtils.hh>
+#include <gz/msgs/Utility.hh>
+#include <gz/plugin/Register.hh>
+#include <gz/transport/Node.hh>
 
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/Conversions.hh>
-#include <ignition/gui/GuiEvents.hh>
-#include <ignition/gui/MainWindow.hh>
+#include <gz/gui/Application.hh>
+#include <gz/gui/Conversions.hh>
+#include <gz/gui/GuiEvents.hh>
+#include <gz/gui/MainWindow.hh>
 
 #include "PointCloud.hh"
 
 /// \brief Private data class for PointCloud
-class ignition::gui::plugins::PointCloudPrivate
+class gz::gui::plugins::PointCloudPrivate
 {
   /// \brief Makes a request to populate the scene with markers
   public: void PublishMarkers();
@@ -49,7 +49,7 @@ class ignition::gui::plugins::PointCloudPrivate
   public: void ClearMarkers();
 
   /// \brief Transport node
-  public: ignition::transport::Node node;
+  public: gz::transport::Node node;
 
   /// \brief Name of topic for PointCloudPacked
   public: std::string pointCloudTopic{""};
@@ -67,10 +67,10 @@ class ignition::gui::plugins::PointCloudPrivate
   public: std::recursive_mutex mutex;
 
   /// \brief Point cloud message containing XYZ positions
-  public: ignition::msgs::PointCloudPacked pointCloudMsg;
+  public: gz::msgs::PointCloudPacked pointCloudMsg;
 
   /// \brief Message holding a float vector.
-  public: ignition::msgs::Float_V floatVMsg;
+  public: gz::msgs::Float_V floatVMsg;
 
   /// \brief Minimum value in latest float vector
   public: float minFloatV{std::numeric_limits<float>::max()};
@@ -79,10 +79,10 @@ class ignition::gui::plugins::PointCloudPrivate
   public: float maxFloatV{-std::numeric_limits<float>::max()};
 
   /// \brief Color for minimum value, changeable at runtime
-  public: ignition::math::Color minColor{1.0f, 0.0f, 0.0f, 1.0f};
+  public: gz::math::Color minColor{1.0f, 0.0f, 0.0f, 1.0f};
 
   /// \brief Color for maximum value, changeable at runtime
-  public: ignition::math::Color maxColor{0.0f, 1.0f, 0.0f, 1.0f};
+  public: gz::math::Color maxColor{0.0f, 1.0f, 0.0f, 1.0f};
 
   /// \brief Size of each point, changeable at runtime
   public: float pointSize{20};
@@ -91,13 +91,13 @@ class ignition::gui::plugins::PointCloudPrivate
   public: bool showing{true};
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
 PointCloud::PointCloud()
-  : ignition::gui::Plugin(),
+  : gz::gui::Plugin(),
     dataPtr(std::make_unique<PointCloudPrivate>())
 {
 }
@@ -137,8 +137,8 @@ void PointCloud::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   }
 
-  ignition::gui::App()->findChild<
-    ignition::gui::MainWindow *>()->installEventFilter(this);
+  gz::gui::App()->findChild<
+    gz::gui::MainWindow *>()->installEventFilter(this);
 }
 
 //////////////////////////////////////////////////
@@ -149,7 +149,7 @@ void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
   if (!this->dataPtr->pointCloudTopic.empty() &&
       !this->dataPtr->node.Unsubscribe(this->dataPtr->pointCloudTopic))
   {
-    ignerr << "Unable to unsubscribe from topic ["
+    gzerr << "Unable to unsubscribe from topic ["
            << this->dataPtr->pointCloudTopic <<"]" <<std::endl;
   }
 
@@ -166,11 +166,11 @@ void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
   if (!this->dataPtr->node.Subscribe(this->dataPtr->pointCloudTopic,
                             &PointCloud::OnPointCloud, this))
   {
-    ignerr << "Unable to subscribe to topic ["
+    gzerr << "Unable to subscribe to topic ["
            << this->dataPtr->pointCloudTopic << "]\n";
     return;
   }
-  ignmsg << "Subscribed to " << this->dataPtr->pointCloudTopic << std::endl;
+  gzmsg << "Subscribed to " << this->dataPtr->pointCloudTopic << std::endl;
 }
 
 //////////////////////////////////////////////////
@@ -181,7 +181,7 @@ void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
   if (!this->dataPtr->floatVTopic.empty() &&
       !this->dataPtr->node.Unsubscribe(this->dataPtr->floatVTopic))
   {
-    ignerr << "Unable to unsubscribe from topic ["
+    gzerr << "Unable to unsubscribe from topic ["
            << this->dataPtr->floatVTopic <<"]" <<std::endl;
   }
 
@@ -198,11 +198,11 @@ void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
   if (!this->dataPtr->node.Subscribe(this->dataPtr->floatVTopic,
                             &PointCloud::OnFloatV, this))
   {
-    ignerr << "Unable to subscribe to topic ["
+    gzerr << "Unable to subscribe to topic ["
            << this->dataPtr->floatVTopic << "]\n";
     return;
   }
-  ignmsg << "Subscribed to " << this->dataPtr->floatVTopic << std::endl;
+  gzmsg << "Subscribed to " << this->dataPtr->floatVTopic << std::endl;
 }
 
 //////////////////////////////////////////////////
@@ -223,7 +223,7 @@ void PointCloud::Show(bool _show)
 void PointCloud::OnRefresh()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
-  ignmsg << "Refreshing topic list for point cloud messages." << std::endl;
+  gzmsg << "Refreshing topic list for point cloud messages." << std::endl;
 
   // Clear
   this->dataPtr->pointCloudTopicList.clear();
@@ -234,16 +234,16 @@ void PointCloud::OnRefresh()
   this->dataPtr->node.TopicList(allTopics);
   for (auto topic : allTopics)
   {
-    std::vector<ignition::transport::MessagePublisher> publishers;
+    std::vector<gz::transport::MessagePublisher> publishers;
     this->dataPtr->node.TopicInfo(topic, publishers);
     for (auto pub : publishers)
     {
-      if (pub.MsgTypeName() == "ignition.msgs.PointCloudPacked")
+      if (pub.MsgTypeName() == "gz.msgs.PointCloudPacked")
       {
         this->dataPtr->pointCloudTopicList.push_back(
             QString::fromStdString(topic));
       }
-      else if (pub.MsgTypeName() == "ignition.msgs.Float_V")
+      else if (pub.MsgTypeName() == "gz.msgs.Float_V")
       {
         this->dataPtr->floatVTopicList.push_back(QString::fromStdString(topic));
       }
@@ -294,7 +294,7 @@ void PointCloud::SetFloatVTopicList(
 
 //////////////////////////////////////////////////
 void PointCloud::OnPointCloud(
-    const ignition::msgs::PointCloudPacked &_msg)
+    const gz::msgs::PointCloudPacked &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
   this->dataPtr->pointCloudMsg = _msg;
@@ -302,7 +302,7 @@ void PointCloud::OnPointCloud(
 }
 
 //////////////////////////////////////////////////
-void PointCloud::OnFloatV(const ignition::msgs::Float_V &_msg)
+void PointCloud::OnFloatV(const gz::msgs::Float_V &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
   this->dataPtr->floatVMsg = _msg;
@@ -328,11 +328,11 @@ void PointCloud::OnFloatV(const ignition::msgs::Float_V &_msg)
 
 //////////////////////////////////////////////////
 void PointCloud::OnPointCloudService(
-    const ignition::msgs::PointCloudPacked &_msg, bool _result)
+    const gz::msgs::PointCloudPacked &_msg, bool _result)
 {
   if (!_result)
   {
-    ignerr << "Service request failed." << std::endl;
+    gzerr << "Service request failed." << std::endl;
     return;
   }
   this->OnPointCloud(_msg);
@@ -340,11 +340,11 @@ void PointCloud::OnPointCloudService(
 
 //////////////////////////////////////////////////
 void PointCloud::OnFloatVService(
-    const ignition::msgs::Float_V &_msg, bool _result)
+    const gz::msgs::Float_V &_msg, bool _result)
 {
   if (!_result)
   {
-    ignerr << "Service request failed." << std::endl;
+    gzerr << "Service request failed." << std::endl;
     return;
   }
   this->OnFloatV(_msg);
@@ -366,21 +366,21 @@ void PointCloudPrivate::PublishMarkers()
   }
 
   std::lock_guard<std::recursive_mutex> lock(this->mutex);
-  ignition::msgs::Marker marker;
+  gz::msgs::Marker marker;
   marker.set_ns(this->pointCloudTopic + this->floatVTopic);
   marker.set_id(1);
-  marker.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  marker.set_type(ignition::msgs::Marker::POINTS);
-  marker.set_visibility(ignition::msgs::Marker::GUI);
+  marker.set_action(gz::msgs::Marker::ADD_MODIFY);
+  marker.set_type(gz::msgs::Marker::POINTS);
+  marker.set_visibility(gz::msgs::Marker::GUI);
 
-  ignition::msgs::Set(marker.mutable_scale(),
-    ignition::math::Vector3d::One * this->pointSize);
+  gz::msgs::Set(marker.mutable_scale(),
+    gz::math::Vector3d::One * this->pointSize);
 
-  ignition::msgs::PointCloudPackedIterator<float>
+  gz::msgs::PointCloudPackedIterator<float>
       iterX(this->pointCloudMsg, "x");
-  ignition::msgs::PointCloudPackedIterator<float>
+  gz::msgs::PointCloudPackedIterator<float>
       iterY(this->pointCloudMsg, "y");
-  ignition::msgs::PointCloudPackedIterator<float>
+  gz::msgs::PointCloudPackedIterator<float>
       iterZ(this->pointCloudMsg, "z");
 
   // Index of point in point cloud, visualized or not
@@ -406,15 +406,15 @@ void PointCloudPrivate::PublishMarkers()
 
     auto ratio = floatRange > 0 ?
         (dataVal - this->minFloatV) / floatRange : 0.0f;
-    ignition:: math::Color color{
+    gz:: math::Color color{
       minC.R() + (maxC.R() - minC.R()) * ratio,
       minC.G() + (maxC.G() - minC.G()) * ratio,
       minC.B() + (maxC.B() - minC.B()) * ratio
     };
 
-    ignition::msgs::Set(marker.add_materials()->mutable_diffuse(), color);
+    gz::msgs::Set(marker.add_materials()->mutable_diffuse(), color);
 
-    ignition::msgs::Set(marker.add_point(), ignition::math::Vector3d(
+    gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
       *iterX,
       *iterY,
       *iterZ));
@@ -430,12 +430,12 @@ void PointCloudPrivate::ClearMarkers()
     return;
 
   std::lock_guard<std::recursive_mutex> lock(this->mutex);
-  ignition::msgs::Marker msg;
+  gz::msgs::Marker msg;
   msg.set_ns(this->pointCloudTopic + this->floatVTopic);
   msg.set_id(0);
-  msg.set_action(ignition::msgs::Marker::DELETE_ALL);
+  msg.set_action(gz::msgs::Marker::DELETE_ALL);
 
-  igndbg << "Clearing markers on "
+  gzdbg << "Clearing markers on "
     << this->pointCloudTopic + this->floatVTopic
     << std::endl;
 
@@ -445,13 +445,13 @@ void PointCloudPrivate::ClearMarkers()
 /////////////////////////////////////////////////
 QColor PointCloud::MinColor() const
 {
-  return ignition::gui::convert(this->dataPtr->minColor);
+  return gz::gui::convert(this->dataPtr->minColor);
 }
 
 /////////////////////////////////////////////////
 void PointCloud::SetMinColor(const QColor &_minColor)
 {
-  this->dataPtr->minColor = ignition::gui::convert(_minColor);
+  this->dataPtr->minColor = gz::gui::convert(_minColor);
   this->MinColorChanged();
   this->dataPtr->PublishMarkers();
 }
@@ -459,13 +459,13 @@ void PointCloud::SetMinColor(const QColor &_minColor)
 /////////////////////////////////////////////////
 QColor PointCloud::MaxColor() const
 {
-  return ignition::gui::convert(this->dataPtr->maxColor);
+  return gz::gui::convert(this->dataPtr->maxColor);
 }
 
 /////////////////////////////////////////////////
 void PointCloud::SetMaxColor(const QColor &_maxColor)
 {
-  this->dataPtr->maxColor = ignition::gui::convert(_maxColor);
+  this->dataPtr->maxColor = gz::gui::convert(_maxColor);
   this->MaxColorChanged();
   this->dataPtr->PublishMarkers();
 }
@@ -511,5 +511,5 @@ void PointCloud::SetPointSize(float _pointSize)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::PointCloud,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::PointCloud,
+                    gz::gui::Plugin)

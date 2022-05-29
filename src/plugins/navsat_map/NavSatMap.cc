@@ -23,13 +23,13 @@
 #include <string>
 #include <vector>
 
-#include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
-#include <ignition/transport/Node.hh>
+#include <gz/common/Console.hh>
+#include <gz/plugin/Register.hh>
+#include <gz/transport/Node.hh>
 
-#include "ignition/gui/Application.hh"
+#include "gz/gui/Application.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -53,7 +53,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -90,7 +90,7 @@ void NavSatMap::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   if (topic.empty() && !topicPicker)
   {
-    ignwarn << "Can't hide topic picker without a default topic." << std::endl;
+    gzwarn << "Can't hide topic picker without a default topic." << std::endl;
     topicPicker = true;
   }
 
@@ -140,7 +140,7 @@ void NavSatMap::OnTopic(const QString _topic)
   if (!this->dataPtr->node.Subscribe(topic, &NavSatMap::OnMessage,
       this))
   {
-    ignerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
+    gzerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
   }
 }
 
@@ -159,7 +159,7 @@ void NavSatMap::OnRefresh()
     this->dataPtr->node.TopicInfo(topic, publishers);
     for (auto pub : publishers)
     {
-      if (pub.MsgTypeName() == "ignition.msgs.NavSat")
+      if (pub.MsgTypeName() == "gz.msgs.NavSat")
       {
         this->dataPtr->topicList.push_back(QString::fromStdString(topic));
         break;
@@ -187,5 +187,5 @@ void NavSatMap::SetTopicList(const QStringList &_topicList)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::NavSatMap,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::NavSatMap,
+                    gz::gui::Plugin)

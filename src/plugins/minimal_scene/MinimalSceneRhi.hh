@@ -15,18 +15,18 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
-#define IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
+#ifndef GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
+#define GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
 
 #include <string>
 
-#include "ignition/gui/Plugin.hh"
-#include "ignition/rendering/RenderTypes.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/rendering/RenderTypes.hh"
 
 #include <QSGTexture>
 #include <QSize>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

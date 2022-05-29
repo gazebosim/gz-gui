@@ -16,3 +16,4 @@
  */
 
 #include <gz/gui/DragDropModel.hh>
+#include <ignition/gui/config.hh>

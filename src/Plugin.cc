@@ -17,11 +17,11 @@
 
 #include <unordered_set>
 
-#include <ignition/common/Console.hh>
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include <gz/common/Console.hh>
+#include "gz/gui/Application.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
 /// \brief Used to store information about anchors set by the user.
 struct Anchors
@@ -51,7 +51,7 @@ static const std::unordered_set<std::string> kIgnoredProps{
     "pluginName",
     "anchored"};
 
-class ignition::gui::PluginPrivate
+class gz::gui::PluginPrivate
 {
   /// \brief Set this to true if the plugin should be deleted as soon as it has
   ///  a parent.
@@ -80,7 +80,7 @@ class ignition::gui::PluginPrivate
   public: Anchors anchors;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -100,7 +100,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 {
   if (!_pluginElem)
   {
-    ignerr << "Failed to load plugin with a NULL element." << std::endl;
+    gzerr << "Failed to load plugin with a NULL element." << std::endl;
     return;
   }
 
@@ -109,7 +109,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   tinyxml2::XMLPrinter printer;
   if (!_pluginElem->Accept(&printer))
   {
-    ignwarn << "There was an error parsing the plugin element for " <<
+    gzwarn << "There was an error parsing the plugin element for " <<
         "[" << this->title << "]." << std::endl;
   }
   else
@@ -129,7 +129,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   std::string qmlFile(":/" + filename + "/" + filename + ".qml");
   if (!QFile(QString::fromStdString(qmlFile)).exists())
   {
-    ignerr << "Can't find [" << qmlFile
+    gzerr << "Can't find [" << qmlFile
            << "]. Are you sure it was added to the .qrc file?" << std::endl;
     return;
   }
@@ -144,12 +144,12 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     {
       errors << "* " << error.toString().toStdString() << std::endl;
     }
-    ignerr << errors.str();
+    gzerr << errors.str();
     return;
   }
   if (!component.isReady())
   {
-    ignerr << "Component from QML file [" << qmlFile
+    gzerr << "Component from QML file [" << qmlFile
            << "] is not ready. Progress: " << component.progress()
            << " / 1.0" << std::endl;
     return;
@@ -160,7 +160,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
       qobject_cast<QQuickItem *>(component.create(this->dataPtr->context));
   if (!this->dataPtr->pluginItem)
   {
-    ignerr << "Failed to instantiate QML file [" << qmlFile << "]." << std::endl
+    gzerr << "Failed to instantiate QML file [" << qmlFile << "]." << std::endl
            << "Are you sure the file is valid QML? "
            << "You can check with the `qmlscene` tool" << std::endl;
     return;
@@ -228,7 +228,7 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
     {
       if (nullptr == propElem->GetText())
       {
-        ignerr << "Invalid string inside [" << key << "]" << std::endl;
+        gzerr << "Invalid string inside [" << key << "]" << std::endl;
         continue;
       }
       std::string value = propElem->GetText();
@@ -236,7 +236,7 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
     }
     else
     {
-      ignwarn << "Property type [" << type << "] not supported." << std::endl;
+      gzwarn << "Property type [" << type << "] not supported." << std::endl;
       continue;
     }
 
@@ -258,13 +258,13 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
 
       if (kAnchorLineSet.find(ownLine) == kAnchorLineSet.end())
       {
-        ignwarn << "Invalid anchor line [" << ownLine << "]" << std::endl;
+        gzwarn << "Invalid anchor line [" << ownLine << "]" << std::endl;
         continue;
       }
 
       if (kAnchorLineSet.find(targetLine) == kAnchorLineSet.end())
       {
-        ignwarn << "Invalid anchor target line [" << targetLine << "]"
+        gzwarn << "Invalid anchor target line [" << targetLine << "]"
                 << std::endl;
         continue;
       }
@@ -289,7 +289,7 @@ std::string Plugin::ConfigStr()
   auto pluginElem = doc.FirstChildElement("plugin");
   if (!pluginElem)
   {
-    ignerr << "Missing <plugin> element, not updating config string."
+    gzerr << "Missing <plugin> element, not updating config string."
            << std::endl;
     return this->configStr;
   }
@@ -360,7 +360,7 @@ std::string Plugin::ConfigStr()
   tinyxml2::XMLPrinter printer;
   if (!pluginElem->Accept(&printer))
   {
-    ignwarn << "There was an error parsing the plugin element for " <<
+    gzwarn << "There was an error parsing the plugin element for " <<
         "[" << this->title << "]." << std::endl;
   }
   else
@@ -414,7 +414,7 @@ QQuickItem *Plugin::CardItem() const
   auto cardItem = qobject_cast<QQuickItem *>(cardComp.create());
   if (!cardItem)
   {
-    ignerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+    gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
            << "]" << std::endl;
     return nullptr;
   }
@@ -426,14 +426,14 @@ QQuickItem *Plugin::CardItem() const
   auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
   if (!cardContentItem)
   {
-    ignerr << "Null card content QQuickItem!" << std::endl;
+    gzerr << "Null card content QQuickItem!" << std::endl;
     return nullptr;
   }
 
   auto cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
   if (!cardToolbarItem)
   {
-    ignerr << "Null toolbar content QQuickItem!" << std::endl;
+    gzerr << "Null toolbar content QQuickItem!" << std::endl;
     return nullptr;
   }
 
@@ -519,7 +519,7 @@ void Plugin::ApplyAnchors()
   // Only floating plugins can be anchored
   if (this->CardItem()->property("state") != "floating")
   {
-    ignwarn << "Anchors can only be applied on floating state." << std::endl;
+    gzwarn << "Anchors can only be applied on floating state." << std::endl;
     return;
   }
 
@@ -531,14 +531,14 @@ void Plugin::ApplyAnchors()
     auto win = App()->findChild<MainWindow *>();
     if (!win)
     {
-      ignerr << "Internal error: missing window" << std::endl;
+      gzerr << "Internal error: missing window" << std::endl;
       return;
     }
 
     auto bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
     if (!bgItem)
     {
-      ignerr << "Internal error: missing background item" << std::endl;
+      gzerr << "Internal error: missing background item" << std::endl;
       return;
     }
 
@@ -554,7 +554,7 @@ void Plugin::ApplyAnchors()
 
   if (!target)
   {
-    ignwarn << "Failed to find anchor target [" << this->dataPtr->anchors.target
+    gzwarn << "Failed to find anchor target [" << this->dataPtr->anchors.target
             << "]" << std::endl;
     return;
   }

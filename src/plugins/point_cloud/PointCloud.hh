@@ -15,23 +15,23 @@
  *
  */
 
-#ifndef IGNITION_GUI_PLUGINS_POINTCLOUD_HH_
-#define IGNITION_GUI_PLUGINS_POINTCLOUD_HH_
+#ifndef GZ_GUI_PLUGINS_POINTCLOUD_HH_
+#define GZ_GUI_PLUGINS_POINTCLOUD_HH_
 
 #include <memory>
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/float_v.pb.h>
-#include <ignition/msgs/pointcloud_packed.pb.h>
+#include <gz/msgs/float_v.pb.h>
+#include <gz/msgs/pointcloud_packed.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -39,11 +39,11 @@ namespace plugins
 {
   class PointCloudPrivate;
 
-  /// \brief Visualize `ignition::msgs::PointCloudPacked` messages in a 3D
+  /// \brief Visualize `gz::msgs::PointCloudPacked` messages in a 3D
   /// scene.
   ///
   /// By default, the whole cloud is displayed using a single color. Users
-  /// can optionally choose a topic publishing `ignition::msgs::FloatV` messages
+  /// can optionally choose a topic publishing `gz::msgs::FloatV` messages
   /// which will be used to color all points with a color gradient according to
   /// their values. The float message must have the same number of elements as
   /// the point cloud and be indexed the same way. NaN values on the FloatV
@@ -56,9 +56,9 @@ namespace plugins
   /// Parameters:
   ///
   /// * `<point_cloud_topic>`: Topic to receive
-  ///      `ignition::msgs::PointCloudPacked` messages.
-  /// * `<float_v_topic>`: Topic to receive `ignition::msgs::FloatV` messages.
-  class PointCloud : public ignition::gui::Plugin
+  ///      `gz::msgs::PointCloudPacked` messages.
+  /// * `<float_v_topic>`: Topic to receive `gz::msgs::FloatV` messages.
+  class PointCloud : public gz::gui::Plugin
   {
     Q_OBJECT
 

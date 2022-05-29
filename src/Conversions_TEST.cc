@@ -17,14 +17,14 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Color.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Color.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Conversions.hh"
+#include "gz/gui/Conversions.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

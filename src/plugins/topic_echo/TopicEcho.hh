@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_TOPICECHO_HH_
-#define IGNITION_GUI_PLUGINS_TOPICECHO_HH_
+#ifndef GZ_GUI_PLUGINS_TOPICECHO_HH_
+#define GZ_GUI_PLUGINS_TOPICECHO_HH_
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
@@ -28,9 +28,9 @@
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -38,7 +38,7 @@ namespace plugins
 {
   class TopicEchoPrivate;
 
-  /// \brief Echo messages coming through an Gazebo Transport topic.
+  /// \brief Echo messages coming through a Gazebo Transport topic.
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.

@@ -15,14 +15,14 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_MARKERMANAGER_HH_
-#define IGNITION_GUI_PLUGINS_MARKERMANAGER_HH_
+#ifndef GZ_GUI_PLUGINS_MARKERMANAGER_HH_
+#define GZ_GUI_PLUGINS_MARKERMANAGER_HH_
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

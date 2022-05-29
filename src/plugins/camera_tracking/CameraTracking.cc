@@ -18,38 +18,38 @@
 #include <mutex>
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Profiler.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Profiler.hh>
+#include <gz/plugin/Register.hh>
 
 // TODO(anyone) Remove these pragmas once ign-rendering and ign-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/stringmsg.pb.h>
-#include <ignition/msgs/Utility.hh>
+#include <gz/msgs/stringmsg.pb.h>
+#include <gz/msgs/Utility.hh>
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/MoveToHelper.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/MoveToHelper.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Conversions.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Conversions.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
 #include "CameraTracking.hh"
 
 /// \brief Private data class for CameraTracking
-class ignition::gui::plugins::CameraTrackingPrivate
+class gz::gui::plugins::CameraTrackingPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -133,7 +133,7 @@ class ignition::gui::plugins::CameraTrackingPrivate
   public: std::string moveToTarget;
 
   /// \brief Helper object to move user camera
-  public: ignition::rendering::MoveToHelper moveToHelper;
+  public: gz::rendering::MoveToHelper moveToHelper;
 
   /// \brief Transport node
   public: transport::Node node;
@@ -163,7 +163,7 @@ class ignition::gui::plugins::CameraTrackingPrivate
   public: QTimer *timer{nullptr};
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -178,14 +178,14 @@ void CameraTrackingPrivate::Initialize()
     if (cam)
     {
       this->camera = cam;
-      igndbg << "CameraTrackingPrivate plugin is moving camera ["
+      gzdbg << "CameraTrackingPrivate plugin is moving camera ["
              << this->camera->Name() << "]" << std::endl;
       break;
     }
   }
   if (!this->camera)
   {
-    ignerr << "Camera is not available" << std::endl;
+    gzerr << "Camera is not available" << std::endl;
     return;
   }
 
@@ -193,14 +193,14 @@ void CameraTrackingPrivate::Initialize()
   this->moveToService = "/gui/move_to";
   this->node.Advertise(this->moveToService,
       &CameraTrackingPrivate::OnMoveTo, this);
-  ignmsg << "Move to service on ["
+  gzmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
   // follow
   this->followService = "/gui/follow";
   this->node.Advertise(this->followService,
       &CameraTrackingPrivate::OnFollow, this);
-  ignmsg << "Follow service on ["
+  gzmsg << "Follow service on ["
          << this->followService << "]" << std::endl;
 
   // move to pose service
@@ -208,21 +208,21 @@ void CameraTrackingPrivate::Initialize()
       "/gui/move_to/pose";
   this->node.Advertise(this->moveToPoseService,
       &CameraTrackingPrivate::OnMoveToPose, this);
-  ignmsg << "Move to pose service on ["
+  gzmsg << "Move to pose service on ["
          << this->moveToPoseService << "]" << std::endl;
 
   // camera position topic
   this->cameraPoseTopic = "/gui/camera/pose";
   this->cameraPosePub =
     this->node.Advertise<msgs::Pose>(this->cameraPoseTopic);
-  ignmsg << "Camera pose topic advertised on ["
+  gzmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
 
    // follow offset
    this->followOffsetService = "/gui/follow/offset";
    this->node.Advertise(this->followOffsetService,
        &CameraTrackingPrivate::OnFollowOffset, this);
-   ignmsg << "Follow offset service on ["
+   gzmsg << "Follow offset service on ["
           << this->followOffsetService << "]" << std::endl;
 }
 
@@ -336,7 +336,7 @@ void CameraTrackingPrivate::OnRender()
         }
         else
         {
-          ignerr << "Unable to move to target. Target: '"
+          gzerr << "Unable to move to target. Target: '"
                  << this->moveToTarget << "' not found" << std::endl;
           this->moveToTarget.clear();
         }
@@ -424,7 +424,7 @@ void CameraTrackingPrivate::OnRender()
       }
       else if (!this->followTargetWait)
       {
-        ignerr << "Unable to follow target. Target: '"
+        gzerr << "Unable to follow target. Target: '"
                << this->followTarget << "' not found" << std::endl;
         this->followTarget.clear();
       }
@@ -505,5 +505,5 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::CameraTracking,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::CameraTracking,
+                    gz::gui::Plugin)

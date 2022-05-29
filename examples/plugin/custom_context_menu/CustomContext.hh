@@ -23,7 +23,7 @@
   #include <gz/gui/Plugin.hh>
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

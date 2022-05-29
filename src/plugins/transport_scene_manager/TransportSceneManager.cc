@@ -24,40 +24,40 @@
 
 #include <QQmlProperty>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/MeshManager.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/MeshManager.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Vector3.hh>
+#include <gz/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
+#include <gz/msgs.hh>
 
-#include <ignition/rendering/Capsule.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
+#include <gz/rendering/Capsule.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/transport/Node.hh>
-#include <ignition/transport/TopicUtils.hh>
+#include <gz/transport/Node.hh>
+#include <gz/transport/TopicUtils.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Conversions.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Conversions.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
 
 #include "TransportSceneManager.hh"
 
 /// \brief Private data class for TransportSceneManager
-class ignition::gui::plugins::TransportSceneManagerPrivate
+class gz::gui::plugins::TransportSceneManagerPrivate
 {
   /// \brief Make the scene service request and populate the scene
   public: void Request();
@@ -168,13 +168,13 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
 
   /// \brief Transport node for making service request and subscribing to
   /// pose topic
-  public: ignition::transport::Node node;
+  public: gz::transport::Node node;
 
   /// \brief Thread to wait for transport initialization
   public: std::thread initializeTransport;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -243,7 +243,7 @@ void TransportSceneManager::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->dataPtr->deletionTopic.empty() ||
       this->dataPtr->sceneTopic.empty())
   {
-    ignerr << "One or more transport parameters invalid:" << std::endl
+    gzerr << "One or more transport parameters invalid:" << std::endl
         << "  * <service>: " << this->dataPtr->service << std::endl
         << "  * <pose_topic>: " << this->dataPtr->poseTopic << std::endl
         << "  * <deletion_topic>: " << this->dataPtr->deletionTopic << std::endl
@@ -263,40 +263,40 @@ void TransportSceneManagerPrivate::InitializeTransport()
   if (!this->node.Subscribe(this->poseTopic,
       &TransportSceneManagerPrivate::OnPoseVMsg, this))
   {
-    ignerr << "Error subscribing to pose topic: " << this->poseTopic
+    gzerr << "Error subscribing to pose topic: " << this->poseTopic
       << std::endl;
   }
   else
   {
-    ignmsg << "Listening to pose messages on [" << this->poseTopic << "]"
+    gzmsg << "Listening to pose messages on [" << this->poseTopic << "]"
            << std::endl;
   }
 
   if (!this->node.Subscribe(this->deletionTopic,
       &TransportSceneManagerPrivate::OnDeletionMsg, this))
   {
-    ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
+    gzerr << "Error subscribing to deletion topic: " << this->deletionTopic
       << std::endl;
   }
   else
   {
-    ignmsg << "Listening to deletion messages on [" << this->deletionTopic
+    gzmsg << "Listening to deletion messages on [" << this->deletionTopic
            << "]" << std::endl;
   }
 
   if (!this->node.Subscribe(this->sceneTopic,
       &TransportSceneManagerPrivate::OnSceneMsg, this))
   {
-    ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+    gzerr << "Error subscribing to scene topic: " << this->sceneTopic
            << std::endl;
   }
   else
   {
-    ignmsg << "Listening to scene messages on [" << this->sceneTopic << "]"
+    gzmsg << "Listening to scene messages on [" << this->sceneTopic << "]"
            << std::endl;
   }
 
-  ignmsg << "Transport initialized." << std::endl;
+  gzmsg << "Transport initialized." << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -324,13 +324,13 @@ void TransportSceneManagerPrivate::Request()
     if (publishers.size() > 0)
       break;
     std::this_thread::sleep_for(sleepDuration);
-    igndbg << "Waiting for service [" << this->service << "]\n";
+    gzdbg << "Waiting for service [" << this->service << "]\n";
   }
 
   if (publishers.empty() || !this->node.Request(this->service,
       &TransportSceneManagerPrivate::OnSceneSrvMsg, this))
   {
-    ignerr << "Error making service request to [" << this->service << "]"
+    gzerr << "Error making service request to [" << this->service << "]"
            << std::endl;
   }
 }
@@ -446,7 +446,7 @@ void TransportSceneManagerPrivate::OnSceneSrvMsg(const msgs::Scene &_msg,
 {
   if (!result)
   {
-    ignerr << "Error making service request to " << this->service
+    gzerr << "Error making service request to " << this->service
            << std::endl;
     return;
   }
@@ -472,7 +472,7 @@ void TransportSceneManagerPrivate::LoadScene(const msgs::Scene &_msg)
       if (modelVis)
         rootVis->AddChild(modelVis);
       else
-        ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+        gzerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
     }
   }
 
@@ -485,7 +485,7 @@ void TransportSceneManagerPrivate::LoadScene(const msgs::Scene &_msg)
       if (light)
         rootVis->AddChild(light);
       else
-        ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+        gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
     }
   }
 }
@@ -515,7 +515,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
     if (linkVis)
       modelVis->AddChild(linkVis);
     else
-      ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
+      gzerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
 
   // load nested models
@@ -525,7 +525,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
     if (nestedModelVis)
       modelVis->AddChild(nestedModelVis);
     else
-      ignerr << "Failed to load nested model: " << _msg.model(i).name()
+      gzerr << "Failed to load nested model: " << _msg.model(i).name()
              << std::endl;
   }
 
@@ -557,7 +557,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadLink(
     if (visualVis)
       linkVis->AddChild(visualVis);
     else
-      ignerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
+      gzerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
   }
 
   // load lights
@@ -567,7 +567,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadLink(
     if (light)
       linkVis->AddChild(light);
     else
-      ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+      gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
   }
 
   return linkVis;
@@ -670,7 +670,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
   }
   else
   {
-    ignerr << "Failed to load geometry for visual: " << _msg.name()
+    gzerr << "Failed to load geometry for visual: " << _msg.name()
            << std::endl;
   }
 
@@ -746,7 +746,7 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
   {
     if (_msg.mesh().filename().empty())
     {
-      ignerr << "Mesh geometry missing filename" << std::endl;
+      gzerr << "Mesh geometry missing filename" << std::endl;
       return geom;
     }
     rendering::MeshDescriptor descriptor;
@@ -754,8 +754,8 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
     // Assume absolute path to mesh file
     descriptor.meshName = _msg.mesh().filename();
 
-    ignition::common::MeshManager* meshManager =
-        ignition::common::MeshManager::Instance();
+    gz::common::MeshManager* meshManager =
+        gz::common::MeshManager::Instance();
     descriptor.mesh = meshManager->Load(descriptor.meshName);
     geom = this->scene->CreateMesh(descriptor);
 
@@ -763,7 +763,7 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
   }
   else
   {
-    ignerr << "Unsupported geometry type" << std::endl;
+    gzerr << "Unsupported geometry type" << std::endl;
   }
   _scale = scale;
   _localPose = localPose;
@@ -827,7 +827,7 @@ rendering::LightPtr TransportSceneManagerPrivate::LoadLight(
       break;
     }
     default:
-      ignerr << "Light type not supported" << std::endl;
+      gzerr << "Light type not supported" << std::endl;
       return light;
   }
 
@@ -875,5 +875,5 @@ void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::TransportSceneManager,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::TransportSceneManager,
+                    gz::gui::Plugin)

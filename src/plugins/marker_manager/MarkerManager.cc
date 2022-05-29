@@ -22,37 +22,37 @@
 
 #include <QQmlProperty>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Profiler.hh>
-#include <ignition/common/StringUtils.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Profiler.hh>
+#include <gz/common/StringUtils.hh>
 
-#include <ignition/math/Rand.hh>
+#include <gz/math/Rand.hh>
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
+#include <gz/msgs.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
-#include "ignition/rendering/Marker.hh"
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
+#include "gz/rendering/Marker.hh"
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
 
 #include "MarkerManager.hh"
 
 /// \brief Private data class for MarkerManager
-class ignition::gui::plugins::MarkerManagerPrivate
+class gz::gui::plugins::MarkerManagerPrivate
 {
   /// \brief Update markers based on msgs received
   public: void OnRender();
@@ -63,37 +63,37 @@ class ignition::gui::plugins::MarkerManagerPrivate
   /// \brief Processes a marker message.
   /// \param[in] _msg The message data.
   /// \return True if the marker was processed successfully.
-  public: bool ProcessMarkerMsg(const ignition::msgs::Marker &_msg);
+  public: bool ProcessMarkerMsg(const gz::msgs::Marker &_msg);
 
   /// \brief Services callback that returns a list of markers.
   /// \param[out] _rep Service reply
   /// \return True on success.
-  public: bool OnList(ignition::msgs::Marker_V &_rep);
+  public: bool OnList(gz::msgs::Marker_V &_rep);
 
   /// \brief Callback that receives marker messages.
   /// \param[in] _req The marker message.
-  public: void OnMarkerMsg(const ignition::msgs::Marker &_req);
+  public: void OnMarkerMsg(const gz::msgs::Marker &_req);
 
   /// \brief Callback that receives multiple marker messages.
   /// \param[in] _req The vector of marker messages
   /// \param[in] _res Response data
   /// \return True if the request is received
-  public: bool OnMarkerMsgArray(const ignition::msgs::Marker_V &_req,
-              ignition::msgs::Boolean &_res);
+  public: bool OnMarkerMsgArray(const gz::msgs::Marker_V &_req,
+              gz::msgs::Boolean &_res);
 
   /// \brief Subscriber callback when new world statistics are received
-  public: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
+  public: void OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg);
 
   /// \brief Sets Visual from marker message.
   /// \param[in] _msg The message data.
   /// \param[out] _visualPtr The visual pointer to set.
-  public: void SetVisual(const ignition::msgs::Marker &_msg,
+  public: void SetVisual(const gz::msgs::Marker &_msg,
                          const rendering::VisualPtr &_visualPtr);
 
   /// \brief Sets Marker from marker message.
   /// \param[in] _msg The message data.
   /// \param[out] _markerPtr The message pointer to set.
-  public: void SetMarker(const ignition::msgs::Marker &_msg,
+  public: void SetMarker(const gz::msgs::Marker &_msg,
                          const rendering::MarkerPtr &_markerPtr);
 
   /// \brief Converts an ignition msg material to ignition rendering
@@ -101,13 +101,13 @@ class ignition::gui::plugins::MarkerManagerPrivate
   //  \param[in] _msg The message data.
   //  \return Converted rendering material, if any.
   public: rendering::MaterialPtr MsgToMaterial(
-    const ignition::msgs::Marker &_msg);
+    const gz::msgs::Marker &_msg);
 
   /// \brief Converts an ignition msg render type to ignition rendering
   /// \param[in] _msg The message data
   /// \return Converted rendering type, if any.
-  public: ignition::rendering::MarkerType MsgToType(
-                    const ignition::msgs::Marker &_msg);
+  public: gz::rendering::MarkerType MsgToType(
+                    const gz::msgs::Marker &_msg);
 
   //// \brief Pointer to the rendering scene
   public: rendering::ScenePtr scene{nullptr};
@@ -116,14 +116,14 @@ class ignition::gui::plugins::MarkerManagerPrivate
   public: std::mutex mutex;
 
   /// \brief List of marker message to process.
-  public: std::list<ignition::msgs::Marker> markerMsgs;
+  public: std::list<gz::msgs::Marker> markerMsgs;
 
   /// \brief Map of visuals
   public: std::map<std::string,
-      std::map<uint64_t, ignition::rendering::VisualPtr>> visuals;
+      std::map<uint64_t, gz::rendering::VisualPtr>> visuals;
 
-  /// \brief Gazebo node
-  public: ignition::transport::Node node;
+  /// \brief Ignition node
+  public: gz::transport::Node node;
 
   /// \brief Topic name for the marker service
   public: std::string topicName = "/marker";
@@ -135,14 +135,14 @@ class ignition::gui::plugins::MarkerManagerPrivate
   public: std::chrono::steady_clock::duration lastSimTime;
 
   /// \brief The last marker message received
-  public: ignition::msgs::Marker msg;
+  public: gz::msgs::Marker msg;
 
   /// \brief True to print console warnings if the user tries to perform an
   /// action with an inexistent marker.
   public: bool warnOnActionFailure{true};
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -151,13 +151,13 @@ void MarkerManagerPrivate::Initialize()
 {
   if (!this->scene)
   {
-    ignerr << "Scene pointer is invalid" << std::endl;
+    gzerr << "Scene pointer is invalid" << std::endl;
     return;
   }
 
   if (this->topicName.empty())
   {
-    ignerr << "Unable to advertise marker service. Topic name empty."
+    gzerr << "Unable to advertise marker service. Topic name empty."
            << std::endl;
     return;
   }
@@ -166,31 +166,31 @@ void MarkerManagerPrivate::Initialize()
   if (!this->node.Advertise(this->topicName + "/list",
       &MarkerManagerPrivate::OnList, this))
   {
-    ignerr << "Unable to advertise to the " << this->topicName
+    gzerr << "Unable to advertise to the " << this->topicName
            << "/list service.\n";
   }
 
-  igndbg << "Advertise " << this->topicName << "/list service.\n";
+  gzdbg << "Advertise " << this->topicName << "/list service.\n";
 
   // Advertise to the marker service
   if (!this->node.Advertise(this->topicName,
         &MarkerManagerPrivate::OnMarkerMsg, this))
   {
-    ignerr << "Unable to advertise to the " << this->topicName
+    gzerr << "Unable to advertise to the " << this->topicName
            << " service.\n";
   }
 
-  igndbg << "Advertise " << this->topicName << "/list.\n";
+  gzdbg << "Advertise " << this->topicName << "/list.\n";
 
   // Advertise to the marker_array service
   if (!this->node.Advertise(this->topicName + "_array",
         &MarkerManagerPrivate::OnMarkerMsgArray, this))
   {
-    ignerr << "Unable to advertise to the " << this->topicName
+    gzerr << "Unable to advertise to the " << this->topicName
            << "_array service.\n";
   }
 
-  igndbg << "Advertise " << this->topicName << "_array.\n";
+  gzdbg << "Advertise " << this->topicName << "_array.\n";
 }
 
 /////////////////////////////////////////////////
@@ -224,8 +224,8 @@ void MarkerManagerPrivate::OnRender()
       if (it->second->GeometryCount() == 0u)
         continue;
 
-      ignition::rendering::MarkerPtr markerPtr =
-            std::dynamic_pointer_cast<ignition::rendering::Marker>
+      gz::rendering::MarkerPtr markerPtr =
+            std::dynamic_pointer_cast<gz::rendering::Marker>
             (it->second->GeometryByIndex(0u));
       if (markerPtr != nullptr)
       {
@@ -250,7 +250,7 @@ void MarkerManagerPrivate::OnRender()
 }
 
 /////////////////////////////////////////////////
-bool MarkerManagerPrivate::OnList(ignition::msgs::Marker_V &_rep)
+bool MarkerManagerPrivate::OnList(gz::msgs::Marker_V &_rep)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   _rep.clear_marker();
@@ -260,7 +260,7 @@ bool MarkerManagerPrivate::OnList(ignition::msgs::Marker_V &_rep)
   {
     for (auto iter : mIter.second)
     {
-      ignition::msgs::Marker *markerMsg = _rep.add_marker();
+      gz::msgs::Marker *markerMsg = _rep.add_marker();
       markerMsg->set_ns(mIter.first);
       markerMsg->set_id(iter.first);
     }
@@ -270,7 +270,7 @@ bool MarkerManagerPrivate::OnList(ignition::msgs::Marker_V &_rep)
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::OnMarkerMsg(const ignition::msgs::Marker &_req)
+void MarkerManagerPrivate::OnMarkerMsg(const gz::msgs::Marker &_req)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   this->markerMsgs.push_back(_req);
@@ -278,7 +278,7 @@ void MarkerManagerPrivate::OnMarkerMsg(const ignition::msgs::Marker &_req)
 
 /////////////////////////////////////////////////
 bool MarkerManagerPrivate::OnMarkerMsgArray(
-    const ignition::msgs::Marker_V&_req, ignition::msgs::Boolean &_res)
+    const gz::msgs::Marker_V&_req, gz::msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   std::copy(_req.marker().begin(), _req.marker().end(),
@@ -288,7 +288,7 @@ bool MarkerManagerPrivate::OnMarkerMsgArray(
 }
 
 //////////////////////////////////////////////////
-bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
+bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
 {
   // Get the namespace, if it exists. Otherwise, use the global namespace
   std::string ns;
@@ -309,14 +309,14 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
   // Otherwise generate unique id
   else
   {
-    id = ignition::math::Rand::IntUniform(0, ignition::math::MAX_I32);
+    id = gz::math::Rand::IntUniform(0, gz::math::MAX_I32);
 
     // Make sure it's unique if namespace is given
     if (nsIter != this->visuals.end())
     {
       while (nsIter->second.find(id) != nsIter->second.end())
-        id = ignition::math::Rand::IntUniform(ignition::math::MIN_UI32,
-                                              ignition::math::MAX_UI32);
+        id = gz::math::Rand::IntUniform(gz::math::MIN_UI32,
+                                              gz::math::MAX_UI32);
     }
   }
 
@@ -326,7 +326,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
     visualIter = nsIter->second.find(id);
 
   // Add/modify a marker
-  if (_msg.action() == ignition::msgs::Marker::ADD_MODIFY)
+  if (_msg.action() == gz::msgs::Marker::ADD_MODIFY)
   {
     // Modify an existing marker, identified by namespace and id
     if (nsIter != this->visuals.end() &&
@@ -336,8 +336,8 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
       {
         // TODO(anyone): Update so that multiple markers can
         //               be attached to one visual
-        ignition::rendering::MarkerPtr markerPtr =
-              std::dynamic_pointer_cast<ignition::rendering::Marker>
+        gz::rendering::MarkerPtr markerPtr =
+              std::dynamic_pointer_cast<gz::rendering::Marker>
               (visualIter->second->GeometryByIndex(0));
 
         visualIter->second->RemoveGeometryByIndex(0);
@@ -384,7 +384,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
     }
   }
   // Remove a single marker
-  else if (_msg.action() == ignition::msgs::Marker::DELETE_MARKER)
+  else if (_msg.action() == gz::msgs::Marker::DELETE_MARKER)
   {
     // Remove the marker if it can be found.
     if (nsIter != this->visuals.end() &&
@@ -401,21 +401,21 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
     {
       if (this->warnOnActionFailure)
       {
-        ignwarn << "Unable to delete marker with id[" << id << "] "
+        gzwarn << "Unable to delete marker with id[" << id << "] "
                 << "in namespace[" << ns << "]" << std::endl;
       }
       return false;
     }
   }
   // Remove all markers, or all markers in a namespace
-  else if (_msg.action() == ignition::msgs::Marker::DELETE_ALL)
+  else if (_msg.action() == gz::msgs::Marker::DELETE_ALL)
   {
     // If given namespace doesn't exist
     if (!ns.empty() && nsIter == this->visuals.end())
     {
       if (this->warnOnActionFailure)
       {
-        ignwarn << "Unable to delete all markers in namespace[" << ns
+        gzwarn << "Unable to delete all markers in namespace[" << ns
                 << "], namespace can't be found." << std::endl;
       }
       return false;
@@ -446,7 +446,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
   }
   else
   {
-    ignerr << "Unknown marker action[" << _msg.action() << "]\n";
+    gzerr << "Unknown marker action[" << _msg.action() << "]\n";
     return false;
   }
 
@@ -454,12 +454,12 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const ignition::msgs::Marker &_msg)
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::SetVisual(const ignition::msgs::Marker &_msg,
+void MarkerManagerPrivate::SetVisual(const gz::msgs::Marker &_msg,
                            const rendering::VisualPtr &_visualPtr)
 {
   // Set Visual Scale
   // The scale for points is used as the size of each point, so skip it here.
-  if (_msg.has_scale() && _msg.type() != ignition::msgs::Marker::POINTS)
+  if (_msg.has_scale() && _msg.type() != gz::msgs::Marker::POINTS)
   {
     _visualPtr->SetLocalScale(_msg.scale().x(),
                               _msg.scale().y(),
@@ -496,7 +496,7 @@ void MarkerManagerPrivate::SetVisual(const ignition::msgs::Marker &_msg,
     }
     else
     {
-      ignerr << "No visual with the name[" << _msg.parent() << "]\n";
+      gzerr << "No visual with the name[" << _msg.parent() << "]\n";
     }
   }
 
@@ -504,7 +504,7 @@ void MarkerManagerPrivate::SetVisual(const ignition::msgs::Marker &_msg,
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::SetMarker(const ignition::msgs::Marker &_msg,
+void MarkerManagerPrivate::SetMarker(const gz::msgs::Marker &_msg,
                            const rendering::MarkerPtr &_markerPtr)
 {
   _markerPtr->SetLayer(_msg.layer());
@@ -523,7 +523,7 @@ void MarkerManagerPrivate::SetMarker(const ignition::msgs::Marker &_msg,
     _markerPtr->SetLifetime(std::chrono::seconds(0));
   }
   // Set Marker Render Type
-  ignition::rendering::MarkerType markerType = MsgToType(_msg);
+  gz::rendering::MarkerType markerType = MsgToType(_msg);
   _markerPtr->SetType(markerType);
 
   // Set Marker Material
@@ -565,7 +565,7 @@ void MarkerManagerPrivate::SetMarker(const ignition::msgs::Marker &_msg,
 
 /////////////////////////////////////////////////
 rendering::MaterialPtr MarkerManagerPrivate::MsgToMaterial(
-                              const ignition::msgs::Marker &_msg)
+                              const gz::msgs::Marker &_msg)
 {
   rendering::MaterialPtr material = this->scene->CreateMaterial();
 
@@ -599,49 +599,49 @@ rendering::MaterialPtr MarkerManagerPrivate::MsgToMaterial(
 }
 
 /////////////////////////////////////////////////
-ignition::rendering::MarkerType MarkerManagerPrivate::MsgToType(
-                          const ignition::msgs::Marker &_msg)
+gz::rendering::MarkerType MarkerManagerPrivate::MsgToType(
+                          const gz::msgs::Marker &_msg)
 {
-  ignition::msgs::Marker_Type marker = this->msg.type();
-  if (marker != _msg.type() && _msg.type() != ignition::msgs::Marker::NONE)
+  gz::msgs::Marker_Type marker = this->msg.type();
+  if (marker != _msg.type() && _msg.type() != gz::msgs::Marker::NONE)
   {
     marker = _msg.type();
     this->msg.set_type(_msg.type());
   }
   switch (marker)
   {
-    case ignition::msgs::Marker::BOX:
-      return ignition::rendering::MarkerType::MT_BOX;
-    case ignition::msgs::Marker::CAPSULE:
-      return ignition::rendering::MarkerType::MT_CAPSULE;
-    case ignition::msgs::Marker::CYLINDER:
-      return ignition::rendering::MarkerType::MT_CYLINDER;
-    case ignition::msgs::Marker::LINE_STRIP:
-      return ignition::rendering::MarkerType::MT_LINE_STRIP;
-    case ignition::msgs::Marker::LINE_LIST:
-      return ignition::rendering::MarkerType::MT_LINE_LIST;
-    case ignition::msgs::Marker::POINTS:
-      return ignition::rendering::MarkerType::MT_POINTS;
-    case ignition::msgs::Marker::SPHERE:
-      return ignition::rendering::MarkerType::MT_SPHERE;
-    case ignition::msgs::Marker::TEXT:
-      return ignition::rendering::MarkerType::MT_TEXT;
-    case ignition::msgs::Marker::TRIANGLE_FAN:
-      return ignition::rendering::MarkerType::MT_TRIANGLE_FAN;
-    case ignition::msgs::Marker::TRIANGLE_LIST:
-      return ignition::rendering::MarkerType::MT_TRIANGLE_LIST;
-    case ignition::msgs::Marker::TRIANGLE_STRIP:
-      return ignition::rendering::MarkerType::MT_TRIANGLE_STRIP;
+    case gz::msgs::Marker::BOX:
+      return gz::rendering::MarkerType::MT_BOX;
+    case gz::msgs::Marker::CAPSULE:
+      return gz::rendering::MarkerType::MT_CAPSULE;
+    case gz::msgs::Marker::CYLINDER:
+      return gz::rendering::MarkerType::MT_CYLINDER;
+    case gz::msgs::Marker::LINE_STRIP:
+      return gz::rendering::MarkerType::MT_LINE_STRIP;
+    case gz::msgs::Marker::LINE_LIST:
+      return gz::rendering::MarkerType::MT_LINE_LIST;
+    case gz::msgs::Marker::POINTS:
+      return gz::rendering::MarkerType::MT_POINTS;
+    case gz::msgs::Marker::SPHERE:
+      return gz::rendering::MarkerType::MT_SPHERE;
+    case gz::msgs::Marker::TEXT:
+      return gz::rendering::MarkerType::MT_TEXT;
+    case gz::msgs::Marker::TRIANGLE_FAN:
+      return gz::rendering::MarkerType::MT_TRIANGLE_FAN;
+    case gz::msgs::Marker::TRIANGLE_LIST:
+      return gz::rendering::MarkerType::MT_TRIANGLE_LIST;
+    case gz::msgs::Marker::TRIANGLE_STRIP:
+      return gz::rendering::MarkerType::MT_TRIANGLE_STRIP;
     default:
-      ignerr << "Unable to create marker of type[" << _msg.type() << "]\n";
+      gzerr << "Unable to create marker of type[" << _msg.type() << "]\n";
       break;
   }
-  return ignition::rendering::MarkerType::MT_NONE;
+  return gz::rendering::MarkerType::MT_NONE;
 }
 
 /////////////////////////////////////////////////
 void MarkerManagerPrivate::OnWorldStatsMsg(
-  const ignition::msgs::WorldStatistics &_msg)
+  const gz::msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   std::chrono::steady_clock::duration timePoint;
@@ -692,7 +692,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       }
       else
       {
-        ignerr << "the provided topic is no allowed. Using default ["
+        gzerr << "the provided topic is no allowed. Using default ["
                << this->dataPtr->topicName << "]"<<  std::endl;
       }
     }
@@ -702,7 +702,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       if (elem->QueryBoolText(&this->dataPtr->warnOnActionFailure) !=
           tinyxml2::XML_SUCCESS)
       {
-        ignerr << "Faild to parse <warn_on_action_failure> value: "
+        gzerr << "Faild to parse <warn_on_action_failure> value: "
                << elem->GetText() << std::endl;
       }
     }
@@ -729,7 +729,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       parts[2] != worldName &&
       parts[3] == "stats")
   {
-    ignwarn << "Ignoring topic [" << statsTopic
+    gzwarn << "Ignoring topic [" << statsTopic
             << "], world name different from [" << worldName
             << "]. Fix or remove your <stats_topic> tag." << std::endl;
 
@@ -748,16 +748,16 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
     if (!this->dataPtr->node.Subscribe(statsTopic,
         &MarkerManagerPrivate::OnWorldStatsMsg, this->dataPtr.get()))
     {
-      ignerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
+      gzerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
     }
     else
     {
-      ignmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
+      gzmsg << "Listening to stats on [" << statsTopic << "]" << std::endl;
     }
   }
   else
   {
-    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+    gzerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
   }
 
@@ -781,5 +781,5 @@ bool MarkerManager::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::MarkerManager,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::MarkerManager,
+                    gz::gui::Plugin)

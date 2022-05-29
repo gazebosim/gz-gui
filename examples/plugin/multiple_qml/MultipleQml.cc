@@ -20,7 +20,7 @@
 
 #include "MultipleQml.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -41,5 +41,5 @@ void MultipleQml::OnButton(const QString &_text)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::MultipleQml,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(gz::gui::MultipleQml,
+                    gz::gui::Plugin);

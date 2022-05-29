@@ -15,14 +15,14 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
-#define IGNITION_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
+#ifndef GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
+#define GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -41,8 +41,8 @@ namespace plugins
   /// projection is used by default. For example:
   ///
   ///     ign service -s /gui/camera/view_control
-  ///         --reqtype ignition.msgs.StringMsg
-  ///         --reptype ignition.msgs.Boolean
+  ///         --reqtype gz.msgs.StringMsg
+  ///         --reptype gz.msgs.Boolean
   ///         --timeout 2000 --req 'data: "ortho"'
   ///
   /// Supported options are:

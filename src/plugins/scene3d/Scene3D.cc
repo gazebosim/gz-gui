@@ -24,43 +24,43 @@
 #include <string>
 #include <vector>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/KeyEvent.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/plugin/Register.hh>
-#include <ignition/common/MeshManager.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/plugin/Register.hh>
+#include <gz/common/MeshManager.hh>
 
-#include <ignition/rendering/Capsule.hh>
+#include <gz/rendering/Capsule.hh>
 
-#include <ignition/math/Vector2.hh>
-#include <ignition/math/Vector3.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/math/Vector3.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
+#include <gz/msgs.hh>
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/OrbitViewController.hh>
-#include <ignition/rendering/RayQuery.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/OrbitViewController.hh>
+#include <gz/rendering/RayQuery.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Conversions.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Conversions.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -201,7 +201,7 @@ namespace plugins
 
     /// \brief Transport node for making service request and subscribing to
     /// pose topic
-    private: ignition::transport::Node node;
+    private: gz::transport::Node node;
   };
 
   /// \brief Private data class for IgnRenderer
@@ -265,7 +265,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -313,13 +313,13 @@ void SceneManager::Request()
     if (publishers.size() > 0)
       break;
     std::this_thread::sleep_for(sleepDuration);
-    igndbg << "Waiting for service " << this->service << "\n";
+    gzdbg << "Waiting for service " << this->service << "\n";
   }
 
   if (publishers.empty() ||
       !this->node.Request(this->service, &SceneManager::OnSceneSrvMsg, this))
   {
-    ignerr << "Error making service request to " << this->service << std::endl;
+    gzerr << "Error making service request to " << this->service << std::endl;
   }
 }
 
@@ -426,7 +426,7 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
 {
   if (!result)
   {
-    ignerr << "Error making service request to " << this->service
+    gzerr << "Error making service request to " << this->service
            << std::endl;
     return;
   }
@@ -440,13 +440,13 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
   {
     if (!this->node.Subscribe(this->poseTopic, &SceneManager::OnPoseVMsg, this))
     {
-      ignerr << "Error subscribing to pose topic: " << this->poseTopic
+      gzerr << "Error subscribing to pose topic: " << this->poseTopic
         << std::endl;
     }
   }
   else
   {
-    ignwarn << "The pose topic, set via <pose_topic>, for the Scene3D plugin "
+    gzwarn << "The pose topic, set via <pose_topic>, for the Scene3D plugin "
       << "is missing or empty. Please set this topic so that the Scene3D "
       << "can receive and process pose information.\n";
   }
@@ -456,13 +456,13 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     if (!this->node.Subscribe(this->deletionTopic, &SceneManager::OnDeletionMsg,
           this))
     {
-      ignerr << "Error subscribing to deletion topic: " << this->deletionTopic
+      gzerr << "Error subscribing to deletion topic: " << this->deletionTopic
         << std::endl;
     }
   }
   else
   {
-    ignwarn << "The deletion topic, set via <deletion_topic>, for the "
+    gzwarn << "The deletion topic, set via <deletion_topic>, for the "
       << "Scene3D plugin is missing or empty. Please set this topic so that "
       << "the Scene3D can receive and process deletion information.\n";
   }
@@ -472,13 +472,13 @@ void SceneManager::OnSceneSrvMsg(const msgs::Scene &_msg, const bool result)
     if (!this->node.Subscribe(
           this->sceneTopic, &SceneManager::OnSceneMsg, this))
     {
-      ignerr << "Error subscribing to scene topic: " << this->sceneTopic
+      gzerr << "Error subscribing to scene topic: " << this->sceneTopic
              << std::endl;
     }
   }
   else
   {
-    ignwarn << "The scene topic, set via <scene_topic>, for the "
+    gzwarn << "The scene topic, set via <scene_topic>, for the "
       << "Scene3D plugin is missing or empty. Please set this topic so that "
       << "the Scene3D can receive and process scene information.\n";
   }
@@ -498,7 +498,7 @@ void SceneManager::LoadScene(const msgs::Scene &_msg)
       if (modelVis)
         rootVis->AddChild(modelVis);
       else
-        ignerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
+        gzerr << "Failed to load model: " << _msg.model(i).name() << std::endl;
     }
   }
 
@@ -511,7 +511,7 @@ void SceneManager::LoadScene(const msgs::Scene &_msg)
       if (light)
         rootVis->AddChild(light);
       else
-        ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+        gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
     }
   }
 }
@@ -531,7 +531,7 @@ rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
     if (linkVis)
       modelVis->AddChild(linkVis);
     else
-      ignerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
+      gzerr << "Failed to load link: " << _msg.link(i).name() << std::endl;
   }
 
   // load nested models
@@ -541,7 +541,7 @@ rendering::VisualPtr SceneManager::LoadModel(const msgs::Model &_msg)
     if (nestedModelVis)
       modelVis->AddChild(nestedModelVis);
     else
-      ignerr << "Failed to load nested model: " << _msg.model(i).name()
+      gzerr << "Failed to load nested model: " << _msg.model(i).name()
              << std::endl;
   }
 
@@ -563,7 +563,7 @@ rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
     if (visualVis)
       linkVis->AddChild(visualVis);
     else
-      ignerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
+      gzerr << "Failed to load visual: " << _msg.visual(i).name() << std::endl;
   }
 
   // load lights
@@ -573,7 +573,7 @@ rendering::VisualPtr SceneManager::LoadLink(const msgs::Link &_msg)
     if (light)
       linkVis->AddChild(light);
     else
-      ignerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
+      gzerr << "Failed to load light: " << _msg.light(i).name() << std::endl;
   }
 
   return linkVis;
@@ -666,7 +666,7 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
   }
   else
   {
-    ignerr << "Failed to load geometry for visual: " << _msg.name()
+    gzerr << "Failed to load geometry for visual: " << _msg.name()
            << std::endl;
   }
 
@@ -741,7 +741,7 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
   {
     if (_msg.mesh().filename().empty())
     {
-      ignerr << "Mesh geometry missing filename" << std::endl;
+      gzerr << "Mesh geometry missing filename" << std::endl;
       return geom;
     }
     rendering::MeshDescriptor descriptor;
@@ -749,8 +749,8 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
     // Assume absolute path to mesh file
     descriptor.meshName = _msg.mesh().filename();
 
-    ignition::common::MeshManager* meshManager =
-        ignition::common::MeshManager::Instance();
+    gz::common::MeshManager* meshManager =
+        gz::common::MeshManager::Instance();
     descriptor.mesh = meshManager->Load(descriptor.meshName);
     geom = this->scene->CreateMesh(descriptor);
 
@@ -758,7 +758,7 @@ rendering::GeometryPtr SceneManager::LoadGeometry(const msgs::Geometry &_msg,
   }
   else
   {
-    ignerr << "Unsupported geometry type" << std::endl;
+    gzerr << "Unsupported geometry type" << std::endl;
   }
   _scale = scale;
   _localPose = localPose;
@@ -820,7 +820,7 @@ rendering::LightPtr SceneManager::LoadLight(const msgs::Light &_msg)
       break;
     }
     default:
-      ignerr << "Light type not supported" << std::endl;
+      gzerr << "Light type not supported" << std::endl;
       return light;
   }
 
@@ -903,10 +903,10 @@ void IgnRenderer::Render()
   // update and render to texture
   this->dataPtr->camera->Update();
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::Render());
   }
 }
@@ -1124,7 +1124,7 @@ std::string IgnRenderer::Initialize()
     std::map<std::string, std::string> params;
     params["useCurrentGLContext"] = "1";
     params["winID"] = std::to_string(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+        gz::gui::App()->findChild<gz::gui::MainWindow *>()->
         QuickWindow()->winId());
     engine = rendering::engine(this->engineName, params);
   }
@@ -1132,7 +1132,7 @@ std::string IgnRenderer::Initialize()
   {
     if (loadedEngines.front() != this->engineName)
     {
-      ignwarn << "Failed to load engine [" << this->engineName
+      gzwarn << "Failed to load engine [" << this->engineName
               << "]. Using engine [" << loadedEngines.front()
               << "], which is already loaded. Currently only one engine is "
               << "supported at a time." << std::endl;
@@ -1149,7 +1149,7 @@ std::string IgnRenderer::Initialize()
   auto scene = engine->SceneByName(this->sceneName);
   if (!scene)
   {
-    igndbg << "Create scene [" << this->sceneName << "]" << std::endl;
+    gzdbg << "Create scene [" << this->sceneName << "]" << std::endl;
     scene = engine->CreateScene(this->sceneName);
     scene->SetAmbientLight(this->ambientLight);
     scene->SetBackgroundColor(this->backgroundColor);
@@ -1205,7 +1205,7 @@ void IgnRenderer::Destroy()
   // If that was the last sensor, destroy scene
   if (scene->SensorCount() == 0)
   {
-    igndbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
+    gzdbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
     engine->DestroyScene(scene);
 
     // TODO(anyone) If that was the last scene, terminate engine?
@@ -1285,7 +1285,7 @@ void RenderThread::RenderNext()
   // check if engine has been successfully initialized
   if (!this->ignRenderer.initialized)
   {
-    ignerr << "Unable to initialize renderer" << std::endl;
+    gzerr << "Unable to initialize renderer" << std::endl;
     return;
   }
 
@@ -1324,7 +1324,7 @@ void RenderThread::SizeChanged()
   auto item = qobject_cast<QQuickItem *>(this->sender());
   if (!item)
   {
-    ignerr << "Internal error, sender is not QQuickItem." << std::endl;
+    gzerr << "Internal error, sender is not QQuickItem." << std::endl;
     return;
   }
 
@@ -1388,7 +1388,7 @@ void TextureNode::PrepareNode()
         newId, sz, QQuickWindow::TextureIsOpaque);
 #else
     // TODO(anyone) Use createTextureFromNativeObject
-    // https://github.com/ignitionrobotics/ign-gui/issues/113
+    // https://github.com/gazebosim/gz-gui/issues/113
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -1575,7 +1575,7 @@ void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
-  ignwarn << "This plugin is deprecated on ign-gui v6 and will be removed on "
+  gzwarn << "This plugin is deprecated on ign-gui v6 and will be removed on "
           << "ign-gui v7. Use MinimalScene + TransportSceneManager instead."
           << std::endl;
 
@@ -1595,7 +1595,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->PluginItem()->findChild<RenderWindowItem *>();
   if (!renderWindow)
   {
-    ignerr << "Unable to find Render Window item. "
+    gzerr << "Unable to find Render Window item. "
            << "Render window will not be created" << std::endl;
     return;
   }
@@ -1684,7 +1684,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
+void RenderWindowItem::OnHovered(const gz::math::Vector2i &_hoverPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
 }
@@ -1823,5 +1823,5 @@ void Scene3D::SetLoadingError(const QString &_loadingError)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Scene3D,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::Scene3D,
+                    gz::gui::Plugin)

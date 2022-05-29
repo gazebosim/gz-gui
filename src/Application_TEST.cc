@@ -17,14 +17,14 @@
 
 #include <stdlib.h>
 #include <gtest/gtest.h>
-#include <ignition/common/Console.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Dialog.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Dialog.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -32,14 +32,14 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Application_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
@@ -65,7 +65,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
@@ -121,7 +121,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
   }
 
-  // Plugin which doesn't inherit from ignition::gui::Plugin
+  // Plugin which doesn't inherit from gz::gui::Plugin
   {
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -149,7 +149,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -177,7 +177,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -186,12 +186,12 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
-    auto testBuildPath = ignition::common::joinPaths(
+    auto testBuildPath = gz::common::joinPaths(
       std::string(PROJECT_BINARY_PATH), "lib");
     app.AddPluginPath(testBuildPath);
 
     // Set default config file
-    auto configPath = ignition::common::joinPaths(
+    auto configPath = gz::common::joinPaths(
       std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
@@ -203,7 +203,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 TEST(ApplicationTest,
     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -273,7 +273,7 @@ TEST(ApplicationTest,
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -348,13 +348,13 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 /////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
 {
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
   Application app(g_argc, g_argv);
 
-  // \todo Verify output, see ignition::commmon::Console_TEST for example
+  // \todo Verify output, see gz::commmon::Console_TEST for example
   qDebug("This came from qDebug");
   qInfo("This came from qInfo");
   qWarning("This came from qWarning");

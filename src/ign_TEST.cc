@@ -21,9 +21,9 @@
 
 #include <string>
 
-#include <ignition/common/Filesystem.hh>
-#include <ignition/common/Util.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/common/Util.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 
@@ -54,7 +54,7 @@ std::string custom_exec_str(std::string _cmd)
   return result;
 }
 
-using namespace ignition;
+using namespace gz;
 
 class CmdLine : public ::testing::Test
 {
@@ -81,7 +81,7 @@ class CmdLine : public ::testing::Test
   public: std::string realHome;
 };
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 {
   // Clear home if it exists

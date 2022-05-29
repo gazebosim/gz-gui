@@ -15,12 +15,12 @@
  *
 */
 
-#include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/plugin/Register.hh>
 
 #include "TestBadInheritancePlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -35,5 +35,5 @@ TestBadInheritancePlugin::~TestBadInheritancePlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::TestBadInheritancePlugin,
-                    ignition::gui::MainWindow)
+IGNITION_ADD_PLUGIN(gz::gui::TestBadInheritancePlugin,
+                    gz::gui::MainWindow)

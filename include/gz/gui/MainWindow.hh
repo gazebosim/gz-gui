@@ -35,7 +35,7 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -58,7 +58,7 @@ namespace ignition
     /// \brief The main window class creates a QQuickWindow and acts as an
     /// interface which provides properties and functions which can be called
     /// from Main.qml
-    class IGNITION_GUI_VISIBLE MainWindow : public QObject
+    class GZ_GUI_VISIBLE MainWindow : public QObject
     {
       Q_OBJECT
 
@@ -589,7 +589,7 @@ namespace ignition
     };
 
     /// \brief Holds configurations related to a MainWindow.
-    struct IGNITION_GUI_VISIBLE WindowConfig
+    struct GZ_GUI_VISIBLE WindowConfig
     {
       /// \brief Update this config from an XML string. Only fields present on
       /// the XML will be overriden / appended / created.

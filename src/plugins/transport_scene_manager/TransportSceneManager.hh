@@ -15,14 +15,14 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_TRANSPORTSCENEMANAGER_HH_
-#define IGNITION_GUI_PLUGINS_TRANSPORTSCENEMANAGER_HH_
+#ifndef GZ_GUI_PLUGINS_TRANSPORTSCENEMANAGER_HH_
+#define GZ_GUI_PLUGINS_TRANSPORTSCENEMANAGER_HH_
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -31,7 +31,7 @@ namespace plugins
   class TransportSceneManagerPrivate;
 
   /// \brief Provides a Gazebo Transport interface to
-  /// `ignition::gui::plugins::MinimalScene`.
+  /// `gz::gui::plugins::MinimalScene`.
   ///
   /// ## Configuration
   ///

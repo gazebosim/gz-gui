@@ -31,7 +31,7 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -51,7 +51,7 @@ namespace ignition
     ///
     /// * The QML file is prefixed by the library's name in the QRC file
     ///   (i.e. the file's resource is found at ':/Publisher/Publisher.qml')
-    class IGNITION_GUI_VISIBLE Plugin : public QObject
+    class GZ_GUI_VISIBLE Plugin : public QObject
     {
       Q_OBJECT
 

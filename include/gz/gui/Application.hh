@@ -37,7 +37,7 @@ namespace tinyxml2
   class XMLElement;
 }
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -61,7 +61,7 @@ namespace ignition
     /// provides an API to load plugins and configuration files. The application
     /// supports either running a single main window or several plugins as
     /// standalone dialogs.
-    class IGNITION_GUI_VISIBLE Application : public QApplication
+    class GZ_GUI_VISIBLE Application : public QApplication
     {
       Q_OBJECT
 
@@ -206,7 +206,7 @@ namespace ignition
 
     /// \brief Get current running application, this is a cast of qGuiApp.
     /// \return Pointer to running application, or nullptr if none is running.
-    IGNITION_GUI_VISIBLE
+    GZ_GUI_VISIBLE
     Application *App();
   }
 }

@@ -31,11 +31,11 @@ int main(int _argc, char **_argv)
   std::cout << "Hello, GUI!" << std::endl;
 
   // Increase verboosity so we see all messages
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // Initialize app
-  ignition::gui::Application app(_argc, _argv,
-      ignition::gui::WindowType::kDialog);
+  gz::gui::Application app(_argc, _argv,
+      gz::gui::WindowType::kDialog);
 
   // Load plugins / config
   app.LoadPlugin("Publisher");

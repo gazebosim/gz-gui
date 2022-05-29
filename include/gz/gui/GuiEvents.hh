@@ -32,7 +32,7 @@
 
 #include "gz/gui/Export.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -58,7 +58,7 @@ namespace ignition
       /// \brief The class for sending and receiving custom snap value events.
       /// This event is used in the Transform Control plugin tool when the
       /// user manually alters their snapping values.
-      class IGNITION_GUI_VISIBLE SnapIntervals : public QEvent
+      class GZ_GUI_VISIBLE SnapIntervals : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _xyz XYZ snapping values.
@@ -91,7 +91,7 @@ namespace ignition
 
       /// \brief Event called to spawn a resource, given its description as a
       /// string.
-      class IGNITION_GUI_VISIBLE SpawnFromDescription : public QEvent
+      class GZ_GUI_VISIBLE SpawnFromDescription : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _description The resource's description as a string, such
@@ -112,7 +112,7 @@ namespace ignition
 
       /// \brief Event called to spawn a resource, which takes the path
       /// to its file.
-      class IGNITION_GUI_VISIBLE SpawnFromPath : public QEvent
+      class GZ_GUI_VISIBLE SpawnFromPath : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _filePath The path to a file.
@@ -132,7 +132,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
       /// user's mouse hover within the scene.
-      class IGNITION_GUI_VISIBLE HoverToScene : public QEvent
+      class GZ_GUI_VISIBLE HoverToScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _point The point at which the mouse is hovering within
@@ -155,7 +155,7 @@ namespace ignition
       /// \brief Event which is called to broadcast the 3D coordinates of a
       /// user's releasing the left button within the scene.
       /// \sa LeftClickOnScene
-      class IGNITION_GUI_VISIBLE LeftClickToScene : public QEvent
+      class GZ_GUI_VISIBLE LeftClickToScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _point The point which the user has left clicked within
@@ -177,7 +177,7 @@ namespace ignition
       /// \brief Event which is called to broadcast the 3D coordinates of a
       /// user's releasing the right button within the scene.
       /// \sa RightClickOnScene
-      class IGNITION_GUI_VISIBLE RightClickToScene : public QEvent
+      class GZ_GUI_VISIBLE RightClickToScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _point The point which the user has right clicked
@@ -199,7 +199,7 @@ namespace ignition
       /// \brief Event which is called to enable or disable the dropdown menu.
       /// This is primarily used by plugins which also use the right click
       /// mouse event to cancel any actions currently in progress.
-      class IGNITION_GUI_VISIBLE DropdownMenuEnabled : public QEvent
+      class GZ_GUI_VISIBLE DropdownMenuEnabled : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _menuEnabled The boolean indicating whether the dropdown
@@ -220,7 +220,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the key release within
       /// the scene.
-      class IGNITION_GUI_VISIBLE KeyReleaseOnScene : public QEvent
+      class GZ_GUI_VISIBLE KeyReleaseOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _key The key released event within the scene
@@ -240,7 +240,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the key press within
       /// the scene.
-      class IGNITION_GUI_VISIBLE KeyPressOnScene : public QEvent
+      class GZ_GUI_VISIBLE KeyPressOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _key The pressed key within the scene
@@ -263,7 +263,7 @@ namespace ignition
       /// For the 3D coordinates of that point on the scene, see
       /// `LeftClickToScene`.
       /// \sa LeftClickToScene
-      class IGNITION_GUI_VISIBLE LeftClickOnScene : public QEvent
+      class GZ_GUI_VISIBLE LeftClickOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The left mouse event on the scene
@@ -286,7 +286,7 @@ namespace ignition
       /// For the 3D coordinates of that point on the scene, see
       /// `RightClickToScene`.
       /// \sa RightClickToScene
-      class IGNITION_GUI_VISIBLE RightClickOnScene : public QEvent
+      class GZ_GUI_VISIBLE RightClickOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The right mouse event on the scene
@@ -307,7 +307,7 @@ namespace ignition
       /// \brief Event that block the Interactive View control when some of the
       /// other plugins require it. For example: When the transform control is
       /// active we should block the movements of the camera.
-      class IGNITION_GUI_VISIBLE BlockOrbit : public QEvent
+      class GZ_GUI_VISIBLE BlockOrbit : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _block True to block otherwise False
@@ -328,7 +328,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast the 2D coordinates of a
       /// user's mouse hover within the scene.
-      class IGNITION_GUI_VISIBLE HoverOnScene : public QEvent
+      class GZ_GUI_VISIBLE HoverOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The hover mouse event on the scene
@@ -348,7 +348,7 @@ namespace ignition
       };
 
       /// \brief Event called to clone a resource, given its name as a string.
-      class IGNITION_GUI_VISIBLE SpawnCloneFromName : public QEvent
+      class GZ_GUI_VISIBLE SpawnCloneFromName : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _name The name of the resource to clone
@@ -367,14 +367,14 @@ namespace ignition
       };
 
       /// \brief Event called to clone a resource, given its name as a string.
-      class IGNITION_GUI_VISIBLE DropOnScene : public QEvent
+      class GZ_GUI_VISIBLE DropOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _dropText Dropped string.
         /// \param[in] _dropMouse x and y  coordinate of mouse position.
         public: explicit DropOnScene(
           const std::string &_dropText,
-          const ignition::math::Vector2i &_dropMouse);
+          const gz::math::Vector2i &_dropMouse);
 
         /// \brief Get the text of the dropped thing on the scene
         /// \return The name of the dropped thing on the scene
@@ -382,7 +382,7 @@ namespace ignition
 
         /// \brief Get X and Y position
         /// \return Get X and Y position
-        public: const ignition::math::Vector2i &Mouse() const;
+        public: const gz::math::Vector2i &Mouse() const;
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 15);
@@ -394,7 +394,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast information about mouse
       /// scrolls on the scene.
-      class IGNITION_GUI_VISIBLE ScrollOnScene : public QEvent
+      class GZ_GUI_VISIBLE ScrollOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The scroll mouse event on the scene
@@ -413,7 +413,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast information about mouse
       /// drags on the scene.
-      class IGNITION_GUI_VISIBLE DragOnScene : public QEvent
+      class GZ_GUI_VISIBLE DragOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The drag mouse event on the scene
@@ -434,7 +434,7 @@ namespace ignition
 
       /// \brief Event which is called to broadcast information about mouse
       /// presses on the scene, with right, left or middle buttons.
-      class IGNITION_GUI_VISIBLE MousePressOnScene : public QEvent
+      class GZ_GUI_VISIBLE MousePressOnScene : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _mouse The mouse event on the scene
@@ -453,7 +453,7 @@ namespace ignition
       };
 
       /// \brief Event which is called to share WorldControl information.
-      class IGNITION_GUI_VISIBLE WorldControl : public QEvent
+      class GZ_GUI_VISIBLE WorldControl : public QEvent
       {
         /// \brief Constructor
         /// \param[in] _worldControl The WorldControl information
@@ -474,7 +474,7 @@ namespace ignition
       /// \brief Event called in the render thread of a 3D scene, before the
       /// user camera is rendered.
       /// It's safe to make rendering calls in this event's callback.
-      class IGNITION_GUI_VISIBLE PreRender : public QEvent
+      class GZ_GUI_VISIBLE PreRender : public QEvent
       {
         /// \brief Constructor
         public: PreRender();

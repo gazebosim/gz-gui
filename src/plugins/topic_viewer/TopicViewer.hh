@@ -16,7 +16,7 @@
 */
 #include <memory>
 
-#include <ignition/gui/Plugin.hh>
+#include <gz/gui/Plugin.hh>
 
 #ifndef _WIN32
 #  define TopicViewer_EXPORTS_API
@@ -28,7 +28,7 @@
 #  endif
 #endif
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

@@ -15,25 +15,25 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
-#define IGNITION_GUI_PLUGINS_SCENE3D_HH_
+#ifndef GZ_GUI_PLUGINS_SCENE3D_HH_
+#define GZ_GUI_PLUGINS_SCENE3D_HH_
 
 #include <string>
 #include <memory>
 
-#include <ignition/common/KeyEvent.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector2.hh>
-#include <ignition/utils/ImplPtr.hh>
-#include <ignition/rendering/GraphicsAPI.hh>
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/utils/ImplPtr.hh>
+#include <gz/rendering/GraphicsAPI.hh>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 #include "MinimalSceneRhi.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -43,7 +43,7 @@ namespace plugins
   /// It is possible to orbit the camera around the scene with
   /// the mouse. Use other plugins to manage objects in the scene.
   ///
-  /// Only one plugin displaying an Gazebo Rendering scene can be used at a
+  /// Only one plugin displaying a Gazebo Rendering scene can be used at a
   /// time.
   ///
   /// ## Configuration
@@ -349,13 +349,13 @@ namespace plugins
     /// \brief Called when the mouse hovers to a new position.
     /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
     /// the render window.
-    public: void OnHovered(const ignition::math::Vector2i &_hoverPos);
+    public: void OnHovered(const gz::math::Vector2i &_hoverPos);
 
     /// \brief Callback when receives a drop event.
     /// \param[in] _drop Dropped string.
     /// \param[in] _dropPos x coordinate of mouse position.
     public: void OnDropped(const QString &_drop,
-        const ignition::math::Vector2i &_dropPos);
+        const gz::math::Vector2i &_dropPos);
 
     /// \brief Set if sky is enabled
     /// \param[in] _sky True to enable the sky, false otherwise.

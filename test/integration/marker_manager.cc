@@ -18,8 +18,8 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
-#include <ignition/rendering.hh>
+#include <gz/msgs.hh>
+#include <gz/rendering.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -27,16 +27,16 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -46,27 +46,27 @@ char* g_argv[] =
 
 using namespace std::chrono_literals;
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 class MarkerManagerTestFixture : public ::testing::Test
 {
 
   public:
-    ignition::transport::Node node;
+    gz::transport::Node node;
     rendering::ScenePtr scene;
-    ignition::transport::Node::Publisher statsPub;
+    gz::transport::Node::Publisher statsPub;
 
     MarkerManagerTestFixture()
     {
       // Periodic world statistics
       statsPub =
-        node.Advertise<ignition::msgs::WorldStatistics>("/example/stats");
+        node.Advertise<gz::msgs::WorldStatistics>("/example/stats");
     }
 
     void sendWorldStatisticsMsg(std::chrono::steady_clock::duration &timePoint)
     {
-      ignition::msgs::WorldStatistics msgWorldStatistics;
+      gz::msgs::WorldStatistics msgWorldStatistics;
 
       msgWorldStatistics.set_real_time_factor(1);
       auto s = std::chrono::duration_cast<std::chrono::seconds>(timePoint);
@@ -164,13 +164,13 @@ TEST_F(MarkerManagerTestFixture,
     std::chrono::steady_clock::duration::zero();
 
   // Create the marker message
-  ignition::msgs::Marker markerMsg;
-  ignition::msgs::Material matMsg;
+  gz::msgs::Marker markerMsg;
+  gz::msgs::Material matMsg;
   markerMsg.set_ns("default");
   markerMsg.set_id(0);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::SPHERE);
-  markerMsg.set_visibility(ignition::msgs::Marker::GUI);
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::SPHERE);
+  markerMsg.set_visibility(gz::msgs::Marker::GUI);
 
   // Add a sphere that will be remove after 2 seconds
   markerMsg.mutable_material()->mutable_ambient()->set_r(0);
@@ -183,11 +183,11 @@ TEST_F(MarkerManagerTestFixture,
   markerMsg.mutable_material()->mutable_diffuse()->set_a(1);
   markerMsg.mutable_lifetime()->set_sec(0);
   markerMsg.mutable_lifetime()->set_nsec(0);
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-                    ignition::math::Vector3d(1.0, 1.0, 1.0));
+  gz::msgs::Set(markerMsg.mutable_scale(),
+                    gz::math::Vector3d(1.0, 1.0, 1.0));
 
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                      ignition::math::Pose3d(2, 2, 0, 0, 0, 0));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                      gz::math::Pose3d(2, 2, 0, 0, 0, 0));
   EXPECT_EQ(0u, scene->VisualCount());
 
   // Wait 2 seconds, plugins need to be initialized
@@ -196,7 +196,7 @@ TEST_F(MarkerManagerTestFixture,
   bool executed = node.Request("/marker", markerMsg);
   if (executed)
   {
-    igndbg << "/marker request sent" << std::endl;
+    gzdbg << "/marker request sent" << std::endl;
     waitAndSendStatsMsgs(timePoint, 1, 200);
     EXPECT_EQ(1u, scene->VisualCount());
   }
@@ -205,7 +205,7 @@ TEST_F(MarkerManagerTestFixture,
     FAIL();
   }
 
-  markerMsg.set_action(ignition::msgs::Marker::DELETE_ALL);
+  markerMsg.set_action(gz::msgs::Marker::DELETE_ALL);
   executed = node.Request("/marker", markerMsg);
   if (executed)
   {

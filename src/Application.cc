@@ -18,23 +18,23 @@
 #include <tinyxml2.h>
 #include <queue>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/SignalHandler.hh>
-#include <ignition/common/SystemPaths.hh>
-#include <ignition/common/Util.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/SignalHandler.hh>
+#include <gz/common/SystemPaths.hh>
+#include <gz/common/Util.hh>
 
-#include <ignition/plugin/Loader.hh>
+#include <gz/plugin/Loader.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/config.hh"
-#include "ignition/gui/Dialog.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/config.hh"
+#include "gz/gui/Dialog.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
-#include "ignition/transport/TopicUtils.hh"
+#include "gz/transport/TopicUtils.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -84,14 +84,14 @@ namespace ignition
   }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
 Application::Application(int &_argc, char **_argv, const WindowType _type)
   : QApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
 {
-  igndbg << "Initializing application." << std::endl;
+  gzdbg << "Initializing application." << std::endl;
 
   this->setOrganizationName("Gazebo");
   this->setOrganizationDomain("gazebosim.org");
@@ -99,7 +99,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 
 #if __APPLE__
   // Use the Metal graphics API on macOS.
-  igndbg << "Qt using Metal graphics interface" << std::endl;
+  gzdbg << "Qt using Metal graphics interface" << std::endl;
   QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
 
   // TODO(srmainwaring): implement facility for overriding the default
@@ -117,7 +117,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   // QSurfaceFormat::setDefaultFormat(format);
 #else
   // Otherwise use OpenGL
-  igndbg << "Qt using OpenGL graphics interface" << std::endl;
+  gzdbg << "Qt using OpenGL graphics interface" << std::endl;
 #endif
 
   // Configure console
@@ -147,7 +147,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   if (_type == WindowType::kMainWindow)
   {
     if (!this->InitializeMainWindow())
-      ignerr << "Failed to initialize main window." << std::endl;
+      gzerr << "Failed to initialize main window." << std::endl;
   }
   else if (_type == WindowType::kDialog)
   {
@@ -155,14 +155,14 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   }
   else
   {
-    ignerr << "Unknown WindowType [" << static_cast<int>(_type) << "]\n";
+    gzerr << "Unknown WindowType [" << static_cast<int>(_type) << "]\n";
   }
 }
 
 /////////////////////////////////////////////////
 Application::~Application()
 {
-  igndbg << "Terminating application." << std::endl;
+  gzdbg << "Terminating application." << std::endl;
 
   if (this->dataPtr->mainWin && this->dataPtr->mainWin->QuickWindow())
   {
@@ -206,7 +206,7 @@ QQmlApplicationEngine *Application::Engine() const
 }
 
 /////////////////////////////////////////////////
-Application *ignition::gui::App()
+Application *gz::gui::App()
 {
   return qobject_cast<Application *>(qGuiApp);
 }
@@ -245,7 +245,7 @@ bool Application::LoadConfig(const std::string &_config)
 {
   if (_config.empty())
   {
-    ignerr << "Missing config file" << std::endl;
+    gzerr << "Missing config file" << std::endl;
     return false;
   }
 
@@ -259,14 +259,14 @@ bool Application::LoadConfig(const std::string &_config)
     // presses "Save configuration".
     if (_config != this->DefaultConfigPath())
     {
-      ignerr << "Failed to load file [" << _config << "]: XMLError"
+      gzerr << "Failed to load file [" << _config << "]: XMLError"
              << std::endl;
     }
 
     return false;
   }
 
-  ignmsg << "Loading config [" << _config << "]" << std::endl;
+  gzmsg << "Loading config [" << _config << "]" << std::endl;
 
   // Clear all previous plugins
   auto plugins = this->dataPtr->mainWin->findChildren<Plugin *>();
@@ -277,7 +277,7 @@ bool Application::LoadConfig(const std::string &_config)
   }
   if (this->dataPtr->pluginsAdded.size() > 0)
   {
-    ignerr << "The plugin list was not properly cleaned up." << std::endl;
+    gzerr << "The plugin list was not properly cleaned up." << std::endl;
   }
   this->dataPtr->pluginsAdded.clear();
 
@@ -292,12 +292,12 @@ bool Application::LoadConfig(const std::string &_config)
   // Process window properties
   if (auto winElem = doc.FirstChildElement("window"))
   {
-    igndbg << "Loading window config" << std::endl;
+    gzdbg << "Loading window config" << std::endl;
 
     tinyxml2::XMLPrinter printer;
     if (!winElem->Accept(&printer))
     {
-      ignwarn << "There was an error parsing the <window> element"
+      gzwarn << "There was an error parsing the <window> element"
               << std::endl;
       return false;
     }
@@ -315,7 +315,7 @@ bool Application::LoadConfig(const std::string &_config)
       }
       else if (value != "close_gui" && !value.empty())
       {
-        ignwarn << "Value '" << value << "' of <default_exit_action> is "
+        gzwarn << "Value '" << value << "' of <default_exit_action> is "
                 << "invalid. Allowed values are CLOSE_GUI and SHUTDOWN_SERVER. "
                 << "Selecting CLOSE_GUI as fallback." << std::endl;
       }
@@ -379,11 +379,11 @@ bool Application::LoadConfig(const std::string &_config)
 
     if (serverControlService.empty())
     {
-      ignerr << "Failed to create valid server control service" << std::endl;
+      gzerr << "Failed to create valid server control service" << std::endl;
     }
     else
     {
-      ignmsg << "Using server control service [" << serverControlService
+      gzmsg << "Using server control service [" << serverControlService
              << "]" << std::endl;
       this->dataPtr->mainWin->SetServerControlService(serverControlService);
     }
@@ -418,11 +418,11 @@ bool Application::LoadPlugin(const std::string &_filename,
 {
   if (_filename.empty())
   {
-    ignerr << "Trying to load plugin with empty filename." << std::endl;
+    gzerr << "Trying to load plugin with empty filename." << std::endl;
     return false;
   }
 
-  igndbg << "Loading plugin [" << _filename << "]" << std::endl;
+  gzdbg << "Loading plugin [" << _filename << "]" << std::endl;
 
   common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(this->dataPtr->pluginPathEnv);
@@ -434,7 +434,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   std::string home;
   common::env(IGN_HOMEDIR, home);
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
-                             IGN_GUI_PLUGIN_INSTALL_DIR);
+                             GZ_GUI_PLUGIN_INSTALL_DIR);
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -445,13 +445,13 @@ bool Application::LoadPlugin(const std::string &_filename,
     pathToLib = systemPathsDep.FindSharedLibrary(_filename);
     if (pathToLib.empty())
     {
-      ignerr << "Failed to load plugin [" << _filename <<
+      gzerr << "Failed to load plugin [" << _filename <<
                 "] : couldn't find shared library." << std::endl;
       return false;
     }
     else
     {
-      ignwarn << "Found plugin [" << _filename
+      gzwarn << "Found plugin [" << _filename
               << "] using deprecated environment variable ["
               << this->dataPtr->pluginPathEnvDeprecated << "]. Please use ["
               << this->dataPtr->pluginPathEnv << "] instead." << std::endl;
@@ -464,14 +464,14 @@ bool Application::LoadPlugin(const std::string &_filename,
   auto pluginNames = pluginLoader.LoadLib(pathToLib);
   if (pluginNames.empty())
   {
-    ignerr << "Failed to load plugin [" << _filename <<
+    gzerr << "Failed to load plugin [" << _filename <<
               "] : couldn't load library on path [" << pathToLib <<
               "]." << std::endl;
     return false;
   }
 
   // Go over all plugin names and get the first one that implements the
-  // ignition::gui::Plugin interface
+  // gz::gui::Plugin interface
   plugin::PluginPtr commonPlugin;
   std::shared_ptr<gui::Plugin> plugin{nullptr};
   for (auto pluginName : pluginNames)
@@ -480,28 +480,28 @@ bool Application::LoadPlugin(const std::string &_filename,
     if (!commonPlugin)
       continue;
 
-    plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
+    plugin = commonPlugin->QueryInterfaceSharedPtr<gz::gui::Plugin>();
     if (plugin)
       break;
   }
 
   if (!commonPlugin)
   {
-    ignerr << "Failed to load plugin [" << _filename <<
+    gzerr << "Failed to load plugin [" << _filename <<
               "] : couldn't instantiate plugin on path [" << pathToLib <<
               "]. Tried plugin names: " << std::endl;
 
     for (auto pluginName : pluginNames)
     {
-      ignerr << " * " << pluginName << std::endl;
+      gzerr << " * " << pluginName << std::endl;
     }
     return false;
   }
 
   if (!plugin)
   {
-    ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't get [ignition::gui::Plugin] interface."
+    gzerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't get [gz::gui::Plugin] interface."
            << std::endl;
     return false;
   }
@@ -532,7 +532,7 @@ bool Application::LoadPlugin(const std::string &_filename,
     this->InitializeDialogs();
 
   this->PluginAdded(plugin->CardItem()->objectName());
-  ignmsg << "Loaded plugin [" << _filename << "] from path [" << pathToLib
+  gzmsg << "Loaded plugin [" << _filename << "] from path [" << pathToLib
          << "]" << std::endl;
 
   return true;
@@ -559,7 +559,7 @@ std::shared_ptr<Plugin> Application::PluginByName(
 /////////////////////////////////////////////////
 bool Application::InitializeMainWindow()
 {
-  igndbg << "Create main window" << std::endl;
+  gzdbg << "Create main window" << std::endl;
 
   this->dataPtr->mainWin = new MainWindow();
   if (!this->dataPtr->mainWin->QuickWindow())
@@ -573,7 +573,7 @@ bool Application::InitializeMainWindow()
 /////////////////////////////////////////////////
 bool Application::ApplyConfig()
 {
-  igndbg << "Applying config" << std::endl;
+  gzdbg << "Applying config" << std::endl;
 
   if (!this->dataPtr->mainWin)
     return false;
@@ -592,7 +592,7 @@ bool Application::AddPluginsToWindow()
       ->findChild<QQuickItem *>("background");
   if (!this->dataPtr->pluginsToAdd.empty() && !bgItem)
   {
-    ignerr << "Null background QQuickItem!" << std::endl;
+    gzerr << "Null background QQuickItem!" << std::endl;
     return false;
   }
 
@@ -623,7 +623,7 @@ bool Application::AddPluginsToWindow()
         splitName.toString());
     if (!splitItem)
     {
-      ignerr << "Internal error: failed to create split ["
+      gzerr << "Internal error: failed to create split ["
              << splitName.toString().toStdString() << "]" << std::endl;
       return false;
     }
@@ -640,7 +640,7 @@ bool Application::AddPluginsToWindow()
     this->dataPtr->mainWin->connect(cardItem, SIGNAL(close()),
         this, SLOT(OnPluginClose()));
 
-    ignmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
+    gzmsg << "Added plugin [" << plugin->Title() << "] to main window" <<
         std::endl;
   }
 
@@ -652,7 +652,7 @@ bool Application::AddPluginsToWindow()
 /////////////////////////////////////////////////
 bool Application::InitializeDialogs()
 {
-  igndbg << "Initialize dialogs" << std::endl;
+  gzdbg << "Initialize dialogs" << std::endl;
 
   while (!this->dataPtr->pluginsToAdd.empty())
   {
@@ -689,7 +689,7 @@ bool Application::InitializeDialogs()
     this->dataPtr->pluginsAdded.push_back(plugin);
 
     auto title = QString::fromStdString(plugin->Title());
-    igndbg << "Initialized dialog [" << title.toStdString() << "]" << std::endl;
+    gzdbg << "Initialized dialog [" << title.toStdString() << "]" << std::endl;
   }
 
   if (this->dataPtr->pluginsAdded.empty())
@@ -734,7 +734,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   paths.push_back(home + "/.ignition/gui/plugins");
 
   // 4. Install path
-  paths.push_back(IGN_GUI_PLUGIN_INSTALL_DIR);
+  paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
 
   // Populate map
   std::vector<std::pair<std::string, std::vector<std::string>>> plugins;
@@ -802,20 +802,20 @@ void ApplicationPrivate::MessageHandler(QtMsgType _type,
   switch (_type)
   {
     case QtDebugMsg:
-      igndbg << msg << std::endl;
+      gzdbg << msg << std::endl;
       break;
     case QtInfoMsg:
-      ignmsg << msg << std::endl;
+      gzmsg << msg << std::endl;
       break;
     case QtWarningMsg:
-      ignwarn << msg << std::endl;
+      gzwarn << msg << std::endl;
       break;
     case QtFatalMsg:
     case QtCriticalMsg:
-      ignerr << msg << std::endl;
+      gzerr << msg << std::endl;
       break;
     default:
-      ignwarn << "Unknown QT Message type[" << _type << "]: "
+      gzwarn << "Unknown QT Message type[" << _type << "]: "
         << msg << std::endl;
       break;
   }

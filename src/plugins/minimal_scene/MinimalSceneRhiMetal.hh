@@ -15,11 +15,11 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_
-#define IGNITION_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_
+#ifndef GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_
+#define GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_
 
 #include "MinimalSceneRhi.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 #include <QQuickWindow>
 #include <QSGTexture>
@@ -28,7 +28,7 @@
 #include <memory>
 #include <string>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

@@ -19,17 +19,17 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/stringmsg.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-#include <ignition/transport/Node.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/MainWindow.hh"
 
 #include "Publisher.hh"
 
@@ -39,11 +39,11 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Publisher_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
@@ -104,7 +104,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
   EXPECT_EQ(plugin->Title(), "Publisher!");
 
   // Message type
-  EXPECT_EQ(plugin->MsgType(), "ignition.msgs.StringMsg");
+  EXPECT_EQ(plugin->MsgType(), "gz.msgs.StringMsg");
 
   // Message
   EXPECT_EQ(plugin->MsgData(), "data: \"Hello\"");
@@ -190,7 +190,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
   plugin->OnPublish(false);
 
   // Bad message type - msg combination
-  plugin->SetMsgType("ignition.msgs.StringMsg");
+  plugin->SetMsgType("gz.msgs.StringMsg");
   plugin->SetMsgData("banana: apple");
   plugin->OnPublish(true);
 
@@ -221,7 +221,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ParamsFromSDF))
     "<plugin filename=\"Publisher\">"
       "<topic>/fruit</topic>"
       "<message>number: 1 fruit {name:\"banana\"}</message>"
-      "<message_type>ignition.msgs.Fruits</message_type>"
+      "<message_type>gz.msgs.Fruits</message_type>"
       "<frequency>0.1</frequency>"
     "</plugin>";
 
@@ -245,7 +245,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ParamsFromSDF))
   EXPECT_EQ(plugin->Title(), "Publisher");
 
   // Message type
-  EXPECT_EQ(plugin->MsgType(), "ignition.msgs.Fruits");
+  EXPECT_EQ(plugin->MsgType(), "gz.msgs.Fruits");
 
   // Message
   EXPECT_EQ(plugin->MsgData(), "number: 1 fruit {name:\"banana\"}");

@@ -19,13 +19,13 @@
 
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/StringUtils.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/StringUtils.hh>
+#include <gz/plugin/Register.hh>
 
-#include "ignition/gui/Helpers.hh"
+#include "gz/gui/Helpers.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -34,13 +34,13 @@ namespace plugins
   class WorldStatsPrivate
   {
     /// \brief Message holding latest world statistics
-    public: ignition::msgs::WorldStatistics msg;
+    public: gz::msgs::WorldStatistics msg;
 
     /// \brief Mutex to protect msg
     public: std::recursive_mutex mutex;
 
     /// \brief Communication node
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Holds real time factor
     public: QString realTimeFactor;
@@ -58,7 +58,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -83,7 +83,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Create elements from configuration
   if (!_pluginElem)
   {
-    ignerr << "Null plugin element." << std::endl;
+    gzerr << "Null plugin element." << std::endl;
     return;
   }
 
@@ -119,7 +119,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       parts[2] != worldName &&
       parts[3] == "stats")
   {
-    ignwarn << "Ignoring topic [" << topic
+    gzwarn << "Ignoring topic [" << topic
             << "], world name different from [" << worldName
             << "]. Fix or remove your <topic> tag." << std::endl;
 
@@ -130,7 +130,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     if (worldName.empty())
     {
-      ignerr << "Must specify a <topic> to subscribe to world statistics, or "
+      gzerr << "Must specify a <topic> to subscribe to world statistics, or "
              << "set the MainWindow's [worldNames] property." << std::endl;
       return;
     }
@@ -141,7 +141,7 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   topic = transport::TopicUtils::AsValidTopic(topic);
   if (topic.empty())
   {
-    ignerr << "Failed to create valid topic for world [" << worldName << "]"
+    gzerr << "Failed to create valid topic for world [" << worldName << "]"
            << std::endl;
     return;
   }
@@ -149,11 +149,11 @@ void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (!this->dataPtr->node.Subscribe(topic, &WorldStats::OnWorldStatsMsg,
       this))
   {
-    ignerr << "Failed to subscribe to [" << topic << "]" << std::endl;
+    gzerr << "Failed to subscribe to [" << topic << "]" << std::endl;
     return;
   }
 
-  ignmsg << "Listening to stats on [" << topic << "]" << std::endl;
+  gzmsg << "Listening to stats on [" << topic << "]" << std::endl;
 
   // Sim time
   if (auto simTimeElem = _pluginElem->FirstChildElement("sim_time"))
@@ -235,7 +235,7 @@ void WorldStats::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void WorldStats::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
+void WorldStats::OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -296,5 +296,5 @@ void WorldStats::SetIterations(const QString &_iterations)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::WorldStats,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::WorldStats,
+                    gz::gui::Plugin)

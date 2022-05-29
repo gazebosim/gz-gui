@@ -16,3 +16,4 @@
  */
 
 #include <gz/gui/Plugin.hh>
+#include <ignition/gui/config.hh>

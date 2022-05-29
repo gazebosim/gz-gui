@@ -18,19 +18,19 @@
 #include <string>
 #include <vector>
 
-#include <ignition/common/Console.hh>
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/Conversions.hh>
-#include <ignition/gui/GuiEvents.hh>
-#include <ignition/gui/MainWindow.hh>
-#include <ignition/plugin/Register.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/rendering.hh>
+#include <gz/common/Console.hh>
+#include <gz/gui/Application.hh>
+#include <gz/gui/Conversions.hh>
+#include <gz/gui/GuiEvents.hh>
+#include <gz/gui/MainWindow.hh>
+#include <gz/plugin/Register.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/rendering.hh>
 
 #include "GridConfig.hh"
 
-namespace ignition::gui
+namespace gz::gui
 {
   struct GridParam
   {
@@ -81,12 +81,12 @@ namespace ignition::gui
   };
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
-  : ignition::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
+  : gz::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
 {
 }
 
@@ -146,14 +146,14 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  ignition::gui::App()->findChild<
-      ignition::gui::MainWindow *>()->installEventFilter(this);
+  gz::gui::App()->findChild<
+      gz::gui::MainWindow *>()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
 bool GridConfig::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if (_event->type() == ignition::gui::events::Render::kType)
+  if (_event->type() == gz::gui::events::Render::kType)
   {
     if (nullptr == this->dataPtr->scene)
       this->dataPtr->scene = rendering::sceneFromFirstRenderEngine();
@@ -201,7 +201,7 @@ void GridConfig::CreateGrids()
 
     this->dataPtr->dirty = true;
 
-    igndbg << "Created grid [" << grid->Name() << "]" << std::endl;
+    gzdbg << "Created grid [" << grid->Name() << "]" << std::endl;
   }
   this->dataPtr->startupGrids.clear();
 }
@@ -241,14 +241,14 @@ void GridConfig::UpdateGrid()
     }
     else
     {
-      ignerr << "Grid visual missing material" << std::endl;
+      gzerr << "Grid visual missing material" << std::endl;
     }
 
     visual->SetVisible(this->dataPtr->visible);
   }
   else
   {
-    ignerr << "Grid missing parent visual" << std::endl;
+    gzerr << "Grid missing parent visual" << std::endl;
   }
 
   this->dataPtr->dirty = false;
@@ -276,7 +276,7 @@ void GridConfig::ConnectToGrid()
       {
         this->dataPtr->grid = grid;
 
-        igndbg << "Connected to grid [" << grid->Name() << "]" << std::endl;
+        gzdbg << "Connected to grid [" << grid->Name() << "]" << std::endl;
 
         // TODO(chapulina) Set to the grid's visible state when that's available
         // through ign-rendering's API
@@ -409,5 +409,5 @@ void GridConfig::RefreshList()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::GridConfig,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::GridConfig,
+                    gz::gui::Plugin)

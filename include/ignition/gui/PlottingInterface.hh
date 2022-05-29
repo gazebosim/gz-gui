@@ -16,3 +16,4 @@
  */
 
 #include <gz/gui/PlottingInterface.hh>
+#include <ignition/gui/config.hh>

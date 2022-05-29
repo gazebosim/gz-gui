@@ -14,16 +14,16 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
-#define IGNITION_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
+#ifndef GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
+#define GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/gui/PlottingInterface.hh>
-#include <ignition/utils/SuppressWarning.hh>
+#include <gz/gui/Plugin.hh>
+#include <gz/gui/PlottingInterface.hh>
+#include <gz/utils/SuppressWarning.hh>
 
 #include <memory>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -32,7 +32,7 @@ namespace plugins
 
 /// \brief Plots fields from Gazebo Transport topics.
 /// Fields can be dragged from the Topic Viewer or the Component Inspector.
-class TransportPlotting : public ignition::gui::Plugin
+class TransportPlotting : public gz::gui::Plugin
 {
   Q_OBJECT
 

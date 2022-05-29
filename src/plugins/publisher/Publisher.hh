@@ -15,12 +15,12 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_PUBLISHER_HH_
-#define IGNITION_GUI_PLUGINS_PUBLISHER_HH_
+#ifndef GZ_GUI_PLUGINS_PUBLISHER_HH_
+#define GZ_GUI_PLUGINS_PUBLISHER_HH_
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 #ifndef _WIN32
 #  define Publisher_EXPORTS_API
@@ -32,7 +32,7 @@
 #  endif
 #endif
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -94,12 +94,12 @@ namespace plugins
     public slots: void OnPublish(const bool _checked);
 
     /// \brief Get the message type as a string, for example
-    /// 'ignition.msgs.StringMsg'
+    /// 'gz.msgs.StringMsg'
     /// \return Message type
     public: Q_INVOKABLE QString MsgType() const;
 
     /// \brief Set the message type from a string, for example
-    /// 'ignition.msgs.StringMsg'
+    /// 'gz.msgs.StringMsg'
     /// \param[in] _msgType Message type
     public: Q_INVOKABLE void SetMsgType(const QString &_msgType);
 

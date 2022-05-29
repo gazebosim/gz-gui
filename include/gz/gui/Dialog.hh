@@ -30,14 +30,14 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
     class DialogPrivate;
 
     /// \brief Gui plugin
-    class IGNITION_GUI_VISIBLE Dialog : public QObject
+    class GZ_GUI_VISIBLE Dialog : public QObject
     {
       Q_OBJECT
 

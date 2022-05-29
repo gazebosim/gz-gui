@@ -24,16 +24,16 @@
 /////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
-  ignition::transport::Node node;
+  gz::transport::Node node;
 
   // Create the marker message
-  ignition::msgs::Marker markerMsg;
-  ignition::msgs::Material matMsg;
+  gz::msgs::Marker markerMsg;
+  gz::msgs::Material matMsg;
   markerMsg.set_ns("default");
   markerMsg.set_id(0);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::SPHERE);
-  markerMsg.set_visibility(ignition::msgs::Marker::GUI);
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::SPHERE);
+  markerMsg.set_visibility(gz::msgs::Marker::GUI);
 
   // Set color to Blue
   markerMsg.mutable_material()->mutable_ambient()->set_r(0);
@@ -46,16 +46,16 @@ int main(int _argc, char **_argv)
   markerMsg.mutable_material()->mutable_diffuse()->set_a(1);
   markerMsg.mutable_lifetime()->set_sec(2);
   markerMsg.mutable_lifetime()->set_nsec(0);
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-                    ignition::math::Vector3d(1.0, 1.0, 1.0));
+  gz::msgs::Set(markerMsg.mutable_scale(),
+                    gz::math::Vector3d(1.0, 1.0, 1.0));
 
   // The rest of this function adds different shapes and/or modifies shapes.
   // Read the terminal statements to figure out what each node.Request
   // call accomplishes.
   std::cout << "Spawning a blue sphere with lifetime 2s\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                      ignition::math::Pose3d(2, 2, 0, 0, 0, 0));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                      gz::math::Pose3d(2, 2, 0, 0, 0, 0));
   node.Request("/marker", markerMsg);
   std::cout << "Sleeping for 2 seconds\n";
   std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -63,8 +63,8 @@ int main(int _argc, char **_argv)
   std::cout << "Spawning a black sphere at the origin with no lifetime\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(1);
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                      ignition::math::Pose3d::Zero);
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                      gz::math::Pose3d::Zero);
   markerMsg.mutable_material()->mutable_ambient()->set_b(0);
   markerMsg.mutable_material()->mutable_diffuse()->set_b(0);
   markerMsg.mutable_lifetime()->set_sec(0);
@@ -72,14 +72,14 @@ int main(int _argc, char **_argv)
 
   std::cout << "Moving the black sphere to x=0, y=1, z=1\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                      ignition::math::Pose3d(0, 1, 1, 0, 0, 0));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                      gz::math::Pose3d(0, 1, 1, 0, 0, 0));
   node.Request("/marker", markerMsg);
 
   std::cout << "Shrinking the black sphere\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-                    ignition::math::Vector3d(0.2, 0.2, 0.2));
+  gz::msgs::Set(markerMsg.mutable_scale(),
+                    gz::math::Vector3d(0.2, 0.2, 0.2));
   node.Request("/marker", markerMsg);
 
   std::cout << "Changing the black sphere to red\n";
@@ -101,67 +101,67 @@ int main(int _argc, char **_argv)
   markerMsg.mutable_material()->mutable_diffuse()->set_b(0);
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(2);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::SPHERE);
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-                    ignition::math::Vector3d(0.5, 1.0, 1.5));
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                    ignition::math::Pose3d(2, 0, .5, 0, 0, 0));
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::SPHERE);
+  gz::msgs::Set(markerMsg.mutable_scale(),
+                    gz::math::Vector3d(0.5, 1.0, 1.5));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                    gz::math::Pose3d(2, 0, .5, 0, 0, 0));
   node.Request("/marker", markerMsg);
 
   std::cout << "Changing the green ellipsoid to a cylinder\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
-  markerMsg.set_type(ignition::msgs::Marker::CYLINDER);
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-                    ignition::math::Vector3d(0.5, 0.5, 1.5));
+  markerMsg.set_type(gz::msgs::Marker::CYLINDER);
+  gz::msgs::Set(markerMsg.mutable_scale(),
+                    gz::math::Vector3d(0.5, 0.5, 1.5));
   node.Request("/marker", markerMsg);
 
   std::cout << "Connecting the sphere and cylinder with a line\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(3);
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                    ignition::math::Pose3d(0, 0, 0, 0, 0, 0));
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-                    ignition::math::Vector3d(1.0, 1.0, 1.0));
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::LINE_LIST);
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(0.0, 1.0, 1.0));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(2, 0, 0.5));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                    gz::math::Pose3d(0, 0, 0, 0, 0, 0));
+  gz::msgs::Set(markerMsg.mutable_scale(),
+                    gz::math::Vector3d(1.0, 1.0, 1.0));
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::LINE_LIST);
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(0.0, 1.0, 1.0));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(2, 0, 0.5));
   node.Request("/marker", markerMsg);
 
   std::cout << "Adding a square around the origin\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(4);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::LINE_STRIP);
-  ignition::msgs::Set(markerMsg.mutable_point(0),
-      ignition::math::Vector3d(0.5, 0.5, 0.05));
-  ignition::msgs::Set(markerMsg.mutable_point(1),
-      ignition::math::Vector3d(0.5, -0.5, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(-0.5, -0.5, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(-0.5, 0.5, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(0.5, 0.5, 0.05));
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::LINE_STRIP);
+  gz::msgs::Set(markerMsg.mutable_point(0),
+      gz::math::Vector3d(0.5, 0.5, 0.05));
+  gz::msgs::Set(markerMsg.mutable_point(1),
+      gz::math::Vector3d(0.5, -0.5, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(-0.5, -0.5, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(-0.5, 0.5, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(0.5, 0.5, 0.05));
   node.Request("/marker", markerMsg);
 
   std::cout << "Adding 100 green points inside the square\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(5);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::POINTS);
-  ignition::msgs::Set(markerMsg.mutable_scale(),
-                    ignition::math::Vector3d(5.0, 1.0, 1.0));
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::POINTS);
+  gz::msgs::Set(markerMsg.mutable_scale(),
+                    gz::math::Vector3d(5.0, 1.0, 1.0));
   markerMsg.clear_point();
   for (int i = 0; i < 100; ++i)
   {
-    ignition::msgs::Set(markerMsg.add_point(),
-        ignition::math::Vector3d(
-          ignition::math::Rand::DblUniform(-0.49, 0.49),
-          ignition::math::Rand::DblUniform(-0.49, 0.49),
+    gz::msgs::Set(markerMsg.add_point(),
+        gz::math::Vector3d(
+          gz::math::Rand::DblUniform(-0.49, 0.49),
+          gz::math::Rand::DblUniform(-0.49, 0.49),
           0.05));
   }
   node.Request("/marker", markerMsg);
@@ -169,94 +169,94 @@ int main(int _argc, char **_argv)
   std::cout << "Adding 100 colored points next to the square\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(6);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::POINTS);
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::POINTS);
   markerMsg.clear_point();
   for (int i = 0; i < 100; ++i)
   {
-    ignition::msgs::Set(markerMsg.add_point(),
-        ignition::math::Vector3d(
-          ignition::math::Rand::DblUniform(-1.0, 1.0),
-          ignition::math::Rand::DblUniform(0.5, 1.0),
+    gz::msgs::Set(markerMsg.add_point(),
+        gz::math::Vector3d(
+          gz::math::Rand::DblUniform(-1.0, 1.0),
+          gz::math::Rand::DblUniform(0.5, 1.0),
           0.05));
-    ignition::msgs::Set(markerMsg.add_materials()->mutable_diffuse(),
-        ignition::math::Color(
-          ignition::math::Rand::DblUniform(0.0, 1.0),
-          ignition::math::Rand::DblUniform(0.0, 1.0),
-          ignition::math::Rand::DblUniform(0.0, 1.0)));
+    gz::msgs::Set(markerMsg.add_materials()->mutable_diffuse(),
+        gz::math::Color(
+          gz::math::Rand::DblUniform(0.0, 1.0),
+          gz::math::Rand::DblUniform(0.0, 1.0),
+          gz::math::Rand::DblUniform(0.0, 1.0)));
   }
   node.Request("/marker", markerMsg);
 
   std::cout << "Adding a semi-circular triangle fan\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(7);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::TRIANGLE_FAN);
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::TRIANGLE_FAN);
   markerMsg.clear_point();
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                    ignition::math::Pose3d(0, 1.5, 0, 0, 0, 0));
-  ignition::msgs::Set(markerMsg.add_point(),
-        ignition::math::Vector3d(0, 0, 0.05));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                    gz::math::Pose3d(0, 1.5, 0, 0, 0, 0));
+  gz::msgs::Set(markerMsg.add_point(),
+        gz::math::Vector3d(0, 0, 0.05));
   double radius = 2;
   for (double t = 0; t <= M_PI; t+= 0.01)
   {
-    ignition::msgs::Set(markerMsg.add_point(),
-        ignition::math::Vector3d(radius * cos(t), radius * sin(t), 0.05));
+    gz::msgs::Set(markerMsg.add_point(),
+        gz::math::Vector3d(radius * cos(t), radius * sin(t), 0.05));
   }
   node.Request("/marker", markerMsg);
 
   std::cout << "Adding two triangles using a triangle list\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(8);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::TRIANGLE_LIST);
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::TRIANGLE_LIST);
   markerMsg.clear_point();
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                    ignition::math::Pose3d(0, -1.5, 0, 0, 0, 0));
-  ignition::msgs::Set(markerMsg.add_point(),
-        ignition::math::Vector3d(0, 0, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(1, 0, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(1, 1, 0.05));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                    gz::math::Pose3d(0, -1.5, 0, 0, 0, 0));
+  gz::msgs::Set(markerMsg.add_point(),
+        gz::math::Vector3d(0, 0, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(1, 0, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(1, 1, 0.05));
 
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(1, 1, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(2, 1, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(2, 2, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(1, 1, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(2, 1, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(2, 2, 0.05));
 
   node.Request("/marker", markerMsg);
 
   std::cout << "Adding a rectangular triangle strip\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(9);
-  markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg.set_type(ignition::msgs::Marker::TRIANGLE_STRIP);
+  markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg.set_type(gz::msgs::Marker::TRIANGLE_STRIP);
   markerMsg.clear_point();
-  ignition::msgs::Set(markerMsg.mutable_pose(),
-                    ignition::math::Pose3d(-2, -2, 0, 0, 0, 0));
-  ignition::msgs::Set(markerMsg.add_point(),
-        ignition::math::Vector3d(0, 0, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(1, 0, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(0, 1, 0.05));
+  gz::msgs::Set(markerMsg.mutable_pose(),
+                    gz::math::Pose3d(-2, -2, 0, 0, 0, 0));
+  gz::msgs::Set(markerMsg.add_point(),
+        gz::math::Vector3d(0, 0, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(1, 0, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(0, 1, 0.05));
 
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(1, 1, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(0, 2, 0.05));
-  ignition::msgs::Set(markerMsg.add_point(),
-      ignition::math::Vector3d(1, 2, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(1, 1, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(0, 2, 0.05));
+  gz::msgs::Set(markerMsg.add_point(),
+      gz::math::Vector3d(1, 2, 0.05));
 
   node.Request("/marker", markerMsg);
   std::cout << "Adding multiple markers via /marker_array\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
 
-  ignition::msgs::Marker_V markerMsgs;
-  ignition::msgs::Boolean res;
+  gz::msgs::Marker_V markerMsgs;
+  gz::msgs::Boolean res;
   bool result;
   unsigned int timeout = 5000;
 
@@ -264,9 +264,9 @@ int main(int _argc, char **_argv)
   auto markerMsg1 = markerMsgs.add_marker();
   markerMsg1->set_ns("default");
   markerMsg1->set_id(0);
-  markerMsg1->set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg1->set_type(ignition::msgs::Marker::SPHERE);
-  markerMsg1->set_visibility(ignition::msgs::Marker::GUI);
+  markerMsg1->set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg1->set_type(gz::msgs::Marker::SPHERE);
+  markerMsg1->set_visibility(gz::msgs::Marker::GUI);
 
   // Set color to Blue
   markerMsg1->mutable_material()->mutable_ambient()->set_r(0);
@@ -277,18 +277,18 @@ int main(int _argc, char **_argv)
   markerMsg1->mutable_material()->mutable_diffuse()->set_g(0);
   markerMsg1->mutable_material()->mutable_diffuse()->set_b(1);
   markerMsg1->mutable_material()->mutable_diffuse()->set_a(1);
-  ignition::msgs::Set(markerMsg1->mutable_scale(),
-                    ignition::math::Vector3d(1.0, 1.0, 1.0));
-  ignition::msgs::Set(markerMsg1->mutable_pose(),
-                      ignition::math::Pose3d(3, 3, 0, 0, 0, 0));
+  gz::msgs::Set(markerMsg1->mutable_scale(),
+                    gz::math::Vector3d(1.0, 1.0, 1.0));
+  gz::msgs::Set(markerMsg1->mutable_pose(),
+                      gz::math::Pose3d(3, 3, 0, 0, 0, 0));
 
   // Create second red box marker
   auto markerMsg2 = markerMsgs.add_marker();
   markerMsg2->set_ns("default");
   markerMsg2->set_id(0);
-  markerMsg2->set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg2->set_type(ignition::msgs::Marker::BOX);
-  markerMsg2->set_visibility(ignition::msgs::Marker::GUI);
+  markerMsg2->set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg2->set_type(gz::msgs::Marker::BOX);
+  markerMsg2->set_visibility(gz::msgs::Marker::GUI);
 
   // Set color to Red
   markerMsg2->mutable_material()->mutable_ambient()->set_r(1);
@@ -301,18 +301,18 @@ int main(int _argc, char **_argv)
   markerMsg2->mutable_material()->mutable_diffuse()->set_a(1);
   markerMsg2->mutable_lifetime()->set_sec(2);
   markerMsg2->mutable_lifetime()->set_nsec(0);
-  ignition::msgs::Set(markerMsg2->mutable_scale(),
-                    ignition::math::Vector3d(1.0, 1.0, 1.0));
-  ignition::msgs::Set(markerMsg2->mutable_pose(),
-                      ignition::math::Pose3d(3, 3, 2, 0, 0, 0));
+  gz::msgs::Set(markerMsg2->mutable_scale(),
+                    gz::math::Vector3d(1.0, 1.0, 1.0));
+  gz::msgs::Set(markerMsg2->mutable_pose(),
+                      gz::math::Pose3d(3, 3, 2, 0, 0, 0));
 
   // Create green capsule marker
   auto markerMsg3 = markerMsgs.add_marker();
   markerMsg3->set_ns("default");
   markerMsg3->set_id(0);
-  markerMsg3->set_action(ignition::msgs::Marker::ADD_MODIFY);
-  markerMsg3->set_type(ignition::msgs::Marker::CAPSULE);
-  markerMsg3->set_visibility(ignition::msgs::Marker::GUI);
+  markerMsg3->set_action(gz::msgs::Marker::ADD_MODIFY);
+  markerMsg3->set_type(gz::msgs::Marker::CAPSULE);
+  markerMsg3->set_visibility(gz::msgs::Marker::GUI);
 
   // Set color to Green
   markerMsg3->mutable_material()->mutable_ambient()->set_r(0);
@@ -325,16 +325,16 @@ int main(int _argc, char **_argv)
   markerMsg3->mutable_material()->mutable_diffuse()->set_a(1);
   markerMsg3->mutable_lifetime()->set_sec(2);
   markerMsg3->mutable_lifetime()->set_nsec(0);
-  ignition::msgs::Set(markerMsg3->mutable_scale(),
-                    ignition::math::Vector3d(1.0, 1.0, 1.0));
-  ignition::msgs::Set(markerMsg3->mutable_pose(),
-                      ignition::math::Pose3d(3, 3, 4, 0, 0, 0));
+  gz::msgs::Set(markerMsg3->mutable_scale(),
+                    gz::math::Vector3d(1.0, 1.0, 1.0));
+  gz::msgs::Set(markerMsg3->mutable_pose(),
+                      gz::math::Pose3d(3, 3, 4, 0, 0, 0));
 
   // Publish the three created markers above simultaneously
   node.Request("/marker_array", markerMsgs, timeout, res, result);
 
   std::cout << "Deleting all the markers\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
-  markerMsg.set_action(ignition::msgs::Marker::DELETE_ALL);
+  markerMsg.set_action(gz::msgs::Marker::DELETE_ALL);
   node.Request("/marker", markerMsg);
 }

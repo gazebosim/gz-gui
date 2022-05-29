@@ -17,12 +17,12 @@
 
 #include "ShutdownButton.hh"
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -45,9 +45,9 @@ void ShutdownButton::LoadConfig(const tinyxml2::XMLElement * /*_pluginElem*/)
 /////////////////////////////////////////////////
 void ShutdownButton::OnStop()
 {
-  ignition::gui::App()->findChild<MainWindow *>()->QuickWindow()->close();
+  gz::gui::App()->findChild<MainWindow *>()->QuickWindow()->close();
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::ShutdownButton,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::ShutdownButton,
+                    gz::gui::Plugin)

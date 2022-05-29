@@ -18,29 +18,29 @@
 
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/common/Image.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/common/Image.hh>
+#include <gz/plugin/Register.hh>
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -49,7 +49,7 @@ namespace plugins
   class ScreenshotPrivate
   {
     /// \brief Node for communication
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Screenshot service name
     public: std::string screenshotService;
@@ -61,7 +61,7 @@ namespace plugins
     public: bool dirty{false};
 
     /// \brief Pointer to the user camera.
-    public: ignition::rendering::CameraPtr userCamera{nullptr};
+    public: gz::rendering::CameraPtr userCamera{nullptr};
 
     /// \brief Saved screenshot filepath
     public: QString savedScreenshotPath = "";
@@ -70,13 +70,13 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : ignition::gui::Plugin(),
+  : gz::gui::Plugin(),
   dataPtr(std::make_unique<ScreenshotPrivate>())
 {
   std::string home;
@@ -91,7 +91,7 @@ Screenshot::Screenshot()
     if (!common::createDirectories(this->dataPtr->directory))
     {
       std::string defaultDir = common::joinPaths(home, ".ignition", "gui");
-      ignerr << "Unable to create directory [" << this->dataPtr->directory
+      gzerr << "Unable to create directory [" << this->dataPtr->directory
              << "]. Changing default directory to: " << defaultDir
              << std::endl;
 
@@ -115,7 +115,7 @@ void Screenshot::LoadConfig(const tinyxml2::XMLElement *)
   this->dataPtr->screenshotService = "/gui/screenshot";
   this->dataPtr->node.Advertise(this->dataPtr->screenshotService,
       &Screenshot::ScreenshotService, this);
-  ignmsg << "Screenshot service on ["
+  gzmsg << "Screenshot service on ["
          << this->dataPtr->screenshotService << "]" << std::endl;
 
   App()->findChild<MainWindow *>()->installEventFilter(this);
@@ -168,7 +168,7 @@ void Screenshot::SaveScreenshot()
   image.SetFromData(cameraImage.Data<unsigned char>(), width, height, format);
   image.SavePNG(savePath);
 
-  igndbg << "Saved image to [" << savePath << "]" << std::endl;
+  gzdbg << "Saved image to [" << savePath << "]" << std::endl;
 
   this->dataPtr->dirty = false;
 
@@ -194,7 +194,7 @@ void Screenshot::FindUserCamera()
     if (nullptr != cam)
     {
       this->dataPtr->userCamera = cam;
-      igndbg << "Screenshot plugin taking pictures of camera ["
+      gzdbg << "Screenshot plugin taking pictures of camera ["
              << this->dataPtr->userCamera->Name() << "]" << std::endl;
       break;
     }
@@ -236,5 +236,5 @@ void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Screenshot,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::Screenshot,
+                    gz::gui::Plugin)

@@ -18,13 +18,13 @@
 #include <stdlib.h>
 #include <gtest/gtest.h>
 
-#include <ignition/math/Helpers.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/math/Helpers.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Helpers.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Helpers.hh"
 
 int gg_argc = 1;
 char* gg_argv[] =
@@ -32,7 +32,7 @@ char* gg_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Helpers_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -122,7 +122,7 @@ TEST(HelpersTest, stringTypeFromKey)
 }
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 {
   Application app(gg_argc, gg_argv);
@@ -152,7 +152,7 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 }
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
 {
   // No app, no window, no names

@@ -24,7 +24,7 @@
   #include <gz/gui/qt.h>
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

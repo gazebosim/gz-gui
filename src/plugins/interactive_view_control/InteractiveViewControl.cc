@@ -18,27 +18,27 @@
 #include <string>
 #include <mutex>
 
-#include <ignition/common/MouseEvent.hh>
+#include <gz/common/MouseEvent.hh>
 
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/GuiEvents.hh>
-#include <ignition/gui/MainWindow.hh>
+#include <gz/gui/Application.hh>
+#include <gz/gui/GuiEvents.hh>
+#include <gz/gui/MainWindow.hh>
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/OrbitViewController.hh>
-#include <ignition/rendering/OrthoViewController.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/RayQuery.hh>
-#include <ignition/rendering/Utils.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/OrbitViewController.hh>
+#include <gz/rendering/OrthoViewController.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/RayQuery.hh>
+#include <gz/rendering/Utils.hh>
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
 #include "InteractiveViewControl.hh"
 
 /// \brief Private data class for InteractiveViewControl
-class ignition::gui::plugins::InteractiveViewControlPrivate
+class gz::gui::plugins::InteractiveViewControlPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -96,7 +96,7 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   public: transport::Node node;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -127,7 +127,7 @@ void InteractiveViewControlPrivate::OnRender()
         if (isUserCamera)
         {
           this->camera = cam;
-          igndbg << "InteractiveViewControl plugin is moving camera ["
+          gzdbg << "InteractiveViewControl plugin is moving camera ["
                  << this->camera->Name() << "]" << std::endl;
           break;
         }
@@ -136,7 +136,7 @@ void InteractiveViewControlPrivate::OnRender()
 
     if (!this->camera)
     {
-      ignerr << "InteractiveViewControl camera is not available" << std::endl;
+      gzerr << "InteractiveViewControl camera is not available" << std::endl;
       return;
     }
     this->rayQuery = this->camera->Scene()->CreateRayQuery();
@@ -166,7 +166,7 @@ void InteractiveViewControlPrivate::OnRender()
   }
   else
   {
-    ignerr << "Unknown view controller: " << this->viewController
+    gzerr << "Unknown view controller: " << this->viewController
            << ". Defaulting to orbit view controller" << std::endl;
     this->viewController = "orbit";
     this->viewControl = &this->orbitViewControl;
@@ -229,7 +229,7 @@ bool InteractiveViewControlPrivate::OnViewControl(const msgs::StringMsg &_msg,
 
   if (_msg.data() != "orbit" && _msg.data() != "ortho")
   {
-    ignwarn << "View controller type not supported [" << _msg.data() << "]"
+    gzwarn << "View controller type not supported [" << _msg.data() << "]"
             << std::endl;
     _res.set_data(false);
     return true;
@@ -265,11 +265,11 @@ void InteractiveViewControl::LoadConfig(
   this->dataPtr->cameraViewControlService = "/gui/camera/view_control";
   this->dataPtr->node.Advertise(this->dataPtr->cameraViewControlService,
       &InteractiveViewControlPrivate::OnViewControl, this->dataPtr.get());
-  ignmsg << "Camera view controller topic advertised on ["
+  gzmsg << "Camera view controller topic advertised on ["
          << this->dataPtr->cameraViewControlService << "]" << std::endl;
 
-  ignition::gui::App()->findChild<
-    ignition::gui::MainWindow *>()->installEventFilter(this);
+  gz::gui::App()->findChild<
+    gz::gui::MainWindow *>()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
@@ -282,7 +282,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::LeftClickOnScene::kType)
   {
     auto leftClickOnScene =
-      reinterpret_cast<ignition::gui::events::LeftClickOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::LeftClickOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     this->dataPtr->drag = math::Vector2d::Zero;
@@ -291,7 +291,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::MousePressOnScene::kType)
   {
     auto pressOnScene =
-      reinterpret_cast<ignition::gui::events::MousePressOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::MousePressOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     this->dataPtr->drag = math::Vector2d::Zero;
@@ -300,7 +300,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::DragOnScene::kType)
   {
     auto dragOnScene =
-      reinterpret_cast<ignition::gui::events::DragOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::DragOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     auto dragStart = this->dataPtr->mouseEvent.Pos();
@@ -314,7 +314,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   else if (_event->type() == events::ScrollOnScene::kType)
   {
     auto scrollOnScene =
-      reinterpret_cast<ignition::gui::events::ScrollOnScene *>(_event);
+      reinterpret_cast<gz::gui::events::ScrollOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
 
     this->dataPtr->drag += math::Vector2d(
@@ -323,9 +323,9 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
 
     this->dataPtr->mouseEvent = scrollOnScene->Mouse();
   }
-  else if (_event->type() == ignition::gui::events::BlockOrbit::kType)
+  else if (_event->type() == gz::gui::events::BlockOrbit::kType)
   {
-    auto blockOrbit = reinterpret_cast<ignition::gui::events::BlockOrbit *>(
+    auto blockOrbit = reinterpret_cast<gz::gui::events::BlockOrbit *>(
       _event);
     this->dataPtr->blockOrbit = blockOrbit->Block();
   }
@@ -335,5 +335,5 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::InteractiveViewControl,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::InteractiveViewControl,
+                    gz::gui::Plugin)

@@ -17,14 +17,14 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/utils/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 #include "WorldControl.hh"
 #include "WorldControlEventListener.hh"
 
@@ -34,10 +34,10 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./WorldControl_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 /////////////////////////////////////////////////
 TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
@@ -338,7 +338,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControlEvent))
   EXPECT_EQ(plugin->Title(), "World Control!");
 
   // World control event listener
-  ignition::gui::WorldControlEventListener eventListener;
+  gz::gui::WorldControlEventListener eventListener;
   EXPECT_FALSE(eventListener.listenedToPause);
   EXPECT_FALSE(eventListener.listenedToStep);
   EXPECT_FALSE(eventListener.listenedToPlay);

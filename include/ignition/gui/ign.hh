@@ -16,3 +16,4 @@
  */
 
 #include <gz/gui/gz.hh>
+#include <ignition/gui/config.hh>
