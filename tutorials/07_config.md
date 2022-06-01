@@ -15,9 +15,19 @@ By default, Ignition GUI will load the config file at
 Configuration files can also be loaded from the command line or through the
 C++ API.
 
-From the command line, use the `--config` / `-c` option, for example:
+From the command line, use the `--config` / `-c` option.
+For example, you can specify an absolute path:
 
-`ign gui -c path/to/example.config`
+`ign gui -c /absolute/path/to/example.config`
+
+Or a path relative to the current working directory:
+
+`ign gui -c relative/path/to/example.config`
+
+Or a path relative to a custom directory, which you can specify by setting the
+environment variable `GZ_GUI_RESOURCE_PATH`, like so:
+
+`GZ_GUI_RESOURCE_PATH=/absolute/path/to/ ign gui --config example.config`
 
 From the C++ API, pass the file path to
 [Application::LoadConfig](https://ignitionrobotics.org/api/gui/6.0/classignition_1_1gui_1_1Application.html#a03c4c3a1b1e58cc4bff05658f21fff17).

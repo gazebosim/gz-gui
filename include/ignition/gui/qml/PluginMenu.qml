@@ -111,6 +111,12 @@ Popup {
   IgnSortFilterModel {
     id: filteredModel
 
+    lessThan: function(left, right) {
+      var leftStr = left.modelData.toLowerCase();
+      var rightStr = right.modelData.toLowerCase();
+      return leftStr < rightStr;
+    }
+
     filterAcceptsItem: function(item) {
       var itemStr = item.modelData.toLowerCase();
       var filterStr = searchField.text.toLowerCase();
