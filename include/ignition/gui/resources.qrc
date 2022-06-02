@@ -2,6 +2,7 @@
 <qresource>
   <file>qtquickcontrols2.conf</file>
 
+  <file>qml/GzColorRGB.qml</file>
   <file>qml/IgnCard.qml</file>
   <file>qml/IgnCardSettings.qml</file>
   <file>qml/IgnHelpers.qml</file>
