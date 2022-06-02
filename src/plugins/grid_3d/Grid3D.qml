@@ -52,10 +52,10 @@ GridLayout {
       roll.value = _rot.x;
       pitch.value = _rot.y;
       yaw.value = _rot.z;
-      r.value = _color.r;
-      g.value = _color.g;
-      b.value = _color.b;
-      a.value = _color.a;
+      gzcolor.r = _color.r * 256;
+      gzcolor.g = _color.g * 256;
+      gzcolor.b = _color.b * 256;
+      gzcolor.a = _color.a * 256;
     }
   }
 
@@ -285,99 +285,13 @@ GridLayout {
     font.bold: true
   }
 
-  Text {
-    text: "R"
-    color: "dimgrey"
-  }
 
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: r
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(r.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "G"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: g
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(g.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "B"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: b
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(b.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "A"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: a
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 1.0
-    stepSize: 0.01
-    decimals: getDecimals(a.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Button {
-    Layout.alignment: Qt.AlignHCenter
+  GzColorRGB {
+    id: gzcolor
     Layout.columnSpan: 4
-    id: color
-    text: qsTr("Custom Color")
-    onClicked: colorDialog.open()
-
-    ColorDialog {
-      id: colorDialog
-      title: "Choose a grid color"
-      visible: false
-      onAccepted: {
-        r.value = colorDialog.color.r
-        g.value = colorDialog.color.g
-        b.value = colorDialog.color.b
-        a.value = colorDialog.color.a
-        Grid3D.SetColor(colorDialog.color.r, colorDialog.color.g, colorDialog.color.b, colorDialog.color.a)
-        colorDialog.close()
-      }
-      onRejected: {
-        colorDialog.close()
-      }
-    }
+    onColorSet: Grid3D.SetColor(r / 256.0, g / 256.0, b / 256.0, a / 256.0)
+    textVisible: true
   }
 
-  // Bottom spacer
-  Item {
-    Layout.columnSpan: 4
-    Layout.fillHeight: true
-  }
 }
 
