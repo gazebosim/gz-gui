@@ -16,7 +16,6 @@
 */
 import QtQuick 2.9
 import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 
@@ -39,6 +38,7 @@ GridLayout {
   Text {
     Layout.row: 0
     Layout.column: 2
+    Layout.alignment: Qt.AlignCenter
     text: "Red"
     color: "dimgrey"
     visible: textVisible
@@ -58,6 +58,7 @@ GridLayout {
   Text {
     Layout.row: 0
     Layout.column: 3
+    Layout.alignment: Qt.AlignCenter
     text: "Green"
     color: "dimgrey"
     visible: textVisible
@@ -77,6 +78,7 @@ GridLayout {
   Text {
     Layout.row: 0
     Layout.column: 4
+    Layout.alignment: Qt.AlignCenter
     text: "Blue"
     color: "dimgrey"
     visible: textVisible
@@ -96,6 +98,7 @@ GridLayout {
   Text {
     Layout.row: 0
     Layout.column: 5
+    Layout.alignment: Qt.AlignCenter
     text: "Alpha"
     color: "dimgrey"
     visible: textVisible
@@ -116,6 +119,7 @@ GridLayout {
   Text {
     Layout.row: 1
     Layout.column: 0
+    Layout.alignment: Qt.AlignCenter
     text: parent.colorName
   }
 
@@ -138,7 +142,7 @@ GridLayout {
 
     ColorDialog {
       id: colorDialog
-      title: "Choose a grid color"
+      title: "Choose a color"
       visible: false
       onAccepted: {
         r_spin.value = colorDialog.color.r * 255

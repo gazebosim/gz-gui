@@ -286,7 +286,7 @@ GridLayout {
   }
 
 
-  GzColorRGB {
+  GzColor {
     id: gzcolor
     Layout.columnSpan: 4
     onColorSet: Grid3D.SetColor(1.0 * r / 255.0, 1.0 * g / 255.0, 1.0 * b / 255.0, a)
