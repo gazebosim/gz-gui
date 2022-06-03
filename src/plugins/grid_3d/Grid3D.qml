@@ -55,7 +55,7 @@ GridLayout {
       gzcolor.r = _color.r * 255;
       gzcolor.g = _color.g * 255;
       gzcolor.b = _color.b * 255;
-      gzcolor.a = _color.a * 255;
+      gzcolor.a = _color.a;
     }
   }
 
@@ -289,7 +289,7 @@ GridLayout {
   GzColorRGB {
     id: gzcolor
     Layout.columnSpan: 4
-    onColorSet: Grid3D.SetColor(r / 255.0, g / 255.0, b / 255.0, a / 255.0)
+    onColorSet: Grid3D.SetColor(1.0 * r / 255.0, 1.0 * g / 255.0, 1.0 * b / 255.0, a)
     textVisible: true
   }
 

@@ -103,10 +103,11 @@ GridLayout {
 
   IgnSpinBox {
     id: "a_spin"
-    maximumValue: 255
+    maximumValue: 1.0
     minimumValue: 0
-    value: 255
-    stepSize: 1
+    value: 1.0
+    stepSize: 0.1
+    decimals: 2
     Layout.row: 1
     Layout.column: 5
     onEditingFinished: root.colorSet()
@@ -129,9 +130,9 @@ GridLayout {
       implicitWidth: 40
       implicitHeight: 40
       radius: 5
-      border.color: Qt.rgba(r / 255, g / 255, b / 255, a / 255)
+      border.color: Qt.rgba(r / 255, g / 255, b / 255, a)
       border.width: 2
-      color: Qt.rgba(r / 255, g / 255, b / 255, a / 255)
+      color: Qt.rgba(r / 255, g / 255, b / 255, a)
     }
     onClicked: colorDialog.open()
 
@@ -143,7 +144,7 @@ GridLayout {
         r_spin.value = colorDialog.color.r * 255
         g_spin.value = colorDialog.color.g * 255
         b_spin.value = colorDialog.color.b * 255
-        a_spin.value = colorDialog.color.a * 255
+        a_spin.value = colorDialog.color.a
         root.colorSet()
         colorDialog.close()
       }
