@@ -38,7 +38,11 @@ Popup {
       Material.color(Material.Grey, Material.Shade200):
       Material.color(Material.Grey, Material.Shade900);
 
-  onOpened: searchField.forceActiveFocus()
+
+  onOpened: {
+    searchField.forceActiveFocus()
+    searchField.selectAll()
+  }
 
   ColumnLayout {
     anchors.fill: parent
@@ -72,6 +76,18 @@ Popup {
           onTextEdited: {
             filteredModel.update();
           }
+          Keys.onReturnPressed: {
+            MainWindow.OnAddPlugin(
+              pluginMenuListView.currentItem.pluginModel.modelData);
+            drawer.close();
+            pluginMenu.close();
+          }
+          Keys.onDownPressed: {
+            pluginMenuListView.incrementCurrentIndex();
+          }
+          Keys.onUpPressed: {
+            pluginMenuListView.decrementCurrentIndex();
+          } 
         }
       }
     }
@@ -110,6 +126,7 @@ Popup {
     model: MainWindow.PluginListModel()
 
     delegate: ItemDelegate {
+      property variant pluginModel: model
       width: parent.width
       text: modelData
       highlighted: ListView.isCurrentItem
