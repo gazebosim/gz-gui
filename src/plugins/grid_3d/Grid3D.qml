@@ -52,10 +52,10 @@ GridLayout {
       roll.value = _rot.x;
       pitch.value = _rot.y;
       yaw.value = _rot.z;
-      gzcolor.r = _color.r * 256;
-      gzcolor.g = _color.g * 256;
-      gzcolor.b = _color.b * 256;
-      gzcolor.a = _color.a * 256;
+      gzcolor.r = _color.r * 255;
+      gzcolor.g = _color.g * 255;
+      gzcolor.b = _color.b * 255;
+      gzcolor.a = _color.a * 255;
     }
   }
 
@@ -289,7 +289,7 @@ GridLayout {
   GzColorRGB {
     id: gzcolor
     Layout.columnSpan: 4
-    onColorSet: Grid3D.SetColor(r / 256.0, g / 256.0, b / 256.0, a / 256.0)
+    onColorSet: Grid3D.SetColor(r / 255.0, g / 255.0, b / 255.0, a / 255.0)
     textVisible: true
   }
 

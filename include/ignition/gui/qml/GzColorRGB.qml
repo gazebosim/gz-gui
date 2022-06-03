@@ -129,9 +129,9 @@ GridLayout {
       implicitWidth: 40
       implicitHeight: 40
       radius: 5
-      border.color: Qt.rgba(r / 256, g / 256, b / 256, a / 256)
+      border.color: Qt.rgba(r / 255, g / 255, b / 255, a / 255)
       border.width: 2
-      color: Qt.rgba(r / 256, g / 256, b / 256, a / 256)
+      color: Qt.rgba(r / 255, g / 255, b / 255, a / 255)
     }
     onClicked: colorDialog.open()
 
@@ -140,10 +140,10 @@ GridLayout {
       title: "Choose a grid color"
       visible: false
       onAccepted: {
-        r_spin.value = colorDialog.color.r * 256
-        g_spin.value = colorDialog.color.g * 256
-        b_spin.value = colorDialog.color.b * 256
-        a_spin.value = colorDialog.color.a * 256
+        r_spin.value = colorDialog.color.r * 255
+        g_spin.value = colorDialog.color.g * 255
+        b_spin.value = colorDialog.color.b * 255
+        a_spin.value = colorDialog.color.a * 255
         root.colorSet()
         colorDialog.close()
       }
