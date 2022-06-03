@@ -52,7 +52,7 @@ ign_build_tests(TYPE UNIT
 
 foreach(test ${gtest_targets})
   target_compile_definitions(${test} PRIVATE
-    "IGN_GUI_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
+    "GZ_GUI_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
 endforeach()
 
 add_subdirectory(cmd)
