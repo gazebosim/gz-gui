@@ -226,8 +226,8 @@ void MainWindow::OnStopServer()
     gzerr << "Calling service [" << this->dataPtr->controlService << "] to "
            << "stop the server failed. Please check that the "
            << "<server_control_service> of the GUI is configured correctly and "
-           << "that the server is running in the same IGN_PARTITION and with "
-           << "the same configuration of IGN_TRANSPORT_TOPIC_STATISTICS."
+           << "that the server is running in the same GZ_PARTITION and with "
+           << "the same configuration of GZ_TRANSPORT_TOPIC_STATISTICS."
            << std::endl;
   }
 }

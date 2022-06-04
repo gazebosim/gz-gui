@@ -73,7 +73,7 @@ TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 // See https://github.com/gazebosim/gz-gui/issues/75
 TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
 {
-    setenv("IGN_PARTITION", "ign-gazebo-test", 1);
+    setenv("GZ_PARTITION", "ign-gazebo-test", 1);
 
     // =========== Publish =================
     transport::Node node;
