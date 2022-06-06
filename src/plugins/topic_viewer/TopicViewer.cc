@@ -425,5 +425,5 @@ void TopicViewer::UpdateModel()
 
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::TopicViewer,
+GZ_ADD_PLUGIN(gz::gui::plugins::TopicViewer,
                     gz::gui::Plugin)

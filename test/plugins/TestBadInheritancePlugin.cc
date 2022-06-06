@@ -35,5 +35,5 @@ TestBadInheritancePlugin::~TestBadInheritancePlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::TestBadInheritancePlugin,
+GZ_ADD_PLUGIN(gz::gui::TestBadInheritancePlugin,
                     gz::gui::MainWindow)

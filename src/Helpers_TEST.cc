@@ -123,7 +123,7 @@ TEST(HelpersTest, stringTypeFromKey)
 
 /////////////////////////////////////////////////
 // See https://github.com/gazebosim/gz-gui/issues/75
-TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
+TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 {
   Application app(gg_argc, gg_argv);
 
@@ -153,7 +153,7 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 
 /////////////////////////////////////////////////
 // See https://github.com/gazebosim/gz-gui/issues/75
-TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
+TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
 {
   // No app, no window, no names
   EXPECT_TRUE(worldNames().empty());
@@ -181,7 +181,7 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
 }
 
 /////////////////////////////////////////////////
-TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(renderEngine))
+TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(renderEngine))
 {
   // No app, no window, no render engine
   EXPECT_TRUE(renderEngineName().empty());

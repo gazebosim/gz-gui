@@ -37,7 +37,7 @@ using namespace gui;
 
 // See https://github.com/gazebosim/gz-gui/issues/75
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
+TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -63,7 +63,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
+TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -147,7 +147,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
+TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -175,7 +175,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
+TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -201,7 +201,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 
 //////////////////////////////////////////////////
 TEST(ApplicationTest,
-    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
+    GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -271,7 +271,7 @@ TEST(ApplicationTest,
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
+TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -346,7 +346,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 }
 
 /////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
+TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
 {
   gz::common::Console::SetVerbosity(4);
 

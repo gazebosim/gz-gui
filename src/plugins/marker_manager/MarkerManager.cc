@@ -781,5 +781,5 @@ bool MarkerManager::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::MarkerManager,
+GZ_ADD_PLUGIN(gz::gui::plugins::MarkerManager,
                     gz::gui::Plugin)

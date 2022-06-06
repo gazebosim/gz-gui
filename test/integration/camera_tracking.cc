@@ -52,7 +52,7 @@ using namespace gui;
 using namespace std::chrono_literals;
 
 /////////////////////////////////////////////////
-TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
+TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 {
   common::Console::SetVerbosity(4);
 

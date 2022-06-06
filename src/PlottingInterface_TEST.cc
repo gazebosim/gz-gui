@@ -37,7 +37,7 @@ using namespace gui;
 //////////////////////////////////////////////////
 // Disable test on windows until we fix "LNK2001 unresolved external symbol"
 // error
-TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
+TEST(PlottingInterfaceTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Topic))
 {
   common::Console::SetVerbosity(4);
 
@@ -115,7 +115,7 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
 //////////////////////////////////////////////////
 // Disable test on windows until we fix "LNK2001 unresolved external symbol"
 // error
-TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(HeaderTime))
+TEST(PlottingInterfaceTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(HeaderTime))
 {
   common::Console::SetVerbosity(4);
 
@@ -162,7 +162,7 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(HeaderTime))
 //////////////////////////////////////////////////
 // Disable test on windows until we fix "LNK2001 unresolved external symbol"
 // error
-TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
+TEST(PlottingInterfaceTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Transport))
 {
   // =========== Publish Test =================
   transport::Node node;

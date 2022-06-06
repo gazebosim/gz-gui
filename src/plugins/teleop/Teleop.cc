@@ -281,5 +281,5 @@ void Teleop::setAngularDirection(int _angularDir)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::Teleop,
+GZ_ADD_PLUGIN(gz::gui::plugins::Teleop,
                     gz::gui::Plugin)

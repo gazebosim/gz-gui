@@ -117,7 +117,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
   class RenderSync;
@@ -243,7 +243,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
   /// \brief Rendering thread
@@ -412,7 +412,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
   /// \brief Texture node for displaying the render texture from ign-renderer

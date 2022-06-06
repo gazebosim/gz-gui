@@ -38,7 +38,7 @@ using namespace gui;
 
 // See https://github.com/gazebosim/gz-gui/issues/75
 /////////////////////////////////////////////////
-TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
+TEST(ShutdownButtonTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -63,7 +63,7 @@ TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 }
 
 /////////////////////////////////////////////////
-TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownButton))
+TEST(ShutdownButtonTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownButton))
 {
   common::Console::SetVerbosity(4);
 
@@ -110,7 +110,7 @@ TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownButton))
 }
 
 /////////////////////////////////////////////////
-TEST(ShutdownButtonTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownGuiOnly))
+TEST(ShutdownButtonTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ShutdownGuiOnly))
 {
   common::Console::SetVerbosity(4);
 

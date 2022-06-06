@@ -86,7 +86,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event called to spawn a resource, given its description as a
@@ -107,7 +107,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event called to spawn a resource, which takes the path
@@ -127,7 +127,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
@@ -149,7 +149,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
@@ -171,7 +171,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the 3D coordinates of a
@@ -193,7 +193,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to enable or disable the dropdown menu.
@@ -215,7 +215,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the key release within
@@ -235,7 +235,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the key press within
@@ -255,7 +255,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast information about left
@@ -278,7 +278,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast information about right
@@ -301,7 +301,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event that block the Interactive View control when some of the
@@ -323,7 +323,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast the 2D coordinates of a
@@ -344,7 +344,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event called to clone a resource, given its name as a string.
@@ -363,7 +363,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event called to clone a resource, given its name as a string.
@@ -389,7 +389,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast information about mouse
@@ -408,7 +408,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast information about mouse
@@ -429,7 +429,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to broadcast information about mouse
@@ -449,7 +449,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event which is called to share WorldControl information.
@@ -468,7 +468,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
 
       /// \brief Event called in the render thread of a 3D scene, before the
@@ -484,7 +484,7 @@ namespace gz
 
         /// \internal
         /// \brief Private data pointer
-        IGN_UTILS_IMPL_PTR(dataPtr)
+        GZ_UTILS_IMPL_PTR(dataPtr)
       };
     }
   }

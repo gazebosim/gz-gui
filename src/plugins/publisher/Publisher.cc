@@ -214,5 +214,5 @@ void Publisher::SetFrequency(const double _frequency)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::Publisher,
+GZ_ADD_PLUGIN(gz::gui::plugins::Publisher,
                     gz::gui::Plugin)

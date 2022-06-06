@@ -49,5 +49,5 @@ void ShutdownButton::OnStop()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::ShutdownButton,
+GZ_ADD_PLUGIN(gz::gui::plugins::ShutdownButton,
                     gz::gui::Plugin)

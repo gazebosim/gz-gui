@@ -1395,5 +1395,5 @@ void MinimalScene::SetLoadingError(const QString &_loadingError)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::MinimalScene,
+GZ_ADD_PLUGIN(gz::gui::plugins::MinimalScene,
                     gz::gui::Plugin)

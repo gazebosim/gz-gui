@@ -139,7 +139,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 
   // Default config path
   std::string home;
-  common::env(IGN_HOMEDIR, home);
+  common::env(GZ_HOMEDIR, home);
   this->dataPtr->defaultConfigPath = common::joinPaths(
         home, ".ignition", "gui", "default.config");
 
@@ -432,7 +432,7 @@ bool Application::LoadPlugin(const std::string &_filename,
 
   // Add default folder and install folder
   std::string home;
-  common::env(IGN_HOMEDIR, home);
+  common::env(GZ_HOMEDIR, home);
   systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
                              GZ_GUI_PLUGIN_INSTALL_DIR);
 
@@ -730,7 +730,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 
   // 3. ~/.ignition/gui/plugins
   std::string home;
-  common::env(IGN_HOMEDIR, home);
+  common::env(GZ_HOMEDIR, home);
   paths.push_back(home + "/.ignition/gui/plugins");
 
   // 4. Install path

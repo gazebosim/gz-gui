@@ -38,7 +38,7 @@ using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(PointCloudTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(PointCloud))
+TEST(PointCloudTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(PointCloud))
 {
   common::Console::SetVerbosity(4);
 

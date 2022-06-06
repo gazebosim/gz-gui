@@ -353,7 +353,7 @@ void PointCloud::OnFloatVService(
 //////////////////////////////////////////////////
 void PointCloudPrivate::PublishMarkers()
 {
-  IGN_PROFILE("PointCloud::PublishMarkers");
+  GZ_PROFILE("PointCloud::PublishMarkers");
 
   if (!this->showing)
     return;
@@ -511,5 +511,5 @@ void PointCloud::SetPointSize(float _pointSize)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::PointCloud,
+GZ_ADD_PLUGIN(gz::gui::plugins::PointCloud,
                     gz::gui::Plugin)

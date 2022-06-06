@@ -178,6 +178,6 @@ void TopicEcho::SetPaused(const bool &_paused)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::TopicEcho,
+GZ_ADD_PLUGIN(gz::gui::plugins::TopicEcho,
                     gz::gui::Plugin)
 

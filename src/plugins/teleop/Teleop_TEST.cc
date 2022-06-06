@@ -129,7 +129,7 @@ class TeleopTest : public ::testing::Test
 };
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
+TEST_F(TeleopTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
 {
   // Forward movement.
   plugin->setLinearDirection(1);
@@ -218,7 +218,7 @@ TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
 }
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
+TEST_F(TeleopTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
 {
   // Generates a key press event on the main window.
   QKeyEvent *keypress_W = new QKeyEvent(QKeyEvent::KeyPress,

@@ -34,5 +34,5 @@ TestInvalidQmlPlugin::~TestInvalidQmlPlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::TestInvalidQmlPlugin,
+GZ_ADD_PLUGIN(gz::gui::TestInvalidQmlPlugin,
                     gz::gui::Plugin)

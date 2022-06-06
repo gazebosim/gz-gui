@@ -875,5 +875,5 @@ void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::TransportSceneManager,
+GZ_ADD_PLUGIN(gz::gui::plugins::TransportSceneManager,
                     gz::gui::Plugin)

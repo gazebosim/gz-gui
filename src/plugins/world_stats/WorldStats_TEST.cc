@@ -38,7 +38,7 @@ using namespace gui;
 
 // See https://github.com/gazebosim/gz-gui/issues/75
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
+TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -76,7 +76,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
+TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
 {
   common::Console::SetVerbosity(4);
 
@@ -188,7 +188,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoTopic))
+TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoTopic))
 {
   common::Console::SetVerbosity(4);
 
@@ -248,7 +248,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoTopic))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadTopic))
+TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadTopic))
 {
   common::Console::SetVerbosity(4);
 
@@ -309,7 +309,7 @@ TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadTopic))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldStatsTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
+TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
 {
   common::Console::SetVerbosity(4);
 

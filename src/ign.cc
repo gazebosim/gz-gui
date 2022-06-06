@@ -37,11 +37,11 @@ char* g_argv[] =
 void startConsoleLog()
 {
   std::string home;
-  gz::common::env(IGN_HOMEDIR, home);
+  gz::common::env(GZ_HOMEDIR, home);
 
   std::string logPathMod = gz::common::joinPaths(home,
       ".ignition", "gui", "log",
-      gz::common::timeToIso(IGN_SYSTEM_TIME()));
+      gz::common::timeToIso(GZ_SYSTEM_TIME()));
   gzLogInit(logPathMod, "console.log");
 }
 

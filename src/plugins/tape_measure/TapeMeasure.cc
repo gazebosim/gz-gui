@@ -328,5 +328,5 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::TapeMeasure,
+GZ_ADD_PLUGIN(gz::gui::TapeMeasure,
                     gz::gui::Plugin)

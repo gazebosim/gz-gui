@@ -46,9 +46,9 @@ class TransportPlotting : public gz::gui::Plugin
   public: void LoadConfig(const tinyxml2::XMLElement *) override;
 
   /// \brief Interface with the UI to Handle Transport Plotting
-  IGN_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING
+  GZ_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING
   private: std::unique_ptr<PlottingInterface> dataPtr;
-  IGN_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
+  GZ_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
 };
 
 }

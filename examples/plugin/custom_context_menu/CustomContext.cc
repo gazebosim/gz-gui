@@ -35,5 +35,5 @@ CustomContext::~CustomContext()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::CustomContext,
+GZ_ADD_PLUGIN(gz::gui::CustomContext,
                     gz::gui::Plugin);

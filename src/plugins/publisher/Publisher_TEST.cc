@@ -44,7 +44,7 @@ using namespace gui;
 
 /////////////////////////////////////////////////
 // See https://github.com/gazebosim/gz-gui/issues/75
-TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
+TEST(PublisherTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -69,7 +69,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 }
 
 /////////////////////////////////////////////////
-TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
+TEST(PublisherTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
 {
   common::Console::SetVerbosity(4);
 
@@ -209,7 +209,7 @@ TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
 }
 
 //////////////////////////////////////////////////
-TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ParamsFromSDF))
+TEST(PublisherTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ParamsFromSDF))
 {
   common::Console::SetVerbosity(4);
 
