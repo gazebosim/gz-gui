@@ -52,6 +52,7 @@ GridLayout {
     stepSize: 1
     Layout.row: 1
     Layout.column: 2
+    Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
@@ -72,6 +73,7 @@ GridLayout {
     stepSize: 1
     Layout.row: 1
     Layout.column: 3
+    Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
@@ -92,6 +94,7 @@ GridLayout {
     stepSize: 1
     Layout.row: 1
     Layout.column: 4
+    Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
@@ -113,6 +116,7 @@ GridLayout {
     decimals: 2
     Layout.row: 1
     Layout.column: 5
+    Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
