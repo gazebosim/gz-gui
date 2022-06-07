@@ -55,5 +55,13 @@ foreach(test ${gtest_targets})
     "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
 endforeach()
 
+if(TARGET UNIT_ign_TEST)
+  set(_env_vars)
+  list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>")
+
+  set_tests_properties(UNIT_ign_TEST PROPERTIES
+    ENVIRONMENT "${_env_vars}")
+endif()
+
 add_subdirectory(cmd)
 add_subdirectory(plugins)
