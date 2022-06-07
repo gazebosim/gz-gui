@@ -51,7 +51,7 @@ extern "C" GZ_GUI_VISIBLE char *gzVersion()
   return strdup(GZ_GUI_VERSION_FULL);
 }
 
-extern "C" GZ_GUI_VISIBLE char GZ_DEPRECATED(7) *ignitionVersion()
+extern "C" GZ_GUI_VISIBLE char *ignitionVersion()
 {
   return gzVersion();
 }
