@@ -112,7 +112,6 @@ TEST(ignTest, GuiHelpVsCompletionFlags)
   // Equivalent to:
   // sh -c "bash -c \". /path/to/gui.bash_completion.sh; _gz_gui_flags\""
   std::string cmd = "bash -c \". " + scriptPath + "; _gz_gui_flags\"";
-  std::cout << "Running command [" << cmd << "]" << std::endl;
   std::string scriptOutput = custom_exec_str(cmd);
 
   // Tokenize script output
