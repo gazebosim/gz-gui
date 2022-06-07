@@ -51,7 +51,7 @@ namespace gz
 
     /// \brief Return the equivalent Gazebo color
     /// \param[in] _color Qt color to convert
-    /// \return Ignition color value
+    /// \return Gazebo color value
     GZ_GUI_VISIBLE
     math::Color convert(const QColor &_color);
 
@@ -75,7 +75,7 @@ namespace gz
 
     /// \brief Return the equivalent Gazebo vector 3d.
     /// \param[in] _vec Qt vector 3d to convert.
-    /// \return Ignition vector 3d value
+    /// \return Gazebo vector 3d value
     GZ_GUI_VISIBLE
     math::Vector3d convert(const QVector3D &_vec);
 
@@ -84,7 +84,7 @@ namespace gz
     /// Note that there isn't a 1-1 mapping between these types, so fields such
     /// as common::MouseEvent::PressPos need to be set afterwards.
     /// \param[in] _e Qt mouse event
-    /// \return Ignition mouse event
+    /// \return Gazebo mouse event
     GZ_GUI_VISIBLE
     common::MouseEvent convert(const QMouseEvent &_e);
 
@@ -92,14 +92,14 @@ namespace gz
     ///
     /// Note that there isn't a 1-1 mapping between these types.
     /// \param[in] _e Qt wheel event
-    /// \return Ignition mouse event
+    /// \return Gazebo mouse event
     GZ_GUI_VISIBLE
     common::MouseEvent convert(const QWheelEvent &_e);
 
     /// \brief Return the equivalent Gazebo key event.
     ///
     /// \param[in] _e Qt key event
-    /// \return Ignition key event
+    /// \return Gazebo key event
     GZ_GUI_VISIBLE
     common::KeyEvent convert(const QKeyEvent &_e);
   }
