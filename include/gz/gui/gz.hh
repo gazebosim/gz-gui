@@ -22,7 +22,8 @@
 
 /// \brief External hook to read the library version.
 /// \return C-string representing the version. Ex.: 0.1.2
-extern "C" GZ_GUI_VISIBLE char *ignitionVersion();
+extern "C" GZ_GUI_VISIBLE char *gzVersion();
+extern "C" GZ_GUI_VISIBLE char GZ_DEPRECATED(7) *ignitionVersion();
 
 /// \brief External hook to execute 'ign gui -l' from the command line.
 extern "C" GZ_GUI_VISIBLE void cmdPluginList();
