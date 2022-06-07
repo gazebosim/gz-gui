@@ -96,14 +96,14 @@ class gz::gui::plugins::MarkerManagerPrivate
   public: void SetMarker(const gz::msgs::Marker &_msg,
                          const rendering::MarkerPtr &_markerPtr);
 
-  /// \brief Converts an Gazebo msg material to Gazebo Rendering
+  /// \brief Converts a Gazebo msg material to Gazebo Rendering
   //         material.
   //  \param[in] _msg The message data.
   //  \return Converted rendering material, if any.
   public: rendering::MaterialPtr MsgToMaterial(
     const gz::msgs::Marker &_msg);
 
-  /// \brief Converts an Gazebo msg render type to Gazebo Rendering
+  /// \brief Converts a Gazebo msg render type to Gazebo Rendering
   /// \param[in] _msg The message data
   /// \return Converted rendering type, if any.
   public: gz::rendering::MarkerType MsgToType(
