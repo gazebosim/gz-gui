@@ -12,6 +12,10 @@ release will remove the deprecated code.
 
 * Header files under `ignition/...` are deprecated and will be removed in future versions.
   Use `gz/...` instead.
+  
+* The `ignition-gui` element is deprecated and will be removed.
+  Please use `gz-gui` instead.
+  
 
 ## Gazebo GUI 6.2 to 6.3
 
