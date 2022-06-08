@@ -33,6 +33,9 @@
 #    define pclose _pclose
 #endif
 
+static const std::string kIgnCommand(
+    std::string(BREW_RUBY) + std::string(IGN_PATH) + "/ign ");
+
 /////////////////////////////////////////////////
 std::string custom_exec_str(std::string _cmd)
 {
@@ -103,7 +106,7 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 TEST(ignTest, GuiHelpVsCompletionFlags)
 {
   // Flags in help message
-  std::string helpOutput = custom_exec_str("ign gui --help");
+  std::string helpOutput = custom_exec_str(kIgnCommand + " gui --help");
 
   // Call the output function in the bash completion script
   std::string scriptPath = common::joinPaths(std::string(PROJECT_SOURCE_DIR),

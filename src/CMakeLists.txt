@@ -56,8 +56,21 @@ foreach(test ${gtest_targets})
 endforeach()
 
 if(TARGET UNIT_ign_TEST)
+  # Running `ign gazebo` on macOS has problems when run with /usr/bin/ruby
+  # due to System Integrity Protection (SIP). Try to find ruby from
+  # homebrew as a workaround.
+  if (APPLE)
+    find_program(BREW_RUBY ruby HINTS /usr/local/opt/ruby/bin)
+  endif()
+
+  target_compile_definitions(UNIT_ign_TEST PRIVATE
+      "BREW_RUBY=\"${BREW_RUBY} \"")
+
+  target_compile_definitions(UNIT_ign_TEST PRIVATE
+      "IGN_PATH=\"${IGNITION-TOOLS_BINARY_DIRS}\"")
+
   set(_env_vars)
-  list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf/$<CONFIG>")
+  list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf")
 
   set_tests_properties(UNIT_ign_TEST PROPERTIES
     ENVIRONMENT "${_env_vars}")
