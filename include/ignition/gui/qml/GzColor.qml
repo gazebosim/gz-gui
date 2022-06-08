@@ -32,12 +32,12 @@ GridLayout {
   property bool textVisible: false
 
   signal colorSet()
-  columns: 6
+  columns: 5
   columnSpacing: 10
 
   Text {
     Layout.row: 0
-    Layout.column: 2
+    Layout.column: 1
     Layout.alignment: Qt.AlignCenter
     text: "Red"
     color: "dimgrey"
@@ -51,14 +51,14 @@ GridLayout {
     value: 255 
     stepSize: 1
     Layout.row: 1
-    Layout.column: 2
+    Layout.column: 1
     Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
   Text {
     Layout.row: 0
-    Layout.column: 3
+    Layout.column: 2
     Layout.alignment: Qt.AlignCenter
     text: "Green"
     color: "dimgrey"
@@ -72,14 +72,14 @@ GridLayout {
     value: 0 
     stepSize: 1
     Layout.row: 1
-    Layout.column: 3
+    Layout.column: 2
     Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
   Text {
     Layout.row: 0
-    Layout.column: 4
+    Layout.column: 3
     Layout.alignment: Qt.AlignCenter
     text: "Blue"
     color: "dimgrey"
@@ -93,14 +93,14 @@ GridLayout {
     value: 0 
     stepSize: 1
     Layout.row: 1
-    Layout.column: 4
+    Layout.column: 3
     Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
   Text {
     Layout.row: 0
-    Layout.column: 5
+    Layout.column: 4
     Layout.alignment: Qt.AlignCenter
     text: "Alpha"
     color: "dimgrey"
@@ -115,22 +115,22 @@ GridLayout {
     stepSize: 0.1
     decimals: 2
     Layout.row: 1
-    Layout.column: 5
+    Layout.column: 4
     Layout.fillWidth: true
     onEditingFinished: root.colorSet()
   }
 
   Text {
-    Layout.row: 1
+    Layout.row: 0
     Layout.column: 0
-    Layout.alignment: Qt.AlignCenter
     text: parent.colorName
   }
 
   Button {
     id: ambientButton
     Layout.row: 1
-    Layout.column: 1
+    Layout.column: 0
+    Layout.leftMargin: 5
     ToolTip.text: "Open color dialog"
     ToolTip.visible: hovered
     ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
