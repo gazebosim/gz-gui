@@ -6,6 +6,6 @@ gz_gui_add_plugin(CameraTracking
   TEST_SOURCES
     # CameraTracking_TEST.cc
   PUBLIC_LINK_LIBS
-   ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
-   ignition-common${IGN_COMMON_VER}::profiler
+   gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+   gz-common${GZ_COMMON_VER}::profiler
 )

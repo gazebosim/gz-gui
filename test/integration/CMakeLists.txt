@@ -7,7 +7,7 @@ gz_build_tests(
   SOURCES ${tests}
   LIB_DEPS
     ${PROJECT_NAME}_test_helpers
-    ignition-plugin${IGN_PLUGIN_VER}::loader
-    ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
+    gz-plugin${GZ_PLUGIN_VER}::loader
+    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
     Qt5::Test
 )

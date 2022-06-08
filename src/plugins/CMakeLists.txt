@@ -76,7 +76,7 @@ function(gz_gui_add_plugin plugin_name)
     SOURCES ${gz_gui_add_plugin_SOURCES}
     QT_HEADERS ${gz_gui_add_plugin_QT_HEADERS}
     PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
-    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} ignition-plugin${IGN_PLUGIN_VER}::register
+    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} gz-plugin${GZ_PLUGIN_VER}::register
   )
 
   if(gz_gui_add_plugin_TEST_SOURCES)

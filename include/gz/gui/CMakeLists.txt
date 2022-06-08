@@ -54,11 +54,11 @@ gz_create_core_library(SOURCES
 
 target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   PUBLIC
-    ${IGNITION-COMMON_LIBRARIES}
-    ${IGNITION-MATH_LIBRARIES}
-    ${IGNITION-MSGS_LIBRARIES}
-    ignition-plugin${IGN_PLUGIN_VER}::loader
-    ${IGNITION-TRANSPORT_LIBRARIES}
+    gz-common${GZ_COMMON_VER}::events
+    gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
+    gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER}
+    gz-plugin${GZ_PLUGIN_VER}::loader
+    gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
     ${Qt5Core_LIBRARIES}
     ${Qt5Qml_LIBRARIES}
     ${Qt5Quick_LIBRARIES}

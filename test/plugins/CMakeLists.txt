@@ -31,7 +31,7 @@ foreach (src ${plugins})
     PUBLIC
     ${PROJECT_LIBRARY_TARGET_NAME}
     PRIVATE
-    ignition-plugin${IGN_PLUGIN_VER}::register
+    gz-plugin${GZ_PLUGIN_VER}::register
   )
 endforeach (src ${qt_headers_local})
 
