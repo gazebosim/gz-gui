@@ -181,10 +181,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     {
       gzwarn << "The `ignition-gui` element is deprecated. Please use "
       << "`gz-gui` instead." << std::endl;
-    }
-    else
-    {
-      this->LoadCommonConfig(_pluginElem->FirstChildElement("gz-gui"));
+      this->LoadCommonConfig(_pluginElem->FirstChildElement("ignition-gui"));
     }
   }
 
@@ -317,19 +314,8 @@ std::string Plugin::ConfigStr()
   auto guiElem = pluginElem->FirstChildElement("gz-gui");
   if (!guiElem)
   {
-    // TODO(CH3): Deprecated. Remove on tock.
-    // Undent else block and remove else conditional
-    guiElem = pluginElem->FirstChildElement("ignition-gui");
-    if (guiElem)
-    {
-      gzwarn << "The `ignition-gui` element is deprecated. Please use "
-             << "`gz-gui` instead." << std::endl;
-    }
-    else
-    {
-      guiElem = doc.NewElement("gz-gui");
-      pluginElem->InsertEndChild(guiElem);
-    }
+    guiElem = doc.NewElement("gz-gui");
+    pluginElem->InsertEndChild(guiElem);    
   }
 
   // Clean <property>s
