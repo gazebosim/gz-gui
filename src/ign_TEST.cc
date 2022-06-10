@@ -82,7 +82,8 @@ class CmdLine : public ::testing::Test
 };
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
+// See https://github.com/gazebosim/gz-gui/issues/415
+TEST_F(CmdLine, DETAIL_IGN_UTILS_ADD_DISABLED_PREFIX(list))
 {
   // Clear home if it exists
   common::removeAll(this->kFakeHome);
