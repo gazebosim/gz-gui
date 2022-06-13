@@ -34,7 +34,7 @@ set (headers
   DragDropModel.hh
   Enums.hh
   Helpers.hh
-  ign.hh
+  gz.hh
   qt.h
   SearchModel.hh
   System.hh

@@ -134,8 +134,8 @@ Navigate to `condabin` if necessary to use the `conda` command (i.e., if Conda i
 
 Create if necessary, and activate a Conda environment:
 ```
-conda create -n ign-ws
-conda activate ign-ws
+conda create -n gz-ws
+conda activate gz-ws
 ```
 
 Install dependencies:
@@ -154,7 +154,7 @@ Before [ign-rendering](https://github.com/gazebosim/gz-rendering) becomes availa
 
 1. Activate the Conda environment created in the prerequisites:
   ```
-  conda activate ign-ws
+  conda activate gz-ws
   ```
 
 1. Navigate to where you would like to build the library, and clone the repository.

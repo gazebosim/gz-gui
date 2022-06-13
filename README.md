@@ -67,12 +67,12 @@ A workaround for a single package is to define the environment variable
 `GZ_CONFIG_PATH` to point to the location of the Ignition library installation,
 where the YAML file for the package is found, such as
 ```
-export GZ_CONFIG_PATH=/usr/local/share/ignition
+export GZ_CONFIG_PATH=/usr/local/share/gz
 ```
 
 Multiple paths can be specified using the `:` delimiter. For example,
 ```
-export GZ_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
+export GZ_CONFIG_PATH=/user/local/share/gz/:/path/to/some/other/location
 ```
 
 # Folder Structure
@@ -92,7 +92,7 @@ export GZ_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
   as a library. Each example has instructions in a README file.
 
 * `examples/config`: Example configuration files which can be loaded using
-  `ign gui -c <path to file>`
+  `gz gui -c <path to file>`
 
 * `examples/plugin`: Example plugins which can be compiled and loaded as explained
   in [this tutorial](https://gazebosim.org/api/gui/5.0/plugins.html).

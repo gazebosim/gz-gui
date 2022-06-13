@@ -38,7 +38,7 @@ COMMON_OPTIONS =
                '  --versions                 Show the available versions.'
 COMMANDS = {  'gui' =>
                        "Gazebo GUI tool.\n\n" +
-                       "  ign gui [options]\n\n" +
+                       "  gz gui [options]\n\n" +
                        "Options:\n\n" +
                        "  -l [ --list ]              List all available plugins.\n" +
                        "\n" +
@@ -196,7 +196,7 @@ class Cmd
         end
       else
         puts 'Command error: I do not have an implementation for '\
-             "command [ign #{options['command']}]."
+             "command [gz #{options['command']}]."
       end
     rescue
       puts "Library error: Problem running [#{options['command']}]() "\

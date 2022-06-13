@@ -7,7 +7,7 @@ configure_file(
   "gui.yaml.in"
     "${CMAKE_BINARY_DIR}/test/conf/gui${PROJECT_VERSION_MAJOR}.yaml" @ONLY)
 
-set(gz_library_path "${CMAKE_INSTALL_PREFIX}/lib/ruby/ignition/cmdgui${PROJECT_VERSION_MAJOR}")
+set(gz_library_path "${CMAKE_INSTALL_PREFIX}/lib/ruby/gz/cmdgui${PROJECT_VERSION_MAJOR}")
 
 # Generate a configuration file.
 # Note that the major version of the library is included in the name.

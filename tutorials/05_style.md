@@ -79,7 +79,7 @@ See
 
 You can try running the following command for example:
 
-    QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue ign gui -v 4
+    QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue gz gui -v 4
 
 \note Any previously saved default configuration (usually stored in ~/.ignition/gui/default.config) will override
 these environment variable preferences.
@@ -107,11 +107,11 @@ attributes:
 
 You can try an example just with the `material_` variables:
 
-    ign gui -c examples/config/style.config
+    gz gui -c examples/config/style.config
 
 And an example also configuring the toolbars:
 
-    ign gui -c examples/config/style_toolbars.config
+    gz gui -c examples/config/style_toolbars.config
 
 \note When saving the configuration file through the GUI, the current style
 will be saved as well.

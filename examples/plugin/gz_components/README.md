@@ -13,10 +13,10 @@ useful for downstream developers.
 Standalone:
 
     cd build
-    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -s GzComponents
+    export GZ_GUI_PLUGIN_PATH=`pwd`; gz gui -s GzComponents
 
 Within a window where other plugins can also be inserted, using a custom
 configuration:
 
     cd build
-    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -c ../GzComponents.config
+    export GZ_GUI_PLUGIN_PATH=`pwd`; gz gui -c ../GzComponents.config

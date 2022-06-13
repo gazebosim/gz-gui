@@ -25,21 +25,21 @@
 extern "C" GZ_GUI_VISIBLE char *gzVersion();
 extern "C" GZ_GUI_VISIBLE char GZ_DEPRECATED(7) *ignitionVersion();
 
-/// \brief External hook to execute 'ign gui -l' from the command line.
+/// \brief External hook to execute 'gz gui -l' from the command line.
 extern "C" GZ_GUI_VISIBLE void cmdPluginList();
 
-/// \brief External hook to execute 'ign gui -s' from the command line.
+/// \brief External hook to execute 'gz gui -s' from the command line.
 /// \param[in] _filename Name of a plugin file.
 extern "C" GZ_GUI_VISIBLE void cmdStandalone(const char *_filename);
 
-/// \brief External hook to execute 'ign gui -c' from the command line.
+/// \brief External hook to execute 'gz gui -c' from the command line.
 /// \param[in] _config Path to a config file.
 extern "C" GZ_GUI_VISIBLE void cmdConfig(const char *_config);
 
-/// \brief External hook to execute 'ign gui' from the command line.
+/// \brief External hook to execute 'gz gui' from the command line.
 extern "C" GZ_GUI_VISIBLE void cmdEmptyWindow();
 
-/// \brief External hook when executing 'ign gui -t' from the command line.
+/// \brief External hook when executing 'gz gui -t' from the command line.
 /// \param[in] _filename Path to a QSS file.
 extern "C" GZ_GUI_VISIBLE void cmdSetStyleFromFile(const char *_filename);
 

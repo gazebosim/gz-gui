@@ -75,8 +75,8 @@ gz_find_package(ignition-msgs9 REQUIRED)
 set(IGN_MSGS_VER ${ignition-msgs9_VERSION_MAJOR})
 
 #--------------------------------------
-# Find if ign command is available
-find_program(HAVE_IGN_TOOLS ign)
+# Find if gz command is available
+find_program(HAVE_GZ_TOOLS gz)
 
 #--------------------------------------
 # Find QT
@@ -100,7 +100,7 @@ set(GZ_GUI_PLUGIN_INSTALL_DIR
 gz_configure_build(QUIT_IF_BUILD_ERRORS)
 
 #============================================================================
-# ign command line support
+# gz command line support
 #============================================================================
 add_subdirectory(conf)
 

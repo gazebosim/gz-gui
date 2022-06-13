@@ -11,7 +11,7 @@ It is possible to change the default directory to a different location, which wi
 be shown in the example below.
 
 **Note**: This example is using Gazebo Sim but is not required.
-The same steps can be done using `ign gui` with a 3D scene.
+The same steps can be done using `gz gui` with a 3D scene.
 
 First, go to the plugins menu on the top right (vertical ellipsis) then select
 'Screenshot':

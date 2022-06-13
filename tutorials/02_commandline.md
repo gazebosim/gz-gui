@@ -5,13 +5,13 @@ Previous Tutorial: \ref install
 
 ## Overview
 
-If you have Gazebo Tools installed, you can use the `ign gui` command line tool:
+If you have Gazebo Tools installed, you can use the `gz gui` command line tool:
 
-`ign gui -h`
+`gz gui -h`
 
     Gazebo GUI tool.
 
-      ign gui [options]
+      gz gui [options]
 
     Options:
 

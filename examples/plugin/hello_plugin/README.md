@@ -13,16 +13,16 @@ configuration from XML.
 Standalone:
 
     cd build
-    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -s HelloPlugin
+    export GZ_GUI_PLUGIN_PATH=`pwd`; gz gui -s HelloPlugin
 
 Within a window where other plugins can also be inserted, using a custom
 configuration:
 
     cd build
-    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui -c ../HelloPlugin.config
+    export GZ_GUI_PLUGIN_PATH=`pwd`; gz gui -c ../HelloPlugin.config
 
 Or open an empty window and insert from menu:
 
     cd build
-    export GZ_GUI_PLUGIN_PATH=`pwd`; ign gui
+    export GZ_GUI_PLUGIN_PATH=`pwd`; gz gui
     # Choose HelloPlugin from menu

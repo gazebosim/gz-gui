@@ -40,7 +40,7 @@ namespace plugins
   /// projections through the `/gui/camera/view_control` service. Perspective
   /// projection is used by default. For example:
   ///
-  ///     ign service -s /gui/camera/view_control
+  ///     gz service -s /gui/camera/view_control
   ///         --reqtype gz.msgs.StringMsg
   ///         --reptype gz.msgs.Boolean
   ///         --timeout 2000 --req 'data: "ortho"'

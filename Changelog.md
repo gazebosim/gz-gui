@@ -219,7 +219,7 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect ign instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for ignition-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 5.1.0 (2021-06-23)
@@ -299,7 +299,7 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect ign instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for ignition-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 4.4.0 (2021-06-21)
@@ -489,7 +489,7 @@
 1. Don't crash if a plugin has invalid QML
     * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
-1. Added log storing for `ign gui` CLI
+1. Added log storing for `gz gui` CLI
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
 ### Gazebo GUI 3.8.0 (2021-10-12)
@@ -523,7 +523,7 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect ign instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for ignition-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 3.6.0 (2021-06-17)
