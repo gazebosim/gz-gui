@@ -20,114 +20,21 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 
 
-GridLayout {
-  id: root
-  property string colorName
+Rectangle {
+  id: gzColorRoot
+  
+  implicitWidth: 40
+  implicitHeight: 40
 
-  property alias r: r_spin.value
-  property alias g: g_spin.value
-  property alias b: b_spin.value
-  property alias a: a_spin.value
-
-  property bool textVisible: false
+  property double r: 255
+  property double g: 0
+  property double b: 0
+  property double a: 1.0
 
   signal colorSet()
-  columns: 5
-  columnSpacing: 10
-
-  Text {
-    Layout.row: 0
-    Layout.column: 1
-    Layout.alignment: Qt.AlignCenter
-    text: "Red"
-    color: "dimgrey"
-    visible: textVisible
-  }
-
-  IgnSpinBox {
-    id: "r_spin"
-    maximumValue: 255
-    minimumValue: 0
-    value: 255 
-    stepSize: 1
-    Layout.row: 1
-    Layout.column: 1
-    Layout.fillWidth: true
-    onEditingFinished: root.colorSet()
-  }
-
-  Text {
-    Layout.row: 0
-    Layout.column: 2
-    Layout.alignment: Qt.AlignCenter
-    text: "Green"
-    color: "dimgrey"
-    visible: textVisible
-  }
-
-  IgnSpinBox {
-    id: "g_spin"
-    maximumValue: 255
-    minimumValue: 0
-    value: 0 
-    stepSize: 1
-    Layout.row: 1
-    Layout.column: 2
-    Layout.fillWidth: true
-    onEditingFinished: root.colorSet()
-  }
-
-  Text {
-    Layout.row: 0
-    Layout.column: 3
-    Layout.alignment: Qt.AlignCenter
-    text: "Blue"
-    color: "dimgrey"
-    visible: textVisible
-  }
-
-  IgnSpinBox {
-    id: "b_spin"
-    maximumValue: 255
-    minimumValue: 0
-    value: 0 
-    stepSize: 1
-    Layout.row: 1
-    Layout.column: 3
-    Layout.fillWidth: true
-    onEditingFinished: root.colorSet()
-  }
-
-  Text {
-    Layout.row: 0
-    Layout.column: 4
-    Layout.alignment: Qt.AlignCenter
-    text: "Alpha"
-    color: "dimgrey"
-    visible: textVisible
-  }
-
-  IgnSpinBox {
-    id: "a_spin"
-    maximumValue: 1.0
-    minimumValue: 0
-    value: 1.0
-    stepSize: 0.1
-    decimals: 2
-    Layout.row: 1
-    Layout.column: 4
-    Layout.fillWidth: true
-    onEditingFinished: root.colorSet()
-  }
-
-  Text {
-    Layout.row: 0
-    Layout.column: 0
-    text: parent.colorName
-  }
 
   Button {
-    id: ambientButton
+    id: colorButton
     Layout.row: 1
     Layout.column: 0
     Layout.leftMargin: 5
@@ -149,11 +56,11 @@ GridLayout {
       title: "Choose a color"
       visible: false
       onAccepted: {
-        r_spin.value = colorDialog.color.r * 255
-        g_spin.value = colorDialog.color.g * 255
-        b_spin.value = colorDialog.color.b * 255
-        a_spin.value = colorDialog.color.a
-        root.colorSet()
+        r = colorDialog.color.r * 255
+        g = colorDialog.color.g * 255
+        b = colorDialog.color.b * 255
+        a = colorDialog.color.a
+        gzColorRoot.colorSet()
         colorDialog.close()
       }
       onRejected: {

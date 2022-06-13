@@ -285,11 +285,19 @@ GridLayout {
     font.bold: true
   }
 
-  GzColor {
+  Text {
+    Layout.columnSpan: 2
+    color: "dimgrey"
+    text: "Grid Color"
+  }
+
+  GzColor { 
     id: gzcolor
-    Layout.columnSpan: 4
+    Layout.columnSpan: 2
+    Layout.alignment: Qt.AlignRight
+    Layout.bottomMargin: 5
+    Layout.rightMargin: 20
     onColorSet: GridConfig.SetColor(1.0 * r / 255.0, 1.0 * g / 255.0, 1.0 * b / 255.0, a)
-    textVisible: true
   }
 
 }
