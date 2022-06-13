@@ -20,8 +20,11 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 
 
-Item {
+Rectangle {
   id: gzColorRoot
+  
+  implicitWidth: 40
+  implicitHeight: 40
 
   property double r: 255
   property double g: 0
@@ -59,7 +62,6 @@ Item {
         a = colorDialog.color.a
         gzColorRoot.colorSet()
         colorDialog.close()
-        console.log(r,g,b,a)
       }
       onRejected: {
         colorDialog.close()
