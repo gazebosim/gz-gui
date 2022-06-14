@@ -34,7 +34,7 @@
 #endif
 
 static const std::string kIgnCommand(
-    std::string(BREW_RUBY) + std::string(IGN_PATH) + "/ign ");
+    std::string(BREW_RUBY) + std::string(IGN_PATH));
 
 /////////////////////////////////////////////////
 std::string custom_exec_str(std::string _cmd)

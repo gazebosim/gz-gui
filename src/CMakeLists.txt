@@ -67,7 +67,7 @@ if(TARGET UNIT_ign_TEST)
       "BREW_RUBY=\"${BREW_RUBY} \"")
 
   target_compile_definitions(UNIT_ign_TEST PRIVATE
-      "IGN_PATH=\"${IGNITION-TOOLS_BINARY_DIRS}\"")
+      "IGN_PATH=\"${HAVE_IGN_TOOLS}\"")
 
   set(_env_vars)
   list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf")
