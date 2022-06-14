@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <fstream>
 #include <string>
 
 #include <ignition/common/Filesystem.hh>
@@ -31,6 +32,9 @@
 #    define popen _popen
 #    define pclose _pclose
 #endif
+
+static const std::string kIgnCommand(
+    std::string(BREW_RUBY) + std::string(IGN_PATH));
 
 /////////////////////////////////////////////////
 std::string custom_exec_str(std::string _cmd)
@@ -96,4 +100,34 @@ TEST_F(CmdLine, DETAIL_IGN_UTILS_ADD_DISABLED_PREFIX(list))
 
   EXPECT_TRUE(common::exists(common::joinPaths(this->kFakeHome, ".ignition",
       "gui")));
+}
+
+//////////////////////////////////////////////////
+/// \brief Check --help message and bash completion script for consistent flags
+TEST(ignTest, GuiHelpVsCompletionFlags)
+{
+  // Flags in help message
+  std::string helpOutput = custom_exec_str(kIgnCommand + " gui --help");
+
+  // Call the output function in the bash completion script
+  std::string scriptPath = common::joinPaths(std::string(PROJECT_SOURCE_DIR),
+    "src", "cmd", "gui.bash_completion.sh");
+
+  // Equivalent to:
+  // sh -c "bash -c \". /path/to/gui.bash_completion.sh; _gz_gui_flags\""
+  std::string cmd = "bash -c \". " + scriptPath + "; _gz_gui_flags\"";
+  std::string scriptOutput = custom_exec_str(cmd);
+
+  // Tokenize script output
+  std::istringstream iss(scriptOutput);
+  std::vector<std::string> flags((std::istream_iterator<std::string>(iss)),
+    std::istream_iterator<std::string>());
+
+  EXPECT_GT(flags.size(), 0u);
+
+  // Match each flag in script output with help message
+  for (std::string flag : flags)
+  {
+    EXPECT_NE(std::string::npos, helpOutput.find(flag)) << helpOutput;
+  }
 }
