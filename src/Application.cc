@@ -216,6 +216,11 @@ bool Application::RemovePlugin(const std::string &_pluginName)
 }
 
 /////////////////////////////////////////////////
+bool Application::ShowQuickSetup() const
+{
+  return this->dataPtr->mainWin->ShowDefaultQuickSetupOpts();
+}
+/////////////////////////////////////////////////
 bool Application::LoadConfig(const std::string &_config)
 {
   if (_config.empty())

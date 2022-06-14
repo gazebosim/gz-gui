@@ -331,6 +331,7 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   // Menus
   this->SetShowDrawer(_config.showDrawer);
   this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
+  this->SetShowDefaultQuickSetupOpts(_config.showDefaultQuickSetupOpts);
   this->SetShowPluginMenu(_config.showPluginMenu);
 
   // Keep a copy
@@ -383,6 +384,8 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   config.showDrawer = this->dataPtr->windowConfig.showDrawer;
   config.showDefaultDrawerOpts =
       this->dataPtr->windowConfig.showDefaultDrawerOpts;
+  config.showDefaultQuickSetupOpts =
+      this->dataPtr->windowConfig.showDefaultQuickSetupOpts;
   config.showPluginMenu = this->dataPtr->windowConfig.showPluginMenu;
   config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
   config.showPlugins = this->dataPtr->windowConfig.showPlugins;
@@ -511,6 +514,18 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
         bool def = true;
         drawerElem->QueryBoolAttribute("default", &def);
         this->showDefaultDrawerOpts = def;
+      }
+    }
+
+    // QuickSetup
+    if (auto quickSetupElem = menusElem->FirstChildElement("quick_setup"))
+    {
+      // Default
+      if (quickSetupElem->Attribute("default"))
+      {
+        bool def = true;
+        quickSetupElem->QueryBoolAttribute("default", &def);
+        this->showDefaultQuickSetupOpts = def;
       }
     }
 
@@ -644,6 +659,16 @@ std::string WindowConfig::XMLString() const
 
       // Default
       elem->SetAttribute("default", this->showDefaultDrawerOpts);
+
+      menusElem->InsertEndChild(elem);
+    }
+
+    // Quick Setup
+    {
+      auto elem = doc.NewElement("quick_setup");
+
+      // Default
+      elem->SetAttribute("default", this->showDefaultQuickSetupOpts);
 
       menusElem->InsertEndChild(elem);
     }
@@ -903,6 +928,19 @@ void MainWindow::SetShowDefaultDrawerOpts(const bool _showDefaultDrawerOpts)
   this->dataPtr->windowConfig.showDefaultDrawerOpts =
       _showDefaultDrawerOpts;
   this->ShowDefaultDrawerOptsChanged();
+}
+
+/////////////////////////////////////////////////
+bool MainWindow::ShowDefaultQuickSetupOpts() const
+{
+  return this->dataPtr->windowConfig.showDefaultQuickSetupOpts;
+}
+
+/////////////////////////////////////////////////
+void MainWindow::SetShowDefaultQuickSetupOpts(const bool _showDefaultQuickSetupOpts)
+{
+  this->dataPtr->windowConfig.showDefaultQuickSetupOpts =
+      _showDefaultQuickSetupOpts;
 }
 
 /////////////////////////////////////////////////

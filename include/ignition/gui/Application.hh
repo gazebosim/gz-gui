@@ -155,6 +155,11 @@ namespace ignition
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
 
+      /// \brief Show quick setup menu or not
+      /// \return True if quick setup menu is configured to be shown before main window
+      /// initialized.
+      public: bool ShowQuickSetup() const;
+
       /// \brief Get a plugin by its unique name.
       /// \param[in] _pluginName Plugn instance's unique name. This is the
       /// plugin card's object name.
@@ -175,7 +180,7 @@ namespace ignition
       /// \return True if successful
       /// \sa LoadConfig
       /// \sa LoadPlugin
-      private: bool InitializeMainWindow();
+      public: bool InitializeMainWindow();
 
       /// \brief Create individual dialogs for all previously loaded plugins.
       /// This has no effect if no plugins have been loaded.
