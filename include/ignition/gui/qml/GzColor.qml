@@ -20,7 +20,7 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 
 
-Rectangle {
+Item {
   id: gzColorRoot
   
   implicitWidth: 40
@@ -35,8 +35,6 @@ Rectangle {
 
   Button {
     id: colorButton
-    Layout.row: 1
-    Layout.column: 0
     Layout.leftMargin: 5
     ToolTip.text: "Open color dialog"
     ToolTip.visible: hovered
