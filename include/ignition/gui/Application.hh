@@ -53,7 +53,8 @@ namespace ignition
       /// plugins
       kMainWindow = 0,
 
-      /// \brief One independent dialog per plugin
+      /// \brief One independent dialog per plugin. Also useful to open a
+      /// startup dialog before the main window.
       kDialog = 1
     };
 
@@ -174,12 +175,18 @@ namespace ignition
       /// \brief Callback when user requests to close a plugin
       public slots: void OnPluginClose();
 
+      /// \brief Create a main window. Just calls InitializeMainWindow.
+      /// \return True if successful
+      /// \sa InitializeMainWindow
+      public: bool CreateMainWindow();
+
       /// \brief Create a main window, populate with previously loaded plugins
       /// and apply previously loaded configuration.
       /// An empty window will be created if no plugins have been loaded.
       /// \return True if successful
       /// \sa LoadConfig
       /// \sa LoadPlugin
+      // FIXME: this should be private and CreateMainWindow public
       public: bool InitializeMainWindow();
 
       /// \brief Create individual dialogs for all previously loaded plugins.

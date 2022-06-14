@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="start_dialog/">
+    <file>start_dialog.qml</file>
+  </qresource>
+</RCC>
