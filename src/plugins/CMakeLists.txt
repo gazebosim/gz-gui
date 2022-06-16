@@ -80,7 +80,7 @@ function(gz_gui_add_plugin plugin_name)
   )
 
   if(gz_gui_add_plugin_TEST_SOURCES)
-    ign_build_tests(TYPE UNIT
+    gz_build_tests(TYPE UNIT
       SOURCES
         ${gz_gui_add_plugin_TEST_SOURCES}
       LIB_DEPS

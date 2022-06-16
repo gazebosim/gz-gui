@@ -43,7 +43,7 @@ if (NOT HAVE_IGN_TOOLS OR APPLE)
   list(REMOVE_ITEM gtest_sources ign_TEST.cc)
 endif()
 
-ign_build_tests(TYPE UNIT
+gz_build_tests(TYPE UNIT
                 SOURCES
                   ${gtest_sources}
                 LIB_DEPS
