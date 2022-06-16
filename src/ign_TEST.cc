@@ -86,13 +86,13 @@ class CmdLine : public ::testing::Test
 };
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
-// See https://github.com/gazebosim/gz-gui/issues/415
-TEST_F(CmdLine, DETAIL_IGN_UTILS_ADD_DISABLED_PREFIX(list))
+TEST_F(CmdLine, list)
 {
   // Clear home if it exists
   common::removeAll(this->kFakeHome);
 
-  EXPECT_FALSE(common::exists(this->kFakeHome));
+  // Can't EXPECT_FALSE here, see https://github.com/gazebosim/gz-gui/issues/415
+  common::exists(this->kFakeHome);
 
   std::string output = custom_exec_str("ign gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
@@ -104,7 +104,7 @@ TEST_F(CmdLine, DETAIL_IGN_UTILS_ADD_DISABLED_PREFIX(list))
 
 //////////////////////////////////////////////////
 /// \brief Check --help message and bash completion script for consistent flags
-TEST(ignTest, GuiHelpVsCompletionFlags)
+TEST(ignTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(GuiHelpVsCompletionFlags))
 {
   // Flags in help message
   std::string helpOutput = custom_exec_str(kIgnCommand + " gui --help");
@@ -126,7 +126,7 @@ TEST(ignTest, GuiHelpVsCompletionFlags)
   EXPECT_GT(flags.size(), 0u);
 
   // Match each flag in script output with help message
-  for (std::string flag : flags)
+  for (const auto &flag : flags)
   {
     EXPECT_NE(std::string::npos, helpOutput.find(flag)) << helpOutput;
   }
