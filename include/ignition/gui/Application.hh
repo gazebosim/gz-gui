@@ -97,11 +97,17 @@ namespace ignition
       /// and plugins. This function doesn't instantiate the plugins, it just
       /// keeps them in memory and they can be applied later by either
       /// instantiating a window or several dialogs.
+      /// and plugins.
       /// \param[in] _path Full path to configuration file.
       /// \return True if successful
       /// \sa InitializeMainWindow
       /// \sa InitializeDialogs
       public: bool LoadConfig(const std::string &_path);
+
+      /// \brief Load a configuration file, load window configurations.
+      /// \param[in] _path Full path to configuration file.
+      /// \return True if successful
+      public: bool LoadWindowConfig(const std::string &_path);
 
       /// \brief Load the configuration from the default config file.
       /// \return True if successful
@@ -124,6 +130,15 @@ namespace ignition
       /// \sa LoadDefaultConfig
       /// \sa SetDefaultConfigPath
       public: std::string DefaultConfigPath();
+
+      /// \brief Show quick setup menu or not
+      /// \return True if quick setup menu is configured to be shown before main window
+      /// initialized.
+      public: bool ShowQuickSetup() const;
+
+      /// \brief Set the flag to show the quick setup menu's default options.
+      /// \param[in] _showDefaultQuickSetupOpts True to show.
+      public: void SetShowDefaultQuickSetupOpts(const bool _showDefaultQuickSetupOpts) const;
 
       /// \brief Set the environment variable which defines the paths to
       /// look for plugins.
@@ -156,10 +171,6 @@ namespace ignition
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
 
-      /// \brief Show quick setup menu or not
-      /// \return True if quick setup menu is configured to be shown before main window
-      /// initialized.
-      public: bool ShowQuickSetup() const;
 
       /// \brief Get a plugin by its unique name.
       /// \param[in] _pluginName Plugn instance's unique name. This is the

@@ -218,7 +218,81 @@ bool Application::RemovePlugin(const std::string &_pluginName)
 /////////////////////////////////////////////////
 bool Application::ShowQuickSetup() const
 {
-  return this->dataPtr->mainWin->ShowDefaultQuickSetupOpts();
+  return this->dataPtr->windowConfig.ShowDefaultQuickSetupOpts();
+}
+
+/////////////////////////////////////////////////
+void Application::SetShowDefaultQuickSetupOpts(const bool _showDefaultQuickSetupOpts) const
+{
+  return this->dataPtr->windowConfig.SetShowDefaultQuickSetupOpts(_showDefaultQuickSetupOpts);
+}
+
+/////////////////////////////////////////////////
+bool Application::LoadWindowConfig(const std::string &_config)
+{
+  if (_config.empty())
+  {
+    ignerr << "Missing config file" << std::endl;
+    return false;
+  }
+
+  std::string configFull = _config;
+
+  // Check if the passed in config file exists.
+  // (If the default config path doesn't exist yet, it's expected behavior.
+  // It will be created the first time the user presses "Save configuration".)
+  if (!common::exists(configFull) && (configFull != this->DefaultConfigPath()))
+  {
+    // If not, then check environment variable
+    std::string configPathEnv;
+    common::env("GZ_GUI_RESOURCE_PATH", configPathEnv);
+
+    if (!configPathEnv.empty())
+    {
+      std::vector<std::string> parentPaths = common::Split(configPathEnv, ':');
+      for (auto parentPath : parentPaths)
+      {
+        std::string tempPath = common::joinPaths(parentPath, configFull);
+        if (common::exists(tempPath))
+        {
+          configFull = tempPath;
+          break;
+        }
+      }
+    }
+  }
+
+  // Use tinyxml to read config
+  tinyxml2::XMLDocument doc;
+  auto success = !doc.LoadFile(configFull.c_str());
+  if (!success)
+  {
+    // We do not show an error message if the default config path doesn't exist
+    // yet. It's expected behavior, it will be created the first time the user
+    // presses "Save configuration".
+    if (configFull != this->DefaultConfigPath())
+    {
+      ignerr << "Failed to load file [" << configFull << "]: XMLError"
+             << std::endl;
+    }
+
+    return false;
+  }
+    // Process window properties
+  if (auto winElem = doc.FirstChildElement("window"))
+  {
+    igndbg << "Loading window config" << std::endl;
+
+    tinyxml2::XMLPrinter printer;
+    if (!winElem->Accept(&printer))
+    {
+      ignwarn << "There was an error parsing the <window> element"
+              << std::endl;
+      return false;
+    }
+    this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
+  }
+  return true;
 }
 /////////////////////////////////////////////////
 bool Application::LoadConfig(const std::string &_config)

@@ -331,7 +331,7 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   // Menus
   this->SetShowDrawer(_config.showDrawer);
   this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
-  this->SetShowDefaultQuickSetupOpts(_config.showDefaultQuickSetupOpts);
+  this->dataPtr->windowConfig.SetShowDefaultQuickSetupOpts(_config.showDefaultQuickSetupOpts);
   this->SetShowPluginMenu(_config.showPluginMenu);
 
   // Keep a copy
@@ -718,6 +718,18 @@ std::string WindowConfig::XMLString() const
 }
 
 /////////////////////////////////////////////////
+bool WindowConfig::ShowDefaultQuickSetupOpts() const
+{
+  return this->showDefaultQuickSetupOpts;
+}
+
+/////////////////////////////////////////////////
+void WindowConfig::SetShowDefaultQuickSetupOpts(const bool _showDefaultQuickSetupOpts)
+{
+  this->showDefaultQuickSetupOpts = _showDefaultQuickSetupOpts;
+}
+
+/////////////////////////////////////////////////
 bool WindowConfig::IsIgnoring(const std::string &_prop) const
 {
   return this->ignoredProps.find(_prop) != this->ignoredProps.end();
@@ -928,19 +940,6 @@ void MainWindow::SetShowDefaultDrawerOpts(const bool _showDefaultDrawerOpts)
   this->dataPtr->windowConfig.showDefaultDrawerOpts =
       _showDefaultDrawerOpts;
   this->ShowDefaultDrawerOptsChanged();
-}
-
-/////////////////////////////////////////////////
-bool MainWindow::ShowDefaultQuickSetupOpts() const
-{
-  return this->dataPtr->windowConfig.showDefaultQuickSetupOpts;
-}
-
-/////////////////////////////////////////////////
-void MainWindow::SetShowDefaultQuickSetupOpts(const bool _showDefaultQuickSetupOpts)
-{
-  this->dataPtr->windowConfig.showDefaultQuickSetupOpts =
-      _showDefaultQuickSetupOpts;
 }
 
 /////////////////////////////////////////////////

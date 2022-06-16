@@ -405,15 +405,6 @@ namespace ignition
       public: Q_INVOKABLE void SetShowDefaultDrawerOpts(
           const bool _showDefaultDrawerOpts);
 
-      /// \brief Get the flag to show the quick setup menu's default options.
-      /// \return True to show.
-      public: bool ShowDefaultQuickSetupOpts() const;
-
-      /// \brief Set the flag to show the quick setup menu's default options.
-      /// \param[in] _showDefaultQuickSetupOpts True to show.
-      public: void SetShowDefaultQuickSetupOpts(
-          const bool _showDefaultQuickSetupOpts);
-
       /// \brief Get the flag to show the plugin menu.
       /// \return True to show.
       public: Q_INVOKABLE bool ShowPluginMenu() const;
@@ -611,6 +602,15 @@ namespace ignition
       /// \return True if it's being ignored
       bool IsIgnoring(const std::string &_prop) const;
 
+      /// \brief Get the flag to show the quick setup menu's default options.
+      /// \return True to show.
+      public: bool ShowDefaultQuickSetupOpts() const;
+
+      /// \brief Set the flag to show the quick setup menu's default options.
+      /// \param[in] _showDefaultQuickSetupOpts True to show.
+      public: void SetShowDefaultQuickSetupOpts(
+          const bool _showDefaultQuickSetupOpts);
+
       /// \brief Window X position in px
       int posX{-1};
 
@@ -683,6 +683,7 @@ namespace ignition
 
       /// \brief Concatenation of all plugin configurations.
       std::string plugins{""};
+
     };
   }
 }
