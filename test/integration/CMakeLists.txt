@@ -1,8 +1,8 @@
-ign_get_sources(tests)
+gz_get_sources(tests)
 
 find_package(Qt5Test REQUIRED)
 
-ign_build_tests(
+gz_build_tests(
   TYPE INTEGRATION
   SOURCES ${tests}
   LIB_DEPS

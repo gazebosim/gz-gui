@@ -45,7 +45,7 @@ set (resources resources.qrc)
 QT5_WRAP_CPP(headers_MOC ${qt_headers})
 QT5_ADD_RESOURCES(resources_RCC ${resources})
 
-ign_create_core_library(SOURCES
+gz_create_core_library(SOURCES
   ${sources}
   ${headers_MOC}
   ${resources_RCC}
@@ -67,5 +67,5 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
     TINYXML2::TINYXML2
 )
 
-ign_install_all_headers()
+gz_install_all_headers()
 
