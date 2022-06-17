@@ -20,21 +20,24 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
 
 
+// RGBA using range 0 - 1.0
 Item {
   id: gzColorRoot
-  
+
   implicitWidth: 40
   implicitHeight: 40
 
-  property double r: 255
-  property double g: 0
-  property double b: 0
+  property double r: 1.0
+  property double g: 0.0
+  property double b: 0.0
   property double a: 1.0
+
+  property bool useWhiteTheme: true
 
   signal colorSet()
 
   Button {
-    id: colorButton
+    id: gzColorButton
     Layout.leftMargin: 5
     ToolTip.text: "Open color dialog"
     ToolTip.visible: hovered
@@ -43,29 +46,29 @@ Item {
       implicitWidth: 40
       implicitHeight: 40
       radius: 5
-      border.color: Qt.rgba(r / 255, g / 255, b / 255, a)
+      border.color: useWhiteTheme ? Qt.rgba(0,0,0,1) : Qt.rgba(1,1,1,1)
       border.width: 2
-      color: Qt.rgba(r / 255, g / 255, b / 255, a)
+      color: Qt.rgba(r,g,b,a)
     }
     onClicked: colorDialog.open()
+  }
 
-    ColorDialog {
-      id: colorDialog
-      title: "Choose a color"
-      visible: false
-      onAccepted: {
-        r = colorDialog.color.r * 255
-        g = colorDialog.color.g * 255
-        b = colorDialog.color.b * 255
-        a = colorDialog.color.a
-        gzColorRoot.colorSet()
-        colorDialog.close()
-      }
-      onRejected: {
-        colorDialog.close()
-      }
+  ColorDialog {
+    id: colorDialog
+    title: "Choose a color"
+    visible: false
+    showAlphaChannel: true
+    onAccepted: {
+      r = colorDialog.color.r
+      g = colorDialog.color.g
+      b = colorDialog.color.b
+      a = colorDialog.color.a
+      gzColorRoot.colorSet()
+      colorDialog.close()
     }
-
+    onRejected: {
+      colorDialog.close()
+    }
   }
 }
 

@@ -52,10 +52,10 @@ GridLayout {
       roll.value = _rot.x;
       pitch.value = _rot.y;
       yaw.value = _rot.z;
-      gzcolor.r = _color.r * 255;
-      gzcolor.g = _color.g * 255;
-      gzcolor.b = _color.b * 255;
-      gzcolor.a = _color.a;
+      gzColorGrid.r = _color.r;
+      gzColorGrid.g = _color.g;
+      gzColorGrid.b = _color.b;
+      gzColorGrid.a = _color.a;
     }
   }
 
@@ -292,12 +292,13 @@ GridLayout {
   }
 
   GzColor { 
-    id: gzcolor
+    id: gzColorGrid
     Layout.columnSpan: 2
     Layout.alignment: Qt.AlignRight
     Layout.bottomMargin: 5
     Layout.rightMargin: 20
-    onColorSet: Grid3D.SetColor(1.0 * r / 255.0, 1.0 * g / 255.0, 1.0 * b / 255.0, a)
+    useWhiteTheme: Material.theme == Material.Light
+    onColorSet: Grid3D.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
   }
 }
 
