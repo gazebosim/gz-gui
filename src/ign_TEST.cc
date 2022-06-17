@@ -91,8 +91,8 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
   // Clear home if it exists
   common::removeAll(this->kFakeHome);
 
-  // Can't EXPECT_FALSE here, see https://github.com/gazebosim/gz-gui/issues/415
-  common::exists(this->kFakeHome);
+  // This line is flaky, see https://github.com/gazebosim/gz-gui/issues/415
+  // EXPECT_FALSE(common::exists(this->kFakeHome));
 
   std::string output = custom_exec_str("ign gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
@@ -104,6 +104,7 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 
 //////////////////////////////////////////////////
 /// \brief Check --help message and bash completion script for consistent flags
+// See https://github.com/gazebo-tooling/release-tools/issues/398
 TEST(ignTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(GuiHelpVsCompletionFlags))
 {
   // Flags in help message
