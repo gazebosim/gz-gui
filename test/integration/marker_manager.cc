@@ -101,7 +101,7 @@ class MarkerManagerTestFixture : public ::testing::Test
 
 /////////////////////////////////////////////////
 TEST_F(MarkerManagerTestFixture,
-  IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(MarkerManager))
+  GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(MarkerManager))
 {
   common::Console::SetVerbosity(4);
 

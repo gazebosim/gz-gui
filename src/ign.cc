@@ -37,18 +37,23 @@ char* g_argv[] =
 void startConsoleLog()
 {
   std::string home;
-  gz::common::env(IGN_HOMEDIR, home);
+  gz::common::env(GZ_HOMEDIR, home);
 
   std::string logPathMod = gz::common::joinPaths(home,
       ".ignition", "gui", "log",
-      gz::common::timeToIso(IGN_SYSTEM_TIME()));
+      gz::common::timeToIso(GZ_SYSTEM_TIME()));
   gzLogInit(logPathMod, "console.log");
 }
 
 //////////////////////////////////////////////////
-extern "C" GZ_GUI_VISIBLE char *ignitionVersion()
+extern "C" GZ_GUI_VISIBLE char *gzVersion()
 {
   return strdup(GZ_GUI_VERSION_FULL);
+}
+
+extern "C" GZ_GUI_VISIBLE char *ignitionVersion()
+{
+  return gzVersion();
 }
 
 //////////////////////////////////////////////////

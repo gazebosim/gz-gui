@@ -409,5 +409,5 @@ void GridConfig::RefreshList()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::GridConfig,
+GZ_ADD_PLUGIN(gz::gui::GridConfig,
                     gz::gui::Plugin)

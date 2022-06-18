@@ -80,7 +80,7 @@ Screenshot::Screenshot()
   dataPtr(std::make_unique<ScreenshotPrivate>())
 {
   std::string home;
-  common::env(IGN_HOMEDIR, home);
+  common::env(GZ_HOMEDIR, home);
 
   // default directory
   this->dataPtr->directory =
@@ -236,5 +236,5 @@ void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::Screenshot,
+GZ_ADD_PLUGIN(gz::gui::plugins::Screenshot,
                     gz::gui::Plugin)

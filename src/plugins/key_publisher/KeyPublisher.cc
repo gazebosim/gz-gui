@@ -96,5 +96,5 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::KeyPublisher,
+GZ_ADD_PLUGIN(gz::gui::KeyPublisher,
                     gz::gui::Plugin)

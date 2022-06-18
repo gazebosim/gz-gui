@@ -11,7 +11,13 @@ release will remove the deprecated code.
 * The `ignition` namespace is deprecated and will be removed in future versions.  Use `gz` instead.
 
 * Header files under `ignition/...` are deprecated and will be removed in future versions.
-  Use `gz/...` instead.
+  Please use `gz/...` instead.
+
+* The `ignition-gui` element is deprecated and will be removed.
+  Please use `gz-gui` instead.
+
+* `ignitionVersion()` is deprecated and will be removed in future versions.
+  Please use `gzVersion()` instead.
 
 ## Gazebo GUI 6.2 to 6.3
 

@@ -45,7 +45,7 @@ using namespace std::chrono_literals;
 
 /////////////////////////////////////////////////
 // See https://github.com/gazebosim/gz-gui/issues/75
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
+TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -58,7 +58,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
+TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -95,7 +95,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
+TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -131,7 +131,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
+TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -173,7 +173,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
+TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -205,7 +205,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
+TEST(WindowConfigTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -240,7 +240,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
+TEST(WindowConfigTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -278,7 +278,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(MenusToString))
+TEST(WindowConfigTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(MenusToString))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -308,7 +308,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(MenusToString))
 }
 
 /////////////////////////////////////////////////
-TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(IgnoreToString))
+TEST(WindowConfigTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(IgnoreToString))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -335,7 +335,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(IgnoreToString))
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest,
-    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(CloseWithoutSavingChanges))
+    GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(CloseWithoutSavingChanges))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -383,7 +383,7 @@ TEST(MainWindowTest,
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest,
-     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoShutdown))
+     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoShutdown))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -415,7 +415,7 @@ TEST(MainWindowTest,
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest,
-     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitActionCustomShutdownService))
+     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitActionCustomShutdownService))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -460,7 +460,7 @@ TEST(MainWindowTest,
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest,
-     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoCloseGui))
+     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoCloseGui))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -562,7 +562,7 @@ void FindExitDialogButtons(
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest,
-     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogShutdownButton))
+     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogShutdownButton))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -622,7 +622,7 @@ TEST(MainWindowTest,
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest,
-     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogDefaultButtons))
+     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogDefaultButtons))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -670,7 +670,7 @@ TEST(MainWindowTest,
 
 /////////////////////////////////////////////////
 TEST(MainWindowTest,
-     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogButtonsText))
+     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogButtonsText))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
@@ -711,7 +711,7 @@ TEST(MainWindowTest,
 }
 
 /////////////////////////////////////////////////
-TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
+TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 {
   gz::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);

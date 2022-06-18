@@ -39,6 +39,6 @@ TransportPlotting::TransportPlotting() : Plugin(),
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::TransportPlotting,
+GZ_ADD_PLUGIN(gz::gui::plugins::TransportPlotting,
                     gz::gui::Plugin)
 

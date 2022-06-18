@@ -62,15 +62,15 @@ class CmdLine : public ::testing::Test
   protected: void SetUp() override
   {
     // Change environment variable so that test files aren't written to $HOME
-    common::env(IGN_HOMEDIR, this->realHome);
-    EXPECT_TRUE(common::setenv(IGN_HOMEDIR, this->kFakeHome.c_str()));
+    common::env(GZ_HOMEDIR, this->realHome);
+    EXPECT_TRUE(common::setenv(GZ_HOMEDIR, this->kFakeHome.c_str()));
   }
 
   // Documentation inherited
   protected: void TearDown() override
   {
     // Restore $HOME
-    EXPECT_TRUE(common::setenv(IGN_HOMEDIR, this->realHome.c_str()));
+    EXPECT_TRUE(common::setenv(GZ_HOMEDIR, this->realHome.c_str()));
   }
 
   /// \brief Directory to act as $HOME for tests
@@ -82,7 +82,7 @@ class CmdLine : public ::testing::Test
 };
 
 // See https://github.com/gazebosim/gz-gui/issues/75
-TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
+TEST_F(CmdLine, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 {
   // Clear home if it exists
   common::removeAll(this->kFakeHome);

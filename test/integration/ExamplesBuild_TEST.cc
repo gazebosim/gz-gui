@@ -168,7 +168,7 @@ void ExamplesBuild::Build(const std::string &_type)
 
 //////////////////////////////////////////////////
 // See https://github.com/gazebosim/gz-gui/issues/75
-TEST_P(ExamplesBuild, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Build))
+TEST_P(ExamplesBuild, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Build))
 {
   Build(GetParam());
 }

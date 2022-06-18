@@ -297,5 +297,5 @@ void ImageDisplay::SetTopicList(const QStringList &_topicList)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::ImageDisplay,
+GZ_ADD_PLUGIN(gz::gui::plugins::ImageDisplay,
                     gz::gui::Plugin)

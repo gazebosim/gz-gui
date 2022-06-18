@@ -167,26 +167,42 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Load common configuration
-  this->LoadCommonConfig(_pluginElem->FirstChildElement("ignition-gui"));
+  auto guiElem = _pluginElem->FirstChildElement("gz-gui");
+  if (guiElem)
+  {
+    this->LoadCommonConfig(_pluginElem->FirstChildElement("gz-gui"));
+  }
+  // TODO(CH3): Deprecated. Remove on tock.
+  // Try deprecated ignition-gui element if gz-gui is missing
+  else
+  {
+    guiElem = _pluginElem->FirstChildElement("ignition-gui");
+    if (guiElem)
+    {
+      gzwarn << "The `ignition-gui` element is deprecated. Please use "
+      << "`gz-gui` instead." << std::endl;
+      this->LoadCommonConfig(_pluginElem->FirstChildElement("ignition-gui"));
+    }
+  }
 
   // Load custom configuration
   this->LoadConfig(_pluginElem);
 }
 
 /////////////////////////////////////////////////
-void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
+void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_guiElem)
 {
-  if (nullptr == _ignGuiElem)
+  if (nullptr == _guiElem)
     return;
 
-  auto elem = _ignGuiElem->FirstChildElement("title");
+  auto elem = _guiElem->FirstChildElement("title");
   if (nullptr != elem && nullptr != elem->GetText())
   {
     this->title = elem->GetText();
   }
 
   // Delete later
-  elem = _ignGuiElem->FirstChildElement("delete_later");
+  elem = _guiElem->FirstChildElement("delete_later");
   if (nullptr != elem)
   {
     // Store param
@@ -198,7 +214,7 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
   }
 
   // Properties
-  for (auto propElem = _ignGuiElem->FirstChildElement("property");
+  for (auto propElem = _guiElem->FirstChildElement("property");
       propElem != nullptr;
       propElem = propElem->NextSiblingElement("property"))
   {
@@ -244,7 +260,7 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_ignGuiElem)
   }
 
   // Anchors
-  if (auto anchorElem = _ignGuiElem->FirstChildElement("anchors"))
+  if (auto anchorElem = _guiElem->FirstChildElement("anchors"))
   {
     this->dataPtr->anchors.target = anchorElem->Attribute("target");
     this->dataPtr->anchors.lines.clear();
@@ -290,24 +306,24 @@ std::string Plugin::ConfigStr()
   if (!pluginElem)
   {
     gzerr << "Missing <plugin> element, not updating config string."
-           << std::endl;
+          << std::endl;
     return this->configStr;
   }
 
-  // <ignition-gui>
-  auto ignGuiElem = pluginElem->FirstChildElement("ignition-gui");
-  if (!ignGuiElem)
+  // <gz-gui>
+  auto guiElem = pluginElem->FirstChildElement("gz-gui");
+  if (!guiElem)
   {
-    ignGuiElem = doc.NewElement("ignition-gui");
-    pluginElem->InsertEndChild(ignGuiElem);
+    guiElem = doc.NewElement("gz-gui");
+    pluginElem->InsertEndChild(guiElem);
   }
 
   // Clean <property>s
-  for (auto propElem = ignGuiElem->FirstChildElement("property");
+  for (auto propElem = guiElem->FirstChildElement("property");
       propElem != nullptr;)
   {
     auto nextProp = propElem->NextSiblingElement("property");
-    ignGuiElem->DeleteChild(propElem);
+    guiElem->DeleteChild(propElem);
     propElem = nextProp;
   }
 
@@ -339,7 +355,7 @@ std::string Plugin::ConfigStr()
     elem->SetAttribute("key", key);
     elem->SetAttribute("type", type.c_str());
     elem->SetText(value.c_str());
-    ignGuiElem->InsertEndChild(elem);
+    guiElem->InsertEndChild(elem);
   }
 
   // Remove <anchors> if needed
@@ -347,11 +363,11 @@ std::string Plugin::ConfigStr()
   auto anchored = this->CardItem()->property("anchored").toBool();
   if (!anchored)
   {
-    for (auto anchorElem = ignGuiElem->FirstChildElement("anchors");
+    for (auto anchorElem = guiElem->FirstChildElement("anchors");
         anchorElem != nullptr;)
     {
       auto nextAnchor = anchorElem->NextSiblingElement("anchors");
-      ignGuiElem->DeleteChild(anchorElem);
+      guiElem->DeleteChild(anchorElem);
       anchorElem = nextAnchor;
     }
   }
@@ -575,4 +591,3 @@ void Plugin::ApplyAnchors()
   }
   this->CardItem()->setProperty("anchored", true);
 }
-

@@ -49,7 +49,7 @@ using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(ScreenshotTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
+TEST(ScreenshotTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
 {
   common::Console::SetVerbosity(4);
 

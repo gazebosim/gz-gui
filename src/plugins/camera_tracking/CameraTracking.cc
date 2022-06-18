@@ -321,7 +321,7 @@ void CameraTrackingPrivate::OnRender()
 
   // Move To
   {
-    IGN_PROFILE("CameraTrackingPrivate::OnRender MoveTo");
+    GZ_PROFILE("CameraTrackingPrivate::OnRender MoveTo");
     if (!this->moveToTarget.empty())
     {
       if (this->moveToHelper.Idle())
@@ -353,7 +353,7 @@ void CameraTrackingPrivate::OnRender()
 
   // Move to pose
   {
-    IGN_PROFILE("CameraTrackingPrivate::OnRender MoveToPose");
+    GZ_PROFILE("CameraTrackingPrivate::OnRender MoveToPose");
     if (this->moveToPoseValue)
     {
       if (this->moveToHelper.Idle())
@@ -375,7 +375,7 @@ void CameraTrackingPrivate::OnRender()
 
   // Follow
   {
-    IGN_PROFILE("CameraTrackingPrivate::OnRender Follow");
+    GZ_PROFILE("CameraTrackingPrivate::OnRender Follow");
     // reset follow mode if target node got removed
     if (!this->followTarget.empty())
     {
@@ -505,5 +505,5 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::CameraTracking,
+GZ_ADD_PLUGIN(gz::gui::plugins::CameraTracking,
                     gz::gui::Plugin)

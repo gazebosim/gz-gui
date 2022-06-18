@@ -339,5 +339,5 @@ void WorldControlPrivate::SendEventMsg(const gz::msgs::WorldControl &_msg)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::WorldControl,
+GZ_ADD_PLUGIN(gz::gui::plugins::WorldControl,
                     gz::gui::Plugin)

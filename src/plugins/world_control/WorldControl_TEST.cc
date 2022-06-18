@@ -39,7 +39,7 @@ using namespace gui;
 
 // See https://github.com/gazebosim/gz-gui/issues/75
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
+TEST(WorldControlTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);
 
@@ -72,7 +72,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
+TEST(WorldControlTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
 {
   common::Console::SetVerbosity(4);
 
@@ -141,7 +141,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
+TEST(WorldControlTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
 {
   common::Console::SetVerbosity(4);
 
@@ -194,7 +194,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoService))
 
 /////////////////////////////////////////////////
 TEST(WorldControlTest,
-    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadService))
+    GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameBadService))
 {
   common::Console::SetVerbosity(4);
 
@@ -249,7 +249,7 @@ TEST(WorldControlTest,
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
+TEST(WorldControlTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
 {
   common::Console::SetVerbosity(4);
 
@@ -300,7 +300,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldNameNoProp))
 }
 
 /////////////////////////////////////////////////
-TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControlEvent))
+TEST(WorldControlTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControlEvent))
 {
   common::Console::SetVerbosity(4);
 

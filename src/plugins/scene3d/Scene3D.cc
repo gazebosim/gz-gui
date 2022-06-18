@@ -1823,5 +1823,5 @@ void Scene3D::SetLoadingError(const QString &_loadingError)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::Scene3D,
+GZ_ADD_PLUGIN(gz::gui::plugins::Scene3D,
                     gz::gui::Plugin)

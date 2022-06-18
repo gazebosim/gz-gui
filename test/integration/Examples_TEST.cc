@@ -35,7 +35,7 @@ using namespace gui;
 
 // See https://github.com/gazebosim/gz-gui/issues/75
 /////////////////////////////////////////////////
-TEST(ExampleTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
+TEST(ExampleTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
 {
   common::Console::SetVerbosity(4);
   auto exampleConfigPath = common::joinPaths(std::string(PROJECT_SOURCE_PATH),

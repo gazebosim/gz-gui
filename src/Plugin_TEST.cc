@@ -35,7 +35,7 @@ using namespace gz;
 using namespace gui;
 
 // See https://github.com/gazebosim/gz-gui/issues/75
-TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
+TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -74,7 +74,7 @@ TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 }
 
 /////////////////////////////////////////////////
-TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
+TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 {
   gz::common::Console::SetVerbosity(4);
 
@@ -104,7 +104,7 @@ TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 }
 
 /////////////////////////////////////////////////
-TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
+TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
 {
   gz::common::Console::SetVerbosity(4);
 

@@ -96,14 +96,14 @@ class gz::gui::plugins::MarkerManagerPrivate
   public: void SetMarker(const gz::msgs::Marker &_msg,
                          const rendering::MarkerPtr &_markerPtr);
 
-  /// \brief Converts an ignition msg material to ignition rendering
+  /// \brief Converts a Gazebo msg material to Gazebo Rendering
   //         material.
   //  \param[in] _msg The message data.
   //  \return Converted rendering material, if any.
   public: rendering::MaterialPtr MsgToMaterial(
     const gz::msgs::Marker &_msg);
 
-  /// \brief Converts an ignition msg render type to ignition rendering
+  /// \brief Converts a Gazebo msg render type to Gazebo Rendering
   /// \param[in] _msg The message data
   /// \return Converted rendering type, if any.
   public: gz::rendering::MarkerType MsgToType(
@@ -122,7 +122,7 @@ class gz::gui::plugins::MarkerManagerPrivate
   public: std::map<std::string,
       std::map<uint64_t, gz::rendering::VisualPtr>> visuals;
 
-  /// \brief Ignition node
+  /// \brief Gazebo node
   public: gz::transport::Node node;
 
   /// \brief Topic name for the marker service
@@ -781,5 +781,5 @@ bool MarkerManager::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::MarkerManager,
+GZ_ADD_PLUGIN(gz::gui::plugins::MarkerManager,
                     gz::gui::Plugin)

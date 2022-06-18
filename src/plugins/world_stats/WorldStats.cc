@@ -296,5 +296,5 @@ void WorldStats::SetIterations(const QString &_iterations)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(gz::gui::plugins::WorldStats,
+GZ_ADD_PLUGIN(gz::gui::plugins::WorldStats,
                     gz::gui::Plugin)
