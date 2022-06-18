@@ -315,7 +315,7 @@ std::string Plugin::ConfigStr()
   if (!guiElem)
   {
     guiElem = doc.NewElement("gz-gui");
-    pluginElem->InsertEndChild(guiElem);    
+    pluginElem->InsertEndChild(guiElem);
   }
 
   // Clean <property>s
