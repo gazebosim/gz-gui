@@ -602,14 +602,14 @@ namespace ignition
       /// \return True if it's being ignored
       bool IsIgnoring(const std::string &_prop) const;
 
-      /// \brief Get the flag to show the quick setup menu's default options.
+      /// \brief Get the flag to show the quick start menu's default options.
       /// \return True to show.
-      public: bool ShowDefaultQuickSetupOpts() const;
+      public: bool ShowDefaultQuickStartOpts() const;
 
-      /// \brief Set the flag to show the quick setup menu's default options.
-      /// \param[in] _showDefaultQuickSetupOpts True to show.
-      public: void SetShowDefaultQuickSetupOpts(
-          const bool _showDefaultQuickSetupOpts);
+      /// \brief Set the flag to show the quick start menu's default options.
+      /// \param[in] _showDefaultQuickStartOpts True to show.
+      public: void SetShowDefaultQuickStartOpts(
+          const bool _showDefaultQuickStartOpts);
 
       /// \brief Window X position in px
       int posX{-1};
@@ -665,8 +665,8 @@ namespace ignition
       /// \brief Show the default options of the drawer
       bool showDefaultDrawerOpts{true};
 
-      /// \brief Show the default options of the quick setup menu
-      bool showDefaultQuickSetupOpts{true};
+      /// \brief Show the default options of the quick Start menu
+      bool showDefaultQuickStartOpts{true};
 
       /// \brief Show the plugins menu
       bool showPluginMenu{true};

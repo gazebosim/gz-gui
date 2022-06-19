@@ -331,7 +331,7 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   // Menus
   this->SetShowDrawer(_config.showDrawer);
   this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
-  this->dataPtr->windowConfig.SetShowDefaultQuickSetupOpts(_config.showDefaultQuickSetupOpts);
+  this->dataPtr->windowConfig.SetShowDefaultQuickStartOpts(_config.showDefaultQuickStartOpts);
   this->SetShowPluginMenu(_config.showPluginMenu);
 
   // Keep a copy
@@ -384,8 +384,8 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   config.showDrawer = this->dataPtr->windowConfig.showDrawer;
   config.showDefaultDrawerOpts =
       this->dataPtr->windowConfig.showDefaultDrawerOpts;
-  config.showDefaultQuickSetupOpts =
-      this->dataPtr->windowConfig.showDefaultQuickSetupOpts;
+  config.showDefaultQuickStartOpts =
+      this->dataPtr->windowConfig.showDefaultQuickStartOpts;
   config.showPluginMenu = this->dataPtr->windowConfig.showPluginMenu;
   config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
   config.showPlugins = this->dataPtr->windowConfig.showPlugins;
@@ -517,15 +517,15 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
       }
     }
 
-    // QuickSetup
-    if (auto quickSetupElem = menusElem->FirstChildElement("quick_setup"))
+    // QuickStart
+    if (auto quickStartElem = menusElem->FirstChildElement("quick_start"))
     {
       // Default
-      if (quickSetupElem->Attribute("default"))
+      if (quickStartElem->Attribute("default"))
       {
         bool def = true;
-        quickSetupElem->QueryBoolAttribute("default", &def);
-        this->showDefaultQuickSetupOpts = def;
+        quickStartElem->QueryBoolAttribute("default", &def);
+        this->showDefaultQuickStartOpts = def;
       }
     }
 
@@ -663,12 +663,12 @@ std::string WindowConfig::XMLString() const
       menusElem->InsertEndChild(elem);
     }
 
-    // Quick Setup
+    // Quick Start
     {
-      auto elem = doc.NewElement("quick_setup");
+      auto elem = doc.NewElement("quick_start");
 
       // Default
-      elem->SetAttribute("default", this->showDefaultQuickSetupOpts);
+      elem->SetAttribute("default", this->showDefaultQuickStartOpts);
 
       menusElem->InsertEndChild(elem);
     }
@@ -718,15 +718,15 @@ std::string WindowConfig::XMLString() const
 }
 
 /////////////////////////////////////////////////
-bool WindowConfig::ShowDefaultQuickSetupOpts() const
+bool WindowConfig::ShowDefaultQuickStartOpts() const
 {
-  return this->showDefaultQuickSetupOpts;
+  return this->showDefaultQuickStartOpts;
 }
 
 /////////////////////////////////////////////////
-void WindowConfig::SetShowDefaultQuickSetupOpts(const bool _showDefaultQuickSetupOpts)
+void WindowConfig::SetShowDefaultQuickStartOpts(const bool _showDefaultQuickStartOpts)
 {
-  this->showDefaultQuickSetupOpts = _showDefaultQuickSetupOpts;
+  this->showDefaultQuickStartOpts = _showDefaultQuickStartOpts;
 }
 
 /////////////////////////////////////////////////
