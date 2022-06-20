@@ -1074,9 +1074,10 @@ void RenderWindowItem::SetEngineName(const std::string &_name)
 {
   // Deprecated: accept ignition-prefixed engines
   auto name = _name;
-  if (name.find("ignition") != std::string::npos)
+  auto pos = name.find("ignition");
+  if (pos != std::string::npos)
   {
-    name.replace(0, 8, "gz");
+    name.replace(pos, pos + 8, "gz");
     gzwarn << "Trying to load deprecated plugin [" << _name << "]. Use ["
            << name << "] instead." << std::endl;
   }
