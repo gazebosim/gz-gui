@@ -132,13 +132,15 @@ namespace ignition
       public: std::string DefaultConfigPath();
 
       /// \brief Show quick Start menu or not
-      /// \return True if quick Start menu is configured to be shown before main window
+      /// \return True if quick Start menu is configured to be shown
+      /// before main window
       /// initialized.
       public: bool ShowQuickStart() const;
 
       /// \brief Set the flag to show the quick start menu's default options.
       /// \param[in] _showDefaultQuickStartOpts True to show.
-      public: void SetShowDefaultQuickStartOpts(const bool _showDefaultQuickStartOpts) const;
+      public: void SetShowDefaultQuickStartOpts(
+        const bool _showDefaultQuickStartOpts) const;
 
       /// \brief Set the environment variable which defines the paths to
       /// look for plugins.

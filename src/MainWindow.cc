@@ -331,7 +331,8 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   // Menus
   this->SetShowDrawer(_config.showDrawer);
   this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
-  this->dataPtr->windowConfig.SetShowDefaultQuickStartOpts(_config.showDefaultQuickStartOpts);
+  this->dataPtr->windowConfig.SetShowDefaultQuickStartOpts(
+    _config.showDefaultQuickStartOpts);
   this->SetShowPluginMenu(_config.showPluginMenu);
 
   // Keep a copy
@@ -724,7 +725,8 @@ bool WindowConfig::ShowDefaultQuickStartOpts() const
 }
 
 /////////////////////////////////////////////////
-void WindowConfig::SetShowDefaultQuickStartOpts(const bool _showDefaultQuickStartOpts)
+void WindowConfig::SetShowDefaultQuickStartOpts(
+  const bool _showDefaultQuickStartOpts)
 {
   this->showDefaultQuickStartOpts = _showDefaultQuickStartOpts;
 }

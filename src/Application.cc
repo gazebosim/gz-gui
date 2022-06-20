@@ -222,9 +222,11 @@ bool Application::ShowQuickStart() const
 }
 
 /////////////////////////////////////////////////
-void Application::SetShowDefaultQuickStartOpts(const bool _showDefaultQuickStartOpts) const
+void Application::SetShowDefaultQuickStartOpts(
+  const bool _showDefaultQuickStartOpts) const
 {
-  return this->dataPtr->windowConfig.SetShowDefaultQuickStartOpts(_showDefaultQuickStartOpts);
+  return this->dataPtr->windowConfig.SetShowDefaultQuickStartOpts(
+    _showDefaultQuickStartOpts);
 }
 
 /////////////////////////////////////////////////
@@ -294,6 +296,7 @@ bool Application::LoadWindowConfig(const std::string &_config)
   }
   return true;
 }
+
 /////////////////////////////////////////////////
 bool Application::LoadConfig(const std::string &_config)
 {
