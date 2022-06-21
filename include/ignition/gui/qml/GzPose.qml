@@ -23,8 +23,8 @@ import QtQuick.Controls.Styles 1.4
 
 // Item displaying 3D pose information.
 Item {
-  id: gzposeRoot
-  height: content.height
+  id: gzPoseRoot
+  height: gzPoseContent.height
 
   // Left indentation
   property int indentation: 10
@@ -36,9 +36,9 @@ Item {
   property double spinMax: 1000000
 
   // Read-only / write
-  property bool readOnly: true
+  property bool readOnly: false
 
-  // Show Pose
+  // Show Pose bar
   property bool show: false
 
   // Loaded item for Pose
@@ -48,6 +48,13 @@ Item {
   property var rollItem: {}
   property var pitchItem: {}
   property var yawItem: {}
+
+  property double xModelValue
+  property double yModelValue
+  property double zModelValue
+  property double rollModelValue
+  property double pitchModelValue
+  property double yawModelValue
 
   signal poseSet()
 
@@ -67,12 +74,12 @@ Item {
     id: writableNumber
     IgnSpinBox {
       id: writableSpin
-      value: writableSpin.activeFocus ? writableSpin.value : numberValue
+      value:  numberValue
       minimumValue: -spinMax
       maximumValue: spinMax
       decimals: getDecimals(writableSpin.width)
       onEditingFinished: {
-        gzposeRoot.poseSet()  
+        gzPoseRoot.poseSet()
       }
     }
   }
@@ -95,7 +102,7 @@ Item {
   }
 
   Rectangle {
-    id: content
+    id: gzPoseContent
     width: parent.width
     height: show ? grid.height : 0
     clip: true
@@ -132,7 +139,7 @@ Item {
         Loader {
           id: xLoader
           anchors.fill: parent
-          property double numberValue: 0.0
+          property double numberValue: xModelValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             xItem = xLoader.item
@@ -153,7 +160,7 @@ Item {
         Loader {
           id: rollLoader
           anchors.fill: parent
-          property double numberValue: 0.0
+          property double numberValue: rollModelValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             rollItem = rollLoader.item
@@ -180,10 +187,10 @@ Item {
         Loader {
           id: yLoader
           anchors.fill: parent
-          property double numberValue: 0.0
+          property double numberValue: yModelValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
-            yItem = yLoader.item
+             yItem = yLoader.item
           }
         }
       }
@@ -201,7 +208,7 @@ Item {
         Loader {
           id: pitchLoader
           anchors.fill: parent
-          property double numberValue: 0.0
+          property double numberValue: pitchModelValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             pitchItem = pitchLoader.item
@@ -222,7 +229,7 @@ Item {
         Loader {
           id: zLoader
           anchors.fill: parent
-          property double numberValue: 0.0
+          property double numberValue: zModelValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             zItem = zLoader.item
@@ -243,7 +250,7 @@ Item {
         Loader {
           id: yawLoader
           anchors.fill: parent
-          property double numberValue: 0.0
+          property double numberValue: yawModelValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             yawItem = yawLoader.item
@@ -251,5 +258,5 @@ Item {
         }
       }
     } // end of GridLayout
-  } // end of Rectangle (content)
-} // end of Rectangle (root)
+  } // end of Rectangle (gzPoseContent)
+} // end of Rectangle (gzPoseRoot)
