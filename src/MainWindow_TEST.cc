@@ -222,6 +222,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
   EXPECT_TRUE(c.showDrawer);
   EXPECT_TRUE(c.showDefaultDrawerOpts);
   EXPECT_TRUE(c.showPluginMenu);
+  EXPECT_TRUE(c.showDefaultQuickStartOpts);
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_TRUE(c.ignoredProps.empty());
@@ -236,6 +237,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
   EXPECT_NE(xml.find("<menus>"), std::string::npos);
   EXPECT_NE(xml.find("<drawer"), std::string::npos);
   EXPECT_NE(xml.find("<plugins"), std::string::npos);
+  EXPECT_NE(xml.find("<quick_setup"), std::string::npos);
   EXPECT_EQ(xml.find("<ignore>"), std::string::npos);
 }
 
@@ -255,7 +257,8 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
 
   // Merge from XML
   c.MergeFromXML(std::string("<window><position_x>5000</position_x>")+
-    "<menus><plugins from_paths=\"false\"/></menus>" +
+    "<menus><quick_setup default=\"false\"/>" +
+    "<plugins from_paths=\"false\"/></menus>" +
     "<ignore>size</ignore></window>");
 
   // Check values
@@ -270,6 +273,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
   EXPECT_TRUE(c.showDrawer);
   EXPECT_TRUE(c.showDefaultDrawerOpts);
   EXPECT_TRUE(c.showPluginMenu);
+  EXPECT_FALSE(c.showDefaultQuickStartOpts);
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_EQ(c.ignoredProps.size(), 2u);
