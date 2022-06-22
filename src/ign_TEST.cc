@@ -84,6 +84,8 @@ class CmdLine : public ::testing::Test
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 {
+  EXPECT_TRUE(common::exists(this->kFakeHome));
+
   // Clear home if it exists
   common::removeAll(this->kFakeHome);
 
