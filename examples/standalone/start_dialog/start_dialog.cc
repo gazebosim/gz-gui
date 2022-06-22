@@ -78,9 +78,7 @@ int main(int _argc, char **_argv)
   igndbg << "Dialog closed, open main window" << std::endl;
 
   // Create main window
-  // FIXME: use CreateMainWindow - currently complains with undefined reference
-  //app.CreateMainWindow();
-  app.InitializeMainWindow();
+  app.CreateMainWindow();
 
   // Run main window
   app.exec();
