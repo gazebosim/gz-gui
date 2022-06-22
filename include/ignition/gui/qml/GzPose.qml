@@ -56,16 +56,7 @@ Item {
   property double pitchModelValue
   property double yawModelValue
 
-  signal poseSet()
-
-  // Get number of decimal digits based on a widget's width
-  function getDecimals(_width) {
-    if (_width <= 80)
-      return 2;
-    else if (_width <= 100)
-      return 4;
-    return 6;
-  }
+  signal gzPoseSet()
 
   /**
    * Used to create a spin box
@@ -79,7 +70,7 @@ Item {
       maximumValue: spinMax
       decimals: getDecimals(writableSpin.width)
       onEditingFinished: {
-        gzPoseRoot.poseSet()
+        gzPoseRoot.gzPoseSet()
       }
     }
   }
