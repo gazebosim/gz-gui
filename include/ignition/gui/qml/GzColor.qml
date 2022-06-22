@@ -18,6 +18,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.3
+import QtQuick.Controls.Material 2.1
 
 
 // RGBA using range 0 - 1.0
@@ -32,9 +33,7 @@ Item {
   property double b: 0.0
   property double a: 1.0
 
-  property bool useWhiteTheme: true
-
-  signal colorSet()
+  signal gzColorSet()
 
   Button {
     id: gzColorButton
@@ -46,28 +45,29 @@ Item {
       implicitWidth: 40
       implicitHeight: 40
       radius: 5
-      border.color: useWhiteTheme ? Qt.rgba(0,0,0,1) : Qt.rgba(1,1,1,1)
+      border.color: (Material.theme === Material.Light) ? Qt.rgba(0,0,0,1) : Qt.rgba(1,1,1,1)
       border.width: 2
       color: Qt.rgba(r,g,b,a)
     }
-    onClicked: colorDialog.open()
+    onClicked: gzColorDialog.open()
   }
 
   ColorDialog {
-    id: colorDialog
+    id: gzColorDialog
     title: "Choose a color"
     visible: false
     showAlphaChannel: true
+    modality: Qt.ApplicationModal
     onAccepted: {
-      r = colorDialog.color.r
-      g = colorDialog.color.g
-      b = colorDialog.color.b
-      a = colorDialog.color.a
-      gzColorRoot.colorSet()
-      colorDialog.close()
+      r = gzColorDialog.color.r
+      g = gzColorDialog.color.g
+      b = gzColorDialog.color.b
+      a = gzColorDialog.color.a
+      gzColorRoot.gzColorSet()
+      gzColorDialog.close()
     }
     onRejected: {
-      colorDialog.close()
+      gzColorDialog.close()
     }
   }
 }

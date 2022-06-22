@@ -297,8 +297,7 @@ GridLayout {
     Layout.alignment: Qt.AlignRight
     Layout.bottomMargin: 5
     Layout.rightMargin: 20
-    useWhiteTheme: Material.theme == Material.Light
-    onColorSet: Grid3D.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
+    onGzColorSet: Grid3D.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
   }
 }
 
