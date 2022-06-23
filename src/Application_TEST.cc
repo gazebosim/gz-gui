@@ -197,6 +197,56 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadConfig))
 }
 
 //////////////////////////////////////////////////
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadWindowConfig))
+{
+  ignition::common::Console::SetVerbosity(4);
+
+  EXPECT_EQ(nullptr, qGuiApp);
+
+  // Empty string
+  {
+    Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
+
+    EXPECT_FALSE(app.LoadWindowConfig(""));
+  }
+
+  // Test config file
+  {
+    Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
+
+    // Add test plugin to path (referenced in config)
+    auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
+    app.AddPluginPath(testBuildPath);
+
+    // Load test config file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(app.LoadWindowConfig(testSourcePath + "config/test.config"));
+  }
+
+  // Test environment variable and relative path
+  {
+    // Environment variable not set
+    Application app(g_argc, g_argv);
+    EXPECT_FALSE(app.LoadWindowConfig("ignore.config"));
+
+    // Invalid path
+    setenv("GZ_GUI_RESOURCE_PATH", "invalidPath", 1);
+    EXPECT_FALSE(app.LoadWindowConfig("ignore.config"));
+
+    // Valid path
+    setenv("GZ_GUI_RESOURCE_PATH",
+        (std::string(PROJECT_SOURCE_PATH) + "/test/config").c_str(), 1);
+    EXPECT_TRUE(app.LoadWindowConfig("ignore.config"));
+
+    // Multiple paths, one valid
+    setenv("GZ_GUI_RESOURCE_PATH",
+        ("banana:" + std::string(PROJECT_SOURCE_PATH) + "/test/config" +
+        ":orange").c_str(), 1);
+    EXPECT_TRUE(app.LoadWindowConfig("ignore.config"));
+  }
+}
+
+//////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
 {
   ignition::common::Console::SetVerbosity(4);
@@ -222,7 +272,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(InitializeMainWindow))
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(CreateMainWindow))
 {
   ignition::common::Console::SetVerbosity(4);
 

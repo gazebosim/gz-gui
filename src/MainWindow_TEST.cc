@@ -727,6 +727,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
     auto c = mainWindow->CurrentWindowConfig();
     EXPECT_TRUE(c.showDrawer);
     EXPECT_TRUE(c.showDefaultDrawerOpts);
+    EXPECT_TRUE(c.showDefaultQuickStartOpts);
     EXPECT_TRUE(c.showPluginMenu);
     EXPECT_TRUE(c.pluginsFromPaths);
     EXPECT_TRUE(c.showPlugins.empty());
