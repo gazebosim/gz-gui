@@ -221,6 +221,11 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadWindowConfig))
 
   // Test getting default show quick start menu
   {
+    Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
+
+    // Load test config file
+    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
+    EXPECT_TRUE(app.LoadWindowConfig(testSourcePath + "config/test.config"));
     EXPECT_TRUE(app.ShowQuickStart());
     app.SetShowDefaultQuickStartOpts(false);
     EXPECT_FALSE(app.ShowQuickStart());
