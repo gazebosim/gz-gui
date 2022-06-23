@@ -89,7 +89,7 @@ TEST_F(CmdLine, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 
   EXPECT_FALSE(common::exists(this->kFakeHome));
 
-  std::string output = custom_exec_str("ign gui -l");
+  std::string output = custom_exec_str("gz gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
   EXPECT_NE(output.find("Publisher"), std::string::npos) << output;
 

@@ -33,7 +33,7 @@ Build:
 
 1. Launch the example config file:
 
-        ign gui -c point_cloud.config
+        gz gui -c point_cloud.config
 
 3. From the build directory above, publish clouds to be visualized:
 

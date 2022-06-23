@@ -57,11 +57,11 @@ by adding a `<window>` element to the config file. The child elements are:
 
 Try an example layout:
 
-    ign gui -c examples/config/layout.config
+    gz gui -c examples/config/layout.config
 
 Compare it to the same plugins loaded without a layout:
 
-    ign gui -c examples/config/no_layout.config
+    gz gui -c examples/config/no_layout.config
 
 ## Create a new layout
 
@@ -71,7 +71,7 @@ config file. For example:
 1. Open a config file loading several plugins, but without window
    configurations, for example:
 
-        ign gui -c examples/config/no_layout.config
+        gz gui -c examples/config/no_layout.config
 
 1. Drag the widgets as you wish.
 
@@ -83,6 +83,6 @@ config file. For example:
 
 1. Close the window, then load the new config file:
 
-        ign gui -c <path to saved file>
+        gz gui -c <path to saved file>
 
 You can also load the new config file from `File->Load configuration`.

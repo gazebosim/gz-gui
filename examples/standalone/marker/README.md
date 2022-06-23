@@ -14,7 +14,7 @@ From this directory:
 
 ## Execute Instructions
 
-Launch ign gazebo unpaused then from the build directory above:
+Launch gz sim unpaused then from the build directory above:
 
     ./marker
 

@@ -13,7 +13,7 @@ under the `examples` folder.
 Gazebo GUI can be used as a C++ library by other applications.
 
 Examples provided under `examples/standalone` can be compiled and run without
-the `ign gui` command line tool.
+the `gz gui` command line tool.
 
 For example, build an example in which an empty window can be opened
 programmatically as follows:
@@ -52,7 +52,7 @@ Then create the plugins directory and copy the generated library to it so that G
 
 Now you can use the command line to open it:
 
-    ign gui -s HelloPlugin
+    gz gui -s HelloPlugin
 
 ### All example plugins
 
@@ -71,4 +71,4 @@ any extra installation step and can be run directly from the command line.
 
 For example, you can run the example `pubsub.config` from the command line:
 
-    ign gui -c examples/config/pubsub.config
+    gz gui -c examples/config/pubsub.config

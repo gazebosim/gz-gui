@@ -7,7 +7,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/GuiEvents.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/gz.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/PlottingInterface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
@@ -21,7 +21,7 @@ set (gtest_sources
   DragDropModel_TEST
   Helpers_TEST
   GuiEvents_TEST
-  ign_TEST
+  gz_TEST
   MainWindow_TEST
   PlottingInterface_TEST
   Plugin_TEST
@@ -39,8 +39,8 @@ endif()
 
 # this test currently fails on brew (issue #27)
 # so disable it for now
-if (NOT HAVE_IGN_TOOLS OR APPLE)
-  list(REMOVE_ITEM gtest_sources ign_TEST.cc)
+if (NOT HAVE_GZ_TOOLS OR APPLE)
+  list(REMOVE_ITEM gtest_sources gz_TEST.cc)
 endif()
 
 gz_build_tests(TYPE UNIT

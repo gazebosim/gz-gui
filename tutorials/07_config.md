@@ -17,7 +17,7 @@ C++ API.
 
 From the command line, use the `--config` / `-c` option, for example:
 
-`ign gui -c path/to/example.config`
+`gz gui -c path/to/example.config`
 
 From the C++ API, pass the file path to
 [Application::LoadConfig](https://gazebosim.org/api/gui/6.0/classignition_1_1gui_1_1Application.html#a03c4c3a1b1e58cc4bff05658f21fff17).

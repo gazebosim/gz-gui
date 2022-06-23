@@ -34,11 +34,11 @@ tutorial for more information.
 
 Display images from a Gazebo Transport topic.
 
-    ign gui -c examples/config/image.config
+    gz gui -c examples/config/image.config
 
 or
 
-    ign gui -s ImageDisplay
+    gz gui -s ImageDisplay
 
 ### Publisher
 
@@ -46,11 +46,11 @@ Publish messages on a Gazebo Transport topic.
 
 1. Listen to string messages on the `/echo` topic:
 
-        ign topic -e -t /echo
+        gz topic -e -t /echo
 
 2. On a new terminal, open the publisher GUI:
 
-        ign gui -s Publisher
+        gz gui -s Publisher
 
 3. The GUI is pre-filled to publish "Hello" messages on the `/echo` topic.
    Click "Publish" to publish a message and see it on the terminal.
@@ -60,19 +60,19 @@ Publish messages on a Gazebo Transport topic.
 * Stats: Display sim / real time published on a topic
 * Control: Buttons to make play / pause / step service requests
 
-        ign gui -c examples/config/time.config
+        gz gui -c examples/config/time.config
 
 ### Topic echo
 
 Echo messages from a Gazebo Transport topic.
 
-    ign gui -c examples/config/pubsub.config
+    gz gui -c examples/config/pubsub.config
 
 ### Key publisher
 
 Publish key presses through Gazebo Transport.
 
-    ign gui -c examples/config/keypublisher.config
+    gz gui -c examples/config/keypublisher.config
 
 Change the topic to echo to `/keyboard/keypress`, echo, and start pressing keys.
 
@@ -82,7 +82,7 @@ Change the topic to echo to `/keyboard/keypress`, echo, and start pressing keys.
 
 Discover all Gazebo Transport topics and introspect its fields.
 
-    ign gui -c examples/config/topicViewer.config
+    gz gui -c examples/config/topicViewer.config
 
 ### Topics stats
 
@@ -90,7 +90,7 @@ Discover all Gazebo Transport topics and introspect its fields.
 
 Show basic stats of all Gazebo Transport topics at the same time.
 
-    ign gui -c examples/config/topicsStats.config
+    gz gui -c examples/config/topicsStats.config
 
 ### Requester and Responder
 
@@ -99,7 +99,7 @@ Show basic stats of all Gazebo Transport topics at the same time.
 Make custom service requests and serve custom services with these two
 plugins.
 
-    ign gui -c examples/config/reqres.config
+    gz gui -c examples/config/reqres.config
 
 ### Displays
 
@@ -109,7 +109,7 @@ This is a container for various Display Plugins that each paint on a Scene.
 The following example includes the display plugins that are installed with
 Gazebo GUI by default.
 
-    ign gui -c examples/config/display_plugins.config
+    gz gui -c examples/config/display_plugins.config
 
 #### Finding display plugins
 
