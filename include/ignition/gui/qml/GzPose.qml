@@ -15,7 +15,6 @@
  *
 */
 import QtQuick 2.9
-import QtQuick.Controls 1.4
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
@@ -56,7 +55,7 @@ Item {
   property double pitchModelValue
   property double yawModelValue
 
-  signal gzPoseSet()
+  signal gzPoseSet(double x, double y, double z, double roll, double pitch, double yaw)
 
   /**
    * Used to create a spin box
@@ -70,7 +69,7 @@ Item {
       maximumValue: spinMax
       decimals: getDecimals(writableSpin.width)
       onEditingFinished: {
-        gzPoseRoot.gzPoseSet()
+        gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value, rollItem.value, pitchItem.value, yawItem.value)
       }
     }
   }
