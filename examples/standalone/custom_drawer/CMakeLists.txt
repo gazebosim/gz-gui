@@ -23,7 +23,7 @@ set(GZ_GUI_VER ${gz-gui7_VERSION_MAJOR})
 
 QT5_ADD_RESOURCES(resources_RCC custom_drawer.qrc)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 
 # Generate example
 add_executable(custom_drawer

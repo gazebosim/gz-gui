@@ -84,7 +84,7 @@ function(gz_gui_add_plugin plugin_name)
       SOURCES
         ${gz_gui_add_plugin_TEST_SOURCES}
       LIB_DEPS
-        ${IGNITION-GUI_LIBRARIES}
+        ${GZ-GUI_LIBRARIES}
         TINYXML2::TINYXML2
         ${plugin_name}
       INCLUDE_DIRS

@@ -21,7 +21,7 @@ find_package (Qt5
 find_package(gz-gui7 REQUIRED)
 set(GZ_GUI_VER ${gz-gui7_VERSION_MAJOR})
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 
 QT5_ADD_RESOURCES(resources_RCC MultipleQml.qrc)
 
