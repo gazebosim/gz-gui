@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
-project(gz-gui-ign-components)
+project(gz-gui-gz-components)
 
 if(POLICY CMP0100)
   cmake_policy(SET CMP0100 NEW)

@@ -55,9 +55,9 @@ TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
   // Load plugin to be deleted
   pluginStr =
     "<plugin filename=\"TestPlugin\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<delete_later>true</delete_later>"
-      "</ignition-gui>"
+      "</gz-gui>"
     "</plugin>";
 
   pluginDoc.Parse(pluginStr);
@@ -84,9 +84,9 @@ TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
   // Load plugin config that returns null GetText
   const char *pluginStr =
     "<plugin filename=\"TestPlugin\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<title><null>This results in null titleElem->GetText</null></title>"
-      "</ignition-gui>"
+      "</gz-gui>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
