@@ -953,8 +953,8 @@ void MainWindow::SetRenderEngine(const std::string &_renderEngine)
   if (pos != std::string::npos)
   {
     renderEngine.replace(pos, pos + 8, "gz");
-    gzwarn << "Trying to load deprecated plugin [" << _renderEngine << "]. Use ["
-           << renderEngine << "] instead." << std::endl;
+    gzwarn << "Trying to load deprecated plugin [" << _renderEngine
+           << "]. Use [" << renderEngine << "] instead." << std::endl;
   }
   this->setProperty("renderEngine", renderEngine.c_str());
 }
