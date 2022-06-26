@@ -100,9 +100,9 @@ TEST(TopicViewerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
     // Load plugin
     const char *pluginStr =
       "<plugin filename=\"TopicViewer\">"
-        "<ignition-gui>"
+        "<gz-gui>"
           "<title>Topic Viewer</title>"
-        "</ignition-gui>"
+        "</gz-gui>"
       "</plugin>";
 
     tinyxml2::XMLDocument pluginDoc;

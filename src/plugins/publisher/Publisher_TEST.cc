@@ -79,9 +79,9 @@ TEST(PublisherTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"Publisher\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<title>Publisher!</title>"
-      "</ignition-gui>"
+      "</gz-gui>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;

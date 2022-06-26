@@ -86,9 +86,9 @@ TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"WorldStats\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<title>World Stats!</title>"
-      "</ignition-gui>"
+      "</gz-gui>"
       "<sim_time>true</sim_time>"
       "<real_time>true</real_time>"
       "<real_time_factor>true</real_time_factor>"

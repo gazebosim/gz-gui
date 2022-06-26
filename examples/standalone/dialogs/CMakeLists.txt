@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
-project(ignition-gui-dialogs)
+project(gz-gui-dialogs)
 
 if(POLICY CMP0100)
   cmake_policy(SET CMP0100 NEW)
@@ -18,28 +18,17 @@ find_package (Qt5
 )
 
 # Find the Gazebo GUI library
-find_package(ignition-gui7 REQUIRED)
+find_package(gz-gui7 REQUIRED)
+set(GZ_GUI_VER ${gz-gui7_VERSION_MAJOR})
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
-
-include_directories(SYSTEM
-  ${IGNITION-GUI_INCLUDE_DIRS}
-  ${Qt5Core_INCLUDE_DIRS}
-  ${Qt5Qml_INCLUDE_DIRS}
-  ${Qt5Quick_INCLUDE_DIRS}
-  ${Qt5QuickControls2_INCLUDE_DIRS}
-)
-
-link_directories(
-  ${IGNITION-GUI_LIBRARY_DIRS}
-)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 
 # Generate example
 add_executable(dialogs
   dialogs.cc
 )
 target_link_libraries(dialogs
-  ${IGNITION-GUI_LIBRARIES}
+  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
   ${Qt5Core_LIBRARIES}
   ${Qt5Qml_LIBRARIES}
   ${Qt5Quick_LIBRARIES}

@@ -6,6 +6,6 @@ gz_gui_add_plugin(TransportSceneManager
   TEST_SOURCES
     # TransportSceneManager_TEST.cc
   PUBLIC_LINK_LIBS
-   ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
+   gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
 )
 

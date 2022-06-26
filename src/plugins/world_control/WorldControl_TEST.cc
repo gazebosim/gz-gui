@@ -82,9 +82,9 @@ TEST(WorldControlTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControl))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<title>World Control!</title>"
-      "</ignition-gui>"
+      "</gz-gui>"
       "<play_pause>true</play_pause>"
       "<service>/world_control_test</service>"
       "<use_event>false</use_event>"
@@ -310,9 +310,9 @@ TEST(WorldControlTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControlEvent))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"WorldControl\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<title>World Control!</title>"
-      "</ignition-gui>"
+      "</gz-gui>"
       "<play_pause>true</play_pause>"
       "<service>/world_control_test</service>"
       "<use_event>true</use_event>"

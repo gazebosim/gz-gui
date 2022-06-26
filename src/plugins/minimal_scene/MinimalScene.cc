@@ -1072,7 +1072,16 @@ void RenderWindowItem::SetAmbientLight(const math::Color &_ambient)
 /////////////////////////////////////////////////
 void RenderWindowItem::SetEngineName(const std::string &_name)
 {
-  this->dataPtr->renderThread->ignRenderer.engineName = _name;
+  // Deprecated: accept ignition-prefixed engines
+  auto name = _name;
+  auto pos = name.find("ignition");
+  if (pos != std::string::npos)
+  {
+    name.replace(pos, pos + 8, "gz");
+    gzwarn << "Trying to load deprecated plugin [" << _name << "]. Use ["
+           << name << "] instead." << std::endl;
+  }
+  this->dataPtr->renderThread->ignRenderer.engineName = name;
 }
 
 /////////////////////////////////////////////////

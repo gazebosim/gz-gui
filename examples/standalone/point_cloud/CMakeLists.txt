@@ -1,21 +1,21 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
-project(ignition-gui-point-cloud-example)
+project(gz-gui-point-cloud-example)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  find_package(ignition-transport12 QUIET REQUIRED OPTIONAL_COMPONENTS log)
-  set(IGN_TRANSPORT_VER ${ignition-transport12_VERSION_MAJOR})
+  find_package(gz-transport12 QUIET REQUIRED OPTIONAL_COMPONENTS log)
+  set(GZ_TRANSPORT_VER ${gz-transport12_VERSION_MAJOR})
 
-  find_package(ignition-common5 REQUIRED)
-  set(IGN_COMMON_VER ${ignition-common5_VERSION_MAJOR})
+  find_package(gz-common5 REQUIRED)
+  set(GZ_COMMON_VER ${gz-common5_VERSION_MAJOR})
 
-  find_package(ignition-msgs9 REQUIRED)
-  set(IGN_MSGS_VER ${ignition-msgs9_VERSION_MAJOR})
+  find_package(gz-msgs9 REQUIRED)
+  set(GZ_MSGS_VER ${gz-msgs9_VERSION_MAJOR})
 
   add_executable(point_cloud point_cloud.cc)
   target_link_libraries(point_cloud
-    ignition-transport${IGN_TRANSPORT_VER}::core
-    ignition-msgs${IGN_MSGS_VER}
-    ignition-common${IGN_COMMON_VER}::ignition-common${IGN_COMMON_VER}
+    gz-transport${GZ_TRANSPORT_VER}::core
+    gz-msgs${GZ_MSGS_VER}
+    gz-common${GZ_COMMON_VER}::gz-common${GZ_COMMON_VER}
     )
 endif()

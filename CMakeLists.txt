@@ -3,12 +3,12 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-gui7 VERSION 7.0.0)
+project(gz-gui7 VERSION 7.0.0)
 
 #============================================================================
-# Find ignition-cmake
+# Find gz-cmake
 #============================================================================
-find_package(ignition-cmake3 REQUIRED)
+find_package(gz-cmake3 REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -40,39 +40,39 @@ gz_find_package(IgnProtobuf
 gz_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
-# Find ignition-utils
-gz_find_package(ignition-utils2 REQUIRED)
-set(IGN_UTILS_VER ${ignition-utils2_VERSION_MAJOR})
+# Find gz-utils
+gz_find_package(gz-utils2 REQUIRED)
+set(GZ_UTILS_VER ${gz-utils2_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-math
-gz_find_package(ignition-math7 REQUIRED)
-set(IGN_MATH_VER ${ignition-math7_VERSION_MAJOR})
+# Find gz-math
+gz_find_package(gz-math7 REQUIRED)
+set(GZ_MATH_VER ${gz-math7_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-common
-gz_find_package(ignition-common5 REQUIRED COMPONENTS profiler)
-set(IGN_COMMON_VER ${ignition-common5_VERSION_MAJOR})
+# Find gz-common
+gz_find_package(gz-common5 REQUIRED COMPONENTS profiler)
+set(GZ_COMMON_VER ${gz-common5_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-plugin
-gz_find_package(ignition-plugin2 REQUIRED COMPONENTS loader register)
-set(IGN_PLUGIN_VER ${ignition-plugin2_VERSION_MAJOR})
+# Find gz-plugin
+gz_find_package(gz-plugin2 REQUIRED COMPONENTS loader register)
+set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-transport
-gz_find_package(ignition-transport12 REQUIRED)
-set(IGN_TRANSPORT_VER ${ignition-transport12_VERSION_MAJOR})
+# Find gz-transport
+gz_find_package(gz-transport12 REQUIRED)
+set(GZ_TRANSPORT_VER ${gz-transport12_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-rendering
-gz_find_package(ignition-rendering7 REQUIRED)
-set(IGN_RENDERING_VER ${ignition-rendering7_VERSION_MAJOR})
+# Find gz-rendering
+gz_find_package(gz-rendering7 REQUIRED)
+set(GZ_RENDERING_VER ${gz-rendering7_VERSION_MAJOR})
 
 #--------------------------------------
-# Find ignition-msgs
-gz_find_package(ignition-msgs9 REQUIRED)
-set(IGN_MSGS_VER ${ignition-msgs9_VERSION_MAJOR})
+# Find gz-msgs
+gz_find_package(gz-msgs9 REQUIRED)
+set(GZ_MSGS_VER ${gz-msgs9_VERSION_MAJOR})
 
 #--------------------------------------
 # Find if gz command is available
@@ -119,11 +119,11 @@ gz_create_docs(
   IMAGE_PATH_DIRS "${CMAKE_SOURCE_DIR}/tutorials/images"
   TAGFILES
     "${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=http://doc.qt.io/qt-5/"
-    "${IGNITION-MATH_DOXYGEN_TAGFILE} = ${IGNITION-MATH_API_URL}"
-    "${IGNITION-MSGS_DOXYGEN_TAGFILE} = ${IGNITION-MSGS_API_URL}"
-    "${IGNITION-RENDERING_DOXYGEN_TAGFILE} = ${IGNITION-RENDERING_API_URL}"
-    "${IGNITION-TRANSPORT_DOXYGEN_TAGFILE} = ${IGNITION-TRANSPORT_API_URL}"
-    "${IGNITION-COMMON_DOXYGEN_TAGFILE} = ${IGNITION-COMMON_API_URL}"
+    "${GZ-MATH_DOXYGEN_TAGFILE} = ${GZ-MATH_API_URL}"
+    "${GZ-MSGS_DOXYGEN_TAGFILE} = ${GZ-MSGS_API_URL}"
+    "${GZ-RENDERING_DOXYGEN_TAGFILE} = ${GZ-RENDERING_API_URL}"
+    "${GZ-TRANSPORT_DOXYGEN_TAGFILE} = ${GZ-TRANSPORT_API_URL}"
+    "${GZ-COMMON_DOXYGEN_TAGFILE} = ${GZ-COMMON_API_URL}"
 )
 
 if(TARGET doc)

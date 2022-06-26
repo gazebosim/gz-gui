@@ -4,6 +4,6 @@ gz_gui_add_plugin(Scene3D
   QT_HEADERS
     Scene3D.hh
   PUBLIC_LINK_LIBS
-    ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
+    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
 )
 

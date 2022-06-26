@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
-project(ignition-gui-ign-components)
+project(gz-gui-gz-components)
 
 if(POLICY CMP0100)
   cmake_policy(SET CMP0100 NEW)
@@ -16,22 +16,12 @@ find_package (Qt5
   REQUIRED
 )
 
-find_package(ignition-gui7 REQUIRED)
-find_package(ignition-common5 REQUIRED)
+find_package(gz-gui7 REQUIRED)
+set(GZ_GUI_VER ${gz-gui7_VERSION_MAJOR})
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNITION-GUI_CXX_FLAGS}")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 
 QT5_ADD_RESOURCES(resources_RCC GzComponents.qrc)
-
-include_directories(SYSTEM
-  ${IGNITION-COMMON_INCLUDE_DIRS}
-  ${IGNITION-GUI_INCLUDE_DIRS}
-)
-
-link_directories(
-  ${IGNITION-COMMON_LIBRARY_DIRS}
-  ${IGNITION-GUI_LIBRARY_DIRS}
-)
 
 # Generate examples
 add_library(GzComponents SHARED ${headers_MOC}
@@ -39,7 +29,7 @@ add_library(GzComponents SHARED ${headers_MOC}
   ${resources_RCC}
 )
 target_link_libraries(GzComponents
-  ${IGNITION-GUI_LIBRARIES}
+  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
   ${Qt5Core_LIBRARIES}
   ${Qt5Qml_LIBRARIES}
   ${Qt5Quick_LIBRARIES}

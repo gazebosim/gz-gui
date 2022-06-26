@@ -55,9 +55,9 @@ class TeleopTest : public ::testing::Test
       // Load plugin
       const char *pluginStr =
         "<plugin filename=\"Teleop\">"
-          "<ignition-gui>"
+          "<gz-gui>"
             "<title>Teleop!</title>"
-          "</ignition-gui>"
+          "</gz-gui>"
         "</plugin>";
 
       tinyxml2::XMLDocument pluginDoc;
