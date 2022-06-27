@@ -193,6 +193,11 @@ namespace ignition
       /// \sa InitializeMainWindow
       public: bool CreateMainWindow();
 
+      // /// \brief .
+      // /// \return True if successful, will fail if there's no main window
+      // /// initialized.
+      // public: bool ApplyPreMainWindowConfig(bool _showQuickStartMenu const);
+
       /// \brief Create a main window, populate with previously loaded plugins
       /// and apply previously loaded configuration.
       /// An empty window will be created if no plugins have been loaded.

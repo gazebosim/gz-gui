@@ -271,7 +271,6 @@ void MainWindow::OnAddPlugin(QString _plugin)
 
   App()->LoadPlugin(plugin);
 }
-
 ///////////////////////////////////////////////////
 bool MainWindow::ApplyConfig(const WindowConfig &_config)
 {
@@ -736,6 +735,12 @@ bool WindowConfig::IsIgnoring(const std::string &_prop) const
 {
   return this->ignoredProps.find(_prop) != this->ignoredProps.end();
 }
+
+// ///////////////////////////////////////////////////
+// bool WindowConfig::ApplyConfig()
+// {
+//   this->SetShowDefaultQuickStartOpts(_config.ShowDefaultQuickStartOpts());
+// }
 
 /////////////////////////////////////////////////
 int MainWindow::PluginCount() const

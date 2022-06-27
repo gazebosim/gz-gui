@@ -19,6 +19,7 @@
 #define IGNITION_GUI_DIALOG_HH_
 
 #include <memory>
+#include <tinyxml2.h>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
@@ -54,6 +55,43 @@ namespace ignition
       /// \brief Get the root quick item of this window
       /// \return Pointer to the item
       public: QQuickItem *RootItem() const;
+
+      /// \brief Set dilaog name
+      public: void SetName(const std::string &_name);
+
+      /// \brief Store dialog default config
+      /// \param[in] _config XML config as string
+      public: void SetDefaultConfig(const std::string &_config);
+
+      /// \brief Write dialog config
+      /// \param[in] _path config path
+      /// \param[in] _attribute XMLElement attribute name
+      /// \param[in] _attribute XMLElement attribute value
+      /// \return true if written to config file
+      public: bool WriteAttribute(const std::string &_path,
+        const std::string &_attribute, const std::string &_value = "") const;
+
+      /// \brief Write dialog config
+      /// \param[in] _path config path
+      /// \param[in] _attribute XMLElement attribute name
+      /// \param[in] _value XMLElement attribute value
+      /// \return true if written to config file
+      public: bool WriteAttribute(const std::string &_path,
+        const std::string &_attribute, const bool _value = false) const;
+
+      /// \brief Gets a config attribute value, if not found in config
+      /// \brief write the default in the config and get it.
+      /// \brief creates config file if it doesn't exist.
+      /// \param[in] _path config path
+      /// \param[in] _attribute attribute name
+      /// \return attribute value as string
+      public: std::string ReadAttribute(const std::string &_path, const std::string  &_attribute) const;
+
+      /// \brief Gets a config attribute value
+      /// \param[in] _path config path
+      /// \param[in] _attribute attribute name
+      /// \return attribute value as string
+      private: bool SaveConfig(const char *_config, const std::string &_path);
 
       /// \internal
       /// \brief Private data pointer
