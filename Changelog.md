@@ -102,7 +102,7 @@
     1. Marker Manager
         * [Pull request #247](https://github.com/gazebosim/gz-gui/pull/247)
 
-    1. Moved tape measure and grid config from ign-gazebo to ign-gui
+    1. Moved tape measure and grid config from gz-sim to gz-gui
         * [Pull request #236](https://github.com/gazebosim/gz-gui/pull/236)
 
 1. PIMPL GUI events
@@ -337,7 +337,7 @@
 1. Improve the height of plugins in the right split
     * [Pull request #194](https://github.com/gazebosim/gz-gui/pull/194)
 
-1. Scene3D: port mesh material fixes from ign-gazebo
+1. Scene3D: port mesh material fixes from gz-sim
     * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
 
 ### Gazebo GUI 4.3.0 (2021-03-11)
@@ -554,7 +554,7 @@
 
 ### Gazebo GUI 3.5.1 (2021-03-18)
 
-1. Scene3D: port mesh material fixes from ign-gazebo
+1. Scene3D: port mesh material fixes from gz-sim
     * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
 
 1. Improve the height of plugins in the right split

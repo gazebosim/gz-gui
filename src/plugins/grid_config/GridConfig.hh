@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef GZ_GAZEBO_GUI_GRIDCONFIG_HH_
-#define GZ_GAZEBO_GUI_GRIDCONFIG_HH_
+#ifndef GZ_GUI_GRIDCONFIG_HH_
+#define GZ_GUI_GRIDCONFIG_HH_
 
 #include <memory>
 

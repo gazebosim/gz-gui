@@ -13,7 +13,7 @@ release will remove the deprecated code.
 * Header files under `ignition/...` are deprecated and will be removed in future versions.
   Please use `gz/...` instead.
 
-* The `ignition-gui` element is deprecated and will be removed.
+* The `gz-gui` element is deprecated and will be removed.
   Please use `gz-gui` instead.
 
 * `ignitionVersion()` is deprecated and will be removed in future versions.

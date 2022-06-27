@@ -30,6 +30,6 @@
 
 #define GZ_GUI_VERSION_HEADER "Gazebo GUI, version ${PROJECT_VERSION_FULL}\nCopyright (C) 2017 Open Source Robotics Foundation.\nReleased under the Apache 2.0 License.\n\n"
 
-#define GZ_GUI_PLUGIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${IGN_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins"
+#define GZ_GUI_PLUGIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/gz-${IGN_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins"
 
 #endif

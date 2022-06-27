@@ -5,8 +5,8 @@ Next Tutorial: \ref commandline
 # Install
 
 These instructions are for installing only Gazebo GUI. If you're interested
-in using all the Ignition libraries, not only Igniton GUI, check out this
-[Ignition installation](https://gazebosim.org/docs/latest/install).
+in using all the Gazebo libraries, not only Igniton GUI, check out this
+[Gazebo installation](https://gazebosim.org/docs/latest/install).
 
 We recommend following the binary install instructions to get up and running as
 quickly and painlessly as possible.
@@ -54,7 +54,7 @@ which version you need.
 
 ### Windows
 
-Binary install is pending `ignition-rendering` and `ignition-gui` being added to conda-forge.
+Binary install is pending `gz-rendering` and `gz-gui` being added to conda-forge.
 
 ## Source Install
 
@@ -86,7 +86,7 @@ Install dependencies
 
 Build and install as follows:
   ```
-  cd ign-gui
+  cd gz-gui
   mkdir build
   cd build
   cmake ..
@@ -112,7 +112,7 @@ Build and install as follows:
 
 3. Configure and build
   ```
-  cd ign-gui
+  cd gz-gui
   mkdir build
   cd build
   cmake ..
@@ -128,7 +128,7 @@ Build and install as follows:
 
 #### Install Prerequisites
 
-First, follow the [ign-cmake](https://github.com/gazebosim/gz-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
+First, follow the [gz-cmake](https://github.com/gazebosim/gz-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
 
 Navigate to `condabin` if necessary to use the `conda` command (i.e., if Conda is not in your `PATH` environment variable. You can find the location of `condabin` in Anaconda Prompt, `where conda`).
 
@@ -143,12 +143,12 @@ Install dependencies:
 conda install qt --channel conda-forge
 ```
 
-Install Ignition dependencies, replacing `<#>` with the desired versions:
+Install Gazebo dependencies, replacing `<#>` with the desired versions:
 ```
 conda install libignition-cmake<#> libignition-common<#> libignition-math<#> libignition-transport<#> libignition-msgs<#> libignition-plugin<#> libignition-tools<#> --channel conda-forge
 ```
 
-Before [ign-rendering](https://github.com/gazebosim/gz-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
+Before [gz-rendering](https://github.com/gazebosim/gz-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
 
 #### Build from source
 
@@ -165,12 +165,12 @@ Before [ign-rendering](https://github.com/gazebosim/gz-rendering) becomes availa
 
 1. Configure and build
   ```
-  cd ign-gui
+  cd gz-gui
   mkdir build
   cd build
   ```
 
-    As `ign-rendering` is not yet available on conda-forge, we need to build it from source and specify the path containing `ignition-rendering<#>-config.cmake` and `ignition-rendering<#>-ogre-config.cmake` in `CMAKE_PREFIX_PATH`. That path could be `ign-rendering-install-path\lib\cmake`, for example.
+    As `gz-rendering` is not yet available on conda-forge, we need to build it from source and specify the path containing `gz-rendering<#>-config.cmake` and `gz-rendering<#>-ogre-config.cmake` in `CMAKE_PREFIX_PATH`. That path could be `gz-rendering-install-path\lib\cmake`, for example.
   ```
   cmake .. -DBUILD_TESTING=OFF -DCMAKE_PREFIX_PATH=path\containing\ignition-rendering-config  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
   cmake --build . --config Release
@@ -200,7 +200,7 @@ You can also generate the documentation from a clone of this repository by follo
 
 3. Configure and build the documentation.
   ```
-  cd ign-gui
+  cd gz-gui
   mkdir build
   cd build
   cmake ..
