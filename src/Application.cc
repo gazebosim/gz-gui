@@ -650,13 +650,6 @@ bool Application::ApplyConfig()
   return this->dataPtr->mainWin->ApplyConfig(this->dataPtr->windowConfig);
 }
 
-// /////////////////////////////////////////////////
-// bool Application::ApplyPreMainWindowConfig(bool _showQuickStart)
-// {
-//   this->dataPtr->windowConfig->ApplyConfig(_showQuickStart);
-//   return true;
-// }
-
 /////////////////////////////////////////////////
 bool Application::AddPluginsToWindow()
 {

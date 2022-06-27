@@ -20,6 +20,7 @@
 
 #include <memory>
 #include <tinyxml2.h>
+#include <string>
 
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
@@ -66,18 +67,18 @@ namespace ignition
       /// \brief Write dialog config
       /// \param[in] _path config path
       /// \param[in] _attribute XMLElement attribute name
-      /// \param[in] _attribute XMLElement attribute value
+      /// \param[in] _attribute XMLElement attribute string value
       /// \return true if written to config file
       public: bool WriteAttribute(const std::string &_path,
-        const std::string &_attribute, const std::string &_value = "") const;
+        const std::string &_attribute, const std::string &_value) const;
 
       /// \brief Write dialog config
       /// \param[in] _path config path
       /// \param[in] _attribute XMLElement attribute name
-      /// \param[in] _value XMLElement attribute value
+      /// \param[in] _value XMLElement attribute boolean value
       /// \return true if written to config file
       public: bool WriteAttribute(const std::string &_path,
-        const std::string &_attribute, const bool _value = false) const;
+        const std::string &_attribute, const bool _value) const;
 
       /// \brief Gets a config attribute value, if not found in config
       /// \brief write the default in the config and get it.
@@ -85,12 +86,13 @@ namespace ignition
       /// \param[in] _path config path
       /// \param[in] _attribute attribute name
       /// \return attribute value as string
-      public: std::string ReadAttribute(const std::string &_path, const std::string  &_attribute) const;
+      public: std::string ReadAttribute(const std::string &_path,
+        const std::string  &_attribute) const;
 
-      /// \brief Gets a config attribute value
-      /// \param[in] _path config path
-      /// \param[in] _attribute attribute name
-      /// \return attribute value as string
+      /// \brief Write config to path
+      /// \param[in] _config config as char array
+      /// \param[in] _path of the config
+      /// \return true if written
       private: bool SaveConfig(const char *_config, const std::string &_path);
 
       /// \internal

@@ -611,12 +611,6 @@ namespace ignition
       public: void SetShowDefaultQuickStartOpts(
           const bool _showDefaultQuickStartOpts);
 
-      // /// \brief Apply a WindowConfig to current appliaction and keep a
-      // /// \brief copy of it.
-      // /// \param[in] _config The configuration to apply.
-      // /// \return True if successful.
-      // public: bool ApplyConfig(const bool _showQuikStart);
-
       /// \brief Window X position in px
       int posX{-1};
 

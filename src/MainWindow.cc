@@ -736,12 +736,6 @@ bool WindowConfig::IsIgnoring(const std::string &_prop) const
   return this->ignoredProps.find(_prop) != this->ignoredProps.end();
 }
 
-// ///////////////////////////////////////////////////
-// bool WindowConfig::ApplyConfig()
-// {
-//   this->SetShowDefaultQuickStartOpts(_config.ShowDefaultQuickStartOpts());
-// }
-
 /////////////////////////////////////////////////
 int MainWindow::PluginCount() const
 {

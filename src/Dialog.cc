@@ -127,7 +127,8 @@ bool Dialog::WriteAttribute(const std::string &_path,
   }
 
   // Update attribute value for the correct dialog
-  for (auto dialogElem = doc.FirstChildElement("dialog"); dialogElem != nullptr;
+    for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))
   {
     if(dialogElem->Attribute("name") == this->dataPtr->name)
@@ -176,7 +177,8 @@ bool Dialog::WriteAttribute(const std::string &_path,
   }
 
   // Update attribute value for the correct dialog
-  for (auto dialogElem = doc.FirstChildElement("dialog"); dialogElem != nullptr;
+    for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))
   {
     if(dialogElem->Attribute("name") == this->dataPtr->name)
@@ -226,8 +228,9 @@ std::string Dialog::ReadAttribute(const std::string &_path,
     configExists = false;
     doc.Parse(this->dataPtr->config.c_str());
     // Process each dialog
-    for (auto dialogElem = doc.FirstChildElement("dialog"); dialogElem != nullptr;
-        dialogElem = dialogElem->NextSiblingElement("dialog"))
+    for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
+      dialogElem = dialogElem->NextSiblingElement("dialog"))
     {
       if(dialogElem->Attribute("name") == this->dataPtr->name)
       {
@@ -244,8 +247,9 @@ std::string Dialog::ReadAttribute(const std::string &_path,
     }
 
     // Process each dialog
-    for (auto dialogElem = doc.FirstChildElement("dialog"); dialogElem != nullptr;
-        dialogElem = dialogElem->NextSiblingElement("dialog"))
+    for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
+      dialogElem = dialogElem->NextSiblingElement("dialog"))
     {
       if(dialogElem->Attribute("name") == this->dataPtr->name)
       {
@@ -259,8 +263,9 @@ std::string Dialog::ReadAttribute(const std::string &_path,
       tinyxml2::XMLDocument missingDoc;
       missingDoc.Parse(this->dataPtr->config.c_str());
 
-      for (auto dialogElem = missingDoc.FirstChildElement("dialog"); dialogElem != nullptr;
-          dialogElem = dialogElem->NextSiblingElement("dialog"))
+    for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
+      dialogElem = dialogElem->NextSiblingElement("dialog"))
       {
         if(dialogElem->Attribute("name") == this->dataPtr->name)
         {
@@ -287,9 +292,11 @@ std::string Dialog::ReadAttribute(const std::string &_path,
   {
     std::string str = "Unable to open file: " + _path;
     str += ".\nCheck file permissions.";
+    igndbg << str << std::endl;
+    return "";
   }
   else
     out << config;
-    
+
   return value;
 }
