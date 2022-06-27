@@ -23,6 +23,23 @@ import QtQuick.Controls.Styles 1.4
 // Item displaying 3D pose information.
 Item {
   id: gzPoseRoot
+
+  // Read-only / write
+  property bool readOnly: false
+
+  // Show Pose bar
+  property bool show: false
+
+  // bind model values here for spinboxs
+  property double xModelValue
+  property double yModelValue
+  property double zModelValue
+  property double rollModelValue
+  property double pitchModelValue
+  property double yawModelValue
+
+  signal gzPoseSet(double x, double y, double z, double roll, double pitch, double yaw)
+
   height: gzPoseContent.height
 
   // Left indentation
@@ -34,28 +51,13 @@ Item {
   // Maximum spinbox value
   property double spinMax: 1000000
 
-  // Read-only / write
-  property bool readOnly: false
-
-  // Show Pose bar
-  property bool show: false
-
-  // Loaded item for Pose
+  // local variables to store spinbox values
   property var xItem: {}
   property var yItem: {}
   property var zItem: {}
   property var rollItem: {}
   property var pitchItem: {}
   property var yawItem: {}
-
-  property double xModelValue
-  property double yModelValue
-  property double zModelValue
-  property double rollModelValue
-  property double pitchModelValue
-  property double yawModelValue
-
-  signal gzPoseSet(double x, double y, double z, double roll, double pitch, double yaw)
 
   /**
    * Used to create a spin box
