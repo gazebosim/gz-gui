@@ -20,6 +20,7 @@
 #include <gz/common/Console.hh>
 #include <gz/math/Color.hh>
 #include <gz/math/Pose3.hh>
+#include <gz/msgs/uint32_v.pb.h>
 #include <gz/msgs/pose_v.pb.h>
 #include <gz/msgs/scene.pb.h>
 #include <gz/rendering/Camera.hh>
@@ -260,6 +261,5 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   win->QuickWindow()->close();
   engine->DestroyScene(scene);
-  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
 

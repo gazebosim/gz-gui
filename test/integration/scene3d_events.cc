@@ -36,110 +36,11 @@
 int g_argc = 1;
 char* g_argv[] =
 {
-  reinterpret_cast<char*>(const_cast<char*>("./Scene3d_TEST")),
+  reinterpret_cast<char*>(const_cast<char*>("./Scene3d_events_TEST")),
 };
 
 using namespace gz;
 using namespace gui;
-
-/////////////////////////////////////////////////
-TEST(Scene3DTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
-{
-  common::Console::SetVerbosity(4);
-
-  Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-  EXPECT_TRUE(app.LoadPlugin("Scene3D"));
-
-  // Get main window
-  auto win = app.findChild<MainWindow *>();
-  ASSERT_NE(nullptr, win);
-
-  // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
-  EXPECT_EQ(plugins.size(), 1);
-
-  auto plugin = plugins[0];
-  EXPECT_EQ(plugin->Title(), "3D Scene");
-
-  // Cleanup
-  plugins.clear();
-  win->QuickWindow()->close();
-}
-
-/////////////////////////////////////////////////
-TEST(Scene3DTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
-{
-  common::Console::SetVerbosity(4);
-
-  Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-  // Load plugin
-  const char *pluginStr =
-    "<plugin filename=\"Scene3D\">"
-      "<engine>ogre</engine>"
-      "<scene>banana</scene>"
-      "<ambient_light>1.0 0 0</ambient_light>"
-      "<background_color>0 1 0</background_color>"
-      "<camera_pose>1 2 3 0 0 1.57</camera_pose>"
-    "</plugin>";
-
-  tinyxml2::XMLDocument pluginDoc;
-  pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(app.LoadPlugin("Scene3D",
-      pluginDoc.FirstChildElement("plugin")));
-
-  // Get main window
-  auto win = app.findChild<MainWindow *>();
-  ASSERT_NE(nullptr, win);
-
-  // Show, but don't exec, so we don't block
-  win->QuickWindow()->show();
-
-  // Check scene
-  auto engine = rendering::engine("ogre");
-  ASSERT_NE(nullptr, engine);
-
-  int sleep = 0;
-  int maxSleep = 30;
-  while (0 == engine->SceneCount() && sleep < maxSleep)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    QCoreApplication::processEvents();
-    sleep++;
-  }
-
-  EXPECT_EQ(1u, engine->SceneCount());
-  auto scene = engine->SceneByName("banana");
-  ASSERT_NE(nullptr, scene);
-
-  EXPECT_EQ(math::Color(0, 1, 0), scene->BackgroundColor());
-  EXPECT_EQ(math::Color(1, 0, 0), scene->AmbientLight());
-
-  auto root = scene->RootVisual();
-  ASSERT_NE(nullptr, root);
-  EXPECT_EQ(1u, root->ChildCount());
-
-  // Check camera
-  auto camera = std::dynamic_pointer_cast<rendering::Camera>(
-      root->ChildByIndex(0));
-  ASSERT_NE(nullptr, camera);
-
-  EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
-
-  // Cleanup
-  auto plugins = win->findChildren<Plugin *>();
-  for (auto & p : plugins)
-  {
-    auto pluginName = p->CardItem()->objectName();
-    app.RemovePlugin(pluginName.toStdString());
-  }
-  win->QuickWindow()->close();
-  engine->DestroyScene(scene);
-  rendering::unloadEngine(engine->Name());
-}
 
 /////////////////////////////////////////////////
 TEST(Scene3DTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
@@ -147,7 +48,7 @@ TEST(Scene3DTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Events))
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(common::joinPaths(PROJECT_BINARY_PATH, "lib"));
 
   // Load plugin
   const char *pluginStr =
