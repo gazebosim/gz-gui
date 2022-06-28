@@ -52,7 +52,8 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReadDialogConfig))
   // Read dialog config
   {
     dialog->SetName("dialog");
-    dialog->SetDefaultConfig(std::string("<dialog name=\"dialog\" default=\"true\"/>"));
+    dialog->SetDefaultConfig(std::string(
+      "<dialog name=\"dialog\" default=\"true\"/>"));
     std::string defaultValue = dialog->ReadAttribute(app->DefaultConfigPath(),
       "default");
     EXPECT_TRUE(defaultValue, "true");
@@ -76,7 +77,8 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ChangeDialogConfig))
   // Read dialog config
   {
     dialog->SetName("dialog");
-    dialog->SetDefaultConfig(std::string("<dialog name=\"dialog\" default=\"true\"/>"));
+    dialog->SetDefaultConfig(std::string(
+      "<dialog name=\"dialog\" default=\"true\"/>"));
     std::string defaultValue = dialog->ReadAttribute(app->DefaultConfigPath(),
       "default");
 
