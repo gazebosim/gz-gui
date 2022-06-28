@@ -87,7 +87,7 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
   // Clear home if it exists
   common::removeAll(this->kFakeHome);
 
-  // EXPECT_FALSE(common::exists(this->kFakeHome));
+  EXPECT_FALSE(common::exists(this->kFakeHome));
 
   std::string output = custom_exec_str("ign gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
