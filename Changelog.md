@@ -129,7 +129,7 @@
 1. Remove deprecations: tock
     * [Pull request #243](https://github.com/gazebosim/gz-gui/pull/243)
 
-1. Depend on ign-msgs8, ign-transport11, ign-rendering6
+1. Depend on gz-msgs8, gz-transport11, gz-rendering6
     * [Pull request #210](https://github.com/gazebosim/gz-gui/pull/210)
 
 1. Infrastructure
@@ -262,13 +262,13 @@
 
 ### Gazebo GUI 5.0.0 (2021-03-31)
 
-1. Bump in edifice: ign-common4
+1. Bump in edifice: gz-common4
     * [Pull request #169](https://github.com/gazebosim/gz-gui/pull/169)
 
-1. Bump in edifice: ign-msgs7 and ign-transport10
+1. Bump in edifice: gz-msgs7 and gz-transport10
     * [Pull request #167](https://github.com/gazebosim/gz-gui/pull/167)
 
-1. Bump in edifice: ign-rendering5
+1. Bump in edifice: gz-rendering5
     * [Pull request #141](https://github.com/gazebosim/gz-gui/pull/141)
 
 1. Documentation updates
@@ -458,10 +458,10 @@
 1. Depend on QtCharts and change application base class to QApplication
     * [BitBucket pull request 252](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/252)
 
-1. Depend on ign-msgs6 and ign-transport9
+1. Depend on gz-msgs6 and gz-transport9
     * [Pull request 92](https://github.com/gazebosim/gz-gui/pull/92)
 
-1. Depend on ign-rendering4
+1. Depend on gz-rendering4
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/243)
 
 ## Gazebo GUI 3
@@ -688,7 +688,7 @@
 
 ### Gazebo GUI 3.1.0 (2020-03-27)
 
-1. Remove old ign-gui0 stuff
+1. Remove old gz-gui0 stuff
     * [BitBucket pull request 248](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/248)
 
 1. Fix homebrew warnings
@@ -740,10 +740,10 @@
 
 ### Gazebo GUI 3.0.0 (2019-12-10)
 
-1. Depend on ign-transport8 and ign-msgs5
+1. Depend on gz-transport8 and gz-msgs5
     * [BitBucket pull request 225](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/225)
 
-1. Depend on ign-rendering3
+1. Depend on gz-rendering3
     * [BitBucket pull request 221](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/221)
 
 ## Gazebo GUI 2
