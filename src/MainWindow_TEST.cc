@@ -222,7 +222,6 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
   EXPECT_TRUE(c.showDrawer);
   EXPECT_TRUE(c.showDefaultDrawerOpts);
   EXPECT_TRUE(c.showPluginMenu);
-  EXPECT_TRUE(c.showDefaultQuickStartOpts);
   EXPECT_TRUE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_TRUE(c.ignoredProps.empty());
@@ -273,7 +272,6 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
   EXPECT_TRUE(c.showDrawer);
   EXPECT_TRUE(c.showDefaultDrawerOpts);
   EXPECT_TRUE(c.showPluginMenu);
-  EXPECT_FALSE(c.showDefaultQuickStartOpts);
   EXPECT_FALSE(c.pluginsFromPaths);
   EXPECT_TRUE(c.showPlugins.empty());
   EXPECT_EQ(c.ignoredProps.size(), 2u);
@@ -727,7 +725,6 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
     auto c = mainWindow->CurrentWindowConfig();
     EXPECT_TRUE(c.showDrawer);
     EXPECT_TRUE(c.showDefaultDrawerOpts);
-    EXPECT_TRUE(c.showDefaultQuickStartOpts);
     EXPECT_TRUE(c.showPluginMenu);
     EXPECT_TRUE(c.pluginsFromPaths);
     EXPECT_TRUE(c.showPlugins.empty());
