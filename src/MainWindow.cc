@@ -271,6 +271,7 @@ void MainWindow::OnAddPlugin(QString _plugin)
 
   App()->LoadPlugin(plugin);
 }
+
 ///////////////////////////////////////////////////
 bool MainWindow::ApplyConfig(const WindowConfig &_config)
 {

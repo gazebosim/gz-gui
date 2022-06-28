@@ -104,11 +104,6 @@ namespace ignition
       /// \sa InitializeDialogs
       public: bool LoadConfig(const std::string &_path);
 
-      /// \brief Load a configuration file, load window configurations.
-      /// \param[in] _path Full path to configuration file.
-      /// \return True if successful
-      public: bool LoadWindowConfig(const std::string &_path);
-
       /// \brief Load the configuration from the default config file.
       /// \return True if successful
       /// \sa SetDefaultConfigPath
