@@ -88,23 +88,6 @@ void Dialog::SetName(const std::string &_name)
 }
 
 /////////////////////////////////////////////////
-bool Dialog::SaveConfig(const char *_config, const std::string &_path)
-{
-  // Write config file
-  std::ofstream out(_path.c_str(), std::ios::out);
-  if (!out)
-  {
-    std::string str = "Unable to open file: " + _path;
-    str += ".\nCheck file permissions.";
-    return false;
-  }
-  else
-    out << _config;
-
-  return true;
-}
-
-/////////////////////////////////////////////////
 bool Dialog::WriteAttribute(const std::string &_path,
   const std::string &_attribute, const std::string &_value) const
 {

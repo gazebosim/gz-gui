@@ -59,6 +59,15 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReadDialogConfig))
     EXPECT_EQ(defaultValue, "true");
   }
 
+  // Read non existing attribute
+  {
+    dialog->SetName("dialog");
+    dialog->SetDefaultConfig(std::string(
+      "<dialog name=\"dialog\" default=\"true\"/>"));
+    std::string defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(),
+      "dummy_attribute");
+    EXPECT_TRUE(defaultValue.empty());
+  }
   delete dialog;
 }
 
