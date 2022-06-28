@@ -236,7 +236,6 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
   EXPECT_NE(xml.find("<menus>"), std::string::npos);
   EXPECT_NE(xml.find("<drawer"), std::string::npos);
   EXPECT_NE(xml.find("<plugins"), std::string::npos);
-  EXPECT_NE(xml.find("<quick_start"), std::string::npos);
   EXPECT_EQ(xml.find("<ignore>"), std::string::npos);
 }
 
@@ -256,8 +255,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
 
   // Merge from XML
   c.MergeFromXML(std::string("<window><position_x>5000</position_x>")+
-    "<menus><quick_start default=\"false\"/>" +
-    "<plugins from_paths=\"false\"/></menus>" +
+    "<menus><plugins from_paths=\"false\"/></menus>" +
     "<ignore>size</ignore></window>");
 
   // Check values
