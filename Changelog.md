@@ -55,7 +55,7 @@
 1. Don't crash if a plugin has invalid QML
     * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
-1. Added log storing for ign-gui
+1. Added log storing for gz-gui
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
 ### Gazebo GUI 6.1.0 (2021-11-05)
@@ -184,7 +184,7 @@
 1. Don't crash if a plugin has invalid QML
     * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
-1. Added log storing for ign-gui
+1. Added log storing for gz-gui
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
 
@@ -219,7 +219,7 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect gz instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for gz-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 5.1.0 (2021-06-23)
@@ -299,12 +299,12 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect gz instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for gz-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 4.4.0 (2021-06-21)
 
-1. Bump required ign-rendering version to 4.8
+1. Bump required gz-rendering version to 4.8
     * [Pull request #234](https://github.com/gazebosim/gz-gui/pull/234)
 
 1. Update codeowners
@@ -503,7 +503,7 @@
 1. 👩‍🌾 Remove bitbucket-pipelines.yml
     * [Pull request #274](https://github.com/gazebosim/gz-gui/pull/274)
 
-1. Require ign-rendering 3.5
+1. Require gz-rendering 3.5
     * [Pull request #264](https://github.com/gazebosim/gz-gui/pull/264)
 
 1. New teleop plugin implementation.
@@ -523,7 +523,7 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect gz instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for gz-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 3.6.0 (2021-06-17)
@@ -885,7 +885,7 @@
 1. Move files not ported to v1 to a separate dir for clarity.
     * [BitBucket pull request 196](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/196)
 
-1. Get ign-gui plugin interface in case there are others.
+1. Get gz-gui plugin interface in case there are others.
     * [BitBucket pull request 186](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/186)
 
 ### Gazebo GUI 1.0.0

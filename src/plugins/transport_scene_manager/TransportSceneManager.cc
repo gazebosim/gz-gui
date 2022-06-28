@@ -30,7 +30,7 @@
 #include <gz/math/Vector3.hh>
 #include <gz/plugin/Register.hh>
 
-// TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
+// TODO(louise) Remove these pragmas once gz-rendering and gz-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
@@ -127,16 +127,16 @@ class gz::gui::plugins::TransportSceneManagerPrivate
   /// \param[in] _entity Entity to delete
   public: void DeleteEntity(const unsigned int _entity);
 
-  //// \brief Ign-transport scene service name
+  //// \brief gz-transport scene service name
   public: std::string service{"scene"};
 
-  //// \brief Ign-transport pose topic name
+  //// \brief gz-transport pose topic name
   public: std::string poseTopic{"pose"};
 
-  //// \brief Ign-transport deletion topic name
+  //// \brief gz-transport deletion topic name
   public: std::string deletionTopic{"delete"};
 
-  //// \brief Ign-transport scene topic name
+  //// \brief gz-transport scene topic name
   public: std::string sceneTopic{"scene"};
 
   //// \brief Pointer to the rendering scene
@@ -663,7 +663,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
       geom->SetMaterial(material);
       // todo(anyone) SetMaterial function clones the input material.
       // but does not take ownership of it so we need to destroy it here.
-      // This is not ideal. We should let ign-rendering handle the lifetime
+      // This is not ideal. We should let gz-rendering handle the lifetime
       // of this material
       this->scene->DestroyMaterial(material);
     }
