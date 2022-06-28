@@ -22,7 +22,7 @@
 #include <gz/common/Filesystem.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 
 using namespace gz;
 
@@ -174,10 +174,10 @@ TEST_P(ExamplesBuild, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Build))
 }
 
 //////////////////////////////////////////////////
-INSTANTIATE_TEST_CASE_P(Plugins, ExamplesBuild, ::testing::Values(
+INSTANTIATE_TEST_SUITE_P(Plugins, ExamplesBuild, ::testing::Values(
   "plugin",
   "standalone"
-),);  // NOLINT
+));
 
 //////////////////////////////////////////////////
 int main(int argc, char **argv)

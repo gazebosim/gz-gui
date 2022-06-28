@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/GuiEvents.hh"
 
 using namespace gz;
