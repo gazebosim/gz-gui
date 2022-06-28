@@ -25,7 +25,7 @@
 #include <gz/common/Util.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 
 #ifdef _MSC_VER
 #    define popen _popen
