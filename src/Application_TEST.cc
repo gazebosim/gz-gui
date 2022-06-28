@@ -197,42 +197,6 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadConfig))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadWindowConfig))
-{
-  ignition::common::Console::SetVerbosity(4);
-
-  EXPECT_EQ(nullptr, qGuiApp);
-
-  // Empty string
-  {
-    Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
-
-    EXPECT_FALSE(app.LoadWindowConfig(""));
-  }
-
-  // Test config file
-  {
-    Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
-
-    // Load test config file
-    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(app.LoadWindowConfig(testSourcePath + "config/test.config"));
-  }
-
-  // Test getting default show quick start menu
-  {
-    Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
-
-    // Load test config file
-    auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
-    EXPECT_TRUE(app.LoadWindowConfig(testSourcePath + "config/test.config"));
-    EXPECT_TRUE(app.ShowQuickStart());
-    app.SetShowDefaultQuickStartOpts(false);
-    EXPECT_FALSE(app.ShowQuickStart());
-  }
-}
-
-//////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
 {
   ignition::common::Console::SetVerbosity(4);

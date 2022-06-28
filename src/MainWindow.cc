@@ -330,8 +330,6 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   // Menus
   this->SetShowDrawer(_config.showDrawer);
   this->SetShowDefaultDrawerOpts(_config.showDefaultDrawerOpts);
-  this->dataPtr->windowConfig.SetShowDefaultQuickStartOpts(
-    _config.showDefaultQuickStartOpts);
   this->SetShowPluginMenu(_config.showPluginMenu);
 
   // Keep a copy
@@ -384,8 +382,6 @@ WindowConfig MainWindow::CurrentWindowConfig() const
   config.showDrawer = this->dataPtr->windowConfig.showDrawer;
   config.showDefaultDrawerOpts =
       this->dataPtr->windowConfig.showDefaultDrawerOpts;
-  config.showDefaultQuickStartOpts =
-      this->dataPtr->windowConfig.showDefaultQuickStartOpts;
   config.showPluginMenu = this->dataPtr->windowConfig.showPluginMenu;
   config.pluginsFromPaths = this->dataPtr->windowConfig.pluginsFromPaths;
   config.showPlugins = this->dataPtr->windowConfig.showPlugins;
@@ -514,18 +510,6 @@ bool WindowConfig::MergeFromXML(const std::string &_windowXml)
         bool def = true;
         drawerElem->QueryBoolAttribute("default", &def);
         this->showDefaultDrawerOpts = def;
-      }
-    }
-
-    // QuickStart
-    if (auto quickStartElem = menusElem->FirstChildElement("quick_start"))
-    {
-      // Default
-      if (quickStartElem->Attribute("default"))
-      {
-        bool def = true;
-        quickStartElem->QueryBoolAttribute("default", &def);
-        this->showDefaultQuickStartOpts = def;
       }
     }
 
@@ -663,16 +647,6 @@ std::string WindowConfig::XMLString() const
       menusElem->InsertEndChild(elem);
     }
 
-    // Quick Start
-    {
-      auto elem = doc.NewElement("quick_start");
-
-      // Default
-      elem->SetAttribute("default", this->showDefaultQuickStartOpts);
-
-      menusElem->InsertEndChild(elem);
-    }
-
     // Plugins
     {
       auto elem = doc.NewElement("plugins");
@@ -715,19 +689,6 @@ std::string WindowConfig::XMLString() const
   config += this->plugins;
 
   return config;
-}
-
-/////////////////////////////////////////////////
-bool WindowConfig::ShowDefaultQuickStartOpts() const
-{
-  return this->showDefaultQuickStartOpts;
-}
-
-/////////////////////////////////////////////////
-void WindowConfig::SetShowDefaultQuickStartOpts(
-  const bool _showDefaultQuickStartOpts)
-{
-  this->showDefaultQuickStartOpts = _showDefaultQuickStartOpts;
 }
 
 /////////////////////////////////////////////////

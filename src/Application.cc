@@ -216,20 +216,6 @@ bool Application::RemovePlugin(const std::string &_pluginName)
 }
 
 /////////////////////////////////////////////////
-bool Application::ShowQuickStart() const
-{
-  return this->dataPtr->windowConfig.ShowDefaultQuickStartOpts();
-}
-
-/////////////////////////////////////////////////
-void Application::SetShowDefaultQuickStartOpts(
-  const bool _showDefaultQuickStartOpts) const
-{
-  return this->dataPtr->windowConfig.SetShowDefaultQuickStartOpts(
-    _showDefaultQuickStartOpts);
-}
-
-/////////////////////////////////////////////////
 bool Application::LoadWindowConfig(const std::string &_config)
 {
   if (_config.empty())
