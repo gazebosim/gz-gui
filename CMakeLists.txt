@@ -13,6 +13,9 @@ find_package(gz-cmake3 REQUIRED)
 #============================================================================
 # Configure the project
 #============================================================================
+set(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 gz_configure_project(
   REPLACE_IGNITION_INCLUDE_PATH gz/gui
   VERSION_SUFFIX pre1)

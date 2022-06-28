@@ -21,7 +21,7 @@
 #include <gz/common/MouseEvent.hh>
 #include <gz/math/Color.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Conversions.hh"
 
 using namespace gz;
