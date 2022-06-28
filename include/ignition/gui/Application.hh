@@ -97,7 +97,6 @@ namespace ignition
       /// and plugins. This function doesn't instantiate the plugins, it just
       /// keeps them in memory and they can be applied later by either
       /// instantiating a window or several dialogs.
-      /// and plugins.
       /// \param[in] _path Full path to configuration file.
       /// \return True if successful
       /// \sa InitializeMainWindow
@@ -156,7 +155,6 @@ namespace ignition
       /// plugin card's object name.
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
-
 
       /// \brief Get a plugin by its unique name.
       /// \param[in] _pluginName Plugn instance's unique name. This is the

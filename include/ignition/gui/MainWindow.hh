@@ -671,7 +671,6 @@ namespace ignition
 
       /// \brief Concatenation of all plugin configurations.
       std::string plugins{""};
-
     };
   }
 }
