@@ -35,7 +35,7 @@
 #include <gz/math/Vector2.hh>
 #include <gz/math/Vector3.hh>
 
-// TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
+// TODO(louise) Remove these pragmas once gz-rendering and gz-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
@@ -1575,8 +1575,8 @@ void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
-  gzwarn << "This plugin is deprecated on ign-gui v6 and will be removed on "
-          << "ign-gui v7. Use MinimalScene + TransportSceneManager instead."
+  gzwarn << "This plugin is deprecated on gz-gui v6 and will be removed on "
+          << "gz-gui v7. Use MinimalScene + TransportSceneManager instead."
           << std::endl;
 
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
