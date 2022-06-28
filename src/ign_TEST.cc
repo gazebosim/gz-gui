@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <fstream>
 #include <string>
 
 #include <ignition/common/Filesystem.hh>
@@ -31,6 +32,9 @@
 #    define popen _popen
 #    define pclose _pclose
 #endif
+
+static const std::string kIgnCommand(
+    std::string(BREW_RUBY) + std::string(IGN_PATH));
 
 /////////////////////////////////////////////////
 std::string custom_exec_str(std::string _cmd)
@@ -87,7 +91,8 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
   // Clear home if it exists
   common::removeAll(this->kFakeHome);
 
-  EXPECT_FALSE(common::exists(this->kFakeHome));
+  // This line is flaky, see https://github.com/gazebosim/gz-gui/issues/415
+  // EXPECT_FALSE(common::exists(this->kFakeHome));
 
   std::string output = custom_exec_str("ign gui -l");
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
@@ -95,4 +100,35 @@ TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 
   EXPECT_TRUE(common::exists(common::joinPaths(this->kFakeHome, ".ignition",
       "gui")));
+}
+
+//////////////////////////////////////////////////
+/// \brief Check --help message and bash completion script for consistent flags
+// See https://github.com/gazebo-tooling/release-tools/issues/398
+TEST(ignTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(GuiHelpVsCompletionFlags))
+{
+  // Flags in help message
+  std::string helpOutput = custom_exec_str(kIgnCommand + " gui --help");
+
+  // Call the output function in the bash completion script
+  std::string scriptPath = common::joinPaths(std::string(PROJECT_SOURCE_DIR),
+    "src", "cmd", "gui.bash_completion.sh");
+
+  // Equivalent to:
+  // sh -c "bash -c \". /path/to/gui.bash_completion.sh; _gz_gui_flags\""
+  std::string cmd = "bash -c \". " + scriptPath + "; _gz_gui_flags\"";
+  std::string scriptOutput = custom_exec_str(cmd);
+
+  // Tokenize script output
+  std::istringstream iss(scriptOutput);
+  std::vector<std::string> flags((std::istream_iterator<std::string>(iss)),
+    std::istream_iterator<std::string>());
+
+  EXPECT_GT(flags.size(), 0u);
+
+  // Match each flag in script output with help message
+  for (const auto &flag : flags)
+  {
+    EXPECT_NE(std::string::npos, helpOutput.find(flag)) << helpOutput;
+  }
 }
