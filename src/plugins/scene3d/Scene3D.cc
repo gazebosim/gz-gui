@@ -160,16 +160,16 @@ namespace plugins
     /// \param[in] _entity Entity to delete
     private: void DeleteEntity(const unsigned int _entity);
 
-    //// \brief Ign-transport scene service name
+    //// \brief gz-transport scene service name
     private: std::string service;
 
-    //// \brief Ign-transport pose topic name
+    //// \brief gz-transport pose topic name
     private: std::string poseTopic;
 
-    //// \brief Ign-transport deletion topic name
+    //// \brief gz-transport deletion topic name
     private: std::string deletionTopic;
 
-    //// \brief Ign-transport scene topic name
+    //// \brief gz-transport scene topic name
     private: std::string sceneTopic;
 
     //// \brief Pointer to the rendering scene

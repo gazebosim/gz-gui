@@ -122,7 +122,7 @@ namespace plugins
 
   class RenderSync;
 
-  /// \brief Ign-rendering renderer.
+  /// \brief gz-rendering renderer.
   /// All ign-rendering calls should be performed inside this class as it makes
   /// sure that opengl calls in the underlying render engine do not interfere
   /// with QtQuick's opengl render operations. The main Render function will
@@ -300,7 +300,7 @@ namespace plugins
     /// On macOS this must be run on the main thread
     public: std::string Initialize();
 
-    /// \brief Ign-rendering renderer
+    /// \brief gz-rendering renderer
     public: IgnRenderer ignRenderer;
 
     /// \brief Pointer to render interface to handle OpenGL/Metal compatibility

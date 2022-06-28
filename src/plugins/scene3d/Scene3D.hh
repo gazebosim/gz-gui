@@ -116,7 +116,7 @@ namespace plugins
     private: std::unique_ptr<Scene3DPrivate> dataPtr;
   };
 
-  /// \brief Ign-rendering renderer.
+  /// \brief gz-rendering renderer.
   /// All ign-rendering calls should be performed inside this class as it makes
   /// sure that opengl calls in the underlying render engine do not interfere
   /// with QtQuick's opengl render operations. The main Render function will
@@ -223,10 +223,10 @@ namespace plugins
     /// topic to get pose updates of objects in the scene
     public: std::string poseTopic;
 
-    /// \brief Ign-transport deletion topic name
+    /// \brief gz-transport deletion topic name
     public: std::string deletionTopic;
 
-    /// \brief Ign-transport scene topic name
+    /// \brief gz-transport scene topic name
     /// New scene messages will be published to this topic when an entities are
     /// added
     public: std::string sceneTopic;
@@ -272,7 +272,7 @@ namespace plugins
     /// \brief OpenGL context to be passed to the render engine
     public: QOpenGLContext *context = nullptr;
 
-    /// \brief Ign-rendering renderer
+    /// \brief gz-rendering renderer
     public: IgnRenderer ignRenderer;
   };
 
