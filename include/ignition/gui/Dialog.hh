@@ -67,7 +67,7 @@ namespace ignition
       /// \brief Write dialog config
       /// \param[in] _path config path
       /// \param[in] _attribute XMLElement attribute name
-      /// \param[in] _attribute XMLElement attribute string value
+      /// \param[in] _value XMLElement attribute string value
       /// \return true if written to config file
       public: bool WriteAttribute(const std::string &_path,
         const std::string &_attribute, const std::string &_value) const;
