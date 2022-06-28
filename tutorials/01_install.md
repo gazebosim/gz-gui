@@ -5,7 +5,7 @@ Next Tutorial: \ref commandline
 # Install
 
 These instructions are for installing only Gazebo GUI. If you're interested
-in using all the Gazebo libraries, not only Igniton GUI, check out this
+in using all the Gazebo libraries, not only Gazebo GUI, check out this
 [Gazebo installation](https://gazebosim.org/docs/latest/install).
 
 We recommend following the binary install instructions to get up and running as
@@ -172,7 +172,7 @@ Before [gz-rendering](https://github.com/gazebosim/gz-rendering) becomes availab
 
     As `gz-rendering` is not yet available on conda-forge, we need to build it from source and specify the path containing `gz-rendering<#>-config.cmake` and `gz-rendering<#>-ogre-config.cmake` in `CMAKE_PREFIX_PATH`. That path could be `gz-rendering-install-path\lib\cmake`, for example.
   ```
-  cmake .. -DBUILD_TESTING=OFF -DCMAKE_PREFIX_PATH=path\containing\ignition-rendering-config  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
+  cmake .. -DBUILD_TESTING=OFF -DCMAKE_PREFIX_PATH=path\containing\gz-rendering-config  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
   cmake --build . --config Release
   ```
 

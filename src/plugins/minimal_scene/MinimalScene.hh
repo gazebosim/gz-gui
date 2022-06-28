@@ -123,7 +123,7 @@ namespace plugins
   class RenderSync;
 
   /// \brief gz-rendering renderer.
-  /// All ign-rendering calls should be performed inside this class as it makes
+  /// All gz-rendering calls should be performed inside this class as it makes
   /// sure that opengl calls in the underlying render engine do not interfere
   /// with QtQuick's opengl render operations. The main Render function will
   /// render to an offscreen texture and notify via signal and slots when it's
