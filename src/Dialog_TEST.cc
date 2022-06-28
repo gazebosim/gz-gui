@@ -83,7 +83,7 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ChangeDialogConfig))
       "default");
 
     EXPECT_EQ(defaultValue, "true");
-    dialog->WriteAttribute(app->DefaultConfigPath(), "default",
+    dialog->WriteAttribute(app.DefaultConfigPath(), "default",
       false);
     defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(),
       "default");
