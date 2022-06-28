@@ -178,10 +178,3 @@ INSTANTIATE_TEST_SUITE_P(Plugins, ExamplesBuild, ::testing::Values(
   "plugin",
   "standalone"
 ));
-
-//////////////////////////////////////////////////
-int main(int argc, char **argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
