@@ -26,7 +26,6 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char* g_argv[] =
 {
@@ -35,18 +34,32 @@ char* g_argv[] =
 
 using namespace ignition;
 using namespace gui;
-using namespace std::chrono_literals;
+
+class DialogTest : public ::testing::Test
+{
+  // Documentation inherited
+  protected: void SetUp() override
+  {
+    common::Console::SetVerbosity(4);
+
+    // Remove the config file at the beginning of every test run
+    common::removeAll(this->kTestConfigFile);
+  }
+
+  /// \brief Directory to act as $HOME for tests
+  public: const std::string kTestConfigFile =
+      common::joinPaths(PROJECT_BINARY_PATH, "test", "ign-gui-test.config");
+};
 
 /////////////////////////////////////////////////
-TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReadDialogConfig))
+TEST_F(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReadDialogConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
-  Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
+  Application app(g_argc, g_argv, WindowType::kDialog);
 
   // Change default config path
-  App()->SetDefaultConfigPath(kTestConfigFile);
+  app.SetDefaultConfigPath(this->kTestConfigFile);
 
-  auto dialog = new Dialog;
+  auto dialog = new Dialog();
   ASSERT_NE(nullptr, dialog);
 
   // Read dialog config
@@ -63,15 +76,14 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReadDialogConfig))
 }
 
 /////////////////////////////////////////////////
-TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ChangeDialogConfig))
+TEST_F(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ChangeDialogConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
-  Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
+  Application app(g_argc, g_argv, WindowType::kDialog);
 
   // Change default config path
-  App()->SetDefaultConfigPath(kTestConfigFile);
+  App()->SetDefaultConfigPath(this->kTestConfigFile);
 
-  auto dialog = new Dialog;
+  auto dialog = new Dialog();
   ASSERT_NE(nullptr, dialog);
 
   // Read dialog config
@@ -83,11 +95,9 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ChangeDialogConfig))
       "default");
 
     EXPECT_EQ(defaultValue, "true");
-    dialog->WriteAttribute(app->DefaultConfigPath(), "default",
-      false);
-    defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(),
-      "default");
-    EXPECT_EQ(defaultValue, "false");
+    dialog->WriteAttribute(app.DefaultConfigPath(), "default", false);
+    defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(), "default");
+    EXPECT_NE(defaultValue, "true");
   }
 
   delete dialog;
