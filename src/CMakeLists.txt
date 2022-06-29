@@ -16,17 +16,17 @@ set (sources
 )
 
 set (gtest_sources
-  Application_TEST
-  Conversions_TEST
-  Dialog_TEST
-  DragDropModel_TEST
-  Helpers_TEST
-  GuiEvents_TEST
-  ign_TEST
-  MainWindow_TEST
-  PlottingInterface_TEST
-  Plugin_TEST
-  SearchModel_TEST
+  Application_TEST.cc
+  Conversions_TEST.cc
+  Dialog_TEST.cc
+  DragDropModel_TEST.cc
+  Helpers_TEST.cc
+  GuiEvents_TEST.cc
+  gz_TEST.cc
+  MainWindow_TEST.cc
+  PlottingInterface_TEST.cc
+  Plugin_TEST.cc
+  SearchModel_TEST.cc
 )
 
 if (MSVC)
