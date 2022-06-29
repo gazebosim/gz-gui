@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef GZ_GAZEBO_GUI_TAPEMEASURE_HH_
-#define GZ_GAZEBO_GUI_TAPEMEASURE_HH_
+#ifndef GZ_GUI_TAPEMEASURE_HH_
+#define GZ_GUI_TAPEMEASURE_HH_
 
 #include <memory>
 

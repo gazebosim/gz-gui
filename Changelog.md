@@ -55,7 +55,7 @@
 1. Don't crash if a plugin has invalid QML
     * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
-1. Added log storing for ign-gui
+1. Added log storing for gz-gui
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
 ### Gazebo GUI 6.1.0 (2021-11-05)
@@ -102,7 +102,7 @@
     1. Marker Manager
         * [Pull request #247](https://github.com/gazebosim/gz-gui/pull/247)
 
-    1. Moved tape measure and grid config from ign-gazebo to ign-gui
+    1. Moved tape measure and grid config from gz-sim to gz-gui
         * [Pull request #236](https://github.com/gazebosim/gz-gui/pull/236)
 
 1. PIMPL GUI events
@@ -129,7 +129,7 @@
 1. Remove deprecations: tock
     * [Pull request #243](https://github.com/gazebosim/gz-gui/pull/243)
 
-1. Depend on ign-msgs8, ign-transport11, ign-rendering6
+1. Depend on gz-msgs8, gz-transport11, gz-rendering6
     * [Pull request #210](https://github.com/gazebosim/gz-gui/pull/210)
 
 1. Infrastructure
@@ -184,7 +184,7 @@
 1. Don't crash if a plugin has invalid QML
     * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
-1. Added log storing for ign-gui
+1. Added log storing for gz-gui
     * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
 
@@ -219,7 +219,7 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect gz instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for gz-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 5.1.0 (2021-06-23)
@@ -262,13 +262,13 @@
 
 ### Gazebo GUI 5.0.0 (2021-03-31)
 
-1. Bump in edifice: ign-common4
+1. Bump in edifice: gz-common4
     * [Pull request #169](https://github.com/gazebosim/gz-gui/pull/169)
 
-1. Bump in edifice: ign-msgs7 and ign-transport10
+1. Bump in edifice: gz-msgs7 and gz-transport10
     * [Pull request #167](https://github.com/gazebosim/gz-gui/pull/167)
 
-1. Bump in edifice: ign-rendering5
+1. Bump in edifice: gz-rendering5
     * [Pull request #141](https://github.com/gazebosim/gz-gui/pull/141)
 
 1. Documentation updates
@@ -299,12 +299,12 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect gz instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for gz-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 4.4.0 (2021-06-21)
 
-1. Bump required ign-rendering version to 4.8
+1. Bump required gz-rendering version to 4.8
     * [Pull request #234](https://github.com/gazebosim/gz-gui/pull/234)
 
 1. Update codeowners
@@ -337,7 +337,7 @@
 1. Improve the height of plugins in the right split
     * [Pull request #194](https://github.com/gazebosim/gz-gui/pull/194)
 
-1. Scene3D: port mesh material fixes from ign-gazebo
+1. Scene3D: port mesh material fixes from gz-sim
     * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
 
 ### Gazebo GUI 4.3.0 (2021-03-11)
@@ -458,10 +458,10 @@
 1. Depend on QtCharts and change application base class to QApplication
     * [BitBucket pull request 252](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/252)
 
-1. Depend on ign-msgs6 and ign-transport9
+1. Depend on gz-msgs6 and gz-transport9
     * [Pull request 92](https://github.com/gazebosim/gz-gui/pull/92)
 
-1. Depend on ign-rendering4
+1. Depend on gz-rendering4
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/243)
 
 ## Gazebo GUI 3
@@ -503,7 +503,7 @@
 1. 👩‍🌾 Remove bitbucket-pipelines.yml
     * [Pull request #274](https://github.com/gazebosim/gz-gui/pull/274)
 
-1. Require ign-rendering 3.5
+1. Require gz-rendering 3.5
     * [Pull request #264](https://github.com/gazebosim/gz-gui/pull/264)
 
 1. New teleop plugin implementation.
@@ -523,7 +523,7 @@
 1. Screenshot plugin fixed dbg message
     * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
-1. Detect gz instead of using cmake module to check for ignition-tools
+1. Detect gz instead of using cmake module to check for gz-tools
     * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
 ### Gazebo GUI 3.6.0 (2021-06-17)
@@ -554,7 +554,7 @@
 
 ### Gazebo GUI 3.5.1 (2021-03-18)
 
-1. Scene3D: port mesh material fixes from ign-gazebo
+1. Scene3D: port mesh material fixes from gz-sim
     * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
 
 1. Improve the height of plugins in the right split
@@ -688,7 +688,7 @@
 
 ### Gazebo GUI 3.1.0 (2020-03-27)
 
-1. Remove old ign-gui0 stuff
+1. Remove old gz-gui0 stuff
     * [BitBucket pull request 248](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/248)
 
 1. Fix homebrew warnings
@@ -740,10 +740,10 @@
 
 ### Gazebo GUI 3.0.0 (2019-12-10)
 
-1. Depend on ign-transport8 and ign-msgs5
+1. Depend on gz-transport8 and gz-msgs5
     * [BitBucket pull request 225](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/225)
 
-1. Depend on ign-rendering3
+1. Depend on gz-rendering3
     * [BitBucket pull request 221](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/221)
 
 ## Gazebo GUI 2
@@ -885,7 +885,7 @@
 1. Move files not ported to v1 to a separate dir for clarity.
     * [BitBucket pull request 196](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/196)
 
-1. Get ign-gui plugin interface in case there are others.
+1. Get gz-gui plugin interface in case there are others.
     * [BitBucket pull request 186](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/186)
 
 ### Gazebo GUI 1.0.0

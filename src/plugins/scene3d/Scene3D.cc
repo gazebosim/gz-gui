@@ -35,7 +35,7 @@
 #include <gz/math/Vector2.hh>
 #include <gz/math/Vector3.hh>
 
-// TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
+// TODO(louise) Remove these pragmas once gz-rendering and gz-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
@@ -160,16 +160,16 @@ namespace plugins
     /// \param[in] _entity Entity to delete
     private: void DeleteEntity(const unsigned int _entity);
 
-    //// \brief Ign-transport scene service name
+    //// \brief gz-transport scene service name
     private: std::string service;
 
-    //// \brief Ign-transport pose topic name
+    //// \brief gz-transport pose topic name
     private: std::string poseTopic;
 
-    //// \brief Ign-transport deletion topic name
+    //// \brief gz-transport deletion topic name
     private: std::string deletionTopic;
 
-    //// \brief Ign-transport scene topic name
+    //// \brief gz-transport scene topic name
     private: std::string sceneTopic;
 
     //// \brief Pointer to the rendering scene
@@ -1575,8 +1575,8 @@ void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 Scene3D::Scene3D()
   : Plugin(), dataPtr(new Scene3DPrivate)
 {
-  gzwarn << "This plugin is deprecated on ign-gui v6 and will be removed on "
-          << "ign-gui v7. Use MinimalScene + TransportSceneManager instead."
+  gzwarn << "This plugin is deprecated on gz-gui v6 and will be removed on "
+          << "gz-gui v7. Use MinimalScene + TransportSceneManager instead."
           << std::endl;
 
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");

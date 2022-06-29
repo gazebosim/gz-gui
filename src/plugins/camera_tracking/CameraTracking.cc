@@ -22,7 +22,7 @@
 #include <gz/common/Profiler.hh>
 #include <gz/plugin/Register.hh>
 
-// TODO(anyone) Remove these pragmas once ign-rendering and ign-msgs
+// TODO(anyone) Remove these pragmas once gz-rendering and gz-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
