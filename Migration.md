@@ -13,11 +13,18 @@ release will remove the deprecated code.
 * Header files under `ignition/...` are deprecated and will be removed in future versions.
   Please use `gz/...` instead.
 
-* The `ignition-gui` element is deprecated and will be removed.
+* The `gz-gui` element is deprecated and will be removed.
   Please use `gz-gui` instead.
 
 * `ignitionVersion()` is deprecated and will be removed in future versions.
   Please use `gzVersion()` instead.
+
+* The project name has been changed to use the `gz-` prefix, you **must** use the `gz` prefix!
+  * This also means that any generated code that use the project name (e.g. CMake variables, in-source macros) would have to be migrated.
+  * Some non-exhaustive examples of this include:
+    * `GZ_<PROJECT>_<VISIBLE/HIDDEN>`
+    * CMake `-config` files
+    * Paths that depend on the project name
 
 ## Gazebo GUI 6.2 to 6.3
 

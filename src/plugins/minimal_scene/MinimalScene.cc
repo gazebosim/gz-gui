@@ -631,14 +631,14 @@ void IgnRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
-    gzdbg << "Creating ign-rendering interface for OpenGL" << std::endl;
+    gzdbg << "Creating gz-rendering interface for OpenGL" << std::endl;
     this->dataPtr->rhiParams["useCurrentGLContext"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiOpenGL>();
   }
 #ifdef __APPLE__
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
-    gzdbg << "Creating ign-renderering interface for Metal" << std::endl;
+    gzdbg << "Creating gz-renderering interface for Metal" << std::endl;
     this->dataPtr->rhiParams["metal"] = "1";
     this->dataPtr->rhi = std::make_unique<IgnCameraTextureRhiMetal>();
   }
