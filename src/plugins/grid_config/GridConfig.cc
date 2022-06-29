@@ -279,7 +279,7 @@ void GridConfig::ConnectToGrid()
         gzdbg << "Connected to grid [" << grid->Name() << "]" << std::endl;
 
         // TODO(chapulina) Set to the grid's visible state when that's available
-        // through ign-rendering's API
+        // through gz-rendering's API
         this->dataPtr->visible = true;
         grid->Parent()->SetVisible(true);
 

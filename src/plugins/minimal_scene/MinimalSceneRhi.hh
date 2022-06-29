@@ -51,7 +51,7 @@ namespace plugins
     public: virtual void TextureId(void* _texturePtr) = 0;
   };
 
-  /// \brief Ign-rendering renderer.
+  /// \brief gz-rendering renderer.
   class IgnRenderer;
   class RenderSync;
 
