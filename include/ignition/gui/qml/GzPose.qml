@@ -20,25 +20,46 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 
-// Item displaying 3D pose information.
+/**
+ *  Item displaying 3D pose information.
+ *
+ *  Users should load values to xValues, yValues, etc.
+ *  If readOnly == False, users can read from signal pararmeters _x, _y, etc.
+ *
+ *  Usage example:
+ *  GzPose {
+ *    id: gzPose
+ *    readOnly: false
+ *    xValue: xValueFromCPP
+ *    yValue: yValueFromCPP
+ *    zValue: zValueFromCPP
+ *    rollValue: rollValueFromCPP
+ *    pitchValue: pitchValueFromCPP
+ *    yawValue: yawValueFromCPP
+ *    onGzPoseSet: {
+ *      myFunc(_x, _y, _z, _roll, _pitch, _yaw)
+ *    }
+ *  }
+**/
+
 Item {
   id: gzPoseRoot
 
   // Read-only / write
   property bool readOnly: false
 
-  // Show Pose bar
-  property bool show: false
-
   // bind model values here for spinboxs
-  property double xModelValue
-  property double yModelValue
-  property double zModelValue
-  property double rollModelValue
-  property double pitchModelValue
-  property double yawModelValue
+  property double xValue
+  property double yValue
+  property double zValue
+  property double rollValue
+  property double pitchValue
+  property double yawValue
 
-  signal gzPoseSet(double x, double y, double z, double roll, double pitch, double yaw)
+  signal gzPoseSet(double _x, double _y, double _z, double _roll, double _pitch, double _yaw)
+
+  // Show Pose bar (used to control expand)
+  property bool show: true
 
   height: gzPoseContent.height
 
@@ -59,6 +80,11 @@ Item {
   property var pitchItem: {}
   property var yawItem: {}
 
+  // Dummy component to use its functions.
+  IgnHelpers {
+    id: gzHelper
+  }
+
   /**
    * Used to create a spin box
    */
@@ -69,7 +95,7 @@ Item {
       value:  numberValue
       minimumValue: -spinMax
       maximumValue: spinMax
-      decimals: getDecimals(writableSpin.width)
+      decimals: gzHelper.getDecimals(writableSpin.width)
       onEditingFinished: {
         gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value, rollItem.value, pitchItem.value, yawItem.value)
       }
@@ -87,7 +113,7 @@ Item {
       horizontalAlignment: Text.AlignRight
       verticalAlignment: Text.AlignVCenter
       text: {
-        var decimals = getDecimals(numberText.width)
+        var decimals = gzHelper.getDecimals(numberText.width)
         return numberValue.toFixed(decimals)
       }
     }
@@ -131,7 +157,7 @@ Item {
         Loader {
           id: xLoader
           anchors.fill: parent
-          property double numberValue: xModelValue
+          property double numberValue: xValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             xItem = xLoader.item
@@ -152,7 +178,7 @@ Item {
         Loader {
           id: rollLoader
           anchors.fill: parent
-          property double numberValue: rollModelValue
+          property double numberValue: rollValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             rollItem = rollLoader.item
@@ -179,7 +205,7 @@ Item {
         Loader {
           id: yLoader
           anchors.fill: parent
-          property double numberValue: yModelValue
+          property double numberValue: yValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
              yItem = yLoader.item
@@ -200,7 +226,7 @@ Item {
         Loader {
           id: pitchLoader
           anchors.fill: parent
-          property double numberValue: pitchModelValue
+          property double numberValue: pitchValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             pitchItem = pitchLoader.item
@@ -221,7 +247,7 @@ Item {
         Loader {
           id: zLoader
           anchors.fill: parent
-          property double numberValue: zModelValue
+          property double numberValue: zValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             zItem = zLoader.item
@@ -242,7 +268,7 @@ Item {
         Loader {
           id: yawLoader
           anchors.fill: parent
-          property double numberValue: yawModelValue
+          property double numberValue: yawValue
           sourceComponent: readOnly ? readOnlyNumber : writableNumber
           onLoaded: {
             yawItem = yawLoader.item
