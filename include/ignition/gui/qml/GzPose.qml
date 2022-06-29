@@ -24,7 +24,8 @@ import QtQuick.Controls.Styles 1.4
  *  Item displaying 3D pose information.
  *
  *  Users should load values to xValues, yValues, etc.
- *  If readOnly == False, users can read from signal pararmeters _x, _y, etc.
+ *  If readOnly == False,
+ *  users can read from signal pararmeters of GzPoseSet: _x, _y, etc.
  *
  *  Usage example:
  *  GzPose {
@@ -48,7 +49,7 @@ Item {
   // Read-only / write
   property bool readOnly: false
 
-  // bind model values here for spinboxs
+  // User input value
   property double xValue
   property double yValue
   property double zValue
@@ -56,8 +57,14 @@ Item {
   property double pitchValue
   property double yawValue
 
+  /**
+   * Useful only when readOnly == false. User should read spinbox values from
+   * its parameters.
+   */
   signal gzPoseSet(double _x, double _y, double _z, double _roll, double _pitch, double _yaw)
 
+
+  /*** The following are private variables: ***/
   // Show Pose bar (used to control expand)
   property bool show: true
 
@@ -84,6 +91,7 @@ Item {
   IgnHelpers {
     id: gzHelper
   }
+  /*** Private variables end: ***/
 
   /**
    * Used to create a spin box
