@@ -116,7 +116,7 @@ TEST_F(MarkerManagerTestFixture,
 
   const char *pluginMinimalSceneStr =
     "<plugin filename=\"MinimalScene\">"
-      "<engine>ogre</engine>"
+      "<engine>ogre2</engine>"
       "<scene>scene</scene>"
     "</plugin>";
 
@@ -144,7 +144,7 @@ TEST_F(MarkerManagerTestFixture,
   window->QuickWindow()->show();
 
   // Check scene
-  auto engine = rendering::engine("ogre");
+  auto engine = rendering::engine("ogre2");
   ASSERT_NE(nullptr, engine);
 
   int sleep = 0;

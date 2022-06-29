@@ -80,7 +80,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"MinimalScene\">"
-      "<engine>ogre</engine>"
+      "<engine>ogre2</engine>"
       "<scene>banana</scene>"
       "<ambient_light>1.0 0 0</ambient_light>"
       "<background_color>0 1 0</background_color>"
@@ -120,7 +120,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   };
 
   // Check scene
-  auto engine = rendering::engine("ogre");
+  auto engine = rendering::engine("ogre2");
   ASSERT_NE(nullptr, engine);
 
   int sleep = 0;
