@@ -15,90 +15,221 @@
  *
 */
 import QtQuick 2.9
+import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 
-GridLayout {
+/**
+ *  Item displaying a 3D vector
+ *
+ *  Users should load values to xValues, yValues, and zValues.
+ *  If readOnly == False,
+ *  users can read from signal parameters of GzVectorSet: _x, _y, and _z
+ *
+ *  Usage example:
+ *  GzVector3 {
+ *    id: gzVector
+ *    xName: "Red"
+ *    yName: "Green"
+ *    zName: "Blue"
+ *    unit: ""
+ *    readOnly: false
+ *    xValue: xValueFromCPP
+ *    yValue: yValueFromCPP
+ *    zValue: zValueFromCPP
+ *    onGzVectorSet: {
+ *      myFunc(_x, _y, _z, _roll, _pitch, _yaw)
+ *    }
+ *  }
+**/
+Rectangle {
   id: gzVectorRoot
 
-  property alias xSpin: x_spin
-  property alias ySpin: y_spin
-  property alias zSpin: z_spin
+  // Readn-only / write
+  property bool readOnly: true
 
-  property string xName: ""
-  property string yName: ""
-  property string zName: ""
+  // User input value
+  property double xValue
+  property double yValue
+  property double zValue
 
-  property bool textVisible: true
+  /**
+   * Useful only when readOnly == false. User should read spinbox values from
+   * its parameters.
+   */
+  signal gzVectorSet(double _x, double _y, double _z)
 
-  signal gzVectorSet()
+  // Names for XYZ
+  property string xName: "X"
+  property string yName: "Y"
+  property string zName: "Z"
 
-  columns: 5
-  columnSpacing: 10
+  // Units, defaults to meters.
+  // Set to "" to omit the parentheses.
+  property string unit: "m"
+
+  // Show Pose bar (used to control expand)
+  property bool show: true
+
+  height: gzVectorContent.height
+
+  // Left indentation
+  property int indentation: 10
+
+  // Horizontal margins
+  property int margin: 5
+
+  // Maximum spinbox value
   property double spinMax: 1000000
 
+  // local variables to store spinbox values
+  property var xItem: {}
+  property var yItem: {}
+  property var zItem: {}
+
+  // Dummy component to use its functions.
   IgnHelpers {
     id: gzHelper
+
+    // Temperary getDecimals()
+    // Remove after merging gz-gui/common_widget_pose
+    function getDecimals(_width) {
+      if (_width <= 0 || _width > 110)
+        return 6
+
+      if (_width <= 80)
+        return 2
+
+      return 4
+    }
   }
 
-  Text {
-    Layout.row: 0
-    Layout.column: 1
-    Layout.alignment: Qt.AlignCenter
-    text: xName
-    color: "dimgrey"
-    visible: textVisible
+  /**
+   * Used to create a spin box
+   */
+  Component {
+    id: writableNumber
+    IgnSpinBox {
+      id: writableSpin
+      value: numberValue
+      minimumValue: -spinMax
+      maximumValue: spinMax
+      decimals: gzHelper.getDecimals(writableSpin.width)
+      onEditingFinished: {
+        gzVectorRoot.gzVectorSet(xItem.value, yItem.value, zItem.value)
+      }
+    }
   }
 
-  IgnSpinBox {
-    id: x_spin
-    maximumValue: spinMax
-    minimumValue: -spinMax
-    decimals: gzHelper.getDecimals(x_spin.width)
-    Layout.row: 1
-    Layout.column: 1
-    Layout.fillWidth: true
-    onEditingFinished: gzVectorRoot.gzVectorSet()
+  /**
+   * Used to create a read-only number
+   */
+  Component {
+    id: readOnlyNumber
+    Text {
+      id: numberText
+      anchors.fill: parent
+      horizontalAlignment: Text.AlignRight
+      verticalAlignment: Text.AlignVCenter
+      text: {
+        var decimals = gzHelper.getDecimals(numberText.width)
+        return numberValue.toFixed(decimals)
+      }
+    }
   }
 
-  Text {
-    Layout.row: 0
-    Layout.column: 2
-    Layout.alignment: Qt.AlignCenter
-    text: yName
-    color: "dimgrey"
-    visible: textVisible
-  }
+  Rectangle {
+    id: gzVectorContent
+    width: parent.width
+    height: show ? grid.height : 0
+    clip: true
+    color: "transparent"
 
-  IgnSpinBox {
-    id: y_spin
-    maximumValue: spinMax
-    minimumValue: -spinMax
-    stepSize: 1
-    decimals: gzHelper.getDecimals(y_spin.width)
-    Layout.row: 1
-    Layout.column: 2
-    Layout.fillWidth: true
-    onEditingFinished: gzVectorRoot.gzVectorSet()
-  }
+    Behavior on height {
+      NumberAnimation {
+        duration: 200;
+        easing.type: Easing.InOutQuad
+      }
+    }
 
-  Text {
-    Layout.row: 0
-    Layout.column: 3
-    Layout.alignment: Qt.AlignCenter
-    text: zName
-    color: "dimgrey"
-    visible: textVisible
-  }
+    GridLayout {
+      id: grid
+      width: parent.width
+      columns: 4
 
-  IgnSpinBox {
-    id: z_spin
-    maximumValue: spinMax
-    minimumValue: -spinMax
-    stepSize: 1
-    decimals: gzHelper.getDecimals(z_spin.width)
-    Layout.row: 1
-    Layout.column: 3
-    Layout.fillWidth: true
-    onEditingFinished: gzVectorRoot.gzVectorSet()
+      // Left spacer
+      Item {
+        Layout.rowSpan: 3
+        width: indentation + margin
+      }
+
+      Text {
+        text: unit == "" ? xName : xName + ' (' + unit + ')'
+        leftPadding: 5
+        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+        font.pointSize: 12
+      }
+
+      Item {
+        Layout.fillWidth: true
+        height: 40
+        Loader {
+          id: xLoader
+          anchors.fill: parent
+          property double numberValue: xValue
+          sourceComponent: readOnly ? readOnlyNumber : writableNumber
+          onLoaded: {
+            xItem = xLoader.item
+          }
+        }
+      }
+
+      // Right spacer
+      Item {
+        Layout.rowSpan: 3
+        width: margin
+      }
+
+      Text {
+        text: unit == "" ? yName : yName + ' (' + unit + ')'
+        leftPadding: 5
+        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+        font.pointSize: 12
+      }
+
+      Item {
+        Layout.fillWidth: true
+        height: 40
+        Loader {
+          id: yLoader
+          anchors.fill: parent
+          property double numberValue: yValue
+          sourceComponent: readOnly ? readOnlyNumber : writableNumber
+          onLoaded: {
+            yItem = yLoader.item
+          }
+        }
+      }
+
+      Text {
+        text: unit == "" ? zName : zName + ' (' + unit + ')'
+        leftPadding: 5
+        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+        font.pointSize: 12
+      }
+
+      Item {
+        Layout.fillWidth: true
+        height: 40
+        Loader {
+          id: zLoader
+          anchors.fill: parent
+          property double numberValue: zValue
+          sourceComponent: readOnly ? readOnlyNumber : writableNumber
+          onLoaded: {
+            zItem = zLoader.item
+          }
+        }
+      }
+    }
   }
 }
