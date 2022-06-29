@@ -31,6 +31,9 @@ namespace ignition
       /// \brief default dialog config
       public: std::string config{""};
 
+      /// \brief Configuration for this dialog.
+      public: DialogConfig dialogConfig;
+
       /// \brief Pointer to quick window
       public: QQuickWindow *quickWindow{nullptr};
     };
@@ -79,6 +82,32 @@ QQuickItem *Dialog::RootItem() const
   }
 
   return dialogItem;
+}
+
+/////////////////////////////////////////////////
+void Dialog::SaveConfig(const std::string &_path)
+{
+  this->dataPtr->dialogConfig = this->CurrentDialogConfig();
+
+  // Create the intermediate directories if needed.
+  // We check for errors when we try to open the file.
+  auto dirname = dirName(_path);
+  ignition::common::createDirectories(dirname);
+
+  // Open the file
+  std::ofstream out(_path.c_str(), std::ios::out);
+  if (!out)
+  {
+    std::string str = "Unable to open file: " + _path;
+    str += ".\nCheck file permissions.";
+    igndbg << str << std::endl;
+  }
+  else
+    out << this->dataPtr->dialogConfig.XMLString();
+
+  std::string msg("Saved configuration to <b>" + _path + "</b>");
+
+  ignmsg << msg << std::endl;
 }
 
 /////////////////////////////////////////////////

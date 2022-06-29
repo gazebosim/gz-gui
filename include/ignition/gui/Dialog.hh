@@ -37,6 +37,7 @@ namespace ignition
   namespace gui
   {
     class DialogPrivate;
+    struct DialogConfig;
 
     /// \brief Gui plugin
     class IGNITION_GUI_VISIBLE Dialog : public QObject
@@ -56,6 +57,21 @@ namespace ignition
       /// \brief Get the root quick item of this window
       /// \return Pointer to the item
       public: QQuickItem *RootItem() const;
+
+      /// \brief Save current dialog configuration to a file on disk.
+      /// Will open an error dialog in case it's not possible to write to the
+      /// path.
+      /// \param[in] _path The full destination path including filename.
+      public: void SaveConfig(const std::string &_path);
+
+      /// \brief Apply a DialogConfig to this window and keep a copy of it.
+      /// \param[in] _config The configuration to apply.
+      /// \return True if successful.
+      public: bool ApplyConfig(const DialogConfig &_config);
+
+      /// \brief Get the current dialog configuration.
+      /// \return Updated dialog config
+      public: WindowConfig CurrentDialogConfig() const;
 
       /// \brief Set dilaog name
       public: void SetName(const std::string &_name);
@@ -89,16 +105,29 @@ namespace ignition
       public: std::string ReadAttribute(const std::string &_path,
         const std::string  &_attribute) const;
 
-      /// \brief Write config to path
-      /// \param[in] _config config as char array
-      /// \param[in] _path of the config
-      /// \return true if written
-      private: bool SaveConfig(const char *_config, const std::string &_path);
-
       /// \internal
       /// \brief Private data pointer
       private: std::unique_ptr<DialogPrivate> dataPtr;
     };
+
+    /// \brief Holds configurations related to a Dialog.
+    struct IGNITION_GUI_VISIBLE DialogConfig
+    {
+      /// \brief Update this config from an XML string. Only fields present on
+      /// the XML will be overriden / appended / created.
+      /// \param[in] _xml A config XML file in string format
+      /// \return True if successful. It may fail for example if the string
+      /// can't be parsed into XML.
+      bool MergeFromXML(const std::string &_xml);
+
+      /// \brief Return this configuration in XML format as a string.
+      /// \return String containing a complete config file.
+      std::string XMLString() const;
+
+      /// \brief The configuration in XML format as a string.
+      std::string xMLString;
+    }
+
   }
 }
 
