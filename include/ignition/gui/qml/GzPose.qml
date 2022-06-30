@@ -25,7 +25,7 @@ import QtQuick.Controls.Styles 1.4
  *
  *  Users should load values to xValues, yValues, etc.
  *  If readOnly == False,
- *  users can read from signal pararmeters of GzPoseSet: _x, _y, etc.
+ *  users can read from signal pararmeters of gzPoseSet: _x, _y, etc.
  *
  *  Usage example:
  *  GzPose {
@@ -49,7 +49,7 @@ Item {
   // Read-only / write
   property bool readOnly: false
 
-  // User input value
+  // User input value.
   property double xValue
   property double yValue
   property double zValue
@@ -58,8 +58,11 @@ Item {
   property double yawValue
 
   /**
-   * Useful only when readOnly == false. User should read spinbox values from
-   * its parameters.
+   * Used to read spinbox values
+   * @params: _x, _y, _z, _roll, _pitch, _yaw: corresponding spinBoxes values
+   * @note: When readOnly == false, user should read spinbox value from its
+   *        parameters.
+   *        When readOnly == true, this signal is unused.
    */
   signal gzPoseSet(double _x, double _y, double _z, double _roll, double _pitch, double _yaw)
 
@@ -130,7 +133,7 @@ Item {
   Rectangle {
     id: gzPoseContent
     width: parent.width
-    height: show ? grid.height : 0
+    height: show ? gzPoseGrid.height : 0
     clip: true
     color: "transparent"
 
@@ -142,7 +145,7 @@ Item {
     }
 
     GridLayout {
-      id: grid
+      id: gzPoseGrid
       width: parent.width
       columns: 6
 
