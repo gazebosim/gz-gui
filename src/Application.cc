@@ -538,6 +538,12 @@ std::shared_ptr<Plugin> Application::PluginByName(
 }
 
 /////////////////////////////////////////////////
+bool Application::CreateMainWindow()
+{
+  return this->InitializeMainWindow();
+}
+
+/////////////////////////////////////////////////
 bool Application::InitializeMainWindow()
 {
   igndbg << "Create main window" << std::endl;
