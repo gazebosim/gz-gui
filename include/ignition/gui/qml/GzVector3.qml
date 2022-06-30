@@ -31,7 +31,7 @@ import QtQuick.Layouts 1.3
  *    xName: "Red"
  *    yName: "Green"
  *    zName: "Blue"
- *    unit: ""
+ *    gzUnit: ""
  *    readOnly: false
  *    xValue: xValueFromCPP
  *    yValue: yValueFromCPP
@@ -53,8 +53,11 @@ Rectangle {
   property double zValue
 
   /**
-   * Useful only when readOnly == false. User should read spinbox values from
-   * its parameters.
+   * Used to read spinbox values
+   * @params: _x, _y, _z: corresponding spinBoxes values
+   * @note: When readOnly == false, user should read spinbox value from its
+   *        parameters.
+   *        When readOnly == true, this signal is unused.
    */
   signal gzVectorSet(double _x, double _y, double _z)
 
@@ -65,8 +68,10 @@ Rectangle {
 
   // Units, defaults to meters.
   // Set to "" to omit the parentheses.
-  property string unit: "m"
+  property string gzUnit: "m"
 
+
+  /*** The following are private variables: ***/
   // Show Pose bar (used to control expand)
   property bool show: true
 
@@ -102,6 +107,7 @@ Rectangle {
       return 4
     }
   }
+  /*** Private variables end: ***/
 
   /**
    * Used to create a spin box
@@ -140,7 +146,7 @@ Rectangle {
   Rectangle {
     id: gzVectorContent
     width: parent.width
-    height: show ? grid.height : 0
+    height: show ? gzVectorGrid.height : 0
     clip: true
     color: "transparent"
 
@@ -152,7 +158,7 @@ Rectangle {
     }
 
     GridLayout {
-      id: grid
+      id: gzVectorGrid
       width: parent.width
       columns: 4
 
@@ -163,7 +169,7 @@ Rectangle {
       }
 
       Text {
-        text: unit == "" ? xName : xName + ' (' + unit + ')'
+        text: gzUnit == "" ? xName : xName + ' (' + gzUnit + ')'
         leftPadding: 5
         color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
         font.pointSize: 12
@@ -190,7 +196,7 @@ Rectangle {
       }
 
       Text {
-        text: unit == "" ? yName : yName + ' (' + unit + ')'
+        text: gzUnit == "" ? yName : yName + ' (' + gzUnit + ')'
         leftPadding: 5
         color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
         font.pointSize: 12
@@ -211,7 +217,7 @@ Rectangle {
       }
 
       Text {
-        text: unit == "" ? zName : zName + ' (' + unit + ')'
+        text: gzUnit == "" ? zName : zName + ' (' + gzUnit + ')'
         leftPadding: 5
         color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
         font.pointSize: 12
