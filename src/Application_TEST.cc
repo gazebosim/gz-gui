@@ -289,6 +289,19 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(InitializeMainWindow))
     // Show window
     app.exec();
   }
+
+  // Start in dialog mode and create main window later
+  {
+    Application app(g_argc, g_argv, WindowType::kDialog);
+
+    auto win = App()->findChild<MainWindow *>();
+    EXPECT_EQ(nullptr, win);
+
+    app.CreateMainWindow();
+
+    win = App()->findChild<MainWindow *>();
+    ASSERT_NE(nullptr, win);
+  }
 }
 
 //////////////////////////////////////////////////
