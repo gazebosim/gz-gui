@@ -52,10 +52,10 @@ GridLayout {
       roll.value = _rot.x;
       pitch.value = _rot.y;
       yaw.value = _rot.z;
-      r.value = _color.r;
-      g.value = _color.g;
-      b.value = _color.b;
-      a.value = _color.a;
+      gzColorGrid.r = _color.r;
+      gzColorGrid.g = _color.g;
+      gzColorGrid.b = _color.b;
+      gzColorGrid.a = _color.a;
     }
   }
 
@@ -286,98 +286,18 @@ GridLayout {
   }
 
   Text {
-    text: "R"
+    Layout.columnSpan: 2
     color: "dimgrey"
+    text: "Grid Color"
   }
 
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: r
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(r.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "G"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: g
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(g.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "B"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: b
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(b.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "A"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: a
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 1.0
-    stepSize: 0.01
-    decimals: getDecimals(a.width)
-    onEditingFinished: Grid3D.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Button {
-    Layout.alignment: Qt.AlignHCenter
-    Layout.columnSpan: 4
-    id: color
-    text: qsTr("Custom Color")
-    onClicked: colorDialog.open()
-
-    ColorDialog {
-      id: colorDialog
-      title: "Choose a grid color"
-      visible: false
-      onAccepted: {
-        r.value = colorDialog.color.r
-        g.value = colorDialog.color.g
-        b.value = colorDialog.color.b
-        a.value = colorDialog.color.a
-        Grid3D.SetColor(colorDialog.color.r, colorDialog.color.g, colorDialog.color.b, colorDialog.color.a)
-        colorDialog.close()
-      }
-      onRejected: {
-        colorDialog.close()
-      }
-    }
-  }
-
-  // Bottom spacer
-  Item {
-    Layout.columnSpan: 4
-    Layout.fillHeight: true
+  GzColor { 
+    id: gzColorGrid
+    Layout.columnSpan: 2
+    Layout.alignment: Qt.AlignRight
+    Layout.bottomMargin: 5
+    Layout.rightMargin: 20
+    onGzColorSet: Grid3D.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
   }
 }
 
