@@ -57,9 +57,6 @@ namespace ignition
       /// \return Pointer to the item
       public: QQuickItem *RootItem() const;
 
-      /// \brief Set dilaog name
-      public: void SetName(const std::string &_name);
-
       /// \brief Store dialog default config
       /// \param[in] _config XML config as string
       public: void SetDefaultConfig(const std::string &_config);
@@ -69,7 +66,7 @@ namespace ignition
       /// \param[in] _attribute XMLElement attribute name
       /// \param[in] _value XMLElement attribute string value
       /// \return true if written to config file
-      public: bool WriteAttribute(const std::string &_path,
+      public: bool UpdateConfigAttribute(const std::string &_path,
         const std::string &_attribute, const std::string &_value) const;
 
       /// \brief Write dialog config
@@ -77,7 +74,7 @@ namespace ignition
       /// \param[in] _attribute XMLElement attribute name
       /// \param[in] _value XMLElement attribute boolean value
       /// \return true if written to config file
-      public: bool WriteAttribute(const std::string &_path,
+      public: bool UpdateConfigAttribute(const std::string &_path,
         const std::string &_attribute, const bool _value) const;
 
       /// \brief Gets a config attribute value, if not found in config
@@ -86,14 +83,8 @@ namespace ignition
       /// \param[in] _path config path
       /// \param[in] _attribute attribute name
       /// \return attribute value as string
-      public: std::string ReadAttribute(const std::string &_path,
+      public: std::string ReadAttributeValue(const std::string &_path,
         const std::string  &_attribute) const;
-
-      /// \brief Write config to path
-      /// \param[in] _config config as char array
-      /// \param[in] _path of the config
-      /// \return true if written
-      private: bool SaveConfig(const char *_config, const std::string &_path);
 
       /// \internal
       /// \brief Private data pointer

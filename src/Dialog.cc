@@ -25,9 +25,6 @@ namespace ignition
   {
     class DialogPrivate
     {
-      /// \brief Dialog name in config
-      public: std::string name{""};
-
       /// \brief default dialog config
       public: std::string config{""};
 
@@ -82,13 +79,7 @@ QQuickItem *Dialog::RootItem() const
 }
 
 /////////////////////////////////////////////////
-void Dialog::SetName(const std::string &_name)
-{
-  this->dataPtr->name = _name;
-}
-
-/////////////////////////////////////////////////
-bool Dialog::WriteAttribute(const std::string &_path,
+bool Dialog::UpdateConfigAttribute(const std::string &_path,
   const std::string &_attribute, const std::string &_value) const
 {
   if (_path.empty())
@@ -114,7 +105,7 @@ bool Dialog::WriteAttribute(const std::string &_path,
       dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))
   {
-    if(dialogElem->Attribute("name") == this->dataPtr->name)
+    if(dialogElem->Attribute("name") == this->objectName().toStdString())
     {
       dialogElem->SetAttribute(_attribute.c_str(), _value.c_str());
     }
@@ -138,7 +129,7 @@ bool Dialog::WriteAttribute(const std::string &_path,
 }
 
 /////////////////////////////////////////////////
-bool Dialog::WriteAttribute(const std::string &_path,
+bool Dialog::UpdateConfigAttribute(const std::string &_path,
   const std::string &_attribute, const bool _value) const
 {
   if (_path.empty())
@@ -164,7 +155,7 @@ bool Dialog::WriteAttribute(const std::string &_path,
       dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))
   {
-    if(dialogElem->Attribute("name") == this->dataPtr->name)
+    if(dialogElem->Attribute("name") == this->objectName().toStdString())
     {
       dialogElem->SetAttribute(_attribute.c_str(), _value);
     }
@@ -194,8 +185,8 @@ void Dialog::SetDefaultConfig(const std::string &_config)
 }
 
 /////////////////////////////////////////////////
-std::string Dialog::ReadAttribute(const std::string &_path,
-  const std::string  &_attribute) const
+std::string Dialog::ReadAttributeValue(const std::string &_path,
+  const std::string &_attribute) const
 {
   tinyxml2::XMLDocument doc;
   std::string value {""};
@@ -215,7 +206,7 @@ std::string Dialog::ReadAttribute(const std::string &_path,
       dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))
     {
-      if(dialogElem->Attribute("name") == this->dataPtr->name)
+      if(dialogElem->Attribute("name") == this->objectName().toStdString())
       {
         value = dialogElem->Attribute(_attribute.c_str());
       }
@@ -229,33 +220,34 @@ std::string Dialog::ReadAttribute(const std::string &_path,
       return "";
     }
 
-    // Process each dialog
+    // Process each existing dialog
     for (auto dialogElem = doc.FirstChildElement("dialog");
       dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))
     {
-      if(dialogElem->Attribute("name") == this->dataPtr->name)
+      if(dialogElem->Attribute("name") == this->objectName().toStdString())
       {
-        value = dialogElem->Attribute(_attribute.c_str());
+        if (dialogElem->Attribute(_attribute.c_str()))
+          value = dialogElem->Attribute(_attribute.c_str());
       }
     }
 
-    // config exists but attribute not there
+    // config exists but attribute not there read from default config
     if (value.empty())
     {
       tinyxml2::XMLDocument missingDoc;
       missingDoc.Parse(this->dataPtr->config.c_str());
 
-    for (auto dialogElem = doc.FirstChildElement("dialog");
-      dialogElem != nullptr;
-      dialogElem = dialogElem->NextSiblingElement("dialog"))
-      {
-        if(dialogElem->Attribute("name") == this->dataPtr->name)
+      for (auto dialogElem = doc.FirstChildElement("dialog");
+        dialogElem != nullptr;
+        dialogElem = dialogElem->NextSiblingElement("dialog"))
         {
-          value = dialogElem->Attribute(_attribute.c_str());
+          if(dialogElem->Attribute("name") == this->objectName().toStdString())
+          {
+            if(dialogElem->Attribute(_attribute.c_str()))
+              value = dialogElem->Attribute(_attribute.c_str());
+          }
         }
-      }
-
       missingDoc.Print(&defaultPrinter);
     }
   }
@@ -268,6 +260,8 @@ std::string Dialog::ReadAttribute(const std::string &_path,
   if (configExists){
     config = "";
   }
+  igndbg << "Setting Quick start dialog default config." << std::endl;
+
   config += printer.CStr();
   config += defaultPrinter.CStr();
   std::ofstream out(_path.c_str(), std::ios::out);

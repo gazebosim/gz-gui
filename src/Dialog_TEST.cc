@@ -38,7 +38,7 @@ using namespace gui;
 using namespace std::chrono_literals;
 
 /////////////////////////////////////////////////
-TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReadDialogConfig))
+TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 {
   ignition::common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
@@ -49,54 +49,44 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReadDialogConfig))
   auto dialog = new Dialog;
   ASSERT_NE(nullptr, dialog);
 
-  // Read dialog config
+  // Read attribute value when the default the config is not set
   {
-    dialog->SetName("dialog");
-    dialog->SetDefaultConfig(std::string(
-      "<dialog name=\"dialog\" default=\"true\"/>"));
-    std::string defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(),
-      "default");
-    EXPECT_EQ(defaultValue, "true");
+    std::string allow = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+      "allow");
+    EXPECT_EQ(allow, "");
   }
 
-  // Read non existing attribute
+  // Read a non existing attribute
   {
-    dialog->SetName("dialog");
+    dialog->setObjectName("quick_menu");
     dialog->SetDefaultConfig(std::string(
-      "<dialog name=\"dialog\" default=\"true\"/>"));
-    std::string defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(),
-      "dummy_attribute");
-    EXPECT_TRUE(defaultValue.empty());
+      "<dialog name=\"quick_menu\" show=\"true\"/>"));
+    std::string allow = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+      "allow");
+    EXPECT_EQ(allow, "");
   }
-  delete dialog;
-}
 
-/////////////////////////////////////////////////
-TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ChangeDialogConfig))
-{
-  ignition::common::Console::SetVerbosity(4);
-  Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
-
-  // Change default config path
-  App()->SetDefaultConfigPath(kTestConfigFile);
-
-  auto dialog = new Dialog;
-  ASSERT_NE(nullptr, dialog);
-
-  // Read dialog config
+  // Read an existing attribute
   {
-    dialog->SetName("dialog");
-    dialog->SetDefaultConfig(std::string(
-      "<dialog name=\"dialog\" default=\"true\"/>"));
-    std::string defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(),
-      "default");
+    std::string show = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+      "show");
+    EXPECT_EQ(show, "true");
+  }
 
-    EXPECT_EQ(defaultValue, "true");
-    dialog->WriteAttribute(app.DefaultConfigPath(), "default",
-      false);
-    defaultValue = dialog->ReadAttribute(app.DefaultConfigPath(),
-      "default");
-    EXPECT_EQ(defaultValue, "false");
+  // Update a non existing attribute
+  {
+    dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", true);
+    std::string show = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+      "allow");
+    EXPECT_EQ(allow, "true");
+  }
+
+  // Update a existing attribute
+  {
+    dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", false);
+    std::string show = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+      "allow");
+    EXPECT_EQ(allow, "false");
   }
 
   delete dialog;
