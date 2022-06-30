@@ -76,7 +76,7 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   // Update a non existing attribute
   {
     dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", true);
-    std::string show = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+    std::string allow = dialog->ReadAttributeValue(app.DefaultConfigPath(),
       "allow");
     EXPECT_EQ(allow, "true");
   }
