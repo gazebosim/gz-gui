@@ -66,8 +66,9 @@ namespace ignition
       /// \param[in] _attribute XMLElement attribute name
       /// \param[in] _value XMLElement attribute value
       /// \return true if written to config file
-      public: template <typename T> bool UpdateConfigAttribute(const std::string &_path,
-        const std::string &_attribute, const T &_value) const;
+      public: template <typename T> bool UpdateConfigAttribute(
+        const std::string &_path, const std::string &_attribute,
+        const T &_value) const;
 
       /// \brief Gets a config attribute value, if not found in config
       /// \brief write the default in the config and get it.
