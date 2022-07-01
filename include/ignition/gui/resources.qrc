@@ -3,6 +3,7 @@
   <file>qtquickcontrols2.conf</file>
 
   <file>qml/GzColor.qml</file>
+  <file>qml/GzPose.qml</file>
   <file>qml/IgnCard.qml</file>
   <file>qml/IgnCardSettings.qml</file>
   <file>qml/IgnHelpers.qml</file>
@@ -27,6 +28,7 @@
     <file alias="qmldir">qml/qmldir</file>
     <!-- Add any QML components referenced in the qmldir file here -->
     <file alias="GzColor.qml">qml/GzColor.qml</file>
+    <file alias="GzPose.qml">qml/GzPose.qml</file>
     <file alias="IgnSnackBar.qml">qml/IgnSnackBar.qml</file>
     <file alias="IgnSpinBox.qml">qml/IgnSpinBox.qml</file>
 </qresource>
