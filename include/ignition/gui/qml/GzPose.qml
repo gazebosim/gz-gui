@@ -23,9 +23,9 @@ import QtQuick.Controls.Styles 1.4
 /**
  *  Item displaying 3D pose information.
  *
- *  Users should load values to xValues, yValues, etc.
+ *  Users can load values to xValues, yValues, etc.
  *  If readOnly == False,
- *  users can read from signal pararmeters of gzPoseSet: _x, _y, etc.
+ *  users can read from signal parameters of gzPoseSet: _x, _y, etc.
  *
  *  Usage example:
  *  GzPose {
@@ -66,6 +66,9 @@ Item {
    */
   signal gzPoseSet(double _x, double _y, double _z, double _roll, double _pitch, double _yaw)
 
+  // Maximum spinbox value
+  property double spinMax: Number.MAX_VALUE
+
 
   /*** The following are private variables: ***/
   // Show Pose bar (used to control expand)
@@ -78,9 +81,6 @@ Item {
 
   // Horizontal margins
   property int margin: 5
-
-  // Maximum spinbox value
-  property double spinMax: 1000000
 
   // local variables to store spinbox values
   property var xItem: {}
