@@ -64,18 +64,10 @@ namespace ignition
       /// \brief Write dialog config
       /// \param[in] _path config path
       /// \param[in] _attribute XMLElement attribute name
-      /// \param[in] _value XMLElement attribute string value
+      /// \param[in] _value XMLElement attribute value
       /// \return true if written to config file
-      public: bool UpdateConfigAttribute(const std::string &_path,
-        const std::string &_attribute, const std::string &_value) const;
-
-      /// \brief Write dialog config
-      /// \param[in] _path config path
-      /// \param[in] _attribute XMLElement attribute name
-      /// \param[in] _value XMLElement attribute boolean value
-      /// \return true if written to config file
-      public: bool UpdateConfigAttribute(const std::string &_path,
-        const std::string &_attribute, const bool _value) const;
+      public: template <typename T> bool UpdateConfigAttribute(const std::string &_path,
+        const std::string &_attribute, const T &_value) const;
 
       /// \brief Gets a config attribute value, if not found in config
       /// \brief write the default in the config and get it.
@@ -84,7 +76,7 @@ namespace ignition
       /// \param[in] _attribute attribute name
       /// \return attribute value as string
       public: std::string ReadAttributeValue(const std::string &_path,
-        const std::string  &_attribute) const;
+        const std::string &_attribute) const;
 
       /// \internal
       /// \brief Private data pointer
