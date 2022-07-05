@@ -23,7 +23,7 @@ import QtQuick.Controls.Styles 1.4
 /**
  *  Item displaying 3D pose information.
  *
- *  Users can load values to xValues, yValues, etc.
+ *  Users can set values to xValue, yValue, etc.
  *  If readOnly == False,
  *  users can read from signal parameters of gzPoseSet: _x, _y, etc.
  *
@@ -69,18 +69,12 @@ Item {
   // Maximum spinbox value
   property double spinMax: Number.MAX_VALUE
 
-
-  /*** The following are private variables: ***/
-  // Show Pose bar (used to control expand)
+  // Expand/Collapse of this widget
   property bool show: true
 
+
+  /*** The following are private variables: ***/
   height: gzPoseContent.height
-
-  // Left indentation
-  property int indentation: 10
-
-  // Horizontal margins
-  property int margin: 5
 
   // local variables to store spinbox values
   property var xItem: {}
@@ -147,13 +141,7 @@ Item {
     GridLayout {
       id: gzPoseGrid
       width: parent.width
-      columns: 6
-
-      // Left spacer
-      Item {
-        Layout.rowSpan: 3
-        width: margin + indentation
-      }
+      columns: 4
 
       Text {
         text: 'X (m)'
@@ -195,12 +183,6 @@ Item {
             rollItem = rollLoader.item
           }
         }
-      }
-
-      // Right spacer
-      Item {
-        Layout.rowSpan: 3
-        width: margin
       }
 
       Text {
