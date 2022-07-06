@@ -79,9 +79,8 @@ QQuickItem *Dialog::RootItem() const
 }
 
 /////////////////////////////////////////////////
-template <typename T>
 bool Dialog::UpdateConfigAttribute(const std::string &_path,
-  const std::string &_attribute, const T &_value) const
+  const std::string &_attribute, const bool _value) const
 {
   if (_path.empty())
   {
@@ -89,22 +88,20 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
     return false;
   }
 
-  std::string configFull = _path;
-
   // Use tinyxml to read config
   tinyxml2::XMLDocument doc;
-  auto success = !doc.LoadFile(configFull.c_str());
+  auto success = !doc.LoadFile(_path.c_str());
   if (!success)
   {
-      ignerr << "Failed to load file [" << configFull << "]: XMLError"
+      ignerr << "Failed to load file [" << _path << "]: XMLError"
              << std::endl;
     return false;
   }
 
   // Update attribute value for the correct dialog
-    for (auto dialogElem = doc.FirstChildElement("dialog");
-      dialogElem != nullptr;
-      dialogElem = dialogElem->NextSiblingElement("dialog"))
+  for (auto dialogElem = doc.FirstChildElement("dialog");
+    dialogElem != nullptr;
+    dialogElem = dialogElem->NextSiblingElement("dialog"))
   {
     if(dialogElem->Attribute("name") == this->objectName().toStdString())
     {
@@ -120,8 +117,8 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
   std::ofstream out(_path.c_str(), std::ios::out);
   if (!out)
   {
-    std::string str = "Unable to open file: " + _path;
-    str += ".\nCheck file permissions.";
+    ignerr << "Unable to open file: " << _path <<
+      ".\nCheck file permissions.\n";
   }
   else
     out << config;
@@ -208,19 +205,20 @@ std::string Dialog::ReadAttributeValue(const std::string &_path,
   doc.Print(&printer);
 
   // Don't write the xml version decleration if file exists
-  if (configExists){
+  if (configExists)
+  {
     config = "";
   }
-  igndbg << "Setting Quick start dialog default config." << std::endl;
 
+  igndbg << "Setting dialog " << this->objectName().toStdString()
+    << " default config." << std::endl;
   config += printer.CStr();
   config += defaultPrinter.CStr();
   std::ofstream out(_path.c_str(), std::ios::out);
   if (!out)
   {
-    std::string str = "Unable to open file: " + _path;
-    str += ".\nCheck file permissions.";
-    igndbg << str << std::endl;
+    ignerr << "Unable to open file: " << _path <<
+      ".\nCheck file permissions.\n";
     return "";
   }
   else
