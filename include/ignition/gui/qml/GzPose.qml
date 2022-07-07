@@ -70,7 +70,7 @@ Item {
   property double spinMax: Number.MAX_VALUE
 
   // Expand/Collapse of this widget
-  property bool show: true
+  property bool expand: true
 
 
   /*** The following are private variables: ***/
@@ -127,7 +127,7 @@ Item {
   Rectangle {
     id: gzPoseContent
     width: parent.width
-    height: show ? gzPoseGrid.height : 0
+    height: expand ? gzPoseGrid.height : 0
     clip: true
     color: "transparent"
 
