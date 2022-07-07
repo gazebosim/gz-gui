@@ -23,9 +23,9 @@ import QtQuick.Controls.Styles 1.4
 /**
  *  Item displaying 3D pose information.
  *
- *  Users should load values to xValues, yValues, etc.
+ *  Users can set values to xValue, yValue, etc.
  *  If readOnly == False,
- *  users can read from signal pararmeters of gzPoseSet: _x, _y, etc.
+ *  users can read from signal parameters of gzPoseSet: _x, _y, etc.
  *
  *  Usage example:
  *  GzPose {
@@ -66,21 +66,15 @@ Item {
    */
   signal gzPoseSet(double _x, double _y, double _z, double _roll, double _pitch, double _yaw)
 
+  // Maximum spinbox value
+  property double spinMax: Number.MAX_VALUE
+
+  // Expand/Collapse of this widget
+  property bool expand: true
+
 
   /*** The following are private variables: ***/
-  // Show Pose bar (used to control expand)
-  property bool show: true
-
   height: gzPoseContent.height
-
-  // Left indentation
-  property int indentation: 10
-
-  // Horizontal margins
-  property int margin: 5
-
-  // Maximum spinbox value
-  property double spinMax: 1000000
 
   // local variables to store spinbox values
   property var xItem: {}
@@ -133,7 +127,7 @@ Item {
   Rectangle {
     id: gzPoseContent
     width: parent.width
-    height: show ? gzPoseGrid.height : 0
+    height: expand ? gzPoseGrid.height : 0
     clip: true
     color: "transparent"
 
@@ -147,13 +141,7 @@ Item {
     GridLayout {
       id: gzPoseGrid
       width: parent.width
-      columns: 6
-
-      // Left spacer
-      Item {
-        Layout.rowSpan: 3
-        width: margin + indentation
-      }
+      columns: 4
 
       Text {
         text: 'X (m)'
@@ -195,12 +183,6 @@ Item {
             rollItem = rollLoader.item
           }
         }
-      }
-
-      // Right spacer
-      Item {
-        Layout.rowSpan: 3
-        width: margin
       }
 
       Text {
