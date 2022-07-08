@@ -148,7 +148,7 @@ std::string Dialog::ReadConfigAttribute(const std::string &_path,
   auto Value = [&_attribute, &doc, &dialogName]()
   {
     // Process each dialog
-    // If multiple attributes share the same name, return the last one
+    // If multiple attributes share the same name, return the first one
     for (auto dialogElem = doc.FirstChildElement("dialog");
       dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))

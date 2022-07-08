@@ -70,8 +70,8 @@ namespace ignition
         const bool _value) const;
 
       /// \brief Gets a config attribute value, if not found in config
-      /// \brief write the default in the config and get it.
-      /// \brief creates config file if it doesn't exist.
+      /// write the default in the config and get it.
+      /// creates config file if it doesn't exist.
       /// \param[in] _path config path
       /// \param[in] _attribute attribute name
       /// \return attribute value as string
