@@ -21,7 +21,7 @@ import QtQuick.Layouts 1.3
 /**
  *  Item displaying a 3D vector
  *
- *  Users should load values to xValues, yValues, and zValues.
+ *  Users can set values to xValue, yValue, and zValue.
  *  If readOnly == False,
  *  users can read from signal parameters of GzVectorSet: _x, _y, and _z
  *
@@ -41,7 +41,7 @@ import QtQuick.Layouts 1.3
  *    }
  *  }
 **/
-Rectangle {
+Item {
   id: gzVectorRoot
 
   // Readn-only / write
@@ -70,21 +70,15 @@ Rectangle {
   // Set to "" to omit the parentheses.
   property string gzUnit: "m"
 
+  // Expand/Collapse of this widget
+  property bool expand: true
+
 
   /*** The following are private variables: ***/
-  // Show Pose bar (used to control expand)
-  property bool show: true
-
   height: gzVectorContent.height
 
-  // Left indentation
-  property int indentation: 10
-
-  // Horizontal margins
-  property int margin: 5
-
   // Maximum spinbox value
-  property double spinMax: 1000000
+  property double spinMax: Number.MAX_VALUE
 
   // local variables to store spinbox values
   property var xItem: {}
@@ -94,18 +88,6 @@ Rectangle {
   // Dummy component to use its functions.
   IgnHelpers {
     id: gzHelper
-
-    // Temperary getDecimals()
-    // Remove after merging gz-gui/common_widget_pose
-    function getDecimals(_width) {
-      if (_width <= 0 || _width > 110)
-        return 6
-
-      if (_width <= 80)
-        return 2
-
-      return 4
-    }
   }
   /*** Private variables end: ***/
 
@@ -146,7 +128,7 @@ Rectangle {
   Rectangle {
     id: gzVectorContent
     width: parent.width
-    height: show ? gzVectorGrid.height : 0
+    height: expand ? gzVectorGrid.height : 0
     clip: true
     color: "transparent"
 
@@ -160,13 +142,7 @@ Rectangle {
     GridLayout {
       id: gzVectorGrid
       width: parent.width
-      columns: 4
-
-      // Left spacer
-      Item {
-        Layout.rowSpan: 3
-        width: indentation + margin
-      }
+      columns: 2
 
       Text {
         text: gzUnit == "" ? xName : xName + ' (' + gzUnit + ')'
@@ -187,12 +163,6 @@ Rectangle {
             xItem = xLoader.item
           }
         }
-      }
-
-      // Right spacer
-      Item {
-        Layout.rowSpan: 3
-        width: margin
       }
 
       Text {
