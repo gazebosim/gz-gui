@@ -15,6 +15,8 @@
  *
  */
 
+#include <tinyxml2.h>
+
 #include <ignition/common/Console.hh>
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
@@ -93,8 +95,8 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
   auto success = !doc.LoadFile(_path.c_str());
   if (!success)
   {
-      ignerr << "Failed to load file [" << _path << "]: XMLError"
-             << std::endl;
+    ignerr << "Failed to load file [" << _path << "]: XMLError"
+            << std::endl;
     return false;
   }
 
@@ -117,8 +119,8 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
   std::ofstream out(_path.c_str(), std::ios::out);
   if (!out)
   {
-    ignerr << "Unable to open file: " << _path <<
-      ".\nCheck file permissions.\n";
+    ignerr << "Unable to open file: " << _path
+           << ".\nCheck file permissions.\n";
   }
   else
     out << config;
@@ -133,7 +135,7 @@ void Dialog::SetDefaultConfig(const std::string &_config)
 }
 
 /////////////////////////////////////////////////
-std::string Dialog::ReadAttributeValue(const std::string &_path,
+std::string Dialog::ReadConfigAttribute(const std::string &_path,
   const std::string &_attribute) const
 {
   tinyxml2::XMLDocument doc;
@@ -141,6 +143,24 @@ std::string Dialog::ReadAttributeValue(const std::string &_path,
   std::string config = "<?xml version=\"1.0\"?>\n\n";
   tinyxml2::XMLPrinter defaultPrinter;
   bool configExists{true};
+  std::string dialogName = this->objectName().toStdString();
+
+  auto Value = [&_attribute, &doc, &dialogName]()
+  {
+    // Process each dialog
+    // If multiple attributes share the same name, return the last one
+    for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
+      dialogElem = dialogElem->NextSiblingElement("dialog"))
+    {
+      if (dialogElem->Attribute("name") == dialogName)
+      {
+        if (dialogElem->Attribute(_attribute.c_str()))
+          return dialogElem->Attribute(_attribute.c_str());
+      }
+    }
+    return "";
+  };
 
   // Check if the passed in config file exists.
   // (If the default config path doesn't exist yet, it's expected behavior.
@@ -149,53 +169,25 @@ std::string Dialog::ReadAttributeValue(const std::string &_path,
   {
     configExists = false;
     doc.Parse(this->dataPtr->config.c_str());
-    // Process each dialog
-    for (auto dialogElem = doc.FirstChildElement("dialog");
-      dialogElem != nullptr;
-      dialogElem = dialogElem->NextSiblingElement("dialog"))
-    {
-      if(dialogElem->Attribute("name") == this->objectName().toStdString())
-      {
-        value = dialogElem->Attribute(_attribute.c_str());
-      }
-    }
+    value = Value();
   }
   else
   {
     auto success = !doc.LoadFile(_path.c_str());
     if (!success)
     {
+      ignerr << "Failed to load file [" << _path << "]: XMLError"
+             << std::endl;
       return "";
     }
-
-    // Process each existing dialog
-    for (auto dialogElem = doc.FirstChildElement("dialog");
-      dialogElem != nullptr;
-      dialogElem = dialogElem->NextSiblingElement("dialog"))
-    {
-      if(dialogElem->Attribute("name") == this->objectName().toStdString())
-      {
-        if (dialogElem->Attribute(_attribute.c_str()))
-          value = dialogElem->Attribute(_attribute.c_str());
-      }
-    }
+    value = Value();
 
     // config exists but attribute not there read from default config
     if (value.empty())
     {
       tinyxml2::XMLDocument missingDoc;
       missingDoc.Parse(this->dataPtr->config.c_str());
-
-      for (auto dialogElem = doc.FirstChildElement("dialog");
-        dialogElem != nullptr;
-        dialogElem = dialogElem->NextSiblingElement("dialog"))
-        {
-          if(dialogElem->Attribute("name") == this->objectName().toStdString())
-          {
-            if(dialogElem->Attribute(_attribute.c_str()))
-              value = dialogElem->Attribute(_attribute.c_str());
-          }
-        }
+      value = Value();
       missingDoc.Print(&defaultPrinter);
     }
   }
@@ -217,8 +209,8 @@ std::string Dialog::ReadAttributeValue(const std::string &_path,
   std::ofstream out(_path.c_str(), std::ios::out);
   if (!out)
   {
-    ignerr << "Unable to open file: " << _path <<
-      ".\nCheck file permissions.\n";
+    ignerr << "Unable to open file: " << _path
+           << ".\nCheck file permissions.\n";
     return "";
   }
   else

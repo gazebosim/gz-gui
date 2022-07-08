@@ -19,7 +19,6 @@
 #define IGNITION_GUI_DIALOG_HH_
 
 #include <memory>
-#include <tinyxml2.h>
 #include <string>
 
 #include "ignition/gui/qt.h"
@@ -76,7 +75,7 @@ namespace ignition
       /// \param[in] _path config path
       /// \param[in] _attribute attribute name
       /// \return attribute value as string
-      public: std::string ReadAttributeValue(const std::string &_path,
+      public: std::string ReadConfigAttribute(const std::string &_path,
         const std::string &_attribute) const;
 
       /// \internal

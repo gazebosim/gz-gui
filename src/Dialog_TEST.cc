@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2022 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 */
 
 #include <gtest/gtest.h>
-
-#include <QQmlProperty>
 
 #include <ignition/common/Console.hh>
 #include <ignition/utilities/ExtraTestMacros.hh>
@@ -51,7 +49,7 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 
   // Read attribute value when the default the config is not set
   {
-    std::string allow = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "allow");
     EXPECT_EQ(allow, "");
   }
@@ -61,14 +59,14 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
     dialog->setObjectName("quick_menu");
     dialog->SetDefaultConfig(std::string(
       "<dialog name=\"quick_menu\" show=\"true\"/>"));
-    std::string allow = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "allow");
     EXPECT_EQ(allow, "");
   }
 
   // Read an existing attribute
   {
-    std::string show = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+    std::string show = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "show");
     EXPECT_EQ(show, "true");
   }
@@ -76,7 +74,7 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   // Update a non existing attribute
   {
     dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", true);
-    std::string allow = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "allow");
     EXPECT_EQ(allow, "true");
   }
@@ -84,7 +82,7 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   // Update a existing attribute
   {
     dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", false);
-    std::string allow = dialog->ReadAttributeValue(app.DefaultConfigPath(),
+    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "allow");
     EXPECT_EQ(allow, "false");
   }
