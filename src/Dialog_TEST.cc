@@ -49,9 +49,16 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 
   // Read attribute value when the default the config is not set
   {
+    EXPECT_FALSE(common::exists(kTestConfigFile));
     std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "allow");
     EXPECT_EQ(allow, "");
+
+    // Config file is created when a read is attempted
+    EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    // Delete file
+    std::remove(kTestConfigFile.c_str());
   }
 
   // Read a non existing attribute
@@ -76,7 +83,6 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
     dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", true);
     std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "allow");
-    EXPECT_EQ(allow, "true");
   }
 
   // Update a existing attribute
