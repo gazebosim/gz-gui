@@ -33,7 +33,7 @@
 #include <gz/math/Vector3.hh>
 #include <gz/plugin/Register.hh>
 
-// TODO(louise) Remove these pragmas once ign-rendering
+// TODO(louise) Remove these pragmas once gz-rendering
 // is disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)

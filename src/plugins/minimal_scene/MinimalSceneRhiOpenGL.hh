@@ -66,7 +66,7 @@ namespace plugins
     public: virtual ~RenderThreadRhiOpenGL() override;
 
     /// \brief Constructor
-    /// \param[in] _renderer The Ign-rendering renderer
+    /// \param[in] _renderer The gz-rendering renderer
     public: RenderThreadRhiOpenGL(IgnRenderer *_renderer);
 
     // Documentation inherited

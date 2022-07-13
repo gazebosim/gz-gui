@@ -310,7 +310,7 @@ namespace plugins
     public: void SetCameraPose(const math::Pose3d &_pose);
 
     /// \brief Set scene service to use in this render window
-    /// A service call will be made using ign-transport to get scene
+    /// A service call will be made using gz-transport to get scene
     /// data using this service
     /// \param[in] _service Scene service name
     public: void SetSceneService(const std::string &_service);
@@ -384,7 +384,7 @@ namespace plugins
     private: std::unique_ptr<RenderWindowItemPrivate> dataPtr;
   };
 
-  /// \brief Texture node for displaying the render texture from ign-renderer
+  /// \brief Texture node for displaying the render texture from gz-renderer
   class TextureNode : public QObject, public QSGSimpleTextureNode
   {
     Q_OBJECT

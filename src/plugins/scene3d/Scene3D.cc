@@ -73,10 +73,10 @@ namespace plugins
     public: SceneManager();
 
     /// \brief Constructor
-    /// \param[in] _service Ign transport scene service name
-    /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _deletionTopic Ign transport deletion topic name
-    /// \param[in] _sceneTopic Ign transport scene topic name
+    /// \param[in] _service Gazebo transport scene service name
+    /// \param[in] _poseTopic Gazebo transport pose topic name
+    /// \param[in] _deletionTopic Gazebo transport deletion topic name
+    /// \param[in] _sceneTopic Gazebo transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: SceneManager(const std::string &_service,
                          const std::string &_poseTopic,
@@ -85,10 +85,10 @@ namespace plugins
                          rendering::ScenePtr _scene);
 
     /// \brief Load the scene manager
-    /// \param[in] _service Ign transport service name
-    /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _deletionTopic Ign transport deletion topic name
-    /// \param[in] _sceneTopic Ign transport scene topic name
+    /// \param[in] _service Gazebo transport service name
+    /// \param[in] _poseTopic Gazebo transport pose topic name
+    /// \param[in] _deletionTopic Gazebo transport deletion topic name
+    /// \param[in] _sceneTopic Gazebo transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: void Load(const std::string &_service,
                       const std::string &_poseTopic,
@@ -618,10 +618,10 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
     else if (!_msg.geometry().has_mesh())
     {
       // create default material
-      material = this->scene->Material("ign-grey");
+      material = this->scene->Material("gz-grey");
       if (!material)
       {
-        material = this->scene->CreateMaterial("ign-grey");
+        material = this->scene->CreateMaterial("gz-grey");
         material->SetAmbient(0.3, 0.3, 0.3);
         material->SetDiffuse(0.7, 0.7, 0.7);
         material->SetSpecular(1.0, 1.0, 1.0);
@@ -659,7 +659,7 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
       geom->SetMaterial(material);
       // todo(anyone) SetMaterial function clones the input material.
       // but does not take ownership of it so we need to destroy it here.
-      // This is not ideal. We should let ign-rendering handle the lifetime
+      // This is not ideal. We should let gz-rendering handle the lifetime
       // of this material
       this->scene->DestroyMaterial(material);
     }

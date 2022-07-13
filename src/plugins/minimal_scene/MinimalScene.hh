@@ -415,7 +415,7 @@ namespace plugins
     GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
-  /// \brief Texture node for displaying the render texture from ign-renderer
+  /// \brief Texture node for displaying the render texture from gz-renderer
   class TextureNode : public QObject, public QSGSimpleTextureNode
   {
     Q_OBJECT

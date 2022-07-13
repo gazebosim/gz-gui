@@ -89,7 +89,7 @@ namespace gz
     GZ_GUI_VISIBLE
     std::string renderEngineName();
 
-    /// \brief Import path for ign-gui QML modules added to the Qt resource
+    /// \brief Import path for gz-gui QML modules added to the Qt resource
     /// system. This helper function returns the QRC resource path where custom
     /// Gazebo QML modules can be imported from. To import a Gazebo QML
     /// module, add this path to the QML engine's import path list before
