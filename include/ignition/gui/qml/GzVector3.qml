@@ -44,7 +44,7 @@ import QtQuick.Layouts 1.3
 Item {
   id: gzVectorRoot
 
-  // Readn-only / write
+  // Read-only / write
   property bool readOnly: true
 
   // User input value
@@ -67,18 +67,17 @@ Item {
   property string zName: "Z"
 
   // Units, defaults to meters.
-  // Set to "" to omit the parentheses.
+  // Set to "" to omit units & the parentheses.
   property string gzUnit: "m"
 
   // Expand/Collapse of this widget
   property bool expand: true
 
+  // Maximum spinbox value
+  property double spinMax: Number.MAX_VALUE
 
   /*** The following are private variables: ***/
   height: gzVectorContent.height
-
-  // Maximum spinbox value
-  property double spinMax: Number.MAX_VALUE
 
   // local variables to store spinbox values
   property var xItem: {}
