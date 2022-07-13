@@ -16,6 +16,7 @@ set (sources
 set (gtest_sources
   Application_TEST
   Conversions_TEST
+  Dialog_TEST
   DragDropModel_TEST
   Helpers_TEST
   GuiEvents_TEST

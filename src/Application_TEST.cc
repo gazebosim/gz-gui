@@ -222,7 +222,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(InitializeMainWindow))
+TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(CreateMainWindow))
 {
   ignition::common::Console::SetVerbosity(4);
 
