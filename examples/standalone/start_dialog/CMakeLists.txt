@@ -8,8 +8,8 @@ endif()
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(ignition-gui3 REQUIRED)
-set(GZ_GUI_VER ${ignition-gui3_VERSION_MAJOR})
+find_package(ignition-gui6 REQUIRED)
+set(GZ_GUI_VER ${ignition-gui6_VERSION_MAJOR})
 
 set(EXEC_NAME "start_dialog")
 
