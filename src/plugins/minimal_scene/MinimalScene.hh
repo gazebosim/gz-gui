@@ -128,10 +128,10 @@ namespace plugins
   /// with QtQuick's opengl render operations. The main Render function will
   /// render to an offscreen texture and notify via signal and slots when it's
   /// ready to be displayed.
-  class IgnRenderer
+  class GzRenderer
   {
     ///  \brief Constructor
-    public: IgnRenderer();
+    public: GzRenderer();
 
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt and worker thread (this)
@@ -301,7 +301,7 @@ namespace plugins
     public: std::string Initialize();
 
     /// \brief gz-rendering renderer
-    public: IgnRenderer ignRenderer;
+    public: GzRenderer gzRenderer;
 
     /// \brief Pointer to render interface to handle OpenGL/Metal compatibility
     private: std::unique_ptr<RenderThreadRhi> rhi;

@@ -22,7 +22,7 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-IgnCameraTextureRhi::~IgnCameraTextureRhi() = default;
+GzCameraTextureRhi::~GzCameraTextureRhi() = default;
 
 /////////////////////////////////////////////////
 RenderThreadRhi::~RenderThreadRhi() = default;
@@ -34,7 +34,7 @@ QOffscreenSurface *RenderThreadRhi::Surface() const
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhi::SetSurface(QOffscreenSurface *) //NOLINT 
+void RenderThreadRhi::SetSurface(QOffscreenSurface *) //NOLINT
 {
   /* no-op */
 }

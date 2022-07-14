@@ -34,17 +34,17 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Private data for IgnCameraTextureRhiOpenGL
-  class IgnCameraTextureRhiOpenGLPrivate;
+  /// \brief Private data for GzCameraTextureRhiOpenGL
+  class GzCameraTextureRhiOpenGLPrivate;
 
-  /// \brief Implementation of IgnCameraTextureRhi for the OpenGL graphics API
-  class IgnCameraTextureRhiOpenGL : public IgnCameraTextureRhi
+  /// \brief Implementation of GzCameraTextureRhi for the OpenGL graphics API
+  class GzCameraTextureRhiOpenGL : public GzCameraTextureRhi
   {
     // Documentation inherited
-    public: virtual ~IgnCameraTextureRhiOpenGL() override;
+    public: virtual ~GzCameraTextureRhiOpenGL() override;
 
     /// \brief Constructor
-    public: IgnCameraTextureRhiOpenGL();
+    public: GzCameraTextureRhiOpenGL();
 
     // Documentation inherited
     public: virtual void Update(rendering::CameraPtr _camera) override;
@@ -53,7 +53,7 @@ namespace plugins
     public: virtual void TextureId(void* _texturePtr) override;
 
     /// \internal Pointer to private data
-    private: std::unique_ptr<IgnCameraTextureRhiOpenGLPrivate> dataPtr;
+    private: std::unique_ptr<GzCameraTextureRhiOpenGLPrivate> dataPtr;
   };
 
   /// \brief Private data for RenderThreadRhiOpenGLPrivate
@@ -67,7 +67,7 @@ namespace plugins
 
     /// \brief Constructor
     /// \param[in] _renderer The gz-rendering renderer
-    public: RenderThreadRhiOpenGL(IgnRenderer *_renderer);
+    public: RenderThreadRhiOpenGL(GzRenderer *_renderer);
 
     // Documentation inherited
     public: virtual QOffscreenSurface *Surface() const override;

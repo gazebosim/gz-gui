@@ -38,7 +38,7 @@ namespace gui
 {
 namespace plugins
 {
-  class IgnRendererPrivate;
+  class GzRendererPrivate;
   class RenderWindowItemPrivate;
   class Scene3DPrivate;
 
@@ -122,13 +122,13 @@ namespace plugins
   /// with QtQuick's opengl render operations. The main Render function will
   /// render to an offscreen texture and notify via signal and slots when it's
   /// ready to be displayed.
-  class IgnRenderer
+  class GzRenderer
   {
     ///  \brief Constructor
-    public: IgnRenderer();
+    public: GzRenderer();
 
     ///  \brief Destructor
-    public: ~IgnRenderer();
+    public: ~GzRenderer();
 
     ///  \brief Main render function
     public: void Render();
@@ -233,7 +233,7 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<IgnRendererPrivate> dataPtr;
+    private: std::unique_ptr<GzRendererPrivate> dataPtr;
   };
 
   /// \brief Rendering thread
@@ -273,7 +273,7 @@ namespace plugins
     public: QOpenGLContext *context = nullptr;
 
     /// \brief gz-rendering renderer
-    public: IgnRenderer ignRenderer;
+    public: GzRenderer gzRenderer;
   };
 
 
