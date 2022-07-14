@@ -15,6 +15,8 @@
  *
  */
 
+#include <tinyxml2.h>
+
 #include <ignition/common/Console.hh>
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
@@ -25,6 +27,9 @@ namespace ignition
   {
     class DialogPrivate
     {
+      /// \brief default dialog config
+      public: std::string config{""};
+
       /// \brief Pointer to quick window
       public: QQuickWindow *quickWindow{nullptr};
     };
@@ -75,3 +80,141 @@ QQuickItem *Dialog::RootItem() const
   return dialogItem;
 }
 
+/////////////////////////////////////////////////
+bool Dialog::UpdateConfigAttribute(const std::string &_path,
+  const std::string &_attribute, const bool _value) const
+{
+  if (_path.empty())
+  {
+    ignerr << "Missing config file" << std::endl;
+    return false;
+  }
+
+  // Use tinyxml to read config
+  tinyxml2::XMLDocument doc;
+  auto success = !doc.LoadFile(_path.c_str());
+  if (!success)
+  {
+    ignerr << "Failed to load file [" << _path << "]: XMLError"
+            << std::endl;
+    return false;
+  }
+
+  // Update attribute value for the correct dialog
+  for (auto dialogElem = doc.FirstChildElement("dialog");
+    dialogElem != nullptr;
+    dialogElem = dialogElem->NextSiblingElement("dialog"))
+  {
+    if(dialogElem->Attribute("name") == this->objectName().toStdString())
+    {
+      dialogElem->SetAttribute(_attribute.c_str(), _value);
+    }
+  }
+
+  // Write config file
+  tinyxml2::XMLPrinter printer;
+  doc.Print(&printer);
+
+  std::string config = printer.CStr();
+  std::ofstream out(_path.c_str(), std::ios::out);
+  if (!out)
+  {
+    ignerr << "Unable to open file: " << _path
+           << ".\nCheck file permissions.\n";
+  }
+  else
+    out << config;
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+void Dialog::SetDefaultConfig(const std::string &_config)
+{
+  this->dataPtr->config = _config;
+}
+
+/////////////////////////////////////////////////
+std::string Dialog::ReadConfigAttribute(const std::string &_path,
+  const std::string &_attribute) const
+{
+  tinyxml2::XMLDocument doc;
+  std::string value {""};
+  std::string config = "<?xml version=\"1.0\"?>\n\n";
+  tinyxml2::XMLPrinter defaultPrinter;
+  bool configExists{true};
+  std::string dialogName = this->objectName().toStdString();
+
+  auto Value = [&_attribute, &doc, &dialogName]()
+  {
+    // Process each dialog
+    // If multiple attributes share the same name, return the first one
+    for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
+      dialogElem = dialogElem->NextSiblingElement("dialog"))
+    {
+      if (dialogElem->Attribute("name") == dialogName)
+      {
+        if (dialogElem->Attribute(_attribute.c_str()))
+          return dialogElem->Attribute(_attribute.c_str());
+      }
+    }
+    return "";
+  };
+
+  // Check if the passed in config file exists.
+  // (If the default config path doesn't exist yet, it's expected behavior.
+  // It will be created the first time now.)
+  if (!common::exists(_path))
+  {
+    configExists = false;
+    doc.Parse(this->dataPtr->config.c_str());
+    value = Value();
+  }
+  else
+  {
+    auto success = !doc.LoadFile(_path.c_str());
+    if (!success)
+    {
+      ignerr << "Failed to load file [" << _path << "]: XMLError"
+             << std::endl;
+      return "";
+    }
+    value = Value();
+
+    // config exists but attribute not there read from default config
+    if (value.empty())
+    {
+      tinyxml2::XMLDocument missingDoc;
+      missingDoc.Parse(this->dataPtr->config.c_str());
+      value = Value();
+      missingDoc.Print(&defaultPrinter);
+    }
+  }
+
+  // Write config file
+  tinyxml2::XMLPrinter printer;
+  doc.Print(&printer);
+
+  // Don't write the xml version decleration if file exists
+  if (configExists)
+  {
+    config = "";
+  }
+
+  igndbg << "Setting dialog " << this->objectName().toStdString()
+    << " default config." << std::endl;
+  config += printer.CStr();
+  config += defaultPrinter.CStr();
+  std::ofstream out(_path.c_str(), std::ios::out);
+  if (!out)
+  {
+    ignerr << "Unable to open file: " << _path
+           << ".\nCheck file permissions.\n";
+    return "";
+  }
+  else
+    out << config;
+
+  return value;
+}

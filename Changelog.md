@@ -460,6 +460,64 @@
 
 ## Ignition Gui 3
 
+### Ignition Gui 3.10.0 (2022-07-13)
+
+1. Add common widget for vector3
+    * [Pull request #427](https://github.com/gazebosim/gz-gui/pull/427)
+
+1. Allow Dialogs to have a MainWindow independent config
+    * [Pull request #418](https://github.com/gazebosim/gz-gui/pull/418)
+
+1. Add common widget for pose
+    * [Pull request #424](https://github.com/gazebosim/gz-gui/pull/424)
+    * [Pull request #431](https://github.com/gazebosim/gz-gui/pull/431)
+
+1. Example running a dialog before the main window
+    * [Pull request #407](https://github.com/gazebosim/gz-gui/pull/407)
+
+1. Common widget GzColor
+    * [Pull request #410](https://github.com/gazebosim/gz-gui/pull/410)
+
+1. Fix ign_TEST
+    * [Pull request #420](https://github.com/gazebosim/gz-gui/pull/420)
+
+1. Make display tests more robust
+    * [Pull request #419](https://github.com/gazebosim/gz-gui/pull/419)
+
+1. Bash completion for flags
+    * [Pull request #392](https://github.com/gazebosim/gz-gui/pull/392)
+
+1. Disable failing test on Citadel
+    * [Pull request #416](https://github.com/gazebosim/gz-gui/pull/416)
+
+1. Search menu keyboard control
+    * [Pull request #403](https://github.com/gazebosim/gz-gui/pull/403)
+    * [Pull request #405](https://github.com/gazebosim/gz-gui/pull/405)
+
+1. Add config relative path environment variable
+    * [Pull request #386](https://github.com/gazebosim/gz-gui/pull/386)
+
+1. Sort plugin list in alphabetical order (including when filtering)
+    * [Pull request #387](https://github.com/gazebosim/gz-gui/pull/387)
+
+1. Added array to snackbar qml
+    * [Pull request #370](https://github.com/gazebosim/gz-gui/pull/370)
+
+1. Fix some Qt warnings
+    * [Pull request #376](https://github.com/gazebosim/gz-gui/pull/376)
+
+1. Added Snackbar qtquick object
+    * [Pull request #369](https://github.com/gazebosim/gz-gui/pull/369)
+
+1. Fix menu scrolling when a new plugin is added
+    * [Pull request #368](https://github.com/gazebosim/gz-gui/pull/368)
+
+1. Improve KeyPublisher's usability
+    * [Pull request #362](https://github.com/gazebosim/gz-gui/pull/362)
+
+1. Backport GridConfig improvements to Citadel's Grid3D
+    * [Pull request #363](https://github.com/gazebosim/gz-gui/pull/363)
+
 ### Ignition Gui 3.9.0 (2022-01-14)
 
 1. Added a button that allows shutting down both the client and server.

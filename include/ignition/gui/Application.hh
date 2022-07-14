@@ -53,7 +53,8 @@ namespace ignition
       /// plugins
       kMainWindow = 0,
 
-      /// \brief One independent dialog per plugin
+      /// \brief One independent dialog per plugin. Also useful to open a
+      /// startup dialog before the main window.
       kDialog = 1
     };
 
@@ -96,6 +97,7 @@ namespace ignition
       /// and plugins. This function doesn't instantiate the plugins, it just
       /// keeps them in memory and they can be applied later by either
       /// instantiating a window or several dialogs.
+      /// and plugins.
       /// \param[in] _path Full path to configuration file.
       /// \return True if successful
       /// \sa InitializeMainWindow
@@ -155,6 +157,7 @@ namespace ignition
       /// \return True if successful
       public: bool RemovePlugin(const std::string &_pluginName);
 
+
       /// \brief Get a plugin by its unique name.
       /// \param[in] _pluginName Plugn instance's unique name. This is the
       /// plugin card's object name.
@@ -168,6 +171,11 @@ namespace ignition
 
       /// \brief Callback when user requests to close a plugin
       public slots: void OnPluginClose();
+
+      /// \brief Create a main window. Just calls InitializeMainWindow.
+      /// \return True if successful
+      /// \sa InitializeMainWindow
+      public: bool CreateMainWindow();
 
       /// \brief Create a main window, populate with previously loaded plugins
       /// and apply previously loaded configuration.

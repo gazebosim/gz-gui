@@ -39,4 +39,21 @@ Item {
 
     return result;
   }
+
+  /**
+   * Helper function to get number of decimal digits based on a width value.
+   * @param _width Pixel width.
+   * @returns Number of decimals that fit with the provided width.
+   */
+  function getDecimals(_width) {
+    // Use full decimals if the width is <= 0, which allows the value
+    // to appear correctly.
+    if (_width <= 0 || _width > 110)
+      return 6
+
+    if (_width <= 80)
+      return 2
+
+    return 4
+  }
 }
