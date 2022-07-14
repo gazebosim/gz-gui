@@ -155,7 +155,7 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_DOUBLE_EQ(0.1, camera->NearClipPlane());
   EXPECT_DOUBLE_EQ(5000.0, camera->FarClipPlane());
 
-  EXPECT_DOUBLE_EQ(60, camera->HFOV().Degree());
+  EXPECT_NEAR(60, camera->HFOV().Degree(), 1e-4);
 
   // Cleanup
   auto plugins = win->findChildren<Plugin *>();
