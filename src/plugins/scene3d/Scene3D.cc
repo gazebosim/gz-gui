@@ -73,10 +73,10 @@ namespace plugins
     public: SceneManager();
 
     /// \brief Constructor
-    /// \param[in] _service Ign transport scene service name
-    /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _deletionTopic Ign transport deletion topic name
-    /// \param[in] _sceneTopic Ign transport scene topic name
+    /// \param[in] _service Gazebo transport scene service name
+    /// \param[in] _poseTopic Gazebo transport pose topic name
+    /// \param[in] _deletionTopic Gazebo transport deletion topic name
+    /// \param[in] _sceneTopic Gazebo transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: SceneManager(const std::string &_service,
                          const std::string &_poseTopic,
@@ -85,10 +85,10 @@ namespace plugins
                          rendering::ScenePtr _scene);
 
     /// \brief Load the scene manager
-    /// \param[in] _service Ign transport service name
-    /// \param[in] _poseTopic Ign transport pose topic name
-    /// \param[in] _deletionTopic Ign transport deletion topic name
-    /// \param[in] _sceneTopic Ign transport scene topic name
+    /// \param[in] _service Gazebo transport service name
+    /// \param[in] _poseTopic Gazebo transport pose topic name
+    /// \param[in] _deletionTopic Gazebo transport deletion topic name
+    /// \param[in] _sceneTopic Gazebo transport scene topic name
     /// \param[in] _scene Pointer to the rendering scene
     public: void Load(const std::string &_service,
                       const std::string &_poseTopic,
@@ -204,8 +204,8 @@ namespace plugins
     private: gz::transport::Node node;
   };
 
-  /// \brief Private data class for IgnRenderer
-  class IgnRendererPrivate
+  /// \brief Private data class for GzRenderer
+  class GzRendererPrivate
   {
     /// \brief Flag to indicate if mouse event is dirty
     public: bool mouseDirty = false;
@@ -618,10 +618,10 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
     else if (!_msg.geometry().has_mesh())
     {
       // create default material
-      material = this->scene->Material("ign-grey");
+      material = this->scene->Material("gz-grey");
       if (!material)
       {
-        material = this->scene->CreateMaterial("ign-grey");
+        material = this->scene->CreateMaterial("gz-grey");
         material->SetAmbient(0.3, 0.3, 0.3);
         material->SetDiffuse(0.7, 0.7, 0.7);
         material->SetSpecular(1.0, 1.0, 1.0);
@@ -659,7 +659,7 @@ rendering::VisualPtr SceneManager::LoadVisual(const msgs::Visual &_msg)
       geom->SetMaterial(material);
       // todo(anyone) SetMaterial function clones the input material.
       // but does not take ownership of it so we need to destroy it here.
-      // This is not ideal. We should let ign-rendering handle the lifetime
+      // This is not ideal. We should let gz-rendering handle the lifetime
       // of this material
       this->scene->DestroyMaterial(material);
     }
@@ -868,19 +868,19 @@ void SceneManager::DeleteEntity(const unsigned int _entity)
 }
 
 /////////////////////////////////////////////////
-IgnRenderer::IgnRenderer()
-  : dataPtr(new IgnRendererPrivate)
+GzRenderer::GzRenderer()
+  : dataPtr(new GzRendererPrivate)
 {
 }
 
 
 /////////////////////////////////////////////////
-IgnRenderer::~IgnRenderer()
+GzRenderer::~GzRenderer()
 {
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::Render()
+void GzRenderer::Render()
 {
   if (this->textureDirty)
   {
@@ -912,7 +912,7 @@ void IgnRenderer::Render()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::HandleMouseEvent()
+void GzRenderer::HandleMouseEvent()
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->BroadcastHoverPos();
@@ -924,7 +924,7 @@ void IgnRenderer::HandleMouseEvent()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::HandleMouseViewControl()
+void GzRenderer::HandleMouseViewControl()
 {
   if (!this->dataPtr->mouseDirty)
     return;
@@ -981,7 +981,7 @@ void IgnRenderer::HandleMouseViewControl()
 }
 
 ////////////////////////////////////////////////
-void IgnRenderer::HandleKeyPress(QKeyEvent *_e)
+void GzRenderer::HandleKeyPress(QKeyEvent *_e)
 {
   if (_e->isAutoRepeat())
     return;
@@ -1005,7 +1005,7 @@ void IgnRenderer::HandleKeyPress(QKeyEvent *_e)
 }
 
 ////////////////////////////////////////////////
-void IgnRenderer::HandleKeyRelease(QKeyEvent *_e)
+void GzRenderer::HandleKeyRelease(QKeyEvent *_e)
 {
   if (_e->isAutoRepeat())
     return;
@@ -1031,7 +1031,7 @@ void IgnRenderer::HandleKeyRelease(QKeyEvent *_e)
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::BroadcastHoverPos()
+void GzRenderer::BroadcastHoverPos()
 {
   if (!this->dataPtr->hoverDirty)
     return;
@@ -1043,7 +1043,7 @@ void IgnRenderer::BroadcastHoverPos()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::BroadcastLeftClick()
+void GzRenderer::BroadcastLeftClick()
 {
   if (!this->dataPtr->mouseDirty)
     return;
@@ -1065,7 +1065,7 @@ void IgnRenderer::BroadcastLeftClick()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::BroadcastRightClick()
+void GzRenderer::BroadcastRightClick()
 {
   if (!this->dataPtr->mouseDirty)
     return;
@@ -1087,7 +1087,7 @@ void IgnRenderer::BroadcastRightClick()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::BroadcastKeyRelease()
+void GzRenderer::BroadcastKeyRelease()
 {
   if (this->dataPtr->keyEvent.Type() == common::KeyEvent::RELEASE)
   {
@@ -1098,7 +1098,7 @@ void IgnRenderer::BroadcastKeyRelease()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::BroadcastKeyPress()
+void GzRenderer::BroadcastKeyPress()
 {
   if (this->dataPtr->keyEvent.Type() == common::KeyEvent::PRESS)
   {
@@ -1109,7 +1109,7 @@ void IgnRenderer::BroadcastKeyPress()
 }
 
 /////////////////////////////////////////////////
-std::string IgnRenderer::Initialize()
+std::string GzRenderer::Initialize()
 {
   if (this->initialized)
     return std::string();
@@ -1192,7 +1192,7 @@ std::string IgnRenderer::Initialize()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::Destroy()
+void GzRenderer::Destroy()
 {
   auto engine = rendering::engine(this->engineName);
   if (!engine)
@@ -1213,7 +1213,7 @@ void IgnRenderer::Destroy()
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::NewHoverEvent(const math::Vector2i &_hoverPos)
+void GzRenderer::NewHoverEvent(const math::Vector2i &_hoverPos)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
   this->dataPtr->mouseHoverPos = _hoverPos;
@@ -1221,7 +1221,7 @@ void IgnRenderer::NewHoverEvent(const math::Vector2i &_hoverPos)
 }
 
 /////////////////////////////////////////////////
-void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e,
+void GzRenderer::NewMouseEvent(const common::MouseEvent &_e,
     const math::Vector2d &_drag)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
@@ -1231,7 +1231,7 @@ void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e,
 }
 
 /////////////////////////////////////////////////
-math::Vector3d IgnRenderer::ScreenToScene(
+math::Vector3d GzRenderer::ScreenToScene(
     const math::Vector2i &_screenPos) const
 {
   // Normalize point on the image
@@ -1271,10 +1271,10 @@ void RenderThread::RenderNext()
 {
   this->context->makeCurrent(this->surface);
 
-  if (!this->ignRenderer.initialized)
+  if (!this->gzRenderer.initialized)
   {
     // Initialize renderer
-    auto loadingError = this->ignRenderer.Initialize();
+    auto loadingError = this->gzRenderer.Initialize();
     if (!loadingError.empty())
     {
       this->errorCb(QString::fromStdString(loadingError));
@@ -1283,15 +1283,15 @@ void RenderThread::RenderNext()
   }
 
   // check if engine has been successfully initialized
-  if (!this->ignRenderer.initialized)
+  if (!this->gzRenderer.initialized)
   {
     gzerr << "Unable to initialize renderer" << std::endl;
     return;
   }
 
-  this->ignRenderer.Render();
+  this->gzRenderer.Render();
 
-  emit TextureReady(this->ignRenderer.textureId, this->ignRenderer.textureSize);
+  emit TextureReady(this->gzRenderer.textureId, this->gzRenderer.textureSize);
 }
 
 /////////////////////////////////////////////////
@@ -1300,7 +1300,7 @@ void RenderThread::ShutDown()
   if (this->context && this->surface)
     this->context->makeCurrent(this->surface);
 
-  this->ignRenderer.Destroy();
+  this->gzRenderer.Destroy();
 
   if (this->context)
   {
@@ -1313,7 +1313,7 @@ void RenderThread::ShutDown()
     this->surface->deleteLater();
 
   // Stop event processing, move the thread to GUI and make sure it is deleted.
-  if (this->ignRenderer.initialized)
+  if (this->gzRenderer.initialized)
     this->moveToThread(QGuiApplication::instance()->thread());
 }
 
@@ -1331,8 +1331,8 @@ void RenderThread::SizeChanged()
   if (item->width() <= 0 || item->height() <= 0)
     return;
 
-  this->ignRenderer.textureSize = QSize(item->width(), item->height());
-  this->ignRenderer.textureDirty = true;
+  this->gzRenderer.textureSize = QSize(item->width(), item->height());
+  this->gzRenderer.textureDirty = true;
 }
 
 /////////////////////////////////////////////////
@@ -1432,7 +1432,7 @@ void RenderWindowItem::Ready()
       this->dataPtr->renderThread->context->format());
   this->dataPtr->renderThread->surface->create();
 
-  this->dataPtr->renderThread->ignRenderer.textureSize =
+  this->dataPtr->renderThread->gzRenderer.textureSize =
       QSize(std::max({this->width(), 1.0}), std::max({this->height(), 1.0}));
 
   this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
@@ -1520,55 +1520,55 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 /////////////////////////////////////////////////
 void RenderWindowItem::SetBackgroundColor(const math::Color &_color)
 {
-  this->dataPtr->renderThread->ignRenderer.backgroundColor = _color;
+  this->dataPtr->renderThread->gzRenderer.backgroundColor = _color;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetAmbientLight(const math::Color &_ambient)
 {
-  this->dataPtr->renderThread->ignRenderer.ambientLight = _ambient;
+  this->dataPtr->renderThread->gzRenderer.ambientLight = _ambient;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetEngineName(const std::string &_name)
 {
-  this->dataPtr->renderThread->ignRenderer.engineName = _name;
+  this->dataPtr->renderThread->gzRenderer.engineName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneName(const std::string &_name)
 {
-  this->dataPtr->renderThread->ignRenderer.sceneName = _name;
+  this->dataPtr->renderThread->gzRenderer.sceneName = _name;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetCameraPose(const math::Pose3d &_pose)
 {
-  this->dataPtr->renderThread->ignRenderer.cameraPose = _pose;
+  this->dataPtr->renderThread->gzRenderer.cameraPose = _pose;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneService(const std::string &_service)
 {
-  this->dataPtr->renderThread->ignRenderer.sceneService = _service;
+  this->dataPtr->renderThread->gzRenderer.sceneService = _service;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetPoseTopic(const std::string &_topic)
 {
-  this->dataPtr->renderThread->ignRenderer.poseTopic = _topic;
+  this->dataPtr->renderThread->gzRenderer.poseTopic = _topic;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetDeletionTopic(const std::string &_topic)
 {
-  this->dataPtr->renderThread->ignRenderer.deletionTopic = _topic;
+  this->dataPtr->renderThread->gzRenderer.deletionTopic = _topic;
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::SetSceneTopic(const std::string &_topic)
 {
-  this->dataPtr->renderThread->ignRenderer.sceneTopic = _topic;
+  this->dataPtr->renderThread->gzRenderer.sceneTopic = _topic;
 }
 
 /////////////////////////////////////////////////
@@ -1686,7 +1686,7 @@ void Scene3D::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 /////////////////////////////////////////////////
 void RenderWindowItem::OnHovered(const gz::math::Vector2i &_hoverPos)
 {
-  this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
+  this->dataPtr->renderThread->gzRenderer.NewHoverEvent(_hoverPos);
 }
 
 /////////////////////////////////////////////////
@@ -1702,7 +1702,7 @@ void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
   event.SetPressPos(event.Pos());
   this->dataPtr->mouseEvent = event;
 
-  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
+  this->dataPtr->renderThread->gzRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
 }
 
@@ -1711,7 +1711,7 @@ void RenderWindowItem::mouseReleaseEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
 
-  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
+  this->dataPtr->renderThread->gzRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent);
 }
 
@@ -1727,7 +1727,7 @@ void RenderWindowItem::mouseMoveEvent(QMouseEvent *_e)
   auto dragInt = event.Pos() - this->dataPtr->mouseEvent.Pos();
   auto dragDistance = math::Vector2d(dragInt.X(), dragInt.Y());
 
-  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(event, dragDistance);
+  this->dataPtr->renderThread->gzRenderer.NewMouseEvent(event, dragDistance);
   this->dataPtr->mouseEvent = event;
 }
 
@@ -1741,7 +1741,7 @@ void RenderWindowItem::wheelEvent(QWheelEvent *_e)
   this->dataPtr->mouseEvent.SetPos(_e->position().x(), _e->position().y());
 #endif
   double scroll = (_e->angleDelta().y() > 0) ? -1.0 : 1.0;
-  this->dataPtr->renderThread->ignRenderer.NewMouseEvent(
+  this->dataPtr->renderThread->gzRenderer.NewMouseEvent(
       this->dataPtr->mouseEvent, math::Vector2d(scroll, scroll));
 }
 
@@ -1760,13 +1760,13 @@ void RenderWindowItem::keyReleaseEvent(QKeyEvent *_event)
 ////////////////////////////////////////////////
 void RenderWindowItem::HandleKeyPress(QKeyEvent *_e)
 {
-  this->dataPtr->renderThread->ignRenderer.HandleKeyPress(_e);
+  this->dataPtr->renderThread->gzRenderer.HandleKeyPress(_e);
 }
 
 ////////////////////////////////////////////////
 void RenderWindowItem::HandleKeyRelease(QKeyEvent *_e)
 {
-  this->dataPtr->renderThread->ignRenderer.HandleKeyRelease(_e);
+  this->dataPtr->renderThread->gzRenderer.HandleKeyRelease(_e);
 }
 
 /////////////////////////////////////////////////

@@ -622,10 +622,10 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
     else if (!_msg.geometry().has_mesh())
     {
       // create default material
-      material = this->scene->Material("ign-grey");
+      material = this->scene->Material("gz-grey");
       if (!material)
       {
-        material = this->scene->CreateMaterial("ign-grey");
+        material = this->scene->CreateMaterial("gz-grey");
         material->SetAmbient(0.3, 0.3, 0.3);
         material->SetDiffuse(0.7, 0.7, 0.7);
         material->SetSpecular(1.0, 1.0, 1.0);

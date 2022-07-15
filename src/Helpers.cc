@@ -198,5 +198,5 @@ std::string gz::gui::renderEngineName()
 /////////////////////////////////////////////////
 const QString gz::gui::qmlQrcImportPath()
 {
-  return "qrc:/ign-gui-qml/";
+  return "qrc:/gz-gui-qml/";
 }

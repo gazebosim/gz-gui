@@ -113,7 +113,7 @@ GridLayout {
     text: "Vertical"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.columnSpan: 2
     Layout.fillWidth: true
     id: verticalCellCount
@@ -130,7 +130,7 @@ GridLayout {
     text: "Horizontal"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.columnSpan: 2
     Layout.fillWidth: true
     id: horizontalCellCount
@@ -154,7 +154,7 @@ GridLayout {
     color: "dimgrey"
     text: "Length (m)"
   }
-  IgnSpinBox {
+  GzSpinBox {
     Layout.columnSpan: 2
     Layout.fillWidth: true
     id: cellLength
@@ -187,7 +187,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: x
     value: 0.00
@@ -203,7 +203,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: roll
     maximumValue: 6.28
@@ -219,7 +219,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: y
     value: 0.00
@@ -235,7 +235,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: pitch
     maximumValue: 6.28
@@ -251,7 +251,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: z
     value: 0.00
@@ -267,7 +267,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: yaw
     maximumValue: 6.28
@@ -290,7 +290,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: r
     maximumValue: 1.00
@@ -306,7 +306,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: g
     maximumValue: 1.00
@@ -322,7 +322,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: b
     maximumValue: 1.00
@@ -338,7 +338,7 @@ GridLayout {
     color: "dimgrey"
   }
 
-  IgnSpinBox {
+  GzSpinBox {
     Layout.fillWidth: true
     id: a
     maximumValue: 1.00

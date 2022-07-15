@@ -12,7 +12,7 @@ but it is also possible to use others such as Default and Universal. This tutori
 focuses on customizing the Material style.
 
 The default style is hardcoded into the
-[qtquickcontrols2.conf](https://github.com/gazebosim/gz-gui/blob/main/include/ignition/gui/qtquickcontrols2.conf)
+[qtquickcontrols2.conf](https://github.com/gazebosim/gz-gui/blob/main/include/gz/gui/qtquickcontrols2.conf)
 file.
 
 There are a few ways to override the default style:

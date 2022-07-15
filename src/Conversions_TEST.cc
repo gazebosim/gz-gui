@@ -107,14 +107,14 @@ TEST(ConversionsTest, MouseEvent)
     QMouseEvent qtEvent(QEvent::MouseButtonPress, QPointF(10, 20),
         Qt::RightButton, Qt::MiddleButton, Qt::ShiftModifier);
 
-    auto ignEvent = convert(qtEvent);
+    auto gzEvent = convert(qtEvent);
 
-    EXPECT_EQ(ignEvent.Type(), common::MouseEvent::PRESS);
-    EXPECT_EQ(ignEvent.Pos(), math::Vector2i(10, 20));
-    EXPECT_EQ(ignEvent.Button(), common::MouseEvent::RIGHT);
-    EXPECT_EQ(ignEvent.Buttons(), common::MouseEvent::MIDDLE);
-    EXPECT_FALSE(ignEvent.Dragging());
-    EXPECT_TRUE(ignEvent.Shift());
+    EXPECT_EQ(gzEvent.Type(), common::MouseEvent::PRESS);
+    EXPECT_EQ(gzEvent.Pos(), math::Vector2i(10, 20));
+    EXPECT_EQ(gzEvent.Button(), common::MouseEvent::RIGHT);
+    EXPECT_EQ(gzEvent.Buttons(), common::MouseEvent::MIDDLE);
+    EXPECT_FALSE(gzEvent.Dragging());
+    EXPECT_TRUE(gzEvent.Shift());
   }
 
   // Release + Control
@@ -122,14 +122,14 @@ TEST(ConversionsTest, MouseEvent)
     QMouseEvent qtEvent(QEvent::MouseButtonRelease, QPointF(0, 200),
         Qt::MiddleButton, Qt::RightButton, Qt::ControlModifier);
 
-    auto ignEvent = convert(qtEvent);
+    auto gzEvent = convert(qtEvent);
 
-    EXPECT_EQ(ignEvent.Type(), common::MouseEvent::RELEASE);
-    EXPECT_EQ(ignEvent.Pos(), math::Vector2i(0, 200));
-    EXPECT_EQ(ignEvent.Button(), common::MouseEvent::MIDDLE);
-    EXPECT_EQ(ignEvent.Buttons(), common::MouseEvent::RIGHT);
-    EXPECT_FALSE(ignEvent.Dragging());
-    EXPECT_TRUE(ignEvent.Control());
+    EXPECT_EQ(gzEvent.Type(), common::MouseEvent::RELEASE);
+    EXPECT_EQ(gzEvent.Pos(), math::Vector2i(0, 200));
+    EXPECT_EQ(gzEvent.Button(), common::MouseEvent::MIDDLE);
+    EXPECT_EQ(gzEvent.Buttons(), common::MouseEvent::RIGHT);
+    EXPECT_FALSE(gzEvent.Dragging());
+    EXPECT_TRUE(gzEvent.Control());
   }
 
   // Move + Alt
@@ -137,14 +137,14 @@ TEST(ConversionsTest, MouseEvent)
     QMouseEvent qtEvent(QEvent::MouseMove, QPointF(123, 456),
         Qt::LeftButton, Qt::LeftButton, Qt::AltModifier);
 
-    auto ignEvent = convert(qtEvent);
+    auto gzEvent = convert(qtEvent);
 
-    EXPECT_EQ(ignEvent.Type(), common::MouseEvent::MOVE);
-    EXPECT_EQ(ignEvent.Pos(), math::Vector2i(123, 456));
-    EXPECT_EQ(ignEvent.Button(), common::MouseEvent::LEFT);
-    EXPECT_EQ(ignEvent.Buttons(), common::MouseEvent::LEFT);
-    EXPECT_TRUE(ignEvent.Dragging());
-    EXPECT_TRUE(ignEvent.Alt());
+    EXPECT_EQ(gzEvent.Type(), common::MouseEvent::MOVE);
+    EXPECT_EQ(gzEvent.Pos(), math::Vector2i(123, 456));
+    EXPECT_EQ(gzEvent.Button(), common::MouseEvent::LEFT);
+    EXPECT_EQ(gzEvent.Buttons(), common::MouseEvent::LEFT);
+    EXPECT_TRUE(gzEvent.Dragging());
+    EXPECT_TRUE(gzEvent.Alt());
   }
 
   // Scroll
@@ -159,14 +159,14 @@ TEST(ConversionsTest, MouseEvent)
         false);
 #endif
 
-    auto ignEvent = convert(qtEvent);
+    auto gzEvent = convert(qtEvent);
 
-    EXPECT_EQ(ignEvent.Type(), common::MouseEvent::SCROLL);
-    EXPECT_EQ(ignEvent.Pos(), math::Vector2i(123, 456));
-    EXPECT_EQ(ignEvent.Scroll(), math::Vector2i(-1, -1));
-    EXPECT_EQ(ignEvent.Buttons(), common::MouseEvent::MIDDLE);
-    EXPECT_FALSE(ignEvent.Dragging());
-    EXPECT_TRUE(ignEvent.Shift());
+    EXPECT_EQ(gzEvent.Type(), common::MouseEvent::SCROLL);
+    EXPECT_EQ(gzEvent.Pos(), math::Vector2i(123, 456));
+    EXPECT_EQ(gzEvent.Scroll(), math::Vector2i(-1, -1));
+    EXPECT_EQ(gzEvent.Buttons(), common::MouseEvent::MIDDLE);
+    EXPECT_FALSE(gzEvent.Dragging());
+    EXPECT_TRUE(gzEvent.Shift());
   }
 }
 
@@ -176,32 +176,32 @@ TEST(ConversionsTest, KeyEvent)
   {
     QKeyEvent qtEvent(QEvent::KeyPress, Qt::Key_Escape,
         Qt::ShiftModifier | Qt::ControlModifier);
-    auto ignEvent = convert(qtEvent);
+    auto gzEvent = convert(qtEvent);
 
-    EXPECT_EQ(ignEvent.Type(), common::KeyEvent::PRESS);
-    EXPECT_EQ(ignEvent.Key(), Qt::Key_Escape);
-    EXPECT_TRUE(ignEvent.Control());
-    EXPECT_TRUE(ignEvent.Shift());
-    EXPECT_FALSE(ignEvent.Alt());
+    EXPECT_EQ(gzEvent.Type(), common::KeyEvent::PRESS);
+    EXPECT_EQ(gzEvent.Key(), Qt::Key_Escape);
+    EXPECT_TRUE(gzEvent.Control());
+    EXPECT_TRUE(gzEvent.Shift());
+    EXPECT_FALSE(gzEvent.Alt());
   }
   {
     QKeyEvent qtEvent(QEvent::KeyRelease, Qt::Key_Control, Qt::NoModifier);
-    auto ignEvent = convert(qtEvent);
+    auto gzEvent = convert(qtEvent);
 
-    EXPECT_EQ(ignEvent.Type(), common::KeyEvent::RELEASE);
-    EXPECT_EQ(ignEvent.Key(), Qt::Key_Control);
-    EXPECT_TRUE(ignEvent.Control());
-    EXPECT_FALSE(ignEvent.Shift());
-    EXPECT_FALSE(ignEvent.Alt());
+    EXPECT_EQ(gzEvent.Type(), common::KeyEvent::RELEASE);
+    EXPECT_EQ(gzEvent.Key(), Qt::Key_Control);
+    EXPECT_TRUE(gzEvent.Control());
+    EXPECT_FALSE(gzEvent.Shift());
+    EXPECT_FALSE(gzEvent.Alt());
   }
   {
     QKeyEvent qtEvent(QEvent::None, Qt::Key_R, Qt::AltModifier);
-    auto ignEvent = convert(qtEvent);
+    auto gzEvent = convert(qtEvent);
 
-    EXPECT_EQ(ignEvent.Type(), common::KeyEvent::NO_EVENT);
-    EXPECT_EQ(ignEvent.Key(), Qt::Key_R);
-    EXPECT_FALSE(ignEvent.Control());
-    EXPECT_FALSE(ignEvent.Shift());
-    EXPECT_TRUE(ignEvent.Alt());
+    EXPECT_EQ(gzEvent.Type(), common::KeyEvent::NO_EVENT);
+    EXPECT_EQ(gzEvent.Key(), Qt::Key_R);
+    EXPECT_FALSE(gzEvent.Control());
+    EXPECT_FALSE(gzEvent.Shift());
+    EXPECT_TRUE(gzEvent.Alt());
   }
 }

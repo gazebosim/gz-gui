@@ -77,7 +77,7 @@ export GZ_CONFIG_PATH=/user/local/share/gz/:/path/to/some/other/location
 
 # Folder Structure
 
-* `include/ignition/gui`: Contains all the files which will be installed, such as
+* `include/gz/gui`: Contains all the files which will be installed, such as
   C++ headers, `.qrc`, `.qss` and `qml` files. Plugin-specific resources go under
   `/plugins`; everything in the top-level is meant to be of common use across
   plugins.

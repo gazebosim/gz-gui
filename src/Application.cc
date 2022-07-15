@@ -166,7 +166,7 @@ Application::~Application()
 
   if (this->dataPtr->mainWin && this->dataPtr->mainWin->QuickWindow())
   {
-    // Detach object from main window and leave libraries for ign-common
+    // Detach object from main window and leave libraries for gz-common
     auto plugins = this->dataPtr->mainWin->findChildren<Plugin *>();
     for (auto plugin : plugins)
     {

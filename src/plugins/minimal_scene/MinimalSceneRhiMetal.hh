@@ -34,17 +34,17 @@ namespace gui
 {
 namespace plugins
 {
-  /// \brief Private data for IgnCameraTextureRhiMetal
-  class IgnCameraTextureRhiMetalPrivate;
+  /// \brief Private data for GzCameraTextureRhiMetal
+  class GzCameraTextureRhiMetalPrivate;
 
-  /// \brief Implementation of IgnCameraTextureRhi for the Metal graphics API
-  class IgnCameraTextureRhiMetal : public IgnCameraTextureRhi
+  /// \brief Implementation of GzCameraTextureRhi for the Metal graphics API
+  class GzCameraTextureRhiMetal : public GzCameraTextureRhi
   {
     // Documentation inherited
-    public: virtual ~IgnCameraTextureRhiMetal() override;
+    public: virtual ~GzCameraTextureRhiMetal() override;
 
     /// \brief Constructor
-    public: IgnCameraTextureRhiMetal();
+    public: GzCameraTextureRhiMetal();
 
     // Documentation inherited
     public: virtual void Update(rendering::CameraPtr _camera) override;
@@ -53,7 +53,7 @@ namespace plugins
     public: virtual void TextureId(void* _texturePtr) override;
 
     /// \internal Pointer to private data
-    private: std::unique_ptr<IgnCameraTextureRhiMetalPrivate> dataPtr;
+    private: std::unique_ptr<GzCameraTextureRhiMetalPrivate> dataPtr;
   };
 
   /// \brief Private data for RenderThreadRhiMetal
@@ -66,8 +66,8 @@ namespace plugins
     public: virtual ~RenderThreadRhiMetal() override;
 
     /// \brief Constructor
-    /// \param[in] _renderer The Ign-rendering renderer
-    public: RenderThreadRhiMetal(IgnRenderer *_renderer);
+    /// \param[in] _renderer The gz-rendering renderer
+    public: RenderThreadRhiMetal(GzRenderer *_renderer);
 
     // Documentation inherited
     public: virtual std::string Initialize() override;
