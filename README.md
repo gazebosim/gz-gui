@@ -1,24 +1,24 @@
-# Ignition GUI : Graphical interfaces for robotics applications
+# Gazebo GUI : Graphical interfaces for robotics applications
 
 **Maintainer:** louise [AT] openrobotics [DOT] org
 
-[![GitHub open issues](https://img.shields.io/github/issues-raw/ignitionrobotics/ign-gui.svg)](https://github.com/ignitionrobotics/ign-gui/issues)
-[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/ignitionrobotics/ign-gui.svg)](https://github.com/ignitionrobotics/ign-gui/pulls)
+[![GitHub open issues](https://img.shields.io/github/issues-raw/gazebosim/gz-gui.svg)](https://github.com/gazebosim/gz-gui/issues)
+[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/gazebosim/gz-gui.svg)](https://github.com/gazebosim/gz-gui/pulls)
 [![Discourse topics](https://img.shields.io/discourse/https/community.gazebosim.org/topics.svg)](https://community.gazebosim.org)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/ign-gui6/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-gui/branch/ign-gui6)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui6-bionic-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui6-bionic-amd64)
+Test coverage | [![codecov](https://codecov.io/gh/gazebosim/gz-gui/branch/ign-gui6/graph/badge.svg)](https://codecov.io/gh/gazebosim/gz-gui/branch/ign-gui6)
+Ubuntu Focal | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui6-focal-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui6-focal-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_gui-ci-ign-gui6-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_gui-ci-ign-gui6-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ign_gui-ign-6-win)](https://build.osrfoundation.org/job/ign_gui-ign-6-win)
 
-Ignition GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
+Gazebo GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,
 and can be used together in a convenient unified interface.
 
-Ignition GUI ships with several widgets ready to use and offers a plugin interface
+Gazebo GUI ships with several widgets ready to use and offers a plugin interface
 which can be used to add custom widgets.
 
 # Table of Contents
@@ -46,25 +46,25 @@ which can be used to add custom widgets.
 * Qt-based widgets, with support for both Qt5 widgets and QtQuick
 * Plugin-based interface, so it's easy to add new widgets
 * Several plugins ready to be used
-* 3D scene integration using [Ignition Rendering](https://github.com/ignitionrobotics/ign-rendering/)
+* 3D scene integration using [Gazebo Rendering](https://github.com/gazebosim/gz-rendering/)
 
 # Install
 
-See the [installation tutorial](https://ignitionrobotics.org/api/gui/5.0/install.html).
+See the [installation tutorial](https://gazebosim.org/api/gui/5.0/install.html).
 
 # Usage
 
 Take a look at the
-[tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html)
+[tutorials](https://gazebosim.org/api/gui/5.0/tutorials.html)
 for usage instructions and API documentation.
 
 ## Known issue of command line tools
 
 In the event that the installation is a mix of Debian and from source, command
-line tools from `ign-tools` may not work correctly.
+line tools from `gz-tools` may not work correctly.
 
 A workaround for a single package is to define the environment variable
-`IGN_CONFIG_PATH` to point to the location of the Ignition library installation,
+`IGN_CONFIG_PATH` to point to the location of the Gazebo library installation,
 where the YAML file for the package is found, such as
 ```
 export IGN_CONFIG_PATH=/usr/local/share/ignition
@@ -88,35 +88,35 @@ export IGN_CONFIG_PATH=/user/local/share/ignition/:/path/to/some/other/location
 * `test`: All integration, performance and regression tests go here, under their
   specific folders.
 
-* `examples/standalone`: Example code for standalone applications using Ignition GUI
+* `examples/standalone`: Example code for standalone applications using Gazebo GUI
   as a library. Each example has instructions in a README file.
 
 * `examples/config`: Example configuration files which can be loaded using
   `ign gui -c <path to file>`
 
 * `examples/plugin`: Example plugins which can be compiled and loaded as explained
-  in [this tutorial](https://ignitionrobotics.org/api/gui/5.0/plugins.html).
+  in [this tutorial](https://gazebosim.org/api/gui/5.0/plugins.html).
 
-* `tutorials`: Markdown files for the [tutorials](https://ignitionrobotics.org/api/gui/5.0/tutorials.html).
+* `tutorials`: Markdown files for the [tutorials](https://gazebosim.org/api/gui/5.0/tutorials.html).
 
-* `conf`: Files needed by [ign-tools](https://github.com/ignitionrobotics/ign-tools).
+* `conf`: Files needed by [gz-tools](https://github.com/gazebosim/gz-tools).
 
 * `doc`: Files used by Doxygen when generating documentation.
 
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://ignitionrobotics.org/docs/all/contributing).
+[CONTRIBUTING.md](https://gazebosim.org/docs/all/contributing).
 
 # Code of Conduct
 
 Please see
-[CODE\_OF\_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/main/CODE_OF_CONDUCT.md).
+[CODE\_OF\_CONDUCT.md](https://github.com/gazebosim/gz-sim/blob/main/CODE_OF_CONDUCT.md).
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Ignition website](https://ignitionrobotics.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Gazebo project](https://gazebosim.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Gazebo website](https://gazebosim.org) for version and release information.
 
 # License
 
-This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-gui/blob/main/LICENSE) file.
+This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/gazebosim/gz-gui/blob/main/LICENSE) file.
