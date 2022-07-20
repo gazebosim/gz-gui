@@ -4,7 +4,7 @@ This example demonstrates how to populate and update a 3D scene using
 Gazebo Transport.
 
 This example is meant to be used with `examples/config/scened.config`, which
-loads the `Scene3D` plugin to create the scene, and the `TransportSceneManager`
+loads the `MinimalScene` plugin to create the scene, and the `TransportSceneManager`
 plugin to update the scene using Gazebo Transport.
 
 ## Build
