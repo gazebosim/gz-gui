@@ -76,6 +76,9 @@ Item {
   /*** The following are private variables: ***/
   height: gzPoseContent.height
 
+  property int iconWidth: 20
+  property int iconHeight: 20
+
   // local variables to store spinbox values
   property var xItem: {}
   property var yItem: {}
@@ -124,6 +127,35 @@ Item {
     }
   }
 
+  Component {
+    id: plotIcon
+    Image {
+      property string componentInfo: ""
+      source: "images/plottable_icon.svg"
+      anchors.top: parent.top
+      anchors.left: parent.left
+
+      Drag.mimeData: { "text/plain" : (model === null) ? "" :
+      "Component," + model.entity + "," + model.typeId + "," +
+                     model.dataType + "," + componentInfo + "," + model.shortName
+      }
+      Drag.dragType: Drag.Automatic
+      Drag.supportedActions : Qt.CopyAction
+      Drag.active: dragMouse.drag.active
+      // a point to drag from
+      Drag.hotSpot.x: 0
+      Drag.hotSpot.y: y
+      MouseArea {
+        id: dragMouse
+        anchors.fill: parent
+        drag.target: (model === null) ? null : parent
+        onPressed: parent.grabToImage(function(result) {parent.Drag.imageSource = result.url })
+        onReleased: parent.Drag.drop();
+        cursorShape: Qt.DragCopyCursor
+      }
+    }
+  }
+
   Rectangle {
     id: gzPoseContent
     width: parent.width
@@ -143,11 +175,27 @@ Item {
       width: parent.width
       columns: 4
 
-      Text {
-        text: 'X (m)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: xText.width + 40
+        Loader {
+          id: xPlot
+          sourceComponent: plotIcon
+          width: iconWidth
+          height: iconHeight
+          y:10
+        }
+        Component.onCompleted: xPlot.item.componentInfo = "x"
+
+        Text {
+          id: xText
+          text: 'X (m)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -164,11 +212,28 @@ Item {
         }
       }
 
-      Text {
-        text: 'Roll (rad)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        width: iconWidth
+        Layout.preferredWidth: rollText.width + 40
+        Loader {
+          id: rollPlot
+          sourceComponent: plotIcon
+          width: iconWidth
+          height: iconHeight
+          y:10
+        }
+        Component.onCompleted: rollPlot.item.componentInfo = "roll"
+
+        Text {
+          id: rollText
+          text: 'Roll (rad)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -185,11 +250,27 @@ Item {
         }
       }
 
-      Text {
-        text: 'Y (m)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: yText.width + 40
+        Loader {
+          id: yPlot
+          sourceComponent: plotIcon
+          width: iconWidth
+          height: iconHeight
+          y:10
+        }
+        Component.onCompleted: yPlot.item.componentInfo = "y"
+
+        Text {
+          id: yText
+          text: 'Y (m)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -206,11 +287,27 @@ Item {
         }
       }
 
-      Text {
-        text: 'Pitch (rad)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+       Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: pitchText.width + 40
+        Loader {
+          id: pitchPlot
+          sourceComponent: plotIcon
+          width: iconWidth
+          height: iconHeight
+          y:10
+        }
+        Component.onCompleted: pitchPlot.item.componentInfo = "pitch"
+
+        Text {
+          id: pitchText
+          text: 'Pitch (rad)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -227,11 +324,27 @@ Item {
         }
       }
 
-      Text {
-        text: 'Z (m)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: zText.width + 40
+        Loader {
+          id: zPlot
+          sourceComponent: plotIcon
+          width: iconWidth
+          height: iconHeight
+          y:10
+        }
+        Component.onCompleted: zPlot.item.componentInfo = "z"
+
+        Text {
+          id: zText
+          text: 'Z (m)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -248,11 +361,27 @@ Item {
         }
       }
 
-      Text {
-        text: 'Yaw (rad)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: yawText.width + 40
+        Loader {
+          id: yawPlot
+          sourceComponent: plotIcon
+          width: iconWidth
+          height: iconHeight
+          y:10
+        }
+        Component.onCompleted: yawPlot.item.componentInfo = "yaw"
+
+        Text {
+          id: yawText
+          text: 'Yaw (rad)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {

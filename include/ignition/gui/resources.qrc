@@ -26,6 +26,7 @@
   <file>qml/images/menu.png</file>
   <file>qml/images/export_icon.png</file>
   <file>qml/images/search.svg</file>
+  <file>qml/images/plottable_icon.svg</file>
 </qresource>
 <qresource prefix="ign-gui-qml/ignition/gui">
     <!-- This qmldir file defines a QML module that can be imported -->
