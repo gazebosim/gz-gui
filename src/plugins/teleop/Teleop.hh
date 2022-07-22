@@ -131,10 +131,6 @@ namespace plugins
     /// \param[in] _checked variable to indicate the state of the switch.
     public slots: void OnKeySwitch(bool _checked);
 
-    /// \brief Callback in Qt thread when the sliders is enabled or disabled.
-    /// \param[in] _checked variable to indicate the state of the switch.
-    public slots: void OnSlidersSwitch(bool _checked);
-
     /// \brief Sets the movement direction when the keyboard is used.
     public: void SetKeyDirection();
 

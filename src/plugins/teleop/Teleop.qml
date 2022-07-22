@@ -16,7 +16,6 @@
 */
 
 import QtQuick 2.9
-import QtQuick.Controls 1.4
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Controls.Styles 1.4
@@ -27,21 +26,40 @@ ColumnLayout {
   Layout.minimumWidth: 400
   Layout.minimumHeight: 900
   Layout.margins: 5
-  spacing: 5
   anchors.fill: parent
   focus: true
 
+  // Maximum linear velocity
   property double maxLinearVel: Teleop.maxLinearVel
+
+  // Maximum angular velocity
   property double maxAngularVel: Teleop.maxAngularVel
 
+  // Send command according to given scale
   function sendCommand(_linScale, _angScale) {
-    // Adjust sign, sliders don't send max
     var linVel = _linScale * maxLinearVel;
     var angVel = _angScale * maxAngularVel;
-
-console.log(linVel, angVel);
-
     Teleop.OnTeleopTwist(linVel, angVel)
+  }
+
+  // Linear scale based on button state
+  function linScale() {
+    if (forwardButton.checked)
+      return 1;
+    else if (backwardButton.checked)
+      return -1;
+
+    return 0;
+  }
+
+  // Angular scale based on button state
+  function angScale() {
+    if (leftButton.checked)
+      return 1;
+    else if (rightButton.checked)
+      return -1;
+
+    return 0;
   }
 
   // Topic input
@@ -49,11 +67,12 @@ console.log(linVel, angVel);
     id: topicLabel
     text: "Topic"
     Layout.fillWidth: true
-    Layout.margins: 5
+    Layout.margins: 10
   }
   TextField {
     id: topicField
     Layout.fillWidth: true
+    Layout.margins: 10
     text: Teleop.topic
     placeholderText: qsTr("Topic to publish...")
     onEditingFinished: {
@@ -65,10 +84,12 @@ console.log(linVel, angVel);
   Label {
     id: velocityLabel
     text: "Velocity"
+    Layout.margins: 10
   }
 
   RowLayout {
     Layout.fillWidth: true
+    Layout.margins: 10
     // Linear velocity input
     Label {
       id: maxLinearVelLabel
@@ -108,36 +129,38 @@ console.log(linVel, angVel);
     }
   }
 
-  TabView {
-    frameVisible: false
+  TabBar {
+    id: tabs
+    Layout.fillWidth: true
+    Layout.margins: 10
+
+    onCurrentIndexChanged: {
+      Teleop.OnKeySwitch(currentIndex == 1);
+    }
+
+    TabButton {
+      text: qsTr("Buttons")
+    }
+    TabButton {
+      text: qsTr("Keyboard")
+    }
+    TabButton {
+      text: qsTr("Sliders")
+    }
+  }
+
+  StackLayout {
     Layout.fillHeight: true
     Layout.fillWidth: true
-    Tab {
-      id: buttonsTab
-      title: "Buttons"
+    Layout.margins: 10
+    currentIndex: tabs.currentIndex
 
-      // Button grid
+    // Buttons
+    Item {
       GridLayout {
         id: buttonsGrid
         Layout.fillWidth: true
         columns: 3
-
-        function linScale() {
-          if (forwardButton.checked)
-            return 1;
-          else if (backwardButton.checked)
-            return -1;
-
-          return 0;
-        }
-        function angScale() {
-          if (leftButton.checked)
-            return 1;
-          else if (rightButton.checked)
-            return -1;
-
-          return 0;
-        }
 
         Button {
           id: forwardButton
@@ -146,7 +169,7 @@ console.log(linVel, angVel);
           Layout.row: 0
           Layout.column: 1
           onClicked: {
-            if(backwardButton.checked)
+            if (backwardButton.checked)
               backwardButton.checked = false
             sendCommand(linScale(), angScale());
           }
@@ -192,7 +215,7 @@ console.log(linVel, angVel);
           Layout.row: 1
           Layout.column: 2
           onClicked: {
-            if(leftButton.checked)
+            if (leftButton.checked)
               leftButton.checked = false
             sendCommand(linScale(), angScale());
           }
@@ -214,7 +237,7 @@ console.log(linVel, angVel);
           Layout.row: 2
           Layout.column: 1
           onClicked: {
-            if(forwardButton.checked)
+            if (forwardButton.checked)
               forwardButton.checked = false
             sendCommand(linScale(), angScale());
           }
@@ -261,13 +284,7 @@ console.log(linVel, angVel);
         }
       }
     }
-    Tab {
-      title: "Keyboard"
-
-      onActiveChanged: {
-        Teleop.OnKeySwitch(active);
-      }
-
+    Item {
       Text {
         textFormat: Text.RichText
         text: "Input from keyboard:</br><ul>" +
@@ -277,9 +294,7 @@ console.log(linVel, angVel);
               "<li><b>D</b>:Right</li></ul>"
       }
     }
-    Tab {
-      title: "Slider"
-
+    Item {
       GridLayout {
         columns: 4
 

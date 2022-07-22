@@ -166,7 +166,7 @@ void Teleop::SetTopic(const QString &_topic)
   else
   {
     App()->findChild<MainWindow *>()->notifyWithDuration(
-      QString::fromStdString("Subscribing to topic: '<b>" +
+      QString::fromStdString("Advertising topic: '<b>" +
         this->dataPtr->topic + "</b>'"), 4000);
   }
   this->TopicChanged();
@@ -202,15 +202,6 @@ double Teleop::MaxAngularVel() const
 void Teleop::OnKeySwitch(bool _checked)
 {
   this->dataPtr->keyEnable = _checked;
-}
-
-/////////////////////////////////////////////////
-void Teleop::OnSlidersSwitch(bool _checked)
-{
-  //if (_checked)
-  //{
-  //  this->OnTeleopTwist();
-  //}
 }
 
 /////////////////////////////////////////////////
