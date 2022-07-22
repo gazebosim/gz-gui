@@ -77,12 +77,12 @@ namespace plugins
       NOTIFY MaxVerticalVelChanged
     )
 
-    /// \brief Angular velocity
+    /// \brief Yaw velocity
     Q_PROPERTY(
-      double maxAngularVel
-      READ MaxAngularVel
-      WRITE SetMaxAngularVel
-      NOTIFY MaxAngularVelChanged
+      double maxYawVel
+      READ MaxYawVel
+      WRITE SetMaxYawVel
+      NOTIFY MaxYawVelChanged
     )
 
     /// \brief Constructor
@@ -100,7 +100,7 @@ namespace plugins
     /// \brief Publish the twist message to the selected command velocity topic.
     /// \param[in] _forwardVel Forward velocity
     /// \param[in] _verticalVel Vertical velocity
-    /// \param[in] _angVel Angular velocity
+    /// \param[in] _angVel Yaw velocity
     public slots: void OnTeleopTwist(double _forwardVel, double _verticalVel,
         double _angVel);
 
@@ -139,16 +139,16 @@ namespace plugins
     /// \brief Notify that vertical velocity has changed
     signals: void MaxVerticalVelChanged();
 
-    /// \brief Get the angular velocity.
-    /// \return Angular velocity.
-    public: Q_INVOKABLE double MaxAngularVel() const;
+    /// \brief Get the yaw velocity.
+    /// \return Yaw velocity.
+    public: Q_INVOKABLE double MaxYawVel() const;
 
-    /// \brief Callback in Qt thread when the angular velocity changes.
-    /// \param[in] _velocity variable to indicate the angular velocity.
-    public slots: void SetMaxAngularVel(double _velocity);
+    /// \brief Callback in Qt thread when the yaw velocity changes.
+    /// \param[in] _velocity variable to indicate the yaw velocity.
+    public slots: void SetMaxYawVel(double _velocity);
 
-    /// \brief Notify that angular velocity has changed
-    signals: void MaxAngularVelChanged();
+    /// \brief Notify that yaw velocity has changed
+    signals: void MaxYawVelChanged();
 
     /// \brief Callback in Qt thread when the keyboard is enabled or disabled.
     /// \param[in] _checked variable to indicate the state of the switch.

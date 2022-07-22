@@ -35,15 +35,15 @@ ColumnLayout {
   // Maximum vertical velocity
   property double maxVerticalVel: Teleop.maxVerticalVel
 
-  // Maximum angular velocity
-  property double maxAngularVel: Teleop.maxAngularVel
+  // Maximum yaw velocity
+  property double maxYawVel: Teleop.maxYawVel
 
   // Send command according to given scale
-  function sendCommand(_forwardScale, _verticalScale, _angScale) {
+  function sendCommand(_forwardScale, _verticalScale, _yawScale) {
     var forwardVel = _forwardScale * maxForwardVel;
     var verticalVel = _verticalScale * maxVerticalVel;
-    var angVel = _angScale * maxAngularVel;
-    Teleop.OnTeleopTwist(forwardVel, verticalVel, angVel)
+    var yawVel = _yawScale * maxYawVel;
+    Teleop.OnTeleopTwist(forwardVel, verticalVel, yawVel)
   }
 
   // Forward scale based on button state
@@ -66,8 +66,8 @@ ColumnLayout {
     return 0;
   }
 
-  // Angular scale based on button state
-  function angScale() {
+  // Yaw scale based on button state
+  function yawScale() {
     if (leftButton.checked)
       return 1;
     else if (rightButton.checked)
@@ -144,22 +144,22 @@ ColumnLayout {
       }
     }
 
-    // Angular velocity input
+    // Yaw velocity input
     Label {
-      id: maxAngularVelLabel
-      text: "Angular (rad/s)"
+      id: maxYawVelLabel
+      text: "Yaw (rad/s)"
       color: "dimgrey"
     }
     IgnSpinBox {
-      id: maxAngularVelField
+      id: maxYawVelField
       Layout.fillWidth: true
-      value: maxAngularVel
+      value: maxYawVel
       maximumValue: 10000.0
       minimumValue: 0.0
       decimals: 2
       stepSize: 0.10
       onEditingFinished:{
-        Teleop.SetMaxAngularVel(value)
+        Teleop.SetMaxYawVel(value)
       }
     }
   }
@@ -206,7 +206,7 @@ ColumnLayout {
           onClicked: {
             if (backwardButton.checked)
               backwardButton.checked = false
-            sendCommand(forwardScale(), verticalScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), yawScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Forward"
@@ -230,7 +230,7 @@ ColumnLayout {
           onClicked: {
             if (rightButton.checked)
               rightButton.checked = false
-            sendCommand(forwardScale(), verticalScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), yawScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Left"
@@ -254,7 +254,7 @@ ColumnLayout {
           onClicked: {
             if (leftButton.checked)
               leftButton.checked = false
-            sendCommand(forwardScale(), verticalScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), yawScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Right"
@@ -278,7 +278,7 @@ ColumnLayout {
           onClicked: {
             if (forwardButton.checked)
               forwardButton.checked = false
-            sendCommand(forwardScale(), verticalScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), yawScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Back"
@@ -306,7 +306,7 @@ ColumnLayout {
             backwardButton.checked = false
             upButton.checked = false
             downButton.checked = false
-            sendCommand(forwardScale(), verticalScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), yawScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Stop"
@@ -331,7 +331,7 @@ ColumnLayout {
           onClicked: {
             if (downButton.checked)
               downButton.checked = false
-            sendCommand(forwardScale(), verticalScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), yawScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Up"
@@ -356,7 +356,7 @@ ColumnLayout {
           onClicked: {
             if (upButton.checked)
               upButton.checked = false
-            sendCommand(forwardScale(), verticalScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), yawScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Down"
@@ -418,7 +418,7 @@ ColumnLayout {
           stepSize: 0.01
 
           onMoved: {
-            sendCommand(forwardVelSlider.value, verticalVelSlider.value, angularVelSlider.value);
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
           }
         }
 
@@ -446,7 +446,7 @@ ColumnLayout {
           stepSize: 0.01
 
           onMoved: {
-            sendCommand(forwardVelSlider.value, verticalVelSlider.value, angularVelSlider.value);
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
           }
         }
 
@@ -455,18 +455,18 @@ ColumnLayout {
           text: maxVerticalVel
         }
 
-        // Angular
+        // Yaw
         Label {
-          text: "Angular (rad/s)"
+          text: "Yaw (rad/s)"
         }
 
         Label {
           width: 40
-          text: -maxAngularVel
+          text: -maxYawVel
         }
 
         Slider {
-          id: angularVelSlider
+          id: yawVelSlider
           Layout.fillWidth: true
           height: 50
           from: -1.0
@@ -474,13 +474,13 @@ ColumnLayout {
           stepSize: 0.01
 
           onMoved: {
-            sendCommand(forwardVelSlider.value, verticalVelSlider.value, angularVelSlider.value);
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
           }
         }
 
         Label {
           width: 40
-          text: maxAngularVel
+          text: maxYawVel
         }
 
         // Bottom spacer

@@ -51,7 +51,7 @@ namespace plugins
     kStop,
   };
 
-  enum class KeyAngular{
+  enum class KeyYaw{
     kLeft,
     kRight,
     kStop,
@@ -74,8 +74,8 @@ namespace plugins
     /// \brief Vertical velocity.
     public: double maxVerticalVel = 1.0;
 
-    /// \brief Angular velocity.
-    public: double maxAngularVel = 0.5;
+    /// \brief Yaw velocity.
+    public: double maxYawVel = 0.5;
 
     /// \brief Forward scale.
     public: int forwardKeyScale = 0;
@@ -83,8 +83,8 @@ namespace plugins
     /// \brief Vertical scale.
     public: int verticalKeyScale = 0;
 
-    /// \brief Angular scale.
-    public: int angularKeyScale = 0;
+    /// \brief Yaw scale.
+    public: int yawKeyScale = 0;
 
     /// \brief Forward state setted by keyboard input.
     public: KeyForward forwardKeyState = KeyForward::kStop;
@@ -92,8 +92,8 @@ namespace plugins
     /// \brief Vertical state setted by keyboard input.
     public: KeyVertical verticalKeyState = KeyVertical::kStop;
 
-    /// \brief Angular state setted by keyboard input.
-    public: KeyAngular angularKeyState = KeyAngular::kStop;
+    /// \brief Yaw state setted by keyboard input.
+    public: KeyYaw yawKeyState = KeyYaw::kStop;
 
     /// \brief Indicates if the keyboard is enabled or
     /// disabled.
@@ -216,16 +216,16 @@ double Teleop::MaxVerticalVel() const
 }
 
 /////////////////////////////////////////////////
-void Teleop::SetMaxAngularVel(double _velocity)
+void Teleop::SetMaxYawVel(double _velocity)
 {
-  this->dataPtr->maxAngularVel = _velocity;
-  this->MaxAngularVelChanged();
+  this->dataPtr->maxYawVel = _velocity;
+  this->MaxYawVelChanged();
 }
 
 /////////////////////////////////////////////////
-double Teleop::MaxAngularVel() const
+double Teleop::MaxYawVel() const
 {
-  return this->dataPtr->maxAngularVel;
+  return this->dataPtr->maxYawVel;
 }
 
 /////////////////////////////////////////////////
@@ -248,10 +248,10 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
           this->dataPtr->forwardKeyState = KeyForward::kForward;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularKeyState = KeyAngular::kLeft;
+          this->dataPtr->yawKeyState = KeyYaw::kLeft;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularKeyState = KeyAngular::kRight;
+          this->dataPtr->yawKeyState = KeyYaw::kRight;
           break;
         case Qt::Key_S:
           this->dataPtr->forwardKeyState = KeyForward::kBackward;
@@ -269,7 +269,7 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
       this->OnTeleopTwist(
           this->dataPtr->forwardKeyScale * this->dataPtr->maxForwardVel,
           this->dataPtr->verticalKeyScale * this->dataPtr->maxVerticalVel,
-          this->dataPtr->angularKeyScale * this->dataPtr->maxAngularVel);
+          this->dataPtr->yawKeyScale * this->dataPtr->maxYawVel);
     }
 
     if (_event->type() == QEvent::KeyRelease)
@@ -281,10 +281,10 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
           this->dataPtr->forwardKeyState = KeyForward::kStop;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularKeyState = KeyAngular::kStop;
+          this->dataPtr->yawKeyState = KeyYaw::kStop;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularKeyState = KeyAngular::kStop;
+          this->dataPtr->yawKeyState = KeyYaw::kStop;
           break;
         case Qt::Key_S:
           this->dataPtr->forwardKeyState = KeyForward::kStop;
@@ -302,7 +302,7 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
       this->OnTeleopTwist(
           this->dataPtr->forwardKeyScale * this->dataPtr->maxForwardVel,
           this->dataPtr->verticalKeyScale * this->dataPtr->maxVerticalVel,
-          this->dataPtr->angularKeyScale * this->dataPtr->maxAngularVel);
+          this->dataPtr->yawKeyScale * this->dataPtr->maxYawVel);
     }
   }
   return QObject::eventFilter(_obj, _event);
@@ -319,9 +319,9 @@ void Teleop::SetKeyScale()
       KeyVertical::kUp ? 1 : this->dataPtr->verticalKeyState ==
       KeyVertical::kDown ? -1 : 0;
 
-  this->dataPtr->angularKeyScale = this->dataPtr->angularKeyState ==
-      KeyAngular::kLeft ? 1 : this->dataPtr->angularKeyState ==
-      KeyAngular::kRight ? -1 : 0;
+  this->dataPtr->yawKeyScale = this->dataPtr->yawKeyState ==
+      KeyYaw::kLeft ? 1 : this->dataPtr->yawKeyState ==
+      KeyYaw::kRight ? -1 : 0;
 }
 
 // Register this plugin
