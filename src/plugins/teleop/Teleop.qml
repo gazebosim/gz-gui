@@ -29,24 +29,38 @@ ColumnLayout {
   anchors.fill: parent
   focus: true
 
-  // Maximum linear velocity
-  property double maxLinearVel: Teleop.maxLinearVel
+  // Maximum forward velocity
+  property double maxForwardVel: Teleop.maxForwardVel
+
+  // Maximum vertical velocity
+  property double maxVerticalVel: Teleop.maxVerticalVel
 
   // Maximum angular velocity
   property double maxAngularVel: Teleop.maxAngularVel
 
   // Send command according to given scale
-  function sendCommand(_linScale, _angScale) {
-    var linVel = _linScale * maxLinearVel;
+  function sendCommand(_forwardScale, _verticalScale, _angScale) {
+    var forwardVel = _forwardScale * maxForwardVel;
+    var verticalVel = _verticalScale * maxVerticalVel;
     var angVel = _angScale * maxAngularVel;
-    Teleop.OnTeleopTwist(linVel, angVel)
+    Teleop.OnTeleopTwist(forwardVel, verticalVel, angVel)
   }
 
-  // Linear scale based on button state
-  function linScale() {
+  // Forward scale based on button state
+  function forwardScale() {
     if (forwardButton.checked)
       return 1;
     else if (backwardButton.checked)
+      return -1;
+
+    return 0;
+  }
+
+  // Vertical scale based on button state
+  function verticalScale() {
+    if (upButton.checked)
+      return 1;
+    else if (downButton.checked)
       return -1;
 
     return 0;
@@ -87,25 +101,46 @@ ColumnLayout {
     Layout.margins: 10
   }
 
-  RowLayout {
+  GridLayout {
     Layout.fillWidth: true
     Layout.margins: 10
-    // Linear velocity input
+    columns: 2
+
+    // Forward velocity input
     Label {
-      id: maxLinearVelLabel
-      text: "Linear (m/s)"
+      id: maxForwardVelLabel
+      text: "Forward (m/s)"
       color: "dimgrey"
     }
     IgnSpinBox {
-      id: maxLinearVelField
+      id: maxForwardVelField
       Layout.fillWidth: true
-      value: maxLinearVel
+      value: maxForwardVel
       maximumValue: 10000.0
       minimumValue: 0.0
       decimals: 2
       stepSize: 0.10
       onEditingFinished:{
-        Teleop.SetMaxLinearVel(value)
+        Teleop.SetMaxForwardVel(value)
+      }
+    }
+
+    // Vertical velocity input
+    Label {
+      id: maxVerticalVelLabel
+      text: "Vertical (m/s)"
+      color: "dimgrey"
+    }
+    IgnSpinBox {
+      id: maxVerticalVelField
+      Layout.fillWidth: true
+      value: maxVerticalVel
+      maximumValue: 10000.0
+      minimumValue: 0.0
+      decimals: 2
+      stepSize: 0.10
+      onEditingFinished:{
+        Teleop.SetMaxVerticalVel(value)
       }
     }
 
@@ -159,8 +194,8 @@ ColumnLayout {
     Item {
       GridLayout {
         id: buttonsGrid
-        Layout.fillWidth: true
-        columns: 3
+        width: parent.width
+        columns: 4
 
         Button {
           id: forwardButton
@@ -171,7 +206,7 @@ ColumnLayout {
           onClicked: {
             if (backwardButton.checked)
               backwardButton.checked = false
-            sendCommand(linScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), angScale());
           }
           ToolTip.visible: hovered
           ToolTip.text: "Forward"
@@ -195,8 +230,10 @@ ColumnLayout {
           onClicked: {
             if (rightButton.checked)
               rightButton.checked = false
-            sendCommand(linScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), angScale());
           }
+          ToolTip.visible: hovered
+          ToolTip.text: "Left"
           Material.background: Material.primary
           contentItem: Label {
             renderType: Text.NativeRendering
@@ -217,8 +254,10 @@ ColumnLayout {
           onClicked: {
             if (leftButton.checked)
               leftButton.checked = false
-            sendCommand(linScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), angScale());
           }
+          ToolTip.visible: hovered
+          ToolTip.text: "Right"
           Material.background: Material.primary
           contentItem: Label {
             renderType: Text.NativeRendering
@@ -239,8 +278,10 @@ ColumnLayout {
           onClicked: {
             if (forwardButton.checked)
               forwardButton.checked = false
-            sendCommand(linScale(), angScale());
+            sendCommand(forwardScale(), verticalScale(), angScale());
           }
+          ToolTip.visible: hovered
+          ToolTip.text: "Back"
           Material.background: Material.primary
           contentItem: Label {
             renderType: Text.NativeRendering
@@ -263,8 +304,12 @@ ColumnLayout {
             leftButton.checked = false
             rightButton.checked = false
             backwardButton.checked = false
-            sendCommand(linScale(), angScale());
+            upButton.checked = false
+            downButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), angScale());
           }
+          ToolTip.visible: hovered
+          ToolTip.text: "Stop"
           Material.background: Material.primary
           contentItem: Label {
             renderType: Text.NativeRendering
@@ -276,6 +321,56 @@ ColumnLayout {
             text: stopButton.text
           }
         }
+
+        Button {
+          id: upButton
+          text: "\u2191"
+          checkable: true
+          Layout.row: 0
+          Layout.column: 3
+          onClicked: {
+            if (downButton.checked)
+              downButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), angScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Up"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: upButton.text
+          }
+        }
+
+        Button {
+          id: downButton
+          text: "\u2193"
+          checkable: true
+          Layout.row: 2
+          Layout.column: 3
+          onClicked: {
+            if (upButton.checked)
+              upButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), angScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Down"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: downButton.text
+          }
+        }
         // Bottom spacer
         Item {
           Layout.row: 3
@@ -285,46 +380,82 @@ ColumnLayout {
       }
     }
     Item {
+      width: parent.width
       Text {
         textFormat: Text.RichText
-        text: "Input from keyboard:</br><ul>" +
+        text: "Hold keys:</br><ul>" +
               "<li><b>W</b>: Forward</li>" +
               "<li><b>A</b>: Left</li>" +
               "<li><b>S</b>: Back</li>" +
-              "<li><b>D</b>:Right</li></ul>"
+              "<li><b>D</b>: Right</li>" +
+              "<li><b>Q</b>: Up</li>" +
+              "<li><b>E</b>: Down</li></ul>"
       }
     }
     Item {
+      width: parent.width
+
       GridLayout {
         columns: 4
+        columnSpacing: 10
 
+        // Forward
         Label {
-          text: "Linear (m/s)"
+          text: "Forward (m/s)"
         }
 
         Label {
           width: 40
-          text: -maxLinearVel
+          text: -maxForwardVel
         }
 
         Slider {
-          id: linearVelSlider
+          id: forwardVelSlider
+          Layout.fillWidth: true
           height: 150
-          width: 50
           from: -1.0
           to: 1.0
           stepSize: 0.01
 
           onMoved: {
-            sendCommand(linearVelSlider.value, angularVelSlider.value);
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, angularVelSlider.value);
           }
         }
 
         Label {
           width: 40
-          text: maxLinearVel
+          text: maxForwardVel
         }
 
+        // Vertical
+        Label {
+          text: "Vertical (m/s)"
+        }
+
+        Label {
+          width: 40
+          text: -maxVerticalVel
+        }
+
+        Slider {
+          id: verticalVelSlider
+          Layout.fillWidth: true
+          height: 150
+          from: -1.0
+          to: 1.0
+          stepSize: 0.01
+
+          onMoved: {
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, angularVelSlider.value);
+          }
+        }
+
+        Label {
+          width: 40
+          text: maxVerticalVel
+        }
+
+        // Angular
         Label {
           text: "Angular (rad/s)"
         }
@@ -336,14 +467,14 @@ ColumnLayout {
 
         Slider {
           id: angularVelSlider
+          Layout.fillWidth: true
           height: 50
-          width: 175
           from: -1.0
           to: 1.0
           stepSize: 0.01
 
           onMoved: {
-            sendCommand(linearVelSlider.value, angularVelSlider.value);
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, angularVelSlider.value);
           }
         }
 
@@ -354,8 +485,6 @@ ColumnLayout {
 
         // Bottom spacer
         Item {
-          Layout.row: 2
-          Layout.column: 0
           Layout.fillHeight: true
         }
       }

@@ -46,9 +46,9 @@ namespace plugins
   /// \brief Publish teleop stokes to a user selected topic,
   /// or to '/cmd_vel' if no topic is selected.
   /// Buttons, the keyboard or sliders can be used to move a
-  /// vehicle load to the world.
+  /// vehicle in the world.
   /// ## Configuration
-  /// This plugin doesn't accept any custom configuration.
+  /// * `<topic>`: Topic to publish twist messages to.
   class Teleop_EXPORTS_API Teleop : public Plugin
   {
     Q_OBJECT
@@ -61,12 +61,20 @@ namespace plugins
       NOTIFY TopicChanged
     )
 
-    /// \brief Linear velocity
+    /// \brief Forward velocity
     Q_PROPERTY(
-      double maxLinearVel
-      READ MaxLinearVel
-      WRITE SetMaxLinearVel
-      NOTIFY MaxLinearVelChanged
+      double maxForwardVel
+      READ MaxForwardVel
+      WRITE SetMaxForwardVel
+      NOTIFY MaxForwardVelChanged
+    )
+
+    /// \brief Vertical velocity
+    Q_PROPERTY(
+      double maxVerticalVel
+      READ MaxVerticalVel
+      WRITE SetMaxVerticalVel
+      NOTIFY MaxVerticalVelChanged
     )
 
     /// \brief Angular velocity
@@ -90,7 +98,11 @@ namespace plugins
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
     /// \brief Publish the twist message to the selected command velocity topic.
-    public slots: void OnTeleopTwist(double _linVel, double _angVel);
+    /// \param[in] _forwardVel Forward velocity
+    /// \param[in] _verticalVel Vertical velocity
+    /// \param[in] _angVel Angular velocity
+    public slots: void OnTeleopTwist(double _forwardVel, double _verticalVel,
+        double _angVel);
 
     /// \brief Get the topic as a string, for example
     /// '/echo'
@@ -105,16 +117,27 @@ namespace plugins
     /// \brief Notify that topic has changed
     signals: void TopicChanged();
 
-    /// \brief Get the linear velocity.
-    /// \return Linear velocity.
-    public: Q_INVOKABLE double MaxLinearVel() const;
+    /// \brief Get the forward velocity.
+    /// \return Forward velocity.
+    public: Q_INVOKABLE double MaxForwardVel() const;
 
-    /// \brief Callback in Qt thread when the linear velocity changes.
-    /// \param[in] _velocity variable to indicate the linear velocity.
-    public slots: void SetMaxLinearVel(double _velocity);
+    /// \brief Callback in Qt thread when the forward velocity changes.
+    /// \param[in] _velocity variable to indicate the forward velocity.
+    public slots: void SetMaxForwardVel(double _velocity);
 
-    /// \brief Notify that linear velocity has changed
-    signals: void MaxLinearVelChanged();
+    /// \brief Notify that forward velocity has changed
+    signals: void MaxForwardVelChanged();
+
+    /// \brief Get the vertical velocity.
+    /// \return Vertical velocity.
+    public: Q_INVOKABLE double MaxVerticalVel() const;
+
+    /// \brief Callback in Qt thread when the vertical velocity changes.
+    /// \param[in] _velocity variable to indicate the vertical velocity.
+    public slots: void SetMaxVerticalVel(double _velocity);
+
+    /// \brief Notify that vertical velocity has changed
+    signals: void MaxVerticalVelChanged();
 
     /// \brief Get the angular velocity.
     /// \return Angular velocity.
@@ -131,8 +154,8 @@ namespace plugins
     /// \param[in] _checked variable to indicate the state of the switch.
     public slots: void OnKeySwitch(bool _checked);
 
-    /// \brief Sets the movement direction when the keyboard is used.
-    public: void SetKeyDirection();
+    /// \brief Sets the movement scale when the keyboard is used.
+    public: void SetKeyScale();
 
     /// \internal
     /// \brief Pointer to private data.

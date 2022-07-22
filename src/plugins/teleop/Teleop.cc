@@ -39,9 +39,15 @@ namespace gui
 {
 namespace plugins
 {
-  enum class KeyLinear{
+  enum class KeyForward{
     kForward,
     kBackward,
+    kStop,
+  };
+
+  enum class KeyVertical{
+    kUp,
+    kDown,
     kStop,
   };
 
@@ -62,20 +68,29 @@ namespace plugins
     /// \brief Publisher.
     public: ignition::transport::Node::Publisher cmdVelPub;
 
-    /// \brief Linear velocity.
-    public: double maxLinearVel = 1.0;
+    /// \brief Forward velocity.
+    public: double maxForwardVel = 1.0;
+
+    /// \brief Vertical velocity.
+    public: double maxVerticalVel = 1.0;
 
     /// \brief Angular velocity.
     public: double maxAngularVel = 0.5;
 
-    /// \brief Linear direction.
-    public: int linearKeyDir = 0;
+    /// \brief Forward scale.
+    public: int forwardKeyScale = 0;
 
-    /// \brief Angular direction.
-    public: int angularKeyDir = 0;
+    /// \brief Vertical scale.
+    public: int verticalKeyScale = 0;
 
-    /// \brief Linear state setted by keyboard input.
-    public: KeyLinear linearKeyState = KeyLinear::kStop;
+    /// \brief Angular scale.
+    public: int angularKeyScale = 0;
+
+    /// \brief Forward state setted by keyboard input.
+    public: KeyForward forwardKeyState = KeyForward::kStop;
+
+    /// \brief Vertical state setted by keyboard input.
+    public: KeyVertical verticalKeyState = KeyVertical::kStop;
 
     /// \brief Angular state setted by keyboard input.
     public: KeyAngular angularKeyState = KeyAngular::kStop;
@@ -123,11 +138,13 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnTeleopTwist(double _linVel, double _angVel)
+void Teleop::OnTeleopTwist(double _forwardVel, double _verticalVel,
+        double _angVel)
 {
   ignition::msgs::Twist cmdVelMsg;
 
-  cmdVelMsg.mutable_linear()->set_x(_linVel);
+  cmdVelMsg.mutable_linear()->set_x(_forwardVel);
+  cmdVelMsg.mutable_linear()->set_z(_verticalVel);
   cmdVelMsg.mutable_angular()->set_z(_angVel);
 
   if (!this->dataPtr->cmdVelPub.Publish(cmdVelMsg))
@@ -173,16 +190,29 @@ void Teleop::SetTopic(const QString &_topic)
 }
 
 /////////////////////////////////////////////////
-void Teleop::SetMaxLinearVel(double _velocity)
+void Teleop::SetMaxForwardVel(double _velocity)
 {
-  this->dataPtr->maxLinearVel = _velocity;
-  this->MaxLinearVelChanged();
+  this->dataPtr->maxForwardVel = _velocity;
+  this->MaxForwardVelChanged();
 }
 
 /////////////////////////////////////////////////
-double Teleop::MaxLinearVel() const
+double Teleop::MaxForwardVel() const
 {
-  return this->dataPtr->maxLinearVel;
+  return this->dataPtr->maxForwardVel;
+}
+
+/////////////////////////////////////////////////
+void Teleop::SetMaxVerticalVel(double _velocity)
+{
+  this->dataPtr->maxVerticalVel = _velocity;
+  this->MaxVerticalVelChanged();
+}
+
+/////////////////////////////////////////////////
+double Teleop::MaxVerticalVel() const
+{
+  return this->dataPtr->maxVerticalVel;
 }
 
 /////////////////////////////////////////////////
@@ -215,7 +245,7 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearKeyState = KeyLinear::kForward;
+          this->dataPtr->forwardKeyState = KeyForward::kForward;
           break;
         case Qt::Key_A:
           this->dataPtr->angularKeyState = KeyAngular::kLeft;
@@ -224,15 +254,22 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
           this->dataPtr->angularKeyState = KeyAngular::kRight;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearKeyState = KeyLinear::kBackward;
+          this->dataPtr->forwardKeyState = KeyForward::kBackward;
+          break;
+        case Qt::Key_Q:
+          this->dataPtr->verticalKeyState = KeyVertical::kUp;
+          break;
+        case Qt::Key_E:
+          this->dataPtr->verticalKeyState = KeyVertical::kDown;
           break;
         default:
           break;
       }
-      this->SetKeyDirection();
+      this->SetKeyScale();
       this->OnTeleopTwist(
-          this->dataPtr->linearKeyDir * this->dataPtr->maxLinearVel,
-          this->dataPtr->angularKeyDir * this->dataPtr->maxAngularVel);
+          this->dataPtr->forwardKeyScale * this->dataPtr->maxForwardVel,
+          this->dataPtr->verticalKeyScale * this->dataPtr->maxVerticalVel,
+          this->dataPtr->angularKeyScale * this->dataPtr->maxAngularVel);
     }
 
     if (_event->type() == QEvent::KeyRelease)
@@ -241,7 +278,7 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearKeyState = KeyLinear::kStop;
+          this->dataPtr->forwardKeyState = KeyForward::kStop;
           break;
         case Qt::Key_A:
           this->dataPtr->angularKeyState = KeyAngular::kStop;
@@ -250,28 +287,39 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
           this->dataPtr->angularKeyState = KeyAngular::kStop;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearKeyState = KeyLinear::kStop;
+          this->dataPtr->forwardKeyState = KeyForward::kStop;
+          break;
+        case Qt::Key_Q:
+          this->dataPtr->verticalKeyState = KeyVertical::kStop;
+          break;
+        case Qt::Key_E:
+          this->dataPtr->verticalKeyState = KeyVertical::kStop;
           break;
         default:
           break;
       }
-      this->SetKeyDirection();
+      this->SetKeyScale();
       this->OnTeleopTwist(
-          this->dataPtr->linearKeyDir * this->dataPtr->maxLinearVel,
-          this->dataPtr->angularKeyDir * this->dataPtr->maxAngularVel);
+          this->dataPtr->forwardKeyScale * this->dataPtr->maxForwardVel,
+          this->dataPtr->verticalKeyScale * this->dataPtr->maxVerticalVel,
+          this->dataPtr->angularKeyScale * this->dataPtr->maxAngularVel);
     }
   }
   return QObject::eventFilter(_obj, _event);
 }
 
 /////////////////////////////////////////////////
-void Teleop::SetKeyDirection()
+void Teleop::SetKeyScale()
 {
-  this->dataPtr->linearKeyDir = this->dataPtr->linearKeyState ==
-      KeyLinear::kForward ? 1 : this->dataPtr->linearKeyState ==
-      KeyLinear::kBackward ? -1 : 0;
+  this->dataPtr->forwardKeyScale = this->dataPtr->forwardKeyState ==
+      KeyForward::kForward ? 1 : this->dataPtr->forwardKeyState ==
+      KeyForward::kBackward ? -1 : 0;
 
-  this->dataPtr->angularKeyDir = this->dataPtr->angularKeyState ==
+  this->dataPtr->verticalKeyScale = this->dataPtr->verticalKeyState ==
+      KeyVertical::kUp ? 1 : this->dataPtr->verticalKeyState ==
+      KeyVertical::kDown ? -1 : 0;
+
+  this->dataPtr->angularKeyScale = this->dataPtr->angularKeyState ==
       KeyAngular::kLeft ? 1 : this->dataPtr->angularKeyState ==
       KeyAngular::kRight ? -1 : 0;
 }
