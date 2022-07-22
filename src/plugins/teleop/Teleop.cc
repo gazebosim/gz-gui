@@ -63,19 +63,22 @@ namespace plugins
     public: ignition::transport::Node::Publisher cmdVelPub;
 
     /// \brief Linear velocity.
-    public: double linearVel = 0;
+    public: double maxLinearVel = 1.0;
+
     /// \brief Angular velocity.
-    public: double angularVel = 0;
+    public: double maxAngularVel = 0.5;
 
     /// \brief Linear direction.
-    public: int linearDir = 0;
+    public: int linearKeyDir = 0;
+
     /// \brief Angular direction.
-    public: int angularDir = 0;
+    public: int angularKeyDir = 0;
 
     /// \brief Linear state setted by keyboard input.
-    public: KeyLinear linearState = KeyLinear::kStop;
+    public: KeyLinear linearKeyState = KeyLinear::kStop;
+
     /// \brief Angular state setted by keyboard input.
-    public: KeyAngular angularState = KeyAngular::kStop;
+    public: KeyAngular angularKeyState = KeyAngular::kStop;
 
     /// \brief Indicates if the keyboard is enabled or
     /// disabled.
@@ -103,32 +106,45 @@ Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
 Teleop::~Teleop() = default;
 
 /////////////////////////////////////////////////
-void Teleop::LoadConfig(const tinyxml2::XMLElement *)
+void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Teleop";
+
+  if (_pluginElem)
+  {
+    auto topicElem = _pluginElem->FirstChildElement("topic");
+    if (nullptr != topicElem && nullptr != topicElem->GetText())
+      this->SetTopic(topicElem->GetText());
+  }
 
   ignition::gui::App()->findChild
     <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnTeleopTwist()
+void Teleop::OnTeleopTwist(double _linVel, double _angVel)
 {
   ignition::msgs::Twist cmdVelMsg;
 
-  cmdVelMsg.mutable_linear()->set_x(
-      this->dataPtr->linearDir * this->dataPtr->linearVel);
-  cmdVelMsg.mutable_angular()->set_z(
-      this->dataPtr->angularDir * this->dataPtr->angularVel);
+  cmdVelMsg.mutable_linear()->set_x(_linVel);
+  cmdVelMsg.mutable_angular()->set_z(_angVel);
 
   if (!this->dataPtr->cmdVelPub.Publish(cmdVelMsg))
+  {
     ignerr << "ignition::msgs::Twist message couldn't be published at topic: "
       << this->dataPtr->topic << std::endl;
+  }
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnTopicSelection(const QString &_topic)
+QString Teleop::Topic() const
+{
+  return QString::fromStdString(this->dataPtr->topic);
+}
+
+/////////////////////////////////////////////////
+void Teleop::SetTopic(const QString &_topic)
 {
   this->dataPtr->topic = _topic.toStdString();
   ignmsg << "A new topic has been entered: '" <<
@@ -139,7 +155,7 @@ void Teleop::OnTopicSelection(const QString &_topic)
   this->dataPtr->cmdVelPub =
       this->dataPtr->node.Advertise<ignition::msgs::Twist>
       (this->dataPtr->topic);
-  if(!this->dataPtr->cmdVelPub)
+  if (!this->dataPtr->cmdVelPub)
   {
     App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Error when advertising topic: " +
@@ -153,90 +169,105 @@ void Teleop::OnTopicSelection(const QString &_topic)
       QString::fromStdString("Subscribing to topic: '<b>" +
         this->dataPtr->topic + "</b>'"), 4000);
   }
+  this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnLinearVelSelection(double _velocity)
+void Teleop::SetMaxLinearVel(double _velocity)
 {
-  this->dataPtr->linearVel = _velocity;
+  this->dataPtr->maxLinearVel = _velocity;
+  this->MaxLinearVelChanged();
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnAngularVelSelection(double _velocity)
+double Teleop::MaxLinearVel() const
 {
-  this->dataPtr->angularVel = _velocity;
+  return this->dataPtr->maxLinearVel;
+}
+
+/////////////////////////////////////////////////
+void Teleop::SetMaxAngularVel(double _velocity)
+{
+  this->dataPtr->maxAngularVel = _velocity;
+  this->MaxAngularVelChanged();
+}
+
+/////////////////////////////////////////////////
+double Teleop::MaxAngularVel() const
+{
+  return this->dataPtr->maxAngularVel;
 }
 
 /////////////////////////////////////////////////
 void Teleop::OnKeySwitch(bool _checked)
 {
-  this->dataPtr->linearDir = 0;
-  this->dataPtr->angularDir = 0;
   this->dataPtr->keyEnable = _checked;
 }
 
 /////////////////////////////////////////////////
 void Teleop::OnSlidersSwitch(bool _checked)
 {
-  if(_checked)
-  {
-    this->dataPtr->linearDir = 1;
-    this->dataPtr->angularDir = 1;
-    this->OnTeleopTwist();
-  }
+  //if (_checked)
+  //{
+  //  this->OnTeleopTwist();
+  //}
 }
 
 /////////////////////////////////////////////////
 bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if(this->dataPtr->keyEnable == true)
+  if (this->dataPtr->keyEnable == true)
   {
-    if(_event->type() == QEvent::KeyPress)
+    if (_event->type() == QEvent::KeyPress)
     {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearState = KeyLinear::kForward;
+          this->dataPtr->linearKeyState = KeyLinear::kForward;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularState = KeyAngular::kLeft;
+          this->dataPtr->angularKeyState = KeyAngular::kLeft;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularState = KeyAngular::kRight;
+          this->dataPtr->angularKeyState = KeyAngular::kRight;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearState = KeyLinear::kBackward;
+          this->dataPtr->linearKeyState = KeyLinear::kBackward;
           break;
         default:
           break;
       }
       this->SetKeyDirection();
-      this->OnTeleopTwist();
+      this->OnTeleopTwist(
+          this->dataPtr->linearKeyDir * this->dataPtr->maxLinearVel,
+          this->dataPtr->angularKeyDir * this->dataPtr->maxAngularVel);
     }
 
-    if(_event->type() == QEvent::KeyRelease)
+    if (_event->type() == QEvent::KeyRelease)
     {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearState = KeyLinear::kStop;
+          this->dataPtr->linearKeyState = KeyLinear::kStop;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularState = KeyAngular::kStop;
+          this->dataPtr->angularKeyState = KeyAngular::kStop;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularState = KeyAngular::kStop;
+          this->dataPtr->angularKeyState = KeyAngular::kStop;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearState = KeyLinear::kStop;
+          this->dataPtr->linearKeyState = KeyLinear::kStop;
           break;
         default:
           break;
       }
       this->SetKeyDirection();
-      this->OnTeleopTwist();
+      this->OnTeleopTwist(
+          this->dataPtr->linearKeyDir * this->dataPtr->maxLinearVel,
+          this->dataPtr->angularKeyDir * this->dataPtr->maxAngularVel);
     }
   }
   return QObject::eventFilter(_obj, _event);
@@ -245,39 +276,13 @@ bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
 /////////////////////////////////////////////////
 void Teleop::SetKeyDirection()
 {
-  this->dataPtr->linearDir = this->dataPtr->linearState ==
-      KeyLinear::kForward ? 1 : this->dataPtr->linearState ==
+  this->dataPtr->linearKeyDir = this->dataPtr->linearKeyState ==
+      KeyLinear::kForward ? 1 : this->dataPtr->linearKeyState ==
       KeyLinear::kBackward ? -1 : 0;
 
-  this->dataPtr->angularDir = this->dataPtr->angularState ==
-      KeyAngular::kLeft ? 1 : this->dataPtr->angularState ==
+  this->dataPtr->angularKeyDir = this->dataPtr->angularKeyState ==
+      KeyAngular::kLeft ? 1 : this->dataPtr->angularKeyState ==
       KeyAngular::kRight ? -1 : 0;
-}
-
-/////////////////////////////////////////////////
-int Teleop::LinearDirection() const
-{
-  return this->dataPtr->linearDir;
-}
-
-/////////////////////////////////////////////////
-void Teleop::setLinearDirection(int _linearDir)
-{
-  this->dataPtr->linearDir = _linearDir;
-  this->LinearDirectionChanged();
-}
-
-/////////////////////////////////////////////////
-int Teleop::AngularDirection() const
-{
-  return this->dataPtr->angularDir;
-}
-
-/////////////////////////////////////////////////
-void Teleop::setAngularDirection(int _angularDir)
-{
-  this->dataPtr->angularDir = _angularDir;
-  this->AngularDirectionChanged();
 }
 
 // Register this plugin

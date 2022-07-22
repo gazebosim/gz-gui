@@ -53,20 +53,28 @@ namespace plugins
   {
     Q_OBJECT
 
-    /// \brief Linear direction
+    /// \brief Topic
     Q_PROPERTY(
-      int linearDir
-      READ LinearDirection
-      WRITE setLinearDirection
-      NOTIFY LinearDirectionChanged
+      QString topic
+      READ Topic
+      WRITE SetTopic
+      NOTIFY TopicChanged
     )
 
-    /// \brief Angular direction
+    /// \brief Linear velocity
     Q_PROPERTY(
-      int angularDir
-      READ AngularDirection
-      WRITE setAngularDirection
-      NOTIFY AngularDirectionChanged
+      double maxLinearVel
+      READ MaxLinearVel
+      WRITE SetMaxLinearVel
+      NOTIFY MaxLinearVelChanged
+    )
+
+    /// \brief Angular velocity
+    Q_PROPERTY(
+      double maxAngularVel
+      READ MaxAngularVel
+      WRITE SetMaxAngularVel
+      NOTIFY MaxAngularVelChanged
     )
 
     /// \brief Constructor
@@ -82,48 +90,42 @@ namespace plugins
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
     /// \brief Publish the twist message to the selected command velocity topic.
-    public slots: void OnTeleopTwist();
+    public slots: void OnTeleopTwist(double _linVel, double _angVel);
 
-    /// \brief Returns the linear direction variable value.
-    ///  When the movement is forward it takes the value 1, when
-    /// is backward it takes the value -1, and when it's 0 the
-    /// movement stops.
-    public: Q_INVOKABLE int LinearDirection() const;
-
-    /// \brief Set the linear direction of the movement.
-    /// \param[in] _linearDir Modifier of the velocity for setting
-    /// the movement direction.
-    public: Q_INVOKABLE void setLinearDirection(int _linearDir);
-
-    /// \brief Notify that the linear direction changed.
-    signals: void LinearDirectionChanged();
-
-    /// \brief Returns the angular direction variable value.
-    /// When the turn is counterclockwise it takes the value 1, when
-    /// is clockwise it takes the value -1, and when it's 0 the
-    /// movement stops.
-    public: Q_INVOKABLE int AngularDirection() const;
-
-    /// \brief Set the angular direction of the movement.
-    /// \param[in] _angularDir Modifier of the velocity for setting
-    /// the direction of the rotation.
-    public: Q_INVOKABLE void setAngularDirection(int _angularDir);
-
-    /// \brief Notify that the angular direction changed.
-    signals: void AngularDirectionChanged();
+    /// \brief Get the topic as a string, for example
+    /// '/echo'
+    /// \return Topic
+    public: Q_INVOKABLE QString Topic() const;
 
     /// \brief Callback in Qt thread when the topic changes.
     /// \param[in] _topic variable to indicate the topic to
     /// publish the Twist commands.
-    public slots: void OnTopicSelection(const QString &_topic);
+    public slots: void SetTopic(const QString &_topic);
+
+    /// \brief Notify that topic has changed
+    signals: void TopicChanged();
+
+    /// \brief Get the linear velocity.
+    /// \return Linear velocity.
+    public: Q_INVOKABLE double MaxLinearVel() const;
 
     /// \brief Callback in Qt thread when the linear velocity changes.
     /// \param[in] _velocity variable to indicate the linear velocity.
-    public slots: void OnLinearVelSelection(double _velocity);
+    public slots: void SetMaxLinearVel(double _velocity);
+
+    /// \brief Notify that linear velocity has changed
+    signals: void MaxLinearVelChanged();
+
+    /// \brief Get the angular velocity.
+    /// \return Angular velocity.
+    public: Q_INVOKABLE double MaxAngularVel() const;
 
     /// \brief Callback in Qt thread when the angular velocity changes.
     /// \param[in] _velocity variable to indicate the angular velocity.
-    public slots: void OnAngularVelSelection(double _velocity);
+    public slots: void SetMaxAngularVel(double _velocity);
+
+    /// \brief Notify that angular velocity has changed
+    signals: void MaxAngularVelChanged();
 
     /// \brief Callback in Qt thread when the keyboard is enabled or disabled.
     /// \param[in] _checked variable to indicate the state of the switch.
