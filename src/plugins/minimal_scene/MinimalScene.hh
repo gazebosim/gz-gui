@@ -208,8 +208,8 @@ namespace plugins
     /// \param[out] _texturePtr Pointer to a texture Id
     public: void TextureId(void* _texturePtr);
 
-    public: std::string engineName = "ogre2";
     /// \brief Render engine to use
+    public: std::string engineName = "ogre2";
 
     /// \brief Unique scene name
     public: std::string sceneName = "scene";
