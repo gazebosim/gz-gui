@@ -36,14 +36,14 @@ namespace gui
 {
 namespace plugins
 {
-  class IgnCameraTextureRhiOpenGLPrivate
+  class GzCameraTextureRhiOpenGLPrivate
   {
     public: int textureId = 0;
   };
 
   class RenderThreadRhiOpenGLPrivate
   {
-    public: IgnRenderer *renderer = nullptr;
+    public: GzRenderer *renderer = nullptr;
     public: void *texturePtr = nullptr;
     public: QOffscreenSurface *surface = nullptr;
     public: QOpenGLContext *context = nullptr;
@@ -68,22 +68,22 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-IgnCameraTextureRhiOpenGL::~IgnCameraTextureRhiOpenGL() = default;
+GzCameraTextureRhiOpenGL::~GzCameraTextureRhiOpenGL() = default;
 
 /////////////////////////////////////////////////
-IgnCameraTextureRhiOpenGL::IgnCameraTextureRhiOpenGL()
-  : dataPtr(std::make_unique<IgnCameraTextureRhiOpenGLPrivate>())
+GzCameraTextureRhiOpenGL::GzCameraTextureRhiOpenGL()
+  : dataPtr(std::make_unique<GzCameraTextureRhiOpenGLPrivate>())
 {
 }
 
 /////////////////////////////////////////////////
-void IgnCameraTextureRhiOpenGL::Update(rendering::CameraPtr _camera)
+void GzCameraTextureRhiOpenGL::Update(rendering::CameraPtr _camera)
 {
   this->dataPtr->textureId = _camera->RenderTextureGLId();
 }
 
 /////////////////////////////////////////////////
-void IgnCameraTextureRhiOpenGL::TextureId(void* _texturePtr)
+void GzCameraTextureRhiOpenGL::TextureId(void* _texturePtr)
 {
   *reinterpret_cast<void**>(_texturePtr) = (void*)&this->dataPtr->textureId; //NOLINT
 }
@@ -93,7 +93,7 @@ void IgnCameraTextureRhiOpenGL::TextureId(void* _texturePtr)
 RenderThreadRhiOpenGL::~RenderThreadRhiOpenGL() = default;
 
 /////////////////////////////////////////////////
-RenderThreadRhiOpenGL::RenderThreadRhiOpenGL(IgnRenderer *_renderer)
+RenderThreadRhiOpenGL::RenderThreadRhiOpenGL(GzRenderer *_renderer)
     : dataPtr(std::make_unique<RenderThreadRhiOpenGLPrivate>())
 {
   this->dataPtr->renderer = _renderer;

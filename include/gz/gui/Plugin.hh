@@ -130,10 +130,10 @@ namespace gz
       /// by Gazebo GUI.
       /// \details Called when a plugin is first created.
       /// \sa LoadConfig
-      /// \param[in] _ignGuiElem <ignition-gui> element within the <plugin>.
+      /// \param[in] _gzGuiElem <gz-gui> element within the <plugin>.
       /// Will be nullptr if not present in the SDF.
       private: virtual void LoadCommonConfig(
-          const tinyxml2::XMLElement *_ignGuiElem);
+          const tinyxml2::XMLElement *_gzGuiElem);
 
       /// \brief Apply any anchors which may have been specified on the config
       /// through the <anchor> tag and any state properties.

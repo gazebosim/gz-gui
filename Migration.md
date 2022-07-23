@@ -55,8 +55,8 @@ release will remove the deprecated code.
 ## Gazebo GUI 3.x to 4.x
 
 * Use rendering4, transport9 and msgs6.
-* Deprecated `ignition::gui::convert` to `ignition::common::Time`.
-  Use `ignition::msgs::Convert` to `std::chrono::steady_clock::time_point`
+* Deprecated `gz::gui::convert` to `gz::common::Time`.
+  Use `gz::msgs::Convert` to `std::chrono::steady_clock::time_point`
   instead.
 
 ## Gazebo GUI 3.6 to 3.7

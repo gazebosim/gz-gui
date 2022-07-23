@@ -30,7 +30,7 @@ Add OSRF packages:
 
 Install Gazebo GUI:
   ```
-  sudo apt install libignition-gui<#>-dev
+  sudo apt install libgz-gui<#>-dev
   ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
@@ -46,7 +46,7 @@ On macOS, add OSRF packages:
 
 Install Gazebo GUI:
   ```
-  brew install ignition-gui<#>
+  brew install gz-gui<#>
   ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
@@ -145,7 +145,7 @@ conda install qt --channel conda-forge
 
 Install Gazebo dependencies, replacing `<#>` with the desired versions:
 ```
-conda install libignition-cmake<#> libignition-common<#> libignition-math<#> libignition-transport<#> libignition-msgs<#> libignition-plugin<#> libignition-tools<#> --channel conda-forge
+conda install libgz-cmake<#> libgz-common<#> libgz-math<#> libgz-transport<#> libgz-msgs<#> libgz-plugin<#> libgz-tools<#> --channel conda-forge
 ```
 
 Before [gz-rendering](https://github.com/gazebosim/gz-rendering) becomes available on conda-forge, follow its tutorial to build it from source.

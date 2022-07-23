@@ -16,9 +16,7 @@ find_package(gz-cmake3 REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-gz_configure_project(
-  REPLACE_IGNITION_INCLUDE_PATH gz/gui
-  VERSION_SUFFIX pre1)
+gz_configure_project(VERSION_SUFFIX pre1)
 
 #============================================================================
 # Set project-specific options
@@ -33,7 +31,7 @@ message(STATUS "\n\n-- ====== Finding Dependencies ======")
 #--------------------------------------
 # Find Protobuf
 set(REQ_PROTOBUF_VER 3)
-gz_find_package(IgnProtobuf
+gz_find_package(GzProtobuf
                  VERSION ${REQ_PROTOBUF_VER}
                  REQUIRED
                  PRETTY Protobuf)
@@ -94,7 +92,7 @@ gz_find_package (Qt5
 )
 
 set(GZ_GUI_PLUGIN_INSTALL_DIR
-  ${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/gz-${IGN_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
+  ${CMAKE_INSTALL_PREFIX}/${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
 )
 
 #============================================================================

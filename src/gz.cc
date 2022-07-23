@@ -40,7 +40,7 @@ void startConsoleLog()
   gz::common::env(GZ_HOMEDIR, home);
 
   std::string logPathMod = gz::common::joinPaths(home,
-      ".ignition", "gui", "log",
+      ".gz", "gui", "log",
       gz::common::timeToIso(GZ_SYSTEM_TIME()));
   gzLogInit(logPathMod, "console.log");
 }

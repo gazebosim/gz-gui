@@ -41,14 +41,14 @@ namespace gui
 {
 namespace plugins
 {
-  class IgnCameraTextureRhiMetalPrivate
+  class GzCameraTextureRhiMetalPrivate
   {
     public: id<MTLTexture> metalTexture = nil;
   };
 
   class RenderThreadRhiMetalPrivate
   {
-    public: IgnRenderer *renderer = nullptr;
+    public: GzRenderer *renderer = nullptr;
     public: void *texturePtr = nullptr;
   };
 
@@ -71,16 +71,16 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-IgnCameraTextureRhiMetal::~IgnCameraTextureRhiMetal() = default;
+GzCameraTextureRhiMetal::~GzCameraTextureRhiMetal() = default;
 
 /////////////////////////////////////////////////
-IgnCameraTextureRhiMetal::IgnCameraTextureRhiMetal()
-  : dataPtr(std::make_unique<IgnCameraTextureRhiMetalPrivate>())
+GzCameraTextureRhiMetal::GzCameraTextureRhiMetal()
+  : dataPtr(std::make_unique<GzCameraTextureRhiMetalPrivate>())
 {
 }
 
 /////////////////////////////////////////////////
-void IgnCameraTextureRhiMetal::Update(rendering::CameraPtr _camera)
+void GzCameraTextureRhiMetal::Update(rendering::CameraPtr _camera)
 {
   void *texturePtr = nullptr;
   _camera->RenderTextureMetalId(&texturePtr);
@@ -88,7 +88,7 @@ void IgnCameraTextureRhiMetal::Update(rendering::CameraPtr _camera)
 }
 
 /////////////////////////////////////////////////
-void IgnCameraTextureRhiMetal::TextureId(void* _texturePtr)
+void GzCameraTextureRhiMetal::TextureId(void* _texturePtr)
 {
   *static_cast<void**>(_texturePtr) =
       (void*)CFBridgingRetain(this->dataPtr->metalTexture);
@@ -99,7 +99,7 @@ void IgnCameraTextureRhiMetal::TextureId(void* _texturePtr)
 RenderThreadRhiMetal::~RenderThreadRhiMetal() = default;
 
 /////////////////////////////////////////////////
-RenderThreadRhiMetal::RenderThreadRhiMetal(IgnRenderer *_renderer)
+RenderThreadRhiMetal::RenderThreadRhiMetal(GzRenderer *_renderer)
     : dataPtr(std::make_unique<RenderThreadRhiMetalPrivate>())
 {
   this->dataPtr->renderer = _renderer;
