@@ -162,7 +162,7 @@ RowLayout {
           Layout.leftMargin: 15
         }
 
-        IgnSpinBox {
+        GzSpinBox {
           maximumValue: 10000
           Layout.alignment: Qt.AlignVCenter
           value: 1

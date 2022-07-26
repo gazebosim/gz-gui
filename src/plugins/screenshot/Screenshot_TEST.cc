@@ -32,7 +32,7 @@
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Application.hh"
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
@@ -68,9 +68,10 @@ TEST(ScreenshotTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
   EXPECT_EQ(plugins.size(), 1);
 
   // TODO(anyone) Below is commented out because currently unable to load
-  // Scene3D from another plugin. Once resolved this test should be implemented
+  // MinimalScene from another plugin. Once resolved this test should be
+  // implemented
 
-  // EXPECT_TRUE(app.LoadPlugin("Scene3D"));
+  // EXPECT_TRUE(app.LoadPlugin("MinimalScene"));
   // EXPECT_TRUE(app.LoadPlugin("Screenshot"));
   //
   // // Get main window

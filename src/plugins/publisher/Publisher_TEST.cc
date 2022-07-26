@@ -26,7 +26,7 @@
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Application.hh"
 #include "gz/gui/Plugin.hh"
 #include "gz/gui/MainWindow.hh"
@@ -79,9 +79,9 @@ TEST(PublisherTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Publish))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"Publisher\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<title>Publisher!</title>"
-      "</ignition-gui>"
+      "</gz-gui>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;

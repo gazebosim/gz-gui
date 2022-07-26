@@ -76,7 +76,7 @@ function(gz_gui_add_plugin plugin_name)
     SOURCES ${gz_gui_add_plugin_SOURCES}
     QT_HEADERS ${gz_gui_add_plugin_QT_HEADERS}
     PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
-    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} ignition-plugin${IGN_PLUGIN_VER}::register
+    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} gz-plugin${GZ_PLUGIN_VER}::register
   )
 
   if(gz_gui_add_plugin_TEST_SOURCES)
@@ -84,7 +84,7 @@ function(gz_gui_add_plugin plugin_name)
       SOURCES
         ${gz_gui_add_plugin_TEST_SOURCES}
       LIB_DEPS
-        ${IGNITION-GUI_LIBRARIES}
+        ${GZ-GUI_LIBRARIES}
         TINYXML2::TINYXML2
         ${plugin_name}
       INCLUDE_DIRS
@@ -123,7 +123,6 @@ add_subdirectory(publisher)
 add_subdirectory(marker_manager)
 add_subdirectory(minimal_scene)
 add_subdirectory(navsat_map)
-add_subdirectory(scene3d)
 add_subdirectory(screenshot)
 add_subdirectory(shutdown_button)
 add_subdirectory(tape_measure)

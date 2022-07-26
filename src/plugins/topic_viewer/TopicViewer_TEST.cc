@@ -20,7 +20,7 @@
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Application.hh"
 #include "gz/gui/Plugin.hh"
 #include "gz/gui/MainWindow.hh"
@@ -73,7 +73,7 @@ TEST(TopicViewerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 // See https://github.com/gazebosim/gz-gui/issues/75
 TEST(TopicViewerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
 {
-    setenv("GZ_PARTITION", "ign-gazebo-test", 1);
+    setenv("GZ_PARTITION", "gz-sim-test", 1);
 
     // =========== Publish =================
     transport::Node node;
@@ -100,9 +100,9 @@ TEST(TopicViewerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
     // Load plugin
     const char *pluginStr =
       "<plugin filename=\"TopicViewer\">"
-        "<ignition-gui>"
+        "<gz-gui>"
           "<title>Topic Viewer</title>"
-        "</ignition-gui>"
+        "</gz-gui>"
       "</plugin>";
 
     tinyxml2::XMLDocument pluginDoc;

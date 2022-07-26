@@ -30,7 +30,7 @@ Gazebo GUI accepts the following top-level elements on a config file:
   See \subpage layout for more details.
 * `<plugin>`: Zero or more plugins to be loaded at startup.
     * `filename`: This attribute specifies the plugin library to be loaded.
-    * `<ignition-gui>`: Gazebo GUI processes this block before passing the
+    * `<gz-gui>`: Gazebo GUI processes this block before passing the
       config to the plugin. See
       [plugin_params.config](https://github.com/gazebosim/gz-gui/blob/main/examples/config/plugin_params.config)
       for an example.
@@ -43,9 +43,9 @@ Gazebo GUI accepts the following top-level elements on a config file:
 See the example plugin block below:
 
     <plugin filename="ImageDisplay">
-      <ignition-gui>
+      <gz-gui>
         <property type="int" key="height">120</property>
-      </ignition-gui>
+      </gz-gui>
       <topic>/camera</topic>
     </plugin>
 

@@ -25,7 +25,7 @@
 #include <gz/common/Util.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 
 #ifdef _MSC_VER
 #    define popen _popen
@@ -93,6 +93,6 @@ TEST_F(CmdLine, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
   EXPECT_NE(output.find("TopicEcho"), std::string::npos) << output;
   EXPECT_NE(output.find("Publisher"), std::string::npos) << output;
 
-  EXPECT_TRUE(common::exists(common::joinPaths(this->kFakeHome, ".ignition",
+  EXPECT_TRUE(common::exists(common::joinPaths(this->kFakeHome, ".gz",
       "gui")));
 }

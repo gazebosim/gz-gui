@@ -40,7 +40,7 @@ namespace gz
     namespace events
     {
       /// User defined events should start from QEvent::MaxUser and
-      /// count down to avoid collision with ign-gazebo events
+      /// count down to avoid collision with gz-sim events
 
       /// \brief Event called in the render thread of a 3D scene after the user
       /// camera has rendered.

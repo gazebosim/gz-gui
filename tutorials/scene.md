@@ -23,7 +23,7 @@ based on its entities and components, and
 updates the scene based on ROS 2 messages. Each of these applications provides
 custom plugins that update the 3D scene through events and the render thread.
 
-Gazebo GUI ships with a plugin that updates the scene based on Ignition
+Gazebo GUI ships with a plugin that updates the scene based on Gazebo
 Transport messages, the `gz::gui::plugins::TransportSceneManager`.
 Applications can use that directly, or use it as inspiration for developing
 their own scene managers.

@@ -5,8 +5,8 @@ set -x
 # Install (needed for some tests)
 make install
 
-# For ign-tools
-export GZ_CONFIG_PATH=/usr/local/share/ignition
+# For gz-tools
+export GZ_CONFIG_PATH=/usr/local/share/gz
 export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
 
 # For rendering / window tests

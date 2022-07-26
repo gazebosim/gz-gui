@@ -16,16 +16,16 @@ set (sources
 )
 
 set (gtest_sources
-  Application_TEST
-  Conversions_TEST
-  DragDropModel_TEST
-  Helpers_TEST
-  GuiEvents_TEST
-  gz_TEST
-  MainWindow_TEST
-  PlottingInterface_TEST
-  Plugin_TEST
-  SearchModel_TEST
+  Application_TEST.cc
+  Conversions_TEST.cc
+  DragDropModel_TEST.cc
+  Helpers_TEST.cc
+  GuiEvents_TEST.cc
+  gz_TEST.cc
+  MainWindow_TEST.cc
+  PlottingInterface_TEST.cc
+  Plugin_TEST.cc
+  SearchModel_TEST.cc
 )
 
 if (MSVC)
@@ -47,7 +47,8 @@ gz_build_tests(TYPE UNIT
                 SOURCES
                   ${gtest_sources}
                 LIB_DEPS
-                  ${IGNITION-MATH_LIBRARIES}
+                  gz-common${GZ_COMMON_VER}::events
+                  gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
                   TINYXML2::TINYXML2
 )
 

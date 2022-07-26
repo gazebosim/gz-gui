@@ -4,7 +4,7 @@ gz_gui_add_plugin(Screenshot
   QT_HEADERS
     Screenshot.hh
   PUBLIC_LINK_LIBS
-    ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
+    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
   TEST_SOURCES
     Screenshot_TEST.cc
 )

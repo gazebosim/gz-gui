@@ -27,12 +27,12 @@
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Application.hh"
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
+std::string kTestConfigFile = "/tmp/gz-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char* g_argv[] =
 {

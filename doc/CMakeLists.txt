@@ -1,18 +1,18 @@
 find_package(Doxygen)
 
-set(IGNITION_DOXYGEN_TAGFILES
+set(GZ_DOXYGEN_TAGFILES
   "\"${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=http://doc.qt.io/qt-5/\" \
-   \"${IGNITION-MATH_DOXYGEN_TAGFILE} = ${IGNITION-MATH_API_URL}\" \
-   \"${IGNITION-MSGS_DOXYGEN_TAGFILE} = ${IGNITION-MSGS_API_URL}\" \
-   \"${IGNITION-TRANSPORT_DOXYGEN_TAGFILE} = ${IGNITION-TRANSPORT_API_URL}\" \
-   \"${IGNITION-COMMON_DOXYGEN_TAGFILE} = ${IGNITION-COMMON_API_URL}\""
+   \"${GZ-MATH_DOXYGEN_TAGFILE} = ${GZ-MATH_API_URL}\" \
+   \"${GZ-MSGS_DOXYGEN_TAGFILE} = ${GZ-MSGS_API_URL}\" \
+   \"${GZ-TRANSPORT_DOXYGEN_TAGFILE} = ${GZ-TRANSPORT_API_URL}\" \
+   \"${GZ-COMMON_DOXYGEN_TAGFILE} = ${GZ-COMMON_API_URL}\""
 )
 
 if (DOXYGEN_FOUND)
-  configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
+  configure_file(${GZ_CMAKE_DOXYGEN_DIR}/api.in
                  ${CMAKE_BINARY_DIR}/api.dox @ONLY)
 
-  configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in
+  configure_file(${GZ_CMAKE_DOXYGEN_DIR}/tutorials.in
                  ${CMAKE_BINARY_DIR}/tutorials.dox @ONLY)
 
   add_custom_target(doc ALL

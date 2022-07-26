@@ -21,7 +21,7 @@
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
+#include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Application.hh"
 #include "gz/gui/Plugin.hh"
 #include "gz/gui/MainWindow.hh"
@@ -86,9 +86,9 @@ TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"WorldStats\">"
-      "<ignition-gui>"
+      "<gz-gui>"
         "<title>World Stats!</title>"
-      "</ignition-gui>"
+      "</gz-gui>"
       "<sim_time>true</sim_time>"
       "<real_time>true</real_time>"
       "<real_time_factor>true</real_time_factor>"

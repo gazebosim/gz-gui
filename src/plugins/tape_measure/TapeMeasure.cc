@@ -127,7 +127,7 @@ void TapeMeasure::Measure()
   this->dataPtr->measure = true;
   QGuiApplication::setOverrideCursor(Qt::CrossCursor);
 
-  // Notify Scene3D to disable the right click menu while we use it to
+  // Notify 3D scene to disable the right click menu while we use it to
   // cancel our current measuring action
   gz::gui::events::DropdownMenuEnabled dropdownMenuEnabledEvent(false);
   gz::gui::App()->sendEvent(
@@ -156,7 +156,7 @@ void TapeMeasure::Reset()
   this->newDistance();
   QGuiApplication::restoreOverrideCursor();
 
-  // Notify Scene3D that we are done using the right click, so it can
+  // Notify 3D scene that we are done using the right click, so it can
   // re-enable the settings menu
   gz::gui::events::DropdownMenuEnabled dropdownMenuEnabledEvent(true);
   gz::gui::App()->sendEvent(
@@ -236,7 +236,7 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
     auto hoverToSceneEvent =
         reinterpret_cast<gz::gui::events::HoverToScene *>(_event);
 
-    // This event is called in Scene3d's RenderThread, so it's safe to make
+    // This event is called in the RenderThread, so it's safe to make
     // rendering calls here
     if (this->dataPtr->measure && hoverToSceneEvent)
     {
@@ -260,7 +260,7 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
     auto leftClickToSceneEvent =
         reinterpret_cast<gz::gui::events::LeftClickToScene *>(_event);
 
-    // This event is called in Scene3d's RenderThread, so it's safe to make
+    // This event is called in the RenderThread, so it's safe to make
     // rendering calls here
     if (this->dataPtr->measure && leftClickToSceneEvent)
     {
@@ -285,7 +285,7 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
         this->newDistance();
         QGuiApplication::restoreOverrideCursor();
 
-        // Notify Scene3D that we are done using the right click, so it can
+        // Notify 3D scene that we are done using the right click, so it can
         // re-enable the settings menu
         gz::gui::events::DropdownMenuEnabled
           dropdownMenuEnabledEvent(true);

@@ -33,14 +33,14 @@ namespace gui
 namespace plugins
 {
   /// \brief Render interface class to handle OpenGL / Metal compatibility
-  /// of camera textures in IgnRenderer
+  /// of camera textures in GzRenderer
   //
   /// Each supported graphics API must implement this interface
   /// to provide access to the underlying render system's texture.
-  class IgnCameraTextureRhi
+  class GzCameraTextureRhi
   {
     /// \brief Destructor
-    public: virtual ~IgnCameraTextureRhi();
+    public: virtual ~GzCameraTextureRhi();
 
     /// \brief Update the texture for a camera
     /// \param[in] _camera Pointer to the camera providing the texture
@@ -51,8 +51,8 @@ namespace plugins
     public: virtual void TextureId(void* _texturePtr) = 0;
   };
 
-  /// \brief Ign-rendering renderer.
-  class IgnRenderer;
+  /// \brief gz-rendering renderer.
+  class GzRenderer;
   class RenderSync;
 
   /// \brief Render interface class to handle OpenGL / Metal compatibility

@@ -84,13 +84,13 @@ Screenshot::Screenshot()
 
   // default directory
   this->dataPtr->directory =
-      common::joinPaths(home, ".ignition", "gui", "pictures");
+      common::joinPaths(home, ".gz", "gui", "pictures");
 
   if (!common::exists(this->dataPtr->directory))
   {
     if (!common::createDirectories(this->dataPtr->directory))
     {
-      std::string defaultDir = common::joinPaths(home, ".ignition", "gui");
+      std::string defaultDir = common::joinPaths(home, ".gz", "gui");
       gzerr << "Unable to create directory [" << this->dataPtr->directory
              << "]. Changing default directory to: " << defaultDir
              << std::endl;

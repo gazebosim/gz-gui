@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef GZ_GUI_PLUGINS_SCENE3D_HH_
-#define GZ_GUI_PLUGINS_SCENE3D_HH_
+#ifndef GZ_GUI_PLUGINS_MINIMALSCENE_HH_
+#define GZ_GUI_PLUGINS_MINIMALSCENE_HH_
 
 #include <string>
 #include <memory>
@@ -122,16 +122,16 @@ namespace plugins
 
   class RenderSync;
 
-  /// \brief Ign-rendering renderer.
-  /// All ign-rendering calls should be performed inside this class as it makes
+  /// \brief gz-rendering renderer.
+  /// All gz-rendering calls should be performed inside this class as it makes
   /// sure that opengl calls in the underlying render engine do not interfere
   /// with QtQuick's opengl render operations. The main Render function will
   /// render to an offscreen texture and notify via signal and slots when it's
   /// ready to be displayed.
-  class IgnRenderer
+  class GzRenderer
   {
     ///  \brief Constructor
-    public: IgnRenderer();
+    public: GzRenderer();
 
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt and worker thread (this)
@@ -300,8 +300,8 @@ namespace plugins
     /// On macOS this must be run on the main thread
     public: std::string Initialize();
 
-    /// \brief Ign-rendering renderer
-    public: IgnRenderer ignRenderer;
+    /// \brief gz-rendering renderer
+    public: GzRenderer gzRenderer;
 
     /// \brief Pointer to render interface to handle OpenGL/Metal compatibility
     private: std::unique_ptr<RenderThreadRhi> rhi;
@@ -415,7 +415,7 @@ namespace plugins
     GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 
-  /// \brief Texture node for displaying the render texture from ign-renderer
+  /// \brief Texture node for displaying the render texture from gz-renderer
   class TextureNode : public QObject, public QSGSimpleTextureNode
   {
     Q_OBJECT

@@ -1,4 +1,4 @@
---- # Subcommands available inside ignition-gui.
+--- # Subcommands available inside gz-gui.
 format: 1.0.0
 library_name: @PROJECT_NAME_NO_VERSION@
 library_version: @PROJECT_VERSION_FULL@

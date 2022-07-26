@@ -35,7 +35,7 @@
   <file alias="IgnSnackBar.qml">qml/GzSnackBar.qml</file>
   <file alias="IgnSpinBox.qml">qml/GzSpinBox.qml</file>
 </qresource>
-<qresource prefix="ign-gui-qml/ignition/gui">
+<qresource prefix="gz-gui-qml/gz/gui">
     <!-- This qmldir file defines a QML module that can be imported -->
     <file alias="qmldir">qml/qmldir</file>
     <!-- Add any QML components referenced in the qmldir file here -->

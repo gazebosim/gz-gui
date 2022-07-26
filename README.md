@@ -61,10 +61,10 @@ for usage instructions and API documentation.
 ## Known issue of command line tools
 
 In the event that the installation is a mix of Debian and from source, command
-line tools from `ign-tools` may not work correctly.
+line tools from `gz-tools` may not work correctly.
 
 A workaround for a single package is to define the environment variable
-`GZ_CONFIG_PATH` to point to the location of the Ignition library installation,
+`GZ_CONFIG_PATH` to point to the location of the Gazebo library installation,
 where the YAML file for the package is found, such as
 ```
 export GZ_CONFIG_PATH=/usr/local/share/gz
@@ -77,7 +77,7 @@ export GZ_CONFIG_PATH=/user/local/share/gz/:/path/to/some/other/location
 
 # Folder Structure
 
-* `include/ignition/gui`: Contains all the files which will be installed, such as
+* `include/gz/gui`: Contains all the files which will be installed, such as
   C++ headers, `.qrc`, `.qss` and `qml` files. Plugin-specific resources go under
   `/plugins`; everything in the top-level is meant to be of common use across
   plugins.
@@ -99,7 +99,7 @@ export GZ_CONFIG_PATH=/user/local/share/gz/:/path/to/some/other/location
 
 * `tutorials`: Markdown files for the [tutorials](https://gazebosim.org/api/gui/5.0/tutorials.html).
 
-* `conf`: Files needed by [ign-tools](https://github.com/gazebosim/gz-tools).
+* `conf`: Files needed by [gz-tools](https://github.com/gazebosim/gz-tools).
 
 * `doc`: Files used by Doxygen when generating documentation.
 
@@ -115,7 +115,7 @@ Please see
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition project](https://gazebosim.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Ignition website](https://gazebosim.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Gazebo project](https://gazebosim.org) which periodically releases a versioned set of compatible and complimentary libraries. See the [Gazebo website](https://gazebosim.org) for version and release information.
 
 # License
 

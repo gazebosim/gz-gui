@@ -13,11 +13,18 @@ release will remove the deprecated code.
 * Header files under `ignition/...` are deprecated and will be removed in future versions.
   Please use `gz/...` instead.
 
-* The `ignition-gui` element is deprecated and will be removed.
+* The `gz-gui` element is deprecated and will be removed.
   Please use `gz-gui` instead.
 
 * `ignitionVersion()` is deprecated and will be removed in future versions.
   Please use `gzVersion()` instead.
+
+* The project name has been changed to use the `gz-` prefix, you **must** use the `gz` prefix!
+  * This also means that any generated code that use the project name (e.g. CMake variables, in-source macros) would have to be migrated.
+  * Some non-exhaustive examples of this include:
+    * `GZ_<PROJECT>_<VISIBLE/HIDDEN>`
+    * CMake `-config` files
+    * Paths that depend on the project name
 
 ## Gazebo GUI 6.2 to 6.3
 
@@ -48,8 +55,8 @@ release will remove the deprecated code.
 ## Gazebo GUI 3.x to 4.x
 
 * Use rendering4, transport9 and msgs6.
-* Deprecated `ignition::gui::convert` to `ignition::common::Time`.
-  Use `ignition::msgs::Convert` to `std::chrono::steady_clock::time_point`
+* Deprecated `gz::gui::convert` to `gz::common::Time`.
+  Use `gz::msgs::Convert` to `std::chrono::steady_clock::time_point`
   instead.
 
 ## Gazebo GUI 3.6 to 3.7

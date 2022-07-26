@@ -28,7 +28,7 @@ end
 require 'optparse'
 
 # Constants.
-LIBRARY_NAME = '@IGN_LIBRARY_NAME@'
+LIBRARY_NAME = '@GZ_LIBRARY_NAME@'
 LIBRARY_VERSION = '@PROJECT_VERSION_FULL@'
 COMMON_OPTIONS =
                "  -h [ --help ]              Print this help message.\n"\

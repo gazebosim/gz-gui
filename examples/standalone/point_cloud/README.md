@@ -16,7 +16,7 @@ This example publishes a point cloud that can be visualized with the
 
 Navigate to this directory:
 
-    cd <path to ign-gui>/examples/standalone/point_cloud
+    cd <path to gz-gui>/examples/standalone/point_cloud
 
 Build:
 
@@ -29,7 +29,7 @@ Build:
 
 1. Navigate to this directory:
 
-        cd <path to ign-gui>/examples/standalone/point_cloud
+        cd <path to gz-gui>/examples/standalone/point_cloud
 
 1. Launch the example config file:
 
@@ -40,4 +40,3 @@ Build:
         ./point_cloud
 
 4. Try out different options on the plugin.
-
