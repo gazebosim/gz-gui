@@ -24,7 +24,7 @@ import ignition.gui 1.0
 
 ColumnLayout {
   Layout.minimumWidth: 400
-  Layout.minimumHeight: 900
+  Layout.minimumHeight: 650
   Layout.margins: 5
   anchors.fill: parent
   focus: true
@@ -97,8 +97,15 @@ ColumnLayout {
   // Velocity input
   Label {
     id: velocityLabel
-    text: "Velocity"
+    text: "Maximum velocity"
     Layout.margins: 10
+    ToolTip.text: "Value that's set by buttons and keys, and scaled by sliders."
+    ToolTip.visible: velocityLabelMA.containsMouse
+    MouseArea {
+        id: velocityLabelMA
+        anchors.fill: parent
+        hoverEnabled: true
+    }
   }
 
   GridLayout {
@@ -379,6 +386,8 @@ ColumnLayout {
         }
       }
     }
+
+    // Keyboard
     Item {
       width: parent.width
       Text {
@@ -392,12 +401,15 @@ ColumnLayout {
               "<li><b>E</b>: Down</li></ul>"
       }
     }
+
+    // Sliders
     Item {
       width: parent.width
 
       GridLayout {
         columns: 4
         columnSpacing: 10
+        width: parent.width
 
         // Forward
         Label {
@@ -405,14 +417,12 @@ ColumnLayout {
         }
 
         Label {
-          width: 40
-          text: -maxForwardVel
+          text: (-maxForwardVel).toFixed(2)
         }
 
         Slider {
           id: forwardVelSlider
           Layout.fillWidth: true
-          height: 150
           from: -1.0
           to: 1.0
           stepSize: 0.01
@@ -423,8 +433,7 @@ ColumnLayout {
         }
 
         Label {
-          width: 40
-          text: maxForwardVel
+          text: maxForwardVel.toFixed(2)
         }
 
         // Vertical
@@ -433,14 +442,12 @@ ColumnLayout {
         }
 
         Label {
-          width: 40
-          text: -maxVerticalVel
+          text: (-maxVerticalVel).toFixed(2)
         }
 
         Slider {
           id: verticalVelSlider
           Layout.fillWidth: true
-          height: 150
           from: -1.0
           to: 1.0
           stepSize: 0.01
@@ -451,8 +458,7 @@ ColumnLayout {
         }
 
         Label {
-          width: 40
-          text: maxVerticalVel
+          text: maxVerticalVel.toFixed(2)
         }
 
         // Yaw
@@ -461,14 +467,12 @@ ColumnLayout {
         }
 
         Label {
-          width: 40
-          text: -maxYawVel
+          text: (-maxYawVel).toFixed(2)
         }
 
         Slider {
           id: yawVelSlider
           Layout.fillWidth: true
-          height: 50
           from: -1.0
           to: 1.0
           stepSize: 0.01
@@ -479,8 +483,21 @@ ColumnLayout {
         }
 
         Label {
-          width: 40
-          text: maxYawVel
+          text: maxYawVel.toFixed(2)
+        }
+
+        Button {
+          text: "Stop"
+          Layout.columnSpan: 4
+          onClicked: {
+            forwardVelSlider.value = 0.0;
+            verticalVelSlider.value = 0.0;
+            yawVelSlider.value = 0.0;
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Stop"
+          Material.background: Material.primary
         }
 
         // Bottom spacer
