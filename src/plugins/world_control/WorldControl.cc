@@ -255,7 +255,7 @@ void WorldControl::ProcessMsg()
   // ignore the message if it's associated with a step
   const auto &header = this->dataPtr->msg.header();
   if (this->dataPtr->msg.stepping() ||
-      // Remove this check in Gazebo H
+      // (deprecated) Remove this check in Gazebo H
       ((header.data_size() > 0) && (header.data(0).key() == "step")))
   {
     return;
