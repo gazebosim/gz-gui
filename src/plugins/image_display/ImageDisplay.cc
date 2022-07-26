@@ -197,9 +197,7 @@ void ImageDisplay::ProcessImage()
   // if not rgb, copy values from common::Image to QImage
   if (pixelFormat != common::Image::PixelFormatType::RGB_INT8)
   {
-    unsigned int outputSize = 0;
-    unsigned char *data = nullptr;
-    output.Data(&data, outputSize);
+    auto data = output.Data();
 
     for (unsigned int j = 0; j < height; ++j)
     {
@@ -213,8 +211,6 @@ void ImageDisplay::ProcessImage()
         image.setPixel(i, j, value);
       }
     }
-
-    delete [] data;
   }
 
   this->dataPtr->provider->SetImage(image);
