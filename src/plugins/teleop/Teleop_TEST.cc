@@ -53,15 +53,17 @@ class TeleopTest : public ::testing::Test
       this->app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
       // Load plugin
-      const char *pluginStr =
+      const std::string kTopic{"/test/cmd_vel"};
+      std::string pluginStr =
         "<plugin filename=\"Teleop\">"
           "<ignition-gui>"
             "<title>Teleop!</title>"
           "</ignition-gui>"
+          "<topic>" + kTopic + "</topic>"
         "</plugin>";
 
       tinyxml2::XMLDocument pluginDoc;
-      EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr));
+      EXPECT_EQ(tinyxml2::XML_SUCCESS, pluginDoc.Parse(pluginStr.c_str()));
       EXPECT_TRUE(this->app.LoadPlugin("Teleop",
           pluginDoc.FirstChildElement("plugin")));
 
@@ -80,13 +82,11 @@ class TeleopTest : public ::testing::Test
       EXPECT_EQ(plugin->Title(), "Teleop!");
 
       // Subscribes to the command velocity topic.
-      node.Subscribe("/model/vehicle_blue/cmd_vel",
-          &TeleopTest::VerifyTwistMsgCb, this);
+      node.Subscribe(kTopic, &TeleopTest::VerifyTwistMsgCb, this);
 
       // Sets topic. This must be the same as the
       // one the node is subscribed to.
-      plugin->SetTopic(
-          QString::fromStdString("/model/vehicle_blue/cmd_vel"));
+      plugin->SetTopic(QString::fromStdString(kTopic));
 
       // Set velocity value and movement direction.
       plugin->SetMaxForwardVel(this->kMaxForwardVel);
@@ -148,11 +148,12 @@ class TeleopTest : public ::testing::Test
   protected: bool received = false;
   protected: transport::Node node;
 
-  // Define velocity values.
+  // Maximum velocities
   protected: const double kMaxForwardVel = 1.0;
   protected: const double kMaxVerticalVel = 1.0;
   protected: const double kMaxYawVel = 0.5;
 
+  // Current vel
   protected: double forwardVel = 0.0;
   protected: double verticalVel = 0.0;
   protected: double yawVel = 0.0;
@@ -216,6 +217,14 @@ TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
   this->forwardVel = 0.0;
   this->KeyEvent(false, Qt::Key_W);
 
+  igndbg << "Press S" << std::endl;
+  this->forwardVel = -this->kMaxForwardVel;
+  this->KeyEvent(true, Qt::Key_S);
+
+  igndbg << "Release S" << std::endl;
+  this->forwardVel = 0.0;
+  this->KeyEvent(false, Qt::Key_S);
+
   igndbg << "Press X" << std::endl;
   this->KeyEvent(true, Qt::Key_X);
 
@@ -229,4 +238,8 @@ TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
   igndbg << "Press E" << std::endl;
   this->verticalVel = -this->kMaxVerticalVel;
   this->KeyEvent(true, Qt::Key_E);
+
+  igndbg << "Release E" << std::endl;
+  this->verticalVel = 0.0;
+  this->KeyEvent(false, Qt::Key_E);
 }

@@ -68,31 +68,39 @@ namespace plugins
     /// \brief Publisher.
     public: ignition::transport::Node::Publisher cmdVelPub;
 
-    /// \brief Forward velocity.
+    /// \brief Maximum forward velocity in m/s. GUI buttons and key presses
+    /// will use this velocity. Sliders will scale up to this value.
     public: double maxForwardVel = 1.0;
 
-    /// \brief Vertical velocity.
+    /// \brief Maximum vertical velocity in m/s. GUI buttons and key presses
+    /// will use this velocity. Sliders will scale up to this value.
     public: double maxVerticalVel = 1.0;
 
-    /// \brief Yaw velocity.
+    /// \brief Maximum yaw velocity in rad/s. GUI buttons and key presses
+    /// will use this velocity. Sliders will scale up to this value.
     public: double maxYawVel = 0.5;
 
-    /// \brief Forward scale.
+    /// \brief Forward scale to multiply by maxForwardVel, in the [-1, 1] range.
+    /// Negative values go backwards, zero stops movement in the forward axis.
     public: int forwardKeyScale = 0;
 
-    /// \brief Vertical scale.
+    /// \brief Vertical scale to multiply by maxVerticalVel, in the [-1, 1]
+    /// range. Negative values go down, zero stops movement in the vertical
+    /// axis.
     public: int verticalKeyScale = 0;
 
-    /// \brief Yaw scale.
+    /// \brief Yaw scale to multiply by maxYawVel, in the [-1, 1] range.
+    /// Negative values rotate clockwise when looking from above, zero stops
+    /// movement in the yaw axis.
     public: int yawKeyScale = 0;
 
-    /// \brief Forward state setted by keyboard input.
+    /// \brief Forward state set by keyboard input.
     public: KeyForward forwardKeyState = KeyForward::kStop;
 
-    /// \brief Vertical state setted by keyboard input.
+    /// \brief Vertical state set by keyboard input.
     public: KeyVertical verticalKeyState = KeyVertical::kStop;
 
-    /// \brief Yaw state setted by keyboard input.
+    /// \brief Yaw state set by keyboard input.
     public: KeyYaw yawKeyState = KeyYaw::kStop;
 
     /// \brief Indicates if the keyboard is enabled or
