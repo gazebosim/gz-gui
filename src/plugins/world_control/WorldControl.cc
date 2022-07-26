@@ -254,8 +254,12 @@ void WorldControl::ProcessMsg()
 
   // ignore the message if it's associated with a step
   const auto &header = this->dataPtr->msg.header();
-  if ((header.data_size() > 0) && (header.data(0).key() == "step"))
+  if (this->dataPtr->msg.stepping() ||
+      // Remove this check in Gazebo H
+      (header.data_size() > 0) && (header.data(0).key() == "step"))
+  {
     return;
+  }
 
   // If the pause state of the message doesn't match the pause state of this
   // plugin, then play/pause must have occurred elsewhere (for example, the
