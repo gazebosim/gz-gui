@@ -39,13 +39,19 @@ namespace gui
 {
 namespace plugins
 {
-  enum class KeyLinear{
+  enum class KeyForward{
     kForward,
     kBackward,
     kStop,
   };
 
-  enum class KeyAngular{
+  enum class KeyVertical{
+    kUp,
+    kDown,
+    kStop,
+  };
+
+  enum class KeyYaw{
     kLeft,
     kRight,
     kStop,
@@ -62,20 +68,40 @@ namespace plugins
     /// \brief Publisher.
     public: ignition::transport::Node::Publisher cmdVelPub;
 
-    /// \brief Linear velocity.
-    public: double linearVel = 0;
-    /// \brief Angular velocity.
-    public: double angularVel = 0;
+    /// \brief Maximum forward velocity in m/s. GUI buttons and key presses
+    /// will use this velocity. Sliders will scale up to this value.
+    public: double maxForwardVel = 1.0;
 
-    /// \brief Linear direction.
-    public: int linearDir = 0;
-    /// \brief Angular direction.
-    public: int angularDir = 0;
+    /// \brief Maximum vertical velocity in m/s. GUI buttons and key presses
+    /// will use this velocity. Sliders will scale up to this value.
+    public: double maxVerticalVel = 1.0;
 
-    /// \brief Linear state setted by keyboard input.
-    public: KeyLinear linearState = KeyLinear::kStop;
-    /// \brief Angular state setted by keyboard input.
-    public: KeyAngular angularState = KeyAngular::kStop;
+    /// \brief Maximum yaw velocity in rad/s. GUI buttons and key presses
+    /// will use this velocity. Sliders will scale up to this value.
+    public: double maxYawVel = 0.5;
+
+    /// \brief Forward scale to multiply by maxForwardVel, in the [-1, 1] range.
+    /// Negative values go backwards, zero stops movement in the forward axis.
+    public: int forwardKeyScale = 0;
+
+    /// \brief Vertical scale to multiply by maxVerticalVel, in the [-1, 1]
+    /// range. Negative values go down, zero stops movement in the vertical
+    /// axis.
+    public: int verticalKeyScale = 0;
+
+    /// \brief Yaw scale to multiply by maxYawVel, in the [-1, 1] range.
+    /// Negative values rotate clockwise when looking from above, zero stops
+    /// movement in the yaw axis.
+    public: int yawKeyScale = 0;
+
+    /// \brief Forward state set by keyboard input.
+    public: KeyForward forwardKeyState = KeyForward::kStop;
+
+    /// \brief Vertical state set by keyboard input.
+    public: KeyVertical verticalKeyState = KeyVertical::kStop;
+
+    /// \brief Yaw state set by keyboard input.
+    public: KeyYaw yawKeyState = KeyYaw::kStop;
 
     /// \brief Indicates if the keyboard is enabled or
     /// disabled.
@@ -103,32 +129,47 @@ Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
 Teleop::~Teleop() = default;
 
 /////////////////////////////////////////////////
-void Teleop::LoadConfig(const tinyxml2::XMLElement *)
+void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Teleop";
+
+  if (_pluginElem)
+  {
+    auto topicElem = _pluginElem->FirstChildElement("topic");
+    if (nullptr != topicElem && nullptr != topicElem->GetText())
+      this->SetTopic(topicElem->GetText());
+  }
 
   ignition::gui::App()->findChild
     <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnTeleopTwist()
+void Teleop::OnTeleopTwist(double _forwardVel, double _verticalVel,
+        double _angVel)
 {
   ignition::msgs::Twist cmdVelMsg;
 
-  cmdVelMsg.mutable_linear()->set_x(
-      this->dataPtr->linearDir * this->dataPtr->linearVel);
-  cmdVelMsg.mutable_angular()->set_z(
-      this->dataPtr->angularDir * this->dataPtr->angularVel);
+  cmdVelMsg.mutable_linear()->set_x(_forwardVel);
+  cmdVelMsg.mutable_linear()->set_z(_verticalVel);
+  cmdVelMsg.mutable_angular()->set_z(_angVel);
 
   if (!this->dataPtr->cmdVelPub.Publish(cmdVelMsg))
+  {
     ignerr << "ignition::msgs::Twist message couldn't be published at topic: "
       << this->dataPtr->topic << std::endl;
+  }
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnTopicSelection(const QString &_topic)
+QString Teleop::Topic() const
+{
+  return QString::fromStdString(this->dataPtr->topic);
+}
+
+/////////////////////////////////////////////////
+void Teleop::SetTopic(const QString &_topic)
 {
   this->dataPtr->topic = _topic.toStdString();
   ignmsg << "A new topic has been entered: '" <<
@@ -139,7 +180,7 @@ void Teleop::OnTopicSelection(const QString &_topic)
   this->dataPtr->cmdVelPub =
       this->dataPtr->node.Advertise<ignition::msgs::Twist>
       (this->dataPtr->topic);
-  if(!this->dataPtr->cmdVelPub)
+  if (!this->dataPtr->cmdVelPub)
   {
     App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Error when advertising topic: " +
@@ -150,134 +191,145 @@ void Teleop::OnTopicSelection(const QString &_topic)
   else
   {
     App()->findChild<MainWindow *>()->notifyWithDuration(
-      QString::fromStdString("Subscribing to topic: '<b>" +
+      QString::fromStdString("Advertising topic: '<b>" +
         this->dataPtr->topic + "</b>'"), 4000);
   }
+  this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnLinearVelSelection(double _velocity)
+void Teleop::SetMaxForwardVel(double _velocity)
 {
-  this->dataPtr->linearVel = _velocity;
+  this->dataPtr->maxForwardVel = _velocity;
+  this->MaxForwardVelChanged();
 }
 
 /////////////////////////////////////////////////
-void Teleop::OnAngularVelSelection(double _velocity)
+double Teleop::MaxForwardVel() const
 {
-  this->dataPtr->angularVel = _velocity;
+  return this->dataPtr->maxForwardVel;
+}
+
+/////////////////////////////////////////////////
+void Teleop::SetMaxVerticalVel(double _velocity)
+{
+  this->dataPtr->maxVerticalVel = _velocity;
+  this->MaxVerticalVelChanged();
+}
+
+/////////////////////////////////////////////////
+double Teleop::MaxVerticalVel() const
+{
+  return this->dataPtr->maxVerticalVel;
+}
+
+/////////////////////////////////////////////////
+void Teleop::SetMaxYawVel(double _velocity)
+{
+  this->dataPtr->maxYawVel = _velocity;
+  this->MaxYawVelChanged();
+}
+
+/////////////////////////////////////////////////
+double Teleop::MaxYawVel() const
+{
+  return this->dataPtr->maxYawVel;
 }
 
 /////////////////////////////////////////////////
 void Teleop::OnKeySwitch(bool _checked)
 {
-  this->dataPtr->linearDir = 0;
-  this->dataPtr->angularDir = 0;
   this->dataPtr->keyEnable = _checked;
-}
-
-/////////////////////////////////////////////////
-void Teleop::OnSlidersSwitch(bool _checked)
-{
-  if(_checked)
-  {
-    this->dataPtr->linearDir = 1;
-    this->dataPtr->angularDir = 1;
-    this->OnTeleopTwist();
-  }
 }
 
 /////////////////////////////////////////////////
 bool Teleop::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if(this->dataPtr->keyEnable == true)
+  if (this->dataPtr->keyEnable == true)
   {
-    if(_event->type() == QEvent::KeyPress)
+    if (_event->type() == QEvent::KeyPress)
     {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearState = KeyLinear::kForward;
+          this->dataPtr->forwardKeyState = KeyForward::kForward;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularState = KeyAngular::kLeft;
+          this->dataPtr->yawKeyState = KeyYaw::kLeft;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularState = KeyAngular::kRight;
+          this->dataPtr->yawKeyState = KeyYaw::kRight;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearState = KeyLinear::kBackward;
+          this->dataPtr->forwardKeyState = KeyForward::kBackward;
+          break;
+        case Qt::Key_Q:
+          this->dataPtr->verticalKeyState = KeyVertical::kUp;
+          break;
+        case Qt::Key_E:
+          this->dataPtr->verticalKeyState = KeyVertical::kDown;
           break;
         default:
           break;
       }
-      this->SetKeyDirection();
-      this->OnTeleopTwist();
+      this->SetKeyScale();
+      this->OnTeleopTwist(
+          this->dataPtr->forwardKeyScale * this->dataPtr->maxForwardVel,
+          this->dataPtr->verticalKeyScale * this->dataPtr->maxVerticalVel,
+          this->dataPtr->yawKeyScale * this->dataPtr->maxYawVel);
     }
 
-    if(_event->type() == QEvent::KeyRelease)
+    if (_event->type() == QEvent::KeyRelease)
     {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(_event);
       switch(keyEvent->key())
       {
         case Qt::Key_W:
-          this->dataPtr->linearState = KeyLinear::kStop;
+          this->dataPtr->forwardKeyState = KeyForward::kStop;
           break;
         case Qt::Key_A:
-          this->dataPtr->angularState = KeyAngular::kStop;
+          this->dataPtr->yawKeyState = KeyYaw::kStop;
           break;
         case Qt::Key_D:
-          this->dataPtr->angularState = KeyAngular::kStop;
+          this->dataPtr->yawKeyState = KeyYaw::kStop;
           break;
         case Qt::Key_S:
-          this->dataPtr->linearState = KeyLinear::kStop;
+          this->dataPtr->forwardKeyState = KeyForward::kStop;
+          break;
+        case Qt::Key_Q:
+          this->dataPtr->verticalKeyState = KeyVertical::kStop;
+          break;
+        case Qt::Key_E:
+          this->dataPtr->verticalKeyState = KeyVertical::kStop;
           break;
         default:
           break;
       }
-      this->SetKeyDirection();
-      this->OnTeleopTwist();
+      this->SetKeyScale();
+      this->OnTeleopTwist(
+          this->dataPtr->forwardKeyScale * this->dataPtr->maxForwardVel,
+          this->dataPtr->verticalKeyScale * this->dataPtr->maxVerticalVel,
+          this->dataPtr->yawKeyScale * this->dataPtr->maxYawVel);
     }
   }
   return QObject::eventFilter(_obj, _event);
 }
 
 /////////////////////////////////////////////////
-void Teleop::SetKeyDirection()
+void Teleop::SetKeyScale()
 {
-  this->dataPtr->linearDir = this->dataPtr->linearState ==
-      KeyLinear::kForward ? 1 : this->dataPtr->linearState ==
-      KeyLinear::kBackward ? -1 : 0;
+  this->dataPtr->forwardKeyScale = this->dataPtr->forwardKeyState ==
+      KeyForward::kForward ? 1 : this->dataPtr->forwardKeyState ==
+      KeyForward::kBackward ? -1 : 0;
 
-  this->dataPtr->angularDir = this->dataPtr->angularState ==
-      KeyAngular::kLeft ? 1 : this->dataPtr->angularState ==
-      KeyAngular::kRight ? -1 : 0;
-}
+  this->dataPtr->verticalKeyScale = this->dataPtr->verticalKeyState ==
+      KeyVertical::kUp ? 1 : this->dataPtr->verticalKeyState ==
+      KeyVertical::kDown ? -1 : 0;
 
-/////////////////////////////////////////////////
-int Teleop::LinearDirection() const
-{
-  return this->dataPtr->linearDir;
-}
-
-/////////////////////////////////////////////////
-void Teleop::setLinearDirection(int _linearDir)
-{
-  this->dataPtr->linearDir = _linearDir;
-  this->LinearDirectionChanged();
-}
-
-/////////////////////////////////////////////////
-int Teleop::AngularDirection() const
-{
-  return this->dataPtr->angularDir;
-}
-
-/////////////////////////////////////////////////
-void Teleop::setAngularDirection(int _angularDir)
-{
-  this->dataPtr->angularDir = _angularDir;
-  this->AngularDirectionChanged();
+  this->dataPtr->yawKeyScale = this->dataPtr->yawKeyState ==
+      KeyYaw::kLeft ? 1 : this->dataPtr->yawKeyState ==
+      KeyYaw::kRight ? -1 : 0;
 }
 
 // Register this plugin
