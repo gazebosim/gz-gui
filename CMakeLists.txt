@@ -8,7 +8,7 @@ project(ignition-gui2 VERSION 2.3.3)
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake2 REQUIRED)
+find_package(ignition-cmake2 2.13 REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -86,7 +86,7 @@ ign_find_package (Qt5
 )
 
 set(IGNITION_GUI_PLUGIN_INSTALL_DIR
-  ${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${IGN_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
+  ${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
 )
 
 #============================================================================
