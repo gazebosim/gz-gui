@@ -8,7 +8,7 @@ project(ignition-gui3 VERSION 3.10.0)
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake2 2.13 REQUIRED)
+find_package(ignition-cmake2 2.14 REQUIRED)
 
 #============================================================================
 # Configure the project
