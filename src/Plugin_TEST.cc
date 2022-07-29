@@ -297,7 +297,7 @@ TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoIgn))
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Load normal plugin
-  const char *pluginStr = 
+  const char *pluginStr =
     "<plugin filename=\"WorldStats\" name=\"World stats\">"
     "</plugin>";
 
