@@ -289,9 +289,11 @@ std::string Plugin::ConfigStr()
   auto pluginElem = doc.FirstChildElement("plugin");
   if (!pluginElem)
   {
+    // LCOV_EXCL_START
     ignerr << "Missing <plugin> element, not updating config string."
            << std::endl;
     return this->configStr;
+    // LCOV_EXCL_STOP
   }
 
   // <ignition-gui>

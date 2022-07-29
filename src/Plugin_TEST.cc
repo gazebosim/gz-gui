@@ -134,3 +134,229 @@ TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Getters))
   ASSERT_NE(nullptr, plugin->CardItem());
   ASSERT_NE(nullptr, plugin->Context());
 }
+
+/////////////////////////////////////////////////
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStr))
+{
+  ignition::common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load normal plugin
+  const char *pluginStr =
+    "<plugin filename=\"WorldStats\" name=\"World stats\">"
+    "  <ignition-gui>"
+    "    <title>World stats</title>"
+    "    <property type=\"bool\" key=\"showTitleBar\">true</property>"
+    "    <property type=\"bool\" key=\"resizable\">true</property>"
+    "    <property type=\"double\" key=\"height\">200</property>"
+    "    <property type=\"double\" key=\"width\">300</property>"
+    "    <property type=\"double\" key=\"z\">2</property>"
+    "    <property type=\"string\" key=\"state\">floating</property>"
+    "    <anchors target=\"3D View\">"
+    "      <line own=\"right\" target=\"right\"/>"
+    "      <line own=\"bottom\" target=\"bottom\"/>"
+    "    </anchors>"
+    "  </ignition-gui>"
+    "</plugin>";
+
+  std::unordered_map<std::string, std::string> pluginProps;
+  pluginProps["showTitleBar"] = "true";
+  pluginProps["resizable"] = "true";
+  pluginProps["height"] = "200";
+  pluginProps["width"] = "300";
+  pluginProps["z"] = "2";
+  pluginProps["state"] = "floating";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("WorldStats",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin count
+  EXPECT_EQ(1, win->findChildren<Plugin *>().size());
+
+  // Get the output for ConfigStr()
+  std::string configStr;
+  tinyxml2::XMLDocument configDoc;
+  auto plugin = win->findChildren<Plugin *>()[0];
+  configStr = plugin->ConfigStr();
+  configDoc.Parse(configStr.c_str());
+
+  // <plugin>
+  auto pluginElem = configDoc.FirstChildElement("plugin");
+  ASSERT_NE(nullptr, pluginElem);
+
+  // <ignition-gui>
+  auto ignGuiElem = pluginElem->FirstChildElement("ignition-gui");
+  ASSERT_NE(nullptr, ignGuiElem);
+
+  // Iterate properties
+  for (auto propElem = ignGuiElem->FirstChildElement("property");
+      propElem != nullptr;)
+  {
+    // If property in map, mark it as "Verified"
+    if (pluginProps.find(propElem->Attribute("key")) != pluginProps.end())
+    {
+      EXPECT_EQ(propElem->GetText(), pluginProps[propElem->Attribute("key")]);
+      pluginProps[propElem->Attribute("key")] = "Verified";
+    }
+    auto nextProp = propElem->NextSiblingElement("property");
+    propElem = nextProp;
+  }
+
+  // Verify all inputs properties are correct
+  for (auto itr = pluginProps.begin(); itr != pluginProps.end(); itr++)
+  {
+    EXPECT_EQ(itr->second, "Verified");
+  }
+
+}
+
+/////////////////////////////////////////////////
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
+{
+  ignition::common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load normal plugin
+  const char *pluginStr = "";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("WorldStats",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin count
+  EXPECT_EQ(1, win->findChildren<Plugin *>().size());
+
+  // Get the output for ConfigStr()
+  std::string configStr;
+  tinyxml2::XMLDocument configDoc;
+  auto plugin = win->findChildren<Plugin *>()[0];
+  configStr = plugin->ConfigStr();
+  configDoc.Parse(configStr.c_str());
+
+  // ConfigStr() creates a plugin with default value when input doesn't
+  // contain a <plugin> tag.
+  // We select a few to verify.
+  std::unordered_map<std::string, std::string> pluginProps;
+  pluginProps["showTitleBar"] = "true";
+  pluginProps["resizable"] = "true";
+  pluginProps["height"] = "952";
+  pluginProps["width"] = "1199";
+  pluginProps["z"] = "0";
+  pluginProps["state"] = "docked";
+
+  // <plugin>
+  auto pluginElem = configDoc.FirstChildElement("plugin");
+  ASSERT_NE(nullptr, pluginElem);
+
+  // <ignition-gui>
+  auto ignGuiElem = pluginElem->FirstChildElement("ignition-gui");
+  ASSERT_NE(nullptr, ignGuiElem);
+
+  // Iterate properties
+  for (auto propElem = ignGuiElem->FirstChildElement("property");
+      propElem != nullptr;)
+  {
+    // If property in map, mark it as "Verified"
+    if (pluginProps.find(propElem->Attribute("key")) != pluginProps.end())
+    {
+      EXPECT_EQ(propElem->GetText(), pluginProps[propElem->Attribute("key")]);
+      pluginProps[propElem->Attribute("key")] = "Verified";
+    }
+    auto nextProp = propElem->NextSiblingElement("property");
+    propElem = nextProp;
+  }
+
+  // Verify all selected inputs properties are correct
+  for (auto itr = pluginProps.begin(); itr != pluginProps.end(); itr++)
+  {
+    EXPECT_EQ(itr->second, "Verified");
+  }
+}
+
+/////////////////////////////////////////////////
+TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoIgn))
+{
+  ignition::common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load normal plugin
+  const char *pluginStr = 
+    "<plugin filename=\"WorldStats\" name=\"World stats\">"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("WorldStats",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin count
+  EXPECT_EQ(1, win->findChildren<Plugin *>().size());
+
+  // Get the output for ConfigStr()
+  std::string configStr;
+  tinyxml2::XMLDocument configDoc;
+  auto plugin = win->findChildren<Plugin *>()[0];
+  configStr = plugin->ConfigStr();
+  configDoc.Parse(configStr.c_str());
+
+  // ConfigStr() creates a plugin with default value when input doesn't
+  // contain a <ignition-gui> tag.
+  // We select a few to verify.
+  std::unordered_map<std::string, std::string> pluginProps;
+  pluginProps["showTitleBar"] = "true";
+  pluginProps["resizable"] = "true";
+  pluginProps["height"] = "952";
+  pluginProps["width"] = "1199";
+  pluginProps["z"] = "0";
+  pluginProps["state"] = "docked";
+
+  // <plugin>
+  auto pluginElem = configDoc.FirstChildElement("plugin");
+  ASSERT_NE(nullptr, pluginElem);
+
+  // <ignition-gui>
+  auto ignGuiElem = pluginElem->FirstChildElement("ignition-gui");
+  ASSERT_NE(nullptr, ignGuiElem);
+
+  // Iterate properties
+  for (auto propElem = ignGuiElem->FirstChildElement("property");
+      propElem != nullptr;)
+  {
+    // If property in map, mark it as "Verified"
+    if (pluginProps.find(propElem->Attribute("key")) != pluginProps.end())
+    {
+      EXPECT_EQ(propElem->GetText(), pluginProps[propElem->Attribute("key")]);
+      pluginProps[propElem->Attribute("key")] = "Verified";
+    }
+    auto nextProp = propElem->NextSiblingElement("property");
+    propElem = nextProp;
+  }
+
+  // Verify all selected inputs properties are correct
+  for (auto itr = pluginProps.begin(); itr != pluginProps.end(); itr++)
+  {
+    EXPECT_EQ(itr->second, "Verified");
+  }
+}
+
