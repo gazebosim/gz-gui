@@ -22,399 +22,489 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import ignition.gui 1.0
 
-Rectangle {
-  color:"transparent"
-  Layout.minimumWidth: 300
-  Layout.minimumHeight: 900
+ColumnLayout {
+  Layout.minimumWidth: 400
+  Layout.minimumHeight: 650
+  Layout.margins: 5
   anchors.fill: parent
   focus: true
+
+  // Maximum forward velocity
+  property double maxForwardVel: Teleop.maxForwardVel
+
+  // Maximum vertical velocity
+  property double maxVerticalVel: Teleop.maxVerticalVel
+
+  // Maximum yaw velocity
+  property double maxYawVel: Teleop.maxYawVel
+
+  // Send command according to given scale
+  function sendCommand(_forwardScale, _verticalScale, _yawScale) {
+    var forwardVel = _forwardScale * maxForwardVel;
+    var verticalVel = _verticalScale * maxVerticalVel;
+    var yawVel = _yawScale * maxYawVel;
+    Teleop.OnTeleopTwist(forwardVel, verticalVel, yawVel)
+  }
+
+  // Forward scale based on button state
+  function forwardScale() {
+    if (forwardButton.checked)
+      return 1;
+    else if (backwardButton.checked)
+      return -1;
+
+    return 0;
+  }
+
+  // Vertical scale based on button state
+  function verticalScale() {
+    if (upButton.checked)
+      return 1;
+    else if (downButton.checked)
+      return -1;
+
+    return 0;
+  }
+
+  // Yaw scale based on button state
+  function yawScale() {
+    if (leftButton.checked)
+      return 1;
+    else if (rightButton.checked)
+      return -1;
+
+    return 0;
+  }
 
   // Topic input
   Label {
     id: topicLabel
-    text: "Topic:"
-    anchors.top: parent.top
-    anchors.topMargin: 10
-    anchors.left: parent.left
-    anchors.leftMargin: 5
+    text: "Topic"
+    Layout.fillWidth: true
+    Layout.margins: 10
   }
   TextField {
     id: topicField
-    anchors.top: topicLabel.bottom
-    anchors.topMargin: 5
-    anchors.left: parent.left
-    anchors.leftMargin: 5
     Layout.fillWidth: true
-    text:"/cmd_vel"
+    Layout.margins: 10
+    text: Teleop.topic
     placeholderText: qsTr("Topic to publish...")
     onEditingFinished: {
-      Teleop.OnTopicSelection(text)
+      Teleop.SetTopic(text)
     }
   }
 
   // Velocity input
   Label {
     id: velocityLabel
-    text: "Velocity:"
-    anchors.top: topicField.bottom
-    anchors.topMargin: 10
-    anchors.left: parent.left
-    anchors.leftMargin: 5
-  }
-  // Linear velocity input
-  Label {
-    id: linearVelLabel
-    text: "Linear"
-    color: "dimgrey"
-    anchors.top: velocityLabel.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
-    anchors.leftMargin: 5
-  }
-  IgnSpinBox {
-    id: linearVelField
-    anchors.top: velocityLabel.bottom
-    anchors.topMargin: 5
-    anchors.left: linearVelLabel.right
-    anchors.leftMargin: 5
-    Layout.fillWidth: true
-    value: 0.0
-    maximumValue: 10.0
-    minimumValue: 0.0
-    decimals: 2
-    stepSize: 0.10
-    onEditingFinished:{
-      Teleop.OnLinearVelSelection(value)
-    } 
-  }
-  
-  // Angular velocity input
-  Label {
-    id: angularVelLabel
-    text: "Angular"
-    color: "dimgrey"
-    anchors.top: velocityLabel.bottom
-    anchors.topMargin: 15
-    anchors.left: linearVelField.right
-    anchors.leftMargin: 10
-  }
-  IgnSpinBox {
-    id: angularVelField
-    anchors.top: velocityLabel.bottom
-    anchors.topMargin: 5
-    anchors.left: angularVelLabel.right
-    anchors.leftMargin: 5
-    Layout.fillWidth: true
-    value: 0.0
-    maximumValue: 2.0
-    minimumValue: 0.0
-    decimals: 2
-    stepSize: 0.10
-    onEditingFinished:{
-      Teleop.OnAngularVelSelection(value)
-    } 
+    text: "Maximum velocity"
+    Layout.margins: 10
+    ToolTip.text: "Value that's set by buttons and keys, and scaled by sliders."
+    ToolTip.visible: velocityLabelMA.containsMouse
+    MouseArea {
+        id: velocityLabelMA
+        anchors.fill: parent
+        hoverEnabled: true
+    }
   }
 
-  // Button grid
   GridLayout {
-    id: buttonsGrid
-    anchors.top: angularVelField.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
-    anchors.leftMargin: 40
     Layout.fillWidth: true
-    columns: 4
-    Button {
-      id: forwardButton
-      text: "\u25B2"
-      checkable: true
-      Layout.row: 0
-      Layout.column: 1
-      onClicked: {
-        Teleop.linearDir = forwardButton.checked ? 1 : 0
-        if(backwardButton.checked)
-          backwardButton.checked = false
-        slidersSwitch.checked = false
-        Teleop.OnTeleopTwist()
-      }
-      ToolTip.visible: hovered
-      ToolTip.text: "Forward"
-      Material.background: Material.primary
-      contentItem: Label {
-        renderType: Text.NativeRendering
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Helvetica"
-        font.pointSize: 10
-        color: "black"
-        text: forwardButton.text
+    Layout.margins: 10
+    columns: 2
+
+    // Forward velocity input
+    Label {
+      id: maxForwardVelLabel
+      text: "Forward (m/s)"
+      color: "dimgrey"
+    }
+    IgnSpinBox {
+      id: maxForwardVelField
+      Layout.fillWidth: true
+      value: maxForwardVel
+      maximumValue: 10000.0
+      minimumValue: 0.0
+      decimals: 2
+      stepSize: 0.10
+      onEditingFinished:{
+        Teleop.SetMaxForwardVel(value)
       }
     }
-    Button {
-      id: leftButton
-      text: "\u25C0"
-      checkable: true
-      Layout.row: 1
-      Layout.column: 0
-      onClicked: {
-        Teleop.angularDir = leftButton.checked ? 1 : 0
-        if(rightButton.checked)
-          rightButton.checked = false
-        slidersSwitch.checked = false
-        Teleop.OnTeleopTwist()
-      }
-      Material.background: Material.primary
-      contentItem: Label {
-        renderType: Text.NativeRendering
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Helvetica"
-        font.pointSize: 10
-        color: "black"
-        text: leftButton.text
+
+    // Vertical velocity input
+    Label {
+      id: maxVerticalVelLabel
+      text: "Vertical (m/s)"
+      color: "dimgrey"
+    }
+    IgnSpinBox {
+      id: maxVerticalVelField
+      Layout.fillWidth: true
+      value: maxVerticalVel
+      maximumValue: 10000.0
+      minimumValue: 0.0
+      decimals: 2
+      stepSize: 0.10
+      onEditingFinished:{
+        Teleop.SetMaxVerticalVel(value)
       }
     }
-    Button {
-      id: rightButton
-      text: "\u25B6"
-      checkable: true
-      Layout.row: 1
-      Layout.column: 2
-      onClicked: {
-        Teleop.angularDir = rightButton.checked ? -1 : 0
-        if(leftButton.checked)
-          leftButton.checked = false
-        slidersSwitch.checked = false
-        Teleop.OnTeleopTwist()
-      }
-      Material.background: Material.primary
-      contentItem: Label {
-        renderType: Text.NativeRendering
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Helvetica"
-        font.pointSize: 10
-        color: "black"
-        text: rightButton.text
-      }
+
+    // Yaw velocity input
+    Label {
+      id: maxYawVelLabel
+      text: "Yaw (rad/s)"
+      color: "dimgrey"
     }
-    Button {
-      id: backwardButton
-      text: "\u25BC"
-      checkable: true
-      Layout.row: 2
-      Layout.column: 1
-      onClicked: {
-        Teleop.linearDir = backwardButton.checked ? -1 : 0
-        if(forwardButton.checked)
-          forwardButton.checked = false
-        slidersSwitch.checked = false
-        Teleop.OnTeleopTwist()
-      }
-      Material.background: Material.primary
-      contentItem: Label {
-        renderType: Text.NativeRendering
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Helvetica"
-        font.pointSize: 10
-        color: "black"
-        text: backwardButton.text
-      }
-    }
-    Button {
-      id: stopButton
-      text: "Stop"
-      checkable: false
-      Layout.row: 1
-      Layout.column: 1
-      onClicked: {
-        Teleop.linearDir = 0
-        Teleop.angularDir = 0
-        forwardButton.checked = false
-        leftButton.checked = false
-        rightButton.checked = false
-        backwardButton.checked = false
-        linearVelSlider.value = 0
-        angularVelSlider.value = 0
-        slidersSwitch.checked = false
-        Teleop.OnTeleopTwist()
-      }
-      Material.background: Material.primary
-      contentItem: Label {
-        renderType: Text.NativeRendering
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Helvetica"
-        font.pointSize: 10
-        color: "black"
-        text: stopButton.text
+    IgnSpinBox {
+      id: maxYawVelField
+      Layout.fillWidth: true
+      value: maxYawVel
+      maximumValue: 10000.0
+      minimumValue: 0.0
+      decimals: 2
+      stepSize: 0.10
+      onEditingFinished:{
+        Teleop.SetMaxYawVel(value)
       }
     }
   }
 
-  //Keyboard's switch
-  Switch {
-    id: keySwitch
-    anchors.top: buttonsGrid.bottom
-    anchors.topMargin: 10
-    anchors.left: parent.left
-    anchors.leftMargin: 5
-    onClicked: {
-      forwardButton.checked = false
-      leftButton.checked = false
-      rightButton.checked = false
-      backwardButton.checked = false
-      Teleop.OnKeySwitch(checked);
+  TabBar {
+    id: tabs
+    Layout.fillWidth: true
+    Layout.margins: 10
+
+    onCurrentIndexChanged: {
+      Teleop.OnKeySwitch(currentIndex == 1);
     }
-    ToolTip.visible: hovered
-    ToolTip.text: checked ? qsTr("Disable keyboard") : qsTr("Enable keyboard")
-  }
-  Label {
-    id: keyboardSwitchLabel
-    text: "Input from keyboard (WASD)"
-    anchors.horizontalCenter : keySwitch.horizontalCenter
-    anchors.verticalCenter : keySwitch.verticalCenter
-    anchors.left: keySwitch.right
-    anchors.leftMargin: 5
+
+    TabButton {
+      text: qsTr("Buttons")
+    }
+    TabButton {
+      text: qsTr("Keyboard")
+    }
+    TabButton {
+      text: qsTr("Sliders")
+    }
   }
 
-  // Slider's switch
-  Switch {
-    id: slidersSwitch
-    anchors.top: keySwitch.bottom
-    anchors.topMargin: 10
-    anchors.left: keySwitch.left
-    onClicked: {
-      Teleop.OnSlidersSwitch(checked);
-      if(checked){
-        forwardButton.checked = false
-        leftButton.checked = false
-        rightButton.checked = false
-        backwardButton.checked = false
-        linearVelField.value = linearVelSlider.value.toFixed(2)
-        angularVelField.value = angularVelSlider.value.toFixed(2)
-        Teleop.OnLinearVelSelection(linearVelSlider.value)
-        Teleop.OnAngularVelSelection(angularVelSlider.value)
-        Teleop.OnTeleopTwist()
+  StackLayout {
+    Layout.fillHeight: true
+    Layout.fillWidth: true
+    Layout.margins: 10
+    currentIndex: tabs.currentIndex
+
+    // Buttons
+    Item {
+      GridLayout {
+        id: buttonsGrid
+        width: parent.width
+        columns: 4
+
+        Button {
+          id: forwardButton
+          text: "\u25B2"
+          checkable: true
+          Layout.row: 0
+          Layout.column: 1
+          onClicked: {
+            if (backwardButton.checked)
+              backwardButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), yawScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Forward"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: forwardButton.text
+          }
+        }
+        Button {
+          id: leftButton
+          text: "\u25C0"
+          checkable: true
+          Layout.row: 1
+          Layout.column: 0
+          onClicked: {
+            if (rightButton.checked)
+              rightButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), yawScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Left"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: leftButton.text
+          }
+        }
+        Button {
+          id: rightButton
+          text: "\u25B6"
+          checkable: true
+          Layout.row: 1
+          Layout.column: 2
+          onClicked: {
+            if (leftButton.checked)
+              leftButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), yawScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Right"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: rightButton.text
+          }
+        }
+        Button {
+          id: backwardButton
+          text: "\u25BC"
+          checkable: true
+          Layout.row: 2
+          Layout.column: 1
+          onClicked: {
+            if (forwardButton.checked)
+              forwardButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), yawScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Back"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: backwardButton.text
+          }
+        }
+        Button {
+          id: stopButton
+          text: "Stop"
+          checkable: false
+          Layout.row: 1
+          Layout.column: 1
+          onClicked: {
+            forwardButton.checked = false
+            leftButton.checked = false
+            rightButton.checked = false
+            backwardButton.checked = false
+            upButton.checked = false
+            downButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), yawScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Stop"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: stopButton.text
+          }
+        }
+
+        Button {
+          id: upButton
+          text: "\u2191"
+          checkable: true
+          Layout.row: 0
+          Layout.column: 3
+          onClicked: {
+            if (downButton.checked)
+              downButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), yawScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Up"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: upButton.text
+          }
+        }
+
+        Button {
+          id: downButton
+          text: "\u2193"
+          checkable: true
+          Layout.row: 2
+          Layout.column: 3
+          onClicked: {
+            if (upButton.checked)
+              upButton.checked = false
+            sendCommand(forwardScale(), verticalScale(), yawScale());
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Down"
+          Material.background: Material.primary
+          contentItem: Label {
+            renderType: Text.NativeRendering
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Helvetica"
+            font.pointSize: 10
+            color: "black"
+            text: downButton.text
+          }
+        }
+        // Bottom spacer
+        Item {
+          Layout.row: 3
+          Layout.column: 0
+          Layout.fillHeight: true
+        }
       }
     }
-    ToolTip.visible: hovered
-    ToolTip.text: checked ? qsTr("Disable sliders") : qsTr("Enable sliders")
-  }
-  Label {
-    id: slidersSwitchLabel
-    text: "Input from sliders"
-    anchors.horizontalCenter : slidersSwitch.horizontalCenter
-    anchors.verticalCenter : slidersSwitch.verticalCenter
-    anchors.left: slidersSwitch.right
-    anchors.leftMargin: 5
-  }
 
-  TextField {
-    id: linearVelMaxTextField
-    anchors.top: slidersSwitch.bottom
-    anchors.topMargin: 10
-    anchors.horizontalCenter : angularVelSlider.horizontalCenter
-    width: 40
-    text:"1.0"
-  }
-
-  // Vertical slider
-  Slider {
-    id: linearVelSlider
-    height: 150
-    width: 50
-    orientation: Qt.Vertical
-    anchors.top: linearVelMaxTextField.bottom
-    anchors.horizontalCenter : angularVelSlider.horizontalCenter
-    handle: Rectangle {
-      y: linearVelSlider.topPadding + linearVelSlider.visualPosition * (linearVelSlider.availableHeight - height)
-      x: linearVelSlider.leftPadding + linearVelSlider.availableWidth / 2 - width / 2
-      implicitWidth: 25
-      implicitHeight: 10
-      color: linearVelSlider.pressed ? "#f0f0f0" : "#f6f6f6"
-      border.color: "black"
+    // Keyboard
+    Item {
+      width: parent.width
+      Text {
+        textFormat: Text.RichText
+        text: "Hold keys:</br><ul>" +
+              "<li><b>W</b>: Forward</li>" +
+              "<li><b>A</b>: Left</li>" +
+              "<li><b>S</b>: Back</li>" +
+              "<li><b>D</b>: Right</li>" +
+              "<li><b>Q</b>: Up</li>" +
+              "<li><b>E</b>: Down</li></ul>"
+      }
     }
-    enabled: slidersSwitch.checked
 
-    from: linearVelMinTextField.text
-    to: linearVelMaxTextField.text
-    stepSize: 0.01
+    // Sliders
+    Item {
+      width: parent.width
 
-    onMoved: {
-      linearVelField.value = linearVelSlider.value.toFixed(2)
-      Teleop.OnLinearVelSelection(linearVelSlider.value)
-      Teleop.OnTeleopTwist()
+      GridLayout {
+        columns: 4
+        columnSpacing: 10
+        width: parent.width
+
+        // Forward
+        Label {
+          text: "Forward (m/s)"
+        }
+
+        Label {
+          text: (-maxForwardVel).toFixed(2)
+        }
+
+        Slider {
+          id: forwardVelSlider
+          Layout.fillWidth: true
+          from: -1.0
+          to: 1.0
+          stepSize: 0.01
+
+          onMoved: {
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
+          }
+        }
+
+        Label {
+          text: maxForwardVel.toFixed(2)
+        }
+
+        // Vertical
+        Label {
+          text: "Vertical (m/s)"
+        }
+
+        Label {
+          text: (-maxVerticalVel).toFixed(2)
+        }
+
+        Slider {
+          id: verticalVelSlider
+          Layout.fillWidth: true
+          from: -1.0
+          to: 1.0
+          stepSize: 0.01
+
+          onMoved: {
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
+          }
+        }
+
+        Label {
+          text: maxVerticalVel.toFixed(2)
+        }
+
+        // Yaw
+        Label {
+          text: "Yaw (rad/s)"
+        }
+
+        Label {
+          text: (-maxYawVel).toFixed(2)
+        }
+
+        Slider {
+          id: yawVelSlider
+          Layout.fillWidth: true
+          from: -1.0
+          to: 1.0
+          stepSize: 0.01
+
+          onMoved: {
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
+          }
+        }
+
+        Label {
+          text: maxYawVel.toFixed(2)
+        }
+
+        Button {
+          text: "Stop"
+          Layout.columnSpan: 4
+          onClicked: {
+            forwardVelSlider.value = 0.0;
+            verticalVelSlider.value = 0.0;
+            yawVelSlider.value = 0.0;
+            sendCommand(forwardVelSlider.value, verticalVelSlider.value, yawVelSlider.value);
+          }
+          ToolTip.visible: hovered
+          ToolTip.text: "Stop"
+          Material.background: Material.primary
+        }
+
+        // Bottom spacer
+        Item {
+          Layout.fillHeight: true
+        }
+      }
     }
-  }
-
-  TextField {
-    id: linearVelMinTextField
-    anchors.top: linearVelSlider.bottom
-    anchors.horizontalCenter : linearVelSlider.horizontalCenter
-    width: 40
-    text:"-1.0"
-  }
-
-  Label {
-    id: currentLinearVelSliderLabel
-    anchors.verticalCenter : linearVelSlider.verticalCenter
-    anchors.left : linearVelSlider.right
-    text: linearVelSlider.value.toFixed(2) + " m/s"
-  }
-
-  TextField {
-    id: angularVelMinTextField
-    anchors.verticalCenter : angularVelSlider.verticalCenter
-    anchors.left : slidersSwitch.left
-    width: 40
-    text:"-1.0"
-  }
-
-  // Horizontal slider
-  Slider {
-    id: angularVelSlider
-    height: 50
-    width: 175
-    anchors.top: linearVelSlider.bottom
-    anchors.topMargin: 50
-    anchors.left : angularVelMinTextField.right
-    anchors.leftMargin: 10
-    handle: Rectangle {
-      x: angularVelSlider.leftPadding + angularVelSlider.visualPosition * (angularVelSlider.availableWidth - width)
-      y: angularVelSlider.topPadding + angularVelSlider.availableHeight / 2 - height / 2
-      implicitWidth: 10
-      implicitHeight: 25
-      color: angularVelSlider.pressed ? "#f0f0f0" : "#f6f6f6"
-      border.color: "black"
-    }
-    enabled: slidersSwitch.checked
-
-    from: angularVelMinTextField.text
-    to: angularVelMaxTextField.text
-    stepSize: 0.01
-
-    onMoved: {
-      angularVelField.value = angularVelSlider.value.toFixed(2)
-      Teleop.OnAngularVelSelection(angularVelSlider.value)
-      Teleop.OnTeleopTwist()
-    }
-  }
-
-  TextField {
-    id: angularVelMaxTextField
-    anchors.verticalCenter : angularVelSlider.verticalCenter
-    anchors.left : angularVelSlider.right
-    anchors.leftMargin: 10
-    width: 40
-    text:"1.0"
-  }
-
-  Label {
-    id: currentAngularVelSliderLabel
-    anchors.horizontalCenter : angularVelSlider.horizontalCenter
-    anchors.top : angularVelSlider.bottom
-    text: angularVelSlider.value.toFixed(2) + " rad/s"
   }
 }

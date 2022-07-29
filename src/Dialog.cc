@@ -145,11 +145,11 @@ std::string Dialog::ReadConfigAttribute(const std::string &_path,
   bool configExists{true};
   std::string dialogName = this->objectName().toStdString();
 
-  auto Value = [&_attribute, &doc, &dialogName]()
+  auto Value = [&_attribute, &dialogName](const tinyxml2::XMLDocument &_doc)
   {
     // Process each dialog
     // If multiple attributes share the same name, return the first one
-    for (auto dialogElem = doc.FirstChildElement("dialog");
+    for (auto dialogElem = _doc.FirstChildElement("dialog");
       dialogElem != nullptr;
       dialogElem = dialogElem->NextSiblingElement("dialog"))
     {
@@ -169,7 +169,7 @@ std::string Dialog::ReadConfigAttribute(const std::string &_path,
   {
     configExists = false;
     doc.Parse(this->dataPtr->config.c_str());
-    value = Value();
+    value = Value(doc);
   }
   else
   {
@@ -180,14 +180,14 @@ std::string Dialog::ReadConfigAttribute(const std::string &_path,
              << std::endl;
       return "";
     }
-    value = Value();
+    value = Value(doc);
 
     // config exists but attribute not there read from default config
     if (value.empty())
     {
       tinyxml2::XMLDocument missingDoc;
       missingDoc.Parse(this->dataPtr->config.c_str());
-      value = Value();
+      value = Value(missingDoc);
       missingDoc.Print(&defaultPrinter);
     }
   }
