@@ -105,6 +105,7 @@ Item {
       decimals: gzHelper.getDecimals(writableSpin.width)
       onEditingFinished: {
         gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value, rollItem.value, pitchItem.value, yawItem.value)
+        console.log(model.entity)
       }
     }
   }
@@ -165,15 +166,11 @@ Item {
           y:10
         }
         Component.onCompleted: {
-          xPlot.item.gzIconWidth = iconWidth
-          xPlot.item.gzIconHeight = iconHeight
-          xPlot.item.gzIconY = 10
           xPlot.item.gzComponentInfo = "x"
           xPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
               "Component," + model.entity + "," + model.typeId + "," +
               model.dataType + "," + xPlot.item.gzComponentInfo + "," + model.shortName
           }
-          xPlot.item.gzDragTarget = (model === null) ? null : parent
         }
 
         Text {
@@ -213,15 +210,11 @@ Item {
           y:10
         }
         Component.onCompleted: {
-          rollPlot.item.gzIconWidth = iconWidth
-          rollPlot.item.gzIconHeight = iconHeight
-          rollPlot.item.gzIconY = 10
           rollPlot.item.gzComponentInfo = "roll"
           rollPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
               "Component," + model.entity + "," + model.typeId + "," +
               model.dataType + "," + rollPlot.item.gzComponentInfo + "," + model.shortName
           }
-          rollPlot.item.gzDragTarget = (model === null) ? null : parent
         }
 
         Text {
@@ -260,15 +253,11 @@ Item {
           y:10
         }
         Component.onCompleted: {
-          yPlot.item.gzIconWidth = iconWidth
-          yPlot.item.gzIconHeight = iconHeight
-          yPlot.item.gzIconY = 10
           yPlot.item.gzComponentInfo = "y"
           yPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
               "Component," + model.entity + "," + model.typeId + "," +
               model.dataType + "," + yPlot.item.gzComponentInfo + "," + model.shortName
           }
-          yPlot.item.gzDragTarget = (model === null) ? null : parent
         }
 
         Text {
@@ -307,15 +296,11 @@ Item {
           y:10
         }
         Component.onCompleted: {
-          pitchPlot.item.gzIconWidth = iconWidth
-          pitchPlot.item.gzIconHeight = iconHeight
-          pitchPlot.item.gzIconY = 10
           pitchPlot.item.gzComponentInfo = "pitch"
           pitchPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
               "Component," + model.entity + "," + model.typeId + "," +
               model.dataType + "," + pitchPlot.item.gzComponentInfo + "," + model.shortName
           }
-          pitchPlot.item.gzDragTarget = (model === null) ? null : parent
         }
 
         Text {
@@ -354,15 +339,11 @@ Item {
           y:10
         }
         Component.onCompleted: {
-          zPlot.item.gzIconWidth = iconWidth
-          zPlot.item.gzIconHeight = iconHeight
-          zPlot.item.gzIconY = 10
           zPlot.item.gzComponentInfo = "z"
           zPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
               "Component," + model.entity + "," + model.typeId + "," +
               model.dataType + "," + zPlot.item.gzComponentInfo + "," + model.shortName
           }
-          zPlot.item.gzDragTarget = (model === null) ? null : parent
         }
 
         Text {
@@ -401,15 +382,11 @@ Item {
           y:10
         }
         Component.onCompleted: {
-          yawPlot.item.gzIconWidth = iconWidth
-          yawPlot.item.gzIconHeight = iconHeight
-          yawPlot.item.gzIconY = 10
           yawPlot.item.gzComponentInfo = "yaw"
           yawPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
               "Component," + model.entity + "," + model.typeId + "," +
               model.dataType + "," + yawPlot.item.gzComponentInfo + "," + model.shortName
           }
-          yawPlot.item.gzDragTarget = (model === null) ? null : parent
         }
 
         Text {

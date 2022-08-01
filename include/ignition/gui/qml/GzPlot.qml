@@ -20,39 +20,32 @@ import QtQuick 2.9
  * Item for a draggable plotting icon
  */
 
-Item {
+Image {
   id: gzPlotIcon
   property string gzComponentInfo
   property var gzMimeData
-  property var gzDragTarget
-  property int gzIconWidth : 20
-  property int gzIconHeight : 20
-  property int gzIconY : 10
+  width: 20
+  height: 20
+  y: 10
+  source: "images/plottable_icon.svg"
+  anchors.top: parent.top
+  anchors.left: parent.left
 
-  Image {
-    width: gzIconWidth
-    height: gzIconHeight
-    y: gzIconY
-    source: "images/plottable_icon.svg"
-    anchors.top: parent.top
-    anchors.left: parent.left
-
-    Drag.mimeData: gzMimeData
-    Drag.dragType: Drag.Automatic
-    Drag.supportedActions : Qt.CopyAction
-    Drag.active: gzDragMouse.drag.active
-    // a point to drag from
-    Drag.hotSpot.x: 0
-    Drag.hotSpot.y: y
-    MouseArea {
-      id: gzDragMouse
-      anchors.fill: parent
-      drag.target: gzDragTarget
-      onPressed: {
-        parent.grabToImage(function(result) {parent.Drag.imageSource = result.url })
-      }
-      onReleased: parent.Drag.drop();
-      cursorShape: Qt.DragCopyCursor
+  Drag.mimeData: gzMimeData
+  Drag.dragType: Drag.Automatic
+  Drag.supportedActions : Qt.CopyAction
+  Drag.active: gzDragMouse.drag.active
+  // a point to drag from
+  Drag.hotSpot.x: 0
+  Drag.hotSpot.y: y
+  MouseArea {
+    id: gzDragMouse
+    anchors.fill: parent
+    drag.target: parent
+    onPressed: {
+      parent.grabToImage(function(result) {parent.Drag.imageSource = result.url })
     }
+    onReleased: parent.Drag.drop();
+    cursorShape: Qt.DragCopyCursor
   }
 }
