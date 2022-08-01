@@ -23,25 +23,21 @@
   <file>qml/images/menu.png</file>
   <file>qml/images/export_icon.png</file>
   <file>qml/images/search.svg</file>
-
-  <file alias="qml/IgnCard.qml">qml/GzCard.qml</file>
-  <file alias="qml/IgnCardSettings.qml">qml/GzCardSettings.qml</file>
-  <file alias="qml/IgnHelpers.qml">qml/GzHelpers.qml</file>
-  <file alias="qml/IgnRulers.qml">qml/GzRulers.qml</file>
-  <file alias="qml/IgnSnackBar.qml">qml/GzSnackBar.qml</file>
-  <file alias="qml/IgnSortFilterModel.qml">qml/GzSortFilterModel.qml</file>
-  <file alias="qml/IgnSpinBox.qml">qml/GzSpinBox.qml</file>
-  <file alias="qml/IgnSplit.qml">qml/GzSplit.qml</file>
-  <file alias="IgnSnackBar.qml">qml/GzSnackBar.qml</file>
-  <file alias="IgnSpinBox.qml">qml/GzSpinBox.qml</file>
 </qresource>
+
 <qresource prefix="gz-gui-qml/gz/gui">
     <!-- This qmldir file defines a QML module that can be imported -->
     <file alias="qmldir">qml/qmldir</file>
+
     <!-- Add any QML components referenced in the qmldir file here -->
     <file alias="GzSnackBar.qml">qml/GzSnackBar.qml</file>
     <file alias="GzSpinBox.qml">qml/GzSpinBox.qml</file>
-    <file alias="IgnSnackBar.qml">qml/GzSnackBar.qml</file>
-    <file alias="IgnSpinBox.qml">qml/GzSpinBox.qml</file>
+</qresource>
+
+<!-- Deprecated module - remove on tock -->
+<qresource prefix="gz-gui-qml/ignition/gui">
+    <file alias="qmldir">qml/qmldir_deprecated</file>
+    <file alias="GzSnackBar.qml">qml/GzSnackBar.qml</file>
+    <file alias="GzSpinBox.qml">qml/GzSpinBox.qml</file>
 </qresource>
 </RCC>
