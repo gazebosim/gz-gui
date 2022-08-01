@@ -15,6 +15,7 @@
  *
 */
 
+#include <unordered_map>
 #include <gtest/gtest.h>
 
 #include <ignition/common/Console.hh>
