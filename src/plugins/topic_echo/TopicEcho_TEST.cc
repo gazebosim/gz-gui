@@ -27,6 +27,7 @@
 #endif
 
 #include <ignition/common/Console.hh>
+#include <ignition/common/Filesystem.hh>
 #include <ignition/transport/Node.hh>
 #include <ignition/utilities/ExtraTestMacros.hh>
 
@@ -51,7 +52,8 @@ TEST(TopicEchoTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Load))
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
   // Load plugin
   EXPECT_TRUE(app.LoadPlugin("TopicEcho"));
@@ -77,7 +79,8 @@ TEST(TopicEchoTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Echo))
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
   // Load plugin
   EXPECT_TRUE(app.LoadPlugin("TopicEcho"));
