@@ -4,5 +4,5 @@ module ignition.gui
 GzSnackBar 1.0 GzSnackBar.qml
 GzSpinBox 1.0 GzSpinBox.qml
 
-IgnSnackBar 1.0 IgnSnackBar.qml
+IgnSnackBar 1.0 GzSnackBar.qml
 IgnSpinBox 1.0 GzSpinBox.qml
