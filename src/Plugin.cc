@@ -362,8 +362,10 @@ std::string Plugin::ConfigStr()
   tinyxml2::XMLPrinter printer;
   if (!pluginElem->Accept(&printer))
   {
+    // LCOV_EXCL_START
     ignwarn << "There was an error parsing the plugin element for " <<
         "[" << this->title << "]." << std::endl;
+    // LCOV_EXCL_STOP
   }
   else
   {
