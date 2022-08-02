@@ -608,7 +608,7 @@ std::string GzRenderer::Initialize()
   this->dataPtr->camera->SetImageWidth(this->textureSize.width());
   this->dataPtr->camera->SetImageHeight(this->textureSize.height());
   this->dataPtr->camera->SetAntiAliasing(8);
-  this->dataPtr->camera->SetHFOV(M_PI * 0.5);
+  this->dataPtr->camera->SetHFOV(this->cameraHFOV);
   // setting the size and calling PreRender should cause the render texture to
   // be rebuilt
   this->dataPtr->camera->PreRender();
@@ -1123,6 +1123,12 @@ void RenderWindowItem::SetGraphicsAPI(
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetCameraHFOV(const math::Angle &_fov)
+{
+  this->dataPtr->renderThread->gzRenderer.cameraHFOV = _fov;
+}
+
+/////////////////////////////////////////////////
 MinimalScene::MinimalScene()
   : Plugin(), dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
@@ -1249,6 +1255,26 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       rendering::GraphicsAPI graphicsAPI =
           rendering::GraphicsAPIUtils::Set(elem->GetText());
       renderWindow->SetGraphicsAPI(graphicsAPI);
+    }
+
+    elem = _pluginElem->FirstChildElement("horizontal_fov");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      double fovDeg;
+      math::Angle fov;
+      std::stringstream fovStr;
+      fovStr << std::string(elem->GetText());
+      fovStr >> fovDeg;
+      if (fovStr.fail())
+      {
+        gzerr << "Unable to set <horizontal_fov> to '" << fovStr.str()
+              << "' using default horizontal field of view" << std::endl;
+      }
+      else
+      {
+        fov.SetDegree(fovDeg);
+        renderWindow->SetCameraHFOV(fov);
+      }
     }
   }
 

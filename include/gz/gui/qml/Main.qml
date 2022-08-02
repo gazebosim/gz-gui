@@ -151,6 +151,11 @@ ApplicationWindow
     onActivated: close()
   }
 
+  Shortcut {
+    sequence: "/"
+    onActivated: pluginMenu.open()
+  }
+
   /**
    * Top toolbar
    */

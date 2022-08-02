@@ -78,6 +78,7 @@ set(GZ_MSGS_VER ${gz-msgs9_VERSION_MAJOR})
 #--------------------------------------
 # Find if gz command is available
 find_program(HAVE_GZ_TOOLS gz)
+set(GZ_TOOLS_VER 2)
 
 #--------------------------------------
 # Find QT

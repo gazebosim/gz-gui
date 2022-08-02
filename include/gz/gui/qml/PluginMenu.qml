@@ -38,7 +38,11 @@ Popup {
       Material.color(Material.Grey, Material.Shade200):
       Material.color(Material.Grey, Material.Shade900);
 
-  onOpened: searchField.forceActiveFocus()
+
+  onOpened: {
+    searchField.forceActiveFocus()
+    searchField.selectAll()
+  }
 
   ColumnLayout {
     anchors.fill: parent
@@ -72,6 +76,18 @@ Popup {
           onTextEdited: {
             filteredModel.update();
           }
+          Keys.onReturnPressed: {
+            MainWindow.OnAddPlugin(
+              pluginMenuListView.currentItem.pluginModel.modelData);
+            drawer.close();
+            pluginMenu.close();
+          }
+          Keys.onDownPressed: {
+            pluginMenuListView.incrementCurrentIndex();
+          }
+          Keys.onUpPressed: {
+            pluginMenuListView.decrementCurrentIndex();
+          } 
         }
       }
     }
@@ -95,6 +111,12 @@ Popup {
   GzSortFilterModel {
     id: filteredModel
 
+    lessThan: function(left, right) {
+      var leftStr = left.modelData.toLowerCase();
+      var rightStr = right.modelData.toLowerCase();
+      return leftStr < rightStr;
+    }
+
     filterAcceptsItem: function(item) {
       var itemStr = item.modelData.toLowerCase();
       var filterStr = searchField.text.toLowerCase();
@@ -104,6 +126,7 @@ Popup {
     model: MainWindow.PluginListModel()
 
     delegate: ItemDelegate {
+      property variant pluginModel: model
       width: parent.width
       text: modelData
       highlighted: ListView.isCurrentItem

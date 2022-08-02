@@ -18,6 +18,7 @@ set (sources
 set (gtest_sources
   Application_TEST.cc
   Conversions_TEST.cc
+  Dialog_TEST.cc
   DragDropModel_TEST.cc
   Helpers_TEST.cc
   GuiEvents_TEST.cc
@@ -50,7 +51,35 @@ gz_build_tests(TYPE UNIT
                   gz-common${GZ_COMMON_VER}::events
                   gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
                   TINYXML2::TINYXML2
+                TEST_LIST
+                  gtest_targets
 )
+
+foreach(test ${gtest_targets})
+  target_compile_definitions(${test} PRIVATE
+    "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
+endforeach()
+
+if(TARGET UNIT_gz_TEST)
+  # Running `gz gazebo` on macOS has problems when run with /usr/bin/ruby
+  # due to System Integrity Protection (SIP). Try to find ruby from
+  # homebrew as a workaround.
+  if (APPLE)
+    find_program(BREW_RUBY ruby HINTS /usr/local/opt/ruby/bin)
+  endif()
+
+  target_compile_definitions(UNIT_gz_TEST PRIVATE
+      "BREW_RUBY=\"${BREW_RUBY} \"")
+
+  target_compile_definitions(UNIT_gz_TEST PRIVATE
+      "GZ_PATH=\"${HAVE_GZ_TOOLS}\"")
+
+  set(_env_vars)
+  list(APPEND _env_vars "GZ_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf")
+
+  set_tests_properties(UNIT_gz_TEST PROPERTIES
+    ENVIRONMENT "${_env_vars}")
+endif()
 
 add_subdirectory(cmd)
 add_subdirectory(plugins)
