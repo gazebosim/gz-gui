@@ -180,4 +180,3 @@ void TopicEcho::SetPaused(const bool &_paused)
 // Register this plugin
 IGNITION_ADD_PLUGIN(ignition::gui::plugins::TopicEcho,
                     ignition::gui::Plugin)
-
