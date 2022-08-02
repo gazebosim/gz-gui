@@ -8,10 +8,10 @@
 #define IGNITION_GUI_VERSION "${PROJECT_VERSION}"
 #define IGNITION_GUI_VERSION_FULL "${PROJECT_VERSION_FULL}"
 
-#define IGNITION_GUI_VERSION_HEADER "Ignition ${IGN_DESIGNATION}, version ${PROJECT_VERSION_FULL}\nCopyright (C) 2017 Open Source Robotics Foundation.\nReleased under the Apache 2.0 License.\n\n"
+#define IGNITION_GUI_VERSION_HEADER "Ignition ${GZ_DESIGNATION}, version ${PROJECT_VERSION_FULL}\nCopyright (C) 2017 Open Source Robotics Foundation.\nReleased under the Apache 2.0 License.\n\n"
 
 #cmakedefine BUILD_TYPE_PROFILE 1
 #cmakedefine BUILD_TYPE_DEBUG 1
 #cmakedefine BUILD_TYPE_RELEASE 1
 
-#define IGN_GUI_PLUGIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${IGN_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins"
+#define IGN_GUI_PLUGIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins"
