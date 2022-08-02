@@ -33,46 +33,44 @@ char* g_argv[] =
 
 using namespace ignition;
 using namespace gui;
-using namespace std::chrono_literals;
 
 /////////////////////////////////////////////////
 TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
-  Application app(g_argc, g_argv, ignition::gui::WindowType::kDialog);
-
-  // Change default config path
-  App()->SetDefaultConfigPath(kTestConfigFile);
+  common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv, WindowType::kDialog);
 
   auto dialog = new Dialog;
   ASSERT_NE(nullptr, dialog);
+  dialog->setObjectName("quick_menu");
 
-  // Read attribute value when the default the config is not set
+  // Start without a file
+  std::remove(kTestConfigFile.c_str());
+
+  // Read attribute value when the config doesn't exist
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
-    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
+    std::string allow = dialog->ReadConfigAttribute(kTestConfigFile,
       "allow");
-    EXPECT_EQ(allow, "");
+    EXPECT_TRUE(allow.empty());
 
-    // Config file is created when a read is attempted
-    EXPECT_TRUE(common::exists(kTestConfigFile));
-
-    // Delete file
-    std::remove(kTestConfigFile.c_str());
+    // Config file still doesn't exist
+    EXPECT_FALSE(common::exists(kTestConfigFile));
   }
 
   // Read a non existing attribute
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
-    dialog->setObjectName("quick_menu");
-    dialog->SetDefaultConfig(std::string(
-      "<dialog name=\"quick_menu\" show=\"true\"/>"));
-    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
-      "allow");
-    EXPECT_EQ(allow, "");
 
-    // Config file is created when a read is attempted
+    // Create file
+    std::ofstream configFile(kTestConfigFile);
+    configFile << "<dialog name='quick_menu'/>";
+    configFile.close();
     EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    std::string allow = dialog->ReadConfigAttribute(kTestConfigFile,
+      "allow");
+    EXPECT_TRUE(allow.empty());
 
     // Delete file
     std::remove(kTestConfigFile.c_str());
@@ -81,12 +79,16 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   // Read an existing attribute
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
-    std::string show = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
+
+    // Create file
+    std::ofstream configFile(kTestConfigFile);
+    configFile << "<dialog name='quick_menu' show='true'/>";
+    configFile.close();
+    EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    std::string show = dialog->ReadConfigAttribute(kTestConfigFile,
       "show");
     EXPECT_EQ(show, "true");
-
-    // Config file is created when a read is attempted
-    EXPECT_TRUE(common::exists(kTestConfigFile));
 
     // Delete file
     std::remove(kTestConfigFile.c_str());
@@ -96,19 +98,18 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
 
-    // Call a read to create config file
-    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
-      "allow");
-
-    // Empty string for a non existing attribute
-    EXPECT_EQ(allow, "");
-    dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", true);
-    allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
-      "allow");
-    EXPECT_EQ(allow, "true");
-
-    // Config file is created when a read is attempted
+    // Create file
+    std::ofstream configFile(kTestConfigFile);
+    configFile << "<dialog name='quick_menu'/>";
+    configFile.close();
     EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    // Update value
+    dialog->UpdateConfigAttribute(kTestConfigFile, "allow", true);
+
+    // Read value
+    auto allow = dialog->ReadConfigAttribute(kTestConfigFile, "allow");
+    EXPECT_EQ(allow, "true");
 
     // Delete file
     std::remove(kTestConfigFile.c_str());
@@ -118,16 +119,18 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
 
-    // Call a read to create config file
-    std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
-      "allow");
-    dialog->UpdateConfigAttribute(app.DefaultConfigPath(), "allow", false);
-    allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
-      "allow");
-    EXPECT_EQ(allow, "false");
-
-    // Config file is created when a read is attempted
+    // Create file
+    std::ofstream configFile(kTestConfigFile);
+    configFile << "<dialog name='quick_menu' show='true'/>";
+    configFile.close();
     EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    // Update value
+    dialog->UpdateConfigAttribute(kTestConfigFile, "allow", false);
+
+    // Read value
+    auto allow = dialog->ReadConfigAttribute(kTestConfigFile, "allow");
+    EXPECT_EQ(allow, "false");
 
     // Delete file
     std::remove(kTestConfigFile.c_str());
