@@ -138,83 +138,33 @@ void Dialog::SetDefaultConfig(const std::string &_config)
 std::string Dialog::ReadConfigAttribute(const std::string &_path,
   const std::string &_attribute) const
 {
-  tinyxml2::XMLDocument doc;
-  std::string value {""};
-  std::string config = "<?xml version=\"1.0\"?>\n\n";
-  tinyxml2::XMLPrinter defaultPrinter;
-  bool configExists{true};
-  std::string dialogName = this->objectName().toStdString();
-
-  auto Value = [&_attribute, &dialogName](const tinyxml2::XMLDocument &_doc)
-  {
-    // Process each dialog
-    // If multiple attributes share the same name, return the first one
-    for (auto dialogElem = _doc.FirstChildElement("dialog");
-      dialogElem != nullptr;
-      dialogElem = dialogElem->NextSiblingElement("dialog"))
-    {
-      if (dialogElem->Attribute("name") == dialogName)
-      {
-        if (dialogElem->Attribute(_attribute.c_str()))
-          return dialogElem->Attribute(_attribute.c_str());
-      }
-    }
-    return "";
-  };
-
-  // Check if the passed in config file exists.
-  // (If the default config path doesn't exist yet, it's expected behavior.
-  // It will be created the first time now.)
   if (!common::exists(_path))
   {
-    configExists = false;
-    doc.Parse(this->dataPtr->config.c_str());
-    value = Value(doc);
+    return std::string();
   }
-  else
+
+  tinyxml2::XMLDocument doc;
+  auto success = !doc.LoadFile(_path.c_str());
+  if (!success)
   {
-    auto success = !doc.LoadFile(_path.c_str());
-    if (!success)
+    ignerr << "Failed to load file [" << _path << "]: XMLError"
+           << std::endl;
+    return std::string();
+  }
+
+  // Process each dialog
+  // If multiple attributes share the same name, return the first one
+  std::string dialogName = this->objectName().toStdString();
+  for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
+      dialogElem = dialogElem->NextSiblingElement("dialog"))
+  {
+    if (dialogElem->Attribute("name") == dialogName &&
+        dialogElem->Attribute(_attribute.c_str()))
     {
-      ignerr << "Failed to load file [" << _path << "]: XMLError"
-             << std::endl;
-      return "";
-    }
-    value = Value(doc);
-
-    // config exists but attribute not there read from default config
-    if (value.empty())
-    {
-      tinyxml2::XMLDocument missingDoc;
-      missingDoc.Parse(this->dataPtr->config.c_str());
-      value = Value(missingDoc);
-      missingDoc.Print(&defaultPrinter);
+      return dialogElem->Attribute(_attribute.c_str());
     }
   }
 
-  // Write config file
-  tinyxml2::XMLPrinter printer;
-  doc.Print(&printer);
-
-  // Don't write the xml version decleration if file exists
-  if (configExists)
-  {
-    config = "";
-  }
-
-  igndbg << "Setting dialog " << this->objectName().toStdString()
-    << " default config." << std::endl;
-  config += printer.CStr();
-  config += defaultPrinter.CStr();
-  std::ofstream out(_path.c_str(), std::ios::out);
-  if (!out)
-  {
-    ignerr << "Unable to open file: " << _path
-           << ".\nCheck file permissions.\n";
-    return "";
-  }
-  else
-    out << config;
-
-  return value;
+  return std::string();
 }

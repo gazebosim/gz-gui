@@ -47,23 +47,23 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   auto dialog = new Dialog;
   ASSERT_NE(nullptr, dialog);
 
-  // Read attribute value when the default the config is not set
+  // Read attribute value when the default the config doesn't exist
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
     std::string allow = dialog->ReadConfigAttribute(app.DefaultConfigPath(),
       "allow");
     EXPECT_EQ(allow, "");
 
-    // Config file is created when a read is attempted
-    EXPECT_TRUE(common::exists(kTestConfigFile));
-
-    // Delete file
-    std::remove(kTestConfigFile.c_str());
+    // Config file still doesn't exist
+    EXPECT_FALSE(common::exists(kTestConfigFile));
   }
 
   // Read a non existing attribute
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
+
+    // TODO create file
+
     dialog->setObjectName("quick_menu");
     dialog->SetDefaultConfig(std::string(
       "<dialog name=\"quick_menu\" show=\"true\"/>"));
