@@ -17,25 +17,25 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/utils/ExtraTestMacros.hh>
 
-#include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Dialog.hh"
+#include "test_config.hh"  // NOLINT(build/include)
+#include "gz/gui/Application.hh"
+#include "gz/gui/Dialog.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
+std::string kTestConfigFile = "/tmp/gz-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char* g_argv[] =
 {
   reinterpret_cast<char*>(const_cast<char*>("./Dialog_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
+TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 {
   common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv, WindowType::kDialog);
