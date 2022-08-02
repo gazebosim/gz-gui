@@ -5,6 +5,10 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Ignition GUI 3.10 to 3.11
+
+* `Dialog::ReadConfigAttribute` doesn't create a missing file anymore.
+
 ## Ignition GUI 3.6 to 3.7
 
 * The `Application::PluginAdded` signal used to send empty strings. Now it
