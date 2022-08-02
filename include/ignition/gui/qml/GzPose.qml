@@ -105,7 +105,6 @@ Item {
       decimals: gzHelper.getDecimals(writableSpin.width)
       onEditingFinished: {
         gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value, rollItem.value, pitchItem.value, yawItem.value)
-        console.log(model.entity)
       }
     }
   }
@@ -131,8 +130,13 @@ Item {
    * Used to create a plotting icon
    */
   Component {
-    id: gzplot
-    GzPlot {}
+    id: gzPlotPose
+    GzPlot {
+      gzMimeData : { "text/plain" : (model === null) ? "" :
+          "Component," + model.entity + "," + model.typeId + "," +
+          model.dataType + "," + gzComponentInfo + "," + model.shortName
+      }
+    }
   }
 
   Rectangle {
@@ -160,17 +164,13 @@ Item {
         Layout.preferredWidth: xText.width + 40
         Loader {
           id: xPlot
-          sourceComponent: gzplot
+          sourceComponent: gzPlotPose
           width: iconWidth
           height: iconHeight
           y:10
         }
         Component.onCompleted: {
           xPlot.item.gzComponentInfo = "x"
-          xPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
-              "Component," + model.entity + "," + model.typeId + "," +
-              model.dataType + "," + xPlot.item.gzComponentInfo + "," + model.shortName
-          }
         }
 
         Text {
@@ -204,17 +204,13 @@ Item {
         Layout.preferredWidth: rollText.width + 40
         Loader {
           id: rollPlot
-          sourceComponent: gzplot
+          sourceComponent: gzPlotPose
           width: iconWidth
           height: iconHeight
           y:10
         }
         Component.onCompleted: {
           rollPlot.item.gzComponentInfo = "roll"
-          rollPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
-              "Component," + model.entity + "," + model.typeId + "," +
-              model.dataType + "," + rollPlot.item.gzComponentInfo + "," + model.shortName
-          }
         }
 
         Text {
@@ -247,17 +243,13 @@ Item {
         Layout.preferredWidth: yText.width + 40
         Loader {
           id: yPlot
-          sourceComponent: gzplot
+          sourceComponent: gzPlotPose
           width: iconWidth
           height: iconHeight
           y:10
         }
         Component.onCompleted: {
           yPlot.item.gzComponentInfo = "y"
-          yPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
-              "Component," + model.entity + "," + model.typeId + "," +
-              model.dataType + "," + yPlot.item.gzComponentInfo + "," + model.shortName
-          }
         }
 
         Text {
@@ -290,17 +282,13 @@ Item {
         Layout.preferredWidth: pitchText.width + 40
         Loader {
           id: pitchPlot
-          sourceComponent: gzplot
+          sourceComponent: gzPlotPose
           width: iconWidth
           height: iconHeight
           y:10
         }
         Component.onCompleted: {
           pitchPlot.item.gzComponentInfo = "pitch"
-          pitchPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
-              "Component," + model.entity + "," + model.typeId + "," +
-              model.dataType + "," + pitchPlot.item.gzComponentInfo + "," + model.shortName
-          }
         }
 
         Text {
@@ -333,17 +321,13 @@ Item {
         Layout.preferredWidth: zText.width + 40
         Loader {
           id: zPlot
-          sourceComponent: gzplot
+          sourceComponent: gzPlotPose
           width: iconWidth
           height: iconHeight
           y:10
         }
         Component.onCompleted: {
           zPlot.item.gzComponentInfo = "z"
-          zPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
-              "Component," + model.entity + "," + model.typeId + "," +
-              model.dataType + "," + zPlot.item.gzComponentInfo + "," + model.shortName
-          }
         }
 
         Text {
@@ -376,17 +360,13 @@ Item {
         Layout.preferredWidth: yawText.width + 40
         Loader {
           id: yawPlot
-          sourceComponent: gzplot
+          sourceComponent: gzPlotPose
           width: iconWidth
           height: iconHeight
           y:10
         }
         Component.onCompleted: {
           yawPlot.item.gzComponentInfo = "yaw"
-          yawPlot.item.gzMimeData = { "text/plain" : (model === null) ? "" :
-              "Component," + model.entity + "," + model.typeId + "," +
-              model.dataType + "," + yawPlot.item.gzComponentInfo + "," + model.shortName
-          }
         }
 
         Text {

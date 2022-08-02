@@ -18,6 +18,26 @@ import QtQuick 2.9
 
 /**
  * Item for a draggable plotting icon
+ *
+ * User Example:
+ * Item {
+ *   Component {
+ *     id: gzplot
+ *     GzPlot {}
+ *   }
+ *
+ *   Rectangle {
+ *     Loader {
+ *       id: plotLoader
+ *       sourceComponent: gzplot
+ *     }
+ *     Component.onCompleted: {
+ *       plotLoader.item.gzComponentInfo = "x"
+ *       plotLoader.item.gzMimeData = {"text/plain" : ""}
+ *     }
+ *   }
+ * }
+ *
  */
 
 Image {
