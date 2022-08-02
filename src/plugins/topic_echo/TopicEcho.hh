@@ -26,6 +26,16 @@
 #pragma warning(pop)
 #endif
 
+#ifndef _WIN32
+#  define TopicEcho_EXPORTS_API
+#else
+#  if (defined(TopicEcho_EXPORTS))
+#    define TopicEcho_EXPORTS_API __declspec(dllexport)
+#  else
+#    define TopicEcho_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 #include <memory>
 
 #include "ignition/gui/Plugin.hh"
@@ -42,7 +52,7 @@ namespace plugins
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class TopicEcho : public Plugin
+  class TopicEcho_EXPORTS_API TopicEcho : public Plugin
   {
     Q_OBJECT
 
