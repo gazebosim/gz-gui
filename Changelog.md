@@ -458,7 +458,25 @@
 1. Depend on ign-rendering4
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/243)
 
-## Ignition Gui 3
+## Gazebo GUI 3
+
+### Gazebo GUI 3.11.0 (2022-08-02)
+
+1. Dialog read attribute fixes
+    * [Pull request #450](https://github.com/gazebosim/gz-gui/pull/450)
+    * [Pull request #442](https://github.com/gazebosim/gz-gui/pull/442)
+
+1. Fixed topic echo test
+    * [Pull request #448](https://github.com/gazebosim/gz-gui/pull/448)
+
+1. Teleop: Refactor and support vertical
+    * [Pull request #440](https://github.com/gazebosim/gz-gui/pull/440)
+
+1. Change `IGN_DESIGNATION` to `GZ_DESIGNATION`
+    * [Pull request #437](https://github.com/gazebosim/gz-gui/pull/437)
+
+1. Ignition -> Gazebo
+    * [Pull request #435](https://github.com/gazebosim/gz-gui/pull/435)
 
 ### Ignition Gui 3.10.0 (2022-07-13)
 

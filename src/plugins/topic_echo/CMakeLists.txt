@@ -4,6 +4,5 @@ ign_gui_add_plugin(TopicEcho
   QT_HEADERS
     TopicEcho.hh
   TEST_SOURCES
-    # TopicEcho_TEST.cc
+    TopicEcho_TEST.cc
 )
-
