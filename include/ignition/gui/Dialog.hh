@@ -69,9 +69,9 @@ namespace ignition
         const std::string &_path, const std::string &_attribute,
         const bool _value) const;
 
-      /// \brief Gets a config attribute value, if not found in config
-      /// write the default in the config and get it.
-      /// creates config file if it doesn't exist.
+      /// \brief Gets a config attribute value.
+      /// It will return an empty string if the config file or the attribute
+      /// don't exist.
       /// \param[in] _path config path
       /// \param[in] _attribute attribute name
       /// \return attribute value as string
