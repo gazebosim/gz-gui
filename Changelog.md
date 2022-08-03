@@ -2,7 +2,7 @@
 
 ### Gazebo GUI 6.5.0 (2022-08-02)
 
-1. Teleop: Refactor and support vertical
+1. `Teleop`: Refactor and support vertical
     * [Pull request #440](https://github.com/gazebosim/gz-gui/pull/440)
 
 1. Change `IGN_DESIGNATION` to `GZ_DESIGNATION`
@@ -11,26 +11,23 @@
 1. Ignition -> Gazebo
     * [Pull request #435](https://github.com/gazebosim/gz-gui/pull/435)
 
-1. update package version
-    * [Pull request #434](https://github.com/gazebosim/gz-gui/pull/434)
-
-1. Add common widget for vector3
-    * [Pull request #427](https://github.com/gazebosim/gz-gui/pull/427)
-
 1. Allow Dialogs to have a MainWindow independent config
     * [Pull request #418](https://github.com/gazebosim/gz-gui/pull/418)
     * [Pull request #442](https://github.com/gazebosim/gz-gui/pull/442)
 
-1. Add common widget for pose
+1. Add common widget for Vector3
+    * [Pull request #427](https://github.com/gazebosim/gz-gui/pull/427)
+
+1. Add common widget for Pose
     * [Pull request #424](https://github.com/gazebosim/gz-gui/pull/424)
     * [Pull request #431](https://github.com/gazebosim/gz-gui/pull/431)
     * [Pull request #450](https://github.com/gazebosim/gz-gui/pull/450)
 
+1. Add common widget for Color
+    * [Pull request #410](https://github.com/gazebosim/gz-gui/pull/410)
+
 1. Example running a dialog before the main window
     * [Pull request #407](https://github.com/gazebosim/gz-gui/pull/407)
-
-1. Common widget GzColor
-    * [Pull request #410](https://github.com/gazebosim/gz-gui/pull/410)
 
 1. Test fixes and improvements
     * [Pull request #420](https://github.com/gazebosim/gz-gui/pull/420)
@@ -61,7 +58,7 @@
 1. Sort plugin list in alphabetical order (including when filtering)
     * [Pull request #387](https://github.com/gazebosim/gz-gui/pull/387)
 
-1. set cameraPassCountPerGpuFlush to 6
+1. Set `cameraPassCountPerGpuFlush` to 6
     * [Pull request #381](https://github.com/gazebosim/gz-gui/pull/381)
 
 1. Avoid nullptr access in MinimalScene
@@ -70,7 +67,7 @@
 1. Fix some Qt warnings
     * [Pull request #376](https://github.com/gazebosim/gz-gui/pull/376)
 
-1. Use ign-rendering's `screenToScene` functions
+1. Use `gz-rendering`'s `screenToScene` functions
     * [Pull request #372](https://github.com/gazebosim/gz-gui/pull/372)
 
 1. Added Snackbar qtquick object
@@ -86,16 +83,13 @@
 1. Populate plugins that were empty
     * [Pull request #366](https://github.com/gazebosim/gz-gui/pull/366)
 
-1. Prevent MinimalScene 💥 if another scene is already loaded
+1. Prevent `MinimalScene` 💥 if another scene is already loaded
     * [Pull request #364](https://github.com/gazebosim/gz-gui/pull/364)
 
-1. Improve KeyPublisher's usability
+1. Improve `KeyPublisher`'s usability
     * [Pull request #362](https://github.com/gazebosim/gz-gui/pull/362)
 
-1. Backport GridConfig improvements to Citadel's Grid3D
-    * [Pull request #363](https://github.com/gazebosim/gz-gui/pull/363)
-
-1. Removed unused code in MinimalScene plugin
+1. Removed unused code in `MinimalScene` plugin
     * [Pull request #359](https://github.com/gazebosim/gz-gui/pull/359)
 
 ### Ignition Gui 6.4.0 (2022-02-01)
