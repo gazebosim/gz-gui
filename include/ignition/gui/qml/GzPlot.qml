@@ -32,7 +32,6 @@ import QtQuick 2.9
  *       sourceComponent: gzplot
  *     }
  *     Component.onCompleted: {
- *       plotLoader.item.gzComponentInfo = "x"
  *       plotLoader.item.gzMimeData = {"text/plain" : ""}
  *     }
  *   }
@@ -41,8 +40,7 @@ import QtQuick 2.9
  */
 
 Image {
-  id: gzPlotIcon
-  property string gzComponentInfo
+  id: gzPlotIconRoot
   property var gzMimeData
   width: 20
   height: 20

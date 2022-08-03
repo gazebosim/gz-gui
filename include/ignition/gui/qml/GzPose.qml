@@ -37,6 +37,12 @@ import QtQuick.Controls.Styles 1.4
  *    rollValue: rollValueFromCPP
  *    pitchValue: pitchValueFromCPP
  *    yawValue: yawValueFromCPP
+ *    gzPlotMimeDataX: {"text/plain" : "text data for x plotting"} 
+ *    gzPlotMimeDataY: {"text/plain" : "text data for y plotting"} 
+ *    gzPlotMimeDataZ: {"text/plain" : "text data for z plotting"} 
+ *    gzPlotMimeDataRoll: {"text/plain" : "text data for roll plotting"} 
+ *    gzPlotMimeDataPitch: {"text/plain" : "text data for pitch plotting"} 
+ *    gzPlotMimeDataYaw: {"text/plain" : "text data for yaw plotting"} 
  *    onGzPoseSet: {
  *      myFunc(_x, _y, _z, _roll, _pitch, _yaw)
  *    }
@@ -72,6 +78,8 @@ Item {
   // Expand/Collapse of this widget
   property bool expand: true
 
+  property var gzPlotMimeData
+
   /*** The following are private variables: ***/
   height: gzPoseContent.height
 
@@ -85,6 +93,14 @@ Item {
   property var rollItem: {}
   property var pitchItem: {}
   property var yawItem: {}
+
+  // text data map for plotting
+  property var gzPlotMimeDataX
+  property var gzPlotMimeDataY
+  property var gzPlotMimeDataZ
+  property var gzPlotMimeDataRoll
+  property var gzPlotMimeDataPitch
+  property var gzPlotMimeDataYaw
 
   // Dummy component to use its functions.
   IgnHelpers {
@@ -132,10 +148,7 @@ Item {
   Component {
     id: gzPlotPose
     GzPlot {
-      gzMimeData : { "text/plain" : (model === null) ? "" :
-          "Component," + model.entity + "," + model.typeId + "," +
-          model.dataType + "," + gzComponentInfo + "," + model.shortName
-      }
+      gzMimeData: gzLoaderMimeData
     }
   }
 
@@ -168,9 +181,7 @@ Item {
           width: iconWidth
           height: iconHeight
           y:10
-        }
-        Component.onCompleted: {
-          xPlot.item.gzComponentInfo = "x"
+          property var gzLoaderMimeData: gzPlotMimeDataX
         }
 
         Text {
@@ -208,9 +219,7 @@ Item {
           width: iconWidth
           height: iconHeight
           y:10
-        }
-        Component.onCompleted: {
-          rollPlot.item.gzComponentInfo = "roll"
+          property var gzLoaderMimeData: gzPlotMimeDataRoll
         }
 
         Text {
@@ -247,9 +256,7 @@ Item {
           width: iconWidth
           height: iconHeight
           y:10
-        }
-        Component.onCompleted: {
-          yPlot.item.gzComponentInfo = "y"
+          property var gzLoaderMimeData: gzPlotMimeDataY
         }
 
         Text {
@@ -286,9 +293,7 @@ Item {
           width: iconWidth
           height: iconHeight
           y:10
-        }
-        Component.onCompleted: {
-          pitchPlot.item.gzComponentInfo = "pitch"
+          property var gzLoaderMimeData: gzPlotMimeDataPitch
         }
 
         Text {
@@ -325,9 +330,7 @@ Item {
           width: iconWidth
           height: iconHeight
           y:10
-        }
-        Component.onCompleted: {
-          zPlot.item.gzComponentInfo = "z"
+          property var gzLoaderMimeData: gzPlotMimeDataZ
         }
 
         Text {
@@ -364,9 +367,7 @@ Item {
           width: iconWidth
           height: iconHeight
           y:10
-        }
-        Component.onCompleted: {
-          yawPlot.item.gzComponentInfo = "yaw"
+          property var gzLoaderMimeData: gzPlotMimeDataYaw
         }
 
         Text {
