@@ -61,6 +61,10 @@ release will remove the deprecated code.
   Use `gz::msgs::Convert` to `std::chrono::steady_clock::time_point`
   instead.
 
+## Gazebo GUI 3.10 to 3.11
+
+* `Dialog::ReadConfigAttribute` doesn't create a missing file anymore.
+
 ## Gazebo GUI 3.6 to 3.7
 
 * The `Application::PluginAdded` signal used to send empty strings. Now it

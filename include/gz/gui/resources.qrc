@@ -4,13 +4,16 @@
 
   <file>qml/Chart.qml</file>
   <file>qml/GzCard.qml</file>
+  <file>qml/GzColor.qml</file>
   <file>qml/GzCardSettings.qml</file>
   <file>qml/GzHelpers.qml</file>
+  <file>qml/GzPose.qml</file>
   <file>qml/GzRulers.qml</file>
   <file>qml/GzSnackBar.qml</file>
   <file>qml/GzSortFilterModel.qml</file>
   <file>qml/GzSpinBox.qml</file>
   <file>qml/GzSplit.qml</file>
+  <file>qml/GzVector3.qml</file>
   <file>qml/Main.qml</file>
   <file>qml/PlottingInterface.qml</file>
   <file>qml/PluginMenu.qml</file>
@@ -30,14 +33,20 @@
     <file alias="qmldir">qml/qmldir</file>
 
     <!-- Add any QML components referenced in the qmldir file here -->
+    <file alias="GzColor.qml">qml/GzColor.qml</file>
+    <file alias="GzPose.qml">qml/GzPose.qml</file>
     <file alias="GzSnackBar.qml">qml/GzSnackBar.qml</file>
     <file alias="GzSpinBox.qml">qml/GzSpinBox.qml</file>
+    <file alias="GzVector3.qml">qml/GzVector3.qml</file>
 </qresource>
 
 <!-- Deprecated module - remove on tock -->
 <qresource prefix="gz-gui-qml/ignition/gui">
     <file alias="qmldir">qml/qmldir_deprecated</file>
+    <file alias="GzColor.qml">qml/GzColor.qml</file>
+    <file alias="GzPose.qml">qml/GzPose.qml</file>
     <file alias="GzSnackBar.qml">qml/GzSnackBar.qml</file>
     <file alias="GzSpinBox.qml">qml/GzSpinBox.qml</file>
+    <file alias="GzVector3.qml">qml/GzVector3.qml</file>
 </qresource>
 </RCC>
