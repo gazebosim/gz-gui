@@ -37,12 +37,12 @@ import QtQuick.Controls.Styles 1.4
  *    rollValue: rollValueFromCPP
  *    pitchValue: pitchValueFromCPP
  *    yawValue: yawValueFromCPP
- *    gzPlotMimeDataX: {"text/plain" : "text data for x plotting"} 
- *    gzPlotMimeDataY: {"text/plain" : "text data for y plotting"} 
- *    gzPlotMimeDataZ: {"text/plain" : "text data for z plotting"} 
- *    gzPlotMimeDataRoll: {"text/plain" : "text data for roll plotting"} 
- *    gzPlotMimeDataPitch: {"text/plain" : "text data for pitch plotting"} 
- *    gzPlotMimeDataYaw: {"text/plain" : "text data for yaw plotting"} 
+ *    gzPlotMimeDataX: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",x," + typeNameFromCpp}
+ *    gzPlotMimeDataY: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",y," + typeNameFromCpp}
+ *    gzPlotMimeDataZ: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",z," + typeNameFromCpp}
+ *    gzPlotMimeDataRoll: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",roll," + typeNameFromCpp}
+ *    gzPlotMimeDataPitch:{"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",pitch," + typeNameFromCpp} 
+ *    gzPlotMimeDataYaw: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",yaw," + typeNameFromCpp}
  *    onGzPoseSet: {
  *      myFunc(_x, _y, _z, _roll, _pitch, _yaw)
  *    }
@@ -78,13 +78,8 @@ Item {
   // Expand/Collapse of this widget
   property bool expand: true
 
-  property var gzPlotMimeData
-
   /*** The following are private variables: ***/
   height: gzPoseContent.height
-
-  property int iconWidth: 20
-  property int iconHeight: 20
 
   // local variables to store spinbox values
   property var xItem: {}
@@ -95,12 +90,12 @@ Item {
   property var yawItem: {}
 
   // text data map for plotting
-  property var gzPlotMimeDataX
-  property var gzPlotMimeDataY
-  property var gzPlotMimeDataZ
-  property var gzPlotMimeDataRoll
-  property var gzPlotMimeDataPitch
-  property var gzPlotMimeDataYaw
+  property var gzPlotMimeDataX: {"text/plain" : ""} 
+  property var gzPlotMimeDataY: {"text/plain" : ""} 
+  property var gzPlotMimeDataZ: {"text/plain" : ""} 
+  property var gzPlotMimeDataRoll: {"text/plain" : ""} 
+  property var gzPlotMimeDataPitch: {"text/plain" : ""} 
+  property var gzPlotMimeDataYaw: {"text/plain" : ""} 
 
   // Dummy component to use its functions.
   IgnHelpers {
@@ -146,8 +141,8 @@ Item {
    * Used to create a plotting icon
    */
   Component {
-    id: gzPlotPose
-    GzPlot {
+    id: gzPlotIcon
+    GzPlotIcon {
       gzMimeData: gzLoaderMimeData
     }
   }
@@ -177,10 +172,7 @@ Item {
         Layout.preferredWidth: xText.width + 40
         Loader {
           id: xPlot
-          sourceComponent: gzPlotPose
-          width: iconWidth
-          height: iconHeight
-          y:10
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataX
         }
 
@@ -211,14 +203,10 @@ Item {
       Rectangle {
         color: "transparent"
         height: 40
-        width: iconWidth
         Layout.preferredWidth: rollText.width + 40
         Loader {
           id: rollPlot
-          sourceComponent: gzPlotPose
-          width: iconWidth
-          height: iconHeight
-          y:10
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataRoll
         }
 
@@ -252,10 +240,7 @@ Item {
         Layout.preferredWidth: yText.width + 40
         Loader {
           id: yPlot
-          sourceComponent: gzPlotPose
-          width: iconWidth
-          height: iconHeight
-          y:10
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataY
         }
 
@@ -289,10 +274,7 @@ Item {
         Layout.preferredWidth: pitchText.width + 40
         Loader {
           id: pitchPlot
-          sourceComponent: gzPlotPose
-          width: iconWidth
-          height: iconHeight
-          y:10
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataPitch
         }
 
@@ -326,10 +308,7 @@ Item {
         Layout.preferredWidth: zText.width + 40
         Loader {
           id: zPlot
-          sourceComponent: gzPlotPose
-          width: iconWidth
-          height: iconHeight
-          y:10
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataZ
         }
 
@@ -363,10 +342,7 @@ Item {
         Layout.preferredWidth: yawText.width + 40
         Loader {
           id: yawPlot
-          sourceComponent: gzPlotPose
-          width: iconWidth
-          height: iconHeight
-          y:10
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataYaw
         }
 
