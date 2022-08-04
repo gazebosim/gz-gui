@@ -315,8 +315,7 @@ void GzRenderer::Render(RenderSync *_renderSync)
     // _renderSync->WaitForQtThreadAndBlock(lock);
     this->dataPtr->camera->SetImageWidth(this->textureSize.width());
     this->dataPtr->camera->SetImageHeight(this->textureSize.height());
-    this->dataPtr->camera->SetAspectRatio(this->textureSize.width() /
-        this->textureSize.height());
+    this->dataPtr->camera->SetHFOV(this->cameraHFOV);
     // setting the size should cause the render texture to be rebuilt
     this->dataPtr->camera->PreRender();
     this->textureDirty = false;
