@@ -78,6 +78,9 @@ Item {
   // Expand/Collapse of this widget
   property bool expand: true
 
+  // Display/Hide plotting icons
+  property bool plotIconEnabled: true
+
   /*** The following are private variables: ***/
   height: gzPoseContent.height
 
@@ -147,6 +150,15 @@ Item {
     }
   }
 
+  Component {
+    id: gzPlotPlaceHolder
+    Rectangle {
+      height: 40
+      width: 20
+      color: "transparent"
+    }
+  }
+
   Rectangle {
     id: gzPoseContent
     width: parent.width
@@ -172,7 +184,7 @@ Item {
         Layout.preferredWidth: xText.width + 40
         Loader {
           id: xPlot
-          sourceComponent: gzPlotIcon
+          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
           property var gzLoaderMimeData: gzPlotMimeDataX
         }
 
@@ -206,7 +218,7 @@ Item {
         Layout.preferredWidth: rollText.width + 40
         Loader {
           id: rollPlot
-          sourceComponent: gzPlotIcon
+          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
           property var gzLoaderMimeData: gzPlotMimeDataRoll
         }
 
@@ -240,7 +252,7 @@ Item {
         Layout.preferredWidth: yText.width + 40
         Loader {
           id: yPlot
-          sourceComponent: gzPlotIcon
+          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
           property var gzLoaderMimeData: gzPlotMimeDataY
         }
 
@@ -274,7 +286,7 @@ Item {
         Layout.preferredWidth: pitchText.width + 40
         Loader {
           id: pitchPlot
-          sourceComponent: gzPlotIcon
+          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
           property var gzLoaderMimeData: gzPlotMimeDataPitch
         }
 
@@ -308,7 +320,7 @@ Item {
         Layout.preferredWidth: zText.width + 40
         Loader {
           id: zPlot
-          sourceComponent: gzPlotIcon
+          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
           property var gzLoaderMimeData: gzPlotMimeDataZ
         }
 
@@ -342,7 +354,7 @@ Item {
         Layout.preferredWidth: yawText.width + 40
         Loader {
           id: yawPlot
-          sourceComponent: gzPlotIcon
+          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
           property var gzLoaderMimeData: gzPlotMimeDataYaw
         }
 
