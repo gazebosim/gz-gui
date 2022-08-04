@@ -143,7 +143,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   std::string home;
   common::env(GZ_HOMEDIR, home);
   this->dataPtr->defaultConfigPath = common::joinPaths(
-        home, ".ignition", "gui", "default.config");
+        home, ".gz", "gui", "default.config");
 
   // If it's a main window, initialize it
   if (_type == WindowType::kMainWindow)
@@ -461,7 +461,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Add default folder and install folder
   std::string home;
   common::env(GZ_HOMEDIR, home);
-  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
+  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
                              GZ_GUI_PLUGIN_INSTALL_DIR);
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
@@ -762,10 +762,10 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   for (auto const &path : this->dataPtr->pluginPaths)
     paths.push_back(path);
 
-  // 3. ~/.ignition/gui/plugins
+  // 3. ~/.gz/gui/plugins
   std::string home;
   common::env(GZ_HOMEDIR, home);
-  paths.push_back(home + "/.ignition/gui/plugins");
+  paths.push_back(home + "/.gz/gui/plugins");
 
   // 4. Install path
   paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
