@@ -177,7 +177,7 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
     std::remove(kTestConfigFile.c_str());
   }
 
-  // Update a file without a <dialog>
+  // Update a file with a different <dialog>
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
 
@@ -198,7 +198,7 @@ TEST(DialogTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
     std::remove(kTestConfigFile.c_str());
   }
 
-  // Update a file with a different <dialog>
+  // Update a file without a <dialog>
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
 
