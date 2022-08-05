@@ -27,6 +27,9 @@ import QtQuick.Controls.Styles 1.4
  *  If readOnly == False,
  *  users can read from signal parameters of gzPoseSet: _x, _y, etc.
  *
+ *  To enable plotting, set gzPlotEnabled = true.
+ *  If true, gzPlotMimeData* is required.
+ *
  *  Usage example:
  *  GzPose {
  *    id: gzPose
@@ -37,11 +40,12 @@ import QtQuick.Controls.Styles 1.4
  *    rollValue: rollValueFromCPP
  *    pitchValue: pitchValueFromCPP
  *    yawValue: yawValueFromCPP
+ *    gzPlotEnabled: true
  *    gzPlotMimeDataX: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",x," + typeNameFromCpp}
  *    gzPlotMimeDataY: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",y," + typeNameFromCpp}
  *    gzPlotMimeDataZ: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",z," + typeNameFromCpp}
  *    gzPlotMimeDataRoll: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",roll," + typeNameFromCpp}
- *    gzPlotMimeDataPitch:{"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",pitch," + typeNameFromCpp} 
+ *    gzPlotMimeDataPitch:{"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",pitch," + typeNameFromCpp}
  *    gzPlotMimeDataYaw: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",yaw," + typeNameFromCpp}
  *    onGzPoseSet: {
  *      myFunc(_x, _y, _z, _roll, _pitch, _yaw)
@@ -79,7 +83,15 @@ Item {
   property bool expand: true
 
   // Display/Hide plotting icons
-  property bool plotIconEnabled: true
+  property bool gzPlotEnabled: false
+
+  // Data for plotting, see GzPlotIcon.qml for more details
+  property var gzPlotMimeDataX: {"text/plain" : ""}
+  property var gzPlotMimeDataY: {"text/plain" : ""}
+  property var gzPlotMimeDataZ: {"text/plain" : ""}
+  property var gzPlotMimeDataRoll: {"text/plain" : ""}
+  property var gzPlotMimeDataPitch: {"text/plain" : ""}
+  property var gzPlotMimeDataYaw: {"text/plain" : ""}
 
   /*** The following are private variables: ***/
   height: gzPoseContent.height
@@ -91,14 +103,6 @@ Item {
   property var rollItem: {}
   property var pitchItem: {}
   property var yawItem: {}
-
-  // text data map for plotting
-  property var gzPlotMimeDataX: {"text/plain" : ""} 
-  property var gzPlotMimeDataY: {"text/plain" : ""} 
-  property var gzPlotMimeDataZ: {"text/plain" : ""} 
-  property var gzPlotMimeDataRoll: {"text/plain" : ""} 
-  property var gzPlotMimeDataPitch: {"text/plain" : ""} 
-  property var gzPlotMimeDataYaw: {"text/plain" : ""} 
 
   // Dummy component to use its functions.
   IgnHelpers {
@@ -118,7 +122,8 @@ Item {
       maximumValue: spinMax
       decimals: gzHelper.getDecimals(writableSpin.width)
       onEditingFinished: {
-        gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value, rollItem.value, pitchItem.value, yawItem.value)
+        gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value,
+                             rollItem.value, pitchItem.value, yawItem.value)
       }
     }
   }
@@ -150,15 +155,6 @@ Item {
     }
   }
 
-  Component {
-    id: gzPlotPlaceHolder
-    Rectangle {
-      height: 40
-      width: 20
-      color: "transparent"
-    }
-  }
-
   Rectangle {
     id: gzPoseContent
     width: parent.width
@@ -184,7 +180,8 @@ Item {
         Layout.preferredWidth: xText.width + 40
         Loader {
           id: xPlot
-          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataX
         }
 
@@ -218,7 +215,8 @@ Item {
         Layout.preferredWidth: rollText.width + 40
         Loader {
           id: rollPlot
-          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataRoll
         }
 
@@ -252,7 +250,8 @@ Item {
         Layout.preferredWidth: yText.width + 40
         Loader {
           id: yPlot
-          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataY
         }
 
@@ -286,7 +285,8 @@ Item {
         Layout.preferredWidth: pitchText.width + 40
         Loader {
           id: pitchPlot
-          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataPitch
         }
 
@@ -320,7 +320,8 @@ Item {
         Layout.preferredWidth: zText.width + 40
         Loader {
           id: zPlot
-          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataZ
         }
 
@@ -354,7 +355,8 @@ Item {
         Layout.preferredWidth: yawText.width + 40
         Loader {
           id: yawPlot
-          sourceComponent: plotIconEnabled ? gzPlotIcon : gzPlotPlaceHolder
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
           property var gzLoaderMimeData: gzPlotMimeDataYaw
         }
 
