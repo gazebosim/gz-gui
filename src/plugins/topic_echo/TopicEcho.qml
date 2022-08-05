@@ -40,12 +40,14 @@ Rectangle {
 
         TextField {
           id: topicField
+          objectName: "topicField"
           text: TopicEcho.topic
           selectByMouse: true
         }
       }
 
       Switch {
+        objectName: "echoSwitch"
         text: qsTr("Echo")
         onToggled: {
           TopicEcho.topic = topicField.text
@@ -64,6 +66,7 @@ Rectangle {
 
     SpinBox {
       id: bufferField
+      objectName: "bufferField"
       value: 10
       onValueChanged: {
         TopicEcho.OnBuffer(value)
@@ -71,6 +74,7 @@ Rectangle {
     }
 
     CheckBox {
+      objectName: "pauseCheck"
       text: qsTr("Pause")
       checked: TopicEcho.paused
       onClicked: {
@@ -90,6 +94,7 @@ Rectangle {
 
       ListView {
         id: listView
+        objectName: "listView"
         clip: true
         anchors.fill: parent
 

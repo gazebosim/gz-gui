@@ -1,4 +1,5 @@
-module gz.gui
+# Deprecated module, remove on tock
+module ignition.gui
 
 GzColor 1.0 GzColor.qml
 GzPose 1.0 GzPose.qml
@@ -6,6 +7,5 @@ GzSnackBar 1.0 GzSnackBar.qml
 GzSpinBox 1.0 GzSpinBox.qml
 GzVector3 1.0 GzVector3.qml
 
-# Deprecated components, remove on tock
 IgnSnackBar 1.0 GzSnackBar.qml
 IgnSpinBox 1.0 GzSpinBox.qml

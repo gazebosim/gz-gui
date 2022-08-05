@@ -46,27 +46,43 @@ namespace plugins
   /// \brief Publish teleop stokes to a user selected topic,
   /// or to '/cmd_vel' if no topic is selected.
   /// Buttons, the keyboard or sliders can be used to move a
-  /// vehicle load to the world.
+  /// vehicle in the world.
   /// ## Configuration
-  /// This plugin doesn't accept any custom configuration.
+  /// * `<topic>`: Topic to publish twist messages to.
   class Teleop_EXPORTS_API Teleop : public Plugin
   {
     Q_OBJECT
 
-    /// \brief Linear direction
+    /// \brief Topic
     Q_PROPERTY(
-      int linearDir
-      READ LinearDirection
-      WRITE setLinearDirection
-      NOTIFY LinearDirectionChanged
+      QString topic
+      READ Topic
+      WRITE SetTopic
+      NOTIFY TopicChanged
     )
 
-    /// \brief Angular direction
+    /// \brief Forward velocity
     Q_PROPERTY(
-      int angularDir
-      READ AngularDirection
-      WRITE setAngularDirection
-      NOTIFY AngularDirectionChanged
+      double maxForwardVel
+      READ MaxForwardVel
+      WRITE SetMaxForwardVel
+      NOTIFY MaxForwardVelChanged
+    )
+
+    /// \brief Vertical velocity
+    Q_PROPERTY(
+      double maxVerticalVel
+      READ MaxVerticalVel
+      WRITE SetMaxVerticalVel
+      NOTIFY MaxVerticalVelChanged
+    )
+
+    /// \brief Yaw velocity
+    Q_PROPERTY(
+      double maxYawVel
+      READ MaxYawVel
+      WRITE SetMaxYawVel
+      NOTIFY MaxYawVelChanged
     )
 
     /// \brief Constructor
@@ -82,59 +98,64 @@ namespace plugins
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
     /// \brief Publish the twist message to the selected command velocity topic.
-    public slots: void OnTeleopTwist();
+    /// \param[in] _forwardVel Forward velocity
+    /// \param[in] _verticalVel Vertical velocity
+    /// \param[in] _angVel Yaw velocity
+    public slots: void OnTeleopTwist(double _forwardVel, double _verticalVel,
+        double _angVel);
 
-    /// \brief Returns the linear direction variable value.
-    ///  When the movement is forward it takes the value 1, when
-    /// is backward it takes the value -1, and when it's 0 the
-    /// movement stops.
-    public: Q_INVOKABLE int LinearDirection() const;
-
-    /// \brief Set the linear direction of the movement.
-    /// \param[in] _linearDir Modifier of the velocity for setting
-    /// the movement direction.
-    public: Q_INVOKABLE void setLinearDirection(int _linearDir);
-
-    /// \brief Notify that the linear direction changed.
-    signals: void LinearDirectionChanged();
-
-    /// \brief Returns the angular direction variable value.
-    /// When the turn is counterclockwise it takes the value 1, when
-    /// is clockwise it takes the value -1, and when it's 0 the
-    /// movement stops.
-    public: Q_INVOKABLE int AngularDirection() const;
-
-    /// \brief Set the angular direction of the movement.
-    /// \param[in] _angularDir Modifier of the velocity for setting
-    /// the direction of the rotation.
-    public: Q_INVOKABLE void setAngularDirection(int _angularDir);
-
-    /// \brief Notify that the angular direction changed.
-    signals: void AngularDirectionChanged();
+    /// \brief Get the topic as a string, for example
+    /// '/echo'
+    /// \return Topic
+    public: Q_INVOKABLE QString Topic() const;
 
     /// \brief Callback in Qt thread when the topic changes.
     /// \param[in] _topic variable to indicate the topic to
     /// publish the Twist commands.
-    public slots: void OnTopicSelection(const QString &_topic);
+    public slots: void SetTopic(const QString &_topic);
 
-    /// \brief Callback in Qt thread when the linear velocity changes.
-    /// \param[in] _velocity variable to indicate the linear velocity.
-    public slots: void OnLinearVelSelection(double _velocity);
+    /// \brief Notify that topic has changed
+    signals: void TopicChanged();
 
-    /// \brief Callback in Qt thread when the angular velocity changes.
-    /// \param[in] _velocity variable to indicate the angular velocity.
-    public slots: void OnAngularVelSelection(double _velocity);
+    /// \brief Get the forward velocity.
+    /// \return Forward velocity.
+    public: Q_INVOKABLE double MaxForwardVel() const;
+
+    /// \brief Callback in Qt thread when the forward velocity changes.
+    /// \param[in] _velocity variable to indicate the forward velocity.
+    public slots: void SetMaxForwardVel(double _velocity);
+
+    /// \brief Notify that forward velocity has changed
+    signals: void MaxForwardVelChanged();
+
+    /// \brief Get the vertical velocity.
+    /// \return Vertical velocity.
+    public: Q_INVOKABLE double MaxVerticalVel() const;
+
+    /// \brief Callback in Qt thread when the vertical velocity changes.
+    /// \param[in] _velocity variable to indicate the vertical velocity.
+    public slots: void SetMaxVerticalVel(double _velocity);
+
+    /// \brief Notify that vertical velocity has changed
+    signals: void MaxVerticalVelChanged();
+
+    /// \brief Get the yaw velocity.
+    /// \return Yaw velocity.
+    public: Q_INVOKABLE double MaxYawVel() const;
+
+    /// \brief Callback in Qt thread when the yaw velocity changes.
+    /// \param[in] _velocity variable to indicate the yaw velocity.
+    public slots: void SetMaxYawVel(double _velocity);
+
+    /// \brief Notify that yaw velocity has changed
+    signals: void MaxYawVelChanged();
 
     /// \brief Callback in Qt thread when the keyboard is enabled or disabled.
     /// \param[in] _checked variable to indicate the state of the switch.
     public slots: void OnKeySwitch(bool _checked);
 
-    /// \brief Callback in Qt thread when the sliders is enabled or disabled.
-    /// \param[in] _checked variable to indicate the state of the switch.
-    public slots: void OnSlidersSwitch(bool _checked);
-
-    /// \brief Sets the movement direction when the keyboard is used.
-    public: void SetKeyDirection();
+    /// \brief Sets the movement scale when the keyboard is used.
+    public: void SetKeyScale();
 
     /// \internal
     /// \brief Pointer to private data.

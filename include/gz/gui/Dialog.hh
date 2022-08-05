@@ -19,6 +19,7 @@
 #define GZ_GUI_DIALOG_HH_
 
 #include <memory>
+#include <string>
 
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
@@ -54,6 +55,28 @@ namespace gz
       /// \brief Get the root quick item of this window
       /// \return Pointer to the item
       public: QQuickItem *RootItem() const;
+
+      /// \brief Store dialog default config
+      /// \param[in] _config XML config as string
+      public: void SetDefaultConfig(const std::string &_config);
+
+      /// \brief Write dialog config
+      /// \param[in] _path config path
+      /// \param[in] _attribute XMLElement attribute name
+      /// \param[in] _value XMLElement attribute value
+      /// \return true if written to config file
+      public: bool UpdateConfigAttribute(
+        const std::string &_path, const std::string &_attribute,
+        const bool _value) const;
+
+      /// \brief Gets a config attribute value.
+      /// It will return an empty string if the config file or the attribute
+      /// don't exist.
+      /// \param[in] _path config path
+      /// \param[in] _attribute attribute name
+      /// \return attribute value as string
+      public: std::string ReadConfigAttribute(const std::string &_path,
+        const std::string &_attribute) const;
 
       /// \internal
       /// \brief Private data pointer

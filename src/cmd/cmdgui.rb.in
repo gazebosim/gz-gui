@@ -52,7 +52,10 @@ COMMANDS = {  'gui' =>
                        "                             The default verbosity is 1, use -v without\n"\
                        "                             arguments for level 3.\n"\
                        "\n" +
-                       COMMON_OPTIONS,
+                       COMMON_OPTIONS + "\n\n" +
+                       "Environment variables:                                                  \n"\
+                       "  GZ_GUI_RESOURCE_PATH    Colon separated paths used to locate GUI     \n"\
+                       " resources such as configuration files.                                 \n"\
             }
 
 #

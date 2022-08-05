@@ -15,6 +15,8 @@
  *
  */
 
+#include <tinyxml2.h>
+
 #include <gz/common/Console.hh>
 #include "gz/gui/Application.hh"
 #include "gz/gui/Dialog.hh"
@@ -25,6 +27,9 @@ namespace gz
   {
     class DialogPrivate
     {
+      /// \brief default dialog config
+      public: std::string config{""};
+
       /// \brief Pointer to quick window
       public: QQuickWindow *quickWindow{nullptr};
     };
@@ -75,3 +80,91 @@ QQuickItem *Dialog::RootItem() const
   return dialogItem;
 }
 
+/////////////////////////////////////////////////
+bool Dialog::UpdateConfigAttribute(const std::string &_path,
+  const std::string &_attribute, const bool _value) const
+{
+  if (_path.empty())
+  {
+    gzerr << "Missing config file" << std::endl;
+    return false;
+  }
+
+  // Use tinyxml to read config
+  tinyxml2::XMLDocument doc;
+  auto success = !doc.LoadFile(_path.c_str());
+  if (!success)
+  {
+    gzerr << "Failed to load file [" << _path << "]: XMLError"
+           << std::endl;
+    return false;
+  }
+
+  // Update attribute value for the correct dialog
+  for (auto dialogElem = doc.FirstChildElement("dialog");
+    dialogElem != nullptr;
+    dialogElem = dialogElem->NextSiblingElement("dialog"))
+  {
+    if (dialogElem->Attribute("name") == this->objectName().toStdString())
+    {
+      dialogElem->SetAttribute(_attribute.c_str(), _value);
+    }
+  }
+
+  // Write config file
+  tinyxml2::XMLPrinter printer;
+  doc.Print(&printer);
+
+  std::string config = printer.CStr();
+  std::ofstream out(_path.c_str(), std::ios::out);
+  if (!out)
+  {
+    gzerr << "Unable to open file: " << _path
+          << ".\nCheck file permissions.\n";
+  }
+  else
+    out << config;
+
+  return true;
+}
+
+/////////////////////////////////////////////////
+void Dialog::SetDefaultConfig(const std::string &_config)
+{
+  this->dataPtr->config = _config;
+}
+
+/////////////////////////////////////////////////
+std::string Dialog::ReadConfigAttribute(const std::string &_path,
+  const std::string &_attribute) const
+{
+  if (!common::exists(_path))
+  {
+    return std::string();
+  }
+
+  tinyxml2::XMLDocument doc;
+  auto success = !doc.LoadFile(_path.c_str());
+  if (!success)
+  {
+    gzerr << "Failed to load file [" << _path << "]: XMLError"
+          << std::endl;
+    return std::string();
+  }
+
+  // Process each dialog
+  // If multiple attributes share the same name, return the first one
+  std::string dialogName = this->objectName().toStdString();
+  for (auto dialogElem = doc.FirstChildElement("dialog");
+      dialogElem != nullptr;
+      dialogElem = dialogElem->NextSiblingElement("dialog"))
+  {
+    if (dialogElem->Attribute("name") == dialogName &&
+        dialogElem->Attribute(_attribute.c_str()))
+    {
+      return dialogElem->Attribute(_attribute.c_str());
+    }
+  }
+
+  return std::string();
+}

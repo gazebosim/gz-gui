@@ -179,5 +179,5 @@ void TopicEcho::SetPaused(const bool &_paused)
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::TopicEcho,
-                    gz::gui::Plugin)
+              gz::gui::Plugin)
 

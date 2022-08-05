@@ -26,6 +26,8 @@ release will remove the deprecated code.
     * CMake `-config` files
     * Paths that depend on the project name
 
+* QML `import ignition.gui 1.0` is deprecated, use `import gz.gui 1.0` instead.
+
 ## Gazebo GUI 6.2 to 6.3
 
 * New QML dependencies, only needed for the NavSatMap plugin: `qml-module-qtlocation`, `qml-module-qtpositioning`
@@ -58,6 +60,10 @@ release will remove the deprecated code.
 * Deprecated `gz::gui::convert` to `gz::common::Time`.
   Use `gz::msgs::Convert` to `std::chrono::steady_clock::time_point`
   instead.
+
+## Gazebo GUI 3.10 to 3.11
+
+* `Dialog::ReadConfigAttribute` doesn't create a missing file anymore.
 
 ## Gazebo GUI 3.6 to 3.7
 

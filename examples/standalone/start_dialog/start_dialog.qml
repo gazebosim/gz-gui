@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2022 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-
-SpinBox {
-  style: SpinBoxStyle{
-    background: Rectangle {
-      implicitWidth: 70
-      implicitHeight: 40
-      border.color: "gray"
-    }
+import QtQuick 2.0
+import QtQuick.Controls 2.0
+Rectangle {
+  color: "green"
+  anchors.fill: parent
+  Text {
+    text: qsTr("Start\ndialog!")
+    font.pointSize: 30
   }
 }
