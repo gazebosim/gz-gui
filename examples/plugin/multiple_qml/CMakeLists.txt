@@ -18,8 +18,8 @@ find_package (Qt5
 )
 
 # Find the Gazebo GUI library
-find_package(gz-gui7 REQUIRED)
-set(GZ_GUI_VER ${gz-gui7_VERSION_MAJOR})
+find_package(gz-gui8 REQUIRED)
+set(GZ_GUI_VER ${gz-gui8_VERSION_MAJOR})
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 
