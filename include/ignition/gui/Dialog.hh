@@ -67,8 +67,8 @@ namespace ignition
       ///
       /// `<dialog name="dialog_name" attribute="value"/>`
       ///
-      /// If a dialog elentn with this dialog's name doesn't exist yet, one will
-      /// be created.
+      /// If a dialog element with this dialog's name doesn't exist yet, one
+      /// will be created.
       ///
       /// \param[in] _path File path. File must already exist, this function
       /// will not create a new file.
