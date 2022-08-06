@@ -43,7 +43,7 @@ Rectangle {
    * Used to transfer data, where data is separated by ','.
    * For components, the syntax needs to be:
    *   `{"text/plain" : "Component," + <entity> + "," + <typeId> + "," + <attribute> + "," + <typeName>}`.
-   * For fields: `{"text/plain" : <topic> + "," + <fieldPath>}`.
+   * For transport topics: `{"text/plain" : <topic> + "," + <fieldPath>}`.
    * See, Chart.qml and PlottingInterface.hh/.cc for more details.
   **/
   property var gzMimeData
