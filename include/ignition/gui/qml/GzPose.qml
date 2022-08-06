@@ -27,6 +27,9 @@ import QtQuick.Controls.Styles 1.4
  *  If readOnly == False,
  *  users can read from signal parameters of gzPoseSet: _x, _y, etc.
  *
+ *  To enable plotting, set gzPlotEnabled = true.
+ *  If true, gzPlotMimeData* is required.
+ *
  *  Usage example:
  *  GzPose {
  *    id: gzPose
@@ -37,6 +40,13 @@ import QtQuick.Controls.Styles 1.4
  *    rollValue: rollValueFromCPP
  *    pitchValue: pitchValueFromCPP
  *    yawValue: yawValueFromCPP
+ *    gzPlotEnabled: true
+ *    gzPlotMimeDataX: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",x," + typeNameFromCpp}
+ *    gzPlotMimeDataY: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",y," + typeNameFromCpp}
+ *    gzPlotMimeDataZ: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",z," + typeNameFromCpp}
+ *    gzPlotMimeDataRoll: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",roll," + typeNameFromCpp}
+ *    gzPlotMimeDataPitch:{"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",pitch," + typeNameFromCpp}
+ *    gzPlotMimeDataYaw: {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",yaw," + typeNameFromCpp}
  *    onGzPoseSet: {
  *      myFunc(_x, _y, _z, _roll, _pitch, _yaw)
  *    }
@@ -72,6 +82,16 @@ Item {
   // Expand/Collapse of this widget
   property bool expand: true
 
+  // Display/Hide plotting icons
+  property bool gzPlotEnabled: false
+
+  // Data for plotting, see GzPlotIcon.qml for more details
+  property var gzPlotMimeDataX: {"text/plain" : ""}
+  property var gzPlotMimeDataY: {"text/plain" : ""}
+  property var gzPlotMimeDataZ: {"text/plain" : ""}
+  property var gzPlotMimeDataRoll: {"text/plain" : ""}
+  property var gzPlotMimeDataPitch: {"text/plain" : ""}
+  property var gzPlotMimeDataYaw: {"text/plain" : ""}
 
   /*** The following are private variables: ***/
   height: gzPoseContent.height
@@ -102,7 +122,8 @@ Item {
       maximumValue: spinMax
       decimals: gzHelper.getDecimals(writableSpin.width)
       onEditingFinished: {
-        gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value, rollItem.value, pitchItem.value, yawItem.value)
+        gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value,
+                             rollItem.value, pitchItem.value, yawItem.value)
       }
     }
   }
@@ -121,6 +142,16 @@ Item {
         var decimals = gzHelper.getDecimals(numberText.width)
         return numberValue.toFixed(decimals)
       }
+    }
+  }
+
+  /**
+   * Used to create a plotting icon
+   */
+  Component {
+    id: gzPlotIcon
+    GzPlotIcon {
+      gzMimeData: gzLoaderMimeData
     }
   }
 
@@ -143,11 +174,25 @@ Item {
       width: parent.width
       columns: 4
 
-      Text {
-        text: 'X (m)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: xText.width + 40
+        Loader {
+          id: xPlot
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
+          property var gzLoaderMimeData: gzPlotMimeDataX
+        }
+
+        Text {
+          id: xText
+          text: 'X (m)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -164,11 +209,25 @@ Item {
         }
       }
 
-      Text {
-        text: 'Roll (rad)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: rollText.width + 40
+        Loader {
+          id: rollPlot
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
+          property var gzLoaderMimeData: gzPlotMimeDataRoll
+        }
+
+        Text {
+          id: rollText
+          text: 'Roll (rad)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -185,11 +244,25 @@ Item {
         }
       }
 
-      Text {
-        text: 'Y (m)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: yText.width + 40
+        Loader {
+          id: yPlot
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
+          property var gzLoaderMimeData: gzPlotMimeDataY
+        }
+
+        Text {
+          id: yText
+          text: 'Y (m)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -206,11 +279,25 @@ Item {
         }
       }
 
-      Text {
-        text: 'Pitch (rad)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+       Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: pitchText.width + 40
+        Loader {
+          id: pitchPlot
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
+          property var gzLoaderMimeData: gzPlotMimeDataPitch
+        }
+
+        Text {
+          id: pitchText
+          text: 'Pitch (rad)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -227,11 +314,25 @@ Item {
         }
       }
 
-      Text {
-        text: 'Z (m)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: zText.width + 40
+        Loader {
+          id: zPlot
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
+          property var gzLoaderMimeData: gzPlotMimeDataZ
+        }
+
+        Text {
+          id: zText
+          text: 'Z (m)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
@@ -248,11 +349,25 @@ Item {
         }
       }
 
-      Text {
-        text: 'Yaw (rad)'
-        leftPadding: 5
-        color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
-        font.pointSize: 12
+      Rectangle {
+        color: "transparent"
+        height: 40
+        Layout.preferredWidth: yawText.width + 40
+        Loader {
+          id: yawPlot
+          active: gzPlotEnabled
+          sourceComponent: gzPlotIcon
+          property var gzLoaderMimeData: gzPlotMimeDataYaw
+        }
+
+        Text {
+          id: yawText
+          text: 'Yaw (rad)'
+          leftPadding: 5
+          color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
+          font.pointSize: 12
+          anchors.centerIn: parent
+        }
       }
 
       Item {
