@@ -2,6 +2,7 @@ set(SOURCES
   MinimalScene.cc
   MinimalSceneRhi.cc
   MinimalSceneRhiOpenGL.cc
+  EngineToQtInterface.cc
 )
 
 set(PROJECT_LINK_LIBS "")
@@ -22,6 +23,7 @@ endif()
 gz_gui_add_plugin(MinimalScene
   SOURCES
     ${SOURCES}
+    EngineToQtInterface.hh
   QT_HEADERS
     MinimalScene.hh
   PUBLIC_LINK_LIBS

@@ -303,7 +303,8 @@ GzRenderer::GzRenderer()
 }
 
 /////////////////////////////////////////////////
-void GzRenderer::Render(RenderSync *_renderSync)
+void GzRenderer::Render(RenderSync *_renderSync,
+                        RenderThreadRhi &_renderThreadRhi)
 {
   std::unique_lock<std::mutex> lock(_renderSync->mutex);
   _renderSync->WaitForQtThreadAndBlock(lock);
@@ -330,7 +331,7 @@ void GzRenderer::Render(RenderSync *_renderSync)
   }
 
   // Update the render interface (texture)
-  this->dataPtr->rhi->Update(this->dataPtr->camera);
+  _renderThreadRhi.Update(this->dataPtr->camera);
 
   // view control
   this->HandleMouseEvent();
@@ -561,7 +562,7 @@ void GzRenderer::BroadcastKeyPress()
 }
 
 /////////////////////////////////////////////////
-std::string GzRenderer::Initialize()
+std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
 {
   if (this->initialized)
     return std::string();
@@ -637,7 +638,7 @@ std::string GzRenderer::Initialize()
   this->dataPtr->camera->PreRender();
 
   // Update the render interface (texture)
-  this->dataPtr->rhi->Update(this->dataPtr->camera);
+  _rhi.Update(this->dataPtr->camera);
 
   // Ray Query
   this->dataPtr->rayQuery = this->dataPtr->camera->Scene()->CreateRayQuery();
@@ -715,12 +716,6 @@ void GzRenderer::NewMouseEvent(const common::MouseEvent &_e)
     this->dataPtr->mouseEvents.pop_front();
   this->dataPtr->mouseEvents.push_back(_e);
   this->dataPtr->mouseDirty = true;
-}
-
-/////////////////////////////////////////////////
-void GzRenderer::TextureId(void* _texturePtr)
-{
-  this->dataPtr->rhi->TextureId(_texturePtr);
 }
 
 /////////////////////////////////////////////////
