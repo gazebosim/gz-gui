@@ -57,7 +57,6 @@ Item {
     title: "Choose a color"
     visible: false
     showAlphaChannel: true
-    modality: Qt.ApplicationModal
     onAccepted: {
       r = gzColorDialog.color.r
       g = gzColorDialog.color.g
