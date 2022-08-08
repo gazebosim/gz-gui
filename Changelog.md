@@ -1,6 +1,8 @@
-## Gazebo GUI 7
+## Gazebo GUI 8
 
-### Gazebo GUI 7.X.X
+### Gazebo GUI 8.0.0 (202X-XX-XX)
+
+## Gazebo GUI 7
 
 ### Gazebo GUI 7.0.0 (202X-XX-XX)
 
