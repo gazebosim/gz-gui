@@ -464,6 +464,11 @@ bool Application::LoadPlugin(const std::string &_filename,
   systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
                              GZ_GUI_PLUGIN_INSTALL_DIR);
 
+  // TODO(CH3): Deprecated. Remove on tock.
+  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
+                             GZ_GUI_PLUGIN_INSTALL_DIR);
+
+
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
   {
@@ -766,6 +771,9 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   std::string home;
   common::env(GZ_HOMEDIR, home);
   paths.push_back(home + "/.gz/gui/plugins");
+
+  // TODO(CH3): Deprecated. Remove on tock.
+  paths.push_back(home + "/.ignition/gui/plugins");
 
   // 4. Install path
   paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
