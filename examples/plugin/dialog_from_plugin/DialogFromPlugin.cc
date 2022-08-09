@@ -35,5 +35,5 @@ DialogFromPlugin::~DialogFromPlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::DialogFromPlugin,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(DialogFromPlugin,
+                    gui::Plugin);

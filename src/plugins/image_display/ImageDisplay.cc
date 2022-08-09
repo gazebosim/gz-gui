@@ -321,7 +321,7 @@ void ImageDisplay::UpdateFromLInt16()
 
   // convert temperature to grayscale image
   double range = static_cast<double>(max - min);
-  if (ignition::math::equal(range, 0.0))
+  if (math::equal(range, 0.0))
     range = 1.0;
   unsigned int idx = 0;
   for (unsigned int j = 0; j < height; ++j)
@@ -357,5 +357,5 @@ void ImageDisplay::SetTopicList(const QStringList &_topicList)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::ImageDisplay,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ImageDisplay,
+                    gui::Plugin)

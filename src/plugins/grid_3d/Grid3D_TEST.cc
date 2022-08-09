@@ -78,7 +78,7 @@ TEST(Grid3DTest, CRUD)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(ignition::gui::loadPlugin("Grid3D",
+  EXPECT_TRUE(loadPlugin("Grid3D",
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
