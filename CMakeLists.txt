@@ -9,6 +9,7 @@ project(gz-gui7 VERSION 7.0.0)
 # Find gz-cmake
 #============================================================================
 find_package(gz-cmake3 REQUIRED)
+set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
 #============================================================================
 # Configure the project
@@ -130,4 +131,24 @@ gz_create_docs(
 
 if(TARGET doc)
   file(COPY ${CMAKE_SOURCE_DIR}/tutorials/images/ DESTINATION ${CMAKE_BINARY_DIR}/doxygen/html/images/)
+endif()
+
+#============================================================================
+# Build examples
+#============================================================================
+if (BUILD_TESTING)
+  gz_build_examples(
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples
+    BINARY_DIR ${PROJECT_BINARY_DIR}/examples
+    COMPONENTS
+    DEPENDENCIES
+      gz-cmake${GZ_CMAKE_VER}
+      gz-common${GZ_COMMON_VER}
+      gz-math${GZ_MATH_VER}
+      gz-msgs${GZ_MSGS_VER}
+      gz-plugin${GZ_PLUGIN_VER}
+      gz-rendering${GZ_RENDERING_VER}
+      gz-transport${GZ_TRANSPORT_VER}
+      gz-utils${GZ_UTILS_VER}
+  )
 endif()
