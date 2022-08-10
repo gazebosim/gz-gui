@@ -1,5 +1,19 @@
 ## Gazebo GUI 6
 
+### Gazebo GUI 6.6.0 (2022-08-10)
+
+1. GzColor ColorDialogue fix
+    * [Pull request #459](https://github.com/gazebosim/gz-gui/pull/459)
+
+1. Fix attribute update when `<dialog>` isn't present
+    * [Pull request #455](https://github.com/gazebosim/gz-gui/pull/455)
+
+1. Add plotting to common widget pose
+    * [Pull request #439](https://github.com/gazebosim/gz-gui/pull/439)
+
+1. Add test for Plugin::ConfigStr()
+    * [Pull request #447](https://github.com/gazebosim/gz-gui/pull/447)
+
 ### Gazebo GUI 6.5.0 (2022-08-02)
 
 1. `Teleop`: Refactor and support vertical
