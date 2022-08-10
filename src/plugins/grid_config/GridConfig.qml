@@ -30,14 +30,9 @@ GridLayout {
   anchors.leftMargin: 10
   anchors.rightMargin: 10
 
-  // Get number of decimal digits based on a widget's width
-  // TODO(chapulina) Move this to a common place so all widgets can use it
-  function getDecimals(_width) {
-    if (_width <= 80)
-      return 2;
-    else if (_width <= 100)
-      return 4;
-    return 6;
+  // Dummy item for using getDecimals()
+  IgnHelpers {
+    id: ignhelper
   }
 
   Connections {
@@ -52,10 +47,10 @@ GridLayout {
       gzPoseInstance.rollValue = _rot.x;
       gzPoseInstance.pitchValue = _rot.y;
       gzPoseInstance.yawValue = _rot.z;
-      r.value = _color.r;
-      g.value = _color.g;
-      b.value = _color.b;
-      a.value = _color.a;
+      gzColorGrid.r = _color.r;
+      gzColorGrid.g = _color.g;
+      gzColorGrid.b = _color.b;
+      gzColorGrid.a = _color.a;
     }
   }
 
@@ -161,7 +156,7 @@ GridLayout {
     maximumValue: Number.MAX_VALUE
     minimumValue: 0.0000001
     value: 1.00
-    decimals: getDecimals(cellLength.width)
+    decimals: ignhelper.getDecimals(cellLength.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.UpdateCellLength(cellLength.value)
   }
@@ -211,92 +206,18 @@ GridLayout {
   }
 
   Text {
-    text: "R"
+    Layout.columnSpan: 2
     color: "dimgrey"
+    text: "Grid Color"
   }
 
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: r
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(r.width)
-    onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "G"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: g
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(g.width)
-    onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "B"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: b
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 0.7
-    stepSize: 0.01
-    decimals: getDecimals(b.width)
-    onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Text {
-    text: "A"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: a
-    maximumValue: 1.00
-    minimumValue: 0.00
-    value: 1.0
-    stepSize: 0.01
-    decimals: getDecimals(a.width)
-    onEditingFinished: GridConfig.SetColor(r.value, g.value, b.value, a.value)
-  }
-
-  Button {
-    Layout.alignment: Qt.AlignHCenter
-    Layout.columnSpan: 4
-    id: color
-    text: qsTr("Custom Color")
-    onClicked: colorDialog.open()
-
-    ColorDialog {
-      id: colorDialog
-      title: "Choose a grid color"
-      visible: false
-      onAccepted: {
-        r.value = colorDialog.color.r
-        g.value = colorDialog.color.g
-        b.value = colorDialog.color.b
-        a.value = colorDialog.color.a
-        GridConfig.SetColor(colorDialog.color.r, colorDialog.color.g, colorDialog.color.b, colorDialog.color.a)
-        colorDialog.close()
-      }
-      onRejected: {
-        colorDialog.close()
-      }
-    }
+  GzColor {
+    id: gzColorGrid
+    Layout.columnSpan: 2
+    Layout.alignment: Qt.AlignRight
+    Layout.bottomMargin: 5
+    Layout.rightMargin: 20
+    onGzColorSet: GridConfig.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
   }
 
   // Bottom spacer
