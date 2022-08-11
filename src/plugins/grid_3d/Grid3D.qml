@@ -30,14 +30,9 @@ GridLayout {
   anchors.leftMargin: 10
   anchors.rightMargin: 10
 
-  // Get number of decimal digits based on a widget's width
-  // TODO(chapulina) Move this to a common place so all widgets can use it
-  function getDecimals(_width) {
-    if (_width <= 80)
-      return 2;
-    else if (_width <= 100)
-      return 4;
-    return 6;
+  // Dummy item to use getDecimals()
+  IgnHelpers {
+    id: ignHelpers
   }
 
   Connections {
@@ -161,7 +156,7 @@ GridLayout {
     maximumValue: Number.MAX_VALUE
     minimumValue: 0.0000001
     value: 1.00
-    decimals: getDecimals(cellLength.width)
+    decimals: ignHelpers.getDecimals(cellLength.width)
     stepSize: 0.01
     onEditingFinished: Grid3D.UpdateCellLength(cellLength.value)
   }
@@ -175,16 +170,11 @@ GridLayout {
   }
 
   Text {
-    Layout.columnSpan: 1
+    Layout.columnSpan: 2
     id: principal
     text: "Rotation (rad)"
     color: "dimgrey"
     font.bold: true
-  }
-
-  // dummy item for formatting
-  Item {
-    Layout.columnSpan: 1
   }
 
   GzPose {
@@ -203,7 +193,7 @@ GridLayout {
       // _x, _y, _z, _roll, _pitch, _yaw are parameters of signal gzPoseSet
       // from gz-gui GzPose.qml
       Grid3D.SetPose(_x, _y, _z, _roll, _pitch, _yaw)
-      }
+    }
     expand: true
   }
 
