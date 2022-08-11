@@ -32,7 +32,7 @@ GridLayout {
 
   // Dummy item for using getDecimals()
   IgnHelpers {
-    id: ignhelper
+    id: ignHelper
   }
 
   Connections {
@@ -156,7 +156,7 @@ GridLayout {
     maximumValue: Number.MAX_VALUE
     minimumValue: 0.0000001
     value: 1.00
-    decimals: ignhelper.getDecimals(cellLength.width)
+    decimals: ignHelper.getDecimals(cellLength.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.UpdateCellLength(cellLength.value)
   }
@@ -193,7 +193,7 @@ GridLayout {
       // _x, _y, _z, _roll, _pitch, _yaw are parameters of signal gzPoseSet
       // from gz-gui GzPose.qml
       GridConfig.SetPose(_x, _y, _z, _roll, _pitch, _yaw)
-      }
+    }
     expand: true
     gzPlotEnabled: false
   }
