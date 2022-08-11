@@ -22,7 +22,7 @@ set (gtest_sources
   DragDropModel_TEST.cc
   Helpers_TEST.cc
   GuiEvents_TEST.cc
-  gz_TEST.cc
+  ign_TEST.cc
   MainWindow_TEST.cc
   PlottingInterface_TEST.cc
   Plugin_TEST.cc
