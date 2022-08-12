@@ -16,70 +16,125 @@
 */
 
 #include <gtest/gtest.h>
+
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
+#include <ignition/msgs/stringmsg.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include <ignition/common/Console.hh>
 #include <ignition/common/Image.hh>
 #include <ignition/transport/Node.hh>
+#include <ignition/utilities/ExtraTestMacros.hh>
 
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/Plugin.hh"
+#include "ignition/gui/Application.hh"
 #include "ignition/gui/MainWindow.hh"
+#include "ignition/gui/Plugin.hh"
+#include "test_config.h"  // NOLINT(build/include)
+#include "ImageDisplay.hh"
+
+int g_argc = 1;
+char* g_argv[] =
+{
+  reinterpret_cast<char*>(const_cast<char*>("./ImageDisplay_TEST")),
+};
 
 using namespace ignition;
 using namespace gui;
 
 /////////////////////////////////////////////////
-TEST(ImageDisplayTest, Load)
+TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Load))
 {
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
 
-  EXPECT_TRUE(loadPlugin("ImageDisplay"));
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
-  EXPECT_TRUE(stop());
+  // Load plugin
+  EXPECT_TRUE(app.LoadPlugin("ImageDisplay"));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(win, nullptr);
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::ImageDisplay *>();
+  EXPECT_EQ(plugins.size(), 1);
+
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "Image display");
+
+  // Cleanup
+  plugins.clear();
 }
 
 /////////////////////////////////////////////////
-TEST(ImageDisplayTest, DefaultConfig)
+TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(DefaultConfig))
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
   // Load plugin
-  EXPECT_TRUE(loadPlugin("ImageDisplay"));
+  EXPECT_TRUE(app.LoadPlugin("ImageDisplay"));
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
-  EXPECT_TRUE(win != nullptr);
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(win, nullptr);
 
   // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
+  auto plugins = win->findChildren<plugins::ImageDisplay *>();
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Image display");
 
   // Has a topic picker
-  auto topicsCombo = plugin->findChild<QComboBox *>("topicsCombo");
-  EXPECT_TRUE(topicsCombo != nullptr);
-  EXPECT_EQ(topicsCombo->count(), 0);
+  auto topicsCombo = plugin->PluginItem()->findChild<QObject *>("topicsCombo");
+  ASSERT_NE(topicsCombo, nullptr);
+  auto topicProp = topicsCombo->property("model");
+  EXPECT_TRUE(topicProp.isValid());
+  auto topicList = topicProp.toStringList();
+  EXPECT_EQ(topicList.size(), 0);
 
-  auto refreshButton = plugin->findChild<QPushButton *>("refreshButton");
-  EXPECT_TRUE(refreshButton != nullptr);
+  auto refreshButton =
+    plugin->PluginItem()->findChild<QObject *>("refreshButton");
+  ASSERT_NE(refreshButton, nullptr);
 
-  // No images
-  auto label = plugin->findChild<QLabel *>();
-  EXPECT_TRUE(label != nullptr);
-  EXPECT_EQ(label->text(), "No image");
+  auto picker =
+    topicsCombo->parent();  // RowLayout that holds `visible: showPicker`
+  ASSERT_NE(picker, nullptr);
+  auto pickerProp = picker->property("visible");
+  EXPECT_TRUE(pickerProp.isValid());
+  EXPECT_TRUE(pickerProp.toBool());
+
+  // No images (gray image)
+  auto providerBase = app.Engine()->imageProvider(
+      plugin->CardItem()->objectName() + "imagedisplay");
+  ASSERT_NE(providerBase, nullptr);
+  auto imageProvider = static_cast<plugins::ImageProvider *>(providerBase);
+  ASSERT_NE(imageProvider, nullptr);
+  QSize dummySize;
+  QImage img = imageProvider->requestImage(QString(), &dummySize, dummySize);
+  EXPECT_TRUE(img.allGray());
 
   // Cleanup
   plugins.clear();
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
-TEST(ImageDisplayTest, NoPickerNeedsTopic)
+TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(NoPickerNeedsTopic))
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
   // Load plugin
   const char *pluginStr =
@@ -89,43 +144,60 @@ TEST(ImageDisplayTest, NoPickerNeedsTopic)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(loadPlugin("ImageDisplay",
+  EXPECT_TRUE(app.LoadPlugin("ImageDisplay",
       pluginDoc.FirstChildElement("plugin")));
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
-  EXPECT_TRUE(win != nullptr);
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(win, nullptr);
 
   // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
+  auto plugins = win->findChildren<plugins::ImageDisplay *>();
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Image display");
 
   // Has a topic picker anyway
-  auto topicsCombo = plugin->findChild<QComboBox *>("topicsCombo");
-  EXPECT_TRUE(topicsCombo != nullptr);
-  EXPECT_EQ(topicsCombo->count(), 0);
+  auto topicsCombo = plugin->PluginItem()->findChild<QObject *>("topicsCombo");
+  ASSERT_NE(topicsCombo, nullptr);
+  auto topicProp = topicsCombo->property("model");
+  EXPECT_TRUE(topicProp.isValid());
+  auto topicList = topicProp.toStringList();
+  EXPECT_EQ(topicList.size(), 0);
 
-  auto refreshButton = plugin->findChild<QPushButton *>("refreshButton");
-  EXPECT_TRUE(refreshButton != nullptr);
+  auto refreshButton =
+    plugin->PluginItem()->findChild<QObject *>("refreshButton");
+  ASSERT_NE(refreshButton, nullptr);
 
-  // No images
-  auto label = plugin->findChild<QLabel *>();
-  EXPECT_TRUE(label != nullptr);
-  EXPECT_EQ(label->text(), "No image");
+  auto picker =
+    topicsCombo->parent();  // RowLayout that holds `visible: showPicker`
+  ASSERT_NE(picker, nullptr);
+  auto pickerProp = picker->property("visible");
+  EXPECT_TRUE(pickerProp.isValid());
+  EXPECT_TRUE(pickerProp.toBool());
+
+  // No images (gray image)
+  auto providerBase = app.Engine()->imageProvider(
+      plugin->CardItem()->objectName() + "imagedisplay");
+  ASSERT_NE(providerBase, nullptr);
+  auto imageProvider = static_cast<plugins::ImageProvider *>(providerBase);
+  ASSERT_NE(imageProvider, nullptr);
+  QSize dummySize;
+  QImage img = imageProvider->requestImage(QString(), &dummySize, dummySize);
+  EXPECT_TRUE(img.allGray());
 
   // Cleanup
   plugins.clear();
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
-TEST(ImageDisplayTest, ReceiveImage)
+TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImage))
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
   // Load plugin
   const char *pluginStr =
@@ -136,29 +208,38 @@ TEST(ImageDisplayTest, ReceiveImage)
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
-  EXPECT_TRUE(loadPlugin("ImageDisplay",
+  EXPECT_TRUE(app.LoadPlugin("ImageDisplay",
       pluginDoc.FirstChildElement("plugin")));
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
-  EXPECT_TRUE(win != nullptr);
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(win, nullptr);
 
   // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
+  auto plugins = win->findChildren<plugins::ImageDisplay *>();
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Image display");
 
-  // Doesn't have a topic picker
-  EXPECT_EQ(plugin->findChildren<QComboBox *>().size(), 0);
-  EXPECT_EQ(plugin->findChildren<QPushButton *>().size(), 0);
+  // Doesn't have a topic picker by checking `showPicker == false`
+  auto topicsCombo = plugin->PluginItem()->findChild<QObject *>("topicsCombo");
+  ASSERT_NE(topicsCombo, nullptr);
+  auto picker =
+    topicsCombo->parent();  // RowLayout that holds `visible: showPicker`
+  ASSERT_NE(picker, nullptr);
+  auto pickerProp = picker->property("visible");
+  EXPECT_TRUE(pickerProp.isValid());
+  EXPECT_FALSE(pickerProp.toBool());
 
-  // Starts with no image
-  auto label = plugin->findChild<QLabel *>();
-  EXPECT_TRUE(label != nullptr);
-  EXPECT_EQ(label->text(), "No image");
-  EXPECT_TRUE(label->pixmap() == nullptr);
+  // Starts with no image (gray image)
+  auto providerBase = app.Engine()->imageProvider(
+      plugin->CardItem()->objectName() + "imagedisplay");
+  ASSERT_NE(providerBase, nullptr);
+  auto imageProvider = static_cast<plugins::ImageProvider *>(providerBase);
+  ASSERT_NE(imageProvider, nullptr);
+  QSize dummySize;
+  QImage img = imageProvider->requestImage(QString(), &dummySize, dummySize);
+  EXPECT_TRUE(img.allGray());
 
   // Publish images
   transport::Node node;
@@ -169,84 +250,107 @@ TEST(ImageDisplayTest, ReceiveImage)
     msgs::Image msg;
     msg.set_height(100);
     msg.set_width(200);
-    msg.set_pixel_format(common::Image::RGB_FLOAT32);
+    msg.set_pixel_format_type(msgs::PixelFormatType::RGB_FLOAT32);
     pub.Publish(msg);
   }
 
   // Give it time to be processed
-  int sleep = 0;
-  int maxSleep = 10;
-  while (!label->text().isEmpty() && sleep < maxSleep)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    QCoreApplication::processEvents();
-    sleep++;
-  }
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  QCoreApplication::processEvents();
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   // Still no image
-  EXPECT_EQ(label->text(), "No image");
-  EXPECT_TRUE(label->pixmap() == nullptr);
+  img = imageProvider->requestImage(QString(), &dummySize, dummySize);
+  EXPECT_TRUE(img.allGray());
 
   // Good message
   {
     msgs::Image msg;
     msg.set_height(100);
     msg.set_width(200);
-    msg.set_pixel_format(common::Image::RGB_INT8);
+    msg.set_pixel_format_type(msgs::PixelFormatType::RGB_INT8);
+    msg.set_step(msg.width() * 3);
+
+    // red image
+    int bufferSize = 3 * msg.width() * msg.height();
+    std::shared_ptr<unsigned char> buffer(new unsigned char[bufferSize]);
+    for (int i = 0; i < bufferSize; i += 3)
+    {
+      buffer.get()[i] = 255u;
+      buffer.get()[i + 1] = 0u;
+      buffer.get()[i + 2] = 0u;
+    }
+    msg.set_data(buffer.get(), bufferSize);
     pub.Publish(msg);
   }
 
   // Give it time to be processed
-  sleep = 0;
-  while (!label->text().isEmpty() && sleep < maxSleep)
+  int sleep = 0;
+  int maxSleep = 30;
+  while (img.allGray() && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-    sleep++;
+    img = imageProvider->requestImage(QString(), &dummySize, dummySize);
+    ++sleep;
   }
 
   // Now it has an image
-  EXPECT_TRUE(label->text().isEmpty());
-  ASSERT_NE(nullptr, label->pixmap());
-  EXPECT_EQ(label->pixmap()->height(), 100);
-  EXPECT_EQ(label->pixmap()->width(), 200);
+  EXPECT_FALSE(img.allGray());
+  EXPECT_EQ(img.height(), 100);
+  EXPECT_EQ(img.width(), 200);
+
+  // check image is red
+  for (int y = 0; y < img.height(); ++y)
+  {
+    for (int x = 0; x < img.width(); ++x)
+    {
+      EXPECT_EQ(img.pixelColor(x, y).red(), 255);
+      EXPECT_EQ(img.pixelColor(x, y).green(), 0);
+      EXPECT_EQ(img.pixelColor(x, y).blue(), 0);
+    }
+  }
 
   // Cleanup
   plugins.clear();
-  EXPECT_TRUE(stop());
 }
 
 /////////////////////////////////////////////////
-TEST(ImageDisplayTest, TopicPicker)
+TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(TopicPicker))
 {
-  setVerbosity(4);
-  EXPECT_TRUE(initApp());
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
   // Load plugin
-  EXPECT_TRUE(loadPlugin("ImageDisplay"));
+  EXPECT_TRUE(app.LoadPlugin("ImageDisplay"));
 
-  // Create main window
-  EXPECT_TRUE(createMainWindow());
-  auto win = mainWindow();
-  EXPECT_TRUE(win != nullptr);
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(win, nullptr);
 
   // Get plugin
-  auto plugins = win->findChildren<Plugin *>();
+  auto plugins = win->findChildren<plugins::ImageDisplay *>();
   EXPECT_EQ(plugins.size(), 1);
   auto plugin = plugins[0];
   EXPECT_EQ(plugin->Title(), "Image display");
 
   // Topic picker starts empty
-  auto topicsCombo = plugin->findChild<QComboBox *>("topicsCombo");
-  EXPECT_TRUE(topicsCombo != nullptr);
-  EXPECT_EQ(topicsCombo->count(), 0);
-
-  auto refreshButton = plugin->findChild<QPushButton *>("refreshButton");
-  EXPECT_TRUE(refreshButton != nullptr);
+  auto topicsCombo = plugin->PluginItem()->findChild<QObject *>("topicsCombo");
+  ASSERT_NE(topicsCombo, nullptr);
+  auto topicProp = topicsCombo->property("model");
+  EXPECT_TRUE(topicProp.isValid());
+  auto topicList = topicProp.toStringList();
+  EXPECT_EQ(topicList.size(), 0);
 
   // Refresh and still empty
-  refreshButton->click();
-  EXPECT_EQ(topicsCombo->count(), 0);
+  plugin->OnRefresh();
+  topicProp = topicsCombo->property("model");
+  EXPECT_TRUE(topicProp.isValid());
+  topicList = topicProp.toStringList();
+  EXPECT_EQ(topicList.size(), 0);
 
   // Advertise topics
   transport::Node node;
@@ -255,17 +359,15 @@ TEST(ImageDisplayTest, TopicPicker)
   auto pubString = node.Advertise<msgs::StringMsg>("/string_test");
 
   // Refresh and now we have image topics
-  refreshButton->click();
-  EXPECT_EQ(topicsCombo->count(), 2);
-  EXPECT_EQ(topicsCombo->itemText(0), "/image_test");
-  EXPECT_EQ(topicsCombo->itemText(1), "/image_test_2");
+  plugin->OnRefresh();
+  topicProp = topicsCombo->property("model");
+  EXPECT_TRUE(topicProp.isValid());
+  topicList = topicProp.toStringList();
+  EXPECT_EQ(topicList.size(), 2);
 
-  // Pick topics
-  topicsCombo->setCurrentIndex(1);
-  topicsCombo->setCurrentIndex(0);
-  topicsCombo->setCurrentIndex(1);
+  EXPECT_EQ(topicList.at(0).toStdString(), "/image_test");
+  EXPECT_EQ(topicList.at(1).toStdString(), "/image_test_2");
 
   // Cleanup
   plugins.clear();
-  EXPECT_TRUE(stop());
 }

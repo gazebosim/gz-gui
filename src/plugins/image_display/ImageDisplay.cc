@@ -17,9 +17,6 @@
 
 #include "ImageDisplay.hh"
 
-#include <QQuickImageProvider>
-
-#include <algorithm>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -39,37 +36,6 @@ namespace gui
 {
 namespace plugins
 {
-  class ImageProvider : public QQuickImageProvider
-  {
-    public: ImageProvider()
-       : QQuickImageProvider(QQuickImageProvider::Image)
-    {
-    }
-
-    public: QImage requestImage(const QString &, QSize *,
-        const QSize &) override
-    {
-      if (!this->img.isNull())
-      {
-        // Must return a copy
-        QImage copy(this->img);
-        return copy;
-      }
-
-      // Placeholder in case we have no image yet
-      QImage i(400, 400, QImage::Format_RGB888);
-      i.fill(QColor(128, 128, 128, 100));
-      return i;
-    }
-
-    public: void SetImage(const QImage &_image)
-    {
-      this->img = _image;
-    }
-
-    private: QImage img;
-  };
-
   class ImageDisplayPrivate
   {
     /// \brief List of topics publishing image messages.
