@@ -2,6 +2,9 @@
 
 ### Gazebo GUI 3.11.1 (2022-08-15)
 
+1. Replace pose in Grid3d with GzPose
+    * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/461)
+
 1. Remove redundant namespace references
     * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/460)
 
