@@ -30,7 +30,7 @@ using namespace gui;
 /////////////////////////////////////////////////
 TEST(DragDropModelTest, Mime)
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   auto model = new DragDropModel();
   ASSERT_TRUE(model != nullptr);

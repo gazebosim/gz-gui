@@ -222,7 +222,7 @@ void WorldControl::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void WorldControl::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
+void WorldControl::OnWorldStatsMsg(const msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -233,14 +233,14 @@ void WorldControl::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 /////////////////////////////////////////////////
 void WorldControl::OnPlay()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
+  std::function<void(const msgs::Boolean &, const bool)> cb =
+      [this](const msgs::Boolean &/*_rep*/, const bool _result)
   {
     if (_result)
       QMetaObject::invokeMethod(this, "playing");
   };
 
-  ignition::msgs::WorldControl req;
+  msgs::WorldControl req;
   req.set_pause(false);
   this->dataPtr->pause = false;
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
@@ -249,14 +249,14 @@ void WorldControl::OnPlay()
 /////////////////////////////////////////////////
 void WorldControl::OnPause()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [this](const ignition::msgs::Boolean &/*_rep*/, const bool _result)
+  std::function<void(const msgs::Boolean &, const bool)> cb =
+      [this](const msgs::Boolean &/*_rep*/, const bool _result)
   {
     if (_result)
       QMetaObject::invokeMethod(this, "paused");
   };
 
-  ignition::msgs::WorldControl req;
+  msgs::WorldControl req;
   req.set_pause(true);
   this->dataPtr->pause = true;
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
@@ -271,17 +271,17 @@ void WorldControl::OnStepCount(const unsigned int _steps)
 /////////////////////////////////////////////////
 void WorldControl::OnStep()
 {
-  std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-      [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+  std::function<void(const msgs::Boolean &, const bool)> cb =
+      [](const msgs::Boolean &/*_rep*/, const bool /*_result*/)
   {
   };
 
-  ignition::msgs::WorldControl req;
+  msgs::WorldControl req;
   req.set_pause(this->dataPtr->pause);
   req.set_multi_step(this->dataPtr->multiStep);
   this->dataPtr->node.Request(this->dataPtr->controlService, req, cb);
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::WorldControl,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(WorldControl,
+                    gui::Plugin)

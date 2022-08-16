@@ -163,7 +163,7 @@ TopicViewer::TopicViewer() : Plugin(), dataPtr(new TopicViewerPrivate)
 
   this->dataPtr->CreateModel();
 
-  ignition::gui::App()->Engine()->rootContext()->setContextProperty(
+  gui::App()->Engine()->rootContext()->setContextProperty(
                 "TopicsModel", this->dataPtr->model);
 
   this->dataPtr->timer = new QTimer();
@@ -199,7 +199,7 @@ void TopicViewerPrivate::CreateModel()
 
   for (unsigned int i = 0; i < topics.size(); ++i)
   {
-    std::vector<ignition::transport::MessagePublisher> infoMsgs;
+    std::vector<transport::MessagePublisher> infoMsgs;
     this->node.TopicInfo(topics[i], infoMsgs);
     std::string msgType = infoMsgs[0].MsgTypeName();
     this->AddTopic(topics[i], msgType);
@@ -241,7 +241,7 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
     _parentItem->appendRow(msgItem);
   }
 
-  auto msg = ignition::msgs::Factory::New(_msgType);
+  auto msg = msgs::Factory::New(_msgType);
   if (!msg)
   {
       ignwarn << "Null Msg: " << _msgType << std::endl;
@@ -384,7 +384,7 @@ void TopicViewer::UpdateModel()
   for (unsigned int i = 0; i < topics.size(); ++i)
   {
     // get the msg type
-    std::vector<ignition::transport::MessagePublisher> infoMsgs;
+    std::vector<transport::MessagePublisher> infoMsgs;
     this->dataPtr->node.TopicInfo(topics[i], infoMsgs);
     std::string msgType = infoMsgs[0].MsgTypeName();
 
@@ -425,5 +425,5 @@ void TopicViewer::UpdateModel()
 
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::TopicViewer,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(TopicViewer,
+                    gui::Plugin)
