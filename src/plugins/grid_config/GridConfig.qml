@@ -215,15 +215,9 @@ GridLayout {
     id: gzColorGrid
     Layout.columnSpan: 2
     Layout.alignment: Qt.AlignRight
-    Layout.bottomMargin: 5
+    Layout.bottomMargin: 10
     Layout.rightMargin: 20
     onGzColorSet: GridConfig.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
-  }
-
-  // Bottom spacer
-  Item {
-    Layout.columnSpan: 4
-    Layout.fillHeight: true
   }
 }
 
