@@ -30,14 +30,9 @@ GridLayout {
   anchors.leftMargin: 10
   anchors.rightMargin: 10
 
-  // Get number of decimal digits based on a widget's width
-  // TODO(chapulina) Move this to a common place so all widgets can use it
-  function getDecimals(_width) {
-    if (_width <= 80)
-      return 2;
-    else if (_width <= 100)
-      return 4;
-    return 6;
+  // Dummy item to use getDecimals()
+  IgnHelpers {
+    id: ignHelpers
   }
 
   Connections {
@@ -46,12 +41,12 @@ GridLayout {
       horizontalCellCount.value = _hCellCount;
       verticalCellCount.value = _vCellCount;
       cellLength.value = _cellLength;
-      x.value = _pos.x;
-      y.value = _pos.y;
-      z.value = _pos.z;
-      roll.value = _rot.x;
-      pitch.value = _rot.y;
-      yaw.value = _rot.z;
+      gzPoseInstance.xValue = _pos.x;
+      gzPoseInstance.yValue = _pos.y;
+      gzPoseInstance.zValue = _pos.z;
+      gzPoseInstance.rollValue = _rot.x;
+      gzPoseInstance.pitchValue = _rot.y;
+      gzPoseInstance.yawValue = _rot.z;
       gzColorGrid.r = _color.r;
       gzColorGrid.g = _color.g;
       gzColorGrid.b = _color.b;
@@ -161,7 +156,7 @@ GridLayout {
     maximumValue: Number.MAX_VALUE
     minimumValue: 0.0000001
     value: 1.00
-    decimals: getDecimals(cellLength.width)
+    decimals: ignHelpers.getDecimals(cellLength.width)
     stepSize: 0.01
     onEditingFinished: Grid3D.UpdateCellLength(cellLength.value)
   }
@@ -182,100 +177,24 @@ GridLayout {
     font.bold: true
   }
 
-  Text {
-    text: "X"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
+  GzPose {
+    id: gzPoseInstance
+    Layout.columnSpan: 4
     Layout.fillWidth: true
-    id: x
-    value: 0.00
-    maximumValue: Number.MAX_VALUE
-    minimumValue: -Number.MAX_VALUE
-    decimals: getDecimals(x.width)
-    stepSize: 0.01
-    onEditingFinished: Grid3D.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
-  }
+    readOnly: false
+    xValue: 0.00
+    yValue: 0.00
+    zValue: 0.00
+    rollValue: 0.00
+    pitchValue: 0.00
+    yawValue: 0.00
 
-  Text {
-    text: "Roll"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: roll
-    maximumValue: 6.28
-    minimumValue: 0.00
-    value: 0.00
-    decimals: getDecimals(roll.width)
-    stepSize: 0.01
-    onEditingFinished: Grid3D.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
-  }
-
-  Text {
-    text: "Y"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: y
-    value: 0.00
-    maximumValue: Number.MAX_VALUE
-    minimumValue: -Number.MAX_VALUE
-    decimals: getDecimals(y.width)
-    stepSize: 0.01
-    onEditingFinished: Grid3D.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
-  }
-
-  Text {
-    text: "Pitch"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: pitch
-    maximumValue: 6.28
-    minimumValue: 0.00
-    value: 0.00
-    decimals: getDecimals(pitch.width)
-    stepSize: 0.01
-    onEditingFinished: Grid3D.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
-  }
-
-  Text {
-    text: "Z"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: z
-    value: 0.00
-    maximumValue: Number.MAX_VALUE
-    minimumValue: -Number.MAX_VALUE
-    decimals: getDecimals(z.width)
-    stepSize: 0.01
-    onEditingFinished: Grid3D.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
-  }
-
-  Text {
-    text: "Yaw"
-    color: "dimgrey"
-  }
-
-  IgnSpinBox {
-    Layout.fillWidth: true
-    id: yaw
-    maximumValue: 6.28
-    minimumValue: 0.00
-    value: 0.00
-    decimals: getDecimals(yaw.width)
-    stepSize: 0.01
-    onEditingFinished: Grid3D.SetPose(x.value, y.value, z.value, roll.value, pitch.value, yaw.value)
+    onGzPoseSet: {
+      // _x, _y, _z, _roll, _pitch, _yaw are parameters of signal gzPoseSet
+      // from gz-gui GzPose.qml
+      Grid3D.SetPose(_x, _y, _z, _roll, _pitch, _yaw)
+    }
+    expand: true
   }
 
   Text {
