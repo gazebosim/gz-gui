@@ -30,6 +30,16 @@
 #pragma warning(pop)
 #endif
 
+#ifndef _WIN32
+#  define ImageDisplay_EXPORTS_API
+#else
+#  if (defined(ImageDisplay_EXPORTS))
+#    define ImageDisplay_EXPORTS_API __declspec(dllexport)
+#  else
+#    define ImageDisplay_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 #include "ignition/gui/Plugin.hh"
 
 namespace ignition
@@ -78,7 +88,7 @@ namespace plugins
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
   ///                    this is false, a \<topic\> must be specified.
-  class ImageDisplay : public Plugin
+  class ImageDisplay_EXPORTS_API ImageDisplay : public Plugin
   {
     Q_OBJECT
 
