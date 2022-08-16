@@ -1,5 +1,22 @@
 ## Gazebo GUI 3
 
+### Gazebo GUI 3.11.1 (2022-08-15)
+
+1. Remove redundant namespace references
+    * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/460)
+
+1. Update codeowners
+    * [Pull request #465](https://github.com/gazebosim/gz-gui/pull/465)
+
+1. `GzColor` `ColorDialogue` fix
+    * [Pull request #459](https://github.com/gazebosim/gz-gui/pull/459)
+
+1. Fix attribute update when `<dialog>` isn't present
+    * [Pull request #455](https://github.com/gazebosim/gz-gui/pull/455)
+
+1. Add test for `Plugin::ConfigStr()`
+    * [Pull request #447](https://github.com/gazebosim/gz-gui/pull/447)
+
 ### Gazebo GUI 3.11.0 (2022-08-02)
 
 1. Dialog read attribute fixes
