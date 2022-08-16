@@ -119,9 +119,9 @@ using namespace plugins;
 Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
 {
   // Initialize publisher using default topic.
-  this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub = transport::Node::Publisher();
   this->dataPtr->cmdVelPub =
-      this->dataPtr->node.Advertise<ignition::msgs::Twist>
+      this->dataPtr->node.Advertise<msgs::Twist>
       (this->dataPtr->topic);
 }
 
@@ -141,15 +141,15 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->SetTopic(topicElem->GetText());
   }
 
-  ignition::gui::App()->findChild
-    <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
+  gui::App()->findChild
+    <MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
 void Teleop::OnTeleopTwist(double _forwardVel, double _verticalVel,
         double _angVel)
 {
-  ignition::msgs::Twist cmdVelMsg;
+  msgs::Twist cmdVelMsg;
 
   cmdVelMsg.mutable_linear()->set_x(_forwardVel);
   cmdVelMsg.mutable_linear()->set_z(_verticalVel);
@@ -176,9 +176,9 @@ void Teleop::SetTopic(const QString &_topic)
       this->dataPtr->topic << " ' " <<std::endl;
 
   // Update publisher with new topic.
-  this->dataPtr->cmdVelPub = ignition::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub = transport::Node::Publisher();
   this->dataPtr->cmdVelPub =
-      this->dataPtr->node.Advertise<ignition::msgs::Twist>
+      this->dataPtr->node.Advertise<msgs::Twist>
       (this->dataPtr->topic);
   if (!this->dataPtr->cmdVelPub)
   {
@@ -333,5 +333,5 @@ void Teleop::SetKeyScale()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Teleop,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(Teleop,
+                    gui::Plugin)

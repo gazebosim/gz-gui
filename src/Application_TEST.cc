@@ -39,7 +39,7 @@ using namespace gui;
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Constructor))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
@@ -65,7 +65,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Constructor))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadPlugin))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
@@ -121,7 +121,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadPlugin))
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
   }
 
-  // Plugin which doesn't inherit from ignition::gui::Plugin
+  // Plugin which doesn't inherit from gui::Plugin
   {
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -149,7 +149,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadPlugin))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -199,7 +199,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadConfig))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -208,12 +208,12 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
-    auto testBuildPath = ignition::common::joinPaths(
+    auto testBuildPath = common::joinPaths(
       std::string(PROJECT_BINARY_PATH), "lib");
     app.AddPluginPath(testBuildPath);
 
     // Set default config file
-    auto configPath = ignition::common::joinPaths(
+    auto configPath = common::joinPaths(
       std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
@@ -224,7 +224,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(LoadDefaultConfig))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(CreateMainWindow))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -307,7 +307,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(CreateMainWindow))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Dialog))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -380,13 +380,13 @@ TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Dialog))
 /////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(messageHandler))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
   Application app(g_argc, g_argv);
 
-  // \todo Verify output, see ignition::commmon::Console_TEST for example
+  // \todo Verify output, see commmon::Console_TEST for example
   qDebug("This came from qDebug");
   qInfo("This came from qInfo");
   qWarning("This came from qWarning");

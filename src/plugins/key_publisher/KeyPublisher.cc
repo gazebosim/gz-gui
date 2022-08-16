@@ -65,7 +65,7 @@ using namespace gui;
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
 {
   // Advertise publisher node
-  this->dataPtr->pub = this->dataPtr->node.Advertise<ignition::msgs::Int32>
+  this->dataPtr->pub = this->dataPtr->node.Advertise<msgs::Int32>
     (this->dataPtr->topic);
 }
 
@@ -80,8 +80,8 @@ void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Key publisher";
 
-  ignition::gui::App()->findChild
-    <ignition::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
+  gui::App()->findChild
+    <MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
@@ -96,5 +96,5 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::KeyPublisher,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(KeyPublisher,
+                    gui::Plugin)

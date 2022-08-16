@@ -43,7 +43,7 @@ int countRowsOfIndex(const QModelIndex &_index = QModelIndex())
 /////////////////////////////////////////////////
 TEST(SearchModelTest, FlatStructure)
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   // A source model
   auto sourceModel = new QStandardItemModel();
@@ -99,7 +99,7 @@ TEST(SearchModelTest, FlatStructure)
 /////////////////////////////////////////////////
 TEST(SearchModelTest, NestedStructure)
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   // A source model
   auto sourceModel = new QStandardItemModel();
