@@ -76,7 +76,7 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : ignition::gui::Plugin(),
+  : gui::Plugin(),
   dataPtr(std::make_unique<ScreenshotPrivate>())
 {
   std::string home;
@@ -236,5 +236,5 @@ void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::Screenshot,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(Screenshot,
+                    gui::Plugin)

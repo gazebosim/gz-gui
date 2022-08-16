@@ -34,5 +34,5 @@ TestInvalidQmlPlugin::~TestInvalidQmlPlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::TestInvalidQmlPlugin,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(TestInvalidQmlPlugin,
+                    gui::Plugin)

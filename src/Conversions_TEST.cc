@@ -156,7 +156,7 @@ TEST(ConversionsTest, Time)
 
   // Msgs to common to msgs
   {
-    ignition::msgs::Time t;
+    msgs::Time t;
     t.set_sec(s);
     t.set_nsec(ns);
 

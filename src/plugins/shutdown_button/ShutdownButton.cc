@@ -45,9 +45,9 @@ void ShutdownButton::LoadConfig(const tinyxml2::XMLElement * /*_pluginElem*/)
 /////////////////////////////////////////////////
 void ShutdownButton::OnStop()
 {
-  ignition::gui::App()->findChild<MainWindow *>()->QuickWindow()->close();
+  gui::App()->findChild<MainWindow *>()->QuickWindow()->close();
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::ShutdownButton,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ShutdownButton,
+                    gui::Plugin)

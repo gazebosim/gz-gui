@@ -35,5 +35,5 @@ TestBadInheritancePlugin::~TestBadInheritancePlugin()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::TestBadInheritancePlugin,
-                    ignition::gui::MainWindow)
+IGNITION_ADD_PLUGIN(TestBadInheritancePlugin,
+                    MainWindow)
