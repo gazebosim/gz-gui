@@ -1,5 +1,10 @@
 ## Gazebo GUI 3
 
+### Gazebo GUI 3.11.2 (2022-08-17)
+
+1. Fix mistaken dialog error message
+    * [Pull request #472](https://github.com/gazebosim/gz-gui/pull/472)
+
 ### Gazebo GUI 3.11.1 (2022-08-15)
 
 1. Replace pose in Grid3d with GzPose
