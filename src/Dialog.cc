@@ -125,7 +125,7 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
   }
 
   // Write config file
-  if (!doc.SaveFile(_path.c_str()))
+  if (doc.SaveFile(_path.c_str()) != tinyxml2::XML_SUCCESS)
   {
     // LCOV_EXCL_START
     ignerr << "Failed to save file: " << _path
