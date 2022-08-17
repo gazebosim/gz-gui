@@ -235,7 +235,7 @@ void WorldStats::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void WorldStats::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
+void WorldStats::OnWorldStatsMsg(const msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -296,5 +296,5 @@ void WorldStats::SetIterations(const QString &_iterations)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::WorldStats,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(WorldStats,
+                    gui::Plugin)

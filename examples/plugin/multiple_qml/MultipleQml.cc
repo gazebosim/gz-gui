@@ -41,5 +41,5 @@ void MultipleQml::OnButton(const QString &_text)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::MultipleQml,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(MultipleQml,
+                    gui::Plugin);

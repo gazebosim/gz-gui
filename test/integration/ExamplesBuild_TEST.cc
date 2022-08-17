@@ -134,24 +134,24 @@ void ExamplesBuild::Build(const std::string &_type)
 
   // Path to examples of the given type
   auto examplesDir = std::string(PROJECT_SOURCE_PATH) + "/examples/" + _type;
-  ASSERT_TRUE(ignition::common::exists(examplesDir));
+  ASSERT_TRUE(common::exists(examplesDir));
 
   // Iterate over directory
-  ignition::common::DirIter endIter;
-  for (ignition::common::DirIter dirIter(examplesDir);
+  common::DirIter endIter;
+  for (common::DirIter dirIter(examplesDir);
       dirIter != endIter; ++dirIter)
   {
-    auto base = ignition::common::basename(*dirIter);
+    auto base = common::basename(*dirIter);
 
     // Source directory for this example
     auto sourceDir = examplesDir + "/" + base;
-    ASSERT_TRUE(ignition::common::exists(sourceDir));
+    ASSERT_TRUE(common::exists(sourceDir));
     igndbg << "Source: " << sourceDir << std::endl;
 
     // Create a temp build directory
     std::string tmpBuildDir;
     ASSERT_TRUE(createAndSwitchToTempDir(tmpBuildDir));
-    EXPECT_TRUE(ignition::common::exists(tmpBuildDir));
+    EXPECT_TRUE(common::exists(tmpBuildDir));
     igndbg << "Build directory: " << tmpBuildDir<< std::endl;
 
     char cmd[1024];

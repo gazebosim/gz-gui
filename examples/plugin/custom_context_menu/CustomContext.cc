@@ -35,5 +35,5 @@ CustomContext::~CustomContext()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::CustomContext,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(CustomContext,
+                    gui::Plugin);

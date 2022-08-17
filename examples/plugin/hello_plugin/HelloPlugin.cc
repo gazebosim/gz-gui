@@ -53,5 +53,5 @@ void HelloPlugin::OnButton()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::HelloPlugin,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(HelloPlugin,
+                    gui::Plugin);

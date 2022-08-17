@@ -38,7 +38,7 @@ using namespace gui;
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -77,7 +77,7 @@ TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 /////////////////////////////////////////////////
 TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -107,7 +107,7 @@ TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 /////////////////////////////////////////////////
 TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -139,7 +139,7 @@ TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
 /////////////////////////////////////////////////
 TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStr))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(
@@ -238,7 +238,7 @@ TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStr))
 /////////////////////////////////////////////////
 TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(
