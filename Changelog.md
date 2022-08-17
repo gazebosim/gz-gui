@@ -1,5 +1,25 @@
 ## Gazebo GUI 6
 
+### Gazebo GUI 6.6.1 (2022-08-17)
+
+1. Fix mistaken dialog error message
+    * [Pull request #472](https://github.com/gazebosim/gz-gui/pull/472)
+
+1. Replace color and pose for `GridConfig` with `GzColor` and `GzPose`
+    * [Pull request #463](https://github.com/gazebosim/gz-gui/pull/463)
+
+1. Replace pose in `Grid3d` with `GzPose`
+    * [Pull request #461](https://github.com/gazebosim/gz-gui/pull/461)
+
+1. Remove redundant namespace references
+    * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/460)
+
+1. Update codeowners
+    * [Pull request #465](https://github.com/gazebosim/gz-gui/pull/465)
+
+1. Fix warnings on Jammy
+    * [Pull request #464](https://github.com/gazebosim/gz-gui/pull/464)
+
 ### Gazebo GUI 6.6.0 (2022-08-10)
 
 1. GzColor ColorDialogue fix
