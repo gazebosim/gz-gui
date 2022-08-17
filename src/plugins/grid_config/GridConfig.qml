@@ -32,7 +32,7 @@ GridLayout {
 
   // Dummy item for using getDecimals()
   IgnHelpers {
-    id: ignHelper
+    id: ignHelpers
   }
 
   Connections {
@@ -156,7 +156,7 @@ GridLayout {
     maximumValue: Number.MAX_VALUE
     minimumValue: 0.0000001
     value: 1.00
-    decimals: ignHelper.getDecimals(cellLength.width)
+    decimals: ignHelpers.getDecimals(cellLength.width)
     stepSize: 0.01
     onEditingFinished: GridConfig.UpdateCellLength(cellLength.value)
   }

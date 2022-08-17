@@ -146,14 +146,14 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  ignition::gui::App()->findChild<
-      ignition::gui::MainWindow *>()->installEventFilter(this);
+  gui::App()->findChild<
+      MainWindow *>()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
 bool GridConfig::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if (_event->type() == ignition::gui::events::Render::kType)
+  if (_event->type() == events::Render::kType)
   {
     if (nullptr == this->dataPtr->scene)
       this->dataPtr->scene = rendering::sceneFromFirstRenderEngine();
@@ -409,5 +409,6 @@ void GridConfig::RefreshList()
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::GridConfig,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(GridConfig,
+                    gui::Plugin)
+

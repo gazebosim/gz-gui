@@ -181,7 +181,7 @@ QQmlApplicationEngine *Application::Engine() const
 }
 
 /////////////////////////////////////////////////
-Application *ignition::gui::App()
+Application *gui::App()
 {
   return qobject_cast<Application *>(qGuiApp);
 }
@@ -458,7 +458,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   }
 
   // Go over all plugin names and get the first one that implements the
-  // ignition::gui::Plugin interface
+  // gui::Plugin interface
   plugin::PluginPtr commonPlugin;
   std::shared_ptr<gui::Plugin> plugin{nullptr};
   for (auto pluginName : pluginNames)
@@ -467,7 +467,7 @@ bool Application::LoadPlugin(const std::string &_filename,
     if (!commonPlugin)
       continue;
 
-    plugin = commonPlugin->QueryInterfaceSharedPtr<ignition::gui::Plugin>();
+    plugin = commonPlugin->QueryInterfaceSharedPtr<gui::Plugin>();
     if (plugin)
       break;
   }
@@ -488,7 +488,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   if (!plugin)
   {
     ignerr << "Failed to load plugin [" << _filename <<
-              "] : couldn't get [ignition::gui::Plugin] interface."
+              "] : couldn't get [gui::Plugin] interface."
            << std::endl;
     return false;
   }

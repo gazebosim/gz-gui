@@ -297,5 +297,5 @@ void ImageDisplay::SetTopicList(const QStringList &_topicList)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::ImageDisplay,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(ImageDisplay,
+                    gui::Plugin)

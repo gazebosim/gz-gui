@@ -42,7 +42,7 @@ TEST(ExampleTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
       "examples", "config");
 
   // Load each config file
-  ignition::common::DirIter endIter;
+  common::DirIter endIter;
   for (common::DirIter file(exampleConfigPath); file != endIter; ++file)
   {
     igndbg << *file << std::endl;

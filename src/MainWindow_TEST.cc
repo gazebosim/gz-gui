@@ -47,7 +47,7 @@ using namespace std::chrono_literals;
 // See https://github.com/ignitionrobotics/ign-gui/issues/75
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   // Constructor
@@ -60,7 +60,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 /////////////////////////////////////////////////
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   // Change default config path
@@ -97,7 +97,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
 /////////////////////////////////////////////////
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   auto mainWindow = new MainWindow;
@@ -133,7 +133,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
 /////////////////////////////////////////////////
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   // Add test plugins to path
@@ -175,7 +175,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
 /////////////////////////////////////////////////
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   // Add test plugins to path
@@ -207,7 +207,7 @@ TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -242,7 +242,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(defaultValues))
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -280,7 +280,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(mergeFromXML))
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(MenusToString))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -310,7 +310,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(MenusToString))
 /////////////////////////////////////////////////
 TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(IgnoreToString))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   WindowConfig c;
 
@@ -337,7 +337,7 @@ TEST(WindowConfigTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(IgnoreToString))
 TEST(MainWindowTest,
     IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(CloseWithoutSavingChanges))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   // Access window after it's open
@@ -385,7 +385,7 @@ TEST(MainWindowTest,
 TEST(MainWindowTest,
      IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoShutdown))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   app.LoadConfig(common::joinPaths(
@@ -398,8 +398,8 @@ TEST(MainWindowTest,
   bool shutdownCalled{false};
   transport::Node node;
   std::string serverControlService{"/server_control"};
-  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
-  cb = [&](const ignition::msgs::ServerControl &_req, msgs::Boolean &_rep) {
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)>
+  cb = [&](const msgs::ServerControl &_req, msgs::Boolean &_rep) {
     shutdownCalled = _req.stop();
     _rep.set_data(true);
     return true;
@@ -417,7 +417,7 @@ TEST(MainWindowTest,
 TEST(MainWindowTest,
      IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitActionCustomShutdownService))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   app.LoadConfig(common::joinPaths(
@@ -433,8 +433,8 @@ TEST(MainWindowTest,
   transport::Node node;
 
   std::string serverControlService{"/test_service"};
-  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
-  cb = [&](const ignition::msgs::ServerControl &_req, msgs::Boolean &_rep) {
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)>
+  cb = [&](const msgs::ServerControl &_req, msgs::Boolean &_rep) {
     shutdownCalled = _req.stop();
     _rep.set_data(true);
     return true;
@@ -442,8 +442,8 @@ TEST(MainWindowTest,
   node.Advertise(serverControlService, cb);
 
   std::string wrongServerControlService{"/server_control"};
-  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
-  cb2 = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)>
+  cb2 = [&](const msgs::ServerControl &, msgs::Boolean &_rep) {
     wrongShutdownCalled = true;
     _rep.set_data(true);
     return true;
@@ -462,7 +462,7 @@ TEST(MainWindowTest,
 TEST(MainWindowTest,
      IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DefaultExitActionAutoCloseGui))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   // Add test plugins to path
@@ -477,8 +477,8 @@ TEST(MainWindowTest,
   bool shutdownCalled{false};
   transport::Node node;
   std::string serverControlService{"/server_control"};
-  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
-  cb = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)>
+  cb = [&](const msgs::ServerControl &, msgs::Boolean &_rep) {
     shutdownCalled = true;
     _rep.set_data(true);
     return true;
@@ -564,7 +564,7 @@ void FindExitDialogButtons(
 TEST(MainWindowTest,
      IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogShutdownButton))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   app.LoadConfig(common::joinPaths(
@@ -596,8 +596,8 @@ TEST(MainWindowTest,
   bool shutdownCalled{false};
   transport::Node node;
   std::string serverControlService{"/server_control"};
-  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
-    cb = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)>
+    cb = [&](const msgs::ServerControl &, msgs::Boolean &_rep) {
     shutdownCalled = true;
     _rep.set_data(true);
     return true;
@@ -624,7 +624,7 @@ TEST(MainWindowTest,
 TEST(MainWindowTest,
      IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogDefaultButtons))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   app.LoadConfig(common::joinPaths(
@@ -655,8 +655,8 @@ TEST(MainWindowTest,
   bool shutdownCalled{false};
   transport::Node node;
   std::string serverControlService{"/server_control"};
-  std::function<bool(const ignition::msgs::ServerControl &, msgs::Boolean &)>
-    cb = [&](const ignition::msgs::ServerControl &, msgs::Boolean &_rep) {
+  std::function<bool(const msgs::ServerControl &, msgs::Boolean &)>
+    cb = [&](const msgs::ServerControl &, msgs::Boolean &_rep) {
     shutdownCalled = true;
     _rep.set_data(true);
     return true;
@@ -672,7 +672,7 @@ TEST(MainWindowTest,
 TEST(MainWindowTest,
      IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ExitDialogButtonsText))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   app.LoadConfig(common::joinPaths(
@@ -713,7 +713,7 @@ TEST(MainWindowTest,
 /////////////////////////////////////////////////
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 {
-  ignition::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
   // Main window

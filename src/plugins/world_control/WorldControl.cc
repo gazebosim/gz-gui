@@ -276,7 +276,7 @@ void WorldControl::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void WorldControl::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
+void WorldControl::OnWorldStatsMsg(const msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -287,7 +287,7 @@ void WorldControl::OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg)
 /////////////////////////////////////////////////
 void WorldControl::OnPlay()
 {
-  ignition::msgs::WorldControl msg;
+  msgs::WorldControl msg;
   msg.set_pause(false);
   this->dataPtr->pause = false;
   this->dataPtr->SendEventMsg(msg);
@@ -296,7 +296,7 @@ void WorldControl::OnPlay()
 /////////////////////////////////////////////////
 void WorldControl::OnPause()
 {
-  ignition::msgs::WorldControl msg;
+  msgs::WorldControl msg;
   msg.set_pause(true);
   this->dataPtr->pause = true;
 
@@ -312,7 +312,7 @@ void WorldControl::OnStepCount(const unsigned int _steps)
 /////////////////////////////////////////////////
 void WorldControl::OnStep()
 {
-  ignition::msgs::WorldControl msg;
+  msgs::WorldControl msg;
   msg.set_pause(this->dataPtr->pause);
   msg.set_multi_step(this->dataPtr->multiStep);
 
@@ -329,8 +329,8 @@ void WorldControlPrivate::SendEventMsg(const ignition::msgs::WorldControl &_msg)
   }
   else
   {
-    std::function<void(const ignition::msgs::Boolean &, const bool)> cb =
-        [](const ignition::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+    std::function<void(const msgs::Boolean &, const bool)> cb =
+        [](const msgs::Boolean &/*_rep*/, const bool /*_result*/)
     {
       // the service CB is empty because updates are handled in
       // WorldControl::ProcessMsg
@@ -340,5 +340,5 @@ void WorldControlPrivate::SendEventMsg(const ignition::msgs::WorldControl &_msg)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::WorldControl,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(WorldControl,
+                    gui::Plugin)
