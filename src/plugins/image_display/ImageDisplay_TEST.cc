@@ -383,7 +383,7 @@ TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageFloat32))
       float v = 0.5f * static_cast<int>(y / (msg.height() / 2.0) + 1);
       for (unsigned int x = 0; x < msg.height(); ++x)
       {
-        buffer.get()[y*msg.width() + x] = v;
+        buffer.get()[y * msg.width() + x] = v;
       }
     }
 
@@ -432,6 +432,120 @@ TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageFloat32))
 }
 
 /////////////////////////////////////////////////
+TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageInt16))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
+
+  // Load plugin
+  const char *pluginStr =
+    "<plugin filename=\"ImageDisplay\">"
+      "<topic>/image_test</topic>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("ImageDisplay",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Get main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(win, nullptr);
+
+  // Get plugin
+  auto plugins = win->findChildren<plugins::ImageDisplay *>();
+  EXPECT_EQ(plugins.size(), 1);
+  auto plugin = plugins[0];
+  EXPECT_EQ(plugin->Title(), "Image display");
+
+  // Starts with no image
+  auto providerBase = app.Engine()->imageProvider(
+      plugin->CardItem()->objectName() + "imagedisplay");
+  ASSERT_NE(providerBase, nullptr);
+  auto imageProvider = static_cast<plugins::ImageProvider *>(providerBase);
+  ASSERT_NE(imageProvider, nullptr);
+  QSize dummySize;
+  QImage img = imageProvider->requestImage(QString(), &dummySize, dummySize);
+  // When there is no image yet, a placeholder image with size 400 is given
+  // See ImageDisplay.hh, ImageProvider for more details
+  int placeholderSize = 400;
+  EXPECT_EQ(img.width(), placeholderSize);
+  EXPECT_EQ(img.height(), placeholderSize);
+
+  // Publish images
+  transport::Node node;
+  auto pub = node.Advertise<msgs::Image>("/image_test");
+
+  // Good message
+  {
+    msgs::Image msg;
+    msg.set_height(32);
+    msg.set_width(32);
+    msg.set_pixel_format_type(msgs::PixelFormatType::L_INT16);
+    // bytes per pixel = channels * bytes = 1 * 2
+    int bpp = 2;
+    msg.set_step(msg.width() * bpp);
+
+    // first half is black, second half is white
+    int bufferSize = msg.width() * msg.height() * bpp;
+    std::shared_ptr<uint16_t> buffer(new uint16_t[bufferSize]);
+    for (unsigned int y = 0; y < msg.width(); ++y)
+    {
+      uint16_t v = 100 * static_cast<int>(y / (msg.height() / 2.0) + 1);
+      for (unsigned int x = 0; x < msg.height(); ++x)
+      {
+        buffer.get()[y * msg.width() + x] = v;
+      }
+    }
+
+    msg.set_data(buffer.get(), bufferSize);
+    pub.Publish(msg);
+  }
+
+  // Give it time to be processed
+  int sleep = 0;
+  int maxSleep = 30;
+  while (img.width() == placeholderSize && sleep < maxSleep)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    QCoreApplication::processEvents();
+    img = imageProvider->requestImage(QString(), &dummySize, dummySize);
+    ++sleep;
+  }
+
+  EXPECT_EQ(img.width(), 32);
+  EXPECT_EQ(img.height(), 32);
+
+  // check image half gray & half black
+  for (int y = 0; y < img.height(); ++y)
+  {
+    for (int x = 0; x < img.width(); ++x)
+    {
+      if (y < img.height() / 2)
+      {
+        // expect black
+        EXPECT_EQ(img.pixelColor(x, y).red(), 0);
+        EXPECT_EQ(img.pixelColor(x, y).green(), 0);
+        EXPECT_EQ(img.pixelColor(x, y).blue(), 0);
+      }
+      else
+      {
+        // expect white
+        EXPECT_EQ(img.pixelColor(x, y).red(), 255);
+        EXPECT_EQ(img.pixelColor(x, y).green(), 255);
+        EXPECT_EQ(img.pixelColor(x, y).blue(), 255);
+      }
+    }
+  }
+
+  // Cleanup
+  plugins.clear();
+}
+
+/////////////////////////////////////////////////
 TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(TopicPicker))
 {
   common::Console::SetVerbosity(4);
@@ -460,6 +574,7 @@ TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(TopicPicker))
   EXPECT_TRUE(topicProp.isValid());
   auto topicList = topicProp.toStringList();
   EXPECT_EQ(topicList.size(), 0);
+  EXPECT_EQ(topicList.size(), plugin->TopicList().size());
 
   // Refresh and still empty
   plugin->OnRefresh();
@@ -467,6 +582,7 @@ TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(TopicPicker))
   EXPECT_TRUE(topicProp.isValid());
   topicList = topicProp.toStringList();
   EXPECT_EQ(topicList.size(), 0);
+  EXPECT_EQ(topicList.size(), plugin->TopicList().size());
 
   // Advertise topics
   transport::Node node;
@@ -480,9 +596,24 @@ TEST(ImageDisplayTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(TopicPicker))
   EXPECT_TRUE(topicProp.isValid());
   topicList = topicProp.toStringList();
   EXPECT_EQ(topicList.size(), 2);
+  EXPECT_EQ(topicList.size(), plugin->TopicList().size());
 
   EXPECT_EQ(topicList.at(0).toStdString(), "/image_test");
   EXPECT_EQ(topicList.at(1).toStdString(), "/image_test_2");
+  EXPECT_EQ(topicList.at(0), plugin->TopicList().at(0));
+  EXPECT_EQ(topicList.at(1), plugin->TopicList().at(1));
+
+  // Set image topics
+  QStringList newTopicList = {"/new_image_test"};
+  plugin->SetTopicList(newTopicList);
+
+  topicProp = topicsCombo->property("model");
+  EXPECT_TRUE(topicProp.isValid());
+  topicList = topicProp.toStringList();
+  EXPECT_EQ(topicList.size(), 1);
+  EXPECT_EQ(topicList.size(), plugin->TopicList().size());
+  EXPECT_EQ(topicList.at(0).toStdString(), "/new_image_test");
+  EXPECT_EQ(topicList.at(0), plugin->TopicList().at(0));
 
   // Cleanup
   plugins.clear();

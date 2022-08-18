@@ -150,7 +150,11 @@ void ImageDisplay::OnTopic(const QString _topic)
 {
   auto topic = _topic.toStdString();
   if (topic.empty())
+  {
+    // LCOV_EXCL_START
     return;
+    // LCOV_EXCL_STOP
+  }
 
   // Unsubscribe
   auto subs = this->dataPtr->node.SubscribedTopics();
@@ -161,8 +165,10 @@ void ImageDisplay::OnTopic(const QString _topic)
   if (!this->dataPtr->node.Subscribe(topic, &ImageDisplay::OnImageMsg,
       this))
   {
+    // LCOV_EXCL_START
     ignerr << "Unable to subscribe to topic [" << topic << "]" << std::endl;
     return;
+    // LCOV_EXCL_STOP
   }
   App()->findChild<MainWindow *>()->notifyWithDuration(
     QString::fromStdString("Subscribed to: <b>" + topic + "</b>"), 4000);
