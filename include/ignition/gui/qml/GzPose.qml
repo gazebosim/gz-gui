@@ -169,7 +169,7 @@ Item {
       }
 
       Text {
-        text: useRadian ? 'Roll (rad)' : 'Roll (deg)'
+        text: 'Roll ' + (useRadian ? '(rad)' : '(deg)')
         leftPadding: 5
         color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
         font.pointSize: 12
@@ -211,7 +211,7 @@ Item {
       }
 
       Text {
-        text: useRadian ? 'Pitch (rad)' : 'Pitch (deg)'
+        text: 'Pitch ' + (useRadian ? '(rad)' : '(deg)')
         leftPadding: 5
         color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
         font.pointSize: 12
@@ -253,7 +253,7 @@ Item {
       }
 
       Text {
-        text: useRadian ? 'Roll (rad)' : 'Roll (deg)'
+        text: 'Yaw ' + (useRadian ? '(rad)' : '(deg)')
         leftPadding: 5
         color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
         font.pointSize: 12
