@@ -58,7 +58,7 @@
 #include "ignition/gui/GuiEvents.hh"
 #include "ignition/gui/MainWindow.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -199,7 +199,7 @@ namespace plugins
 
     /// \brief Transport node for making service request and subscribing to
     /// pose topic
-    private: ignition::transport::Node node;
+    private: gz::transport::Node node;
   };
 
   /// \brief Private data class for IgnRenderer
@@ -263,7 +263,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

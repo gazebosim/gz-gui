@@ -42,7 +42,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./ImageDisplay_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

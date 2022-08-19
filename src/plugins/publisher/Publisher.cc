@@ -29,7 +29,7 @@
 
 #include "Publisher.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -38,7 +38,7 @@ namespace plugins
   class PublisherPrivate
   {
     /// \brief Message type
-    public: QString msgType = "ignition.msgs.StringMsg";
+    public: QString msgType = "gz.msgs.StringMsg";
 
     /// \brief Message contents
     public: QString msgData = "data: \"Hello\"";
@@ -53,16 +53,16 @@ namespace plugins
     public: QTimer *timer;
 
     /// \brief Node for communication
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Publisher
-    public: ignition::transport::Node::Publisher pub;
+    public: gz::transport::Node::Publisher pub;
   };
 }
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

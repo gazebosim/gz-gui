@@ -19,5 +19,5 @@
 #include "IgnComponents.hh"
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::IgnComponents,
-                    ignition::gui::Plugin);
+IGNITION_ADD_PLUGIN(gz::gui::IgnComponents,
+                    gz::gui::Plugin);

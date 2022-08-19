@@ -18,9 +18,9 @@ for an example.
 Ignition GUI will look for plugins on the following paths, in this order:
 
 1. All paths set on the `IGN_GUI_PLUGIN_PATH` environment variable
-2. All paths added by calling `ignition::gui::addPluginPath`
+2. All paths added by calling `gz::gui::addPluginPath`
 3. `~/.ignition/gui/plugins`
-4. [Plugins which are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/3.3/namespaceignition_1_1gui_1_1plugins.html)
+4. [Plugins which are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/3.3/namespace gz_1_1gui_1_1plugins.html)
 
 ## Configuring plugins
 
@@ -120,4 +120,4 @@ order:
 
 1. All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
 2. `~/.ignition/gui/display_plugins`
-3. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
+3. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespace gz_1_1gui_1_1display_plugins.html)

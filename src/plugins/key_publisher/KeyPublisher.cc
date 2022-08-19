@@ -31,17 +31,17 @@
 
 #include "KeyPublisher.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
   class KeyPublisherPrivate
   {
     /// \brief Node for communication
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Publisher
-    public: ignition::transport::Node::Publisher pub;
+    public: gz::transport::Node::Publisher pub;
 
     /// \brief Topic
     public: std::string topic = "keyboard/keypress";
@@ -50,7 +50,7 @@ namespace gui
     /// \param[in] key_press Pointer to the keyevent
     public: void KeyPub(QKeyEvent *_keyPress)
     {
-      ignition::msgs::Int32 Msg;
+      gz::msgs::Int32 Msg;
       Msg.set_data(_keyPress->key());
       pub.Publish(Msg);
     }
@@ -58,7 +58,7 @@ namespace gui
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

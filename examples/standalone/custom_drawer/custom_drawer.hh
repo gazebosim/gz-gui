@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
-#define IGNITION_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
+#ifndef GZ_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
+#define GZ_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
 
 #include <iostream>
 
@@ -24,7 +24,7 @@
   #include <ignition/gui/qt.h>
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

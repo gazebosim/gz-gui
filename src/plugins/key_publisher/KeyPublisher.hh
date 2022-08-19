@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
-#define IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
+#ifndef GZ_GUI_PLUGINS_KEYPUBLISHER_HH_
+#define GZ_GUI_PLUGINS_KEYPUBLISHER_HH_
 
 #include <ignition/gui/qt.h>
 
@@ -25,7 +25,7 @@
 #include <ignition/gui/Plugin.hh>
 #include <ignition/transport/Node.hh>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -35,7 +35,7 @@ namespace gui
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class KeyPublisher : public ignition::gui::Plugin
+  class KeyPublisher : public gz::gui::Plugin
   {
     Q_OBJECT
 

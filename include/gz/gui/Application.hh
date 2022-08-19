@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_APPLICATION_HH_
-#define IGNITION_GUI_APPLICATION_HH_
+#ifndef GZ_GUI_APPLICATION_HH_
+#define GZ_GUI_APPLICATION_HH_
 
 #include <memory>
 #include <string>
@@ -37,7 +37,7 @@ namespace tinyxml2
   class XMLElement;
 }
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

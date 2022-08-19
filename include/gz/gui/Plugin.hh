@@ -14,8 +14,8 @@
  * limitations under the License.
  *
  */
-#ifndef IGNITION_GUI_PLUGIN_HH_
-#define IGNITION_GUI_PLUGIN_HH_
+#ifndef GZ_GUI_PLUGIN_HH_
+#define GZ_GUI_PLUGIN_HH_
 
 #include <tinyxml2.h>
 #include <memory>
@@ -31,7 +31,7 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

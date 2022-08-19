@@ -61,7 +61,7 @@
 1. Common widget GzColor
     * [Pull request #410](https://github.com/gazebosim/gz-gui/pull/410)
 
-1. Fix ign_TEST
+1. Fix gz_TEST
     * [Pull request #420](https://github.com/gazebosim/gz-gui/pull/420)
 
 1. Make display tests more robust

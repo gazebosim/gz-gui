@@ -15,15 +15,15 @@
  *
 */
 
-#ifndef IGNITION_GUI_EXAMPLES_PLUGINS_MULTIPLEQML_HH_
-#define IGNITION_GUI_EXAMPLES_PLUGINS_MULTIPLEQML_HH_
+#ifndef GZ_GUI_EXAMPLES_PLUGINS_MULTIPLEQML_HH_
+#define GZ_GUI_EXAMPLES_PLUGINS_MULTIPLEQML_HH_
 
 #ifndef Q_MOC_RUN
   #include <ignition/gui/qt.h>
   #include <ignition/gui/Plugin.hh>
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

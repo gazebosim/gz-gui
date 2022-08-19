@@ -17,7 +17,7 @@
 
 #include "TestHelper.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

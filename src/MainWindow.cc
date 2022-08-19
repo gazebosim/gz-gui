@@ -29,7 +29,7 @@
 #include "ignition/msgs/server_control.pb.h"
 #include "ignition/transport/Node.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -76,12 +76,12 @@ namespace ignition
       public: std::string controlService{"/server_control"};
 
       /// \brief Communication node
-      public: ignition::transport::Node node;
+      public: gz::transport::Node node;
     };
   }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /// \brief Strip last component from a path.

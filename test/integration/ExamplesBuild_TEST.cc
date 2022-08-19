@@ -24,7 +24,7 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 
-using namespace ignition;
+using namespace gz;
 
 // Helper functions copied from
 // https://github.com/ignitionrobotics/ign-common/raw/ign-common3/src/Filesystem_TEST.cc

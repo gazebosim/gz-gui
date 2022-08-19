@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
-#define IGNITION_GUI_PLUGINS_SCENE3D_HH_
+#ifndef GZ_GUI_PLUGINS_SCENE3D_HH_
+#define GZ_GUI_PLUGINS_SCENE3D_HH_
 
 #include <string>
 #include <memory>
@@ -32,7 +32,7 @@
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -329,7 +329,7 @@ namespace plugins
     /// \brief Called when the mouse hovers to a new position.
     /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
     /// the render window.
-    public: void OnHovered(const ignition::math::Vector2i &_hoverPos);
+    public: void OnHovered(const gz::math::Vector2i &_hoverPos);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();

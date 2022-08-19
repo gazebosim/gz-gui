@@ -29,7 +29,7 @@
 int gg_argc = 1;
 char **gg_argv = new char *[gg_argc];
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

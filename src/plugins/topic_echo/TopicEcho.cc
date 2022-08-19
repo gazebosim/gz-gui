@@ -23,7 +23,7 @@
 #include "ignition/gui/Application.hh"
 #include "TopicEcho.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -48,13 +48,13 @@ namespace plugins
     public: std::mutex mutex;
 
     /// \brief Node for communication
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
   };
 }
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

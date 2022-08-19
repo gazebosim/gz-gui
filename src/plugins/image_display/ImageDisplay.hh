@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
-#define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
 #include <algorithm>
 #include <memory>
@@ -42,7 +42,7 @@
 
 #include "ignition/gui/Plugin.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -116,12 +116,12 @@ namespace plugins
     public slots: void OnTopic(const QString _topic);
 
     /// \brief Get the topic list as a string, for example
-    /// 'ignition.msgs.StringMsg'
+    /// 'gz.msgs.StringMsg'
     /// \return Message type
     public: Q_INVOKABLE QStringList TopicList() const;
 
     /// \brief Set the topic list from a string, for example
-    /// 'ignition.msgs.StringMsg'
+    /// 'gz.msgs.StringMsg'
     /// \param[in] _topicList Message type
     public: Q_INVOKABLE void SetTopicList(const QStringList &_topicList);
 
@@ -145,7 +145,7 @@ namespace plugins
 
     /// \brief Subscriber callback when new image is received
     /// \param[in] _msg New image
-    private: void OnImageMsg(const ignition::msgs::Image &_msg);
+    private: void OnImageMsg(const gz::msgs::Image &_msg);
 
     /// \internal
     /// \brief Pointer to private data.

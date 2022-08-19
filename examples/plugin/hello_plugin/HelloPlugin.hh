@@ -15,15 +15,15 @@
  *
 */
 
-#ifndef IGNITION_GUI_HELLOPLUGIN_HH_
-#define IGNITION_GUI_HELLOPLUGIN_HH_
+#ifndef GZ_GUI_HELLOPLUGIN_HH_
+#define GZ_GUI_HELLOPLUGIN_HH_
 
 #include <string>
 
 #include <ignition/gui/qt.h>
 #include <ignition/gui/Plugin.hh>
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_IGN_HH_
-#define IGNITION_GUI_IGN_HH_
+#ifndef GZ_GUI_IGN_HH_
+#define GZ_GUI_IGN_HH_
 
 #include "ignition/gui/Export.hh"
 

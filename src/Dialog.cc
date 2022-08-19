@@ -21,7 +21,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Dialog.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -33,7 +33,7 @@ namespace ignition
   }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

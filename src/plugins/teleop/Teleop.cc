@@ -33,7 +33,7 @@
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/MainWindow.hh>
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -60,13 +60,13 @@ namespace plugins
   class TeleopPrivate
   {
     /// \brief Node for communication.
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Topic. Set '/cmd_vel' as default.
     public: std::string topic = "/cmd_vel";
 
     /// \brief Publisher.
-    public: ignition::transport::Node::Publisher cmdVelPub;
+    public: gz::transport::Node::Publisher cmdVelPub;
 
     /// \brief Maximum forward velocity in m/s. GUI buttons and key presses
     /// will use this velocity. Sliders will scale up to this value.
@@ -111,7 +111,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -157,7 +157,7 @@ void Teleop::OnTeleopTwist(double _forwardVel, double _verticalVel,
 
   if (!this->dataPtr->cmdVelPub.Publish(cmdVelMsg))
   {
-    ignerr << "ignition::msgs::Twist message couldn't be published at topic: "
+    ignerr << "gz::msgs::Twist message couldn't be published at topic: "
       << this->dataPtr->topic << std::endl;
   }
 }

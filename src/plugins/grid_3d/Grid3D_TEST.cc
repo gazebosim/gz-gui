@@ -29,7 +29,7 @@
 #include "ignition/gui/Plugin.hh"
 #include "ignition/gui/QtMetatypes.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

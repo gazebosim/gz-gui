@@ -26,7 +26,7 @@
 
 #include "ignition/gui/Helpers.hh"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -35,7 +35,7 @@ namespace plugins
   class WorldControlPrivate
   {
     /// \brief Message holding latest world statistics
-    public: ignition::msgs::WorldStatistics msg;
+    public: gz::msgs::WorldStatistics msg;
 
     /// \brief Service to send world control requests
     public: std::string controlService;
@@ -44,7 +44,7 @@ namespace plugins
     public: std::recursive_mutex mutex;
 
     /// \brief Communication node
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief The multi step value
     public: unsigned int multiStep = 1u;
@@ -56,7 +56,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

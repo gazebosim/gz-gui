@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_GUIEVENTS_HH_
-#define IGNITION_GUI_GUIEVENTS_HH_
+#ifndef GZ_GUI_GUIEVENTS_HH_
+#define GZ_GUI_GUIEVENTS_HH_
 
 #include <QEvent>
 #include <string>
@@ -23,7 +23,7 @@
 #include <vector>
 #include <ignition/math/Vector3.hh>
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
@@ -259,4 +259,4 @@ namespace ignition
   }
 }
 
-#endif  // IGNITION_GUI_GUIEVENTS_HH_
+#endif  // GZ_GUI_GUIEVENTS_HH_

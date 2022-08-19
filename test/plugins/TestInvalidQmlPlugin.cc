@@ -19,7 +19,7 @@
 
 #include "TestInvalidQmlPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

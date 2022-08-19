@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_WORLDSTATS_HH_
-#define IGNITION_GUI_PLUGINS_WORLDSTATS_HH_
+#ifndef GZ_GUI_PLUGINS_WORLDSTATS_HH_
+#define GZ_GUI_PLUGINS_WORLDSTATS_HH_
 
 #include <memory>
 
@@ -42,7 +42,7 @@
 #  endif
 #endif
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -70,7 +70,7 @@ namespace plugins
   ///
   /// If no elements are filled for the plugin, all properties will be
   /// displayed.
-  class WorldStats_EXPORTS_API WorldStats: public ignition::gui::Plugin
+  class WorldStats_EXPORTS_API WorldStats: public gz::gui::Plugin
   {
     Q_OBJECT
 
@@ -163,7 +163,7 @@ namespace plugins
     signals: void IterationsChanged();
 
     /// \brief Subscriber callback when new world statistics are received
-    private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
+    private: void OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg);
 
     // Private data
     private: std::unique_ptr<WorldStatsPrivate> dataPtr;

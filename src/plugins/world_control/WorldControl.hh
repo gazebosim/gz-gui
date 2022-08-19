@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_WORLDCONTROL_HH_
-#define IGNITION_GUI_PLUGINS_WORLDCONTROL_HH_
+#ifndef GZ_GUI_PLUGINS_WORLDCONTROL_HH_
+#define GZ_GUI_PLUGINS_WORLDCONTROL_HH_
 
 #include <memory>
 
@@ -41,7 +41,7 @@
 #  endif
 #endif
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -67,7 +67,7 @@ namespace plugins
   ///
   /// If no elements are filled for the plugin, both the play/pause and the
   /// step buttons will be displayed.
-  class WorldControl_EXPORTS_API WorldControl: public ignition::gui::Plugin
+  class WorldControl_EXPORTS_API WorldControl: public gz::gui::Plugin
   {
     Q_OBJECT
 
@@ -103,7 +103,7 @@ namespace plugins
     signals: void paused();
 
     /// \brief Subscriber callback when new world statistics are received
-    private: void OnWorldStatsMsg(const ignition::msgs::WorldStatistics &_msg);
+    private: void OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg);
 
     // Private data
     private: std::unique_ptr<WorldControlPrivate> dataPtr;

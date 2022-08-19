@@ -20,7 +20,7 @@
 
 #include "TestNotRegisteredPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

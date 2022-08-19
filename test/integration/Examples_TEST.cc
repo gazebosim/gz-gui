@@ -30,7 +30,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Examples_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 // See https://github.com/ignitionrobotics/ign-gui/issues/75

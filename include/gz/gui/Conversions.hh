@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_CONVERSIONS_HH_
-#define IGNITION_GUI_CONVERSIONS_HH_
+#ifndef GZ_GUI_CONVERSIONS_HH_
+#define GZ_GUI_CONVERSIONS_HH_
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
@@ -33,7 +33,7 @@
 #include "ignition/gui/qt.h"
 #include "ignition/gui/Export.hh"
 
-namespace ignition
+namespace gz
 {
   namespace common
   {
@@ -87,15 +87,15 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QMouseEvent &_e);
 
-    /// \brief Convert an ignition::msgs::Time to an ignition::common::Time
+    /// \brief Convert an gz::msgs::Time to an gz::common::Time
     /// \param[in] _t The time to convert
-    /// \return An ignition::common::Time object
+    /// \return An gz::common::Time object
     IGNITION_GUI_VISIBLE
     common::Time convert(const msgs::Time &_t);
 
-    /// \brief Convert an ignition::common::Time to an ignition::msgs::Time
+    /// \brief Convert an gz::common::Time to an gz::msgs::Time
     /// \param[in] _t The time to convert
-    /// \return An ignition::msgs::Time object
+    /// \return An gz::msgs::Time object
     IGNITION_GUI_VISIBLE
     msgs::Time convert(const common::Time &_t);
   }

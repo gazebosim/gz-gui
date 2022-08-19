@@ -20,7 +20,7 @@
 #include "test_config.h"  // NOLINT(build/include)
 #include "ignition/gui/GuiEvents.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

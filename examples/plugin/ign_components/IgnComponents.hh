@@ -15,12 +15,12 @@
  *
 */
 
-#ifndef IGNITION_GUI_EXAMPLES_PLUGIN_IGNCOMPONENTS_HH_
-#define IGNITION_GUI_EXAMPLES_PLUGIN_IGNCOMPONENTS_HH_
+#ifndef GZ_GUI_EXAMPLES_PLUGIN_IGNCOMPONENTS_HH_
+#define GZ_GUI_EXAMPLES_PLUGIN_IGNCOMPONENTS_HH_
 
 #include <ignition/gui/Plugin.hh>
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

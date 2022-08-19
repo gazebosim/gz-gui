@@ -24,7 +24,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/config.hh"
 #include "ignition/gui/Export.hh"
-#include "ignition/gui/ign.hh"
+#include "gz/gui/gz.hh"
 #include "ignition/gui/MainWindow.hh"
 
 int g_argc = 1;
@@ -37,11 +37,11 @@ char* g_argv[] =
 void startConsoleLog()
 {
   std::string home;
-  ignition::common::env(IGN_HOMEDIR, home);
+  gz::common::env(IGN_HOMEDIR, home);
 
-  std::string logPathMod = ignition::common::joinPaths(home,
+  std::string logPathMod = gz::common::joinPaths(home,
       ".ignition", "gui", "log",
-      ignition::common::timeToIso(IGN_SYSTEM_TIME()));
+      gz::common::timeToIso(IGN_SYSTEM_TIME()));
   ignLogInit(logPathMod, "console.log");
 }
 
@@ -56,7 +56,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdPluginList()
 {
   startConsoleLog();
 
-  ignition::gui::Application app(g_argc, g_argv);
+  gz::gui::Application app(g_argc, g_argv);
 
   auto pluginsList = app.PluginList();
   for (auto const &path : pluginsList)
@@ -81,8 +81,8 @@ extern "C" IGNITION_GUI_VISIBLE void cmdStandalone(const char *_filename)
 {
   startConsoleLog();
 
-  ignition::gui::Application app(g_argc, g_argv,
-      ignition::gui::WindowType::kDialog);
+  gz::gui::Application app(g_argc, g_argv,
+      gz::gui::WindowType::kDialog);
 
   if (!app.LoadPlugin(_filename))
   {
@@ -97,9 +97,9 @@ extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 {
   startConsoleLog();
 
-  ignition::gui::Application app(g_argc, g_argv);
+  gz::gui::Application app(g_argc, g_argv);
 
-  if (!app.findChild<ignition::gui::MainWindow *>())
+  if (!app.findChild<gz::gui::MainWindow *>())
   {
     return;
   }
@@ -115,7 +115,7 @@ extern "C" IGNITION_GUI_VISIBLE void cmdConfig(const char *_config)
 //////////////////////////////////////////////////
 extern "C" IGNITION_GUI_VISIBLE void cmdVerbose(const char *_verbosity)
 {
-  ignition::common::Console::SetVerbosity(std::atoi(_verbosity));
+  gz::common::Console::SetVerbosity(std::atoi(_verbosity));
 }
 
 //////////////////////////////////////////////////
@@ -123,9 +123,9 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 {
   startConsoleLog();
 
-  ignition::gui::Application app(g_argc, g_argv);
+  gz::gui::Application app(g_argc, g_argv);
 
-  if (!app.findChild<ignition::gui::MainWindow *>())
+  if (!app.findChild<gz::gui::MainWindow *>())
   {
     return;
   }
@@ -139,5 +139,5 @@ extern "C" IGNITION_GUI_VISIBLE void cmdEmptyWindow()
 extern "C" IGNITION_GUI_VISIBLE void cmdSetStyleFromFile(
     const char * /*_filename*/)
 {
-//  ignition::gui::setStyleFromFile(std::string(_filename));
+//  gz::gui::setStyleFromFile(std::string(_filename));
 }

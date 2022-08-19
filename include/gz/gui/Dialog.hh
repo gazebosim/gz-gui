@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef IGNITION_GUI_DIALOG_HH_
-#define IGNITION_GUI_DIALOG_HH_
+#ifndef GZ_GUI_DIALOG_HH_
+#define GZ_GUI_DIALOG_HH_
 
 #include <memory>
 #include <string>
@@ -31,7 +31,7 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {

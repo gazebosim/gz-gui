@@ -46,7 +46,7 @@
 #define PATH_ROLE 54
 #define PLOT_ROLE 55
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
@@ -73,7 +73,7 @@ namespace plugins
   class TopicViewerPrivate
   {
     /// \brief Node for Commincation
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Model to create it from the available topics and messages
     public: TopicsModel *model;
@@ -146,7 +146,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

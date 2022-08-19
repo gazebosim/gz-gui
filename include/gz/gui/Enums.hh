@@ -15,12 +15,12 @@
  *
 */
 
-#ifndef IGNITION_GUI_ENUMS_HH_
-#define IGNITION_GUI_ENUMS_HH_
+#ifndef GZ_GUI_ENUMS_HH_
+#define GZ_GUI_ENUMS_HH_
 
 #include "ignition/gui/qt.h"
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

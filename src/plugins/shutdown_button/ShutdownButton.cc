@@ -22,7 +22,7 @@
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/MainWindow.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

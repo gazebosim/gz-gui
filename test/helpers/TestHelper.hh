@@ -14,8 +14,8 @@
  * limitations under the License.
  *
  */
-#ifndef IGNITION_GUI_TESTHELPER_HH_
-#define IGNITION_GUI_TESTHELPER_HH_
+#ifndef GZ_GUI_TESTHELPER_HH_
+#define GZ_GUI_TESTHELPER_HH_
 
 #include <ignition/gui/Application.hh>
 #include <ignition/gui/Export.hh>
@@ -31,7 +31,7 @@
 #  endif
 #endif
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {

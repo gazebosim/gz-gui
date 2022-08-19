@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
-#define IGNITION_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
+#ifndef GZ_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
+#define GZ_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
 
 #include "ignition/gui/Plugin.hh"
 
@@ -30,14 +30,14 @@
 #  endif
 #endif
 
-namespace ignition
+namespace gz
 {
 namespace gui
 {
 namespace plugins
 {
   /// \brief This plugin provides a shutdown button.
-  class ShutdownButton_EXPORTS_API ShutdownButton: public ignition::gui::Plugin
+  class ShutdownButton_EXPORTS_API ShutdownButton: public gz::gui::Plugin
   {
     Q_OBJECT
 

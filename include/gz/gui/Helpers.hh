@@ -14,15 +14,15 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_HELPERS_HH_
-#define IGNITION_GUI_HELPERS_HH_
+#ifndef GZ_GUI_HELPERS_HH_
+#define GZ_GUI_HELPERS_HH_
 
 #include <string>
 
 #include "ignition/gui/Enums.hh"
 #include "ignition/gui/Export.hh"
 
-namespace ignition
+namespace gz
 {
   namespace gui
   {
