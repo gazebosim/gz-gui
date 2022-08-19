@@ -18,7 +18,7 @@
 #ifndef GZ_GUI_TEST_MALFORMEDPLUGIN_HH_
 #define GZ_GUI_TEST_MALFORMEDPLUGIN_HH_
 
-#include <ignition/gui/Plugin.hh>
+#include <gz/gui/Plugin.hh>
 
 namespace gz
 {

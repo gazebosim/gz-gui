@@ -17,8 +17,8 @@
 #ifndef GZ_GUI_DRAGDROPMODEL_HH_
 #define GZ_GUI_DRAGDROPMODEL_HH_
 
-#include "ignition/gui/Export.hh"
-#include "ignition/gui/qt.h"
+#include "gz/gui/Export.hh"
+#include "gz/gui/qt.h"
 
 namespace gz
 {

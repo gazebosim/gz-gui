@@ -18,13 +18,13 @@
 #include <stdlib.h>
 #include <gtest/gtest.h>
 
-#include <ignition/math/Helpers.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/math/Helpers.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Helpers.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Helpers.hh"
 
 int gg_argc = 1;
 char **gg_argv = new char *[gg_argc];

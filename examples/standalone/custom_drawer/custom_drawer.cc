@@ -15,12 +15,12 @@
  *
 */
 
-#include <ignition/common/Console.hh>
+#include <gz/common/Console.hh>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/Application.hh>
-  #include <ignition/gui/MainWindow.hh>
-  #include <ignition/gui/qt.h>
+  #include <gz/gui/Application.hh>
+  #include <gz/gui/MainWindow.hh>
+  #include <gz/gui/qt.h>
   #include "custom_drawer.hh"
 #endif
 

@@ -16,7 +16,7 @@
 */
 
 #include <iostream>
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
 #include "MultipleQml.hh"
 

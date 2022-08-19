@@ -18,7 +18,7 @@
 #ifndef GZ_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
 #define GZ_GUI_PLUGINS_SHUTDOWNBUTTON_HH_
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 #ifndef _WIN32
 #  define ShutdownButton_EXPORTS_API

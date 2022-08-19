@@ -18,7 +18,7 @@
 #ifndef GZ_GUI_ENUMS_HH_
 #define GZ_GUI_ENUMS_HH_
 
-#include "ignition/gui/qt.h"
+#include "gz/gui/qt.h"
 
 namespace gz
 {

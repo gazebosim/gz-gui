@@ -20,8 +20,8 @@
 
 #include <string>
 
-#include <ignition/gui/qt.h>
-#include <ignition/gui/Plugin.hh>
+#include <gz/gui/qt.h>
+#include <gz/gui/Plugin.hh>
 
 namespace gz
 {

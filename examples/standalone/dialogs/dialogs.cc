@@ -17,12 +17,12 @@
 
 #include <iostream>
 
-#include <ignition/common/Console.hh>
+#include <gz/common/Console.hh>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Application.hh>
-  #include <ignition/gui/Dialog.hh>
+  #include <gz/gui/qt.h>
+  #include <gz/gui/Application.hh>
+  #include <gz/gui/Dialog.hh>
 #endif
 
 //////////////////////////////////////////////////

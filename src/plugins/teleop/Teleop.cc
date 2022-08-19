@@ -19,7 +19,7 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/twist.pb.h>
+#include <gz/msgs/twist.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -28,10 +28,10 @@
 
 #include <string>
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/MainWindow.hh>
+#include <gz/gui/Application.hh>
+#include <gz/gui/MainWindow.hh>
 
 namespace gz
 {

@@ -21,17 +21,17 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/time.pb.h>
+#include <gz/msgs/time.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-#include <ignition/common/Time.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Vector2.hh>
-#include <ignition/math/Vector3.hh>
+#include <gz/common/Time.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/math/Vector3.hh>
 
-#include "ignition/gui/qt.h"
-#include "ignition/gui/Export.hh"
+#include "gz/gui/qt.h"
+#include "gz/gui/Export.hh"
 
 namespace gz
 {

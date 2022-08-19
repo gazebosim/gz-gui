@@ -19,8 +19,8 @@
 
 #include <string>
 
-#include "ignition/gui/Enums.hh"
-#include "ignition/gui/Export.hh"
+#include "gz/gui/Enums.hh"
+#include "gz/gui/Export.hh"
 
 namespace gz
 {

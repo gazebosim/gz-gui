@@ -18,12 +18,12 @@
 #ifndef GZ_GUI_PLUGINS_KEYPUBLISHER_HH_
 #define GZ_GUI_PLUGINS_KEYPUBLISHER_HH_
 
-#include <ignition/gui/qt.h>
+#include <gz/gui/qt.h>
 
 #include <memory>
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/transport/Node.hh>
+#include <gz/gui/Plugin.hh>
+#include <gz/transport/Node.hh>
 
 namespace gz
 {

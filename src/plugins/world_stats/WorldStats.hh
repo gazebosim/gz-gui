@@ -23,14 +23,14 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
+#include <gz/msgs.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-#include <ignition/transport.hh>
+#include <gz/transport.hh>
 
-#include "ignition/gui/Export.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Export.hh"
+#include "gz/gui/Plugin.hh"
 
 #ifndef _WIN32
 #  define WorldStats_EXPORTS_API

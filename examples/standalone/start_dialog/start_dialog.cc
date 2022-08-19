@@ -17,10 +17,10 @@
 
 #include <iostream>
 
-#include <ignition/gui/qt.h>
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/Dialog.hh>
-#include <ignition/gui/MainWindow.hh>
+#include <gz/gui/qt.h>
+#include <gz/gui/Application.hh>
+#include <gz/gui/Dialog.hh>
+#include <gz/gui/MainWindow.hh>
 
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)

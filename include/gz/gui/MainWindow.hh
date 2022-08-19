@@ -23,10 +23,10 @@
 #include <string>
 #include <vector>
 
-#include <ignition/common/Console.hh>
+#include <gz/common/Console.hh>
 
-#include "ignition/gui/qt.h"
-#include "ignition/gui/Export.hh"
+#include "gz/gui/qt.h"
+#include "gz/gui/Export.hh"
 
 #ifdef _WIN32
 // Disable warning C4251 which is triggered by

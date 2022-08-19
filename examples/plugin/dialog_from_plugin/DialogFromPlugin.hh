@@ -19,8 +19,8 @@
 #define GZ_GUI_DIALOGFROMPLUGIN_HH_
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Plugin.hh>
+  #include <gz/gui/qt.h>
+  #include <gz/gui/Plugin.hh>
 #endif
 
 namespace gz

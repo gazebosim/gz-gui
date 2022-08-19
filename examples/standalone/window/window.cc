@@ -18,9 +18,9 @@
 #include <iostream>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Application.hh>
-  #include <ignition/gui/MainWindow.hh>
+  #include <gz/gui/qt.h>
+  #include <gz/gui/Application.hh>
+  #include <gz/gui/MainWindow.hh>
 #endif
 
 //////////////////////////////////////////////////

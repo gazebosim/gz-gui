@@ -19,8 +19,8 @@
 #define GZ_GUI_TEST_TESTBADINHERITANCEPLUGIN_HH_
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/MainWindow.hh>
+  #include <gz/gui/qt.h>
+  #include <gz/gui/MainWindow.hh>
 #endif
 
 namespace gz

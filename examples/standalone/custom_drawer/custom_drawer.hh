@@ -21,7 +21,7 @@
 #include <iostream>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
+  #include <gz/gui/qt.h>
 #endif
 
 namespace gz
