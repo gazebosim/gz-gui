@@ -307,6 +307,18 @@ void WorldControl::OnPause()
 }
 
 /////////////////////////////////////////////////
+void WorldControl::OnReset()
+{
+  gz::msgs::WorldControl msg;
+  auto msgReset = new gz::msgs::WorldReset();
+  msgReset->set_all(true);
+  msg.set_pause(true);
+  msg.set_allocated_reset(msgReset);
+
+  this->dataPtr->SendEventMsg(msg);
+}
+
+/////////////////////////////////////////////////
 void WorldControl::OnStepCount(const unsigned int _steps)
 {
   this->dataPtr->multiStep = _steps;

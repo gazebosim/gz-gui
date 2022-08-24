@@ -24,7 +24,7 @@ RowLayout {
   id: worldControl
   width: 200
   spacing: 2
-  Layout.minimumWidth: 121
+  Layout.minimumWidth: 200
   Layout.minimumHeight: 100
 
   Connections {
@@ -53,6 +53,11 @@ RowLayout {
   property bool showPlay: false
 
   /**
+   * True to show reset button
+   */
+  property bool showReset: true
+
+  /**
    * True to show step buttons
    */
   property bool showStep: false
@@ -68,6 +73,11 @@ RowLayout {
   property string playIcon: "\u25B6"
 
   /**
+   * Reset button
+   */
+  property string resetIcon: "\u25A0"
+
+  /**
    * Pause icon
    */
   property string pauseIcon: "\u275A\u275A"
@@ -81,6 +91,24 @@ RowLayout {
    * True if paused, false is playing
    */
   property bool paused: false
+
+  /**
+   * Reset
+   */
+  RoundButton {
+    id: stopButton
+    objectName: "stopButton"
+    visible: showReset
+    text: resetIcon
+    checkable: true
+    Layout.alignment : Qt.AlignVCenter
+    Layout.minimumWidth: width
+    Layout.leftMargin: 10
+    onClicked: {
+      WorldControl.OnReset()
+    }
+    Material.background: Material.primary
+  }
 
   /**
    * Play / pause

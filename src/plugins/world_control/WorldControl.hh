@@ -89,6 +89,9 @@ namespace plugins
     /// \brief Callback in Qt thread when pause button is clicked.
     public slots: void OnPause();
 
+    /// \brief Callback in Qt thread when reset button is clicked.
+    public slots: void OnReset();
+
     /// \brief Callback in Qt thread when step button is clicked.
     public slots: void OnStep();
 
@@ -101,6 +104,9 @@ namespace plugins
 
     /// \brief Notify that it's now paused.
     signals: void paused();
+
+    /// \brief Notify that it's now resetted.
+    signals: void reset();
 
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg);
