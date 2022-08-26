@@ -29,7 +29,7 @@
 #include "gz/msgs/server_control.pb.h"
 #include "gz/transport/Node.hh"
 
-namespace gz
+namespace ignition
 {
   namespace gui
   {

@@ -31,7 +31,7 @@
 
 #include "KeyPublisher.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

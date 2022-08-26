@@ -25,7 +25,7 @@
 #include <gz/gui/Plugin.hh>
 #include <gz/transport/Node.hh>
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

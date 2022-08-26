@@ -31,7 +31,7 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace gz
+namespace ignition
 {
   namespace gui
   {

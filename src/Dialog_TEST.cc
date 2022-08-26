@@ -24,7 +24,7 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/Dialog.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
+std::string kTestConfigFile = "/tmp/gz-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char* g_argv[] =
 {

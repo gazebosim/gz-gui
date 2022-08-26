@@ -33,7 +33,7 @@
 #include <gz/gui/Application.hh>
 #include <gz/gui/MainWindow.hh>
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

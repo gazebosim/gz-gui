@@ -15,3 +15,12 @@
 #cmakedefine BUILD_TYPE_RELEASE 1
 
 #define IGN_GUI_PLUGIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}/ign-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins"
+
+namespace ignition
+{
+}
+
+namespace gz
+{
+  using namespace ignition;
+}

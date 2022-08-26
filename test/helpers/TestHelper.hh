@@ -31,7 +31,7 @@
 #  endif
 #endif
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

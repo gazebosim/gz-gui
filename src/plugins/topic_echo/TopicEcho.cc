@@ -23,7 +23,7 @@
 #include "gz/gui/Application.hh"
 #include "TopicEcho.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

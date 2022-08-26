@@ -23,7 +23,7 @@
 #include <vector>
 #include <gz/math/Vector3.hh>
 
-namespace gz
+namespace ignition
 {
   namespace gui
   {

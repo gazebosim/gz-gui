@@ -30,7 +30,7 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {
@@ -189,7 +189,7 @@ void ImageDisplay::OnRefresh()
     this->dataPtr->node.TopicInfo(topic, publishers);
     for (auto pub : publishers)
     {
-      if (pub.MsgTypeName() == "gz.msgs.Image")
+      if (pub.MsgTypeName() == "ignition.msgs.Image")
       {
         this->dataPtr->topicList.push_back(QString::fromStdString(topic));
         break;

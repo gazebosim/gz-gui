@@ -33,7 +33,7 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
 
-namespace gz
+namespace ignition
 {
   namespace common
   {

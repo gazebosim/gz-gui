@@ -32,7 +32,7 @@
 
 #include "Grid3D.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

@@ -32,7 +32,7 @@
 #  endif
 #endif
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {
@@ -94,12 +94,12 @@ namespace plugins
     public slots: void OnPublish(const bool _checked);
 
     /// \brief Get the message type as a string, for example
-    /// 'gz.msgs.StringMsg'
+    /// 'ignition.msgs.StringMsg'
     /// \return Message type
     public: Q_INVOKABLE QString MsgType() const;
 
     /// \brief Set the message type from a string, for example
-    /// 'gz.msgs.StringMsg'
+    /// 'ignition.msgs.StringMsg'
     /// \param[in] _msgType Message type
     public: Q_INVOKABLE void SetMsgType(const QString &_msgType);
 

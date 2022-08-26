@@ -145,7 +145,7 @@ TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
         {
             foundCollision = true;
 
-            EXPECT_EQ(child->data(TYPE_ROLE), "gz.msgs.Collision");
+            EXPECT_EQ(child->data(TYPE_ROLE), "ignition.msgs.Collision");
             EXPECT_EQ(child->rowCount(), 8);
 
             auto pose = child->child(5);
@@ -162,7 +162,7 @@ TEST(TopicViewerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
         {
             foundInt = true;
 
-            EXPECT_EQ(child->data(TYPE_ROLE), "gz.msgs.Int32");
+            EXPECT_EQ(child->data(TYPE_ROLE), "ignition.msgs.Int32");
             EXPECT_EQ(child->rowCount(), 2);
 
             auto data = child->child(1);

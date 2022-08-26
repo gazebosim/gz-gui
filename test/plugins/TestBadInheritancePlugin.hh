@@ -23,7 +23,7 @@
   #include <gz/gui/MainWindow.hh>
 #endif
 
-namespace gz
+namespace ignition
 {
   namespace gui
   {

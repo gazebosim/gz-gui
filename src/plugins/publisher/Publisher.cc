@@ -19,7 +19,7 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <gz/msgs.hh>
+#include <ignition/msgs.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -29,7 +29,7 @@
 
 #include "Publisher.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {
@@ -38,7 +38,7 @@ namespace plugins
   class PublisherPrivate
   {
     /// \brief Message type
-    public: QString msgType = "gz.msgs.StringMsg";
+    public: QString msgType = "ignition.msgs.StringMsg";
 
     /// \brief Message contents
     public: QString msgData = "data: \"Hello\"";

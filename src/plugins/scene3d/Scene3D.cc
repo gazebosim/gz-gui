@@ -38,7 +38,7 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <gz/msgs.hh>
+#include <ignition/msgs.hh>
 
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/OrbitViewController.hh>
@@ -58,7 +58,7 @@
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

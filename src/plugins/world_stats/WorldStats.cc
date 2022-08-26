@@ -26,7 +26,7 @@
 
 #include "gz/gui/Helpers.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

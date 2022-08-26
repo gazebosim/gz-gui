@@ -42,7 +42,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {
@@ -116,12 +116,12 @@ namespace plugins
     public slots: void OnTopic(const QString _topic);
 
     /// \brief Get the topic list as a string, for example
-    /// 'gz.msgs.StringMsg'
+    /// 'ignition.msgs.StringMsg'
     /// \return Message type
     public: Q_INVOKABLE QStringList TopicList() const;
 
     /// \brief Set the topic list from a string, for example
-    /// 'gz.msgs.StringMsg'
+    /// 'ignition.msgs.StringMsg'
     /// \param[in] _topicList Message type
     public: Q_INVOKABLE void SetTopicList(const QStringList &_topicList);
 

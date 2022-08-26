@@ -40,7 +40,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

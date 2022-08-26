@@ -46,7 +46,7 @@
 #define PATH_ROLE 54
 #define PLOT_ROLE 55
 
-namespace gz
+namespace ignition
 {
 namespace gui
 {

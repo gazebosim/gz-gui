@@ -1,6 +1,8 @@
 #define PROJECT_SOURCE_PATH "${PROJECT_SOURCE_DIR}"
 #define PROJECT_BINARY_PATH "${CMAKE_BINARY_DIR}"
 
+#include <gz/gui/config.hh>
+
 #if (_MSC_VER >= 1400) // Visual Studio 2005
   #include <sstream>
 

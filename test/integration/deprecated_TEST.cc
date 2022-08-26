@@ -23,4 +23,5 @@
 TEST(Deprecated, IgnitionNamespace)
 {
   ignition::gui::Plugin plugin;
+  EXPECT_TRUE(plugin.Title().empty());
 }

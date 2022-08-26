@@ -36,7 +36,7 @@
 
 #include "gz/transport/TopicUtils.hh"
 
-namespace gz
+namespace ignition
 {
   namespace gui
   {
