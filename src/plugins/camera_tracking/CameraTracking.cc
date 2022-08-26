@@ -18,17 +18,17 @@
 #include <mutex>
 #include <string>
 
+#include <gz/msgs/stringmsg.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/common/Profiler.hh>
+#include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
 
-// TODO(anyone) Remove these pragmas once gz-rendering and gz-msgs
-// are disabling the warnings
+// TODO(anyone) Remove these pragmas once gz-rendering is disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <gz/msgs/stringmsg.pb.h>
-#include <gz/msgs/Utility.hh>
 
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/MoveToHelper.hh>

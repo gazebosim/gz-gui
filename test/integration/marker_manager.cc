@@ -18,8 +18,9 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <gz/msgs.hh>
-#include <gz/rendering.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -27,8 +28,13 @@
 #include <gtest/gtest.h>
 #include <string>
 
+#include <gz/msgs/world_stats.pb.h>
+#include <gz/msgs/marker.pb.h>
+#include <gz/msgs/material.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/common/Filesystem.hh>
+#include <gz/msgs/Utility.hh>
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
