@@ -23,9 +23,10 @@
 #include <gz/msgs/time.pb.h>
 #include <gz/msgs/vector3d.pb.h>
 
-#include <gz/transport/Node.hh>
 #include <gz/common/Console.hh>
+#include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
+
 #include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Enums.hh"
 #include "gz/gui/PlottingInterface.hh"
