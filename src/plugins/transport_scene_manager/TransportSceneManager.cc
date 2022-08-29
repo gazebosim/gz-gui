@@ -38,22 +38,12 @@
 #include <gz/common/MeshManager.hh>
 #include <gz/math/Pose3.hh>
 #include <gz/math/Vector3.hh>
+#include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
-
-// TODO(louise) Remove these pragmas once gz-rendering is disabling the warnings
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/rendering/Capsule.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-#include <gz/msgs/Utility.hh>
 #include <gz/transport/Node.hh>
 #include <gz/transport/TopicUtils.hh>
 
