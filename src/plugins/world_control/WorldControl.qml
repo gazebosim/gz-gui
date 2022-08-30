@@ -108,6 +108,9 @@ RowLayout {
       confirmationDialogOnReset.open()
     }
     Material.background: Material.primary
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: qsTr("Reset the simulation")
   }
 
   Shortcut {
@@ -167,6 +170,9 @@ RowLayout {
       else
         WorldControl.OnPause()
     }
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: paused ? qsTr("Run the simulation") : qsTr("Pause the simulation")
     Material.background: Material.primary
   }
 
