@@ -32,23 +32,12 @@
 #include <gz/math/Vector2.hh>
 #include <gz/math/Vector3.hh>
 #include <gz/plugin/Register.hh>
-
-// TODO(louise) Remove these pragmas once gz-rendering
-// is disabling the warnings
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/RayQuery.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
 #include <gz/rendering/Utils.hh>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include "gz/gui/Application.hh"
 #include "gz/gui/Conversions.hh"

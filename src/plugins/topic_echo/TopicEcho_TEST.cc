@@ -18,13 +18,7 @@
 #include <gtest/gtest.h>
 #include <QRegExp>
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/msgs/stringmsg.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <gz/common/Console.hh>
 #include <gz/common/Filesystem.hh>

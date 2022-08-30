@@ -16,6 +16,9 @@
 */
 #include <gtest/gtest.h>
 
+#include <gz/msgs/collision.pb.h>
+#include <gz/msgs/int32.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>

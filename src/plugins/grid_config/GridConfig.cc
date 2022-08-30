@@ -26,7 +26,9 @@
 #include <gz/plugin/Register.hh>
 #include <gz/math/Color.hh>
 #include <gz/math/Pose3.hh>
-#include <gz/rendering.hh>
+#include <gz/rendering/Grid.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
 #include "GridConfig.hh"
 

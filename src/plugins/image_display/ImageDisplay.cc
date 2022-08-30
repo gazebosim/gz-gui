@@ -15,6 +15,8 @@
  *
 */
 
+#include <gz/msgs/image.pb.h>
+
 #include "ImageDisplay.hh"
 
 #include <QQuickImageProvider>
@@ -27,6 +29,7 @@
 
 #include <gz/common/Console.hh>
 #include <gz/common/Image.hh>
+#include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
 #include <gz/transport/Node.hh>
 

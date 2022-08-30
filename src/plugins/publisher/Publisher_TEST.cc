@@ -16,13 +16,8 @@
 */
 
 #include <gtest/gtest.h>
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/msgs/stringmsg.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 

@@ -24,28 +24,26 @@
 
 #include <QQmlProperty>
 
+#include <gz/msgs/geometry.pb.h>
+#include <gz/msgs/light.pb.h>
+#include <gz/msgs/link.pb.h>
+#include <gz/msgs/material.pb.h>
+#include <gz/msgs/model.pb.h>
+#include <gz/msgs/pose_v.pb.h>
+#include <gz/msgs/scene.pb.h>
+#include <gz/msgs/uint32_v.pb.h>
+#include <gz/msgs/visual.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/common/MeshManager.hh>
 #include <gz/math/Pose3.hh>
 #include <gz/math/Vector3.hh>
+#include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
-
-// TODO(louise) Remove these pragmas once gz-rendering and gz-msgs
-// are disabling the warnings
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <gz/msgs.hh>
-
 #include <gz/rendering/Capsule.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <gz/transport/Node.hh>
 #include <gz/transport/TopicUtils.hh>
 
