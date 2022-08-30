@@ -1,16 +1,47 @@
-# Generate the ruby script.
+#===============================================================================
+# Generate the ruby script for internal testing.
 # Note that the major version of the library is included in the name.
-if (APPLE)
-  set(IGN_LIBRARY_NAME lib${PROJECT_NAME_LOWER}.dylib)
-else()
-  set(IGN_LIBRARY_NAME lib${PROJECT_NAME_LOWER}.so)
-endif()
+# Ex: cmdgui3.rb
+set(cmd_script_generated_test "${CMAKE_BINARY_DIR}/test/lib/ruby/ignition/cmd${GZ_DESIGNATION}${PROJECT_VERSION_MAJOR}.rb")
+set(cmd_script_configured_test "${cmd_script_generated_test}.configured")
+
+# Set the library_location variable to the full path of the library file within
+# the build directory.
+set(library_location "$<TARGET_FILE:${PROJECT_LIBRARY_TARGET_NAME}>")
+
 configure_file(
-  "cmdgui.rb.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmdgui${PROJECT_VERSION_MAJOR}.rb" @ONLY)
+  "cmd${GZ_DESIGNATION}.rb.in"
+  "${cmd_script_configured_test}"
+  @ONLY)
+
+file(GENERATE
+  OUTPUT "${cmd_script_generated_test}"
+  INPUT  "${cmd_script_configured_test}")
+
+
+#===============================================================================
+# Used for the installed version.
+# Generate the ruby script that gets installed.
+# Note that the major version of the library is included in the name.
+# Ex: cmdgui3.rb
+set(cmd_script_generated "${CMAKE_CURRENT_BINARY_DIR}/cmd${GZ_DESIGNATION}${PROJECT_VERSION_MAJOR}.rb")
+set(cmd_script_configured "${cmd_script_generated}.configured")
+
+# Set the library_location variable to the relative path to the library file
+# within the install directory structure.
+set(library_location "../../../${CMAKE_INSTALL_LIBDIR}/$<TARGET_FILE_NAME:${PROJECT_LIBRARY_TARGET_NAME}>")
+
+configure_file(
+  "cmd${GZ_DESIGNATION}.rb.in"
+  "${cmd_script_configured}"
+  @ONLY)
+
+file(GENERATE
+  OUTPUT "${cmd_script_generated}"
+  INPUT  "${cmd_script_configured}")
 
 # Install the ruby command line library in an unversioned location.
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmdgui${PROJECT_VERSION_MAJOR}.rb DESTINATION lib/ruby/ignition)
+install(FILES ${cmd_script_generated} DESTINATION lib/ruby/ignition)
 
 # Tack version onto and install the bash completion script
 configure_file(
