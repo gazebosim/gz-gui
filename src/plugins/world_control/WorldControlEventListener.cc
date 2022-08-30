@@ -38,7 +38,8 @@ bool WorldControlEventListener::eventFilter(QObject *_obj, QEvent *_event)
     {
       this->listenedToPlay = !worldControlEvent->WorldControlInfo().pause();
       this->listenedToPause = worldControlEvent->WorldControlInfo().pause();
-      this->listenedToReset = worldControlEvent->WorldControlInfo().reset().all();
+      this->listenedToReset =
+        worldControlEvent->WorldControlInfo().reset().all();
       this->listenedToStep =
         worldControlEvent->WorldControlInfo().multi_step() > 0u;
     }

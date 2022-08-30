@@ -309,8 +309,8 @@ void WorldControl::OnPause()
 /////////////////////////////////////////////////
 void WorldControl::OnReset()
 {
-  gz::msgs::WorldControl msg;
-  auto msgReset = new gz::msgs::WorldReset();
+  msgs::WorldControl msg;
+  auto msgReset = new msgs::WorldReset();
   msgReset->set_all(true);
   msg.set_pause(true);
   msg.set_allocated_reset(msgReset);

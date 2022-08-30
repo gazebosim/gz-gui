@@ -75,7 +75,7 @@ RowLayout {
   /**
    * Reset button
    */
-  property string resetIcon: "\u25A0"
+  property string resetIcon: "\u21bb"
 
   /**
    * Pause icon
@@ -105,9 +105,48 @@ RowLayout {
     Layout.minimumWidth: width
     Layout.leftMargin: 10
     onClicked: {
-      WorldControl.OnReset()
+      confirmationDialogOnReset.open()
     }
     Material.background: Material.primary
+  }
+
+  Shortcut {
+    sequence: "Ctrl+R"
+    onActivated: confirmationDialogOnReset.open()
+  }
+
+
+  /**
+   *  Confirmation dialog on close button
+   */
+  Dialog {
+    id: confirmationDialogOnReset
+    title: "Do you really want to reset the simulation?"
+    objectName: "confirmationDialogOnReset"
+
+    modal: true
+    focus: true
+    parent: ApplicationWindow.overlay
+    width: 500
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
+    closePolicy: Popup.CloseOnEscape
+    standardButtons: Dialog.Ok  | Dialog.Discard
+
+    onAboutToShow: function () {
+      footer.standardButton(Dialog.Discard).text = "Abort"
+      footer.standardButton(Dialog.Ok).text = "Reset"
+    }
+
+    footer:
+      DialogButtonBox {
+        onClicked: function (btn) {
+          confirmationDialogOnReset.close()
+          if (btn == this.standardButton(Dialog.Ok)) {
+            WorldControl.OnReset()
+          }
+        }
+    }
   }
 
   /**
