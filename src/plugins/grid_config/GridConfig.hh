@@ -21,7 +21,6 @@
 #include <memory>
 
 #include <gz/gui/Plugin.hh>
-#include <gz/rendering.hh>
 
 namespace gz
 {

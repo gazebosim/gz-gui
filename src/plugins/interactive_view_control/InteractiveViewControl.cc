@@ -15,6 +15,9 @@
  *
  */
 
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
+
 #include <string>
 #include <mutex>
 

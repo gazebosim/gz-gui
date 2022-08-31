@@ -19,13 +19,7 @@
 #define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
 #include <memory>
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/msgs/image.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include "gz/gui/Plugin.hh"
 

@@ -19,9 +19,13 @@
 
 #include <string>
 
+#include <gz/msgs/world_stats.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/common/StringUtils.hh>
+#include <gz/math/Helpers.hh>
 #include <gz/plugin/Register.hh>
+#include <gz/transport/Node.hh>
 
 #include "gz/gui/Helpers.hh"
 
