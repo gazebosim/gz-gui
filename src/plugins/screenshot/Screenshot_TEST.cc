@@ -14,15 +14,9 @@
  * limitations under the License.
  *
 */
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
+
 #include <gz/msgs/boolean.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
-#include <gz/rendering.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <gtest/gtest.h>
 #include <string>

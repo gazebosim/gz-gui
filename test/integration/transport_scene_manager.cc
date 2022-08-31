@@ -22,6 +22,7 @@
 #include <gz/math/Pose3.hh>
 #include <gz/msgs/pose_v.pb.h>
 #include <gz/msgs/scene.pb.h>
+#include <gz/msgs/uint32_v.pb.h>
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>

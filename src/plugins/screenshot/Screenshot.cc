@@ -22,18 +22,10 @@
 #include <gz/common/Filesystem.hh>
 #include <gz/common/Image.hh>
 #include <gz/plugin/Register.hh>
-
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <gz/transport/Node.hh>
 
 #include "gz/gui/Application.hh"

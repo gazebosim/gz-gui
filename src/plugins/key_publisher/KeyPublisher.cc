@@ -15,13 +15,7 @@
  *
 */
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/msgs/int32.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <string>
 

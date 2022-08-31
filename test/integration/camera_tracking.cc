@@ -17,17 +17,15 @@
 
 #include <gtest/gtest.h>
 
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/pose.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
+#include <gz/msgs/vector3d.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/math/Pose3.hh>
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <gz/msgs/pose.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
+#include <gz/msgs/Utility.hh>
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>

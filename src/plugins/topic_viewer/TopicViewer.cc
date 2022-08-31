@@ -24,14 +24,14 @@
 #include <string>
 #include <vector>
 
+#include <gz/common/Console.hh>
 #include <gz/gui/Application.hh>
-
+#include <gz/plugin/Register.hh>
+#include <gz/msgs/Factory.hh>
 #include <gz/transport/MessageInfo.hh>
 #include <gz/transport/Node.hh>
 #include <gz/transport/Publisher.hh>
 
-#include <gz/common/Console.hh>
-#include <gz/plugin/Register.hh>
 #include "TopicViewer.hh"
 
 #define NAME_KEY "name"
