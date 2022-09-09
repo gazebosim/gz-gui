@@ -20,14 +20,7 @@
 
 #include <memory>
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <gz/msgs.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-#include <gz/transport.hh>
+#include <gz/msgs/world_stats.pb.h>
 
 #include "gz/gui/Plugin.hh"
 

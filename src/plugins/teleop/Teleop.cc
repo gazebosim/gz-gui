@@ -16,17 +16,11 @@
 */
 
 #include <iostream>
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
+#include <string>
+
 #include <gz/msgs/twist.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include "Teleop.hh"
-
-#include <string>
 
 #include <gz/plugin/Register.hh>
 

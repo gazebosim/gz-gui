@@ -18,13 +18,8 @@
 #ifndef GZ_GUI_CONVERSIONS_HH_
 #define GZ_GUI_CONVERSIONS_HH_
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/msgs/time.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+
 #include <gz/common/KeyEvent.hh>
 #include <gz/common/MouseEvent.hh>
 #include <gz/math/Color.hh>

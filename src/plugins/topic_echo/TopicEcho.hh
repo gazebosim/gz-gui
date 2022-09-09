@@ -19,7 +19,8 @@
 #define GZ_GUI_PLUGINS_TOPICECHO_HH_
 
 #ifdef _MSC_VER
-#pragma warning(push, 0)
+#pragma warning(push)
+#pragma warning(disable: 4251)
 #endif
 #include <google/protobuf/message.h>
 #ifdef _MSC_VER

@@ -20,14 +20,8 @@
 
 #include <memory>
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/msgs/float_v.pb.h>
 #include <gz/msgs/pointcloud_packed.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include "gz/gui/Plugin.hh"
 

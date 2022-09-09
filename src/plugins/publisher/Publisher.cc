@@ -16,14 +16,8 @@
 */
 
 #include <iostream>
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <gz/msgs.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 #include <gz/common/Console.hh>
+#include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
 #include <gz/transport/Node.hh>
 

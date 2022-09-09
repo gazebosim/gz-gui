@@ -19,9 +19,14 @@
 
 #include <string>
 
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/world_control.pb.h>
+#include <gz/msgs/world_stats.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/common/StringUtils.hh>
 #include <gz/plugin/Register.hh>
+#include <gz/transport/Node.hh>
 
 #include "gz/gui/Application.hh"
 #include "gz/gui/Helpers.hh"
