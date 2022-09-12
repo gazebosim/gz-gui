@@ -28,9 +28,9 @@ release will remove the deprecated code.
 
 * QML `import ignition.gui 1.0` is deprecated, use `import gz.gui 1.0` instead.
 
-* The `Scene3D` plugin as been removed. A possible replacement of SDF code can
+* The `Scene3D` plugin from [gz-sim](https://github.com/gazebosim/gz-sim) has been removed and replaced with `gz-gui`'s `MinimalScene` plugin. A possible replacement of SDF code can
   be found in:
-  https://github.com/gazebosim/gz-sim/tree/main/examples/migrations/scene3d_deprecation.sdf
+  https://github.com/gazebosim/gz-sim/blob/ff1c82b41e548dfdc8076374f9500db2df2c35a1/examples/worlds/minimal_scene.sdf#L29-L128
 
 ## Gazebo GUI 6.2 to 6.3
 
