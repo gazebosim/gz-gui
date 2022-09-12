@@ -28,6 +28,10 @@ release will remove the deprecated code.
 
 * QML `import ignition.gui 1.0` is deprecated, use `import gz.gui 1.0` instead.
 
+* The `Scene3D` plugin as been removed. A possible replacement of SDF code can
+  be found in:
+  https://github.com/gazebosim/gz-sim/tree/main/examples/migrations/scene3d_deprecation.sdf
+
 ## Gazebo GUI 6.2 to 6.3
 
 * New QML dependencies, only needed for the NavSatMap plugin: `qml-module-qtlocation`, `qml-module-qtpositioning`
