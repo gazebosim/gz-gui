@@ -56,6 +56,7 @@ namespace plugins
   {
     public: VkImage textureId = 0;
     public: VkImage newTextureId = 0;
+    public: std::weak_ptr<rendering::Camera> lastCamera;
     public: QSize size {0, 0};
     public: QSize newSize {0, 0};
     public: QMutex mutex;
@@ -189,6 +190,7 @@ TextureNodeRhiVulkan::TextureNodeRhiVulkan(QQuickWindow *_window,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2)
   // It says Metal but it also works for Vulkan in the exact same way
   _camera->RenderTextureMetalId(&this->dataPtr->textureId);
+  this->dataPtr->lastCamera = _camera;
 
   this->dataPtr->texture = this->dataPtr->window->createTextureFromNativeObject(
     QQuickWindow::NativeObjectTexture,
@@ -229,6 +231,12 @@ void TextureNodeRhiVulkan::PrepareNode()
   this->dataPtr->newSize = this->dataPtr->size;
   this->dataPtr->textureId = 0;
   this->dataPtr->mutex.unlock();
+
+  // Required: PrepareForExternalSampling ensures the texture is ready to
+  // be sampled by Qt. Otherwise Qt could attempt to sample the texture
+  // while the GPU is still drawing to it, or the caches aren't flushed, etc.
+  auto lastCamera = this->dataPtr->lastCamera.lock();
+  lastCamera->PrepareForExternalSampling();
 
   if (this->dataPtr->newTextureId)
   {
