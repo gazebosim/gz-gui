@@ -633,24 +633,24 @@ static void fillQtDeviceExtensionsToOgre(
   // We know Qt adds these by looking at
   //  qt-everywhere-src-5.15.2/qtbase/src/gui/rhi/qrhivulkan.cpp
   QVector<QString> deviceExtensions;
-  deviceExtensions.append( "VK_KHR_swapchain" );
+  deviceExtensions.append("VK_KHR_swapchain");
 
-  QByteArray envExts = qgetenv( "QT_VULKAN_DEVICE_EXTENSIONS" );
-  if( !envExts.isEmpty() )
+  QByteArray envExts = qgetenv("QT_VULKAN_DEVICE_EXTENSIONS");
+  if (!envExts.isEmpty())
   {
-    QByteArrayList envExtList = envExts.split( ';' );
-    for( const auto &ext : envExtList )
+    QByteArrayList envExtList = envExts.split(';');
+    for (const auto &ext : envExtList)
     {
-      if( !ext.isEmpty() )
+      if (!ext.isEmpty())
       {
-        deviceExtensions.append( ext );
+        deviceExtensions.append(ext);
       }
     }
   }
 
-  for( const auto &ext : deviceExtensions )
+  for (const auto &ext : deviceExtensions)
   {
-    externalDevice.deviceExtensions.push_back( VkExtensionProperties{} );
+    externalDevice.deviceExtensions.push_back(VkExtensionProperties{});
     VkExtensionProperties &extProp = externalDevice.deviceExtensions.back();
     strncpy(extProp.extensionName, ext.toStdString().c_str(),
             VK_MAX_EXTENSION_NAME_SIZE);
