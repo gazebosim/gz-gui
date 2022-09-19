@@ -1,8 +1,165 @@
 ## Gazebo GUI 7
 
-### Gazebo GUI 7.X.X
+### Gazebo GUI 7.X.X (202X-XX-XX)
 
-### Gazebo GUI 7.0.0 (202X-XX-XX)
+### Gazebo GUI 7.0.0 (2022-09-XX)
+
+1. Use RTLD_NODELETE=true when loading libraries
+    * [Pull request #469](https://github.com/gazebosim/gz-gui/pull/469)
+
+1. Update cmd/CMakeLists to conform with all other gz libraries
+    * [Pull request #478](https://github.com/gazebosim/gz-gui/pull/478)
+
+1. Clean up headers
+    * [Pull request #490](https://github.com/gazebosim/gz-gui/pull/490)
+    * [Pull request #486](https://github.com/gazebosim/gz-gui/pull/486)
+    * [Pull request #479](https://github.com/gazebosim/gz-gui/pull/479)
+
+1. Fixed topic echo test
+    * [Pull request #448](https://github.com/gazebosim/gz-gui/pull/448)
+
+1. Use stepping field in message
+    * [Pull request #441](https://github.com/gazebosim/gz-gui/pull/441)
+
+1. Teleop: Refactor and support vertical
+    * [Pull request #440](https://github.com/gazebosim/gz-gui/pull/440)
+
+1. Remove deprecated image.data API
+    * [Pull request #430](https://github.com/gazebosim/gz-gui/pull/430)
+
+1. Remove deprecated Scene3d plugin
+    * [Pull request #438](https://github.com/gazebosim/gz-gui/pull/438)
+
+1. Add common widget for vector3
+    * [Pull request #427](https://github.com/gazebosim/gz-gui/pull/427)
+
+1. Allow Dialogs to have a MainWindow independent config
+    * [Pull request #450](https://github.com/gazebosim/gz-gui/pull/450)
+    * [Pull request #442](https://github.com/gazebosim/gz-gui/pull/442)
+    * [Pull request #418](https://github.com/gazebosim/gz-gui/pull/418)
+
+1. Add common widget for pose
+    * [Pull request #431](https://github.com/gazebosim/gz-gui/pull/431)
+    * [Pull request #424](https://github.com/gazebosim/gz-gui/pull/424)
+
+1. Example running a dialog before the main window
+    * [Pull request #407](https://github.com/gazebosim/gz-gui/pull/407)
+
+1. Add .cc extension to suppress CMake warnings
+    * [Pull request #428](https://github.com/gazebosim/gz-gui/pull/428)
+
+1. Update GoogleTest to latest version
+    * [Pull request #426](https://github.com/gazebosim/gz-gui/pull/426)
+
+1. Common widget GzColor
+    * [Pull request #410](https://github.com/gazebosim/gz-gui/pull/410)
+
+1. Make display tests more robust
+    * [Pull request #419](https://github.com/gazebosim/gz-gui/pull/419)
+
+1. Bash completion for flags
+    * [Pull request #392](https://github.com/gazebosim/gz-gui/pull/392)
+
+1. Disable failing test on Citadel
+    * [Pull request #420](https://github.com/gazebosim/gz-gui/pull/420)
+    * [Pull request #416](https://github.com/gazebosim/gz-gui/pull/416)
+
+1. Search menu keyboard control
+    * [Pull request #405](https://github.com/gazebosim/gz-gui/pull/405)
+    * [Pull request #403](https://github.com/gazebosim/gz-gui/pull/403)
+
+1. User camera FOV control in SDF files
+    * [Pull request #400](https://github.com/gazebosim/gz-gui/pull/400)
+
+1. Add config relative path environment variable
+    * [Pull request #386](https://github.com/gazebosim/gz-gui/pull/386)
+
+1. Add repo specific issue templates
+    * [Pull request #393](https://github.com/gazebosim/gz-gui/pull/393)
+
+1. Sort plugin list in alphabetical order (including when filtering)
+    * [Pull request #387](https://github.com/gazebosim/gz-gui/pull/387)
+
+1. Rename Ignition to Gazebo
+    * [Pull request #449](https://github.com/gazebosim/gz-gui/pull/449)
+    * [Pull request #446](https://github.com/gazebosim/gz-gui/pull/446)
+    * [Pull request #437](https://github.com/gazebosim/gz-gui/pull/437)
+    * [Pull request #435](https://github.com/gazebosim/gz-gui/pull/435)
+    * [Pull request #433](https://github.com/gazebosim/gz-gui/pull/433)
+    * [Pull request #425](https://github.com/gazebosim/gz-gui/pull/425)
+    * [Pull request #422](https://github.com/gazebosim/gz-gui/pull/422)
+    * [Pull request #417](https://github.com/gazebosim/gz-gui/pull/417)
+    * [Pull request #414](https://github.com/gazebosim/gz-gui/pull/414)
+    * [Pull request #413](https://github.com/gazebosim/gz-gui/pull/413)
+    * [Pull request #412](https://github.com/gazebosim/gz-gui/pull/412)
+    * [Pull request #401](https://github.com/gazebosim/gz-gui/pull/401)
+    * [Pull request #398](https://github.com/gazebosim/gz-gui/pull/398)
+    * [Pull request #395](https://github.com/gazebosim/gz-gui/pull/395)
+    * [Pull request #384](https://github.com/gazebosim/gz-gui/pull/384)
+
+1. set cameraPassCountPerGpuFlush to 6
+    * [Pull request #381](https://github.com/gazebosim/gz-gui/pull/381)
+
+1. Add Ubuntu Jammy CI
+    * [Pull request #374](https://github.com/gazebosim/gz-gui/pull/374)
+
+1. Avoid nullptr access in MinimalScene
+    * [Pull request #380](https://github.com/gazebosim/gz-gui/pull/380)
+
+1. Added array to snackbar qml
+    * [Pull request #370](https://github.com/gazebosim/gz-gui/pull/370)
+
+1. Fix some Qt warnings
+    * [Pull request #376](https://github.com/gazebosim/gz-gui/pull/376)
+
+1. Fix nondiscard warnings with lock_guard
+    * [Pull request #373](https://github.com/gazebosim/gz-gui/pull/373)
+
+1. Remove Bionic from future releases (Garden+)
+    * [Pull request #371](https://github.com/gazebosim/gz-gui/pull/371)
+
+1. Use gz-rendering's screenToScene functions
+    * [Pull request #372](https://github.com/gazebosim/gz-gui/pull/372)
+
+1. Added Snackbar qtquick object
+    * [Pull request #369](https://github.com/gazebosim/gz-gui/pull/369)
+
+1. Fix menu scrolling when a new plugin is added
+    * [Pull request #368](https://github.com/gazebosim/gz-gui/pull/368)
+
+1. Add Metal support to MinimalScene and Qt Application
+    * [Pull request #323](https://github.com/gazebosim/gz-gui/pull/323)
+
+1. Cleanup GUI plugin menu
+    * [Pull request #366](https://github.com/gazebosim/gz-gui/pull/366)
+    * [Pull request #365](https://github.com/gazebosim/gz-gui/pull/365)
+    * [Pull request #364](https://github.com/gazebosim/gz-gui/pull/364)
+    * [Pull request #363](https://github.com/gazebosim/gz-gui/pull/363)
+    * [Pull request #362](https://github.com/gazebosim/gz-gui/pull/362)
+
+1. Attempt at fixing Helpers test on macOS
+    * [Pull request #361](https://github.com/gazebosim/gz-gui/pull/361)
+
+1. Removed unused code in MinimalScene plugin
+    * [Pull request #359](https://github.com/gazebosim/gz-gui/pull/359)
+
+1. Point cloud visualization plugin
+    * [Pull request #346](https://github.com/gazebosim/gz-gui/pull/346)
+
+1. Set per-point color on markers
+    * [Pull request #318](https://github.com/gazebosim/gz-gui/pull/318)
+
+1. Bumps in garden
+    * [Pull request #388](https://github.com/gazebosim/gz-gui/pull/388)
+    * [Pull request #385](https://github.com/gazebosim/gz-gui/pull/385)
+    * [Pull request #343](https://github.com/gazebosim/gz-gui/pull/343)
+    * [Pull request #327](https://github.com/gazebosim/gz-gui/pull/327)
+    * [Pull request #313](https://github.com/gazebosim/gz-gui/pull/313)
+    * [Pull request #301](https://github.com/gazebosim/gz-gui/pull/301)    
+
+1. Added macOS source code installation
+    * [Pull request #297](https://github.com/gazebosim/gz-gui/pull/297)
+
 
 ## Gazebo GUI 6
 
