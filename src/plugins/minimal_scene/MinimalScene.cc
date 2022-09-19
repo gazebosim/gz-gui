@@ -771,6 +771,8 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   this->dataPtr->camera->SetFarClipPlane(this->cameraFarClip);
   this->dataPtr->camera->SetImageWidth(this->textureSize.width());
   this->dataPtr->camera->SetImageHeight(this->textureSize.height());
+  this->dataPtr->camera->SetImageFormat(this->dataPtr->camera->ImageFormat(),
+                                        true);
   this->dataPtr->camera->SetAntiAliasing(8);
   this->dataPtr->camera->SetHFOV(this->cameraHFOV);
   // setting the size and calling PreRender should cause the render texture to
