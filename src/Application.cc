@@ -89,9 +89,18 @@ namespace gz
 using namespace gz;
 using namespace gui;
 
+enum class GZ_COMMON_HIDDEN AvailableAPIs
+{
+  OpenGL,
+  Vulkan,
+  Metal
+};
+
 /////////////////////////////////////////////////
-Application::Application(int &_argc, char **_argv, const WindowType _type)
-  : QApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
+Application::Application(int &_argc, char **_argv, const WindowType _type,
+                         const char *_renderEngineGuiApiBackend) :
+  QApplication(_argc, _argv),
+  dataPtr(new ApplicationPrivate)
 {
   gzdbg << "Initializing application." << std::endl;
 
@@ -99,10 +108,29 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   this->setOrganizationDomain("gazebosim.org");
   this->setApplicationName("Gazebo GUI");
 
-#if __APPLE__
-  // Use the Metal graphics API on macOS.
-  gzdbg << "Qt using Metal graphics interface" << std::endl;
-  QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
+#ifdef __APPLE__
+  AvailableAPIs api = AvailableAPIs::Metal;
+#else
+  AvailableAPIs api = AvailableAPIs::OpenGL;
+#endif
+  if (_renderEngineGuiApiBackend)
+  {
+    const std::string renderEngineGuiApiBackend = _renderEngineGuiApiBackend;
+    if (renderEngineGuiApiBackend == "vulkan")
+      api = AvailableAPIs::Vulkan;
+#ifdef __APPLE__
+    if (renderEngineGuiApiBackend == "metal")
+      api = AvailableAPIs::Metal;
+#endif
+  }
+
+#ifdef __APPLE__
+  if (api == AvailableAPIs::Metal)
+  {
+    // Use the Metal graphics API on macOS.
+    gzdbg << "Qt using Metal graphics interface" << std::endl;
+    QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
+  }
 
   // TODO(srmainwaring): implement facility for overriding the default
   //    graphics API in macOS, in which case there are restrictions on
@@ -120,9 +148,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 #else
   // Otherwise use OpenGL (or Vulkan when supported and requested)
 
-  const bool useVulkan = true;  // TODO(anyone)
-
-  if (useVulkan)
+  if (api == AvailableAPIs::Vulkan)
   {
     gzdbg << "Qt using Vulkan graphics interface" << std::endl;
 
@@ -180,10 +206,20 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
     }
     else
     {
-      if (useVulkan)
+      switch (api)
       {
+      case AvailableAPIs::OpenGL:
+        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
+                                            "opengl");
+        break;
+      case AvailableAPIs::Vulkan:
         this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
                                             "vulkan");
+        break;
+      case AvailableAPIs::Metal:
+        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
+                                            "metal");
+        break;
       }
     }
   }
