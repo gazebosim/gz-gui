@@ -388,17 +388,16 @@ void PointCloudPrivate::PublishMarkers()
   auto minC = this->minColor;
   auto maxC = this->maxColor;
   auto floatRange = this->maxFloatV - this->minFloatV;
-  for (; iterX != iterX.End() &&
-         iterY != iterY.End() &&
-         iterZ != iterZ.End(); ++iterX, ++iterY, ++iterZ, ++ptIdx)
+  for (; ptIdx < this->floatVMsg.data().size();
+    ++iterX, ++iterY, ++iterZ, ++ptIdx)
   {
     // Value from float vector, if available. Otherwise publish all data as
     // zeroes.
     float dataVal = 0.0;
-    if (this->floatVMsg.data().size() > ptIdx)
-    {
-      dataVal = this->floatVMsg.data(ptIdx);
-    }
+    //if (this->floatVMsg.data().size() > ptIdx)
+    //{
+    //  dataVal = this->floatVMsg.data(ptIdx);
+    //}
 
     // Don't visualize NaN
     if (std::isnan(dataVal))
@@ -413,7 +412,6 @@ void PointCloudPrivate::PublishMarkers()
     };
 
     gz::msgs::Set(marker.add_materials()->mutable_diffuse(), color);
-
     gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
       *iterX,
       *iterY,
