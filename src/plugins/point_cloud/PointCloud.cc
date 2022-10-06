@@ -388,7 +388,20 @@ void PointCloudPrivate::PublishMarkers()
   auto minC = this->minColor;
   auto maxC = this->maxColor;
   auto floatRange = this->maxFloatV - this->minFloatV;
-  for (; ptIdx < this->floatVMsg.data().size();
+  auto num_points =
+    this->pointCloudMsg.data().size() / this->pointCloudMsg.point_step();
+  if (num_points != this->floatVMsg.data().size())
+  {
+    gzwarn << "Float message and pointcloud are not of the same size,"
+      <<" visualization may not be accurate" << std::endl;
+  }
+  if (this->pointCloudMsg.data().size() % this->pointCloudMsg.point_step() != 0)
+  {
+    gzwarn << "Mal-formatted pointcloud" << std::endl;
+  }
+
+  for (; ptIdx < std::min<unsigned int>(
+    this->floatVMsg.data().size(), num_points);
     ++iterX, ++iterY, ++iterZ, ++ptIdx)
   {
     // Value from float vector, if available. Otherwise publish all data as
