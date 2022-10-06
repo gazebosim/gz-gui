@@ -394,10 +394,6 @@ void PointCloudPrivate::PublishMarkers()
     // Value from float vector, if available. Otherwise publish all data as
     // zeroes.
     float dataVal = 0.0;
-    //if (this->floatVMsg.data().size() > ptIdx)
-    //{
-    //  dataVal = this->floatVMsg.data(ptIdx);
-    //}
 
     // Don't visualize NaN
     if (std::isnan(dataVal))
