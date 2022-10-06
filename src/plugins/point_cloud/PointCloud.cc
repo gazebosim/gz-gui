@@ -400,8 +400,7 @@ void PointCloudPrivate::PublishMarkers()
     gzwarn << "Mal-formatted pointcloud" << std::endl;
   }
 
-  for (; ptIdx < std::min<unsigned int>(
-    this->floatVMsg.data().size(), num_points);
+  for (; ptIdx < std::min<int>(this->floatVMsg.data().size(), num_points);
     ++iterX, ++iterY, ++iterZ, ++ptIdx)
   {
     // Value from float vector, if available. Otherwise publish all data as
