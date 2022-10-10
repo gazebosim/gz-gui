@@ -17,6 +17,7 @@
 
 #include "gz/msgs/pointcloud_packed.pb.h"
 
+#include <algorithm>
 #include <limits>
 #include <string>
 #include <utility>
