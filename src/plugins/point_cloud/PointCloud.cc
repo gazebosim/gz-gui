@@ -391,7 +391,7 @@ void PointCloudPrivate::PublishMarkers()
   auto floatRange = this->maxFloatV - this->minFloatV;
   auto num_points =
     this->pointCloudMsg.data().size() / this->pointCloudMsg.point_step();
-  if (num_points != this->floatVMsg.data().size())
+  if (static_cast<int>(num_points) != this->floatVMsg.data().size())
   {
     gzwarn << "Float message and pointcloud are not of the same size,"
       <<" visualization may not be accurate" << std::endl;
