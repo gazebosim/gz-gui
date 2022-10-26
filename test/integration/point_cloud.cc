@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2022 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include <gz/msgs/world_stats.pb.h>
+#include <gz/msgs/float_v.pb.h>
 #include <gz/msgs/marker.pb.h>
 #include <gz/msgs/material.pb.h>
-#include <gz/msgs/float_v.pb.h>
 #include <gz/msgs/pointcloud_packed.pb.h>
+#include <gz/msgs/world_stats.pb.h>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Filesystem.hh>
@@ -53,7 +53,6 @@ using namespace gui;
 
 class PointCloudTestFixture : public ::testing::Test
 {
-
   public:
     gz::transport::Node node;
     rendering::ScenePtr scene;
@@ -79,7 +78,6 @@ class PointCloudTestFixture : public ::testing::Test
 
     public: void InitMockData()
     {
-
       gz::msgs::InitPointCloudPacked(pcMsg, "some_frame", true,
           {{"xyz", gz::msgs::PointCloudPacked::Field::FLOAT32}});
 
@@ -139,7 +137,7 @@ class PointCloudTestFixture : public ::testing::Test
         EXPECT_EQ(_req.visibility(), gz::msgs::Marker::GUI);
         if (_req.point().size() != 0)
         {
-          // We might recieve empty packets as the sending process
+          // We might receive empty packets as the sending process
           // is asynchronuous
           EXPECT_EQ(_req.point().size(), this->flatMsg.data().size());
           EXPECT_EQ(_req.materials().size(), this->flatMsg.data().size());
@@ -161,7 +159,8 @@ TEST_F(PointCloudTestFixture,
 
   // Load the plugin
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(
+    common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
   // Load plugin
   const char *pluginStr =
     "<plugin filename=\"PointCloud\" name=\"Point Cloud\">"
@@ -185,7 +184,6 @@ TEST_F(PointCloudTestFixture,
 
   // Show, but don't exec, so we don't block
   window->QuickWindow()->show();
-
 
   this->Publish();
 
