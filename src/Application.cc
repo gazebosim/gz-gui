@@ -230,7 +230,7 @@ bool Application::RemovePlugin(const std::string &_pluginName)
   // Remove split on QML
   auto bgItem = this->dataPtr->mainWin->QuickWindow()
       ->findChild<QQuickItem *>("background");
-  if (bgItem)
+  if (bgItem && cardItem->parentItem())
   {
     QMetaObject::invokeMethod(bgItem, "removeSplitItem",
         Q_ARG(QVariant, cardItem->parentItem()->objectName()));
