@@ -109,7 +109,7 @@ void Publisher::OnPublish(const bool _checked)
       this->dataPtr->timer->stop();
       this->disconnect(this->dataPtr->timer, 0, 0, 0);
     }
-    this->dataPtr->pub = gz::transport::Node::Publisher();
+    this->dataPtr->pub = transport::Node::Publisher();
     return;
   }
 
@@ -118,7 +118,7 @@ void Publisher::OnPublish(const bool _checked)
   auto msgData = this->dataPtr->msgData.toStdString();
 
   // Check it's possible to create message
-  auto msg = gz::msgs::Factory::New(msgType, msgData);
+  auto msg = msgs::Factory::New(msgType, msgData);
   if (!msg || (msg->DebugString() == "" && msgData != ""))
   {
     gzerr << "Unable to create message of type[" << msgType << "] "
@@ -149,7 +149,7 @@ void Publisher::OnPublish(const bool _checked)
   this->dataPtr->timer->setInterval(1000/this->dataPtr->frequency);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
   {
-    auto newMsg = gz::msgs::Factory::New(msgType, msgData);
+    auto newMsg = msgs::Factory::New(msgType, msgData);
     this->dataPtr->pub.Publish(*newMsg);
   });
   this->dataPtr->timer->start();
@@ -208,5 +208,5 @@ void Publisher::SetFrequency(const double _frequency)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::Publisher,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(Publisher,
+              gui::Plugin)

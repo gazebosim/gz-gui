@@ -77,8 +77,8 @@ TEST(ScreenshotTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
   // ASSERT_EQ(plugins.size(), 2);
   //
   // --- Screenshot request ---
-  // std::function<void(const gz::msgs::Boolean &, const bool)> cb =
-  //   [](const gz::msgs::Boolean &/*_rep*/, const bool _result)
+  // std::function<void(const msgs::Boolean &, const bool)> cb =
+  //   [](const msgs::Boolean &/*_rep*/, const bool _result)
   // {
   //   if (!_result)
   //     gzerr << "Error saving screenshot" << std::endl;
