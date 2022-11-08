@@ -125,7 +125,6 @@ TEST(HelpersTest, stringTypeFromKey)
 // See https://github.com/gazebosim/gz-gui/issues/75
 TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
 {
-#ifndef __APPLE__
   Application app(gg_argc, gg_argv);
 
   // Construct a list
@@ -150,7 +149,6 @@ TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(findFirstByProperty))
   EXPECT_EQ(findFirstByProperty(list, "banana", 2.0), o1);
   EXPECT_EQ(findFirstByProperty(list, "banana", 3.0), nullptr);
   EXPECT_EQ(findFirstByProperty(list, "acerola", 1.0), nullptr);
-#endif
 }
 
 /////////////////////////////////////////////////
@@ -160,7 +158,6 @@ TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
   // No app, no window, no names
   EXPECT_TRUE(worldNames().empty());
 
-#ifndef __APPLE__
   Application app(gg_argc, gg_argv);
   auto mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
@@ -181,7 +178,6 @@ TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
 
   // No more names
   EXPECT_TRUE(worldNames().empty());
-#endif
 }
 
 /////////////////////////////////////////////////
@@ -190,7 +186,6 @@ TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(renderEngine))
   // No app, no window, no render engine
   EXPECT_TRUE(renderEngineName().empty());
 
-#ifndef __APPLE__
   Application app(gg_argc, gg_argv);
   auto mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
@@ -210,5 +205,4 @@ TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(renderEngine))
 
   // No render engine set
   EXPECT_TRUE(renderEngineName().empty());
-#endif
 }
