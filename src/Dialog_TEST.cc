@@ -37,6 +37,7 @@ using namespace gui;
 /////////////////////////////////////////////////
 TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 {
+#ifndef __APPLE__
   common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv, WindowType::kDialog);
 
@@ -137,4 +138,5 @@ TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   }
 
   delete dialog;
+#endif
 }
