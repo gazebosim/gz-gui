@@ -47,7 +47,7 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
 
   /// \brief Callback for camera view controller request
   /// \param[in] _msg Request message to set the camera view controller
-  /// \param[in] _res Response data
+  /// \param[out] _res Response data
   /// \return True if the request is received
   public: bool OnViewControl(const msgs::StringMsg &_msg,
     msgs::Boolean &_res);
@@ -55,7 +55,7 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
 
   /// \brief Callback for camera reference visual request
   /// \param[in] _msg Request message to enable/disable the reference visual
-  /// \param[in] _res Response data
+  /// \param[out] _res Response data
   /// \return True if the request is received
   public: bool OnReferenceVisual(const msgs::Boolean &_msg,
     msgs::Boolean &_res);
