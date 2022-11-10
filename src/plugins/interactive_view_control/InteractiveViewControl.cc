@@ -205,6 +205,9 @@ void InteractiveViewControlPrivate::OnRender()
       rendering::GeometryPtr sphere = scene->CreateSphere();
       this->refVisual->AddGeometry(sphere);
       this->refVisual->SetLocalScale(math::Vector3d(0.2, 0.2, 0.1));
+      this->refVisual->SetVisibilityFlags(
+        IGN_VISIBILITY_GUI & ~IGN_VISIBILITY_SELECTABLE
+      );
 
       // create material
       math::Color diffuse(1.0f, 1.0f, 0.0f, 1.0f);
@@ -269,6 +272,7 @@ void InteractiveViewControlPrivate::OnRender()
       this->viewControl->Zoom(amount);
       this->UpdateReferenceVisual();
     }
+    // hover
     else
     {
       if (this->refVisual)
