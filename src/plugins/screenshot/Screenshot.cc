@@ -68,7 +68,7 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : gz::gui::Plugin(),
+  : gui::Plugin(),
   dataPtr(std::make_unique<ScreenshotPrivate>())
 {
   std::string home;
@@ -228,5 +228,5 @@ void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::Screenshot,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(Screenshot,
+              gui::Plugin)

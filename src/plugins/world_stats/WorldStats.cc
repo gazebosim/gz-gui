@@ -239,7 +239,7 @@ void WorldStats::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void WorldStats::OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg)
+void WorldStats::OnWorldStatsMsg(const msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -300,5 +300,5 @@ void WorldStats::SetIterations(const QString &_iterations)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::WorldStats,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(WorldStats,
+              gui::Plugin)

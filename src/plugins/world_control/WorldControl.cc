@@ -284,7 +284,7 @@ void WorldControl::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void WorldControl::OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg)
+void WorldControl::OnWorldStatsMsg(const msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -295,7 +295,7 @@ void WorldControl::OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg)
 /////////////////////////////////////////////////
 void WorldControl::OnPlay()
 {
-  gz::msgs::WorldControl msg;
+  msgs::WorldControl msg;
   msg.set_pause(false);
   this->dataPtr->pause = false;
   this->dataPtr->SendEventMsg(msg);
@@ -304,7 +304,7 @@ void WorldControl::OnPlay()
 /////////////////////////////////////////////////
 void WorldControl::OnPause()
 {
-  gz::msgs::WorldControl msg;
+  msgs::WorldControl msg;
   msg.set_pause(true);
   this->dataPtr->pause = true;
 
@@ -320,7 +320,7 @@ void WorldControl::OnStepCount(const unsigned int _steps)
 /////////////////////////////////////////////////
 void WorldControl::OnStep()
 {
-  gz::msgs::WorldControl msg;
+  msgs::WorldControl msg;
   msg.set_pause(this->dataPtr->pause);
   msg.set_multi_step(this->dataPtr->multiStep);
 
@@ -328,7 +328,7 @@ void WorldControl::OnStep()
 }
 
 /////////////////////////////////////////////////
-void WorldControlPrivate::SendEventMsg(const gz::msgs::WorldControl &_msg)
+void WorldControlPrivate::SendEventMsg(const msgs::WorldControl &_msg)
 {
   if (this->useEvent)
   {
@@ -337,8 +337,8 @@ void WorldControlPrivate::SendEventMsg(const gz::msgs::WorldControl &_msg)
   }
   else
   {
-    std::function<void(const gz::msgs::Boolean &, const bool)> cb =
-        [](const gz::msgs::Boolean &/*_rep*/, const bool /*_result*/)
+    std::function<void(const msgs::Boolean &, const bool)> cb =
+        [](const msgs::Boolean &/*_rep*/, const bool /*_result*/)
     {
       // the service CB is empty because updates are handled in
       // WorldControl::ProcessMsg
@@ -348,5 +348,5 @@ void WorldControlPrivate::SendEventMsg(const gz::msgs::WorldControl &_msg)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::WorldControl,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(WorldControl,
+              gui::Plugin)

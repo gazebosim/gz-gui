@@ -113,9 +113,9 @@ using namespace plugins;
 Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
 {
   // Initialize publisher using default topic.
-  this->dataPtr->cmdVelPub = gz::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub = transport::Node::Publisher();
   this->dataPtr->cmdVelPub =
-      this->dataPtr->node.Advertise<gz::msgs::Twist>
+      this->dataPtr->node.Advertise<msgs::Twist>
       (this->dataPtr->topic);
 }
 
@@ -142,7 +142,7 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 void Teleop::OnTeleopTwist(double _forwardVel, double _verticalVel,
         double _angVel)
 {
-  gz::msgs::Twist cmdVelMsg;
+  msgs::Twist cmdVelMsg;
 
   cmdVelMsg.mutable_linear()->set_x(_forwardVel);
   cmdVelMsg.mutable_linear()->set_z(_verticalVel);
@@ -169,9 +169,9 @@ void Teleop::SetTopic(const QString &_topic)
       this->dataPtr->topic << " ' " <<std::endl;
 
   // Update publisher with new topic.
-  this->dataPtr->cmdVelPub = gz::transport::Node::Publisher();
+  this->dataPtr->cmdVelPub = transport::Node::Publisher();
   this->dataPtr->cmdVelPub =
-      this->dataPtr->node.Advertise<gz::msgs::Twist>
+      this->dataPtr->node.Advertise<msgs::Twist>
       (this->dataPtr->topic);
   if (!this->dataPtr->cmdVelPub)
   {
@@ -326,5 +326,5 @@ void Teleop::SetKeyScale()
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::Teleop,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(Teleop,
+              gui::Plugin)

@@ -15,6 +15,7 @@
  *
 */
 
+#include <unordered_map>
 #include <gtest/gtest.h>
 
 #include <gz/common/Console.hh>
@@ -37,7 +38,7 @@ using namespace gui;
 // See https://github.com/gazebosim/gz-gui/issues/75
 TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -76,7 +77,7 @@ TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(DeleteLater))
 /////////////////////////////////////////////////
 TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -106,7 +107,7 @@ TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InvalidXmlText))
 /////////////////////////////////////////////////
 TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -134,3 +135,189 @@ TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
   ASSERT_NE(nullptr, plugin->CardItem());
   ASSERT_NE(nullptr, plugin->Context());
 }
+
+/////////////////////////////////////////////////
+TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStr))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+      common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
+
+  // Load normal plugin
+  const char *pluginStr =
+    "<plugin filename=\"WorldStats\" name=\"World stats\">"
+    "  <gz-gui>"
+    "    <title>World stats</title>"
+    "    <property type=\"bool\" key=\"showTitleBar\">true</property>"
+    "    <property type=\"bool\" key=\"resizable\">true</property>"
+    "    <property type=\"double\" key=\"height\">200</property>"
+    "    <property type=\"double\" key=\"width\">300</property>"
+    "    <property type=\"double\" key=\"z\">2</property>"
+    "    <property type=\"string\" key=\"state\">floating</property>"
+    "    <anchors target=\"3D View\">"
+    "      <line own=\"right\" target=\"right\"/>"
+    "      <line own=\"bottom\" target=\"bottom\"/>"
+    "    </anchors>"
+    "  </gz-gui>"
+    "</plugin>";
+
+  std::unordered_map<std::string, std::string> pluginProps;
+  std::unordered_map<std::string, std::string> pluginTypes;
+  pluginProps["showTitleBar"] = "true";
+  pluginProps["resizable"] = "true";
+  pluginProps["height"] = "200";
+  pluginProps["width"] = "300";
+  pluginProps["z"] = "2";
+  pluginProps["state"] = "floating";
+
+  pluginTypes["showTitleBar"] = "bool";
+  pluginTypes["resizable"] = "bool";
+  pluginTypes["height"] = "double";
+  pluginTypes["width"] = "double";
+  pluginTypes["z"] = "double";
+  pluginTypes["state"] = "string";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("WorldStats",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin count
+  EXPECT_EQ(1, win->findChildren<Plugin *>().size());
+
+  // Get the output for ConfigStr()
+  std::string configStr;
+  tinyxml2::XMLDocument configDoc;
+  auto plugin = win->findChildren<Plugin *>()[0];
+  configStr = plugin->ConfigStr();
+  configDoc.Parse(configStr.c_str());
+
+  // <plugin>
+  auto pluginElem = configDoc.FirstChildElement("plugin");
+  ASSERT_NE(nullptr, pluginElem);
+
+  // <gz-gui>
+  auto gzGuiElem = pluginElem->FirstChildElement("gz-gui");
+  ASSERT_NE(nullptr, gzGuiElem);
+
+  // Iterate properties
+  for (auto propElem = gzGuiElem->FirstChildElement("property");
+      propElem != nullptr;)
+  {
+    // If property in map, mark it as "Verified"
+    if (pluginProps.find(propElem->Attribute("key")) != pluginProps.end())
+    {
+      // check if the type is correct
+      EXPECT_EQ(propElem->Attribute("type"),
+        pluginTypes[propElem->Attribute("key")]) << propElem->Attribute("key");
+
+      // check if the value is correct
+      EXPECT_EQ(propElem->GetText(), pluginProps[propElem->Attribute("key")])
+          << propElem->Attribute("key");
+      pluginProps[propElem->Attribute("key")] = "Verified";
+    }
+    auto nextProp = propElem->NextSiblingElement("property");
+    propElem = nextProp;
+  }
+
+  // Verify all inputs properties are checked
+  for (auto itr = pluginProps.begin(); itr != pluginProps.end(); itr++)
+  {
+    EXPECT_EQ(itr->second, "Verified") << "Did not find property: "
+        <<  itr->first;
+  }
+
+}
+
+/////////////////////////////////////////////////
+TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+      common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
+
+  // Load normal plugin
+  const char *pluginStr = "";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("WorldStats",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Create main window
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin count
+  EXPECT_EQ(1, win->findChildren<Plugin *>().size());
+
+  // Get the output for ConfigStr()
+  std::string configStr;
+  tinyxml2::XMLDocument configDoc;
+  auto plugin = win->findChildren<Plugin *>()[0];
+  configStr = plugin->ConfigStr();
+  configDoc.Parse(configStr.c_str());
+
+  // ConfigStr() creates a plugin with default value when input doesn't
+  // contain a <plugin> tag.
+  // We select a few to verify.
+  std::unordered_map<std::string, std::string> pluginProps;
+  std::unordered_map<std::string, std::string> pluginTypes;
+  pluginProps["showTitleBar"] = "true";
+  pluginProps["resizable"] = "true";
+  pluginProps["cardMinimumWidth"] = "290";
+  pluginProps["cardMinimumHeight"] = "110";
+  pluginProps["z"] = "0";
+  pluginProps["state"] = "docked";
+
+  pluginTypes["showTitleBar"] = "bool";
+  pluginTypes["resizable"] = "bool";
+  pluginTypes["cardMinimumWidth"] = "int";
+  pluginTypes["cardMinimumHeight"] = "int";
+  pluginTypes["z"] = "double";
+  pluginTypes["state"] = "string";
+
+  // <plugin>
+  auto pluginElem = configDoc.FirstChildElement("plugin");
+  ASSERT_NE(nullptr, pluginElem);
+
+  // <gz-gui>
+  auto gzGuiElem = pluginElem->FirstChildElement("gz-gui");
+  ASSERT_NE(nullptr, gzGuiElem);
+
+  // Iterate properties
+  for (auto propElem = gzGuiElem->FirstChildElement("property");
+      propElem != nullptr;)
+  {
+    // If property in map, mark it as "Verified"
+    if (pluginProps.find(propElem->Attribute("key")) != pluginProps.end())
+    {
+      // check if the type is correct
+      EXPECT_EQ(propElem->Attribute("type"),
+        pluginTypes[propElem->Attribute("key")]) << propElem->Attribute("key");
+
+      // check if the value is correct
+      EXPECT_EQ(propElem->GetText(), pluginProps[propElem->Attribute("key")])
+          << propElem->Attribute("key");
+      pluginProps[propElem->Attribute("key")] = "Verified";
+    }
+    auto nextProp = propElem->NextSiblingElement("property");
+    propElem = nextProp;
+  }
+
+  // Verify all selected inputs properties are checked
+  for (auto itr = pluginProps.begin(); itr != pluginProps.end(); itr++)
+  {
+    EXPECT_EQ(itr->second, "Verified") << "Did not find property: "
+      << itr->first;
+  }
+}
+

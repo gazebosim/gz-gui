@@ -35,6 +35,19 @@ using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
+TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Accessors))
+{
+  common::Console::SetVerbosity(4);
+  Application app(g_argc, g_argv, WindowType::kDialog);
+
+  auto dialog = new Dialog;
+  ASSERT_NE(nullptr, dialog);
+
+  EXPECT_NE(nullptr, dialog->RootItem());
+  EXPECT_NE(nullptr, dialog->QuickWindow());
+}
+
+/////////////////////////////////////////////////
 TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 {
   common::Console::SetVerbosity(4);
@@ -44,10 +57,13 @@ TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
   ASSERT_NE(nullptr, dialog);
   dialog->setObjectName("quick_menu");
 
+  // Call deprecated function for test coverage
+  dialog->SetDefaultConfig("");
+
   // Start without a file
   std::remove(kTestConfigFile.c_str());
 
-  // Read attribute value when the config doesn't exist
+  // The file doesn't exist
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
     std::string allow = dialog->ReadConfigAttribute(kTestConfigFile,
@@ -56,6 +72,31 @@ TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
 
     // Config file still doesn't exist
     EXPECT_FALSE(common::exists(kTestConfigFile));
+
+    EXPECT_FALSE(dialog->UpdateConfigAttribute(kTestConfigFile, "allow", true));
+
+    // Config file still doesn't exist
+    EXPECT_FALSE(common::exists(kTestConfigFile));
+  }
+
+  // Malformed file
+  {
+    EXPECT_FALSE(common::exists(kTestConfigFile));
+
+    // Create file
+    std::ofstream configFile(kTestConfigFile);
+    configFile << "banana";
+    configFile.close();
+    EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    std::string allow = dialog->ReadConfigAttribute(kTestConfigFile,
+      "allow");
+    EXPECT_TRUE(allow.empty());
+
+    EXPECT_FALSE(dialog->UpdateConfigAttribute(kTestConfigFile, "allow", true));
+
+    // Delete file
+    std::remove(kTestConfigFile.c_str());
   }
 
   // Read a non existing attribute
@@ -105,7 +146,7 @@ TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
     EXPECT_TRUE(common::exists(kTestConfigFile));
 
     // Update value
-    dialog->UpdateConfigAttribute(kTestConfigFile, "allow", true);
+    EXPECT_TRUE(dialog->UpdateConfigAttribute(kTestConfigFile, "allow", true));
 
     // Read value
     auto allow = dialog->ReadConfigAttribute(kTestConfigFile, "allow");
@@ -115,22 +156,64 @@ TEST(DialogTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(UpdateDialogConfig))
     std::remove(kTestConfigFile.c_str());
   }
 
-  // Update a existing attribute
+  // Update an existing attribute
   {
     EXPECT_FALSE(common::exists(kTestConfigFile));
 
     // Create file
     std::ofstream configFile(kTestConfigFile);
-    configFile << "<dialog name='quick_menu' show='true'/>";
+    configFile << "<dialog name='quick_menu' allow='true'/>";
     configFile.close();
     EXPECT_TRUE(common::exists(kTestConfigFile));
 
     // Update value
-    dialog->UpdateConfigAttribute(kTestConfigFile, "allow", false);
+    EXPECT_TRUE(dialog->UpdateConfigAttribute(kTestConfigFile, "allow", false));
 
     // Read value
     auto allow = dialog->ReadConfigAttribute(kTestConfigFile, "allow");
     EXPECT_EQ(allow, "false");
+
+    // Delete file
+    std::remove(kTestConfigFile.c_str());
+  }
+
+  // Update a file with a different <dialog>
+  {
+    EXPECT_FALSE(common::exists(kTestConfigFile));
+
+    // Create file
+    std::ofstream configFile(kTestConfigFile);
+    configFile << "<dialog name='banana' allow='false'/>";
+    configFile.close();
+    EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    // Update value
+    EXPECT_TRUE(dialog->UpdateConfigAttribute(kTestConfigFile, "allow", true));
+
+    // Read value
+    auto allow = dialog->ReadConfigAttribute(kTestConfigFile, "allow");
+    EXPECT_EQ(allow, "true");
+
+    // Delete file
+    std::remove(kTestConfigFile.c_str());
+  }
+
+  // Update a file without a <dialog>
+  {
+    EXPECT_FALSE(common::exists(kTestConfigFile));
+
+    // Create file
+    std::ofstream configFile(kTestConfigFile);
+    configFile << "<banana/>";
+    configFile.close();
+    EXPECT_TRUE(common::exists(kTestConfigFile));
+
+    // Update value
+    EXPECT_TRUE(dialog->UpdateConfigAttribute(kTestConfigFile, "allow", true));
+
+    // Read value
+    auto allow = dialog->ReadConfigAttribute(kTestConfigFile, "allow");
+    EXPECT_EQ(allow, "true");
 
     // Delete file
     std::remove(kTestConfigFile.c_str());
