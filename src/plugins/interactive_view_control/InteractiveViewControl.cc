@@ -27,6 +27,8 @@
 #include <ignition/plugin/Register.hh>
 
 #include <ignition/rendering/Camera.hh>
+#include <ignition/rendering/Geometry.hh>
+#include <ignition/rendering/Material.hh>
 #include <ignition/rendering/OrbitViewController.hh>
 #include <ignition/rendering/OrthoViewController.hh>
 #include <ignition/rendering/RenderingIface.hh>
@@ -45,10 +47,22 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
 
   /// \brief Callback for camera view controller request
   /// \param[in] _msg Request message to set the camera view controller
-  /// \param[in] _res Response data
+  /// \param[out] _res Response data
   /// \return True if the request is received
   public: bool OnViewControl(const msgs::StringMsg &_msg,
     msgs::Boolean &_res);
+
+
+  /// \brief Callback for camera reference visual request
+  /// \param[in] _msg Request message to enable/disable the reference visual
+  /// \param[out] _res Response data
+  /// \return True if the request is received
+  public: bool OnReferenceVisual(const msgs::Boolean &_msg,
+    msgs::Boolean &_res);
+
+  /// \brief Update the reference visual. Adjust scale based on distance from
+  /// camera to target point so it remains the same size on screen.
+  public: void UpdateReferenceVisual();
 
   /// \brief Flag to indicate if mouse event is dirty
   public: bool mouseDirty = false;
@@ -83,14 +97,23 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   /// \brief View controller
   public: std::string viewController{"orbit"};
 
+  /// \brief Enable / disable reference visual
+  public: bool enableRefVisual{true};
+
   /// \brief Camera view control service
   public: std::string cameraViewControlService;
+
+  /// \brief Camera reference visual service
+  public: std::string cameraRefVisualService;
 
   /// \brief Ray query for mouse clicks
   public: rendering::RayQueryPtr rayQuery{nullptr};
 
   //// \brief Pointer to the rendering scene
   public: rendering::ScenePtr scene{nullptr};
+
+  /// \brief Reference visual for visualizing the target point
+  public: rendering::VisualPtr refVisual{nullptr};
 
   /// \brief Transport node for making transform control requests
   public: transport::Node node;
@@ -173,6 +196,34 @@ void InteractiveViewControlPrivate::OnRender()
   }
   this->viewControl->SetCamera(this->camera);
 
+  if (this->enableRefVisual)
+  {
+    if (!this->refVisual)
+    {
+      // create ref visual
+      this->refVisual = scene->CreateVisual();
+      rendering::GeometryPtr sphere = scene->CreateSphere();
+      this->refVisual->AddGeometry(sphere);
+      this->refVisual->SetLocalScale(math::Vector3d(0.2, 0.2, 0.1));
+      this->refVisual->SetVisibilityFlags(
+        IGN_VISIBILITY_GUI & ~IGN_VISIBILITY_SELECTABLE
+      );
+
+      // create material
+      math::Color diffuse(1.0f, 1.0f, 0.0f, 1.0f);
+      math::Color specular(1.0f, 1.0f, 0.0f, 1.0f);
+      double transparency = 0.3;
+      rendering::MaterialPtr material = scene->CreateMaterial();
+      material->SetDiffuse(diffuse);
+      material->SetSpecular(specular);
+      material->SetTransparency(transparency);
+      material->SetCastShadows(false);
+      this->refVisual->SetMaterial(material);
+      scene->DestroyMaterial(material);
+    }
+    this->refVisual->SetVisible(true);
+  }
+
   if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
   {
     this->target = rendering::screenToScene(
@@ -183,12 +234,14 @@ void InteractiveViewControlPrivate::OnRender()
         this->target);
     double amount = -this->drag.Y() * distance / 5.0;
     this->viewControl->Zoom(amount);
+    this->UpdateReferenceVisual();
   }
   else if (this->mouseEvent.Type() == common::MouseEvent::PRESS)
   {
     this->target = rendering::screenToScene(
       this->mouseEvent.PressPos(), this->camera, this->rayQuery);
     this->viewControl->SetTarget(this->target);
+    this->UpdateReferenceVisual();
   }
   else
   {
@@ -199,11 +252,13 @@ void InteractiveViewControlPrivate::OnRender()
         this->viewControl->Orbit(this->drag);
       else
         this->viewControl->Pan(this->drag);
+      this->UpdateReferenceVisual();
     }
     // Orbit with middle button
     else if (this->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
     {
       this->viewControl->Orbit(this->drag);
+      this->UpdateReferenceVisual();
     }
     // Zoom with right button
     else if (this->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
@@ -215,10 +270,34 @@ void InteractiveViewControlPrivate::OnRender()
           static_cast<double>(this->camera->ImageHeight()))
           * distance * tan(vfov/2.0) * 6.0);
       this->viewControl->Zoom(amount);
+      this->UpdateReferenceVisual();
+    }
+    // hover
+    else
+    {
+      if (this->refVisual)
+        this->refVisual->SetVisible(false);
     }
   }
+
   this->drag = 0;
   this->mouseDirty = false;
+}
+
+/////////////////////////////////////////////////
+void InteractiveViewControlPrivate::UpdateReferenceVisual()
+{
+  if (!this->refVisual || !this->enableRefVisual)
+    return;
+  this->refVisual->SetWorldPosition(this->target);
+  // Update the size of the reference visual based on the distance to the
+  // target point.
+  double distance =
+      this->camera->WorldPosition().Distance(this->target);
+
+  double scale = distance * atan(IGN_DTOR(1.0));
+  this->refVisual->SetLocalScale(
+      math::Vector3d(scale, scale, scale * 0.5));
 }
 
 /////////////////////////////////////////////////
@@ -246,6 +325,17 @@ bool InteractiveViewControlPrivate::OnViewControl(const msgs::StringMsg &_msg,
 }
 
 /////////////////////////////////////////////////
+bool InteractiveViewControlPrivate::OnReferenceVisual(const msgs::Boolean &_msg,
+  msgs::Boolean &_res)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  this->enableRefVisual = _msg.data();
+
+  _res.set_data(true);
+  return true;
+}
+
+/////////////////////////////////////////////////
 InteractiveViewControl::InteractiveViewControl()
   : Plugin(), dataPtr(std::make_unique<InteractiveViewControlPrivate>())
 {
@@ -267,6 +357,12 @@ void InteractiveViewControl::LoadConfig(
       &InteractiveViewControlPrivate::OnViewControl, this->dataPtr.get());
   ignmsg << "Camera view controller topic advertised on ["
          << this->dataPtr->cameraViewControlService << "]" << std::endl;
+
+  this->dataPtr->cameraRefVisualService = "/gui/camera/reference_visual";
+  this->dataPtr->node.Advertise(this->dataPtr->cameraRefVisualService,
+      &InteractiveViewControlPrivate::OnReferenceVisual, this->dataPtr.get());
+  ignmsg << "Camera reference visual topic advertised on ["
+         << this->dataPtr->cameraRefVisualService << "]" << std::endl;
 
   ignition::gui::App()->findChild<
     ignition::gui::MainWindow *>()->installEventFilter(this);
@@ -328,6 +424,13 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
     auto blockOrbit = reinterpret_cast<ignition::gui::events::BlockOrbit *>(
       _event);
     this->dataPtr->blockOrbit = blockOrbit->Block();
+  }
+  else if (_event->type() == gui::events::HoverOnScene::kType)
+  {
+    gui::events::HoverOnScene *_e =
+      static_cast<gui::events::HoverOnScene*>(_event);
+    this->dataPtr->mouseDirty = true;
+    this->dataPtr->mouseEvent = _e->Mouse();
   }
 
   // Standard event processing
