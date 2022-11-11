@@ -58,23 +58,35 @@ namespace gz
 
       /// \brief Store dialog default config
       /// \param[in] _config XML config as string
+      /// \deprecated Introduce deprecation warnings on v7.
       public: void SetDefaultConfig(const std::string &_config);
 
-      /// \brief Write dialog config
-      /// \param[in] _path config path
+      /// \brief Update an attribute on an XML file. The attribute belongs to
+      /// a `<dialog>` element that has a `name` attrbute matching this dialog's
+      /// name, i.e.
+      ///
+      /// `<dialog name="dialog_name" attribute="value"/>`
+      ///
+      /// If a dialog element with this dialog's name doesn't exist yet, one
+      /// will be created.
+      ///
+      /// \param[in] _path File path. File must already exist, this function
+      /// will not create a new file.
       /// \param[in] _attribute XMLElement attribute name
       /// \param[in] _value XMLElement attribute value
-      /// \return true if written to config file
+      /// \return True if written to config file
       public: bool UpdateConfigAttribute(
         const std::string &_path, const std::string &_attribute,
         const bool _value) const;
 
-      /// \brief Gets a config attribute value.
-      /// It will return an empty string if the config file or the attribute
+      /// \brief Gets an attribute value from an XML file. The attribute belongs
+      /// to a `<dialog>` element that has a `name` attribute matching this
+      /// dialog's name.
+      /// It will return an empty string if the file or the attribute
       /// don't exist.
-      /// \param[in] _path config path
+      /// \param[in] _path File path
       /// \param[in] _attribute attribute name
-      /// \return attribute value as string
+      /// \return Attribute value as string
       public: std::string ReadConfigAttribute(const std::string &_path,
         const std::string &_attribute) const;
 

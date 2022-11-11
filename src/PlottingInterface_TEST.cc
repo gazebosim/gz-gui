@@ -172,8 +172,7 @@ TEST(PlottingInterfaceTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Transport))
 
   auto transport = Transport();
 
-  double time = 10;
-  std::shared_ptr<double> timeRef(&time);
+  auto timeRef = std::make_shared<double>(10);
 
   transport.Subscribe("/collision_topic", "pose-position-x", 1, timeRef);
   transport.Subscribe("/collision_topic", "pose-position-z", 1, timeRef);

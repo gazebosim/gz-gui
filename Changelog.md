@@ -163,6 +163,132 @@
 
 ## Gazebo GUI 6
 
+### Gazebo GUI 6.6.1 (2022-08-17)
+
+1. Fix mistaken dialog error message
+    * [Pull request #472](https://github.com/gazebosim/gz-gui/pull/472)
+
+1. Replace color and pose for `GridConfig` with `GzColor` and `GzPose`
+    * [Pull request #463](https://github.com/gazebosim/gz-gui/pull/463)
+
+1. Replace pose in `Grid3d` with `GzPose`
+    * [Pull request #461](https://github.com/gazebosim/gz-gui/pull/461)
+
+1. Remove redundant namespace references
+    * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/460)
+
+1. Update codeowners
+    * [Pull request #465](https://github.com/gazebosim/gz-gui/pull/465)
+
+1. Fix warnings on Jammy
+    * [Pull request #464](https://github.com/gazebosim/gz-gui/pull/464)
+
+### Gazebo GUI 6.6.0 (2022-08-10)
+
+1. GzColor ColorDialogue fix
+    * [Pull request #459](https://github.com/gazebosim/gz-gui/pull/459)
+
+1. Fix attribute update when `<dialog>` isn't present
+    * [Pull request #455](https://github.com/gazebosim/gz-gui/pull/455)
+
+1. Add plotting to common widget pose
+    * [Pull request #439](https://github.com/gazebosim/gz-gui/pull/439)
+
+1. Add test for Plugin::ConfigStr()
+    * [Pull request #447](https://github.com/gazebosim/gz-gui/pull/447)
+
+### Gazebo GUI 6.5.0 (2022-08-02)
+
+1. `Teleop`: Refactor and support vertical
+    * [Pull request #440](https://github.com/gazebosim/gz-gui/pull/440)
+
+1. Change `IGN_DESIGNATION` to `GZ_DESIGNATION`
+    * [Pull request #437](https://github.com/gazebosim/gz-gui/pull/437)
+
+1. Ignition -> Gazebo
+    * [Pull request #435](https://github.com/gazebosim/gz-gui/pull/435)
+
+1. Allow Dialogs to have a MainWindow independent config
+    * [Pull request #418](https://github.com/gazebosim/gz-gui/pull/418)
+    * [Pull request #442](https://github.com/gazebosim/gz-gui/pull/442)
+
+1. Add common widget for Vector3
+    * [Pull request #427](https://github.com/gazebosim/gz-gui/pull/427)
+
+1. Add common widget for Pose
+    * [Pull request #424](https://github.com/gazebosim/gz-gui/pull/424)
+    * [Pull request #431](https://github.com/gazebosim/gz-gui/pull/431)
+    * [Pull request #450](https://github.com/gazebosim/gz-gui/pull/450)
+
+1. Add common widget for Color
+    * [Pull request #410](https://github.com/gazebosim/gz-gui/pull/410)
+
+1. Example running a dialog before the main window
+    * [Pull request #407](https://github.com/gazebosim/gz-gui/pull/407)
+
+1. Test fixes and improvements
+    * [Pull request #420](https://github.com/gazebosim/gz-gui/pull/420)
+    * [Pull request #419](https://github.com/gazebosim/gz-gui/pull/419)
+    * [Pull request #448](https://github.com/gazebosim/gz-gui/pull/448)
+    * [Pull request #416](https://github.com/gazebosim/gz-gui/pull/416)
+    * [Pull request #374](https://github.com/gazebosim/gz-gui/pull/374)
+
+1. Bash completion for flags
+    * [Pull request #392](https://github.com/gazebosim/gz-gui/pull/392)
+
+1. Shortcut to search and auto highlight search bar
+    * [Pull request #405](https://github.com/gazebosim/gz-gui/pull/405)
+
+1. Search menu keyboard control
+    * [Pull request #403](https://github.com/gazebosim/gz-gui/pull/403)
+
+1. User camera FOV control in SDF files
+    * [Pull request #400](https://github.com/gazebosim/gz-gui/pull/400)
+    * [Pull request #434](https://github.com/gazebosim/gz-gui/pull/434)
+
+1. Add config relative path environment variable
+    * [Pull request #386](https://github.com/gazebosim/gz-gui/pull/386)
+
+1. Add repo specific issue templates
+    * [Pull request #393](https://github.com/gazebosim/gz-gui/pull/393)
+
+1. Sort plugin list in alphabetical order (including when filtering)
+    * [Pull request #387](https://github.com/gazebosim/gz-gui/pull/387)
+
+1. Set `cameraPassCountPerGpuFlush` to 6
+    * [Pull request #381](https://github.com/gazebosim/gz-gui/pull/381)
+
+1. Avoid nullptr access in MinimalScene
+    * [Pull request #380](https://github.com/gazebosim/gz-gui/pull/380)
+
+1. Fix some Qt warnings
+    * [Pull request #376](https://github.com/gazebosim/gz-gui/pull/376)
+
+1. Use `gz-rendering`'s `screenToScene` functions
+    * [Pull request #372](https://github.com/gazebosim/gz-gui/pull/372)
+
+1. Added Snackbar qtquick object
+    * [Pull request #369](https://github.com/gazebosim/gz-gui/pull/369)
+    * [Pull request #370](https://github.com/gazebosim/gz-gui/pull/370)
+
+1. Fix menu scrolling when a new plugin is added
+    * [Pull request #368](https://github.com/gazebosim/gz-gui/pull/368)
+
+1. `TransportSceneManager`: Prevent freeze when inserted from menu
+    * [Pull request #365](https://github.com/gazebosim/gz-gui/pull/365)
+
+1. Populate plugins that were empty
+    * [Pull request #366](https://github.com/gazebosim/gz-gui/pull/366)
+
+1. Prevent `MinimalScene` 💥 if another scene is already loaded
+    * [Pull request #364](https://github.com/gazebosim/gz-gui/pull/364)
+
+1. Improve `KeyPublisher`'s usability
+    * [Pull request #362](https://github.com/gazebosim/gz-gui/pull/362)
+
+1. Removed unused code in `MinimalScene` plugin
+    * [Pull request #359](https://github.com/gazebosim/gz-gui/pull/359)
+
 ### Gazebo GUI 6.4.0 (2022-02-01)
 
 1. Improve inserting WorldControl and WorldStats from menu
@@ -622,6 +748,26 @@
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/243)
 
 ## Gazebo GUI 3
+
+### Gazebo GUI 3.11.1 (2022-08-15)
+
+1. Replace pose in Grid3d with GzPose
+    * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/461)
+
+1. Remove redundant namespace references
+    * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/460)
+
+1. Update codeowners
+    * [Pull request #465](https://github.com/gazebosim/gz-gui/pull/465)
+
+1. `GzColor` `ColorDialogue` fix
+    * [Pull request #459](https://github.com/gazebosim/gz-gui/pull/459)
+
+1. Fix attribute update when `<dialog>` isn't present
+    * [Pull request #455](https://github.com/gazebosim/gz-gui/pull/455)
+
+1. Add test for `Plugin::ConfigStr()`
+    * [Pull request #447](https://github.com/gazebosim/gz-gui/pull/447)
 
 ### Gazebo GUI 3.11.0 (2022-08-02)
 

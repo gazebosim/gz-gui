@@ -45,9 +45,9 @@ void ShutdownButton::LoadConfig(const tinyxml2::XMLElement * /*_pluginElem*/)
 /////////////////////////////////////////////////
 void ShutdownButton::OnStop()
 {
-  gz::gui::App()->findChild<MainWindow *>()->QuickWindow()->close();
+  gui::App()->findChild<MainWindow *>()->QuickWindow()->close();
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::ShutdownButton,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(ShutdownButton,
+              gui::Plugin)

@@ -35,5 +35,5 @@ TestPlugin::~TestPlugin()
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::TestPlugin,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(TestPlugin,
+              gui::Plugin)
