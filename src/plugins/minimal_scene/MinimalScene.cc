@@ -18,6 +18,7 @@
 #include "MinimalScene.hh"
 
 #include <algorithm>
+#include <list>
 #include <map>
 #include <sstream>
 #include <string>
