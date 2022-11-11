@@ -15,7 +15,7 @@
  *
 */
 import QtQuick 2.9
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 import "qrc:/qml"
@@ -24,7 +24,7 @@ RowLayout {
   id: worldControl
   width: 200
   spacing: 2
-  Layout.minimumWidth: 200
+  Layout.minimumWidth: 100
   Layout.minimumHeight: 100
 
   Connections {
@@ -93,17 +93,39 @@ RowLayout {
   property bool paused: false
 
   /**
+   * Play / pause
+   */
+  RoundButton {
+    id: playButton
+    objectName: "playButton"
+    visible: showPlay
+    text: paused ? playIcon : pauseIcon
+    checkable: true
+    Layout.alignment : Qt.AlignVCenter
+    Layout.leftMargin: 10
+    onClicked: {
+      if (paused)
+        WorldControl.OnPlay()
+      else
+        WorldControl.OnPause()
+    }
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: paused ? qsTr("Run the simulation") : qsTr("Pause the simulation")
+    Material.background: Material.primary
+  }
+
+  /**
    * Reset
    */
   RoundButton {
-    id: stopButton
-    objectName: "stopButton"
+    id: resetButton
+    objectName: "resetButton"
     visible: showReset
     text: resetIcon
     checkable: true
-    Layout.alignment : Qt.AlignVCenter
-    Layout.minimumWidth: width
-    Layout.leftMargin: 10
+    implicitHeight: stepButton.height
+    implicitWidth: stepButton.width
     onClicked: {
       confirmationDialogOnReset.open()
     }
@@ -117,7 +139,6 @@ RowLayout {
     sequence: "Ctrl+R"
     onActivated: confirmationDialogOnReset.open()
   }
-
 
   /**
    *  Confirmation dialog on close button
@@ -142,38 +163,17 @@ RowLayout {
     }
 
     footer:
-      DialogButtonBox {
-        onClicked: function (btn) {
+      DialogButtonBox
+      {
+        onClicked: function (btn)
+        {
           confirmationDialogOnReset.close()
-          if (btn == this.standardButton(Dialog.Ok)) {
+          if (btn == this.standardButton(Dialog.Ok))
+          {
             WorldControl.OnReset()
           }
         }
-    }
-  }
-
-  /**
-   * Play / pause
-   */
-  RoundButton {
-    id: playButton
-    objectName: "playButton"
-    visible: showPlay
-    text: paused ? playIcon : pauseIcon
-    checkable: true
-    Layout.alignment : Qt.AlignVCenter
-    Layout.minimumWidth: width
-    Layout.leftMargin: 10
-    onClicked: {
-      if (paused)
-        WorldControl.OnPlay()
-      else
-        WorldControl.OnPause()
-    }
-    ToolTip.visible: hovered
-    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
-    ToolTip.text: paused ? qsTr("Run the simulation") : qsTr("Pause the simulation")
-    Material.background: Material.primary
+      }
   }
 
   /**
@@ -185,7 +185,6 @@ RowLayout {
     Layout.fillWidth: true
 
     onEntered: {
-
       var minX = 0;
       var maxX = worldControl.parent.card().parent.width -
           stepPopup.width * 0.5;
