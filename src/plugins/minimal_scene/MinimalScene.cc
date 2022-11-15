@@ -77,7 +77,12 @@ class ignition::gui::plugins::IgnRenderer::Implementation
   /// \brief Key event
   public: common::KeyEvent keyEvent;
 
-  /// \brief Max number of mouse events to process
+  /// \brief Max number of mouse events to store in the queue.
+  /// These events are then propagated to other gui plugins. A queue is used
+  /// instead of just keeping the latest mouse event so that we can capture
+  /// important events like mouse presses. However we keep the queue size
+  /// small on purpose so that we do not flood other gui plugins with events
+  /// that may be outdated.
   public: const unsigned int kMaxMouseEventSize = 5u;
 
   /// \brief Mutex to protect mouse events
