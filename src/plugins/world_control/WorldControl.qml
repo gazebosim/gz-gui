@@ -15,7 +15,7 @@
  *
 */
 import QtQuick 2.9
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 import "qrc:/qml"
@@ -24,7 +24,7 @@ RowLayout {
   id: worldControl
   width: 200
   spacing: 2
-  Layout.minimumWidth: 121
+  Layout.minimumWidth: 100
   Layout.minimumHeight: 100
 
   Connections {
@@ -53,6 +53,11 @@ RowLayout {
   property bool showPlay: false
 
   /**
+   * True to show reset button
+   */
+  property bool showReset: true
+
+  /**
    * True to show step buttons
    */
   property bool showStep: false
@@ -66,6 +71,11 @@ RowLayout {
    * Play icon
    */
   property string playIcon: "\u25B6"
+
+  /**
+   * Reset button
+   */
+  property string resetIcon: "\u21bb"
 
   /**
    * Pause icon
@@ -92,7 +102,6 @@ RowLayout {
     text: paused ? playIcon : pauseIcon
     checkable: true
     Layout.alignment : Qt.AlignVCenter
-    Layout.minimumWidth: width
     Layout.leftMargin: 10
     onClicked: {
       if (paused)
@@ -100,7 +109,71 @@ RowLayout {
       else
         WorldControl.OnPause()
     }
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: paused ? qsTr("Run the simulation") : qsTr("Pause the simulation")
     Material.background: Material.primary
+  }
+
+  /**
+   * Reset
+   */
+  RoundButton {
+    id: resetButton
+    objectName: "resetButton"
+    visible: showReset
+    text: resetIcon
+    checkable: true
+    implicitHeight: stepButton.height
+    implicitWidth: stepButton.width
+    onClicked: {
+      confirmationDialogOnReset.open()
+    }
+    Material.background: Material.primary
+    ToolTip.visible: hovered
+    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
+    ToolTip.text: qsTr("Reset the simulation")
+  }
+
+  Shortcut {
+    sequence: "Ctrl+R"
+    onActivated: confirmationDialogOnReset.open()
+  }
+
+  /**
+   *  Confirmation dialog on close button
+   */
+  Dialog {
+    id: confirmationDialogOnReset
+    title: "Do you really want to reset the simulation?"
+    objectName: "confirmationDialogOnReset"
+
+    modal: true
+    focus: true
+    parent: ApplicationWindow.overlay
+    width: 500
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
+    closePolicy: Popup.CloseOnEscape
+    standardButtons: Dialog.Ok  | Dialog.Discard
+
+    onAboutToShow: function () {
+      footer.standardButton(Dialog.Discard).text = "Abort"
+      footer.standardButton(Dialog.Ok).text = "Reset"
+    }
+
+    footer:
+      DialogButtonBox
+      {
+        onClicked: function (btn)
+        {
+          confirmationDialogOnReset.close()
+          if (btn == this.standardButton(Dialog.Ok))
+          {
+            WorldControl.OnReset()
+          }
+        }
+      }
   }
 
   /**
@@ -112,7 +185,6 @@ RowLayout {
     Layout.fillWidth: true
 
     onEntered: {
-
       var minX = 0;
       var maxX = worldControl.parent.card().parent.width -
           stepPopup.width * 0.5;
