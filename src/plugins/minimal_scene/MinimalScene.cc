@@ -18,6 +18,7 @@
 #include "MinimalScene.hh"
 
 #include <algorithm>
+#include <list>
 #include <map>
 #include <sstream>
 #include <string>
@@ -67,11 +68,22 @@ class ignition::gui::plugins::IgnRenderer::Implementation
   /// \brief Flag to indicate if drop event is dirty
   public: bool dropDirty{false};
 
-  /// \brief Mouse event
+  /// \brief Current mouse event
   public: common::MouseEvent mouseEvent;
+
+  /// \brief A list of mouse events
+  public: std::list<common::MouseEvent> mouseEvents;
 
   /// \brief Key event
   public: common::KeyEvent keyEvent;
+
+  /// \brief Max number of mouse events to store in the queue.
+  /// These events are then propagated to other gui plugins. A queue is used
+  /// instead of just keeping the latest mouse event so that we can capture
+  /// important events like mouse presses. However we keep the queue size
+  /// small on purpose so that we do not flood other gui plugins with events
+  /// that may be outdated.
+  public: const unsigned int kMaxMouseEventSize = 5u;
 
   /// \brief Mutex to protect mouse events
   public: std::mutex mutex;
@@ -329,14 +341,21 @@ void IgnRenderer::Render(RenderSync *_renderSync)
 void IgnRenderer::HandleMouseEvent()
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  for (const auto &e : this->dataPtr->mouseEvents)
+  {
+    this->dataPtr->mouseEvent = e;
+
+    this->BroadcastDrag();
+    this->BroadcastMousePress();
+    this->BroadcastLeftClick();
+    this->BroadcastRightClick();
+    this->BroadcastScroll();
+    this->BroadcastKeyPress();
+    this->BroadcastKeyRelease();
+  }
+  this->dataPtr->mouseEvents.clear();
+
   this->BroadcastHoverPos();
-  this->BroadcastDrag();
-  this->BroadcastMousePress();
-  this->BroadcastLeftClick();
-  this->BroadcastRightClick();
-  this->BroadcastScroll();
-  this->BroadcastKeyPress();
-  this->BroadcastKeyRelease();
   this->BroadcastDrop();
   this->dataPtr->mouseDirty = false;
 }
@@ -410,8 +429,6 @@ void IgnRenderer::BroadcastDrag()
 
   events::DragOnScene dragEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &dragEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -432,8 +449,6 @@ void IgnRenderer::BroadcastLeftClick()
 
   events::LeftClickOnScene leftClickOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickOnSceneEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -454,8 +469,6 @@ void IgnRenderer::BroadcastRightClick()
 
   events::RightClickOnScene rightClickOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickOnSceneEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -469,8 +482,6 @@ void IgnRenderer::BroadcastMousePress()
 
   events::MousePressOnScene event(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &event);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -484,8 +495,6 @@ void IgnRenderer::BroadcastScroll()
 
   events::ScrollOnScene scrollOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &scrollOnSceneEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -641,7 +650,9 @@ void IgnRenderer::NewDropEvent(const std::string &_dropText,
 void IgnRenderer::NewMouseEvent(const common::MouseEvent &_e)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-  this->dataPtr->mouseEvent = _e;
+  if (this->dataPtr->mouseEvents.size() >= this->dataPtr->kMaxMouseEventSize)
+    this->dataPtr->mouseEvents.pop_front();
+  this->dataPtr->mouseEvents.push_back(_e);
   this->dataPtr->mouseDirty = true;
 }
 

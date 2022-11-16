@@ -67,6 +67,12 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   /// \brief Flag to indicate if mouse event is dirty
   public: bool mouseDirty = false;
 
+  /// \brief Flag to indicate if hover event is dirty
+  public: bool hoverDirty = false;
+
+  /// \brief Flag to indicate if mouse press event is dirty
+  public: bool mousePressDirty = false;
+
   /// \brief True to block orbiting with the mouse.
   public: bool blockOrbit = false;
 
@@ -171,10 +177,18 @@ void InteractiveViewControlPrivate::OnRender()
     return;
   }
 
-  if (!this->mouseDirty)
+  if (!this->camera)
     return;
 
-  if (!this->camera)
+  // hover
+  if (this->hoverDirty)
+  {
+    if (this->refVisual)
+      this->refVisual->SetVisible(false);
+    this->hoverDirty = false;
+  }
+
+  if (!this->mouseDirty)
     return;
 
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -240,8 +254,10 @@ void InteractiveViewControlPrivate::OnRender()
   {
     this->target = rendering::screenToScene(
       this->mouseEvent.PressPos(), this->camera, this->rayQuery);
+
     this->viewControl->SetTarget(this->target);
     this->UpdateReferenceVisual();
+    this->mousePressDirty = false;
   }
   else
   {
@@ -271,12 +287,6 @@ void InteractiveViewControlPrivate::OnRender()
           * distance * tan(vfov/2.0) * 6.0);
       this->viewControl->Zoom(amount);
       this->UpdateReferenceVisual();
-    }
-    // hover
-    else
-    {
-      if (this->refVisual)
-        this->refVisual->SetVisible(false);
     }
   }
 
@@ -389,12 +399,16 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
     auto pressOnScene =
       reinterpret_cast<ignition::gui::events::MousePressOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
+    this->dataPtr->mousePressDirty = true;
 
     this->dataPtr->drag = math::Vector2d::Zero;
     this->dataPtr->mouseEvent = pressOnScene->Mouse();
   }
   else if (_event->type() == events::DragOnScene::kType)
   {
+    if (this->dataPtr->mousePressDirty)
+      return QObject::eventFilter(_obj, _event);
+
     auto dragOnScene =
       reinterpret_cast<ignition::gui::events::DragOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
@@ -427,10 +441,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   }
   else if (_event->type() == gui::events::HoverOnScene::kType)
   {
-    gui::events::HoverOnScene *_e =
-      static_cast<gui::events::HoverOnScene*>(_event);
-    this->dataPtr->mouseDirty = true;
-    this->dataPtr->mouseEvent = _e->Mouse();
+    this->dataPtr->hoverDirty = true;
   }
 
   // Standard event processing
