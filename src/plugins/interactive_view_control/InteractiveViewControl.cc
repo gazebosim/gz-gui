@@ -133,7 +133,7 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   /// \brief Transport node for making transform control requests
   public: transport::Node node;
 
-  /// \brief View control sensitivity seeting
+  /// \brief View control sensitivity value. Must be greater than 0.
   public: double viewControlSensitivity = 1.0;
 };
 
