@@ -61,7 +61,9 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
 
   /// \brief Callback for camera view control sensitivity request
   /// \param[in] _msg Request message to set the camera view controller
-  /// sensitivity
+  /// sensitivity. Value must be greater than zero. The higher the number
+  /// the more sensitive camera control is to mouse movements. Affects all
+  /// camera movements (pan, orbit, zoom)
   /// \param[out] _res Response data
   /// \return True if the request is received
   public: bool OnViewControlSensitivity(const msgs::Double &_msg,
