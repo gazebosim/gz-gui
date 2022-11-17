@@ -52,12 +52,21 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   public: bool OnViewControl(const msgs::StringMsg &_msg,
     msgs::Boolean &_res);
 
-
   /// \brief Callback for camera reference visual request
   /// \param[in] _msg Request message to enable/disable the reference visual
   /// \param[out] _res Response data
   /// \return True if the request is received
   public: bool OnReferenceVisual(const msgs::Boolean &_msg,
+    msgs::Boolean &_res);
+
+  /// \brief Callback for camera view control sensitivity request
+  /// \param[in] _msg Request message to set the camera view controller
+  /// sensitivity. Value must be greater than zero. The higher the number
+  /// the more sensitive camera control is to mouse movements. Affects all
+  /// camera movements (pan, orbit, zoom)
+  /// \param[out] _res Response data
+  /// \return True if the request is received
+  public: bool OnViewControlSensitivity(const msgs::Double &_msg,
     msgs::Boolean &_res);
 
   /// \brief Update the reference visual. Adjust scale based on distance from
@@ -112,6 +121,9 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
   /// \brief Camera reference visual service
   public: std::string cameraRefVisualService;
 
+  /// \brief Camera view control sensitivity service
+  public: std::string cameraViewControlSensitivityService;
+
   /// \brief Ray query for mouse clicks
   public: rendering::RayQueryPtr rayQuery{nullptr};
 
@@ -123,6 +135,9 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
 
   /// \brief Transport node for making transform control requests
   public: transport::Node node;
+
+  /// \brief View control sensitivity value. Must be greater than 0.
+  public: double viewControlSensitivity = 1.0;
 };
 
 using namespace ignition;
@@ -246,7 +261,9 @@ void InteractiveViewControlPrivate::OnRender()
     this->viewControl->SetTarget(this->target);
     double distance = this->camera->WorldPosition().Distance(
         this->target);
-    double amount = -this->drag.Y() * distance / 5.0;
+
+    math::Vector2d newDrag = this->drag * this->viewControlSensitivity;
+    double amount = -newDrag.Y() * distance / 5.0;
     this->viewControl->Zoom(amount);
     this->UpdateReferenceVisual();
   }
@@ -261,19 +278,20 @@ void InteractiveViewControlPrivate::OnRender()
   }
   else
   {
+    math::Vector2d newDrag = this->drag * this->viewControlSensitivity;
     // Pan with left button
     if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
     {
       if (Qt::ShiftModifier == QGuiApplication::queryKeyboardModifiers())
-        this->viewControl->Orbit(this->drag);
+        this->viewControl->Orbit(newDrag);
       else
-        this->viewControl->Pan(this->drag);
+        this->viewControl->Pan(newDrag);
       this->UpdateReferenceVisual();
     }
     // Orbit with middle button
     else if (this->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
     {
-      this->viewControl->Orbit(this->drag);
+      this->viewControl->Orbit(newDrag);
       this->UpdateReferenceVisual();
     }
     // Zoom with right button
@@ -282,7 +300,7 @@ void InteractiveViewControlPrivate::OnRender()
       double hfov = this->camera->HFOV().Radian();
       double vfov = 2.0f * atan(tan(hfov / 2.0f) / this->camera->AspectRatio());
       double distance = this->camera->WorldPosition().Distance(this->target);
-      double amount = ((-this->drag.Y() /
+      double amount = ((-newDrag.Y() /
           static_cast<double>(this->camera->ImageHeight()))
           * distance * tan(vfov/2.0) * 6.0);
       this->viewControl->Zoom(amount);
@@ -346,6 +364,26 @@ bool InteractiveViewControlPrivate::OnReferenceVisual(const msgs::Boolean &_msg,
 }
 
 /////////////////////////////////////////////////
+bool InteractiveViewControlPrivate::OnViewControlSensitivity(
+  const msgs::Double &_msg, msgs::Boolean &_res)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+
+  if (_msg.data() <= 0.0)
+  {
+    ignwarn << "View controller sensitivity must be greater than zero ["
+            << _msg.data() << "]" << std::endl;
+    _res.set_data(false);
+    return true;
+  }
+
+  this->viewControlSensitivity = _msg.data();
+
+  _res.set_data(true);
+  return true;
+}
+
+/////////////////////////////////////////////////
 InteractiveViewControl::InteractiveViewControl()
   : Plugin(), dataPtr(std::make_unique<InteractiveViewControlPrivate>())
 {
@@ -368,11 +406,24 @@ void InteractiveViewControl::LoadConfig(
   ignmsg << "Camera view controller topic advertised on ["
          << this->dataPtr->cameraViewControlService << "]" << std::endl;
 
-  this->dataPtr->cameraRefVisualService = "/gui/camera/reference_visual";
+  // camera reference visual
+  this->dataPtr->cameraRefVisualService =
+      "/gui/camera/view_control/reference_visual";
   this->dataPtr->node.Advertise(this->dataPtr->cameraRefVisualService,
       &InteractiveViewControlPrivate::OnReferenceVisual, this->dataPtr.get());
   ignmsg << "Camera reference visual topic advertised on ["
          << this->dataPtr->cameraRefVisualService << "]" << std::endl;
+
+  // camera view control sensitivity
+  this->dataPtr->cameraViewControlSensitivityService =
+      "/gui/camera/view_control/sensitivity";
+  this->dataPtr->node.Advertise(
+      this->dataPtr->cameraViewControlSensitivityService,
+      &InteractiveViewControlPrivate::OnViewControlSensitivity,
+      this->dataPtr.get());
+  ignmsg << "Camera view control sensitivity advertised on ["
+         << this->dataPtr->cameraViewControlSensitivityService << "]"
+         << std::endl;
 
   ignition::gui::App()->findChild<
     ignition::gui::MainWindow *>()->installEventFilter(this);
