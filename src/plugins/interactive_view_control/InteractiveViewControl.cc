@@ -60,7 +60,8 @@ class ignition::gui::plugins::InteractiveViewControlPrivate
     msgs::Boolean &_res);
 
   /// \brief Callback for camera view control sensitivity request
-  /// \param[in] _msg Request message to set the camera view controller sensitivity
+  /// \param[in] _msg Request message to set the camera view controller
+  /// sensitivity
   /// \param[out] _res Response data
   /// \return True if the request is received
   public: bool OnViewControlSensitivity(const msgs::Double &_msg,
@@ -414,10 +415,13 @@ void InteractiveViewControl::LoadConfig(
   // camera view control sensitivity
   this->dataPtr->cameraViewControlSensitivityService =
       "/gui/camera/view_control/sensitivity";
-  this->dataPtr->node.Advertise(this->dataPtr->cameraViewControlSensitivityService,
-      &InteractiveViewControlPrivate::OnViewControlSensitivity, this->dataPtr.get());
+  this->dataPtr->node.Advertise(
+      this->dataPtr->cameraViewControlSensitivityService,
+      &InteractiveViewControlPrivate::OnViewControlSensitivity,
+      this->dataPtr.get());
   ignmsg << "Camera view control sensitivity advertised on ["
-         << this->dataPtr->cameraViewControlSensitivityService << "]" << std::endl;
+         << this->dataPtr->cameraViewControlSensitivityService << "]"
+         << std::endl;
 
   ignition::gui::App()->findChild<
     ignition::gui::MainWindow *>()->installEventFilter(this);
