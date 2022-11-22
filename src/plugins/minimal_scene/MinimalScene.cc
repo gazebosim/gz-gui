@@ -28,6 +28,15 @@
 #include <ignition/common/MouseEvent.hh>
 #include <ignition/math/Vector2.hh>
 #include <ignition/math/Vector3.hh>
+
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
+#include <ignition/msgs/boolean.pb.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include <ignition/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering
@@ -46,6 +55,8 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+
+#include <ignition/transport/Node.hh>
 
 #include "ignition/gui/Application.hh"
 #include "ignition/gui/Conversions.hh"
@@ -315,6 +326,38 @@ void IgnRenderer::Render(RenderSync *_renderSync)
 
   // update and render to texture
   this->dataPtr->camera->Update();
+
+  if (!this->cameraViewController.empty())
+  {
+    std::string viewControlService = "/gui/camera/view_control";
+    transport::Node node;
+    std::function<void(const msgs::Boolean &, const bool)> cb =
+        [&](const msgs::Boolean &/*_rep*/, const bool _result)
+    {
+      if (!_result)
+        ignerr << "Error setting view controller" << std::endl;
+      else
+      {
+        this->cameraViewController = "";
+      }
+    };
+
+    msgs::StringMsg req;
+    if (this->cameraViewController.find("orbit") != std::string::npos)
+    {
+      req.set_data("orbit");
+    }
+    else if (this->cameraViewController.find("ortho") != std::string::npos)
+    {
+      req.set_data("ortho");
+    }
+    else
+    {
+      ignerr << "Unknown view controller selected: "
+             << this->cameraViewController << std::endl;
+    }
+    node.Request(viewControlService, req, cb);
+  }
 
   if (ignition::gui::App())
   {
@@ -1004,6 +1047,14 @@ void RenderWindowItem::SetCameraHFOV(const math::Angle &_fov)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetCameraViewController(
+  const std::string &_view_controller)
+{
+  this->dataPtr->renderThread->ignRenderer.cameraViewController =
+    _view_controller;
+}
+
+/////////////////////////////////////////////////
 MinimalScene::MinimalScene()
   : Plugin(), dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
@@ -1140,6 +1191,22 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       {
         fov.SetDegree(fovDeg);
         renderWindow->SetCameraHFOV(fov);
+      }
+    }
+
+    elem = _pluginElem->FirstChildElement("view_controller");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      std::string viewControllerType = elem->GetText();
+      if (viewControllerType.find("orbit") != std::string::npos ||
+          viewControllerType.find("ortho") != std::string::npos)
+      {
+        renderWindow->SetCameraViewController(viewControllerType);
+      }
+      else
+      {
+        ignerr << "Unknown view controller selected: "
+               << viewControllerType << std::endl;
       }
     }
   }

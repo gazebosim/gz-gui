@@ -5,5 +5,5 @@ ign_gui_add_plugin(MinimalScene
     MinimalScene.hh
   PUBLIC_LINK_LIBS
    ignition-rendering${IGN_RENDERING_VER}::ignition-rendering${IGN_RENDERING_VER}
+   ignition-transport${IGN_TRANSPORT_VER}::ignition-transport${IGN_TRANSPORT_VER}
 )
-
