@@ -347,7 +347,8 @@ void IgnRenderer::Render(RenderSync *_renderSync)
         [&](const msgs::Boolean &/*_rep*/, const bool _result)
     {
       if (!_result)
-        ignerr << "Error setting view controller" << std::endl;
+        ignerr << "Error setting view controller. Check if view angle GUI "
+                  "plugin is already loaded" << std::endl;
       else
       {
         this->cameraViewController = "";
@@ -355,19 +356,7 @@ void IgnRenderer::Render(RenderSync *_renderSync)
     };
 
     msgs::StringMsg req;
-    if (this->cameraViewController.find("orbit") != std::string::npos)
-    {
-      req.set_data("orbit");
-    }
-    else if (this->cameraViewController.find("ortho") != std::string::npos)
-    {
-      req.set_data("ortho");
-    }
-    else
-    {
-      ignerr << "Unknown view controller selected: "
-             << this->cameraViewController << std::endl;
-    }
+    req.set_data(this->cameraViewController);
     node.Request(viewControlService, req, cb);
   }
 
