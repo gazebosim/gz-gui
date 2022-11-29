@@ -33,7 +33,7 @@ namespace plugins
   // TODO(chapulina) Delete this plugin when forward porting to `ign-gui6` in
   // favor of `GridConfig`
 
-  /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
+  /// \brief Manages grids in an Gazebo Rendering scene. This plugin can be
   /// used for:
   /// * Introspecting grids
   /// * Editing grids

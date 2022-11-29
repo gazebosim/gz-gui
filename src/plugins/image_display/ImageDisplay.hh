@@ -81,7 +81,7 @@ namespace plugins
     private: QImage img;
   };
 
-  /// \brief Display images coming through an Ignition transport topic.
+  /// \brief Display images coming through an Gazebo transport topic.
   ///
   /// ## Configuration
   ///

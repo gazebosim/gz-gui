@@ -4,9 +4,9 @@ Next Tutorial: \ref commandline
 
 # Install
 
-These instructions are for installing only Ignition GUI. If you're interested
-in using all the Ignition libraries, not only Igniton GUI, check out this
-[Ignition installation](https://ignitionrobotics.org/docs/latest/install).
+These instructions are for installing only Gazebo GUI. If you're interested
+in using all the Gazebo libraries, not only Igniton GUI, check out this
+[Gazebo installation](https://ignitionrobotics.org/docs/latest/install).
 
 We recommend following the binary install instructions to get up and running as
 quickly and painlessly as possible.
@@ -19,7 +19,7 @@ contribution.
 
 ### Ubuntu
 
-On Ubuntu, it's possible to install Ignition GUI as follows:
+On Ubuntu, it's possible to install Gazebo GUI as follows:
 
 Add OSRF packages:
   ```
@@ -28,7 +28,7 @@ Add OSRF packages:
   sudo apt update
   ```
 
-Install Ignition GUI:
+Install Gazebo GUI:
   ```
   sudo apt install libignition-gui<#>-dev
   ```
@@ -44,7 +44,7 @@ On macOS, add OSRF packages:
   brew tap osrf/simulation
   ```
 
-Install Ignition GUI:
+Install Gazebo GUI:
   ```
   brew install ignition-gui<#>
   ```
@@ -118,7 +118,7 @@ Install dependencies:
 conda install qt --channel conda-forge
 ```
 
-Install Ignition dependencies, replacing `<#>` with the desired versions:
+Install Gazebo dependencies, replacing `<#>` with the desired versions:
 ```
 conda install libignition-cmake<#> libignition-common<#> libignition-math<#> libignition-transport<#> libignition-msgs<#> libignition-plugin<#> libignition-tools<#> --channel conda-forge
 ```

@@ -48,7 +48,7 @@ namespace plugins
 {
   class TopicEchoPrivate;
 
-  /// \brief Echo messages coming through an Ignition transport topic.
+  /// \brief Echo messages coming through an Gazebo transport topic.
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.

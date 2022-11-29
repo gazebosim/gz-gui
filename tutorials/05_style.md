@@ -5,7 +5,7 @@ Previous Tutorial: \ref layout
 
 ## Overview
 
-Ignition GUI leverages
+Gazebo GUI leverages
 [QtQuick Controls 2 Styles](https://doc.qt.io/qt-5.9/qtquickcontrols2-styles.html)
 for styling. The recommended and best supported style is the Material Style,
 but it is also possible to use others such as Default and Universal. This tutorial
@@ -19,7 +19,7 @@ There are a few ways to override the default style:
 
 * Through the graphical interface (GUI)
 * Setting environment variables (env)
-* Through Ignition GUI config files (config)
+* Through Gazebo GUI config files (config)
 
 If styles are set from multiple sources, this is the order in which they take precendence:
 
@@ -35,13 +35,13 @@ Users can customize the whole application's material style using just a few vari
 
 QML types provided by
 [QtQuick Controls 2](https://doc.qt.io/qt-5/qtquick-controls2-qmlmodule.html),
-as well as QML types provided by Ignition GUI, use these variables as appropriate.
+as well as QML types provided by Gazebo GUI, use these variables as appropriate.
 It's recommended that developers make sure their plugins use these variables
 for a more integrated experience.
 
 ### Top toolbar
 
-On top of those, Ignition GUI also offers a few variables specific to customizing
+On top of those, Gazebo GUI also offers a few variables specific to customizing
 the top toolbar.
 
 By default, the top toolbar will use the primary color, while the plugin toolbars will
@@ -86,7 +86,7 @@ these environment variable preferences.
 
 \note Toolbar colors can't be changed through environment variables yet.
 
-\note Applications built on top of Ignition GUI may override custom environment variables.
+\note Applications built on top of Gazebo GUI may override custom environment variables.
 
 ## Config files
 

@@ -85,7 +85,7 @@ Rectangle {
         ToolTip.visible: hovered
         ToolTip.delay: tooltipDelay
         ToolTip.timeout: tooltipTimeout
-        ToolTip.text: qsTr("Ignition transport topics publishing Image messages")
+        ToolTip.text: qsTr("Gazebo transport topics publishing Image messages")
       }
     }
     Image {

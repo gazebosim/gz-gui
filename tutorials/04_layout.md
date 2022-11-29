@@ -32,7 +32,7 @@ by adding a `<window>` element to the config file. The child elements are:
                            `<dialog_on_exit>` is `false`, closing the window will
                            emit a server shutdown request with `stop = true` to the
                            `<server_control_service>` topic. This can be used
-                           in applications like Ignition Gazebo which can run a
+                           in applications like Gazebo Gazebo which can run a
                            server in a process separate from the GUI to stop both
                            the GUI and the server when the window is closed. The value is
                            case-insensitive.
@@ -83,7 +83,7 @@ config file. For example:
 1. Click on `File->Save configuration as` and save on a new file.
 
     > You can also click on `File -> Save configuration` to save that as the
-      default configuration which is loaded whenever Ignition GUI is opened
+      default configuration which is loaded whenever Gazebo GUI is opened
       without a config file.
 
 1. Close the window, then load the new config file:

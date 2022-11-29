@@ -1,4 +1,4 @@
-This directory contains examples which are not shipped with Ignition GUI
+This directory contains examples which are not shipped with Gazebo GUI
 
 # Standalone
 
@@ -7,11 +7,11 @@ Ignition-GUI as a library
 
 # Plugin
 
-Examples of how to build plugins which can then be used with Ignition GUI's
+Examples of how to build plugins which can then be used with Gazebo GUI's
 command line tool, or used by standalone applications.
 
 # Config
 
-Example configuration files which can be used with Ignition GUI's command
+Example configuration files which can be used with Gazebo GUI's command
 line tool or with standalone applications
 

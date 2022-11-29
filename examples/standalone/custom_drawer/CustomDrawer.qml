@@ -50,7 +50,7 @@ Rectangle {
       actionElement: "cppActionFromQml"
     }
 
-    // Actions provided by Ignition GUI, with custom titles
+    // Actions provided by Gazebo GUI, with custom titles
     ListElement {
       title: "Call default action (Style)"
       actionElement: "styleSettings"
