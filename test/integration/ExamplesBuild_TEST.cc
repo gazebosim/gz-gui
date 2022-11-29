@@ -27,7 +27,7 @@
 using namespace gz;
 
 // Helper functions copied from
-// https://github.com/ignitionrobotics/ign-common/raw/ign-common3/src/Filesystem_TEST.cc
+// https://github.com/gazebosim/gz-common/raw/ign-common3/src/Filesystem_TEST.cc
 
 #ifndef _WIN32
 #include <fcntl.h>  // NOLINT(build/include_order)
@@ -167,7 +167,7 @@ void ExamplesBuild::Build(const std::string &_type)
 }
 
 //////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST_P(ExamplesBuild, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Build))
 {
   Build(GetParam());

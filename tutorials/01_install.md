@@ -6,7 +6,7 @@ Next Tutorial: \ref commandline
 
 These instructions are for installing only Gazebo GUI. If you're interested
 in using all the Gazebo libraries, not only Igniton GUI, check out this
-[Gazebo installation](https://ignitionrobotics.org/docs/latest/install).
+[Gazebo installation](https://gazebosim.org/docs/latest/install).
 
 We recommend following the binary install instructions to get up and running as
 quickly and painlessly as possible.
@@ -74,7 +74,7 @@ Add OSRF packages:
 Clone source code:
   ```
   # This checks out the default branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
-  git clone http://github.com/ignitionrobotics/ign-gui
+  git clone http://github.com/gazebosim/gz-gui
   ```
 
 Install dependencies
@@ -103,7 +103,7 @@ Build and install as follows:
 
 #### Install Prerequisites
 
-First, follow the [ign-cmake](https://github.com/ignitionrobotics/ign-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
+First, follow the [ign-cmake](https://github.com/gazebosim/gz-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
 
 Navigate to `condabin` if necessary to use the `conda` command (i.e., if Conda is not in your `PATH` environment variable. You can find the location of `condabin` in Anaconda Prompt, `where conda`).
 
@@ -123,7 +123,7 @@ Install Gazebo dependencies, replacing `<#>` with the desired versions:
 conda install libignition-cmake<#> libignition-common<#> libignition-math<#> libignition-transport<#> libignition-msgs<#> libignition-plugin<#> libignition-tools<#> --channel conda-forge
 ```
 
-Before [ign-rendering](https://github.com/ignitionrobotics/ign-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
+Before [ign-rendering](https://github.com/gazebosim/gz-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
 
 #### Build from source
 
@@ -135,7 +135,7 @@ Before [ign-rendering](https://github.com/ignitionrobotics/ign-rendering) become
 1. Navigate to where you would like to build the library, and clone the repository.
   ```
   # Optionally, append `-b ign-gui#` (replace # with a number) to check out a specific version
-  git clone https://github.com/ignitionrobotics/ign-gui.git
+  git clone https://github.com/gazebosim/gz-gui.git
   ```
 
 1. Configure and build
@@ -159,7 +159,7 @@ Before [ign-rendering](https://github.com/ignitionrobotics/ign-rendering) become
 # Documentation
 
 API documentation and tutorials can be accessed at
-[https://ignitionrobotics.org/libs/gui](https://ignitionrobotics.org/libs/gui)
+[https://gazebosim.org/libs/gui](https://gazebosim.org/libs/gui)
 
 You can also generate the documentation from a clone of this repository by following these steps.
 
@@ -170,7 +170,7 @@ You can also generate the documentation from a clone of this repository by follo
 
 2. Clone the repository
   ```
-  git clone https://github.com/ignitionrobotics/ign-gui
+  git clone https://github.com/gazebosim/gz-gui
   ```
 
 3. Configure and build the documentation.
@@ -203,5 +203,5 @@ Follow these steps to run tests and static code analysis in your clone of this r
   make codecheck
   ```
 
-See the [Writing Tests section of the contributor guide](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help       creating or modifying tests.
+See the [Writing Tests section of the contributor guide](https://gazebosim.org/docs/all/contributing#writing-tests) for help       creating or modifying tests.
 

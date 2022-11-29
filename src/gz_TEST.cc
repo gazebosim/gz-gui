@@ -85,7 +85,7 @@ class CmdLine : public ::testing::Test
   public: std::string realHome;
 };
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST_F(CmdLine, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(list))
 {
   // Clear home if it exists

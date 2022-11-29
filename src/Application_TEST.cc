@@ -35,7 +35,7 @@ char* g_argv[] =
 using namespace gz;
 using namespace gui;
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Constructor))
 {
