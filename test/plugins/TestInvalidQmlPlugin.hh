@@ -15,10 +15,10 @@
  *
 */
 
-#ifndef IGNITION_GUI_TEST_MALFORMEDPLUGIN_HH_
-#define IGNITION_GUI_TEST_MALFORMEDPLUGIN_HH_
+#ifndef GZ_GUI_TEST_MALFORMEDPLUGIN_HH_
+#define GZ_GUI_TEST_MALFORMEDPLUGIN_HH_
 
-#include <ignition/gui/Plugin.hh>
+#include <gz/gui/Plugin.hh>
 
 namespace ignition
 {

@@ -19,15 +19,15 @@
 #include <regex>
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/qt.h"
-#include "ignition/msgs/boolean.pb.h"
-#include "ignition/msgs/server_control.pb.h"
-#include "ignition/transport/Node.hh"
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/qt.h"
+#include "gz/msgs/boolean.pb.h"
+#include "gz/msgs/server_control.pb.h"
+#include "gz/transport/Node.hh"
 
 namespace ignition
 {
@@ -76,12 +76,12 @@ namespace ignition
       public: std::string controlService{"/server_control"};
 
       /// \brief Communication node
-      public: ignition::transport::Node node;
+      public: gz::transport::Node node;
     };
   }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /// \brief Strip last component from a path.

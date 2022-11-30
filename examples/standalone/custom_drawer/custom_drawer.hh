@@ -15,13 +15,13 @@
  *
 */
 
-#ifndef IGNITION_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
-#define IGNITION_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
+#ifndef GZ_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
+#define GZ_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_
 
 #include <iostream>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
+  #include <gz/gui/qt.h>
 #endif
 
 namespace ignition

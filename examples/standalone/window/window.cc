@@ -18,9 +18,9 @@
 #include <iostream>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Application.hh>
-  #include <ignition/gui/MainWindow.hh>
+  #include <gz/gui/qt.h>
+  #include <gz/gui/Application.hh>
+  #include <gz/gui/MainWindow.hh>
 #endif
 
 //////////////////////////////////////////////////
@@ -29,10 +29,10 @@ int main(int _argc, char **_argv)
   std::cout << "Hello, GUI!" << std::endl;
 
   // Increase verboosity so we see all messages
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // Create app
-  ignition::gui::Application app(_argc, _argv);
+  gz::gui::Application app(_argc, _argv);
 
   // Load plugins / config
   if (!app.LoadPlugin("Publisher"))
@@ -41,7 +41,7 @@ int main(int _argc, char **_argv)
   }
 
   // Customize main window
-  auto win = app.findChild<ignition::gui::MainWindow *>()->QuickWindow();
+  auto win = app.findChild<gz::gui::MainWindow *>()->QuickWindow();
   win->setProperty("title", "Hello Window!");
 
   // Run window

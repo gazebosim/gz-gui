@@ -5,11 +5,11 @@ Previous Tutorial: \ref install
 
 ## Overview
 
-If you have Ignition Tools installed, you can use the `ign gui` command line tool:
+If you have Gazebo Tools installed, you can use the `ign gui` command line tool:
 
 `ign gui -h`
 
-    Ignition GUI tool.
+    Gazebo GUI tool.
 
       ign gui [options]
 

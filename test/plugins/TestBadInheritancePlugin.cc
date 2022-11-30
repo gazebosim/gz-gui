@@ -15,12 +15,12 @@
  *
 */
 
-#include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/plugin/Register.hh>
 
 #include "TestBadInheritancePlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

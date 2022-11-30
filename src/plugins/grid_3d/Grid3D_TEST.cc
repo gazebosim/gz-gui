@@ -16,20 +16,20 @@
 */
 
 #include <gtest/gtest.h>
-#include <ignition/common/Console.hh>
-#include <ignition/rendering.hh>
+#include <gz/common/Console.hh>
+#include <gz/rendering.hh>
 
-#include "ignition/gui/CollapsibleWidget.hh"
-#include "ignition/gui/ColorWidget.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/Iface.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/NumberWidget.hh"
-#include "ignition/gui/Pose3dWidget.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/QtMetatypes.hh"
+#include "gz/gui/CollapsibleWidget.hh"
+#include "gz/gui/ColorWidget.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/Iface.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/NumberWidget.hh"
+#include "gz/gui/Pose3dWidget.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/QtMetatypes.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

@@ -15,22 +15,22 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_SCENE3D_HH_
-#define IGNITION_GUI_PLUGINS_SCENE3D_HH_
+#ifndef GZ_GUI_PLUGINS_SCENE3D_HH_
+#define GZ_GUI_PLUGINS_SCENE3D_HH_
 
 #include <string>
 #include <memory>
 #include <mutex>
 
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector2.hh>
-#include <ignition/math/Vector3.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/math/Vector3.hh>
 
-#include <ignition/common/MouseEvent.hh>
+#include <gz/common/MouseEvent.hh>
 
-#include "ignition/gui/qt.h"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/qt.h"
+#include "gz/gui/Plugin.hh"
 
 namespace ignition
 {
@@ -46,7 +46,7 @@ namespace plugins
   /// It is possible to orbit the camera around the scene with
   /// the mouse. Use other plugins to manage objects in the scene.
   ///
-  /// Only one plugin displaying an Ignition Rendering scene can be used at a
+  /// Only one plugin displaying an Gazebo Rendering scene can be used at a
   /// time.
   ///
   /// ## Configuration
@@ -329,7 +329,7 @@ namespace plugins
     /// \brief Called when the mouse hovers to a new position.
     /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
     /// the render window.
-    public: void OnHovered(const ignition::math::Vector2i &_hoverPos);
+    public: void OnHovered(const gz::math::Vector2i &_hoverPos);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();

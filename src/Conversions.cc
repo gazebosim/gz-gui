@@ -15,13 +15,13 @@
  *
 */
 
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Color.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Color.hh>
 
-#include "ignition/gui/Conversions.hh"
+#include "gz/gui/Conversions.hh"
 
 //////////////////////////////////////////////////
-QColor ignition::gui::convert(const ignition::math::Color &_color)
+QColor gz::gui::convert(const gz::math::Color &_color)
 {
   return QColor(_color.R()*255.0,
                 _color.G()*255.0,
@@ -30,40 +30,40 @@ QColor ignition::gui::convert(const ignition::math::Color &_color)
 }
 
 //////////////////////////////////////////////////
-ignition::math::Color ignition::gui::convert(const QColor &_color)
+gz::math::Color gz::gui::convert(const QColor &_color)
 {
-  return ignition::math::Color(_color.red() / 255.0,
+  return gz::math::Color(_color.red() / 255.0,
                        _color.green() / 255.0,
                        _color.blue() / 255.0,
                        _color.alpha() / 255.0);
 }
 
 //////////////////////////////////////////////////
-QPointF ignition::gui::convert(const ignition::math::Vector2d &_pt)
+QPointF gz::gui::convert(const gz::math::Vector2d &_pt)
 {
   return QPointF(_pt.X(), _pt.Y());
 }
 
 //////////////////////////////////////////////////
-ignition::math::Vector2d ignition::gui::convert(const QPointF &_pt)
+gz::math::Vector2d gz::gui::convert(const QPointF &_pt)
 {
-  return ignition::math::Vector2d(_pt.x(), _pt.y());
+  return gz::math::Vector2d(_pt.x(), _pt.y());
 }
 
 //////////////////////////////////////////////////
-QVector3D ignition::gui::convert(const ignition::math::Vector3d &_vec)
+QVector3D gz::gui::convert(const gz::math::Vector3d &_vec)
 {
   return QVector3D(_vec.X(), _vec.Y(), _vec.Z());
 }
 
 //////////////////////////////////////////////////
-ignition::math::Vector3d ignition::gui::convert(const QVector3D &_vec)
+gz::math::Vector3d gz::gui::convert(const QVector3D &_vec)
 {
-  return ignition::math::Vector3d(_vec.x(), _vec.y(), _vec.z());
+  return gz::math::Vector3d(_vec.x(), _vec.y(), _vec.z());
 }
 
 //////////////////////////////////////////////////
-ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
+gz::common::MouseEvent gz::gui::convert(const QMouseEvent &_e)
 {
   common::MouseEvent event;
   event.SetPos(_e.pos().x(), _e.pos().y());
@@ -114,16 +114,16 @@ ignition::common::MouseEvent ignition::gui::convert(const QMouseEvent &_e)
 }
 
 /////////////////////////////////////////////////
-ignition::common::Time ignition::gui::convert(const ignition::msgs::Time &_t)
+gz::common::Time gz::gui::convert(const gz::msgs::Time &_t)
 {
-  ignition::common::Time result(_t.sec(), _t.nsec());
+  gz::common::Time result(_t.sec(), _t.nsec());
   return result;
 }
 
 /////////////////////////////////////////////////
-ignition::msgs::Time ignition::gui::convert(const ignition::common::Time &_t)
+gz::msgs::Time gz::gui::convert(const gz::common::Time &_t)
 {
-  ignition::msgs::Time result;
+  gz::msgs::Time result;
   result.set_sec(_t.sec);
   result.set_nsec(_t.nsec);
   return result;

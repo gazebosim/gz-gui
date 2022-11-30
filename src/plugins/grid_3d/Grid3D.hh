@@ -15,12 +15,12 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_GRID3D_HH_
-#define IGNITION_GUI_PLUGINS_GRID3D_HH_
+#ifndef GZ_GUI_PLUGINS_GRID3D_HH_
+#define GZ_GUI_PLUGINS_GRID3D_HH_
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 namespace ignition
 {
@@ -33,7 +33,7 @@ namespace plugins
   // TODO(chapulina) Delete this plugin when forward porting to `ign-gui6` in
   // favor of `GridConfig`
 
-  /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
+  /// \brief Manages grids in an Gazebo Rendering scene. This plugin can be
   /// used for:
   /// * Introspecting grids
   /// * Editing grids

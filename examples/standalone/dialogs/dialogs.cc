@@ -17,12 +17,12 @@
 
 #include <iostream>
 
-#include <ignition/common/Console.hh>
+#include <gz/common/Console.hh>
 
 #ifndef Q_MOC_RUN
-  #include <ignition/gui/qt.h>
-  #include <ignition/gui/Application.hh>
-  #include <ignition/gui/Dialog.hh>
+  #include <gz/gui/qt.h>
+  #include <gz/gui/Application.hh>
+  #include <gz/gui/Dialog.hh>
 #endif
 
 //////////////////////////////////////////////////
@@ -31,11 +31,11 @@ int main(int _argc, char **_argv)
   std::cout << "Hello, GUI!" << std::endl;
 
   // Increase verboosity so we see all messages
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // Initialize app
-  ignition::gui::Application app(_argc, _argv,
-      ignition::gui::WindowType::kDialog);
+  gz::gui::Application app(_argc, _argv,
+      gz::gui::WindowType::kDialog);
 
   // Load plugins / config
   app.LoadPlugin("Publisher");
