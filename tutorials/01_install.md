@@ -103,7 +103,7 @@ Build and install as follows:
 
 #### Install Prerequisites
 
-First, follow the [ign-cmake](https://github.com/gazebosim/gz-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
+First, follow the [gz-cmake](https://github.com/gazebosim/gz-cmake) tutorial for installing Conda, Visual Studio, CMake, etc., prerequisites, and creating a Conda environment.
 
 Navigate to `condabin` if necessary to use the `conda` command (i.e., if Conda is not in your `PATH` environment variable. You can find the location of `condabin` in Anaconda Prompt, `where conda`).
 
@@ -123,7 +123,7 @@ Install Gazebo dependencies, replacing `<#>` with the desired versions:
 conda install libignition-cmake<#> libignition-common<#> libignition-math<#> libignition-transport<#> libignition-msgs<#> libignition-plugin<#> libignition-tools<#> --channel conda-forge
 ```
 
-Before [ign-rendering](https://github.com/gazebosim/gz-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
+Before [gz-rendering](https://github.com/gazebosim/gz-rendering) becomes available on conda-forge, follow its tutorial to build it from source.
 
 #### Build from source
 
