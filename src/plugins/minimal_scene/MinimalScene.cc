@@ -348,8 +348,10 @@ void IgnRenderer::Render(RenderSync *_renderSync)
     {
       if (!_result)
       {
+        // LCOV_EXCL_START
         ignerr << "Error setting view controller. Check if the View Angle GUI "
                   "plugin is loaded." << std::endl;
+        // LCOV_EXCL_STOP
       }
       this->cameraViewController = "";
     };

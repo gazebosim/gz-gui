@@ -90,12 +90,14 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       "  <far>5000</far>"
       "</camera_clip>"
       "<horizontal_fov>60</horizontal_fov>"
+      "<view_controller>ortho</view_controller>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
   pluginDoc.Parse(pluginStr);
   EXPECT_TRUE(app.LoadPlugin("MinimalScene",
       pluginDoc.FirstChildElement("plugin")));
+  EXPECT_TRUE(app.LoadPlugin("InteractiveViewControl"));
 
   // Get main window
   auto win = app.findChild<MainWindow *>();
@@ -130,7 +132,7 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-    sleep++;
+    ++sleep;
   }
   EXPECT_TRUE(receivedPreRenderEvent);
   EXPECT_TRUE(receivedRenderEvent);
@@ -157,9 +159,12 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   EXPECT_NEAR(60, camera->HFOV().Degree(), 1e-4);
 
+  EXPECT_EQ(rendering::CameraProjectionType::CPT_ORTHOGRAPHIC,
+            camera->ProjectionType());
+
   // Cleanup
   auto plugins = win->findChildren<Plugin *>();
-  EXPECT_EQ(1, plugins.size());
+  EXPECT_EQ(2, plugins.size());
 
   auto pluginName = plugins[0]->CardItem()->objectName().toStdString();
   EXPECT_TRUE(app.RemovePlugin(pluginName));
