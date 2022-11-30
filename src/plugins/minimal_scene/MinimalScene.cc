@@ -347,12 +347,11 @@ void IgnRenderer::Render(RenderSync *_renderSync)
         [&](const msgs::Boolean &/*_rep*/, const bool _result)
     {
       if (!_result)
-        ignerr << "Error setting view controller. Check if view angle GUI "
-                  "plugin is already loaded" << std::endl;
-      else
       {
-        this->cameraViewController = "";
+        ignerr << "Error setting view controller. Check if the View Angle GUI "
+                  "plugin is loaded." << std::endl;
       }
+      this->cameraViewController = "";
     };
 
     msgs::StringMsg req;
@@ -1197,17 +1196,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     elem = _pluginElem->FirstChildElement("view_controller");
     if (nullptr != elem && nullptr != elem->GetText())
     {
-      std::string viewControllerType = elem->GetText();
-      if (viewControllerType.find("orbit") != std::string::npos ||
-          viewControllerType.find("ortho") != std::string::npos)
-      {
-        renderWindow->SetCameraViewController(viewControllerType);
-      }
-      else
-      {
-        ignerr << "Unknown view controller selected: "
-               << viewControllerType << std::endl;
-      }
+      renderWindow->SetCameraViewController(elem->GetText());
     }
   }
 
