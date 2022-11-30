@@ -15,7 +15,7 @@ find_package(ignition-cmake2 2.14 REQUIRED)
 #============================================================================
 ign_configure_project(
   REPLACE_IGNITION_INCLUDE_PATH gz/gui
-  VERSION_SUFFIX pre1
+  VERSION_SUFFIX
 )
 
 #============================================================================
