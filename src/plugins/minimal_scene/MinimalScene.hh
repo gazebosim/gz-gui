@@ -63,6 +63,8 @@ namespace plugins
   /// * \<sky\> : If present, sky is enabled.
   /// * \<horizontal_fov\> : Horizontal FOV of the user camera in degrees,
   ///                        defaults to 90
+  /// * \<view_controller> : Set the view controller (InteractiveViewControl
+  ///                        currently supports types: ortho or orbit).
   class MinimalScene : public Plugin
   {
     Q_OBJECT
@@ -242,6 +244,9 @@ namespace plugins
     /// \brief Horizontal FOV of the camera;
     public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
 
+    /// \brief View controller type
+    public: std::string cameraViewController{""};
+
     /// \internal
     /// \brief Pointer to private data.
     IGN_UTILS_UNIQUE_IMPL_PTR(dataPtr)
@@ -346,6 +351,10 @@ namespace plugins
     /// \brief Set the Horizontal FOV of the camera
     /// \param[in] _fov FOV of the camera in degree
     public: void SetCameraHFOV(const ignition::math::Angle &_fov);
+
+    /// \brief Set the camera view controller
+    /// \param[in] _view_controller The camera view controller type to set
+    public: void SetCameraViewController(const std::string &_view_controller);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();
