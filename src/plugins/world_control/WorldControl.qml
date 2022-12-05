@@ -22,8 +22,8 @@ import "qrc:/qml"
 
 RowLayout {
   id: worldControl
-  width: 200
-  spacing: 2
+  spacing: 10
+  Layout.leftMargin: 10
   Layout.minimumWidth: 100
   Layout.minimumHeight: 100
 
@@ -102,7 +102,6 @@ RowLayout {
     text: paused ? playIcon : pauseIcon
     checkable: true
     Layout.alignment : Qt.AlignVCenter
-    Layout.leftMargin: 10
     onClicked: {
       if (paused)
         WorldControl.OnPlay()
@@ -113,6 +112,92 @@ RowLayout {
     ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
     ToolTip.text: paused ? qsTr("Run the simulation") : qsTr("Pause the simulation")
     Material.background: Material.primary
+  }
+
+  /**
+   * Step button
+   */
+  Rectangle {
+     width: stepButton.width
+     height: stepButton.height
+     color: "transparent"
+
+    MouseArea {
+      id: buttonHoverArea
+      hoverEnabled: true
+      anchors.fill: parent
+
+      onEntered: {
+        var minX = 0;
+        var maxX = worldControl.parent.card().parent.width -
+            stepPopup.width * 0.5;
+        var popX = stepButton.windowPos().x - stepPopup.width * 0.5;
+
+        stepPopup.x = Math.min(Math.max(popX, minX), maxX);
+        stepPopup.y = stepButton.windowPos().y - stepPopup.height + 4;
+      }
+
+      RoundButton {
+        id: stepButton
+        objectName: "stepButton"
+        text: stepIcon
+        visible: showStep
+        height: playButton.height * 0.8
+        width: playButton.width * 0.8
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        onClicked: {
+          WorldControl.OnStep()
+        }
+        Material.background: Material.primary
+
+        function windowPos() {
+          return mapToItem(worldControl.parent.card().parent, 0, 0);
+        }
+      }
+    }
+  }
+
+  Popup {
+    id: stepPopup
+    visible: buttonHoverArea.containsMouse || popupHoverArea.containsMouse
+    parent: worldControl.parent ? worldControl.parent.card().parent : null
+
+    contentItem: MouseArea {
+      id: popupHoverArea
+      anchors.fill: parent
+      hoverEnabled: true
+
+      RowLayout {
+        id: row
+        anchors.fill: parent
+
+        Label {
+          text: "Steps"
+          Layout.alignment: Qt.AlignVCenter
+          Layout.leftMargin: 15
+        }
+
+        GzSpinBox {
+          maximumValue: 10000
+          Layout.alignment: Qt.AlignVCenter
+          value: 1
+          onValueChanged: {
+            WorldControl.OnStepCount(value)
+          }
+        }
+      }
+    }
+
+    exit: Transition {
+      NumberAnimation {
+        property: "opacity"
+        from: 1.0
+        to: 0.0
+        duration: 500
+        easing.type: Easing.OutExpo
+      }
+    }
   }
 
   /**
@@ -158,7 +243,7 @@ RowLayout {
     standardButtons: Dialog.Ok  | Dialog.Discard
 
     onAboutToShow: function () {
-      footer.standardButton(Dialog.Discard).text = "Abort"
+      footer.standardButton(Dialog.Discard).text = "Cancel"
       footer.standardButton(Dialog.Ok).text = "Reset"
     }
 
@@ -174,85 +259,5 @@ RowLayout {
           }
         }
       }
-  }
-
-  /**
-   * Step button
-   */
-  MouseArea {
-    id: buttonHoverArea
-    hoverEnabled: true
-    Layout.fillWidth: true
-
-    onEntered: {
-      var minX = 0;
-      var maxX = worldControl.parent.card().parent.width -
-          stepPopup.width * 0.5;
-      var popX = stepButton.windowPos().x - stepPopup.width * 0.5;
-
-      stepPopup.x = Math.min(Math.max(popX, minX), maxX);
-      stepPopup.y = stepButton.windowPos().y - stepPopup.height
-    }
-
-    RoundButton {
-      id: stepButton
-      objectName: "stepButton"
-      text: stepIcon
-      visible: showStep
-      height: playButton.height * 0.8
-      width: playButton.width * 0.8
-      anchors.verticalCenter: parent.verticalCenter
-      Layout.leftMargin: 10
-      onClicked: {
-        WorldControl.OnStep()
-      }
-      Material.background: Material.primary
-
-      function windowPos() {
-        return mapToItem(worldControl.parent.card().parent, 0, 0);
-      }
-    }
-  }
-
-  Popup {
-    id: stepPopup
-    visible: buttonHoverArea.containsMouse || popupHoverArea.containsMouse
-    parent: worldControl.parent ? worldControl.parent.card().parent : null
-
-    contentItem: MouseArea {
-      id: popupHoverArea
-      anchors.fill: parent
-      hoverEnabled: true
-
-      RowLayout {
-        id: row
-        anchors.fill: parent
-
-        Label {
-          text: "Steps"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: 15
-        }
-
-        GzSpinBox {
-          maximumValue: 10000
-          Layout.alignment: Qt.AlignVCenter
-          value: 1
-          onValueChanged: {
-            WorldControl.OnStepCount(value)
-          }
-        }
-      }
-    }
-
-    exit: Transition {
-      NumberAnimation {
-        property: "opacity"
-        from: 1.0
-        to: 0.0
-        duration: 500
-        easing.type: Easing.OutExpo
-      }
-    }
   }
 }
