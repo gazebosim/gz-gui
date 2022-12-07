@@ -20,14 +20,7 @@
 
 #include <memory>
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <gz/msgs.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-#include <gz/transport.hh>
+#include <gz/msgs/world_stats.pb.h>
 
 #include "gz/gui/Plugin.hh"
 
@@ -89,6 +82,9 @@ namespace plugins
     /// \brief Callback in Qt thread when pause button is clicked.
     public slots: void OnPause();
 
+    /// \brief Callback in Qt thread when reset button is clicked.
+    public slots: void OnReset();
+
     /// \brief Callback in Qt thread when step button is clicked.
     public slots: void OnStep();
 
@@ -101,6 +97,9 @@ namespace plugins
 
     /// \brief Notify that it's now paused.
     signals: void paused();
+
+    /// \brief Notify that it's now resetted.
+    signals: void reset();
 
     /// \brief Subscriber callback when new world statistics are received
     private: void OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg);

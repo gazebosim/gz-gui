@@ -49,8 +49,11 @@ namespace gui
     /// \brief Whether a pause event has been received (true) or not (false)
     public: bool listenedToPause{false};
 
-    /// \brief Whether a pause event has been received (true) or not (false)
+    /// \brief Whether a step event has been received (true) or not (false)
     public: bool listenedToStep{false};
+
+    /// \brief Whether a reset event has been received (true) or not (false)
+    public: bool listenedToReset{false};
   };
 }
 }

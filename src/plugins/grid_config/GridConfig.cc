@@ -26,7 +26,9 @@
 #include <gz/plugin/Register.hh>
 #include <gz/math/Color.hh>
 #include <gz/math/Pose3.hh>
-#include <gz/rendering.hh>
+#include <gz/rendering/Grid.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
 #include "GridConfig.hh"
 
@@ -146,14 +148,14 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  gz::gui::App()->findChild<
-      gz::gui::MainWindow *>()->installEventFilter(this);
+  gui::App()->findChild<
+      MainWindow *>()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
 bool GridConfig::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if (_event->type() == gz::gui::events::Render::kType)
+  if (_event->type() == events::Render::kType)
   {
     if (nullptr == this->dataPtr->scene)
       this->dataPtr->scene = rendering::sceneFromFirstRenderEngine();
@@ -409,5 +411,5 @@ void GridConfig::RefreshList()
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::GridConfig,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(GridConfig,
+              gui::Plugin)

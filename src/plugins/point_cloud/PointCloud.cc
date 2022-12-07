@@ -17,6 +17,7 @@
 
 #include "gz/msgs/pointcloud_packed.pb.h"
 
+#include <algorithm>
 #include <limits>
 #include <string>
 #include <utility>
@@ -388,17 +389,24 @@ void PointCloudPrivate::PublishMarkers()
   auto minC = this->minColor;
   auto maxC = this->maxColor;
   auto floatRange = this->maxFloatV - this->minFloatV;
-  for (; iterX != iterX.End() &&
-         iterY != iterY.End() &&
-         iterZ != iterZ.End(); ++iterX, ++iterY, ++iterZ, ++ptIdx)
+  auto num_points =
+    this->pointCloudMsg.data().size() / this->pointCloudMsg.point_step();
+  if (static_cast<int>(num_points) != this->floatVMsg.data().size())
+  {
+    gzwarn << "Float message and pointcloud are not of the same size,"
+      <<" visualization may not be accurate" << std::endl;
+  }
+  if (this->pointCloudMsg.data().size() % this->pointCloudMsg.point_step() != 0)
+  {
+    gzwarn << "Mal-formatted pointcloud" << std::endl;
+  }
+
+  for (; ptIdx < std::min<int>(this->floatVMsg.data().size(), num_points);
+    ++iterX, ++iterY, ++iterZ, ++ptIdx)
   {
     // Value from float vector, if available. Otherwise publish all data as
     // zeroes.
-    float dataVal = 0.0;
-    if (this->floatVMsg.data().size() > ptIdx)
-    {
-      dataVal = this->floatVMsg.data(ptIdx);
-    }
+    float dataVal = this->floatVMsg.data(ptIdx);
 
     // Don't visualize NaN
     if (std::isnan(dataVal))
@@ -413,7 +421,6 @@ void PointCloudPrivate::PublishMarkers()
     };
 
     gz::msgs::Set(marker.add_materials()->mutable_diffuse(), color);
-
     gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
       *iterX,
       *iterY,

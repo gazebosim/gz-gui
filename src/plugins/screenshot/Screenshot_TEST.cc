@@ -14,15 +14,9 @@
  * limitations under the License.
  *
 */
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
+
 #include <gz/msgs/boolean.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
-#include <gz/rendering.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <gtest/gtest.h>
 #include <string>
@@ -83,8 +77,8 @@ TEST(ScreenshotTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Screenshot))
   // ASSERT_EQ(plugins.size(), 2);
   //
   // --- Screenshot request ---
-  // std::function<void(const gz::msgs::Boolean &, const bool)> cb =
-  //   [](const gz::msgs::Boolean &/*_rep*/, const bool _result)
+  // std::function<void(const msgs::Boolean &, const bool)> cb =
+  //   [](const msgs::Boolean &/*_rep*/, const bool _result)
   // {
   //   if (!_result)
   //     gzerr << "Error saving screenshot" << std::endl;

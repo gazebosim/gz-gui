@@ -16,6 +16,9 @@
 */
 #include <gtest/gtest.h>
 
+#include <gz/msgs/collision.pb.h>
+#include <gz/msgs/int32.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
@@ -116,7 +119,7 @@ TEST(TopicViewerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
     EXPECT_NE(nullptr, win);
 
     // Get plugin
-    auto plugins = win->findChildren<plugins::TopicViewer *>();
+    auto plugins = win->findChildren<TopicViewer *>();
     ASSERT_EQ(plugins.size(), 1);
 
     auto plugin = plugins[0];

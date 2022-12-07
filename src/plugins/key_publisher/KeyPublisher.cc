@@ -15,13 +15,7 @@
  *
 */
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/msgs/int32.pb.h>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <string>
 
@@ -65,7 +59,7 @@ using namespace gui;
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
 {
   // Advertise publisher node
-  this->dataPtr->pub = this->dataPtr->node.Advertise<gz::msgs::Int32>
+  this->dataPtr->pub = this->dataPtr->node.Advertise<msgs::Int32>
     (this->dataPtr->topic);
 }
 
@@ -80,8 +74,8 @@ void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Key publisher";
 
-  gz::gui::App()->findChild
-    <gz::gui::MainWindow *>()->QuickWindow()->installEventFilter(this);
+  gui::App()->findChild
+    <MainWindow *>()->QuickWindow()->installEventFilter(this);
 }
 
 /////////////////////////////////////////////////
@@ -96,5 +90,5 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::KeyPublisher,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(KeyPublisher,
+              gui::Plugin)

@@ -39,7 +39,7 @@ using namespace gui;
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
@@ -65,7 +65,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
@@ -121,7 +121,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
     EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
   }
 
-  // Plugin which doesn't inherit from gz::gui::Plugin
+  // Plugin which doesn't inherit from gui::Plugin
   {
     Application app(g_argc, g_argv);
     app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -149,7 +149,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -199,7 +199,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -208,12 +208,12 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
-    auto testBuildPath = gz::common::joinPaths(
+    auto testBuildPath = common::joinPaths(
       std::string(PROJECT_BINARY_PATH), "lib");
     app.AddPluginPath(testBuildPath);
 
     // Set default config file
-    auto configPath = gz::common::joinPaths(
+    auto configPath = common::joinPaths(
       std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
@@ -225,7 +225,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 TEST(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -295,7 +295,7 @@ TEST(ApplicationTest,
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
@@ -370,13 +370,13 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 /////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
 {
-  gz::common::Console::SetVerbosity(4);
+  common::Console::SetVerbosity(4);
 
   EXPECT_EQ(nullptr, qGuiApp);
 
   Application app(g_argc, g_argv);
 
-  // \todo Verify output, see gz::commmon::Console_TEST for example
+  // \todo Verify output, see commmon::Console_TEST for example
   qDebug("This came from qDebug");
   qInfo("This came from qInfo");
   qWarning("This came from qWarning");
