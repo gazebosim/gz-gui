@@ -163,6 +163,20 @@
 
 ## Gazebo GUI 6
 
+### Gazebo GUI 6.7.0 (2022-12-02)
+
+1. Set View Camera controller from plugin configuration
+    * [Pull request #506](https://github.com/gazebosim/gz-gui/pull/506)
+
+1. Add service for configuring view control sensitivity
+    * [Pull request #504](https://github.com/gazebosim/gz-gui/pull/504)
+
+1. Fix large / unexpected camera movements
+    * [Pull request #502](https://github.com/gazebosim/gz-gui/pull/502)
+
+1. Add view control reference visual
+    * [Pull request #500](https://github.com/gazebosim/gz-gui/pull/500)
+
 ### Gazebo GUI 6.6.1 (2022-08-17)
 
 1. Fix mistaken dialog error message
