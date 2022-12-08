@@ -305,9 +305,11 @@ std::string Plugin::ConfigStr()
   auto pluginElem = doc.FirstChildElement("plugin");
   if (!pluginElem)
   {
+    // LCOV_EXCL_START
     gzerr << "Missing <plugin> element, not updating config string."
           << std::endl;
     return this->configStr;
+    // LCOV_EXCL_STOP
   }
 
   // <gz-gui>
@@ -376,8 +378,10 @@ std::string Plugin::ConfigStr()
   tinyxml2::XMLPrinter printer;
   if (!pluginElem->Accept(&printer))
   {
+    // LCOV_EXCL_START
     gzwarn << "There was an error parsing the plugin element for " <<
         "[" << this->title << "]." << std::endl;
+    // LCOV_EXCL_STOP
   }
   else
   {

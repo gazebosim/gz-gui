@@ -15,6 +15,10 @@
  *
  */
 
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/double.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
+
 #include <string>
 #include <mutex>
 
@@ -27,6 +31,8 @@
 #include <gz/plugin/Register.hh>
 
 #include <gz/rendering/Camera.hh>
+#include <gz/rendering/Geometry.hh>
+#include <gz/rendering/Material.hh>
 #include <gz/rendering/OrbitViewController.hh>
 #include <gz/rendering/OrthoViewController.hh>
 #include <gz/rendering/RenderingIface.hh>
@@ -45,13 +51,40 @@ class gz::gui::plugins::InteractiveViewControlPrivate
 
   /// \brief Callback for camera view controller request
   /// \param[in] _msg Request message to set the camera view controller
-  /// \param[in] _res Response data
+  /// \param[out] _res Response data
   /// \return True if the request is received
   public: bool OnViewControl(const msgs::StringMsg &_msg,
     msgs::Boolean &_res);
 
+  /// \brief Callback for camera reference visual request
+  /// \param[in] _msg Request message to enable/disable the reference visual
+  /// \param[out] _res Response data
+  /// \return True if the request is received
+  public: bool OnReferenceVisual(const msgs::Boolean &_msg,
+    msgs::Boolean &_res);
+
+  /// \brief Callback for camera view control sensitivity request
+  /// \param[in] _msg Request message to set the camera view controller
+  /// sensitivity. Value must be greater than zero. The higher the number
+  /// the more sensitive camera control is to mouse movements. Affects all
+  /// camera movements (pan, orbit, zoom)
+  /// \param[out] _res Response data
+  /// \return True if the request is received
+  public: bool OnViewControlSensitivity(const msgs::Double &_msg,
+    msgs::Boolean &_res);
+
+  /// \brief Update the reference visual. Adjust scale based on distance from
+  /// camera to target point so it remains the same size on screen.
+  public: void UpdateReferenceVisual();
+
   /// \brief Flag to indicate if mouse event is dirty
   public: bool mouseDirty = false;
+
+  /// \brief Flag to indicate if hover event is dirty
+  public: bool hoverDirty = false;
+
+  /// \brief Flag to indicate if mouse press event is dirty
+  public: bool mousePressDirty = false;
 
   /// \brief True to block orbiting with the mouse.
   public: bool blockOrbit = false;
@@ -83,8 +116,17 @@ class gz::gui::plugins::InteractiveViewControlPrivate
   /// \brief View controller
   public: std::string viewController{"orbit"};
 
+  /// \brief Enable / disable reference visual
+  public: bool enableRefVisual{true};
+
   /// \brief Camera view control service
   public: std::string cameraViewControlService;
+
+  /// \brief Camera reference visual service
+  public: std::string cameraRefVisualService;
+
+  /// \brief Camera view control sensitivity service
+  public: std::string cameraViewControlSensitivityService;
 
   /// \brief Ray query for mouse clicks
   public: rendering::RayQueryPtr rayQuery{nullptr};
@@ -92,8 +134,14 @@ class gz::gui::plugins::InteractiveViewControlPrivate
   //// \brief Pointer to the rendering scene
   public: rendering::ScenePtr scene{nullptr};
 
+  /// \brief Reference visual for visualizing the target point
+  public: rendering::VisualPtr refVisual{nullptr};
+
   /// \brief Transport node for making transform control requests
   public: transport::Node node;
+
+  /// \brief View control sensitivity value. Must be greater than 0.
+  public: double viewControlSensitivity = 1.0;
 };
 
 using namespace gz;
@@ -148,10 +196,18 @@ void InteractiveViewControlPrivate::OnRender()
     return;
   }
 
-  if (!this->mouseDirty)
+  if (!this->camera)
     return;
 
-  if (!this->camera)
+  // hover
+  if (this->hoverDirty)
+  {
+    if (this->refVisual)
+      this->refVisual->SetVisible(false);
+    this->hoverDirty = false;
+  }
+
+  if (!this->mouseDirty)
     return;
 
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -173,6 +229,34 @@ void InteractiveViewControlPrivate::OnRender()
   }
   this->viewControl->SetCamera(this->camera);
 
+  if (this->enableRefVisual)
+  {
+    if (!this->refVisual)
+    {
+      // create ref visual
+      this->refVisual = scene->CreateVisual();
+      rendering::GeometryPtr sphere = scene->CreateSphere();
+      this->refVisual->AddGeometry(sphere);
+      this->refVisual->SetLocalScale(math::Vector3d(0.2, 0.2, 0.1));
+      this->refVisual->SetVisibilityFlags(
+        GZ_VISIBILITY_GUI & ~GZ_VISIBILITY_SELECTABLE
+      );
+
+      // create material
+      math::Color diffuse(1.0f, 1.0f, 0.0f, 1.0f);
+      math::Color specular(1.0f, 1.0f, 0.0f, 1.0f);
+      double transparency = 0.3;
+      rendering::MaterialPtr material = scene->CreateMaterial();
+      material->SetDiffuse(diffuse);
+      material->SetSpecular(specular);
+      material->SetTransparency(transparency);
+      material->SetCastShadows(false);
+      this->refVisual->SetMaterial(material);
+      scene->DestroyMaterial(material);
+    }
+    this->refVisual->SetVisible(true);
+  }
+
   if (this->mouseEvent.Type() == common::MouseEvent::SCROLL)
   {
     this->target = rendering::screenToScene(
@@ -181,29 +265,38 @@ void InteractiveViewControlPrivate::OnRender()
     this->viewControl->SetTarget(this->target);
     double distance = this->camera->WorldPosition().Distance(
         this->target);
-    double amount = -this->drag.Y() * distance / 5.0;
+
+    math::Vector2d newDrag = this->drag * this->viewControlSensitivity;
+    double amount = -newDrag.Y() * distance / 5.0;
     this->viewControl->Zoom(amount);
+    this->UpdateReferenceVisual();
   }
   else if (this->mouseEvent.Type() == common::MouseEvent::PRESS)
   {
     this->target = rendering::screenToScene(
       this->mouseEvent.PressPos(), this->camera, this->rayQuery);
+
     this->viewControl->SetTarget(this->target);
+    this->UpdateReferenceVisual();
+    this->mousePressDirty = false;
   }
   else
   {
+    math::Vector2d newDrag = this->drag * this->viewControlSensitivity;
     // Pan with left button
     if (this->mouseEvent.Buttons() & common::MouseEvent::LEFT)
     {
       if (Qt::ShiftModifier == QGuiApplication::queryKeyboardModifiers())
-        this->viewControl->Orbit(this->drag);
+        this->viewControl->Orbit(newDrag);
       else
-        this->viewControl->Pan(this->drag);
+        this->viewControl->Pan(newDrag);
+      this->UpdateReferenceVisual();
     }
     // Orbit with middle button
     else if (this->mouseEvent.Buttons() & common::MouseEvent::MIDDLE)
     {
-      this->viewControl->Orbit(this->drag);
+      this->viewControl->Orbit(newDrag);
+      this->UpdateReferenceVisual();
     }
     // Zoom with right button
     else if (this->mouseEvent.Buttons() & common::MouseEvent::RIGHT)
@@ -211,14 +304,32 @@ void InteractiveViewControlPrivate::OnRender()
       double hfov = this->camera->HFOV().Radian();
       double vfov = 2.0f * atan(tan(hfov / 2.0f) / this->camera->AspectRatio());
       double distance = this->camera->WorldPosition().Distance(this->target);
-      double amount = ((-this->drag.Y() /
+      double amount = ((-newDrag.Y() /
           static_cast<double>(this->camera->ImageHeight()))
           * distance * tan(vfov/2.0) * 6.0);
       this->viewControl->Zoom(amount);
+      this->UpdateReferenceVisual();
     }
   }
+
   this->drag = 0;
   this->mouseDirty = false;
+}
+
+/////////////////////////////////////////////////
+void InteractiveViewControlPrivate::UpdateReferenceVisual()
+{
+  if (!this->refVisual || !this->enableRefVisual)
+    return;
+  this->refVisual->SetWorldPosition(this->target);
+  // Update the size of the reference visual based on the distance to the
+  // target point.
+  double distance =
+      this->camera->WorldPosition().Distance(this->target);
+
+  double scale = distance * atan(GZ_DTOR(1.0));
+  this->refVisual->SetLocalScale(
+      math::Vector3d(scale, scale, scale * 0.5));
 }
 
 /////////////////////////////////////////////////
@@ -240,6 +351,37 @@ bool InteractiveViewControlPrivate::OnViewControl(const msgs::StringMsg &_msg,
   // mark mouse dirty to trigger HandleMouseEvent call and
   // set up a new view controller
   this->mouseDirty = true;
+
+  _res.set_data(true);
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool InteractiveViewControlPrivate::OnReferenceVisual(const msgs::Boolean &_msg,
+  msgs::Boolean &_res)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  this->enableRefVisual = _msg.data();
+
+  _res.set_data(true);
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool InteractiveViewControlPrivate::OnViewControlSensitivity(
+  const msgs::Double &_msg, msgs::Boolean &_res)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+
+  if (_msg.data() <= 0.0)
+  {
+    gzwarn << "View controller sensitivity must be greater than zero ["
+            << _msg.data() << "]" << std::endl;
+    _res.set_data(false);
+    return true;
+  }
+
+  this->viewControlSensitivity = _msg.data();
 
   _res.set_data(true);
   return true;
@@ -268,6 +410,25 @@ void InteractiveViewControl::LoadConfig(
   gzmsg << "Camera view controller topic advertised on ["
          << this->dataPtr->cameraViewControlService << "]" << std::endl;
 
+  // camera reference visual
+  this->dataPtr->cameraRefVisualService =
+      "/gui/camera/view_control/reference_visual";
+  this->dataPtr->node.Advertise(this->dataPtr->cameraRefVisualService,
+      &InteractiveViewControlPrivate::OnReferenceVisual, this->dataPtr.get());
+  gzmsg << "Camera reference visual topic advertised on ["
+        << this->dataPtr->cameraRefVisualService << "]" << std::endl;
+
+  // camera view control sensitivity
+  this->dataPtr->cameraViewControlSensitivityService =
+      "/gui/camera/view_control/sensitivity";
+  this->dataPtr->node.Advertise(
+      this->dataPtr->cameraViewControlSensitivityService,
+      &InteractiveViewControlPrivate::OnViewControlSensitivity,
+      this->dataPtr.get());
+  gzmsg << "Camera view control sensitivity advertised on ["
+        << this->dataPtr->cameraViewControlSensitivityService << "]"
+        << std::endl;
+
   gz::gui::App()->findChild<
     gz::gui::MainWindow *>()->installEventFilter(this);
 }
@@ -293,12 +454,16 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
     auto pressOnScene =
       reinterpret_cast<gz::gui::events::MousePressOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
+    this->dataPtr->mousePressDirty = true;
 
     this->dataPtr->drag = math::Vector2d::Zero;
     this->dataPtr->mouseEvent = pressOnScene->Mouse();
   }
   else if (_event->type() == events::DragOnScene::kType)
   {
+    if (this->dataPtr->mousePressDirty)
+      return QObject::eventFilter(_obj, _event);
+
     auto dragOnScene =
       reinterpret_cast<gz::gui::events::DragOnScene *>(_event);
     this->dataPtr->mouseDirty = true;
@@ -328,6 +493,10 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
     auto blockOrbit = reinterpret_cast<gz::gui::events::BlockOrbit *>(
       _event);
     this->dataPtr->blockOrbit = blockOrbit->Block();
+  }
+  else if (_event->type() == gui::events::HoverOnScene::kType)
+  {
+    this->dataPtr->hoverDirty = true;
   }
 
   // Standard event processing

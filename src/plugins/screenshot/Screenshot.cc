@@ -22,18 +22,10 @@
 #include <gz/common/Filesystem.hh>
 #include <gz/common/Image.hh>
 #include <gz/plugin/Register.hh>
-
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <gz/transport/Node.hh>
 
 #include "gz/gui/Application.hh"
@@ -76,7 +68,7 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : gz::gui::Plugin(),
+  : gui::Plugin(),
   dataPtr(std::make_unique<ScreenshotPrivate>())
 {
   std::string home;
@@ -236,5 +228,5 @@ void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::Screenshot,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(Screenshot,
+              gui::Plugin)

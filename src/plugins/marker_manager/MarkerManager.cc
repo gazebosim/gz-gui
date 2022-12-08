@@ -22,19 +22,16 @@
 
 #include <QQmlProperty>
 
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/marker.pb.h>
+#include <gz/msgs/marker_v.pb.h>
+#include <gz/msgs/world_stats.pb.h>
+
 #include <gz/common/Console.hh>
 #include <gz/common/Profiler.hh>
 #include <gz/common/StringUtils.hh>
 
 #include <gz/math/Rand.hh>
-
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <gz/msgs.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <gz/plugin/Register.hh>
 
@@ -42,6 +39,7 @@
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
 
+#include <gz/msgs/Utility.hh>
 #include <gz/transport/Node.hh>
 
 #include "gz/gui/Application.hh"

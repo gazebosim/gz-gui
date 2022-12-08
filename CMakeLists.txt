@@ -75,8 +75,9 @@ set(GZ_RENDERING_VER ${gz-rendering7_VERSION_MAJOR})
 gz_find_package(gz-msgs9 REQUIRED)
 set(GZ_MSGS_VER ${gz-msgs9_VERSION_MAJOR})
 
-#--------------------------------------
-# Find if gz command is available
+# Find if command is available. This is used to enable tests.
+# Note that CLI files are installed regardless of whether the dependency is
+# available during build time
 find_program(HAVE_GZ_TOOLS gz)
 set(GZ_TOOLS_VER 2)
 

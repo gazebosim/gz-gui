@@ -15,12 +15,16 @@
  *
 */
 
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
+
 #include "MinimalScene.hh"
 #include "MinimalSceneRhi.hh"
 #include "MinimalSceneRhiMetal.hh"
 #include "MinimalSceneRhiOpenGL.hh"
 
 #include <algorithm>
+#include <list>
 #include <map>
 #include <sstream>
 #include <string>
@@ -32,23 +36,13 @@
 #include <gz/math/Vector2.hh>
 #include <gz/math/Vector3.hh>
 #include <gz/plugin/Register.hh>
-
-// TODO(louise) Remove these pragmas once gz-rendering
-// is disabling the warnings
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/RayQuery.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
 #include <gz/rendering/Utils.hh>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <gz/transport/Node.hh>
 
 #include "gz/gui/Application.hh"
 #include "gz/gui/Conversions.hh"
@@ -70,11 +64,22 @@ class gz::gui::plugins::GzRenderer::Implementation
   /// \brief Flag to indicate if drop event is dirty
   public: bool dropDirty{false};
 
-  /// \brief Mouse event
+  /// \brief Current mouse event
   public: common::MouseEvent mouseEvent;
+
+  /// \brief A list of mouse events
+  public: std::list<common::MouseEvent> mouseEvents;
 
   /// \brief Key event
   public: common::KeyEvent keyEvent;
+
+  /// \brief Max number of mouse events to store in the queue.
+  /// These events are then propagated to other gui plugins. A queue is used
+  /// instead of just keeping the latest mouse event so that we can capture
+  /// important events like mouse presses. However we keep the queue size
+  /// small on purpose so that we do not flood other gui plugins with events
+  /// that may be outdated.
+  public: const unsigned int kMaxMouseEventSize = 5u;
 
   /// \brief Mutex to protect mouse events
   public: std::mutex mutex;
@@ -340,6 +345,28 @@ void GzRenderer::Render(RenderSync *_renderSync)
   // update and render to texture
   this->dataPtr->camera->Update();
 
+  if (!this->cameraViewController.empty())
+  {
+    std::string viewControlService = "/gui/camera/view_control";
+    transport::Node node;
+    std::function<void(const msgs::Boolean &, const bool)> cb =
+        [&](const msgs::Boolean &/*_rep*/, const bool _result)
+    {
+      if (!_result)
+      {
+        // LCOV_EXCL_START
+        gzerr << "Error setting view controller. Check if the View Angle GUI "
+                 "plugin is loaded." << std::endl;
+        // LCOV_EXCL_STOP
+      }
+      this->cameraViewController = "";
+    };
+
+    msgs::StringMsg req;
+    req.set_data(this->cameraViewController);
+    node.Request(viewControlService, req, cb);
+  }
+
   if (gz::gui::App())
   {
     gz::gui::App()->sendEvent(
@@ -353,14 +380,21 @@ void GzRenderer::Render(RenderSync *_renderSync)
 void GzRenderer::HandleMouseEvent()
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+  for (const auto &e : this->dataPtr->mouseEvents)
+  {
+    this->dataPtr->mouseEvent = e;
+
+    this->BroadcastDrag();
+    this->BroadcastMousePress();
+    this->BroadcastLeftClick();
+    this->BroadcastRightClick();
+    this->BroadcastScroll();
+    this->BroadcastKeyPress();
+    this->BroadcastKeyRelease();
+  }
+  this->dataPtr->mouseEvents.clear();
+
   this->BroadcastHoverPos();
-  this->BroadcastDrag();
-  this->BroadcastMousePress();
-  this->BroadcastLeftClick();
-  this->BroadcastRightClick();
-  this->BroadcastScroll();
-  this->BroadcastKeyPress();
-  this->BroadcastKeyRelease();
   this->BroadcastDrop();
   this->dataPtr->mouseDirty = false;
 }
@@ -434,8 +468,6 @@ void GzRenderer::BroadcastDrag()
 
   events::DragOnScene dragEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &dragEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -456,8 +488,6 @@ void GzRenderer::BroadcastLeftClick()
 
   events::LeftClickOnScene leftClickOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &leftClickOnSceneEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -478,8 +508,6 @@ void GzRenderer::BroadcastRightClick()
 
   events::RightClickOnScene rightClickOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &rightClickOnSceneEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -493,8 +521,6 @@ void GzRenderer::BroadcastMousePress()
 
   events::MousePressOnScene event(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &event);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -508,8 +534,6 @@ void GzRenderer::BroadcastScroll()
 
   events::ScrollOnScene scrollOnSceneEvent(this->dataPtr->mouseEvent);
   App()->sendEvent(App()->findChild<MainWindow *>(), &scrollOnSceneEvent);
-
-  this->dataPtr->mouseDirty = false;
 }
 
 /////////////////////////////////////////////////
@@ -559,9 +583,9 @@ std::string GzRenderer::Initialize()
     if (!this->engineName.empty() && loadedEngines.front() != this->engineName)
     {
       gzwarn << "Failed to load engine [" << this->engineName
-              << "]. Using engine [" << loadedEngines.front()
-              << "], which is already loaded. Currently only one engine is "
-              << "supported at a time." << std::endl;
+             << "]. Using engine [" << loadedEngines.front()
+             << "], which is already loaded. Currently only one engine is "
+             << "supported at a time." << std::endl;
     }
     this->engineName = loadedEngines.front();
     engine = rendering::engine(loadedEngines.front());
@@ -687,7 +711,9 @@ void GzRenderer::NewDropEvent(const std::string &_dropText,
 void GzRenderer::NewMouseEvent(const common::MouseEvent &_e)
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-  this->dataPtr->mouseEvent = _e;
+  if (this->dataPtr->mouseEvents.size() >= this->dataPtr->kMaxMouseEventSize)
+    this->dataPtr->mouseEvents.pop_front();
+  this->dataPtr->mouseEvents.push_back(_e);
   this->dataPtr->mouseDirty = true;
 }
 
@@ -1128,6 +1154,14 @@ void RenderWindowItem::SetCameraHFOV(const math::Angle &_fov)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetCameraViewController(
+  const std::string &_view_controller)
+{
+  this->dataPtr->renderThread->gzRenderer.cameraViewController =
+    _view_controller;
+}
+
+/////////////////////////////////////////////////
 MinimalScene::MinimalScene()
   : Plugin(), dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
@@ -1274,6 +1308,12 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         fov.SetDegree(fovDeg);
         renderWindow->SetCameraHFOV(fov);
       }
+    }
+
+    elem = _pluginElem->FirstChildElement("view_controller");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      renderWindow->SetCameraViewController(elem->GetText());
     }
   }
 

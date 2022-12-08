@@ -24,14 +24,14 @@
 #include <string>
 #include <vector>
 
+#include <gz/common/Console.hh>
 #include <gz/gui/Application.hh>
-
+#include <gz/plugin/Register.hh>
+#include <gz/msgs/Factory.hh>
 #include <gz/transport/MessageInfo.hh>
 #include <gz/transport/Node.hh>
 #include <gz/transport/Publisher.hh>
 
-#include <gz/common/Console.hh>
-#include <gz/plugin/Register.hh>
 #include "TopicViewer.hh"
 
 #define NAME_KEY "name"
@@ -163,7 +163,7 @@ TopicViewer::TopicViewer() : Plugin(), dataPtr(new TopicViewerPrivate)
 
   this->dataPtr->CreateModel();
 
-  gz::gui::App()->Engine()->rootContext()->setContextProperty(
+  gui::App()->Engine()->rootContext()->setContextProperty(
                 "TopicsModel", this->dataPtr->model);
 
   this->dataPtr->timer = new QTimer();
@@ -199,7 +199,7 @@ void TopicViewerPrivate::CreateModel()
 
   for (unsigned int i = 0; i < topics.size(); ++i)
   {
-    std::vector<gz::transport::MessagePublisher> infoMsgs;
+    std::vector<transport::MessagePublisher> infoMsgs;
     this->node.TopicInfo(topics[i], infoMsgs);
     std::string msgType = infoMsgs[0].MsgTypeName();
     this->AddTopic(topics[i], msgType);
@@ -241,7 +241,7 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
     _parentItem->appendRow(msgItem);
   }
 
-  auto msg = gz::msgs::Factory::New(_msgType);
+  auto msg = msgs::Factory::New(_msgType);
   if (!msg)
   {
       gzwarn << "Null Msg: " << _msgType << std::endl;
@@ -384,7 +384,7 @@ void TopicViewer::UpdateModel()
   for (unsigned int i = 0; i < topics.size(); ++i)
   {
     // get the msg type
-    std::vector<gz::transport::MessagePublisher> infoMsgs;
+    std::vector<transport::MessagePublisher> infoMsgs;
     this->dataPtr->node.TopicInfo(topics[i], infoMsgs);
     std::string msgType = infoMsgs[0].MsgTypeName();
 
@@ -425,5 +425,5 @@ void TopicViewer::UpdateModel()
 
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::TopicViewer,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(TopicViewer,
+              gui::Plugin)

@@ -16,17 +16,17 @@
 */
 #include <gtest/gtest.h>
 
-#ifdef _MSC_VER
-#pragma warning(push, 0)
-#endif
-#include <gz/msgs.hh>
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <gz/msgs/collision.pb.h>
+#include <gz/msgs/header.pb.h>
+#include <gz/msgs/int32.pb.h>
+#include <gz/msgs/pose.pb.h>
+#include <gz/msgs/time.pb.h>
+#include <gz/msgs/vector3d.pb.h>
 
-#include <gz/transport.hh>
 #include <gz/common/Console.hh>
+#include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
+
 #include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Enums.hh"
 #include "gz/gui/PlottingInterface.hh"
@@ -172,8 +172,7 @@ TEST(PlottingInterfaceTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Transport))
 
   auto transport = Transport();
 
-  double time = 10;
-  std::shared_ptr<double> timeRef(&time);
+  auto timeRef = std::make_shared<double>(10);
 
   transport.Subscribe("/collision_topic", "pose-position-x", 1, timeRef);
   transport.Subscribe("/collision_topic", "pose-position-z", 1, timeRef);

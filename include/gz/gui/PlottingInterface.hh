@@ -22,7 +22,8 @@
 #include <QMap>
 #include <QVariant>
 #ifdef _MSC_VER
-#pragma warning(push, 0)
+#pragma warning(push)
+#pragma warning(disable: 4251)
 #endif
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
