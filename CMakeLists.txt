@@ -67,8 +67,8 @@ set(GZ_TRANSPORT_VER ${gz-transport12_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-rendering
-gz_find_package(gz-rendering7 REQUIRED)
-set(GZ_RENDERING_VER ${gz-rendering7_VERSION_MAJOR})
+gz_find_package(gz-rendering8 REQUIRED)
+set(GZ_RENDERING_VER ${gz-rendering8_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-msgs
