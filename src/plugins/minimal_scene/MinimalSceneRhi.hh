@@ -37,6 +37,10 @@ namespace plugins
   //
   /// Each supported graphics API must implement this interface
   /// to provide access to the underlying render system's texture.
+  ///
+  /// TODO(anyone): This class doesn't seem to be doing anything at all
+  /// Anyone should try to remove it, and if nothing bad happens
+  /// (on Ubuntu & macOS) it should be deprecated and removed
   class GzCameraTextureRhi
   {
     /// \brief Destructor

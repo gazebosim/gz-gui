@@ -2,6 +2,7 @@ set(SOURCES
   MinimalScene.cc
   MinimalSceneRhi.cc
   MinimalSceneRhiOpenGL.cc
+  MinimalSceneRhiVulkan.cc
   EngineToQtInterface.cc
 )
 

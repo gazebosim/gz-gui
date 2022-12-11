@@ -118,8 +118,34 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   // format.setRenderableType(QSurfaceFormat::OpenGL);
   // QSurfaceFormat::setDefaultFormat(format);
 #else
-  // Otherwise use OpenGL
-  gzdbg << "Qt using OpenGL graphics interface" << std::endl;
+  // Otherwise use OpenGL (or Vulkan when supported and requested)
+
+  const bool useVulkan = true;  // TODO(anyone)
+
+  if (useVulkan)
+  {
+    gzdbg << "Qt using Vulkan graphics interface" << std::endl;
+
+#  ifdef GZ_USE_VULKAN_DEBUG_EXT
+    qputenv("QT_VULKAN_INSTANCE_EXTENSIONS",
+            "VK_EXT_debug_report;VK_EXT_debug_utils");
+#  endif
+    qputenv("QT_VULKAN_DEVICE_EXTENSIONS",
+            "VK_KHR_maintenance2;VK_EXT_shader_subgroup_vote;"
+            "VK_EXT_shader_viewport_index_layer;"
+#  ifdef GZ_USE_VULKAN_DEBUG_EXT
+            ";VK_EXT_debug_marker"
+#  endif
+    );
+
+#  if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2)
+    QQuickWindow::setSceneGraphBackend(QSGRendererInterface::VulkanRhi);
+#  endif
+  }
+  else
+  {
+    gzdbg << "Qt using OpenGL graphics interface" << std::endl;
+  }
 #endif
 
   // Configure console
@@ -149,7 +175,17 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   if (_type == WindowType::kMainWindow)
   {
     if (!this->InitializeMainWindow())
+    {
       gzerr << "Failed to initialize main window." << std::endl;
+    }
+    else
+    {
+      if (useVulkan)
+      {
+        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
+                                            "vulkan");
+      }
+    }
   }
   else if (_type == WindowType::kDialog)
   {

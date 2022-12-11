@@ -89,6 +89,15 @@ namespace gz
     GZ_GUI_VISIBLE
     std::string renderEngineName();
 
+    /// \brief Just like renderEngineName(), but valid entries are:
+    ///  - opengl (default)
+    ///  - metal (Apple only)
+    ///  - vulkan
+    /// \return Name of API backend used on the GUI, as stored in the
+    /// `MainWindow`'s "renderEngineBackendApiName" property.
+    GZ_GUI_VISIBLE
+    std::string renderEngineBackendApiName();
+
     /// \brief Import path for gz-gui QML modules added to the Qt resource
     /// system. This helper function returns the QRC resource path where custom
     /// Gazebo QML modules can be imported from. To import a Gazebo QML
