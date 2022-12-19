@@ -49,7 +49,7 @@ namespace plugins
   class RenderThreadRhiMetalPrivate
   {
     public: GzRenderer *renderer = nullptr;
-    public: void *texturePtr = nullptr;
+    public: id<MTLTexture> metalTexture = nil;
   };
 
   class TextureNodeRhiMetalPrivate
@@ -110,7 +110,6 @@ void RenderThreadRhiMetal::Update(rendering::CameraPtr _camera)
   void *texturePtr = nullptr;
   _camera->RenderTextureMetalId(&texturePtr);
   this->dataPtr->metalTexture = CFBridgingRelease(texturePtr);
-  this->dataPtr->texturePtr = this->dataPtr->metalTexture;
 }
 
 /////////////////////////////////////////////////
@@ -135,7 +134,8 @@ void RenderThreadRhiMetal::RenderNext(RenderSync *_renderSync)
 /////////////////////////////////////////////////
 void* RenderThreadRhiMetal::TexturePtr() const
 {
-  return this->dataPtr->texturePtr;
+  void *texturePtr = CFBridgingRetain(this->dataPtr->metalTexture);
+  return texturePtr;
 }
 
 /////////////////////////////////////////////////
@@ -148,8 +148,6 @@ QSize RenderThreadRhiMetal::TextureSize() const
 void RenderThreadRhiMetal::ShutDown()
 {
   this->dataPtr->renderer->Destroy();
-
-  this->dataPtr->texturePtr = nullptr;
 }
 
 /////////////////////////////////////////////////
