@@ -23,8 +23,6 @@
 
 #include <QOpenGLExtraFunctions>
 
-#include <GL/glcorearb.h>
-
 // clang-format off
 namespace gz
 {
