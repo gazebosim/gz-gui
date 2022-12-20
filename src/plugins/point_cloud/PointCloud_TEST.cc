@@ -19,11 +19,11 @@
 #include <string>
 
 #include <gz/msgs/pointcloud_packed.pb.h>
+#include <gz/msgs/PointCloudPackedUtils.hh>
+#include <gz/msgs/Utility.hh>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Filesystem.hh>
-#include <gz/msgs/PointCloudPackedUtils.hh>
-#include <gz/msgs/Utility.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
