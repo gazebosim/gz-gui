@@ -134,7 +134,7 @@ void RenderThreadRhiMetal::RenderNext(RenderSync *_renderSync)
 /////////////////////////////////////////////////
 void* RenderThreadRhiMetal::TexturePtr() const
 {
-  void *texturePtr = CFBridgingRetain(this->dataPtr->metalTexture);
+  void *texturePtr = (void *)CFBridgingRetain(this->dataPtr->metalTexture);
   return texturePtr;
 }
 

@@ -113,7 +113,8 @@ void EngineToQtInterface::CreateFallbackTexture()
 /////////////////////////////////////////////////
 void EngineToQtInterface::DestroyFallbackTexture()
 {
-  glDeleteTextures(1, &this->dataPtr->fallbackTexture);
+  QOpenGLFunctions *glFuncs = this->dataPtr->glContext->functions();
+  glFuncs->glDeleteTextures(1, &this->dataPtr->fallbackTexture);
   this->dataPtr->fallbackTexture = 0;
 }
 
