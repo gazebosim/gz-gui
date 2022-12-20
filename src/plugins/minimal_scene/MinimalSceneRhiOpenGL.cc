@@ -16,6 +16,8 @@
 */
 
 #include "MinimalSceneRhiOpenGL.hh"
+
+#include "EngineToQtInterface.hh"
 #include "MinimalScene.hh"
 
 #include <gz/common/Console.hh>
@@ -47,12 +49,15 @@ namespace plugins
     public: void *texturePtr = nullptr;
     public: QOffscreenSurface *surface = nullptr;
     public: QOpenGLContext *context = nullptr;
+
+    /// \brief For fallback support if we can't render directly to Qt API
+    public: std::unique_ptr<EngineToQtInterface> engineToQtInterface;
   };
 
   class TextureNodeRhiOpenGLPrivate
   {
-    public: int textureId = 0;
-    public: int newTextureId = 0;
+    public: GLuint textureId = 0;
+    public: GLuint newTextureId = 0;
     public: QSize size {0, 0};
     public: QSize newSize {0, 0};
     public: QMutex mutex;
@@ -80,12 +85,6 @@ GzCameraTextureRhiOpenGL::GzCameraTextureRhiOpenGL()
 void GzCameraTextureRhiOpenGL::Update(rendering::CameraPtr _camera)
 {
   this->dataPtr->textureId = _camera->RenderTextureGLId();
-}
-
-/////////////////////////////////////////////////
-void GzCameraTextureRhiOpenGL::TextureId(void* _texturePtr)
-{
-  *reinterpret_cast<void**>(_texturePtr) = (void*)&this->dataPtr->textureId; //NOLINT
 }
 
 /////////////////////////////////////////////////
@@ -128,7 +127,10 @@ std::string RenderThreadRhiOpenGL::Initialize()
 {
   this->dataPtr->context->makeCurrent(this->dataPtr->surface);
 
-  auto loadingError = this->dataPtr->renderer->Initialize();
+  this->dataPtr->engineToQtInterface.reset(
+    new EngineToQtInterface(this->dataPtr->context));
+
+  auto loadingError = this->dataPtr->renderer->Initialize(*this);
   if (!loadingError.empty())
   {
     return loadingError;
@@ -136,6 +138,13 @@ std::string RenderThreadRhiOpenGL::Initialize()
 
   this->dataPtr->context->doneCurrent();
   return std::string();
+}
+
+/////////////////////////////////////////////////
+void RenderThreadRhiOpenGL::Update(rendering::CameraPtr _camera)
+{
+  const GLuint glId = this->dataPtr->engineToQtInterface->TextureId(_camera);
+  this->dataPtr->texturePtr = reinterpret_cast<void *>(glId);
 }
 
 /////////////////////////////////////////////////
@@ -155,11 +164,7 @@ void RenderThreadRhiOpenGL::RenderNext(RenderSync *_renderSync)
   }
 
   // Call the renderer
-  this->dataPtr->renderer->Render(_renderSync);
-
-  // Get reference to the rendered texture
-  this->dataPtr->texturePtr = nullptr;
-  this->dataPtr->renderer->TextureId(&this->dataPtr->texturePtr);
+  this->dataPtr->renderer->Render(_renderSync, *this);
 
   this->dataPtr->context->doneCurrent();
 }
@@ -250,7 +255,8 @@ void TextureNodeRhiOpenGL::NewTexture(
     void* _texturePtr, const QSize &_size)
 {
   this->dataPtr->mutex.lock();
-  this->dataPtr->textureId = *static_cast<int*>(_texturePtr);
+  this->dataPtr->textureId =
+    static_cast<GLuint>(reinterpret_cast<size_t>(_texturePtr));
   this->dataPtr->size = _size;
   this->dataPtr->mutex.unlock();
 }

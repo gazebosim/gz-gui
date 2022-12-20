@@ -49,7 +49,7 @@ namespace plugins
   class RenderThreadRhiMetalPrivate
   {
     public: GzRenderer *renderer = nullptr;
-    public: void *texturePtr = nullptr;
+    public: id<MTLTexture> metalTexture = nil;
   };
 
   class TextureNodeRhiMetalPrivate
@@ -88,13 +88,6 @@ void GzCameraTextureRhiMetal::Update(rendering::CameraPtr _camera)
 }
 
 /////////////////////////////////////////////////
-void GzCameraTextureRhiMetal::TextureId(void* _texturePtr)
-{
-  *static_cast<void**>(_texturePtr) =
-      (void*)CFBridgingRetain(this->dataPtr->metalTexture);
-}
-
-/////////////////////////////////////////////////
 /////////////////////////////////////////////////
 RenderThreadRhiMetal::~RenderThreadRhiMetal() = default;
 
@@ -108,7 +101,15 @@ RenderThreadRhiMetal::RenderThreadRhiMetal(GzRenderer *_renderer)
 /////////////////////////////////////////////////
 std::string RenderThreadRhiMetal::Initialize()
 {
-  return this->dataPtr->renderer->Initialize();
+  return this->dataPtr->renderer->Initialize(*this);
+}
+
+/////////////////////////////////////////////////
+void RenderThreadRhiMetal::Update(rendering::CameraPtr _camera)
+{
+  void *texturePtr = nullptr;
+  _camera->RenderTextureMetalId(&texturePtr);
+  this->dataPtr->metalTexture = CFBridgingRelease(texturePtr);
 }
 
 /////////////////////////////////////////////////
@@ -116,7 +117,7 @@ void RenderThreadRhiMetal::RenderNext(RenderSync *_renderSync)
 {
   if (!this->dataPtr->renderer->initialized)
   {
-    this->dataPtr->renderer->Initialize();
+    this->dataPtr->renderer->Initialize(*this);
   }
 
   // Check if engine has been successfully initialized
@@ -127,17 +128,14 @@ void RenderThreadRhiMetal::RenderNext(RenderSync *_renderSync)
   }
 
   // Call the renderer
-  this->dataPtr->renderer->Render(_renderSync);
-
-  // Get reference to the rendered texture
-  this->dataPtr->texturePtr = nullptr;
-  this->dataPtr->renderer->TextureId(&this->dataPtr->texturePtr);
+  this->dataPtr->renderer->Render(_renderSync, *this);
 }
 
 /////////////////////////////////////////////////
 void* RenderThreadRhiMetal::TexturePtr() const
 {
-  return this->dataPtr->texturePtr;
+  void *texturePtr = (void *)CFBridgingRetain(this->dataPtr->metalTexture);
+  return texturePtr;
 }
 
 /////////////////////////////////////////////////
@@ -150,8 +148,6 @@ QSize RenderThreadRhiMetal::TextureSize() const
 void RenderThreadRhiMetal::ShutDown()
 {
   this->dataPtr->renderer->Destroy();
-
-  this->dataPtr->texturePtr = nullptr;
 }
 
 /////////////////////////////////////////////////

@@ -45,10 +45,6 @@ namespace plugins
     /// \brief Update the texture for a camera
     /// \param[in] _camera Pointer to the camera providing the texture
     public: virtual void Update(rendering::CameraPtr _camera) = 0;
-
-    /// \brief Get the graphics API texture Id
-    /// \param[out] _texturePtr Pointer to a texture Id
-    public: virtual void TextureId(void* _texturePtr) = 0;
   };
 
   /// \brief gz-rendering renderer.
@@ -89,6 +85,10 @@ namespace plugins
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt and worker thread (this)
     public: virtual void RenderNext(RenderSync *_renderSync) = 0;
+
+    /// \brief Update the texture for a camera
+    /// \param[in] _camera Pointer to the camera providing the texture
+    public: virtual void Update(rendering::CameraPtr _camera) = 0;
 
     /// \brief Return a pointer to the graphics API texture Id
     public: virtual void* TexturePtr() const = 0;

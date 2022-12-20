@@ -49,9 +49,6 @@ namespace plugins
     // Documentation inherited
     public: virtual void Update(rendering::CameraPtr _camera) override;
 
-    // Documentation inherited
-    public: virtual void TextureId(void* _texturePtr) override;
-
     /// \internal Pointer to private data
     private: std::unique_ptr<GzCameraTextureRhiMetalPrivate> dataPtr;
   };
@@ -71,6 +68,9 @@ namespace plugins
 
     // Documentation inherited
     public: virtual std::string Initialize() override;
+
+    // Documentation inherited
+    public: virtual void Update(rendering::CameraPtr _camera) override;
 
     // Documentation inherited
     public: virtual void RenderNext(RenderSync *_renderSync) override;

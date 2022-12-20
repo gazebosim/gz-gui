@@ -139,13 +139,16 @@ namespace plugins
 
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt and worker thread (this)
-    public: void Render(RenderSync *_renderSync);
+    /// \param[in] _renderThreadRhi Our caller
+    public: void Render(RenderSync *_renderSync,
+                        RenderThreadRhi &_renderThreadRhi);
 
     /// \brief Initialize the render engine and scene.
     /// On macOS this must be called on the main thread.
+    /// \param[in] _rhi our caller
     /// \return Error message if initialization failed. If empty, no errors
     /// occurred.
-    public: std::string Initialize();
+    public: std::string Initialize(RenderThreadRhi &_rhi);
 
     /// \brief Set the graphics API
     /// \param[in] _graphicsAPI The type of graphics API
