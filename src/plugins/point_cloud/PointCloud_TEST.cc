@@ -24,15 +24,11 @@
 
 #include <gz/common/Console.hh>
 #include <gz/common/Filesystem.hh>
-#include <gz/rendering/RenderEngine.hh>
-#include <gz/rendering/RenderingIface.hh>
-#include <gz/rendering/Scene.hh>
 #include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
 #include "test_config.hh"  // NOLINT(build/include)
 #include "gz/gui/Application.hh"
-#include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
 
@@ -42,8 +38,6 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./PointCloud_TEST")),
 };
 
-using namespace std::chrono_literals;
-
 using namespace gz;
 using namespace gui;
 
@@ -51,7 +45,6 @@ class PointCloudTestFixture : public ::testing::Test
 {
   public:
     transport::Node node;
-    rendering::ScenePtr scene;
     transport::Node::Publisher pointcloudPub;
     transport::Node::Publisher flatPub;
     msgs::PointCloudPacked pcMsg;
@@ -135,14 +128,12 @@ class PointCloudTestFixture : public ::testing::Test
           this->receivedMsg = true;
         }
       }
-      else if(_req.action() == gz::msgs::Marker::DELETE_ALL)
+      else if (_req.action() != msgs::Marker::DELETE_ALL)
       {
-        // Do nothing. Its ok to clear the screen.
-      }
-      else
-      {
+        // if DELETE_ALL, its ok to clear the screen. Otherwise fail
         ADD_FAILURE();
       }
+
     }
 };
 
@@ -184,14 +175,13 @@ TEST_F(PointCloudTestFixture,
 
   int sleep = 0;
   int maxSleep = 30;
-  while (sleep < maxSleep && !this->receivedMsg)
+  while (!this->receivedMsg && sleep < maxSleep)
   {
+    this->Publish();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
-    this->Publish();
-    sleep++;
+    ++sleep;
   }
-
   EXPECT_TRUE(this->receivedMsg);
 
   // Cleanup
