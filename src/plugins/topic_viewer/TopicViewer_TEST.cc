@@ -119,7 +119,7 @@ TEST(TopicViewerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Model))
     EXPECT_NE(nullptr, win);
 
     // Get plugin
-    auto plugins = win->findChildren<plugins::TopicViewer *>();
+    auto plugins = win->findChildren<TopicViewer *>();
     ASSERT_EQ(plugins.size(), 1);
 
     auto plugin = plugins[0];

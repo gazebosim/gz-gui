@@ -7,6 +7,7 @@
   <file>qml/GzColor.qml</file>
   <file>qml/GzCardSettings.qml</file>
   <file>qml/GzHelpers.qml</file>
+  <file>qml/GzPlotIcon.qml</file>
   <file>qml/GzPose.qml</file>
   <file>qml/GzRulers.qml</file>
   <file>qml/GzSnackBar.qml</file>
@@ -26,6 +27,7 @@
   <file>qml/images/menu.png</file>
   <file>qml/images/export_icon.png</file>
   <file>qml/images/search.svg</file>
+  <file>qml/images/plottable_icon.svg</file>
 </qresource>
 
 <qresource prefix="gz-gui-qml/gz/gui">
@@ -34,6 +36,7 @@
 
     <!-- Add any QML components referenced in the qmldir file here -->
     <file alias="GzColor.qml">qml/GzColor.qml</file>
+    <file alias="GzPlotIcon.qml">qml/GzPlotIcon.qml</file>
     <file alias="GzPose.qml">qml/GzPose.qml</file>
     <file alias="GzSnackBar.qml">qml/GzSnackBar.qml</file>
     <file alias="GzSpinBox.qml">qml/GzSpinBox.qml</file>
