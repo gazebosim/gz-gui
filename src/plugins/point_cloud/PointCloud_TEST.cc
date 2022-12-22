@@ -103,11 +103,20 @@ class PointCloudTestFixture : public ::testing::Test
       }
     }
 
+    /// \brief Publish pointcloud packed data
     public: void Publish()
     {
       this->pointcloudPub.Publish(this->pcMsg);
       this->flatPub.Publish(this->flatMsg);
     }
+
+    /// \brief Color for minimum value
+    public: const math::Color minColor{1.0f, 0.0f, 0.0f, 1.0f};
+
+    /// \brief Color for maximum value
+    public: const math::Color maxColor{0.0f, 1.0f, 0.0f, 1.0f};
+
+    public: bool indexRecieved[10][10][10] = {false};
 
     /// \brief Callback that receives marker messages.
     /// \param[in] _req The marker message.
@@ -125,6 +134,43 @@ class PointCloudTestFixture : public ::testing::Test
           // is asynchronuous
           EXPECT_EQ(_req.point().size(), this->flatMsg.data().size());
           EXPECT_EQ(_req.materials().size(), this->flatMsg.data().size());
+
+          auto dR = maxColor.R() - minColor.R();
+          auto dG = maxColor.G() - minColor.G();
+          auto dB = maxColor.B() - minColor.B();
+          auto dA = maxColor.A() - minColor.A();
+
+          for (std::size_t idx = 0; idx < _req.point().size(); idx++)
+          {
+            // Check color correctness
+            EXPECT_NEAR(dR * (_req.point()[idx].x() / 9) + minColor.R(),
+             _req.materials()[idx].diffuse().r(), 1e-3);
+            EXPECT_NEAR(dG * (_req.point()[idx].x() / 9) + minColor.G(),
+             _req.materials()[idx].diffuse().g(), 1e-3);
+            EXPECT_NEAR(dB * (_req.point()[idx].x() / 9) + minColor.B(),
+             _req.materials()[idx].diffuse().b(), 1e-3);
+            EXPECT_NEAR(dA * (_req.point()[idx].x() / 9) + minColor.A(),
+             _req.materials()[idx].diffuse().a(), 1e-3);
+
+            std::size_t x = round(_req.point()[idx].x());
+            std::size_t y = round(_req.point()[idx].y());
+            std::size_t z = round(_req.point()[idx].z());
+
+            // Mark this voxel as occupied
+            this->indexRecieved[x][y][z] = true;
+          }
+
+          // Check all points in the point cloud have been populated.
+          for (std::size_t i = 0; i < 10; i++)
+          {
+            for (std::size_t j = 0; j < 10; j++)
+            {
+              for (std::size_t k = 0; k < 10; k++)
+              {
+                EXPECT_TRUE(this->indexRecieved[i][j][k]);
+              }
+            }
+          }
           this->receivedMsg = true;
         }
       }
