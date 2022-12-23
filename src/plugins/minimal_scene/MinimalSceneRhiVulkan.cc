@@ -182,7 +182,11 @@ TextureNodeRhiVulkan::~TextureNodeRhiVulkan()
 
 /////////////////////////////////////////////////
 TextureNodeRhiVulkan::TextureNodeRhiVulkan(QQuickWindow *_window,
-                                           rendering::CameraPtr &_camera) :
+                                           rendering::CameraPtr &
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2)
+                                             _camera
+#endif
+                                           ) :
   dataPtr(std::make_unique<TextureNodeRhiVulkanPrivate>())
 {
   this->dataPtr->window = _window;
