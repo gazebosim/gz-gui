@@ -28,6 +28,7 @@
 #include <memory>
 #include <string>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
 namespace gz
 {
 namespace gui
@@ -140,5 +141,7 @@ namespace plugins
 }
 }
 }
+
+#endif
 
 #endif

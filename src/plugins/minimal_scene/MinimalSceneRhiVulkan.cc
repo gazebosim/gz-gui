@@ -17,6 +17,8 @@
 
 #include "MinimalSceneRhiVulkan.hh"
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
+
 #include "EngineToQtInterface.hh"
 #include "MinimalScene.hh"
 
@@ -257,3 +259,4 @@ void TextureNodeRhiVulkan::PrepareNode()
 #endif
   }
 }
+#endif
