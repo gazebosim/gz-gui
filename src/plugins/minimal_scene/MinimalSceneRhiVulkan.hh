@@ -65,7 +65,7 @@ namespace plugins
 
     /// \brief Constructor
     /// \param[in] _renderer The gz-rendering renderer
-    public: RenderThreadRhiVulkan(GzRenderer *_renderer);
+    public: explicit RenderThreadRhiVulkan(GzRenderer *_renderer);
 
     // Documentation inherited
     public: virtual QOffscreenSurface *Surface() const override;
@@ -113,8 +113,8 @@ namespace plugins
     /// \brief Constructor
     /// \param[in] _window Window to display the texture
     /// \param[in] _camera Camera owning the API texture handle
-    public: TextureNodeRhiVulkan(QQuickWindow *_window,
-                                 rendering::CameraPtr &_camera);
+    public: explicit TextureNodeRhiVulkan(QQuickWindow *_window,
+                                          rendering::CameraPtr &_camera);
 
     // Documentation inherited
     public: virtual QSGTexture *Texture() const override;

@@ -208,6 +208,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
     {
       switch (api)
       {
+      default:
       case AvailableAPIs::OpenGL:
         this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
                                             "opengl");

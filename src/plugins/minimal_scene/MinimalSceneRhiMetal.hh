@@ -64,7 +64,7 @@ namespace plugins
 
     /// \brief Constructor
     /// \param[in] _renderer The gz-rendering renderer
-    public: RenderThreadRhiMetal(GzRenderer *_renderer);
+    public: explicit RenderThreadRhiMetal(GzRenderer *_renderer);
 
     // Documentation inherited
     public: virtual std::string Initialize() override;
@@ -105,7 +105,7 @@ namespace plugins
 
     /// \brief Constructor
     /// \param[in] _window Window to display the texture
-    public: TextureNodeRhiMetal(QQuickWindow *_window);
+    public: explicit TextureNodeRhiMetal(QQuickWindow *_window);
 
     // Documentation inherited
     public: virtual QSGTexture *Texture() const override;
