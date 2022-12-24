@@ -183,7 +183,7 @@ TextureNodeRhiVulkan::~TextureNodeRhiVulkan()
 /////////////////////////////////////////////////
 TextureNodeRhiVulkan::TextureNodeRhiVulkan(QQuickWindow *_window,
                                            rendering::CameraPtr &
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
                                              _camera
 #endif
                                            ) :
@@ -191,7 +191,7 @@ TextureNodeRhiVulkan::TextureNodeRhiVulkan(QQuickWindow *_window,
 {
   this->dataPtr->window = _window;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
   // It says Metal but it also works for Vulkan in the exact same way
   _camera->RenderTextureMetalId(&this->dataPtr->textureId);
   this->dataPtr->lastCamera = _camera;
@@ -247,7 +247,7 @@ void TextureNodeRhiVulkan::PrepareNode()
     delete this->dataPtr->texture;
     this->dataPtr->texture = nullptr;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
     this->dataPtr->texture =
         this->dataPtr->window->createTextureFromNativeObject(
             QQuickWindow::NativeObjectTexture,

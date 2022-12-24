@@ -164,7 +164,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #  endif
     );
 
-#  if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2)
+#  if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
     QQuickWindow::setSceneGraphBackend(QSGRendererInterface::VulkanRhi);
 #  endif
   }
