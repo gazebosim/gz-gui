@@ -653,7 +653,7 @@ static void fillQtDeviceExtensionsToOgre(
     externalDevice.deviceExtensions.push_back(VkExtensionProperties{});
     VkExtensionProperties &extProp = externalDevice.deviceExtensions.back();
     strncpy(extProp.extensionName, ext.toStdString().c_str(),
-            VK_MAX_EXTENSION_NAME_SIZE);
+            VK_MAX_EXTENSION_NAME_SIZE - 1u);
     extProp.extensionName[VK_MAX_EXTENSION_NAME_SIZE - 1u] = 0;
   }
 }
