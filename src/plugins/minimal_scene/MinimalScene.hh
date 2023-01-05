@@ -209,12 +209,6 @@ namespace plugins
     /// \brief Broadcasts a key press event within the scene
     private: void BroadcastKeyPress();
 
-    /// Values is constantly constantly cycled/swapped/changed
-    /// from a worker thread
-    /// Don't read this directly
-    /// \param[out] _texturePtr Pointer to a texture Id
-    public: void TextureId(void* _texturePtr);
-
     /// \brief Render engine to use
     public: std::string engineName = "ogre";
 
@@ -253,6 +247,10 @@ namespace plugins
 
     /// \brief View controller type
     public: std::string cameraViewController{""};
+
+    /// \brief Retrieves the internal camera.
+    /// TODO(darksylinc): Remove this hack.
+    public: rendering::CameraPtr Camera();
 
     /// \internal
     /// \brief Pointer to private data.
@@ -446,9 +444,11 @@ namespace plugins
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt (this) and worker thread
     /// \param[in] _graphicsAPI The type of graphics API
+    /// \param[in] _camera Camera owning the Texture Handle
     public: explicit TextureNode(QQuickWindow *_window,
                                  RenderSync &_renderSync,
-                                 const rendering::GraphicsAPI &_graphicsAPI);
+                                 const rendering::GraphicsAPI &_graphicsAPI,
+                                 rendering::CameraPtr &_camera);
 
     /// \brief Destructor
     public: ~TextureNode() override;

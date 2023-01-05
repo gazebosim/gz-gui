@@ -70,8 +70,11 @@ namespace gz
       /// \param[in] _argc Argument count.
       /// \param[in] _argv Argument values.
       /// \param[in] _type Window type, by default it's a main window.
+      /// \param[in] _renderEngineGuiApiBackend --render-engine-gui-api-backend
+      /// option
       public: Application(int &_argc, char **_argv,
-          const WindowType _type = WindowType::kMainWindow);
+          const WindowType _type = WindowType::kMainWindow,
+          const char *_renderEngineGuiApiBackend = nullptr);
 
       /// \brief Destructor
       public: virtual ~Application();

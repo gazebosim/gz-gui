@@ -15,7 +15,9 @@
  *
 */
 
-#include "MinimalSceneRhiOpenGL.hh"
+#include "MinimalSceneRhiVulkan.hh"
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
 
 #include "EngineToQtInterface.hh"
 #include "MinimalScene.hh"
@@ -28,6 +30,8 @@
 #include <QSGTexture>
 #include <QSize>
 
+#include <vulkan/vulkan_core.h>
+
 #include <memory>
 #include <string>
 
@@ -38,26 +42,23 @@ namespace gui
 {
 namespace plugins
 {
-  class GzCameraTextureRhiOpenGLPrivate
+  class GzCameraTextureRhiVulkanPrivate
   {
-    public: int textureId = 0;
+    public: VkImage textureId = 0;
   };
 
-  class RenderThreadRhiOpenGLPrivate
+  class RenderThreadRhiVulkanPrivate
   {
     public: GzRenderer *renderer = nullptr;
     public: void *texturePtr = nullptr;
     public: QOffscreenSurface *surface = nullptr;
-    public: QOpenGLContext *context = nullptr;
-
-    /// \brief For fallback support if we can't render directly to Qt API
-    public: std::unique_ptr<EngineToQtInterface> engineToQtInterface;
   };
 
-  class TextureNodeRhiOpenGLPrivate
+  class TextureNodeRhiVulkanPrivate
   {
-    public: GLuint textureId = 0;
-    public: GLuint newTextureId = 0;
+    public: VkImage textureId = 0;
+    public: VkImage newTextureId = 0;
+    public: std::weak_ptr<rendering::Camera> lastCamera;
     public: QSize size {0, 0};
     public: QSize newSize {0, 0};
     public: QMutex mutex;
@@ -73,85 +74,66 @@ using namespace gui;
 using namespace plugins;
 
 /////////////////////////////////////////////////
-GzCameraTextureRhiOpenGL::~GzCameraTextureRhiOpenGL() = default;
+GzCameraTextureRhiVulkan::~GzCameraTextureRhiVulkan() = default;
 
 /////////////////////////////////////////////////
-GzCameraTextureRhiOpenGL::GzCameraTextureRhiOpenGL()
-  : dataPtr(std::make_unique<GzCameraTextureRhiOpenGLPrivate>())
+GzCameraTextureRhiVulkan::GzCameraTextureRhiVulkan()
+  : dataPtr(std::make_unique<GzCameraTextureRhiVulkanPrivate>())
 {
 }
 
 /////////////////////////////////////////////////
-void GzCameraTextureRhiOpenGL::Update(rendering::CameraPtr _camera)
+void GzCameraTextureRhiVulkan::Update(rendering::CameraPtr _camera)
 {
-  this->dataPtr->textureId = _camera->RenderTextureGLId();
+  // It says Metal but it also works for Vulkan in the exact same way
+  _camera->RenderTextureMetalId(&this->dataPtr->textureId);
 }
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
-RenderThreadRhiOpenGL::~RenderThreadRhiOpenGL() = default;
+RenderThreadRhiVulkan::~RenderThreadRhiVulkan() = default;
 
 /////////////////////////////////////////////////
-RenderThreadRhiOpenGL::RenderThreadRhiOpenGL(GzRenderer *_renderer)
-    : dataPtr(std::make_unique<RenderThreadRhiOpenGLPrivate>())
+RenderThreadRhiVulkan::RenderThreadRhiVulkan(GzRenderer *_renderer)
+    : dataPtr(std::make_unique<RenderThreadRhiVulkanPrivate>())
 {
   this->dataPtr->renderer = _renderer;
 }
 
 /////////////////////////////////////////////////
-QOffscreenSurface *RenderThreadRhiOpenGL::Surface() const
+QOffscreenSurface *RenderThreadRhiVulkan::Surface() const
 {
   return this->dataPtr->surface;
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhiOpenGL::SetSurface(QOffscreenSurface *_surface)
+void RenderThreadRhiVulkan::SetSurface(QOffscreenSurface *_surface)
 {
   this->dataPtr->surface = _surface;
 }
 
 /////////////////////////////////////////////////
-QOpenGLContext *RenderThreadRhiOpenGL::Context() const
+std::string RenderThreadRhiVulkan::Initialize()
 {
-  return this->dataPtr->context;
-}
-
-/////////////////////////////////////////////////
-void RenderThreadRhiOpenGL::SetContext(QOpenGLContext *_context)
-{
-  this->dataPtr->context = _context;
-}
-
-/////////////////////////////////////////////////
-std::string RenderThreadRhiOpenGL::Initialize()
-{
-  this->dataPtr->context->makeCurrent(this->dataPtr->surface);
-
-  this->dataPtr->engineToQtInterface.reset(
-    new EngineToQtInterface(this->dataPtr->context));
-
   auto loadingError = this->dataPtr->renderer->Initialize(*this);
   if (!loadingError.empty())
   {
     return loadingError;
   }
 
-  this->dataPtr->context->doneCurrent();
   return std::string();
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhiOpenGL::Update(rendering::CameraPtr _camera)
+void RenderThreadRhiVulkan::Update(rendering::CameraPtr _camera)
 {
-  const GLuint glId = this->dataPtr->engineToQtInterface->TextureId(_camera);
-  this->dataPtr->texturePtr = reinterpret_cast<void *>(glId);
+  // It says Metal but it also works for Vulkan in the exact same way
+  _camera->RenderTextureMetalId(&this->dataPtr->texturePtr);
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhiOpenGL::RenderNext(RenderSync *_renderSync)
+void RenderThreadRhiVulkan::RenderNext(RenderSync *_renderSync)
 {
-  this->dataPtr->context->makeCurrent(this->dataPtr->surface);
-
   if (!this->dataPtr->renderer->initialized)
   {
     this->Initialize();
@@ -165,35 +147,26 @@ void RenderThreadRhiOpenGL::RenderNext(RenderSync *_renderSync)
 
   // Call the renderer
   this->dataPtr->renderer->Render(_renderSync, *this);
-
-  this->dataPtr->context->doneCurrent();
 }
 
 /////////////////////////////////////////////////
-void* RenderThreadRhiOpenGL::TexturePtr() const
+void* RenderThreadRhiVulkan::TexturePtr() const
 {
   return this->dataPtr->texturePtr;
 }
 
 /////////////////////////////////////////////////
-QSize RenderThreadRhiOpenGL::TextureSize() const
+QSize RenderThreadRhiVulkan::TextureSize() const
 {
   return this->dataPtr->renderer->textureSize;
 }
 
 /////////////////////////////////////////////////
-void RenderThreadRhiOpenGL::ShutDown()
+void RenderThreadRhiVulkan::ShutDown()
 {
   this->dataPtr->renderer->Destroy();
 
   this->dataPtr->texturePtr = nullptr;
-
-  if (this->dataPtr->context)
-  {
-    this->dataPtr->context->doneCurrent();
-    delete this->dataPtr->context;
-    this->dataPtr->context = nullptr;
-  }
 
   // Schedule this to be deleted only after we're done cleaning up
   if (this->dataPtr->surface)
@@ -203,66 +176,61 @@ void RenderThreadRhiOpenGL::ShutDown()
 }
 
 /////////////////////////////////////////////////
-TextureNodeRhiOpenGL::~TextureNodeRhiOpenGL()
+TextureNodeRhiVulkan::~TextureNodeRhiVulkan()
 {
   delete this->dataPtr->texture;
   this->dataPtr->texture = nullptr;
 }
 
 /////////////////////////////////////////////////
-TextureNodeRhiOpenGL::TextureNodeRhiOpenGL(QQuickWindow *_window)
-    : dataPtr(std::make_unique<TextureNodeRhiOpenGLPrivate>())
+TextureNodeRhiVulkan::TextureNodeRhiVulkan(QQuickWindow *_window,
+                                           rendering::CameraPtr &
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
+                                             _camera
+#endif
+                                           ) :
+  dataPtr(std::make_unique<TextureNodeRhiVulkanPrivate>())
 {
   this->dataPtr->window = _window;
 
-  // Our texture node must have a texture, so use the default 0 texture.
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-# ifndef _WIN32
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-# endif
-  this->dataPtr->texture = this->dataPtr->window->createTextureFromId(
-      this->dataPtr->textureId,
-      QSize(1, 1),
-      QQuickWindow::TextureIsOpaque);
-# ifndef _WIN32
-#   pragma GCC diagnostic pop
-# endif
-#else
-  this->dataPtr->texture =
-      this->dataPtr->window->createTextureFromNativeObject(
-          QQuickWindow::NativeObjectTexture,
-          static_cast<void*>(&this->dataPtr->textureId),
-          0,
-          QSize(1, 1));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
+  // It says Metal but it also works for Vulkan in the exact same way
+  _camera->RenderTextureMetalId(&this->dataPtr->textureId);
+  this->dataPtr->lastCamera = _camera;
+
+  this->dataPtr->texture = this->dataPtr->window->createTextureFromNativeObject(
+    QQuickWindow::NativeObjectTexture,
+    static_cast<void *>(&this->dataPtr->textureId),  //
+    0,                                               //
+    QSize(static_cast<int>(_camera->ImageWidth()),
+          static_cast<int>(_camera->ImageHeight())));
 #endif
 }
 
 /////////////////////////////////////////////////
-QSGTexture *TextureNodeRhiOpenGL::Texture() const
+QSGTexture *TextureNodeRhiVulkan::Texture() const
 {
   return this->dataPtr->texture;
 }
 
 /////////////////////////////////////////////////
-bool TextureNodeRhiOpenGL::HasNewTexture() const
+bool TextureNodeRhiVulkan::HasNewTexture() const
 {
   return (this->dataPtr->newTextureId != 0);
 }
 
 /////////////////////////////////////////////////
-void TextureNodeRhiOpenGL::NewTexture(
+void TextureNodeRhiVulkan::NewTexture(
     void* _texturePtr, const QSize &_size)
 {
   this->dataPtr->mutex.lock();
-  this->dataPtr->textureId =
-    static_cast<GLuint>(reinterpret_cast<size_t>(_texturePtr));
+  this->dataPtr->textureId = reinterpret_cast<VkImage>(_texturePtr);
   this->dataPtr->size = _size;
   this->dataPtr->mutex.unlock();
 }
 
 /////////////////////////////////////////////////
-void TextureNodeRhiOpenGL::PrepareNode()
+void TextureNodeRhiVulkan::PrepareNode()
 {
   this->dataPtr->mutex.lock();
   this->dataPtr->newTextureId = this->dataPtr->textureId;
@@ -270,30 +238,25 @@ void TextureNodeRhiOpenGL::PrepareNode()
   this->dataPtr->textureId = 0;
   this->dataPtr->mutex.unlock();
 
+  // Required: PrepareForExternalSampling ensures the texture is ready to
+  // be sampled by Qt. Otherwise Qt could attempt to sample the texture
+  // while the GPU is still drawing to it, or the caches aren't flushed, etc.
+  auto lastCamera = this->dataPtr->lastCamera.lock();
+  lastCamera->PrepareForExternalSampling();
+
   if (this->dataPtr->newTextureId)
   {
     delete this->dataPtr->texture;
     this->dataPtr->texture = nullptr;
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-# ifndef _WIN32
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-# endif
-    this->dataPtr->texture = this->dataPtr->window->createTextureFromId(
-        this->dataPtr->newTextureId,
-        this->dataPtr->newSize,
-        QQuickWindow::TextureIsOpaque);
-# ifndef _WIN32
-#   pragma GCC diagnostic pop
-# endif
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
     this->dataPtr->texture =
         this->dataPtr->window->createTextureFromNativeObject(
             QQuickWindow::NativeObjectTexture,
             static_cast<void*>(&this->dataPtr->newTextureId),
-            0,
+            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
             this->dataPtr->newSize);
 #endif
   }
 }
+#endif

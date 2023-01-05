@@ -196,6 +196,20 @@ std::string gz::gui::renderEngineName()
 }
 
 /////////////////////////////////////////////////
+std::string gz::gui::renderEngineBackendApiName()
+{
+  auto win = App()->findChild<MainWindow *>();
+  if (nullptr == win)
+    return {};
+
+  auto renderEngineNameVariant = win->property("renderEngineBackendApiName");
+  if (!renderEngineNameVariant.isValid())
+    return {};
+
+  return renderEngineNameVariant.toString().toStdString();
+}
+
+/////////////////////////////////////////////////
 const QString gz::gui::qmlQrcImportPath()
 {
   return "qrc:/gz-gui-qml/";

@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_
-#define GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_
+#ifndef GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIVULKAN_HH_
+#define GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIVULKAN_HH_
 
 #include "MinimalSceneRhi.hh"
 #include "gz/gui/Plugin.hh"
@@ -28,43 +28,50 @@
 #include <memory>
 #include <string>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
 namespace gz
 {
 namespace gui
 {
 namespace plugins
 {
-  /// \brief Private data for GzCameraTextureRhiMetal
-  class GzCameraTextureRhiMetalPrivate;
+  /// \brief Private data for GzCameraTextureRhiVulkan
+  class GzCameraTextureRhiVulkanPrivate;
 
-  /// \brief Implementation of GzCameraTextureRhi for the Metal graphics API
-  class GzCameraTextureRhiMetal : public GzCameraTextureRhi
+  /// \brief Implementation of GzCameraTextureRhi for the Vulkan graphics API
+  class GzCameraTextureRhiVulkan : public GzCameraTextureRhi
   {
     // Documentation inherited
-    public: virtual ~GzCameraTextureRhiMetal() override;
+    public: virtual ~GzCameraTextureRhiVulkan() override;
 
     /// \brief Constructor
-    public: GzCameraTextureRhiMetal();
+    public: GzCameraTextureRhiVulkan();
 
     // Documentation inherited
     public: virtual void Update(rendering::CameraPtr _camera) override;
 
     /// \internal Pointer to private data
-    private: std::unique_ptr<GzCameraTextureRhiMetalPrivate> dataPtr;
+    private: std::unique_ptr<GzCameraTextureRhiVulkanPrivate> dataPtr;
   };
 
-  /// \brief Private data for RenderThreadRhiMetal
-  class RenderThreadRhiMetalPrivate;
+  /// \brief Private data for RenderThreadRhiVulkanPrivate
+  class RenderThreadRhiVulkanPrivate;
 
-  /// \brief Implementation of RenderThreadRhi for the Metal graphics API
-  class RenderThreadRhiMetal : public RenderThreadRhi
+  /// \brief Implementation of RenderThreadRhi for the Vulkan graphics API
+  class RenderThreadRhiVulkan : public RenderThreadRhi
   {
     // Documentation inherited
-    public: virtual ~RenderThreadRhiMetal() override;
+    public: virtual ~RenderThreadRhiVulkan() override;
 
     /// \brief Constructor
     /// \param[in] _renderer The gz-rendering renderer
-    public: explicit RenderThreadRhiMetal(GzRenderer *_renderer);
+    public: explicit RenderThreadRhiVulkan(GzRenderer *_renderer);
+
+    // Documentation inherited
+    public: virtual QOffscreenSurface *Surface() const override;
+
+    // Documentation inherited
+    public: virtual void SetSurface(QOffscreenSurface *_surface) override;
 
     // Documentation inherited
     public: virtual std::string Initialize() override;
@@ -85,27 +92,29 @@ namespace plugins
     public: virtual void ShutDown() override;
 
     /// \internal Prevent copy and assignment
-    private: RenderThreadRhiMetal(
-        const RenderThreadRhiMetal &_other) = delete;
-    private: RenderThreadRhiMetal& operator=(
-        const RenderThreadRhiMetal &_other) = delete;
+    private: RenderThreadRhiVulkan(
+        const RenderThreadRhiVulkan &_other) = delete;
+    private: RenderThreadRhiVulkan& operator=(
+        const RenderThreadRhiVulkan &_other) = delete;
 
     /// \internal Pointer to private data
-    private: std::unique_ptr<RenderThreadRhiMetalPrivate> dataPtr;
+    private: std::unique_ptr<RenderThreadRhiVulkanPrivate> dataPtr;
   };
 
-  /// \brief Private data for TextureNodeRhiMetal
-  class TextureNodeRhiMetalPrivate;
+  /// \brief Private data for TextureNodeRhiVulkan
+  class TextureNodeRhiVulkanPrivate;
 
-  /// \brief Implementation of TextureNodeRhi for the Metal graphics API
-  class TextureNodeRhiMetal : public TextureNodeRhi
+  /// \brief Implementation of TextureNodeRhi for the Vulkan graphics API
+  class TextureNodeRhiVulkan : public TextureNodeRhi
   {
     // Documentation inherited
-    public: virtual ~TextureNodeRhiMetal() override;
+    public: virtual ~TextureNodeRhiVulkan() override;
 
     /// \brief Constructor
     /// \param[in] _window Window to display the texture
-    public: explicit TextureNodeRhiMetal(QQuickWindow *_window);
+    /// \param[in] _camera Camera owning the API texture handle
+    public: explicit TextureNodeRhiVulkan(QQuickWindow *_window,
+                                          rendering::CameraPtr &_camera);
 
     // Documentation inherited
     public: virtual QSGTexture *Texture() const override;
@@ -115,22 +124,24 @@ namespace plugins
 
     // Documentation inherited
     public: virtual void NewTexture(
-        void* _texturePtr, const QSize &_size)override;
+        void* _texturePtr, const QSize &_size) override;
 
     // Documentation inherited
     public: virtual void PrepareNode() override;
 
     /// \internal Prevent copy and assignment
-    private: TextureNodeRhiMetal(
-        const TextureNodeRhiMetal &_other) = delete;
-    private: TextureNodeRhiMetal& operator=(
-        const TextureNodeRhiMetal &_other) = delete;
+    private: TextureNodeRhiVulkan(
+        const TextureNodeRhiVulkan &_other) = delete;
+    private: TextureNodeRhiVulkan& operator=(
+        const TextureNodeRhiVulkan &_other) = delete;
 
     /// \internal Pointer to private data
-    private: std::unique_ptr<TextureNodeRhiMetalPrivate> dataPtr;
+    private: std::unique_ptr<TextureNodeRhiVulkanPrivate> dataPtr;
    };
 }
 }
 }
+
+#endif
 
 #endif

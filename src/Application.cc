@@ -89,9 +89,18 @@ namespace gz
 using namespace gz;
 using namespace gui;
 
+enum class GZ_COMMON_HIDDEN AvailableAPIs
+{
+  OpenGL,
+  Vulkan,
+  Metal
+};
+
 /////////////////////////////////////////////////
-Application::Application(int &_argc, char **_argv, const WindowType _type)
-  : QApplication(_argc, _argv), dataPtr(new ApplicationPrivate)
+Application::Application(int &_argc, char **_argv, const WindowType _type,
+                         const char *_renderEngineGuiApiBackend) :
+  QApplication(_argc, _argv),
+  dataPtr(new ApplicationPrivate)
 {
   gzdbg << "Initializing application." << std::endl;
 
@@ -99,10 +108,29 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   this->setOrganizationDomain("gazebosim.org");
   this->setApplicationName("Gazebo GUI");
 
-#if __APPLE__
-  // Use the Metal graphics API on macOS.
-  gzdbg << "Qt using Metal graphics interface" << std::endl;
-  QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
+#ifdef __APPLE__
+  AvailableAPIs api = AvailableAPIs::Metal;
+#else
+  AvailableAPIs api = AvailableAPIs::OpenGL;
+#endif
+  if (_renderEngineGuiApiBackend)
+  {
+    const std::string renderEngineGuiApiBackend = _renderEngineGuiApiBackend;
+    if (renderEngineGuiApiBackend == "vulkan")
+      api = AvailableAPIs::Vulkan;
+#ifdef __APPLE__
+    if (renderEngineGuiApiBackend == "metal")
+      api = AvailableAPIs::Metal;
+#endif
+  }
+
+#ifdef __APPLE__
+  if (api == AvailableAPIs::Metal)
+  {
+    // Use the Metal graphics API on macOS.
+    gzdbg << "Qt using Metal graphics interface" << std::endl;
+    QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
+  }
 
   // TODO(srmainwaring): implement facility for overriding the default
   //    graphics API in macOS, in which case there are restrictions on
@@ -118,8 +146,32 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   // format.setRenderableType(QSurfaceFormat::OpenGL);
   // QSurfaceFormat::setDefaultFormat(format);
 #else
-  // Otherwise use OpenGL
-  gzdbg << "Qt using OpenGL graphics interface" << std::endl;
+  // Otherwise use OpenGL (or Vulkan when supported and requested)
+
+  if (api == AvailableAPIs::Vulkan)
+  {
+    gzdbg << "Qt using Vulkan graphics interface" << std::endl;
+
+#  ifdef GZ_USE_VULKAN_DEBUG_EXT
+    qputenv("QT_VULKAN_INSTANCE_EXTENSIONS",
+            "VK_EXT_debug_report;VK_EXT_debug_utils");
+#  endif
+    qputenv("QT_VULKAN_DEVICE_EXTENSIONS",
+            "VK_KHR_maintenance2;VK_EXT_shader_subgroup_vote;"
+            "VK_EXT_shader_viewport_index_layer;"
+#  ifdef GZ_USE_VULKAN_DEBUG_EXT
+            ";VK_EXT_debug_marker"
+#  endif
+    );
+
+#  if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
+    QQuickWindow::setSceneGraphBackend(QSGRendererInterface::VulkanRhi);
+#  endif
+  }
+  else
+  {
+    gzdbg << "Qt using OpenGL graphics interface" << std::endl;
+  }
 #endif
 
   // Configure console
@@ -149,7 +201,28 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
   if (_type == WindowType::kMainWindow)
   {
     if (!this->InitializeMainWindow())
+    {
       gzerr << "Failed to initialize main window." << std::endl;
+    }
+    else
+    {
+      switch (api)
+      {
+      default:
+      case AvailableAPIs::OpenGL:
+        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
+                                            "opengl");
+        break;
+      case AvailableAPIs::Vulkan:
+        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
+                                            "vulkan");
+        break;
+      case AvailableAPIs::Metal:
+        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
+                                            "metal");
+        break;
+      }
+    }
   }
   else if (_type == WindowType::kDialog)
   {

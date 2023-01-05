@@ -64,7 +64,7 @@ namespace plugins
 
     /// \brief Constructor
     /// \param[in] _renderer The gz-rendering renderer
-    public: RenderThreadRhiOpenGL(GzRenderer *_renderer);
+    public: explicit RenderThreadRhiOpenGL(GzRenderer *_renderer);
 
     // Documentation inherited
     public: virtual QOffscreenSurface *Surface() const override;
@@ -117,7 +117,7 @@ namespace plugins
 
     /// \brief Constructor
     /// \param[in] _window Window to display the texture
-    public: TextureNodeRhiOpenGL(QQuickWindow *_window);
+    public: explicit TextureNodeRhiOpenGL(QQuickWindow *_window);
 
     // Documentation inherited
     public: virtual QSGTexture *Texture() const override;
