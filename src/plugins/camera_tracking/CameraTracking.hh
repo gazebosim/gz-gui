@@ -35,6 +35,7 @@ namespace gz::gui::plugins
   /// * `/gui/move_to/pose`: Move the user camera to a given pose.
   /// * `/gui/follow`: Set the user camera to follow a given target,
   ///                   identified by name.
+  /// * `/gui/follow/pgain`: Set the pgain for following.
   /// * `/gui/follow/offset`: Set the offset for following.
   ///
   /// Topics:

@@ -186,6 +186,14 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_TRUE(result);
   EXPECT_TRUE(rep.data());
 
+  msgs::Double reqPGain;
+  reqPGain.set_data(1.0);
+  executed = node.Request("/gui/follow/pgain", reqPGain, timeout, rep,
+      result);
+  EXPECT_TRUE(executed);
+  EXPECT_TRUE(result);
+  EXPECT_TRUE(rep.data());
+
   // Many update loops to process many events
   maxSleep = 600;
   for (auto it : {150.0, 200.0})

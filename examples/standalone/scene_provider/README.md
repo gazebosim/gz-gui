@@ -63,3 +63,15 @@ Update follow offset:
 ```
 gz service -s /gui/follow/offset --reqtype gz.msgs.Vector3d --reptype gz.msgs.Boolean --timeout 2000 --req 'x: 5, y: 5, z: 5'
 ```
+
+Set next follow pgain:
+
+```
+gz service -s /gui/follow/pgain --reqtype gz.msgs.Double --reptype gz.msgs.Boolean --timeout 2000 --req 'data: 1.0'
+```
+
+Update follow offset with new pgain:
+
+```
+gz service -s /gui/follow/offset --reqtype gz.msgs.Vector3d --reptype gz.msgs.Boolean --timeout 2000 --req 'x: 1, y: 1, z: 5'
+```
