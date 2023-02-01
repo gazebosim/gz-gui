@@ -15,19 +15,32 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
-#define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
+#include <algorithm>
 #include <memory>
+#include <QQuickImageProvider>
+
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/image.pb.h>
+#include <gz/msgs/image.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include "ignition/gui/Plugin.hh"
+#ifndef _WIN32
+#  define ImageDisplay_EXPORTS_API
+#else
+#  if (defined(ImageDisplay_EXPORTS))
+#    define ImageDisplay_EXPORTS_API __declspec(dllexport)
+#  else
+#    define ImageDisplay_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
+#include "gz/gui/Plugin.hh"
 
 namespace ignition
 {
@@ -37,14 +50,45 @@ namespace plugins
 {
   class ImageDisplayPrivate;
 
-  /// \brief Display images coming through an Ignition transport topic.
+  class ImageProvider : public QQuickImageProvider
+  {
+    public: ImageProvider()
+       : QQuickImageProvider(QQuickImageProvider::Image)
+    {
+    }
+
+    public: QImage requestImage(const QString &, QSize *,
+        const QSize &) override
+    {
+      if (!this->img.isNull())
+      {
+        // Must return a copy
+        QImage copy(this->img);
+        return copy;
+      }
+
+      // Placeholder in case we have no image yet
+      QImage i(400, 400, QImage::Format_RGB888);
+      i.fill(QColor(128, 128, 128, 100));
+      return i;
+    }
+
+    public: void SetImage(const QImage &_image)
+    {
+      this->img = _image;
+    }
+
+    private: QImage img;
+  };
+
+  /// \brief Display images coming through an Gazebo transport topic.
   ///
   /// ## Configuration
   ///
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
   ///                    this is false, a \<topic\> must be specified.
-  class ImageDisplay : public Plugin
+  class ImageDisplay_EXPORTS_API ImageDisplay : public Plugin
   {
     Q_OBJECT
 
@@ -92,7 +136,7 @@ namespace plugins
 
     /// \brief Subscriber callback when new image is received
     /// \param[in] _msg New image
-    private: void OnImageMsg(const ignition::msgs::Image &_msg);
+    private: void OnImageMsg(const gz::msgs::Image &_msg);
 
     /// \internal
     /// \brief Pointer to private data.

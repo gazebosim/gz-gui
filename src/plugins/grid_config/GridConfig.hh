@@ -15,13 +15,13 @@
  *
 */
 
-#ifndef IGNITION_GAZEBO_GUI_GRIDCONFIG_HH_
-#define IGNITION_GAZEBO_GUI_GRIDCONFIG_HH_
+#ifndef GZ_GUI_PLUGINS_GRID3D_HH_
+#define GZ_GUI_PLUGINS_GRID3D_HH_
 
 #include <memory>
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/rendering.hh>
+#include <gz/gui/Plugin.hh>
+#include <gz/rendering.hh>
 
 namespace ignition
 {
@@ -29,7 +29,7 @@ namespace gui
 {
   class GridConfigPrivate;
 
-  /// \brief Manages grids in an Ignition Rendering scene. This plugin can be
+  /// \brief Manages grids in an Gazebo Rendering scene. This plugin can be
   /// used for:
   /// * Introspecting grids
   /// * Editing grids
@@ -45,7 +45,7 @@ namespace gui
   ///   * \<cell_length\> : Length of each cell, defaults to 1.
   ///   * \<pose\> : Grid pose, defaults to the origin.
   ///   * \<color\> : Grid color, defaults to (0.7, 0.7, 0.7, 1.0)
-  class GridConfig : public ignition::gui::Plugin
+  class GridConfig : public Plugin
   {
     Q_OBJECT
 

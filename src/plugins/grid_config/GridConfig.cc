@@ -18,15 +18,17 @@
 #include <string>
 #include <vector>
 
-#include <ignition/common/Console.hh>
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/Conversions.hh>
-#include <ignition/gui/GuiEvents.hh>
-#include <ignition/gui/MainWindow.hh>
-#include <ignition/plugin/Register.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/rendering.hh>
+#include <gz/common/Console.hh>
+#include <gz/gui/Application.hh>
+#include <gz/gui/Conversions.hh>
+#include <gz/gui/GuiEvents.hh>
+#include <gz/gui/MainWindow.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/plugin/Register.hh>
+#include <gz/rendering/Grid.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
 #include "GridConfig.hh"
 
@@ -81,7 +83,7 @@ namespace ignition::gui
   };
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

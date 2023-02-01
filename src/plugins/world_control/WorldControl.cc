@@ -19,15 +19,15 @@
 
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Time.hh>
-#include <ignition/common/StringUtils.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Time.hh>
+#include <gz/common/StringUtils.hh>
+#include <gz/plugin/Register.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
 
 namespace ignition
 {
@@ -42,7 +42,7 @@ namespace plugins
     public: void SendEventMsg(const ignition::msgs::WorldControl &_msg);
 
     /// \brief Message holding latest world statistics
-    public: ignition::msgs::WorldStatistics msg;
+    public: gz::msgs::WorldStatistics msg;
 
     /// \brief Service to send world control requests
     public: std::string controlService;
@@ -51,7 +51,7 @@ namespace plugins
     public: std::recursive_mutex mutex;
 
     /// \brief Communication node
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief The multi step value
     public: unsigned int multiStep = 1u;
@@ -72,7 +72,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

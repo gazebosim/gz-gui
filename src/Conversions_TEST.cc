@@ -17,20 +17,20 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Color.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Color.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Conversions.hh"
+#include "gz/gui/Conversions.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
 TEST(ConversionsTest, Color)
 {
-  // Ignition to Qt to Ignition
+  // Gazebo to Qt to Gazebo
   {
     double red = 0.1;
     double green = 0.3;
@@ -48,7 +48,7 @@ TEST(ConversionsTest, Color)
     EXPECT_NEAR(newColor.A(), newColor.A(), tol);
   }
 
-  // Qt to Ignition to Qt
+  // Qt to Gazebo to Qt
   {
     int red = 100;
     int green = 150;
@@ -66,13 +66,13 @@ TEST(ConversionsTest, Point2d)
   double x = -0.5;
   double y = 123;
 
-  // Ignition to Qt to Ignition
+  // Gazebo to Qt to Gazebo
   {
     math::Vector2d point(x, y);
     EXPECT_EQ(convert(convert(point)), point);
   }
 
-  // Qt to Ignition to Qt
+  // Qt to Gazebo to Qt
   {
     QPointF point(x, y);
     EXPECT_EQ(convert(convert(point)), point);
@@ -86,13 +86,13 @@ TEST(ConversionsTest, Vector3d)
   double y = 0;
   double z = 1234;
 
-  // Ignition to Qt to Ignition
+  // Gazebo to Qt to Gazebo
   {
     math::Vector3d vec(x, y, z);
     EXPECT_EQ(convert(convert(vec)), vec);
   }
 
-  // Qt to Ignition to Qt
+  // Qt to Gazebo to Qt
   {
     QVector3D vec(x, y, z);
     EXPECT_EQ(convert(convert(vec)), vec);

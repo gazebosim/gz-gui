@@ -34,6 +34,7 @@ import QtQuick.Controls.Styles 1.4
  *  GzPose {
  *    id: gzPose
  *    readOnly: false
+ *    useRadian: true
  *    xValue: xValueFromCPP
  *    yValue: yValueFromCPP
  *    zValue: zValueFromCPP
@@ -58,6 +59,9 @@ Item {
 
   // Read-only / write
   property bool readOnly: false
+
+  // Radian / Degree as the unit for Rotation
+  property bool useRadian: true
 
   // User input value.
   property double xValue

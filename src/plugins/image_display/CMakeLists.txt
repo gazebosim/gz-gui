@@ -4,6 +4,5 @@ ign_gui_add_plugin(ImageDisplay
   QT_HEADERS
     ImageDisplay.hh
   TEST_SOURCES
-    # ImageDisplay_TEST.cc
+    ImageDisplay_TEST.cc
 )
-

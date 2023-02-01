@@ -60,6 +60,7 @@ Rectangle {
     RowLayout {
       visible: showPicker
       RoundButton {
+        objectName: "refreshButton"
         text: "\u21bb"
         Material.background: Material.primary
         onClicked: {
@@ -72,6 +73,7 @@ Rectangle {
       }
       ComboBox {
         id: combo
+        objectName: "topicsCombo"
         Layout.fillWidth: true
         model: ImageDisplay.topicList
         onCurrentIndexChanged: {
@@ -83,7 +85,7 @@ Rectangle {
         ToolTip.visible: hovered
         ToolTip.delay: tooltipDelay
         ToolTip.timeout: tooltipTimeout
-        ToolTip.text: qsTr("Ignition transport topics publishing Image messages")
+        ToolTip.text: qsTr("Gazebo transport topics publishing Image messages")
       }
     }
     Image {

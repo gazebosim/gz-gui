@@ -1,0 +1,3 @@
+// Automatically generated
+#include <gz/${GZ_DESIGNATION}/config.hh>
+${ign_headers}

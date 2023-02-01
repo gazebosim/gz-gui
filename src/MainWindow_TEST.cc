@@ -21,30 +21,30 @@
 
 #include <QQmlProperty>
 
-#include <ignition/common/Console.hh>
-#include <ignition/msgs/boolean.pb.h>
-#include <ignition/msgs/server_control.pb.h>
-#include <ignition/transport/Node.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/server_control.pb.h>
+#include <gz/transport/Node.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
-std::string kTestConfigFile = "/tmp/ign-gui-test.config"; // NOLINT(*)
+std::string kTestConfigFile = "/tmp/gz-gui-test.config"; // NOLINT(*)
 int g_argc = 1;
 char* g_argv[] =
 {
   reinterpret_cast<char*>(const_cast<char*>("./MainWindow_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace std::chrono_literals;
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(MainWindowTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
   common::Console::SetVerbosity(4);

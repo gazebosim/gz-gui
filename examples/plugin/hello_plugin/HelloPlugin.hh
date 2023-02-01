@@ -15,13 +15,13 @@
  *
 */
 
-#ifndef IGNITION_GUI_HELLOPLUGIN_HH_
-#define IGNITION_GUI_HELLOPLUGIN_HH_
+#ifndef GZ_GUI_HELLOPLUGIN_HH_
+#define GZ_GUI_HELLOPLUGIN_HH_
 
 #include <string>
 
-#include <ignition/gui/qt.h>
-#include <ignition/gui/Plugin.hh>
+#include <gz/gui/qt.h>
+#include <gz/gui/Plugin.hh>
 
 namespace ignition
 {
@@ -37,7 +37,7 @@ namespace ignition
       /// \brief Destructor
       public: virtual ~HelloPlugin();
 
-      /// \brief Called by Ignition GUI when plugin is instantiated.
+      /// \brief Called by Gazebo GUI when plugin is instantiated.
       /// \param[in] _pluginElem XML configuration for this plugin.
       public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           override;

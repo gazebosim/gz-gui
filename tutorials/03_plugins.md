@@ -5,26 +5,26 @@ Previous Tutorial: \ref commandline
 
 ## Writing plugins
 
-An Ignition GUI plugin is a shared library that defines a widget.
+An Gazebo GUI plugin is a shared library that defines a widget.
 The plugin contains [QML](https://doc.qt.io/qt-5/qtqml-index.html)
 code that specifies what the widget looks like, as well as C++ code
 that defines the plugin's behavior and ties it to other libraries.
 
-See [HelloPlugin](https://github.com/ignitionrobotics/ign-gui/blob/main/examples/plugin/hello_plugin/)
+See [HelloPlugin](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/)
 for an example.
 
 ## Finding plugins
 
-Ignition GUI will look for plugins on the following paths, in this order:
+Gazebo GUI will look for plugins on the following paths, in this order:
 
 1. All paths set on the `IGN_GUI_PLUGIN_PATH` environment variable
-2. All paths added by calling `ignition::gui::addPluginPath`
+2. All paths added by calling `gz::gui::addPluginPath`
 3. `~/.ignition/gui/plugins`
-4. [Plugins which are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/6.0/namespaceignition_1_1gui_1_1plugins.html)
+4. [Plugins which are installed with Gazebo GUI](https://gazebosim.org/api/gui/6/namespaceignition_1_1gui_1_1plugins.html)
 
 ## Configuring plugins
 
-Ignition GUI supports loading XML configuration files, which may contain
+Gazebo GUI supports loading XML configuration files, which may contain
 parameters to be passed directly to the plugin. See the \subpage config
 tutorial for more information.
 
@@ -32,7 +32,7 @@ tutorial for more information.
 
 ### Image display
 
-Display images from an Ignition Transport topic.
+Display images from an Gazebo Transport topic.
 
     ign gui -c examples/config/image.config
 
@@ -42,7 +42,7 @@ or
 
 ### Publisher
 
-Publish messages on an Ignition Transport topic.
+Publish messages on an Gazebo Transport topic.
 
 1. Listen to string messages on the `/echo` topic:
 
@@ -64,13 +64,13 @@ Publish messages on an Ignition Transport topic.
 
 ### Topic echo
 
-Echo messages from an Ignition Transport topic.
+Echo messages from an Gazebo Transport topic.
 
     ign gui -c examples/config/pubsub.config
 
 ### Key publisher
 
-Publish key presses through Ignition Transport.
+Publish key presses through Gazebo Transport.
 
     ign gui -c examples/config/keypublisher.config
 
@@ -80,7 +80,7 @@ Change the topic to echo to `/keyboard/keypress`, echo, and start pressing keys.
 
 **Not ported to versions 1 or higher yet**
 
-Discover all Ignition Transport topics and introspect its fields.
+Discover all Gazebo Transport topics and introspect its fields.
 
     ign gui -c examples/config/topicViewer.config
 
@@ -88,7 +88,7 @@ Discover all Ignition Transport topics and introspect its fields.
 
 **Not ported to versions 1 or higher yet**
 
-Show basic stats of all Ignition Transport topics at the same time.
+Show basic stats of all Gazebo Transport topics at the same time.
 
     ign gui -c examples/config/topicsStats.config
 
@@ -107,7 +107,7 @@ plugins.
 
 This is a container for various Display Plugins that each paint on a Scene.
 The following example includes the display plugins that are installed with
-Ignition GUI by default.
+Gazebo GUI by default.
 
     ign gui -c examples/config/display_plugins.config
 
@@ -115,9 +115,9 @@ Ignition GUI by default.
 
 **Not ported to versions 1 or higher yet**
 
-Ignition GUI will look for display plugins on the following paths, in this
+Gazebo GUI will look for display plugins on the following paths, in this
 order:
 
 1. All paths set on the `IGN_GUI_DISPLAY_PLUGIN_PATH` environment variable
 2. `~/.ignition/gui/display_plugins`
-3. [Display plugins that are installed with Ignition GUI](https://ignitionrobotics.org/api/gui/0.1/namespaceignition_1_1gui_1_1display_plugins.html)
+3. [Display plugins that are installed with Gazebo GUI](https://gazebosim.org/api/gui/0.1/namespaceignition_1_1gui_1_1plugins.html)

@@ -4,7 +4,7 @@
 #              [PUBLIC_LINK_LIBS <libraries...>]
 #              [PRIVATE_LINK_LIBS <libraries...>])
 #
-# Add a plugin library to Ignition GUI.
+# Add a plugin library to Gazebo GUI.
 #
 # <library_name> Required. Name of the library
 #
@@ -47,7 +47,7 @@ endfunction()
 #              [PUBLIC_LINK_LIBS <libraries...>]
 #              [PRIVATE_LINK_LIBS <libraries...>])
 #
-# Add a plugin to Ignition GUI.
+# Add a plugin to Gazebo GUI.
 #
 # <plugin_name> Required. Name of the plugin.
 #

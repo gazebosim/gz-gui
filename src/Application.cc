@@ -18,23 +18,23 @@
 #include <tinyxml2.h>
 #include <queue>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/common/SignalHandler.hh>
-#include <ignition/common/StringUtils.hh>
-#include <ignition/common/SystemPaths.hh>
-#include <ignition/common/Util.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/common/SignalHandler.hh>
+#include <gz/common/StringUtils.hh>
+#include <gz/common/SystemPaths.hh>
+#include <gz/common/Util.hh>
 
-#include <ignition/plugin/Loader.hh>
+#include <gz/plugin/Loader.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/config.hh"
-#include "ignition/gui/Dialog.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/config.hh"
+#include "gz/gui/Dialog.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 
-#include "ignition/transport/TopicUtils.hh"
+#include "gz/transport/TopicUtils.hh"
 
 namespace ignition
 {
@@ -82,7 +82,7 @@ namespace ignition
   }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -91,9 +91,9 @@ Application::Application(int &_argc, char **_argv, const WindowType _type)
 {
   igndbg << "Initializing application." << std::endl;
 
-  this->setOrganizationName("Ignition");
-  this->setOrganizationDomain("ignitionrobotics.org");
-  this->setApplicationName("Ignition GUI");
+  this->setOrganizationName("Gazebo");
+  this->setOrganizationDomain("gazebosim.org");
+  this->setApplicationName("Gazebo GUI");
 
   // Configure console
   common::Console::SetPrefix("[GUI] ");
@@ -203,7 +203,7 @@ bool Application::RemovePlugin(const std::string &_pluginName)
   // Remove split on QML
   auto bgItem = this->dataPtr->mainWin->QuickWindow()
       ->findChild<QQuickItem *>("background");
-  if (bgItem)
+  if (bgItem && cardItem->parentItem())
   {
     QMetaObject::invokeMethod(bgItem, "removeSplitItem",
         Q_ARG(QVariant, cardItem->parentItem()->objectName()));
