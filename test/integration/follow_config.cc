@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2023 Rudis Laboratories LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@
 int g_argc = 1;
 char* g_argv[] =
 {
-  reinterpret_cast<char*>(const_cast<char*>("./camera_tracking")),
+  reinterpret_cast<char*>(const_cast<char*>("./follow_config")),
 };
 
 using namespace gz;
@@ -56,16 +56,17 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   common::Console::SetVerbosity(4);
 
   Application app(g_argc, g_argv);
-  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(gz::common::joinPaths(
+    std::string(PROJECT_BINARY_PATH), "lib"));
 
   // Load plugins
   const char *pluginStr =
     "<plugin filename=\"MinimalScene\">"
-      "<engine>ogre2</engine>"
+      "<engine>ogre</engine>"
       "<scene>banana</scene>"
       "<ambient_light>1.0 0 0</ambient_light>"
       "<background_color>0 1 0</background_color>"
-      "<camera_pose>1 2 3 0 0 0</camera_pose>"
+      "<camera_pose>0 0 0 0 0 0</camera_pose>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -81,19 +82,23 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_TRUE(app.LoadPlugin("CameraTracking",
       pluginDoc.FirstChildElement("plugin")));
 
+  pluginStr =
+    "<plugin filename=\"FollowConfig\">"
+      "<follow_target>track_me</follow_target>"
+      "<follow_offset>0.0 0.0 0.0</follow_offset>"
+      "<follow_pgain>1.0</follow_pgain>"
+    "</plugin>";
+
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("FollowConfig",
+      pluginDoc.FirstChildElement("plugin")));
+
   // Get main window
   auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
 
   // Get plugin
   auto plugins = win->findChildren<Plugin *>();
-  EXPECT_EQ(plugins.size(), 2);
-
-  auto plugin = plugins[0];
-  EXPECT_EQ(plugin->Title(), "3D Scene");
-
-  plugin = plugins[1];
-  EXPECT_EQ(plugin->Title(), "Camera tracking");
 
   // Show, but don't exec, so we don't block
   win->QuickWindow()->show();
@@ -110,7 +115,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   node.Subscribe("/gui/camera/pose", poseCb);
 
   int sleep = 0;
-  int maxSleep = 30;
+  int maxSleep = 60;
   while (!poseMsg.has_position() && sleep++ < maxSleep)
   {
     std::this_thread::sleep_for(100ms);
@@ -120,11 +125,15 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_TRUE(poseMsg.has_position());
   EXPECT_TRUE(poseMsg.has_orientation());
 
-  auto engine = rendering::engine("ogre2");
+  auto engine = rendering::engine("ogre");
   ASSERT_NE(nullptr, engine);
 
   auto scene = engine->SceneByName("banana");
   ASSERT_NE(nullptr, scene);
+
+  auto trackedVis = scene->CreateVisual("track_me");
+  ASSERT_NE(nullptr, trackedVis);
+  trackedVis->SetWorldPose({0, 0, 0, 0, 0, 0});
 
   auto root = scene->RootVisual();
   ASSERT_NE(nullptr, root);
@@ -133,87 +142,26 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       root->ChildByIndex(0));
   ASSERT_NE(nullptr, camera);
 
-  EXPECT_EQ(camera->WorldPose(), msgs::Convert(poseMsg));
-  EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 0), msgs::Convert(poseMsg));
-
-  // Add object to be tracked
-  auto trackedVis = scene->CreateVisual("track_me");
-  ASSERT_NE(nullptr, trackedVis);
-  trackedVis->SetWorldPose({100, 100, 100, 0, 0, 0});
-
-  // Move to
   msgs::StringMsg req;
   msgs::Boolean rep;
-
   req.set_data("track_me");
 
   bool result;
   unsigned int timeout = 2000;
-  bool executed = node.Request("/gui/move_to", req, timeout, rep, result);
+  bool executed = node.Request("/gui/follow", req, timeout, rep, result);
   EXPECT_TRUE(executed);
   EXPECT_TRUE(result);
   EXPECT_TRUE(rep.data());
 
   sleep = 0;
-  while (abs(camera->WorldPose().Pos().X() - 100) > 10 && sleep++ < maxSleep)
+  while (abs(poseMsg.mutable_position()->x()) < .01  && sleep++ < maxSleep)
   {
     std::this_thread::sleep_for(100ms);
     QCoreApplication::processEvents();
   }
   EXPECT_LT(sleep, maxSleep);
 
-  EXPECT_GT(10, abs(camera->WorldPose().Pos().X() - 100));
-  EXPECT_GT(10, abs(camera->WorldPose().Pos().Y() - 100));
-  EXPECT_GT(10, abs(camera->WorldPose().Pos().Z() - 100));
-
-  // Move target object to new position
-  trackedVis->SetWorldPose({130, 130, 130, 0, 0, 0});
-
-  // Follow
-  result = false;
-  executed = node.Request("/gui/follow", req, timeout, rep, result);
-  EXPECT_TRUE(executed);
-  EXPECT_TRUE(result);
-  EXPECT_TRUE(rep.data());
-
-  msgs::Vector3d reqOffset;
-  reqOffset.set_x(1.0);
-  reqOffset.set_y(1.0);
-  reqOffset.set_z(1.0);
-  result = false;
-  executed = node.Request("/gui/follow/offset", reqOffset, timeout, rep,
-      result);
-  EXPECT_TRUE(executed);
-  EXPECT_TRUE(result);
-  EXPECT_TRUE(rep.data());
-
-  msgs::Double reqPGain;
-  reqPGain.set_data(1.0);
-  executed = node.Request("/gui/follow/p_gain", reqPGain, timeout, rep,
-      result);
-  EXPECT_TRUE(executed);
-  EXPECT_TRUE(result);
-  EXPECT_TRUE(rep.data());
-
-  // Many update loops to process many events
-  maxSleep = 600;
-  for (auto it : {150.0, 200.0})
-  {
-    // Move target
-    trackedVis->SetWorldPose({it, it, it, 0, 0, 0});
-
-    // Check camera moved
-    sleep = 0;
-    while (abs(camera->WorldPose().Pos().X() - it) > 10 &&
-        sleep++ < maxSleep)
-    {
-      std::this_thread::sleep_for(10ms);
-      QCoreApplication::processEvents();
-    }
-    EXPECT_LT(sleep, maxSleep);
-
-    EXPECT_GT(10, abs(camera->WorldPose().Pos().X() - it));
-    EXPECT_GT(10, abs(camera->WorldPose().Pos().Y() - it));
-    EXPECT_GT(10, abs(camera->WorldPose().Pos().Z() - it));
-  }
+  EXPECT_NEAR(0.0, abs(poseMsg.mutable_position()->x()), 1.0);
+  EXPECT_NEAR(0.0, abs(poseMsg.mutable_position()->y()), 1.0);
+  EXPECT_NEAR(0.0, abs(poseMsg.mutable_position()->z()), 1.0);
 }

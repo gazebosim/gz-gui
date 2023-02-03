@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2023 Rudis Laboratories LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,7 +225,7 @@ void CameraTrackingPrivate::Initialize()
          << this->followOffsetService << "]" << std::endl;
 
   // follow pgain
-  this->followPGainService = "/gui/follow/pgain";
+  this->followPGainService = "/gui/follow/p_gain";
   this->node.Advertise(this->followPGainService,
       &CameraTrackingPrivate::OnFollowPGain, this);
   gzmsg << "Follow P gain service on ["
@@ -285,8 +286,11 @@ bool CameraTrackingPrivate::OnFollowPGain(const msgs::Double &_msg,
   msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
-  this->followPGain = msgs::Convert(_msg);
-
+  if (!this->followTarget.empty())
+  {
+    this->newFollowOffset = true;
+    this->followPGain = msgs::Convert(_msg);
+  }
   _res.set_data(true);
   return true;
 }
