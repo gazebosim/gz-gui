@@ -25,6 +25,7 @@
 #include <QtCore>
 
 #include <QGuiApplication>
+#include <QApplication>
 
 #include <QOffscreenSurface>
 #include <QOpenGLFunctions>
@@ -42,6 +43,5 @@
 #include <QStandardItemModel>
 
 #include <gz/gui/config.hh>
-
 
 #endif  // GZ_GUI_QT_H_

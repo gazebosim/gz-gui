@@ -14,12 +14,12 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
-#define IGNITION_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
+#ifndef GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
+#define GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/gui/PlottingInterface.hh>
-#include <ignition/utilities/SuppressWarning.hh>
+#include <gz/gui/Plugin.hh>
+#include <gz/gui/PlottingInterface.hh>
+#include <gz/utilities/SuppressWarning.hh>
 
 #include <memory>
 

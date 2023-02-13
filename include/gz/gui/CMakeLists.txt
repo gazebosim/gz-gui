@@ -68,3 +68,4 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
 )
 
 ign_install_all_headers()
+

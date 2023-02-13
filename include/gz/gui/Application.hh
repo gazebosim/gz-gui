@@ -62,7 +62,7 @@ namespace ignition
     /// provides an API to load plugins and configuration files. The application
     /// supports either running a single main window or several plugins as
     /// standalone dialogs.
-    class IGNITION_GUI_VISIBLE Application : public QGuiApplication
+    class IGNITION_GUI_VISIBLE Application : public QApplication
     {
       Q_OBJECT
 

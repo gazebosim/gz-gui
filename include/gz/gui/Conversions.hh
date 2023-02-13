@@ -25,6 +25,8 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
 #include <gz/common/Time.hh>
 #include <gz/math/Color.hh>
 #include <gz/math/Vector2.hh>
@@ -86,6 +88,21 @@ namespace ignition
     /// \return Gazebo mouse event
     IGNITION_GUI_VISIBLE
     common::MouseEvent convert(const QMouseEvent &_e);
+
+    /// \brief Return the equivalent Gazebo mouse event.
+    ///
+    /// Note that there isn't a 1-1 mapping between these types.
+    /// \param[in] _e Qt wheel event
+    /// \return Gazebo mouse event
+    IGNITION_GUI_VISIBLE
+    common::MouseEvent convert(const QWheelEvent &_e);
+
+    /// \brief Return the equivalent Gazebo key event.
+    ///
+    /// \param[in] _e Qt key event
+    /// \return Gazebo key event
+    IGNITION_GUI_VISIBLE
+    common::KeyEvent convert(const QKeyEvent &_e);
 
     /// \brief Convert an gz::msgs::Time to an gz::common::Time
     /// \param[in] _t The time to convert

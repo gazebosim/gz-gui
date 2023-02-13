@@ -15,7 +15,7 @@
  *
 */
 
-#include "ignition/gui/GuiEvents.hh"
+#include "gz/gui/GuiEvents.hh"
 
 class ignition::gui::events::SnapIntervals::Implementation
 {

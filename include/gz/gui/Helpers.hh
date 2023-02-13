@@ -79,6 +79,15 @@ namespace ignition
     IGNITION_GUI_VISIBLE
     QStringList worldNames();
 
+    /// \brief The main window's "renderEngine" property may be filled with
+    /// a string of the render engine gui name. This information can be
+    /// used by plugins to set the GUI render engine
+    /// This helper function provides a handy access to the render engine GUI
+    /// name
+    /// \return Name of render engine used on the GUI, as stored in the
+    /// `MainWindow`'s "renderEngine" property.
+    IGNITION_GUI_VISIBLE
+    std::string renderEngineName();
 
     /// \brief Import path for gz-gui QML modules added to the Qt resource
     /// system. This helper function returns the QRC resource path where custom
