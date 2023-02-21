@@ -1,11 +1,11 @@
 libgz-cmake3-dev
 libgz-common5-dev
 libgz-math7-dev
-libgz-msgs9-dev
+libgz-msgs10-dev
 libgz-plugin2-dev
 libgz-rendering8-dev
 libgz-tools2-dev
-libgz-transport12-dev
+libgz-transport13-dev
 libgz-utils2-dev
 libprotobuf-dev
 libprotoc-dev
