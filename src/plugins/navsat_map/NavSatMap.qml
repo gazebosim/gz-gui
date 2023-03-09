@@ -91,7 +91,7 @@ Item {
 
   Plugin {
     id: mapPlugin
-    name: "osm"
+    name: "mapboxgl"
   }
 
   Map {
