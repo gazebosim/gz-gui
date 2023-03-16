@@ -107,6 +107,11 @@ class gz::gui::plugins::GzRenderer::Implementation
 
   /// \brief Render hardware interface for the texture
   public: std::unique_ptr<GzCameraTextureRhi> rhi;
+
+  public: std::chrono::steady_clock::time_point prevCameraUpdateTime;
+  public: std::list<std::chrono::duration<double>> cameraUpdateTimes;
+  public: std::chrono::duration<double> cameraUpdateTimeSum;
+  public: unsigned int kCameraFPSWindowSize = 20u;
 };
 
 /// \brief Qt and Ogre rendering is happening in different threads
@@ -300,6 +305,9 @@ GzRenderer::GzRenderer()
 {
   // Set default graphics API to OpenGL
   this->SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
+
+  this->dataPtr->prevCameraUpdateTime =
+      std::chrono::steady_clock::now();
 }
 
 /////////////////////////////////////////////////
@@ -331,6 +339,24 @@ void GzRenderer::Render(RenderSync *_renderSync)
 
   // Update the render interface (texture)
   this->dataPtr->rhi->Update(this->dataPtr->camera);
+
+  auto now = std::chrono::steady_clock::now();
+  const std::chrono::duration<double> dt =
+    std::chrono::steady_clock::now() - this->dataPtr->prevCameraUpdateTime;
+  this->dataPtr->prevCameraUpdateTime = now;
+  this->dataPtr->cameraUpdateTimeSum += dt;
+  if (this->dataPtr->cameraUpdateTimes.size() >=
+      this->dataPtr->kCameraFPSWindowSize)
+  {
+    auto first = this->dataPtr->cameraUpdateTimes.front();
+    this->dataPtr->cameraUpdateTimes.pop_front();
+    this->dataPtr->cameraUpdateTimeSum -= first;
+    double sum = this->dataPtr->cameraUpdateTimeSum.count();
+    double avg = sum /
+        static_cast<double>(this->dataPtr->kCameraFPSWindowSize);
+    std::cerr << "FPS: " << 1.0 / avg << std::endl;
+  }
+  this->dataPtr->cameraUpdateTimes.push_back(dt);
 
   // view control
   this->HandleMouseEvent();
