@@ -25,7 +25,6 @@ Rectangle {
   Layout.minimumWidth: 150
   Layout.minimumHeight: 80
 
-
   RowLayout {
     id: cameraFpsLayout
     anchors.fill: parent

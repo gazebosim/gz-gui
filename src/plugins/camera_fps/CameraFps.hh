@@ -35,7 +35,7 @@ namespace plugins
   {
     Q_OBJECT
 
-    /// \brief Real time factor
+    /// \brief Camera frames per second
     Q_PROPERTY(
       QString cameraFPSValue
       READ CameraFpsValue
