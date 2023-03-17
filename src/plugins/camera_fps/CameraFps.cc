@@ -23,14 +23,14 @@
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
 
 #include "CameraFps.hh"
 
 /// \brief Private data class for CameraFps
-class ignition::gui::plugins::CameraFpsPrivate
+class gz::gui::plugins::CameraFpsPrivate
 {
   /// \brief Previous camera update time
   public: std::optional<std::chrono::steady_clock::time_point>
@@ -50,7 +50,7 @@ class ignition::gui::plugins::CameraFpsPrivate
   public: QString cameraFPSValue;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -127,5 +127,5 @@ void CameraFps::SetCameraFpsValue(const QString &_value)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::CameraFps,
-                    ignition::gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::CameraFps,
+                    gz::gui::Plugin)
