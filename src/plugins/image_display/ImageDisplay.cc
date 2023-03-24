@@ -188,6 +188,18 @@ void ImageDisplay::ProcessImage()
       common::Image::ConvertToRGBImage<uint8_t>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output);
       break;
+    case msgs::PixelFormatType::BAYER_BGGR8:
+      common::Image::ConvertToRGBImage<uint8_t>(
+          this->dataPtr->imageMsg.data().c_str(), width, height, output);
+      break;
+    case msgs::PixelFormatType::BAYER_GBRG8:
+      common::Image::ConvertToRGBImage<uint8_t>(
+          this->dataPtr->imageMsg.data().c_str(), width, height, output);
+      break;
+    case msgs::PixelFormatType::BAYER_GRBG8:
+      common::Image::ConvertToRGBImage<uint8_t>(
+          this->dataPtr->imageMsg.data().c_str(), width, height, output);
+      break;
     default:
     {
       gzwarn << "Unsupported image type: "
