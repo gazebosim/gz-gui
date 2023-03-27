@@ -18,6 +18,16 @@
 #ifndef IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
 #define IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
 
+#ifndef _WIN32
+#  define KeyPublisher_EXPORTS_API
+#else
+#  if (defined(KeyPublisher_EXPORTS))
+#    define KeyPublisher_EXPORTS_API __declspec(dllexport)
+#  else
+#    define KeyPublisher_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 #include <ignition/gui/qt.h>
 
 #include <memory>
@@ -35,7 +45,7 @@ namespace gui
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class KeyPublisher : public ignition::gui::Plugin
+  class KeyPublisher_EXPORTS_API KeyPublisher : public ignition::gui::Plugin
   {
     Q_OBJECT
 

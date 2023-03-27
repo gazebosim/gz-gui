@@ -80,5 +80,7 @@ if(TARGET UNIT_ign_TEST)
     ENVIRONMENT "${_env_vars}")
 endif()
 
-add_subdirectory(cmd)
+if(NOT WIN32)
+  add_subdirectory(cmd)
+endif()
 add_subdirectory(plugins)

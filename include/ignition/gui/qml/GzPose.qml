@@ -34,6 +34,7 @@ import QtQuick.Controls.Styles 1.4
  *  GzPose {
  *    id: gzPose
  *    readOnly: false
+ *    useRadian: true
  *    xValue: xValueFromCPP
  *    yValue: yValueFromCPP
  *    zValue: zValueFromCPP
@@ -58,6 +59,9 @@ Item {
 
   // Read-only / write
   property bool readOnly: false
+
+  // Radian / Degree as the unit for Rotation
+  property bool useRadian: true
 
   // User input value.
   property double xValue
@@ -222,7 +226,7 @@ Item {
 
         Text {
           id: rollText
-          text: 'Roll (rad)'
+          text: 'Roll ' + (useRadian ? '(rad)' : '(deg)')
           leftPadding: 5
           color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
           font.pointSize: 12
@@ -292,7 +296,7 @@ Item {
 
         Text {
           id: pitchText
-          text: 'Pitch (rad)'
+          text: 'Pitch ' + (useRadian ? '(rad)' : '(deg)')
           leftPadding: 5
           color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
           font.pointSize: 12
@@ -362,7 +366,7 @@ Item {
 
         Text {
           id: yawText
-          text: 'Yaw (rad)'
+          text: 'Yaw ' + (useRadian ? '(rad)' : '(deg)')
           leftPadding: 5
           color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
           font.pointSize: 12
