@@ -226,7 +226,7 @@ Item {
 
         Text {
           id: rollText
-          text: 'Roll (rad)'
+          text: 'Roll ' + (useRadian ? '(rad)' : '(deg)')
           leftPadding: 5
           color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
           font.pointSize: 12
@@ -296,7 +296,7 @@ Item {
 
         Text {
           id: pitchText
-          text: 'Pitch (rad)'
+          text: 'Pitch ' + (useRadian ? '(rad)' : '(deg)')
           leftPadding: 5
           color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
           font.pointSize: 12
@@ -366,7 +366,7 @@ Item {
 
         Text {
           id: yawText
-          text: 'Yaw (rad)'
+          text: 'Yaw ' + (useRadian ? '(rad)' : '(deg)')
           leftPadding: 5
           color: Material.theme == Material.Light ? "#444444" : "#bbbbbb"
           font.pointSize: 12
