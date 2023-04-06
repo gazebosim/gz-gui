@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
-#define IGNITION_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
 #include <algorithm>
 #include <memory>
@@ -25,7 +25,7 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/image.pb.h>
+#include <gz/msgs/image.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -40,7 +40,7 @@
 #  endif
 #endif
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 namespace ignition
 {
@@ -81,7 +81,7 @@ namespace plugins
     private: QImage img;
   };
 
-  /// \brief Display images coming through an Ignition transport topic.
+  /// \brief Display images coming through an Gazebo transport topic.
   ///
   /// ## Configuration
   ///
@@ -136,7 +136,7 @@ namespace plugins
 
     /// \brief Subscriber callback when new image is received
     /// \param[in] _msg New image
-    private: void OnImageMsg(const ignition::msgs::Image &_msg);
+    private: void OnImageMsg(const gz::msgs::Image &_msg);
 
     /// \internal
     /// \brief Pointer to private data.

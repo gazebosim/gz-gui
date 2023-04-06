@@ -19,17 +19,17 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/stringmsg.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-#include <ignition/transport/Node.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/MainWindow.hh"
 
 #include "Publisher.hh"
 
@@ -39,11 +39,11 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Publisher_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 TEST(PublisherTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
 {
   common::Console::SetVerbosity(4);

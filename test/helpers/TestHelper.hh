@@ -14,12 +14,12 @@
  * limitations under the License.
  *
  */
-#ifndef IGNITION_GUI_TESTHELPER_HH_
-#define IGNITION_GUI_TESTHELPER_HH_
+#ifndef GZ_GUI_TESTHELPER_HH_
+#define GZ_GUI_TESTHELPER_HH_
 
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/Export.hh>
-#include <ignition/gui/MainWindow.hh>
+#include <gz/gui/Application.hh>
+#include <gz/gui/Export.hh>
+#include <gz/gui/MainWindow.hh>
 
 #ifndef _WIN32
 #  define TestHelper_EXPORTS_API

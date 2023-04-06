@@ -24,14 +24,14 @@
 #include <string>
 #include <vector>
 
-#include <ignition/gui/Application.hh>
+#include <gz/gui/Application.hh>
 
-#include <ignition/transport/MessageInfo.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/transport/Publisher.hh>
+#include <gz/transport/MessageInfo.hh>
+#include <gz/transport/Node.hh>
+#include <gz/transport/Publisher.hh>
 
-#include <ignition/common/Console.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/plugin/Register.hh>
 #include "TopicViewer.hh"
 
 #define NAME_KEY "name"
@@ -73,7 +73,7 @@ namespace plugins
   class TopicViewerPrivate
   {
     /// \brief Node for Commincation
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Model to create it from the available topics and messages
     public: TopicsModel *model;
@@ -146,7 +146,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

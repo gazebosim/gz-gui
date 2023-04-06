@@ -17,24 +17,24 @@
 
 #include <gtest/gtest.h>
 #include <QtTest/QtTest>
-#include <ignition/common/Console.hh>
-#include <ignition/math/Color.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/msgs/pose_v.pb.h>
-#include <ignition/msgs/scene.pb.h>
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/math/Color.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/msgs/pose_v.pb.h>
+#include <gz/msgs/scene.pb.h>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "../helpers/TestHelper.hh"
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/MainWindow.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -42,7 +42,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./TransportSceneManager_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -212,9 +212,9 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_EQ(1u, visualVis->GeometryCount());
 
   // Change model pose
-  auto posePub = node.Advertise<ignition::msgs::Pose_V>("/test/pose");
+  auto posePub = node.Advertise<gz::msgs::Pose_V>("/test/pose");
 
-  ignition::msgs::Pose_V poseVMsg;
+  gz::msgs::Pose_V poseVMsg;
   auto poseMsg = poseVMsg.add_pose();
   poseMsg->set_id(1);
   poseMsg->set_name("box_model");
@@ -232,9 +232,9 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_EQ(math::Pose3d(5, 0, 0, 0, 0, 0), modelVis->LocalPose());
 
   // Delete model
-  auto deletePub = node.Advertise<ignition::msgs::UInt32_V>("/test/delete");
+  auto deletePub = node.Advertise<gz::msgs::UInt32_V>("/test/delete");
 
-  ignition::msgs::UInt32_V entityVMsg;
+  gz::msgs::UInt32_V entityVMsg;
   entityVMsg.add_data(1);
   deletePub.Publish(entityVMsg);
 

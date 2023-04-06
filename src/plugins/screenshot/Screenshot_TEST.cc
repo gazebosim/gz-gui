@@ -17,9 +17,9 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/boolean.pb.h>
-#include <ignition/msgs/stringmsg.pb.h>
-#include <ignition/rendering.hh>
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
+#include <gz/rendering.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -27,16 +27,16 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 #include "Screenshot.hh"
 
 int g_argc = 1;
@@ -45,7 +45,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Screenshot_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
-#define IGNITION_GUI_PLUGINS_KEYPUBLISHER_HH_
+#ifndef GZ_GUI_PLUGINS_KEYPUBLISHER_HH_
+#define GZ_GUI_PLUGINS_KEYPUBLISHER_HH_
 
 #ifndef _WIN32
 #  define KeyPublisher_EXPORTS_API
@@ -28,12 +28,12 @@
 #  endif
 #endif
 
-#include <ignition/gui/qt.h>
+#include <gz/gui/qt.h>
 
 #include <memory>
 
-#include <ignition/gui/Plugin.hh>
-#include <ignition/transport/Node.hh>
+#include <gz/gui/Plugin.hh>
+#include <gz/transport/Node.hh>
 
 namespace ignition
 {
@@ -45,7 +45,7 @@ namespace gui
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class KeyPublisher_EXPORTS_API KeyPublisher : public ignition::gui::Plugin
+  class KeyPublisher_EXPORTS_API KeyPublisher : public gz::gui::Plugin
   {
     Q_OBJECT
 

@@ -24,21 +24,21 @@
 #include <string>
 #include <vector>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/KeyEvent.hh>
-#include <ignition/common/MouseEvent.hh>
-#include <ignition/math/Vector2.hh>
-#include <ignition/math/Vector3.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/KeyEvent.hh>
+#include <gz/common/MouseEvent.hh>
+#include <gz/math/Vector2.hh>
+#include <gz/math/Vector3.hh>
 
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/boolean.pb.h>
+#include <gz/msgs/boolean.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering
 // is disabling the warnings
@@ -46,26 +46,26 @@
 #pragma warning(push, 0)
 #endif
 
-#include <ignition/rendering/Camera.hh>
-#include <ignition/rendering/RayQuery.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
-#include <ignition/rendering/Utils.hh>
+#include <gz/rendering/Camera.hh>
+#include <gz/rendering/RayQuery.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
+#include <gz/rendering/Utils.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Conversions.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/Helpers.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Conversions.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/Helpers.hh"
+#include "gz/gui/MainWindow.hh"
 
-Q_DECLARE_METATYPE(ignition::gui::plugins::RenderSync*)
+Q_DECLARE_METATYPE(gz::gui::plugins::RenderSync*)
 
 /// \brief Private data class for IgnRenderer
 class ignition::gui::plugins::IgnRenderer::Implementation
@@ -153,7 +153,7 @@ class ignition::gui::plugins::IgnRenderer::Implementation
 ///
 ///
 /// For more info see
-/// https://github.com/ignitionrobotics/ign-rendering/issues/304
+/// https://github.com/gazebosim/gz-rendering/issues/304
 class ignition::gui::plugins::RenderSync
 {
   /// \brief Cond. variable to synchronize rendering on specific events
@@ -225,7 +225,7 @@ class ignition::gui::plugins::MinimalScene::Implementation
 {
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -329,10 +329,10 @@ void IgnRenderer::Render(RenderSync *_renderSync)
   // view control
   this->HandleMouseEvent();
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::PreRender());
   }
 
@@ -361,10 +361,10 @@ void IgnRenderer::Render(RenderSync *_renderSync)
     node.Request(viewControlService, req, cb);
   }
 
-  if (ignition::gui::App())
+  if (gz::gui::App())
   {
-    ignition::gui::App()->sendEvent(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>(),
+    gz::gui::App()->sendEvent(
+        gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::Render());
   }
   _renderSync->ReleaseQtThreadFromBlock(lock);
@@ -570,7 +570,7 @@ std::string IgnRenderer::Initialize()
     std::map<std::string, std::string> params;
     params["useCurrentGLContext"] = "1";
     params["winID"] = std::to_string(
-        ignition::gui::App()->findChild<ignition::gui::MainWindow *>()->
+        gz::gui::App()->findChild<gz::gui::MainWindow *>()->
         QuickWindow()->winId());
     engine = rendering::engine(this->engineName, params);
   }
@@ -851,7 +851,7 @@ void TextureNode::PrepareNode()
   // However we need to synchronize the threads when resolution changes,
   // and we're also currently doing everything in lockstep (i.e. both Qt
   // and worker thread are serialized,
-  // see https://github.com/ignitionrobotics/ign-rendering/issues/304 )
+  // see https://github.com/gazebosim/gz-rendering/issues/304 )
   //
   // We need to emit even if newId == 0 because it's safe as long as both
   // threads are forcefully serialized and otherwise we may get a
@@ -1212,14 +1212,14 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::OnHovered(const ignition::math::Vector2i &_hoverPos)
+void RenderWindowItem::OnHovered(const gz::math::Vector2i &_hoverPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewHoverEvent(_hoverPos);
 }
 
 /////////////////////////////////////////////////
 void RenderWindowItem::OnDropped(const QString &_drop,
-    const ignition::math::Vector2i &_dropPos)
+    const gz::math::Vector2i &_dropPos)
 {
   this->dataPtr->renderThread->ignRenderer.NewDropEvent(
     _drop.toStdString(), _dropPos);
@@ -1354,5 +1354,5 @@ void MinimalScene::SetLoadingError(const QString &_loadingError)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::MinimalScene,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::MinimalScene,
+                    gz::gui::Plugin)

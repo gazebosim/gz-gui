@@ -17,24 +17,24 @@
 
 #include <iostream>
 
-#include <ignition/gui/qt.h>
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/Dialog.hh>
-#include <ignition/gui/MainWindow.hh>
+#include <gz/gui/qt.h>
+#include <gz/gui/Application.hh>
+#include <gz/gui/Dialog.hh>
+#include <gz/gui/MainWindow.hh>
 
 //////////////////////////////////////////////////
 int main(int _argc, char **_argv)
 {
   // Increase verboosity so we see all messages
-  ignition::common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // Create app
-  ignition::gui::Application app(_argc, _argv, ignition::gui::WindowType::kDialog);
+  gz::gui::Application app(_argc, _argv, gz::gui::WindowType::kDialog);
 
   igndbg << "Open dialog" << std::endl;
 
   // Add and display a dialog
-  auto dialog = new ignition::gui::Dialog();
+  auto dialog = new gz::gui::Dialog();
   dialog->QuickWindow();
 
   std::string qmlFile(":start_dialog/start_dialog.qml");
@@ -45,7 +45,7 @@ int main(int _argc, char **_argv)
     return -1;
   }
 
-  QQmlComponent dialogComponent(ignition::gui::App()->Engine(),
+  QQmlComponent dialogComponent(gz::gui::App()->Engine(),
       QString(QString::fromStdString(qmlFile)));
   if (dialogComponent.isError())
   {

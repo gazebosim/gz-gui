@@ -15,11 +15,11 @@
  *
 */
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
 #include "TestInvalidQmlPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

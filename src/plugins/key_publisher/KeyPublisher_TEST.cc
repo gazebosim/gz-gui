@@ -18,19 +18,19 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/int32.pb.h>
+#include <gz/msgs/int32.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
-#include "ignition/gui/qt.h"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
+#include "gz/gui/qt.h"
 #include "test_config.h"  // NOLINT(build/include)
 
 #include "KeyPublisher.hh"
@@ -41,7 +41,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./KeyPublisher_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 class KeyPublisherTest : public ::testing::Test

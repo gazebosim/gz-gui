@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2022 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,34 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
-#ifndef IGNITION_GUI_QT_H_
-#define IGNITION_GUI_QT_H_
-
-#ifndef _MSC_VER
-#pragma GCC system_header
-#endif
-
-#include <QtCore>
-
-#include <QGuiApplication>
-#include <QApplication>
-
-#include <QOffscreenSurface>
-#include <QOpenGLFunctions>
-
-#include <QQmlApplicationEngine>
-#include <QQmlComponent>
-#include <QQmlContext>
-#include <QQmlEngine>
-
-#include <QQuickItem>
-#include <QQuickStyle>
-#include <QQuickWindow>
-
-#include <QSGSimpleTextureNode>
-#include <QStandardItemModel>
-
-
-#endif  // IGNITION_GUI_QT_H_
+#include <gz/gui/qt.h>
+#include <ignition/gui/config.hh>

@@ -16,11 +16,11 @@
 */
 
 #include <iostream>
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
 #include "HelloPlugin.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

@@ -14,10 +14,10 @@
  * limitations under the License.
  *
 */
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 #include "TransportPlotting.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -39,6 +39,6 @@ TransportPlotting::TransportPlotting() : Plugin(),
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::TransportPlotting,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::TransportPlotting,
+                    gz::gui::Plugin)
 
