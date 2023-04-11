@@ -58,7 +58,12 @@ namespace plugins
     /// \brief Holds iterations
     public: QString iterations;
 
+    /// \brief Time delayed version if simTime used for computing a low-pass
+    /// filtered RTF
     public: std::optional<double> simTimeDelayed;
+
+    /// \brief Time delayed version if realTime used for computing a low-pass
+    /// filtered RTF
     public: std::optional<double> realTimeDelayed;
   };
 }
