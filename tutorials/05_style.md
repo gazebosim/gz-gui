@@ -81,7 +81,7 @@ You can try running the following command for example:
 
     QT_QUICK_CONTROLS_MATERIAL_THEME=Dark QT_QUICK_CONTROLS_MATERIAL_PRIMARY=Blue gz gui -v 4
 
-\note Any previously saved default configuration (usually stored in ~/.ignition/gui/default.config) will override
+\note Any previously saved default configuration (usually stored in ~/.gz/gui/default.config) will override
 these environment variable preferences.
 
 \note Toolbar colors can't be changed through environment variables yet.
