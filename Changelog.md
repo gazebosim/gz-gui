@@ -2,6 +2,58 @@
 
 ### Gazebo GUI 7.X.X (202X-XX-XX)
 
+### Gazebo GUI 7.1.0 (2023-03-10)
+
+
+1. Set View Camera controller from plugin configuration
+    * [Pull request #506](https://github.com/gazebosim/gz-gui/pull/506)
+
+1. Add service for configuring view control sensitivity
+    * [Pull request #504](https://github.com/gazebosim/gz-gui/pull/504)
+
+1. Fix large / unexpected camera movements
+    * [Pull request #502](https://github.com/gazebosim/gz-gui/pull/502)
+
+1. Added Reset button to world_control
+    * [Pull request #476](https://github.com/gazebosim/gz-gui/pull/476)
+    * [Pull request #505](https://github.com/gazebosim/gz-gui/pull/505)
+
+1. Add view control reference visual
+    * [Pull request #500](https://github.com/gazebosim/gz-gui/pull/500)
+
+1. Tries to fix a scenario when a user sends a malformed point cloud
+    * [Pull request #494](https://github.com/gazebosim/gz-gui/pull/494)
+
+1. Fix mistaken dialog error message
+    * [Pull request #472](https://github.com/gazebosim/gz-gui/pull/472)
+
+1. Replace color and pose for GridConfig with GzColor and GzPose
+    * [Pull request #463](https://github.com/gazebosim/gz-gui/pull/463)
+
+1. Replace pose in Grid3d with GzPose
+    * [Pull request #461](https://github.com/gazebosim/gz-gui/pull/461)
+
+1. Remove redundant namespace references
+    * [Pull request #460](https://github.com/gazebosim/gz-gui/pull/460)
+
+1. Update codeowners
+    * [Pull request #465](https://github.com/gazebosim/gz-gui/pull/465)
+
+1. Fix warnings on Jammy
+    * [Pull request #464](https://github.com/gazebosim/gz-gui/pull/464)
+
+1. GzColor ColorDialogue fix
+    * [Pull request #459](https://github.com/gazebosim/gz-gui/pull/459)
+
+1. Fix attribute update when <dialog> isn't present
+    * [Pull request #455](https://github.com/gazebosim/gz-gui/pull/455)
+
+1. Add plotting to common widget pose
+    * [Pull request #439](https://github.com/gazebosim/gz-gui/pull/439)
+
+1. Add test for Plugin::ConfigStr()
+    * [Pull request #447](https://github.com/gazebosim/gz-gui/pull/447)
+
 ### Gazebo GUI 7.0.0 (2022-09-XX)
 
 1. Use RTLD_NODELETE=true when loading libraries

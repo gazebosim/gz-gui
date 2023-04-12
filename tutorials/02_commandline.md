@@ -34,4 +34,4 @@ If you have Gazebo Tools installed, you can use the `gz gui` command line tool:
       --versions                 Show the available versions.
 
 When using the command line tool, all console messages are logged to
-`$HOME/.ignition/gui/log/<timestamp>`.
+`$HOME/.gz/gui/log/<timestamp>`.

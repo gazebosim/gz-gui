@@ -187,7 +187,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_TRUE(rep.data());
 
   // Many update loops to process many events
-  maxSleep = 300;
+  maxSleep = 600;
   for (auto it : {150.0, 200.0})
   {
     // Move target

@@ -5,7 +5,7 @@ Previous Tutorial: \ref examples
 ## Overview
 
 Screenshots of the current 3D scene can be taken using the screenshot plugin.
-The default directory for saved screenshots is in `~/.ignition/gui/pictures` and
+The default directory for saved screenshots is in `~/.gz/gui/pictures` and
 the filename will be the timestamp of when the screenshot was taken.
 It is possible to change the default directory to a different location, which will
 be shown in the example below.
@@ -26,7 +26,7 @@ To take a screenshot of the 3D scene, click on the camera icon:
 
 @image html images/screenshot_button.png
 
-The default location of saved screenshots is `~/.ignition/gui/pictures`, to change
+The default location of saved screenshots is `~/.gz/gui/pictures`, to change
 this click on the folder icon:
 
 @image html images/screenshot_change_directory.png
