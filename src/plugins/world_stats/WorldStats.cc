@@ -57,6 +57,14 @@ namespace plugins
 
     /// \brief Holds iterations
     public: QString iterations;
+
+    /// \brief Time delayed version if simTime used for computing a low-pass
+    /// filtered RTF
+    public: std::optional<double> simTimeDelayed;
+
+    /// \brief Time delayed version if realTime used for computing a low-pass
+    /// filtered RTF
+    public: std::optional<double> realTimeDelayed;
   };
 }
 }
@@ -207,30 +215,65 @@ void WorldStats::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  std::chrono::steady_clock::time_point timePoint;
+  std::chrono::steady_clock::time_point simTimePoint;
+  std::chrono::steady_clock::time_point realTimePoint;
 
   if (this->dataPtr->msg.has_sim_time())
   {
-    timePoint = math::secNsecToTimePoint(
+    simTimePoint = math::secNsecToTimePoint(
         this->dataPtr->msg.sim_time().sec(),
         this->dataPtr->msg.sim_time().nsec());
     this->SetSimTime(QString::fromStdString(
-      math::timePointToString(timePoint)));
+      math::timePointToString(simTimePoint)));
   }
 
   if (this->dataPtr->msg.has_real_time())
   {
-    timePoint = math::secNsecToTimePoint(
+    realTimePoint = math::secNsecToTimePoint(
         this->dataPtr->msg.real_time().sec(),
         this->dataPtr->msg.real_time().nsec());
     this->SetRealTime(QString::fromStdString(
-      math::timePointToString(timePoint)));
+      math::timePointToString(realTimePoint)));
   }
 
   {
-    // RTF as a percentage.
-    double rtf = this->dataPtr->msg.real_time_factor() * 100;
-    this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
+    const double simTimeCount =
+        static_cast<double>(simTimePoint.time_since_epoch().count());
+    const double realTimeCount =
+        static_cast<double>(realTimePoint.time_since_epoch().count());
+
+    if (realTimeCount > 0)
+    {
+      constexpr double kAlpha = 0.9;
+      this->dataPtr->simTimeDelayed =
+        kAlpha * this->dataPtr->simTimeDelayed.value_or(simTimeCount) +
+        (1.0 - kAlpha) * simTimeCount;
+
+      this->dataPtr->realTimeDelayed =
+        kAlpha * this->dataPtr->realTimeDelayed.value_or(realTimeCount) +
+        (1.0 - kAlpha) * realTimeCount;
+
+      // Compute the average sim and real times.
+      const double realTimeFiltered =
+          realTimeCount - (*this->dataPtr->realTimeDelayed);
+      const double simTimeFiltered =
+          simTimeCount - (*this->dataPtr->simTimeDelayed);
+
+      // RTF, only compute this if the realTime count is greater than zero. The
+      // realtTime count could be zero if simulation was started paused.
+      if (realTimeFiltered > 0)
+      {
+        const double rtf =
+            math::precision(simTimeFiltered / realTimeFiltered, 4) * 100;
+        this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
+      }
+    }
+    else
+    {
+      // RTF as a percentage.
+      double rtf = this->dataPtr->msg.real_time_factor() * 100;
+      this->SetRealTimeFactor(QString::number(rtf, 'f', 2) + " %");
+    }
   }
 
   {
@@ -239,7 +282,7 @@ void WorldStats::ProcessMsg()
 }
 
 /////////////////////////////////////////////////
-void WorldStats::OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg)
+void WorldStats::OnWorldStatsMsg(const msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
@@ -300,5 +343,5 @@ void WorldStats::SetIterations(const QString &_iterations)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::plugins::WorldStats,
-                    gz::gui::Plugin)
+GZ_ADD_PLUGIN(WorldStats,
+              gui::Plugin)

@@ -27,9 +27,6 @@ namespace gz
   {
     class DialogPrivate
     {
-      /// \brief default dialog config
-      public: std::string config{""};
-
       /// \brief Pointer to quick window
       public: QQuickWindow *quickWindow{nullptr};
     };
@@ -51,9 +48,11 @@ Dialog::Dialog()
       App()->Engine()->rootObjects().value(0));
   if (!this->dataPtr->quickWindow)
   {
+    // We'd only get here if the QML file is malformed
+    // LCOV_EXCL_START
     gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
            << "]" << std::endl;
-    return;
+    // LCOV_EXCL_STOP
   }
 }
 
@@ -74,7 +73,10 @@ QQuickItem *Dialog::RootItem() const
   auto dialogItem = this->dataPtr->quickWindow->findChild<QQuickItem *>();
   if (!dialogItem)
   {
+    // We'd only get here if the QML file is malformed
+    // LCOV_EXCL_START
     gzerr << "Internal error: Null dialog root item!" << std::endl;
+    // LCOV_EXCL_STOP
   }
 
   return dialogItem;
@@ -84,7 +86,7 @@ QQuickItem *Dialog::RootItem() const
 bool Dialog::UpdateConfigAttribute(const std::string &_path,
   const std::string &_attribute, const bool _value) const
 {
-  if (_path.empty())
+  if (!common::exists(_path))
   {
     gzerr << "Missing config file" << std::endl;
     return false;
@@ -101,6 +103,7 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
   }
 
   // Update attribute value for the correct dialog
+  bool updated{false};
   for (auto dialogElem = doc.FirstChildElement("dialog");
     dialogElem != nullptr;
     dialogElem = dialogElem->NextSiblingElement("dialog"))
@@ -108,30 +111,35 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
     if (dialogElem->Attribute("name") == this->objectName().toStdString())
     {
       dialogElem->SetAttribute(_attribute.c_str(), _value);
+      updated = true;
     }
   }
 
-  // Write config file
-  tinyxml2::XMLPrinter printer;
-  doc.Print(&printer);
-
-  std::string config = printer.CStr();
-  std::ofstream out(_path.c_str(), std::ios::out);
-  if (!out)
+  // Create new <dialog> if missing
+  if (!updated)
   {
-    gzerr << "Unable to open file: " << _path
-          << ".\nCheck file permissions.\n";
+    auto dialogElem = doc.NewElement("dialog");
+    dialogElem->SetAttribute("name", this->objectName().toStdString().c_str());
+    dialogElem->SetAttribute(_attribute.c_str(), _value);
+    doc.InsertEndChild(dialogElem);
   }
-  else
-    out << config;
+
+  // Write config file
+  if (doc.SaveFile(_path.c_str()) != tinyxml2::XML_SUCCESS)
+  {
+    // LCOV_EXCL_START
+    gzerr << "Failed to save file: " << _path
+           << ".\nCheck file permissions.\n";
+    // LCOV_EXCL_STOP
+  }
 
   return true;
 }
 
 /////////////////////////////////////////////////
-void Dialog::SetDefaultConfig(const std::string &_config)
+void Dialog::SetDefaultConfig(const std::string &)
 {
-  this->dataPtr->config = _config;
+  gzwarn << "Dialog::SetDefaultConfig has no effect." << std::endl;
 }
 
 /////////////////////////////////////////////////

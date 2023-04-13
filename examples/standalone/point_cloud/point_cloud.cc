@@ -18,6 +18,8 @@
 #include <gz/msgs/float_v.pb.h>
 #include <gz/msgs/pointcloud_packed.pb.h>
 
+#include <gz/msgs/PointCloudPackedUtils.hh>
+#include <gz/msgs/Utility.hh>
 #include <gz/transport/Node.hh>
 
 #include <atomic>

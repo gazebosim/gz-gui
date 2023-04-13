@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Open Source Robotics Foundation
+ * Copyright (C) 2023 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- */
+*/
 
-#include <gz/gui/gz_auto_headers.hh>
-#include <ignition/gui/config.hh>
+import QtQuick 2.9
+import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
+
+Rectangle {
+  id: cameraFps
+  color: "transparent"
+  Layout.minimumWidth: 150
+  Layout.minimumHeight: 80
+
+  RowLayout {
+    id: cameraFpsLayout
+    anchors.fill: parent
+    anchors.margins: 10
+
+    Label {
+      ToolTip.text: qsTr("Camera FPS")
+      font.weight: Font.DemiBold
+      text: "FPS"
+    }
+
+    Label {
+      objectName: "cameraFps"
+      text: CameraFps.cameraFPSValue
+      Layout.alignment: Qt.AlignRight
+    }
+  }
+}

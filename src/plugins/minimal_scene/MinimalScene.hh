@@ -68,6 +68,8 @@ namespace plugins
   ///                        defaults to 90
   /// * \<graphics_api\> : Optional graphics API name. Valid choices are:
   ///                      'opengl', 'metal'. Defaults to 'opengl'.
+  /// * \<view_controller> : Set the view controller (InteractiveViewControl
+  ///                        currently supports types: ortho or orbit).
   class MinimalScene : public Plugin
   {
     Q_OBJECT
@@ -246,6 +248,9 @@ namespace plugins
     /// \brief Horizontal FOV of the camera;
     public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
 
+    /// \brief View controller type
+    public: std::string cameraViewController{""};
+
     /// \internal
     /// \brief Pointer to private data.
     GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
@@ -373,6 +378,10 @@ namespace plugins
     /// \brief Set the graphics API
     /// \param[in] _graphicsAPI The type of graphics API
     public: void SetGraphicsAPI(const rendering::GraphicsAPI& _graphicsAPI);
+
+    /// \brief Set the camera view controller
+    /// \param[in] _view_controller The camera view controller type to set
+    public: void SetCameraViewController(const std::string &_view_controller);
 
     /// \brief Slot called when thread is ready to be started
     public Q_SLOTS: void Ready();

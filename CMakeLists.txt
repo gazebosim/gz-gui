@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(gz-gui7 VERSION 7.0.0)
+project(gz-gui7 VERSION 7.1.0)
 
 #============================================================================
 # Find gz-cmake
@@ -16,7 +16,7 @@ find_package(gz-cmake3 REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-gz_configure_project(VERSION_SUFFIX pre1)
+gz_configure_project(VERSION_SUFFIX)
 
 #============================================================================
 # Set project-specific options
@@ -75,8 +75,9 @@ set(GZ_RENDERING_VER ${gz-rendering7_VERSION_MAJOR})
 gz_find_package(gz-msgs9 REQUIRED)
 set(GZ_MSGS_VER ${gz-msgs9_VERSION_MAJOR})
 
-#--------------------------------------
-# Find if gz command is available
+# Find if command is available. This is used to enable tests.
+# Note that CLI files are installed regardless of whether the dependency is
+# available during build time
 find_program(HAVE_GZ_TOOLS gz)
 set(GZ_TOOLS_VER 2)
 
