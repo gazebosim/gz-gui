@@ -122,10 +122,6 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
     }
   };
 
-  // Check scene
-  auto engine = rendering::engine("ogre2");
-  ASSERT_NE(nullptr, engine);
-
   int sleep = 0;
   int maxSleep = 30;
   while (!receivedRenderEvent && sleep < maxSleep)
@@ -136,6 +132,10 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   }
   EXPECT_TRUE(receivedPreRenderEvent);
   EXPECT_TRUE(receivedRenderEvent);
+
+  // Check scene
+  auto engine = rendering::engine("ogre2");
+  ASSERT_NE(nullptr, engine);
 
   EXPECT_EQ(1u, engine->SceneCount());
   auto scene = engine->SceneByName("banana");
@@ -172,4 +172,5 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   win->QuickWindow()->close();
   engine->DestroyScene(scene);
+  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
