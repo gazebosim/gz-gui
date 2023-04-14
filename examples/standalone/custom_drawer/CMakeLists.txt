@@ -17,7 +17,7 @@ find_package (Qt5
   REQUIRED
 )
 
-# Find the Ignition gui library
+# Find the Gazebo gui library
 find_package(ignition-gui6 REQUIRED)
 
 QT5_ADD_RESOURCES(resources_RCC custom_drawer.qrc)

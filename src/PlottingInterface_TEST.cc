@@ -19,19 +19,19 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
+#include <gz/msgs.hh>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/transport.hh>
-#include <ignition/common/Console.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/transport.hh>
+#include <gz/common/Console.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Enums.hh"
-#include "ignition/gui/PlottingInterface.hh"
+#include "gz/gui/Enums.hh"
+#include "gz/gui/PlottingInterface.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 //////////////////////////////////////////////////
@@ -45,8 +45,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Topic))
 
   // prepare the msg
   msgs::Collision msg;
-  auto pose = new ignition::msgs::Pose();
-  auto vector3d = new ignition::msgs::Vector3d();
+  auto pose = new gz::msgs::Pose();
+  auto vector3d = new gz::msgs::Vector3d();
   vector3d->set_x(10);
   vector3d->set_z(15);
   pose->set_allocated_position(vector3d);
@@ -179,8 +179,8 @@ TEST(PlottingInterfaceTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(Transport))
 
   // prepare the msg
   msgs::Collision msg;
-  auto pose = new ignition::msgs::Pose();
-  auto vector3d = new ignition::msgs::Vector3d();
+  auto pose = new gz::msgs::Pose();
+  auto vector3d = new gz::msgs::Vector3d();
   vector3d->set_x(10);
   vector3d->set_z(15);
   pose->set_allocated_position(vector3d);

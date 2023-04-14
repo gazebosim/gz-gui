@@ -15,9 +15,9 @@
  *
 */
 
-#include "ignition/gui/GuiEvents.hh"
+#include "gz/gui/GuiEvents.hh"
 
-class ignition::gui::events::SnapIntervals::Implementation
+class gz::gui::events::SnapIntervals::Implementation
 {
   /// \brief XYZ snapping values in meters, these values must be positive.
   public: math::Vector3d xyz;
@@ -31,122 +31,122 @@ class ignition::gui::events::SnapIntervals::Implementation
   public: math::Vector3d scale;
 };
 
-class ignition::gui::events::SpawnFromDescription::Implementation
+class gz::gui::events::SpawnFromDescription::Implementation
 {
   /// \brief The string of the resource to be spawned.
   public: std::string description;
 };
 
-class ignition::gui::events::SpawnFromPath::Implementation
+class gz::gui::events::SpawnFromPath::Implementation
 {
   /// \brief The path of file to be previewed.
   public: std::string filePath;
 };
 
-class ignition::gui::events::HoverToScene::Implementation
+class gz::gui::events::HoverToScene::Implementation
 {
   /// \brief The 3D point over which the user is hovering.
   public: math::Vector3d point;
 };
 
-class ignition::gui::events::HoverOnScene::Implementation
+class gz::gui::events::HoverOnScene::Implementation
 {
   /// \brief The 2D point over which the user is hovering.
   public: common::MouseEvent mouse;
 };
 
-class ignition::gui::events::LeftClickToScene::Implementation
+class gz::gui::events::LeftClickToScene::Implementation
 {
   /// \brief The 3D point that the user clicked within the scene.
   public: math::Vector3d point;
 };
 
-class ignition::gui::events::RightClickToScene::Implementation
+class gz::gui::events::RightClickToScene::Implementation
 {
   /// \brief The 3D point that the user clicked within the scene.
   public: math::Vector3d point;
 };
 
-class ignition::gui::events::DropdownMenuEnabled::Implementation
+class gz::gui::events::DropdownMenuEnabled::Implementation
 {
   /// \brief The boolean indicating whether the menu is disabled or not
   /// for this event.
   public: bool menuEnabled;
 };
 
-class ignition::gui::events::LeftClickOnScene::Implementation
+class gz::gui::events::LeftClickOnScene::Implementation
 {
   /// \brief Mouse event
   public: common::MouseEvent mouse;
 };
 
-class ignition::gui::events::RightClickOnScene::Implementation
+class gz::gui::events::RightClickOnScene::Implementation
 {
   /// \brief Mouse event
   public: common::MouseEvent mouse;
 };
 
-class ignition::gui::events::BlockOrbit::Implementation
+class gz::gui::events::BlockOrbit::Implementation
 {
   public: bool block;
 };
 
-class ignition::gui::events::KeyReleaseOnScene::Implementation
+class gz::gui::events::KeyReleaseOnScene::Implementation
 {
   /// \brief Key event
   public: common::KeyEvent key;
 };
 
-class ignition::gui::events::KeyPressOnScene::Implementation
+class gz::gui::events::KeyPressOnScene::Implementation
 {
   /// \brief Key event
   public: common::KeyEvent key;
 };
 
-class ignition::gui::events::SpawnCloneFromName::Implementation
+class gz::gui::events::SpawnCloneFromName::Implementation
 {
   /// \brief The name of the resource to be cloned
   public: std::string name;
 };
 
-class ignition::gui::events::DropOnScene::Implementation
+class gz::gui::events::DropOnScene::Implementation
 {
   /// \brief The name of the dropped thing
   public: std::string dropText;
 
   /// \brief X and Y position of the mouse
-  public: ignition::math::Vector2i mouse;
+  public: gz::math::Vector2i mouse;
 };
 
-class ignition::gui::events::ScrollOnScene::Implementation
+class gz::gui::events::ScrollOnScene::Implementation
 {
   /// \brief Mouse event with scroll information.
   public: common::MouseEvent mouse;
 };
 
-class ignition::gui::events::DragOnScene::Implementation
+class gz::gui::events::DragOnScene::Implementation
 {
   /// \brief Mouse event with drag information.
   public: common::MouseEvent mouse;
 };
 
-class ignition::gui::events::MousePressOnScene::Implementation
+class gz::gui::events::MousePressOnScene::Implementation
 {
   /// \brief Mouse event with press information.
   public: common::MouseEvent mouse;
 };
 
-class ignition::gui::events::WorldControl::Implementation
+class gz::gui::events::WorldControl::Implementation
 {
   /// \brief WorldControl information.
   public: msgs::WorldControl worldControl;
 };
 
-class ignition::gui::events::PreRender::Implementation
+class gz::gui::events::PreRender::Implementation
 {
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace events;
 
@@ -354,7 +354,7 @@ const std::string &SpawnCloneFromName::Name() const
 
 /////////////////////////////////////////////////
 DropOnScene::DropOnScene(
-  const std::string &_dropText, const ignition::math::Vector2i &_dropMouse)
+  const std::string &_dropText, const gz::math::Vector2i &_dropMouse)
     : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
   this->dataPtr->dropText = _dropText;
@@ -368,7 +368,7 @@ const std::string &DropOnScene::DropText() const
 }
 
 /////////////////////////////////////////////////
-const ignition::math::Vector2i &DropOnScene::Mouse() const
+const gz::math::Vector2i &DropOnScene::Mouse() const
 {
   return this->dataPtr->mouse;
 }

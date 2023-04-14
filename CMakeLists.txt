@@ -13,7 +13,10 @@ find_package(ignition-cmake2 2.14 REQUIRED)
 #============================================================================
 # Configure the project
 #============================================================================
-ign_configure_project(VERSION_SUFFIX)
+ign_configure_project(
+  REPLACE_IGNITION_INCLUDE_PATH gz/gui
+  VERSION_SUFFIX
+)
 
 #============================================================================
 # Set project-specific options

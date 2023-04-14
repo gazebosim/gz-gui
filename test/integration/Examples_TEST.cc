@@ -17,12 +17,12 @@
 
 #include <gtest/gtest.h>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/Application.hh"
+#include "gz/gui/Application.hh"
 
 int g_argc = 1;
 char* g_argv[] =
@@ -30,10 +30,10 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./Examples_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
-// See https://github.com/ignitionrobotics/ign-gui/issues/75
+// See https://github.com/gazebosim/gz-gui/issues/75
 /////////////////////////////////////////////////
 TEST(ExampleTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Configs))
 {

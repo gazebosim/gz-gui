@@ -19,11 +19,11 @@
 
 #include <string>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/StringUtils.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/StringUtils.hh>
+#include <gz/plugin/Register.hh>
 
-#include "ignition/gui/Helpers.hh"
+#include "gz/gui/Helpers.hh"
 
 namespace ignition
 {
@@ -34,13 +34,13 @@ namespace plugins
   class WorldStatsPrivate
   {
     /// \brief Message holding latest world statistics
-    public: ignition::msgs::WorldStatistics msg;
+    public: gz::msgs::WorldStatistics msg;
 
     /// \brief Mutex to protect msg
     public: std::recursive_mutex mutex;
 
     /// \brief Communication node
-    public: ignition::transport::Node node;
+    public: gz::transport::Node node;
 
     /// \brief Holds real time factor
     public: QString realTimeFactor;
@@ -58,7 +58,7 @@ namespace plugins
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 

@@ -7,7 +7,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/DragDropModel.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/GuiEvents.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/ign.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/gz.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/PlottingInterface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
@@ -22,7 +22,7 @@ set (gtest_sources
   DragDropModel_TEST.cc
   Helpers_TEST.cc
   GuiEvents_TEST.cc
-  ign_TEST.cc
+  gz_TEST.cc
   MainWindow_TEST.cc
   PlottingInterface_TEST.cc
   Plugin_TEST.cc
@@ -41,7 +41,7 @@ endif()
 # this test currently fails on brew (issue #27)
 # so disable it for now
 if (NOT HAVE_IGN_TOOLS OR APPLE)
-  list(REMOVE_ITEM gtest_sources ign_TEST.cc)
+  list(REMOVE_ITEM gtest_sources gz_TEST.cc)
 endif()
 
 ign_build_tests(TYPE UNIT
@@ -59,7 +59,7 @@ foreach(test ${gtest_targets})
     "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
 endforeach()
 
-if(TARGET UNIT_ign_TEST)
+if(TARGET UNIT_gz_TEST)
   # Running `ign gazebo` on macOS has problems when run with /usr/bin/ruby
   # due to System Integrity Protection (SIP). Try to find ruby from
   # homebrew as a workaround.
@@ -67,16 +67,16 @@ if(TARGET UNIT_ign_TEST)
     find_program(BREW_RUBY ruby HINTS /usr/local/opt/ruby/bin)
   endif()
 
-  target_compile_definitions(UNIT_ign_TEST PRIVATE
+  target_compile_definitions(UNIT_gz_TEST PRIVATE
       "BREW_RUBY=\"${BREW_RUBY} \"")
 
-  target_compile_definitions(UNIT_ign_TEST PRIVATE
+  target_compile_definitions(UNIT_gz_TEST PRIVATE
       "IGN_PATH=\"${HAVE_IGN_TOOLS}\"")
 
   set(_env_vars)
   list(APPEND _env_vars "IGN_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf")
 
-  set_tests_properties(UNIT_ign_TEST PROPERTIES
+  set_tests_properties(UNIT_gz_TEST PROPERTIES
     ENVIRONMENT "${_env_vars}")
 endif()
 

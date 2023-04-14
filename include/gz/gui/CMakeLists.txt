@@ -34,7 +34,7 @@ set (headers
   DragDropModel.hh
   Enums.hh
   Helpers.hh
-  ign.hh
+  gz.hh
   qt.h
   SearchModel.hh
   System.hh
@@ -68,4 +68,3 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
 )
 
 ign_install_all_headers()
-

@@ -18,9 +18,9 @@
 #include <gtest/gtest.h>
 
 #include "test_config.h"  // NOLINT(build/include)
-#include "ignition/gui/GuiEvents.hh"
+#include "gz/gui/GuiEvents.hh"
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////
@@ -73,7 +73,7 @@ TEST(GuiEventsTest, HoverToScene)
 TEST(GuiEventsTest, HoverOnScene)
 {
 
-  ignition::common::MouseEvent mouse;
+  gz::common::MouseEvent mouse;
   mouse.SetAlt(true);
   mouse.SetShift(true);
   mouse.SetDragging(false);
@@ -100,7 +100,7 @@ TEST(GuiEventsTest, LeftClickToScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, LeftClickOnScene)
 {
-  ignition::common::MouseEvent mouse;
+  gz::common::MouseEvent mouse;
   mouse.SetAlt(true);
   mouse.SetShift(true);
   events::LeftClickOnScene event(mouse);
@@ -123,7 +123,7 @@ TEST(GuiEventsTest, RightClickToScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, RightClickOnScene)
 {
-  ignition::common::MouseEvent mouse;
+  gz::common::MouseEvent mouse;
   mouse.SetControl(true);
   mouse.SetAlt(true);
   events::RightClickOnScene event(mouse);
@@ -137,7 +137,7 @@ TEST(GuiEventsTest, RightClickOnScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, KeyPressOnScene)
 {
-  ignition::common::KeyEvent key;
+  gz::common::KeyEvent key;
   key.SetKey(49);
   key.SetControl(true);
   key.SetAlt(false);
@@ -154,7 +154,7 @@ TEST(GuiEventsTest, KeyPressOnScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, KeyReleaseOnScene)
 {
-  ignition::common::KeyEvent key;
+  gz::common::KeyEvent key;
   key.SetKey(49);
   key.SetControl(true);
   key.SetAlt(true);
@@ -206,17 +206,17 @@ TEST(GuiEventsTest, SpawnCloneFromName)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, DropOnScene)
 {
-  events::DropOnScene dropOnScene("text", ignition::math::Vector2i(3, 100));
+  events::DropOnScene dropOnScene("text", gz::math::Vector2i(3, 100));
 
   EXPECT_LT(QEvent::User, dropOnScene.type());
-  EXPECT_EQ(ignition::math::Vector2i(3, 100), dropOnScene.Mouse());
+  EXPECT_EQ(gz::math::Vector2i(3, 100), dropOnScene.Mouse());
   EXPECT_EQ("text", dropOnScene.DropText());
 }
 
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, ScrollOnScene)
 {
-  ignition::common::MouseEvent mouse;
+  gz::common::MouseEvent mouse;
   mouse.SetControl(true);
   mouse.SetAlt(true);
   events::ScrollOnScene event(mouse);
@@ -230,7 +230,7 @@ TEST(GuiEventsTest, ScrollOnScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, DragOnScene)
 {
-  ignition::common::MouseEvent mouse;
+  gz::common::MouseEvent mouse;
   mouse.SetControl(true);
   mouse.SetAlt(true);
   events::DragOnScene event(mouse);
@@ -244,7 +244,7 @@ TEST(GuiEventsTest, DragOnScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, MousePressOnScene)
 {
-  ignition::common::MouseEvent mouse;
+  gz::common::MouseEvent mouse;
   mouse.SetControl(true);
   mouse.SetAlt(true);
   events::MousePressOnScene event(mouse);
@@ -258,7 +258,7 @@ TEST(GuiEventsTest, MousePressOnScene)
 /////////////////////////////////////////////////
 TEST(GuiEventsTest, WorldControl)
 {
-  ignition::msgs::WorldControl worldControl;
+  gz::msgs::WorldControl worldControl;
   worldControl.set_pause(true);
   worldControl.set_step(true);
   worldControl.set_multi_step(5u);

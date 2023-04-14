@@ -5,12 +5,12 @@ Previous Tutorial: \ref style
 
 ## Overview
 
-Ignition GUI comes with several examples of plugins and other files
+Gazebo GUI comes with several examples of plugins and other files
 under the `examples` folder.
 
 ## Standalone applications
 
-Ignition GUI can be used as a C++ library by other applications.
+Gazebo GUI can be used as a C++ library by other applications.
 
 Examples provided under `examples/standalone` can be compiled and run without
 the `ign gui` command line tool.
@@ -30,7 +30,7 @@ Then run it:
 
 ## Custom plugins
 
-Ignition GUI comes with several plugins, but its true power is loading custom
+Gazebo GUI comes with several plugins, but its true power is loading custom
 plugins developed by others. Under `examples/plugins`, there are several
 examples on how to build different types of plugins.
 
@@ -42,7 +42,7 @@ For example, we can build the `hello_plugin` example plugin:
     cmake ..
     make
 
-Then create the plugins directory and copy the generated library to it so that Ignition GUI can find the plugin:
+Then create the plugins directory and copy the generated library to it so that Gazebo GUI can find the plugin:
 
     mkdir -p ~/.ignition/gui/plugins
     # Linux
@@ -61,7 +61,7 @@ Now you can use the command line to open it:
 
 ## Configuration files
 
-Configuration files are used to load an Ignition GUI window with several
+Configuration files are used to load an Gazebo GUI window with several
 plugins and custom window configurations.
 
 Example configuration files are provided in the `/examples/config` folder.

@@ -21,19 +21,19 @@
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs/stringmsg.pb.h>
+#include <gz/msgs/stringmsg.pb.h>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/utilities/ExtraTestMacros.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/transport/Node.hh>
+#include <gz/utilities/ExtraTestMacros.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/Plugin.hh"
 #include "test_config.h"  // NOLINT(build/include)
 #include "TopicEcho.hh"
 
@@ -43,7 +43,7 @@ char* g_argv[] =
   reinterpret_cast<char*>(const_cast<char*>("./TopicEcho_TEST")),
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

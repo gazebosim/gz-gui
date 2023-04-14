@@ -140,465 +140,485 @@
 1. Removed unused code in `MinimalScene` plugin
     * [Pull request #359](https://github.com/gazebosim/gz-gui/pull/359)
 
-### Ignition Gui 6.4.0 (2022-02-01)
+### Gazebo Gui 6.4.0 (2022-02-01)
 
 1. Improve inserting WorldControl and WorldStats from menu
-    * [Pull request #349](https://github.com/ignitionrobotics/ign-gui/pull/349)
+    * [Pull request #349](https://github.com/gazebosim/gz-gui/pull/349)
 
 1. Added a button that allows shutting down both the client and server.
-    * [Pull request #335](https://github.com/ignitionrobotics/ign-gui/pull/335)
+    * [Pull request #335](https://github.com/gazebosim/gz-gui/pull/335)
 
 1. Prevent Scene3D 💥 if another scene is already loaded
-    * [Pull request #347](https://github.com/ignitionrobotics/ign-gui/pull/347)
+    * [Pull request #347](https://github.com/gazebosim/gz-gui/pull/347)
 
 1. Add project() to examples and remove hard-dependency on Ogre1
-    * [Pull request #345](https://github.com/ignitionrobotics/ign-gui/pull/345)
+    * [Pull request #345](https://github.com/gazebosim/gz-gui/pull/345)
 
-### Ignition Gui 6.3.0 (2022-01-06)
+### Gazebo Gui 6.3.0 (2022-01-06)
 
 1. NavSat (GPS) map plugin
-    * [Pull request #342](https://github.com/ignitionrobotics/ign-gui/pull/342)
+    * [Pull request #342](https://github.com/gazebosim/gz-gui/pull/342)
 
-### Ignition Gui 6.2.0 (2021-12-08)
+### Gazebo Gui 6.2.0 (2021-12-08)
 
 1. Grid config: set values from startup and improve layout
-    * [Pull request #324](https://github.com/ignitionrobotics/ign-gui/pull/324)
+    * [Pull request #324](https://github.com/gazebosim/gz-gui/pull/324)
 
 1. Fix codecheck
-    * [Pull request #332](https://github.com/ignitionrobotics/ign-gui/pull/332)
-    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
+    * [Pull request #332](https://github.com/gazebosim/gz-gui/pull/332)
+    * [Pull request #329](https://github.com/gazebosim/gz-gui/pull/329)
 
 1. Offer a way to disable warnings on marker manager
-    * [Pull request #326](https://github.com/ignitionrobotics/ign-gui/pull/326)
+    * [Pull request #326](https://github.com/gazebosim/gz-gui/pull/326)
 
 1. Add PreRender event to MinimalScene
-    * [Pull request #325](https://github.com/ignitionrobotics/ign-gui/pull/325)
+    * [Pull request #325](https://github.com/gazebosim/gz-gui/pull/325)
 
 1. Use qmldir to define QML module with IgnSpinBox
-    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+    * [Pull request #319](https://github.com/gazebosim/gz-gui/pull/319)
 
 1. Fix TopicEcho plugin message display
-    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+    * [Pull request #322](https://github.com/gazebosim/gz-gui/pull/322)
 
 1. Don't set visual scale for point markers
-    * [Pull request #321](https://github.com/ignitionrobotics/ign-gui/pull/321)
+    * [Pull request #321](https://github.com/gazebosim/gz-gui/pull/321)
 
 1. Set marker point size from message
-    * [Pull request #317](https://github.com/ignitionrobotics/ign-gui/pull/317)
+    * [Pull request #317](https://github.com/gazebosim/gz-gui/pull/317)
 
 1. Don't crash if a plugin has invalid QML
-    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+    * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
 1. Added log storing for ign-gui
-    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
+    * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
-### Ignition Gui 6.1.0 (2021-11-05)
+### Gazebo Gui 6.1.0 (2021-11-05)
 
 1. Improved doxygen
-    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+    * [Pull request #275](https://github.com/gazebosim/gz-gui/pull/275)
 
 1. Fix mimimal scene deadlock on shutdown
-    * [Pull request #300](https://github.com/ignitionrobotics/ign-gui/pull/300)
+    * [Pull request #300](https://github.com/gazebosim/gz-gui/pull/300)
 
 1. Fix memory leak
-    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+    * [Pull request #287](https://github.com/gazebosim/gz-gui/pull/287)
 
 1. Set near/far camera clipping distance
-    * [Pull request #309](https://github.com/ignitionrobotics/ign-gui/pull/309)
+    * [Pull request #309](https://github.com/gazebosim/gz-gui/pull/309)
 
 1. Support emitting an event on play/pause/step
-    * [Pull request #306](https://github.com/ignitionrobotics/ign-gui/pull/306)
+    * [Pull request #306](https://github.com/gazebosim/gz-gui/pull/306)
 
-### Ignition Gui 6.0.0 (2021-09-XX)
+### Gazebo Gui 6.0.0 (2021-09-XX)
 
 1. Add a filter to the plugin menu
-    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+    * [Pull request #277](https://github.com/gazebosim/gz-gui/pull/277)
 
 1. New events
 
     1. Drop
-        * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
+        * [Pull request #282](https://github.com/gazebosim/gz-gui/pull/282)
 
     1. SpawnCloneFromName
-        * [Pull request #278](https://github.com/ignitionrobotics/ign-gui/pull/278)
+        * [Pull request #278](https://github.com/gazebosim/gz-gui/pull/278)
 
     1. HoverOnScene
-        * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
+        * [Pull request #273](https://github.com/gazebosim/gz-gui/pull/273)
 
     1. Mouse Events based on ignition::common
-        * [Pull request #228](https://github.com/ignitionrobotics/ign-gui/pull/228)
+        * [Pull request #228](https://github.com/gazebosim/gz-gui/pull/228)
 
 1. New plugins
 
     1. Interactive view control
-        * [Pull request #231](https://github.com/ignitionrobotics/ign-gui/pull/231)
+        * [Pull request #231](https://github.com/gazebosim/gz-gui/pull/231)
 
     1. Marker Manager
-        * [Pull request #247](https://github.com/ignitionrobotics/ign-gui/pull/247)
+        * [Pull request #247](https://github.com/gazebosim/gz-gui/pull/247)
 
     1. Moved tape measure and grid config from ign-gazebo to ign-gui
-        * [Pull request #236](https://github.com/ignitionrobotics/ign-gui/pull/236)
+        * [Pull request #236](https://github.com/gazebosim/gz-gui/pull/236)
 
 1. PIMPL GUI events
-    * [Pull request #253](https://github.com/ignitionrobotics/ign-gui/pull/253)
+    * [Pull request #253](https://github.com/gazebosim/gz-gui/pull/253)
 
 1. Added winID to fix second windows in OGRE2.2
-    * [Pull request #292](https://github.com/ignitionrobotics/ign-gui/pull/292)
+    * [Pull request #292](https://github.com/gazebosim/gz-gui/pull/292)
 
 1. Added camera tracking
-    * [Pull request #226](https://github.com/ignitionrobotics/ign-gui/pull/226)
-    * [Pull request #254](https://github.com/ignitionrobotics/ign-gui/pull/254)
+    * [Pull request #226](https://github.com/gazebosim/gz-gui/pull/226)
+    * [Pull request #254](https://github.com/gazebosim/gz-gui/pull/254)
 
 1. Split transport scene manager into a plugin outside Scene3D. Adds MinimalScene
-    * [Pull request #221](https://github.com/ignitionrobotics/ign-gui/pull/221)
-    * [Pull request #284](https://github.com/ignitionrobotics/ign-gui/pull/284)
-    * [Pull request #285](https://github.com/ignitionrobotics/ign-gui/pull/285)
-    * [Pull request #268](https://github.com/ignitionrobotics/ign-gui/pull/268)
-    * [Pull request #224](https://github.com/ignitionrobotics/ign-gui/pull/224)
-    * [Pull request #282](https://github.com/ignitionrobotics/ign-gui/pull/282)
-    * [Pull request #273](https://github.com/ignitionrobotics/ign-gui/pull/273)
-    * [Pull request #286](https://github.com/ignitionrobotics/ign-gui/pull/286)
-    * [Pull request #295](https://github.com/ignitionrobotics/ign-gui/pull/295)
+    * [Pull request #221](https://github.com/gazebosim/gz-gui/pull/221)
+    * [Pull request #284](https://github.com/gazebosim/gz-gui/pull/284)
+    * [Pull request #285](https://github.com/gazebosim/gz-gui/pull/285)
+    * [Pull request #268](https://github.com/gazebosim/gz-gui/pull/268)
+    * [Pull request #224](https://github.com/gazebosim/gz-gui/pull/224)
+    * [Pull request #282](https://github.com/gazebosim/gz-gui/pull/282)
+    * [Pull request #273](https://github.com/gazebosim/gz-gui/pull/273)
+    * [Pull request #286](https://github.com/gazebosim/gz-gui/pull/286)
+    * [Pull request #295](https://github.com/gazebosim/gz-gui/pull/295)
 
 1. Remove deprecations: tock
-    * [Pull request #243](https://github.com/ignitionrobotics/ign-gui/pull/243)
+    * [Pull request #243](https://github.com/gazebosim/gz-gui/pull/243)
 
 1. Depend on ign-msgs8, ign-transport11, ign-rendering6
-    * [Pull request #210](https://github.com/ignitionrobotics/ign-gui/pull/210)
+    * [Pull request #210](https://github.com/gazebosim/gz-gui/pull/210)
 
 1. Infrastructure
-    * [Pull request #207](https://github.com/ignitionrobotics/ign-gui/pull/207)
-    * [Pull request #219](https://github.com/ignitionrobotics/ign-gui/pull/219)
-    * [Pull request #266](https://github.com/ignitionrobotics/ign-gui/pull/266)
-    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+    * [Pull request #207](https://github.com/gazebosim/gz-gui/pull/207)
+    * [Pull request #219](https://github.com/gazebosim/gz-gui/pull/219)
+    * [Pull request #266](https://github.com/gazebosim/gz-gui/pull/266)
+    * [Pull request #274](https://github.com/gazebosim/gz-gui/pull/274)
 
-## Ignition Gui 5
+## Gazebo Gui 5
 
-### Ignition Gui 5.5.0 (2022-03-28)
+### Gazebo Gui 5.5.0 (2022-03-28)
 
 1. Fix some Qt warnings
-    * [Pull request #376](https://github.com/ignitionrobotics/ign-gui/pull/376)
+    * [Pull request #376](https://github.com/gazebosim/gz-gui/pull/376)
 
 1. Added Snackbar QtQuick object
-    * [Pull request #369](https://github.com/ignitionrobotics/ign-gui/pull/369)
-    * [Pull request #370](https://github.com/ignitionrobotics/ign-gui/pull/370)
+    * [Pull request #369](https://github.com/gazebosim/gz-gui/pull/369)
+    * [Pull request #370](https://github.com/gazebosim/gz-gui/pull/370)
 
 1. Fix menu scrolling when a new plugin is added
-    * [Pull request #368](https://github.com/ignitionrobotics/ign-gui/pull/368)
+    * [Pull request #368](https://github.com/gazebosim/gz-gui/pull/368)
 
 1. Improve KeyPublisher's usability
-    * [Pull request #362](https://github.com/ignitionrobotics/ign-gui/pull/362)
+    * [Pull request #362](https://github.com/gazebosim/gz-gui/pull/362)
 
 1. Backport GridConfig improvements to Grid3D
-    * [Pull request #363](https://github.com/ignitionrobotics/ign-gui/pull/363)
+    * [Pull request #363](https://github.com/gazebosim/gz-gui/pull/363)
 
-### Ignition Gui 5.4.0 (2022-01-31)
+### Gazebo Gui 5.4.0 (2022-01-31)
 
 1. Improve inserting WorldControl and WorldStats from menu
-    * [Pull request #349](https://github.com/ignitionrobotics/ign-gui/pull/349)
+    * [Pull request #349](https://github.com/gazebosim/gz-gui/pull/349)
 
 1. Added a button that allows shutting down both the client and server.
-    * [Pull request #335](https://github.com/ignitionrobotics/ign-gui/pull/335)
+    * [Pull request #335](https://github.com/gazebosim/gz-gui/pull/335)
 
 1. Prevent Scene3D 💥 if another scene is already loaded
-    * [Pull request #347](https://github.com/ignitionrobotics/ign-gui/pull/347)
+    * [Pull request #347](https://github.com/gazebosim/gz-gui/pull/347)
 
 1. Add project() to examples and remove hard-dependency on Ogre1
-    * [Pull request #345](https://github.com/ignitionrobotics/ign-gui/pull/345)
+    * [Pull request #345](https://github.com/gazebosim/gz-gui/pull/345)
 
 1. Fix codecheck
-    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
+    * [Pull request #329](https://github.com/gazebosim/gz-gui/pull/329)
 
 1. Use qmldir to define QML module with IgnSpinBox
-    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+    * [Pull request #319](https://github.com/gazebosim/gz-gui/pull/319)
 
 1. Fix TopicEcho plugin message display
-    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+    * [Pull request #322](https://github.com/gazebosim/gz-gui/pull/322)
 
 1. Don't crash if a plugin has invalid QML
-    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+    * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
 1. Added log storing for ign-gui
-    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
+    * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
 
-### Ignition Gui 5.3.0 (2021-10-13)
+### Gazebo Gui 5.3.0 (2021-10-13)
 
 1. Improved doxygen
-    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+    * [Pull request #275](https://github.com/gazebosim/gz-gui/pull/275)
 
 1. Fix memory leak
-    * [Pull request #287](https://github.com/ignitionrobotics/ign-gui/pull/287)
+    * [Pull request #287](https://github.com/gazebosim/gz-gui/pull/287)
 
 1. Add a filter to the plugin menu
-    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+    * [Pull request #277](https://github.com/gazebosim/gz-gui/pull/277)
 
 1. 👩‍🌾 Remove bitbucket-pipelines.yml
-    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+    * [Pull request #274](https://github.com/gazebosim/gz-gui/pull/274)
 
 1. Fix doc build error
-    * [Pull request #266](https://github.com/ignitionrobotics/ign-gui/pull/266)
+    * [Pull request #266](https://github.com/gazebosim/gz-gui/pull/266)
 
-### Ignition Gui 5.2.0 (2021-07-27)
+### Gazebo Gui 5.2.0 (2021-07-27)
 
 1. New teleop plugin implementation.
-    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
+    * [Pull request #245](https://github.com/gazebosim/gz-gui/pull/245)
 
 1. Fix plugin added signal, add PluginByName
-    * [Pull request #249](https://github.com/ignitionrobotics/ign-gui/pull/249)
+    * [Pull request #249](https://github.com/gazebosim/gz-gui/pull/249)
 
 1. Fixed tests by passing valid argv
-    * [Pull request #244](https://github.com/ignitionrobotics/ign-gui/pull/244)
+    * [Pull request #244](https://github.com/gazebosim/gz-gui/pull/244)
 
 1. Screenshot plugin fixed dbg message
-    * [Pull request #246](https://github.com/ignitionrobotics/ign-gui/pull/246)
+    * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
 1. Detect ign instead of using cmake module to check for ignition-tools
-    * [Pull request #240](https://github.com/ignitionrobotics/ign-gui/pull/240)
+    * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
-### Ignition Gui 5.1.0 (2021-06-23)
+### Gazebo Gui 5.1.0 (2021-06-23)
 
 1. Depend on common 4.1 and rendering 5.1
-    * [Pull request #238](https://github.com/ignitionrobotics/ign-gui/pull/238)
+    * [Pull request #238](https://github.com/gazebosim/gz-gui/pull/238)
 
 1. Update codeowners
-    * [Pull request #232](https://github.com/ignitionrobotics/ign-gui/pull/232)
+    * [Pull request #232](https://github.com/gazebosim/gz-gui/pull/232)
 
 1. Confirmation dialog when closing main window
-    * [Pull request #225](https://github.com/ignitionrobotics/ign-gui/pull/225)
+    * [Pull request #225](https://github.com/gazebosim/gz-gui/pull/225)
 
 1. Avoid Grid3D crash
-    * [Pull request #227](https://github.com/ignitionrobotics/ign-gui/pull/227)
+    * [Pull request #227](https://github.com/gazebosim/gz-gui/pull/227)
 
 1. Emit more events from Scene3D
-    * [Pull request #213](https://github.com/ignitionrobotics/ign-gui/pull/213)
+    * [Pull request #213](https://github.com/gazebosim/gz-gui/pull/213)
 
 1. Removed duplicated code with `rendering::sceneFromFirstRenderEngine`
-    * [Pull request #223](https://github.com/ignitionrobotics/ign-gui/pull/223)
+    * [Pull request #223](https://github.com/gazebosim/gz-gui/pull/223)
 
 1. Remove `tools/code_check` and update codecov
-    * [Pull request #222](https://github.com/ignitionrobotics/ign-gui/pull/222)
+    * [Pull request #222](https://github.com/gazebosim/gz-gui/pull/222)
 
 1. Refactor Image Display to use ConvertToRGB function
-    * [Pull request #212](https://github.com/ignitionrobotics/ign-gui/pull/212)
+    * [Pull request #212](https://github.com/gazebosim/gz-gui/pull/212)
 
 1. Fixed material specular in Scene3D
-    * [Pull request #218](https://github.com/ignitionrobotics/ign-gui/pull/218)
+    * [Pull request #218](https://github.com/gazebosim/gz-gui/pull/218)
 
 1. Updated scale for capsule in Scene3D
-    * [Pull request #215](https://github.com/ignitionrobotics/ign-gui/pull/215)
+    * [Pull request #215](https://github.com/gazebosim/gz-gui/pull/215)
 
 1. Support Capsule and Ellipsoid in Scene3D
-    * [Pull request #214](https://github.com/ignitionrobotics/ign-gui/pull/214)
+    * [Pull request #214](https://github.com/gazebosim/gz-gui/pull/214)
 
 1. `check_test_ran.py`: remove grep/xsltproc
-    * [Pull request #203](https://github.com/ignitionrobotics/ign-gui/pull/203)
+    * [Pull request #203](https://github.com/gazebosim/gz-gui/pull/203)
 
-### Ignition Gui 5.0.0 (2021-03-31)
+### Gazebo Gui 5.0.0 (2021-03-31)
 
 1. Bump in edifice: ign-common4
-    * [Pull request #169](https://github.com/ignitionrobotics/ign-gui/pull/169)
+    * [Pull request #169](https://github.com/gazebosim/gz-gui/pull/169)
 
 1. Bump in edifice: ign-msgs7 and ign-transport10
-    * [Pull request #167](https://github.com/ignitionrobotics/ign-gui/pull/167)
+    * [Pull request #167](https://github.com/gazebosim/gz-gui/pull/167)
 
 1. Bump in edifice: ign-rendering5
-    * [Pull request #141](https://github.com/ignitionrobotics/ign-gui/pull/141)
+    * [Pull request #141](https://github.com/gazebosim/gz-gui/pull/141)
 
 1. Documentation updates
-    * [Pull request #202](https://github.com/ignitionrobotics/ign-gui/pull/202)
-    * [Pull request #204](https://github.com/ignitionrobotics/ign-gui/pull/204)
+    * [Pull request #202](https://github.com/gazebosim/gz-gui/pull/202)
+    * [Pull request #204](https://github.com/gazebosim/gz-gui/pull/204)
 
-## Ignition Gui 4
+## Gazebo Gui 4
 
-### Ignition Gui 4.X.X
+### Gazebo Gui 4.X.X
 
-### Ignition Gui 4.X.X (20XX-XX-XX)
+### Gazebo Gui 4.X.X (20XX-XX-XX)
 
 
-### Ignition Gui 4.5.0 (2021-07-26)
+### Gazebo Gui 4.5.0 (2021-07-26)
 
 1. New teleop plugin implementation.
-    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
+    * [Pull request #245](https://github.com/gazebosim/gz-gui/pull/245)
 
 1. Fix codeowners
-    * [Pull request #251](https://github.com/ignitionrobotics/ign-gui/pull/251)
+    * [Pull request #251](https://github.com/gazebosim/gz-gui/pull/251)
 
 1. Fix plugin added signal, add PluginByName
-    * [Pull request #249](https://github.com/ignitionrobotics/ign-gui/pull/249)
+    * [Pull request #249](https://github.com/gazebosim/gz-gui/pull/249)
 
 1. Fixed tests by passing valid argv
-    * [Pull request #244](https://github.com/ignitionrobotics/ign-gui/pull/244)
+    * [Pull request #244](https://github.com/gazebosim/gz-gui/pull/244)
 
 1. Screenshot plugin fixed dbg message
-    * [Pull request #246](https://github.com/ignitionrobotics/ign-gui/pull/246)
+    * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
 1. Detect ign instead of using cmake module to check for ignition-tools
-    * [Pull request #240](https://github.com/ignitionrobotics/ign-gui/pull/240)
+    * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
-### Ignition Gui 4.4.0 (2021-06-21)
+### Gazebo Gui 4.4.0 (2021-06-21)
 
 1. Bump required ign-rendering version to 4.8
-    * [Pull request #234](https://github.com/ignitionrobotics/ign-gui/pull/234)
+    * [Pull request #234](https://github.com/gazebosim/gz-gui/pull/234)
 
 1. Update codeowners
-    * [Pull request #232](https://github.com/ignitionrobotics/ign-gui/pull/232)
+    * [Pull request #232](https://github.com/gazebosim/gz-gui/pull/232)
 
 1. Confirmation dialog when closing main window
-    * [Pull request #225](https://github.com/ignitionrobotics/ign-gui/pull/225)
+    * [Pull request #225](https://github.com/gazebosim/gz-gui/pull/225)
 
 1. Avoid grid3D crash
-    * [Pull request #227](https://github.com/ignitionrobotics/ign-gui/pull/227)
+    * [Pull request #227](https://github.com/gazebosim/gz-gui/pull/227)
 
 1. Emit more events from Scene3D
-    * [Pull request #213](https://github.com/ignitionrobotics/ign-gui/pull/213)
+    * [Pull request #213](https://github.com/gazebosim/gz-gui/pull/213)
 
 1. Removed duplicated code with rendering::sceneFromFirstRenderEngine
-    * [Pull request #223](https://github.com/ignitionrobotics/ign-gui/pull/223)
+    * [Pull request #223](https://github.com/gazebosim/gz-gui/pull/223)
 
 1. Remove `tools/code_check` and update codecov
-    * [Pull request #222](https://github.com/ignitionrobotics/ign-gui/pull/222)
+    * [Pull request #222](https://github.com/gazebosim/gz-gui/pull/222)
 
 1. Refactor Image Display to use ConvertToRGB function
-    * [Pull request #212](https://github.com/ignitionrobotics/ign-gui/pull/212)
+    * [Pull request #212](https://github.com/gazebosim/gz-gui/pull/212)
 
 1. Fixed material specular in scene3D
-    * [Pull request #218](https://github.com/ignitionrobotics/ign-gui/pull/218)
+    * [Pull request #218](https://github.com/gazebosim/gz-gui/pull/218)
 
 1. `check_test_ran.py`: remove grep/xsltproc
-    * [Pull request #203](https://github.com/ignitionrobotics/ign-gui/pull/203)
+    * [Pull request #203](https://github.com/gazebosim/gz-gui/pull/203)
 
 1. Improve the height of plugins in the right split
-    * [Pull request #194](https://github.com/ignitionrobotics/ign-gui/pull/194)
+    * [Pull request #194](https://github.com/gazebosim/gz-gui/pull/194)
 
 1. Scene3D: port mesh material fixes from ign-gazebo
-    * [Pull request #191](https://github.com/ignitionrobotics/ign-gui/pull/191)
+    * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
 
-### Ignition Gui 4.3.0 (2021-03-11)
+### Gazebo Gui 4.3.0 (2021-03-11)
 
 1. Screenshot plugin
-    * [Pull request #170](https://github.com/ignitionrobotics/ign-gui/pull/170)
+    * [Pull request #170](https://github.com/gazebosim/gz-gui/pull/170)
 
 1. Master branch updates
-    * [Pull request #187](https://github.com/ignitionrobotics/ign-gui/pull/187)
+    * [Pull request #187](https://github.com/gazebosim/gz-gui/pull/187)
 
 1. 👩‍🌾 Disable tests that initialize App on macOS: they're all flaky
-    * [Pull request #184](https://github.com/ignitionrobotics/ign-gui/pull/184)
+    * [Pull request #184](https://github.com/gazebosim/gz-gui/pull/184)
 
 1. Remove issue & PR templates
-    * [Pull request #181](https://github.com/ignitionrobotics/ign-gui/pull/181)
+    * [Pull request #181](https://github.com/gazebosim/gz-gui/pull/181)
 
 1. Backport Publisher test from v4
-    * [Pull request #173](https://github.com/ignitionrobotics/ign-gui/pull/173)
+    * [Pull request #173](https://github.com/gazebosim/gz-gui/pull/173)
 
 1. Fix version number
-    * [Pull request #179](https://github.com/ignitionrobotics/ign-gui/pull/179)
+    * [Pull request #179](https://github.com/gazebosim/gz-gui/pull/179)
 
 1. Better error messages when component can't be loaded
-    * [Pull request #175](https://github.com/ignitionrobotics/ign-gui/pull/175)
+    * [Pull request #175](https://github.com/gazebosim/gz-gui/pull/175)
 
 1. Make Grid3D plugin more flexible
-    * [Pull request #172](https://github.com/ignitionrobotics/ign-gui/pull/172)
+    * [Pull request #172](https://github.com/gazebosim/gz-gui/pull/172)
 
 1. Add Windows Installation
-    * [Pull request #168](https://github.com/ignitionrobotics/ign-gui/pull/168)
+    * [Pull request #168](https://github.com/gazebosim/gz-gui/pull/168)
 
-### Ignition Gui 4.2.0 (2021-02-09)
+### Gazebo Gui 4.2.0 (2021-02-09)
 
 1. Added issue and PR templates
-    * [Pull request 174](https://github.com/ignitionrobotics/ign-gui/pull/174)
+    * [Pull request 174](https://github.com/gazebosim/gz-gui/pull/174)
 
 1. Visualize single channel 8 bit image data
-    * [Pull request 176](https://github.com/ignitionrobotics/ign-gui/pull/176)
+    * [Pull request 176](https://github.com/gazebosim/gz-gui/pull/176)
 
-### Ignition Gui 4.1.1 (2021-01-05)
+### Gazebo Gui 4.1.1 (2021-01-05)
 
 1. Use default value of double ptr argv for CLI
-    * [Pull request 165](https://github.com/ignitionrobotics/ign-gui/pull/165)
+    * [Pull request 165](https://github.com/gazebosim/gz-gui/pull/165)
 
 1. Generate valid topics depending on world name
-    * [Pull request 164](https://github.com/ignitionrobotics/ign-gui/pull/164)
+    * [Pull request 164](https://github.com/gazebosim/gz-gui/pull/164)
 
-### Ignition Gui 4.1.0 (2020-12-18)
+### Gazebo Gui 4.1.0 (2020-12-18)
 
 1. Publish plugin API docs
-    * [Pull request 128](https://github.com/ignitionrobotics/ign-gui/pull/128)
+    * [Pull request 128](https://github.com/gazebosim/gz-gui/pull/128)
 
 1. Tutorial tweaks
-    * [Pull request 132](https://github.com/ignitionrobotics/ign-gui/pull/132)
+    * [Pull request 132](https://github.com/gazebosim/gz-gui/pull/132)
 
 1. Floating and standalone plugins respect minimum dimensions
-    * [Pull request 135](https://github.com/ignitionrobotics/ign-gui/pull/135)
+    * [Pull request 135](https://github.com/gazebosim/gz-gui/pull/135)
 
 1. Add scrollable indicator for plugin menu
-    * [Pull request 134](https://github.com/ignitionrobotics/ign-gui/pull/134)
+    * [Pull request 134](https://github.com/gazebosim/gz-gui/pull/134)
 
 1. Add qml-module-qtcharts dependency
-    * [Pull request 136](https://github.com/ignitionrobotics/ign-gui/pull/136)
+    * [Pull request 136](https://github.com/gazebosim/gz-gui/pull/136)
 
 1. Re-enable image.config test
-    * [Pull request 140](https://github.com/ignitionrobotics/ign-gui/pull/140)
+    * [Pull request 140](https://github.com/gazebosim/gz-gui/pull/140)
 
 1. Improve fork experience
-    * [Pull request 139](https://github.com/ignitionrobotics/ign-gui/pull/139)
+    * [Pull request 139](https://github.com/gazebosim/gz-gui/pull/139)
 
 1. Resolve updated codecheck issues
-    * [Pull request 144](https://github.com/ignitionrobotics/ign-gui/pull/144)
-    * [Pull request 157](https://github.com/ignitionrobotics/ign-gui/pull/157)
+    * [Pull request 144](https://github.com/gazebosim/gz-gui/pull/144)
+    * [Pull request 157](https://github.com/gazebosim/gz-gui/pull/157)
 
 1. Port Gazebo GUI events to Ignition GUI
-    * [Pull request 148](https://github.com/ignitionrobotics/ign-gui/pull/148)
+    * [Pull request 148](https://github.com/gazebosim/gz-gui/pull/148)
 
 1. Change deprecated Qt::MidButton
-    * [Pull request 153](https://github.com/ignitionrobotics/ign-gui/pull/153)
+    * [Pull request 153](https://github.com/gazebosim/gz-gui/pull/153)
 
 1. Add right mouse events and tests
-    * [Pull request 154](https://github.com/ignitionrobotics/ign-gui/pull/154)
+    * [Pull request 154](https://github.com/gazebosim/gz-gui/pull/154)
 
 1. Avoid crash on macOS
-    * [Pull request 155](https://github.com/ignitionrobotics/ign-gui/pull/155)
+    * [Pull request 155](https://github.com/gazebosim/gz-gui/pull/155)
 
-### Ignition Gui 4.0.0 (2020-09-29)
+### Gazebo Gui 4.0.0 (2020-09-29)
 
 1. GitHub migration
-    * [Pull request 59](https://github.com/ignitionrobotics/ign-gui/pull/59)
+    * [Pull request 59](https://github.com/gazebosim/gz-gui/pull/59)
 
 1. Fixed ImageDisplay in Ubuntu 20.04
-    * [Pull request 88](https://github.com/ignitionrobotics/ign-gui/pull/88)
+    * [Pull request 88](https://github.com/gazebosim/gz-gui/pull/88)
 
 1. Re-enable publisher test
-    * [Pull request 85](https://github.com/ignitionrobotics/ign-gui/pull/85)
+    * [Pull request 85](https://github.com/gazebosim/gz-gui/pull/85)
 
 1. Disable TopicViewer test on Windows and macOS
-    * [Pull request 85](https://github.com/ignitionrobotics/ign-gui/pull/85)
+    * [Pull request 85](https://github.com/gazebosim/gz-gui/pull/85)
 
 1. Documentation updates
-    * [Pull request 106](https://github.com/ignitionrobotics/ign-gui/pull/106)
-    * [Pull request 130](https://github.com/ignitionrobotics/ign-gui/pull/130)
-    * [Pull request 127](https://github.com/ignitionrobotics/ign-gui/pull/127)
+    * [Pull request 106](https://github.com/gazebosim/gz-gui/pull/106)
+    * [Pull request 130](https://github.com/gazebosim/gz-gui/pull/130)
+    * [Pull request 127](https://github.com/gazebosim/gz-gui/pull/127)
 
 1. Fix qt anchor warnings
-    * [Pull request 126](https://github.com/ignitionrobotics/ign-gui/pull/126)
+    * [Pull request 126](https://github.com/gazebosim/gz-gui/pull/126)
 
 1. Plotting: transport plotting and interface
-    * [Pull request 115](https://github.com/ignitionrobotics/ign-gui/pull/115)
-    * [Pull request 125](https://github.com/ignitionrobotics/ign-gui/pull/125)
-    * [Pull request 124](https://github.com/ignitionrobotics/ign-gui/pull/124)
-    * [Pull request 89](https://github.com/ignitionrobotics/ign-gui/pull/89)
+    * [Pull request 115](https://github.com/gazebosim/gz-gui/pull/115)
+    * [Pull request 125](https://github.com/gazebosim/gz-gui/pull/125)
+    * [Pull request 124](https://github.com/gazebosim/gz-gui/pull/124)
+    * [Pull request 89](https://github.com/gazebosim/gz-gui/pull/89)
 
 1. Use std::chrono instead of common::Time
-    * [Pull request 116](https://github.com/ignitionrobotics/ign-gui/pull/116)
+    * [Pull request 116](https://github.com/gazebosim/gz-gui/pull/116)
 
 1. Depend on QtCharts and change application base class to QApplication
     * [BitBucket pull request 252](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/252)
 
 1. Depend on ign-msgs6 and ign-transport9
-    * [Pull request 92](https://github.com/ignitionrobotics/ign-gui/pull/92)
+    * [Pull request 92](https://github.com/gazebosim/gz-gui/pull/92)
 
 1. Depend on ign-rendering4
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/243)
 
 ## Gazebo GUI 3
+
+### Gazebo GUI 3.12.0 (2022-11-30)
+
+1. Add degree as an optional unit for rotation in GzPose.
+    * [Pull request #475](https://github.com/gazebosim/gz-gui/pull/475)
+
+1. Fix image display test.
+    * [Pull request #468](https://github.com/gazebosim/gz-gui/pull/468)
+
+1. Update cmd/CMakeLists to conform with all other gz libraries.
+    * [Pull request #478](https://github.com/gazebosim/gz-gui/pull/478)
+
+1. Add key publisher test.
+    * [Pull request #477](https://github.com/gazebosim/gz-gui/pull/477)
+
+1. Add pointer check in Application::RemovePlugin.
+    * [Pull request #501](https://github.com/gazebosim/gz-gui/pull/501)
+
+1. Ign to gz header migration.
+    * [Pull request #466](https://github.com/gazebosim/gz-gui/pull/466)
 
 ### Gazebo GUI 3.11.2 (2022-08-17)
 
@@ -643,7 +663,7 @@
 1. Ignition -> Gazebo
     * [Pull request #435](https://github.com/gazebosim/gz-gui/pull/435)
 
-### Ignition Gui 3.10.0 (2022-07-13)
+### Gazebo Gui 3.10.0 (2022-07-13)
 
 1. Add common widget for vector3
     * [Pull request #427](https://github.com/gazebosim/gz-gui/pull/427)
@@ -661,7 +681,7 @@
 1. Common widget GzColor
     * [Pull request #410](https://github.com/gazebosim/gz-gui/pull/410)
 
-1. Fix ign_TEST
+1. Fix gz_TEST
     * [Pull request #420](https://github.com/gazebosim/gz-gui/pull/420)
 
 1. Make display tests more robust
@@ -701,227 +721,227 @@
 1. Backport GridConfig improvements to Citadel's Grid3D
     * [Pull request #363](https://github.com/gazebosim/gz-gui/pull/363)
 
-### Ignition Gui 3.9.0 (2022-01-14)
+### Gazebo Gui 3.9.0 (2022-01-14)
 
 1. Added a button that allows shutting down both the client and server.
-    * [Pull request #335](https://github.com/ignitionrobotics/ign-gui/pull/335)
+    * [Pull request #335](https://github.com/gazebosim/gz-gui/pull/335)
 
 1. Prevent Scene3D 💥 if another scene is already loaded
-    * [Pull request #347](https://github.com/ignitionrobotics/ign-gui/pull/347)
+    * [Pull request #347](https://github.com/gazebosim/gz-gui/pull/347)
 
 1. Add project() to examples and remove hard-dependency on Ogre1
-    * [Pull request #345](https://github.com/ignitionrobotics/ign-gui/pull/345)
+    * [Pull request #345](https://github.com/gazebosim/gz-gui/pull/345)
 
 1. Fix codecheck
-    * [Pull request #329](https://github.com/ignitionrobotics/ign-gui/pull/329)
+    * [Pull request #329](https://github.com/gazebosim/gz-gui/pull/329)
 
 1. Use `qmldir` to define QML module with `IgnSpinBox`
-    * [Pull request #319](https://github.com/ignitionrobotics/ign-gui/pull/319)
+    * [Pull request #319](https://github.com/gazebosim/gz-gui/pull/319)
 
 1. Fix `TopicEcho` plugin message display
-    * [Pull request #322](https://github.com/ignitionrobotics/ign-gui/pull/322)
+    * [Pull request #322](https://github.com/gazebosim/gz-gui/pull/322)
 
 1. Don't crash if a plugin has invalid QML
-    * [Pull request #315](https://github.com/ignitionrobotics/ign-gui/pull/315)
+    * [Pull request #315](https://github.com/gazebosim/gz-gui/pull/315)
 
 1. Added log storing for `ign gui` CLI
-    * [Pull request #272](https://github.com/ignitionrobotics/ign-gui/pull/272)
+    * [Pull request #272](https://github.com/gazebosim/gz-gui/pull/272)
 
-### Ignition Gui 3.8.0 (2021-10-12)
+### Gazebo Gui 3.8.0 (2021-10-12)
 
 1. Improved doxygen
-    * [Pull request #275](https://github.com/ignitionrobotics/ign-gui/pull/275)
+    * [Pull request #275](https://github.com/gazebosim/gz-gui/pull/275)
 
 1. Add a filter to the plugin menu
-    * [Pull request #277](https://github.com/ignitionrobotics/ign-gui/pull/277)
+    * [Pull request #277](https://github.com/gazebosim/gz-gui/pull/277)
 
 1. 👩‍🌾 Remove bitbucket-pipelines.yml
-    * [Pull request #274](https://github.com/ignitionrobotics/ign-gui/pull/274)
+    * [Pull request #274](https://github.com/gazebosim/gz-gui/pull/274)
 
 1. Require ign-rendering 3.5
-    * [Pull request #264](https://github.com/ignitionrobotics/ign-gui/pull/264)
+    * [Pull request #264](https://github.com/gazebosim/gz-gui/pull/264)
 
 1. New teleop plugin implementation.
-    * [Pull request #245](https://github.com/ignitionrobotics/ign-gui/pull/245)
+    * [Pull request #245](https://github.com/gazebosim/gz-gui/pull/245)
 
-### Ignition Gui 3.7.0 (2021-07-14)
+### Gazebo Gui 3.7.0 (2021-07-14)
 
 1. Fix codeowners
-    * [Pull request #251](https://github.com/ignitionrobotics/ign-gui/pull/251)
+    * [Pull request #251](https://github.com/gazebosim/gz-gui/pull/251)
 
 1. Fix plugin added signal, add PluginByName
-    * [Pull request #249](https://github.com/ignitionrobotics/ign-gui/pull/249)
+    * [Pull request #249](https://github.com/gazebosim/gz-gui/pull/249)
 
 1. Fixed tests by passing valid argv
-    * [Pull request #244](https://github.com/ignitionrobotics/ign-gui/pull/244)
+    * [Pull request #244](https://github.com/gazebosim/gz-gui/pull/244)
 
 1. Screenshot plugin fixed dbg message
-    * [Pull request #246](https://github.com/ignitionrobotics/ign-gui/pull/246)
+    * [Pull request #246](https://github.com/gazebosim/gz-gui/pull/246)
 
 1. Detect ign instead of using cmake module to check for ignition-tools
-    * [Pull request #240](https://github.com/ignitionrobotics/ign-gui/pull/240)
+    * [Pull request #240](https://github.com/gazebosim/gz-gui/pull/240)
 
-### Ignition Gui 3.6.0 (2021-06-17)
+### Gazebo Gui 3.6.0 (2021-06-17)
 
 1. Update codeowners
-    * [Pull request #232](https://github.com/ignitionrobotics/ign-gui/pull/232)
+    * [Pull request #232](https://github.com/gazebosim/gz-gui/pull/232)
 
 1. Confirmation dialog when closing main window
-    * [Pull request #225](https://github.com/ignitionrobotics/ign-gui/pull/225)
+    * [Pull request #225](https://github.com/gazebosim/gz-gui/pull/225)
 
 1. Avoid grid3D crash
-    * [Pull request #227](https://github.com/ignitionrobotics/ign-gui/pull/227)
+    * [Pull request #227](https://github.com/gazebosim/gz-gui/pull/227)
 
 1. Emit more events from Scene3D
-    * [Pull request #213](https://github.com/ignitionrobotics/ign-gui/pull/213)
+    * [Pull request #213](https://github.com/gazebosim/gz-gui/pull/213)
 
 1. Removed duplicated code with rendering::sceneFromFirstRenderEngine
-    * [Pull request #223](https://github.com/ignitionrobotics/ign-gui/pull/223)
+    * [Pull request #223](https://github.com/gazebosim/gz-gui/pull/223)
 
 1. Remove `tools/code_check` and update codecov
-    * [Pull request #222](https://github.com/ignitionrobotics/ign-gui/pull/222)
+    * [Pull request #222](https://github.com/gazebosim/gz-gui/pull/222)
 
 1. Fixed material specular in `Scene3D`
-    * [Pull request #218](https://github.com/ignitionrobotics/ign-gui/pull/218)
+    * [Pull request #218](https://github.com/gazebosim/gz-gui/pull/218)
 
 1. `check_test_ran.py`: remove grep/xsltproc
-    * [Pull request #203](https://github.com/ignitionrobotics/ign-gui/pull/203)
+    * [Pull request #203](https://github.com/gazebosim/gz-gui/pull/203)
 
-### Ignition Gui 3.5.1 (2021-03-18)
+### Gazebo Gui 3.5.1 (2021-03-18)
 
 1. Scene3D: port mesh material fixes from ign-gazebo
-    * [Pull request #191](https://github.com/ignitionrobotics/ign-gui/pull/191)
+    * [Pull request #191](https://github.com/gazebosim/gz-gui/pull/191)
 
 1. Improve the height of plugins in the right split
-    * [Pull request #194](https://github.com/ignitionrobotics/ign-gui/pull/194)
+    * [Pull request #194](https://github.com/gazebosim/gz-gui/pull/194)
 
-### Ignition Gui 3.5.0 (2021-03-10)
+### Gazebo Gui 3.5.0 (2021-03-10)
 
 1. Screenshot plugin
-    * [Pull request #170](https://github.com/ignitionrobotics/ign-gui/pull/170)
+    * [Pull request #170](https://github.com/gazebosim/gz-gui/pull/170)
 
 1. Master branch updates
-    * [Pull request #187](https://github.com/ignitionrobotics/ign-gui/pull/187)
+    * [Pull request #187](https://github.com/gazebosim/gz-gui/pull/187)
 
 1. Backport Publisher test from v4
-    * [Pull request #173](https://github.com/ignitionrobotics/ign-gui/pull/173)
+    * [Pull request #173](https://github.com/gazebosim/gz-gui/pull/173)
 
 1. Better error messages when component can't be loaded
-    * [Pull request #175](https://github.com/ignitionrobotics/ign-gui/pull/175)
+    * [Pull request #175](https://github.com/gazebosim/gz-gui/pull/175)
 
 1. Make Grid3D plugin more flexible
-    * [Pull request #172](https://github.com/ignitionrobotics/ign-gui/pull/172)
+    * [Pull request #172](https://github.com/gazebosim/gz-gui/pull/172)
 
 1. Add Windows Installation
-    * [Pull request #168](https://github.com/ignitionrobotics/ign-gui/pull/168)
+    * [Pull request #168](https://github.com/gazebosim/gz-gui/pull/168)
 
 1. Fix codecheck
-    * [Pull request #157](https://github.com/ignitionrobotics/ign-gui/pull/157)
+    * [Pull request #157](https://github.com/gazebosim/gz-gui/pull/157)
 
-### Ignition Gui 3.4.0 (2020-12-10)
+### Gazebo Gui 3.4.0 (2020-12-10)
 
 1. Publish plugin API docs
-    * [Pull request 128](https://github.com/ignitionrobotics/ign-gui/pull/128)
+    * [Pull request 128](https://github.com/gazebosim/gz-gui/pull/128)
 
 1. Tutorial tweaks
-    * [Pull request 132](https://github.com/ignitionrobotics/ign-gui/pull/132)
+    * [Pull request 132](https://github.com/gazebosim/gz-gui/pull/132)
 
 1. Floating and standalone plugins respect minimum dimensions
-    * [Pull request 135](https://github.com/ignitionrobotics/ign-gui/pull/135)
+    * [Pull request 135](https://github.com/gazebosim/gz-gui/pull/135)
 
 1. Add scrollable indicator for plugin menu
-    * [Pull request 134](https://github.com/ignitionrobotics/ign-gui/pull/134)
+    * [Pull request 134](https://github.com/gazebosim/gz-gui/pull/134)
 
 1. Re-enable image.config test
-    * [Pull request 140](https://github.com/ignitionrobotics/ign-gui/pull/140)
+    * [Pull request 140](https://github.com/gazebosim/gz-gui/pull/140)
 
 1. Improve fork experience
-    * [Pull request 139](https://github.com/ignitionrobotics/ign-gui/pull/139)
+    * [Pull request 139](https://github.com/gazebosim/gz-gui/pull/139)
 
 1. Resolve updated codecheck issues
-    * [Pull request 144](https://github.com/ignitionrobotics/ign-gui/pull/144)
+    * [Pull request 144](https://github.com/gazebosim/gz-gui/pull/144)
 
 1. Port Gazebo GUI events to Ignition GUI
-    * [Pull request 148](https://github.com/ignitionrobotics/ign-gui/pull/148)
+    * [Pull request 148](https://github.com/gazebosim/gz-gui/pull/148)
 
 1. Change deprecated Qt::MidButton
-    * [Pull request 153](https://github.com/ignitionrobotics/ign-gui/pull/153)
+    * [Pull request 153](https://github.com/gazebosim/gz-gui/pull/153)
 
 1. Add right mouse events and tests
-    * [Pull request 154](https://github.com/ignitionrobotics/ign-gui/pull/154)
+    * [Pull request 154](https://github.com/gazebosim/gz-gui/pull/154)
 
-### Ignition Gui 3.3.0 (2020-08-31)
+### Gazebo Gui 3.3.0 (2020-08-31)
 
 1. rename key publisher plugin
-    * [Pull request 93](https://github.com/ignitionrobotics/ign-gui/pull/93)
+    * [Pull request 93](https://github.com/gazebosim/gz-gui/pull/93)
 
 1. Add shift + drag to rotate camera
-    * [Pull request 96](https://github.com/ignitionrobotics/ign-gui/pull/96)
+    * [Pull request 96](https://github.com/gazebosim/gz-gui/pull/96)
 
 1. Scroll bar adjustment
-    * [Pull request 97](https://github.com/ignitionrobotics/ign-gui/pull/97)
+    * [Pull request 97](https://github.com/gazebosim/gz-gui/pull/97)
 
 1. Minimize GUI plugin
-    * [Pull request 84](https://github.com/ignitionrobotics/ign-gui/pull/84)
-    * [Pull request 99](https://github.com/ignitionrobotics/ign-gui/pull/99)
-    * [Pull request 102](https://github.com/ignitionrobotics/ign-gui/pull/102)
+    * [Pull request 84](https://github.com/gazebosim/gz-gui/pull/84)
+    * [Pull request 99](https://github.com/gazebosim/gz-gui/pull/99)
+    * [Pull request 102](https://github.com/gazebosim/gz-gui/pull/102)
 
 1. Fix tests on actions
-    * [Pull request 98](https://github.com/ignitionrobotics/ign-gui/pull/98)
+    * [Pull request 98](https://github.com/gazebosim/gz-gui/pull/98)
 
 1. Disable failing tests
-    * [Pull request 76](https://github.com/ignitionrobotics/ign-gui/pull/76)
+    * [Pull request 76](https://github.com/gazebosim/gz-gui/pull/76)
 
 1. Use world name in default topics
-    * [Pull request 104](https://github.com/ignitionrobotics/ign-gui/pull/104)
+    * [Pull request 104](https://github.com/gazebosim/gz-gui/pull/104)
 
 1. Fix running plugins with bad world name
-    * [Pull request 107](https://github.com/ignitionrobotics/ign-gui/pull/107)
-    * [Pull request 110](https://github.com/ignitionrobotics/ign-gui/pull/110)
-    * [Pull request 111](https://github.com/ignitionrobotics/ign-gui/pull/111)
+    * [Pull request 107](https://github.com/gazebosim/gz-gui/pull/107)
+    * [Pull request 110](https://github.com/gazebosim/gz-gui/pull/110)
+    * [Pull request 111](https://github.com/gazebosim/gz-gui/pull/111)
 
 1. Disable more tests known to fail on macOS and Windows
-    * [Pull request 112](https://github.com/ignitionrobotics/ign-gui/pull/112)
+    * [Pull request 112](https://github.com/gazebosim/gz-gui/pull/112)
 
 1. Add render event
-    * [Pull request 70](https://github.com/ignitionrobotics/ign-gui/pull/70)
+    * [Pull request 70](https://github.com/gazebosim/gz-gui/pull/70)
 
 1. Fixed left menu events
-    * [Pull request 85](https://github.com/ignitionrobotics/ign-gui/pull/85)
+    * [Pull request 85](https://github.com/gazebosim/gz-gui/pull/85)
 
 1. Added Topic Viewer plugin, list all transport topics
-    * [Pull request 69](https://github.com/ignitionrobotics/ign-gui/pull/69)
+    * [Pull request 69](https://github.com/gazebosim/gz-gui/pull/69)
 
 1. Fix ImageDisplay in Ubuntu 20.04
-    * [Pull request 96](https://github.com/ignitionrobotics/ign-gui/pull/96)
+    * [Pull request 96](https://github.com/gazebosim/gz-gui/pull/96)
 
-### Ignition Gui 3.2.0 (2020-06-22)
+### Gazebo Gui 3.2.0 (2020-06-22)
 
 1. Sort GUI plugins alphabetically
-    * [Pull request 71](https://github.com/ignitionrobotics/ign-gui/pull/71)
+    * [Pull request 71](https://github.com/gazebosim/gz-gui/pull/71)
 
 1. Add color palette to plugin settings to change background color
-    * [Pull request 62](https://github.com/ignitionrobotics/ign-gui/pull/62)
+    * [Pull request 62](https://github.com/gazebosim/gz-gui/pull/62)
 
 1. Close plugin menu after a plugin has been added
-    * [Pull request 60](https://github.com/ignitionrobotics/ign-gui/pull/60)
+    * [Pull request 60](https://github.com/gazebosim/gz-gui/pull/60)
 
 1. Resize undocked plugins by dragging corners
-    * [Pull request 78](https://github.com/ignitionrobotics/ign-gui/pull/78)
+    * [Pull request 78](https://github.com/gazebosim/gz-gui/pull/78)
 
 1. Move each plugin to its own directory
-    * [Pull request 64](https://github.com/ignitionrobotics/ign-gui/pull/64)
+    * [Pull request 64](https://github.com/gazebosim/gz-gui/pull/64)
 
 1. Add Key Publisher plugin
-    * [Pull request 81](https://github.com/ignitionrobotics/ign-gui/pull/81)
+    * [Pull request 81](https://github.com/gazebosim/gz-gui/pull/81)
 
 1. GitHub migration
-    * [Pull request 46](https://github.com/ignitionrobotics/ign-gui/pull/46)
-    * [Pull request 47](https://github.com/ignitionrobotics/ign-gui/pull/47)
-    * [Pull request 56](https://github.com/ignitionrobotics/ign-gui/pull/56)
-    * [Pull request 57](https://github.com/ignitionrobotics/ign-gui/pull/57)
+    * [Pull request 46](https://github.com/gazebosim/gz-gui/pull/46)
+    * [Pull request 47](https://github.com/gazebosim/gz-gui/pull/47)
+    * [Pull request 56](https://github.com/gazebosim/gz-gui/pull/56)
+    * [Pull request 57](https://github.com/gazebosim/gz-gui/pull/57)
 
-### Ignition Gui 3.1.0 (2020-03-27)
+### Gazebo Gui 3.1.0 (2020-03-27)
 
 1. Remove old ign-gui0 stuff
     * [BitBucket pull request 248](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/248)
@@ -973,7 +993,7 @@
     * [BitBucket pull request 228](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/228)
     * [BitBucket pull request 230](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/230)
 
-### Ignition Gui 3.0.0 (2019-12-10)
+### Gazebo Gui 3.0.0 (2019-12-10)
 
 1. Depend on ign-transport8 and ign-msgs5
     * [BitBucket pull request 225](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/225)
@@ -981,73 +1001,73 @@
 1. Depend on ign-rendering3
     * [BitBucket pull request 221](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/221)
 
-## Ignition Gui 2
+## Gazebo Gui 2
 
-### Ignition Gui 2.3.3 (2020-08-31)
+### Gazebo Gui 2.3.3 (2020-08-31)
 
 1. Fix running plugins with bad world names.
-    * [Pull request 111](https://github.com/ignitionrobotics/ign-gui/pull/111)
+    * [Pull request 111](https://github.com/gazebosim/gz-gui/pull/111)
 
 1. Disable more tests known to fail on macOS and Windows.
-    * [Pull request 112](https://github.com/ignitionrobotics/ign-gui/pull/112)
+    * [Pull request 112](https://github.com/gazebosim/gz-gui/pull/112)
 
-### Ignition Gui 2.3.2 (2020-08-19)
+### Gazebo Gui 2.3.2 (2020-08-19)
 
 1. Revert pull request #107
-    * [Pull request 110](https://github.com/ignitionrobotics/ign-gui/pull/110)
+    * [Pull request 110](https://github.com/gazebosim/gz-gui/pull/110)
 
-### Ignition Gui 2.3.1 (2020-08-17)
+### Gazebo Gui 2.3.1 (2020-08-17)
 
 1. Fix running plugins with bad world name
-    * [Pull request 107](https://github.com/ignitionrobotics/ign-gui/pull/107)
+    * [Pull request 107](https://github.com/gazebosim/gz-gui/pull/107)
 
-### Ignition Gui 2.3.0 (2020-08-11)
+### Gazebo Gui 2.3.0 (2020-08-11)
 
 1. Add shift + drag to rotate camera
-    * [Pull request 96](https://github.com/ignitionrobotics/ign-gui/pull/96)
+    * [Pull request 96](https://github.com/gazebosim/gz-gui/pull/96)
 
 1. Scroll bar adjustment
-    * [Pull request 97](https://github.com/ignitionrobotics/ign-gui/pull/97)
+    * [Pull request 97](https://github.com/gazebosim/gz-gui/pull/97)
 
 1. Minimize GUI plugin
-    * [Pull request 84](https://github.com/ignitionrobotics/ign-gui/pull/84)
-    * [Pull request 99](https://github.com/ignitionrobotics/ign-gui/pull/99)
+    * [Pull request 84](https://github.com/gazebosim/gz-gui/pull/84)
+    * [Pull request 99](https://github.com/gazebosim/gz-gui/pull/99)
 
 1. Fix tests on actions
-    * [Pull request 98](https://github.com/ignitionrobotics/ign-gui/pull/98)
+    * [Pull request 98](https://github.com/gazebosim/gz-gui/pull/98)
 
 1. Disable failing tests
-    * [Pull request 76](https://github.com/ignitionrobotics/ign-gui/pull/76)
+    * [Pull request 76](https://github.com/gazebosim/gz-gui/pull/76)
 
 1. Use world name in default topics
-    * [Pull request 104](https://github.com/ignitionrobotics/ign-gui/pull/104)
+    * [Pull request 104](https://github.com/gazebosim/gz-gui/pull/104)
 
-### Ignition Gui 2.2.0 (2020-06-17)
+### Gazebo Gui 2.2.0 (2020-06-17)
 
 1. Sort GUI plugins alphabetically
-    * [Pull request 71](https://github.com/ignitionrobotics/ign-gui/pull/71)
+    * [Pull request 71](https://github.com/gazebosim/gz-gui/pull/71)
 
 1. Add color palette to plugin settings to change background color
-    * [Pull request 62](https://github.com/ignitionrobotics/ign-gui/pull/62)
+    * [Pull request 62](https://github.com/gazebosim/gz-gui/pull/62)
 
 1. Close plugin menu after a plugin has been added
-    * [Pull request 60](https://github.com/ignitionrobotics/ign-gui/pull/60)
+    * [Pull request 60](https://github.com/gazebosim/gz-gui/pull/60)
 
 1. Resize undocked plugins by dragging corners
-    * [Pull request 78](https://github.com/ignitionrobotics/ign-gui/pull/78)
+    * [Pull request 78](https://github.com/gazebosim/gz-gui/pull/78)
 
 1. Move each plugin to its own directory
-    * [Pull request 64](https://github.com/ignitionrobotics/ign-gui/pull/64)
+    * [Pull request 64](https://github.com/gazebosim/gz-gui/pull/64)
 
 1. GitHub migration
-    * [Pull request 46](https://github.com/ignitionrobotics/ign-gui/pull/46)
-    * [Pull request 56](https://github.com/ignitionrobotics/ign-gui/pull/56)
+    * [Pull request 46](https://github.com/gazebosim/gz-gui/pull/46)
+    * [Pull request 56](https://github.com/gazebosim/gz-gui/pull/56)
 
 1. Fix homebrew warnings
     * [BitBucket pull request 249](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/249)
 
 
-### Ignition Gui 2.1.0 (2020-03-04)
+### Gazebo Gui 2.1.0 (2020-03-04)
 
 1. Add space for pausing sim
     * [BitBucket pull request 245](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/245)
@@ -1076,7 +1096,7 @@
 1. Fix changing topics in ImageDisplay
     * [BitBucket pull request 224](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/224)
 
-### Ignition Gui 2.0.1
+### Gazebo Gui 2.0.1
 
 1. Made image display responsive.
     * [BitBucket pull request 223](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/223)
@@ -1084,7 +1104,7 @@
 1. Downstream applications can override this using MainWindow::setIcon once they get the window.
     * [BitBucket pull request 222](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/222)
 
-### Ignition Gui 2.0.0
+### Gazebo Gui 2.0.0
 
 1. Delete QmlApplicationEngine later.
     * [BitBucket pull request 209](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/209)
@@ -1113,9 +1133,9 @@
 1. Fix topic echo test and make msgs visible.
     * [BitBucket pull request 201](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/201)
 
-## Ignition Gui 1
+## Gazebo Gui 1
 
-### Ignition Gui 1.X.X
+### Gazebo Gui 1.X.X
 
 1. Move files not ported to v1 to a separate dir for clarity.
     * [BitBucket pull request 196](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/196)
@@ -1123,4 +1143,4 @@
 1. Get ign-gui plugin interface in case there are others.
     * [BitBucket pull request 186](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/186)
 
-### Ignition Gui 1.0.0
+### Gazebo Gui 1.0.0

@@ -16,14 +16,14 @@
 */
 
 #include <sstream>
-#include <ignition/common/Console.hh>
-#include <ignition/common/StringUtils.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/transport/MessageInfo.hh>
-#include <ignition/transport/Publisher.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/StringUtils.hh>
+#include <gz/transport/Node.hh>
+#include <gz/transport/MessageInfo.hh>
+#include <gz/transport/Publisher.hh>
 
-#include "ignition/gui/PlottingInterface.hh"
-#include "ignition/gui/Application.hh"
+#include "gz/gui/PlottingInterface.hh"
+#include "gz/gui/Application.hh"
 
 #define DEFAULT_TIME (INT_MIN)
 // 1/60 Period like the GuiSystem frequency (60Hz)
@@ -65,16 +65,16 @@ class TopicPrivate
   public: double lastHeaderTime = 0;
 
   /// \brief Plotting fields to update its values
-  public: std::map<std::string, ignition::gui::PlotData*> fields;
+  public: std::map<std::string, gz::gui::PlotData*> fields;
 };
 
 class TransportPrivate
 {
   /// \brief Node for Commincation
-  public: ignition::transport::Node node;
+  public: gz::transport::Node node;
 
   /// \brief subscribed topics
-  public: std::map<std::string, ignition::gui::Topic*> topics;
+  public: std::map<std::string, gz::gui::Topic*> topics;
 };
 
 class PlottingIfacePrivate
@@ -95,7 +95,7 @@ class PlottingIfacePrivate
 }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 //////////////////////////////////////////////////////
@@ -246,7 +246,7 @@ void Topic::Callback(const google::protobuf::Message &_msg)
 
     google::protobuf::Message *valueMsg = nullptr;
 
-    auto fieldFullPath = ignition::common::Split(fieldIt.first, '-');
+    auto fieldFullPath = gz::common::Split(fieldIt.first, '-');
     int pathSize = fieldFullPath.size();
 
     // loop until you reach the last field in the path
@@ -629,7 +629,7 @@ bool PlottingInterface::exportCSV(QString _path, int _chart,
     auto key = series.key().toStdString();
 
     // check if it is a component
-    auto seriesKeys = ignition::common::Split(key, ',');
+    auto seriesKeys = gz::common::Split(key, ',');
     if (seriesKeys.size() == 3)
     {
       // convert from string to uint64_t

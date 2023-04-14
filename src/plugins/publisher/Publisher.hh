@@ -15,12 +15,12 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_PUBLISHER_HH_
-#define IGNITION_GUI_PLUGINS_PUBLISHER_HH_
+#ifndef GZ_GUI_PLUGINS_PUBLISHER_HH_
+#define GZ_GUI_PLUGINS_PUBLISHER_HH_
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 #ifndef _WIN32
 #  define Publisher_EXPORTS_API
@@ -40,7 +40,7 @@ namespace plugins
 {
   class PublisherPrivate;
 
-  /// \brief Widget which publishes a custom Ignition transport message.
+  /// \brief Widget which publishes a custom Gazebo transport message.
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.

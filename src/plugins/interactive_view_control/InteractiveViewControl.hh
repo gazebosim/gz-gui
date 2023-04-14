@@ -15,12 +15,12 @@
  *
 */
 
-#ifndef IGNITION_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
-#define IGNITION_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
+#ifndef GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
+#define GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
 
 #include <memory>
 
-#include "ignition/gui/Plugin.hh"
+#include "gz/gui/Plugin.hh"
 
 namespace ignition
 {

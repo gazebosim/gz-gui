@@ -17,9 +17,9 @@
 
 #include <tinyxml2.h>
 
-#include <ignition/common/Console.hh>
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Dialog.hh"
+#include <gz/common/Console.hh>
+#include "gz/gui/Application.hh"
+#include "gz/gui/Dialog.hh"
 
 namespace ignition
 {
@@ -33,7 +33,7 @@ namespace ignition
   }
 }
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 
 /////////////////////////////////////////////////

@@ -24,35 +24,35 @@
 
 #include <QQmlProperty>
 
-#include <ignition/common/Console.hh>
-#include <ignition/common/MeshManager.hh>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/MeshManager.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/Vector3.hh>
+#include <gz/plugin/Register.hh>
 
 // TODO(louise) Remove these pragmas once ign-rendering and ign-msgs
 // are disabling the warnings
 #ifdef _MSC_VER
 #pragma warning(push, 0)
 #endif
-#include <ignition/msgs.hh>
+#include <gz/msgs.hh>
 
-#include <ignition/rendering/Capsule.hh>
-#include <ignition/rendering/RenderEngine.hh>
-#include <ignition/rendering/RenderingIface.hh>
-#include <ignition/rendering/Scene.hh>
+#include <gz/rendering/Capsule.hh>
+#include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
+#include <gz/rendering/Scene.hh>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#include <ignition/transport/Node.hh>
-#include <ignition/transport/TopicUtils.hh>
+#include <gz/transport/Node.hh>
+#include <gz/transport/TopicUtils.hh>
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Conversions.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Conversions.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
 
 #include "TransportSceneManager.hh"
 
@@ -127,16 +127,16 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
   /// \param[in] _entity Entity to delete
   public: void DeleteEntity(const unsigned int _entity);
 
-  //// \brief Ign-transport scene service name
+  //// \brief gz-transport scene service name
   public: std::string service{"scene"};
 
-  //// \brief Ign-transport pose topic name
+  //// \brief gz-transport pose topic name
   public: std::string poseTopic{"pose"};
 
-  //// \brief Ign-transport deletion topic name
+  //// \brief gz-transport deletion topic name
   public: std::string deletionTopic{"delete"};
 
-  //// \brief Ign-transport scene topic name
+  //// \brief gz-transport scene topic name
   public: std::string sceneTopic{"scene"};
 
   //// \brief Pointer to the rendering scene
@@ -168,13 +168,13 @@ class ignition::gui::plugins::TransportSceneManagerPrivate
 
   /// \brief Transport node for making service request and subscribing to
   /// pose topic
-  public: ignition::transport::Node node;
+  public: gz::transport::Node node;
 
   /// \brief Thread to wait for transport initialization
   public: std::thread initializeTransport;
 };
 
-using namespace ignition;
+using namespace gz;
 using namespace gui;
 using namespace plugins;
 
@@ -663,7 +663,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
       geom->SetMaterial(material);
       // todo(anyone) SetMaterial function clones the input material.
       // but does not take ownership of it so we need to destroy it here.
-      // This is not ideal. We should let ign-rendering handle the lifetime
+      // This is not ideal. We should let gz-rendering handle the lifetime
       // of this material
       this->scene->DestroyMaterial(material);
     }
@@ -754,8 +754,8 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
     // Assume absolute path to mesh file
     descriptor.meshName = _msg.mesh().filename();
 
-    ignition::common::MeshManager* meshManager =
-        ignition::common::MeshManager::Instance();
+    gz::common::MeshManager* meshManager =
+        gz::common::MeshManager::Instance();
     descriptor.mesh = meshManager->Load(descriptor.meshName);
     geom = this->scene->CreateMesh(descriptor);
 
@@ -875,5 +875,5 @@ void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
 }
 
 // Register this plugin
-IGNITION_ADD_PLUGIN(ignition::gui::plugins::TransportSceneManager,
-                    ignition::gui::Plugin)
+IGNITION_ADD_PLUGIN(gz::gui::plugins::TransportSceneManager,
+                    gz::gui::Plugin)
