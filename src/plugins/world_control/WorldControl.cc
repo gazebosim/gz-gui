@@ -39,7 +39,7 @@ namespace plugins
   {
     /// \brief Send the world control event or call the control service.
     /// \param[in] _msg Message to send.
-    public: void SendEventMsg(const ignition::msgs::WorldControl &_msg);
+    public: void SendEventMsg(const gz::msgs::WorldControl &_msg);
 
     /// \brief Message holding latest world statistics
     public: gz::msgs::WorldStatistics msg;
@@ -65,7 +65,7 @@ namespace plugins
 
     /// \brief Whether server communication should occur through an event (true)
     /// or service (false). The service option is used by default for
-    /// ign-gui6, and should be changed to use the event by default in ign-gui7.
+    /// gz-gui6, and should be changed to use the event by default in gz-gui7.
     public: bool useEvent{false};
   };
 }
@@ -320,7 +320,7 @@ void WorldControl::OnStep()
 }
 
 /////////////////////////////////////////////////
-void WorldControlPrivate::SendEventMsg(const ignition::msgs::WorldControl &_msg)
+void WorldControlPrivate::SendEventMsg(const msgs::WorldControl &_msg)
 {
   if (this->useEvent)
   {

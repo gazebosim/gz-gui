@@ -203,5 +203,5 @@ Follow these steps to run tests and static code analysis in your clone of this r
   make codecheck
   ```
 
-See the [Writing Tests section of the contributor guide](https://gazebosim.org/docs/all/contributing#writing-tests) for help       creating or modifying tests.
+See the [Writing Tests section of the contributor guide](https://gazebosim.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
 

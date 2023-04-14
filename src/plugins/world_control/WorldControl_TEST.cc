@@ -338,7 +338,7 @@ TEST(WorldControlTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldControlEvent))
   EXPECT_EQ(plugin->Title(), "World Control!");
 
   // World control event listener
-  ignition::gui::WorldControlEventListener eventListener;
+  gui::WorldControlEventListener eventListener;
   EXPECT_FALSE(eventListener.listenedToPause);
   EXPECT_FALSE(eventListener.listenedToStep);
   EXPECT_FALSE(eventListener.listenedToPlay);

@@ -14,14 +14,14 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GUI_WORLDCONTROLEVENTLISTENER_HH_
-#define IGNITION_GUI_WORLDCONTROLEVENTLISTENER_HH_
+#ifndef GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_
+#define GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_
 
-#include "ignition/gui/Application.hh"
-#include "ignition/gui/Export.hh"
-#include "ignition/gui/GuiEvents.hh"
-#include "ignition/gui/MainWindow.hh"
-#include "ignition/gui/qt.h"
+#include "gz/gui/Application.hh"
+#include "gz/gui/Export.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
+#include "gz/gui/qt.h"
 
 namespace ignition
 {
@@ -49,7 +49,7 @@ namespace gui
     /// \brief Whether a pause event has been received (true) or not (false)
     public: bool listenedToPause{false};
 
-    /// \brief Whether a pause event has been received (true) or not (false)
+    /// \brief Whether a step event has been received (true) or not (false)
     public: bool listenedToStep{false};
   };
 }

@@ -18,17 +18,17 @@
 #include <chrono>
 #include <iostream>
 #include <string>
-#include <ignition/math/Rand.hh>
-#include <ignition/msgs/pose_v.pb.h>
-#include <ignition/msgs/scene.pb.h>
-#include <ignition/msgs/scene.pb.h>
-#include <ignition/msgs/world_stats.pb.h>
-#include <ignition/transport/Node.hh>
+#include <gz/math/Rand.hh>
+#include <gz/msgs/pose_v.pb.h>
+#include <gz/msgs/scene.pb.h>
+#include <gz/msgs/scene.pb.h>
+#include <gz/msgs/world_stats.pb.h>
+#include <gz/transport/Node.hh>
 
 using namespace std::chrono_literals;
 
 //////////////////////////////////////////////////
-bool sceneService(ignition::msgs::Scene &_rep)
+bool sceneService(gz::msgs::Scene &_rep)
 {
   std::cout << "Returning scene" << std::endl;
 
@@ -72,19 +72,19 @@ bool sceneService(ignition::msgs::Scene &_rep)
 //////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
-  ignition::transport::Node node;
+  gz::transport::Node node;
 
   // Scene service
   node.Advertise("/example/scene", sceneService);
 
   // Periodic pose updated
   auto statsPub =
-    node.Advertise<ignition::msgs::WorldStatistics>("/example/stats");
+    node.Advertise<gz::msgs::WorldStatistics>("/example/stats");
 
   // Periodic pose updated
-  auto posePub = node.Advertise<ignition::msgs::Pose_V>("/example/pose");
+  auto posePub = node.Advertise<gz::msgs::Pose_V>("/example/pose");
 
-  ignition::msgs::Pose_V poseVMsg;
+  gz::msgs::Pose_V poseVMsg;
   auto poseMsg = poseVMsg.add_pose();
   poseMsg->set_id(1);
   poseMsg->set_name("box_model");
@@ -98,15 +98,15 @@ int main(int argc, char **argv)
 
   std::chrono::steady_clock::duration timePoint =
     std::chrono::steady_clock::duration::zero();
-  ignition::msgs::WorldStatistics msgWorldStatistics;
+  gz::msgs::WorldStatistics msgWorldStatistics;
 
   while (true)
   {
     std::this_thread::sleep_for(100ms);
 
-    x += ignition::math::Rand::DblUniform(-change, change);
-    y += ignition::math::Rand::DblUniform(-change, change);
-    z += ignition::math::Rand::DblUniform(-change, change);
+    x += gz::math::Rand::DblUniform(-change, change);
+    y += gz::math::Rand::DblUniform(-change, change);
+    z += gz::math::Rand::DblUniform(-change, change);
 
     positionMsg->set_x(x);
     positionMsg->set_y(y);
@@ -124,5 +124,5 @@ int main(int argc, char **argv)
     statsPub.Publish(msgWorldStatistics);
   }
 
-  ignition::transport::waitForShutdown();
+  gz::transport::waitForShutdown();
 }

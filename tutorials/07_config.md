@@ -45,7 +45,7 @@ Gazebo GUI accepts the following top-level elements on a config file:
       [plugin_params.config](https://github.com/gazebosim/gz-gui/blob/main/examples/config/plugin_params.config)
       for an example.
     * custom elements: Developers can read custom plugin configurations overriding the
-      [Plugin::LoadConfig](https://gazebosim.org/api/gui/6.0/classignition_1_1gui_1_1Plugin.html#a720646.0af4cd247b994b905559fd4ee)
+      [Plugin::LoadConfig](https://gazebosim.org/api/gui/6.0/classignition_1_1gui_1_1Plugin.html#a72064530af4cd247b994b905559fd4ee)
       function, see the
       [HelloPlugin](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/HelloPlugin.cc)
       example.

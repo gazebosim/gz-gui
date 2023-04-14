@@ -58,7 +58,7 @@ namespace ignition
       kDialog = 1
     };
 
-    /// \brief An Gazebo GUI application loads a QML engine and
+    /// \brief A Gazebo GUI application loads a QML engine and
     /// provides an API to load plugins and configuration files. The application
     /// supports either running a single main window or several plugins as
     /// standalone dialogs.
@@ -97,7 +97,6 @@ namespace ignition
       /// and plugins. This function doesn't instantiate the plugins, it just
       /// keeps them in memory and they can be applied later by either
       /// instantiating a window or several dialogs.
-      /// and plugins.
       /// \param[in] _path Full path to configuration file.
       /// \return True if successful
       /// \sa InitializeMainWindow

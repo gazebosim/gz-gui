@@ -23,12 +23,10 @@
 #include <gz/gui/Conversions.hh>
 #include <gz/gui/GuiEvents.hh>
 #include <gz/gui/MainWindow.hh>
+#include <gz/plugin/Register.hh>
 #include <gz/math/Color.hh>
 #include <gz/math/Pose3.hh>
-#include <gz/plugin/Register.hh>
-#include <gz/rendering/Grid.hh>
-#include <gz/rendering/RenderingIface.hh>
-#include <gz/rendering/Scene.hh>
+#include <gz/rendering.hh>
 
 #include "GridConfig.hh"
 
@@ -88,7 +86,7 @@ using namespace gui;
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
-  : ignition::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
+  : gz::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
 {
 }
 
@@ -281,7 +279,7 @@ void GridConfig::ConnectToGrid()
         igndbg << "Connected to grid [" << grid->Name() << "]" << std::endl;
 
         // TODO(chapulina) Set to the grid's visible state when that's available
-        // through ign-rendering's API
+        // through gz-rendering's API
         this->dataPtr->visible = true;
         grid->Parent()->SetVisible(true);
 

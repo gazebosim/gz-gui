@@ -115,3 +115,4 @@ And an example also configuring the toolbars:
 
 \note When saving the configuration file through the GUI, the current style
 will be saved as well.
+

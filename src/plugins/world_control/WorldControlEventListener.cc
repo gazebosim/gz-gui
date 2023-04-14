@@ -22,15 +22,15 @@ using namespace gui;
 
 WorldControlEventListener::WorldControlEventListener()
 {
-  ignition::gui::App()->findChild<
-    ignition::gui::MainWindow *>()->installEventFilter(this);
+  gz::gui::App()->findChild<
+    gz::gui::MainWindow *>()->installEventFilter(this);
 }
 
 WorldControlEventListener::~WorldControlEventListener() = default;
 
 bool WorldControlEventListener::eventFilter(QObject *_obj, QEvent *_event)
 {
-  if (_event->type() == ignition::gui::events::WorldControl::kType)
+  if (_event->type() == gz::gui::events::WorldControl::kType)
   {
     auto worldControlEvent =
       reinterpret_cast<gui::events::WorldControl *>(_event);
