@@ -33,6 +33,7 @@
 
 #include "test_config.hh"  // NOLINT(build/include)
 #include "../helpers/TestHelper.hh"
+#include "../helpers/RenderEngineHelper.hh"
 #include "gz/gui/Application.hh"
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
@@ -143,28 +144,8 @@ TEST_F(MarkerManagerTestFixture,
   // Show, but don't exec, so we don't block
   window->QuickWindow()->show();
 
-  bool receivedRenderEvent{false};
-  auto testHelper = std::make_unique<TestHelper>();
-  testHelper->forwardEvent = [&](QEvent *_event)
-  {
-    if (_event->type() == events::Render::kType)
-    {
-      receivedRenderEvent = true;
-    }
-  };
-
-  int sleep = 0;
-  int maxSleep = 30;
-  while (!receivedRenderEvent && sleep < maxSleep)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    QCoreApplication::processEvents();
-    sleep++;
-  }
-  EXPECT_TRUE(receivedRenderEvent);
-
-  // Check scene
-  auto engine = rendering::engine("ogre2");
+  // get render engine after window is shown
+  auto engine = gz::gui::testing::getRenderEngine("ogre2");
   ASSERT_NE(nullptr, engine);
 
   EXPECT_EQ(1u, engine->SceneCount());

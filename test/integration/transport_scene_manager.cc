@@ -32,6 +32,7 @@
 
 #include "test_config.hh"  // NOLINT(build/include)
 #include "../helpers/TestHelper.hh"
+#include "../helpers/RenderEngineHelper.hh"
 #include "gz/gui/Application.hh"
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/Plugin.hh"
@@ -165,8 +166,8 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_TRUE(sceneRequested);
   EXPECT_LT(sleep, maxSleep);
 
-  // Get scene
-  auto engine = rendering::engine("ogre2");
+  // get render engine after window is shown
+  auto engine = gz::gui::testing::getRenderEngine("ogre2");
   ASSERT_NE(nullptr, engine);
 
   auto scene = engine->SceneByName("banana");
