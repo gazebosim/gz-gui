@@ -251,14 +251,12 @@ bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
 /////////////////////////////////////////////////
 void CameraTrackingPrivate::OnMoveToComplete()
 {
-  std::lock_guard<std::mutex> lock(this->mutex);
   this->moveToTarget.clear();
 }
 
 /////////////////////////////////////////////////
 void CameraTrackingPrivate::OnMoveToPoseComplete()
 {
-  std::lock_guard<std::mutex> lock(this->mutex);
   this->moveToPoseValue.reset();
 }
 
