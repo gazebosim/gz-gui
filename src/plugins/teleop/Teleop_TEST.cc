@@ -156,7 +156,7 @@ class TeleopTest : public ::testing::Test
 };
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
+TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ButtonCommand))
 {
   this->forwardVel = 0.1;
   this->verticalVel = 0.2;
@@ -177,7 +177,7 @@ TEST_F(TeleopTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
 }
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
+TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
 {
   QKeyEvent *keypress_W = new QKeyEvent(QKeyEvent::KeyPress,
     Qt::Key_W, Qt::NoModifier);
