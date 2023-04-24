@@ -128,4 +128,4 @@ void CameraFps::SetCameraFpsValue(const QString &_value)
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::CameraFps,
-                    gz::gui::Plugin)
+              gz::gui::Plugin)

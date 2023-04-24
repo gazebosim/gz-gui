@@ -18,8 +18,21 @@
 #ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 #define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
+#include <algorithm>
 #include <memory>
+#include <QQuickImageProvider>
+
 #include <gz/msgs/image.pb.h>
+
+#ifndef _WIN32
+#  define ImageDisplay_EXPORTS_API
+#else
+#  if (defined(ImageDisplay_EXPORTS))
+#    define ImageDisplay_EXPORTS_API __declspec(dllexport)
+#  else
+#    define ImageDisplay_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
 
 #include "gz/gui/Plugin.hh"
 
@@ -31,6 +44,37 @@ namespace plugins
 {
   class ImageDisplayPrivate;
 
+  class ImageProvider : public QQuickImageProvider
+  {
+    public: ImageProvider()
+       : QQuickImageProvider(QQuickImageProvider::Image)
+    {
+    }
+
+    public: QImage requestImage(const QString &, QSize *,
+        const QSize &) override
+    {
+      if (!this->img.isNull())
+      {
+        // Must return a copy
+        QImage copy(this->img);
+        return copy;
+      }
+
+      // Placeholder in case we have no image yet
+      QImage i(400, 400, QImage::Format_RGB888);
+      i.fill(QColor(128, 128, 128, 100));
+      return i;
+    }
+
+    public: void SetImage(const QImage &_image)
+    {
+      this->img = _image;
+    }
+
+    private: QImage img;
+  };
+
   /// \brief Display images coming through a Gazebo Transport topic.
   ///
   /// ## Configuration
@@ -38,7 +82,7 @@ namespace plugins
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
   ///                    this is false, a \<topic\> must be specified.
-  class ImageDisplay : public Plugin
+  class ImageDisplay_EXPORTS_API ImageDisplay : public Plugin
   {
     Q_OBJECT
 

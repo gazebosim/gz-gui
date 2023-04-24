@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 #ifndef GZ_GUI_GUIEVENTS_HH_
 #define GZ_GUI_GUIEVENTS_HH_
 
@@ -374,7 +374,7 @@ namespace gz
         /// \param[in] _dropMouse x and y  coordinate of mouse position.
         public: explicit DropOnScene(
           const std::string &_dropText,
-          const gz::math::Vector2i &_dropMouse);
+          const math::Vector2i &_dropMouse);
 
         /// \brief Get the text of the dropped thing on the scene
         /// \return The name of the dropped thing on the scene
@@ -382,7 +382,7 @@ namespace gz
 
         /// \brief Get X and Y position
         /// \return Get X and Y position
-        public: const gz::math::Vector2i &Mouse() const;
+        public: const math::Vector2i &Mouse() const;
 
         /// \brief Unique type for this event.
         static const QEvent::Type kType = QEvent::Type(QEvent::MaxUser - 15);
