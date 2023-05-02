@@ -47,7 +47,7 @@ int main(int _argc, char **_argv)
   markerMsg.mutable_lifetime()->set_sec(2);
   markerMsg.mutable_lifetime()->set_nsec(0);
   gz::msgs::Set(markerMsg.mutable_scale(),
-                    gz::math::Vector3d(1.0, 1.0, 1.0));
+                gz::math::Vector3d(1.0, 1.0, 1.0));
 
   // The rest of this function adds different shapes and/or modifies shapes.
   // Read the terminal statements to figure out what each node.Request
@@ -55,7 +55,7 @@ int main(int _argc, char **_argv)
   std::cout << "Spawning a blue sphere with lifetime 2s\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   gz::msgs::Set(markerMsg.mutable_pose(),
-                      gz::math::Pose3d(2, 2, 0, 0, 0, 0));
+                gz::math::Pose3d(2, 2, 0, 0, 0, 0));
   node.Request("/marker", markerMsg);
   std::cout << "Sleeping for 2 seconds\n";
   std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -64,7 +64,7 @@ int main(int _argc, char **_argv)
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(1);
   gz::msgs::Set(markerMsg.mutable_pose(),
-                      gz::math::Pose3d::Zero);
+                gz::math::Pose3d::Zero);
   markerMsg.mutable_material()->mutable_ambient()->set_b(0);
   markerMsg.mutable_material()->mutable_diffuse()->set_b(0);
   markerMsg.mutable_lifetime()->set_sec(0);
@@ -73,13 +73,13 @@ int main(int _argc, char **_argv)
   std::cout << "Moving the black sphere to x=0, y=1, z=1\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   gz::msgs::Set(markerMsg.mutable_pose(),
-                      gz::math::Pose3d(0, 1, 1, 0, 0, 0));
+                gz::math::Pose3d(0, 1, 1, 0, 0, 0));
   node.Request("/marker", markerMsg);
 
   std::cout << "Shrinking the black sphere\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   gz::msgs::Set(markerMsg.mutable_scale(),
-                    gz::math::Vector3d(0.2, 0.2, 0.2));
+                gz::math::Vector3d(0.2, 0.2, 0.2));
   node.Request("/marker", markerMsg);
 
   std::cout << "Changing the black sphere to red\n";
@@ -104,25 +104,25 @@ int main(int _argc, char **_argv)
   markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
   markerMsg.set_type(gz::msgs::Marker::SPHERE);
   gz::msgs::Set(markerMsg.mutable_scale(),
-                    gz::math::Vector3d(0.5, 1.0, 1.5));
+                gz::math::Vector3d(0.5, 1.0, 1.5));
   gz::msgs::Set(markerMsg.mutable_pose(),
-                    gz::math::Pose3d(2, 0, .5, 0, 0, 0));
+                gz::math::Pose3d(2, 0, .5, 0, 0, 0));
   node.Request("/marker", markerMsg);
 
   std::cout << "Changing the green ellipsoid to a cylinder\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_type(gz::msgs::Marker::CYLINDER);
   gz::msgs::Set(markerMsg.mutable_scale(),
-                    gz::math::Vector3d(0.5, 0.5, 1.5));
+                gz::math::Vector3d(0.5, 0.5, 1.5));
   node.Request("/marker", markerMsg);
 
   std::cout << "Connecting the sphere and cylinder with a line\n";
   std::this_thread::sleep_for(std::chrono::seconds(4));
   markerMsg.set_id(3);
   gz::msgs::Set(markerMsg.mutable_pose(),
-                    gz::math::Pose3d(0, 0, 0, 0, 0, 0));
+                gz::math::Pose3d(0, 0, 0, 0, 0, 0));
   gz::msgs::Set(markerMsg.mutable_scale(),
-                    gz::math::Vector3d(1.0, 1.0, 1.0));
+                gz::math::Vector3d(1.0, 1.0, 1.0));
   markerMsg.set_action(gz::msgs::Marker::ADD_MODIFY);
   markerMsg.set_type(gz::msgs::Marker::LINE_LIST);
   gz::msgs::Set(markerMsg.add_point(),
@@ -194,7 +194,7 @@ int main(int _argc, char **_argv)
   markerMsg.set_type(gz::msgs::Marker::TRIANGLE_FAN);
   markerMsg.clear_point();
   gz::msgs::Set(markerMsg.mutable_pose(),
-                    gz::math::Pose3d(0, 1.5, 0, 0, 0, 0));
+                gz::math::Pose3d(0, 1.5, 0, 0, 0, 0));
   gz::msgs::Set(markerMsg.add_point(),
         gz::math::Vector3d(0, 0, 0.05));
   double radius = 2;
@@ -212,7 +212,7 @@ int main(int _argc, char **_argv)
   markerMsg.set_type(gz::msgs::Marker::TRIANGLE_LIST);
   markerMsg.clear_point();
   gz::msgs::Set(markerMsg.mutable_pose(),
-                    gz::math::Pose3d(0, -1.5, 0, 0, 0, 0));
+                gz::math::Pose3d(0, -1.5, 0, 0, 0, 0));
   gz::msgs::Set(markerMsg.add_point(),
         gz::math::Vector3d(0, 0, 0.05));
   gz::msgs::Set(markerMsg.add_point(),
@@ -236,7 +236,7 @@ int main(int _argc, char **_argv)
   markerMsg.set_type(gz::msgs::Marker::TRIANGLE_STRIP);
   markerMsg.clear_point();
   gz::msgs::Set(markerMsg.mutable_pose(),
-                    gz::math::Pose3d(-2, -2, 0, 0, 0, 0));
+                gz::math::Pose3d(-2, -2, 0, 0, 0, 0));
   gz::msgs::Set(markerMsg.add_point(),
         gz::math::Vector3d(0, 0, 0.05));
   gz::msgs::Set(markerMsg.add_point(),
@@ -278,9 +278,9 @@ int main(int _argc, char **_argv)
   markerMsg1->mutable_material()->mutable_diffuse()->set_b(1);
   markerMsg1->mutable_material()->mutable_diffuse()->set_a(1);
   gz::msgs::Set(markerMsg1->mutable_scale(),
-                    gz::math::Vector3d(1.0, 1.0, 1.0));
+                gz::math::Vector3d(1.0, 1.0, 1.0));
   gz::msgs::Set(markerMsg1->mutable_pose(),
-                      gz::math::Pose3d(3, 3, 0, 0, 0, 0));
+                gz::math::Pose3d(3, 3, 0, 0, 0, 0));
 
   // Create second red box marker
   auto markerMsg2 = markerMsgs.add_marker();
@@ -302,9 +302,9 @@ int main(int _argc, char **_argv)
   markerMsg2->mutable_lifetime()->set_sec(2);
   markerMsg2->mutable_lifetime()->set_nsec(0);
   gz::msgs::Set(markerMsg2->mutable_scale(),
-                    gz::math::Vector3d(1.0, 1.0, 1.0));
+                gz::math::Vector3d(1.0, 1.0, 1.0));
   gz::msgs::Set(markerMsg2->mutable_pose(),
-                      gz::math::Pose3d(3, 3, 2, 0, 0, 0));
+                gz::math::Pose3d(3, 3, 2, 0, 0, 0));
 
   // Create green capsule marker
   auto markerMsg3 = markerMsgs.add_marker();
@@ -326,9 +326,9 @@ int main(int _argc, char **_argv)
   markerMsg3->mutable_lifetime()->set_sec(2);
   markerMsg3->mutable_lifetime()->set_nsec(0);
   gz::msgs::Set(markerMsg3->mutable_scale(),
-                    gz::math::Vector3d(1.0, 1.0, 1.0));
+                gz::math::Vector3d(1.0, 1.0, 1.0));
   gz::msgs::Set(markerMsg3->mutable_pose(),
-                      gz::math::Pose3d(3, 3, 4, 0, 0, 0));
+                gz::math::Pose3d(3, 3, 4, 0, 0, 0));
 
   // Publish the three created markers above simultaneously
   node.Request("/marker_array", markerMsgs, timeout, res, result);

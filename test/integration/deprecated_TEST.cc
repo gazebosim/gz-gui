@@ -27,6 +27,7 @@
 TEST(Deprecated, IgnitionNamespace)
 {
   ignition::gui::Plugin plugin;
+  EXPECT_TRUE(plugin.Title().empty());
 }
 
 #undef SUPPRESS_IGNITION_HEADER_DEPRECATION

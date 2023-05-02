@@ -496,4 +496,4 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::CameraTracking,
-                    gz::gui::Plugin)
+              gz::gui::Plugin)

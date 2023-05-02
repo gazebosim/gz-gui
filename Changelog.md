@@ -815,6 +815,31 @@
 
 ## Gazebo GUI 3
 
+### Gazebo GUI 3.12.0 (2022-11-30)
+
+1. Add degree as an optional unit for rotation in GzPose.
+    * [Pull request #475](https://github.com/gazebosim/gz-gui/pull/475)
+
+1. Fix image display test.
+    * [Pull request #468](https://github.com/gazebosim/gz-gui/pull/468)
+
+1. Update cmd/CMakeLists to conform with all other gz libraries.
+    * [Pull request #478](https://github.com/gazebosim/gz-gui/pull/478)
+
+1. Add key publisher test.
+    * [Pull request #477](https://github.com/gazebosim/gz-gui/pull/477)
+
+1. Add pointer check in Application::RemovePlugin.
+    * [Pull request #501](https://github.com/gazebosim/gz-gui/pull/501)
+
+1. Ign to gz header migration.
+    * [Pull request #466](https://github.com/gazebosim/gz-gui/pull/466)
+
+### Gazebo GUI 3.11.2 (2022-08-17)
+
+1. Fix mistaken dialog error message
+    * [Pull request #472](https://github.com/gazebosim/gz-gui/pull/472)
+
 ### Gazebo GUI 3.11.1 (2022-08-15)
 
 1. Replace pose in Grid3d with GzPose
