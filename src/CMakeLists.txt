@@ -51,6 +51,7 @@ gz_build_tests(TYPE UNIT
                   gz-common${GZ_COMMON_VER}::events
                   gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
                   TINYXML2::TINYXML2
+                  gz_msgs_gen
                 TEST_LIST
                   gtest_targets
 )

@@ -10,4 +10,5 @@ gz_build_tests(
     gz-plugin${GZ_PLUGIN_VER}::loader
     gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
     Qt5::Test
+    gz_msgs_gen
 )

@@ -76,7 +76,7 @@ function(gz_gui_add_plugin plugin_name)
     SOURCES ${gz_gui_add_plugin_SOURCES}
     QT_HEADERS ${gz_gui_add_plugin_QT_HEADERS}
     PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
-    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} gz-plugin${GZ_PLUGIN_VER}::register
+    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} gz-plugin${GZ_PLUGIN_VER}::register gz_msgs_gen
   )
 
   if(gz_gui_add_plugin_TEST_SOURCES)
@@ -87,6 +87,7 @@ function(gz_gui_add_plugin plugin_name)
         ${GZ-GUI_LIBRARIES}
         TINYXML2::TINYXML2
         ${plugin_name}
+        gz_msgs_gen
       INCLUDE_DIRS
         # Used to make internal source file headers visible to the unit tests
         ${CMAKE_CURRENT_SOURCE_DIR}

@@ -55,7 +55,6 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   PUBLIC
     gz-common${GZ_COMMON_VER}::events
     gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
-    gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER}
     gz-plugin${GZ_PLUGIN_VER}::loader
     gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
     ${Qt5Core_LIBRARIES}
@@ -64,7 +63,9 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
     ${Qt5QuickControls2_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     TINYXML2::TINYXML2
+  PRIVATE
+    gz_msgs_gen
+
 )
 
 gz_install_all_headers()
-
