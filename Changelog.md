@@ -2,8 +2,73 @@
 
 ### Gazebo GUI 7.X.X (202X-XX-XX)
 
-### Gazebo GUI 7.1.0 (2023-03-10)
+### Gazebo GUI 7.2.0 (2023-05-14)
 
+1. Add support for bayer images to get displayed in gazebo gui
+    * [Pull request #528](https://github.com/gazebosim/gz-gui/pull/528)
+
+1. Disable deprecation messages about onFoo connections
+    * [Pull request #534](https://github.com/gazebosim/gz-gui/pull/534)
+
+1. Apply low-pass filter to RTF display
+    * [Pull request #529](https://github.com/gazebosim/gz-gui/pull/529)
+
+1. Disable Teleop_TEST on macOS
+    * [Pull request #530](https://github.com/gazebosim/gz-gui/pull/530)
+
+1. ign -> gz Migrate config and log directories : gz-gui
+    * [Pull request #454](https://github.com/gazebosim/gz-gui/pull/454)
+
+1. 6 ➡️  7
+    * [Pull request #524](https://github.com/gazebosim/gz-gui/pull/524)
+
+1. CI workflow: use checkout v3
+    * [Pull request #526](https://github.com/gazebosim/gz-gui/pull/526)
+
+1. Rename COPYING to LICENSE
+    * [Pull request #525](https://github.com/gazebosim/gz-gui/pull/525)
+
+1. ign to gz
+    * [Pull request #524](https://github.com/gazebosim/gz-gui/pull/524)
+
+1. Add Camera FPS plugin
+    * [Pull request #523](https://github.com/gazebosim/gz-gui/pull/523)
+
+1. Update maintainer email
+    * [Pull request #521](https://github.com/gazebosim/gz-gui/pull/521)
+
+1. Fix INTEGRATION_camera_tracking test
+    * [Pull request #519](https://github.com/gazebosim/gz-gui/pull/519)
+
+1. 3.12.0 release
+    * [Pull request #508](https://github.com/gazebosim/gz-gui/pull/508)
+
+1. 3.12.0 pre1
+    * [Pull request #507](https://github.com/gazebosim/gz-gui/pull/507)
+
+1. ign -> gz Migrate Ignition Headers : gz-gui
+    * [Pull request #466](https://github.com/gazebosim/gz-gui/pull/466)
+
+1. Add pointer check in Application::RemovePlugin
+    * [Pull request #501](https://github.com/gazebosim/gz-gui/pull/501)
+
+1. Add key publisher test
+    * [Pull request #477](https://github.com/gazebosim/gz-gui/pull/477)
+
+1. Update cmd/CMakeLists to conform with all other gz libraries
+    * [Pull request #478](https://github.com/gazebosim/gz-gui/pull/478)
+
+1. Fix image display test
+    * [Pull request #468](https://github.com/gazebosim/gz-gui/pull/468)
+
+1. Add degree as an optional unit for rotation in GzPose
+    * [Pull request #475](https://github.com/gazebosim/gz-gui/pull/475)
+
+1. 🎈 3.11.2
+    * [Pull request #474](https://github.com/gazebosim/gz-gui/pull/474)
+
+
+### Gazebo GUI 7.1.0 (2023-03-10)
 
 1. Set View Camera controller from plugin configuration
     * [Pull request #506](https://github.com/gazebosim/gz-gui/pull/506)
@@ -814,6 +879,31 @@
     * [BitBucket pull request 243](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-gui/pull-requests/243)
 
 ## Gazebo GUI 3
+
+### Gazebo GUI 3.12.0 (2022-11-30)
+
+1. Add degree as an optional unit for rotation in GzPose.
+    * [Pull request #475](https://github.com/gazebosim/gz-gui/pull/475)
+
+1. Fix image display test.
+    * [Pull request #468](https://github.com/gazebosim/gz-gui/pull/468)
+
+1. Update cmd/CMakeLists to conform with all other gz libraries.
+    * [Pull request #478](https://github.com/gazebosim/gz-gui/pull/478)
+
+1. Add key publisher test.
+    * [Pull request #477](https://github.com/gazebosim/gz-gui/pull/477)
+
+1. Add pointer check in Application::RemovePlugin.
+    * [Pull request #501](https://github.com/gazebosim/gz-gui/pull/501)
+
+1. Ign to gz header migration.
+    * [Pull request #466](https://github.com/gazebosim/gz-gui/pull/466)
+
+### Gazebo GUI 3.11.2 (2022-08-17)
+
+1. Fix mistaken dialog error message
+    * [Pull request #472](https://github.com/gazebosim/gz-gui/pull/472)
 
 ### Gazebo GUI 3.11.1 (2022-08-15)
 

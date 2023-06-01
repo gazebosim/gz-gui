@@ -61,7 +61,7 @@ foreach(test ${gtest_targets})
 endforeach()
 
 if(TARGET UNIT_gz_TEST)
-  # Running `gz gazebo` on macOS has problems when run with /usr/bin/ruby
+  # Running `gz gui` on macOS has problems when run with /usr/bin/ruby
   # due to System Integrity Protection (SIP). Try to find ruby from
   # homebrew as a workaround.
   if (APPLE)
