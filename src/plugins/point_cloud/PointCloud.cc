@@ -236,7 +236,8 @@ void PointCloud::OnRefresh()
   for (auto topic : allTopics)
   {
     std::vector<gz::transport::MessagePublisher> publishers;
-    this->dataPtr->node.TopicInfo(topic, publishers);
+    std::vector<gz::transport::MessagePublisher> subscribers;
+    this->dataPtr->node.TopicInfo(topic, publishers, subscribers);
     for (auto pub : publishers)
     {
       if (pub.MsgTypeName() == "gz.msgs.PointCloudPacked")
