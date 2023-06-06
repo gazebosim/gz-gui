@@ -32,6 +32,7 @@
 
 #include "test_config.hh"  // NOLINT(build/include)
 #include "../helpers/TestHelper.hh"
+#include "../helpers/RenderEngineHelper.hh"
 #include "gz/gui/Application.hh"
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/Plugin.hh"
@@ -154,10 +155,6 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   // Show, but don't exec, so we don't block
   win->QuickWindow()->show();
 
-  // Get scene
-  auto engine = rendering::engine("ogre2");
-  ASSERT_NE(nullptr, engine);
-
   int sleep = 0;
   int maxSleep = 30;
   while (!sceneRequested && sleep < maxSleep)
@@ -168,6 +165,10 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   }
   EXPECT_TRUE(sceneRequested);
   EXPECT_LT(sleep, maxSleep);
+
+  // get render engine after window is shown
+  auto engine = gz::gui::testing::getRenderEngine("ogre2");
+  ASSERT_NE(nullptr, engine);
 
   auto scene = engine->SceneByName("banana");
   ASSERT_NE(nullptr, scene);
@@ -261,5 +262,6 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   win->QuickWindow()->close();
   engine->DestroyScene(scene);
+  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
 
