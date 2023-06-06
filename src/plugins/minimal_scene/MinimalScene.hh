@@ -213,7 +213,7 @@ namespace plugins
     public: void TextureId(void* _texturePtr);
 
     /// \brief Render engine to use
-    public: std::string engineName = "ogre2";
+    public: std::string engineName = "ogre";
 
     /// \brief Unique scene name
     public: std::string sceneName = "scene";
