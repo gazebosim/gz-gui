@@ -156,7 +156,8 @@ void NavSatMap::OnRefresh()
   for (auto topic : allTopics)
   {
     std::vector<transport::MessagePublisher> publishers;
-    this->dataPtr->node.TopicInfo(topic, publishers);
+    std::vector<transport::MessagePublisher> subscribers;
+    this->dataPtr->node.TopicInfo(topic, publishers, subscribers);
     for (auto pub : publishers)
     {
       if (pub.MsgTypeName() == "gz.msgs.NavSat")

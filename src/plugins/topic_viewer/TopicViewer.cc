@@ -199,9 +199,10 @@ void TopicViewerPrivate::CreateModel()
 
   for (unsigned int i = 0; i < topics.size(); ++i)
   {
-    std::vector<transport::MessagePublisher> infoMsgs;
-    this->node.TopicInfo(topics[i], infoMsgs);
-    std::string msgType = infoMsgs[0].MsgTypeName();
+    std::vector<transport::MessagePublisher> publishers;
+    std::vector<transport::MessagePublisher> subscribers;
+    this->node.TopicInfo(topics[i], publishers, subscribers);
+    std::string msgType = publishers[0].MsgTypeName();
     this->AddTopic(topics[i], msgType);
   }
 }
@@ -384,9 +385,10 @@ void TopicViewer::UpdateModel()
   for (unsigned int i = 0; i < topics.size(); ++i)
   {
     // get the msg type
-    std::vector<transport::MessagePublisher> infoMsgs;
-    this->dataPtr->node.TopicInfo(topics[i], infoMsgs);
-    std::string msgType = infoMsgs[0].MsgTypeName();
+    std::vector<transport::MessagePublisher> publishers;
+    std::vector<transport::MessagePublisher> subscribers;
+    this->dataPtr->node.TopicInfo(topics[i], publishers, subscribers);
+    std::string msgType = publishers[0].MsgTypeName();
 
     // skip the matched topics
     if (this->dataPtr->currentTopics.count(topics[i]) &&
