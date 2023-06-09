@@ -20,4 +20,4 @@
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::GzComponents,
-                    gz::gui::Plugin);
+              gz::gui::Plugin);

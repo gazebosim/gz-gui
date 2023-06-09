@@ -19,7 +19,7 @@ Gazebo GUI will look for plugins on the following paths, in this order:
 
 1. All paths set on the `GZ_GUI_PLUGIN_PATH` environment variable
 2. All paths added by calling `gz::gui::addPluginPath`
-3. `~/.ignition/gui/plugins`
+3. `~/.gz/gui/plugins`
 4. [Plugins which are installed with Gazebo GUI](https://gazebosim.org/api/gui/6.0/namespace gz_1_1gui_1_1plugins.html)
 
 ## Configuring plugins
@@ -119,5 +119,5 @@ Gazebo GUI will look for display plugins on the following paths, in this
 order:
 
 1. All paths set on the `GZ_GUI_DISPLAY_PLUGIN_PATH` environment variable
-2. `~/.ignition/gui/display_plugins`
+2. `~/.gz/gui/display_plugins`
 3. [Display plugins that are installed with Gazebo GUI](https://gazebosim.org/api/gui/0.1/namespace gz_1_1gui_1_1display_plugins.html)

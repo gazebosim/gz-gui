@@ -314,7 +314,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
     {
       while (nsIter->second.find(id) != nsIter->second.end())
         id = gz::math::Rand::IntUniform(gz::math::MIN_UI32,
-                                              gz::math::MAX_UI32);
+                                        gz::math::MAX_UI32);
     }
   }
 
@@ -780,4 +780,4 @@ bool MarkerManager::eventFilter(QObject *_obj, QEvent *_event)
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::MarkerManager,
-                    gz::gui::Plugin)
+              gz::gui::Plugin)

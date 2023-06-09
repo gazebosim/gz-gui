@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef GZ_GUI_CONVERSIONS_HH_
 #define GZ_GUI_CONVERSIONS_HH_
-
-#include <gz/msgs/time.pb.h>
 
 #include <gz/common/KeyEvent.hh>
 #include <gz/common/MouseEvent.hh>
