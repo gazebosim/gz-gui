@@ -467,13 +467,14 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Add default folder and install folder
   std::string home;
   common::env(GZ_HOMEDIR, home);
-  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
-                             GZ_GUI_PLUGIN_INSTALL_DIR);
+  //systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
+  //                           GZ_GUI_PLUGIN_INSTALL_DIR);
 
   // TODO(CH3): Deprecated. Remove on tock.
-  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
-                             GZ_GUI_PLUGIN_INSTALL_DIR);
+  //systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
+                             //GZ_GUI_PLUGIN_INSTALL_DIR);
 
+  std::cout << "_filename: " << _filename << std::endl;
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -782,7 +783,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   paths.push_back(home + "/.ignition/gui/plugins");
 
   // 4. Install path
-  paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
+  //paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
 
   // Populate map
   std::vector<std::pair<std::string, std::vector<std::string>>> plugins;
@@ -806,6 +807,15 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 
     plugins.push_back(std::make_pair(path, ps));
   }
+
+  gz::plugin::Loader loader;
+  auto loader_plugins = loader.AllPlugins();
+  std::vector<std::string> ps;
+  for (auto & plugin : loader_plugins)
+  {
+    ps.push_back(plugin);
+  }
+  plugins.push_back(std::make_pair("static", ps));
 
   return plugins;
 }

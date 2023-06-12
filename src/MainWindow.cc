@@ -133,14 +133,23 @@ QStringList MainWindow::PluginListModel() const
   auto plugins = App()->PluginList();
   for (auto const &path : plugins)
   {
+
     for (auto const &plugin : path.second)
     {
-      // Remove lib and .so
-      auto pluginName = plugin.substr(3, plugin.find(".") - 3);
+      std::string pluginName;
+      if (path.first != "static")
+      {
+        // Remove lib and .so
+        pluginName = plugin.substr(3, plugin.find(".") - 3);
 
-      // Split WWWCamelCase3D -> WWW Camel Case 3D
-      std::regex reg("(\\B[A-Z][a-z])|(\\B[0-9])");
-      pluginName = std::regex_replace(pluginName, reg, " $&");
+        // Split WWWCamelCase3D -> WWW Camel Case 3D
+        std::regex reg("(\\B[A-Z][a-z])|(\\B[0-9])");
+        pluginName = std::regex_replace(pluginName, reg, " $&");
+      }
+      else
+      {
+        pluginName = plugin;
+      }
 
       // Show?
       if (this->dataPtr->windowConfig.pluginsFromPaths ||
@@ -267,7 +276,7 @@ void MainWindow::OnAddPlugin(QString _plugin)
   // Remove spaces
   plugin.erase(remove_if(plugin.begin(), plugin.end(), isspace), plugin.end());
 
-  gzlog << "Add [" << plugin << "] via menu" << std::endl;
+  gzmsg << "Add [" << plugin << "] via menu" << std::endl;
 
   App()->LoadPlugin(plugin);
 }
