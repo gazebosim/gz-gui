@@ -505,4 +505,4 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::InteractiveViewControl,
-                    gz::gui::Plugin)
+              gz::gui::Plugin)

@@ -189,4 +189,4 @@ void NavSatMap::SetTopicList(const QStringList &_topicList)
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::NavSatMap,
-                    gz::gui::Plugin)
+              gz::gui::Plugin)
