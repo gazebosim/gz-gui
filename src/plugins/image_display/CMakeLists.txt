@@ -6,6 +6,5 @@ gz_gui_add_plugin(ImageDisplay
   PUBLIC_LINK_LIBS
     gz-common${GZ_COMMON_VER}::graphics
   TEST_SOURCES
-    # ImageDisplay_TEST.cc
+    ImageDisplay_TEST.cc
 )
-
