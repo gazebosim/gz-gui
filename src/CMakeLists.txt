@@ -8,6 +8,7 @@ set (sources
   ${CMAKE_CURRENT_SOURCE_DIR}/GuiEvents.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Helpers.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/gz.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/InstallationDirectories.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/PlottingInterface.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/Plugin.cc
@@ -53,6 +54,8 @@ gz_build_tests(TYPE UNIT
                   TINYXML2::TINYXML2
                 TEST_LIST
                   gtest_targets
+                ENVIRONMENT 
+                  GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 )
 
 foreach(test ${gtest_targets})
@@ -76,6 +79,7 @@ if(TARGET UNIT_gz_TEST)
 
   set(_env_vars)
   list(APPEND _env_vars "GZ_CONFIG_PATH=${CMAKE_BINARY_DIR}/test/conf")
+  list(APPEND _env_vars "GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
   set_tests_properties(UNIT_gz_TEST PROPERTIES
     ENVIRONMENT "${_env_vars}")
