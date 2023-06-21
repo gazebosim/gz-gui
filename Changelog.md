@@ -284,6 +284,45 @@
 
 ## Gazebo GUI 6
 
+### Gazebo GUI 6.7.0 (2023-05-12)
+
+1. Add degree as an optional unit for rotation in GzPose.
+    * [Pull request #475](https://github.com/gazebosim/gz-gui/pull/475)
+
+1. Fix image display test.
+    * [Pull request #468](https://github.com/gazebosim/gz-gui/pull/468)
+
+1. Update cmd/CMakeLists to conform with all other gz libraries.
+    * [Pull request #478](https://github.com/gazebosim/gz-gui/pull/478)
+
+1. Add key publisher test.
+    * [Pull request #477](https://github.com/gazebosim/gz-gui/pull/477)
+
+1. Add pointer check in Application::RemovePlugin.
+    * [Pull request #501](https://github.com/gazebosim/gz-gui/pull/501)
+
+1. ign -> gz Migrate Ignition Headers : gz-gui.
+    * [Pull request #466](https://github.com/gazebosim/gz-gui/pull/466)
+
+1. Fix INTEGRATION_camera_tracking test.
+    * [Pull request #519](https://github.com/gazebosim/gz-gui/pull/519)
+
+1. Update maintainer email.
+    * [Pull request #521](https://github.com/gazebosim/gz-gui/pull/521)
+
+1. Add Camera FPS plugin.
+    * [Pull request #523](https://github.com/gazebosim/gz-gui/pull/523)
+
+1. Rename COPYING to LICENSE.
+    * [Pull request #525](https://github.com/gazebosim/gz-gui/pull/525)
+
+1. CI workflow: use checkout v3.
+    * [Pull request #526](https://github.com/gazebosim/gz-gui/pull/526)
+    * [Pull request #536](https://github.com/gazebosim/gz-gui/pull/536)
+
+1. Fix data race issues in CameraTracking plugin.
+    * [Pull request #537](https://github.com/gazebosim/gz-gui/pull/537)
+
 ### Gazebo GUI 6.7.0 (2022-12-02)
 
 1. Set View Camera controller from plugin configuration
