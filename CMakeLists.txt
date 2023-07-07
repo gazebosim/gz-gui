@@ -30,9 +30,7 @@ message(STATUS "\n\n-- ====== Finding Dependencies ======")
 
 #--------------------------------------
 # Find Protobuf
-gz_find_package(GzProtobuf
-                REQUIRED
-                PRETTY Protobuf)
+find_package(Protobuf REQUIRED)
 
 #--------------------------------------
 # Find Tinyxml2
