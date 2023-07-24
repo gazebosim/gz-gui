@@ -241,14 +241,12 @@ bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
 /////////////////////////////////////////////////
 void CameraTrackingPrivate::OnMoveToComplete()
 {
-  std::lock_guard<std::mutex> lock(this->mutex);
   this->moveToTarget.clear();
 }
 
 /////////////////////////////////////////////////
 void CameraTrackingPrivate::OnMoveToPoseComplete()
 {
-  std::lock_guard<std::mutex> lock(this->mutex);
   this->moveToPoseValue.reset();
 }
 
@@ -297,6 +295,8 @@ bool CameraTrackingPrivate::OnMoveToPose(const msgs::GUICamera &_msg,
 /////////////////////////////////////////////////
 void CameraTrackingPrivate::OnRender()
 {
+  std::lock_guard<std::mutex> lock(this->mutex);
+
   if (nullptr == this->scene)
   {
     this->scene = rendering::sceneFromFirstRenderEngine();
@@ -434,13 +434,14 @@ CameraTracking::CameraTracking()
   this->dataPtr->timer = new QTimer(this);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
   {
-   if (!this->dataPtr->camera)
-    return;
-   if (this->dataPtr->cameraPosePub.HasConnections())
-   {
-     auto poseMsg = msgs::Convert(this->dataPtr->camera->WorldPose());
-     this->dataPtr->cameraPosePub.Publish(poseMsg);
-   }
+    std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
+    if (!this->dataPtr->camera)
+     return;
+    if (this->dataPtr->cameraPosePub.HasConnections())
+    {
+      auto poseMsg = msgs::Convert(this->dataPtr->camera->WorldPose());
+      this->dataPtr->cameraPosePub.Publish(poseMsg);
+    }
   });
   this->dataPtr->timer->setInterval(1000.0 / 50.0);
   this->dataPtr->timer->start();
