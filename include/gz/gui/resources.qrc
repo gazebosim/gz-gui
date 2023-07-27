@@ -43,13 +43,4 @@
     <file alias="GzVector3.qml">qml/GzVector3.qml</file>
 </qresource>
 
-<!-- Deprecated module - remove on tock -->
-<qresource prefix="gz-gui-qml/ignition/gui">
-    <file alias="qmldir">qml/qmldir_deprecated</file>
-    <file alias="GzColor.qml">qml/GzColor.qml</file>
-    <file alias="GzPose.qml">qml/GzPose.qml</file>
-    <file alias="GzSnackBar.qml">qml/GzSnackBar.qml</file>
-    <file alias="GzSpinBox.qml">qml/GzSpinBox.qml</file>
-    <file alias="GzVector3.qml">qml/GzVector3.qml</file>
-</qresource>
 </RCC>

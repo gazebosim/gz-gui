@@ -30,7 +30,7 @@
 int g_argc = 1;
 char* g_argv[] =
 {
-  reinterpret_cast<char*>(const_cast<char*>("./ignition")),
+  reinterpret_cast<char*>(const_cast<char*>("./gz")),
 };
 
 //////////////////////////////////////////////////
@@ -49,11 +49,6 @@ void startConsoleLog()
 extern "C" GZ_GUI_VISIBLE char *gzVersion()
 {
   return strdup(GZ_GUI_VERSION_FULL);
-}
-
-extern "C" GZ_GUI_VISIBLE char *ignitionVersion()
-{
-  return gzVersion();
 }
 
 //////////////////////////////////////////////////
