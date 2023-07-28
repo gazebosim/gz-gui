@@ -9,5 +9,6 @@ gz_build_tests(
     ${PROJECT_NAME}_test_helpers
     gz-plugin${GZ_PLUGIN_VER}::loader
     gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+    gz-gui${PROJECT_VERSION_MAJOR}-msgs
     Qt5::Test
 )

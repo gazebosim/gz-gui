@@ -64,7 +64,8 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
     ${Qt5QuickControls2_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     TINYXML2::TINYXML2
+  PRIVATE
+    gz-gui${PROJECT_VERSION_MAJOR}-msgs
 )
 
 gz_install_all_headers()
-

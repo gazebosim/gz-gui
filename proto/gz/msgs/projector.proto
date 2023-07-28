@@ -1,0 +1,50 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "ProjectorProtos";
+
+/// \ingroup gz.msgs
+/// \interface Projector
+/// \brief Information about a projector
+
+import "gz/msgs/pose.proto";
+import "gz/msgs/header.proto";
+
+message Projector
+{
+  /// \brief Optional header data
+  Header header        = 1;
+
+  string name          = 2;
+  string texture       = 3;
+  Pose pose            = 4;
+  double fov           = 5;
+  double near_clip     = 6;
+  double far_clip      = 7;
+  bool enabled         = 8;
+
+  /// \brief Unique ID associated with the projector
+  uint32 id            = 9;
+
+  /// \brief Visibility flags of a projector. When a camera's visibility_mask
+  /// & (bitwise AND) the projector's visibility_flags evaluates to non-zero,
+  /// the projected pattern will be visible to the camera.
+  uint32 visibility_flags = 10;
+}

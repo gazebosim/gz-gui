@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "GeometryProtos";
+
+/// \ingroup gz.msgs
+/// \interface Geometry
+/// \brief Information about a geometry element
+
+import "gz/msgs/boxgeom.proto";
+import "gz/msgs/capsulegeom.proto";
+import "gz/msgs/conegeom.proto";
+import "gz/msgs/cylindergeom.proto";
+import "gz/msgs/ellipsoidgeom.proto";
+import "gz/msgs/header.proto";
+import "gz/msgs/heightmapgeom.proto";
+import "gz/msgs/imagegeom.proto";
+import "gz/msgs/meshgeom.proto";
+import "gz/msgs/planegeom.proto";
+import "gz/msgs/polylinegeom.proto";
+import "gz/msgs/spheregeom.proto";
+import "gz/msgs/vector3d.proto";
+
+message Geometry
+{
+  enum Type
+  {
+    BOX          = 0;
+    CYLINDER     = 1;
+    SPHERE       = 2;
+    PLANE        = 3;
+    IMAGE        = 4;
+    HEIGHTMAP    = 5;
+    MESH         = 6;
+    TRIANGLE_FAN = 7;
+    LINE_STRIP   = 8;
+    POLYLINE     = 9;
+    CONE         = 10;
+    EMPTY        = 11;
+    ARROW        = 12;
+    AXIS         = 13;
+    CAPSULE      = 14;
+    ELLIPSOID    = 15;
+  }
+
+  /// \brief Optional header data
+  Header header             = 1;
+
+  Type type                = 2;
+  BoxGeom box              = 3;
+  CylinderGeom cylinder    = 4;
+  PlaneGeom plane          = 5;
+  SphereGeom sphere        = 6;
+  ImageGeom image          = 7;
+  HeightmapGeom heightmap  = 8;
+  MeshGeom      mesh       = 9;
+  ConeGeom      cone       = 10;
+  CapsuleGeom   capsule    = 13;
+  EllipsoidGeom ellipsoid  = 14;
+
+  repeated Vector3d points          = 11;
+  repeated Polyline polyline        = 12;
+}

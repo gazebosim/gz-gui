@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "AxisProtos";
+
+/// \ingroup gz.msgs
+/// \interface Axis
+/// \brief msgs::Joint axis message
+
+import "gz/msgs/vector3d.proto";
+import "gz/msgs/header.proto";
+
+message Axis
+{
+  /// \brief Optional header data
+  Header header               = 1;
+
+  /// \brief The x,y,z components of the axis unit vector.
+  Vector3d xyz                = 2;
+
+  /// \brief The lower joint axis limit (radians for revolute joints,
+  /// meters for prismatic joints). Not valid if the joint that uses this
+  /// axis is continuous.
+  double limit_lower          = 3;
+
+  /// \brief The upper joint axis limit (radians for revolute joints,
+  /// meters for prismatic joints). Not valid if the joint that uses this
+  /// axis is continuous.
+  double limit_upper          = 4;
+
+  /// \brief Value for enforcing the maximum joint effort applied.
+  /// Limit is not enforced if value is negative.
+  double limit_effort         = 5;
+
+  /// \brief Value for enforcing the maximum joint velocity.
+  double limit_velocity       = 6;
+
+  /// \brief The physical velocity dependent viscous damping coefficient
+  /// of the joint axis.
+  double damping              = 7;
+
+  /// \brief The physical static friction value of the joint.
+  double friction             = 8;
+
+  /// \brief Position of the joint. For angular joints, such as revolute
+  /// joints, the units are radians. For linear joints, such as prismatic
+  /// joints, the units are meters.
+  double position             = 10;
+
+  /// \brief Velocity of the joint in SI units (meter/second).
+  double velocity             = 11;
+
+  /// \brief Force applied to the joint in SI units (Newton).
+  double force                = 12;
+
+  /// \brief Acceleration of the joint is SI units (meter/second^2).
+  double acceleration         = 13;
+
+  /// \brief Set the name of the coordinate frame in which this joint axis's
+  /// unit vector is expressed. An empty value implies the parent (joint)
+  /// frame.
+  string xyz_expressed_in     = 14;
+}

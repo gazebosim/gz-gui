@@ -1,0 +1,162 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "IMUSensorProtos";
+
+/// \ingroup gz.msgs
+/// \interface IMUSensor
+/// \brief Information about an imu sensor 
+
+import "gz/msgs/sensor_noise.proto";
+import "gz/msgs/header.proto";
+import "gz/msgs/vector3d.proto";
+
+message IMUSensor
+{
+  /// \brief Angular velocity information
+  message AngularVelocity
+  {
+    /// \brief Noise about the x-axis
+    SensorNoise x_noise = 1;
+
+    /// \brief Noise about the y-axis
+    SensorNoise y_noise = 2;
+
+    /// \brief Noise about the z-axis
+    SensorNoise z_noise = 3;
+  }
+
+  /// \brief Linear acceleration information
+  message LinearAcceleration
+  {
+    /// \brief Noise about the x-axis
+    SensorNoise x_noise = 1;
+
+    /// \brief Noise about the y-axis
+    SensorNoise y_noise = 2;
+
+    /// \brief Noise about the z-axis
+    SensorNoise z_noise = 3;
+  }
+
+  /// \brief Orientation reference frame information
+  message OrientationReferenceFrame
+  {
+    /// \brief This string represents special hardcoded use cases that are
+    /// commonly seen with typical robot IMU's:
+    ///   - CUSTOM: use Euler angle custom_rpy orientation specification.
+    ///             The orientation of the IMU's reference frame is defined
+    ///             by adding the custom_rpy rotation
+    ///             to the parent_frame.
+    ///   - NED: The IMU XYZ aligns with NED, where NED orientation relative
+    ///          to the world
+    ///             is defined by the SphericalCoordinates class.
+    ///   - ENU: The IMU XYZ aligns with ENU, where ENU orientation relative
+    ///          to the world is defined by the SphericalCoordinates class.
+    ///   - NWU: The IMU XYZ aligns with NWU, where NWU orientation relative
+    ///          to the world is defined by the SphericalCoordinates class.
+    ///   - GRAV_UP: where direction of gravity maps to IMU reference frame
+    ///              Z-axis with Z-axis pointing in the opposite direction of
+    ///              gravity. IMU reference frame X-axis direction is defined
+    ///              by GravityDirX(). Note if GravityDirX() is parallel to
+    ///              gravity direction, this configuration fails. Otherwise,
+    ///              IMU reference frame X-axis is defined by projection of
+    ///              GravtyDirX onto a plane normal to the gravity vector.
+    ///              IMU reference frame Y-axis is a vector orthogonal to
+    ///              both X and Z axis following the right hand rule.
+    ///  - GRAV_DOWN: where direction of gravity maps to IMU reference frame
+    ///               Z-axis with Z-axis pointing in the direction of gravity.
+    ///               IMU reference frame X-axis direction is defined by
+    ///               GravityDirX(). Note if GravityDirX() is parallel to
+    ///               gravity direction, this configuration fails. Otherwise,
+    ///               IMU reference frame X-axis is defined by projection of
+    ///               GravityDirX() onto a plane normal to the gravity vector.
+    ///               IMU reference frame Y-axis is a vector orthogonal to both
+    ///               X and Z axis following the right hand rule.
+    string localization               = 1;
+
+    /// \brief This field and custom_rpy_parent_frame are used when
+    /// Localization is set to CUSTOM. Orientation
+    /// (fixed axis roll, pitch yaw) transform from ParentFrame to this IMU's
+    /// reference frame.
+    ///
+    /// Some common examples are:
+    ///  - IMU reports in its local frame on boot. IMU sensor frame is the
+    ///    reference frame. Example: parent_frame="", custom_rpy="0 0 0"
+    ///  - IMU reports in Gazebo world frame.
+    ///    Example sdf: parent_frame="world", custom_rpy="0 0 0"
+    ///  - IMU reports in NWU frame. Uses SphericalCoordinates class to
+    ///    determine world frame in relation to magnetic north and gravity;
+    ///    i.e. rotation between North-West-Up and world (+X,+Y,+Z) frame is
+    ///    defined by SphericalCoordinates class.
+    ///    Example sdf given world is NWU: parent_frame="world",
+    ///    custom_rpy="0 0 0"
+    ///  - IMU reports in NED frame. Uses SphericalCoordinates class to
+    ///    determine world frame in relation to magnetic north and gravity;
+    ///    i.e. rotation between North-East-Down and world (+X,+Y,+Z) frame is
+    ///    defined by SphericalCoordinates class.
+    ///    Example sdf given world is NWU: parent_frame="world",
+    ///    custom_rpy="M_PI 0 0"
+    ///  - IMU reports in ENU frame. Uses SphericalCoordinates class to
+    ///    determine world frame in relation to magnetic north and gravity;
+    ///    i.e. rotation between East-North-Up and world (+X,+Y,+Z) frame is
+    ///    defined by SphericalCoordinates class.
+    ///    Example sdf given world is NWU: parent_frame="world",
+    ///    custom_rpy="0 0 -0.5*M_PI"
+    ///  - IMU reports in ROS optical frame as described in
+    ///    http://www.ros.org/reps/rep-0103.html#suffix-frames, which is
+    ///    (z-forward, x-left to right when facing +z, y-top to bottom when
+    ///    facing +z). (default gazebo camera is +x:view direction, +y:left,
+    ///    +z:up).
+    ///    Example sdf: parent_frame="local", custom_rpy="-0.5*M_PI 0 -0.5*M_PI"
+    Vector3d custom_rpy               = 2;
+
+    /// \brief The name of parent frame which the custom_rpy transform is
+    /// defined relative to. It can be any valid fully scoped link name or the
+    /// special reserved "world" frame. If left empty, use the sensor's own
+    /// local frame.
+    string custom_rpy_parent_frame    = 3;
+
+    /// \brief Used when localization is set to GRAV_UP or GRAV_DOWN, a
+    /// projection of this vector into a plane that is orthogonal to the
+    /// gravity vector defines the direction of the IMU reference frame's
+    /// X-axis.  grav_dir_x is  defined in the coordinate frame as defined by
+    /// the parent_frame element.
+    Vector3d gravity_dir_x            = 4;
+
+    /// \brief The name of parent frame which the GravityDirX vector is
+    /// defined relative to. It can be any valid fully scoped link name or the
+    /// special reserved "world" frame. If left empty, use the sensor's own
+    /// local frame.
+    string gravity_dir_x_parent_frame = 5;
+  }
+
+  /// \brief Optional header data
+  Header header                    = 1;
+
+  /// \brief Angular velocity information
+  AngularVelocity angular_velocity = 2;
+
+  /// \brief Linear acceleration information
+  LinearAcceleration linear_acceleration = 3;
+  
+  /// \brief Orientation reference frame information.
+  OrientationReferenceFrame orientation_ref_frame = 4;
+}

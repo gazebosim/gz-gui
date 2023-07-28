@@ -1,0 +1,44 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "WorldControlProtos";
+
+/// \ingroup gz.msgs
+/// \interface WorldControl
+/// \brief A message that allows for control of world functions
+
+import "gz/msgs/world_reset.proto";
+import "gz/msgs/header.proto";
+import "gz/msgs/time.proto";
+
+message WorldControl
+{
+  /// \brief Optional header data
+  Header header        = 1;
+
+  bool pause           = 2;
+  bool step            = 3;
+  uint32 multi_step    = 4;
+  WorldReset reset     = 5;
+  uint32 seed          = 6;
+
+  // \brief A simulation time in the future to run to and then pause.
+  Time run_to_sim_time = 7;
+}

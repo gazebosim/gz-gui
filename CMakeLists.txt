@@ -60,13 +60,18 @@ set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-transport
-gz_find_package(gz-transport13 REQUIRED)
+gz_find_package(gz-transport13 REQUIRED COMPONENTS msgs)
 set(GZ_TRANSPORT_VER ${gz-transport13_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-rendering
 gz_find_package(gz-rendering8 REQUIRED)
 set(GZ_RENDERING_VER ${gz-rendering8_VERSION_MAJOR})
+
+#--------------------------------------
+# Find gz-sensors (we only need the messages component)
+gz_find_package(gz-sensors8-msgs REQUIRED)
+set(GZ_SENSORS_VER 8)
 
 #--------------------------------------
 # Find gz-msgs
@@ -104,6 +109,8 @@ gz_configure_build(QUIT_IF_BUILD_ERRORS)
 # gz command line support
 #============================================================================
 add_subdirectory(conf)
+
+add_subdirectory(proto)
 
 #============================================================================
 # Create package information

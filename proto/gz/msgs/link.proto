@@ -1,0 +1,67 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "LinkProtos";
+
+/// \ingroup gz.msgs
+/// \interface Link
+/// \brief Information about a link
+
+import "gz/msgs/inertial.proto";
+import "gz/msgs/collision.proto";
+import "gz/msgs/visual.proto";
+import "gz/msgs/light.proto";
+import "gz/msgs/sensor.proto";
+import "gz/msgs/particle_emitter.proto";
+import "gz/msgs/projector.proto";
+import "gz/msgs/pose.proto";
+import "gz/msgs/battery.proto";
+import "gz/msgs/density.proto";
+import "gz/msgs/header.proto";
+
+message Link
+{
+  /// \brief Optional header data
+  Header header        = 1;
+
+  uint32 id            = 2;
+  string name          = 3;
+  bool self_collide    = 4;
+  bool gravity         = 5;
+  bool kinematic       = 6;
+  bool enabled         = 7;
+  Density density      = 8;
+  Inertial inertial    = 9;
+  Pose pose            = 10;
+  repeated Visual visual        = 11;
+  repeated Collision collision  = 12;
+  repeated Sensor sensor        = 13;
+  repeated Projector projector  = 14;
+  bool canonical       = 15;
+
+  /// \brief A vector of batteries attached to this link.
+  repeated Battery battery      = 16;
+
+  /// \brief A vector of lights attached to this link
+  repeated Light light          = 17;
+
+  /// \brief A vector of particle emitters attached to this link.
+  repeated ParticleEmitter particle_emitter = 18;
+}

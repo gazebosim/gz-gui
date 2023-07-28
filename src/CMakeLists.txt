@@ -50,6 +50,7 @@ gz_build_tests(TYPE UNIT
                 LIB_DEPS
                   gz-common${GZ_COMMON_VER}::events
                   gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
+                  gz-gui${PROJECT_VERSION_MAJOR}-msgs
                   TINYXML2::TINYXML2
                 TEST_LIST
                   gtest_targets

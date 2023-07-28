@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "JointProtos";
+
+/// \ingroup gz.msgs
+/// \interface Joint
+/// \brief Message for creating joint
+
+import "gz/msgs/header.proto";
+import "gz/msgs/axis.proto";
+import "gz/msgs/pose.proto";
+import "gz/msgs/sensor.proto";
+
+message Joint
+{
+
+  message Gearbox
+  {
+    /// \brief Gearbox joint reference body link
+    string gearbox_reference_body = 1;
+
+    /// \brief Gearbox ratio.
+    double gearbox_ratio = 2;
+  }
+
+  message Screw
+  {
+    /// \brief Screw joint thread pitch.
+    double thread_pitch = 1;
+  }
+
+  enum Type
+  {
+    REVOLUTE  = 0;
+    REVOLUTE2 = 1;
+    PRISMATIC = 2;
+    UNIVERSAL = 3;
+    BALL      = 4;
+    SCREW     = 5;
+    GEARBOX   = 6;
+    FIXED     = 7;
+    CONTINUOUS = 8;
+  }
+
+  /// \brief Optional header data
+  Header header         = 1;
+
+  string name           = 2;
+  uint32 id             = 3;
+
+  Type type             = 4;
+  string parent         = 5;
+  uint32 parent_id      = 6;
+  string child          = 7;
+  uint32 child_id       = 8;
+  Pose pose             = 9;
+  Axis axis1            = 10;
+  Axis axis2            = 11;
+
+  double cfm            = 12;
+  double bounce         = 13;
+
+  double fudge_factor   = 14;
+  double limit_cfm      = 15;
+  double limit_erp      = 16;
+  double suspension_cfm = 17;
+  double suspension_erp = 18;
+
+  Gearbox gearbox       = 19;
+  Screw screw           = 20;
+
+  repeated Sensor sensor         = 21;
+}

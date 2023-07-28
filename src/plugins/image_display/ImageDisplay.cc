@@ -26,7 +26,7 @@
 
 #include <gz/common/Console.hh>
 #include <gz/common/Image.hh>
-#include <gz/msgs/Utility.hh>
+#include <gz/msgs/convert/PixelFormatType.hh>
 #include <gz/plugin/Register.hh>
 #include <gz/transport/Node.hh>
 

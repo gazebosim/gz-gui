@@ -1,0 +1,104 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "SensorProtos";
+
+/// \ingroup gz.msgs
+/// \interface Sensor
+/// \brief Information about a sensor element
+
+import "gz/msgs/altimeter_sensor.proto";
+import "gz/msgs/camerasensor.proto";
+import "gz/msgs/contactsensor.proto";
+import "gz/msgs/air_pressure_sensor.proto";
+import "gz/msgs/gps_sensor.proto";
+import "gz/msgs/header.proto";
+import "gz/msgs/imu_sensor.proto";
+import "gz/msgs/lidar_sensor.proto";
+import "gz/msgs/logical_camera_sensor.proto";
+import "gz/msgs/magnetometer_sensor.proto";
+import "gz/msgs/pose.proto";
+
+message Sensor
+{
+  /// \brief Optional header data
+  Header header          = 1;
+
+  /// \brief Name of the sensor
+  string name            = 2;
+
+  /// \brief Id of the sensor
+  uint32 id              = 3;
+
+  /// \brief Name of the parent, usually a link or joint.
+  string parent          = 4;
+
+  /// \brief Id of the parent, usually a link or joint.
+  uint32 parent_id       = 5;
+
+  /// \brief Sensor type
+  string type            = 6;
+
+  /// \brief True indicates that the sensor should always
+  /// produce data, instead of producing data only when
+  /// a consumer is connected to the data topic
+  bool always_on         = 7;
+
+  /// \brief Refresh rate
+  double update_rate     = 8;
+
+  /// \brief Sensor pose
+  Pose pose              = 9;
+
+  /// \brief Description of a camera sensor
+  CameraSensor camera    = 10;
+
+  /// \brief Description of a contact sensor
+  ContactSensor contact  = 11;
+
+  /// \brief True value indicates that sensor data should be
+  /// visualized in the GUI
+  bool visualize         = 12;
+
+  /// \brief Topic on which sensor data is published
+  string topic           = 13;
+
+  /// \brief Description of a logical camera sensor
+  LogicalCameraSensor logical_camera = 14;
+
+  /// \brief Description of a gps sensor
+  /// TODO(chapulina) Migrate to NavSat
+  GPSSensor gps          = 15;
+
+  /// \brief Description of an IMU sensor
+  IMUSensor imu          = 16;
+
+  /// \brief Description of a Magnetometer sensor
+  MagnetometerSensor magnetometer      = 17;
+
+  /// \brief Description of an Altimeter sensor.
+  AltimeterSensor altimeter            = 18;
+
+  /// \brief Description of an Air Pressure sensor.
+  AirPressureSensor air_pressure       = 19;
+
+  /// \brief Description of a lidar sensor
+  LidarSensor lidar                    = 20;
+}

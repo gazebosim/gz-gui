@@ -1,0 +1,63 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "TrackVisualProtos";
+
+/// \ingroup gz.msgs
+/// \interface TrackVisual
+/// \brief Message for a tracking a rendering::Visual with a rendering::Camera
+
+import "gz/msgs/vector3d.proto";
+import "gz/msgs/header.proto";
+
+message TrackVisual
+{
+  /// \brief Optional header data
+  Header header            = 1;
+
+  /// \brief Name of the visual to track
+  string name              = 2;
+
+  /// \brief Id of the visual to track
+  uint32 id                = 3;
+
+  /// \brief True to have the tracking camera inherit the orientation of
+  /// the tracked visual.
+  bool inherit_orientation = 4;
+
+  /// \brief Minimum follow distance
+  double min_dist          = 5;
+
+  /// \brief Maximum follow distance
+  double max_dist          = 6;
+
+  /// \brief If set to true, the position of the camera is fixed.
+  bool static              = 7;
+
+  /// \brief If set to true, the position of the camera is relative to the
+  /// model reference frame.
+  bool use_model_frame     = 8;
+
+  /// \brief Position of the camera.
+  Vector3d xyz             = 9;
+
+  /// \brief If set to true, the camera inherits the yaw rotation of the model.
+  bool inherit_yaw         = 10;
+}

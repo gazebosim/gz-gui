@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "VisualProtos";
+
+/// \ingroup gz.msgs
+/// \interface Visual
+/// \brief A message containing visual information for rendering::Visual
+
+import "gz/msgs/header.proto";
+import "gz/msgs/pose.proto";
+import "gz/msgs/geometry.proto";
+import "gz/msgs/material.proto";
+import "gz/msgs/plugin.proto";
+import "gz/msgs/vector3d.proto";
+
+message Visual
+{
+  /// \brief Optional meta information for the visual. The information
+  /// contained within this element should be used to provide additional
+  /// feedback to an end user.
+  message Meta
+  {
+    /// \brief The layer in which this visual is displayed. The layer number
+    /// is useful for programs, such as Gazebo, that put visuals in different
+    /// layers for enhanced visualization.
+    int32 layer       = 1;
+  }
+
+  enum Type
+  {
+    /// \brief Entity visual
+    ENTITY    = 0;
+    /// \brief Model visual
+    MODEL     = 1;
+    /// \brief Link visual
+    LINK      = 2;
+    /// \brief Visual visual
+    VISUAL    = 3;
+    /// \brief Collision visual
+    COLLISION = 4;
+    /// \brief Sensor visual
+    SENSOR =    5;
+    /// \brief GUI visual
+    GUI =       6;
+    /// \brief Physics data visual
+    PHYSICS =   7;
+  }
+
+  /// \brief Optional header data
+  Header header       = 1;
+
+  string name         = 2;
+  uint32 id           = 3;
+  string parent_name  = 4;
+  uint32 parent_id    = 5;
+  bool cast_shadows   = 6;
+  double transparency = 7;
+  double laser_retro  = 8;
+  Pose pose           = 9;
+  Geometry geometry   = 10;
+  Material material   = 11;
+
+  bool visible        = 12;
+  bool delete_me      = 13;
+  bool is_static      = 14;
+  repeated Plugin plugin       = 15;
+  Vector3d scale      = 16;
+
+  /// \brief Option meta information associated with this visual.
+  Meta meta           = 17;
+
+  /// \brief Type of visual.
+  Type type           = 18;
+}

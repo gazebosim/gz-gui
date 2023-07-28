@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2022 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "LensProtos";
+
+/// \ingroup gz.msgs
+/// \interface Lens
+/// \brief Information about a lens element
+
+message Lens
+{
+  /// \brief Types of lens models.
+  enum Type
+  {
+    TYPE_NOT_SPECIFIED   = 0;
+    GNOMONICAL           = 1;
+    STEREOGRAPHIC        = 2;
+    EQUIDISTANT          = 3;
+    EQUISOLID_ANGLE      = 4;
+    ORTHOGRAPHIC         = 5;
+    CUSTOM               = 6;
+  }
+
+  /// \brief Lens custom function type.
+  enum FunctionType
+  {
+    FUNCTION_NOT_SPECIFIED = 0;
+    SIN = 1;
+    TAN = 2;
+    ID  = 3;
+  }
+
+  /// \brief Lens type
+  Type type                      = 1;
+
+  /// \brief Lens scale to horizontal field of view.
+  bool scale_to_hfov             = 2;
+
+  /// \brief Lens custom function linear scaling constant
+  double c1                      = 3;
+
+  /// \brief Lens custom function angular scaling constant.
+  double c2                      = 4;
+
+  /// \brief Lens custom function angle offset constant.
+  double c3                      = 5;
+
+  /// \brief Lens custom function focal length.
+  double focal_length            = 6;
+
+  /// \brief Lens custom function type.
+  FunctionType function_type     = 7;
+
+  /// \brief Lens cutoff angle in radians. Everything outside of the specified
+  /// angle will be hidden.
+  double cutoff_angle            = 8;
+
+  /// \brief The resolution of the environment cube map used to draw the world.
+  int32 environment_texture_size = 9;
+
+  /// \brief Lens X focal length in pixels.
+  double intrinsics_fx           = 10;
+
+  /// \brief Lens Y focal length in pixels.
+  double intrinsics_fy           = 11;
+
+  /// \brief Lens X principal point in pixels.
+  double intrinsics_cx           = 12;
+
+  /// \brief Lens Y principal point in pixels.
+  double intrinsics_cy           = 13;
+
+  /// \brief Lens XY axis skew.
+  double intrinsics_skew         = 14;
+}

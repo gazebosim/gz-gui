@@ -1,0 +1,84 @@
+/*
+ * Copyright (C) 2017 Open Source Robotics Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+syntax = "proto3";
+package gz.msgs;
+option java_package = "com.gz.msgs";
+option java_outer_classname = "FrictionProtos";
+
+/// \ingroup gz.msgs
+/// \interface Friction
+/// \brief Information about friction
+
+import "gz/msgs/vector3d.proto";
+import "gz/msgs/header.proto";
+
+message Friction
+{
+  message Torsional
+  {
+    message ODE
+    {
+      /// \brief Force dependent slip for torsional friction, between the range
+      /// of [0..1].
+      double slip = 1;
+    }
+
+    /// \brief Torsional coefficient of friction in the range of [0..1].
+    double coefficient = 1;
+
+    /// \brief By default, torsional friction is calculated using the
+    /// "patch_radius", which is sqrt(R*d), where "R" is the radius of the
+    /// collision at the contact point (surface_radius) and "d" is the contact
+    /// depth. If this flag is set to false, surface_radius and contact depth
+    /// will be used instead of patch radius.
+    bool use_patch_radius = 2;
+
+    /// \brief Radius of contact patch surface, used for torsional friction.
+    double patch_radius = 3;
+
+    /// \brief Surface radius on the point of contact, used for torsional
+    /// friction.
+    double surface_radius = 4;
+
+    /// \brief Torsional friction information exclusive to ODE physics engine.
+    ODE ode = 5;
+  }
+
+  /// \brief Optional header data
+  Header header = 1;
+
+  /// \brief Coefficient of friction in the range of [0..1].
+  double mu = 2;
+
+  /// \brief Second coefficient of friction in the range of [0..1].
+  double mu2 = 3;
+
+  /// \brief Direction of mu1 in the collision local reference frame.
+  Vector3d fdir1 = 4;
+
+  /// \brief Force dependent slip direction 1 in collision local frame, between
+  /// the range of [0..1].
+  double slip1 = 5;
+
+  /// \brief Force dependent slip direction 2 in collision local frame, between
+  /// the range of [0..1].
+  double slip2 = 6;
+
+  /// \brief Torsional friction.
+  Torsional torsional = 7;
+}
