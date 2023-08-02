@@ -947,7 +947,7 @@ void MainWindow::SetShowDialogOnExit(bool _showDialogOnExit)
 /////////////////////////////////////////////////
 void MainWindow::SetRenderEngine(const std::string &_renderEngine)
 {
- this->setProperty("renderEngine", _renderEngine.c_str());
+  this->setProperty("renderEngine", _renderEngine.c_str());
 }
 
 /////////////////////////////////////////////////
