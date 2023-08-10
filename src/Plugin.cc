@@ -72,7 +72,7 @@ class gz::gui::PluginPrivate
   public: QQmlContext *context{nullptr};
 
   /// \brief Map of card properties to be passed to QML card object.
-  /// Accepts all QML Pane properties plus custom Igntiion GUI properties.
+  /// Accepts all QML Pane properties plus custom Gazeb: GUI properties.
   /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
   public: std::map<std::string, QVariant> cardProperties;
 

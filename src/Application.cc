@@ -58,10 +58,6 @@ namespace gz
       /// these until it is ok to unload the plugin's shared library.
       public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
 
-      /// \brief Deprecated environment variable which holds paths to look for
-      /// plugins
-      public: std::string pluginPathEnvDeprecated = "IGN_GUI_PLUGIN_PATH";
-
       /// \brief Environment variable which holds paths to look for plugins
       public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
 
