@@ -68,9 +68,9 @@ namespace plugins
     public: bool lastStatsMsgPaused{true};
 
     /// \brief Whether server communication should occur through an event (true)
-    /// or service (false). The service option is used by default for
-    /// gz-gui6, and should be changed to use the event by default in gz-gui7.
-    public: bool useEvent{false};
+    /// or service (false). The service option was used by default for
+    /// gz-gui7 and earlier, and now uses the event by default in gz-gui8.
+    public: bool useEvent{true};
   };
 }
 }
