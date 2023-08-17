@@ -115,7 +115,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   std::cerr << " =================== after get render engine " << std::endl;
   ASSERT_NE(nullptr, engine);
 
-/*  EXPECT_EQ(1u, engine->SceneCount());
+  EXPECT_EQ(1u, engine->SceneCount());
   auto scene = engine->SceneByName("banana");
   ASSERT_NE(nullptr, scene);
 
@@ -139,7 +139,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   EXPECT_EQ(rendering::CameraProjectionType::CPT_ORTHOGRAPHIC,
             camera->ProjectionType());
-*/
+
   // Cleanup
   auto plugins = win->findChildren<Plugin *>();
   EXPECT_EQ(2, plugins.size());
@@ -151,9 +151,8 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   win->QuickWindow()->close();
 
-//  camera.reset();
-//  std::cerr << " =================== before destroying scene" << std::endl;
-//  engine->DestroyScene(scene);
+  std::cerr << " =================== before destroying scene" << std::endl;
+  engine->DestroyScene(scene);
 
   std::cerr << " =================== before unloading engine " << std::endl;
 //  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
