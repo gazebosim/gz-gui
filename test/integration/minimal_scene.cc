@@ -100,6 +100,8 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       pluginDoc.FirstChildElement("plugin")));
   EXPECT_TRUE(app.LoadPlugin("InteractiveViewControl"));
 
+  std::cerr << " =================== create main window " << std::endl;
+
   // Get main window
   auto win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
@@ -107,8 +109,10 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   // Show, but don't exec, so we don't block
   win->QuickWindow()->show();
 
+  std::cerr << " =================== before get render engine " << std::endl;
   // get render engine after window is shown
   auto engine = gz::gui::testing::getRenderEngine("ogre2");
+  std::cerr << " =================== after get render engine " << std::endl;
   ASSERT_NE(nullptr, engine);
 
   EXPECT_EQ(1u, engine->SceneCount());
@@ -145,6 +149,12 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   plugins.clear();
 
   win->QuickWindow()->close();
+
+  std::cerr << " =================== before destroying scene" << std::endl;
   engine->DestroyScene(scene);
+
+  std::cerr << " =================== before unloading engine " << std::endl;
   EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
+
+  std::cerr << " =================== exiting " << std::endl;
 }
