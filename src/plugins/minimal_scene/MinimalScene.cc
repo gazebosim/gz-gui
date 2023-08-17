@@ -679,6 +679,10 @@ void GzRenderer::Destroy()
     return;
   scene->DestroySensor(this->dataPtr->camera);
 
+  // clean up in the rendering thread
+  this->dataPtr->camera.reset();
+  this->dataPtr->rayQuery.reset();
+
   // If that was the last sensor, destroy scene
   if (scene->SensorCount() == 0)
   {
@@ -686,11 +690,10 @@ void GzRenderer::Destroy()
     engine->DestroyScene(scene);
 
     // TODO(anyone) If that was the last scene, terminate engine?
+    if (engine->SceneCount() == 0)
+      rendering::unloadEngine(engine->Name());
   }
 
-  // clean up in the rendering thread
-  this->dataPtr->camera.reset();
-  this->dataPtr->rayQuery.reset();
   std::cerr << "================ GzRenderer Destroy " << std::endl;
 }
 
