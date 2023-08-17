@@ -149,10 +149,11 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   plugins.clear();
 
 
+  scene.reset();
   win->QuickWindow()->close();
 
   std::cerr << " =================== before destroying scene" << std::endl;
-  engine->DestroyScene(scene);
+//  engine->DestroyScene(scene);
 
   std::cerr << " =================== before unloading engine " << std::endl;
 //  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
