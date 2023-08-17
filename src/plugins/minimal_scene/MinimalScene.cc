@@ -691,6 +691,7 @@ void GzRenderer::Destroy()
   // clean up in the rendering thread
   this->dataPtr->camera.reset();
   this->dataPtr->rayQuery.reset();
+  std::cerr << "================ GzRenderer Destroy " << std::endl;
 }
 
 /////////////////////////////////////////////////
