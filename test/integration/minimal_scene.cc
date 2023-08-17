@@ -150,6 +150,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   win->QuickWindow()->close();
 
+  camera.reset();
   std::cerr << " =================== before destroying scene" << std::endl;
   engine->DestroyScene(scene);
 
