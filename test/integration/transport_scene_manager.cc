@@ -262,7 +262,5 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   scene.reset();
   win->QuickWindow()->close();
-//  engine->DestroyScene(scene);
-//  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
 

@@ -691,15 +691,7 @@ void GzRenderer::Destroy()
 
     scene.reset();
     // TODO(anyone) If that was the last scene, terminate engine?
-    if (engine->SceneCount() == 0)
-    {
-      std::cerr << "terminating " << std::endl;
-      /// rendering::unloadEngine(engine->Name());
-      std::cerr << "terminated " << std::endl;
-    }
   }
-
-  std::cerr << "================ GzRenderer Destroy " << std::endl;
 }
 
 /////////////////////////////////////////////////
