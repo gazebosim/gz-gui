@@ -694,7 +694,7 @@ void GzRenderer::Destroy()
     if (engine->SceneCount() == 0)
     {
       std::cerr << "terminating " << std::endl;
-      rendering::unloadEngine(engine->Name());
+      /// rendering::unloadEngine(engine->Name());
       std::cerr << "terminated " << std::endl;
     }
   }
