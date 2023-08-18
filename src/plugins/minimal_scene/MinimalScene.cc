@@ -685,7 +685,6 @@ void GzRenderer::Destroy()
     gzdbg << "Destroy scene [" << scene->Name() << "]" << std::endl;
     engine->DestroyScene(scene);
 
-    scene.reset();
     // TODO(anyone) If that was the last scene, terminate engine?
   }
 
