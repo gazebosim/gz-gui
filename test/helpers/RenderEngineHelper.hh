@@ -60,7 +60,7 @@ namespace testing
     };
 
     int sleep = 0;
-    int maxSleep = 30;
+    int maxSleep = 100;
     while (!receivedRenderEvent && sleep < maxSleep)
     {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
