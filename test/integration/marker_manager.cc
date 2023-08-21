@@ -211,4 +211,7 @@ TEST_F(MarkerManagerTestFixture,
 
   // Cleanup
   plugins.clear();
+  scene.reset();
+
+  window->QuickWindow()->close();
 }

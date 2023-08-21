@@ -144,7 +144,7 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_TRUE(app.RemovePlugin(pluginName));
   plugins.clear();
 
+
+  scene.reset();
   win->QuickWindow()->close();
-  engine->DestroyScene(scene);
-  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
