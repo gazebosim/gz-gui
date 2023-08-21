@@ -18,6 +18,7 @@
 #include <mutex>
 #include <string>
 
+#include <gz/msgs/gui_camera.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
 
 #include <gz/common/Console.hh>

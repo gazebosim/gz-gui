@@ -15,6 +15,7 @@
  *
  */
 
+#include "gz/msgs/marker.pb.h"
 #include "gz/msgs/pointcloud_packed.pb.h"
 
 #include <algorithm>
