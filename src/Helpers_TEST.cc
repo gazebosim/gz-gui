@@ -191,11 +191,11 @@ TEST(HelpersTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(renderEngine))
   EXPECT_TRUE(renderEngineName().empty());
 
   // Set the render engine GUI name
-  mainWindow->SetRenderEngine("ogre");
+  mainWindow->SetRenderEngine("ogre2");
 
   // Has render engine
   EXPECT_FALSE(renderEngineName().empty());
-  EXPECT_EQ("ogre", renderEngineName());
+  EXPECT_EQ("ogre2", renderEngineName());
 
   // Set no render engine
   mainWindow->SetRenderEngine({});

@@ -33,6 +33,8 @@
 #include <gz/utilities/ExtraTestMacros.hh>
 
 #include "test_config.h"  // NOLINT(build/include)
+#include "../helpers/TestHelper.hh"
+#include "../helpers/RenderEngineHelper.hh"
 #include "gz/gui/Application.hh"
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
@@ -116,7 +118,7 @@ TEST_F(MarkerManagerTestFixture,
 
   const char *pluginMinimalSceneStr =
     "<plugin filename=\"MinimalScene\">"
-      "<engine>ogre</engine>"
+      "<engine>ogre2</engine>"
       "<scene>scene</scene>"
     "</plugin>";
 
@@ -143,18 +145,9 @@ TEST_F(MarkerManagerTestFixture,
   // Show, but don't exec, so we don't block
   window->QuickWindow()->show();
 
-  // Check scene
-  auto engine = rendering::engine("ogre");
+  // get render engine after window is shown
+  auto engine = ignition::gui::testing::getRenderEngine("ogre2");
   ASSERT_NE(nullptr, engine);
-
-  int sleep = 0;
-  int maxSleep = 30;
-  while (0 == engine->SceneCount() && sleep < maxSleep)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    QCoreApplication::processEvents();
-    sleep++;
-  }
 
   EXPECT_EQ(1u, engine->SceneCount());
   scene = engine->SceneByName("scene");
@@ -219,4 +212,7 @@ TEST_F(MarkerManagerTestFixture,
 
   // Cleanup
   plugins.clear();
+  scene.reset();
+
+  window->QuickWindow()->close();
 }
