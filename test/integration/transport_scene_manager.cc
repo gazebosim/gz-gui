@@ -31,6 +31,7 @@
 
 #include "test_config.h"  // NOLINT(build/include)
 #include "../helpers/TestHelper.hh"
+#include "../helpers/RenderEngineHelper.hh"
 #include "gz/gui/Application.hh"
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/Plugin.hh"
@@ -122,7 +123,7 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   // Load plugins
   const char *pluginStr =
     "<plugin filename=\"MinimalScene\">"
-      "<engine>ogre</engine>"
+      "<engine>ogre2</engine>"
       "<scene>banana</scene>"
       "<ambient_light>1.0 0 0</ambient_light>"
       "<background_color>0 1 0</background_color>"
@@ -153,8 +154,8 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   // Show, but don't exec, so we don't block
   win->QuickWindow()->show();
 
-  // Get scene
-  auto engine = rendering::engine("ogre");
+  // get render engine after window is shown
+  auto engine = ignition::gui::testing::getRenderEngine("ogre2");
   ASSERT_NE(nullptr, engine);
 
   int sleep = 0;
@@ -258,7 +259,6 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   }
   plugins.clear();
 
+  scene.reset();
   win->QuickWindow()->close();
-  engine->DestroyScene(scene);
-  EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
