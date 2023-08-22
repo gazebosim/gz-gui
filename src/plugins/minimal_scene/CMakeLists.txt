@@ -37,5 +37,6 @@ if (APPLE)
       PROPERTIES
       COMPILE_FLAGS
           "-fobjc-arc"
+          "-Wno-nullability-completeness"
   )
 endif()
