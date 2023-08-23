@@ -18,7 +18,10 @@
 #include <mutex>
 #include <string>
 
+#include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/gui_camera.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
+#include <gz/msgs/vector3d.pb.h>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Profiler.hh>
