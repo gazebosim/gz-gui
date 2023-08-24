@@ -38,9 +38,6 @@
 #include "gz/gui/Plugin.hh"
 #include "gz/gui/MainWindow.hh"
 
-#include "backward.hpp"
-backward::SignalHandling sh;
-
 int g_argc = 1;
 char* g_argv[] =
 {
@@ -265,7 +262,4 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   scene.reset();
   win->QuickWindow()->close();
-  engine->DestroyScene(scene);
-  // \TODO(mjcarroll) Re-enable unloadEngine when it works correctly
-  // EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }

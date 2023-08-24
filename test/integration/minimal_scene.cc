@@ -34,9 +34,6 @@
 #include "gz/gui/Plugin.hh"
 #include "gz/gui/MainWindow.hh"
 
-#include "backward.hpp"
-backward::SignalHandling sh;
-
 int g_argc = 1;
 char* g_argv[] =
 {
@@ -147,10 +144,6 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_TRUE(app.RemovePlugin(pluginName));
   plugins.clear();
 
-
   scene.reset();
   win->QuickWindow()->close();
-  engine->DestroyScene(scene);
-  // \TODO(mjcarroll) Re-enable unloadEngine when it works correctly
-  // EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }

@@ -39,9 +39,6 @@
 #include "gz/gui/Plugin.hh"
 #include "gz/gui/MainWindow.hh"
 
-#include "backward.hpp"
-backward::SignalHandling sh;
-
 int g_argc = 1;
 char* g_argv[] =
 {
