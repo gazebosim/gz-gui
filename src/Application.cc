@@ -542,23 +542,9 @@ bool Application::LoadPlugin(const std::string &_filename,
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
   {
-    // Try deprecated environment variable
-    common::SystemPaths systemPathsDep;
-    systemPathsDep.SetPluginPathEnv(this->dataPtr->pluginPathEnvDeprecated);
-    pathToLib = systemPathsDep.FindSharedLibrary(_filename);
-    if (pathToLib.empty())
-    {
-      gzerr << "Failed to load plugin [" << _filename <<
-                "] : couldn't find shared library." << std::endl;
-      return false;
-    }
-    else
-    {
-      gzwarn << "Found plugin [" << _filename
-              << "] using deprecated environment variable ["
-              << this->dataPtr->pluginPathEnvDeprecated << "]. Please use ["
-              << this->dataPtr->pluginPathEnv << "] instead." << std::endl;
-    }
+    gzerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't find shared library." << std::endl;
+    return false;
   }
 
   // Load plugin
@@ -825,13 +811,6 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
 {
   // 1. Paths from env variable
   auto paths = common::SystemPaths::PathsFromEnv(this->dataPtr->pluginPathEnv);
-
-  // 1.5 Paths from deprecated env variable
-  auto pathsDeprecated =
-      common::SystemPaths::PathsFromEnv(this->dataPtr->pluginPathEnvDeprecated);
-
-  for (auto const &path : pathsDeprecated)
-    paths.push_back(path);
 
   // 2. Paths added by calling addPluginPath
   for (auto const &path : this->dataPtr->pluginPaths)
