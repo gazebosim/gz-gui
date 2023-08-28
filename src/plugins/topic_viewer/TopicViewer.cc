@@ -388,11 +388,19 @@ void TopicViewer::UpdateModel()
     std::vector<transport::MessagePublisher> publishers;
     std::vector<transport::MessagePublisher> subscribers;
     this->dataPtr->node.TopicInfo(topics[i], publishers, subscribers);
+
+    if (publishers.empty())
+      continue;
+
+    // ToDo: Go over all the publishers and also consider subscribers.
+    // Review the way we're using "topicsToRemove" as the logic doesn't look
+    // very clear to me.
+
     std::string msgType = publishers[0].MsgTypeName();
 
     // skip the matched topics
     if (this->dataPtr->currentTopics.count(topics[i]) &&
-            this->dataPtr->currentTopics[topics[i]] == msgType)
+        this->dataPtr->currentTopics[topics[i]] == msgType)
     {
       topicsToRemove.erase(topics[i]);
       continue;
@@ -413,7 +421,7 @@ void TopicViewer::UpdateModel()
       auto child = root->child(i);
 
       if (child->data(NAME_ROLE).toString().toStdString() == topic.first &&
-              child->data(TYPE_ROLE).toString().toStdString() == topic.second)
+          child->data(TYPE_ROLE).toString().toStdString() == topic.second)
       {
         // remove from model
         root->removeRow(i);
