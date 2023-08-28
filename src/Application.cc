@@ -58,10 +58,6 @@ namespace gz
       /// these until it is ok to unload the plugin's shared library.
       public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
 
-      /// \brief Deprecated environment variable which holds paths to look for
-      /// plugins
-      public: std::string pluginPathEnvDeprecated = "IGN_GUI_PLUGIN_PATH";
-
       /// \brief Environment variable which holds paths to look for plugins
       public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
 
@@ -548,31 +544,12 @@ bool Application::LoadPlugin(const std::string &_filename,
   systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
                              GZ_GUI_PLUGIN_INSTALL_DIR);
 
-  // TODO(CH3): Deprecated. Remove on tock.
-  systemPaths.AddPluginPaths(home + "/.ignition/gui/plugins:" +
-                             GZ_GUI_PLUGIN_INSTALL_DIR);
-
-
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
   {
-    // Try deprecated environment variable
-    common::SystemPaths systemPathsDep;
-    systemPathsDep.SetPluginPathEnv(this->dataPtr->pluginPathEnvDeprecated);
-    pathToLib = systemPathsDep.FindSharedLibrary(_filename);
-    if (pathToLib.empty())
-    {
-      gzerr << "Failed to load plugin [" << _filename <<
-                "] : couldn't find shared library." << std::endl;
-      return false;
-    }
-    else
-    {
-      gzwarn << "Found plugin [" << _filename
-              << "] using deprecated environment variable ["
-              << this->dataPtr->pluginPathEnvDeprecated << "]. Please use ["
-              << this->dataPtr->pluginPathEnv << "] instead." << std::endl;
-    }
+    gzerr << "Failed to load plugin [" << _filename <<
+              "] : couldn't find shared library." << std::endl;
+    return false;
   }
 
   // Load plugin
@@ -840,13 +817,6 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   // 1. Paths from env variable
   auto paths = common::SystemPaths::PathsFromEnv(this->dataPtr->pluginPathEnv);
 
-  // 1.5 Paths from deprecated env variable
-  auto pathsDeprecated =
-      common::SystemPaths::PathsFromEnv(this->dataPtr->pluginPathEnvDeprecated);
-
-  for (auto const &path : pathsDeprecated)
-    paths.push_back(path);
-
   // 2. Paths added by calling addPluginPath
   for (auto const &path : this->dataPtr->pluginPaths)
     paths.push_back(path);
@@ -855,9 +825,6 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   std::string home;
   common::env(GZ_HOMEDIR, home);
   paths.push_back(home + "/.gz/gui/plugins");
-
-  // TODO(CH3): Deprecated. Remove on tock.
-  paths.push_back(home + "/.ignition/gui/plugins");
 
   // 4. Install path
   paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);

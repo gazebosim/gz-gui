@@ -40,13 +40,4 @@ Column {
     value: 5.8
     width: 300
   }
-
-  // Deprecated spin box
-  IgnSpinBox {
-    minimumValue: -2
-    maximumValue: 19
-    decimals: 0
-    stepSize: 3
-    value: 5
-  }
 }

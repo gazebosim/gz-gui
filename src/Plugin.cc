@@ -72,7 +72,7 @@ class gz::gui::PluginPrivate
   public: QQmlContext *context{nullptr};
 
   /// \brief Map of card properties to be passed to QML card object.
-  /// Accepts all QML Pane properties plus custom Igntiion GUI properties.
+  /// Accepts all QML Pane properties plus custom Gazebo: GUI properties.
   /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
   public: std::map<std::string, QVariant> cardProperties;
 
@@ -171,18 +171,6 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   if (guiElem)
   {
     this->LoadCommonConfig(_pluginElem->FirstChildElement("gz-gui"));
-  }
-  // TODO(CH3): Deprecated. Remove on tock.
-  // Try deprecated ignition-gui element if gz-gui is missing
-  else
-  {
-    guiElem = _pluginElem->FirstChildElement("ignition-gui");
-    if (guiElem)
-    {
-      gzwarn << "The `ignition-gui` element is deprecated. Please use "
-      << "`gz-gui` instead." << std::endl;
-      this->LoadCommonConfig(_pluginElem->FirstChildElement("ignition-gui"));
-    }
   }
 
   // Load custom configuration
