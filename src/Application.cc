@@ -267,8 +267,7 @@ Application::~Application()
   }
   this->dataPtr->dialogs.clear();
 
-  if (this->dataPtr->engine)
-    delete this->dataPtr->engine;
+  delete this->dataPtr->engine;
 
   std::queue<std::shared_ptr<Plugin>> empty;
   std::swap(this->dataPtr->pluginsToAdd, empty);
