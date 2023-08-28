@@ -36,6 +36,6 @@ if (APPLE)
       MinimalSceneRhiMetal.mm
       PROPERTIES
       COMPILE_FLAGS
-          "-fobjc-arc"
+          "-fobjc-arc -Wno-nullability-completeness"
   )
 endif()
