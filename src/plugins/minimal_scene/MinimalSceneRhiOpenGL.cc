@@ -144,7 +144,8 @@ std::string RenderThreadRhiOpenGL::Initialize()
 void RenderThreadRhiOpenGL::Update(rendering::CameraPtr _camera)
 {
   const GLuint glId = this->dataPtr->engineToQtInterface->TextureId(_camera);
-  this->dataPtr->texturePtr = reinterpret_cast<void *>(glId);
+  this->dataPtr->texturePtr = reinterpret_cast<void *>(
+    static_cast<intptr_t>(glId));
 }
 
 /////////////////////////////////////////////////
