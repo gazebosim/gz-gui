@@ -140,7 +140,7 @@ class PointCloudTestFixture : public ::testing::Test
           auto dB = maxColor.B() - minColor.B();
           auto dA = maxColor.A() - minColor.A();
 
-          for (std::size_t idx = 0; idx < _req.point().size(); idx++)
+          for (int idx = 0; idx < _req.point().size(); idx++)
           {
             // Check color correctness
             EXPECT_NEAR(dR * (_req.point()[idx].x() / 9) + minColor.R(),
