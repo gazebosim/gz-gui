@@ -262,4 +262,3 @@ TEST(TransportSceneManagerTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   engine->DestroyScene(scene);
   EXPECT_TRUE(rendering::unloadEngine(engine->Name()));
 }
-
