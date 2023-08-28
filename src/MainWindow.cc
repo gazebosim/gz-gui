@@ -947,16 +947,7 @@ void MainWindow::SetShowDialogOnExit(bool _showDialogOnExit)
 /////////////////////////////////////////////////
 void MainWindow::SetRenderEngine(const std::string &_renderEngine)
 {
-  // Deprecated: accept ignition-prefixed engines
-  auto renderEngine = _renderEngine;
-  auto pos = renderEngine.find("ignition");
-  if (pos != std::string::npos)
-  {
-    renderEngine.replace(pos, pos + 8, "gz");
-    gzwarn << "Trying to load deprecated plugin [" << _renderEngine
-           << "]. Use [" << renderEngine << "] instead." << std::endl;
-  }
-  this->setProperty("renderEngine", renderEngine.c_str());
+  this->setProperty("renderEngine", _renderEngine.c_str());
 }
 
 /////////////////////////////////////////////////
