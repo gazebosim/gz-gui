@@ -54,7 +54,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }
 
 /////////////////////////////////////////////////
@@ -91,7 +91,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
     std::remove(kTestConfigFile.c_str());
   }
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }
 
 /////////////////////////////////////////////////
@@ -127,7 +127,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
     std::remove(kTestConfigFile.c_str());
   }
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }
 
 /////////////////////////////////////////////////
@@ -720,6 +720,8 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
   auto mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
+  app.processEvents(QEventLoop::ExcludeUserInputEvents);
+
   // Default config
   {
     auto c = mainWindow->CurrentWindowConfig();
@@ -729,6 +731,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
     EXPECT_TRUE(c.pluginsFromPaths);
     EXPECT_TRUE(c.showPlugins.empty());
     EXPECT_TRUE(c.ignoredProps.empty());
+
   }
 
   // Apply a config
@@ -746,8 +749,10 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 //    c.showPlugins.push_back("watermelon");
 //    c.ignoredProps.insert("position");
 
-    mainWindow->ApplyConfig(c);
+    EXPECT_TRUE(mainWindow->ApplyConfig(c));
   }
+
+  app.processEvents(QEventLoop::ExcludeUserInputEvents);
 
   // Check applied config
   {
@@ -769,5 +774,5 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 //    EXPECT_EQ(c.ignoredProps.size(), 1u);
   }
 
-  delete mainWindow;
+  mainWindow->deleteLater();
 }

@@ -25,7 +25,7 @@ using namespace gui;
 
 /////////////////////////////////////////////////
 TestBadInheritancePlugin::TestBadInheritancePlugin()
-  : MainWindow()
+  : Dialog ()
 {
 }
 
@@ -36,4 +36,4 @@ TestBadInheritancePlugin::~TestBadInheritancePlugin()
 
 // Register this plugin
 GZ_ADD_PLUGIN(TestBadInheritancePlugin,
-              gui::MainWindow)
+              gui::Dialog)

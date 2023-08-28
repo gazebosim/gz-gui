@@ -20,14 +20,14 @@
 
 #ifndef Q_MOC_RUN
   #include <gz/gui/qt.h>
-  #include <gz/gui/MainWindow.hh>
+  #include <gz/gui/Dialog.hh>
 #endif
 
 namespace gz
 {
   namespace gui
   {
-    class TestBadInheritancePlugin : public MainWindow
+    class TestBadInheritancePlugin : public Dialog
     {
       Q_OBJECT
 

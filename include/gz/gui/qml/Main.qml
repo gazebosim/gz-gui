@@ -101,10 +101,10 @@ ApplicationWindow
   // C++ signals to QML slots
   Connections {
     target: MainWindow
-    onNotify: {
+    function onNotify(_message) {
       notificationDialog.setTextDuration(_message, 0)
     }
-    onNotifyWithDuration: {
+    function onNotifyWithDuration(_message, _duration) {
       notificationDialog.setTextDuration(_message, _duration)
     }
   }

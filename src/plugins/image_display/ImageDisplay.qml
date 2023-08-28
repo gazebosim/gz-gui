@@ -49,7 +49,7 @@ Rectangle {
 
   Connections {
     target: ImageDisplay
-    onNewImage: image.reload();
+    function onNewImage(){ image.reload(); }
   }
 
   ColumnLayout {
