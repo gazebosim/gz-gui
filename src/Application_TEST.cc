@@ -42,8 +42,8 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
   common::Console::SetVerbosity(4);
 
   // No Qt app
-  EXPECT_EQ(nullptr, qGuiApp);
-  EXPECT_EQ(nullptr, App());
+  ASSERT_EQ(nullptr, qGuiApp);
+  ASSERT_EQ(nullptr, App());
 
   // One app construct - destruct
   {
@@ -65,85 +65,108 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 {
-  common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // No Qt app
-  EXPECT_EQ(nullptr, qGuiApp);
+  ASSERT_EQ(nullptr, qGuiApp);
+  Application app(g_argc, g_argv);
 
-  // Official plugin
+  EXPECT_TRUE(app.LoadPlugin("Publisher"));
+}
+//////////////////////////////////////////////////
+TEST(ApplicationTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadNonexistantPlugin))
+{
+  gz::common::Console::SetVerbosity(4);
+  // No Qt app
+  ASSERT_EQ(nullptr, qGuiApp);
+  Application app(g_argc, g_argv);
+
+  EXPECT_FALSE(app.LoadPlugin("_doesnt_exist"));
+  EXPECT_FALSE(app.RemovePlugin("_doesnt_exist"));
+}
+
+//////////////////////////////////////////////////
+TEST(ApplicationTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadProgrammaticPlugin))
+{
+  gz::common::Console::SetVerbosity(4);
+  // No Qt app
+  ASSERT_EQ(nullptr, qGuiApp);
+  Application app(g_argc, g_argv);
+
+  std::string pluginName;
+  app.connect(&app, &Application::PluginAdded, [&pluginName](
+      const QString &_pluginName)
   {
-    Application app(g_argc, g_argv);
+    pluginName = _pluginName.toStdString();
+  });
 
-    EXPECT_TRUE(app.LoadPlugin("Publisher"));
-  }
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
-  // Inexistent plugin
-  {
-    Application app(g_argc, g_argv);
+  EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
+  EXPECT_EQ(0u, pluginName.find("plugin"));
 
-    EXPECT_FALSE(app.LoadPlugin("_doesnt_exist"));
-    EXPECT_FALSE(app.RemovePlugin("_doesnt_exist"));
-  }
+  auto plugin = app.PluginByName(pluginName);
+  ASSERT_NE(nullptr, plugin);
+  ASSERT_NE(nullptr, plugin->CardItem());
 
-  // Plugin path added programmatically
-  {
-    Application app(g_argc, g_argv);
+  EXPECT_EQ(pluginName, plugin->CardItem()->objectName().toStdString());
 
-    std::string pluginName;
-    app.connect(&app, &Application::PluginAdded, [&pluginName](
-        const QString &_pluginName)
-    {
-      pluginName = _pluginName.toStdString();
-    });
+  EXPECT_TRUE(app.RemovePlugin(pluginName));
+}
 
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+//////////////////////////////////////////////////
+TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadEnvPlugin))
+{
+  gz::common::Console::SetVerbosity(4);
+  // No Qt app
+  ASSERT_EQ(nullptr, qGuiApp);
+  Application app(g_argc, g_argv);
 
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-    EXPECT_EQ(0u, pluginName.find("plugin"));
+  setenv("TEST_ENV_VAR",
+      (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
+  app.SetPluginPathEnv("TEST_ENV_VAR");
+  EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
+}
 
-    auto plugin = app.PluginByName(pluginName);
-    ASSERT_NE(nullptr, plugin);
-    ASSERT_NE(nullptr, plugin->CardItem());
+//////////////////////////////////////////////////
+TEST(ApplicationTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadBadInheritancePlugin))
+{
+  gz::common::Console::SetVerbosity(4);
+  // No Qt app
+  ASSERT_EQ(nullptr, qGuiApp);
+  Application app(g_argc, g_argv);
 
-    EXPECT_EQ(pluginName, plugin->CardItem()->objectName().toStdString());
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  EXPECT_FALSE(app.LoadPlugin("TestBadInheritancePlugin"));
+}
 
-    EXPECT_TRUE(app.RemovePlugin(pluginName));
-  }
+//////////////////////////////////////////////////
+TEST(ApplicationTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadNotRegisteredPlugin))
+{
+  gz::common::Console::SetVerbosity(4);
+  // No Qt app
+  ASSERT_EQ(nullptr, qGuiApp);
+  Application app(g_argc, g_argv);
 
-  // Plugin path added by env var
-  {
-    setenv("TEST_ENV_VAR",
-        (std::string(PROJECT_BINARY_PATH) + "/lib").c_str(), 1);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  EXPECT_FALSE(app.LoadPlugin("TestNotRegisteredPlugin"));
+}
 
-    Application app(g_argc, g_argv);
-    app.SetPluginPathEnv("TEST_ENV_VAR");
+//////////////////////////////////////////////////
+TEST(ApplicationTest,
+    IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadInvalidQmlPlugin))
+{
+  gz::common::Console::SetVerbosity(4);
+  // No Qt app
+  ASSERT_EQ(nullptr, qGuiApp);
+  Application app(g_argc, g_argv);
 
-    EXPECT_TRUE(app.LoadPlugin("TestPlugin"));
-  }
-
-  // Plugin which doesn't inherit from gui::Plugin
-  {
-    Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-    EXPECT_FALSE(app.LoadPlugin("TestBadInheritancePlugin"));
-  }
-
-  // Plugin which is not registered
-  {
-    Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-    EXPECT_FALSE(app.LoadPlugin("TestNotRegisteredPlugin"));
-  }
-
-  // Plugin with invalid QML
-  {
-    Application app(g_argc, g_argv);
-    app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
-
-    EXPECT_FALSE(app.LoadPlugin("TestInvalidQmlPlugin"));
-  }
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  EXPECT_FALSE(app.LoadPlugin("TestInvalidQmlPlugin"));
 }
 
 //////////////////////////////////////////////////
@@ -151,7 +174,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 {
   common::Console::SetVerbosity(4);
 
-  EXPECT_EQ(nullptr, qGuiApp);
+  ASSERT_EQ(nullptr, qGuiApp);
 
   // Empty string
   {
@@ -201,7 +224,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 {
   common::Console::SetVerbosity(4);
 
-  EXPECT_EQ(nullptr, qGuiApp);
+  ASSERT_EQ(nullptr, qGuiApp);
 
   // Test config file
   {
@@ -227,7 +250,7 @@ TEST(ApplicationTest,
 {
   common::Console::SetVerbosity(4);
 
-  EXPECT_EQ(nullptr, qGuiApp);
+  ASSERT_EQ(nullptr, qGuiApp);
 
   // No plugins
   {
@@ -297,7 +320,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 {
   common::Console::SetVerbosity(4);
 
-  EXPECT_EQ(nullptr, qGuiApp);
+  ASSERT_EQ(nullptr, qGuiApp);
 
   // Single dialog
   {
@@ -372,7 +395,7 @@ TEST(ApplicationTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
 {
   common::Console::SetVerbosity(4);
 
-  EXPECT_EQ(nullptr, qGuiApp);
+  ASSERT_EQ(nullptr, qGuiApp);
 
   Application app(g_argc, g_argv);
 

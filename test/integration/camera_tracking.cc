@@ -100,23 +100,34 @@ TEST(MinimalSceneTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   win->QuickWindow()->show();
 
   // Get camera pose
+  std::mutex poseMutex;
   msgs::Pose poseMsg;
   auto poseCb = std::function<void(const msgs::Pose &)>(
       [&](const auto &_msg)
       {
+        std::unique_lock<std::mutex> lk(poseMutex);
         poseMsg = _msg;
       });
 
   transport::Node node;
-  node.Subscribe("/gui/camera/pose", poseCb);
+  ASSERT_TRUE(node.Subscribe("/gui/camera/pose", poseCb));
 
   int sleep = 0;
   int maxSleep = 30;
-  while (!poseMsg.has_position() && sleep++ < maxSleep)
+  while (sleep++ < maxSleep)
   {
     std::this_thread::sleep_for(100ms);
     QCoreApplication::processEvents();
+
+    std::unique_lock<std::mutex> lk(poseMutex);
+    if (poseMsg.has_position())
+    {
+      break;
+    }
   }
+
+  // Unsubscribe from updates
+  node.Unsubscribe("/gui/camera/pose");
   EXPECT_LT(sleep, maxSleep);
   EXPECT_TRUE(poseMsg.has_position());
   EXPECT_TRUE(poseMsg.has_orientation());
