@@ -541,8 +541,8 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Add default folder and install folder
   std::string home;
   common::env(GZ_HOMEDIR, home);
-  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
-                             GZ_GUI_PLUGIN_INSTALL_DIR);
+  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins");
+  systemPaths.AddPluginPaths(GZ_GUI_PLUGIN_INSTALL_DIR);
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -842,10 +842,19 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
     {
       auto plugin = common::basename(*dirIter);
 
-      // All we verify is that the file starts with "lib", any further
-      // checks would require loading the plugin.
+      // All we verify is that the file starts with shared library prefix and
+      // ends with shared library suffix, any further checks would require
+      // loading the plugin.
 
-      if (plugin.find("lib") == 0)
+      //TODO(anyone): Move this logic into gz-plugin to be reusable
+
+      // This computation could underflow the unsigned range, but that is okay
+      // as in such case we would check if the suffix is placed somewhere much
+      // further than allowed filename length.
+      const auto suffixPos = plugin.length() - strlen(SHARED_LIBRARY_SUFFIX);
+
+      if (plugin.find(SHARED_LIBRARY_PREFIX) == 0 &&
+          plugin.find(SHARED_LIBRARY_SUFFIX) == suffixPos)
         ps.push_back(plugin);
     }
 
