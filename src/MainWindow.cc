@@ -135,7 +135,7 @@ QStringList MainWindow::PluginListModel() const
   {
     for (auto const &plugin : path.second)
     {
-      //TODO(anyone): Move this into gz-plugin to be reusable
+      // TODO(anyone): Move this into gz-plugin to be reusable
 
       // Remove shared library prefix and shared library suffix
       auto pluginName = plugin.substr(

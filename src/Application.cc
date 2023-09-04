@@ -846,7 +846,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
       // ends with shared library suffix, any further checks would require
       // loading the plugin.
 
-      //TODO(anyone): Move this logic into gz-plugin to be reusable
+      // TODO(anyone): Move this logic into gz-plugin to be reusable
 
       // This computation could underflow the unsigned range, but that is okay
       // as in such case we would check if the suffix is placed somewhere much
