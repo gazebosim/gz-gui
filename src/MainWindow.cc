@@ -137,7 +137,7 @@ QStringList MainWindow::PluginListModel() const
     {
       //TODO(anyone): Move this into gz-plugin to be reusable
 
-      // Remove lib and .so
+      // Remove shared library prefix and shared library suffix
       auto pluginName = plugin.substr(
         strlen(SHARED_LIBRARY_PREFIX),
         plugin.length() - strlen(SHARED_LIBRARY_SUFFIX));
