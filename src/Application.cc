@@ -854,7 +854,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
       const auto suffixPos = plugin.length() - strlen(SHARED_LIBRARY_SUFFIX);
 
       if (plugin.find(SHARED_LIBRARY_PREFIX) == 0 &&
-          plugin.find(SHARED_LIBRARY_SUFFIX) == suffixPos)
+          plugin.rfind(SHARED_LIBRARY_SUFFIX) == suffixPos)
         ps.push_back(plugin);
     }
 
