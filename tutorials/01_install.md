@@ -100,8 +100,9 @@ Build and install as follows:
   ```
   git clone https://github.com/gazebosim/gz-gui -b gz-gui<#>
   ```
-  Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
+  Be sure to replace `<#>` with a number value, such as 7 or 8, depending on
   which version you need.
+  **Note:** If the version is 6 or downwards replace `gz-gui<#>` for `ign-gui<#>` in the command line. For more information take a look [here](https://community.gazebosim.org/t/a-new-era-for-gazebo/1356).
 
 2. Install dependencies
   ```
