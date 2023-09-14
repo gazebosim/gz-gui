@@ -50,12 +50,12 @@ which can be used to add custom widgets.
 
 # Install
 
-See the [installation tutorial](https://gazebosim.org/api/gui/5.0/install.html).
+See the [installation tutorial](https://gazebosim.org/api/gui/8/install.html).
 
 # Usage
 
 Take a look at the
-[tutorials](https://gazebosim.org/api/gui/5.0/tutorials.html)
+[tutorials](https://gazebosim.org/api/gui/8/tutorials.html)
 for usage instructions and API documentation.
 
 ## Known issue of command line tools
@@ -66,12 +66,12 @@ line tools from `gz-tools` may not work correctly.
 A workaround for a single package is to define the environment variable
 `GZ_CONFIG_PATH` to point to the location of the Gazebo library installation,
 where the YAML file for the package is found, such as
-```
+```{.sh}
 export GZ_CONFIG_PATH=/usr/local/share/gz
 ```
 
 Multiple paths can be specified using the `:` delimiter. For example,
-```
+```{.sh}
 export GZ_CONFIG_PATH=/user/local/share/gz/:/path/to/some/other/location
 ```
 
