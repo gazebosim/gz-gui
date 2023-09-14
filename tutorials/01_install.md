@@ -98,14 +98,14 @@ Build and install as follows:
 
 1. Clone the repository
   ```
-  git clone https://github.com/gazebosim/gz-gui -b ign-gui<#>
+  git clone https://github.com/gazebosim/gz-gui -b gz-gui<#>
   ```
   Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
   which version you need.
 
 2. Install dependencies
   ```
-  brew install --only-dependencies ignition-gui<#>
+  brew install --only-dependencies gz-gui<#>
   ```
   Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
   which version you need.
