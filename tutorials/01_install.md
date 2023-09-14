@@ -108,7 +108,7 @@ Build and install as follows:
   ```
   brew install --only-dependencies gz-gui<#>
   ```
-  Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
+  Be sure to replace `<#>` with a number value, such as 7 or 8, depending on
   which version you need.
 
 3. Configure and build
