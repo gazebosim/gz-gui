@@ -35,6 +35,9 @@ namespace gz
 {
   namespace gui
   {
+    /// \brief Namespace for all plugins
+    namespace plugins {}
+
     class PluginPrivate;
 
     /// \brief Base class for Gazebo GUI plugins.
