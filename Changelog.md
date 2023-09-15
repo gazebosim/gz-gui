@@ -2,6 +2,65 @@
 
 ### Gazebo GUI 8.0.0 (202X-XX-XX)
 
+1. Use fully-qualified message names to avoid deprecation warning
+    * [Pull request #575](https://github.com/gazebosim/gz-gui/pull/575)
+
+1. Fix crash when starting Topic Viewer
+    * [Pull request #574](https://github.com/gazebosim/gz-gui/pull/574)
+
+1. Add namespace for plugins for doxygen in gz-sim
+    * [Pull request #571](https://github.com/gazebosim/gz-gui/pull/571)
+
+1. ign -> gz
+    * [Pull request #570](https://github.com/gazebosim/gz-gui/pull/570)
+    * [Pull request #556](https://github.com/gazebosim/gz-gui/pull/556)
+
+1. Documentation fixes
+    * [Pull request #569](https://github.com/gazebosim/gz-gui/pull/569)
+
+1. Suppress new Jammy warnings
+    * [Pull request #404](https://github.com/gazebosim/gz-gui/pull/404)
+
+1. Fix issue with topic info.
+    * [Pull request #566](https://github.com/gazebosim/gz-gui/pull/566)
+
+1. Make plugins include message types they use
+    * [Pull request #563](https://github.com/gazebosim/gz-gui/pull/563)
+
+1. Fix segfaulting tests
+    * [Pull request #429](https://github.com/gazebosim/gz-gui/pull/429)
+
+1. WorldControl: use event by default
+    * [Pull request #531](https://github.com/gazebosim/gz-gui/pull/531)
+
+1. Find any major version of Protobuf
+    * [Pull request #544](https://github.com/gazebosim/gz-gui/pull/544)
+
+1. Fix TopicInfo depcrecation warnings
+    * [Pull request #543](https://github.com/gazebosim/gz-gui/pull/543)
+
+1. Fix data race issues in CameraTracking plugin
+    * [Pull request #537](https://github.com/gazebosim/gz-gui/pull/537)
+
+1. Bump msgs and transport version in Harmonic
+    * [Pull request #517](https://github.com/gazebosim/gz-gui/pull/517)
+
+1. Add Vulkan QML backend
+    * [Pull request #467](https://github.com/gazebosim/gz-gui/pull/467)
+
+1. Add fallback rendering for other APIs
+    * [Pull request #357](https://github.com/gazebosim/gz-gui/pull/357)
+
+1. Infrastructure
+    * [Pull request #560](https://github.com/gazebosim/gz-gui/pull/560)
+    * [Pull request #559](https://github.com/gazebosim/gz-gui/pull/559)
+    * [Pull request #555](https://github.com/gazebosim/gz-gui/pull/555)
+    * [Pull request #536](https://github.com/gazebosim/gz-gui/pull/536)
+
+1. ⬆️  Bump main to 8.0.0~pre1
+    * [Pull request #456](https://github.com/gazebosim/gz-gui/pull/456)
+    * [Pull request #512](https://github.com/gazebosim/gz-gui/pull/512)
+
 ## Gazebo GUI 7
 
 ### Gazebo GUI 7.X.X (202X-XX-XX)
