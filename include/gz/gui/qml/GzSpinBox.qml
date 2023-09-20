@@ -15,8 +15,8 @@
  *
 */
 import QtQuick 2.9
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 2.15
+import QtQuick.Controls.Styles 2.15
 
 Item {
   id: gzSpinBoxItem
@@ -40,14 +40,13 @@ Item {
                                notation: DoubleValidator.StandardNotation;
                               }
     onEditingFinished: {
-      gzSpinBoxItem.editingFinished()
+      parent.editingFinished()
     }
-    style: TextFieldStyle{
-      background: Rectangle {
-        implicitWidth: 70
-        implicitHeight: 40
-        border.color: "gray"
-      }
+    
+    background: Rectangle {
+      implicitWidth: 70
+      implicitHeight: 40
+      border.color: "gray"
     }
   }
 }
