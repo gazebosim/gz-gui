@@ -18,12 +18,31 @@ import QtQuick 2.9
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
-SpinBox {
-  style: SpinBoxStyle{
-    background: Rectangle {
-      implicitWidth: 70
-      implicitHeight: 40
-      border.color: "gray"
+Item {
+  property double minimumValue : 0
+  property double maximumValue : 100
+  property double stepSize : 0
+  property double decimals : 0
+  property real value : 0
+  signal onEditingFinished()
+  
+  TextField {
+    id: numberField
+    placeholderText: "0.0"
+    validator: DoubleValidator{bottom: minimumValue;
+                               top: maximumValue;
+                               decimals: decimals;
+                               notation: DoubleValidator.StandardNotation;
+                              }
+    onEditingFinished: {
+          parent.value = parseFloat(text)
+    } 
+    style: TextFieldStyle{
+      background: Rectangle {
+        implicitWidth: 70
+        implicitHeight: 40
+        border.color: "gray"
+      }
     }
   }
 }
