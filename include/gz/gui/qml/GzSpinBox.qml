@@ -16,7 +16,6 @@
 */
 import QtQuick 2.9
 import QtQuick.Controls 2.15
-import QtQuick.Controls.Styles 2.15
 
 Item {
   id: gzSpinBoxItem
@@ -33,7 +32,8 @@ Item {
   
   TextField {
     id: numberField
-    placeholderText: "0.0"
+    placeholderText: gzSpinBoxItem.value
+    horizontalAlignment: TextInput.AlignHCenter
     validator: DoubleValidator{bottom: gzSpinBoxItem.minimumValue;
                                top: gzSpinBoxItem.maximumValue;
                                decimals: gzSpinBoxItem.decimals;
