@@ -19,11 +19,12 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 Item {
-  property double minimumValue : 0
-  property double maximumValue : 100
-  property double stepSize : 0
-  property double decimals : 0
-  property double value : 0
+  id: gzSpinBoxItem
+  property real minimumValue : 0
+  property real maximumValue : 100
+  property real stepSize : 0
+  property int decimals : 0
+  property real value : 0
   signal editingFinished
   
   onEditingFinished: {
@@ -33,13 +34,13 @@ Item {
   TextField {
     id: numberField
     placeholderText: "0.0"
-    validator: DoubleValidator{bottom: parent.minimumValue;
-                               top: parent.maximumValue;
-                               decimals: parent.decimals;
+    validator: DoubleValidator{bottom: gzSpinBoxItem.minimumValue;
+                               top: gzSpinBoxItem.maximumValue;
+                               decimals: gzSpinBoxItem.decimals;
                                notation: DoubleValidator.StandardNotation;
                               }
     onEditingFinished: {
-      parent.editingFinished()
+      gzSpinBoxItem.editingFinished()
     }
     style: TextFieldStyle{
       background: Rectangle {
