@@ -23,20 +23,24 @@ Item {
   property double maximumValue : 100
   property double stepSize : 0
   property double decimals : 0
-  property real value : 0
-  signal onEditingFinished()
+  property double value : 0
+  signal editingFinished
+  
+  onEditingFinished: {
+    value = parseFloat(numberField.text)
+  }
   
   TextField {
     id: numberField
     placeholderText: "0.0"
-    validator: DoubleValidator{bottom: minimumValue;
-                               top: maximumValue;
-                               decimals: decimals;
+    validator: DoubleValidator{bottom: parent.minimumValue;
+                               top: parent.maximumValue;
+                               decimals: parent.decimals;
                                notation: DoubleValidator.StandardNotation;
                               }
     onEditingFinished: {
-          parent.value = parseFloat(text)
-    } 
+      parent.editingFinished()
+    }
     style: TextFieldStyle{
       background: Rectangle {
         implicitWidth: 70
