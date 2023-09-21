@@ -269,7 +269,7 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
     auto messageType = msgField->message_type();
 
     if (messageType)
-      this->AddField(msgItem, msgField->name(), messageType->name());
+      this->AddField(msgItem, msgField->name(), messageType->full_name());
 
     else
     {
