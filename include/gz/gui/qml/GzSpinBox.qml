@@ -17,8 +17,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.15
 
-Item {
-  id: gzSpinBoxItem
+Control {
+  id: spinBoxItem
   property real minimumValue : 0
   property real maximumValue : 100
   property real stepSize : 0
@@ -26,23 +26,21 @@ Item {
   property real value : 0
   signal editingFinished
   
-  onEditingFinished: {
-    value = parseFloat(numberField.text)
-  }
-  
   TextField {
     id: numberField
-    placeholderText: gzSpinBoxItem.value
+    placeholderText: spinBoxItem.value
     horizontalAlignment: TextInput.AlignHCenter
-    validator: DoubleValidator{bottom: gzSpinBoxItem.minimumValue;
-                               top: gzSpinBoxItem.maximumValue;
-                               decimals: gzSpinBoxItem.decimals;
+    activeFocusOnPress: spinBoxItem.activeFocusOnPress
+    enabled: false // The TextField is disabled for the moment due to a not desired behavior.
+    validator: DoubleValidator{bottom: spinBoxItem.minimumValue;
+                               top: spinBoxItem.maximumValue;
+                               decimals: spinBoxItem.decimals;
                                notation: DoubleValidator.StandardNotation;
                               }
     onEditingFinished: {
-      parent.editingFinished()
+      spinBoxItem.value = parseFloat(text)
+      spinBoxItem.editingFinished()
     }
-    
     background: Rectangle {
       implicitWidth: 70
       implicitHeight: 40
