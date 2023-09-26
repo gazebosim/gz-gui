@@ -6,6 +6,23 @@
 
 ### Gazebo GUI 7.X.X (202X-XX-XX)
 
+### Gazebo GUI 7.2.1 (2023-09-26)
+
+1. Fix segfaulting tests
+    * [Pull request #429](https://github.com/gazebosim/gz-gui/pull/429)
+
+1. Find any major version of Protobuf
+    * [Pull request #544](https://github.com/gazebosim/gz-gui/pull/544)
+
+1. Fix data race issues in CameraTracking plugin
+    * [Pull request #537](https://github.com/gazebosim/gz-gui/pull/537)
+
+1. Infrastructure
+    * [Pull request #560](https://github.com/gazebosim/gz-gui/pull/560)
+    * [Pull request #559](https://github.com/gazebosim/gz-gui/pull/559)
+    * [Pull request #536](https://github.com/gazebosim/gz-gui/pull/536)
+
+
 ### Gazebo GUI 7.2.0 (2023-05-14)
 
 1. Add support for bayer images to get displayed in gazebo gui
