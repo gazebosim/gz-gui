@@ -1,6 +1,6 @@
 ## Gazebo GUI 8
 
-### Gazebo GUI 8.0.0 (202X-XX-XX)
+### Gazebo GUI 8.0.0 (2023-09-29)
 
 1. Use fully-qualified message names to avoid deprecation warning
     * [Pull request #575](https://github.com/gazebosim/gz-gui/pull/575)
