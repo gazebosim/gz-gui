@@ -202,8 +202,11 @@ void TopicViewerPrivate::CreateModel()
     std::vector<transport::MessagePublisher> publishers;
     std::vector<transport::MessagePublisher> subscribers;
     this->node.TopicInfo(topics[i], publishers, subscribers);
-    std::string msgType = publishers[0].MsgTypeName();
-    this->AddTopic(topics[i], msgType);
+    if (!publishers.empty())
+    {
+      std::string msgType = publishers[0].MsgTypeName();
+      this->AddTopic(topics[i], msgType);
+    }
   }
 }
 
@@ -266,7 +269,7 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
     auto messageType = msgField->message_type();
 
     if (messageType)
-      this->AddField(msgItem, msgField->name(), messageType->name());
+      this->AddField(msgItem, msgField->name(), messageType->full_name());
 
     else
     {
