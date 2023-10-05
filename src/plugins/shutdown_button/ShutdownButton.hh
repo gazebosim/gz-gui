@@ -41,7 +41,7 @@ namespace gz::gui::plugins
     public: ShutdownButton();
 
     /// \brief Destructor
-    public: virtual ~ShutdownButton();
+    public: virtual ~ShutdownButton() override;
 
     // Documentation inherited
     public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;

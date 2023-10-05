@@ -15,10 +15,14 @@
  *
 */
 #include <gz/plugin/Register.hh>
+#include <gz/utils/ImplPtr.hh>
 #include "TransportPlotting.hh"
 
 namespace gz::gui::plugins
 {
+//////////////////////////////////////////
+TransportPlotting::TransportPlotting() = default;
+
 //////////////////////////////////////////
 TransportPlotting::~TransportPlotting() = default;
 
@@ -28,14 +32,8 @@ void TransportPlotting::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Transport plotting";
 }
-
-//////////////////////////////////////////
-TransportPlotting::TransportPlotting() :
-    dataPtr(new PlottingInterface)
-{
-}
 }  // namespace gz::gui::plugins
-
+//
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::TransportPlotting,
               gz::gui::Plugin)

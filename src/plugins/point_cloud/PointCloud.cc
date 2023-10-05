@@ -21,6 +21,7 @@
 #include "gz/msgs/pointcloud_packed.pb.h"
 
 #include <algorithm>
+#include <gz/utils/ImplPtr.hh>
 #include <limits>
 #include <string>
 #include <utility>
@@ -46,7 +47,7 @@
 namespace gz::gui::plugins
 {
 /// \brief Private data class for PointCloud
-class PointCloudPrivate
+class PointCloud::Implementation
 {
   /// \brief Makes a request to populate the scene with markers
   public: void PublishMarkers();
@@ -55,7 +56,7 @@ class PointCloudPrivate
   public: void ClearMarkers();
 
   /// \brief Transport node
-  public: gz::transport::Node node;
+  public: gz::transport::Node node {gz::transport::NodeOptions()};
 
   /// \brief Name of topic for PointCloudPacked
   public: std::string pointCloudTopic{""};
@@ -99,7 +100,7 @@ class PointCloudPrivate
 
 /////////////////////////////////////////////////
 PointCloud::PointCloud()
-  : dataPtr(std::make_unique<PointCloudPrivate>())
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -353,7 +354,7 @@ void PointCloud::OnFloatVService(
 }
 
 //////////////////////////////////////////////////
-void PointCloudPrivate::PublishMarkers()
+void PointCloud::Implementation::PublishMarkers()
 {
   GZ_PROFILE("PointCloud::PublishMarkers");
 
@@ -432,7 +433,7 @@ void PointCloudPrivate::PublishMarkers()
 }
 
 //////////////////////////////////////////////////
-void PointCloudPrivate::ClearMarkers()
+void PointCloud::Implementation::ClearMarkers()
 {
   if (this->pointCloudTopic.empty())
     return;

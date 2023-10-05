@@ -85,6 +85,5 @@ namespace gz::gui
       /// \brief Private data pointer
       GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
     };
-};
 }  // namespace gz::gui
 #endif  // GZ_GUI_DIALOG_HH_

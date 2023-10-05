@@ -24,6 +24,8 @@
 
 #include "gz/gui/Plugin.hh"
 
+#include <gz/utils/ImplPtr.hh>
+
 #ifndef _WIN32
 #  define WorldControl_EXPORTS_API
 #else
@@ -36,8 +38,6 @@
 
 namespace gz::gui::plugins
 {
-  class WorldControlPrivate;
-
   /// \brief This plugin provides a world control panel which may have a
   /// play / pause and step buttons.
   ///
@@ -63,11 +63,11 @@ namespace gz::gui::plugins
     /// \brief Constructor
     public: WorldControl();
 
-    /// \brief Destructor
-    public: virtual ~WorldControl();
+  /// \brief Destructor
+  public: ~WorldControl() override;
 
-    // Documentation inherited
-    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
+  // Documentation inherited
+  public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
 
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
@@ -101,7 +101,7 @@ namespace gz::gui::plugins
     private: void OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg);
 
     // Private data
-    private: std::unique_ptr<WorldControlPrivate> dataPtr;
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 }  // namespace gz::gui::plugins
 

@@ -85,7 +85,7 @@ class MainWindow::Implementation
   public: std::string controlService{"/server_control"};
 
   /// \brief Communication node
-  public: gz::transport::Node node;
+  public: gz::transport::Node node {gz::transport::NodeOptions()};
 };
 
 /////////////////////////////////////////////////

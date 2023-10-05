@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
@@ -25,13 +26,13 @@
 
 namespace gz::gui::plugins
 {
-class TopicEchoPrivate
+class TopicEcho::Implementation
 {
   /// \brief Topic
   public: QString topic{"/echo"};
 
   /// \brief A list of text data.
-  public: QStringListModel msgList;
+  public: QStringListModel msgList {nullptr};
 
   /// \brief Size of the text buffer. The size is the number of
   /// messages.
@@ -49,7 +50,7 @@ class TopicEchoPrivate
 
 /////////////////////////////////////////////////
 TopicEcho::TopicEcho()
-  : dataPtr(new TopicEchoPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Connect model
   App()->Engine()->rootContext()->setContextProperty("TopicEchoMsgList",

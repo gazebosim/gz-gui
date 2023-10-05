@@ -70,7 +70,7 @@ class Topic::Implementation
 class Transport::Implementation
 {
   /// \brief Node for Commincation
-  public: gz::transport::Node node;
+  public: gz::transport::Node node {gz::transport::NodeOptions()};
 
   /// \brief subscribed topics
   public: std::map<std::string, gz::gui::Topic*> topics;

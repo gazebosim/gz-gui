@@ -575,8 +575,9 @@ namespace gz::gui
 
       /// \internal
       /// \brief Private data pointer
+      /// Private is necessary here for the Qt MOC
       private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
-};
+    };
 
     /// \brief Holds configurations related to a MainWindow.
     struct GZ_GUI_VISIBLE WindowConfig
@@ -667,9 +668,4 @@ namespace gz::gui
       std::string plugins{""};
     };
 }  // namespace gz::gui
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #endif  // GZ_GUI_MAINWINDOW_HH_

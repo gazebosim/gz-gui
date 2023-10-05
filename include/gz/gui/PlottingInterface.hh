@@ -323,6 +323,7 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   public slots: void UpdateTime();
 
   /// \brief Private data member.
+  /// Private is necessary here for the Qt MOC
   private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
 };
 }  // namespace gz::gui

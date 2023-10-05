@@ -20,6 +20,7 @@
 #include <QString>
 
 #include <deque>
+#include <gz/utils/ImplPtr.hh>
 #include <map>
 #include <string>
 #include <vector>
@@ -34,17 +35,20 @@
 
 #include "TopicViewer.hh"
 
-#define NAME_KEY "name"
-#define TYPE_KEY "type"
-#define TOPIC_KEY "topic"
-#define PATH_KEY "path"
-#define PLOT_KEY "plottable"
+namespace
+{
+constexpr const char * NAME_KEY = "name";
+constexpr const char * TYPE_KEY = "type";
+constexpr const char * TOPIC_KEY = "topic";
+constexpr const char * PATH_KEY = "path";
+constexpr const char * PLOT_KEY = "plottable";
 
-#define NAME_ROLE 51
-#define TYPE_ROLE 52
-#define TOPIC_ROLE 53
-#define PATH_ROLE 54
-#define PLOT_ROLE 55
+constexpr uint8_t NAME_ROLE = 51;
+constexpr uint8_t TYPE_ROLE = 52;
+constexpr uint8_t TOPIC_ROLE = 53;
+constexpr uint8_t PATH_ROLE = 54;
+constexpr uint8_t PLOT_ROLE = 55;
+}  // namespace
 
 namespace gz::gui::plugins
 {
@@ -56,26 +60,27 @@ class TopicsModel : public QStandardItemModel
   /// \brief roles and names of the model
   public: QHash<int, QByteArray> roleNames() const override
   {
-    QHash<int, QByteArray> roles;
-    roles[NAME_ROLE] = NAME_KEY;
-    roles[TYPE_ROLE] = TYPE_KEY;
-    roles[TOPIC_ROLE] = TOPIC_KEY;
-    roles[PATH_ROLE] = PATH_KEY;
-    roles[PLOT_ROLE] = PLOT_KEY;
-    return roles;
+    return
+      {
+        {NAME_ROLE, NAME_KEY},
+        {TYPE_ROLE, TYPE_KEY},
+        {TOPIC_ROLE, TOPIC_KEY},
+        {PATH_ROLE, PATH_KEY},
+        {PLOT_ROLE, PLOT_KEY},
+    };
   }
 };
 
-class TopicViewerPrivate
+class TopicViewer::Implementation
 {
   /// \brief Node for Commincation
   public: gz::transport::Node node;
 
   /// \brief Model to create it from the available topics and messages
-  public: TopicsModel *model;
+  public: TopicsModel *model {nullptr};
 
   /// \brief Timer to update the model and keep track of its changes
-  public: QTimer *timer;
+  public: QTimer *timer {nullptr};
 
   /// \brief topic: msgType map to keep track of the model current topics
   public: std::map<std::string, std::string> currentTopics;
@@ -139,7 +144,8 @@ class TopicViewerPrivate
   public: std::vector<google::protobuf::FieldDescriptor::Type> plotableTypes;
 };
 
-TopicViewer::TopicViewer() : dataPtr(new TopicViewerPrivate)
+TopicViewer::TopicViewer()
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   using namespace google::protobuf;
   this->dataPtr->plotableTypes.push_back(FieldDescriptor::Type::TYPE_DOUBLE);
@@ -177,7 +183,7 @@ QStandardItemModel *TopicViewer::Model()
 }
 
 //////////////////////////////////////////////////
-void TopicViewerPrivate::CreateModel()
+void TopicViewer::Implementation::CreateModel()
 {
   this->model = new TopicsModel();
 
@@ -198,7 +204,7 @@ void TopicViewerPrivate::CreateModel()
 }
 
 //////////////////////////////////////////////////
-void TopicViewerPrivate::AddTopic(const std::string &_topic,
+void TopicViewer::Implementation::AddTopic(const std::string &_topic,
                            const std::string &_msg)
 {
   QStandardItem *topicItem = this->FactoryItem(_topic, _msg);
@@ -213,7 +219,7 @@ void TopicViewerPrivate::AddTopic(const std::string &_topic,
 }
 
 //////////////////////////////////////////////////
-void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
+void TopicViewer::Implementation::AddField(QStandardItem *_parentItem,
                            const std::string &_msgName,
                            const std::string &_msgType)
 {
@@ -275,7 +281,7 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
 }
 
 //////////////////////////////////////////////////
-QStandardItem *TopicViewerPrivate::FactoryItem(const std::string &_name,
+QStandardItem *TopicViewer::Implementation::FactoryItem(const std::string &_name,
                                                const std::string &_type,
                                                const std::string &_path,
                                                const std::string &_topic)
@@ -297,7 +303,7 @@ QStandardItem *TopicViewerPrivate::FactoryItem(const std::string &_name,
 }
 
 //////////////////////////////////////////////////
-void TopicViewerPrivate::SetItemTopic(QStandardItem *_item)
+void TopicViewer::Implementation::SetItemTopic(QStandardItem *_item)
 {
   std::string topic = this->TopicName(_item);
   QVariant Topic(QString::fromStdString(topic));
@@ -305,7 +311,7 @@ void TopicViewerPrivate::SetItemTopic(QStandardItem *_item)
 }
 
 //////////////////////////////////////////////////
-void TopicViewerPrivate::SetItemPath(QStandardItem *_item)
+void TopicViewer::Implementation::SetItemPath(QStandardItem *_item)
 {
   std::string path = this->ItemPath(_item);
   QVariant Path(QString::fromStdString(path));
@@ -313,7 +319,8 @@ void TopicViewerPrivate::SetItemPath(QStandardItem *_item)
 }
 
 //////////////////////////////////////////////////
-std::string TopicViewerPrivate::TopicName(const QStandardItem *_item) const
+std::string TopicViewer::Implementation::TopicName(
+  const QStandardItem *_item) const
 {
   QStandardItem *parent = _item->parent();
 
@@ -328,7 +335,8 @@ std::string TopicViewerPrivate::TopicName(const QStandardItem *_item) const
 }
 
 //////////////////////////////////////////////////
-std::string TopicViewerPrivate::ItemPath(const QStandardItem *_item) const
+std::string TopicViewer::Implementation::ItemPath(
+  const QStandardItem *_item) const
 {
   std::deque<std::string> path;
   while (_item)
@@ -353,7 +361,7 @@ std::string TopicViewerPrivate::ItemPath(const QStandardItem *_item) const
 }
 
 /////////////////////////////////////////////////
-bool TopicViewerPrivate::IsPlotable(
+bool TopicViewer::Implementation::IsPlotable(
     const google::protobuf::FieldDescriptor::Type &_type)
 {
   return std::find(this->plotableTypes.begin(), this->plotableTypes.end(),

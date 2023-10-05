@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <gz/common/Console.hh>
 #include <gz/msgs/Utility.hh>
@@ -25,7 +26,7 @@
 
 namespace gz::gui::plugins
 {
-class PublisherPrivate
+class Publisher::Implementation
 {
   /// \brief Message type
   public: QString msgType = "gz.msgs.StringMsg";
@@ -51,7 +52,7 @@ class PublisherPrivate
 
 /////////////////////////////////////////////////
 Publisher::Publisher()
-  : dataPtr(new PublisherPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 

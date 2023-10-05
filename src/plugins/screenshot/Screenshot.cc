@@ -16,6 +16,7 @@
 */
 #include "Screenshot.hh"
 
+#include <gz/utils/ImplPtr.hh>
 #include <string>
 
 #include <gz/common/Console.hh>
@@ -34,7 +35,7 @@
 
 namespace gz::gui::plugins
 {
-class ScreenshotPrivate
+class Screenshot::Implementation
 {
   /// \brief Node for communication
   public: gz::transport::Node node;
@@ -57,7 +58,7 @@ class ScreenshotPrivate
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : dataPtr(std::make_unique<ScreenshotPrivate>())
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   std::string home;
   common::env(GZ_HOMEDIR, home);

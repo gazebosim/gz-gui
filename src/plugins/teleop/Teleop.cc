@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <string>
 
@@ -50,7 +51,7 @@ enum class KeyYaw{
 
 namespace gz::gui::plugins
 {
-class TeleopPrivate
+class Teleop::Implementation
 {
   /// \brief Node for communication.
   public: gz::transport::Node node;
@@ -102,7 +103,7 @@ class TeleopPrivate
 };
 
 /////////////////////////////////////////////////
-Teleop::Teleop(): dataPtr(std::make_unique<TeleopPrivate>())
+Teleop::Teleop(): dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Initialize publisher using default topic.
   this->dataPtr->cmdVelPub = transport::Node::Publisher();
