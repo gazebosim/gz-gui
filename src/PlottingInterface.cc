@@ -25,13 +25,15 @@
 #include "gz/gui/PlottingInterface.hh"
 #include "gz/gui/Application.hh"
 
+#include <gz/utils/ImplPtr.hh>
+
 #define DEFAULT_TIME (INT_MIN)
 // 1/60 Period like the GuiSystem frequency (60Hz)
 #define MAX_PERIOD_DIFF (0.0166666667)
 
 namespace gz::gui
 {
-class PlotDataPrivate
+class PlotData::Implementation
 {
   /// \brief Value of that field
   public: double value;
@@ -43,7 +45,7 @@ class PlotDataPrivate
   public: std::set<int> charts;
 };
 
-class TopicPrivate
+class Topic::Implementation
 {
   /// \brief Check the plotable types and get data from reflection
   /// \param[in] _msg Message to get data from
@@ -65,7 +67,7 @@ class TopicPrivate
   public: std::map<std::string, gz::gui::PlotData*> fields;
 };
 
-class TransportPrivate
+class Transport::Implementation
 {
   /// \brief Node for Commincation
   public: gz::transport::Node node;
@@ -74,7 +76,7 @@ class TransportPrivate
   public: std::map<std::string, gz::gui::Topic*> topics;
 };
 
-class PlottingIfacePrivate
+class PlottingInterface::Implementation
 {
   /// \brief Responsible for transport messages and topics
   public: gui::Transport transport;
@@ -86,12 +88,12 @@ class PlottingIfacePrivate
   public: int timeout;
 
   /// \brief timer to update the plotting each time step
-  public: QTimer timer;
+  public: QTimer timer {nullptr};
 };
 
 //////////////////////////////////////////////////////
 PlotData::PlotData() :
-    dataPtr(std::make_unique<PlotDataPrivate>())
+    dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   this->dataPtr->value = 0;
 }
@@ -150,8 +152,8 @@ std::set<int> &PlotData::Charts()
 }
 
 //////////////////////////////////////////////////////
-Topic::Topic(const std::string &_name) : QObject(),
-    dataPtr(std::make_unique<TopicPrivate>())
+Topic::Topic(const std::string &_name):
+    dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   this->dataPtr->name = _name;
 }
@@ -361,7 +363,7 @@ void Topic::SetPlottingTimeRef(const std::shared_ptr<double> &_timeRef)
 }
 
 //////////////////////////////////////////////////////
-double TopicPrivate::FieldData(const google::protobuf::Message &_msg,
+double Topic::Implementation::FieldData(const google::protobuf::Message &_msg,
                                const google::protobuf::FieldDescriptor *_field)
 {
   using namespace google::protobuf;
@@ -390,7 +392,8 @@ double TopicPrivate::FieldData(const google::protobuf::Message &_msg,
 }
 
 ////////////////////////////////////////////
-Transport::Transport() : dataPtr(std::make_unique<TransportPrivate>())
+Transport::Transport():
+  dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -481,7 +484,7 @@ void Transport::UnsubscribeOutdatedTopics()
 
 //////////////////////////////////////////////////////
 PlottingInterface::PlottingInterface() : QObject(),
-    dataPtr(std::make_unique<PlottingIfacePrivate>())
+    dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   connect(&this->dataPtr->transport,
           SIGNAL(plot(int, QString, double, double)), this,

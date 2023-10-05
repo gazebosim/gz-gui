@@ -38,10 +38,10 @@
 
 #include "gz/gui/Export.hh"
 
+#include <gz/utils/ImplPtr.hh>
+
 namespace gz::gui
 {
-class PlotDataPrivate;
-
 /// \brief Plot Data containter to hold value and registered charts
 /// Can be a Field or a PlotComponent
 /// Used by PlottingInterface and Gazebo Plotting
@@ -85,10 +85,8 @@ class GZ_GUI_VISIBLE PlotData
   public: std::set<int> &Charts();
 
   /// \brief Private data member.
-  private: std::unique_ptr<PlotDataPrivate> dataPtr;
+  GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
 };
-
-class TopicPrivate;
 
 /// \brief Plotting Topic to handle published topics & their registered fields
 class GZ_GUI_VISIBLE Topic : public QObject
@@ -149,10 +147,8 @@ class GZ_GUI_VISIBLE Topic : public QObject
   public: void SetPlottingTimeRef(const std::shared_ptr<double> &_time);
 
   /// \brief Private data member.
-  private: std::unique_ptr<TopicPrivate> dataPtr;
+  GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
 };
-
-class TransportPrivate;
 
 /// \brief Handle transport topics subscribing for one object (Chart)
 class GZ_GUI_VISIBLE Transport : public QObject
@@ -203,11 +199,10 @@ class GZ_GUI_VISIBLE Transport : public QObject
   /// \param[in] _y y coordinates of the plot point
   signals: void plot(int _chart, QString _fieldID, double _x, double _y);
 
+  private:
   /// \brief Private data member.
-  private: std::unique_ptr<TransportPrivate> dataPtr;
+  GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
 };
-
-class PlottingIfacePrivate;
 
 /// \brief Plotting Interface
 /// Responsible for plotting transport msgs-fields
@@ -328,7 +323,7 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   public slots: void UpdateTime();
 
   /// \brief Private data member.
-  private: std::unique_ptr<PlottingIfacePrivate> dataPtr;
+  private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
 };
 }  // namespace gz::gui
 #endif  // GZ_GUI_PLOTTINGINTERFACE_HH_

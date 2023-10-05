@@ -18,25 +18,17 @@
 #define GZ_GUI_PLUGIN_HH_
 
 #include <tinyxml2.h>
+#include <gz/utils/ImplPtr.hh>
 #include <memory>
 #include <string>
 
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
 
-#ifdef _WIN32
-// Disable warning C4251 which is triggered by
-// std::unique_ptr
-#pragma warning(push)
-#pragma warning(disable: 4251)
-#endif
-
 namespace gz::gui
 {
     /// \brief Namespace for all plugins
     namespace plugins {}
-
-    class PluginPrivate;
 
     /// \brief Base class for Gazebo GUI plugins.
     ///
@@ -102,15 +94,11 @@ namespace gz::gui
       ///
       /// \sa Load
       /// \param[in] _pluginElem Element containing configuration
-      protected: virtual void LoadConfig(
-          const tinyxml2::XMLElement *_pluginElem)
-          {
-            (void)_pluginElem;
-          }
+      protected: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
 
       /// \brief Get title
       /// \return Plugin title.
-      public: virtual std::string Title() const {return this->title;}
+      public: virtual std::string Title() const;
 
       /// \brief Get the value of the the `delete_later` element from the
       /// configuration file, which defaults to false.
@@ -142,12 +130,7 @@ namespace gz::gui
 
       /// \internal
       /// \brief Pointer to private data
-      private: std::unique_ptr<PluginPrivate> dataPtr;
+      GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
     };
 }  // namespace gz::gui
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #endif  // GZ_GUI_PLUGIN_HH_
