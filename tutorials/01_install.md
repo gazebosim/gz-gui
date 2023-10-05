@@ -15,6 +15,8 @@ The source install instructions should be used if you need the very latest
 software improvements, if you need to modify the code, or if you plan to make a
 contribution.
 
+**Note:** If the version is 6 or downwards replace `gz-gui<#>` for `ign-gui<#>` in the command line. For more information take a look [here](https://community.gazebosim.org/t/a-new-era-for-gazebo/1356).
+
 ## Binary Install
 
 ### Ubuntu
@@ -98,16 +100,16 @@ Build and install as follows:
 
 1. Clone the repository
   ```
-  git clone https://github.com/gazebosim/gz-gui -b ign-gui<#>
+  git clone https://github.com/gazebosim/gz-gui -b gz-gui<#>
   ```
-  Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
+  Be sure to replace `<#>` with a number value, such as 7 or 8, depending on
   which version you need.
 
 2. Install dependencies
   ```
-  brew install --only-dependencies ignition-gui<#>
+  brew install --only-dependencies gz-gui<#>
   ```
-  Be sure to replace `<#>` with a number value, such as 5 or 6, depending on
+  Be sure to replace `<#>` with a number value, such as 7 or 8, depending on
   which version you need.
 
 3. Configure and build
