@@ -23,40 +23,29 @@
 #include "gz/gui/Application.hh"
 #include "TopicEcho.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class TopicEchoPrivate
 {
-namespace plugins
-{
-  class TopicEchoPrivate
-  {
-    /// \brief Topic
-    public: QString topic{"/echo"};
+  /// \brief Topic
+  public: QString topic{"/echo"};
 
-    /// \brief A list of text data.
-    public: QStringListModel msgList;
+  /// \brief A list of text data.
+  public: QStringListModel msgList;
 
-    /// \brief Size of the text buffer. The size is the number of
-    /// messages.
-    public: unsigned int buffer{10u};
+  /// \brief Size of the text buffer. The size is the number of
+  /// messages.
+  public: unsigned int buffer{10u};
 
-    /// \brief Flag used to pause message parsing.
-    public: bool paused{false};
+  /// \brief Flag used to pause message parsing.
+  public: bool paused{false};
 
-    /// \brief Mutex to protect message buffer.
-    public: std::mutex mutex;
+  /// \brief Mutex to protect message buffer.
+  public: std::mutex mutex;
 
-    /// \brief Node for communication
-    public: gz::transport::Node node;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Node for communication
+  public: gz::transport::Node node;
+};
 
 /////////////////////////////////////////////////
 TopicEcho::TopicEcho()
@@ -176,8 +165,8 @@ void TopicEcho::SetPaused(const bool &_paused)
   this->dataPtr->paused = _paused;
   this->PausedChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(TopicEcho,
-              gui::Plugin)
-
+GZ_ADD_PLUGIN(gz::gui::plugins::TopicEcho,
+              gz::gui::Plugin)

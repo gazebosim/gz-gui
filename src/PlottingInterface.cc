@@ -29,9 +29,7 @@
 // 1/60 Period like the GuiSystem frequency (60Hz)
 #define MAX_PERIOD_DIFF (0.0166666667)
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
 class PlotDataPrivate
 {
@@ -91,12 +89,6 @@ class PlottingIfacePrivate
   /// \brief timer to update the plotting each time step
   public: QTimer timer;
 };
-
-}
-}
-
-using namespace gz;
-using namespace gui;
 
 //////////////////////////////////////////////////////
 PlotData::PlotData() :
@@ -677,3 +669,4 @@ bool PlottingInterface::exportCSV(QString _path, int _chart,
   }
   return true;
 }
+}  // namespace gz::gui

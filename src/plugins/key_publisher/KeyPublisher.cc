@@ -25,35 +25,28 @@
 
 #include "KeyPublisher.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class KeyPublisherPrivate
 {
-  class KeyPublisherPrivate
+  /// \brief Node for communication
+  public: gz::transport::Node node;
+
+  /// \brief Publisher
+  public: gz::transport::Node::Publisher pub;
+
+  /// \brief Topic
+  public: std::string topic = "keyboard/keypress";
+
+  /// \brief Publish keyboard strokes
+  /// \param[in] key_press Pointer to the keyevent
+  public: void KeyPub(QKeyEvent *_keyPress)
   {
-    /// \brief Node for communication
-    public: gz::transport::Node node;
-
-    /// \brief Publisher
-    public: gz::transport::Node::Publisher pub;
-
-    /// \brief Topic
-    public: std::string topic = "keyboard/keypress";
-
-    /// \brief Publish keyboard strokes
-    /// \param[in] key_press Pointer to the keyevent
-    public: void KeyPub(QKeyEvent *_keyPress)
-    {
-      gz::msgs::Int32 Msg;
-      Msg.set_data(_keyPress->key());
-      pub.Publish(Msg);
-    }
-  };
-}
-}
-
-using namespace gz;
-using namespace gui;
+    gz::msgs::Int32 Msg;
+    Msg.set_data(_keyPress->key());
+    pub.Publish(Msg);
+  }
+};
 
 /////////////////////////////////////////////////
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
@@ -88,7 +81,8 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
   }
   return QObject::eventFilter(_obj, _event);
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(KeyPublisher,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::KeyPublisher,
+              gz::gui::Plugin)

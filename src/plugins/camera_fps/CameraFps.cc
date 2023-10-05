@@ -29,8 +29,11 @@
 
 #include "CameraFps.hh"
 
+namespace gz::gui::plugins
+{
+
 /// \brief Private data class for CameraFps
-class gz::gui::plugins::CameraFpsPrivate
+class CameraFpsPrivate
 {
   /// \brief Previous camera update time
   public: std::optional<std::chrono::steady_clock::time_point>
@@ -49,10 +52,6 @@ class gz::gui::plugins::CameraFpsPrivate
   /// \brief Camera FPS string value
   public: QString cameraFPSValue;
 };
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 void CameraFps::OnRender()
@@ -125,6 +124,7 @@ void CameraFps::SetCameraFpsValue(const QString &_value)
   this->dataPtr->cameraFPSValue = _value;
   this->CameraFpsValueChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::CameraFps,

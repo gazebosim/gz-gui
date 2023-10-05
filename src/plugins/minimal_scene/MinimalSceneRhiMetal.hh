@@ -28,109 +28,102 @@
 #include <memory>
 #include <string>
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+/// \brief Private data for GzCameraTextureRhiMetal
+class GzCameraTextureRhiMetalPrivate;
+
+/// \brief Implementation of GzCameraTextureRhi for the Metal graphics API
+class GzCameraTextureRhiMetal : public GzCameraTextureRhi
 {
-namespace plugins
+  // Documentation inherited
+  public: virtual ~GzCameraTextureRhiMetal() override;
+
+  /// \brief Constructor
+  public: GzCameraTextureRhiMetal();
+
+  // Documentation inherited
+  public: virtual void Update(rendering::CameraPtr _camera) override;
+
+  /// \internal Pointer to private data
+  private: std::unique_ptr<GzCameraTextureRhiMetalPrivate> dataPtr;
+};
+
+/// \brief Private data for RenderThreadRhiMetal
+class RenderThreadRhiMetalPrivate;
+
+/// \brief Implementation of RenderThreadRhi for the Metal graphics API
+class RenderThreadRhiMetal : public RenderThreadRhi
 {
-  /// \brief Private data for GzCameraTextureRhiMetal
-  class GzCameraTextureRhiMetalPrivate;
+  // Documentation inherited
+  public: virtual ~RenderThreadRhiMetal() override;
 
-  /// \brief Implementation of GzCameraTextureRhi for the Metal graphics API
-  class GzCameraTextureRhiMetal : public GzCameraTextureRhi
-  {
-    // Documentation inherited
-    public: virtual ~GzCameraTextureRhiMetal() override;
+  /// \brief Constructor
+  /// \param[in] _renderer The gz-rendering renderer
+  public: explicit RenderThreadRhiMetal(GzRenderer *_renderer);
 
-    /// \brief Constructor
-    public: GzCameraTextureRhiMetal();
+  // Documentation inherited
+  public: virtual std::string Initialize() override;
 
-    // Documentation inherited
-    public: virtual void Update(rendering::CameraPtr _camera) override;
+  // Documentation inherited
+  public: virtual void Update(rendering::CameraPtr _camera) override;
 
-    /// \internal Pointer to private data
-    private: std::unique_ptr<GzCameraTextureRhiMetalPrivate> dataPtr;
-  };
+  // Documentation inherited
+  public: virtual void RenderNext(RenderSync *_renderSync) override;
 
-  /// \brief Private data for RenderThreadRhiMetal
-  class RenderThreadRhiMetalPrivate;
+  // Documentation inherited
+  public: virtual void* TexturePtr() const override;
 
-  /// \brief Implementation of RenderThreadRhi for the Metal graphics API
-  class RenderThreadRhiMetal : public RenderThreadRhi
-  {
-    // Documentation inherited
-    public: virtual ~RenderThreadRhiMetal() override;
+  // Documentation inherited
+  public: virtual QSize TextureSize() const override;
 
-    /// \brief Constructor
-    /// \param[in] _renderer The gz-rendering renderer
-    public: explicit RenderThreadRhiMetal(GzRenderer *_renderer);
+  // Documentation inherited
+  public: virtual void ShutDown() override;
 
-    // Documentation inherited
-    public: virtual std::string Initialize() override;
+  /// \internal Prevent copy and assignment
+  private: RenderThreadRhiMetal(
+      const RenderThreadRhiMetal &_other) = delete;
+  private: RenderThreadRhiMetal& operator=(
+      const RenderThreadRhiMetal &_other) = delete;
 
-    // Documentation inherited
-    public: virtual void Update(rendering::CameraPtr _camera) override;
+  /// \internal Pointer to private data
+  private: std::unique_ptr<RenderThreadRhiMetalPrivate> dataPtr;
+};
 
-    // Documentation inherited
-    public: virtual void RenderNext(RenderSync *_renderSync) override;
+/// \brief Private data for TextureNodeRhiMetal
+class TextureNodeRhiMetalPrivate;
 
-    // Documentation inherited
-    public: virtual void* TexturePtr() const override;
+/// \brief Implementation of TextureNodeRhi for the Metal graphics API
+class TextureNodeRhiMetal : public TextureNodeRhi
+{
+  // Documentation inherited
+  public: virtual ~TextureNodeRhiMetal() override;
 
-    // Documentation inherited
-    public: virtual QSize TextureSize() const override;
+  /// \brief Constructor
+  /// \param[in] _window Window to display the texture
+  public: explicit TextureNodeRhiMetal(QQuickWindow *_window);
 
-    // Documentation inherited
-    public: virtual void ShutDown() override;
+  // Documentation inherited
+  public: virtual QSGTexture *Texture() const override;
 
-    /// \internal Prevent copy and assignment
-    private: RenderThreadRhiMetal(
-        const RenderThreadRhiMetal &_other) = delete;
-    private: RenderThreadRhiMetal& operator=(
-        const RenderThreadRhiMetal &_other) = delete;
+  // Documentation inherited
+  public: virtual bool HasNewTexture() const override;
 
-    /// \internal Pointer to private data
-    private: std::unique_ptr<RenderThreadRhiMetalPrivate> dataPtr;
-  };
+  // Documentation inherited
+  public: virtual void NewTexture(
+      void* _texturePtr, const QSize &_size)override;
 
-  /// \brief Private data for TextureNodeRhiMetal
-  class TextureNodeRhiMetalPrivate;
+  // Documentation inherited
+  public: virtual void PrepareNode() override;
 
-  /// \brief Implementation of TextureNodeRhi for the Metal graphics API
-  class TextureNodeRhiMetal : public TextureNodeRhi
-  {
-    // Documentation inherited
-    public: virtual ~TextureNodeRhiMetal() override;
+  /// \internal Prevent copy and assignment
+  private: TextureNodeRhiMetal(
+      const TextureNodeRhiMetal &_other) = delete;
+  private: TextureNodeRhiMetal& operator=(
+      const TextureNodeRhiMetal &_other) = delete;
 
-    /// \brief Constructor
-    /// \param[in] _window Window to display the texture
-    public: explicit TextureNodeRhiMetal(QQuickWindow *_window);
-
-    // Documentation inherited
-    public: virtual QSGTexture *Texture() const override;
-
-    // Documentation inherited
-    public: virtual bool HasNewTexture() const override;
-
-    // Documentation inherited
-    public: virtual void NewTexture(
-        void* _texturePtr, const QSize &_size)override;
-
-    // Documentation inherited
-    public: virtual void PrepareNode() override;
-
-    /// \internal Prevent copy and assignment
-    private: TextureNodeRhiMetal(
-        const TextureNodeRhiMetal &_other) = delete;
-    private: TextureNodeRhiMetal& operator=(
-        const TextureNodeRhiMetal &_other) = delete;
-
-    /// \internal Pointer to private data
-    private: std::unique_ptr<TextureNodeRhiMetalPrivate> dataPtr;
-   };
-}
-}
-}
-
-#endif
+  /// \internal Pointer to private data
+  private: std::unique_ptr<TextureNodeRhiMetalPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_

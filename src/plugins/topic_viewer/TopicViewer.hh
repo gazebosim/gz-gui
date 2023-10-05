@@ -14,6 +14,10 @@
  * limitations under the License.
  *
 */
+
+#ifndef GZ_GUI_PLUGINS_TOPICVIEWER_HH_
+#define GZ_GUI_PLUGINS_TOPICVIEWER_HH_
+
 #include <memory>
 
 #include <gz/gui/Plugin.hh>
@@ -28,41 +32,35 @@
 #  endif
 #endif
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class TopicsModel;
+class TopicViewerPrivate;
+
+/// \brief a Plugin to view the topics and their msgs & fields
+/// Field's informations can be passed by dragging them via the UI
+class TopicViewer_EXPORTS_API TopicViewer : public Plugin
 {
-namespace plugins
-{
-  class TopicsModel;
-  class TopicViewerPrivate;
+  Q_OBJECT
 
-  /// \brief a Plugin to view the topics and their msgs & fields
-  /// Field's informations can be passed by dragging them via the UI
-  class TopicViewer_EXPORTS_API TopicViewer : public Plugin
-  {
-    Q_OBJECT
+  /// \brief Constructor
+  public: TopicViewer();
 
-    /// \brief Constructor
-    public: TopicViewer();
+  /// \brief Destructor
+  public: ~TopicViewer();
 
-    /// \brief Destructor
-    public: ~TopicViewer();
+  /// \brief Documentaation inherited
+  public: void LoadConfig(const tinyxml2::XMLElement *) override;
 
-    /// \brief Documentaation inherited
-    public: void LoadConfig(const tinyxml2::XMLElement *) override;
+  /// \brief Get the model of msgs & fields
+  /// \return Pointer to the model of msgs & fields
+  public: QStandardItemModel *Model();
 
-    /// \brief Get the model of msgs & fields
-    /// \return Pointer to the model of msgs & fields
-    public: QStandardItemModel *Model();
+  /// \brief update the model according to the changes of the topics
+  public slots: void UpdateModel();
 
-    /// \brief update the model according to the changes of the topics
-    public slots: void UpdateModel();
-
-    /// \brief Pointer to private data.
-    private: std:: unique_ptr<TopicViewerPrivate> dataPtr;
-  };
-
-}
-}
-}
+  /// \brief Pointer to private data.
+  private: std:: unique_ptr<TopicViewerPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_TOPICVIEWER_HH_

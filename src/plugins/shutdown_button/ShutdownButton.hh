@@ -30,31 +30,24 @@
 #  endif
 #endif
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+/// \brief This plugin provides a shutdown button.
+class ShutdownButton_EXPORTS_API ShutdownButton: public gz::gui::Plugin
 {
-namespace plugins
-{
-  /// \brief This plugin provides a shutdown button.
-  class ShutdownButton_EXPORTS_API ShutdownButton: public gz::gui::Plugin
-  {
-    Q_OBJECT
+  Q_OBJECT
 
-    /// \brief Constructor
-    public: ShutdownButton();
+  /// \brief Constructor
+  public: ShutdownButton();
 
-    /// \brief Destructor
-    public: virtual ~ShutdownButton();
+  /// \brief Destructor
+  public: virtual ~ShutdownButton();
 
-    // Documentation inherited
-    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
+  // Documentation inherited
+  public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
 
-    /// \brief Callback in Qt thread when close button is clicked.
-    public slots: void OnStop();
-  };
-}
-}
-}
-
-#endif
+  /// \brief Callback in Qt thread when close button is clicked.
+  public slots: void OnStop();
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_SHUTDOWNBUTTON_HH_

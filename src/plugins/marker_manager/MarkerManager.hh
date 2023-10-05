@@ -22,47 +22,41 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class MarkerManagerPrivate;
+
+/// \brief This plugin will be in charge of handling the markers in the
+/// scene. It will allow to add, modify or remove markers.
+///
+/// ## Parameters
+///
+/// * `<topic_name>`: Optional. Name of topic for marker service. Defaults
+/// to `/marker`.
+/// * `<stats_topic>`: Optional. Name of topic to receive world stats.
+/// Defaults to `/world/[world name]/stats`.
+/// * `<warn_on_action_failure>`: True to display warnings if the user
+/// attempts to perform an invalid action. Defaults to true.
+class MarkerManager : public Plugin
 {
-namespace plugins
-{
-  class MarkerManagerPrivate;
+  Q_OBJECT
 
-  /// \brief This plugin will be in charge of handling the markers in the
-  /// scene. It will allow to add, modify or remove markers.
-  ///
-  /// ## Parameters
-  ///
-  /// * `<topic_name>`: Optional. Name of topic for marker service. Defaults
-  /// to `/marker`.
-  /// * `<stats_topic>`: Optional. Name of topic to receive world stats.
-  /// Defaults to `/world/[world name]/stats`.
-  /// * `<warn_on_action_failure>`: True to display warnings if the user
-  /// attempts to perform an invalid action. Defaults to true.
-  class MarkerManager : public Plugin
-  {
-    Q_OBJECT
+  /// \brief Constructor
+  public: MarkerManager();
 
-    /// \brief Constructor
-    public: MarkerManager();
+  /// \brief Destructor
+  public: virtual ~MarkerManager();
 
-    /// \brief Destructor
-    public: virtual ~MarkerManager();
+  // Documentation inherited
+  public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+      override;
 
-    // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
+  // Documentation inherited
+  private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
-    // Documentation inherited
-    private: bool eventFilter(QObject *_obj, QEvent *_event) override;
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<MarkerManagerPrivate> dataPtr;
-  };
-}
-}
-}
-#endif
+  /// \internal
+  /// \brief Pointer to private data.
+  private: std::unique_ptr<MarkerManagerPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_MARKERMANAGER_HH_

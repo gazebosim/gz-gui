@@ -23,42 +23,31 @@
 
 #include "Publisher.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class PublisherPrivate
 {
-namespace plugins
-{
-  class PublisherPrivate
-  {
-    /// \brief Message type
-    public: QString msgType = "gz.msgs.StringMsg";
+  /// \brief Message type
+  public: QString msgType = "gz.msgs.StringMsg";
 
-    /// \brief Message contents
-    public: QString msgData = "data: \"Hello\"";
+  /// \brief Message contents
+  public: QString msgData = "data: \"Hello\"";
 
-    /// \brief Topic
-    public: QString topic = "/echo";
+  /// \brief Topic
+  public: QString topic = "/echo";
 
-    /// \brief Frequency
-    public: double frequency = 1.0;
+  /// \brief Frequency
+  public: double frequency = 1.0;
 
-    /// \brief Timer to keep publishing
-    public: QTimer *timer;
+  /// \brief Timer to keep publishing
+  public: QTimer *timer;
 
-    /// \brief Node for communication
-    public: gz::transport::Node node;
+  /// \brief Node for communication
+  public: gz::transport::Node node;
 
-    /// \brief Publisher
-    public: gz::transport::Node::Publisher pub;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Publisher
+  public: gz::transport::Node::Publisher pub;
+};
 
 /////////////////////////////////////////////////
 Publisher::Publisher()
@@ -206,7 +195,8 @@ void Publisher::SetFrequency(const double _frequency)
   this->dataPtr->frequency = _frequency;
   this->FrequencyChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(Publisher,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::Publisher,
+              gz::gui::Plugin)

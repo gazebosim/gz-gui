@@ -20,75 +20,72 @@
 #include "gz/gui/Export.hh"
 #include "gz/gui/qt.h"
 
-namespace gz
+namespace gz::gui
 {
-namespace gui
+/// \brief Customize the proxy model to display search results.
+///
+/// Features:
+///
+/// * This has been tested with QTreeView and QTableView.
+/// * Manages expansion of nested items through DataRole::TO_EXPAND when
+///   applicable
+/// * Items with DataRole::TYPE == "title" are ignored
+///
+class GZ_GUI_VISIBLE SearchModel : public QSortFilterProxyModel
 {
-  /// \brief Customize the proxy model to display search results.
+  /// \brief Overloaded Qt method. Customize so we accept rows where:
+  /// 1. Each of the words can be found in its ancestors or itself, but not
+  /// necessarily all words on the same row, or
+  /// 2. One of its descendants matches rule 1, or
+  /// 3. One of its ancestors matches rule 1.
   ///
-  /// Features:
+  /// For example this structure:
+  /// - a
+  /// -- b
+  /// -- c
+  /// --- d
   ///
-  /// * This has been tested with QTreeView and QTableView.
-  /// * Manages expansion of nested items through DataRole::TO_EXPAND when
-  ///   applicable
-  /// * Items with DataRole::TYPE == "title" are ignored
+  /// * A search of "a" will display all rows.
+  /// * A search of "b" or "a b" will display "a" and "b".
+  /// * A search of "c", "d", "a c", "a d", "a c d" or "c d" will display
+  /// "a", "c" and "d".
+  /// * A search of "a b c d", "b c" or "b d" will display nothing.
   ///
-  class GZ_GUI_VISIBLE SearchModel : public QSortFilterProxyModel
-  {
-    /// \brief Overloaded Qt method. Customize so we accept rows where:
-    /// 1. Each of the words can be found in its ancestors or itself, but not
-    /// necessarily all words on the same row, or
-    /// 2. One of its descendants matches rule 1, or
-    /// 3. One of its ancestors matches rule 1.
-    ///
-    /// For example this structure:
-    /// - a
-    /// -- b
-    /// -- c
-    /// --- d
-    ///
-    /// * A search of "a" will display all rows.
-    /// * A search of "b" or "a b" will display "a" and "b".
-    /// * A search of "c", "d", "a c", "a d", "a c d" or "c d" will display
-    /// "a", "c" and "d".
-    /// * A search of "a b c d", "b c" or "b d" will display nothing.
-    ///
-    /// \param[in] _srcRow Row on the source model.
-    /// \param[in] _srcParent Parent on the source model.
-    /// \return True if row is accepted.
-    public: bool filterAcceptsRow(const int _srcRow,
-                                  const QModelIndex &_srcParent) const;
+  /// \param[in] _srcRow Row on the source model.
+  /// \param[in] _srcParent Parent on the source model.
+  /// \return True if row is accepted.
+  public: bool filterAcceptsRow(const int _srcRow,
+                                const QModelIndex &_srcParent) const;
 
-    /// \brief Check if row contains the word on itself.
-    /// \param[in] _srcRow Row on the source model.
-    /// \param[in] _srcParent Parent on the source model.
-    /// \param[in] _word Word to be checked.
-    /// \return True if row matches.
-    public: bool FilterAcceptsRowItself(const int _srcRow,
-                                        const QModelIndex &_srcParent,
-                                        const QString &_word) const;
+  /// \brief Check if row contains the word on itself.
+  /// \param[in] _srcRow Row on the source model.
+  /// \param[in] _srcParent Parent on the source model.
+  /// \param[in] _word Word to be checked.
+  /// \return True if row matches.
+  public: bool FilterAcceptsRowItself(const int _srcRow,
+                                      const QModelIndex &_srcParent,
+                                      const QString &_word) const;
 
-    /// \brief Check if any of the children is fully accepted.
-    /// \param[in] _srcRow Row on the source model.
-    /// \param[in] _srcParent Parent on the source model.
-    /// \return True if any of the children match.
-    public: bool HasAcceptedChildren(const int _srcRow,
-                                     const QModelIndex &_srcParent) const;
+  /// \brief Check if any of the children is fully accepted.
+  /// \param[in] _srcRow Row on the source model.
+  /// \param[in] _srcParent Parent on the source model.
+  /// \return True if any of the children match.
+  public: bool HasAcceptedChildren(const int _srcRow,
+                                   const QModelIndex &_srcParent) const;
 
-    /// \brief Check if any of the children accepts a specific word.
-    /// \param[in] _srcParent Parent on the source model.
-    /// \param[in] _word Word to be checked.
-    /// \return True if any of the children match.
-    public: bool HasChildAcceptsItself(const QModelIndex &_srcParent,
-                                       const QString &_word) const;
+  /// \brief Check if any of the children accepts a specific word.
+  /// \param[in] _srcParent Parent on the source model.
+  /// \param[in] _word Word to be checked.
+  /// \return True if any of the children match.
+  public: bool HasChildAcceptsItself(const QModelIndex &_srcParent,
+                                     const QString &_word) const;
 
-    /// \brief Set a new search value.
-    /// \param[in] _search Full search string.
-    public: void SetSearch(const QString &_search);
+  /// \brief Set a new search value.
+  /// \param[in] _search Full search string.
+  public: void SetSearch(const QString &_search);
 
-    /// \brief Full search string.
-    public: QString search;
-  };
-}
-}
+  /// \brief Full search string.
+  public: QString search;
+};
+}  // namespace gz::gui
 #endif

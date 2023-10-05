@@ -46,109 +46,95 @@
 #define PATH_ROLE 54
 #define PLOT_ROLE 55
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class TopicsModel : public QStandardItemModel
 {
-namespace plugins
-{
-  /// \brief Model for the Topics and their Msgs and Fields
-  /// a tree model that represents the topics tree with its Msgs
-  /// Childeren and each msg node has its own fileds/msgs childeren
-  class TopicsModel : public QStandardItemModel
+  /// \brief roles and names of the model
+  public: QHash<int, QByteArray> roleNames() const override
   {
-    /// \brief roles and names of the model
-    public: QHash<int, QByteArray> roleNames() const override
-    {
-      QHash<int, QByteArray> roles;
-      roles[NAME_ROLE] = NAME_KEY;
-      roles[TYPE_ROLE] = TYPE_KEY;
-      roles[TOPIC_ROLE] = TOPIC_KEY;
-      roles[PATH_ROLE] = PATH_KEY;
-      roles[PLOT_ROLE] = PLOT_KEY;
-      return roles;
-    }
-  };
+    QHash<int, QByteArray> roles;
+    roles[NAME_ROLE] = NAME_KEY;
+    roles[TYPE_ROLE] = TYPE_KEY;
+    roles[TOPIC_ROLE] = TOPIC_KEY;
+    roles[PATH_ROLE] = PATH_KEY;
+    roles[PLOT_ROLE] = PLOT_KEY;
+    return roles;
+  }
+};
 
-  class TopicViewerPrivate
-  {
-    /// \brief Node for Commincation
-    public: gz::transport::Node node;
+class TopicViewerPrivate
+{
+  /// \brief Node for Commincation
+  public: gz::transport::Node node;
 
-    /// \brief Model to create it from the available topics and messages
-    public: TopicsModel *model;
+  /// \brief Model to create it from the available topics and messages
+  public: TopicsModel *model;
 
-    /// \brief Timer to update the model and keep track of its changes
-    public: QTimer *timer;
+  /// \brief Timer to update the model and keep track of its changes
+  public: QTimer *timer;
 
-    /// \brief topic: msgType map to keep track of the model current topics
-    public: std::map<std::string, std::string> currentTopics;
+  /// \brief topic: msgType map to keep track of the model current topics
+  public: std::map<std::string, std::string> currentTopics;
 
-    /// \brief Create the fields model
-    public: void CreateModel();
+  /// \brief Create the fields model
+  public: void CreateModel();
 
-    /// \brief add a topic to the model
-    /// \param[in] _topic topic name to be displayed
-    /// \param[in] _msg topic's msg type
-    public: void AddTopic(const std::string &_topic,
-                         const std::string &_msg);
+  /// \brief add a topic to the model
+  /// \param[in] _topic topic name to be displayed
+  /// \param[in] _msg topic's msg type
+  public: void AddTopic(const std::string &_topic,
+                       const std::string &_msg);
 
-    /// \brief add a field/msg child to that parent item
-    /// \param[in] _parentItem a parent for the added field/msg
-    /// \param[in] _msgName the displayed name of the field/msg
-    /// \param[in] _msgType field/msg type
-    public: void AddField(QStandardItem *_parentItem,
-                       const std::string &_msgName,
-                       const std::string &_msgType);
+  /// \brief add a field/msg child to that parent item
+  /// \param[in] _parentItem a parent for the added field/msg
+  /// \param[in] _msgName the displayed name of the field/msg
+  /// \param[in] _msgType field/msg type
+  public: void AddField(QStandardItem *_parentItem,
+                     const std::string &_msgName,
+                     const std::string &_msgType);
 
-    /// \brief factory method for creating an item
-    /// \param[in] _name the display name
-    /// \param[in] _type type of the field of the item
-    /// \param[in] _path a set of concatenate strings of parent msgs
-    /// names that lead to that field, starting from the most parent
-    /// ex : if we have [Collision]msg contains [pose]msg contains [position]
-    /// msg contains [x,y,z] fields, so the path of x = "pose-position-x"
-    /// \param[in] _topic the name of the most parent item
-    /// \return the created Item
-    public: QStandardItem *FactoryItem(const std::string &_name,
-                                      const std::string &_type,
-                                      const std::string &_path = "",
-                                      const std::string &_topic = "");
+  /// \brief factory method for creating an item
+  /// \param[in] _name the display name
+  /// \param[in] _type type of the field of the item
+  /// \param[in] _path a set of concatenate strings of parent msgs
+  /// names that lead to that field, starting from the most parent
+  /// ex : if we have [Collision]msg contains [pose]msg contains [position]
+  /// msg contains [x,y,z] fields, so the path of x = "pose-position-x"
+  /// \param[in] _topic the name of the most parent item
+  /// \return the created Item
+  public: QStandardItem *FactoryItem(const std::string &_name,
+                                    const std::string &_type,
+                                    const std::string &_path = "",
+                                    const std::string &_topic = "");
 
-    /// \brief set the topic role name of the item with the most
-    /// topic parent of that field item
-    /// \param[in] _item item ref to set its topic
-    public: void SetItemTopic(QStandardItem *_item);
+  /// \brief set the topic role name of the item with the most
+  /// topic parent of that field item
+  /// \param[in] _item item ref to set its topic
+  public: void SetItemTopic(QStandardItem *_item);
 
-    /// \brief set the path/ID of the givin item starting from
-    /// the most topic parent to the field itself
-    /// \param[in] _item item ref to set its path
-    public: void SetItemPath(QStandardItem *_item);
+  /// \brief set the path/ID of the givin item starting from
+  /// the most topic parent to the field itself
+  /// \param[in] _item item ref to set its path
+  public: void SetItemPath(QStandardItem *_item);
 
-    /// \brief get the topic name of selected item
-    /// \param[in] _item ref to the item to get its parent topic
-    public: std::string TopicName(const QStandardItem *_item) const;
+  /// \brief get the topic name of selected item
+  /// \param[in] _item ref to the item to get its parent topic
+  public: std::string TopicName(const QStandardItem *_item) const;
 
-    /// \brief full path starting from topic name till the msg name
-    /// \param[in] _index index of the QStanadardItem
-    /// \return string with all elements separated by '/'
-    public: std::string ItemPath(const QStandardItem *_item) const;
+  /// \brief full path starting from topic name till the msg name
+  /// \param[in] _index index of the QStanadardItem
+  /// \return string with all elements separated by '/'
+  public: std::string ItemPath(const QStandardItem *_item) const;
 
-    /// \brief check if the type is supported in the plotting types
-    /// \param[in] _type the msg type to check if it is supported
-    public: bool IsPlotable(
-            const google::protobuf::FieldDescriptor::Type &_type);
+  /// \brief check if the type is supported in the plotting types
+  /// \param[in] _type the msg type to check if it is supported
+  public: bool IsPlotable(
+          const google::protobuf::FieldDescriptor::Type &_type);
 
-    /// \brief supported types for plotting
-    public: std::vector<google::protobuf::FieldDescriptor::Type> plotableTypes;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief supported types for plotting
+  public: std::vector<google::protobuf::FieldDescriptor::Type> plotableTypes;
+};
 
 TopicViewer::TopicViewer() : Plugin(), dataPtr(new TopicViewerPrivate)
 {
@@ -432,8 +418,7 @@ void TopicViewer::UpdateModel()
     }
   }
 }
-
-
+}  // namespace gz::gui::plugins
 // Register this plugin
-GZ_ADD_PLUGIN(TopicViewer,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::TopicViewer,
+              gz::gui::Plugin)

@@ -22,59 +22,54 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+/// Forward declarations
+class CameraFpsPrivate;
+
+/// \brief This plugin displays the GUI camera's Framerate Per Second (FPS)
+class CameraFps : public Plugin
 {
-namespace plugins
-{
-  class CameraFpsPrivate;
+  Q_OBJECT
 
-  /// \brief This plugin displays the GUI camera's Framerate Per Second (FPS)
-  class CameraFps : public Plugin
-  {
-    Q_OBJECT
+  /// \brief Camera frames per second
+  Q_PROPERTY(
+    QString cameraFPSValue
+    READ CameraFpsValue
+    WRITE SetCameraFpsValue
+    NOTIFY CameraFpsValueChanged
+  )
 
-    /// \brief Camera frames per second
-    Q_PROPERTY(
-      QString cameraFPSValue
-      READ CameraFpsValue
-      WRITE SetCameraFpsValue
-      NOTIFY CameraFpsValueChanged
-    )
+  /// \brief Constructor
+  public: CameraFps();
 
-    /// \brief Constructor
-    public: CameraFps();
+  /// \brief Destructor
+  public: virtual ~CameraFps();
 
-    /// \brief Destructor
-    public: virtual ~CameraFps();
+  // Documentation inherited
+  public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+      override;
 
-    // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
+  /// \brief Set the camera FPS value string
+  /// \param[in] _value Camera FPS value string
+  public: Q_INVOKABLE void SetCameraFpsValue(const QString &_value);
 
-    /// \brief Set the camera FPS value string
-    /// \param[in] _value Camera FPS value string
-    public: Q_INVOKABLE void SetCameraFpsValue(const QString &_value);
+  /// \brief Get the camera FPS value string
+  /// \return Camera FPS value string
+  public: Q_INVOKABLE QString CameraFpsValue() const;
 
-    /// \brief Get the camera FPS value string
-    /// \return Camera FPS value string
-    public: Q_INVOKABLE QString CameraFpsValue() const;
+  /// \brief Notify that camera FPS value has changed
+  signals: void CameraFpsValueChanged();
 
-    /// \brief Notify that camera FPS value has changed
-    signals: void CameraFpsValueChanged();
+  /// \brief Perform rendering calls in the rendering thread.
+  private: void OnRender();
 
-    /// \brief Perform rendering calls in the rendering thread.
-    private: void OnRender();
+  // Documentation inherited
+  private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
-    // Documentation inherited
-    private: bool eventFilter(QObject *_obj, QEvent *_event) override;
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<CameraFpsPrivate> dataPtr;
-  };
-}
-}
-}
-#endif
+  /// \internal
+  /// \brief Pointer to private data.
+  private: std::unique_ptr<CameraFpsPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_CAMERAFPS_HH_

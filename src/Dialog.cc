@@ -21,20 +21,13 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/Dialog.hh"
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
-    class DialogPrivate
-    {
-      /// \brief Pointer to quick window
-      public: QQuickWindow *quickWindow{nullptr};
-    };
-  }
-}
-
-using namespace gz;
-using namespace gui;
+class DialogPrivate
+{
+  /// \brief Pointer to quick window
+  public: QQuickWindow *quickWindow{nullptr};
+};
 
 /////////////////////////////////////////////////
 Dialog::Dialog()
@@ -176,3 +169,4 @@ std::string Dialog::ReadConfigAttribute(const std::string &_path,
 
   return std::string();
 }
+}  // namespace gz::gui

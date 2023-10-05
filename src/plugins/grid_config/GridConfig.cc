@@ -32,59 +32,55 @@
 
 #include "GridConfig.hh"
 
-namespace gz::gui
+namespace gz::gui::plugins
 {
-  struct GridParam
-  {
-    /// \brief Horizontal cell count
-    int hCellCount{20};
+struct GridParam
+{
+  /// \brief Horizontal cell count
+  int hCellCount{20};
 
-    /// \brief Vertical cell count
-    int vCellCount{0};
+  /// \brief Vertical cell count
+  int vCellCount{0};
 
-    /// \brief Cell length
-    double cellLength{1.0};
+  /// \brief Cell length
+  double cellLength{1.0};
 
-    /// \brief 3D pose
-    math::Pose3d pose{math::Pose3d::Zero};
+  /// \brief 3D pose
+  math::Pose3d pose{math::Pose3d::Zero};
 
-    /// \brief Grid color
-    math::Color color{math::Color(0.7f, 0.7f, 0.7f, 1.0f)};
-  };
+  /// \brief Grid color
+  math::Color color{math::Color(0.7f, 0.7f, 0.7f, 1.0f)};
+};
 
-  class GridConfigPrivate
-  {
-    /// \brief List of grid names.
-    public: QStringList nameList;
+class GridConfigPrivate
+{
+  /// \brief List of grid names.
+  public: QStringList nameList;
 
-    /// \brief
-    std::string name;
+  /// \brief
+  std::string name;
 
-    /// \brief Grid parameters
-    public: GridParam gridParam;
+  /// \brief Grid parameters
+  public: GridParam gridParam;
 
-    /// \brief Grids to add at startup
-    public: std::vector<GridParam> startupGrids;
+  /// \brief Grids to add at startup
+  public: std::vector<GridParam> startupGrids;
 
-    /// \brief Pointer to selected grid
-    rendering::GridPtr grid{nullptr};
+  /// \brief Pointer to selected grid
+  rendering::GridPtr grid{nullptr};
 
-    /// \brief Pointer to scene
-    rendering::ScenePtr scene{nullptr};
+  /// \brief Pointer to scene
+  rendering::ScenePtr scene{nullptr};
 
-    /// \brief Flag that indicates whether there are new updates to be rendered.
-    public: bool dirty{false};
+  /// \brief Flag that indicates whether there are new updates to be rendered.
+  public: bool dirty{false};
 
-    /// \brief True if name list needs to be refreshed.
-    public: bool refreshList{true};
+  /// \brief True if name list needs to be refreshed.
+  public: bool refreshList{true};
 
-    /// \brief Visible state
-    bool visible{true};
-  };
-}
-
-using namespace gz;
-using namespace gui;
+  /// \brief Visible state
+  bool visible{true};
+};
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
@@ -409,7 +405,8 @@ void GridConfig::RefreshList()
     this->OnName(this->dataPtr->nameList.at(0));
   this->NameListChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(GridConfig,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::GridConfig,
+              gz::gui::Plugin)

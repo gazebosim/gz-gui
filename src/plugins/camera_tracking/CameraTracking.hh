@@ -22,49 +22,43 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class CameraTrackingPrivate;
+
+/// \brief This plugin provides camera tracking capabilities such as "move to"
+/// and "follow".
+///
+/// Services:
+/// * `/gui/move_to`: Move the user camera to look at a given target,
+///                   identified by name.
+/// * `/gui/move_to/pose`: Move the user camera to a given pose.
+/// * `/gui/follow`: Set the user camera to follow a given target,
+///                   identified by name.
+/// * `/gui/follow/offset`: Set the offset for following.
+///
+/// Topics:
+/// * `/gui/camera/pose`: Publishes the current user camera pose.
+class CameraTracking : public Plugin
 {
-namespace plugins
-{
-  class CameraTrackingPrivate;
+  Q_OBJECT
 
-  /// \brief This plugin provides camera tracking capabilities such as "move to"
-  /// and "follow".
-  ///
-  /// Services:
-  /// * `/gui/move_to`: Move the user camera to look at a given target,
-  ///                   identified by name.
-  /// * `/gui/move_to/pose`: Move the user camera to a given pose.
-  /// * `/gui/follow`: Set the user camera to follow a given target,
-  ///                   identified by name.
-  /// * `/gui/follow/offset`: Set the offset for following.
-  ///
-  /// Topics:
-  /// * `/gui/camera/pose`: Publishes the current user camera pose.
-  class CameraTracking : public Plugin
-  {
-    Q_OBJECT
+  /// \brief Constructor
+  public: CameraTracking();
 
-    /// \brief Constructor
-    public: CameraTracking();
+  /// \brief Destructor
+  public: virtual ~CameraTracking();
 
-    /// \brief Destructor
-    public: virtual ~CameraTracking();
+  // Documentation inherited
+  public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+      override;
 
-    // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
+  // Documentation inherited
+  private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
-    // Documentation inherited
-    private: bool eventFilter(QObject *_obj, QEvent *_event) override;
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<CameraTrackingPrivate> dataPtr;
-  };
-}
-}
-}
-#endif
+  /// \internal
+  /// \brief Pointer to private data.
+  private: std::unique_ptr<CameraTrackingPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_CAMERATRACKING_HH_

@@ -32,39 +32,28 @@
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class ScreenshotPrivate
 {
-namespace plugins
-{
-  class ScreenshotPrivate
-  {
-    /// \brief Node for communication
-    public: gz::transport::Node node;
+  /// \brief Node for communication
+  public: gz::transport::Node node;
 
-    /// \brief Screenshot service name
-    public: std::string screenshotService;
+  /// \brief Screenshot service name
+  public: std::string screenshotService;
 
-    /// \brief Directory to save screenshots
-    public: std::string directory;
+  /// \brief Directory to save screenshots
+  public: std::string directory;
 
-    /// \brief Whether a screenshot has been requested but not processed yet.
-    public: bool dirty{false};
+  /// \brief Whether a screenshot has been requested but not processed yet.
+  public: bool dirty{false};
 
-    /// \brief Pointer to the user camera.
-    public: gz::rendering::CameraPtr userCamera{nullptr};
+  /// \brief Pointer to the user camera.
+  public: gz::rendering::CameraPtr userCamera{nullptr};
 
-    /// \brief Saved screenshot filepath
-    public: QString savedScreenshotPath = "";
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Saved screenshot filepath
+  public: QString savedScreenshotPath = "";
+};
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
@@ -226,7 +215,8 @@ void Screenshot::SetSavedScreenshotPath(const QString &_filename)
   this->SavedScreenshotPathChanged();
   this->savedScreenshot();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(Screenshot,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::Screenshot,
+              gz::gui::Plugin)

@@ -21,8 +21,10 @@
 
 #include "gz/gui/Conversions.hh"
 
+namespace gz::gui {
+
 //////////////////////////////////////////////////
-QColor gz::gui::convert(const gz::math::Color &_color)
+QColor convert(const gz::math::Color &_color)
 {
   return QColor(_color.R()*255.0,
                 _color.G()*255.0,
@@ -31,7 +33,7 @@ QColor gz::gui::convert(const gz::math::Color &_color)
 }
 
 //////////////////////////////////////////////////
-gz::math::Color gz::gui::convert(const QColor &_color)
+gz::math::Color convert(const QColor &_color)
 {
   return gz::math::Color(_color.red() / 255.0,
                        _color.green() / 255.0,
@@ -40,31 +42,31 @@ gz::math::Color gz::gui::convert(const QColor &_color)
 }
 
 //////////////////////////////////////////////////
-QPointF gz::gui::convert(const gz::math::Vector2d &_pt)
+QPointF convert(const gz::math::Vector2d &_pt)
 {
   return QPointF(_pt.X(), _pt.Y());
 }
 
 //////////////////////////////////////////////////
-gz::math::Vector2d gz::gui::convert(const QPointF &_pt)
+gz::math::Vector2d convert(const QPointF &_pt)
 {
   return gz::math::Vector2d(_pt.x(), _pt.y());
 }
 
 //////////////////////////////////////////////////
-QVector3D gz::gui::convert(const gz::math::Vector3d &_vec)
+QVector3D convert(const gz::math::Vector3d &_vec)
 {
   return QVector3D(_vec.X(), _vec.Y(), _vec.Z());
 }
 
 //////////////////////////////////////////////////
-gz::math::Vector3d gz::gui::convert(const QVector3D &_vec)
+gz::math::Vector3d convert(const QVector3D &_vec)
 {
   return gz::math::Vector3d(_vec.x(), _vec.y(), _vec.z());
 }
 
 //////////////////////////////////////////////////
-gz::common::MouseEvent gz::gui::convert(const QMouseEvent &_e)
+gz::common::MouseEvent convert(const QMouseEvent &_e)
 {
   common::MouseEvent event;
   event.SetPos(_e.pos().x(), _e.pos().y());
@@ -115,7 +117,7 @@ gz::common::MouseEvent gz::gui::convert(const QMouseEvent &_e)
 }
 
 //////////////////////////////////////////////////
-gz::common::MouseEvent gz::gui::convert(const QWheelEvent &_e)
+gz::common::MouseEvent convert(const QWheelEvent &_e)
 {
   common::MouseEvent event;
 
@@ -152,7 +154,7 @@ gz::common::MouseEvent gz::gui::convert(const QWheelEvent &_e)
 }
 
 //////////////////////////////////////////////////
-gz::common::KeyEvent gz::gui::convert(const QKeyEvent &_e)
+gz::common::KeyEvent convert(const QKeyEvent &_e)
 {
   common::KeyEvent event;
   event.SetKey(_e.key());
@@ -177,4 +179,4 @@ gz::common::KeyEvent gz::gui::convert(const QKeyEvent &_e)
 
   return event;
 }
-
+}  // namespace gz::gui

@@ -36,60 +36,55 @@
 
 #include "gz/transport/TopicUtils.hh"
 
-namespace gz
-{
-  namespace gui
-  {
-    class ApplicationPrivate
-    {
-      /// \brief QML engine
-      public: QQmlApplicationEngine *engine{nullptr};
-
-      /// \brief Pointer to main window
-      public: MainWindow *mainWin{nullptr};
-
-      /// \brief Vector of pointers to dialogs
-      public: std::vector<Dialog *> dialogs;
-
-      /// \brief Queue of plugins which should be added to the window
-      public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
-
-      /// \brief Vector of pointers to plugins already added, we hang on to
-      /// these until it is ok to unload the plugin's shared library.
-      public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
-
-      /// \brief Environment variable which holds paths to look for plugins
-      public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
-
-      /// \brief Vector of paths to look for plugins
-      public: std::vector<std::string> pluginPaths;
-
-      /// \brief Holds a configuration which may be applied to mainWin once it
-      /// is created by calling applyConfig(). It's no longer needed and
-      /// should not be used after that.
-      public: WindowConfig windowConfig;
-
-      /// \brief The path containing the default configuration file.
-      public: std::string defaultConfigPath;
-
-      public: common::SignalHandler signalHandler;
-
-      /// \brief QT message handler that pipes qt messages into our console
-      /// system.
-      public: static void MessageHandler(QtMsgType _type,
-          const QMessageLogContext &_context, const QString &_msg);
-    };
-  }
-}
-
-using namespace gz;
-using namespace gui;
-
+namespace {
 enum class GZ_COMMON_HIDDEN AvailableAPIs
 {
   OpenGL,
   Vulkan,
   Metal
+};
+}  // namespace
+
+namespace gz::gui
+{
+class ApplicationPrivate
+{
+  /// \brief QML engine
+  public: QQmlApplicationEngine *engine{nullptr};
+
+  /// \brief Pointer to main window
+  public: MainWindow *mainWin{nullptr};
+
+  /// \brief Vector of pointers to dialogs
+  public: std::vector<Dialog *> dialogs;
+
+  /// \brief Queue of plugins which should be added to the window
+  public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
+
+  /// \brief Vector of pointers to plugins already added, we hang on to
+  /// these until it is ok to unload the plugin's shared library.
+  public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
+
+  /// \brief Environment variable which holds paths to look for plugins
+  public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
+
+  /// \brief Vector of paths to look for plugins
+  public: std::vector<std::string> pluginPaths;
+
+  /// \brief Holds a configuration which may be applied to mainWin once it
+  /// is created by calling applyConfig(). It's no longer needed and
+  /// should not be used after that.
+  public: WindowConfig windowConfig;
+
+  /// \brief The path containing the default configuration file.
+  public: std::string defaultConfigPath;
+
+  public: common::SignalHandler signalHandler;
+
+  /// \brief QT message handler that pipes qt messages into our console
+  /// system.
+  public: static void MessageHandler(QtMsgType _type,
+      const QMessageLogContext &_context, const QString &_msg);
 };
 
 /////////////////////////////////////////////////
@@ -279,7 +274,7 @@ QQmlApplicationEngine *Application::Engine() const
 }
 
 /////////////////////////////////////////////////
-Application *gz::gui::App()
+Application *App()
 {
   return qobject_cast<Application *>(qGuiApp);
 }
@@ -913,3 +908,4 @@ void ApplicationPrivate::MessageHandler(QtMsgType _type,
       break;
   }
 }
+}  // namepace gz::gui

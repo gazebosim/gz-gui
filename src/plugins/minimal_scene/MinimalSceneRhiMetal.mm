@@ -35,40 +35,29 @@
 #endif
 
 /////////////////////////////////////////////////
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class GzCameraTextureRhiMetalPrivate
 {
-namespace plugins
+  public: id<MTLTexture> metalTexture = nil;
+};
+
+class RenderThreadRhiMetalPrivate
 {
-  class GzCameraTextureRhiMetalPrivate
-  {
-    public: id<MTLTexture> metalTexture = nil;
-  };
+  public: GzRenderer *renderer = nullptr;
+  public: id<MTLTexture> metalTexture = nil;
+};
 
-  class RenderThreadRhiMetalPrivate
-  {
-    public: GzRenderer *renderer = nullptr;
-    public: id<MTLTexture> metalTexture = nil;
-  };
-
-  class TextureNodeRhiMetalPrivate
-  {
-    public: id<MTLTexture> metalTexture = nil;
-    public: id<MTLTexture> newMetalTexture = nil;
-    public: QSize size {0, 0};
-    public: QSize newSize {0, 0};
-    public: QMutex mutex;
-    public: QSGTexture *texture = nullptr;
-    public: QQuickWindow *window = nullptr;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+class TextureNodeRhiMetalPrivate
+{
+  public: id<MTLTexture> metalTexture = nil;
+  public: id<MTLTexture> newMetalTexture = nil;
+  public: QSize size {0, 0};
+  public: QSize newSize {0, 0};
+  public: QMutex mutex;
+  public: QSGTexture *texture = nullptr;
+  public: QQuickWindow *window = nullptr;
+};
 
 /////////////////////////////////////////////////
 GzCameraTextureRhiMetal::~GzCameraTextureRhiMetal() = default;
@@ -217,3 +206,4 @@ void TextureNodeRhiMetal::PrepareNode()
             this->dataPtr->newSize);
   }
 }
+}  // namespace gz::gui::plugins

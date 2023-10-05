@@ -25,8 +25,11 @@
 #include "gz/gui/Helpers.hh"
 #include "gz/gui/MainWindow.hh"
 
+namespace gz::gui
+{
+
 /////////////////////////////////////////////////
-std::string gz::gui::humanReadable(const std::string &_key)
+std::string humanReadable(const std::string &_key)
 {
   std::string humanKey = _key;
   humanKey[0] = toupper(humanKey[0]);
@@ -35,7 +38,7 @@ std::string gz::gui::humanReadable(const std::string &_key)
 }
 
 /////////////////////////////////////////////////
-std::string gz::gui::unitFromKey(const std::string &_key,
+std::string unitFromKey(const std::string &_key,
     const std::string &_type)
 {
   if (_key == "pos" || _key == "length" || _key == "min_depth")
@@ -110,7 +113,7 @@ std::string gz::gui::unitFromKey(const std::string &_key,
 }
 
 /////////////////////////////////////////////////
-void gz::gui::rangeFromKey(const std::string &_key, double &_min,
+void rangeFromKey(const std::string &_key, double &_min,
     double &_max)
 {
   // Maximum range by default
@@ -139,19 +142,19 @@ void gz::gui::rangeFromKey(const std::string &_key, double &_min,
 }
 
 /////////////////////////////////////////////////
-gz::gui::StringType gz::gui::stringTypeFromKey(
+StringType stringTypeFromKey(
     const std::string &_key)
 {
   if (_key == "innerxml")
   {
-    return gz::gui::StringType::PLAIN_TEXT;
+    return StringType::PLAIN_TEXT;
   }
 
   return StringType::LINE;
 }
 
 /////////////////////////////////////////////////
-std::string gz::gui::uniqueFilePath(const std::string &_pathAndName,
+std::string uniqueFilePath(const std::string &_pathAndName,
     const std::string &_extension)
 {
   std::string result = _pathAndName + "." + _extension;
@@ -168,7 +171,7 @@ std::string gz::gui::uniqueFilePath(const std::string &_pathAndName,
 }
 
 /////////////////////////////////////////////////
-QStringList gz::gui::worldNames()
+QStringList worldNames()
 {
   auto win = App()->findChild<MainWindow *>();
   if (nullptr == win)
@@ -182,7 +185,7 @@ QStringList gz::gui::worldNames()
 }
 
 /////////////////////////////////////////////////
-std::string gz::gui::renderEngineName()
+std::string renderEngineName()
 {
   auto win = App()->findChild<MainWindow *>();
   if (nullptr == win)
@@ -196,7 +199,7 @@ std::string gz::gui::renderEngineName()
 }
 
 /////////////////////////////////////////////////
-std::string gz::gui::renderEngineBackendApiName()
+std::string renderEngineBackendApiName()
 {
   auto win = App()->findChild<MainWindow *>();
   if (nullptr == win)
@@ -210,7 +213,8 @@ std::string gz::gui::renderEngineBackendApiName()
 }
 
 /////////////////////////////////////////////////
-const QString gz::gui::qmlQrcImportPath()
+const QString qmlQrcImportPath()
 {
   return "qrc:/gz-gui-qml/";
 }
+}  // namespace gz::gui

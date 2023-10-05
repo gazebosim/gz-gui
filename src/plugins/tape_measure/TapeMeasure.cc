@@ -33,64 +33,60 @@
 
 #include "TapeMeasure.hh"
 
-namespace gz::gui
+namespace gz::gui::plugins
 {
-  class TapeMeasurePrivate
-  {
-    /// \brief Gazebo communication node.
-    public: transport::Node node;
+class TapeMeasurePrivate
+{
+  /// \brief Gazebo communication node.
+  public: transport::Node node;
 
-    /// \brief True if currently measuring, else false.
-    public: bool measure = false;
+  /// \brief True if currently measuring, else false.
+  public: bool measure = false;
 
-    /// \brief The id of the start point marker.
-    public: const int kStartPointId = 1;
+  /// \brief The id of the start point marker.
+  public: const int kStartPointId = 1;
 
-    /// \brief The id of the end point marker.
-    public: const int kEndPointId = 2;
+  /// \brief The id of the end point marker.
+  public: const int kEndPointId = 2;
 
-    /// \brief The id of the line marker.
-    public: const int kLineId = 3;
+  /// \brief The id of the line marker.
+  public: const int kLineId = 3;
 
-    /// \brief The id of the start or end point marker that is currently
-    /// being placed. This is primarily used to track the state machine of
-    /// the plugin.
-    public: int currentId = kStartPointId;
+  /// \brief The id of the start or end point marker that is currently
+  /// being placed. This is primarily used to track the state machine of
+  /// the plugin.
+  public: int currentId = kStartPointId;
 
-    /// \brief The location of the placed starting point of the tape measure
-    /// tool, only set when the user clicks to set the point.
-    public: gz::math::Vector3d startPoint =
-            gz::math::Vector3d::Zero;
+  /// \brief The location of the placed starting point of the tape measure
+  /// tool, only set when the user clicks to set the point.
+  public: gz::math::Vector3d startPoint =
+          gz::math::Vector3d::Zero;
 
-    /// \brief The location of the placed ending point of the tape measure
-    /// tool, only set when the user clicks to set the point.
-    public: gz::math::Vector3d endPoint = gz::math::Vector3d::Zero;
+  /// \brief The location of the placed ending point of the tape measure
+  /// tool, only set when the user clicks to set the point.
+  public: gz::math::Vector3d endPoint = gz::math::Vector3d::Zero;
 
-    /// \brief The color to set the marker when hovering the mouse over the
-    /// scene.
-    public: gz::math::Color
-            hoverColor{gz::math::Color(0.2f, 0.2f, 0.2f, 0.5f)};
+  /// \brief The color to set the marker when hovering the mouse over the
+  /// scene.
+  public: gz::math::Color
+          hoverColor{gz::math::Color(0.2f, 0.2f, 0.2f, 0.5f)};
 
-    /// \brief The color to draw the marker when the user clicks to confirm
-    /// its location.
-    public: gz::math::Color
-            drawColor{gz::math::Color(0.2f, 0.2f, 0.2f, 1.0f)};
+  /// \brief The color to draw the marker when the user clicks to confirm
+  /// its location.
+  public: gz::math::Color
+          drawColor{gz::math::Color(0.2f, 0.2f, 0.2f, 1.0f)};
 
-    /// \brief A set of the currently placed markers.  Used to make sure a
-    /// non-existent marker is not deleted.
-    public: std::unordered_set<int> placedMarkers;
+  /// \brief A set of the currently placed markers.  Used to make sure a
+  /// non-existent marker is not deleted.
+  public: std::unordered_set<int> placedMarkers;
 
-    /// \brief The current distance between the two points.  This distance
-    /// is updated as the user hovers the end point as well.
-    public: double distance = 0.0;
+  /// \brief The current distance between the two points.  This distance
+  /// is updated as the user hovers the end point as well.
+  public: double distance = 0.0;
 
-    /// \brief The namespace that the markers for this plugin are placed in.
-    public: std::string ns = "tape_measure";
-  };
-}
-
-using namespace gz;
-using namespace gui;
+  /// \brief The namespace that the markers for this plugin are placed in.
+  public: std::string ns = "tape_measure";
+};
 
 /////////////////////////////////////////////////
 TapeMeasure::TapeMeasure()
@@ -326,7 +322,8 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
 
   return QObject::eventFilter(_obj, _event);
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::TapeMeasure,
+GZ_ADD_PLUGIN(gz::gui::plugins::TapeMeasure,
               gz::gui::Plugin)

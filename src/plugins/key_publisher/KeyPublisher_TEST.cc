@@ -30,24 +30,24 @@
 
 #include "KeyPublisher.hh"
 
+using KeyPublisher = gz::gui::plugins::KeyPublisher;
+using MainWindow = gz::gui::MainWindow;
+
 int g_argc = 1;
 char* g_argv[] =
 {
   reinterpret_cast<char*>(const_cast<char*>("./KeyPublisher_TEST")),
 };
 
-using namespace gz;
-using namespace gui;
-
 class KeyPublisherTest : public ::testing::Test
 {
   // Set up function.
   protected: void SetUp() override
     {
-      common::Console::SetVerbosity(4);
+      gz::common::Console::SetVerbosity(4);
 
       this->app.AddPluginPath(
-        common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
+        gz::common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
 
       // Load plugin
       EXPECT_TRUE(this->app.LoadPlugin("KeyPublisher"));
@@ -75,7 +75,7 @@ class KeyPublisherTest : public ::testing::Test
     }
 
   // Callback function to verify key message was sent correctly
-  protected: void VerifyKeypressCb(const msgs::Int32 &_msg)
+  protected: void VerifyKeypressCb(const gz::msgs::Int32 &_msg)
     {
       this->received = true;
       EXPECT_EQ(_msg.data(), this->currentKey);
@@ -102,18 +102,18 @@ class KeyPublisherTest : public ::testing::Test
     }
 
   // Provides an API to load plugins and configuration files.
-  protected: Application app{g_argc, g_argv};
+  protected: gz::gui::Application app{g_argc, g_argv};
 
   // Instance of the main window.
-  protected: MainWindow *win;
+  protected: gz::gui::MainWindow *win;
 
   // List of plugins.
   protected: QList<KeyPublisher *> plugins;
-  protected: KeyPublisher *plugin;
+  protected: gz::gui::plugins::KeyPublisher *plugin;
 
   // Checks if a new key has been received.
   protected: bool received = false;
-  protected: transport::Node node;
+  protected: gz::transport::Node node;
 
   // Current key
   protected: int currentKey = 0;

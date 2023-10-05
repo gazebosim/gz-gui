@@ -20,19 +20,16 @@
 #include "gz/gui/Export.hh"
 #include "gz/gui/qt.h"
 
-namespace gz
+namespace gz::gui
 {
-namespace gui
+/// \brief Customized item model so that we can pass along an URI query as
+/// MIME information during a drag-drop.
+class GZ_GUI_VISIBLE DragDropModel : public QStandardItemModel
 {
-  /// \brief Customized item model so that we can pass along an URI query as
-  /// MIME information during a drag-drop.
-  class GZ_GUI_VISIBLE DragDropModel : public QStandardItemModel
-  {
-    /// \brief Overloaded from Qt. Custom MIME data function.
-    /// \param[in] _indexes List of selected items.
-    /// \return Mime data for the selected items.
-    public: QMimeData *mimeData(const QModelIndexList &_indexes) const;
-  };
-}
-}
-#endif
+  /// \brief Overloaded from Qt. Custom MIME data function.
+  /// \param[in] _indexes List of selected items.
+  /// \return Mime data for the selected items.
+  public: QMimeData *mimeData(const QModelIndexList &_indexes) const;
+};
+}  // namespace gz::gui
+#endif  // GZ_GUI_DRAGDROPMODEL_HH_

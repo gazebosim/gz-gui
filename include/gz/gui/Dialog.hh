@@ -31,74 +31,72 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
-    class DialogPrivate;
+/// Forward declarations
+class DialogPrivate;
 
-    /// \brief Gui plugin
-    class GZ_GUI_VISIBLE Dialog : public QObject
-    {
-      Q_OBJECT
+/// \brief Gui plugin
+class GZ_GUI_VISIBLE Dialog : public QObject
+{
+  Q_OBJECT
 
-      /// \brief Constructor
-      public: Dialog();
+  /// \brief Constructor
+  public: Dialog();
 
-      /// \brief Destructor
-      public: virtual ~Dialog();
+  /// \brief Destructor
+  public: virtual ~Dialog();
 
-      /// \brief Get the QtQuick window created by this object
-      /// \return Pointer to the QtQuick window
-      public: QQuickWindow *QuickWindow() const;
+  /// \brief Get the QtQuick window created by this object
+  /// \return Pointer to the QtQuick window
+  public: QQuickWindow *QuickWindow() const;
 
-      /// \brief Get the root quick item of this window
-      /// \return Pointer to the item
-      public: QQuickItem *RootItem() const;
+  /// \brief Get the root quick item of this window
+  /// \return Pointer to the item
+  public: QQuickItem *RootItem() const;
 
-      /// \brief Store dialog default config
-      /// \param[in] _config XML config as string
-      /// \deprecated Introduce deprecation warnings on v7.
-      public: void SetDefaultConfig(const std::string &_config);
+  /// \brief Store dialog default config
+  /// \param[in] _config XML config as string
+  /// \deprecated Introduce deprecation warnings on v7.
+  public: void SetDefaultConfig(const std::string &_config);
 
-      /// \brief Update an attribute on an XML file. The attribute belongs to
-      /// a `<dialog>` element that has a `name` attrbute matching this dialog's
-      /// name, i.e.
-      ///
-      /// `<dialog name="dialog_name" attribute="value"/>`
-      ///
-      /// If a dialog element with this dialog's name doesn't exist yet, one
-      /// will be created.
-      ///
-      /// \param[in] _path File path. File must already exist, this function
-      /// will not create a new file.
-      /// \param[in] _attribute XMLElement attribute name
-      /// \param[in] _value XMLElement attribute value
-      /// \return True if written to config file
-      public: bool UpdateConfigAttribute(
-        const std::string &_path, const std::string &_attribute,
-        const bool _value) const;
+  /// \brief Update an attribute on an XML file. The attribute belongs to
+  /// a `<dialog>` element that has a `name` attrbute matching this dialog's
+  /// name, i.e.
+  ///
+  /// `<dialog name="dialog_name" attribute="value"/>`
+  ///
+  /// If a dialog element with this dialog's name doesn't exist yet, one
+  /// will be created.
+  ///
+  /// \param[in] _path File path. File must already exist, this function
+  /// will not create a new file.
+  /// \param[in] _attribute XMLElement attribute name
+  /// \param[in] _value XMLElement attribute value
+  /// \return True if written to config file
+  public: bool UpdateConfigAttribute(
+    const std::string &_path, const std::string &_attribute,
+    const bool _value) const;
 
-      /// \brief Gets an attribute value from an XML file. The attribute belongs
-      /// to a `<dialog>` element that has a `name` attribute matching this
-      /// dialog's name.
-      /// It will return an empty string if the file or the attribute
-      /// don't exist.
-      /// \param[in] _path File path
-      /// \param[in] _attribute attribute name
-      /// \return Attribute value as string
-      public: std::string ReadConfigAttribute(const std::string &_path,
-        const std::string &_attribute) const;
+  /// \brief Gets an attribute value from an XML file. The attribute belongs
+  /// to a `<dialog>` element that has a `name` attribute matching this
+  /// dialog's name.
+  /// It will return an empty string if the file or the attribute
+  /// don't exist.
+  /// \param[in] _path File path
+  /// \param[in] _attribute attribute name
+  /// \return Attribute value as string
+  public: std::string ReadConfigAttribute(const std::string &_path,
+    const std::string &_attribute) const;
 
-      /// \internal
-      /// \brief Private data pointer
-      private: std::unique_ptr<DialogPrivate> dataPtr;
-    };
-  }
-}
+  /// \internal
+  /// \brief Private data pointer
+  private: std::unique_ptr<DialogPrivate> dataPtr;
+};
+}  // namespace gz::gui
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#endif
+#endif  // GZ_GUI_DIALOG_HH_

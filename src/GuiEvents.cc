@@ -17,7 +17,10 @@
 
 #include "gz/gui/GuiEvents.hh"
 
-class gz::gui::events::SnapIntervals::Implementation
+namespace gz::gui::events
+{
+
+class events::SnapIntervals::Implementation
 {
   /// \brief XYZ snapping values in meters, these values must be positive.
   public: math::Vector3d xyz;
@@ -31,85 +34,85 @@ class gz::gui::events::SnapIntervals::Implementation
   public: math::Vector3d scale;
 };
 
-class gz::gui::events::SpawnFromDescription::Implementation
+class SpawnFromDescription::Implementation
 {
   /// \brief The string of the resource to be spawned.
   public: std::string description;
 };
 
-class gz::gui::events::SpawnFromPath::Implementation
+class SpawnFromPath::Implementation
 {
   /// \brief The path of file to be previewed.
   public: std::string filePath;
 };
 
-class gz::gui::events::HoverToScene::Implementation
+class HoverToScene::Implementation
 {
   /// \brief The 3D point over which the user is hovering.
   public: math::Vector3d point;
 };
 
-class gz::gui::events::HoverOnScene::Implementation
+class HoverOnScene::Implementation
 {
   /// \brief The 2D point over which the user is hovering.
   public: common::MouseEvent mouse;
 };
 
-class gz::gui::events::LeftClickToScene::Implementation
+class LeftClickToScene::Implementation
 {
   /// \brief The 3D point that the user clicked within the scene.
   public: math::Vector3d point;
 };
 
-class gz::gui::events::RightClickToScene::Implementation
+class RightClickToScene::Implementation
 {
   /// \brief The 3D point that the user clicked within the scene.
   public: math::Vector3d point;
 };
 
-class gz::gui::events::DropdownMenuEnabled::Implementation
+class DropdownMenuEnabled::Implementation
 {
   /// \brief The boolean indicating whether the menu is disabled or not
   /// for this event.
   public: bool menuEnabled;
 };
 
-class gz::gui::events::LeftClickOnScene::Implementation
+class LeftClickOnScene::Implementation
 {
   /// \brief Mouse event
   public: common::MouseEvent mouse;
 };
 
-class gz::gui::events::RightClickOnScene::Implementation
+class RightClickOnScene::Implementation
 {
   /// \brief Mouse event
   public: common::MouseEvent mouse;
 };
 
-class gz::gui::events::BlockOrbit::Implementation
+class BlockOrbit::Implementation
 {
   public: bool block;
 };
 
-class gz::gui::events::KeyReleaseOnScene::Implementation
+class KeyReleaseOnScene::Implementation
 {
   /// \brief Key event
   public: common::KeyEvent key;
 };
 
-class gz::gui::events::KeyPressOnScene::Implementation
+class KeyPressOnScene::Implementation
 {
   /// \brief Key event
   public: common::KeyEvent key;
 };
 
-class gz::gui::events::SpawnCloneFromName::Implementation
+class SpawnCloneFromName::Implementation
 {
   /// \brief The name of the resource to be cloned
   public: std::string name;
 };
 
-class gz::gui::events::DropOnScene::Implementation
+class DropOnScene::Implementation
 {
   /// \brief The name of the dropped thing
   public: std::string dropText;
@@ -118,37 +121,33 @@ class gz::gui::events::DropOnScene::Implementation
   public: gz::math::Vector2i mouse;
 };
 
-class gz::gui::events::ScrollOnScene::Implementation
+class ScrollOnScene::Implementation
 {
   /// \brief Mouse event with scroll information.
   public: common::MouseEvent mouse;
 };
 
-class gz::gui::events::DragOnScene::Implementation
+class DragOnScene::Implementation
 {
   /// \brief Mouse event with drag information.
   public: common::MouseEvent mouse;
 };
 
-class gz::gui::events::MousePressOnScene::Implementation
+class MousePressOnScene::Implementation
 {
   /// \brief Mouse event with press information.
   public: common::MouseEvent mouse;
 };
 
-class gz::gui::events::WorldControl::Implementation
+class WorldControl::Implementation
 {
   /// \brief WorldControl information.
   public: msgs::WorldControl worldControl;
 };
 
-class gz::gui::events::PreRender::Implementation
+class PreRender::Implementation
 {
 };
-
-using namespace gz;
-using namespace gui;
-using namespace events;
 
 /////////////////////////////////////////////////
 SnapIntervals::SnapIntervals(
@@ -430,3 +429,4 @@ PreRender::PreRender()
   : QEvent(kType), dataPtr(utils::MakeImpl<Implementation>())
 {
 }
+}  // namespace gz::gui::events

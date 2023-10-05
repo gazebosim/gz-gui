@@ -33,52 +33,41 @@
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class WorldControlPrivate
 {
-namespace plugins
-{
-  class WorldControlPrivate
-  {
-    /// \brief Send the world control event or call the control service.
-    /// \param[in] _msg Message to send.
-    public: void SendEventMsg(const gz::msgs::WorldControl &_msg);
+  /// \brief Send the world control event or call the control service.
+  /// \param[in] _msg Message to send.
+  public: void SendEventMsg(const gz::msgs::WorldControl &_msg);
 
-    /// \brief Message holding latest world statistics
-    public: gz::msgs::WorldStatistics msg;
+  /// \brief Message holding latest world statistics
+  public: gz::msgs::WorldStatistics msg;
 
-    /// \brief Service to send world control requests
-    public: std::string controlService;
+  /// \brief Service to send world control requests
+  public: std::string controlService;
 
-    /// \brief Mutex to protect msg
-    public: std::recursive_mutex mutex;
+  /// \brief Mutex to protect msg
+  public: std::recursive_mutex mutex;
 
-    /// \brief Communication node
-    public: gz::transport::Node node;
+  /// \brief Communication node
+  public: gz::transport::Node node;
 
-    /// \brief The multi step value
-    public: unsigned int multiStep = 1u;
+  /// \brief The multi step value
+  public: unsigned int multiStep = 1u;
 
-    /// \brief True for paused
-    public: bool pause{true};
+  /// \brief True for paused
+  public: bool pause{true};
 
-    /// \brief The paused state of the most recently received world stats msg
-    /// (true for paused)
-    public: bool lastStatsMsgPaused{true};
+  /// \brief The paused state of the most recently received world stats msg
+  /// (true for paused)
+  public: bool lastStatsMsgPaused{true};
 
-    /// \brief Whether server communication should occur through an event (true)
-    /// or service (false). The service option was used by default for
-    /// gz-gui7 and earlier, and now uses the event by default in gz-gui8.
-    public: bool useEvent{true};
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Whether server communication should occur through an event (true)
+  /// or service (false). The service option was used by default for
+  /// gz-gui7 and earlier, and now uses the event by default in gz-gui8.
+  public: bool useEvent{true};
+};
 
 /////////////////////////////////////////////////
 WorldControl::WorldControl()
@@ -358,7 +347,8 @@ void WorldControlPrivate::SendEventMsg(const msgs::WorldControl &_msg)
     this->node.Request(this->controlService, _msg, cb);
   }
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(WorldControl,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::WorldControl,
+              gz::gui::Plugin)

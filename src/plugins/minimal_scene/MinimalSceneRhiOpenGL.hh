@@ -28,121 +28,115 @@
 #include <memory>
 #include <string>
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+/// \brief Private data for GzCameraTextureRhiOpenGL
+class GzCameraTextureRhiOpenGLPrivate;
+
+/// \brief Implementation of GzCameraTextureRhi for the OpenGL graphics API
+class GzCameraTextureRhiOpenGL : public GzCameraTextureRhi
 {
-namespace plugins
+  // Documentation inherited
+  public: virtual ~GzCameraTextureRhiOpenGL() override;
+
+  /// \brief Constructor
+  public: GzCameraTextureRhiOpenGL();
+
+  // Documentation inherited
+  public: virtual void Update(rendering::CameraPtr _camera) override;
+
+  /// \internal Pointer to private data
+  private: std::unique_ptr<GzCameraTextureRhiOpenGLPrivate> dataPtr;
+};
+
+/// \brief Private data for RenderThreadRhiOpenGLPrivate
+class RenderThreadRhiOpenGLPrivate;
+
+/// \brief Implementation of RenderThreadRhi for the OpenGL graphics API
+class RenderThreadRhiOpenGL : public RenderThreadRhi
 {
-  /// \brief Private data for GzCameraTextureRhiOpenGL
-  class GzCameraTextureRhiOpenGLPrivate;
+  // Documentation inherited
+  public: virtual ~RenderThreadRhiOpenGL() override;
 
-  /// \brief Implementation of GzCameraTextureRhi for the OpenGL graphics API
-  class GzCameraTextureRhiOpenGL : public GzCameraTextureRhi
-  {
-    // Documentation inherited
-    public: virtual ~GzCameraTextureRhiOpenGL() override;
+  /// \brief Constructor
+  /// \param[in] _renderer The gz-rendering renderer
+  public: explicit RenderThreadRhiOpenGL(GzRenderer *_renderer);
 
-    /// \brief Constructor
-    public: GzCameraTextureRhiOpenGL();
+  // Documentation inherited
+  public: virtual QOffscreenSurface *Surface() const override;
 
-    // Documentation inherited
-    public: virtual void Update(rendering::CameraPtr _camera) override;
+  // Documentation inherited
+  public: virtual void SetSurface(QOffscreenSurface *_surface) override;
 
-    /// \internal Pointer to private data
-    private: std::unique_ptr<GzCameraTextureRhiOpenGLPrivate> dataPtr;
-  };
+  // Documentation inherited
+  public: virtual QOpenGLContext *Context() const override;
 
-  /// \brief Private data for RenderThreadRhiOpenGLPrivate
-  class RenderThreadRhiOpenGLPrivate;
+  // Documentation inherited
+  public: virtual void SetContext(QOpenGLContext *_context) override;
 
-  /// \brief Implementation of RenderThreadRhi for the OpenGL graphics API
-  class RenderThreadRhiOpenGL : public RenderThreadRhi
-  {
-    // Documentation inherited
-    public: virtual ~RenderThreadRhiOpenGL() override;
+  // Documentation inherited
+  public: virtual std::string Initialize() override;
 
-    /// \brief Constructor
-    /// \param[in] _renderer The gz-rendering renderer
-    public: explicit RenderThreadRhiOpenGL(GzRenderer *_renderer);
+  // Documentation inherited
+  public: virtual void Update(rendering::CameraPtr _camera) override;
 
-    // Documentation inherited
-    public: virtual QOffscreenSurface *Surface() const override;
+  // Documentation inherited
+  public: virtual void RenderNext(RenderSync *_renderSync) override;
 
-    // Documentation inherited
-    public: virtual void SetSurface(QOffscreenSurface *_surface) override;
+  // Documentation inherited
+  public: virtual void* TexturePtr() const override;
 
-    // Documentation inherited
-    public: virtual QOpenGLContext *Context() const override;
+  // Documentation inherited
+  public: virtual QSize TextureSize() const override;
 
-    // Documentation inherited
-    public: virtual void SetContext(QOpenGLContext *_context) override;
+  // Documentation inherited
+  public: virtual void ShutDown() override;
 
-    // Documentation inherited
-    public: virtual std::string Initialize() override;
+  /// \internal Prevent copy and assignment
+  private: RenderThreadRhiOpenGL(
+      const RenderThreadRhiOpenGL &_other) = delete;
+  private: RenderThreadRhiOpenGL& operator=(
+      const RenderThreadRhiOpenGL &_other) = delete;
 
-    // Documentation inherited
-    public: virtual void Update(rendering::CameraPtr _camera) override;
+  /// \internal Pointer to private data
+  private: std::unique_ptr<RenderThreadRhiOpenGLPrivate> dataPtr;
+};
 
-    // Documentation inherited
-    public: virtual void RenderNext(RenderSync *_renderSync) override;
+/// \brief Private data for TextureNodeRhiOpenGL
+class TextureNodeRhiOpenGLPrivate;
 
-    // Documentation inherited
-    public: virtual void* TexturePtr() const override;
+/// \brief Implementation of TextureNodeRhi for the OpenGL graphics API
+class TextureNodeRhiOpenGL : public TextureNodeRhi
+{
+  // Documentation inherited
+  public: virtual ~TextureNodeRhiOpenGL() override;
 
-    // Documentation inherited
-    public: virtual QSize TextureSize() const override;
+  /// \brief Constructor
+  /// \param[in] _window Window to display the texture
+  public: explicit TextureNodeRhiOpenGL(QQuickWindow *_window);
 
-    // Documentation inherited
-    public: virtual void ShutDown() override;
+  // Documentation inherited
+  public: virtual QSGTexture *Texture() const override;
 
-    /// \internal Prevent copy and assignment
-    private: RenderThreadRhiOpenGL(
-        const RenderThreadRhiOpenGL &_other) = delete;
-    private: RenderThreadRhiOpenGL& operator=(
-        const RenderThreadRhiOpenGL &_other) = delete;
+  // Documentation inherited
+  public: virtual bool HasNewTexture() const override;
 
-    /// \internal Pointer to private data
-    private: std::unique_ptr<RenderThreadRhiOpenGLPrivate> dataPtr;
-  };
+  // Documentation inherited
+  public: virtual void NewTexture(
+      void* _texturePtr, const QSize &_size) override;
 
-  /// \brief Private data for TextureNodeRhiOpenGL
-  class TextureNodeRhiOpenGLPrivate;
+  // Documentation inherited
+  public: virtual void PrepareNode() override;
 
-  /// \brief Implementation of TextureNodeRhi for the OpenGL graphics API
-  class TextureNodeRhiOpenGL : public TextureNodeRhi
-  {
-    // Documentation inherited
-    public: virtual ~TextureNodeRhiOpenGL() override;
+  /// \internal Prevent copy and assignment
+  private: TextureNodeRhiOpenGL(
+      const TextureNodeRhiOpenGL &_other) = delete;
+  private: TextureNodeRhiOpenGL& operator=(
+      const TextureNodeRhiOpenGL &_other) = delete;
 
-    /// \brief Constructor
-    /// \param[in] _window Window to display the texture
-    public: explicit TextureNodeRhiOpenGL(QQuickWindow *_window);
-
-    // Documentation inherited
-    public: virtual QSGTexture *Texture() const override;
-
-    // Documentation inherited
-    public: virtual bool HasNewTexture() const override;
-
-    // Documentation inherited
-    public: virtual void NewTexture(
-        void* _texturePtr, const QSize &_size) override;
-
-    // Documentation inherited
-    public: virtual void PrepareNode() override;
-
-    /// \internal Prevent copy and assignment
-    private: TextureNodeRhiOpenGL(
-        const TextureNodeRhiOpenGL &_other) = delete;
-    private: TextureNodeRhiOpenGL& operator=(
-        const TextureNodeRhiOpenGL &_other) = delete;
-
-    /// \internal Pointer to private data
-    private: std::unique_ptr<TextureNodeRhiOpenGLPrivate> dataPtr;
-   };
-}
-}
-}
-
-#endif
+  /// \internal Pointer to private data
+  private: std::unique_ptr<TextureNodeRhiOpenGLPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIOPENGL_HH_
+//

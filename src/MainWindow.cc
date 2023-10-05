@@ -29,60 +29,53 @@
 #include "gz/msgs/server_control.pb.h"
 #include "gz/transport/Node.hh"
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
-    class MainWindowPrivate
-    {
-      /// \brief Number of plugins on the window
-      public: int pluginCount{0};
+class MainWindowPrivate
+{
+  /// \brief Number of plugins on the window
+  public: int pluginCount{0};
 
-      /// \brief Pointer to quick window
-      public: QQuickWindow *quickWindow{nullptr};
+  /// \brief Pointer to quick window
+  public: QQuickWindow *quickWindow{nullptr};
 
-      /// \brief Configuration for this window.
-      public: WindowConfig windowConfig;
+  /// \brief Configuration for this window.
+  public: WindowConfig windowConfig;
 
-      /// \brief Counts the times the window has been painted
-      public: unsigned int paintCount{0};
+  /// \brief Counts the times the window has been painted
+  public: unsigned int paintCount{0};
 
-      /// \brief Minimum number of paint events to consider the window to be
-      /// fully initialized.
-      public: const unsigned int paintCountMin{20};
+  /// \brief Minimum number of paint events to consider the window to be
+  /// fully initialized.
+  public: const unsigned int paintCountMin{20};
 
-      /// \brief The action executed when GUI is closed without prompt.
-      public: ExitAction defaultExitAction{ExitAction::CLOSE_GUI};
+  /// \brief The action executed when GUI is closed without prompt.
+  public: ExitAction defaultExitAction{ExitAction::CLOSE_GUI};
 
-      /// \brief Show the confirmation dialog on exit
-      public: bool showDialogOnExit{false};
+  /// \brief Show the confirmation dialog on exit
+  public: bool showDialogOnExit{false};
 
-      /// \brief Text of the prompt in the confirmation dialog on exit
-      public: QString dialogOnExitText;
+  /// \brief Text of the prompt in the confirmation dialog on exit
+  public: QString dialogOnExitText;
 
-      /// \brief Show "shutdown" button in exit dialog
-      public: bool exitDialogShowShutdown{false};
+  /// \brief Show "shutdown" button in exit dialog
+  public: bool exitDialogShowShutdown{false};
 
-      /// \brief Show "Close GUI" button in exit dialog
-      public: bool exitDialogShowCloseGui{true};
+  /// \brief Show "Close GUI" button in exit dialog
+  public: bool exitDialogShowCloseGui{true};
 
-      /// \brief Text of "shutdown" button in exit dialog
-      public: QString exitDialogShutdownText;
+  /// \brief Text of "shutdown" button in exit dialog
+  public: QString exitDialogShutdownText;
 
-      /// \brief Text of "Close GUI" button in exit dialog
-      public: QString exitDialogCloseGuiText;
+  /// \brief Text of "Close GUI" button in exit dialog
+  public: QString exitDialogCloseGuiText;
 
-      /// \brief Service to send server control requests
-      public: std::string controlService{"/server_control"};
+  /// \brief Service to send server control requests
+  public: std::string controlService{"/server_control"};
 
-      /// \brief Communication node
-      public: gz::transport::Node node;
-    };
-  }
-}
-
-using namespace gz;
-using namespace gui;
+  /// \brief Communication node
+  public: gz::transport::Node node;
+};
 
 /// \brief Strip last component from a path.
 /// \return Original path without its last component.
@@ -1029,3 +1022,4 @@ void MainWindow::SetServerControlService(const std::string &_service)
 {
   this->dataPtr->controlService = _service;
 }
+}  // namespace gz::gui

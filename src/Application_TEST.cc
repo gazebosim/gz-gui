@@ -26,32 +26,35 @@
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
 
+using Application = gz::gui::Application;
+using Dialog = gz::gui::Dialog;
+using MainWindow = gz::gui::MainWindow;
+using Plugin = gz::gui::Plugin;
+using WindowType = gz::gui::WindowType;
+
 int g_argc = 1;
 char* g_argv[] =
 {
   reinterpret_cast<char*>(const_cast<char*>("./Application_TEST")),
 };
 
-using namespace gz;
-using namespace gui;
-
 // See https://github.com/gazebosim/gz-gui/issues/75
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
-  common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   // No Qt app
   ASSERT_EQ(nullptr, qGuiApp);
-  ASSERT_EQ(nullptr, App());
+  ASSERT_EQ(nullptr, gz::gui::App());
 
   // One app construct - destruct
   {
     Application app(g_argc, g_argv);
 
     EXPECT_NE(nullptr, qGuiApp);
-    ASSERT_NE(nullptr, App());
-    EXPECT_NE(nullptr, App()->Engine());
+    ASSERT_NE(nullptr, gz::gui::App());
+    EXPECT_NE(nullptr, gz::gui::App()->Engine());
 
     // No crash if argc and argv were correctly set
     QCoreApplication::arguments();
@@ -59,7 +62,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
-  EXPECT_EQ(nullptr, App());
+  EXPECT_EQ(nullptr, gz::gui::App());
 }
 
 //////////////////////////////////////////////////
@@ -172,7 +175,7 @@ TEST(ApplicationTest,
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 {
-  common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   ASSERT_EQ(nullptr, qGuiApp);
 
@@ -222,7 +225,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 {
-  common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   ASSERT_EQ(nullptr, qGuiApp);
 
@@ -231,12 +234,12 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
     Application app(g_argc, g_argv);
 
     // Add test plugin to path (referenced in config)
-    auto testBuildPath = common::joinPaths(
+    auto testBuildPath = gz::common::joinPaths(
       std::string(PROJECT_BINARY_PATH), "lib");
     app.AddPluginPath(testBuildPath);
 
     // Set default config file
-    auto configPath = common::joinPaths(
+    auto configPath = gz::common::joinPaths(
       std::string(PROJECT_SOURCE_PATH), "test", "config", "test.config");
     app.SetDefaultConfigPath(configPath);
 
@@ -248,7 +251,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 TEST(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
 {
-  common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   ASSERT_EQ(nullptr, qGuiApp);
 
@@ -272,7 +275,7 @@ TEST(ApplicationTest,
 
     EXPECT_TRUE(app.LoadPlugin("Publisher"));
 
-    auto win = App()->findChild<MainWindow *>();
+    auto win = gz::gui::App()->findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
 
     // Check plugin count
@@ -300,7 +303,7 @@ TEST(ApplicationTest,
     // Load test config file
     EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
 
-    auto win = App()->findChild<MainWindow *>();
+    auto win = gz::gui::App()->findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
 
     // Check plugin count
@@ -318,7 +321,7 @@ TEST(ApplicationTest,
 //////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 {
-  common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   ASSERT_EQ(nullptr, qGuiApp);
 
@@ -393,7 +396,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 /////////////////////////////////////////////////
 TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
 {
-  common::Console::SetVerbosity(4);
+  gz::common::Console::SetVerbosity(4);
 
   ASSERT_EQ(nullptr, qGuiApp);
 

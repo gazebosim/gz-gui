@@ -22,56 +22,49 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class InteractiveViewControlPrivate;
+
+/// \brief This Plugin allows to control a user camera with the mouse:
+///
+/// * Drag left button to pan
+/// * Drag middle button to orbit
+/// * Drag right button or scroll wheel to zoom
+///
+/// This plugin also supports changing between perspective and orthographic
+/// projections through the `/gui/camera/view_control` service. Perspective
+/// projection is used by default. For example:
+///
+///     gz service -s /gui/camera/view_control
+///         --reqtype gz.msgs.StringMsg
+///         --reptype gz.msgs.Boolean
+///         --timeout 2000 --req 'data: "ortho"'
+///
+/// Supported options are:
+///
+/// * `orbit`: perspective projection
+/// * `ortho`: orthographic projection
+class InteractiveViewControl : public Plugin
 {
-namespace plugins
-{
-  class InteractiveViewControlPrivate;
+  Q_OBJECT
 
-  /// \brief This Plugin allows to control a user camera with the mouse:
-  ///
-  /// * Drag left button to pan
-  /// * Drag middle button to orbit
-  /// * Drag right button or scroll wheel to zoom
-  ///
-  /// This plugin also supports changing between perspective and orthographic
-  /// projections through the `/gui/camera/view_control` service. Perspective
-  /// projection is used by default. For example:
-  ///
-  ///     gz service -s /gui/camera/view_control
-  ///         --reqtype gz.msgs.StringMsg
-  ///         --reptype gz.msgs.Boolean
-  ///         --timeout 2000 --req 'data: "ortho"'
-  ///
-  /// Supported options are:
-  ///
-  /// * `orbit`: perspective projection
-  /// * `ortho`: orthographic projection
-  class InteractiveViewControl : public Plugin
-  {
-    Q_OBJECT
+  /// \brief Constructor
+  public: InteractiveViewControl();
 
-    /// \brief Constructor
-    public: InteractiveViewControl();
+  /// \brief Destructor
+  public: virtual ~InteractiveViewControl();
 
-    /// \brief Destructor
-    public: virtual ~InteractiveViewControl();
+  // Documentation inherited
+  public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+      override;
 
-    // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
+  // Documentation inherited
+  private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
-    // Documentation inherited
-    private: bool eventFilter(QObject *_obj, QEvent *_event) override;
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<InteractiveViewControlPrivate> dataPtr;
-  };
-}
-}
-}
-
-#endif
+  /// \internal
+  /// \brief Pointer to private data.
+  private: std::unique_ptr<InteractiveViewControlPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_

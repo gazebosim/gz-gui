@@ -51,7 +51,9 @@ static const std::unordered_set<std::string> kIgnoredProps{
     "pluginName",
     "anchored"};
 
-class gz::gui::PluginPrivate
+namespace gz::gui
+{
+class PluginPrivate
 {
   /// \brief Set this to true if the plugin should be deleted as soon as it has
   ///  a parent.
@@ -583,3 +585,4 @@ void Plugin::ApplyAnchors()
   }
   this->CardItem()->setProperty("anchored", true);
 }
+}  // namespace gz::gui

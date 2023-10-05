@@ -28,120 +28,115 @@
 #include <memory>
 #include <string>
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
-namespace gz
+#define HAVE_QT_VULKAN \
+  QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
+
+#if HAVE_QT_VULKAN
+namespace gz::gui::plugins
 {
-namespace gui
+/// \brief Private data for GzCameraTextureRhiVulkan
+class GzCameraTextureRhiVulkanPrivate;
+
+/// \brief Implementation of GzCameraTextureRhi for the Vulkan graphics API
+class GzCameraTextureRhiVulkan : public GzCameraTextureRhi
 {
-namespace plugins
+  // Documentation inherited
+  public: virtual ~GzCameraTextureRhiVulkan() override;
+
+  /// \brief Constructor
+  public: GzCameraTextureRhiVulkan();
+
+  // Documentation inherited
+  public: virtual void Update(rendering::CameraPtr _camera) override;
+
+  /// \internal Pointer to private data
+  private: std::unique_ptr<GzCameraTextureRhiVulkanPrivate> dataPtr;
+};
+
+/// \brief Private data for RenderThreadRhiVulkanPrivate
+class RenderThreadRhiVulkanPrivate;
+
+/// \brief Implementation of RenderThreadRhi for the Vulkan graphics API
+class RenderThreadRhiVulkan : public RenderThreadRhi
 {
-  /// \brief Private data for GzCameraTextureRhiVulkan
-  class GzCameraTextureRhiVulkanPrivate;
+  // Documentation inherited
+  public: virtual ~RenderThreadRhiVulkan() override;
 
-  /// \brief Implementation of GzCameraTextureRhi for the Vulkan graphics API
-  class GzCameraTextureRhiVulkan : public GzCameraTextureRhi
-  {
-    // Documentation inherited
-    public: virtual ~GzCameraTextureRhiVulkan() override;
+  /// \brief Constructor
+  /// \param[in] _renderer The gz-rendering renderer
+  public: explicit RenderThreadRhiVulkan(GzRenderer *_renderer);
 
-    /// \brief Constructor
-    public: GzCameraTextureRhiVulkan();
+  // Documentation inherited
+  public: virtual QOffscreenSurface *Surface() const override;
 
-    // Documentation inherited
-    public: virtual void Update(rendering::CameraPtr _camera) override;
+  // Documentation inherited
+  public: virtual void SetSurface(QOffscreenSurface *_surface) override;
 
-    /// \internal Pointer to private data
-    private: std::unique_ptr<GzCameraTextureRhiVulkanPrivate> dataPtr;
-  };
+  // Documentation inherited
+  public: virtual std::string Initialize() override;
 
-  /// \brief Private data for RenderThreadRhiVulkanPrivate
-  class RenderThreadRhiVulkanPrivate;
+  // Documentation inherited
+  public: virtual void Update(rendering::CameraPtr _camera) override;
 
-  /// \brief Implementation of RenderThreadRhi for the Vulkan graphics API
-  class RenderThreadRhiVulkan : public RenderThreadRhi
-  {
-    // Documentation inherited
-    public: virtual ~RenderThreadRhiVulkan() override;
+  // Documentation inherited
+  public: virtual void RenderNext(RenderSync *_renderSync) override;
 
-    /// \brief Constructor
-    /// \param[in] _renderer The gz-rendering renderer
-    public: explicit RenderThreadRhiVulkan(GzRenderer *_renderer);
+  // Documentation inherited
+  public: virtual void* TexturePtr() const override;
 
-    // Documentation inherited
-    public: virtual QOffscreenSurface *Surface() const override;
+  // Documentation inherited
+  public: virtual QSize TextureSize() const override;
 
-    // Documentation inherited
-    public: virtual void SetSurface(QOffscreenSurface *_surface) override;
+  // Documentation inherited
+  public: virtual void ShutDown() override;
 
-    // Documentation inherited
-    public: virtual std::string Initialize() override;
+  /// \internal Prevent copy and assignment
+  private: RenderThreadRhiVulkan(
+      const RenderThreadRhiVulkan &_other) = delete;
+  private: RenderThreadRhiVulkan& operator=(
+      const RenderThreadRhiVulkan &_other) = delete;
 
-    // Documentation inherited
-    public: virtual void Update(rendering::CameraPtr _camera) override;
+  /// \internal Pointer to private data
+  private: std::unique_ptr<RenderThreadRhiVulkanPrivate> dataPtr;
+};
 
-    // Documentation inherited
-    public: virtual void RenderNext(RenderSync *_renderSync) override;
+/// \brief Private data for TextureNodeRhiVulkan
+class TextureNodeRhiVulkanPrivate;
 
-    // Documentation inherited
-    public: virtual void* TexturePtr() const override;
+/// \brief Implementation of TextureNodeRhi for the Vulkan graphics API
+class TextureNodeRhiVulkan : public TextureNodeRhi
+{
+  // Documentation inherited
+  public: virtual ~TextureNodeRhiVulkan() override;
 
-    // Documentation inherited
-    public: virtual QSize TextureSize() const override;
+  /// \brief Constructor
+  /// \param[in] _window Window to display the texture
+  /// \param[in] _camera Camera owning the API texture handle
+  public: explicit TextureNodeRhiVulkan(QQuickWindow *_window,
+                                        rendering::CameraPtr &_camera);
 
-    // Documentation inherited
-    public: virtual void ShutDown() override;
+  // Documentation inherited
+  public: virtual QSGTexture *Texture() const override;
 
-    /// \internal Prevent copy and assignment
-    private: RenderThreadRhiVulkan(
-        const RenderThreadRhiVulkan &_other) = delete;
-    private: RenderThreadRhiVulkan& operator=(
-        const RenderThreadRhiVulkan &_other) = delete;
+  // Documentation inherited
+  public: virtual bool HasNewTexture() const override;
 
-    /// \internal Pointer to private data
-    private: std::unique_ptr<RenderThreadRhiVulkanPrivate> dataPtr;
-  };
+  // Documentation inherited
+  public: virtual void NewTexture(
+      void* _texturePtr, const QSize &_size) override;
 
-  /// \brief Private data for TextureNodeRhiVulkan
-  class TextureNodeRhiVulkanPrivate;
+  // Documentation inherited
+  public: virtual void PrepareNode() override;
 
-  /// \brief Implementation of TextureNodeRhi for the Vulkan graphics API
-  class TextureNodeRhiVulkan : public TextureNodeRhi
-  {
-    // Documentation inherited
-    public: virtual ~TextureNodeRhiVulkan() override;
+  /// \internal Prevent copy and assignment
+  private: TextureNodeRhiVulkan(
+      const TextureNodeRhiVulkan &_other) = delete;
+  private: TextureNodeRhiVulkan& operator=(
+      const TextureNodeRhiVulkan &_other) = delete;
 
-    /// \brief Constructor
-    /// \param[in] _window Window to display the texture
-    /// \param[in] _camera Camera owning the API texture handle
-    public: explicit TextureNodeRhiVulkan(QQuickWindow *_window,
-                                          rendering::CameraPtr &_camera);
-
-    // Documentation inherited
-    public: virtual QSGTexture *Texture() const override;
-
-    // Documentation inherited
-    public: virtual bool HasNewTexture() const override;
-
-    // Documentation inherited
-    public: virtual void NewTexture(
-        void* _texturePtr, const QSize &_size) override;
-
-    // Documentation inherited
-    public: virtual void PrepareNode() override;
-
-    /// \internal Prevent copy and assignment
-    private: TextureNodeRhiVulkan(
-        const TextureNodeRhiVulkan &_other) = delete;
-    private: TextureNodeRhiVulkan& operator=(
-        const TextureNodeRhiVulkan &_other) = delete;
-
-    /// \internal Pointer to private data
-    private: std::unique_ptr<TextureNodeRhiVulkanPrivate> dataPtr;
-   };
-}
-}
-}
-
-#endif
-
-#endif
+  /// \internal Pointer to private data
+  private: std::unique_ptr<TextureNodeRhiVulkanPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // HAVE_QT_VULKAN
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIVULKAN_HH_

@@ -22,50 +22,43 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class TransportSceneManagerPrivate;
+
+/// \brief Provides a Gazebo Transport interface to
+/// `gz::gui::plugins::MinimalScene`.
+///
+/// ## Configuration
+///
+/// * \<service\> : Name of service where this system will request a scene
+///                 message. Optional, defaults to "/scene".
+/// * \<pose_topic\> : Name of topic to subscribe to receive pose updates.
+///                    Optional, defaults to "/pose".
+/// * \<deletion_topic\> : Name of topic to request entity deletions.
+///                        Optional, defaults to "/delete".
+/// * \<scene_topic\> : Name of topic to receive scene updates. Optional,
+///                     defaults to "/scene".
+class TransportSceneManager : public Plugin
 {
-namespace plugins
-{
-  class TransportSceneManagerPrivate;
+  Q_OBJECT
 
-  /// \brief Provides a Gazebo Transport interface to
-  /// `gz::gui::plugins::MinimalScene`.
-  ///
-  /// ## Configuration
-  ///
-  /// * \<service\> : Name of service where this system will request a scene
-  ///                 message. Optional, defaults to "/scene".
-  /// * \<pose_topic\> : Name of topic to subscribe to receive pose updates.
-  ///                    Optional, defaults to "/pose".
-  /// * \<deletion_topic\> : Name of topic to request entity deletions.
-  ///                        Optional, defaults to "/delete".
-  /// * \<scene_topic\> : Name of topic to receive scene updates. Optional,
-  ///                     defaults to "/scene".
-  class TransportSceneManager : public Plugin
-  {
-    Q_OBJECT
+  /// \brief Constructor
+  public: TransportSceneManager();
 
-    /// \brief Constructor
-    public: TransportSceneManager();
+  /// \brief Destructor
+  public: virtual ~TransportSceneManager();
 
-    /// \brief Destructor
-    public: virtual ~TransportSceneManager();
+  // Documentation inherited
+  public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+      override;
 
-    // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
+  // Documentation inherited
+  private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
-    // Documentation inherited
-    private: bool eventFilter(QObject *_obj, QEvent *_event) override;
-
-    /// \internal
-    /// \brief Pointer to private data.
-    private: std::unique_ptr<TransportSceneManagerPrivate> dataPtr;
-  };
-}
-}
-}
-
-#endif
+  /// \internal
+  /// \brief Pointer to private data.
+  private: std::unique_ptr<TransportSceneManagerPrivate> dataPtr;
+};
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_TRANSPORTSCENEMANAGER_HH_

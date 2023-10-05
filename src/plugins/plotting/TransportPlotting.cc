@@ -17,10 +17,8 @@
 #include <gz/plugin/Register.hh>
 #include "TransportPlotting.hh"
 
-using namespace gz;
-using namespace gui;
-using namespace plugins;
-
+namespace gz::gui::plugins
+{
 TransportPlotting::~TransportPlotting()
 {
 }
@@ -37,8 +35,8 @@ TransportPlotting::TransportPlotting() : Plugin(),
     dataPtr(new PlottingInterface)
 {
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::TransportPlotting,
               gz::gui::Plugin)
-
