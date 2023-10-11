@@ -50,12 +50,12 @@ which can be used to add custom widgets.
 
 # Install
 
-See the [installation tutorial](https://gazebosim.org/api/gui/8/install.html).
+See the [installation tutorial](https://gazebosim.org/api/gui/9/install.html).
 
 # Usage
 
 Take a look at the
-[tutorials](https://gazebosim.org/api/gui/8/tutorials.html)
+[tutorials](https://gazebosim.org/api/gui/9/tutorials.html)
 for usage instructions and API documentation.
 
 ## Known issue of command line tools
