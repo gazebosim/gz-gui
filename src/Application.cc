@@ -31,6 +31,7 @@
 #include "gz/gui/config.hh"
 #include "gz/gui/Dialog.hh"
 #include "gz/gui/Helpers.hh"
+#include "gz/gui/InstallationDirectories.hh"
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
 
@@ -542,7 +543,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   std::string home;
   common::env(GZ_HOMEDIR, home);
   systemPaths.AddPluginPaths(home + "/.gz/gui/plugins");
-  systemPaths.AddPluginPaths(GZ_GUI_PLUGIN_INSTALL_DIR);
+  systemPaths.AddPluginPaths(gz::gui::getPluginInstallDir());
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -827,7 +828,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   paths.push_back(home + "/.gz/gui/plugins");
 
   // 4. Install path
-  paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
+  paths.push_back(gz::gui::getPluginInstallDir());
 
   // Populate map
   std::vector<std::pair<std::string, std::vector<std::string>>> plugins;

@@ -50,6 +50,15 @@ gz_create_core_library(SOURCES
   ${headers_MOC}
   ${resources_RCC}
 )
+gz_add_get_install_prefix_impl(GET_INSTALL_PREFIX_FUNCTION gz::gui::getInstallPrefix
+                               GET_INSTALL_PREFIX_HEADER gz/gui/InstallationDirectories.hh
+                               OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE GZ_GUI_INSTALL_PREFIX)
+
+set_property(
+  SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/../../../src/InstallationDirectories.cc
+  PROPERTY COMPILE_DEFINITIONS
+  GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR="${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}"
+)
 
 target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   PUBLIC
