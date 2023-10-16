@@ -37,6 +37,7 @@
 #include <gz/math/Vector2.hh>
 #include <gz/math/Vector3.hh>
 #include <gz/plugin/Register.hh>
+#include <gz/rendering/config.hh>
 #include <gz/rendering/Camera.hh>
 #include <gz/rendering/RayQuery.hh>
 #include <gz/rendering/RenderEngine.hh>
