@@ -55,8 +55,8 @@ set(GZ_COMMON_VER ${gz-common6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-plugin
-gz_find_package(gz-plugin2 REQUIRED COMPONENTS loader register)
-set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
+gz_find_package(gz-plugin3 REQUIRED COMPONENTS loader register)
+set(GZ_PLUGIN_VER ${gz-plugin3_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-transport
