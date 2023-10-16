@@ -8,7 +8,7 @@ project(gz-gui9 VERSION 9.0.0)
 #============================================================================
 # Find gz-cmake
 #============================================================================
-find_package(gz-cmake3 REQUIRED)
+find_package(gz-cmake4 REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -50,8 +50,8 @@ set(GZ_MATH_VER ${gz-math7_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-common
-gz_find_package(gz-common5 REQUIRED COMPONENTS profiler)
-set(GZ_COMMON_VER ${gz-common5_VERSION_MAJOR})
+gz_find_package(gz-common6 REQUIRED COMPONENTS profiler)
+set(GZ_COMMON_VER ${gz-common6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-plugin
@@ -60,18 +60,18 @@ set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-transport
-gz_find_package(gz-transport13 REQUIRED)
-set(GZ_TRANSPORT_VER ${gz-transport13_VERSION_MAJOR})
+gz_find_package(gz-transport14 REQUIRED)
+set(GZ_TRANSPORT_VER ${gz-transport14_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-rendering
-gz_find_package(gz-rendering8 REQUIRED)
-set(GZ_RENDERING_VER ${gz-rendering8_VERSION_MAJOR})
+gz_find_package(gz-rendering9 REQUIRED)
+set(GZ_RENDERING_VER ${gz-rendering9_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-msgs
-gz_find_package(gz-msgs10 REQUIRED)
-set(GZ_MSGS_VER ${gz-msgs10_VERSION_MAJOR})
+gz_find_package(gz-msgs11 REQUIRED)
+set(GZ_MSGS_VER ${gz-msgs11_VERSION_MAJOR})
 
 # Find if command is available. This is used to enable tests.
 # Note that CLI files are installed regardless of whether the dependency is
