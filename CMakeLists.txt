@@ -40,8 +40,8 @@ gz_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
 # Find gz-utils
-gz_find_package(gz-utils2 REQUIRED)
-set(GZ_UTILS_VER ${gz-utils2_VERSION_MAJOR})
+gz_find_package(gz-utils3 REQUIRED)
+set(GZ_UTILS_VER ${gz-utils3_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-math

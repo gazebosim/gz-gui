@@ -6,7 +6,7 @@ libgz-plugin2-dev
 libgz-rendering9-dev
 libgz-tools2-dev
 libgz-transport14-dev
-libgz-utils2-dev
+libgz-utils3-dev
 libprotobuf-dev
 libprotoc-dev
 libtinyxml2-dev
