@@ -69,7 +69,7 @@ namespace plugins
 
     /// \brief Whether server communication should occur through an event (true)
     /// or service (false). The service option was used by default for
-    /// gz-gui7 and earlier, and now uses the event by default in gz-gui8.
+    /// gz-gui7 and earlier, and now uses the event by default in gz-gui9.
     public: bool useEvent{true};
   };
 }
