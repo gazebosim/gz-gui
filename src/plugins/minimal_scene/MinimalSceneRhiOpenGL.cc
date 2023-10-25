@@ -16,6 +16,7 @@
 */
 
 #include "MinimalSceneRhiOpenGL.hh"
+#include <qsgtexture_platform.h>
 
 #include "EngineToQtInterface.hh"
 #include "MinimalScene.hh"
@@ -204,14 +205,11 @@ TextureNodeRhiOpenGL::TextureNodeRhiOpenGL(QQuickWindow *_window)
     : dataPtr(std::make_unique<TextureNodeRhiOpenGLPrivate>())
 {
   this->dataPtr->window = _window;
-
-  // Our texture node must have a texture, so use the default 0 texture.
   this->dataPtr->texture =
-      this->dataPtr->window->createTextureFromNativeObject(
-          QQuickWindow::NativeObjectTexture,
-          static_cast<void*>(&this->dataPtr->textureId),
-          0,
-          QSize(1, 1));
+    QNativeInterface::QSGOpenGLTexture::fromNative(
+      this->dataPtr->textureId,
+      this->dataPtr->window,
+      QSize(1, 1));
 }
 
 /////////////////////////////////////////////////
@@ -252,11 +250,10 @@ void TextureNodeRhiOpenGL::PrepareNode()
     this->dataPtr->texture = nullptr;
 
     this->dataPtr->texture =
-        this->dataPtr->window->createTextureFromNativeObject(
-            QQuickWindow::NativeObjectTexture,
-            static_cast<void*>(&this->dataPtr->newTextureId),
-            0,
-            this->dataPtr->newSize);
+      QNativeInterface::QSGOpenGLTexture::fromNative(
+        this->dataPtr->newTextureId,
+        this->dataPtr->window,
+        this->dataPtr->newSize);
   }
 }
 }  // namespace gz::gui::plugins

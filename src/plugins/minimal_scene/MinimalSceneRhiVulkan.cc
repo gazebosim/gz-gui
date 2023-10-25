@@ -182,12 +182,13 @@ TextureNodeRhiVulkan::TextureNodeRhiVulkan(QQuickWindow *_window,
   _camera->RenderTextureMetalId(&this->dataPtr->textureId);
   this->dataPtr->lastCamera = _camera;
 
-  this->dataPtr->texture = this->dataPtr->window->createTextureFromNativeObject(
-    QQuickWindow::NativeObjectTexture,
-    static_cast<void *>(&this->dataPtr->textureId),  //
-    0,                                               //
-    QSize(static_cast<int>(_camera->ImageWidth()),
-          static_cast<int>(_camera->ImageHeight())));
+  this->dataPtr->texture =
+    QNativeInterface::QSGVulkanTexture::fromNative(
+      this->dataPtr->textureId,
+      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+      this->dataPtr->window,
+      QSize(static_cast<int>(_camera->ImageWidth()),
+            static_cast<int>(_camera->ImageHeight())));
 }
 
 /////////////////////////////////////////////////
@@ -206,6 +207,7 @@ bool TextureNodeRhiVulkan::HasNewTexture() const
 void TextureNodeRhiVulkan::NewTexture(
     void* _texturePtr, const QSize &_size)
 {
+  std::cout << "NewTexture" << std::endl;
   this->dataPtr->mutex.lock();
   this->dataPtr->textureId = reinterpret_cast<VkImage>(_texturePtr);
   this->dataPtr->size = _size;
@@ -215,6 +217,7 @@ void TextureNodeRhiVulkan::NewTexture(
 /////////////////////////////////////////////////
 void TextureNodeRhiVulkan::PrepareNode()
 {
+  std::cout << "PrepareNode" << std::endl;
   this->dataPtr->mutex.lock();
   this->dataPtr->newTextureId = this->dataPtr->textureId;
   this->dataPtr->newSize = this->dataPtr->size;
@@ -230,14 +233,12 @@ void TextureNodeRhiVulkan::PrepareNode()
   if (this->dataPtr->newTextureId != nullptr)
   {
     delete this->dataPtr->texture;
-    this->dataPtr->texture = nullptr;
-
     this->dataPtr->texture =
-        this->dataPtr->window->createTextureFromNativeObject(
-            QQuickWindow::NativeObjectTexture,
-            static_cast<void*>(&this->dataPtr->newTextureId),
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-            this->dataPtr->newSize);
+      QNativeInterface::QSGVulkanTexture::fromNative(
+        this->dataPtr->newTextureId,
+        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+        this->dataPtr->window,
+        this->dataPtr->newSize);
   }
 }
 }  // namespace gz::gui::plugins

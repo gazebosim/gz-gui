@@ -15,11 +15,10 @@
  *
 */
 
-import QtGraphicalEffects 1.0
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 
@@ -70,12 +69,6 @@ Popup {
   background: Rectangle {
     color: Material.background
     layer.enabled: true
-    layer.effect: DropShadow {
-      color: "#aa000000"
-      samples: 9
-      spread: 0
-      radius: 8.0
-    }
   }
 
   // this function is called when notify() or notifyWithDuration() are called

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2017 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,21 @@
  * limitations under the License.
  *
 */
-import QtQuick
-import QtQuick.Controls
 
-SpinBox {
-  background: Rectangle {
-    implicitWidth: 70
-    implicitHeight: 40
-    border.color: "gray"
-  }
-}
+#include <QtGlobal>
+#include <qtgui-config.h>
+
+#define MINIMAL_SCENE_HAVE_OPENGL true
+
+#define MINIMAL_SCENE_HAVE_VULKAN \
+  QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
+
+#if defined(__APPLE__)
+#define MINIMAL_SCENE_HAVE_METAL 1
+#else
+#define MINIMAL_SCENE_HAVE_METAL 0
+#endif
+
+constexpr bool kMinimalSceneHaveOpenGl = MINIMAL_SCENE_HAVE_OPENGL;
+constexpr bool kMinimalSceneHaveVulkan = MINIMAL_SCENE_HAVE_VULKAN;
+constexpr bool kMinimalSceneHaveMETAL = MINIMAL_SCENE_HAVE_METAL;

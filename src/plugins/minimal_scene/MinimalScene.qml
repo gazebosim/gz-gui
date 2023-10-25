@@ -14,11 +14,12 @@
  * limitations under the License.
  *
 */
-import QtGraphicalEffects 1.0
-import QtQuick 2.9
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
-import RenderWindow 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import RenderWindow
+
+import Qt5Compat.GraphicalEffects
 
 Rectangle {
   Layout.minimumWidth: 200
@@ -51,7 +52,7 @@ Rectangle {
     id: renderWindow
     objectName: "rw"
     anchors.fill: parent
-    visible: MinimalScene.loadingError.length == 0
+    // visible: MinimalScene.loadingError.length == 0
   }
 
   /*

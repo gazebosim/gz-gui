@@ -14,11 +14,11 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Layouts 1.3
-import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
+import QtQuick.Dialogs
 import "qrc:/qml"
 
 Dialog {
@@ -135,7 +135,7 @@ Dialog {
 
       GzSpinBox {
         visible: !cardPane.anchored
-        maximumValue: cardPane.parent ? cardPane.parent.width - cardPane.width : minSize
+        to: cardPane.parent ? cardPane.parent.width - cardPane.width : from
         onVisibleChanged: value = cardPane.x
         onValueChanged: {
           cardPane.x = value;
@@ -147,7 +147,7 @@ Dialog {
       }
       GzSpinBox {
         visible: !cardPane.anchored
-        maximumValue: cardPane.parent ? cardPane.parent.height - cardPane.height : minSize
+        to: cardPane.parent ? cardPane.parent.height - cardPane.height : from
         onVisibleChanged: value = cardPane.y
         onValueChanged: {
           cardPane.y = value;
@@ -159,7 +159,7 @@ Dialog {
       }
       GzSpinBox {
         visible: !cardPane.anchored
-        maximumValue: 10000
+        to: 10000
         onVisibleChanged: value = cardPane.z
         onValueChanged: {
           cardPane.z = value;
@@ -177,7 +177,7 @@ Dialog {
         text: ""
       }
       GzSpinBox {
-        maximumValue: cardPane.parent ? cardPane.parent.width : minSize
+        to: cardPane.parent ? cardPane.parent.width : from
         onVisibleChanged: {
           if (cardPane)
             value = cardPane.width
@@ -190,7 +190,8 @@ Dialog {
         text: "Width"
       }
       GzSpinBox {
-        maximumValue: cardPane.parent ? cardPane.parent.height : minSize
+        to: cardPane.parent ? cardPane.parent.height : from
+
         onVisibleChanged: {
           if (cardPane)
             value = cardPane.height
@@ -208,7 +209,7 @@ Dialog {
   ColorDialog {
     id: colorDialog
     title: "Please choose a color"
-    showAlphaChannel : true
+    options: [ColorDialog.ShowAlphaChannel]
     onAccepted: {
       content.color = colorDialog.color
       bgColor.color = colorDialog.color

@@ -1,3 +1,10 @@
+add_executable(gui_main gui_main.cc)
+
+target_link_libraries(gui_main
+  ${PROJECT_LIBRARY_TARGET_NAME}
+  gz-utils${GZ_UTILS_VER}::cli
+)
+
 #===============================================================================
 # Generate the ruby script for internal testing.
 # Note that the major version of the library is included in the name.

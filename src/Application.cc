@@ -108,7 +108,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #ifdef __APPLE__
   AvailableAPIs api = AvailableAPIs::Metal;
 #else
-  AvailableAPIs api = AvailableAPIs::OpenGL;
+  AvailableAPIs api = AvailableAPIs::Vulkan;
 #endif
   if (_renderEngineGuiApiBackend)
   {
@@ -147,8 +147,6 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 
   if (api == AvailableAPIs::Vulkan)
   {
-    gzdbg << "Qt using Vulkan graphics interface" << std::endl;
-
 #  ifdef GZ_USE_VULKAN_DEBUG_EXT
     qputenv("QT_VULKAN_INSTANCE_EXTENSIONS",
             "VK_EXT_debug_report;VK_EXT_debug_utils");
@@ -161,7 +159,8 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #  endif
     );
 
-    QQuickWindow::setSceneGraphBackend(QSGRendererInterface::VulkanRhi);
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::VulkanRhi);
+    gzdbg << "Qt using Vulkan graphics interface" << std::endl;
   }
   else
   {
@@ -204,13 +203,13 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
       switch (api)
       {
       default:
-      case AvailableAPIs::OpenGL:
-        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
-                                            "opengl");
-        break;
       case AvailableAPIs::Vulkan:
         this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
                                             "vulkan");
+        break;
+      case AvailableAPIs::OpenGL:
+        this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",
+                                            "opengl");
         break;
       case AvailableAPIs::Metal:
         this->dataPtr->mainWin->setProperty("renderEngineBackendApiName",

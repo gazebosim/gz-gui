@@ -1,44 +1,31 @@
 set(SOURCES
   MinimalScene.cc
+  MinimalScene.hh
   MinimalSceneRhi.cc
+  MinimalSceneRhi.hh
   MinimalSceneRhiOpenGL.cc
+  MinimalSceneRhiOpenGL.hh
   MinimalSceneRhiVulkan.cc
+  MinimalSceneRhiVulkan.hh
   EngineToQtInterface.cc
+  EngineToQtInterface.hh
 )
 
-set(PROJECT_LINK_LIBS "")
+qt6_add_qml_module(MinimalScene
+  URI MinimalScene
+  VERSION 1.0
+  SOURCES ${SOURCES}
+  QML_FILES MinimalScene.qml
+)
 
-# Objective-C sources for macOS
-if (APPLE)
-  set(SOURCES
-    ${SOURCES}
-    MinimalSceneRhiMetal.mm
-  )
-
-  set(PROJECT_LINK_LIBS
-    "-framework AppKit"
-    "-framework Metal"
-  )
-endif()
-
-gz_gui_add_plugin(MinimalScene
-  SOURCES
-    ${SOURCES}
-    EngineToQtInterface.hh
-  QT_HEADERS
-    MinimalScene.hh
-  PUBLIC_LINK_LIBS
+target_link_libraries(MinimalScene PRIVATE
    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
    gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
-   ${PROJECT_LINK_LIBS}
+   gz-plugin${GZ_PLUGIN_VER}::register
+   Qt6::Gui
+   Qt6::Widgets
+   Qt6::Quick
+   Qt6::QuickControls2
 )
 
-# Enable ARC on selected source files
-if (APPLE)
-  set_source_files_properties(
-      MinimalSceneRhiMetal.mm
-      PROPERTIES
-      COMPILE_FLAGS
-          "-fobjc-arc -Wno-nullability-completeness"
-  )
-endif()
+install (TARGETS MinimalScene DESTINATION ${GZ_GUI_PLUGIN_INSTALL_DIR})

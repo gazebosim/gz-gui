@@ -76,15 +76,14 @@ set(GZ_MSGS_VER ${gz-msgs11_VERSION_MAJOR})
 
 #--------------------------------------
 # Find QT
-gz_find_package (Qt5
-  VERSION 5.15
+gz_find_package (Qt6
   COMPONENTS
     Core
     Quick
     QuickControls2
     Widgets
   REQUIRED
-  PKGCONFIG "Qt5Core Qt5Quick Qt5QuickControls2 Qt5Widgets"
+  PKGCONFIG "Qt6Core Qt6Quick Qt6QuickControls2 Qt6Widgets"
 )
 
 if (BUILD_TESTING)
@@ -94,9 +93,14 @@ if (BUILD_TESTING)
   find_program(HAVE_GZ_TOOLS gz)
   set(GZ_TOOLS_VER 2)
 
-  find_package(Qt5 REQUIRED COMPONENTS Test)
-
+  find_package(Qt6 REQUIRED COMPONENTS Test)
 endif()
+
+if(POLICY CMP0100)
+  cmake_policy(SET CMP0100 NEW)
+endif()
+
+qt_standard_project_setup()
 
 set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
   ${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins

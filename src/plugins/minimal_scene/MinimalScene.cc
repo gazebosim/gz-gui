@@ -17,12 +17,10 @@
 
 #include <gz/msgs/boolean.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
+#include <qsgtexture_platform.h>
 
 #include "MinimalScene.hh"
-#include "MinimalSceneRhi.hh"
-#include "MinimalSceneRhiMetal.hh"
-#include "MinimalSceneRhiOpenGL.hh"
-#include "MinimalSceneRhiVulkan.hh"
+#include "MinimalSceneConfig.hh"
 
 #include <algorithm>
 #include <list>
@@ -37,8 +35,11 @@
 #include <gz/math/Vector2.hh>
 #include <gz/math/Vector3.hh>
 #include <gz/plugin/Register.hh>
-#include <gz/rendering/config.hh>
+
+
+#include <gz/rendering/AxisVisual.hh>
 #include <gz/rendering/Camera.hh>
+#include <gz/rendering/Capsule.hh>
 #include <gz/rendering/RayQuery.hh>
 #include <gz/rendering/RenderEngine.hh>
 #include <gz/rendering/RenderingIface.hh>
@@ -222,9 +223,11 @@ class gz::gui::plugins::RenderWindowItem::Implementation
 
   /// \brief Graphics API. The default is platform specific.
   public: gz::rendering::GraphicsAPI graphicsAPI =
-#if GZ_GUI_HAVE_METAL_
+#if GZ_GUI_HAVE_METAL
       rendering::GraphicsAPI::METAL;
-#else
+#elif GZ_GUI_HAVE_VULKAN
+      rendering::GraphicsAPI::VULKAN;
+#elif MINIMAL_SCENE_HAVE_OPENGL
       rendering::GraphicsAPI::OPENGL;
 #endif
 
@@ -311,9 +314,9 @@ GzRenderer::GzRenderer()
   : dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
   const std::string backendApiName = gz::gui::renderEngineBackendApiName();
-  if (backendApiName == "vulkan")
+  if (backendApiName == "opengl")
   {
-    this->SetGraphicsAPI(rendering::GraphicsAPI::VULKAN);
+    this->SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
   }
   else if (backendApiName == "metal")
   {
@@ -321,7 +324,7 @@ GzRenderer::GzRenderer()
   }
   else
   {
-    this->SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
+    this->SetGraphicsAPI(rendering::GraphicsAPI::VULKAN);
   }
 }
 
@@ -723,8 +726,9 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
       this->dataPtr->rhiParams["external_device"] =
         std::to_string(reinterpret_cast<uintptr_t>(&externalDevice));
     }
-#endif
+#endif  // MINIMAL_SCENE_HAVE_VULKAN
 
+    std::cout << "Loading engine: " << this->engineName << std::endl;
     engine = rendering::engine(this->engineName, this->dataPtr->rhiParams);
   }
   else
@@ -809,16 +813,14 @@ void GzRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
     this->dataPtr->rhiParams["useCurrentGLContext"] = "1";
     this->dataPtr->rhi = std::make_unique<GzCameraTextureRhiOpenGL>();
   }
+#if GZ_GUI_HAVE_VULKAN
   else if (_graphicsAPI == rendering::GraphicsAPI::VULKAN)
   {
     gzdbg << "Creating gz-rendering interface for Vulkan" << std::endl;
     this->dataPtr->rhiParams["vulkan"] = "1";
-#if GZ_GUI_HAVE_VULKAN
     this->dataPtr->rhi = std::make_unique<GzCameraTextureRhiVulkan>();
-#else
-    this->dataPtr->rhi = std::make_unique<GzCameraTextureRhiOpenGL>();
-#endif
   }
+#endif  // GZ_GUI_HAVE_VULKAN
 #if GZ_GUI_HAVE_METAL
   else if (_graphicsAPI == rendering::GraphicsAPI::METAL)
   {
@@ -826,7 +828,7 @@ void GzRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
     this->dataPtr->rhiParams["metal"] = "1";
     this->dataPtr->rhi = std::make_unique<GzCameraTextureRhiMetal>();
   }
-#endif
+#endif  // GZ_GUI_HAVE_METAL
 }
 
 /////////////////////////////////////////////////
@@ -887,9 +889,9 @@ RenderThread::RenderThread()
 {
   // Set default graphics API to OpenGL
   const std::string backendApiName = gz::gui::renderEngineBackendApiName();
-  if (backendApiName == "vulkan")
+  if (backendApiName == "opengl")
   {
-    this->SetGraphicsAPI(rendering::GraphicsAPI::VULKAN);
+    this->SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
   }
   else if (backendApiName == "metal")
   {
@@ -897,7 +899,7 @@ RenderThread::RenderThread()
   }
   else
   {
-    this->SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
+    this->SetGraphicsAPI(rendering::GraphicsAPI::VULKAN);
   }
 
   RenderWindowItem::Implementation::threads << this;
@@ -985,7 +987,6 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
     gzdbg << "Creating render thread interface for OpenGL" << std::endl;
     this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->gzRenderer);
   }
-
 #if GZ_GUI_HAVE_VULKAN
   else if (_graphicsAPI == rendering::GraphicsAPI::VULKAN)
   {
@@ -1100,6 +1101,7 @@ void TextureNode::PrepareNode()
 RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
   : QQuickItem(_parent), dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
+  std::cout << "RenderWindowItem::RenderWindowItem" << std::endl;
   this->setAcceptedMouseButtons(Qt::AllButtons);
   this->setFlag(ItemHasContents);
   this->dataPtr->renderThread = new RenderThread();
@@ -1108,6 +1110,7 @@ RenderWindowItem::RenderWindowItem(QQuickItem *_parent)
 /////////////////////////////////////////////////
 RenderWindowItem::~RenderWindowItem()
 {
+  std::cout << "RenderWindowItem::~RenderWindowItem" << std::endl;
   this->StopRendering();
 }
 
@@ -1189,23 +1192,6 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 
     if (this->dataPtr->graphicsAPI == rendering::GraphicsAPI::OPENGL)
     {
-      QOpenGLContext *current = this->window()->openglContext();
-      // Some GL implementations require that the currently bound context is
-      // made non-current before we set up sharing, so we doneCurrent here
-      // and makeCurrent down below while setting up our own context.
-      current->doneCurrent();
-
-      this->dataPtr->renderThread->SetContext(new QOpenGLContext());
-      this->dataPtr->renderThread->Context()->setFormat(current->format());
-      this->dataPtr->renderThread->Context()->setShareContext(current);
-      this->dataPtr->renderThread->Context()->create();
-
-      // The slot "Ready" runs on the main thread, move the context to match
-      this->dataPtr->renderThread->Context()->moveToThread(
-          QApplication::instance()->thread());
-
-      current->makeCurrent(this->window());
-
       // Initialize on main thread
       QMetaObject::invokeMethod(this, "Ready", Qt::QueuedConnection);
     }
@@ -1344,7 +1330,7 @@ void RenderWindowItem::SetCameraViewController(
 
 /////////////////////////////////////////////////
 MinimalScene::MinimalScene()
-  : Plugin(), dataPtr(utils::MakeUniqueImpl<Implementation>())
+  : dataPtr(utils::MakeUniqueImpl<Implementation>())
 {
   qmlRegisterType<RenderWindowItem>("RenderWindow", 1, 0, "RenderWindow");
 }
@@ -1367,6 +1353,8 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     this->title = "3D Scene";
 
   std::string cmdRenderEngine = gui::renderEngineName();
+  std::cout << "MinimalScene::LoadConfig " << cmdRenderEngine << std::endl;
+
   // Custom parameters
   if (_pluginElem)
   {
