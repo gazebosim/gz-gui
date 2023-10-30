@@ -33,7 +33,7 @@
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
 namespace gui
 {
@@ -358,7 +358,8 @@ void WorldControlPrivate::SendEventMsg(const msgs::WorldControl &_msg)
     this->node.Request(this->controlService, _msg, cb);
   }
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(WorldControl,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::WorldControl,
+              gz::gui::Plugin)

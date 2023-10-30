@@ -54,8 +54,10 @@
 
 #include "TransportSceneManager.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for TransportSceneManager
-class gz::gui::plugins::TransportSceneManagerPrivate
+class TransportSceneManagerPrivate
 {
   /// \brief Make the scene service request and populate the scene
   public: void Request();
@@ -871,6 +873,7 @@ void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
     this->lights.erase(_entity);
   }
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::TransportSceneManager,

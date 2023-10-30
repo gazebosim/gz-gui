@@ -87,10 +87,6 @@ namespace gz::gui
     /// \brief The namespace that the markers for this plugin are placed in.
     public: std::string ns = "tape_measure";
   };
-}
-
-using namespace gz;
-using namespace gui;
 
 /////////////////////////////////////////////////
 TapeMeasure::TapeMeasure()
@@ -326,6 +322,7 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
 
   return QObject::eventFilter(_obj, _event);
 }
+}  // namespace gz::gui
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::TapeMeasure,

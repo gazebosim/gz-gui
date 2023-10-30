@@ -23,7 +23,7 @@
 #include "gz/gui/Application.hh"
 #include "TopicEcho.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
 namespace gui
 {
@@ -176,8 +176,8 @@ void TopicEcho::SetPaused(const bool &_paused)
   this->dataPtr->paused = _paused;
   this->PausedChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(TopicEcho,
-              gui::Plugin)
-
+GZ_ADD_PLUGIN(gz::gui::plugins::TopicEcho,
+              gz::gui::Plugin)

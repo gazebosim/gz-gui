@@ -23,11 +23,7 @@
 
 #include "Publisher.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class PublisherPrivate
   {
@@ -52,13 +48,6 @@ namespace plugins
     /// \brief Publisher
     public: gz::transport::Node::Publisher pub;
   };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 Publisher::Publisher()
@@ -206,7 +195,8 @@ void Publisher::SetFrequency(const double _frequency)
   this->dataPtr->frequency = _frequency;
   this->FrequencyChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(Publisher,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::Publisher,
+              gz::gui::Plugin)

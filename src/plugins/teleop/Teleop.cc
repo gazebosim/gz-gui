@@ -27,11 +27,7 @@
 #include <gz/gui/Application.hh>
 #include <gz/gui/MainWindow.hh>
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   enum class KeyForward{
     kForward,
@@ -101,13 +97,6 @@ namespace plugins
     /// disabled.
     public: bool keyEnable = false;
   };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
@@ -324,7 +313,8 @@ void Teleop::SetKeyScale()
       KeyYaw::kLeft ? 1 : this->dataPtr->yawKeyState ==
       KeyYaw::kRight ? -1 : 0;
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(Teleop,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::Teleop,
+              gz::gui::Plugin)

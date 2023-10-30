@@ -49,8 +49,10 @@
 
 #include "MarkerManager.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for MarkerManager
-class gz::gui::plugins::MarkerManagerPrivate
+class MarkerManagerPrivate
 {
   /// \brief Update markers based on msgs received
   public: void OnRender();
@@ -139,10 +141,6 @@ class gz::gui::plugins::MarkerManagerPrivate
   /// action with an inexistent marker.
   public: bool warnOnActionFailure{true};
 };
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 void MarkerManagerPrivate::Initialize()
@@ -777,6 +775,7 @@ bool MarkerManager::eventFilter(QObject *_obj, QEvent *_event)
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::MarkerManager,

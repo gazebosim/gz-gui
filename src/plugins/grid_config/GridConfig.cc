@@ -81,10 +81,6 @@ namespace gz::gui
     /// \brief Visible state
     bool visible{true};
   };
-}
-
-using namespace gz;
-using namespace gui;
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
@@ -409,7 +405,8 @@ void GridConfig::RefreshList()
     this->OnName(this->dataPtr->nameList.at(0));
   this->NameListChanged();
 }
+}  // namespace gz::gui
 
 // Register this plugin
-GZ_ADD_PLUGIN(GridConfig,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::GridConfig,
+              gz::gui::Plugin)

@@ -46,11 +46,7 @@
 #define PATH_ROLE 54
 #define PLOT_ROLE 55
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief Model for the Topics and their Msgs and Fields
   /// a tree model that represents the topics tree with its Msgs
@@ -142,13 +138,6 @@ namespace plugins
     /// \brief supported types for plotting
     public: std::vector<google::protobuf::FieldDescriptor::Type> plotableTypes;
   };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 TopicViewer::TopicViewer() : Plugin(), dataPtr(new TopicViewerPrivate)
 {
@@ -422,8 +411,8 @@ void TopicViewer::UpdateModel()
     }
   }
 }
-
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(TopicViewer,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::TopicViewer,
+              gz::gui::Plugin)

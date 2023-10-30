@@ -29,11 +29,7 @@
 
 #include "gz/gui/Application.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class NavSatMapPrivate
   {
@@ -49,13 +45,6 @@ namespace plugins
     /// \brief Mutex for accessing navSat data
     public: std::recursive_mutex navSatMutex;
   };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 NavSatMap::NavSatMap()
@@ -185,6 +174,7 @@ void NavSatMap::SetTopicList(const QStringList &_topicList)
   this->dataPtr->topicList = _topicList;
   this->TopicListChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::NavSatMap,

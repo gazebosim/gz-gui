@@ -22,10 +22,8 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/MainWindow.hh"
 
-using namespace gz;
-using namespace gui;
-using namespace plugins;
-
+namespace gz::gui::plugins
+{
 /////////////////////////////////////////////////
 ShutdownButton::ShutdownButton() : Plugin()
 {
@@ -47,7 +45,8 @@ void ShutdownButton::OnStop()
 {
   gui::App()->findChild<MainWindow *>()->QuickWindow()->close();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(ShutdownButton,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::ShutdownButton,
+              gz::gui::Plugin)

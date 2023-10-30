@@ -29,7 +29,7 @@
 
 #include "gz/gui/Helpers.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
 namespace gui
 {
@@ -341,7 +341,8 @@ void WorldStats::SetIterations(const QString &_iterations)
   this->dataPtr->iterations = _iterations;
   this->IterationsChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(WorldStats,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::WorldStats,
+              gz::gui::Plugin)

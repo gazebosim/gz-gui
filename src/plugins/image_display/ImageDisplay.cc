@@ -33,11 +33,7 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class ImageDisplayPrivate
   {
@@ -56,13 +52,6 @@ namespace plugins
     /// \brief To provide images for QML.
     public: ImageProvider *provider{nullptr};
   };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 ImageDisplay::ImageDisplay()
@@ -273,7 +262,8 @@ void ImageDisplay::SetTopicList(const QStringList &_topicList)
   this->dataPtr->topicList = _topicList;
   this->TopicListChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(ImageDisplay,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::ImageDisplay,
+              gz::gui::Plugin)

@@ -43,8 +43,10 @@
 
 #include "InteractiveViewControl.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for InteractiveViewControl
-class gz::gui::plugins::InteractiveViewControlPrivate
+class InteractiveViewControlPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -143,10 +145,6 @@ class gz::gui::plugins::InteractiveViewControlPrivate
   /// \brief View control sensitivity value. Must be greater than 0.
   public: double viewControlSensitivity = 1.0;
 };
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 void InteractiveViewControlPrivate::OnRender()
@@ -502,6 +500,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::InteractiveViewControl,

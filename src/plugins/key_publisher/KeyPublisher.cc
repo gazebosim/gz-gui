@@ -25,9 +25,7 @@
 
 #include "KeyPublisher.hh"
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
   class KeyPublisherPrivate
   {
@@ -49,11 +47,6 @@ namespace gui
       pub.Publish(Msg);
     }
   };
-}
-}
-
-using namespace gz;
-using namespace gui;
 
 /////////////////////////////////////////////////
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
@@ -88,7 +81,8 @@ bool KeyPublisher::eventFilter(QObject *_obj, QEvent *_event)
   }
   return QObject::eventFilter(_obj, _event);
 }
+}  // namespace gz::gui
 
 // Register this plugin
-GZ_ADD_PLUGIN(KeyPublisher,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::KeyPublisher,
+              gz::gui::Plugin)
