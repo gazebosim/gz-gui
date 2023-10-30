@@ -20,12 +20,9 @@
 
 #include "DialogFromPlugin.hh"
 
-using namespace gz;
-using namespace gui;
-
 /////////////////////////////////////////////////
 DialogFromPlugin::DialogFromPlugin()
-  : Plugin()
+  : gz::gui::Plugin()
 {
 }
 
@@ -36,4 +33,4 @@ DialogFromPlugin::~DialogFromPlugin()
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::DialogFromPlugin,
-                    gz::gui::Plugin);
+              gz::gui::Plugin);

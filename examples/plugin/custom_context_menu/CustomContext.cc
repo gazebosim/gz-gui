@@ -20,12 +20,9 @@
 
 #include "CustomContext.hh"
 
-using namespace gz;
-using namespace gui;
-
 /////////////////////////////////////////////////
 CustomContext::CustomContext()
-  : Plugin()
+  : gz::gui::Plugin()
 {
 }
 
@@ -36,4 +33,4 @@ CustomContext::~CustomContext()
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::CustomContext,
-                    gz::gui::Plugin);
+              gz::gui::Plugin);
