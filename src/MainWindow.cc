@@ -29,10 +29,8 @@
 #include "gz/msgs/server_control.pb.h"
 #include "gz/transport/Node.hh"
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
     class MainWindowPrivate
     {
       /// \brief Number of plugins on the window
@@ -78,11 +76,6 @@ namespace gz
       /// \brief Communication node
       public: gz::transport::Node node;
     };
-  }
-}
-
-using namespace gz;
-using namespace gui;
 
 /// \brief Strip last component from a path.
 /// \return Original path without its last component.
@@ -1038,3 +1031,4 @@ void MainWindow::SetServerControlService(const std::string &_service)
 {
   this->dataPtr->controlService = _service;
 }
+}  // namespace gz::gui

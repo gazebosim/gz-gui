@@ -22,10 +22,8 @@
 #include "gz/gui/Enums.hh"
 #include "gz/gui/Export.hh"
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
     /// \brief Create a human readable key, capitalizing the first letter
     /// and removing characters like "_".
     /// \param[in] _key Non-human-readable key.
@@ -121,6 +119,5 @@ namespace gz
       }
       return nullptr;
     }
-  }
-}
-#endif
+}  // namespace gz::gui
+#endif  // GZ_GUI_HELPERS_HH_

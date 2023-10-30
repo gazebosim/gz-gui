@@ -20,9 +20,7 @@
 
 #include "gz/gui/qt.h"
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
   /// \brief Data roles
   enum DataRole
@@ -81,6 +79,5 @@ namespace gui
     /// \brief Portable document format (PDF)
     PDFFile
   };
-}
-}
-#endif
+}  // namespace gz::gui
+#endif  // GZ_GUI_ENUMS_HH_

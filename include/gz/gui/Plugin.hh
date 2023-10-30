@@ -31,10 +31,8 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
     class PluginPrivate;
 
     /// \brief Base class for Gazebo GUI plugins.
@@ -143,11 +141,10 @@ namespace gz
       /// \brief Pointer to private data
       private: std::unique_ptr<PluginPrivate> dataPtr;
     };
-  }
-}
+}  // namespace gz::gui
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#endif
+#endif  // GZ_GUI_PLUGIN_HH_

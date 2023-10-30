@@ -36,10 +36,8 @@
 
 #include "gz/transport/TopicUtils.hh"
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
     class ApplicationPrivate
     {
       /// \brief QML engine
@@ -83,11 +81,7 @@ namespace gz
       public: static void MessageHandler(QtMsgType _type,
           const QMessageLogContext &_context, const QString &_msg);
     };
-  }
-}
 
-using namespace gz;
-using namespace gui;
 
 /////////////////////////////////////////////////
 Application::Application(int &_argc, char **_argv, const WindowType _type)
@@ -214,7 +208,7 @@ QQmlApplicationEngine *Application::Engine() const
 }
 
 /////////////////////////////////////////////////
-Application *gz::gui::App()
+Application *App()
 {
   return qobject_cast<Application *>(qGuiApp);
 }
@@ -868,3 +862,4 @@ void ApplicationPrivate::MessageHandler(QtMsgType _type,
       break;
   }
 }
+}  // namespace gz::gui
