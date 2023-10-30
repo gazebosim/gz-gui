@@ -25,29 +25,29 @@
 
 namespace gz::gui::plugins
 {
-  class PublisherPrivate
-  {
-    /// \brief Message type
-    public: QString msgType = "gz.msgs.StringMsg";
+class PublisherPrivate
+{
+  /// \brief Message type
+  public: QString msgType = "gz.msgs.StringMsg";
 
-    /// \brief Message contents
-    public: QString msgData = "data: \"Hello\"";
+  /// \brief Message contents
+  public: QString msgData = "data: \"Hello\"";
 
-    /// \brief Topic
-    public: QString topic = "/echo";
+  /// \brief Topic
+  public: QString topic = "/echo";
 
-    /// \brief Frequency
-    public: double frequency = 1.0;
+  /// \brief Frequency
+  public: double frequency = 1.0;
 
-    /// \brief Timer to keep publishing
-    public: QTimer *timer;
+  /// \brief Timer to keep publishing
+  public: QTimer *timer;
 
-    /// \brief Node for communication
-    public: gz::transport::Node node;
+  /// \brief Node for communication
+  public: gz::transport::Node node;
 
-    /// \brief Publisher
-    public: gz::transport::Node::Publisher pub;
-  };
+  /// \brief Publisher
+  public: gz::transport::Node::Publisher pub;
+};
 
 /////////////////////////////////////////////////
 Publisher::Publisher()

@@ -27,26 +27,26 @@
 
 namespace gz::gui
 {
-  class KeyPublisherPrivate
+class KeyPublisherPrivate
+{
+  /// \brief Node for communication
+  public: gz::transport::Node node;
+
+  /// \brief Publisher
+  public: gz::transport::Node::Publisher pub;
+
+  /// \brief Topic
+  public: std::string topic = "keyboard/keypress";
+
+  /// \brief Publish keyboard strokes
+  /// \param[in] key_press Pointer to the keyevent
+  public: void KeyPub(QKeyEvent *_keyPress)
   {
-    /// \brief Node for communication
-    public: gz::transport::Node node;
-
-    /// \brief Publisher
-    public: gz::transport::Node::Publisher pub;
-
-    /// \brief Topic
-    public: std::string topic = "keyboard/keypress";
-
-    /// \brief Publish keyboard strokes
-    /// \param[in] key_press Pointer to the keyevent
-    public: void KeyPub(QKeyEvent *_keyPress)
-    {
-      gz::msgs::Int32 Msg;
-      Msg.set_data(_keyPress->key());
-      pub.Publish(Msg);
-    }
-  };
+    gz::msgs::Int32 Msg;
+    Msg.set_data(_keyPress->key());
+    pub.Publish(Msg);
+  }
+};
 
 /////////////////////////////////////////////////
 KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)

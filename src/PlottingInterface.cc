@@ -43,7 +43,6 @@ class PlotDataPrivate
   public: std::set<int> charts;
 };
 
-
 class TopicPrivate
 {
   /// \brief Check the plotable types and get data from reflection

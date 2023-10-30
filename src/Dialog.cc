@@ -23,11 +23,11 @@
 
 namespace gz::gui
 {
-    class DialogPrivate
-    {
-      /// \brief Pointer to quick window
-      public: QQuickWindow *quickWindow{nullptr};
-    };
+class DialogPrivate
+{
+  /// \brief Pointer to quick window
+  public: QQuickWindow *quickWindow{nullptr};
+};
 
 /////////////////////////////////////////////////
 Dialog::Dialog()

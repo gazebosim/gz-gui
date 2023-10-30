@@ -34,26 +34,26 @@
 
 namespace gz::gui::plugins
 {
-  class ScreenshotPrivate
-  {
-    /// \brief Node for communication
-    public: gz::transport::Node node;
+class ScreenshotPrivate
+{
+  /// \brief Node for communication
+  public: gz::transport::Node node;
 
-    /// \brief Screenshot service name
-    public: std::string screenshotService;
+  /// \brief Screenshot service name
+  public: std::string screenshotService;
 
-    /// \brief Directory to save screenshots
-    public: std::string directory;
+  /// \brief Directory to save screenshots
+  public: std::string directory;
 
-    /// \brief Whether a screenshot has been requested but not processed yet.
-    public: bool dirty{false};
+  /// \brief Whether a screenshot has been requested but not processed yet.
+  public: bool dirty{false};
 
-    /// \brief Pointer to the user camera.
-    public: gz::rendering::CameraPtr userCamera{nullptr};
+  /// \brief Pointer to the user camera.
+  public: gz::rendering::CameraPtr userCamera{nullptr};
 
-    /// \brief Saved screenshot filepath
-    public: QString savedScreenshotPath = "";
-  };
+  /// \brief Saved screenshot filepath
+  public: QString savedScreenshotPath = "";
+};
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()

@@ -35,23 +35,23 @@
 
 namespace gz::gui::plugins
 {
-  class ImageDisplayPrivate
-  {
-    /// \brief List of topics publishing image messages.
-    public: QStringList topicList;
+class ImageDisplayPrivate
+{
+  /// \brief List of topics publishing image messages.
+  public: QStringList topicList;
 
-    /// \brief Holds data to set as the next image
-    public: msgs::Image imageMsg;
+  /// \brief Holds data to set as the next image
+  public: msgs::Image imageMsg;
 
-    /// \brief Node for communication.
-    public: transport::Node node;
+  /// \brief Node for communication.
+  public: transport::Node node;
 
-    /// \brief Mutex for accessing image data
-    public: std::recursive_mutex imageMutex;
+  /// \brief Mutex for accessing image data
+  public: std::recursive_mutex imageMutex;
 
-    /// \brief To provide images for QML.
-    public: ImageProvider *provider{nullptr};
-  };
+  /// \brief To provide images for QML.
+  public: ImageProvider *provider{nullptr};
+};
 
 /////////////////////////////////////////////////
 ImageDisplay::ImageDisplay()
