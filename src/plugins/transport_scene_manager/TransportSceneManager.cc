@@ -174,10 +174,6 @@ class TransportSceneManagerPrivate
   public: std::thread initializeTransport;
 };
 
-using namespace gz;
-using namespace gui;
-using namespace plugins;
-
 /////////////////////////////////////////////////
 TransportSceneManager::TransportSceneManager()
   : Plugin(), dataPtr(new TransportSceneManagerPrivate)
