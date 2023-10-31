@@ -65,14 +65,12 @@ class WorldStatsPrivate
 
 /////////////////////////////////////////////////
 WorldStats::WorldStats()
-  : Plugin(), dataPtr(new WorldStatsPrivate)
+  : dataPtr(new WorldStatsPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-WorldStats::~WorldStats()
-{
-}
+WorldStats::~WorldStats() = default;
 
 /////////////////////////////////////////////////
 void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)

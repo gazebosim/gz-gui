@@ -71,14 +71,12 @@ class WorldControlPrivate
 
 /////////////////////////////////////////////////
 WorldControl::WorldControl()
-  : Plugin(), dataPtr(new WorldControlPrivate)
+  : dataPtr(new WorldControlPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-WorldControl::~WorldControl()
-{
-}
+WorldControl::~WorldControl() = default;
 
 /////////////////////////////////////////////////
 void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)

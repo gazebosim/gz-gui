@@ -659,14 +659,12 @@ void MarkerManagerPrivate::OnWorldStatsMsg(
 
 /////////////////////////////////////////////////
 MarkerManager::MarkerManager()
-  : Plugin(), dataPtr(new MarkerManagerPrivate)
+  : dataPtr(new MarkerManagerPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-MarkerManager::~MarkerManager()
-{
-}
+MarkerManager::~MarkerManager() = default;
 
 /////////////////////////////////////////////////
 void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)

@@ -48,14 +48,12 @@ class NavSatMapPrivate
 
 /////////////////////////////////////////////////
 NavSatMap::NavSatMap()
-  : Plugin(), dataPtr(new NavSatMapPrivate)
+  : dataPtr(new NavSatMapPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-NavSatMap::~NavSatMap()
-{
-}
+NavSatMap::~NavSatMap() = default;
 
 /////////////////////////////////////////////////
 void NavSatMap::LoadConfig(const tinyxml2::XMLElement *_pluginElem)

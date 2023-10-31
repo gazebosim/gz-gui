@@ -90,8 +90,7 @@ class TapeMeasurePrivate
 
 /////////////////////////////////////////////////
 TapeMeasure::TapeMeasure()
-  : gz::gui::Plugin(),
-  dataPtr(std::make_unique<TapeMeasurePrivate>())
+  : dataPtr(std::make_unique<TapeMeasurePrivate>())
 {
 }
 

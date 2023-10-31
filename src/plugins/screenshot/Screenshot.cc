@@ -57,8 +57,7 @@ class ScreenshotPrivate
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : gui::Plugin(),
-  dataPtr(std::make_unique<ScreenshotPrivate>())
+  : dataPtr(std::make_unique<ScreenshotPrivate>())
 {
   std::string home;
   common::env(GZ_HOMEDIR, home);

@@ -97,9 +97,7 @@ PlotData::PlotData() :
 }
 
 //////////////////////////////////////////////////////
-PlotData::~PlotData()
-{
-}
+PlotData::~PlotData() = default;
 
 //////////////////////////////////////////////////////
 void PlotData::SetValue(const double _value)
@@ -496,9 +494,7 @@ PlottingInterface::PlottingInterface() : QObject(),
 }
 
 //////////////////////////////////////////////////////
-PlottingInterface::~PlottingInterface()
-{
-}
+PlottingInterface::~PlottingInterface() = default;
 
 //////////////////////////////////////////////////////
 void PlottingInterface::unsubscribe(int _chart,

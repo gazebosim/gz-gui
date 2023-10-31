@@ -51,14 +51,12 @@ class PublisherPrivate
 
 /////////////////////////////////////////////////
 Publisher::Publisher()
-  : Plugin(), dataPtr(new PublisherPrivate)
+  : dataPtr(new PublisherPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-Publisher::~Publisher()
-{
-}
+Publisher::~Publisher() = default;
 
 /////////////////////////////////////////////////
 void Publisher::LoadConfig(const tinyxml2::XMLElement *_pluginElem)

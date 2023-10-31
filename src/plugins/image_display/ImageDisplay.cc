@@ -55,7 +55,7 @@ class ImageDisplayPrivate
 
 /////////////////////////////////////////////////
 ImageDisplay::ImageDisplay()
-  : Plugin(), dataPtr(new ImageDisplayPrivate)
+  : dataPtr(new ImageDisplayPrivate)
 {
 }
 

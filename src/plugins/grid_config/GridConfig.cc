@@ -84,7 +84,7 @@ namespace gz::gui
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
-  : gz::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
+  : dataPtr(std::make_unique<GridConfigPrivate>())
 {
 }
 

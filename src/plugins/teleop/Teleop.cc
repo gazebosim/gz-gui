@@ -102,7 +102,7 @@ class TeleopPrivate
 };
 
 /////////////////////////////////////////////////
-Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
+Teleop::Teleop(): dataPtr(std::make_unique<TeleopPrivate>())
 {
   // Initialize publisher using default topic.
   this->dataPtr->cmdVelPub = transport::Node::Publisher();

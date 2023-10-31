@@ -49,7 +49,7 @@ class TopicEchoPrivate
 
 /////////////////////////////////////////////////
 TopicEcho::TopicEcho()
-  : Plugin(), dataPtr(new TopicEchoPrivate)
+  : dataPtr(new TopicEchoPrivate)
 {
   // Connect model
   App()->Engine()->rootContext()->setContextProperty("TopicEchoMsgList",
@@ -57,9 +57,7 @@ TopicEcho::TopicEcho()
 }
 
 /////////////////////////////////////////////////
-TopicEcho::~TopicEcho()
-{
-}
+TopicEcho::~TopicEcho() = default;
 
 /////////////////////////////////////////////////
 void TopicEcho::LoadConfig(const tinyxml2::XMLElement * /*_pluginElem*/)

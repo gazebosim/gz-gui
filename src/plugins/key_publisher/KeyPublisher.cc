@@ -49,7 +49,7 @@ class KeyPublisherPrivate
 };
 
 /////////////////////////////////////////////////
-KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
+KeyPublisher::KeyPublisher(): dataPtr(new KeyPublisherPrivate)
 {
   // Advertise publisher node
   this->dataPtr->pub = this->dataPtr->node.Advertise<msgs::Int32>
@@ -57,9 +57,7 @@ KeyPublisher::KeyPublisher(): Plugin(), dataPtr(new KeyPublisherPrivate)
 }
 
 /////////////////////////////////////////////////
-KeyPublisher::~KeyPublisher()
-{
-}
+KeyPublisher::~KeyPublisher() = default;
 
 /////////////////////////////////////////////////
 void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)

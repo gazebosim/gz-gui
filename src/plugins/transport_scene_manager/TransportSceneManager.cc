@@ -176,7 +176,7 @@ class TransportSceneManagerPrivate
 
 /////////////////////////////////////////////////
 TransportSceneManager::TransportSceneManager()
-  : Plugin(), dataPtr(new TransportSceneManagerPrivate)
+  : dataPtr(new TransportSceneManagerPrivate)
 {
 }
 

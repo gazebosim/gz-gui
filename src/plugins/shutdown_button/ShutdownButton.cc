@@ -25,9 +25,7 @@
 namespace gz::gui::plugins
 {
 /////////////////////////////////////////////////
-ShutdownButton::ShutdownButton() : Plugin()
-{
-}
+ShutdownButton::ShutdownButton() = default;
 
 /////////////////////////////////////////////////
 ShutdownButton::~ShutdownButton() = default;

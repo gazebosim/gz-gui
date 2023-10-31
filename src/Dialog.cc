@@ -50,9 +50,7 @@ Dialog::Dialog()
 }
 
 /////////////////////////////////////////////////
-Dialog::~Dialog()
-{
-}
+Dialog::~Dialog() = default;
 
 /////////////////////////////////////////////////
 QQuickWindow *Dialog::QuickWindow() const

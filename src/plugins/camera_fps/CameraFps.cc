@@ -82,14 +82,12 @@ void CameraFps::OnRender()
 
 /////////////////////////////////////////////////
 CameraFps::CameraFps()
-  : Plugin(), dataPtr(new CameraFpsPrivate)
+  : dataPtr(new CameraFpsPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-CameraFps::~CameraFps()
-{
-}
+CameraFps::~CameraFps() = default;
 
 /////////////////////////////////////////////////
 void CameraFps::LoadConfig(const tinyxml2::XMLElement *)

@@ -427,7 +427,7 @@ void CameraTrackingPrivate::OnRender()
 
 /////////////////////////////////////////////////
 CameraTracking::CameraTracking()
-  : Plugin(), dataPtr(new CameraTrackingPrivate)
+  : dataPtr(new CameraTrackingPrivate)
 {
   this->dataPtr->timer = new QTimer(this);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
@@ -446,9 +446,7 @@ CameraTracking::CameraTracking()
 }
 
 /////////////////////////////////////////////////
-CameraTracking::~CameraTracking()
-{
-}
+CameraTracking::~CameraTracking() = default;
 
 /////////////////////////////////////////////////
 void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)

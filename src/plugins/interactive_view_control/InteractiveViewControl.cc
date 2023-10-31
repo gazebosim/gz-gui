@@ -387,7 +387,7 @@ bool InteractiveViewControlPrivate::OnViewControlSensitivity(
 
 /////////////////////////////////////////////////
 InteractiveViewControl::InteractiveViewControl()
-  : Plugin(), dataPtr(std::make_unique<InteractiveViewControlPrivate>())
+  : dataPtr(std::make_unique<InteractiveViewControlPrivate>())
 {
 }
 

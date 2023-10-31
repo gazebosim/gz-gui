@@ -98,8 +98,7 @@ using namespace plugins;
 
 /////////////////////////////////////////////////
 PointCloud::PointCloud()
-  : gz::gui::Plugin(),
-    dataPtr(std::make_unique<PointCloudPrivate>())
+  : dataPtr(std::make_unique<PointCloudPrivate>())
 {
 }
 

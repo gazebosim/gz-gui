@@ -115,9 +115,7 @@ MainWindow::MainWindow()
 }
 
 /////////////////////////////////////////////////
-MainWindow::~MainWindow()
-{
-}
+MainWindow::~MainWindow() = default;
 
 /////////////////////////////////////////////////
 QStringList MainWindow::PluginListModel() const

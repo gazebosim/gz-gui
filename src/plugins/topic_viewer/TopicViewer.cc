@@ -139,7 +139,7 @@ class TopicViewerPrivate
   public: std::vector<google::protobuf::FieldDescriptor::Type> plotableTypes;
 };
 
-TopicViewer::TopicViewer() : Plugin(), dataPtr(new TopicViewerPrivate)
+TopicViewer::TopicViewer() : dataPtr(new TopicViewerPrivate)
 {
   using namespace google::protobuf;
   this->dataPtr->plotableTypes.push_back(FieldDescriptor::Type::TYPE_DOUBLE);
@@ -161,9 +161,7 @@ TopicViewer::TopicViewer() : Plugin(), dataPtr(new TopicViewerPrivate)
 }
 
 //////////////////////////////////////////////////
-TopicViewer::~TopicViewer()
-{
-}
+TopicViewer::~TopicViewer() = default;
 
 //////////////////////////////////////////////////
 void TopicViewer::LoadConfig(const tinyxml2::XMLElement *)

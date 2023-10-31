@@ -20,9 +20,7 @@
 namespace gz::gui::plugins
 {
 //////////////////////////////////////////
-TransportPlotting::~TransportPlotting()
-{
-}
+TransportPlotting::~TransportPlotting() = default;
 
 //////////////////////////////////////////
 void TransportPlotting::LoadConfig(const tinyxml2::XMLElement *)
@@ -32,7 +30,7 @@ void TransportPlotting::LoadConfig(const tinyxml2::XMLElement *)
 }
 
 //////////////////////////////////////////
-TransportPlotting::TransportPlotting() : Plugin(),
+TransportPlotting::TransportPlotting() :
     dataPtr(new PlottingInterface)
 {
 }
