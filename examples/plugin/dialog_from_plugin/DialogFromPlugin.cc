@@ -32,5 +32,5 @@ DialogFromPlugin::~DialogFromPlugin()
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::DialogFromPlugin,
+GZ_ADD_PLUGIN(DialogFromPlugin,
               gz::gui::Plugin);

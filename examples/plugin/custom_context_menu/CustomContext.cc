@@ -32,5 +32,5 @@ CustomContext::~CustomContext()
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::CustomContext,
+GZ_ADD_PLUGIN(CustomContext,
               gz::gui::Plugin);

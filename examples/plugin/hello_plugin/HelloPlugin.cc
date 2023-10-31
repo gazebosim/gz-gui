@@ -50,5 +50,5 @@ void HelloPlugin::OnButton()
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::HelloPlugin,
+GZ_ADD_PLUGIN(HelloPlugin,
               gz::gui::Plugin);

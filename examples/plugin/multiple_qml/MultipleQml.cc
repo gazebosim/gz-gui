@@ -38,5 +38,5 @@ void MultipleQml::OnButton(const QString &_text)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::MultipleQml,
+GZ_ADD_PLUGIN(MultipleQml,
               gz::gui::Plugin);
