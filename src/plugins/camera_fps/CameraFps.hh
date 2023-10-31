@@ -72,4 +72,4 @@ namespace gz::gui::plugins
   };
 }  // namespace gz::gui::plugins
 
-#endif // GZ_GUI_PLUGINS_CAMERAFPS_HH_
+#endif  // GZ_GUI_PLUGINS_CAMERAFPS_HH_
