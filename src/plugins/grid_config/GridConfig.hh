@@ -22,9 +22,7 @@
 
 #include <gz/gui/Plugin.hh>
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
   class GridConfigPrivate;
 
@@ -143,7 +141,6 @@ namespace gui
     /// \brief Pointer to private data.
     private: std::unique_ptr<GridConfigPrivate> dataPtr;
   };
-}
-}
+}  // namespace gz::gui
 
-#endif
+#endif  // GZ_GUI_GRIDCONFIG_HH_

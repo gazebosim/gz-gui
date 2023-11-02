@@ -35,11 +35,7 @@
 #  endif
 #endif
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class WorldStatsPrivate;
 
@@ -161,8 +157,6 @@ namespace plugins
     // Private data
     private: std::unique_ptr<WorldStatsPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_WORLDSTATS_HH_

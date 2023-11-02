@@ -30,11 +30,7 @@
 #  endif
 #endif
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief This plugin provides a shutdown button.
   class ShutdownButton_EXPORTS_API ShutdownButton: public gz::gui::Plugin
@@ -53,8 +49,6 @@ namespace plugins
     /// \brief Callback in Qt thread when close button is clicked.
     public slots: void OnStop();
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_SHUTDOWNBUTTON_HH_

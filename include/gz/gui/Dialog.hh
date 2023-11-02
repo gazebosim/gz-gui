@@ -31,10 +31,8 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
     class DialogPrivate;
 
     /// \brief Gui plugin
@@ -94,11 +92,10 @@ namespace gz
       /// \brief Private data pointer
       private: std::unique_ptr<DialogPrivate> dataPtr;
     };
-  }
-}
+}  // namespace gz::gui
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#endif
+#endif  // GZ_GUI_DIALOG_HH_

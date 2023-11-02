@@ -42,5 +42,4 @@
 #include <QSGSimpleTextureNode>
 #include <QStandardItemModel>
 
-
 #endif  // GZ_GUI_QT_H_

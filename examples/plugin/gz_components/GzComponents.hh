@@ -20,18 +20,12 @@
 
 #include <gz/gui/Plugin.hh>
 
-namespace gz
+class GzComponents : public gz::gui::Plugin
 {
-  namespace gui
-  {
-    class GzComponents : public Plugin
-    {
-      Q_OBJECT
+  Q_OBJECT
 
-      /// \brief Constructor
-      public: GzComponents() = default;
-    };
-  }
-}
+  /// \brief Constructor
+  public: GzComponents() = default;
+};
 
-#endif
+#endif  // GZ_GUI_EXAMPLES_PLUGIN_GZCOMPONENTS_HH_

@@ -23,21 +23,15 @@
   #include <gz/gui/Plugin.hh>
 #endif
 
-namespace gz
+class DialogFromPlugin : public gz::gui::Plugin
 {
-  namespace gui
-  {
-    class DialogFromPlugin : public Plugin
-    {
-      Q_OBJECT
+  Q_OBJECT
 
-      /// \brief Constructor
-      public: DialogFromPlugin();
+  /// \brief Constructor
+  public: DialogFromPlugin();
 
-      /// \brief Destructor
-      public: virtual ~DialogFromPlugin();
-    };
-  }
-}
+  /// \brief Destructor
+  public: virtual ~DialogFromPlugin();
+};
 
-#endif
+#endif  // GZ_GUI_DIALOGFROMPLUGIN_HH_

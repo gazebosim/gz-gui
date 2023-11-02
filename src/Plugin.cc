@@ -23,6 +23,8 @@
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
 
+namespace
+{
 /// \brief Used to store information about anchors set by the user.
 struct Anchors
 {
@@ -36,7 +38,7 @@ struct Anchors
 };
 
 /// \brief Set of all possible lines.
-static const std::unordered_set<std::string> kAnchorLineSet{
+const std::unordered_set<std::string> kAnchorLineSet{
     "top",
     "bottom",
     "left",
@@ -46,12 +48,15 @@ static const std::unordered_set<std::string> kAnchorLineSet{
     "baseline"};
 
 /// \brief Properties which shouldn't be saved or loaded
-static const std::unordered_set<std::string> kIgnoredProps{
+const std::unordered_set<std::string> kIgnoredProps{
     "objectName",
     "pluginName",
     "anchored"};
+}  // namespace
 
-class gz::gui::PluginPrivate
+namespace gz::gui
+{
+class PluginPrivate
 {
   /// \brief Set this to true if the plugin should be deleted as soon as it has
   ///  a parent.
@@ -79,9 +84,6 @@ class gz::gui::PluginPrivate
   /// \brief Holds all anchor information
   public: Anchors anchors;
 };
-
-using namespace gz;
-using namespace gui;
 
 /////////////////////////////////////////////////
 Plugin::Plugin() : dataPtr(new PluginPrivate)
@@ -583,3 +585,4 @@ void Plugin::ApplyAnchors()
   }
   this->CardItem()->setProperty("anchored", true);
 }
+}  // namespace gz::gui

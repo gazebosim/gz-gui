@@ -29,44 +29,31 @@
 
 #include "gz/gui/Application.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class NavSatMapPrivate
 {
-namespace plugins
-{
-  class NavSatMapPrivate
-  {
-    /// \brief List of topics publishing navSat messages.
-    public: QStringList topicList;
+  /// \brief List of topics publishing navSat messages.
+  public: QStringList topicList;
 
-    /// \brief Holds data to set as the next navSat
-    public: msgs::NavSat navSatMsg;
+  /// \brief Holds data to set as the next navSat
+  public: msgs::NavSat navSatMsg;
 
-    /// \brief Node for communication.
-    public: transport::Node node;
+  /// \brief Node for communication.
+  public: transport::Node node;
 
-    /// \brief Mutex for accessing navSat data
-    public: std::recursive_mutex navSatMutex;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Mutex for accessing navSat data
+  public: std::recursive_mutex navSatMutex;
+};
 
 /////////////////////////////////////////////////
 NavSatMap::NavSatMap()
-  : Plugin(), dataPtr(new NavSatMapPrivate)
+  : dataPtr(new NavSatMapPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-NavSatMap::~NavSatMap()
-{
-}
+NavSatMap::~NavSatMap() = default;
 
 /////////////////////////////////////////////////
 void NavSatMap::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
@@ -186,6 +173,7 @@ void NavSatMap::SetTopicList(const QStringList &_topicList)
   this->dataPtr->topicList = _topicList;
   this->TopicListChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::NavSatMap,
