@@ -28,11 +28,7 @@
 #include <memory>
 #include <string>
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief Private data for GzCameraTextureRhiOpenGL
   class GzCameraTextureRhiOpenGLPrivate;
@@ -141,8 +137,6 @@ namespace plugins
     /// \internal Pointer to private data
     private: std::unique_ptr<TextureNodeRhiOpenGLPrivate> dataPtr;
    };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIOPENGL_HH_

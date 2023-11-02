@@ -35,9 +35,7 @@
 #include <gz/gui/Plugin.hh>
 #include <gz/transport/Node.hh>
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
   class KeyPublisherPrivate;
 
@@ -68,7 +66,6 @@ namespace gui
     /// \brief Pointer to private data.
     private: std::unique_ptr<KeyPublisherPrivate> dataPtr;
   };
-}
-}
+}  // namespace gz::gui
 
-#endif
+#endif  // GZ_GUI_PLUGINS_KEYPUBLISHER_HH_

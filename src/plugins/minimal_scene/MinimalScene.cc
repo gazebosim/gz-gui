@@ -52,8 +52,10 @@
 
 Q_DECLARE_METATYPE(gz::gui::plugins::RenderSync*)
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for GzRenderer
-class gz::gui::plugins::GzRenderer::Implementation
+class GzRenderer::Implementation
 {
   /// \brief Flag to indicate if mouse event is dirty
   public: bool mouseDirty{false};
@@ -145,7 +147,7 @@ class gz::gui::plugins::GzRenderer::Implementation
 ///
 /// For more info see
 /// https://github.com/gazebosim/gz-rendering/issues/304
-class gz::gui::plugins::RenderSync
+class RenderSync
 {
   /// \brief Cond. variable to synchronize rendering on specific events
   /// (e.g. texture resize) or for debugging (e.g. keep
@@ -229,10 +231,6 @@ class gz::gui::plugins::RenderWindowItem::Implementation
 class gz::gui::plugins::MinimalScene::Implementation
 {
 };
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 QList<QThread *> RenderWindowItem::Implementation::threads;
 
@@ -1471,6 +1469,7 @@ void MinimalScene::SetLoadingError(const QString &_loadingError)
   this->loadingError = _loadingError;
   this->LoadingErrorChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::MinimalScene,

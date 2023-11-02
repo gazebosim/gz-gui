@@ -14,6 +14,10 @@
  * limitations under the License.
  *
 */
+
+#ifndef GZ_GUI_PLUGINS_TOPICVIEWER_HH_
+#define GZ_GUI_PLUGINS_TOPICVIEWER_HH_
+
 #include <memory>
 
 #include <gz/gui/Plugin.hh>
@@ -28,11 +32,7 @@
 #  endif
 #endif
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class TopicsModel;
   class TopicViewerPrivate;
@@ -62,7 +62,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std:: unique_ptr<TopicViewerPrivate> dataPtr;
   };
+}  // namespace gz::gui::plugins
 
-}
-}
-}
+#endif  // GZ_GUI_PLUGINS_TOPICVIEWER_HH_

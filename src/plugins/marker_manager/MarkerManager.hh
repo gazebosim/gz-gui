@@ -22,11 +22,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class MarkerManagerPrivate;
 
@@ -62,7 +58,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<MarkerManagerPrivate> dataPtr;
   };
-}
-}
-}
-#endif
+}  // namespace gz::gui::plugins
+
+#endif  // GZ_GUI_PLUGINS_MARKERMANAGER_HH_

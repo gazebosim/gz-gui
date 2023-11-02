@@ -37,10 +37,8 @@ namespace tinyxml2
   class XMLElement;
 }
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
     class ApplicationPrivate;
     class Dialog;
     class MainWindow;
@@ -214,11 +212,10 @@ namespace gz
     /// \return Pointer to running application, or nullptr if none is running.
     GZ_GUI_VISIBLE
     Application *App();
-  }
-}
+}  // namespace gz::gui
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#endif
+#endif  // GZ_GUI_APPLICATION_HH_

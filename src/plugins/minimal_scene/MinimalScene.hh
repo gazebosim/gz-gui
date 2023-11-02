@@ -33,11 +33,7 @@
 
 #include "MinimalSceneRhi.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief Creates a Gazebo rendering scene and user camera.
   /// It is possible to orbit the camera around the scene with
@@ -483,8 +479,6 @@ namespace plugins
     /// \brief Pointer to render interface to handle OpenGL/Metal compatibility
     private: std::unique_ptr<TextureNodeRhi> rhi;
    };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_HH_

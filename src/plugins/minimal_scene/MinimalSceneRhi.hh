@@ -26,11 +26,7 @@
 #include <QSGTexture>
 #include <QSize>
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief Render interface class to handle OpenGL / Metal compatibility
   /// of camera textures in GzRenderer
@@ -125,8 +121,6 @@ namespace plugins
     /// pending texture
     public: virtual void PrepareNode() = 0;
    };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHI_HH_
