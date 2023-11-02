@@ -37,7 +37,7 @@ int main(int _argc, char **_argv)
   app.LoadConfig("../custom_drawer.config");
 
   // Let QML files use CustomActions' functions and properties
-  gz::gui::CustomActions actions;
+  CustomActions actions;
   auto context = new QQmlContext(app.Engine()->rootContext());
   context->setContextProperty("CustomActions", &actions);
 
