@@ -22,11 +22,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class CameraFpsPrivate;
 
@@ -74,7 +70,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<CameraFpsPrivate> dataPtr;
   };
-}
-}
-}
-#endif
+}  // namespace gz::gui::plugins
+
+#endif  // GZ_GUI_PLUGINS_CAMERAFPS_HH_

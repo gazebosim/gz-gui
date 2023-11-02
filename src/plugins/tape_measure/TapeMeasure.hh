@@ -14,6 +14,7 @@
  * limitations under the License.
  *
 */
+
 #ifndef GZ_GUI_TAPEMEASURE_HH_
 #define GZ_GUI_TAPEMEASURE_HH_
 
@@ -23,9 +24,7 @@
 #include <gz/math/Vector3.hh>
 #include <gz/math/Color.hh>
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
   class TapeMeasurePrivate;
 
@@ -99,7 +98,6 @@ namespace gui
     /// \brief Pointer to private data.
     private: std::unique_ptr<TapeMeasurePrivate> dataPtr;
   };
-}
-}
+}  // namespace gz::gui
 
-#endif
+#endif  // GZ_GUI_TAPEMEASURE_HH_

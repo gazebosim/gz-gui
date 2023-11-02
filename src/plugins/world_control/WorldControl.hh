@@ -34,11 +34,7 @@
 #  endif
 #endif
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class WorldControlPrivate;
 
@@ -107,8 +103,6 @@ namespace plugins
     // Private data
     private: std::unique_ptr<WorldControlPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_WORLDCONTROL_HH_
