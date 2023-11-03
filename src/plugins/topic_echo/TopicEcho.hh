@@ -41,11 +41,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class TopicEchoPrivate;
 
@@ -130,8 +126,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<TopicEchoPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_TOPICECHO_HH_

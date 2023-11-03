@@ -35,11 +35,7 @@
 #  endif
 #endif
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class TeleopPrivate;
 
@@ -162,8 +158,6 @@ namespace plugins
     private: std::unique_ptr<TeleopPrivate> dataPtr;
 
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_TELEOP_HH_

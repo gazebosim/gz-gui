@@ -42,4 +42,4 @@ extern "C" GZ_GUI_VISIBLE void cmdEmptyWindow();
 /// \param[in] _filename Path to a QSS file.
 extern "C" GZ_GUI_VISIBLE void cmdSetStyleFromFile(const char *_filename);
 
-#endif
+#endif  // GZ_GUI_GZ_HH_

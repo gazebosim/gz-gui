@@ -32,13 +32,8 @@
 
 #include "gz/gui/Export.hh"
 
-namespace gz
+namespace gz::gui::events
 {
-  namespace gui
-  {
-    /// \brief Namespace for all events.
-    namespace events
-    {
       /// User defined events should start from QEvent::MaxUser and
       /// count down to avoid collision with gz-sim events
 
@@ -486,8 +481,6 @@ namespace gz
         /// \brief Private data pointer
         GZ_UTILS_IMPL_PTR(dataPtr)
       };
-    }
-  }
-}
+}  // namespace gz::gui::events
 
 #endif  // GZ_GUI_GUIEVENTS_HH_

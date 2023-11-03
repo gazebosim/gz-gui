@@ -29,9 +29,7 @@
 // 1/60 Period like the GuiSystem frequency (60Hz)
 #define MAX_PERIOD_DIFF (0.0166666667)
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
 class PlotDataPrivate
 {
@@ -44,7 +42,6 @@ class PlotDataPrivate
   /// \brief Registered Charts to that field
   public: std::set<int> charts;
 };
-
 
 class TopicPrivate
 {
@@ -80,7 +77,7 @@ class TransportPrivate
 class PlottingIfacePrivate
 {
   /// \brief Responsible for transport messages and topics
-  public: Transport transport;
+  public: gui::Transport transport;
 
   /// \brief Plotting time pointer to give access to topics to read it
   public: std::shared_ptr<double> plottingTimeRef = std::make_shared<double>();
@@ -92,12 +89,6 @@ class PlottingIfacePrivate
   public: QTimer timer;
 };
 
-}
-}
-
-using namespace gz;
-using namespace gui;
-
 //////////////////////////////////////////////////////
 PlotData::PlotData() :
     dataPtr(std::make_unique<PlotDataPrivate>())
@@ -106,9 +97,7 @@ PlotData::PlotData() :
 }
 
 //////////////////////////////////////////////////////
-PlotData::~PlotData()
-{
-}
+PlotData::~PlotData() = default;
 
 //////////////////////////////////////////////////////
 void PlotData::SetValue(const double _value)
@@ -505,9 +494,7 @@ PlottingInterface::PlottingInterface() : QObject(),
 }
 
 //////////////////////////////////////////////////////
-PlottingInterface::~PlottingInterface()
-{
-}
+PlottingInterface::~PlottingInterface() = default;
 
 //////////////////////////////////////////////////////
 void PlottingInterface::unsubscribe(int _chart,
@@ -677,3 +664,4 @@ bool PlottingInterface::exportCSV(QString _path, int _chart,
   }
   return true;
 }
+}  // namespace gz::gui

@@ -14,6 +14,7 @@
  * limitations under the License.
  *
 */
+
 #ifndef GZ_GUI_PLUGINS_SCREENSHOT_HH_
 #define GZ_GUI_PLUGINS_SCREENSHOT_HH_
 
@@ -25,11 +26,7 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class ScreenshotPrivate;
 
@@ -123,8 +120,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<ScreenshotPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_SCREENSHOT_HH_

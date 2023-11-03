@@ -23,21 +23,15 @@
   #include <gz/gui/Plugin.hh>
 #endif
 
-namespace gz
+class CustomContext : public gz::gui::Plugin
 {
-  namespace gui
-  {
-    class CustomContext : public Plugin
-    {
-      Q_OBJECT
+  Q_OBJECT
 
-      /// \brief Constructor
-      public: CustomContext();
+  /// \brief Constructor
+  public: CustomContext();
 
-      /// \brief Destructor
-      public: virtual ~CustomContext();
-    };
-  }
-}
+  /// \brief Destructor
+  public: virtual ~CustomContext();
+};
 
-#endif
+#endif  // GZ_GUI_CUSTOMCONTEXTPLUGIN_HH_
