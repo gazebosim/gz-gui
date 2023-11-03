@@ -23,9 +23,7 @@
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/qt.h"
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
   /// \brief Helper class for testing listening to events emitted by the
   /// WorldControl plugin. This is used for testing the event behavior of
@@ -55,7 +53,6 @@ namespace gui
     /// \brief Whether a reset event has been received (true) or not (false)
     public: bool listenedToReset{false};
   };
-}
-}
+}  // namespace gz::gui
 
-#endif
+#endif  // GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_

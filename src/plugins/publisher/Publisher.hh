@@ -32,11 +32,7 @@
 #  endif
 #endif
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class PublisherPrivate;
 
@@ -147,8 +143,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<PublisherPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_PUBLISHER_HH_

@@ -20,9 +20,8 @@
 #include "gz/gui/Enums.hh"
 #include "gz/gui/SearchModel.hh"
 
-using namespace gz;
-using namespace gui;
-
+namespace gz::gui
+{
 /////////////////////////////////////////////////
 bool SearchModel::filterAcceptsRow(const int _srcRow,
       const QModelIndex &_srcParent) const
@@ -155,4 +154,4 @@ void SearchModel::SetSearch(const QString &_search)
   // TopicsStats
   this->layoutChanged();
 }
-
+}  // namespace gz::gui

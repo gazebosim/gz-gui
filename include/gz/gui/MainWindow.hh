@@ -35,10 +35,8 @@
 #pragma warning(disable: 4251)
 #endif
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
     Q_NAMESPACE
     class MainWindowPrivate;
     struct WindowConfig;
@@ -676,11 +674,10 @@ namespace gz
       /// \brief Concatenation of all plugin configurations.
       std::string plugins{""};
     };
-  }
-}
+}  // namespace gz::gui
 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-#endif
+#endif  // GZ_GUI_MAINWINDOW_HH_

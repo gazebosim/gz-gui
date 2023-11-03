@@ -29,61 +29,48 @@
 
 #include "gz/gui/Helpers.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class WorldStatsPrivate
 {
-namespace plugins
-{
-  class WorldStatsPrivate
-  {
-    /// \brief Message holding latest world statistics
-    public: gz::msgs::WorldStatistics msg;
+  /// \brief Message holding latest world statistics
+  public: gz::msgs::WorldStatistics msg;
 
-    /// \brief Mutex to protect msg
-    public: std::recursive_mutex mutex;
+  /// \brief Mutex to protect msg
+  public: std::recursive_mutex mutex;
 
-    /// \brief Communication node
-    public: gz::transport::Node node;
+  /// \brief Communication node
+  public: gz::transport::Node node;
 
-    /// \brief Holds real time factor
-    public: QString realTimeFactor;
+  /// \brief Holds real time factor
+  public: QString realTimeFactor;
 
-    /// \brief Holds sim time
-    public: QString simTime;
+  /// \brief Holds sim time
+  public: QString simTime;
 
-    /// \brief Holds real time
-    public: QString realTime;
+  /// \brief Holds real time
+  public: QString realTime;
 
-    /// \brief Holds iterations
-    public: QString iterations;
+  /// \brief Holds iterations
+  public: QString iterations;
 
-    /// \brief Time delayed version if simTime used for computing a low-pass
-    /// filtered RTF
-    public: std::optional<double> simTimeDelayed;
+  /// \brief Time delayed version if simTime used for computing a low-pass
+  /// filtered RTF
+  public: std::optional<double> simTimeDelayed;
 
-    /// \brief Time delayed version if realTime used for computing a low-pass
-    /// filtered RTF
-    public: std::optional<double> realTimeDelayed;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Time delayed version if realTime used for computing a low-pass
+  /// filtered RTF
+  public: std::optional<double> realTimeDelayed;
+};
 
 /////////////////////////////////////////////////
 WorldStats::WorldStats()
-  : Plugin(), dataPtr(new WorldStatsPrivate)
+  : dataPtr(new WorldStatsPrivate)
 {
 }
 
 /////////////////////////////////////////////////
-WorldStats::~WorldStats()
-{
-}
+WorldStats::~WorldStats() = default;
 
 /////////////////////////////////////////////////
 void WorldStats::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
@@ -341,7 +328,8 @@ void WorldStats::SetIterations(const QString &_iterations)
   this->dataPtr->iterations = _iterations;
   this->IterationsChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(WorldStats,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::WorldStats,
+              gz::gui::Plugin)

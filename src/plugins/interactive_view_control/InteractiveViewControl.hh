@@ -22,11 +22,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class InteractiveViewControlPrivate;
 
@@ -70,8 +66,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<InteractiveViewControlPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_

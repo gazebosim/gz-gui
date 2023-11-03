@@ -38,8 +38,10 @@
 
 #include "CameraTracking.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for CameraTracking
-class gz::gui::plugins::CameraTrackingPrivate
+class CameraTrackingPrivate
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -152,10 +154,6 @@ class gz::gui::plugins::CameraTrackingPrivate
   /// \brief Timer to keep publishing camera poses.
   public: QTimer *timer{nullptr};
 };
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 void CameraTrackingPrivate::Initialize()
@@ -429,7 +427,7 @@ void CameraTrackingPrivate::OnRender()
 
 /////////////////////////////////////////////////
 CameraTracking::CameraTracking()
-  : Plugin(), dataPtr(new CameraTrackingPrivate)
+  : dataPtr(new CameraTrackingPrivate)
 {
   this->dataPtr->timer = new QTimer(this);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
@@ -448,9 +446,7 @@ CameraTracking::CameraTracking()
 }
 
 /////////////////////////////////////////////////
-CameraTracking::~CameraTracking()
-{
-}
+CameraTracking::~CameraTracking() = default;
 
 /////////////////////////////////////////////////
 void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)
@@ -494,6 +490,7 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::CameraTracking,

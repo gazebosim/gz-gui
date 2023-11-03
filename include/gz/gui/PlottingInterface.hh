@@ -38,9 +38,7 @@
 
 #include "gz/gui/Export.hh"
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
 class PlotDataPrivate;
 
@@ -332,8 +330,5 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   /// \brief Private data member.
   private: std::unique_ptr<PlottingIfacePrivate> dataPtr;
 };
-
-}
-}
-
-#endif
+}  // namespace gz::gui
+#endif  // GZ_GUI_PLOTTINGINTERFACE_HH_

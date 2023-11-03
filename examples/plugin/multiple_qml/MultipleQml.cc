@@ -20,12 +20,9 @@
 
 #include "MultipleQml.hh"
 
-using namespace gz;
-using namespace gui;
-
 /////////////////////////////////////////////////
 MultipleQml::MultipleQml()
-  : Plugin()
+  : gz::gui::Plugin()
 {
 }
 
@@ -41,5 +38,5 @@ void MultipleQml::OnButton(const QString &_text)
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::MultipleQml,
-                    gz::gui::Plugin);
+GZ_ADD_PLUGIN(MultipleQml,
+              gz::gui::Plugin);
