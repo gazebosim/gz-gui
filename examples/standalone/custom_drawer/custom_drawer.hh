@@ -24,25 +24,18 @@
   #include <gz/gui/qt.h>
 #endif
 
-namespace gz
+/// \brief Object holding actions which can be triggered from the custom
+/// drawer.
+class CustomActions : public QObject
 {
-  namespace gui
-  {
-    /// \brief Object holding actions which can be triggered from the custom
-    /// drawer.
-    class CustomActions : public QObject
+  Q_OBJECT
+
+  /// \brief Demonstrates a C++ function which can be called from the
+  /// drawer's QML code.
+  public: Q_INVOKABLE void cppActionFromQml() const
     {
-      Q_OBJECT
+      std::cout << "C++ action called from QML" << std::endl;
+    }
+};
 
-      /// \brief Demonstrates a C++ function which can be called from the
-      /// drawer's QML code.
-      public: Q_INVOKABLE void cppActionFromQml() const
-        {
-          std::cout << "C++ action called from QML" << std::endl;
-        }
-    };
-  }
-}
-
-#endif
-
+#endif  //GZ_GUI_EXAMPLES_STANDALONE_CUSTOMDRAWER_HH_

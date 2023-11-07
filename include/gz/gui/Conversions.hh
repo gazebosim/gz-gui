@@ -27,15 +27,13 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
 
-namespace gz
+namespace gz::common
 {
-  namespace common
-  {
-    class MouseEvent;
-  }
+  class MouseEvent;
+}
 
-  namespace gui
-  {
+namespace gz::gui
+{
     /// \brief Return the equivalent Qt color
     /// \param[in] _color Gazebo color to convert
     /// \return Qt color value
@@ -95,6 +93,5 @@ namespace gz
     /// \return Gazebo key event
     GZ_GUI_VISIBLE
     common::KeyEvent convert(const QKeyEvent &_e);
-  }
-}
-#endif
+}  // namespace gz::gui
+#endif  // GZ_GUI_CONVERSIONS_HH_

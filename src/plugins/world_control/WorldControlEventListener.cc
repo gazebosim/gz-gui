@@ -17,9 +17,8 @@
 
 #include "WorldControlEventListener.hh"
 
-using namespace gz;
-using namespace gui;
-
+namespace gz::gui
+{
 WorldControlEventListener::WorldControlEventListener()
 {
   gz::gui::App()->findChild<
@@ -47,4 +46,5 @@ bool WorldControlEventListener::eventFilter(QObject *_obj, QEvent *_event)
 
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
+}
 }

@@ -36,11 +36,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class ImageDisplayPrivate;
 
@@ -136,8 +132,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<ImageDisplayPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_

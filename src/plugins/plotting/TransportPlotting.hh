@@ -14,6 +14,7 @@
  * limitations under the License.
  *
 */
+
 #ifndef GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 #define GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 
@@ -23,13 +24,8 @@
 
 #include <memory>
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-namespace plugins
-{
-
 /// \brief Plots fields from Gazebo Transport topics.
 /// Fields can be dragged from the Topic Viewer or the Component Inspector.
 class TransportPlotting : public gz::gui::Plugin
@@ -50,8 +46,6 @@ class TransportPlotting : public gz::gui::Plugin
   private: std::unique_ptr<PlottingInterface> dataPtr;
   GZ_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
 };
+}  // namespace gz::gui::plugins
 
-}
-}
-}
-#endif
+#endif  // GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_

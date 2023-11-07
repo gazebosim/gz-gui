@@ -28,11 +28,7 @@
 #include <memory>
 #include <string>
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief Private data for GzCameraTextureRhiMetal
   class GzCameraTextureRhiMetalPrivate;
@@ -129,8 +125,6 @@ namespace plugins
     /// \internal Pointer to private data
     private: std::unique_ptr<TextureNodeRhiMetalPrivate> dataPtr;
    };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIMETAL_HH_

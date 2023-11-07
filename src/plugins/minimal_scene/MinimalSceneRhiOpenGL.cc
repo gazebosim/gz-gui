@@ -32,11 +32,7 @@
 #include <string>
 
 /////////////////////////////////////////////////
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class GzCameraTextureRhiOpenGLPrivate
   {
@@ -64,13 +60,6 @@ namespace plugins
     public: QSGTexture *texture = nullptr;
     public: QQuickWindow *window = nullptr;
   };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 GzCameraTextureRhiOpenGL::~GzCameraTextureRhiOpenGL() = default;
@@ -298,3 +287,4 @@ void TextureNodeRhiOpenGL::PrepareNode()
 #endif
   }
 }
+}  // namespace gz::gui::plugins
