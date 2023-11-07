@@ -79,8 +79,6 @@ Screenshot::Screenshot()
       this->dataPtr->directory = defaultDir;
     }
   }
-
-  this->DirectoryChanged();
 }
 
 /////////////////////////////////////////////////
@@ -155,7 +153,7 @@ void Screenshot::SaveScreenshot()
 
   this->SetSavedScreenshotPath(QString::fromStdString(savePath));
 
-  App()->findChild<MainWindow *>()->notifyWithDuration(
+  emit App()->findChild<MainWindow *>()->notifyWithDuration(
     QString::fromStdString("Saved image to: <b>" + savePath + "</b>"), 4000);
 }
 
@@ -199,7 +197,7 @@ void Screenshot::SetDirectory(const QString &_dirUrl)
 {
   QString newDir = QUrl(_dirUrl).toLocalFile();
   this->dataPtr->directory = newDir.toStdString();
-  this->DirectoryChanged();
+  emit this->DirectoryChanged();
 }
 
 /////////////////////////////////////////////////
@@ -212,8 +210,8 @@ QString Screenshot::SavedScreenshotPath() const
 void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 {
   this->dataPtr->savedScreenshotPath = _filename;
-  this->SavedScreenshotPathChanged();
-  this->savedScreenshot();
+  emit this->SavedScreenshotPathChanged();
+  emit this->savedScreenshot();
 }
 }  // namespace gz::gui::plugins
 

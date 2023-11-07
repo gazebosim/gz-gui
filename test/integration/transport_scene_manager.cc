@@ -73,7 +73,7 @@ TEST(TransportSceneManagerTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Load))
   EXPECT_EQ(plugin->Title(), "Transport Scene Manager");
 
   // Cleanup
-  for (const auto &p : plugins)
+  for (const auto &p : qAsConst(plugins))
   {
     auto pluginName = p->CardItem()->objectName().toStdString();
     EXPECT_TRUE(app.RemovePlugin(pluginName));

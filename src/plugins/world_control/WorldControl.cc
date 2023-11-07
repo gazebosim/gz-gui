@@ -153,7 +153,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
          << "]" << std::endl;
 
   // Play / pause buttons
-  if (auto playElem = _pluginElem->FirstChildElement("play_pause"))
+  if (const auto *playElem = _pluginElem->FirstChildElement("play_pause"))
   {
     auto has = false;
     playElem->QueryBoolText(&has);
@@ -162,21 +162,21 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     if (has)
     {
       auto startPaused = this->dataPtr->pause;
-      if (auto pausedElem = _pluginElem->FirstChildElement("start_paused"))
+      if (const auto *pausedElem = _pluginElem->FirstChildElement("start_paused"))
       {
         pausedElem->QueryBoolText(&startPaused);
       }
       this->dataPtr->pause = startPaused;
       this->dataPtr->lastStatsMsgPaused = startPaused;
       if (startPaused)
-        this->paused();
+        emit this->paused();
       else
-        this->playing();
+        emit this->playing();
     }
   }
 
   // Step buttons
-  if (auto stepElem = _pluginElem->FirstChildElement("step"))
+  if (const auto *stepElem = _pluginElem->FirstChildElement("step"))
   {
     auto has = false;
     stepElem->QueryBoolText(&has);
@@ -185,7 +185,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Subscribe to world stats
   std::string statsTopic;
-  auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
+  const auto *statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
   if (nullptr != statsTopicElem && nullptr != statsTopicElem->GetText())
     statsTopic = statsTopicElem->GetText();
 
@@ -230,7 +230,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
            << std::endl;
   }
 
-  if (auto elem = _pluginElem->FirstChildElement("use_event"))
+  if (const auto *elem = _pluginElem->FirstChildElement("use_event"))
     elem->QueryBoolText(&this->dataPtr->useEvent);
 
   if (this->dataPtr->useEvent)
@@ -261,10 +261,10 @@ void WorldControl::ProcessMsg()
   // this plugin has been registered by the server
   if (this->dataPtr->msg.paused() &&
       (!this->dataPtr->pause || !this->dataPtr->lastStatsMsgPaused))
-    this->paused();
+    emit this->paused();
   else if (!this->dataPtr->msg.paused() &&
       (this->dataPtr->pause || this->dataPtr->lastStatsMsgPaused))
-    this->playing();
+    emit this->playing();
 
   this->dataPtr->pause = this->dataPtr->msg.paused();
   this->dataPtr->lastStatsMsgPaused = this->dataPtr->msg.paused();
@@ -302,7 +302,7 @@ void WorldControl::OnPause()
 void WorldControl::OnReset()
 {
   msgs::WorldControl msg;
-  auto msgReset = new msgs::WorldReset();
+  auto *msgReset = new msgs::WorldReset();
   msgReset->set_all(true);
   msg.set_pause(true);
   msg.set_allocated_reset(msgReset);

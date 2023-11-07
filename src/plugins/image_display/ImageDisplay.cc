@@ -179,7 +179,7 @@ void ImageDisplay::ProcessImage()
   }
 
   this->dataPtr->provider->SetImage(image);
-  this->newImage();
+  emit this->newImage();
 }
 
 /////////////////////////////////////////////////
@@ -205,7 +205,7 @@ void ImageDisplay::OnTopic(const QString _topic)
 
   // Unsubscribe
   auto subs = this->dataPtr->node.SubscribedTopics();
-  for (auto sub : subs)
+  for (const auto &sub : subs)
     this->dataPtr->node.Unsubscribe(sub);
 
   // Subscribe to new topic
@@ -217,7 +217,7 @@ void ImageDisplay::OnTopic(const QString _topic)
     return;
     // LCOV_EXCL_STOP
   }
-  App()->findChild<MainWindow *>()->notifyWithDuration(
+  emit App()->findChild<MainWindow *>()->notifyWithDuration(
     QString::fromStdString("Subscribed to: <b>" + topic + "</b>"), 4000);
 }
 
@@ -230,12 +230,12 @@ void ImageDisplay::OnRefresh()
   // Get updated list
   std::vector<std::string> allTopics;
   this->dataPtr->node.TopicList(allTopics);
-  for (auto topic : allTopics)
+  for (const auto &topic : allTopics)
   {
     std::vector<transport::MessagePublisher> publishers;
     std::vector<transport::MessagePublisher> subscribers;
     this->dataPtr->node.TopicInfo(topic, publishers, subscribers);
-    for (auto pub : publishers)
+    for (const auto &pub : publishers)
     {
       if (pub.MsgTypeName() == "gz.msgs.Image")
       {
@@ -248,7 +248,7 @@ void ImageDisplay::OnRefresh()
   // Select first one
   if (this->dataPtr->topicList.count() > 0)
     this->OnTopic(this->dataPtr->topicList.at(0));
-  this->TopicListChanged();
+  emit this->TopicListChanged();
 }
 
 /////////////////////////////////////////////////
@@ -261,7 +261,7 @@ QStringList ImageDisplay::TopicList() const
 void ImageDisplay::SetTopicList(const QStringList &_topicList)
 {
   this->dataPtr->topicList = _topicList;
-  this->TopicListChanged();
+  emit this->TopicListChanged();
 }
 }  // namespace gz::gui::plugins
 

@@ -342,7 +342,7 @@ TEST(MainWindowTest,
 
   // Access window after it's open
   bool closed{false};
-  QTimer::singleShot(300, [&closed]
+  QTimer::singleShot(300, App(), [&closed]
   {
     auto win = App()->findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
@@ -519,7 +519,10 @@ void FindExitDialogButtons(
   ASSERT_NE(nullptr, dialog);
 
   QObject *buttonBox{nullptr};
-  for (const auto& c : dialog->findChildren<QObject *>())
+  // Qt considers range-based for loops over temporary objects
+  // potentially dangerous, so explicitly create a container.
+  const auto children = dialog->findChildren<QObject *>();
+  for (const auto& c : children)
   {
     if (std::string(c->metaObject()->className()).find("ButtonBox") !=
         std::string::npos)
@@ -539,9 +542,9 @@ void FindExitDialogButtons(
   std::vector<QQuickItem *> buttons;
   for (int index = 0; index < buttonCount; ++index)
   {
-    QQuickItem *button;
+    QQuickItem *button {nullptr};
     QMetaObject::invokeMethod(buttonBox, "itemAt", Qt::DirectConnection,
-                              Q_RETURN_ARG(QQuickItem *, button),
+                              Q_RETURN_ARG(QQuickItem*, button),
                               Q_ARG(int, index));
 
     ASSERT_NE(std::string::npos,

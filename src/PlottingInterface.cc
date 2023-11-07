@@ -161,7 +161,7 @@ Topic::Topic(const std::string &_name):
 //////////////////////////////////////////////////////
 Topic::~Topic()
 {
-  for (auto field : this->dataPtr->fields)
+  for (const auto &field : this->dataPtr->fields)
     delete field.second;
 }
 
@@ -207,7 +207,7 @@ std::map<std::string, PlotData*> &Topic::Fields()
 void Topic::Callback(const google::protobuf::Message &_msg)
 {
   // check for header time
-  double headerTime;
+  double headerTime = 0.0;
   if (!this->HasHeader(_msg, headerTime))
   {
     if (!this->dataPtr->plottingTime)
@@ -230,10 +230,10 @@ void Topic::Callback(const google::protobuf::Message &_msg)
   }
 
   // loop over the registered fields and update them
-  for (auto fieldIt : this->dataPtr->fields)
+  for (const auto &fieldIt : this->dataPtr->fields)
   {
-    auto msgDescriptor = _msg.GetDescriptor();
-    auto ref = _msg.GetReflection();
+    const auto *msgDescriptor = _msg.GetDescriptor();
+    const auto *ref = _msg.GetReflection();
 
     google::protobuf::Message *valueMsg = nullptr;
 
@@ -245,7 +245,7 @@ void Topic::Callback(const google::protobuf::Message &_msg)
     {
       std::string fieldName = fieldFullPath[i];
 
-      auto field = msgDescriptor->FindFieldByName(fieldName);
+      const auto *field = msgDescriptor->FindFieldByName(fieldName);
 
       msgDescriptor = field->message_type();
 
@@ -270,16 +270,16 @@ void Topic::Callback(const google::protobuf::Message &_msg)
     }
 
     std::string fieldName = fieldFullPath[pathSize-1];
-    double data;
+    double data = 0.0;
 
     if (valueMsg)
     {
-      auto field = valueMsg->GetDescriptor()->FindFieldByName(fieldName);
+      const auto *field = valueMsg->GetDescriptor()->FindFieldByName(fieldName);
       data = this->dataPtr->FieldData(*valueMsg, field);
     }
     else
     {
-      auto field = msgDescriptor->FindFieldByName(fieldName);
+      const auto *field = msgDescriptor->FindFieldByName(fieldName);
       data = this->dataPtr->FieldData(_msg, field);
     }
 
@@ -301,19 +301,19 @@ void Topic::Callback(const google::protobuf::Message &_msg)
 bool Topic::HasHeader(const google::protobuf::Message &_msg,
                       double &_headerTime)
 {
-  auto ref = _msg.GetReflection();
-  auto header = _msg.GetDescriptor()->FindFieldByName("header");
+  const auto *ref = _msg.GetReflection();
+  const auto *header = _msg.GetDescriptor()->FindFieldByName("header");
   auto found = ref->HasField(_msg, header);
 
   if (!found)
     return false;
 
-  auto stamp = header->message_type()->FindFieldByName("stamp");
+  const auto *stamp = header->message_type()->FindFieldByName("stamp");
 
   if (!stamp)
     return false;
 
-  auto headerMsg = ref->MutableMessage
+  auto *headerMsg = ref->MutableMessage
           (const_cast<google::protobuf::Message *>(&_msg), header);
 
   if (!headerMsg)
@@ -321,14 +321,14 @@ bool Topic::HasHeader(const google::protobuf::Message &_msg,
 
   ref = headerMsg->GetReflection();
 
-  auto stampMsg = ref->MutableMessage
+  auto *stampMsg = ref->MutableMessage
           (const_cast<google::protobuf::Message *>(headerMsg), stamp);
 
   if (!stampMsg)
     return false;
 
-  auto secField = stamp->message_type()->FindFieldByName("sec");
-  auto nsecField = stamp->message_type()->FindFieldByName("nsec");
+  const auto *secField = stamp->message_type()->FindFieldByName("sec");
+  const auto *nsecField = stamp->message_type()->FindFieldByName("nsec");
 
   auto sec = this->dataPtr->FieldData(*stampMsg, secField);
   auto nsec = this->dataPtr->FieldData(*stampMsg, nsecField);
@@ -341,7 +341,7 @@ bool Topic::HasHeader(const google::protobuf::Message &_msg,
 //////////////////////////////////////////////////////
 void Topic::UpdateGui(const std::string &_field)
 {
-  auto field = this->dataPtr->fields[_field];
+  auto *field = this->dataPtr->fields[_field];
 
   auto x = field->Time();
   auto y = field->Value();
@@ -366,8 +366,8 @@ void Topic::SetPlottingTimeRef(const std::shared_ptr<double> &_timeRef)
 double Topic::Implementation::FieldData(const google::protobuf::Message &_msg,
                                const google::protobuf::FieldDescriptor *_field)
 {
-  using namespace google::protobuf;
-  auto ref = _msg.GetReflection();
+  using FieldDescriptor = google::protobuf::FieldDescriptor;
+  const auto *ref = _msg.GetReflection();
   auto type = _field->type();
 
   if (type == FieldDescriptor::Type::TYPE_DOUBLE)
@@ -401,7 +401,7 @@ Transport::Transport():
 Transport::~Transport()
 {
   // unsubscribe from all topics in the transport
-  for (auto topic : this->dataPtr->topics)
+  for (const auto &topic : this->dataPtr->topics)
     this->dataPtr->node.Unsubscribe(topic.first);
 }
 
@@ -431,7 +431,7 @@ void Transport::Subscribe(const std::string &_topic,
   // new topic
   if (this->dataPtr->topics.count(_topic) == 0)
   {
-    auto topicHandler = new Topic(_topic);
+    auto *topicHandler = new Topic(_topic);
     this->dataPtr->topics[_topic] = topicHandler;
 
     topicHandler->Register(_fieldPath, _chart);
@@ -470,7 +470,7 @@ void Transport::UnsubscribeOutdatedTopics()
   std::vector<std::string> topics;
   this->dataPtr->node.TopicList(topics);
 
-  for (auto topic : this->dataPtr->topics)
+  for (const auto &topic : this->dataPtr->topics)
   {
     // check if the topic exist
     if (std::find(topics.begin(), topics.end(), topic.first) == topics.end())
@@ -483,7 +483,7 @@ void Transport::UnsubscribeOutdatedTopics()
 }
 
 //////////////////////////////////////////////////////
-PlottingInterface::PlottingInterface() : QObject(),
+PlottingInterface::PlottingInterface():
     dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   connect(&this->dataPtr->transport,

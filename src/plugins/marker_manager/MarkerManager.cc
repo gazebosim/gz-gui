@@ -252,9 +252,9 @@ bool MarkerManager::Implementation::OnList(gz::msgs::Marker_V &_rep)
   _rep.clear_marker();
 
   // Create the list of visuals
-  for (auto mIter : this->visuals)
+  for (const auto &mIter : this->visuals)
   {
-    for (auto iter : mIter.second)
+    for (const auto &iter : mIter.second)
     {
       gz::msgs::Marker *markerMsg = _rep.add_marker();
       markerMsg->set_ns(mIter.first);
@@ -284,7 +284,8 @@ bool MarkerManager::Implementation::OnMarkerMsgArray(
 }
 
 //////////////////////////////////////////////////
-bool MarkerManager::Implementation::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
+bool MarkerManager::Implementation::ProcessMarkerMsg(
+    const gz::msgs::Marker &_msg)
 {
   // Get the namespace, if it exists. Otherwise, use the global namespace
   std::string ns;
@@ -419,7 +420,7 @@ bool MarkerManager::Implementation::ProcessMarkerMsg(const gz::msgs::Marker &_ms
     // Remove all markers in the specified namespace
     else if (nsIter != this->visuals.end())
     {
-      for (auto it : nsIter->second)
+      for (const auto &it : nsIter->second)
       {
         this->scene->DestroyVisual(it.second);
       }
@@ -432,7 +433,7 @@ bool MarkerManager::Implementation::ProcessMarkerMsg(const gz::msgs::Marker &_ms
       for (nsIter = this->visuals.begin();
            nsIter != this->visuals.end(); ++nsIter)
       {
-        for (auto it : nsIter->second)
+        for (const auto &it : nsIter->second)
         {
           this->scene->DestroyVisual(it.second);
         }

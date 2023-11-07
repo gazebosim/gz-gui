@@ -171,8 +171,8 @@ TEST(HelpersTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(worldNames))
   // Has names
   EXPECT_FALSE(worldNames().empty());
   ASSERT_EQ(2, worldNames().size());
-  EXPECT_EQ("banana", worldNames()[0]);
-  EXPECT_EQ("grape", worldNames()[1]);
+  EXPECT_EQ("banana", worldNames().at(0));
+  EXPECT_EQ("grape", worldNames().at(1));
 
   mainWindow->setProperty("worldNames", QStringList());
 

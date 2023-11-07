@@ -130,7 +130,7 @@ TEST(PluginTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Getters))
   EXPECT_EQ(1, win->findChildren<Plugin *>().size());
 
   // Get pointers
-  auto plugin = win->findChildren<Plugin *>()[0];
+  auto *plugin = win->findChildren<Plugin *>().at(0);
   ASSERT_NE(nullptr, plugin->PluginItem());
   ASSERT_NE(nullptr, plugin->CardItem());
   ASSERT_NE(nullptr, plugin->Context());
@@ -185,7 +185,7 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStr))
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
-  auto win = app.findChild<MainWindow *>();
+  auto *win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
 
   // Check plugin count
@@ -194,20 +194,20 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStr))
   // Get the output for ConfigStr()
   std::string configStr;
   tinyxml2::XMLDocument configDoc;
-  auto plugin = win->findChildren<Plugin *>()[0];
+  auto *plugin = win->findChildren<Plugin *>().at(0);
   configStr = plugin->ConfigStr();
   configDoc.Parse(configStr.c_str());
 
   // <plugin>
-  auto pluginElem = configDoc.FirstChildElement("plugin");
+  auto *pluginElem = configDoc.FirstChildElement("plugin");
   ASSERT_NE(nullptr, pluginElem);
 
   // <gz-gui>
-  auto gzGuiElem = pluginElem->FirstChildElement("gz-gui");
+  auto *gzGuiElem = pluginElem->FirstChildElement("gz-gui");
   ASSERT_NE(nullptr, gzGuiElem);
 
   // Iterate properties
-  for (auto propElem = gzGuiElem->FirstChildElement("property");
+  for (auto *propElem = gzGuiElem->FirstChildElement("property");
       propElem != nullptr;)
   {
     // If property in map, mark it as "Verified"
@@ -222,7 +222,7 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStr))
           << propElem->Attribute("key");
       pluginProps[propElem->Attribute("key")] = "Verified";
     }
-    auto nextProp = propElem->NextSiblingElement("property");
+    auto *nextProp = propElem->NextSiblingElement("property");
     propElem = nextProp;
   }
 
@@ -253,7 +253,7 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
       pluginDoc.FirstChildElement("plugin")));
 
   // Create main window
-  auto win = app.findChild<MainWindow *>();
+  auto *win = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, win);
 
   // Check plugin count
@@ -262,7 +262,7 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
   // Get the output for ConfigStr()
   std::string configStr;
   tinyxml2::XMLDocument configDoc;
-  auto plugin = win->findChildren<Plugin *>()[0];
+  auto *plugin = win->findChildren<Plugin *>().at(0);
   configStr = plugin->ConfigStr();
   configDoc.Parse(configStr.c_str());
 
@@ -286,15 +286,15 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
   pluginTypes["state"] = "string";
 
   // <plugin>
-  auto pluginElem = configDoc.FirstChildElement("plugin");
+  auto *pluginElem = configDoc.FirstChildElement("plugin");
   ASSERT_NE(nullptr, pluginElem);
 
   // <gz-gui>
-  auto gzGuiElem = pluginElem->FirstChildElement("gz-gui");
+  auto *gzGuiElem = pluginElem->FirstChildElement("gz-gui");
   ASSERT_NE(nullptr, gzGuiElem);
 
   // Iterate properties
-  for (auto propElem = gzGuiElem->FirstChildElement("property");
+  for (auto *propElem = gzGuiElem->FirstChildElement("property");
       propElem != nullptr;)
   {
     // If property in map, mark it as "Verified"
@@ -309,7 +309,7 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
           << propElem->Attribute("key");
       pluginProps[propElem->Attribute("key")] = "Verified";
     }
-    auto nextProp = propElem->NextSiblingElement("property");
+    auto *nextProp = propElem->NextSiblingElement("property");
     propElem = nextProp;
   }
 
@@ -320,4 +320,3 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
       << itr->first;
   }
 }
-
