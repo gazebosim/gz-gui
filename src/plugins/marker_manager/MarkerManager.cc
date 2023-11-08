@@ -284,7 +284,8 @@ bool MarkerManager::Implementation::OnMarkerMsgArray(
 }
 
 //////////////////////////////////////////////////
-bool MarkerManager::Implementation::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
+bool MarkerManager::Implementation::ProcessMarkerMsg(
+  const gz::msgs::Marker &_msg)
 {
   // Get the namespace, if it exists. Otherwise, use the global namespace
   std::string ns;

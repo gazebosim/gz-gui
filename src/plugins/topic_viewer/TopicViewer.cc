@@ -281,10 +281,11 @@ void TopicViewer::Implementation::AddField(QStandardItem *_parentItem,
 }
 
 //////////////////////////////////////////////////
-QStandardItem *TopicViewer::Implementation::FactoryItem(const std::string &_name,
-                                               const std::string &_type,
-                                               const std::string &_path,
-                                               const std::string &_topic)
+QStandardItem *TopicViewer::Implementation::FactoryItem(
+  const std::string &_name,
+  const std::string &_type,
+  const std::string &_path,
+  const std::string &_topic)
 {
   QString name = QString::fromStdString(_name);
   QString type = QString::fromStdString(_type);

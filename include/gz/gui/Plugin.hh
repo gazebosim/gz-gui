@@ -94,7 +94,8 @@ namespace gz::gui
       ///
       /// \sa Load
       /// \param[in] _pluginElem Element containing configuration
-      protected: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
+      protected: virtual void LoadConfig(
+                    const tinyxml2::XMLElement *_pluginElem);
 
       /// \brief Get title
       /// \return Plugin title.
