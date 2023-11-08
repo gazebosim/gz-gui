@@ -25,11 +25,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class PointCloudPrivate;
 
@@ -238,7 +234,6 @@ namespace plugins
     /// \brief Pointer to private data
     private: std::unique_ptr<PointCloudPrivate> dataPtr;
   };
-}
-}
-}
-#endif
+}  // namespace gz::gui::plugins
+
+#endif  // GZ_GUI_PLUGINS_POINTCLOUD_HH_

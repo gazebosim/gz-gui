@@ -31,59 +31,54 @@
 #include "gz/gui/config.hh"
 #include "gz/gui/Dialog.hh"
 #include "gz/gui/Helpers.hh"
+#include "gz/gui/InstallationDirectories.hh"
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
 
 #include "gz/transport/TopicUtils.hh"
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
-    class ApplicationPrivate
-    {
-      /// \brief QML engine
-      public: QQmlApplicationEngine *engine{nullptr};
+class ApplicationPrivate
+{
+  /// \brief QML engine
+  public: QQmlApplicationEngine *engine{nullptr};
 
-      /// \brief Pointer to main window
-      public: MainWindow *mainWin{nullptr};
+  /// \brief Pointer to main window
+  public: MainWindow *mainWin{nullptr};
 
-      /// \brief Vector of pointers to dialogs
-      public: std::vector<Dialog *> dialogs;
+  /// \brief Vector of pointers to dialogs
+  public: std::vector<Dialog *> dialogs;
 
-      /// \brief Queue of plugins which should be added to the window
-      public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
+  /// \brief Queue of plugins which should be added to the window
+  public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
 
-      /// \brief Vector of pointers to plugins already added, we hang on to
-      /// these until it is ok to unload the plugin's shared library.
-      public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
+  /// \brief Vector of pointers to plugins already added, we hang on to
+  /// these until it is ok to unload the plugin's shared library.
+  public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
 
-      /// \brief Environment variable which holds paths to look for plugins
-      public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
 
-      /// \brief Vector of paths to look for plugins
-      public: std::vector<std::string> pluginPaths;
+  /// \brief Environment variable which holds paths to look for plugins
+  public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
 
-      /// \brief Holds a configuration which may be applied to mainWin once it
-      /// is created by calling applyConfig(). It's no longer needed and
-      /// should not be used after that.
-      public: WindowConfig windowConfig;
+  /// \brief Vector of paths to look for plugins
+  public: std::vector<std::string> pluginPaths;
 
-      /// \brief The path containing the default configuration file.
-      public: std::string defaultConfigPath;
+  /// \brief Holds a configuration which may be applied to mainWin once it
+  /// is created by calling applyConfig(). It's no longer needed and
+  /// should not be used after that.
+  public: WindowConfig windowConfig;
 
-      public: common::SignalHandler signalHandler;
+  /// \brief The path containing the default configuration file.
+  public: std::string defaultConfigPath;
 
-      /// \brief QT message handler that pipes qt messages into our console
-      /// system.
-      public: static void MessageHandler(QtMsgType _type,
-          const QMessageLogContext &_context, const QString &_msg);
-    };
-  }
-}
+  public: common::SignalHandler signalHandler;
 
-using namespace gz;
-using namespace gui;
+  /// \brief QT message handler that pipes qt messages into our console
+  /// system.
+  public: static void MessageHandler(QtMsgType _type,
+      const QMessageLogContext &_context, const QString &_msg);
+};
 
 enum class GZ_COMMON_HIDDEN AvailableAPIs
 {
@@ -279,7 +274,7 @@ QQmlApplicationEngine *Application::Engine() const
 }
 
 /////////////////////////////////////////////////
-Application *gz::gui::App()
+Application *App()
 {
   return qobject_cast<Application *>(qGuiApp);
 }
@@ -541,8 +536,8 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Add default folder and install folder
   std::string home;
   common::env(GZ_HOMEDIR, home);
-  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
-                             GZ_GUI_PLUGIN_INSTALL_DIR);
+  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins");
+  systemPaths.AddPluginPaths(gz::gui::getPluginInstallDir());
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -827,7 +822,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   paths.push_back(home + "/.gz/gui/plugins");
 
   // 4. Install path
-  paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
+  paths.push_back(gz::gui::getPluginInstallDir());
 
   // Populate map
   std::vector<std::pair<std::string, std::vector<std::string>>> plugins;
@@ -913,3 +908,4 @@ void ApplicationPrivate::MessageHandler(QtMsgType _type,
       break;
   }
 }
+}  // namespace gz::gui

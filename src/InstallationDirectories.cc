@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2023 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,23 @@
  *
 */
 
-#ifndef GZ_GUI_QT_H_
-#define GZ_GUI_QT_H_
+#include <gz/gui/config.hh>
+#include <gz/gui/InstallationDirectories.hh>
 
-#ifndef _MSC_VER
-#pragma GCC system_header
-#endif
+#include <gz/common/Filesystem.hh>
 
-#include <QtCore>
+namespace gz
+{
+namespace gui
+{
+inline namespace GZ_GUI_VERSION_NAMESPACE {
 
-#include <QGuiApplication>
-#include <QApplication>
+std::string getPluginInstallDir()
+{
+  return gz::common::joinPaths(
+      getInstallPrefix(), GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR);
+}
 
-#include <QOffscreenSurface>
-#include <QOpenGLFunctions>
-
-#include <QQmlApplicationEngine>
-#include <QQmlComponent>
-#include <QQmlContext>
-#include <QQmlEngine>
-
-#include <QQuickItem>
-#include <QQuickStyle>
-#include <QQuickWindow>
-
-#include <QSGSimpleTextureNode>
-#include <QStandardItemModel>
-
-#endif  // GZ_GUI_QT_H_
+}
+}
+}

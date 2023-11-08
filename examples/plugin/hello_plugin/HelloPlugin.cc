@@ -20,12 +20,9 @@
 
 #include "HelloPlugin.hh"
 
-using namespace gz;
-using namespace gui;
-
 /////////////////////////////////////////////////
 HelloPlugin::HelloPlugin()
-  : Plugin()
+  : gz::gui::Plugin()
 {
 }
 
@@ -53,5 +50,5 @@ void HelloPlugin::OnButton()
 }
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::HelloPlugin,
-                    gz::gui::Plugin);
+GZ_ADD_PLUGIN(HelloPlugin,
+              gz::gui::Plugin);

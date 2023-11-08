@@ -43,8 +43,10 @@
 
 #include "PointCloud.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for PointCloud
-class gz::gui::plugins::PointCloudPrivate
+class PointCloudPrivate
 {
   /// \brief Makes a request to populate the scene with markers
   public: void PublishMarkers();
@@ -95,14 +97,9 @@ class gz::gui::plugins::PointCloudPrivate
   public: bool showing{true};
 };
 
-using namespace gz;
-using namespace gui;
-using namespace plugins;
-
 /////////////////////////////////////////////////
 PointCloud::PointCloud()
-  : gz::gui::Plugin(),
-    dataPtr(std::make_unique<PointCloudPrivate>())
+  : dataPtr(std::make_unique<PointCloudPrivate>())
 {
 }
 
@@ -520,7 +517,8 @@ void PointCloud::SetPointSize(float _pointSize)
   this->PointSizeChanged();
   this->dataPtr->PublishMarkers();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::PointCloud,
-                    gz::gui::Plugin)
+              gz::gui::Plugin)

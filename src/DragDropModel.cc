@@ -18,9 +18,8 @@
 #include "gz/gui/Enums.hh"
 #include "gz/gui/DragDropModel.hh"
 
-using namespace gz;
-using namespace gui;
-
+namespace gz::gui
+{
 /////////////////////////////////////////////////
 QMimeData *DragDropModel::mimeData(const QModelIndexList &_indexes) const
 {
@@ -39,4 +38,4 @@ QMimeData *DragDropModel::mimeData(const QModelIndexList &_indexes) const
 
   return curMimeData;
 }
-
+}  // namespace gz::gui

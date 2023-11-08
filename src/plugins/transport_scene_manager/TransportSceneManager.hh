@@ -22,11 +22,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class TransportSceneManagerPrivate;
 
@@ -64,8 +60,6 @@ namespace plugins
     /// \brief Pointer to private data.
     private: std::unique_ptr<TransportSceneManagerPrivate> dataPtr;
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_TRANSPORTSCENEMANAGER_HH_

@@ -23,25 +23,19 @@
   #include <gz/gui/Plugin.hh>
 #endif
 
-namespace gz
+class MultipleQml : public gz::gui::Plugin
 {
-  namespace gui
-  {
-    class MultipleQml : public Plugin
-    {
-      Q_OBJECT
+  Q_OBJECT
 
-      /// \brief Constructor
-      public: MultipleQml();
+  /// \brief Constructor
+  public: MultipleQml();
 
-      /// \brief Destructor
-      public: virtual ~MultipleQml();
+  /// \brief Destructor
+  public: virtual ~MultipleQml();
 
-      /// \brief Callback trigged when the button is pressed.
-      /// \param[in] _text Button text.
-      protected slots: void OnButton(const QString &_text);
-    };
-  }
-}
+  /// \brief Callback trigged when the button is pressed.
+  /// \param[in] _text Button text.
+  protected slots: void OnButton(const QString &_text);
+};
 
-#endif
+#endif  // GZ_GUI_EXAMPLES_PLUGINS_MULTIPLEQML_HH_
