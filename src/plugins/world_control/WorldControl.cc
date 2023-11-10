@@ -162,7 +162,8 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     if (has)
     {
       auto startPaused = this->dataPtr->pause;
-      if (const auto *pausedElem = _pluginElem->FirstChildElement("start_paused"))
+      if (const auto *pausedElem =
+        _pluginElem->FirstChildElement("start_paused"))
       {
         pausedElem->QueryBoolText(&startPaused);
       }
