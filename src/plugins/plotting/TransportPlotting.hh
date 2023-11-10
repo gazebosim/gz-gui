@@ -20,6 +20,7 @@
 
 #include <gz/gui/Plugin.hh>
 #include <gz/gui/PlottingInterface.hh>
+#include <gz/utils/ImplPtr.hh>
 #include <gz/utils/SuppressWarning.hh>
 
 #include <memory>
@@ -36,15 +37,10 @@ class TransportPlotting : public gz::gui::Plugin
   public: TransportPlotting();
 
   /// \brief Destructor
-  public: ~TransportPlotting();
+  public: ~TransportPlotting() override;
 
   // Documentation inherited
   public: void LoadConfig(const tinyxml2::XMLElement *) override;
-
-  /// \brief Interface with the UI to Handle Transport Plotting
-  GZ_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING
-  private: std::unique_ptr<PlottingInterface> dataPtr;
-  GZ_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
 };
 }  // namespace gz::gui::plugins
 

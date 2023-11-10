@@ -35,7 +35,7 @@
 
 namespace gz::gui::plugins
 {
-class ImageDisplayPrivate
+class ImageDisplay::Implementation
 {
   /// \brief List of topics publishing image messages.
   public: QStringList topicList;
@@ -55,7 +55,7 @@ class ImageDisplayPrivate
 
 /////////////////////////////////////////////////
 ImageDisplay::ImageDisplay()
-  : dataPtr(new ImageDisplayPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 

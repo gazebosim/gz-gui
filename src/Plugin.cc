@@ -15,6 +15,7 @@
  *
  */
 
+#include <gz/utils/ImplPtr.hh>
 #include <unordered_set>
 
 #include <gz/common/Console.hh>
@@ -56,7 +57,7 @@ const std::unordered_set<std::string> kIgnoredProps{
 
 namespace gz::gui
 {
-class PluginPrivate
+class Plugin::Implementation
 {
   /// \brief Set this to true if the plugin should be deleted as soon as it has
   ///  a parent.
@@ -86,7 +87,7 @@ class PluginPrivate
 };
 
 /////////////////////////////////////////////////
-Plugin::Plugin() : dataPtr(new PluginPrivate)
+Plugin::Plugin() : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -515,6 +516,17 @@ void Plugin::PostParentChanges()
 
     this->CardItem()->setProperty(prop.first.c_str(), prop.second);
   }
+}
+
+/////////////////////////////////////////////////
+void Plugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+{
+  (void) _pluginElem;
+}
+
+/////////////////////////////////////////////////
+std::string Plugin::Title() const {
+  return this->title;
 }
 
 /////////////////////////////////////////////////

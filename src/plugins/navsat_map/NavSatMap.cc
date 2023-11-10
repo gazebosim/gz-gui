@@ -31,7 +31,7 @@
 
 namespace gz::gui::plugins
 {
-class NavSatMapPrivate
+class NavSatMap::Implementation
 {
   /// \brief List of topics publishing navSat messages.
   public: QStringList topicList;
@@ -48,7 +48,7 @@ class NavSatMapPrivate
 
 /////////////////////////////////////////////////
 NavSatMap::NavSatMap()
-  : dataPtr(new NavSatMapPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -78,7 +78,7 @@ void NavSatMap::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   if (topic.empty() && !topicPicker)
   {
     gzwarn << "Can't hide topic picker without a default topic." << std::endl;
-    topicPicker = true;
+   topicPicker = true;
   }
 
   this->PluginItem()->setProperty("showPicker", topicPicker);

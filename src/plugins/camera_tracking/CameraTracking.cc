@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <mutex>
 #include <string>
 
@@ -44,7 +45,7 @@
 namespace gz::gui::plugins
 {
 /// \brief Private data class for CameraTracking
-class CameraTrackingPrivate
+class CameraTracking::Implementation
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -159,7 +160,7 @@ class CameraTrackingPrivate
 };
 
 /////////////////////////////////////////////////
-void CameraTrackingPrivate::Initialize()
+void CameraTracking::Implementation::Initialize()
 {
   // Attach to the first camera we find
   for (unsigned int i = 0; i < scene->NodeCount(); ++i)
@@ -169,7 +170,7 @@ void CameraTrackingPrivate::Initialize()
     if (cam)
     {
       this->camera = cam;
-      gzdbg << "CameraTrackingPrivate plugin is moving camera ["
+      gzdbg << "CameraTracking plugin is moving camera ["
              << this->camera->Name() << "]" << std::endl;
       break;
     }
@@ -183,14 +184,14 @@ void CameraTrackingPrivate::Initialize()
   // move to
   this->moveToService = "/gui/move_to";
   this->node.Advertise(this->moveToService,
-      &CameraTrackingPrivate::OnMoveTo, this);
+      &Implementation::OnMoveTo, this);
   gzmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
   // follow
   this->followService = "/gui/follow";
   this->node.Advertise(this->followService,
-      &CameraTrackingPrivate::OnFollow, this);
+      &Implementation::OnFollow, this);
   gzmsg << "Follow service on ["
          << this->followService << "]" << std::endl;
 
@@ -198,7 +199,7 @@ void CameraTrackingPrivate::Initialize()
   this->moveToPoseService =
       "/gui/move_to/pose";
   this->node.Advertise(this->moveToPoseService,
-      &CameraTrackingPrivate::OnMoveToPose, this);
+      &Implementation::OnMoveToPose, this);
   gzmsg << "Move to pose service on ["
          << this->moveToPoseService << "]" << std::endl;
 
@@ -209,16 +210,16 @@ void CameraTrackingPrivate::Initialize()
   gzmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
 
-   // follow offset
-   this->followOffsetService = "/gui/follow/offset";
-   this->node.Advertise(this->followOffsetService,
-       &CameraTrackingPrivate::OnFollowOffset, this);
-   gzmsg << "Follow offset service on ["
-          << this->followOffsetService << "]" << std::endl;
+  // follow offset
+  this->followOffsetService = "/gui/follow/offset";
+  this->node.Advertise(this->followOffsetService,
+      &Implementation::OnFollowOffset, this);
+  gzmsg << "Follow offset service on ["
+       << this->followOffsetService << "]" << std::endl;
 }
 
 /////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnMoveTo(const msgs::StringMsg &_msg,
+bool CameraTracking::Implementation::OnMoveTo(const msgs::StringMsg &_msg,
   msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -229,7 +230,7 @@ bool CameraTrackingPrivate::OnMoveTo(const msgs::StringMsg &_msg,
 }
 
 /////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
+bool CameraTracking::Implementation::OnFollow(const msgs::StringMsg &_msg,
   msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -240,19 +241,19 @@ bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
 }
 
 /////////////////////////////////////////////////
-void CameraTrackingPrivate::OnMoveToComplete()
+void CameraTracking::Implementation::OnMoveToComplete()
 {
   this->moveToTarget.clear();
 }
 
 /////////////////////////////////////////////////
-void CameraTrackingPrivate::OnMoveToPoseComplete()
+void CameraTracking::Implementation::OnMoveToPoseComplete()
 {
   this->moveToPoseValue.reset();
 }
 
 /////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
+bool CameraTracking::Implementation::OnFollowOffset(const msgs::Vector3d &_msg,
   msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -267,7 +268,7 @@ bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
 }
 
 /////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnMoveToPose(const msgs::GUICamera &_msg,
+bool CameraTracking::Implementation::OnMoveToPose(const msgs::GUICamera &_msg,
   msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -294,7 +295,7 @@ bool CameraTrackingPrivate::OnMoveToPose(const msgs::GUICamera &_msg,
 }
 
 /////////////////////////////////////////////////
-void CameraTrackingPrivate::OnRender()
+void CameraTracking::Implementation::OnRender()
 {
   std::lock_guard<std::mutex> lock(this->mutex);
 
@@ -312,7 +313,7 @@ void CameraTrackingPrivate::OnRender()
 
   // Move To
   {
-    GZ_PROFILE("CameraTrackingPrivate::OnRender MoveTo");
+    GZ_PROFILE("CameraTracking::Implementation::OnRender MoveTo");
     if (!this->moveToTarget.empty())
     {
       if (this->moveToHelper.Idle())
@@ -322,7 +323,7 @@ void CameraTrackingPrivate::OnRender()
         if (target)
         {
           this->moveToHelper.MoveTo(this->camera, target, 0.5,
-              std::bind(&CameraTrackingPrivate::OnMoveToComplete, this));
+              std::bind(&Implementation::OnMoveToComplete, this));
           this->prevMoveToTime = std::chrono::system_clock::now();
         }
         else
@@ -344,14 +345,14 @@ void CameraTrackingPrivate::OnRender()
 
   // Move to pose
   {
-    GZ_PROFILE("CameraTrackingPrivate::OnRender MoveToPose");
+    GZ_PROFILE("CameraTracking::Implementation::OnRender MoveToPose");
     if (this->moveToPoseValue)
     {
       if (this->moveToHelper.Idle())
       {
         this->moveToHelper.MoveTo(this->camera,
             *(this->moveToPoseValue),
-            0.5, std::bind(&CameraTrackingPrivate::OnMoveToPoseComplete, this));
+            0.5, std::bind(&Implementation::OnMoveToPoseComplete, this));
         this->prevMoveToTime = std::chrono::system_clock::now();
       }
       else
@@ -366,7 +367,7 @@ void CameraTrackingPrivate::OnRender()
 
   // Follow
   {
-    GZ_PROFILE("CameraTrackingPrivate::OnRender Follow");
+    GZ_PROFILE("CameraTracking::Implementation::OnRender Follow");
     // reset follow mode if target node got removed
     if (!this->followTarget.empty())
     {
@@ -430,7 +431,7 @@ void CameraTrackingPrivate::OnRender()
 
 /////////////////////////////////////////////////
 CameraTracking::CameraTracking()
-  : dataPtr(new CameraTrackingPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   this->dataPtr->timer = new QTimer(this);
   this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
@@ -461,7 +462,8 @@ void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)
 }
 
 /////////////////////////////////////////////////
-void CameraTrackingPrivate::HandleKeyRelease(events::KeyReleaseOnScene *_e)
+void CameraTracking::Implementation::HandleKeyRelease(
+  events::KeyReleaseOnScene *_e)
 {
   if (_e->Key().Key() == Qt::Key_Escape)
   {

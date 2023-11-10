@@ -16,6 +16,7 @@
  */
 
 #include <tinyxml2.h>
+#include <gz/utils/ImplPtr.hh>
 #include <regex>
 #include <string>
 
@@ -29,11 +30,21 @@
 #include "gz/msgs/server_control.pb.h"
 #include "gz/transport/Node.hh"
 
+namespace {
+/// \brief Strip last component from a path.
+/// \return Original path without its last component.
+/// \ToDo: Move this function to common::Filesystem
+std::string dirName(const std::string &_path)
+{
+  std::size_t found = _path.find_last_of("/\\");
+  return _path.substr(0, found);
+}
+}  // namespace
+
 namespace gz::gui
 {
-class MainWindowPrivate
+class MainWindow::Implementation
 {
-  /// \brief Number of plugins on the window
   public: int pluginCount{0};
 
   /// \brief Pointer to quick window
@@ -74,21 +85,12 @@ class MainWindowPrivate
   public: std::string controlService{"/server_control"};
 
   /// \brief Communication node
-  public: gz::transport::Node node;
+  public: gz::transport::Node node {gz::transport::NodeOptions()};
 };
-
-/// \brief Strip last component from a path.
-/// \return Original path without its last component.
-/// \ToDo: Move this function to common::Filesystem
-std::string dirName(const std::string &_path)
-{
-  std::size_t found = _path.find_last_of("/\\");
-  return _path.substr(0, found);
-}
 
 /////////////////////////////////////////////////
 MainWindow::MainWindow()
-  : dataPtr(new MainWindowPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Expose the ExitAction enum to QML via ExitAction 1.0 module
   qRegisterMetaType<ExitAction>("ExitAction");

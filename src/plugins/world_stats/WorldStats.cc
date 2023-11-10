@@ -26,12 +26,13 @@
 #include <gz/math/Helpers.hh>
 #include <gz/plugin/Register.hh>
 #include <gz/transport/Node.hh>
+#include <gz/utils/ImplPtr.hh>
 
 #include "gz/gui/Helpers.hh"
 
 namespace gz::gui::plugins
 {
-class WorldStatsPrivate
+class WorldStats::Implementation
 {
   /// \brief Message holding latest world statistics
   public: gz::msgs::WorldStatistics msg;
@@ -65,7 +66,7 @@ class WorldStatsPrivate
 
 /////////////////////////////////////////////////
 WorldStats::WorldStats()
-  : dataPtr(new WorldStatsPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 

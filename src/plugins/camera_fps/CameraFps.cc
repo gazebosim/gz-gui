@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <list>
 #include <string>
 
@@ -32,7 +33,7 @@
 namespace gz::gui::plugins
 {
 /// \brief Private data class for CameraFps
-class CameraFpsPrivate
+class CameraFps::Implementation
 {
   /// \brief Previous camera update time
   public: std::optional<std::chrono::steady_clock::time_point>
@@ -82,7 +83,7 @@ void CameraFps::OnRender()
 
 /////////////////////////////////////////////////
 CameraFps::CameraFps()
-  : dataPtr(new CameraFpsPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 

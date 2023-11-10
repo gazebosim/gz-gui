@@ -35,7 +35,7 @@
 
 namespace gz::gui::plugins
 {
-class WorldControlPrivate
+class WorldControl::Implementation
 {
   /// \brief Send the world control event or call the control service.
   /// \param[in] _msg Message to send.
@@ -71,7 +71,7 @@ class WorldControlPrivate
 
 /////////////////////////////////////////////////
 WorldControl::WorldControl()
-  : dataPtr(new WorldControlPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -327,7 +327,7 @@ void WorldControl::OnStep()
 }
 
 /////////////////////////////////////////////////
-void WorldControlPrivate::SendEventMsg(const msgs::WorldControl &_msg)
+void WorldControl::Implementation::SendEventMsg(const msgs::WorldControl &_msg)
 {
   if (this->useEvent)
   {

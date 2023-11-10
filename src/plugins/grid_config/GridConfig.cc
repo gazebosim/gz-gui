@@ -32,7 +32,7 @@
 
 #include "GridConfig.hh"
 
-namespace gz::gui
+namespace gz::gui::plugins
 {
   struct GridParam
   {
@@ -52,7 +52,7 @@ namespace gz::gui
     math::Color color{math::Color(0.7f, 0.7f, 0.7f, 1.0f)};
   };
 
-  class GridConfigPrivate
+  class GridConfig::Implementation
   {
     /// \brief List of grid names.
     public: QStringList nameList;
@@ -84,7 +84,7 @@ namespace gz::gui
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
-  : dataPtr(std::make_unique<GridConfigPrivate>())
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -408,5 +408,5 @@ void GridConfig::RefreshList()
 }  // namespace gz::gui
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::GridConfig,
+GZ_ADD_PLUGIN(gz::gui::plugins::GridConfig,
               gz::gui::Plugin)

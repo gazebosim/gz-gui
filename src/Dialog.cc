@@ -18,12 +18,13 @@
 #include <tinyxml2.h>
 
 #include <gz/common/Console.hh>
+#include <gz/utils/ImplPtr.hh>
 #include "gz/gui/Application.hh"
 #include "gz/gui/Dialog.hh"
 
 namespace gz::gui
 {
-class DialogPrivate
+class Dialog::Implementation
 {
   /// \brief Pointer to quick window
   public: QQuickWindow *quickWindow{nullptr};
@@ -31,7 +32,7 @@ class DialogPrivate
 
 /////////////////////////////////////////////////
 Dialog::Dialog()
-  : dataPtr(new DialogPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Load QML and keep pointer to generated QQuickWindow
   std::string qmlFile("qrc:qml/StandaloneDialog.qml");
