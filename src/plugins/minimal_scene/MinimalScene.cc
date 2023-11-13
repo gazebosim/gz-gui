@@ -1187,7 +1187,8 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
       Q_ASSERT(rif->graphicsApi() == QSGRendererInterface::OpenGL);
 
       auto *current =  static_cast<QOpenGLContext*>(
-        rif->getResource(this->window(), QSGRendererInterface::OpenGLContextResource));
+        rif->getResource(this->window(),
+                         QSGRendererInterface::OpenGLContextResource));
 
       // Some GL implementations require that the currently bound context is
       // made non-current before we set up sharing, so we doneCurrent here
