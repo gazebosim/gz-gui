@@ -87,6 +87,8 @@ gz_find_package (Qt5
   PKGCONFIG "Qt5Core Qt5Quick Qt5QuickControls2 Qt5Widgets"
 )
 
+add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
+
 if (BUILD_TESTING)
   # Find if command is available. This is used to enable tests.
   # Note that CLI files are installed regardless of whether the dependency is
