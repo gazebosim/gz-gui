@@ -342,7 +342,7 @@ TEST(MainWindowTest,
 
   // Access window after it's open
   bool closed{false};
-  QTimer::singleShot(300, App(), [&closed]
+  QTimer::singleShot(300, App(), [&closed, &app]
   {
     auto *win = app.findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
