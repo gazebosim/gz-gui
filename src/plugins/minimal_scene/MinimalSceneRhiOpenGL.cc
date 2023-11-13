@@ -16,7 +16,6 @@
 */
 
 #include "MinimalSceneRhiOpenGL.hh"
-#include <qsgtexture_platform.h>
 
 #include "EngineToQtInterface.hh"
 #include "MinimalScene.hh"
