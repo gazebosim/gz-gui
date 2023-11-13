@@ -21,6 +21,9 @@
 
 #include "MinimalScene.hh"
 #include "MinimalSceneConfig.hh"
+#include "MinimalSceneRhiMetal.hh"
+#include "MinimalSceneRhiOpenGL.hh"
+#include "MinimalSceneRhiVulkan.hh"
 
 #include <algorithm>
 #include <list>

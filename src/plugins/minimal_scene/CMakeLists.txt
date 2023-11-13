@@ -12,7 +12,7 @@ set(SOURCES
 )
 
 qt6_add_qml_module(MinimalScene
-  URI MinimalScene
+  URI minimal_scene
   VERSION 1.0
   SOURCES ${SOURCES}
   QML_FILES MinimalScene.qml
