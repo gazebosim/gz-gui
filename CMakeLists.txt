@@ -73,15 +73,11 @@ set(GZ_RENDERING_VER ${gz-rendering9_VERSION_MAJOR})
 gz_find_package(gz-msgs11 REQUIRED)
 set(GZ_MSGS_VER ${gz-msgs11_VERSION_MAJOR})
 
-# Find if command is available. This is used to enable tests.
-# Note that CLI files are installed regardless of whether the dependency is
-# available during build time
-find_program(HAVE_GZ_TOOLS gz)
-set(GZ_TOOLS_VER 2)
 
 #--------------------------------------
 # Find QT
 gz_find_package (Qt5
+  VERSION 5.15
   COMPONENTS
     Core
     Quick
@@ -90,6 +86,17 @@ gz_find_package (Qt5
   REQUIRED
   PKGCONFIG "Qt5Core Qt5Quick Qt5QuickControls2 Qt5Widgets"
 )
+
+if (BUILD_TESTING)
+  # Find if command is available. This is used to enable tests.
+  # Note that CLI files are installed regardless of whether the dependency is
+  # available during build time
+  find_program(HAVE_GZ_TOOLS gz)
+  set(GZ_TOOLS_VER 2)
+
+  find_package(Qt5 REQUIRED COMPONENTS Test)
+
+endif()
 
 set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
   ${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
