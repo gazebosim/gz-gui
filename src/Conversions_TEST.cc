@@ -149,15 +149,9 @@ TEST(ConversionsTest, MouseEvent)
 
   // Scroll
   {
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-    QWheelEvent qtEvent(QPointF(123, 456), QPointF(1000, 2000), QPoint(2, 3),
-        QPoint(1, 4), -1, Qt::Horizontal, Qt::MiddleButton, Qt::ShiftModifier,
-        Qt::ScrollUpdate, Qt::MouseEventNotSynthesized, false);
-#else
     QWheelEvent qtEvent(QPointF(123, 456), QPointF(1000, 2000), QPoint(2, 3),
         QPoint(1, 4), Qt::MiddleButton, Qt::ShiftModifier, Qt::ScrollUpdate,
         false);
-#endif
 
     auto gzEvent = convert(qtEvent);
 
