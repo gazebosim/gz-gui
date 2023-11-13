@@ -120,7 +120,7 @@ QString CameraFps::CameraFpsValue() const
 void CameraFps::SetCameraFpsValue(const QString &_value)
 {
   this->dataPtr->cameraFPSValue = _value;
-  this->CameraFpsValueChanged();
+  emit this->CameraFpsValueChanged();
 }
 }  // namespace gz::gui::plugins
 

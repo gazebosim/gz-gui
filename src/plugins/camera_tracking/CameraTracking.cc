@@ -434,7 +434,7 @@ CameraTracking::CameraTracking()
   : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   this->dataPtr->timer = new QTimer(this);
-  this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
+  connect(this->dataPtr->timer, &QTimer::timeout, this->dataPtr->timer, [=]()
   {
     std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
     if (!this->dataPtr->camera)

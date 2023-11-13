@@ -97,7 +97,7 @@ void NavSatMap::ProcessMessage()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->navSatMutex);
 
-  this->newMessage(this->dataPtr->navSatMsg.latitude_deg(),
+  emit this->newMessage(this->dataPtr->navSatMsg.latitude_deg(),
       this->dataPtr->navSatMsg.longitude_deg());
 }
 
@@ -120,7 +120,7 @@ void NavSatMap::OnTopic(const QString _topic)
 
   // Unsubscribe
   auto subs = this->dataPtr->node.SubscribedTopics();
-  for (auto sub : subs)
+  for (const auto &sub : subs)
     this->dataPtr->node.Unsubscribe(sub);
 
   // Subscribe to new topic
@@ -140,12 +140,12 @@ void NavSatMap::OnRefresh()
   // Get updated list
   std::vector<std::string> allTopics;
   this->dataPtr->node.TopicList(allTopics);
-  for (auto topic : allTopics)
+  for (const auto &topic : allTopics)
   {
     std::vector<transport::MessagePublisher> publishers;
     std::vector<transport::MessagePublisher> subscribers;
     this->dataPtr->node.TopicInfo(topic, publishers, subscribers);
-    for (auto pub : publishers)
+    for (const auto &pub : publishers)
     {
       if (pub.MsgTypeName() == "gz.msgs.NavSat")
       {
@@ -158,7 +158,7 @@ void NavSatMap::OnRefresh()
   // Select first one
   if (this->dataPtr->topicList.count() > 0)
     this->OnTopic(this->dataPtr->topicList.at(0));
-  this->TopicListChanged();
+  emit this->TopicListChanged();
 }
 
 /////////////////////////////////////////////////
@@ -171,7 +171,7 @@ QStringList NavSatMap::TopicList() const
 void NavSatMap::SetTopicList(const QStringList &_topicList)
 {
   this->dataPtr->topicList = _topicList;
-  this->TopicListChanged();
+  emit this->TopicListChanged();
 }
 }  // namespace gz::gui::plugins
 

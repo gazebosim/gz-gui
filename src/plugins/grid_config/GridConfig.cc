@@ -286,7 +286,7 @@ void GridConfig::ConnectToGrid()
         this->dataPtr->gridParam.cellLength = grid->CellLength();
         this->dataPtr->gridParam.pose = grid->Parent()->LocalPose();
         this->dataPtr->gridParam.color = grid->Parent()->Material()->Ambient();
-        this->newParams(
+        emit this->newParams(
             grid->CellCount(),
             grid->VerticalCellCount(),
             grid->CellLength(),
@@ -320,7 +320,7 @@ QStringList GridConfig::NameList() const
 void GridConfig::SetNameList(const QStringList &_nameList)
 {
   this->dataPtr->nameList = _nameList;
-  this->NameListChanged();
+  emit this->NameListChanged();
 }
 
 /////////////////////////////////////////////////
@@ -403,7 +403,7 @@ void GridConfig::RefreshList()
   // Select first one
   if (this->dataPtr->nameList.count() > 0)
     this->OnName(this->dataPtr->nameList.at(0));
-  this->NameListChanged();
+  emit this->NameListChanged();
 }
 }  // namespace gz::gui
 

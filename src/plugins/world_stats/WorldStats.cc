@@ -288,7 +288,7 @@ QString WorldStats::RealTimeFactor() const
 void WorldStats::SetRealTimeFactor(const QString &_realTimeFactor)
 {
   this->dataPtr->realTimeFactor = _realTimeFactor;
-  this->RealTimeFactorChanged();
+  emit this->RealTimeFactorChanged();
 }
 
 /////////////////////////////////////////////////
@@ -301,7 +301,7 @@ QString WorldStats::SimTime() const
 void WorldStats::SetSimTime(const QString &_simTime)
 {
   this->dataPtr->simTime = _simTime;
-  this->SimTimeChanged();
+  emit this->SimTimeChanged();
 }
 
 /////////////////////////////////////////////////
@@ -314,7 +314,7 @@ QString WorldStats::RealTime() const
 void WorldStats::SetRealTime(const QString &_realTime)
 {
   this->dataPtr->realTime = _realTime;
-  this->RealTimeChanged();
+  emit this->RealTimeChanged();
 }
 
 /////////////////////////////////////////////////
@@ -327,7 +327,7 @@ QString WorldStats::Iterations() const
 void WorldStats::SetIterations(const QString &_iterations)
 {
   this->dataPtr->iterations = _iterations;
-  this->IterationsChanged();
+  emit this->IterationsChanged();
 }
 }  // namespace gz::gui::plugins
 

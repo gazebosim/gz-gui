@@ -110,7 +110,7 @@ void TopicEcho::OnMessage(const google::protobuf::Message &_msg)
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->AddMsg(QString::fromStdString(_msg.DebugString()));
+  emit this->AddMsg(QString::fromStdString(_msg.DebugString()));
 }
 
 /////////////////////////////////////////////////
@@ -142,7 +142,7 @@ QString TopicEcho::Topic() const
 void TopicEcho::SetTopic(const QString &_topic)
 {
   this->dataPtr->topic = _topic;
-  this->TopicChanged();
+  emit this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
@@ -162,7 +162,7 @@ bool TopicEcho::Paused() const
 void TopicEcho::SetPaused(const bool &_paused)
 {
   this->dataPtr->paused = _paused;
-  this->PausedChanged();
+  emit this->PausedChanged();
 }
 }  // namespace gz::gui::plugins
 

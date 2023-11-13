@@ -410,14 +410,14 @@ void TopicViewer::UpdateModel()
   }
 
   // remove the topics that don't exist in the network
-  for (auto topic : topicsToRemove)
+  for (const auto &topic : topicsToRemove)
   {
-    auto root = this->dataPtr->model->invisibleRootItem();
+    auto *root = this->dataPtr->model->invisibleRootItem();
 
     // search for the topic in the model
     for (int i = 0; i < root->rowCount(); ++i)
     {
-      auto child = root->child(i);
+      auto *child = root->child(i);
 
       if (child->data(NAME_ROLE).toString().toStdString() == topic.first &&
           child->data(TYPE_ROLE).toString().toStdString() == topic.second)

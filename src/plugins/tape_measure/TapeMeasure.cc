@@ -149,7 +149,7 @@ void TapeMeasure::Reset()
   this->dataPtr->endPoint = gz::math::Vector3d::Zero;
   this->dataPtr->distance = 0.0;
   this->dataPtr->measure = false;
-  this->newDistance();
+  emit this->newDistance();
   QGuiApplication::restoreOverrideCursor();
 
   // Notify 3D scene that we are done using the right click, so it can
@@ -247,7 +247,7 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
         this->DrawLine(this->dataPtr->kLineId, this->dataPtr->startPoint,
           point, this->dataPtr->hoverColor);
         this->dataPtr->distance = this->dataPtr->startPoint.Distance(point);
-        this->newDistance();
+        emit this->newDistance();
       }
     }
   }
@@ -278,7 +278,7 @@ bool TapeMeasure::eventFilter(QObject *_obj, QEvent *_event)
           this->dataPtr->endPoint, this->dataPtr->drawColor);
         this->dataPtr->distance =
           this->dataPtr->startPoint.Distance(this->dataPtr->endPoint);
-        this->newDistance();
+        emit this->newDistance();
         QGuiApplication::restoreOverrideCursor();
 
         // Notify 3D scene that we are done using the right click, so it can
