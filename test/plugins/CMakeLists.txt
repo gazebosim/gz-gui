@@ -2,13 +2,6 @@ if (WIN32)
   add_definitions(-DBUILDING_DLL)
 endif()
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}
-)
-
-link_directories(
-)
-
 set (plugins
   TestBadInheritancePlugin
   TestInvalidQmlPlugin
@@ -18,9 +11,9 @@ set (plugins
 
 # Plugin shared libraries
 foreach (src ${plugins})
-  QT5_WRAP_CPP(${src}_MOC ${src}.hh)
+  qt_wrap_cpp(${src}_MOC ${src}.hh)
   if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${src}.qrc")
-    QT5_ADD_RESOURCES(${src}_RCC ${src}.qrc)
+    qt_add_resources(${src}_RCC ${src}.qrc)
   endif()
   add_library(${src} SHARED
     ${src}.cc
@@ -34,4 +27,3 @@ foreach (src ${plugins})
     gz-plugin${GZ_PLUGIN_VER}::register
   )
 endforeach (src ${qt_headers_local})
-
