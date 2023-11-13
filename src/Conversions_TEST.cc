@@ -104,8 +104,11 @@ TEST(ConversionsTest, MouseEvent)
 {
   // Press + Shift
   {
-    QMouseEvent qtEvent(QEvent::MouseButtonPress, QPointF(10, 20),
-        Qt::RightButton, Qt::MiddleButton, Qt::ShiftModifier);
+    QMouseEvent qtEvent(QEvent::MouseButtonPress,
+                        QPointF(10, 20), QPointF(10, 20),
+                        Qt::RightButton,
+                        Qt::MiddleButton,
+                        Qt::ShiftModifier);
 
     auto gzEvent = convert(qtEvent);
 
@@ -119,8 +122,11 @@ TEST(ConversionsTest, MouseEvent)
 
   // Release + Control
   {
-    QMouseEvent qtEvent(QEvent::MouseButtonRelease, QPointF(0, 200),
-        Qt::MiddleButton, Qt::RightButton, Qt::ControlModifier);
+    QMouseEvent qtEvent(QEvent::MouseButtonRelease,
+                        QPointF(0, 200), QPointF(0, 200),
+                        Qt::MiddleButton,
+                        Qt::RightButton,
+                        Qt::ControlModifier);
 
     auto gzEvent = convert(qtEvent);
 
@@ -134,8 +140,11 @@ TEST(ConversionsTest, MouseEvent)
 
   // Move + Alt
   {
-    QMouseEvent qtEvent(QEvent::MouseMove, QPointF(123, 456),
-        Qt::LeftButton, Qt::LeftButton, Qt::AltModifier);
+    QMouseEvent qtEvent(QEvent::MouseMove,
+                        QPointF(123, 456), QPointF(123, 456),
+                        Qt::LeftButton,
+                        Qt::LeftButton,
+                        Qt::AltModifier);
 
     auto gzEvent = convert(qtEvent);
 
