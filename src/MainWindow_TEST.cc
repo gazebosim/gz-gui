@@ -51,7 +51,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
   Application app(g_argc, g_argv);
 
   // Constructor
-  auto mainWindow = new MainWindow;
+  auto *mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
   mainWindow->deleteLater();
@@ -64,10 +64,10 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
   Application app(g_argc, g_argv);
 
   // Change default config path
-  App()->SetDefaultConfigPath(kTestConfigFile);
+  app.SetDefaultConfigPath(kTestConfigFile);
 
   // Create window
-  auto mainWindow = new MainWindow;
+  auto *mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
   // Save to default location
@@ -100,7 +100,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
   common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
-  auto mainWindow = new MainWindow;
+  auto *mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
   // Save to file
@@ -137,10 +137,10 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnLoadConfig))
   Application app(g_argc, g_argv);
 
   // Add test plugins to path
-  App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Get main window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
@@ -179,10 +179,10 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnAddPlugin))
   Application app(g_argc, g_argv);
 
   // Add test plugins to path
-  App()->AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
   // Get window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   // Check window doesn't have any plugins
@@ -344,7 +344,7 @@ TEST(MainWindowTest,
   bool closed{false};
   QTimer::singleShot(300, App(), [&closed]
   {
-    auto win = App()->findChild<MainWindow *>();
+    auto *win = app.findChild<MainWindow *>();
     ASSERT_NE(nullptr, win);
     EXPECT_TRUE(win->QuickWindow()->isVisible());
 
@@ -376,7 +376,7 @@ TEST(MainWindowTest,
   });
 
   // Show window
-  App()->exec();
+  app.exec();
 
   EXPECT_TRUE(closed);
 }
@@ -392,7 +392,7 @@ TEST(MainWindowTest,
     PROJECT_SOURCE_PATH, "test", "config",
     "close_dialog_auto_shutdown.config"));
   // Get main window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   bool shutdownCalled{false};
@@ -424,7 +424,7 @@ TEST(MainWindowTest,
     PROJECT_SOURCE_PATH, "test", "config",
     "close_dialog_custom_shutdown_service.config"));
   // Get main window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   bool shutdownCalled{false};
@@ -471,7 +471,7 @@ TEST(MainWindowTest,
     PROJECT_SOURCE_PATH, "test", "config",
     "close_dialog_auto_gui_only.config"));
   // Get main window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   bool shutdownCalled{false};
@@ -574,7 +574,7 @@ TEST(MainWindowTest,
     PROJECT_SOURCE_PATH, "test", "config",
     "close_dialog_buttons.config"));
   // Get main window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   // Trigger the closing behavior
@@ -634,7 +634,7 @@ TEST(MainWindowTest,
     PROJECT_SOURCE_PATH, "test", "config",
     "close_dialog_default_buttons.config"));
   // Get main window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   // Trigger the closing behavior
@@ -682,7 +682,7 @@ TEST(MainWindowTest,
     PROJECT_SOURCE_PATH, "test", "config",
     "close_dialog_buttons_text.config"));
   // Get main window
-  auto mainWindow = App()->findChild<MainWindow *>();
+  auto *mainWindow = app.findChild<MainWindow *>();
   ASSERT_NE(nullptr, mainWindow);
 
   // Trigger the closing behavior
@@ -704,11 +704,11 @@ TEST(MainWindowTest,
     });
   ASSERT_EQ(expectedRoles, roles);
 
-  auto closeGui = buttonRoles[ButtonRole::AcceptRole];
+  auto *closeGui = buttonRoles[ButtonRole::AcceptRole];
   EXPECT_EQ("close_gui",
     closeGui->property("text").toString().toStdString());
 
-  auto shutdown = buttonRoles[ButtonRole::DestructiveRole];
+  auto *shutdown = buttonRoles[ButtonRole::DestructiveRole];
   EXPECT_EQ("shutdown",
     shutdown->property("text").toString().toStdString());
 }
@@ -720,7 +720,7 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
   Application app(g_argc, g_argv);
 
   // Main window
-  auto mainWindow = new MainWindow;
+  auto *mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
 
   app.processEvents(QEventLoop::ExcludeUserInputEvents);
