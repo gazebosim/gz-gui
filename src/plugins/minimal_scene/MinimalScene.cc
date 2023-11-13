@@ -29,6 +29,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <gz/common/Console.hh>
@@ -52,17 +53,10 @@
 #include "gz/gui/Helpers.hh"
 #include "gz/gui/MainWindow.hh"
 
-#define GZ_GUI_HAVE_VULKAN \
-  QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && \
-  QT_CONFIG(vulkan) && \
-  GZ_RENDERING_HAVE_VULKAN
-
-#define GZ_GUI_HAVE_METAL __APPLE__
-
 #if GZ_GUI_HAVE_VULKAN
 #  include <QVulkanInstance>
 #  include <gz/rendering/RenderEngineVulkanExternalDeviceStructs.hh>
-#endif  // GZ_HAVE_VULKAN
+#endif  // GZ_GUI_HAVE_VULKAN
 
 Q_DECLARE_METATYPE(gz::gui::plugins::RenderSync*)
 
@@ -1189,7 +1183,12 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
 
     if (this->dataPtr->graphicsAPI == rendering::GraphicsAPI::OPENGL)
     {
-      QOpenGLContext *current = this->window()->openglContext();
+      auto *rif = this->window()->rendererInterface();
+      Q_ASSERT(rif->graphicsApi() == QSGRendererInterface::OpenGL);
+
+      auto *current =  static_cast<QOpenGLContext*>(
+        rif->getResource(this->window(), QSGRendererInterface::OpenGLContextResource));
+
       // Some GL implementations require that the currently bound context is
       // made non-current before we set up sharing, so we doneCurrent here
       // and makeCurrent down below while setting up our own context.
