@@ -16,7 +16,7 @@
 */
 
 #include <gtest/gtest.h>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include <gz/msgs/stringmsg.pb.h>
 
@@ -150,10 +150,8 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
     pub.Publish(msg);
   }
 
-  QRegExp regExp13("*13");
-  regExp13.setPatternSyntax(QRegExp::Wildcard);
-  QRegExp regExp14("*14");
-  regExp14.setPatternSyntax(QRegExp::Wildcard);
+  auto regExp13 = QRegularExpression::wildcardToRegularExpression("*13");
+  auto regExp14 = QRegularExpression::wildcardToRegularExpression("*14");
 
   // Wait until all 15 messages are received
   // To avoid flakiness due to messages coming out of order, we check for both
@@ -176,12 +174,11 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
   // We can't guarantee the order of messages
   // We expect that out of the 10 messages last, at least 6 belong to the [5-14]
   // range
-  QRegExp regExp;
-  regExp.setPatternSyntax(QRegExp::Wildcard);
   unsigned int count = 0;
   for (auto i = 5; i < 15; ++i)
   {
-    regExp.setPattern("*" + QString::number(i));
+    auto regExp =
+      QRegularExpression::wildcardToRegularExpression("*" + QString::number(i));
     if (msgStringList->stringList().filter(regExp).count() > 0)
       ++count;
   }

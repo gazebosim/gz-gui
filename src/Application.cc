@@ -15,6 +15,7 @@
  *
  */
 
+#include <qsgrendererinterface.h>
 #include <tinyxml2.h>
 #include <queue>
 
@@ -126,7 +127,12 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   {
     // Use the Metal graphics API on macOS.
     gzdbg << "Qt using Metal graphics interface" << std::endl;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::MetalRhi);
+#else
     QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
+#endif
+
   }
 
   // TODO(srmainwaring): implement facility for overriding the default
@@ -161,7 +167,11 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #  endif
     );
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::VulkanRhi);
+#else
     QQuickWindow::setSceneGraphBackend(QSGRendererInterface::VulkanRhi);
+#endif
   }
   else
   {
