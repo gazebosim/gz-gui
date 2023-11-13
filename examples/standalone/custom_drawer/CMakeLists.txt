@@ -21,9 +21,7 @@ find_package (Qt5
 find_package(gz-gui9 REQUIRED)
 set(GZ_GUI_VER ${gz-gui9_VERSION_MAJOR})
 
-QT5_ADD_RESOURCES(resources_RCC custom_drawer.qrc)
-
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
+qt_add_resources(resources_RCC custom_drawer.qrc)
 
 # Generate example
 add_executable(custom_drawer
@@ -32,8 +30,4 @@ add_executable(custom_drawer
 )
 target_link_libraries(custom_drawer
   gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
-  ${Qt5Core_LIBRARIES}
-  ${Qt5Qml_LIBRARIES}
-  ${Qt5Quick_LIBRARIES}
-  ${Qt5QuickControls2_LIBRARIES}
 )
