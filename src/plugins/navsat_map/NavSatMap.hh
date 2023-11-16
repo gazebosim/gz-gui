@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
-#define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
+#ifndef GZ_GUI_PLUGINS_NAVSAT_MAP_HH_
+#define GZ_GUI_PLUGINS_NAVSAT_MAP_HH_
 
 #include <memory>
 
@@ -24,11 +24,7 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class NavSatMapPrivate;
 
@@ -92,10 +88,8 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<NavSatMapPrivate> dataPtr;
-  };
-}
-}
-}
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
+};
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_NAVSAT_MAP_HH_

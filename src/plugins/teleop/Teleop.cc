@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <string>
 
@@ -27,90 +28,82 @@
 #include <gz/gui/Application.hh>
 #include <gz/gui/MainWindow.hh>
 
-namespace gz
+namespace
 {
-namespace gui
+enum class KeyForward{
+  kForward,
+  kBackward,
+  kStop,
+};
+
+enum class KeyVertical{
+  kUp,
+  kDown,
+  kStop,
+};
+
+enum class KeyYaw{
+  kLeft,
+  kRight,
+  kStop,
+};
+}  // namespace
+
+namespace gz::gui::plugins
 {
-namespace plugins
+class Teleop::Implementation
 {
-  enum class KeyForward{
-    kForward,
-    kBackward,
-    kStop,
-  };
+  /// \brief Node for communication.
+  public: gz::transport::Node node;
 
-  enum class KeyVertical{
-    kUp,
-    kDown,
-    kStop,
-  };
+  /// \brief Topic. Set '/cmd_vel' as default.
+  public: std::string topic = "/cmd_vel";
 
-  enum class KeyYaw{
-    kLeft,
-    kRight,
-    kStop,
-  };
+  /// \brief Publisher.
+  public: gz::transport::Node::Publisher cmdVelPub;
 
-  class TeleopPrivate
-  {
-    /// \brief Node for communication.
-    public: gz::transport::Node node;
+  /// \brief Maximum forward velocity in m/s. GUI buttons and key presses
+  /// will use this velocity. Sliders will scale up to this value.
+  public: double maxForwardVel = 1.0;
 
-    /// \brief Topic. Set '/cmd_vel' as default.
-    public: std::string topic = "/cmd_vel";
+  /// \brief Maximum vertical velocity in m/s. GUI buttons and key presses
+  /// will use this velocity. Sliders will scale up to this value.
+  public: double maxVerticalVel = 1.0;
 
-    /// \brief Publisher.
-    public: gz::transport::Node::Publisher cmdVelPub;
+  /// \brief Maximum yaw velocity in rad/s. GUI buttons and key presses
+  /// will use this velocity. Sliders will scale up to this value.
+  public: double maxYawVel = 0.5;
 
-    /// \brief Maximum forward velocity in m/s. GUI buttons and key presses
-    /// will use this velocity. Sliders will scale up to this value.
-    public: double maxForwardVel = 1.0;
+  /// \brief Forward scale to multiply by maxForwardVel, in the [-1, 1] range.
+  /// Negative values go backwards, zero stops movement in the forward axis.
+  public: int forwardKeyScale = 0;
 
-    /// \brief Maximum vertical velocity in m/s. GUI buttons and key presses
-    /// will use this velocity. Sliders will scale up to this value.
-    public: double maxVerticalVel = 1.0;
+  /// \brief Vertical scale to multiply by maxVerticalVel, in the [-1, 1]
+  /// range. Negative values go down, zero stops movement in the vertical
+  /// axis.
+  public: int verticalKeyScale = 0;
 
-    /// \brief Maximum yaw velocity in rad/s. GUI buttons and key presses
-    /// will use this velocity. Sliders will scale up to this value.
-    public: double maxYawVel = 0.5;
+  /// \brief Yaw scale to multiply by maxYawVel, in the [-1, 1] range.
+  /// Negative values rotate clockwise when looking from above, zero stops
+  /// movement in the yaw axis.
+  public: int yawKeyScale = 0;
 
-    /// \brief Forward scale to multiply by maxForwardVel, in the [-1, 1] range.
-    /// Negative values go backwards, zero stops movement in the forward axis.
-    public: int forwardKeyScale = 0;
+  /// \brief Forward state set by keyboard input.
+  public: KeyForward forwardKeyState = KeyForward::kStop;
 
-    /// \brief Vertical scale to multiply by maxVerticalVel, in the [-1, 1]
-    /// range. Negative values go down, zero stops movement in the vertical
-    /// axis.
-    public: int verticalKeyScale = 0;
+  /// \brief Vertical state set by keyboard input.
+  public: KeyVertical verticalKeyState = KeyVertical::kStop;
 
-    /// \brief Yaw scale to multiply by maxYawVel, in the [-1, 1] range.
-    /// Negative values rotate clockwise when looking from above, zero stops
-    /// movement in the yaw axis.
-    public: int yawKeyScale = 0;
+  /// \brief Yaw state set by keyboard input.
+  public: KeyYaw yawKeyState = KeyYaw::kStop;
 
-    /// \brief Forward state set by keyboard input.
-    public: KeyForward forwardKeyState = KeyForward::kStop;
-
-    /// \brief Vertical state set by keyboard input.
-    public: KeyVertical verticalKeyState = KeyVertical::kStop;
-
-    /// \brief Yaw state set by keyboard input.
-    public: KeyYaw yawKeyState = KeyYaw::kStop;
-
-    /// \brief Indicates if the keyboard is enabled or
-    /// disabled.
-    public: bool keyEnable = false;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Indicates if the keyboard is enabled or
+  /// disabled.
+  public: bool keyEnable = false;
+};
 
 /////////////////////////////////////////////////
-Teleop::Teleop(): Plugin(), dataPtr(std::make_unique<TeleopPrivate>())
+Teleop::Teleop(): dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Initialize publisher using default topic.
   this->dataPtr->cmdVelPub = transport::Node::Publisher();
@@ -175,7 +168,7 @@ void Teleop::SetTopic(const QString &_topic)
       (this->dataPtr->topic);
   if (!this->dataPtr->cmdVelPub)
   {
-    App()->findChild<MainWindow *>()->notifyWithDuration(
+    emit App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Error when advertising topic: " +
         this->dataPtr->topic), 4000);
     gzerr << "Error when advertising topic: " <<
@@ -183,18 +176,18 @@ void Teleop::SetTopic(const QString &_topic)
   }
   else
   {
-    App()->findChild<MainWindow *>()->notifyWithDuration(
+    emit App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Advertising topic: '<b>" +
         this->dataPtr->topic + "</b>'"), 4000);
   }
-  this->TopicChanged();
+  emit this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
 void Teleop::SetMaxForwardVel(double _velocity)
 {
   this->dataPtr->maxForwardVel = _velocity;
-  this->MaxForwardVelChanged();
+  emit this->MaxForwardVelChanged();
 }
 
 /////////////////////////////////////////////////
@@ -207,7 +200,7 @@ double Teleop::MaxForwardVel() const
 void Teleop::SetMaxVerticalVel(double _velocity)
 {
   this->dataPtr->maxVerticalVel = _velocity;
-  this->MaxVerticalVelChanged();
+  emit this->MaxVerticalVelChanged();
 }
 
 /////////////////////////////////////////////////
@@ -220,7 +213,7 @@ double Teleop::MaxVerticalVel() const
 void Teleop::SetMaxYawVel(double _velocity)
 {
   this->dataPtr->maxYawVel = _velocity;
-  this->MaxYawVelChanged();
+  emit this->MaxYawVelChanged();
 }
 
 /////////////////////////////////////////////////
@@ -324,7 +317,8 @@ void Teleop::SetKeyScale()
       KeyYaw::kLeft ? 1 : this->dataPtr->yawKeyState ==
       KeyYaw::kRight ? -1 : 0;
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(Teleop,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::Teleop,
+              gz::gui::Plugin)

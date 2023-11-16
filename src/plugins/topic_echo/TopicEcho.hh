@@ -40,15 +40,10 @@
 #include <memory>
 
 #include "gz/gui/Plugin.hh"
+#include <gz/utils/ImplPtr.hh>
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-namespace plugins
-{
-  class TopicEchoPrivate;
-
   /// \brief Echo messages coming through a Gazebo Transport topic.
   ///
   /// ## Configuration
@@ -77,10 +72,10 @@ namespace plugins
     public: TopicEcho();
 
     /// \brief Destructor
-    public: virtual ~TopicEcho();
+    public: ~TopicEcho() override;
 
     // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
+    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
 
     /// \brief Get the topic as a string, for example
     /// '/echo'
@@ -128,10 +123,8 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<TopicEchoPrivate> dataPtr;
+    private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_TOPICECHO_HH_

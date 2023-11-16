@@ -33,63 +33,50 @@
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class WorldControl::Implementation
 {
-namespace plugins
-{
-  class WorldControlPrivate
-  {
-    /// \brief Send the world control event or call the control service.
-    /// \param[in] _msg Message to send.
-    public: void SendEventMsg(const gz::msgs::WorldControl &_msg);
+  /// \brief Send the world control event or call the control service.
+  /// \param[in] _msg Message to send.
+  public: void SendEventMsg(const gz::msgs::WorldControl &_msg);
 
-    /// \brief Message holding latest world statistics
-    public: gz::msgs::WorldStatistics msg;
+  /// \brief Message holding latest world statistics
+  public: gz::msgs::WorldStatistics msg;
 
-    /// \brief Service to send world control requests
-    public: std::string controlService;
+  /// \brief Service to send world control requests
+  public: std::string controlService;
 
-    /// \brief Mutex to protect msg
-    public: std::recursive_mutex mutex;
+  /// \brief Mutex to protect msg
+  public: std::recursive_mutex mutex;
 
-    /// \brief Communication node
-    public: gz::transport::Node node;
+  /// \brief Communication node
+  public: gz::transport::Node node;
 
-    /// \brief The multi step value
-    public: unsigned int multiStep = 1u;
+  /// \brief The multi step value
+  public: unsigned int multiStep = 1u;
 
-    /// \brief True for paused
-    public: bool pause{true};
+  /// \brief True for paused
+  public: bool pause{true};
 
-    /// \brief The paused state of the most recently received world stats msg
-    /// (true for paused)
-    public: bool lastStatsMsgPaused{true};
+  /// \brief The paused state of the most recently received world stats msg
+  /// (true for paused)
+  public: bool lastStatsMsgPaused{true};
 
-    /// \brief Whether server communication should occur through an event (true)
-    /// or service (false). The service option was used by default for
-    /// gz-gui7 and earlier, and now uses the event by default in gz-gui9.
-    public: bool useEvent{true};
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Whether server communication should occur through an event (true)
+  /// or service (false). The service option was used by default for
+  /// gz-gui7 and earlier, and now uses the event by default in gz-gui8.
+  public: bool useEvent{true};
+};
 
 /////////////////////////////////////////////////
 WorldControl::WorldControl()
-  : Plugin(), dataPtr(new WorldControlPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
 /////////////////////////////////////////////////
-WorldControl::~WorldControl()
-{
-}
+WorldControl::~WorldControl() = default;
 
 /////////////////////////////////////////////////
 void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
@@ -166,7 +153,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
          << "]" << std::endl;
 
   // Play / pause buttons
-  if (auto playElem = _pluginElem->FirstChildElement("play_pause"))
+  if (const auto *playElem = _pluginElem->FirstChildElement("play_pause"))
   {
     auto has = false;
     playElem->QueryBoolText(&has);
@@ -175,21 +162,22 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     if (has)
     {
       auto startPaused = this->dataPtr->pause;
-      if (auto pausedElem = _pluginElem->FirstChildElement("start_paused"))
+      if (const auto *pausedElem =
+        _pluginElem->FirstChildElement("start_paused"))
       {
         pausedElem->QueryBoolText(&startPaused);
       }
       this->dataPtr->pause = startPaused;
       this->dataPtr->lastStatsMsgPaused = startPaused;
       if (startPaused)
-        this->paused();
+        emit this->paused();
       else
-        this->playing();
+        emit this->playing();
     }
   }
 
   // Step buttons
-  if (auto stepElem = _pluginElem->FirstChildElement("step"))
+  if (const auto *stepElem = _pluginElem->FirstChildElement("step"))
   {
     auto has = false;
     stepElem->QueryBoolText(&has);
@@ -198,7 +186,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   // Subscribe to world stats
   std::string statsTopic;
-  auto statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
+  const auto *statsTopicElem = _pluginElem->FirstChildElement("stats_topic");
   if (nullptr != statsTopicElem && nullptr != statsTopicElem->GetText())
     statsTopic = statsTopicElem->GetText();
 
@@ -243,7 +231,7 @@ void WorldControl::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
            << std::endl;
   }
 
-  if (auto elem = _pluginElem->FirstChildElement("use_event"))
+  if (const auto *elem = _pluginElem->FirstChildElement("use_event"))
     elem->QueryBoolText(&this->dataPtr->useEvent);
 
   if (this->dataPtr->useEvent)
@@ -274,10 +262,10 @@ void WorldControl::ProcessMsg()
   // this plugin has been registered by the server
   if (this->dataPtr->msg.paused() &&
       (!this->dataPtr->pause || !this->dataPtr->lastStatsMsgPaused))
-    this->paused();
+    emit this->paused();
   else if (!this->dataPtr->msg.paused() &&
       (this->dataPtr->pause || this->dataPtr->lastStatsMsgPaused))
-    this->playing();
+    emit this->playing();
 
   this->dataPtr->pause = this->dataPtr->msg.paused();
   this->dataPtr->lastStatsMsgPaused = this->dataPtr->msg.paused();
@@ -315,7 +303,7 @@ void WorldControl::OnPause()
 void WorldControl::OnReset()
 {
   msgs::WorldControl msg;
-  auto msgReset = new msgs::WorldReset();
+  auto *msgReset = new msgs::WorldReset();
   msgReset->set_all(true);
   msg.set_pause(true);
   msg.set_allocated_reset(msgReset);
@@ -340,7 +328,7 @@ void WorldControl::OnStep()
 }
 
 /////////////////////////////////////////////////
-void WorldControlPrivate::SendEventMsg(const msgs::WorldControl &_msg)
+void WorldControl::Implementation::SendEventMsg(const msgs::WorldControl &_msg)
 {
   if (this->useEvent)
   {
@@ -358,7 +346,8 @@ void WorldControlPrivate::SendEventMsg(const msgs::WorldControl &_msg)
     this->node.Request(this->controlService, _msg, cb);
   }
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(WorldControl,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::WorldControl,
+              gz::gui::Plugin)

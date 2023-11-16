@@ -20,10 +20,10 @@
 
 #include <memory>
 
-#include <gz/transport/Node.hh>
-
 #include <gz/gui/Plugin.hh>
 #include <gz/gui/qt.h>
+#include <gz/transport/Node.hh>
+#include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
 #  define Teleop_EXPORTS_API
@@ -35,14 +35,8 @@
 #  endif
 #endif
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-namespace plugins
-{
-  class TeleopPrivate;
-
   /// \brief Publish teleop stokes to a user selected topic,
   /// or to '/cmd_vel' if no topic is selected.
   /// Buttons, the keyboard or sliders can be used to move a
@@ -89,10 +83,10 @@ namespace plugins
     public: Teleop();
 
     /// \brief Destructor
-    public: virtual ~Teleop();
+    public: ~Teleop() override;
 
     // Documentation inherited.
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *) override;
+    public: void LoadConfig(const tinyxml2::XMLElement *) override;
 
     /// \brief Filters events of type 'keypress' and 'keyrelease'.
     protected: bool eventFilter(QObject *_obj, QEvent *_event) override;
@@ -159,11 +153,8 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<TeleopPrivate> dataPtr;
-
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_TELEOP_HH_

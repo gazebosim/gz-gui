@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <list>
 #include <string>
 
@@ -29,8 +30,10 @@
 
 #include "CameraFps.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for CameraFps
-class gz::gui::plugins::CameraFpsPrivate
+class CameraFps::Implementation
 {
   /// \brief Previous camera update time
   public: std::optional<std::chrono::steady_clock::time_point>
@@ -49,10 +52,6 @@ class gz::gui::plugins::CameraFpsPrivate
   /// \brief Camera FPS string value
   public: QString cameraFPSValue;
 };
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
 
 /////////////////////////////////////////////////
 void CameraFps::OnRender()
@@ -84,14 +83,12 @@ void CameraFps::OnRender()
 
 /////////////////////////////////////////////////
 CameraFps::CameraFps()
-  : Plugin(), dataPtr(new CameraFpsPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
 /////////////////////////////////////////////////
-CameraFps::~CameraFps()
-{
-}
+CameraFps::~CameraFps() = default;
 
 /////////////////////////////////////////////////
 void CameraFps::LoadConfig(const tinyxml2::XMLElement *)
@@ -123,8 +120,9 @@ QString CameraFps::CameraFpsValue() const
 void CameraFps::SetCameraFpsValue(const QString &_value)
 {
   this->dataPtr->cameraFPSValue = _value;
-  this->CameraFpsValueChanged();
+  emit this->CameraFpsValueChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::CameraFps,

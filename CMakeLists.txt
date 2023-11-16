@@ -91,8 +91,12 @@ gz_find_package (Qt5
   PKGCONFIG "Qt5Core Qt5Quick Qt5QuickControls2 Qt5Widgets"
 )
 
+set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
+  ${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
+)
+
 set(GZ_GUI_PLUGIN_INSTALL_DIR
-  ${CMAKE_INSTALL_PREFIX}/${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
+  ${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}
 )
 
 #============================================================================

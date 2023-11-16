@@ -14,21 +14,19 @@
  * limitations under the License.
  *
 */
+
 #ifndef GZ_GUI_TAPEMEASURE_HH_
 #define GZ_GUI_TAPEMEASURE_HH_
 
+#include <gz/utils/ImplPtr.hh>
 #include <memory>
 
 #include <gz/gui/Plugin.hh>
 #include <gz/math/Vector3.hh>
 #include <gz/math/Color.hh>
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-  class TapeMeasurePrivate;
-
   /// \brief Provides buttons for the tape measure tool.
   class TapeMeasure : public gz::gui::Plugin
   {
@@ -97,9 +95,7 @@ namespace gui
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<TapeMeasurePrivate> dataPtr;
+    private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-
-#endif
+}  // namespace gz::gui::plugins
+#endif  // GZ_GUI_PLUGINS_TAPEMEASURE_HH_

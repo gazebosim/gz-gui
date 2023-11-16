@@ -31,59 +31,54 @@
 #include "gz/gui/config.hh"
 #include "gz/gui/Dialog.hh"
 #include "gz/gui/Helpers.hh"
+#include "gz/gui/InstallationDirectories.hh"
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
 
 #include "gz/transport/TopicUtils.hh"
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
-    class ApplicationPrivate
-    {
-      /// \brief QML engine
-      public: QQmlApplicationEngine *engine{nullptr};
+class Application::Implementation
+{
+  /// \brief QML engine
+  public: QQmlApplicationEngine *engine{nullptr};
 
-      /// \brief Pointer to main window
-      public: MainWindow *mainWin{nullptr};
+  /// \brief Pointer to main window
+  public: MainWindow *mainWin{nullptr};
 
-      /// \brief Vector of pointers to dialogs
-      public: std::vector<Dialog *> dialogs;
+  /// \brief Vector of pointers to dialogs
+  public: std::vector<Dialog *> dialogs;
 
-      /// \brief Queue of plugins which should be added to the window
-      public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
+  /// \brief Queue of plugins which should be added to the window
+  public: std::queue<std::shared_ptr<Plugin>> pluginsToAdd;
 
-      /// \brief Vector of pointers to plugins already added, we hang on to
-      /// these until it is ok to unload the plugin's shared library.
-      public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
+  /// \brief Vector of pointers to plugins already added, we hang on to
+  /// these until it is ok to unload the plugin's shared library.
+  public: std::vector<std::shared_ptr<Plugin>> pluginsAdded;
 
-      /// \brief Environment variable which holds paths to look for plugins
-      public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
 
-      /// \brief Vector of paths to look for plugins
-      public: std::vector<std::string> pluginPaths;
+  /// \brief Environment variable which holds paths to look for plugins
+  public: std::string pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
 
-      /// \brief Holds a configuration which may be applied to mainWin once it
-      /// is created by calling applyConfig(). It's no longer needed and
-      /// should not be used after that.
-      public: WindowConfig windowConfig;
+  /// \brief Vector of paths to look for plugins
+  public: std::vector<std::string> pluginPaths;
 
-      /// \brief The path containing the default configuration file.
-      public: std::string defaultConfigPath;
+  /// \brief Holds a configuration which may be applied to mainWin once it
+  /// is created by calling applyConfig(). It's no longer needed and
+  /// should not be used after that.
+  public: WindowConfig windowConfig;
 
-      public: common::SignalHandler signalHandler;
+  /// \brief The path containing the default configuration file.
+  public: std::string defaultConfigPath;
 
-      /// \brief QT message handler that pipes qt messages into our console
-      /// system.
-      public: static void MessageHandler(QtMsgType _type,
-          const QMessageLogContext &_context, const QString &_msg);
-    };
-  }
-}
+  public: common::SignalHandler signalHandler;
 
-using namespace gz;
-using namespace gui;
+  /// \brief QT message handler that pipes qt messages into our console
+  /// system.
+  public: static void MessageHandler(QtMsgType _type,
+      const QMessageLogContext &_context, const QString &_msg);
+};
 
 enum class GZ_COMMON_HIDDEN AvailableAPIs
 {
@@ -96,7 +91,7 @@ enum class GZ_COMMON_HIDDEN AvailableAPIs
 Application::Application(int &_argc, char **_argv, const WindowType _type,
                          const char *_renderEngineGuiApiBackend) :
   QApplication(_argc, _argv),
-  dataPtr(new ApplicationPrivate)
+  dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   gzdbg << "Initializing application." << std::endl;
 
@@ -279,7 +274,7 @@ QQmlApplicationEngine *Application::Engine() const
 }
 
 /////////////////////////////////////////////////
-Application *gz::gui::App()
+Application *App()
 {
   return qobject_cast<Application *>(qGuiApp);
 }
@@ -336,7 +331,7 @@ bool Application::LoadConfig(const std::string &_config)
     if (!configPathEnv.empty())
     {
       std::vector<std::string> parentPaths = common::Split(configPathEnv, ':');
-      for (auto parentPath : parentPaths)
+      for (const auto &parentPath : parentPaths)
       {
         std::string tempPath = common::joinPaths(parentPath, configFull);
         if (common::exists(tempPath))
@@ -369,12 +364,12 @@ bool Application::LoadConfig(const std::string &_config)
 
   // Clear all previous plugins
   auto plugins = this->dataPtr->mainWin->findChildren<Plugin *>();
-  for (auto plugin : plugins)
+  for (auto *plugin : plugins)
   {
     auto pluginName = plugin->CardItem()->objectName();
     this->RemovePlugin(pluginName.toStdString());
   }
-  if (this->dataPtr->pluginsAdded.size() > 0)
+  if (!this->dataPtr->pluginsAdded.empty())
   {
     gzerr << "The plugin list was not properly cleaned up." << std::endl;
   }
@@ -382,10 +377,11 @@ bool Application::LoadConfig(const std::string &_config)
 
   // Process each plugin
   bool successful = true;
-  for (auto pluginElem = doc.FirstChildElement("plugin"); pluginElem != nullptr;
-      pluginElem = pluginElem->NextSiblingElement("plugin"))
+  for (auto *pluginElem = doc.FirstChildElement("plugin");
+       pluginElem != nullptr;
+       pluginElem = pluginElem->NextSiblingElement("plugin"))
   {
-    auto filename = pluginElem->Attribute("filename");
+    const auto *filename = pluginElem->Attribute("filename");
     if (!this->LoadPlugin(filename, pluginElem))
     {
       successful = false;
@@ -398,7 +394,7 @@ bool Application::LoadConfig(const std::string &_config)
   }
 
   // Process window properties
-  if (auto winElem = doc.FirstChildElement("window"))
+  if (auto *winElem = doc.FirstChildElement("window"))
   {
     gzdbg << "Loading window config" << std::endl;
 
@@ -412,7 +408,7 @@ bool Application::LoadConfig(const std::string &_config)
     this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
 
     // Closing behavior.
-    if (auto defaultExitActionElem =
+    if (auto *defaultExitActionElem =
       winElem->FirstChildElement("default_exit_action"))
     {
       ExitAction action{ExitAction::CLOSE_GUI};
@@ -431,43 +427,43 @@ bool Application::LoadConfig(const std::string &_config)
     }
 
     // Dialog on exit
-    if (auto dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
+    if (auto *dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
     {
       bool showDialogOnExit{false};
       dialogOnExitElem->QueryBoolText(&showDialogOnExit);
       this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
     }
 
-    if (auto dialogOnExitOptionsElem =
+    if (auto *dialogOnExitOptionsElem =
       winElem->FirstChildElement("dialog_on_exit_options"))
     {
-      if (auto promptElem =
+      if (auto *promptElem =
         dialogOnExitOptionsElem->FirstChildElement("prompt_text"))
       {
         this->dataPtr->mainWin->SetDialogOnExitText(
           QString::fromStdString(promptElem->GetText()));
       }
-      if (auto showShutdownElem =
+      if (auto *showShutdownElem =
         dialogOnExitOptionsElem->FirstChildElement("show_shutdown_button"))
       {
         bool showShutdownButton{false};
         showShutdownElem->QueryBoolText(&showShutdownButton);
         this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
       }
-      if (auto showCloseGuiElem =
+      if (auto *showCloseGuiElem =
         dialogOnExitOptionsElem->FirstChildElement("show_close_gui_button"))
       {
         bool showCloseGuiButton{false};
         showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
         this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
       }
-      if (auto shutdownTextElem =
+      if (auto *shutdownTextElem =
         dialogOnExitOptionsElem->FirstChildElement("shutdown_button_text"))
       {
         this->dataPtr->mainWin->SetExitDialogShutdownText(
           QString::fromStdString(shutdownTextElem->GetText()));
       }
-      if (auto closeGuiTextElem =
+      if (auto *closeGuiTextElem =
         dialogOnExitOptionsElem->FirstChildElement("close_gui_button_text"))
       {
         this->dataPtr->mainWin->SetExitDialogCloseGuiText(
@@ -477,7 +473,7 @@ bool Application::LoadConfig(const std::string &_config)
 
     // Server control service topic
     std::string serverControlService{"/server_control"};
-    auto serverControlElem =
+    auto *serverControlElem =
       winElem->FirstChildElement("server_control_service");
     if (nullptr != serverControlElem && nullptr != serverControlElem->GetText())
     {
@@ -541,8 +537,8 @@ bool Application::LoadPlugin(const std::string &_filename,
   // Add default folder and install folder
   std::string home;
   common::env(GZ_HOMEDIR, home);
-  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins:" +
-                             GZ_GUI_PLUGIN_INSTALL_DIR);
+  systemPaths.AddPluginPaths(home + "/.gz/gui/plugins");
+  systemPaths.AddPluginPaths(gz::gui::getPluginInstallDir());
 
   auto pathToLib = systemPaths.FindSharedLibrary(_filename);
   if (pathToLib.empty())
@@ -568,7 +564,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   // gz::gui::Plugin interface
   plugin::PluginPtr commonPlugin;
   std::shared_ptr<gui::Plugin> plugin{nullptr};
-  for (auto pluginName : pluginNames)
+  for (const auto &pluginName : pluginNames)
   {
     commonPlugin = pluginLoader.Instantiate(pluginName);
     if (!commonPlugin)
@@ -585,7 +581,7 @@ bool Application::LoadPlugin(const std::string &_filename,
               "] : couldn't instantiate plugin on path [" << pathToLib <<
               "]. Tried plugin names: " << std::endl;
 
-    for (auto pluginName : pluginNames)
+    for (const auto &pluginName : pluginNames)
     {
       gzerr << " * " << pluginName << std::endl;
     }
@@ -625,7 +621,7 @@ bool Application::LoadPlugin(const std::string &_filename,
   else
     this->InitializeDialogs();
 
-  this->PluginAdded(plugin->CardItem()->objectName());
+  emit this->PluginAdded(plugin->CardItem()->objectName());
   gzmsg << "Loaded plugin [" << _filename << "] from path [" << pathToLib
          << "]" << std::endl;
 
@@ -638,7 +634,7 @@ std::shared_ptr<Plugin> Application::PluginByName(
 {
   for (auto &plugin : this->dataPtr->pluginsAdded)
   {
-    auto cardItem = plugin->CardItem();
+    auto *cardItem = plugin->CardItem();
     if (!cardItem)
       continue;
 
@@ -688,7 +684,7 @@ bool Application::AddPluginsToWindow()
     return false;
 
   // Get main window background item
-  auto bgItem = this->dataPtr->mainWin->QuickWindow()
+  auto *bgItem = this->dataPtr->mainWin->QuickWindow()
       ->findChild<QQuickItem *>("background");
   if (!this->dataPtr->pluginsToAdd.empty() && !bgItem)
   {
@@ -710,7 +706,7 @@ bool Application::AddPluginsToWindow()
       continue;
     }
 
-    auto cardItem = plugin->CardItem();
+    auto *cardItem = plugin->CardItem();
     if (!cardItem)
       continue;
 
@@ -719,7 +715,7 @@ bool Application::AddPluginsToWindow()
     QMetaObject::invokeMethod(bgItem, "addSplitItem",
         Q_RETURN_ARG(QVariant, splitName));
 
-    auto splitItem = bgItem->findChild<QQuickItem *>(
+    auto *splitItem = bgItem->findChild<QQuickItem *>(
         splitName.toString());
     if (!splitItem)
     {
@@ -760,12 +756,12 @@ bool Application::InitializeDialogs()
     this->dataPtr->pluginsToAdd.pop();
 
     // Create card
-    auto cardItem = plugin->CardItem();
+    auto *cardItem = plugin->CardItem();
     if (!cardItem)
       continue;
 
     // Create dialog
-    auto dialog = new Dialog();
+    auto *dialog = new Dialog();
     if (!dialog || !dialog->QuickWindow())
       continue;
 
@@ -792,10 +788,7 @@ bool Application::InitializeDialogs()
     gzdbg << "Initialized dialog [" << title.toStdString() << "]" << std::endl;
   }
 
-  if (this->dataPtr->pluginsAdded.empty())
-    return false;
-
-  return true;
+  return !this->dataPtr->pluginsAdded.empty();
 }
 
 /////////////////////////////////////////////////
@@ -827,7 +820,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
   paths.push_back(home + "/.gz/gui/plugins");
 
   // 4. Install path
-  paths.push_back(GZ_GUI_PLUGIN_INSTALL_DIR);
+  paths.push_back(gz::gui::getPluginInstallDir());
 
   // Populate map
   std::vector<std::pair<std::string, std::vector<std::string>>> plugins;
@@ -849,7 +842,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
         ps.push_back(plugin);
     }
 
-    plugins.push_back(std::make_pair(path, ps));
+    plugins.emplace_back(path, ps);
   }
 
   return plugins;
@@ -885,7 +878,7 @@ void Application::RemovePlugin(std::shared_ptr<Plugin> _plugin)
 }
 
 //////////////////////////////////////////////////
-void ApplicationPrivate::MessageHandler(QtMsgType _type,
+void Application::Implementation::MessageHandler(QtMsgType _type,
     const QMessageLogContext &_context, const QString &_msg)
 {
   std::string msg = "[QT] " + _msg.toStdString();
@@ -913,3 +906,4 @@ void ApplicationPrivate::MessageHandler(QtMsgType _type,
       break;
   }
 }
+}  // namespace gz::gui

@@ -19,5 +19,5 @@
 #include "GzComponents.hh"
 
 // Register this plugin
-GZ_ADD_PLUGIN(gz::gui::GzComponents,
+GZ_ADD_PLUGIN(GzComponents,
               gz::gui::Plugin);

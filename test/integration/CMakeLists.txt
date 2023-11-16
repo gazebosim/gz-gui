@@ -10,4 +10,6 @@ gz_build_tests(
     gz-plugin${GZ_PLUGIN_VER}::loader
     gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
     Qt5::Test
+  ENVIRONMENT 
+    GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 )

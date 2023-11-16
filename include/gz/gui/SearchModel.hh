@@ -20,9 +20,7 @@
 #include "gz/gui/Export.hh"
 #include "gz/gui/qt.h"
 
-namespace gz
-{
-namespace gui
+namespace gz::gui
 {
   /// \brief Customize the proxy model to display search results.
   ///
@@ -89,6 +87,5 @@ namespace gui
     /// \brief Full search string.
     public: QString search;
   };
-}
-}
-#endif
+}  // namespace gz::gui
+#endif  // GZ_GUI_SEARCHMODEL_HH_

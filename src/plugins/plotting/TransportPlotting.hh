@@ -14,22 +14,19 @@
  * limitations under the License.
  *
 */
+
 #ifndef GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 #define GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 
 #include <gz/gui/Plugin.hh>
 #include <gz/gui/PlottingInterface.hh>
+#include <gz/utils/ImplPtr.hh>
 #include <gz/utils/SuppressWarning.hh>
 
 #include <memory>
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-namespace plugins
-{
-
 /// \brief Plots fields from Gazebo Transport topics.
 /// Fields can be dragged from the Topic Viewer or the Component Inspector.
 class TransportPlotting : public gz::gui::Plugin
@@ -40,18 +37,11 @@ class TransportPlotting : public gz::gui::Plugin
   public: TransportPlotting();
 
   /// \brief Destructor
-  public: ~TransportPlotting();
+  public: ~TransportPlotting() override;
 
   // Documentation inherited
   public: void LoadConfig(const tinyxml2::XMLElement *) override;
-
-  /// \brief Interface with the UI to Handle Transport Plotting
-  GZ_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING
-  private: std::unique_ptr<PlottingInterface> dataPtr;
-  GZ_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
 };
+}  // namespace gz::gui::plugins
 
-}
-}
-}
-#endif
+#endif  // GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_

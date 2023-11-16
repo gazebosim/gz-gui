@@ -17,10 +17,8 @@
 
 #include "MinimalSceneRhi.hh"
 
-using namespace gz;
-using namespace gui;
-using namespace plugins;
-
+namespace gz::gui::plugins
+{
 /////////////////////////////////////////////////
 GzCameraTextureRhi::~GzCameraTextureRhi() = default;
 
@@ -53,3 +51,4 @@ void RenderThreadRhi::SetContext(QOpenGLContext *) //NOLINT
 
 /////////////////////////////////////////////////
 TextureNodeRhi::~TextureNodeRhi() = default;
+}  // namespace gz::gui::plugins

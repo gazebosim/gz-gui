@@ -33,11 +33,7 @@
 
 #include "MinimalSceneRhi.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief Creates a Gazebo rendering scene and user camera.
   /// It is possible to orbit the camera around the scene with
@@ -268,7 +264,7 @@ namespace plugins
     /// \brief Render when safe
     /// \param[in] _renderSync RenderSync to safely
     /// synchronize Qt and worker thread (this)
-    public slots: void RenderNext(RenderSync *_renderSync);
+    public slots: void RenderNext(gz::gui::plugins::RenderSync *_renderSync);
 
     /// \brief Shutdown the thread and the render engine
     public slots: void ShutDown();
@@ -384,101 +380,101 @@ namespace plugins
     /// \param[in] _view_controller The camera view controller type to set
     public: void SetCameraViewController(const std::string &_view_controller);
 
-    /// \brief Slot called when thread is ready to be started
-    public Q_SLOTS: void Ready();
+  /// \brief Slot called when thread is ready to be started
+  public Q_SLOTS: void Ready();
 
-    /// \brief Handle key press event for snapping
-    /// \param[in] _e The key event to process.
-    public: void HandleKeyPress(const common::KeyEvent &_e);
+  /// \brief Handle key press event for snapping
+  /// \param[in] _e The key event to process.
+  public: void HandleKeyPress(const common::KeyEvent &_e);
 
-    /// \brief Handle key release event for snapping
-    /// \param[in] _e The key event to process.
-    public: void HandleKeyRelease(const common::KeyEvent &_e);
+  /// \brief Handle key release event for snapping
+  /// \param[in] _e The key event to process.
+  public: void HandleKeyRelease(const common::KeyEvent &_e);
 
-    /// \brief Set a callback to be called in case there are errors.
-    /// \param[in] _cb Error callback
-    public: void SetErrorCb(std::function<void(const QString &)> _cb);
+  /// \brief Set a callback to be called in case there are errors.
+  /// \param[in] _cb Error callback
+  public: void SetErrorCb(std::function<void(const QString &)> _cb);
 
-    /// \brief Stop rendering and shutdown resources.
-    public: void StopRendering();
+  /// \brief Stop rendering and shutdown resources.
+  public: void StopRendering();
 
-    // Documentation inherited
-    protected: virtual void mousePressEvent(QMouseEvent *_e) override;
+  // Documentation inherited
+  protected: virtual void mousePressEvent(QMouseEvent *_e) override;
 
-    // Documentation inherited
-    protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
+  // Documentation inherited
+  protected: virtual void mouseReleaseEvent(QMouseEvent *_e) override;
 
-    // Documentation inherited
-    protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
+  // Documentation inherited
+  protected: virtual void mouseMoveEvent(QMouseEvent *_e) override;
 
-    // Documentation inherited
-    protected: virtual void keyPressEvent(QKeyEvent *_e) override;
+  // Documentation inherited
+  protected: virtual void keyPressEvent(QKeyEvent *_e) override;
 
-    // Documentation inherited
-    protected: virtual void keyReleaseEvent(QKeyEvent *_e) override;
+  // Documentation inherited
+  protected: virtual void keyReleaseEvent(QKeyEvent *_e) override;
 
-    // Documentation inherited
-    protected: virtual void wheelEvent(QWheelEvent *_e) override;
+  // Documentation inherited
+  protected: virtual void wheelEvent(QWheelEvent *_e) override;
 
-    /// \brief Overrides the paint event to render the render engine
-    /// camera view
-    /// \param[in] _oldNode The node passed in previous updatePaintNode
-    /// function. It represents the visual representation of the item.
-    /// \param[in] _data The node transformation data.
-    /// \return Updated node.
-    private: QSGNode *updatePaintNode(QSGNode *_oldNode,
-        QQuickItem::UpdatePaintNodeData *_data) override;
+  /// \brief Overrides the paint event to render the render engine
+  /// camera view
+  /// \param[in] _oldNode The node passed in previous updatePaintNode
+  /// function. It represents the visual representation of the item.
+  /// \param[in] _data The node transformation data.
+  /// \return Updated node.
+  private: QSGNode *updatePaintNode(QSGNode *_oldNode,
+      QQuickItem::UpdatePaintNodeData *_data) override;
 
-    /// \internal
-    /// \brief Pointer to private data.
-    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
-  };
+  /// \internal
+  /// \brief Pointer to private data.
+  GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
+};
 
-  /// \brief Texture node for displaying the render texture from gz-renderer
-  class TextureNode : public QObject, public QSGSimpleTextureNode
-  {
-    Q_OBJECT
+/// \brief Texture node for displaying the render texture from gz-renderer
+class TextureNode : public QObject, public QSGSimpleTextureNode
+{
+  Q_OBJECT
 
-    /// \brief Constructor
-    /// \param[in] _window Window to display the texture
-    /// \param[in] _renderSync RenderSync to safely
-    /// synchronize Qt (this) and worker thread
-    /// \param[in] _graphicsAPI The type of graphics API
-    /// \param[in] _camera Camera owning the Texture Handle
-    public: explicit TextureNode(QQuickWindow *_window,
-                                 RenderSync &_renderSync,
-                                 const rendering::GraphicsAPI &_graphicsAPI,
-                                 rendering::CameraPtr &_camera);
+  /// \brief Constructor
+  /// \param[in] _window Window to display the texture
+  /// \param[in] _renderSync RenderSync to safely
+  /// synchronize Qt (this) and worker thread
+  /// \param[in] _graphicsAPI The type of graphics API
+  /// \param[in] _camera Camera owning the Texture Handle
+  public: explicit TextureNode(QQuickWindow *_window,
+                               RenderSync &_renderSync,
+                               const rendering::GraphicsAPI &_graphicsAPI,
+                               rendering::CameraPtr &_camera);
 
-    /// \brief Destructor
-    public: ~TextureNode() override;
+  /// \brief Destructor
+  public: ~TextureNode() override;
 
-    /// \brief This function gets called on the FBO rendering thread and will
-    ///  store the texture id and size and schedule an update on the window.
-    /// \param[in] _texturePtr Pointer to a texture Id
-    /// \param[in] _size Texture size
-    // public slots: void NewTexture(uint _id, const QSize &_size);
-    public slots: void NewTexture(void* _texturePtr, const QSize &_size);
+  /// \brief This function gets called on the FBO rendering thread and will
+  ///  store the texture id and size and schedule an update on the window.
+  /// \param[in] _texturePtr Pointer to a texture Id
+  /// \param[in] _size Texture size
+  // public slots: void NewTexture(uint _id, const QSize &_size);
+  public slots: void NewTexture(void* _texturePtr, const QSize &_size);
 
-    /// \brief Before the scene graph starts to render, we update to the
-    /// pending texture
-    public slots: void PrepareNode();
+  /// \brief Before the scene graph starts to render, we update to the
+  /// pending texture
+  public slots: void PrepareNode();
 
-    /// \param[in] _renderSync RenderSync to send to the worker thread
-    signals: void TextureInUse(RenderSync *_renderSync);
+  /// \param[in] _renderSync RenderSync to send to the worker thread
+        signals: void TextureInUse(gz::gui::plugins::RenderSync *_renderSync);
 
-    /// \brief Signal emitted when a new texture is ready to trigger window
-    /// update
-    signals: void PendingNewTexture();
+  /// \brief Signal emitted when a new texture is ready to trigger window
+  /// update
+  signals: void PendingNewTexture();
 
-    /// \brief Texture size
-    public: QSize size = QSize(0, 0);
+  /// \brief Texture size
+  public: QSize size = QSize(0, 0);
 
-    /// \brief Mutex to protect the texture variables
-    public: QMutex mutex;
+  /// \brief Mutex to protect the texture variables
+  public: QMutex mutex;
 
-    /// \brief See RenderSync
-    public: RenderSync &renderSync;
+  /// \brief See RenderSync
+  public: RenderSync &renderSync;
 
     /// \brief Qt quick window
     public: QQuickWindow *window = nullptr;
@@ -486,8 +482,6 @@ namespace plugins
     /// \brief Pointer to render interface to handle OpenGL/Metal compatibility
     private: std::unique_ptr<TextureNodeRhi> rhi;
    };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_MINIMALSCENE_HH_

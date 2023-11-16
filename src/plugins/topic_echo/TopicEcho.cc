@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
@@ -23,44 +24,33 @@
 #include "gz/gui/Application.hh"
 #include "TopicEcho.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class TopicEcho::Implementation
 {
-namespace plugins
-{
-  class TopicEchoPrivate
-  {
-    /// \brief Topic
-    public: QString topic{"/echo"};
+  /// \brief Topic
+  public: QString topic{"/echo"};
 
-    /// \brief A list of text data.
-    public: QStringListModel msgList;
+  /// \brief A list of text data.
+  public: QStringListModel msgList {nullptr};
 
-    /// \brief Size of the text buffer. The size is the number of
-    /// messages.
-    public: unsigned int buffer{10u};
+  /// \brief Size of the text buffer. The size is the number of
+  /// messages.
+  public: unsigned int buffer{10u};
 
-    /// \brief Flag used to pause message parsing.
-    public: bool paused{false};
+  /// \brief Flag used to pause message parsing.
+  public: bool paused{false};
 
-    /// \brief Mutex to protect message buffer.
-    public: std::mutex mutex;
+  /// \brief Mutex to protect message buffer.
+  public: std::mutex mutex;
 
-    /// \brief Node for communication
-    public: gz::transport::Node node;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Node for communication
+  public: gz::transport::Node node;
+};
 
 /////////////////////////////////////////////////
 TopicEcho::TopicEcho()
-  : Plugin(), dataPtr(new TopicEchoPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Connect model
   App()->Engine()->rootContext()->setContextProperty("TopicEchoMsgList",
@@ -68,9 +58,7 @@ TopicEcho::TopicEcho()
 }
 
 /////////////////////////////////////////////////
-TopicEcho::~TopicEcho()
-{
-}
+TopicEcho::~TopicEcho() = default;
 
 /////////////////////////////////////////////////
 void TopicEcho::LoadConfig(const tinyxml2::XMLElement * /*_pluginElem*/)
@@ -122,7 +110,7 @@ void TopicEcho::OnMessage(const google::protobuf::Message &_msg)
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->AddMsg(QString::fromStdString(_msg.DebugString()));
+  emit this->AddMsg(QString::fromStdString(_msg.DebugString()));
 }
 
 /////////////////////////////////////////////////
@@ -154,7 +142,7 @@ QString TopicEcho::Topic() const
 void TopicEcho::SetTopic(const QString &_topic)
 {
   this->dataPtr->topic = _topic;
-  this->TopicChanged();
+  emit this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
@@ -174,10 +162,10 @@ bool TopicEcho::Paused() const
 void TopicEcho::SetPaused(const bool &_paused)
 {
   this->dataPtr->paused = _paused;
-  this->PausedChanged();
+  emit this->PausedChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(TopicEcho,
-              gui::Plugin)
-
+GZ_ADD_PLUGIN(gz::gui::plugins::TopicEcho,
+              gz::gui::Plugin)

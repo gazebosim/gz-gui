@@ -93,7 +93,9 @@ function(gz_gui_add_plugin plugin_name)
         # Used to make test-directory headers visible to the unit tests
         ${PROJECT_SOURCE_DIR}
         # Used to make test_config.h visible to the unit tests
-        ${PROJECT_BINARY_DIR})
+        ${PROJECT_BINARY_DIR}
+      ENVIRONMENT 
+        GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX})
   endif()
 
   if (MSVC)

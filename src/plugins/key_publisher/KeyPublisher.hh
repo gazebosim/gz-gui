@@ -33,14 +33,11 @@
 #include <memory>
 
 #include <gz/gui/Plugin.hh>
+#include <gz/utils/ImplPtr.hh>
 #include <gz/transport/Node.hh>
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-  class KeyPublisherPrivate;
-
   /// \brief Publish keyboard stokes to "keyboard/keypress" topic.
   ///
   /// ## Configuration
@@ -66,9 +63,8 @@ namespace gui
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<KeyPublisherPrivate> dataPtr;
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_KEYPUBLISHER_HH_

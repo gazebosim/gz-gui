@@ -36,14 +36,10 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
-{
-  class ImageDisplayPrivate;
+#include <gz/utils/ImplPtr.hh>
 
+namespace gz::gui::plugins
+{
   class ImageProvider : public QQuickImageProvider
   {
     public: ImageProvider()
@@ -125,7 +121,6 @@ namespace plugins
     /// \brief Notify that a new image has been received.
     signals: void newImage();
 
-    /// \brief Callback in main thread when image changes
     private slots: void ProcessImage();
 
     /// \brief Subscriber callback when new image is received
@@ -134,10 +129,8 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<ImageDisplayPrivate> dataPtr;
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_

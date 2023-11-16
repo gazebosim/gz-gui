@@ -18,18 +18,13 @@
 #ifndef GZ_GUI_PLUGINS_CAMERAFPS_HH_
 #define GZ_GUI_PLUGINS_CAMERAFPS_HH_
 
+#include <gz/utils/ImplPtr.hh>
 #include <memory>
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-namespace plugins
-{
-  class CameraFpsPrivate;
-
   /// \brief This plugin displays the GUI camera's Framerate Per Second (FPS)
   class CameraFps : public Plugin
   {
@@ -72,9 +67,8 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<CameraFpsPrivate> dataPtr;
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-}
-#endif
+}  // namespace gz::gui::plugins
+
+#endif  // GZ_GUI_PLUGINS_CAMERAFPS_HH_

@@ -14,6 +14,7 @@
  * limitations under the License.
  *
 */
+
 #ifndef GZ_GUI_PLUGINS_SCREENSHOT_HH_
 #define GZ_GUI_PLUGINS_SCREENSHOT_HH_
 
@@ -25,14 +26,10 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
-{
-  class ScreenshotPrivate;
+#include <gz/utils/ImplPtr.hh>
 
+namespace gz::gui::plugins
+{
   /// \brief Provides a button and a transport service for taking a screenshot
   /// of current 3D scene.
   ///
@@ -121,10 +118,8 @@ namespace plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<ScreenshotPrivate> dataPtr;
+    private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_SCREENSHOT_HH_

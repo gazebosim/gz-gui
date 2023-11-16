@@ -16,6 +16,7 @@
 */
 #include "Screenshot.hh"
 
+#include <gz/utils/ImplPtr.hh>
 #include <string>
 
 #include <gz/common/Console.hh>
@@ -32,44 +33,32 @@
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class Screenshot::Implementation
 {
-namespace plugins
-{
-  class ScreenshotPrivate
-  {
-    /// \brief Node for communication
-    public: gz::transport::Node node;
+  /// \brief Node for communication
+  public: gz::transport::Node node;
 
-    /// \brief Screenshot service name
-    public: std::string screenshotService;
+  /// \brief Screenshot service name
+  public: std::string screenshotService;
 
-    /// \brief Directory to save screenshots
-    public: std::string directory;
+  /// \brief Directory to save screenshots
+  public: std::string directory;
 
-    /// \brief Whether a screenshot has been requested but not processed yet.
-    public: bool dirty{false};
+  /// \brief Whether a screenshot has been requested but not processed yet.
+  public: bool dirty{false};
 
-    /// \brief Pointer to the user camera.
-    public: gz::rendering::CameraPtr userCamera{nullptr};
+  /// \brief Pointer to the user camera.
+  public: gz::rendering::CameraPtr userCamera{nullptr};
 
-    /// \brief Saved screenshot filepath
-    public: QString savedScreenshotPath = "";
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Saved screenshot filepath
+  public: QString savedScreenshotPath = "";
+};
 
 /////////////////////////////////////////////////
 Screenshot::Screenshot()
-  : gui::Plugin(),
-  dataPtr(std::make_unique<ScreenshotPrivate>())
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   std::string home;
   common::env(GZ_HOMEDIR, home);
@@ -90,8 +79,6 @@ Screenshot::Screenshot()
       this->dataPtr->directory = defaultDir;
     }
   }
-
-  this->DirectoryChanged();
 }
 
 /////////////////////////////////////////////////
@@ -166,7 +153,7 @@ void Screenshot::SaveScreenshot()
 
   this->SetSavedScreenshotPath(QString::fromStdString(savePath));
 
-  App()->findChild<MainWindow *>()->notifyWithDuration(
+  emit App()->findChild<MainWindow *>()->notifyWithDuration(
     QString::fromStdString("Saved image to: <b>" + savePath + "</b>"), 4000);
 }
 
@@ -210,7 +197,7 @@ void Screenshot::SetDirectory(const QString &_dirUrl)
 {
   QString newDir = QUrl(_dirUrl).toLocalFile();
   this->dataPtr->directory = newDir.toStdString();
-  this->DirectoryChanged();
+  emit this->DirectoryChanged();
 }
 
 /////////////////////////////////////////////////
@@ -223,10 +210,11 @@ QString Screenshot::SavedScreenshotPath() const
 void Screenshot::SetSavedScreenshotPath(const QString &_filename)
 {
   this->dataPtr->savedScreenshotPath = _filename;
-  this->SavedScreenshotPathChanged();
-  this->savedScreenshot();
+  emit this->SavedScreenshotPathChanged();
+  emit this->savedScreenshot();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(Screenshot,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::Screenshot,
+              gz::gui::Plugin)

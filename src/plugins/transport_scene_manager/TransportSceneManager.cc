@@ -16,6 +16,7 @@
 */
 
 #include <algorithm>
+#include <gz/utils/ImplPtr.hh>
 #include <map>
 #include <sstream>
 #include <string>
@@ -54,8 +55,10 @@
 
 #include "TransportSceneManager.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for TransportSceneManager
-class gz::gui::plugins::TransportSceneManagerPrivate
+class TransportSceneManager::Implementation
 {
   /// \brief Make the scene service request and populate the scene
   public: void Request();
@@ -172,13 +175,9 @@ class gz::gui::plugins::TransportSceneManagerPrivate
   public: std::thread initializeTransport;
 };
 
-using namespace gz;
-using namespace gui;
-using namespace plugins;
-
 /////////////////////////////////////////////////
 TransportSceneManager::TransportSceneManager()
-  : Plugin(), dataPtr(new TransportSceneManagerPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -254,12 +253,12 @@ void TransportSceneManager::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::InitializeTransport()
+void TransportSceneManager::Implementation::InitializeTransport()
 {
   this->Request();
 
   if (!this->node.Subscribe(this->poseTopic,
-      &TransportSceneManagerPrivate::OnPoseVMsg, this))
+      &Implementation::OnPoseVMsg, this))
   {
     gzerr << "Error subscribing to pose topic: " << this->poseTopic
       << std::endl;
@@ -271,7 +270,7 @@ void TransportSceneManagerPrivate::InitializeTransport()
   }
 
   if (!this->node.Subscribe(this->deletionTopic,
-      &TransportSceneManagerPrivate::OnDeletionMsg, this))
+      &Implementation::OnDeletionMsg, this))
   {
     gzerr << "Error subscribing to deletion topic: " << this->deletionTopic
       << std::endl;
@@ -283,7 +282,7 @@ void TransportSceneManagerPrivate::InitializeTransport()
   }
 
   if (!this->node.Subscribe(this->sceneTopic,
-      &TransportSceneManagerPrivate::OnSceneMsg, this))
+      &Implementation::OnSceneMsg, this))
   {
     gzerr << "Error subscribing to scene topic: " << this->sceneTopic
            << std::endl;
@@ -310,7 +309,7 @@ bool TransportSceneManager::eventFilter(QObject *_obj, QEvent *_event)
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::Request()
+void TransportSceneManager::Implementation::Request()
 {
   // wait for the service to be advertized
   std::vector<transport::ServicePublisher> publishers;
@@ -326,7 +325,7 @@ void TransportSceneManagerPrivate::Request()
   }
 
   if (publishers.empty() || !this->node.Request(this->service,
-      &TransportSceneManagerPrivate::OnSceneSrvMsg, this))
+      &Implementation::OnSceneSrvMsg, this))
   {
     gzerr << "Error making service request to [" << this->service << "]"
            << std::endl;
@@ -334,7 +333,7 @@ void TransportSceneManagerPrivate::Request()
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::OnPoseVMsg(const msgs::Pose_V &_msg)
+void TransportSceneManager::Implementation::OnPoseVMsg(const msgs::Pose_V &_msg)
 {
   std::lock_guard<std::mutex> lock(this->msgMutex);
   for (int i = 0; i < _msg.pose_size(); ++i)
@@ -353,7 +352,8 @@ void TransportSceneManagerPrivate::OnPoseVMsg(const msgs::Pose_V &_msg)
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::OnDeletionMsg(const msgs::UInt32_V &_msg)
+void TransportSceneManager::Implementation::OnDeletionMsg(
+  const msgs::UInt32_V &_msg)
 {
   std::lock_guard<std::mutex> lock(this->msgMutex);
   std::copy(_msg.data().begin(), _msg.data().end(),
@@ -361,7 +361,7 @@ void TransportSceneManagerPrivate::OnDeletionMsg(const msgs::UInt32_V &_msg)
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::OnRender()
+void TransportSceneManager::Implementation::OnRender()
 {
   if (nullptr == this->scene)
   {
@@ -370,7 +370,7 @@ void TransportSceneManagerPrivate::OnRender()
       return;
 
     this->initializeTransport = std::thread(
-        &TransportSceneManagerPrivate::InitializeTransport, this);
+        &Implementation::InitializeTransport, this);
   }
 
   std::lock_guard<std::mutex> lock(this->msgMutex);
@@ -432,15 +432,15 @@ void TransportSceneManagerPrivate::OnRender()
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::OnSceneMsg(const msgs::Scene &_msg)
+void TransportSceneManager::Implementation::OnSceneMsg(const msgs::Scene &_msg)
 {
   std::lock_guard<std::mutex> lock(this->msgMutex);
   this->sceneMsgs.push_back(_msg);
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::OnSceneSrvMsg(const msgs::Scene &_msg,
-    const bool result)
+void TransportSceneManager::Implementation::OnSceneSrvMsg(
+  const msgs::Scene &_msg, const bool result)
 {
   if (!result)
   {
@@ -456,7 +456,7 @@ void TransportSceneManagerPrivate::OnSceneSrvMsg(const msgs::Scene &_msg,
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::LoadScene(const msgs::Scene &_msg)
+void TransportSceneManager::Implementation::LoadScene(const msgs::Scene &_msg)
 {
   rendering::VisualPtr rootVis = this->scene->RootVisual();
 
@@ -489,7 +489,7 @@ void TransportSceneManagerPrivate::LoadScene(const msgs::Scene &_msg)
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
+rendering::VisualPtr TransportSceneManager::Implementation::LoadModel(
     const msgs::Model &_msg)
 {
   rendering::VisualPtr modelVis;
@@ -531,7 +531,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadModel(
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr TransportSceneManagerPrivate::LoadLink(
+rendering::VisualPtr TransportSceneManager::Implementation::LoadLink(
     const msgs::Link &_msg)
 {
   rendering::VisualPtr linkVis;
@@ -572,7 +572,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadLink(
 }
 
 /////////////////////////////////////////////////
-rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
+rendering::VisualPtr TransportSceneManager::Implementation::LoadVisual(
     const msgs::Visual &_msg)
 {
   if (!_msg.has_geometry())
@@ -676,7 +676,7 @@ rendering::VisualPtr TransportSceneManagerPrivate::LoadVisual(
 }
 
 /////////////////////////////////////////////////
-rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
+rendering::GeometryPtr TransportSceneManager::Implementation::LoadGeometry(
     const msgs::Geometry &_msg, math::Vector3d &_scale,
     math::Pose3d &_localPose)
 {
@@ -769,7 +769,7 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
 }
 
 /////////////////////////////////////////////////
-rendering::MaterialPtr TransportSceneManagerPrivate::LoadMaterial(
+rendering::MaterialPtr TransportSceneManager::Implementation::LoadMaterial(
     const msgs::Material &_msg)
 {
   rendering::MaterialPtr material = this->scene->CreateMaterial();
@@ -794,7 +794,7 @@ rendering::MaterialPtr TransportSceneManagerPrivate::LoadMaterial(
 }
 
 /////////////////////////////////////////////////
-rendering::LightPtr TransportSceneManagerPrivate::LoadLight(
+rendering::LightPtr TransportSceneManager::Implementation::LoadLight(
     const msgs::Light &_msg)
 {
   rendering::LightPtr light;
@@ -850,7 +850,8 @@ rendering::LightPtr TransportSceneManagerPrivate::LoadLight(
 }
 
 /////////////////////////////////////////////////
-void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
+void TransportSceneManager::Implementation::DeleteEntity(
+  const unsigned int _entity)
 {
   if (this->visuals.find(_entity) != this->visuals.end())
   {
@@ -871,6 +872,7 @@ void TransportSceneManagerPrivate::DeleteEntity(const unsigned int _entity)
     this->lights.erase(_entity);
   }
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::TransportSceneManager,

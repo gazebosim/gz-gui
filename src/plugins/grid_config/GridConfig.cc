@@ -32,7 +32,7 @@
 
 #include "GridConfig.hh"
 
-namespace gz::gui
+namespace gz::gui::plugins
 {
   struct GridParam
   {
@@ -52,7 +52,7 @@ namespace gz::gui
     math::Color color{math::Color(0.7f, 0.7f, 0.7f, 1.0f)};
   };
 
-  class GridConfigPrivate
+  class GridConfig::Implementation
   {
     /// \brief List of grid names.
     public: QStringList nameList;
@@ -81,14 +81,10 @@ namespace gz::gui
     /// \brief Visible state
     bool visible{true};
   };
-}
-
-using namespace gz;
-using namespace gui;
 
 /////////////////////////////////////////////////
 GridConfig::GridConfig()
-  : gz::gui::Plugin(), dataPtr(std::make_unique<GridConfigPrivate>())
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -290,7 +286,7 @@ void GridConfig::ConnectToGrid()
         this->dataPtr->gridParam.cellLength = grid->CellLength();
         this->dataPtr->gridParam.pose = grid->Parent()->LocalPose();
         this->dataPtr->gridParam.color = grid->Parent()->Material()->Ambient();
-        this->newParams(
+        emit this->newParams(
             grid->CellCount(),
             grid->VerticalCellCount(),
             grid->CellLength(),
@@ -324,7 +320,7 @@ QStringList GridConfig::NameList() const
 void GridConfig::SetNameList(const QStringList &_nameList)
 {
   this->dataPtr->nameList = _nameList;
-  this->NameListChanged();
+  emit this->NameListChanged();
 }
 
 /////////////////////////////////////////////////
@@ -407,9 +403,10 @@ void GridConfig::RefreshList()
   // Select first one
   if (this->dataPtr->nameList.count() > 0)
     this->OnName(this->dataPtr->nameList.at(0));
-  this->NameListChanged();
+  emit this->NameListChanged();
 }
+}  // namespace gz::gui
 
 // Register this plugin
-GZ_ADD_PLUGIN(GridConfig,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::GridConfig,
+              gz::gui::Plugin)

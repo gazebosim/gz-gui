@@ -24,19 +24,10 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
 
-#ifdef _WIN32
-// Disable warning C4251 which is triggered by
-// std::unique_ptr
-#pragma warning(push)
-#pragma warning(disable: 4251)
-#endif
+#include <gz/utils/ImplPtr.hh>
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
-    class DialogPrivate;
-
     /// \brief Gui plugin
     class GZ_GUI_VISIBLE Dialog : public QObject
     {
@@ -92,13 +83,7 @@ namespace gz
 
       /// \internal
       /// \brief Private data pointer
-      private: std::unique_ptr<DialogPrivate> dataPtr;
+      GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
     };
-  }
-}
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-#endif
+}  // namespace gz::gui
+#endif  // GZ_GUI_DIALOG_HH_

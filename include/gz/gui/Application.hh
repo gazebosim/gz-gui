@@ -25,23 +25,15 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
 
-#ifdef _WIN32
-// Disable warning C4251 which is triggered by
-// std::unique_ptr
-#pragma warning(push)
-#pragma warning(disable: 4251)
-#endif
+#include <gz/utils/ImplPtr.hh>
 
 namespace tinyxml2
 {
   class XMLElement;
 }
 
-namespace gz
+namespace gz::gui
 {
-  namespace gui
-  {
-    class ApplicationPrivate;
     class Dialog;
     class MainWindow;
     class Plugin;
@@ -210,18 +202,12 @@ namespace gz
 
       /// \internal
       /// \brief Private data pointer
-      private: std::unique_ptr<ApplicationPrivate> dataPtr;
+      GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
     };
 
     /// \brief Get current running application, this is a cast of qGuiApp.
     /// \return Pointer to running application, or nullptr if none is running.
     GZ_GUI_VISIBLE
     Application *App();
-  }
-}
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-#endif
+}  // namespace gz::gui
+#endif  // GZ_GUI_APPLICATION_HH_

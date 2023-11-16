@@ -25,6 +25,8 @@
 #include "gz/gui/Export.hh"
 #include "gz/gui/Plugin.hh"
 
+#include <gz/utils/ImplPtr.hh>
+
 #ifndef _WIN32
 #  define WorldStats_EXPORTS_API
 #else
@@ -35,14 +37,8 @@
 #  endif
 #endif
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
-{
-namespace plugins
-{
-  class WorldStatsPrivate;
-
   /// \brief This plugin provides a time panel which may display:
   /// * Simulation time
   /// * Real time
@@ -103,10 +99,10 @@ namespace plugins
     public: WorldStats();
 
     /// \brief Destructor
-    public: virtual ~WorldStats();
+    public: ~WorldStats() override;
 
     // Documentation inherited
-    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem);
+    public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
 
     /// \brief Callback in main thread when diagnostics come in
     public slots: void ProcessMsg();
@@ -159,10 +155,8 @@ namespace plugins
     private: void OnWorldStatsMsg(const gz::msgs::WorldStatistics &_msg);
 
     // Private data
-    private: std::unique_ptr<WorldStatsPrivate> dataPtr;
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_WORLDSTATS_HH_

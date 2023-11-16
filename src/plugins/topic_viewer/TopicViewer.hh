@@ -14,9 +14,14 @@
  * limitations under the License.
  *
 */
+
+#ifndef GZ_GUI_PLUGINS_TOPICVIEWER_HH_
+#define GZ_GUI_PLUGINS_TOPICVIEWER_HH_
+
 #include <memory>
 
 #include <gz/gui/Plugin.hh>
+#include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
 #  define TopicViewer_EXPORTS_API
@@ -28,14 +33,9 @@
 #  endif
 #endif
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   class TopicsModel;
-  class TopicViewerPrivate;
 
   /// \brief a Plugin to view the topics and their msgs & fields
   /// Field's informations can be passed by dragging them via the UI
@@ -60,9 +60,8 @@ namespace plugins
     public slots: void UpdateModel();
 
     /// \brief Pointer to private data.
-    private: std:: unique_ptr<TopicViewerPrivate> dataPtr;
+    private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
+}  // namespace gz::gui::plugins
 
-}
-}
-}
+#endif  // GZ_GUI_PLUGINS_TOPICVIEWER_HH_

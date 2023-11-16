@@ -19,6 +19,7 @@
 #include <gz/msgs/double.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
 
+#include <gz/utils/ImplPtr.hh>
 #include <string>
 #include <mutex>
 
@@ -43,8 +44,10 @@
 
 #include "InteractiveViewControl.hh"
 
+namespace gz::gui::plugins
+{
 /// \brief Private data class for InteractiveViewControl
-class gz::gui::plugins::InteractiveViewControlPrivate
+class InteractiveViewControl::Implementation
 {
   /// \brief Perform rendering calls in the rendering thread.
   public: void OnRender();
@@ -144,12 +147,8 @@ class gz::gui::plugins::InteractiveViewControlPrivate
   public: double viewControlSensitivity = 1.0;
 };
 
-using namespace gz;
-using namespace gui;
-using namespace plugins;
-
 /////////////////////////////////////////////////
-void InteractiveViewControlPrivate::OnRender()
+void InteractiveViewControl::Implementation::OnRender()
 {
   if (!this->scene)
   {
@@ -317,7 +316,7 @@ void InteractiveViewControlPrivate::OnRender()
 }
 
 /////////////////////////////////////////////////
-void InteractiveViewControlPrivate::UpdateReferenceVisual()
+void InteractiveViewControl::Implementation::UpdateReferenceVisual()
 {
   if (!this->refVisual || !this->enableRefVisual)
     return;
@@ -333,8 +332,8 @@ void InteractiveViewControlPrivate::UpdateReferenceVisual()
 }
 
 /////////////////////////////////////////////////
-bool InteractiveViewControlPrivate::OnViewControl(const msgs::StringMsg &_msg,
-  msgs::Boolean &_res)
+bool InteractiveViewControl::Implementation::OnViewControl(
+  const msgs::StringMsg &_msg, msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
 
@@ -357,8 +356,8 @@ bool InteractiveViewControlPrivate::OnViewControl(const msgs::StringMsg &_msg,
 }
 
 /////////////////////////////////////////////////
-bool InteractiveViewControlPrivate::OnReferenceVisual(const msgs::Boolean &_msg,
-  msgs::Boolean &_res)
+bool InteractiveViewControl::Implementation::OnReferenceVisual(
+  const msgs::Boolean &_msg, msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   this->enableRefVisual = _msg.data();
@@ -368,7 +367,7 @@ bool InteractiveViewControlPrivate::OnReferenceVisual(const msgs::Boolean &_msg,
 }
 
 /////////////////////////////////////////////////
-bool InteractiveViewControlPrivate::OnViewControlSensitivity(
+bool InteractiveViewControl::Implementation::OnViewControlSensitivity(
   const msgs::Double &_msg, msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -389,7 +388,7 @@ bool InteractiveViewControlPrivate::OnViewControlSensitivity(
 
 /////////////////////////////////////////////////
 InteractiveViewControl::InteractiveViewControl()
-  : Plugin(), dataPtr(std::make_unique<InteractiveViewControlPrivate>())
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -406,7 +405,7 @@ void InteractiveViewControl::LoadConfig(
   // camera view control mode
   this->dataPtr->cameraViewControlService = "/gui/camera/view_control";
   this->dataPtr->node.Advertise(this->dataPtr->cameraViewControlService,
-      &InteractiveViewControlPrivate::OnViewControl, this->dataPtr.get());
+      &Implementation::OnViewControl, this->dataPtr.get());
   gzmsg << "Camera view controller topic advertised on ["
          << this->dataPtr->cameraViewControlService << "]" << std::endl;
 
@@ -414,7 +413,7 @@ void InteractiveViewControl::LoadConfig(
   this->dataPtr->cameraRefVisualService =
       "/gui/camera/view_control/reference_visual";
   this->dataPtr->node.Advertise(this->dataPtr->cameraRefVisualService,
-      &InteractiveViewControlPrivate::OnReferenceVisual, this->dataPtr.get());
+      &Implementation::OnReferenceVisual, this->dataPtr.get());
   gzmsg << "Camera reference visual topic advertised on ["
         << this->dataPtr->cameraRefVisualService << "]" << std::endl;
 
@@ -423,7 +422,7 @@ void InteractiveViewControl::LoadConfig(
       "/gui/camera/view_control/sensitivity";
   this->dataPtr->node.Advertise(
       this->dataPtr->cameraViewControlSensitivityService,
-      &InteractiveViewControlPrivate::OnViewControlSensitivity,
+      &Implementation::OnViewControlSensitivity,
       this->dataPtr.get());
   gzmsg << "Camera view control sensitivity advertised on ["
         << this->dataPtr->cameraViewControlSensitivityService << "]"
@@ -502,7 +501,7 @@ bool InteractiveViewControl::eventFilter(QObject *_obj, QEvent *_event)
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
 }
-
+}  // namespace gz::gui::plugins
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::InteractiveViewControl,
               gz::gui::Plugin)

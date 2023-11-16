@@ -22,14 +22,10 @@
 
 #include "gz/gui/Plugin.hh"
 
-namespace gz
-{
-namespace gui
-{
-namespace plugins
-{
-  class TransportSceneManagerPrivate;
+#include <gz/utils/ImplPtr.hh>
 
+namespace gz::gui::plugins
+{
   /// \brief Provides a Gazebo Transport interface to
   /// `gz::gui::plugins::MinimalScene`.
   ///
@@ -50,22 +46,19 @@ namespace plugins
     /// \brief Constructor
     public: TransportSceneManager();
 
-    /// \brief Destructor
-    public: virtual ~TransportSceneManager();
+  /// \brief Destructor
+  public: ~TransportSceneManager() override;
 
-    // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
-        override;
+  // Documentation inherited
+  public: void LoadConfig(const tinyxml2::XMLElement *_pluginElem) override;
 
     // Documentation inherited
     private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<TransportSceneManagerPrivate> dataPtr;
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
-}
-}
-}
+}  // namespace gz::gui::plugins
 
-#endif
+#endif  // GZ_GUI_PLUGINS_TRANSPORTSCENEMANAGER_HH_

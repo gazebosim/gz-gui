@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <gz/common/Console.hh>
 #include <gz/msgs/Utility.hh>
@@ -23,53 +24,40 @@
 
 #include "Publisher.hh"
 
-namespace gz
+namespace gz::gui::plugins
 {
-namespace gui
+class Publisher::Implementation
 {
-namespace plugins
-{
-  class PublisherPrivate
-  {
-    /// \brief Message type
-    public: QString msgType = "gz.msgs.StringMsg";
+  /// \brief Message type
+  public: QString msgType = "gz.msgs.StringMsg";
 
-    /// \brief Message contents
-    public: QString msgData = "data: \"Hello\"";
+  /// \brief Message contents
+  public: QString msgData = "data: \"Hello\"";
 
-    /// \brief Topic
-    public: QString topic = "/echo";
+  /// \brief Topic
+  public: QString topic = "/echo";
 
-    /// \brief Frequency
-    public: double frequency = 1.0;
+  /// \brief Frequency
+  public: double frequency = 1.0;
 
-    /// \brief Timer to keep publishing
-    public: QTimer *timer;
+  /// \brief Timer to keep publishing
+  public: QTimer *timer;
 
-    /// \brief Node for communication
-    public: gz::transport::Node node;
+  /// \brief Node for communication
+  public: gz::transport::Node node;
 
-    /// \brief Publisher
-    public: gz::transport::Node::Publisher pub;
-  };
-}
-}
-}
-
-using namespace gz;
-using namespace gui;
-using namespace plugins;
+  /// \brief Publisher
+  public: gz::transport::Node::Publisher pub;
+};
 
 /////////////////////////////////////////////////
 Publisher::Publisher()
-  : Plugin(), dataPtr(new PublisherPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
 /////////////////////////////////////////////////
-Publisher::~Publisher()
-{
-}
+Publisher::~Publisher() = default;
 
 /////////////////////////////////////////////////
 void Publisher::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
@@ -107,7 +95,7 @@ void Publisher::OnPublish(const bool _checked)
     if (this->dataPtr->timer != nullptr)
     {
       this->dataPtr->timer->stop();
-      this->disconnect(this->dataPtr->timer, 0, 0, 0);
+      disconnect(this->dataPtr->timer, nullptr, nullptr, nullptr);
     }
     this->dataPtr->pub = transport::Node::Publisher();
     return;
@@ -119,7 +107,7 @@ void Publisher::OnPublish(const bool _checked)
 
   // Check it's possible to create message
   auto msg = msgs::Factory::New(msgType, msgData);
-  if (!msg || (msg->DebugString() == "" && msgData != ""))
+  if (!msg || (msg->DebugString().empty() && !msgData.empty()))
   {
     gzerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";
@@ -147,7 +135,7 @@ void Publisher::OnPublish(const bool _checked)
   }
 
   this->dataPtr->timer->setInterval(1000/this->dataPtr->frequency);
-  this->connect(this->dataPtr->timer, &QTimer::timeout, [=]()
+  connect(this->dataPtr->timer, &QTimer::timeout, this->dataPtr->timer, [=]()
   {
     auto newMsg = msgs::Factory::New(msgType, msgData);
     this->dataPtr->pub.Publish(*newMsg);
@@ -165,7 +153,7 @@ QString Publisher::MsgType() const
 void Publisher::SetMsgType(const QString &_msgType)
 {
   this->dataPtr->msgType = _msgType;
-  this->MsgTypeChanged();
+  emit this->MsgTypeChanged();
 }
 
 /////////////////////////////////////////////////
@@ -178,7 +166,7 @@ QString Publisher::MsgData() const
 void Publisher::SetMsgData(const QString &_msgData)
 {
   this->dataPtr->msgData = _msgData;
-  this->MsgDataChanged();
+  emit this->MsgDataChanged();
 }
 
 /////////////////////////////////////////////////
@@ -191,7 +179,7 @@ QString Publisher::Topic() const
 void Publisher::SetTopic(const QString &_topic)
 {
   this->dataPtr->topic = _topic;
-  this->TopicChanged();
+  emit this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
@@ -204,9 +192,10 @@ double Publisher::Frequency() const
 void Publisher::SetFrequency(const double _frequency)
 {
   this->dataPtr->frequency = _frequency;
-  this->FrequencyChanged();
+  emit this->FrequencyChanged();
 }
+}  // namespace gz::gui::plugins
 
 // Register this plugin
-GZ_ADD_PLUGIN(Publisher,
-              gui::Plugin)
+GZ_ADD_PLUGIN(gz::gui::plugins::Publisher,
+              gz::gui::Plugin)

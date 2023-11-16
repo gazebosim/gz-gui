@@ -20,9 +20,8 @@
 #include "gz/gui/Enums.hh"
 #include "gz/gui/SearchModel.hh"
 
-using namespace gz;
-using namespace gui;
-
+namespace gz::gui
+{
 /////////////////////////////////////////////////
 bool SearchModel::filterAcceptsRow(const int _srcRow,
       const QModelIndex &_srcParent) const
@@ -48,7 +47,7 @@ bool SearchModel::filterAcceptsRow(const int _srcRow,
 
   // Each word must match at least once, either self, parent or child.
   auto words = this->search.split(" ");
-  for (auto word : words)
+  for (const auto &word : words)
   {
     if (word.isEmpty())
       continue;
@@ -153,6 +152,6 @@ void SearchModel::SetSearch(const QString &_search)
 
   // TODO(anyone): Figure out why filterChanged works for TopicViewer but not
   // TopicsStats
-  this->layoutChanged();
+  emit this->layoutChanged();
 }
-
+}  // namespace gz::gui
