@@ -39,7 +39,7 @@ namespace plugins
 
   /// \brief a Plugin to view the topics and their msgs & fields
   /// Field's informations can be passed by dragging them via the UI
-  class TopicViewer_EXPORTS_API TopicViewer : public Plugin
+  class GZ_GUI_VISIBLE TopicViewer : public Plugin
   {
     Q_OBJECT
 

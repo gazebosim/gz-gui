@@ -63,7 +63,7 @@ namespace plugins
   ///
   /// If no elements are filled for the plugin, all properties will be
   /// displayed.
-  class WorldStats_EXPORTS_API WorldStats: public gz::gui::Plugin
+  class GZ_GUI_VISIBLE WorldStats: public gz::gui::Plugin
   {
     Q_OBJECT
 

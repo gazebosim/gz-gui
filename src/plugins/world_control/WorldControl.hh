@@ -60,7 +60,7 @@ namespace plugins
   ///
   /// If no elements are filled for the plugin, both the play/pause and the
   /// step buttons will be displayed.
-  class WorldControl_EXPORTS_API WorldControl: public gz::gui::Plugin
+  class GZ_GUI_VISIBLE WorldControl: public gz::gui::Plugin
   {
     Q_OBJECT
 

@@ -49,7 +49,7 @@ namespace plugins
   /// vehicle in the world.
   /// ## Configuration
   /// * `<topic>`: Topic to publish twist messages to.
-  class Teleop_EXPORTS_API Teleop : public Plugin
+  class GZ_GUI_VISIBLE Teleop : public Plugin
   {
     Q_OBJECT
 

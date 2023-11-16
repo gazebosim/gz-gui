@@ -30,7 +30,7 @@ namespace gui
   /// \brief Helper class for testing listening to events emitted by the
   /// WorldControl plugin. This is used for testing the event behavior of
   /// the WorldControl plugin.
-  class WorldControlEventListener : public QObject
+  class GZ_GUI_VISIBLE WorldControlEventListener : public QObject
   {
     Q_OBJECT
 

@@ -37,7 +37,7 @@ namespace gui
 namespace plugins
 {
   /// \brief This plugin provides a shutdown button.
-  class ShutdownButton_EXPORTS_API ShutdownButton: public gz::gui::Plugin
+  class GZ_GUI_VISIBLE ShutdownButton: public gz::gui::Plugin
   {
     Q_OBJECT
 

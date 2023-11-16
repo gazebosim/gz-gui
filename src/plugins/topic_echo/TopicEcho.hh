@@ -53,7 +53,7 @@ namespace plugins
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class TopicEcho_EXPORTS_API TopicEcho : public Plugin
+  class GZ_GUI_VISIBLE TopicEcho : public Plugin
   {
     Q_OBJECT
 

@@ -45,7 +45,7 @@ namespace gui
   ///
   /// ## Configuration
   /// This plugin doesn't accept any custom configuration.
-  class KeyPublisher_EXPORTS_API KeyPublisher : public gz::gui::Plugin
+  class GZ_GUI_VISIBLE KeyPublisher : public gz::gui::Plugin
   {
     Q_OBJECT
 

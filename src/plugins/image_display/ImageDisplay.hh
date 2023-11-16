@@ -82,7 +82,7 @@ namespace plugins
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
   ///                    this is false, a \<topic\> must be specified.
-  class ImageDisplay_EXPORTS_API ImageDisplay : public Plugin
+  class GZ_GUI_VISIBLE ImageDisplay : public Plugin
   {
     Q_OBJECT
 
