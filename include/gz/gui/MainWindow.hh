@@ -28,17 +28,9 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Export.hh"
 
-#ifdef _WIN32
-// Disable warning C4251 which is triggered by
-// std::unique_ptr
-#pragma warning(push)
-#pragma warning(disable: 4251)
-#endif
-
 namespace gz::gui
 {
     Q_NAMESPACE
-    class MainWindowPrivate;
     struct WindowConfig;
 
     /// \brief The action executed when GUI is closed without prompt.
@@ -417,7 +409,7 @@ namespace gz::gui
 
       /// \brief Get the action performed when GUI closes without prompt.
       /// \return The action.
-      public: Q_INVOKABLE ExitAction DefaultExitAction() const;
+      public: Q_INVOKABLE gz::gui::ExitAction DefaultExitAction() const;
 
       /// \brief Set the action performed when GUI closes without prompt.
       /// \param[in] _defaultExitAction The action.
@@ -583,7 +575,8 @@ namespace gz::gui
 
       /// \internal
       /// \brief Private data pointer
-      private: std::unique_ptr<MainWindowPrivate> dataPtr;
+      /// Private is necessary here for the Qt MOC
+      private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
     };
 
     /// \brief Holds configurations related to a MainWindow.
@@ -675,9 +668,4 @@ namespace gz::gui
       std::string plugins{""};
     };
 }  // namespace gz::gui
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #endif  // GZ_GUI_MAINWINDOW_HH_

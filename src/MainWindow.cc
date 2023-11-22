@@ -16,6 +16,7 @@
  */
 
 #include <tinyxml2.h>
+#include <gz/utils/ImplPtr.hh>
 #include <regex>
 #include <string>
 
@@ -29,11 +30,21 @@
 #include "gz/msgs/server_control.pb.h"
 #include "gz/transport/Node.hh"
 
+namespace {
+/// \brief Strip last component from a path.
+/// \return Original path without its last component.
+/// \ToDo: Move this function to common::Filesystem
+std::string dirName(const std::string &_path)
+{
+  std::size_t found = _path.find_last_of("/\\");
+  return _path.substr(0, found);
+}
+}  // namespace
+
 namespace gz::gui
 {
-class MainWindowPrivate
+class MainWindow::Implementation
 {
-  /// \brief Number of plugins on the window
   public: int pluginCount{0};
 
   /// \brief Pointer to quick window
@@ -74,21 +85,12 @@ class MainWindowPrivate
   public: std::string controlService{"/server_control"};
 
   /// \brief Communication node
-  public: gz::transport::Node node;
+  public: gz::transport::Node node {gz::transport::NodeOptions()};
 };
-
-/// \brief Strip last component from a path.
-/// \return Original path without its last component.
-/// \ToDo: Move this function to common::Filesystem
-std::string dirName(const std::string &_path)
-{
-  std::size_t found = _path.find_last_of("/\\");
-  return _path.substr(0, found);
-}
 
 /////////////////////////////////////////////////
 MainWindow::MainWindow()
-  : dataPtr(new MainWindowPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Expose the ExitAction enum to QML via ExitAction 1.0 module
   qRegisterMetaType<ExitAction>("ExitAction");
@@ -146,7 +148,7 @@ QStringList MainWindow::PluginListModel() const
   }
 
   // Error
-  for (auto plugin : this->dataPtr->windowConfig.showPlugins)
+  for (const auto &plugin : this->dataPtr->windowConfig.showPlugins)
   {
     if (!pluginNames.contains(QString::fromStdString(plugin)))
     {
@@ -239,14 +241,14 @@ void MainWindow::SaveConfig(const std::string &_path)
   {
     std::string str = "Unable to open file: " + _path;
     str += ".\nCheck file permissions.";
-    this->notify(QString::fromStdString(str));
+    emit this->notify(QString::fromStdString(str));
   }
   else
     out << this->dataPtr->windowConfig.XMLString();
 
   std::string msg("Saved configuration to <b>" + _path + "</b>");
 
-  this->notify(QString::fromStdString(msg));
+  emit this->notify(QString::fromStdString(msg));
   gzmsg << msg << std::endl;
 }
 
@@ -328,7 +330,7 @@ bool MainWindow::ApplyConfig(const WindowConfig &_config)
   this->dataPtr->windowConfig = _config;
 
   // Notify view
-  this->configChanged();
+  emit this->configChanged();
 
   return true;
 }
@@ -699,7 +701,7 @@ int MainWindow::PluginCount() const
 void MainWindow::SetPluginCount(const int _pluginCount)
 {
   this->dataPtr->pluginCount = _pluginCount;
-  this->PluginCountChanged();
+  emit this->PluginCountChanged();
 }
 
 /////////////////////////////////////////////////
@@ -712,7 +714,7 @@ QString MainWindow::MaterialTheme() const
 void MainWindow::SetMaterialTheme(const QString &_materialTheme)
 {
   this->dataPtr->windowConfig.materialTheme = _materialTheme.toStdString();
-  this->MaterialThemeChanged();
+  emit this->MaterialThemeChanged();
 }
 
 /////////////////////////////////////////////////
@@ -725,7 +727,7 @@ QString MainWindow::MaterialPrimary() const
 void MainWindow::SetMaterialPrimary(const QString &_materialPrimary)
 {
   this->dataPtr->windowConfig.materialPrimary = _materialPrimary.toStdString();
-  this->MaterialPrimaryChanged();
+  emit this->MaterialPrimaryChanged();
 }
 
 /////////////////////////////////////////////////
@@ -738,7 +740,7 @@ QString MainWindow::MaterialAccent() const
 void MainWindow::SetMaterialAccent(const QString &_materialAccent)
 {
   this->dataPtr->windowConfig.materialAccent = _materialAccent.toStdString();
-  this->MaterialAccentChanged();
+  emit this->MaterialAccentChanged();
 }
 
 /////////////////////////////////////////////////
@@ -752,7 +754,7 @@ void MainWindow::SetToolBarColorLight(const QString &_toolBarColorLight)
 {
   this->dataPtr->windowConfig.toolBarColorLight =
       _toolBarColorLight.toStdString();
-  this->ToolBarColorLightChanged();
+  emit this->ToolBarColorLightChanged();
 }
 
 /////////////////////////////////////////////////
@@ -767,7 +769,7 @@ void MainWindow::SetToolBarTextColorLight(const QString &_toolBarTextColorLight)
 {
   this->dataPtr->windowConfig.toolBarTextColorLight =
       _toolBarTextColorLight.toStdString();
-  this->ToolBarTextColorLightChanged();
+  emit this->ToolBarTextColorLightChanged();
 }
 
 /////////////////////////////////////////////////
@@ -781,7 +783,7 @@ void MainWindow::SetToolBarColorDark(const QString &_toolBarColorDark)
 {
   this->dataPtr->windowConfig.toolBarColorDark =
       _toolBarColorDark.toStdString();
-  this->ToolBarColorDarkChanged();
+  emit this->ToolBarColorDarkChanged();
 }
 
 /////////////////////////////////////////////////
@@ -796,7 +798,7 @@ void MainWindow::SetToolBarTextColorDark(const QString &_toolBarTextColorDark)
 {
   this->dataPtr->windowConfig.toolBarTextColorDark =
       _toolBarTextColorDark.toStdString();
-  this->ToolBarTextColorDarkChanged();
+  emit this->ToolBarTextColorDarkChanged();
 }
 
 /////////////////////////////////////////////////
@@ -812,7 +814,7 @@ void MainWindow::SetPluginToolBarColorLight(
 {
   this->dataPtr->windowConfig.pluginToolBarColorLight =
       _pluginToolBarColorLight.toStdString();
-  this->PluginToolBarColorLightChanged();
+  emit this->PluginToolBarColorLightChanged();
 }
 
 /////////////////////////////////////////////////
@@ -828,7 +830,7 @@ void MainWindow::SetPluginToolBarTextColorLight(
 {
   this->dataPtr->windowConfig.pluginToolBarTextColorLight =
       _pluginToolBarTextColorLight.toStdString();
-  this->PluginToolBarTextColorLightChanged();
+  emit this->PluginToolBarTextColorLightChanged();
 }
 
 /////////////////////////////////////////////////
@@ -844,7 +846,7 @@ void MainWindow::SetPluginToolBarColorDark(
 {
   this->dataPtr->windowConfig.pluginToolBarColorDark =
       _pluginToolBarColorDark.toStdString();
-  this->PluginToolBarColorDarkChanged();
+  emit this->PluginToolBarColorDarkChanged();
 }
 
 /////////////////////////////////////////////////
@@ -860,7 +862,7 @@ void MainWindow::SetPluginToolBarTextColorDark(
 {
   this->dataPtr->windowConfig.pluginToolBarTextColorDark =
       _pluginToolBarTextColorDark.toStdString();
-  this->PluginToolBarTextColorDarkChanged();
+  emit this->PluginToolBarTextColorDarkChanged();
 }
 
 /////////////////////////////////////////////////
@@ -879,7 +881,7 @@ bool MainWindow::ShowDrawer() const
 void MainWindow::SetShowDrawer(const bool _showDrawer)
 {
   this->dataPtr->windowConfig.showDrawer = _showDrawer;
-  this->ShowDrawerChanged();
+  emit this->ShowDrawerChanged();
 }
 
 /////////////////////////////////////////////////
@@ -893,7 +895,7 @@ void MainWindow::SetShowDefaultDrawerOpts(const bool _showDefaultDrawerOpts)
 {
   this->dataPtr->windowConfig.showDefaultDrawerOpts =
       _showDefaultDrawerOpts;
-  this->ShowDefaultDrawerOptsChanged();
+  emit this->ShowDefaultDrawerOptsChanged();
 }
 
 /////////////////////////////////////////////////
@@ -906,7 +908,7 @@ bool MainWindow::ShowPluginMenu() const
 void MainWindow::SetShowPluginMenu(const bool _showPluginMenu)
 {
   this->dataPtr->windowConfig.showPluginMenu = _showPluginMenu;
-  this->ShowPluginMenuChanged();
+  emit this->ShowPluginMenuChanged();
 }
 
 /////////////////////////////////////////////////
@@ -919,7 +921,7 @@ ExitAction MainWindow::DefaultExitAction() const
 void MainWindow::SetDefaultExitAction(ExitAction _defaultExitAction)
 {
   this->dataPtr->defaultExitAction = _defaultExitAction;
-  this->DefaultExitActionChanged();
+  emit this->DefaultExitActionChanged();
 }
 
 /////////////////////////////////////////////////
@@ -932,7 +934,7 @@ bool MainWindow::ShowDialogOnExit() const
 void MainWindow::SetShowDialogOnExit(bool _showDialogOnExit)
 {
   this->dataPtr->showDialogOnExit = _showDialogOnExit;
-  this->ShowDialogOnExitChanged();
+  emit this->ShowDialogOnExitChanged();
 }
 
 /////////////////////////////////////////////////
@@ -952,7 +954,7 @@ void MainWindow::SetDialogOnExitText(
   const QString &_dialogOnExitText)
 {
   this->dataPtr->dialogOnExitText = _dialogOnExitText;
-  this->DialogOnExitTextChanged();
+  emit this->DialogOnExitTextChanged();
 }
 
 /////////////////////////////////////////////////
@@ -965,7 +967,7 @@ bool MainWindow::ExitDialogShowShutdown() const
 void MainWindow::SetExitDialogShowShutdown(bool _exitDialogShowShutdown)
 {
   this->dataPtr->exitDialogShowShutdown = _exitDialogShowShutdown;
-  this->ExitDialogShowShutdownChanged();
+  emit this->ExitDialogShowShutdownChanged();
 }
 
 /////////////////////////////////////////////////
@@ -978,7 +980,7 @@ bool MainWindow::ExitDialogShowCloseGui() const
 void MainWindow::SetExitDialogShowCloseGui(bool _exitDialogShowCloseGui)
 {
   this->dataPtr->exitDialogShowCloseGui = _exitDialogShowCloseGui;
-  this->ExitDialogShowCloseGuiChanged();
+  emit this->ExitDialogShowCloseGuiChanged();
 }
 
 /////////////////////////////////////////////////
@@ -992,7 +994,7 @@ void MainWindow::SetExitDialogShutdownText(
   const QString &_exitDialogShutdownText)
 {
   this->dataPtr->exitDialogShutdownText = _exitDialogShutdownText;
-  this->ExitDialogShutdownTextChanged();
+  emit this->ExitDialogShutdownTextChanged();
 }
 
 /////////////////////////////////////////////////
@@ -1006,7 +1008,7 @@ void MainWindow::SetExitDialogCloseGuiText(
   const QString &_exitDialogCloseGuiText)
 {
   this->dataPtr->exitDialogCloseGuiText = _exitDialogCloseGuiText;
-  this->ExitDialogCloseGuiTextChanged();
+  emit this->ExitDialogCloseGuiTextChanged();
 }
 
 /////////////////////////////////////////////////

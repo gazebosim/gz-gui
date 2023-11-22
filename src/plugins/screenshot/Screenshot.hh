@@ -26,10 +26,10 @@
 #include "gz/gui/qt.h"
 #include "gz/gui/Plugin.hh"
 
+#include <gz/utils/ImplPtr.hh>
+
 namespace gz::gui::plugins
 {
-  class ScreenshotPrivate;
-
   /// \brief Provides a button and a transport service for taking a screenshot
   /// of current 3D scene.
   ///
@@ -118,7 +118,7 @@ namespace gz::gui::plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<ScreenshotPrivate> dataPtr;
+    private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 }  // namespace gz::gui::plugins
 

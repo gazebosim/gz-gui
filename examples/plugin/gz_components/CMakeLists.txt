@@ -16,8 +16,8 @@ find_package (Qt5
   REQUIRED
 )
 
-find_package(gz-gui8 REQUIRED)
-set(GZ_GUI_VER ${gz-gui8_VERSION_MAJOR})
+find_package(gz-gui9 REQUIRED)
+set(GZ_GUI_VER ${gz-gui9_VERSION_MAJOR})
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 

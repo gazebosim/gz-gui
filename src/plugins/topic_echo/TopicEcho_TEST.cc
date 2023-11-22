@@ -139,7 +139,7 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
 
   // Check message was echoed
   ASSERT_EQ(msgStringList->rowCount(), 1);
-  EXPECT_EQ(msgStringList->stringList()[0].toStdString(),
+  EXPECT_EQ(msgStringList->stringList().at(0).toStdString(),
             "data: \"example string\"\n");
 
   // Publish more than buffer size (messages numbered 0 to 14)
@@ -210,9 +210,9 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
   ASSERT_EQ(msgStringList->rowCount(), 11);
 
   // The last one is guaranteed to be the new message
-  EXPECT_EQ(msgStringList->stringList().last().toStdString(),
+  EXPECT_EQ(msgStringList->stringList().constLast().toStdString(),
             "data: \"new message\"\n")
-            << msgStringList->stringList().last().toStdString();
+            << msgStringList->stringList().constLast().toStdString();
 
   // Pause
   plugin->SetPaused(true);
@@ -232,9 +232,9 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
     ++sleep;
   }
   ASSERT_EQ(msgStringList->rowCount(), 11);
-  EXPECT_EQ(msgStringList->stringList().last().toStdString(),
+  EXPECT_EQ(msgStringList->stringList().constLast().toStdString(),
             "data: \"new message\"\n")
-            << msgStringList->stringList().last().toStdString();
+            << msgStringList->stringList().constLast().toStdString();
 
   // Decrease buffer
   bufferField->setProperty("value", 5);
@@ -260,9 +260,9 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
   ASSERT_EQ(msgStringList->rowCount(), 5);
 
   // The last message is still the new one
-  EXPECT_EQ(msgStringList->stringList().last().toStdString(),
+  EXPECT_EQ(msgStringList->stringList().constLast().toStdString(),
             "data: \"new message 2\"\n")
-            << msgStringList->stringList().last().toStdString();
+            << msgStringList->stringList().constLast().toStdString();
 
   // Stop echoing
   plugin->OnEcho(false);

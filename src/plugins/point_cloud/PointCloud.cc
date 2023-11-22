@@ -21,6 +21,7 @@
 #include "gz/msgs/pointcloud_packed.pb.h"
 
 #include <algorithm>
+#include <gz/utils/ImplPtr.hh>
 #include <limits>
 #include <string>
 #include <utility>
@@ -46,7 +47,7 @@
 namespace gz::gui::plugins
 {
 /// \brief Private data class for PointCloud
-class PointCloudPrivate
+class PointCloud::Implementation
 {
   /// \brief Makes a request to populate the scene with markers
   public: void PublishMarkers();
@@ -55,7 +56,7 @@ class PointCloudPrivate
   public: void ClearMarkers();
 
   /// \brief Transport node
-  public: gz::transport::Node node;
+  public: gz::transport::Node node {gz::transport::NodeOptions()};
 
   /// \brief Name of topic for PointCloudPacked
   public: std::string pointCloudTopic{""};
@@ -99,7 +100,7 @@ class PointCloudPrivate
 
 /////////////////////////////////////////////////
 PointCloud::PointCloud()
-  : dataPtr(std::make_unique<PointCloudPrivate>())
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -233,12 +234,12 @@ void PointCloud::OnRefresh()
   // Get updated list
   std::vector<std::string> allTopics;
   this->dataPtr->node.TopicList(allTopics);
-  for (auto topic : allTopics)
+  for (const auto &topic : allTopics)
   {
     std::vector<gz::transport::MessagePublisher> publishers;
     std::vector<gz::transport::MessagePublisher> subscribers;
     this->dataPtr->node.TopicInfo(topic, publishers, subscribers);
-    for (auto pub : publishers)
+    for (const auto &pub : publishers)
     {
       if (pub.MsgTypeName() == "gz.msgs.PointCloudPacked")
       {
@@ -253,17 +254,17 @@ void PointCloud::OnRefresh()
   }
   // Handle floats first, so by the time we get the point cloud it can be
   // colored
-  if (this->dataPtr->floatVTopicList.size() > 0)
+  if (!this->dataPtr->floatVTopicList.empty())
   {
     this->OnFloatVTopic(this->dataPtr->floatVTopicList.at(0));
   }
-  if (this->dataPtr->pointCloudTopicList.size() > 0)
+  if (!this->dataPtr->pointCloudTopicList.empty())
   {
     this->OnPointCloudTopic(this->dataPtr->pointCloudTopicList.at(0));
   }
 
-  this->PointCloudTopicListChanged();
-  this->FloatVTopicListChanged();
+  emit this->PointCloudTopicListChanged();
+  emit this->FloatVTopicListChanged();
 }
 
 /////////////////////////////////////////////////
@@ -277,7 +278,7 @@ void PointCloud::SetPointCloudTopicList(
     const QStringList &_pointCloudTopicList)
 {
   this->dataPtr->pointCloudTopicList = _pointCloudTopicList;
-  this->PointCloudTopicListChanged();
+  emit this->PointCloudTopicListChanged();
 }
 
 /////////////////////////////////////////////////
@@ -291,7 +292,7 @@ void PointCloud::SetFloatVTopicList(
     const QStringList &_floatVTopicList)
 {
   this->dataPtr->floatVTopicList = _floatVTopicList;
-  this->FloatVTopicListChanged();
+  emit this->FloatVTopicListChanged();
 }
 
 //////////////////////////////////////////////////
@@ -353,7 +354,7 @@ void PointCloud::OnFloatVService(
 }
 
 //////////////////////////////////////////////////
-void PointCloudPrivate::PublishMarkers()
+void PointCloud::Implementation::PublishMarkers()
 {
   GZ_PROFILE("PointCloud::PublishMarkers");
 
@@ -432,7 +433,7 @@ void PointCloudPrivate::PublishMarkers()
 }
 
 //////////////////////////////////////////////////
-void PointCloudPrivate::ClearMarkers()
+void PointCloud::Implementation::ClearMarkers()
 {
   if (this->pointCloudTopic.empty())
     return;
@@ -460,7 +461,7 @@ QColor PointCloud::MinColor() const
 void PointCloud::SetMinColor(const QColor &_minColor)
 {
   this->dataPtr->minColor = gz::gui::convert(_minColor);
-  this->MinColorChanged();
+  emit this->MinColorChanged();
   this->dataPtr->PublishMarkers();
 }
 
@@ -474,7 +475,7 @@ QColor PointCloud::MaxColor() const
 void PointCloud::SetMaxColor(const QColor &_maxColor)
 {
   this->dataPtr->maxColor = gz::gui::convert(_maxColor);
-  this->MaxColorChanged();
+  emit this->MaxColorChanged();
   this->dataPtr->PublishMarkers();
 }
 
@@ -488,7 +489,7 @@ float PointCloud::MinFloatV() const
 void PointCloud::SetMinFloatV(float _minFloatV)
 {
   this->dataPtr->minFloatV = _minFloatV;
-  this->MinFloatVChanged();
+  emit this->MinFloatVChanged();
 }
 
 /////////////////////////////////////////////////
@@ -501,7 +502,7 @@ float PointCloud::MaxFloatV() const
 void PointCloud::SetMaxFloatV(float _maxFloatV)
 {
   this->dataPtr->maxFloatV = _maxFloatV;
-  this->MaxFloatVChanged();
+  emit this->MaxFloatVChanged();
 }
 
 /////////////////////////////////////////////////
@@ -514,7 +515,7 @@ float PointCloud::PointSize() const
 void PointCloud::SetPointSize(float _pointSize)
 {
   this->dataPtr->pointSize = _pointSize;
-  this->PointSizeChanged();
+  emit this->PointSizeChanged();
   this->dataPtr->PublishMarkers();
 }
 }  // namespace gz::gui::plugins

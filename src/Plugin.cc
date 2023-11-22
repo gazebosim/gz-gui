@@ -15,6 +15,7 @@
  *
  */
 
+#include <gz/utils/ImplPtr.hh>
 #include <unordered_set>
 
 #include <gz/common/Console.hh>
@@ -56,7 +57,7 @@ const std::unordered_set<std::string> kIgnoredProps{
 
 namespace gz::gui
 {
-class PluginPrivate
+class Plugin::Implementation
 {
   /// \brief Set this to true if the plugin should be deleted as soon as it has
   ///  a parent.
@@ -86,7 +87,7 @@ class PluginPrivate
 };
 
 /////////////////////////////////////////////////
-Plugin::Plugin() : dataPtr(new PluginPrivate)
+Plugin::Plugin() : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -142,7 +143,10 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
     std::stringstream errors;
     errors << "Failed to instantiate QML file [" << qmlFile << "]."
            << std::endl;
-    for (auto error : component.errors())
+    // Qt considers range-based for loops over temporary objects
+    // potentially dangerous, so explicitly create a container.
+    const auto componentErrors = component.errors();
+    for (const auto &error : componentErrors)
     {
       errors << "* " << error.toString().toStdString() << std::endl;
     }
@@ -169,7 +173,7 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Load common configuration
-  auto guiElem = _pluginElem->FirstChildElement("gz-gui");
+  const auto *guiElem = _pluginElem->FirstChildElement("gz-gui");
   if (guiElem)
   {
     this->LoadCommonConfig(_pluginElem->FirstChildElement("gz-gui"));
@@ -185,7 +189,7 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_guiElem)
   if (nullptr == _guiElem)
     return;
 
-  auto elem = _guiElem->FirstChildElement("title");
+  const auto *elem = _guiElem->FirstChildElement("title");
   if (nullptr != elem && nullptr != elem->GetText())
   {
     this->title = elem->GetText();
@@ -204,7 +208,7 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_guiElem)
   }
 
   // Properties
-  for (auto propElem = _guiElem->FirstChildElement("property");
+  for (const auto *propElem = _guiElem->FirstChildElement("property");
       propElem != nullptr;
       propElem = propElem->NextSiblingElement("property"))
   {
@@ -214,19 +218,19 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_guiElem)
 
     if (type == "bool")
     {
-      bool value;
+      bool value = false;
       propElem->QueryBoolText(&value);
       variant = QVariant(value);
     }
     else if (type == "int")
     {
-      int value;
+      int value = 0;
       propElem->QueryIntText(&value);
       variant = QVariant(value);
     }
     else if (type == "double")
     {
-      double value;
+      double value = 0.0;
       propElem->QueryDoubleText(&value);
       variant = QVariant(value);
     }
@@ -250,17 +254,17 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_guiElem)
   }
 
   // Anchors
-  if (auto anchorElem = _guiElem->FirstChildElement("anchors"))
+  if (const auto *anchorElem = _guiElem->FirstChildElement("anchors"))
   {
     this->dataPtr->anchors.target = anchorElem->Attribute("target");
     this->dataPtr->anchors.lines.clear();
 
-    for (auto lineElem = anchorElem->FirstChildElement("line");
+    for (const auto *lineElem = anchorElem->FirstChildElement("line");
         lineElem != nullptr;
         lineElem = lineElem->NextSiblingElement("line"))
     {
-      auto ownLine = lineElem->Attribute("own");
-      auto targetLine = lineElem->Attribute("target");
+      const auto *ownLine = lineElem->Attribute("own");
+      const auto *targetLine = lineElem->Attribute("target");
 
       if (kAnchorLineSet.find(ownLine) == kAnchorLineSet.end())
       {
@@ -275,8 +279,7 @@ void Plugin::LoadCommonConfig(const tinyxml2::XMLElement *_guiElem)
         continue;
       }
 
-      this->dataPtr->anchors.lines.push_back(
-          std::make_pair(ownLine, targetLine));
+      this->dataPtr->anchors.lines.emplace_back(ownLine, targetLine);
     }
   }
 }
@@ -292,7 +295,7 @@ std::string Plugin::ConfigStr()
   doc.Parse(this->configStr.c_str());
 
   // <plugin>
-  auto pluginElem = doc.FirstChildElement("plugin");
+  auto *pluginElem = doc.FirstChildElement("plugin");
   if (!pluginElem)
   {
     // LCOV_EXCL_START
@@ -303,7 +306,7 @@ std::string Plugin::ConfigStr()
   }
 
   // <gz-gui>
-  auto guiElem = pluginElem->FirstChildElement("gz-gui");
+  auto *guiElem = pluginElem->FirstChildElement("gz-gui");
   if (!guiElem)
   {
     guiElem = doc.NewElement("gz-gui");
@@ -311,23 +314,23 @@ std::string Plugin::ConfigStr()
   }
 
   // Clean <property>s
-  for (auto propElem = guiElem->FirstChildElement("property");
+  for (auto *propElem = guiElem->FirstChildElement("property");
       propElem != nullptr;)
   {
-    auto nextProp = propElem->NextSiblingElement("property");
+    auto *nextProp = propElem->NextSiblingElement("property");
     guiElem->DeleteChild(propElem);
     propElem = nextProp;
   }
 
   // Add <property>s
-  auto meta = this->CardItem()->metaObject();
+  const auto *meta = this->CardItem()->metaObject();
   for (int i = 0; i < meta->propertyCount(); ++i)
   {
-    auto key = meta->property(i).name();
+    const auto *key = meta->property(i).name();
     auto type = std::string(meta->property(i).typeName());
 
     // Explicitly skip some keys
-    if (kIgnoredProps.find(key) != kAnchorLineSet.end())
+    if (kIgnoredProps.find(key) != kIgnoredProps.end())
       continue;
 
     // When setting, it will need to be string
@@ -343,7 +346,7 @@ std::string Plugin::ConfigStr()
     value = this->CardItem()->property(meta->property(i).name())
             .toString().toStdString();
 
-    auto elem = doc.NewElement("property");
+    auto *elem = doc.NewElement("property");
     elem->SetAttribute("key", key);
     elem->SetAttribute("type", type.c_str());
     elem->SetText(value.c_str());
@@ -355,10 +358,10 @@ std::string Plugin::ConfigStr()
   auto anchored = this->CardItem()->property("anchored").toBool();
   if (!anchored)
   {
-    for (auto anchorElem = guiElem->FirstChildElement("anchors");
+    for (auto *anchorElem = guiElem->FirstChildElement("anchors");
         anchorElem != nullptr;)
     {
-      auto nextAnchor = anchorElem->NextSiblingElement("anchors");
+      auto *nextAnchor = anchorElem->NextSiblingElement("anchors");
       guiElem->DeleteChild(anchorElem);
       anchorElem = nextAnchor;
     }
@@ -419,9 +422,8 @@ QQuickItem *Plugin::CardItem() const
 
   // Instantiate a card
   std::string qmlFile(":qml/GzCard.qml");
-  QQmlComponent cardComp(App()->Engine(),
-      QString(QString::fromStdString(qmlFile)));
-  auto cardItem = qobject_cast<QQuickItem *>(cardComp.create());
+  QQmlComponent cardComp(App()->Engine(), QString::fromStdString(qmlFile));
+  auto *cardItem = qobject_cast<QQuickItem *>(cardComp.create());
   if (!cardItem)
   {
     gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
@@ -433,14 +435,14 @@ QQuickItem *Plugin::CardItem() const
   QQmlEngine::setObjectOwnership(cardItem, QQmlEngine::CppOwnership);
 
   // Get card parts
-  auto cardContentItem = cardItem->findChild<QQuickItem *>("content");
+  auto *cardContentItem = cardItem->findChild<QQuickItem *>("content");
   if (!cardContentItem)
   {
     gzerr << "Null card content QQuickItem!" << std::endl;
     return nullptr;
   }
 
-  auto cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
+  auto *cardToolbarItem = cardItem->findChild<QQuickItem *>("cardToolbar");
   if (!cardToolbarItem)
   {
     gzerr << "Null toolbar content QQuickItem!" << std::endl;
@@ -451,7 +453,7 @@ QQuickItem *Plugin::CardItem() const
   cardItem->setProperty("pluginName",
       QString::fromStdString(this->Title()));
 
-  for (auto prop : this->dataPtr->cardProperties)
+  for (const auto &prop : this->dataPtr->cardProperties)
   {
     // Skip and only apply once it's reparented
     if (prop.first == "state")
@@ -508,13 +510,24 @@ void Plugin::PostParentChanges()
   this->ApplyAnchors();
 
   // Re-apply other properties like size and position if present
-  for (auto prop : this->dataPtr->cardProperties)
+  for (const auto &prop : this->dataPtr->cardProperties)
   {
     if (prop.first == "state")
       continue;
 
     this->CardItem()->setProperty(prop.first.c_str(), prop.second);
   }
+}
+
+/////////////////////////////////////////////////
+void Plugin::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+{
+  (void) _pluginElem;
+}
+
+/////////////////////////////////////////////////
+std::string Plugin::Title() const {
+  return this->title;
 }
 
 /////////////////////////////////////////////////
@@ -538,14 +551,14 @@ void Plugin::ApplyAnchors()
 
   if (this->dataPtr->anchors.target == "window")
   {
-    auto win = App()->findChild<MainWindow *>();
+    auto *win = App()->findChild<MainWindow *>();
     if (!win)
     {
       gzerr << "Internal error: missing window" << std::endl;
       return;
     }
 
-    auto bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
+    auto *bgItem = win->QuickWindow()->findChild<QQuickItem *>("background");
     if (!bgItem)
     {
       gzerr << "Internal error: missing background item" << std::endl;
@@ -576,9 +589,9 @@ void Plugin::ApplyAnchors()
   QMetaObject::invokeMethod(this->CardItem(), "clearAnchors");
 
   // Set anchors
-  auto cardAnchors = qvariant_cast<QObject *>(
+  auto *cardAnchors = qvariant_cast<QObject *>(
       this->CardItem()->property("anchors"));
-  for (auto line : this->dataPtr->anchors.lines)
+  for (const auto &line : this->dataPtr->anchors.lines)
   {
     cardAnchors->setProperty(line.first.c_str(),
         target->property(line.second.c_str()));

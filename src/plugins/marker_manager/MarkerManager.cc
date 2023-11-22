@@ -52,7 +52,7 @@
 namespace gz::gui::plugins
 {
 /// \brief Private data class for MarkerManager
-class MarkerManagerPrivate
+class MarkerManager::Implementation
 {
   /// \brief Update markers based on msgs received
   public: void OnRender();
@@ -123,7 +123,7 @@ class MarkerManagerPrivate
       std::map<uint64_t, gz::rendering::VisualPtr>> visuals;
 
   /// \brief Gazebo node
-  public: gz::transport::Node node;
+  public: gz::transport::Node node {gz::transport::NodeOptions()};
 
   /// \brief Topic name for the marker service
   public: std::string topicName = "/marker";
@@ -143,7 +143,7 @@ class MarkerManagerPrivate
 };
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::Initialize()
+void MarkerManager::Implementation::Initialize()
 {
   if (!this->scene)
   {
@@ -160,7 +160,7 @@ void MarkerManagerPrivate::Initialize()
 
   // Advertise the list service
   if (!this->node.Advertise(this->topicName + "/list",
-      &MarkerManagerPrivate::OnList, this))
+      &Implementation::OnList, this))
   {
     gzerr << "Unable to advertise to the " << this->topicName
            << "/list service.\n";
@@ -170,7 +170,7 @@ void MarkerManagerPrivate::Initialize()
 
   // Advertise to the marker service
   if (!this->node.Advertise(this->topicName,
-        &MarkerManagerPrivate::OnMarkerMsg, this))
+        &Implementation::OnMarkerMsg, this))
   {
     gzerr << "Unable to advertise to the " << this->topicName
            << " service.\n";
@@ -180,7 +180,7 @@ void MarkerManagerPrivate::Initialize()
 
   // Advertise to the marker_array service
   if (!this->node.Advertise(this->topicName + "_array",
-        &MarkerManagerPrivate::OnMarkerMsgArray, this))
+        &Implementation::OnMarkerMsgArray, this))
   {
     gzerr << "Unable to advertise to the " << this->topicName
            << "_array service.\n";
@@ -190,7 +190,7 @@ void MarkerManagerPrivate::Initialize()
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::OnRender()
+void MarkerManager::Implementation::OnRender()
 {
   if (!this->scene)
   {
@@ -246,15 +246,15 @@ void MarkerManagerPrivate::OnRender()
 }
 
 /////////////////////////////////////////////////
-bool MarkerManagerPrivate::OnList(gz::msgs::Marker_V &_rep)
+bool MarkerManager::Implementation::OnList(gz::msgs::Marker_V &_rep)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   _rep.clear_marker();
 
   // Create the list of visuals
-  for (auto mIter : this->visuals)
+  for (const auto &mIter : this->visuals)
   {
-    for (auto iter : mIter.second)
+    for (const auto &iter : mIter.second)
     {
       gz::msgs::Marker *markerMsg = _rep.add_marker();
       markerMsg->set_ns(mIter.first);
@@ -266,14 +266,14 @@ bool MarkerManagerPrivate::OnList(gz::msgs::Marker_V &_rep)
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::OnMarkerMsg(const gz::msgs::Marker &_req)
+void MarkerManager::Implementation::OnMarkerMsg(const gz::msgs::Marker &_req)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   this->markerMsgs.push_back(_req);
 }
 
 /////////////////////////////////////////////////
-bool MarkerManagerPrivate::OnMarkerMsgArray(
+bool MarkerManager::Implementation::OnMarkerMsgArray(
     const gz::msgs::Marker_V&_req, gz::msgs::Boolean &_res)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -284,7 +284,8 @@ bool MarkerManagerPrivate::OnMarkerMsgArray(
 }
 
 //////////////////////////////////////////////////
-bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
+bool MarkerManager::Implementation::ProcessMarkerMsg(
+    const gz::msgs::Marker &_msg)
 {
   // Get the namespace, if it exists. Otherwise, use the global namespace
   std::string ns;
@@ -419,7 +420,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
     // Remove all markers in the specified namespace
     else if (nsIter != this->visuals.end())
     {
-      for (auto it : nsIter->second)
+      for (const auto &it : nsIter->second)
       {
         this->scene->DestroyVisual(it.second);
       }
@@ -432,7 +433,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
       for (nsIter = this->visuals.begin();
            nsIter != this->visuals.end(); ++nsIter)
       {
-        for (auto it : nsIter->second)
+        for (const auto &it : nsIter->second)
         {
           this->scene->DestroyVisual(it.second);
         }
@@ -450,7 +451,7 @@ bool MarkerManagerPrivate::ProcessMarkerMsg(const gz::msgs::Marker &_msg)
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::SetVisual(const gz::msgs::Marker &_msg,
+void MarkerManager::Implementation::SetVisual(const gz::msgs::Marker &_msg,
                            const rendering::VisualPtr &_visualPtr)
 {
   // Set Visual Scale
@@ -500,7 +501,7 @@ void MarkerManagerPrivate::SetVisual(const gz::msgs::Marker &_msg,
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::SetMarker(const gz::msgs::Marker &_msg,
+void MarkerManager::Implementation::SetMarker(const gz::msgs::Marker &_msg,
                            const rendering::MarkerPtr &_markerPtr)
 {
   _markerPtr->SetLayer(_msg.layer());
@@ -560,8 +561,8 @@ void MarkerManagerPrivate::SetMarker(const gz::msgs::Marker &_msg,
 }
 
 /////////////////////////////////////////////////
-rendering::MaterialPtr MarkerManagerPrivate::MsgToMaterial(
-                              const gz::msgs::Marker &_msg)
+rendering::MaterialPtr
+MarkerManager::Implementation::MsgToMaterial(const gz::msgs::Marker &_msg)
 {
   rendering::MaterialPtr material = this->scene->CreateMaterial();
 
@@ -595,8 +596,8 @@ rendering::MaterialPtr MarkerManagerPrivate::MsgToMaterial(
 }
 
 /////////////////////////////////////////////////
-gz::rendering::MarkerType MarkerManagerPrivate::MsgToType(
-                          const gz::msgs::Marker &_msg)
+gz::rendering::MarkerType
+MarkerManager::Implementation::MsgToType(const gz::msgs::Marker &_msg)
 {
   gz::msgs::Marker_Type marker = this->msg.type();
   if (marker != _msg.type() && _msg.type() != gz::msgs::Marker::NONE)
@@ -636,7 +637,7 @@ gz::rendering::MarkerType MarkerManagerPrivate::MsgToType(
 }
 
 /////////////////////////////////////////////////
-void MarkerManagerPrivate::OnWorldStatsMsg(
+void MarkerManager::Implementation::OnWorldStatsMsg(
   const gz::msgs::WorldStatistics &_msg)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
@@ -659,7 +660,7 @@ void MarkerManagerPrivate::OnWorldStatsMsg(
 
 /////////////////////////////////////////////////
 MarkerManager::MarkerManager()
-  : dataPtr(new MarkerManagerPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -740,7 +741,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
   {
     // Subscribe to world_stats
     if (!this->dataPtr->node.Subscribe(statsTopic,
-        &MarkerManagerPrivate::OnWorldStatsMsg, this->dataPtr.get()))
+        &Implementation::OnWorldStatsMsg, this->dataPtr.get()))
     {
       gzerr << "Failed to subscribe to [" << statsTopic << "]" << std::endl;
     }

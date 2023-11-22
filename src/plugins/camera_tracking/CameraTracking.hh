@@ -18,14 +18,13 @@
 #ifndef GZ_GUI_PLUGINS_CAMERATRACKING_HH_
 #define GZ_GUI_PLUGINS_CAMERATRACKING_HH_
 
+#include <gz/utils/ImplPtr.hh>
 #include <memory>
 
 #include "gz/gui/Plugin.hh"
 
 namespace gz::gui::plugins
 {
-  class CameraTrackingPrivate;
-
   /// \brief This plugin provides camera tracking capabilities such as "move to"
   /// and "follow".
   ///
@@ -58,7 +57,7 @@ namespace gz::gui::plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<CameraTrackingPrivate> dataPtr;
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 }  // namespace gz::gui::plugins
 

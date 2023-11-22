@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <string>
 
@@ -50,7 +51,7 @@ enum class KeyYaw{
 
 namespace gz::gui::plugins
 {
-class TeleopPrivate
+class Teleop::Implementation
 {
   /// \brief Node for communication.
   public: gz::transport::Node node;
@@ -102,7 +103,7 @@ class TeleopPrivate
 };
 
 /////////////////////////////////////////////////
-Teleop::Teleop(): dataPtr(std::make_unique<TeleopPrivate>())
+Teleop::Teleop(): dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Initialize publisher using default topic.
   this->dataPtr->cmdVelPub = transport::Node::Publisher();
@@ -167,7 +168,7 @@ void Teleop::SetTopic(const QString &_topic)
       (this->dataPtr->topic);
   if (!this->dataPtr->cmdVelPub)
   {
-    App()->findChild<MainWindow *>()->notifyWithDuration(
+    emit App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Error when advertising topic: " +
         this->dataPtr->topic), 4000);
     gzerr << "Error when advertising topic: " <<
@@ -175,18 +176,18 @@ void Teleop::SetTopic(const QString &_topic)
   }
   else
   {
-    App()->findChild<MainWindow *>()->notifyWithDuration(
+    emit App()->findChild<MainWindow *>()->notifyWithDuration(
       QString::fromStdString("Advertising topic: '<b>" +
         this->dataPtr->topic + "</b>'"), 4000);
   }
-  this->TopicChanged();
+  emit this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
 void Teleop::SetMaxForwardVel(double _velocity)
 {
   this->dataPtr->maxForwardVel = _velocity;
-  this->MaxForwardVelChanged();
+  emit this->MaxForwardVelChanged();
 }
 
 /////////////////////////////////////////////////
@@ -199,7 +200,7 @@ double Teleop::MaxForwardVel() const
 void Teleop::SetMaxVerticalVel(double _velocity)
 {
   this->dataPtr->maxVerticalVel = _velocity;
-  this->MaxVerticalVelChanged();
+  emit this->MaxVerticalVelChanged();
 }
 
 /////////////////////////////////////////////////
@@ -212,7 +213,7 @@ double Teleop::MaxVerticalVel() const
 void Teleop::SetMaxYawVel(double _velocity)
 {
   this->dataPtr->maxYawVel = _velocity;
-  this->MaxYawVelChanged();
+  emit this->MaxYawVelChanged();
 }
 
 /////////////////////////////////////////////////

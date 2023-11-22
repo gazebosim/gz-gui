@@ -21,6 +21,7 @@
 #include <memory>
 
 #include <gz/gui/Plugin.hh>
+#include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
 #  define TopicViewer_EXPORTS_API
@@ -35,7 +36,6 @@
 namespace gz::gui::plugins
 {
   class TopicsModel;
-  class TopicViewerPrivate;
 
   /// \brief a Plugin to view the topics and their msgs & fields
   /// Field's informations can be passed by dragging them via the UI
@@ -60,7 +60,7 @@ namespace gz::gui::plugins
     public slots: void UpdateModel();
 
     /// \brief Pointer to private data.
-    private: std:: unique_ptr<TopicViewerPrivate> dataPtr;
+    private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
   };
 }  // namespace gz::gui::plugins
 

@@ -88,8 +88,8 @@ namespace gz::gui::plugins
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<NavSatMapPrivate> dataPtr;
-  };
+    GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
+};
 }  // namespace gz::gui::plugins
 
 #endif  // GZ_GUI_PLUGINS_NAVSAT_MAP_HH_

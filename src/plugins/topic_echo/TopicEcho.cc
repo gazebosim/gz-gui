@@ -15,6 +15,7 @@
  *
 */
 
+#include <gz/utils/ImplPtr.hh>
 #include <iostream>
 #include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
@@ -25,13 +26,13 @@
 
 namespace gz::gui::plugins
 {
-class TopicEchoPrivate
+class TopicEcho::Implementation
 {
   /// \brief Topic
   public: QString topic{"/echo"};
 
   /// \brief A list of text data.
-  public: QStringListModel msgList;
+  public: QStringListModel msgList {nullptr};
 
   /// \brief Size of the text buffer. The size is the number of
   /// messages.
@@ -49,7 +50,7 @@ class TopicEchoPrivate
 
 /////////////////////////////////////////////////
 TopicEcho::TopicEcho()
-  : dataPtr(new TopicEchoPrivate)
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Connect model
   App()->Engine()->rootContext()->setContextProperty("TopicEchoMsgList",
@@ -109,7 +110,7 @@ void TopicEcho::OnMessage(const google::protobuf::Message &_msg)
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  this->AddMsg(QString::fromStdString(_msg.DebugString()));
+  emit this->AddMsg(QString::fromStdString(_msg.DebugString()));
 }
 
 /////////////////////////////////////////////////
@@ -141,7 +142,7 @@ QString TopicEcho::Topic() const
 void TopicEcho::SetTopic(const QString &_topic)
 {
   this->dataPtr->topic = _topic;
-  this->TopicChanged();
+  emit this->TopicChanged();
 }
 
 /////////////////////////////////////////////////
@@ -161,7 +162,7 @@ bool TopicEcho::Paused() const
 void TopicEcho::SetPaused(const bool &_paused)
 {
   this->dataPtr->paused = _paused;
-  this->PausedChanged();
+  emit this->PausedChanged();
 }
 }  // namespace gz::gui::plugins
 

@@ -336,7 +336,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 
     // Close dialog after some time
     auto closed = false;
-    QTimer::singleShot(300, [&] {
+    QTimer::singleShot(300, &app, [&] {
       auto ds = app.allWindows();
 
       // The main dialog - some systems return more, not sure why
@@ -371,7 +371,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 
     // Close dialogs after some time
     auto closed = false;
-    QTimer::singleShot(300, [&] {
+    QTimer::singleShot(300, &app, [&] {
       auto ds = app.allWindows();
 
       // 2 dialog - some systems return more, not sure why

@@ -28,12 +28,7 @@
 #include <memory>
 #include <string>
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
-namespace gz
-{
-namespace gui
-{
-namespace plugins
+namespace gz::gui::plugins
 {
   /// \brief Private data for GzCameraTextureRhiVulkan
   class GzCameraTextureRhiVulkanPrivate;
@@ -138,10 +133,6 @@ namespace plugins
     /// \internal Pointer to private data
     private: std::unique_ptr<TextureNodeRhiVulkanPrivate> dataPtr;
    };
-}
-}
-}
-
-#endif
+}  // namespace gz::gui::plugins
 
 #endif
