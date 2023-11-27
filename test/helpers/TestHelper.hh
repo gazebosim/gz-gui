@@ -36,7 +36,7 @@ namespace gz
 namespace gui
 {
 /// \brief
-class GZ_GUI_VISIBLE TestHelper : public QObject
+class TestHelper_EXPORTS_API TestHelper : public QObject
 {
   Q_OBJECT
 
