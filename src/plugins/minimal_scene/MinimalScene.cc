@@ -216,11 +216,11 @@ class gz::gui::plugins::RenderWindowItem::Implementation
 
   /// \brief Graphics API. The default is platform specific.
   public: gz::rendering::GraphicsAPI graphicsAPI =
-#if GZ_GUI_HAVE_METAL_
+#if GZ_GUI_HAVE_METAL
       rendering::GraphicsAPI::METAL;
 #else
       rendering::GraphicsAPI::OPENGL;
-#endif
+#endif  // GZ_GUI_HAVE_METAL
 
   /// \brief Render thread
   public: RenderThread *renderThread = nullptr;
