@@ -28,7 +28,9 @@
 #include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
-#  define WorldStats_EXPORTS_API
+#  if (defined(WorldStats_EXPORTS))
+#    define WorldStats_EXPORTS_API __attribute__((visibility("default")))
+#  endif
 #else
 #  if (defined(WorldStats_EXPORTS))
 #    define WorldStats_EXPORTS_API __declspec(dllexport)

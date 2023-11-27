@@ -78,6 +78,9 @@ function(gz_gui_add_plugin plugin_name)
     PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
     PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} gz-plugin${GZ_PLUGIN_VER}::register
   )
+  
+  message(STATUS "Define WorldStats_EXPORTS for ${plugin_name}")
+  target_compile_definitions(${plugin_name} PUBLIC WorldStats_EXPORTS)
 
   if(gz_gui_add_plugin_TEST_SOURCES)
     gz_build_tests(TYPE UNIT
