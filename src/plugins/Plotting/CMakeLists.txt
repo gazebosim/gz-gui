@@ -1,0 +1,8 @@
+gz_gui_add_plugin(TransportPlotting
+  SOURCES
+    TransportPlotting.cc
+  QT_HEADERS
+    TransportPlotting.hh
+  QML_URI
+    TransportPlotting
+)

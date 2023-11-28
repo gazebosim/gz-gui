@@ -1,0 +1,12 @@
+gz_gui_add_plugin(Screenshot
+  SOURCES
+    Screenshot.cc
+  QT_HEADERS
+    Screenshot.hh
+  PUBLIC_LINK_LIBS
+    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+  TEST_SOURCES
+    Screenshot_TEST.cc
+  QML_URI
+    Screenshot
+)

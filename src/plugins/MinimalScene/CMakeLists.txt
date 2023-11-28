@@ -1,0 +1,20 @@
+gz_gui_add_plugin(MinimalScene
+  SOURCES
+    MinimalScene.cc
+    MinimalSceneRhi.cc
+    MinimalSceneRhiOpenGL.cc
+    MinimalSceneRhiVulkan.cc
+    EngineToQtInterface.cc
+  QT_HEADERS
+    MinimalScene.hh
+    MinimalSceneRhi.hh
+    MinimalSceneRhiOpenGL.hh
+    MinimalSceneRhiVulkan.hh
+    EngineToQtInterface.hh
+  QML_SOURCES
+    MinimalScene.qml
+  QML_URI
+    MinimalScene
+  PUBLIC_LINK_LIBS
+   gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+)

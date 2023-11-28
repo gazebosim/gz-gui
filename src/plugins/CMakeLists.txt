@@ -143,6 +143,25 @@ function(gz_gui_add_plugin_qt6 plugin_name)
       ${gz_gui_add_plugin_qt6_PRIVATE_LINK_LIBS}
   )
   install (TARGETS ${plugin_name} DESTINATION ${GZ_GUI_PLUGIN_INSTALL_DIR})
+
+  if (gz_gui_add_plugin_qt6_TEST_SOURCES)
+    gz_build_tests(TYPE UNIT
+      SOURCES
+        ${gz_gui_add_plugin_qt6_TEST_SOURCES}
+      LIB_DEPS
+        ${GZ-GUI_LIBRARIES}
+        TINYXML2::TINYXML2
+        ${plugin_name}
+      INCLUDE_DIRS
+        # Used to make internal source file headers visible to the unit tests
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        # Used to make test-directory headers visible to the unit tests
+        ${PROJECT_SOURCE_DIR}
+        # Used to make test_config.h visible to the unit tests
+        ${PROJECT_BINARY_DIR}
+      ENVIRONMENT
+        GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX})
+  endif()
 endfunction()
 
 
@@ -183,6 +202,25 @@ endfunction()
 
 
 # Plugins
-add_subdirectory(camera_fps)
-add_subdirectory(camera_tracking)
-add_subdirectory(publisher)
+
+add_subdirectory(CameraFps)
+add_subdirectory(CameraTracking)
+add_subdirectory(GridConfig)
+add_subdirectory(ImageDisplay)
+add_subdirectory(InteractiveViewControl)
+add_subdirectory(KeyPublisher)
+add_subdirectory(MarkerManager)
+add_subdirectory(MinimalScene)
+add_subdirectory(NavsatMap)
+add_subdirectory(Plotting)
+add_subdirectory(PointCloud)
+add_subdirectory(Publisher)
+add_subdirectory(Screenshot)
+add_subdirectory(ShutdownButton)
+add_subdirectory(TapeMeasure)
+add_subdirectory(Teleop)
+add_subdirectory(TopicEcho)
+add_subdirectory(TopicViewer)
+add_subdirectory(TransportSceneManager)
+add_subdirectory(WorldControl)
+add_subdirectory(WorldStats)
