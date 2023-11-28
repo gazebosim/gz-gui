@@ -169,3 +169,5 @@ std::string Dialog::ReadConfigAttribute(const std::string &_path,
   return std::string();
 }
 }  // namespace gz::gui
+
+#include "moc_Dialog.cpp"

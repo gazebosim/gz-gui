@@ -19,7 +19,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Dialogs
-import "qrc:/qml"
+import "qrc:/gz/gui/qml"
 
 Dialog {
   id: settingsDialog

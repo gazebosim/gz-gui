@@ -18,8 +18,8 @@
 // Borrowed from
 // https://martin.rpdev.net/2019/01/15/using-delegatemodel-in-qml-for-sorting-and-filtering.html
 
-import QtQuick 2.9
-import QtQml.Models 2.3
+import QtQuick
+import QtQml.Models
 
 DelegateModel {
   /**
@@ -83,4 +83,3 @@ DelegateModel {
 
   filterOnGroup: "visible"
 }
-

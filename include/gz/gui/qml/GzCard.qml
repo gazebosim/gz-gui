@@ -14,12 +14,12 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts 1.3
-import QtQuick.Window 2.2
-import "qrc:/qml"
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import QtQuick.Window
+import "qrc:/gz/gui/qml"
 
 // TODO: don't use "parent"
 Pane {

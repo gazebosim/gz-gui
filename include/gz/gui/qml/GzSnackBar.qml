@@ -15,12 +15,14 @@
  *
 */
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Dialogs
-import QtQuick.Layouts 1.3
-import QtQuick.Window 2.2
+import QtQuick.Layouts
+import QtQuick.Window
+
+import Qt5Compat.GraphicalEffects as Effects
 
 /*
  To use the snackbar you need to call the methods in the MainWindow class:
@@ -69,6 +71,12 @@ Popup {
   background: Rectangle {
     color: Material.background
     layer.enabled: true
+    layer.effect: Effects.DropShadow {
+      color: "#aa000000"
+      samples: 9
+      spread: 0
+      radius: 8.0
+    }
   }
 
   // this function is called when notify() or notifyWithDuration() are called

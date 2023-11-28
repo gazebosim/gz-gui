@@ -81,7 +81,7 @@ class Application::Implementation
       const QMessageLogContext &_context, const QString &_msg);
 };
 
-enum class GZ_COMMON_HIDDEN AvailableAPIs
+enum class GZ_COMMON_HIDDEN AvailableAPIs
 {
   OpenGL,
   Vulkan,
@@ -889,6 +889,8 @@ void Application::Implementation::MessageHandler(QtMsgType _type,
     const QMessageLogContext &_context, const QString &_msg)
 {
   std::string msg = "[QT] " + _msg.toStdString();
+  if (_context.file)
+    msg += std::string("[") + _context.file + ":" + std::to_string(_context.line) + "]";
   if (_context.function)
     msg += std::string("(") + _context.function + ")";
 
@@ -914,3 +916,5 @@ void Application::Implementation::MessageHandler(QtMsgType _type,
   }
 }
 }  // namespace gz::gui
+
+#include "moc_Application.cpp"

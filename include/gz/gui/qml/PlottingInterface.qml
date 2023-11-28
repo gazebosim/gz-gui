@@ -14,13 +14,13 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtCharts 2.2
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.0
+import QtQuick
+import QtCharts
+import QtQuick.Controls
+import QtQuick.Controls.Styles
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import Qt.labs.platform
 import "qrc:/qml"
 
 Rectangle

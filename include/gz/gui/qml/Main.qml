@@ -14,13 +14,14 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.1
+import QtCore
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Dialogs
-import QtQuick.Layouts 1.3
-import ExitAction 1.0
-import "qrc:/qml"
+import QtQuick.Layouts
+import ExitAction
+import "qrc:/gz/gui/qml/"
 
 ApplicationWindow
 {
@@ -85,7 +86,7 @@ ApplicationWindow
   }
 
   // Handler for window closing
-  onClosing: {
+  onClosing: (close) => {
     close.accepted = !showDialogOnExit
     if(showDialogOnExit){
       if (closingFromDialog) {
@@ -295,6 +296,8 @@ ApplicationWindow
   FileDialog {
     id: loadFileDialog
     title: "Load configuration"
+    fileMode: FileDialog.OpenFile
+    currentFolder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
     nameFilters: [ "Config files (*.config)" ]
     onAccepted: {
       MainWindow.OnLoadConfig(fileUrl)
@@ -307,6 +310,8 @@ ApplicationWindow
   FileDialog {
     id: saveFileDialog
     title: "Save configuration"
+    fileMode: FileDialog.SaveFile
+    currentFolder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
     nameFilters: [ "Config files (*.config)" ]
     onAccepted: {
       var selected = fileUrl.toString();

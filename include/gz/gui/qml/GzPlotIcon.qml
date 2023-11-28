@@ -14,7 +14,7 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
+import QtQuick
 
 /**
  * Item for a draggable plotting icon
@@ -32,7 +32,7 @@ import QtQuick 2.9
  *       sourceComponent: gzploticon
  *     }
  *     Component.onCompleted: {
- *       plotLoader.item.gzMimeData = {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",x," + typeNameFromCpp} 
+ *       plotLoader.item.gzMimeData = {"text/plain" : "Component," + entityFromCpp + "," + typeIdFromCpp + ",x," + typeNameFromCpp}
  *     }
  *   }
  * }

@@ -51,8 +51,9 @@ class Publisher::Implementation
 };
 
 /////////////////////////////////////////////////
-Publisher::Publisher()
-  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
+Publisher::Publisher(QObject *_parent)
+  : gz::gui::Plugin(_parent),
+    dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -199,3 +200,5 @@ void Publisher::SetFrequency(const double _frequency)
 // Register this plugin
 GZ_ADD_PLUGIN(gz::gui::plugins::Publisher,
               gz::gui::Plugin)
+
+#include "moc_Publisher.cpp"

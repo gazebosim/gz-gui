@@ -14,11 +14,10 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Styles 1.4
+import QtQuick
+import QtQuick.Control
+import QtQuick.Layout
+import QtQuick.Controls.Styles
 
 /**
  *  Item displaying 3D pose information.

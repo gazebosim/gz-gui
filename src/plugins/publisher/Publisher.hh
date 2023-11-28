@@ -42,6 +42,7 @@ namespace gz::gui::plugins
   class Publisher_EXPORTS_API Publisher : public Plugin
   {
     Q_OBJECT
+    QML_ELEMENT
 
     /// \brief Message type
     Q_PROPERTY(
@@ -76,7 +77,7 @@ namespace gz::gui::plugins
     )
 
     /// \brief Constructor
-    public: Publisher();
+    public: Publisher(QObject *_parent = nullptr);
 
     /// \brief Destructor
     public: virtual ~Publisher();

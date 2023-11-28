@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
+import QtQuick
+import QtQuick.Controls
 
 /**
  * Rulers which can be dragged to resize a target.

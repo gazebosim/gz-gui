@@ -246,73 +246,91 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 
 //////////////////////////////////////////////////
 TEST(ApplicationTest,
-    GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindow))
+    GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindowSimple))
 {
   common::Console::SetVerbosity(4);
-
   ASSERT_EQ(nullptr, qGuiApp);
 
   // No plugins
-  {
-    Application app(g_argc, g_argv);
+  Application app(g_argc, g_argv);
 
-    auto wins = app.allWindows();
-    ASSERT_EQ(wins.size(), 1);
+  auto wins = app.allWindows();
+  ASSERT_EQ(wins.size(), 1);
 
-    // Close window after some time
-    QTimer::singleShot(300, wins[0], SLOT(close()));
+  // Close window after some time
+  QTimer::singleShot(300, wins[0], [&wins](){
+    wins[0]->close();
+  });
 
-    // Show window
-    app.exec();
-  }
+  // Show window
+  app.exec();
+}
 
-  // Load plugin
-  {
-    Application app(g_argc, g_argv);
+//////////////////////////////////////////////////
+TEST(ApplicationTest,
+    GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindowPlugin))
+{
+  common::Console::SetVerbosity(4);
+  ASSERT_EQ(nullptr, qGuiApp);
 
-    EXPECT_TRUE(app.LoadPlugin("Publisher"));
+  Application app(g_argc, g_argv);
 
-    auto win = App()->findChild<MainWindow *>();
-    ASSERT_NE(nullptr, win);
+  EXPECT_TRUE(app.LoadPlugin("Publisher"));
 
-    // Check plugin count
-    auto plugins = win->findChildren<Plugin *>();
-    EXPECT_EQ(1, plugins.count());
+  auto *win = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
 
-    // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+  // Check plugin count
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(1, plugins.count());
 
-    // Show window
-    app.exec();
-  }
+  QObject::connect(&app, &QGuiApplication::applicationStateChanged,
+                   [&win](auto state){
+                     std::cout << "State Changed, starting timer" << std::endl;
+                     QTimer::singleShot(100, [&win](){
+                      win->QuickWindow()->close();
+                    });
+                   });
+
+  // Show window
+  app.exec();
+  app.quit();
+}
+
+//////////////////////////////////////////////////
+TEST(ApplicationTest,
+    GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindowConfig))
+{
+  common::Console::SetVerbosity(4);
+  ASSERT_EQ(nullptr, qGuiApp);
 
   // Test config
   auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
   auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
 
   // Load config
-  {
-    Application app(g_argc, g_argv);
+  Application app(g_argc, g_argv);
 
-    // Add test plugin to path (referenced in config)
-    app.AddPluginPath(testBuildPath);
+  // Add test plugin to path (referenced in config)
+  app.AddPluginPath(testBuildPath);
 
-    // Load test config file
-    EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
+  // Load test config file
+  EXPECT_TRUE(app.LoadConfig(testSourcePath + "config/test.config"));
 
-    auto win = App()->findChild<MainWindow *>();
-    ASSERT_NE(nullptr, win);
+  auto *win = App()->findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
 
-    // Check plugin count
-    auto plugins = win->findChildren<Plugin *>();
-    EXPECT_EQ(1, plugins.count());
+  // Check plugin count
+  auto plugins = win->findChildren<Plugin *>();
+  EXPECT_EQ(1, plugins.count());
 
-    // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+  // Close window after some time
+  QTimer::singleShot(1000, win, [&win](){
+    win->QuickWindow()->close();
+  });
 
-    // Show window
-    app.exec();
-  }
+  // Show window
+  app.exec();
 }
 
 //////////////////////////////////////////////////
