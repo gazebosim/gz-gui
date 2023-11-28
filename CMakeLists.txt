@@ -73,28 +73,27 @@ set(GZ_RENDERING_VER ${gz-rendering9_VERSION_MAJOR})
 gz_find_package(gz-msgs11 REQUIRED)
 set(GZ_MSGS_VER ${gz-msgs11_VERSION_MAJOR})
 
+# Find if command is available. This is used to enable tests.
+# Note that CLI files are installed regardless of whether the dependency is
+# available during build time
+find_program(HAVE_GZ_TOOLS gz)
+set(GZ_TOOLS_VER 2)
 
 #--------------------------------------
 # Find QT
-gz_find_package (Qt6
+set(QT_MAJOR_VERSION 6)
+set(QT_MINOR_VERSION 0)
+gz_find_package (Qt${QT_MAJOR_VERSION}
+  VERSION ${QT_MAJOR_VERSION}.${QT_MINOR_VERSION}
   COMPONENTS
     Core
     Quick
     QuickControls2
     Widgets
+    Test
   REQUIRED
-  PKGCONFIG "Qt6Core Qt6Quick Qt6QuickControls2 Qt6Widgets"
-)
-
-if (BUILD_TESTING)
-  # Find if command is available. This is used to enable tests.
-  # Note that CLI files are installed regardless of whether the dependency is
-  # available during build time
-  find_program(HAVE_GZ_TOOLS gz)
-  set(GZ_TOOLS_VER 2)
-
-  find_package(Qt6 REQUIRED COMPONENTS Test)
-endif()
+  PKGCONFIG "Qt${QT_MAJOR_VERSION}Core Qt${QT_MAJOR_VERSION}Quick Qt${QT_MAJOR_VERSION}QuickControls2 Qt${QT_MAJOR_VERSION}Widgets")
+add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
 
 if(POLICY CMP0100)
   cmake_policy(SET CMP0100 NEW)

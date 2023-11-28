@@ -16,7 +16,6 @@
 */
 
 #include <gtest/gtest.h>
-#include <QRegularExpression>
 
 #include <gz/msgs/stringmsg.pb.h>
 
@@ -130,7 +129,7 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
 
   int sleep = 0;
   int maxSleep = 30;
-  while(msgStringList->rowCount() == 0 && sleep < maxSleep)
+  while (msgStringList->rowCount() == 0 && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QCoreApplication::processEvents();
@@ -150,16 +149,13 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
     pub.Publish(msg);
   }
 
-  auto regExp13 = QRegularExpression::wildcardToRegularExpression("*13");
-  auto regExp14 = QRegularExpression::wildcardToRegularExpression("*14");
-
   // Wait until all 15 messages are received
   // To avoid flakiness due to messages coming out of order, we check for both
   // 13 and 14. There's a chance a lower number comes afterwards, but that's
   // just bad luck.
   sleep = 0;
-  while (msgStringList->stringList().filter(regExp13).count() == 0
-      && msgStringList->stringList().filter(regExp14).count() == 0
+  while (msgStringList->stringList().filter("13").count() == 0
+      && msgStringList->stringList().filter("14").count() == 0
       && sleep < maxSleep)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -177,9 +173,7 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
   unsigned int count = 0;
   for (auto i = 5; i < 15; ++i)
   {
-    auto regExp =
-      QRegularExpression::wildcardToRegularExpression("*" + QString::number(i));
-    if (msgStringList->stringList().filter(regExp).count() > 0)
+    if (msgStringList->stringList().filter(QString::number(i)).count() > 0)
       ++count;
   }
   EXPECT_GE(count, 6u);

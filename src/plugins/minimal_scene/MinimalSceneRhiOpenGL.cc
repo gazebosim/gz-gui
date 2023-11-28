@@ -60,6 +60,27 @@ namespace gz::gui::plugins
     public: QMutex mutex;
     public: QSGTexture *texture = nullptr;
     public: QQuickWindow *window = nullptr;
+
+  public: void CreateTexture(GLuint *_id, QSize _size) {
+    delete this->texture;
+    this->texture = nullptr;
+
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    this->texture = QNativeInterface::QSGOpenGLTexture::fromNative(
+      *_id,
+      this->window,
+      _size);
+#else
+  this->texture =
+      this->window->createTextureFromNativeObject(
+          QQuickWindow::NativeObjectTexture,
+          static_cast<void*>(_id),
+          0,
+          _size);
+#endif
+    }
+
   };
 
 /////////////////////////////////////////////////
@@ -205,11 +226,10 @@ TextureNodeRhiOpenGL::TextureNodeRhiOpenGL(QQuickWindow *_window)
     : dataPtr(std::make_unique<TextureNodeRhiOpenGLPrivate>())
 {
   this->dataPtr->window = _window;
-  this->dataPtr->texture =
-    QNativeInterface::QSGOpenGLTexture::fromNative(
-      this->dataPtr->textureId,
-      this->dataPtr->window,
-      QSize(1, 1));
+
+  // Our texture node must have a texture, so use the default 0 texture.
+  this->dataPtr->CreateTexture(
+    &this->dataPtr->textureId, QSize(1, 1));
 }
 
 /////////////////////////////////////////////////
@@ -244,16 +264,10 @@ void TextureNodeRhiOpenGL::PrepareNode()
   this->dataPtr->textureId = 0;
   this->dataPtr->mutex.unlock();
 
-  if (this->dataPtr->newTextureId)
+  if (this->dataPtr->newTextureId != 0)
   {
-    delete this->dataPtr->texture;
-    this->dataPtr->texture = nullptr;
-
-    this->dataPtr->texture =
-      QNativeInterface::QSGOpenGLTexture::fromNative(
-        this->dataPtr->newTextureId,
-        this->dataPtr->window,
-        this->dataPtr->newSize);
+    this->dataPtr->CreateTexture(
+      &this->dataPtr->newTextureId, this->dataPtr->newSize);
   }
 }
 }  // namespace gz::gui::plugins
