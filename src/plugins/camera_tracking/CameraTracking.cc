@@ -366,7 +366,7 @@ void CameraTracking::Implementation::OnRender()
         this->moveToHelper.MoveTo(this->camera,
             *(this->moveToPoseValue),
             *(this->moveToPoseDuration),
-            std::bind(&CameraTrackingPrivate::OnMoveToPoseComplete, this));
+            std::bind(&Implementation::OnMoveToPoseComplete, this));
         this->prevMoveToTime = std::chrono::system_clock::now();
       }
       else
