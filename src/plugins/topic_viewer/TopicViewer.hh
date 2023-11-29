@@ -24,7 +24,7 @@
 #include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
-#  define TopicViewer_EXPORTS_API
+#  define TopicViewer_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(TopicViewer_EXPORTS))
 #    define TopicViewer_EXPORTS_API __declspec(dllexport)

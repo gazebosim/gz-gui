@@ -27,7 +27,7 @@
 #include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
-#  define WorldControl_EXPORTS_API
+#  define WorldControl_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(WorldControl_EXPORTS))
 #    define WorldControl_EXPORTS_API __declspec(dllexport)
