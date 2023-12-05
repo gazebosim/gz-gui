@@ -129,7 +129,8 @@ void ImageDisplay::ProcessImage()
     case msgs::PixelFormatType::RGB_INT8:
       // copy image data buffer directly to QImage
       image = QImage(reinterpret_cast<const uchar *>(
-          this->dataPtr->imageMsg.data().c_str()), width, height, qFormat);
+          this->dataPtr->imageMsg.data().c_str()), width, height,
+          3 * width, qFormat);
       break;
     // for other cases, convert to RGB common::Image
     case msgs::PixelFormatType::R_FLOAT32:
