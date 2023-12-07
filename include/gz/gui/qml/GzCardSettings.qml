@@ -209,7 +209,7 @@ Dialog {
   ColorDialog {
     id: colorDialog
     title: "Please choose a color"
-    options: [ColorDialog.ShowAlphaChannel]
+    options: ColorDialog.ShowAlphaChannel
     onAccepted: {
       content.color = colorDialog.color
       bgColor.color = colorDialog.color

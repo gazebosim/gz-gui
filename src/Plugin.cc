@@ -125,7 +125,6 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   // Qml file
   auto filename = QString::fromStdString(_pluginElem->Attribute("filename"));
 
-
   // Instantiate plugin QML file into a component
   auto qmlFile = ":/" + filename + "/" + filename + ".qml";
   if (!QFile(qmlFile).exists())

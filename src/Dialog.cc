@@ -22,6 +22,11 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/Dialog.hh"
 
+namespace
+{
+constexpr const char* kQmlUri ="qrc:gz/gui/qml/StandaloneDialog.qml";
+}  // namespace
+
 namespace gz::gui
 {
 class Dialog::Implementation
@@ -35,16 +40,15 @@ Dialog::Dialog()
   : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
   // Load QML and keep pointer to generated QQuickWindow
-  std::string qmlFile("qrc:qml/StandaloneDialog.qml");
-  App()->Engine()->load(QUrl(QString::fromStdString(qmlFile)));
+  App()->Engine()->load(QUrl(QString(kQmlUri)));
 
   this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
       App()->Engine()->rootObjects().value(0));
-  if (!this->dataPtr->quickWindow)
+  if (this->dataPtr->quickWindow == nullptr)
   {
     // We'd only get here if the QML file is malformed
     // LCOV_EXCL_START
-    gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
+    gzerr << "Internal error: Failed to instantiate QML file [" << kQmlUri
            << "]" << std::endl;
     // LCOV_EXCL_STOP
   }
@@ -62,8 +66,8 @@ QQuickWindow *Dialog::QuickWindow() const
 /////////////////////////////////////////////////
 QQuickItem *Dialog::RootItem() const
 {
-  auto dialogItem = this->dataPtr->quickWindow->findChild<QQuickItem *>();
-  if (!dialogItem)
+  auto *dialogItem = this->dataPtr->quickWindow->findChild<QQuickItem *>();
+  if (dialogItem == nullptr)
   {
     // We'd only get here if the QML file is malformed
     // LCOV_EXCL_START
@@ -96,7 +100,7 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
 
   // Update attribute value for the correct dialog
   bool updated{false};
-  for (auto dialogElem = doc.FirstChildElement("dialog");
+  for (auto *dialogElem = doc.FirstChildElement("dialog");
     dialogElem != nullptr;
     dialogElem = dialogElem->NextSiblingElement("dialog"))
   {
@@ -110,7 +114,7 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
   // Create new <dialog> if missing
   if (!updated)
   {
-    auto dialogElem = doc.NewElement("dialog");
+    auto *dialogElem = doc.NewElement("dialog");
     dialogElem->SetAttribute("name", this->objectName().toStdString().c_str());
     dialogElem->SetAttribute(_attribute.c_str(), _value);
     doc.InsertEndChild(dialogElem);

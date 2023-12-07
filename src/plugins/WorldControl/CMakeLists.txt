@@ -3,6 +3,8 @@ if (NOT MSVC)
     SOURCES
       WorldControl.cc
       WorldControlEventListener.cc
+    QML_SOURCES
+      WorldControl.qml
     QT_HEADERS
       WorldControl.hh
       WorldControlEventListener.hh
@@ -19,5 +21,7 @@ else()
       WorldControl.hh
     QML_URI
       WorldControl
+    QML_SOURCES
+      WorldControl.qml
   )
 endif()

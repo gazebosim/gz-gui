@@ -265,6 +265,9 @@ Application::~Application()
   }
   this->dataPtr->dialogs.clear();
 
+  this->dataPtr->engine->clearComponentCache();
+  this->dataPtr->engine->clearSingletons();
+
   delete this->dataPtr->engine;
 
   std::queue<std::shared_ptr<Plugin>> empty;

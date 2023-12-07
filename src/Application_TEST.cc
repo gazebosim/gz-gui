@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 #include <gtest/gtest.h>
+#include <chrono>
 #include <gz/common/Console.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
@@ -35,16 +36,23 @@ char* g_argv[] =
 using namespace gz;
 using namespace gui;
 
+class ApplicationTest: public ::testing::Test
+{
+  protected:
+    void SetUp() override
+    {
+      common::Console::SetVerbosity(4);
+      // No Qt app
+      ASSERT_EQ(nullptr, qGuiApp);
+      ASSERT_EQ(nullptr, App());
+    }
+};
+
+
 // See https://github.com/gazebosim/gz-gui/issues/75
 //////////////////////////////////////////////////
-TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
+TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
-  common::Console::SetVerbosity(4);
-
-  // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
-  ASSERT_EQ(nullptr, App());
-
   // One app construct - destruct
   {
     Application app(g_argc, g_argv);
@@ -63,23 +71,16 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
+TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadPlugin))
 {
-  gz::common::Console::SetVerbosity(4);
-
-  // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
   Application app(g_argc, g_argv);
 
   EXPECT_TRUE(app.LoadPlugin("Publisher"));
 }
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadNonexistantPlugin))
 {
-  gz::common::Console::SetVerbosity(4);
-  // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
   Application app(g_argc, g_argv);
 
   EXPECT_FALSE(app.LoadPlugin("_doesnt_exist"));
@@ -87,12 +88,10 @@ TEST(ApplicationTest,
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadProgrammaticPlugin))
 {
-  gz::common::Console::SetVerbosity(4);
   // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
   Application app(g_argc, g_argv);
 
   std::string pluginName;
@@ -117,11 +116,8 @@ TEST(ApplicationTest,
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadEnvPlugin))
+TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadEnvPlugin))
 {
-  gz::common::Console::SetVerbosity(4);
-  // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
   Application app(g_argc, g_argv);
 
   setenv("TEST_ENV_VAR",
@@ -131,12 +127,9 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadEnvPlugin))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadBadInheritancePlugin))
 {
-  gz::common::Console::SetVerbosity(4);
-  // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
   Application app(g_argc, g_argv);
 
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -144,12 +137,9 @@ TEST(ApplicationTest,
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadNotRegisteredPlugin))
 {
-  gz::common::Console::SetVerbosity(4);
-  // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
   Application app(g_argc, g_argv);
 
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -157,12 +147,9 @@ TEST(ApplicationTest,
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadInvalidQmlPlugin))
 {
-  gz::common::Console::SetVerbosity(4);
-  // No Qt app
-  ASSERT_EQ(nullptr, qGuiApp);
   Application app(g_argc, g_argv);
 
   app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
@@ -170,12 +157,8 @@ TEST(ApplicationTest,
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
+TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 {
-  common::Console::SetVerbosity(4);
-
-  ASSERT_EQ(nullptr, qGuiApp);
-
   // Empty string
   {
     Application app(g_argc, g_argv);
@@ -220,12 +203,8 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadConfig))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
+TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 {
-  common::Console::SetVerbosity(4);
-
-  ASSERT_EQ(nullptr, qGuiApp);
-
   // Test config file
   {
     Application app(g_argc, g_argv);
@@ -245,12 +224,9 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(LoadDefaultConfig))
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindowSimple))
 {
-  common::Console::SetVerbosity(4);
-  ASSERT_EQ(nullptr, qGuiApp);
-
   // No plugins
   Application app(g_argc, g_argv);
 
@@ -258,21 +234,20 @@ TEST(ApplicationTest,
   ASSERT_EQ(wins.size(), 1);
 
   // Close window after some time
-  QTimer::singleShot(300, wins[0], [&wins](){
-    wins[0]->close();
-  });
+  QObject::connect(&app, &QGuiApplication::applicationStateChanged,
+    [&wins](auto /*state*/){
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      wins[0]->close();
+    });
 
   // Show window
-  app.exec();
+  gz::gui::Application::exec();
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindowPlugin))
 {
-  common::Console::SetVerbosity(4);
-  ASSERT_EQ(nullptr, qGuiApp);
-
   Application app(g_argc, g_argv);
 
   EXPECT_TRUE(app.LoadPlugin("Publisher"));
@@ -285,25 +260,19 @@ TEST(ApplicationTest,
   EXPECT_EQ(1, plugins.count());
 
   QObject::connect(&app, &QGuiApplication::applicationStateChanged,
-                   [&win](auto state){
-                     std::cout << "State Changed, starting timer" << std::endl;
-                     QTimer::singleShot(100, [&win](){
-                      win->QuickWindow()->close();
-                    });
-                   });
+    [&win](auto /*state*/){
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      win->QuickWindow()->close();
+    });
 
   // Show window
-  app.exec();
-  app.quit();
+  gz::gui::Application::exec();
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest,
+TEST_F(ApplicationTest,
     GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(InitializeMainWindowConfig))
 {
-  common::Console::SetVerbosity(4);
-  ASSERT_EQ(nullptr, qGuiApp);
-
   // Test config
   auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
   auto testSourcePath = std::string(PROJECT_SOURCE_PATH) + "/test/";
@@ -325,21 +294,19 @@ TEST(ApplicationTest,
   EXPECT_EQ(1, plugins.count());
 
   // Close window after some time
-  QTimer::singleShot(1000, win, [&win](){
-    win->QuickWindow()->close();
-  });
+  QObject::connect(&app, &QGuiApplication::applicationStateChanged,
+    [&win](auto /*state*/){
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      win->QuickWindow()->close();
+    });
 
   // Show window
-  app.exec();
+  gz::gui::Application::exec();
 }
 
 //////////////////////////////////////////////////
-TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
+TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 {
-  common::Console::SetVerbosity(4);
-
-  ASSERT_EQ(nullptr, qGuiApp);
-
   // Single dialog
   {
     Application app(g_argc, g_argv, WindowType::kDialog);
@@ -354,21 +321,23 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 
     // Close dialog after some time
     auto closed = false;
-    QTimer::singleShot(300, &app, [&] {
-      auto ds = app.allWindows();
 
-      // The main dialog - some systems return more, not sure why
-      ASSERT_GE(ds.size(), 1);
+  // Close window after some time
+  QObject::connect(&app, &QGuiApplication::applicationStateChanged,
+   [&closed](auto /*state*/){
+     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+     auto ds = gz::gui::Application::allWindows();
 
-      EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
-
-      // Close
-      ds[0]->close();
-      closed = true;
+     // The main diaog - some systems return more, not sure why
+     ASSERT_GE(ds.size(), 1);
+     EXPECT_TRUE(qobject_cast<QQuickWindow *>(ds[0]));
+     // Close
+     ds[0]->close();
+     closed = true;
     });
 
-    // Exec dialog
-    app.exec();
+    // Show window
+    gz::gui::Application::exec();
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
@@ -389,19 +358,21 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 
     // Close dialogs after some time
     auto closed = false;
-    QTimer::singleShot(300, &app, [&] {
-      auto ds = app.allWindows();
+    QObject::connect(&app, &QGuiApplication::applicationStateChanged,
+     [&closed](auto /*state*/){
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        auto ds = gz::gui::Application::allWindows();
 
-      // 2 dialog - some systems return more, not sure why
-      EXPECT_GE(ds.size(), 2);
+        // 2 dialog - some systems return more, not sure why
+        ASSERT_GE(ds.size(), 2);
 
-      for (auto dialog : ds)
-        dialog->close();
-      closed = true;
-    });
+        for (auto *dialog : ds)
+          dialog->close();
+        closed = true;
+      });
 
     // Exec dialog
-    app.exec();
+    gz::gui::Application::exec();
 
     // Make sure timer was triggered
     EXPECT_TRUE(closed);
@@ -409,12 +380,8 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Dialog))
 }
 
 /////////////////////////////////////////////////
-TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
+TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
 {
-  common::Console::SetVerbosity(4);
-
-  ASSERT_EQ(nullptr, qGuiApp);
-
   Application app(g_argc, g_argv);
 
   // \todo Verify output, see commmon::Console_TEST for example

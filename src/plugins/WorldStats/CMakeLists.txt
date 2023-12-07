@@ -3,6 +3,8 @@ gz_gui_add_plugin(WorldStats
     WorldStats.cc
   QT_HEADERS
     WorldStats.hh
+  QML_SOURCES
+    WorldStats.qml
   TEST_SOURCES
     WorldStats_TEST.cc
   QML_URI
