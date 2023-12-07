@@ -140,6 +140,9 @@ class CameraTracking::Implementation
   /// \brief The pose set from the move to pose service.
   public: std::optional<math::Pose3d> moveToPoseValue;
 
+  /// \brief The motion duration set from the move to pose service.
+  public: std::optional<double> moveToPoseDuration;
+
   /// \brief Follow service
   public: std::string followService;
 
@@ -250,6 +253,7 @@ void CameraTracking::Implementation::OnMoveToComplete()
 void CameraTracking::Implementation::OnMoveToPoseComplete()
 {
   this->moveToPoseValue.reset();
+  this->moveToPoseDuration.reset();
 }
 
 /////////////////////////////////////////////////
@@ -289,6 +293,15 @@ bool CameraTracking::Implementation::OnMoveToPose(const msgs::GUICamera &_msg,
     pose.Pos().X() = math::INF_D;
 
   this->moveToPoseValue = pose;
+
+  if (_msg.duration() > 0)
+  {
+    this->moveToPoseDuration = _msg.duration();
+  }
+  else
+  {
+    this->moveToPoseDuration = 0.5;
+  }
 
   _res.set_data(true);
   return true;
@@ -352,7 +365,8 @@ void CameraTracking::Implementation::OnRender()
       {
         this->moveToHelper.MoveTo(this->camera,
             *(this->moveToPoseValue),
-            0.5, std::bind(&Implementation::OnMoveToPoseComplete, this));
+            *(this->moveToPoseDuration),
+            std::bind(&Implementation::OnMoveToPoseComplete, this));
         this->prevMoveToTime = std::chrono::system_clock::now();
       }
       else
