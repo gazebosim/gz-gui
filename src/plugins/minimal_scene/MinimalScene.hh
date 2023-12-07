@@ -428,11 +428,11 @@ namespace gz::gui::plugins
     /// \internal
     /// \brief Pointer to private data.
     GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
-};
+  };
 
-/// \brief Texture node for displaying the render texture from gz-renderer
-class TextureNode : public QObject, public QSGSimpleTextureNode
-{
+  /// \brief Texture node for displaying the render texture from gz-renderer
+  class TextureNode : public QObject, public QSGSimpleTextureNode
+  {
     Q_OBJECT
 
     /// \brief Constructor
@@ -481,7 +481,7 @@ class TextureNode : public QObject, public QSGSimpleTextureNode
 
     /// \brief Pointer to render interface to handle OpenGL/Metal compatibility
     private: std::unique_ptr<TextureNodeRhi> rhi;
-};
+  };
 }  // namespace gz::gui::plugins
 
 #endif  // GZ_GUI_PLUGINS_MINIMALSCENE_HH_
