@@ -2,7 +2,7 @@ set (qt_headers
   TestHelper.hh
 )
 
-QT5_WRAP_CPP(headers_MOC ${qt_headers})
+qt_wrap_cpp(headers_MOC ${qt_headers})
 
 add_library(${PROJECT_NAME}_test_helpers SHARED
   TestHelper.cc

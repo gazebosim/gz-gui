@@ -54,7 +54,7 @@ gz_build_tests(TYPE UNIT
                   TINYXML2::TINYXML2
                 TEST_LIST
                   gtest_targets
-                ENVIRONMENT 
+                ENVIRONMENT
                   GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 )
 

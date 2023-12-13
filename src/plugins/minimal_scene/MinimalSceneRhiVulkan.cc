@@ -17,7 +17,7 @@
 
 #include "MinimalSceneRhiVulkan.hh"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && QT_CONFIG(vulkan)
+#if GZ_GUI_HAVE_VULKAN
 
 #include "EngineToQtInterface.hh"
 #include "MinimalScene.hh"
@@ -60,7 +60,28 @@ class TextureNodeRhiVulkanPrivate
   public: QMutex mutex;
   public: QSGTexture *texture = nullptr;
   public: QQuickWindow *window = nullptr;
+
+  public: void CreateTexture(VkImage *_id, QSize _size) {
+    delete this->texture;
+    this->texture = nullptr;
+
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    this->texture = QNativeInterface::QSGVulkanTexture::fromNative(
+      *_id,
+      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+      this->window,
+      _size);
+#else
+    this->texture = this->window->createTextureFromNativeObject(
+      QQuickWindow::NativeObjectTexture,
+      static_cast<void *>(_id),  //
+      VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL,
+      _size);
+#endif
+    }
 };
+
 
 /////////////////////////////////////////////////
 GzCameraTextureRhiVulkan::~GzCameraTextureRhiVulkan() = default;
@@ -182,10 +203,8 @@ TextureNodeRhiVulkan::TextureNodeRhiVulkan(QQuickWindow *_window,
   _camera->RenderTextureMetalId(&this->dataPtr->textureId);
   this->dataPtr->lastCamera = _camera;
 
-  this->dataPtr->texture = this->dataPtr->window->createTextureFromNativeObject(
-    QQuickWindow::NativeObjectTexture,
-    static_cast<void *>(&this->dataPtr->textureId),  //
-    0,                                               //
+  this->dataPtr->CreateTexture(
+    &this->dataPtr->textureId,
     QSize(static_cast<int>(_camera->ImageWidth()),
           static_cast<int>(_camera->ImageHeight())));
 }
@@ -229,16 +248,9 @@ void TextureNodeRhiVulkan::PrepareNode()
 
   if (this->dataPtr->newTextureId != nullptr)
   {
-    delete this->dataPtr->texture;
-    this->dataPtr->texture = nullptr;
-
-    this->dataPtr->texture =
-        this->dataPtr->window->createTextureFromNativeObject(
-            QQuickWindow::NativeObjectTexture,
-            static_cast<void*>(&this->dataPtr->newTextureId),
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-            this->dataPtr->newSize);
+    this->dataPtr->CreateTexture(
+      &this->dataPtr->newTextureId, this->dataPtr->newSize);
   }
 }
 }  // namespace gz::gui::plugins
-#endif  // HAVE_QT_VULKAN
+#endif  // GZ_GUI_HAVE_VULKAN

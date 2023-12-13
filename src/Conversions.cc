@@ -122,11 +122,7 @@ gz::common::MouseEvent convert(const QWheelEvent &_e)
   common::MouseEvent event;
 
   event.SetType(common::MouseEvent::SCROLL);
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-  event.SetPos(_e.x(), _e.y());
-#else
   event.SetPos(_e.position().x(), _e.position().y());
-#endif
   double scroll = (_e.angleDelta().y() > 0) ? -1.0 : 1.0;
   event.SetScroll(scroll, scroll);
 

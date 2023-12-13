@@ -81,15 +81,19 @@ set(GZ_TOOLS_VER 2)
 
 #--------------------------------------
 # Find QT
-gz_find_package (Qt5
+set(QT_MAJOR_VERSION 5)
+set(QT_MINOR_VERSION 15)
+gz_find_package (Qt${QT_MAJOR_VERSION}
+  VERSION ${QT_MAJOR_VERSION}.${QT_MINOR_VERSION}
   COMPONENTS
     Core
     Quick
     QuickControls2
     Widgets
+    Test
   REQUIRED
-  PKGCONFIG "Qt5Core Qt5Quick Qt5QuickControls2 Qt5Widgets"
-)
+  PKGCONFIG "Qt${QT_MAJOR_VERSION}Core Qt${QT_MAJOR_VERSION}Quick Qt${QT_MAJOR_VERSION}QuickControls2 Qt${QT_MAJOR_VERSION}Widgets")
+add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
 
 set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
   ${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins

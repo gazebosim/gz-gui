@@ -26,6 +26,13 @@
 #include <QSGTexture>
 #include <QSize>
 
+#define GZ_GUI_HAVE_VULKAN \
+  QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && \
+  QT_CONFIG(vulkan) && \
+  GZ_RENDERING_HAVE_VULKAN
+
+#define GZ_GUI_HAVE_METAL __APPLE__
+
 namespace gz::gui::plugins
 {
   /// \brief Render interface class to handle OpenGL / Metal compatibility
