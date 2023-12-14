@@ -21,7 +21,7 @@
 #include "gz/gui/Plugin.hh"
 
 #ifndef _WIN32
-#  define ShutdownButton_EXPORTS_API
+#  define ShutdownButton_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(ShutdownButton_EXPORTS))
 #    define ShutdownButton_EXPORTS_API __declspec(dllexport)

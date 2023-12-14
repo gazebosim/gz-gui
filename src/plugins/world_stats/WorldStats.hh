@@ -22,13 +22,12 @@
 
 #include <gz/msgs/world_stats.pb.h>
 
-#include "gz/gui/Export.hh"
 #include "gz/gui/Plugin.hh"
 
 #include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
-#  define WorldStats_EXPORTS_API
+#  define WorldStats_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(WorldStats_EXPORTS))
 #    define WorldStats_EXPORTS_API __declspec(dllexport)

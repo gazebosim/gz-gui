@@ -18,11 +18,10 @@
 #define GZ_GUI_TESTHELPER_HH_
 
 #include <gz/gui/Application.hh>
-#include <gz/gui/Export.hh>
 #include <gz/gui/MainWindow.hh>
 
 #ifndef _WIN32
-#  define TestHelper_EXPORTS_API
+#  define TestHelper_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(TestHelper_EXPORTS))
 #    define TestHelper_EXPORTS_API __declspec(dllexport)
