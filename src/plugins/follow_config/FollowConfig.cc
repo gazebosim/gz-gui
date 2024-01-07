@@ -98,7 +98,7 @@ void FollowConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   // Follow target name service
   this->dataPtr->followTargetNameService = "/gui/follow";
   gzmsg << "FollowConfig: Follow target name service on ["
-         << this->dataPtr->followTargetNameService << "]" << std::endl;
+        << this->dataPtr->followTargetNameService << "]" << std::endl;
 
   // Follow target offset service
   this->dataPtr->followOffsetService = "/gui/follow/offset";
@@ -110,7 +110,6 @@ void FollowConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   gzmsg << "FollowConfig: Follow P gain service on ["
          << this->dataPtr->followPGainService << "]" << std::endl;
 
-
   // Read configuration
   if (_pluginElem)
   {
@@ -118,7 +117,7 @@ void FollowConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     {
       this->dataPtr->followTargetName = nameElem->GetText();
       gzmsg << "FollowConfig: Loaded follow_target from sdf ["
-         << this->dataPtr->followTargetName << "]" << std::endl;
+            << this->dataPtr->followTargetName << "]" << std::endl;
       this->dataPtr->newFollowUpdateTargetName = true;
     }
     if (auto offsetElem = _pluginElem->FirstChildElement("follow_offset"))
@@ -127,14 +126,14 @@ void FollowConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       offsetStr << std::string(offsetElem->GetText());
       offsetStr >> this->dataPtr->followOffset;
       gzmsg << "FollowConfig: Loaded follow_offset from sdf ["
-         << this->dataPtr->followOffset << "]" << std::endl;
+            << this->dataPtr->followOffset << "]" << std::endl;
       this->dataPtr->newFollowUpdateOffset = true;
     }
     if (auto pGainElem = _pluginElem->FirstChildElement("follow_pgain"))
     {
       this->dataPtr->followPGain = std::stod(std::string(pGainElem->GetText()));
       gzmsg << "FollowConfig: Loaded follow_pgain from sdf ["
-         << this->dataPtr->followPGain << "]" << std::endl;
+            << this->dataPtr->followPGain << "]" << std::endl;
       this->dataPtr->newFollowUpdatePGain = true;
     }
   }
@@ -174,8 +173,8 @@ void FollowConfig::SetFollowOffset(double _x,
   {
     this->dataPtr->followOffset = math::Vector3d(
       _x, _y, _z);
-      gzmsg << "FollowConfig: SetFollowOffset("
-        << this->dataPtr->followOffset << ")" << std::endl;
+    gzmsg << "FollowConfig: SetFollowOffset("
+          << this->dataPtr->followOffset << ")" << std::endl;
     this->dataPtr->newFollowUpdateOffset = true;
   }
 }
