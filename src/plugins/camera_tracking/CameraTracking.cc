@@ -481,10 +481,37 @@ CameraTracking::CameraTracking()
 CameraTracking::~CameraTracking() = default;
 
 /////////////////////////////////////////////////
-void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)
+void CameraTracking::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Camera tracking";
+
+  if (_pluginElem)
+  {
+    if (auto nameElem = _pluginElem->FirstChildElement("follow_target"))
+    {
+      this->dataPtr->followTarget = nameElem->GetText();
+      gzmsg << "CameraTracking: Loaded follow_target from sdf ["
+            << this->dataPtr->followTarget << "]" << std::endl;
+      this->dataPtr->followTargetWait = true;
+    }
+    if (auto offsetElem = _pluginElem->FirstChildElement("follow_offset"))
+    {
+      std::stringstream offsetStr;
+      offsetStr << std::string(offsetElem->GetText());
+      offsetStr >> this->dataPtr->followOffset;
+      gzmsg << "FollowConfig: Loaded follow_offset from sdf ["
+            << this->dataPtr->followOffset << "]" << std::endl;
+      this->dataPtr->newFollowOffset = true;
+    }
+    if (auto pGainElem = _pluginElem->FirstChildElement("follow_pgain"))
+    {
+      this->dataPtr->followPGain = std::stod(std::string(pGainElem->GetText()));
+      gzmsg << "FollowConfig: Loaded follow_pgain from sdf ["
+            << this->dataPtr->followPGain << "]" << std::endl;
+      this->dataPtr->newFollowOffset = true;
+    }
+  }
 
   App()->findChild<MainWindow *>()->installEventFilter(this);
 }

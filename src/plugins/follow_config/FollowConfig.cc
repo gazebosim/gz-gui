@@ -36,8 +36,6 @@
 /// \brief Private data class for FollowConfig
 class gz::gui::plugins::FollowConfigPrivate
 {
-  /// \brief Service request topic for follow name
-  public: std::string followTargetNameService;
 
   /// \brief Service request topic for follow offset
   public: std::string followOffsetService;
@@ -51,13 +49,7 @@ class gz::gui::plugins::FollowConfigPrivate
   /// \brief Follow P gain
   public: double followPGain{0.01};
 
-  /// \brief Follow target name from sdf
-  public: std::string followTargetName;
-
   public: transport::Node node;
-
-  /// \brief Process updated follow name from SDF
-  public: void UpdateFollowTargetName();
 
   /// \brief Process updated follow offset
   public: void UpdateFollowOffset();
@@ -90,15 +82,10 @@ FollowConfig::FollowConfig()
 FollowConfig::~FollowConfig() = default;
 
 /////////////////////////////////////////////////
-void FollowConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+void FollowConfig::LoadConfig(const tinyxml2::XMLElement *)
 {
   if (this->title.empty())
     this->title = "Follow Config";
-
-  // Follow target name service
-  this->dataPtr->followTargetNameService = "/gui/follow";
-  gzmsg << "FollowConfig: Follow target name service on ["
-        << this->dataPtr->followTargetNameService << "]" << std::endl;
 
   // Follow target offset service
   this->dataPtr->followOffsetService = "/gui/follow/offset";
@@ -110,34 +97,6 @@ void FollowConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   gzmsg << "FollowConfig: Follow P gain service on ["
          << this->dataPtr->followPGainService << "]" << std::endl;
 
-  // Read configuration
-  if (_pluginElem)
-  {
-    if (auto nameElem = _pluginElem->FirstChildElement("follow_target"))
-    {
-      this->dataPtr->followTargetName = nameElem->GetText();
-      gzmsg << "FollowConfig: Loaded follow_target from sdf ["
-            << this->dataPtr->followTargetName << "]" << std::endl;
-      this->dataPtr->newFollowUpdateTargetName = true;
-    }
-    if (auto offsetElem = _pluginElem->FirstChildElement("follow_offset"))
-    {
-      std::stringstream offsetStr;
-      offsetStr << std::string(offsetElem->GetText());
-      offsetStr >> this->dataPtr->followOffset;
-      gzmsg << "FollowConfig: Loaded follow_offset from sdf ["
-            << this->dataPtr->followOffset << "]" << std::endl;
-      this->dataPtr->newFollowUpdateOffset = true;
-    }
-    if (auto pGainElem = _pluginElem->FirstChildElement("follow_pgain"))
-    {
-      this->dataPtr->followPGain = std::stod(std::string(pGainElem->GetText()));
-      gzmsg << "FollowConfig: Loaded follow_pgain from sdf ["
-            << this->dataPtr->followPGain << "]" << std::endl;
-      this->dataPtr->newFollowUpdatePGain = true;
-    }
-  }
-
   gui::App()->findChild<
       MainWindow *>()->installEventFilter(this);
 }
@@ -147,10 +106,6 @@ bool FollowConfig::eventFilter(QObject *_obj, QEvent *_event)
 {
   if (_event->type() == events::Render::kType)
   {
-    if (this->dataPtr->newFollowUpdateTargetName)
-    {
-      this->dataPtr->UpdateFollowTargetName();
-    }
     if (this->dataPtr->newFollowUpdatePGain)
     {
       this->dataPtr->UpdateFollowPGain();
@@ -189,28 +144,6 @@ void FollowConfig::SetFollowPGain(double _p)
          << this->dataPtr->followPGain << ")" << std::endl;
     this->dataPtr->newFollowUpdatePGain = true;
   }
-}
-
-/////////////////////////////////////////////////
-void FollowConfigPrivate::UpdateFollowTargetName()
-{
-  // Offset
-  std::function<void(const msgs::Boolean &, const bool)> cbName =
-    [&](const msgs::Boolean &/*_rep*/, const bool _resultName)
-  {
-    if (!_resultName)
-    {
-      gzerr << "FollowConfig: Error sending follow target name." << std::endl;
-    } else {
-      gzmsg << "FollowConfig: Request Target Name: "
-            << this->followTargetName << " sent" << std::endl;
-    }
-  };
-
-  msgs::StringMsg reqName;
-  reqName.set_data(this->followTargetName);
-  node.Request(this->followTargetNameService, reqName, cbName);
-  this->newFollowUpdateTargetName = false;
 }
 
 /////////////////////////////////////////////////

@@ -76,6 +76,9 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   pluginStr =
     "<plugin filename=\"CameraTracking\">"
+      "<follow_target>track_me</follow_target>"
+      "<follow_offset>0.0 0.0 0.0</follow_offset>"
+      "<follow_pgain>1.0</follow_pgain>"
     "</plugin>";
 
   pluginDoc.Parse(pluginStr);
@@ -84,9 +87,6 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
 
   pluginStr =
     "<plugin filename=\"FollowConfig\">"
-      "<follow_target>track_me</follow_target>"
-      "<follow_offset>0.0 0.0 0.0</follow_offset>"
-      "<follow_pgain>1.0</follow_pgain>"
     "</plugin>";
 
   pluginDoc.Parse(pluginStr);

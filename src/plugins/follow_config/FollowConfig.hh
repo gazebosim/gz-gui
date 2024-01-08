@@ -40,7 +40,7 @@ namespace plugins
     public: virtual ~FollowConfig();
 
     // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
+    public: virtual void LoadConfig(const tinyxml2::XMLElement *)
         override;
 
     /// \brief Set the follow offset, requested from the GUI.
