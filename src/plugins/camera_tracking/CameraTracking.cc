@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2023 Rudis Laboratories LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,6 +78,13 @@ class CameraTrackingPrivate
   public: bool OnFollowOffset(const msgs::Vector3d &_msg,
                msgs::Boolean &_res);
 
+  /// \brief Callback for a follow pgain request
+  /// \param[in] _msg Request message to set the camera's follow pgain.
+  /// \param[in] _res Response data
+  /// \return True if the request is received
+  public: bool OnFollowPGain(const msgs::Double &_msg,
+               msgs::Boolean &_res);
+
   /// \brief Callback when a move to animation is complete
   private: void OnMoveToComplete();
 
@@ -142,6 +150,9 @@ class CameraTrackingPrivate
   /// \brief Follow offset service
   public: std::string followOffsetService;
 
+  /// \brief Follow offset pgain service
+  public: std::string followPGainService;
+
   /// \brief Camera pose topic
   public: std::string cameraPoseTopic;
 
@@ -206,12 +217,19 @@ void CameraTrackingPrivate::Initialize()
   gzmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
 
-   // follow offset
-   this->followOffsetService = "/gui/follow/offset";
-   this->node.Advertise(this->followOffsetService,
-       &CameraTrackingPrivate::OnFollowOffset, this);
-   gzmsg << "Follow offset service on ["
-          << this->followOffsetService << "]" << std::endl;
+  // follow offset
+  this->followOffsetService = "/gui/follow/offset";
+  this->node.Advertise(this->followOffsetService,
+      &CameraTrackingPrivate::OnFollowOffset, this);
+  gzmsg << "Follow offset service on ["
+         << this->followOffsetService << "]" << std::endl;
+
+  // follow pgain
+  this->followPGainService = "/gui/follow/p_gain";
+  this->node.Advertise(this->followPGainService,
+      &CameraTrackingPrivate::OnFollowPGain, this);
+  gzmsg << "Follow P gain service on ["
+         << this->followPGainService << "]" << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -259,6 +277,20 @@ bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
     this->followOffset = msgs::Convert(_msg);
   }
 
+  _res.set_data(true);
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool CameraTrackingPrivate::OnFollowPGain(const msgs::Double &_msg,
+  msgs::Boolean &_res)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  if (!this->followTarget.empty())
+  {
+    this->newFollowOffset = true;
+    this->followPGain = msgs::Convert(_msg);
+  }
   _res.set_data(true);
   return true;
 }
@@ -449,10 +481,37 @@ CameraTracking::CameraTracking()
 CameraTracking::~CameraTracking() = default;
 
 /////////////////////////////////////////////////
-void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)
+void CameraTracking::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Camera tracking";
+
+  if (_pluginElem)
+  {
+    if (auto nameElem = _pluginElem->FirstChildElement("follow_target"))
+    {
+      this->dataPtr->followTarget = nameElem->GetText();
+      gzmsg << "CameraTracking: Loaded follow_target from sdf ["
+            << this->dataPtr->followTarget << "]" << std::endl;
+      this->dataPtr->followTargetWait = true;
+    }
+    if (auto offsetElem = _pluginElem->FirstChildElement("follow_offset"))
+    {
+      std::stringstream offsetStr;
+      offsetStr << std::string(offsetElem->GetText());
+      offsetStr >> this->dataPtr->followOffset;
+      gzmsg << "FollowConfig: Loaded follow_offset from sdf ["
+            << this->dataPtr->followOffset << "]" << std::endl;
+      this->dataPtr->newFollowOffset = true;
+    }
+    if (auto pGainElem = _pluginElem->FirstChildElement("follow_pgain"))
+    {
+      this->dataPtr->followPGain = std::stod(std::string(pGainElem->GetText()));
+      gzmsg << "FollowConfig: Loaded follow_pgain from sdf ["
+            << this->dataPtr->followPGain << "]" << std::endl;
+      this->dataPtr->newFollowOffset = true;
+    }
+  }
 
   App()->findChild<MainWindow *>()->installEventFilter(this);
 }

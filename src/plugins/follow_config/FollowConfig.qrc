@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="FollowConfig/">
+  <file>FollowConfig.qml</file>
+</qresource>
+</RCC>

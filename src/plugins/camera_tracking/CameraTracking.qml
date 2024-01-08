@@ -29,6 +29,7 @@ ColumnLayout {
       '<li>/gui/move_to</li>' +
       '<li>/gui/move_to/pose</li>' +
       '<li>/gui/follow</li>' +
+      '<li>/gui/follow/p_gain</li>' +
       '<li>/gui/follow/offset</li></ul><br>Topics provided:<br><ul>' +
       '<li>/gui/camera/pose</li></ul>'
 
