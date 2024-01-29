@@ -53,6 +53,12 @@ class ApplicationTest: public ::testing::Test
 //////////////////////////////////////////////////
 TEST_F(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
 {
+
+  QDirIterator it(":", QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+    std::cout << it.next().toStdString() << "\n";
+  }
+
   // One app construct - destruct
   {
     Application app(g_argc, g_argv);

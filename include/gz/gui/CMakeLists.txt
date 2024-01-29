@@ -70,6 +70,16 @@ if (QT_MAJOR_VERSION EQUAL 6)
     "${GZ_CMAKE_DIR}/Export.hh.in"
     "${PROJECT_BINARY_DIR}/include/gz/gui/Export.hh")
 
+  install(
+    FILES "${PROJECT_BINARY_DIR}/include/gz/gui/Export.hh"
+    DESTINATION ${GZ_INCLUDE_INSTALL_DIR_FULL}/Export.hh
+    COMPONENT headers)
+
+  install(
+    FILES "${PROJECT_BINARY_DIR}/include/gz/gui/detail/Export.hh"
+    DESTINATION ${GZ_INCLUDE_INSTALL_DIR_FULL}/detail/Export.hh
+    COMPONENT headers)
+
   target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
     PUBLIC
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
