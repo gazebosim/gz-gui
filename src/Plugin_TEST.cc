@@ -321,3 +321,33 @@ TEST(PluginTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
   }
 }
 
+/////////////////////////////////////////////////
+TEST(PluginTest, IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(GzSimCompatibility))
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(
+      common::joinPaths(std::string(PROJECT_BINARY_PATH), "lib"));
+
+  // Load plugin config that returns null GetText
+  const char *pluginStr = R"(
+    <plugin filename="TestPlugin">
+      <gz-gui>
+        <title>GzSimCompatibility</title>
+      </gz-gui>
+    </plugin>)";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  EXPECT_TRUE(app.LoadPlugin("TestPlugin",
+      pluginDoc.FirstChildElement("plugin")));
+
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Check plugin was loaded and `gz-gui` was processed.
+  auto plugins = win->findChildren<Plugin *>();
+  ASSERT_EQ(1, plugins.size());
+  EXPECT_EQ(plugins[0]->Title(), "GzSimCompatibility");
+}
