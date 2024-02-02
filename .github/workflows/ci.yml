@@ -1,6 +1,12 @@
 name: Ubuntu CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - 'ign-gui[0-9]'
+      - 'gz-gui[0-9]?'
+      - 'main'
 
 jobs:
   jammy-ci:
