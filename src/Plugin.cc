@@ -167,7 +167,12 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Load common configuration
-  this->LoadCommonConfig(_pluginElem->FirstChildElement("ignition-gui"));
+  auto guiElem = _pluginElem->FirstChildElement("ignition-gui");
+  if (!guiElem)
+  {
+    guiElem = _pluginElem->FirstChildElement("gz-gui");
+  }
+  this->LoadCommonConfig(guiElem);
 
   // Load custom configuration
   this->LoadConfig(_pluginElem);
