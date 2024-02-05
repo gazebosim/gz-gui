@@ -24,7 +24,7 @@
 #include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
-#  define Publisher_EXPORTS_API
+#  define Publisher_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(Publisher_EXPORTS))
 #    define Publisher_EXPORTS_API __declspec(dllexport)

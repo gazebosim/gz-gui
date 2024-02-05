@@ -18,17 +18,27 @@
 #define GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_
 
 #include "gz/gui/Application.hh"
-#include "gz/gui/Export.hh"
 #include "gz/gui/GuiEvents.hh"
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/qt.h"
+
+#ifndef _WIN32
+#  define WorldControl_EXPORTS_API __attribute__ ((visibility ("default")))
+#else
+#  if (defined(WorldControl_EXPORTS))
+#    define WorldControl_EXPORTS_API __declspec(dllexport)
+#  else
+#    define WorldControl_EXPORTS_API __declspec(dllimport)
+#  endif
+#endif
+
 
 namespace gz::gui
 {
   /// \brief Helper class for testing listening to events emitted by the
   /// WorldControl plugin. This is used for testing the event behavior of
   /// the WorldControl plugin.
-  class WorldControlEventListener : public QObject
+  class WorldControl_EXPORTS_API WorldControlEventListener : public QObject
   {
     Q_OBJECT
 

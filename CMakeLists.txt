@@ -98,8 +98,6 @@ add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
 set(CMAKE_AUTOMOC TRUE)
 set(CMAKE_AUTOUIC TRUE)
 set(CMAKE_AUTORCC TRUE)
-cmake_policy(SET CMP0100 NEW)
-
 if(POLICY CMP0100)
   cmake_policy(SET CMP0100 NEW)
 endif()

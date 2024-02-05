@@ -19,7 +19,7 @@
 #define GZ_GUI_PLUGINS_KEYPUBLISHER_HH_
 
 #ifndef _WIN32
-#  define KeyPublisher_EXPORTS_API
+#  define KeyPublisher_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(KeyPublisher_EXPORTS))
 #    define KeyPublisher_EXPORTS_API __declspec(dllexport)

@@ -28,7 +28,7 @@
 #endif
 
 #ifndef _WIN32
-#  define TopicEcho_EXPORTS_API
+#  define TopicEcho_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(TopicEcho_EXPORTS))
 #    define TopicEcho_EXPORTS_API __declspec(dllexport)

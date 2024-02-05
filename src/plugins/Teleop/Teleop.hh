@@ -26,7 +26,7 @@
 #include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32
-#  define Teleop_EXPORTS_API
+#  define Teleop_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(Teleop_EXPORTS))
 #    define Teleop_EXPORTS_API __declspec(dllexport)

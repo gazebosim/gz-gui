@@ -25,7 +25,7 @@
 #include <gz/msgs/image.pb.h>
 
 #ifndef _WIN32
-#  define ImageDisplay_EXPORTS_API
+#  define ImageDisplay_EXPORTS_API __attribute__ ((visibility ("default")))
 #else
 #  if (defined(ImageDisplay_EXPORTS))
 #    define ImageDisplay_EXPORTS_API __declspec(dllexport)
