@@ -92,6 +92,7 @@ gz_find_package (Qt${QT_MAJOR_VERSION}
     Widgets
     Test
   REQUIRED
+  PKGCONFIG_VER_COMPARISON >=
   PKGCONFIG "Qt${QT_MAJOR_VERSION}Core Qt${QT_MAJOR_VERSION}Quick Qt${QT_MAJOR_VERSION}QuickControls2 Qt${QT_MAJOR_VERSION}Widgets")
 add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
 
