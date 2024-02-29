@@ -14,11 +14,10 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 1.1
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 /**
  * Main split view, which provides functions to add and remove child items
@@ -93,7 +92,7 @@ SplitView {
 
     // First section goes in the top level SplitView, which is Qt.Horizontal
     // 2 for helpers and startLabel
-    if (background.__items.length <= 2)
+    if (background.count <= 2)
     {
       itemName = _addNewItem(background);
     }
@@ -382,4 +381,3 @@ SplitView {
     }
   }
 }
-

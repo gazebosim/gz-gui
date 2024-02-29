@@ -14,10 +14,11 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Dialogs
+import Qt.labs.platform as Platform
 
 /**
  * Style dialog
@@ -309,28 +310,16 @@ Dialog {
         text: modelData
         width: parent.width
       }
-      onCurrentTextChanged: {
-        updateTheme();
-      }
     }
 
     Label {
       text: "Primary"
     }
 
-    ColorDialog {
+    Platform.ColorDialog {
       id: materialPrimaryDialog
       title: "Primary color"
       // options: ColorDialog.NoButtons
-      onCurrentColorChanged: {
-
-        // Avoiding pure black because for some reason it is set to that as the
-        // dialog opens
-        if (currentColor == "#000000")
-          return;
-
-        updatePrimary(colorToHex(currentColor))
-      }
     }
 
     Row {
@@ -364,19 +353,10 @@ Dialog {
       text: "Accent"
     }
 
-    ColorDialog {
+    Platform.ColorDialog {
       id: materialAccentDialog
       title: "Accent color"
       // options: ColorDialog.NoButtons
-      onCurrentColorChanged: {
-
-        // Avoiding pure black because for some reason it is set to that as the
-        // dialog opens
-        if (currentColor == "#000000")
-          return;
-
-        updateAccent(colorToHex(currentColor))
-      }
     }
 
     Row {

@@ -668,3 +668,5 @@ bool PlottingInterface::exportCSV(QString _path, int _chart,
   return true;
 }
 }  // namespace gz::gui
+
+#include "moc_PlottingInterface.cpp"

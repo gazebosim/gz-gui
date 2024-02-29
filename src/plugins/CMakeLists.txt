@@ -40,6 +40,7 @@ function(gz_gui_add_library library_name)
   )
 endfunction()
 
+
 #################################################
 # gz_gui_add_plugin(<plugin_name>
 #              SOURCES <sources>
@@ -60,7 +61,7 @@ endfunction()
 #
 # [PRIVATE_LINK_LIBS]: Specify a list of libraries to be privately linked.
 #
-function(gz_gui_add_plugin plugin_name)
+function(gz_gui_add_plugin_qt5 plugin_name)
   set(options)
   set(oneValueArgs)
   set(multiValueArgs
@@ -70,19 +71,19 @@ function(gz_gui_add_plugin plugin_name)
     PUBLIC_LINK_LIBS
     PRIVATE_LINK_LIBS
   )
-  cmake_parse_arguments(gz_gui_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(gz_gui_add_plugin_qt5 "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   gz_gui_add_library(${plugin_name}
-    SOURCES ${gz_gui_add_plugin_SOURCES}
-    QT_HEADERS ${gz_gui_add_plugin_QT_HEADERS}
-    PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
-    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS} gz-plugin${GZ_PLUGIN_VER}::register
+    SOURCES ${gz_gui_add_plugin_qt5_SOURCES}
+    QT_HEADERS ${gz_gui_add_plugin_qt5_QT_HEADERS}
+    PUBLIC_LINK_LIBS ${gz_gui_add_plugin_qt5_PUBLIC_LINK_LIBS}
+    PRIVATE_LINK_LIBS ${gz_gui_add_plugin_qt5_PRIVATE_LINK_LIBS} gz-plugin${GZ_PLUGIN_VER}::register
   )
 
-  if(gz_gui_add_plugin_TEST_SOURCES)
+  if(gz_gui_add_plugin_qt5_TEST_SOURCES)
     gz_build_tests(TYPE UNIT
       SOURCES
-        ${gz_gui_add_plugin_TEST_SOURCES}
+        ${gz_gui_add_plugin_qt5_TEST_SOURCES}
       LIB_DEPS
         ${GZ-GUI_LIBRARIES}
         TINYXML2::TINYXML2
@@ -105,33 +106,121 @@ function(gz_gui_add_plugin plugin_name)
     # warning is not important since those members do not need to be interfaced
     # with.
     set_source_files_properties(
-        ${gz_gui_add_plugin_SOURCES}
-        ${gz_gui_add_plugin_TEST_SOURCES}
+        ${gz_gui_add_plugin_qt5_SOURCES}
+        ${gz_gui_add_plugin_qt5_TEST_SOURCES}
         COMPILE_FLAGS "/wd4251")
   endif()
 
   install (TARGETS ${plugin_name} DESTINATION ${GZ_GUI_PLUGIN_INSTALL_DIR})
 endfunction()
 
+function(gz_gui_add_plugin_qt6 plugin_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs
+    SOURCES
+    QML_SOURCES
+    QML_URI
+    QT_HEADERS
+    TEST_SOURCES
+    PUBLIC_LINK_LIBS
+    PRIVATE_LINK_LIBS
+  )
+  cmake_parse_arguments(gz_gui_add_plugin_qt6 "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  qt_add_qml_module(${plugin_name}
+    URI ${gz_gui_add_plugin_QML_URI}
+    VERSION 1.0
+    SOURCES ${gz_gui_add_plugin_qt6_SOURCES}  ${qt_gui_add_plugin_qt6_QT_HEADERS}
+    QML_FILES ${gz_gui_add_plugin_qt6_QML_SOURCES}
+  )
+
+  target_link_libraries(${plugin_name}
+    PUBLIC
+      ${PROJECT_LIBRARY_TARGET_NAME}
+      ${gz_gui_add_plugin_qt6_PUBLIC_LINK_LIBS}
+    PRIVATE
+      ${gz_gui_add_plugin_qt6_PRIVATE_LINK_LIBS}
+  )
+  install (TARGETS ${plugin_name} DESTINATION ${GZ_GUI_PLUGIN_INSTALL_DIR})
+
+  if (gz_gui_add_plugin_qt6_TEST_SOURCES)
+    gz_build_tests(TYPE UNIT
+      SOURCES
+        ${gz_gui_add_plugin_qt6_TEST_SOURCES}
+      LIB_DEPS
+        ${GZ-GUI_LIBRARIES}
+        TINYXML2::TINYXML2
+        ${plugin_name}
+      INCLUDE_DIRS
+        # Used to make internal source file headers visible to the unit tests
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        # Used to make test-directory headers visible to the unit tests
+        ${PROJECT_SOURCE_DIR}
+        # Used to make test_config.h visible to the unit tests
+        ${PROJECT_BINARY_DIR}
+      ENVIRONMENT
+        GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX})
+  endif()
+endfunction()
+
+
+function(gz_gui_add_plugin plugin_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs
+    SOURCES
+    QML_SOURCES
+    QML_URI
+    QT_HEADERS
+    TEST_SOURCES
+    PUBLIC_LINK_LIBS
+    PRIVATE_LINK_LIBS
+  )
+  cmake_parse_arguments(gz_gui_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if (QT_MAJOR_VERSION EQUAL 6)
+    gz_gui_add_plugin_qt6(${plugin_name}
+      SOURCES ${gz_gui_add_plugin_SOURCES}
+      QML_URI ${gz_gui_add_plugin_QML_URI}
+      QML_SOURCES ${gz_gui_add_plugin_QML_SOURCES}
+      QT_HEADERS ${gz_gui_add_plugin_QT_HEADERS}
+      TEST_SOURCES ${gz_gui_add_plugin_TEST_SOURCES}
+      PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
+      PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS}
+    )
+  else()
+    gz_gui_add_plugin_qt5(${plugin_name}
+      SOURCES ${gz_gui_add_plugin_SOURCES}
+      QT_HEADERS ${gz_gui_add_plugin_QT_HEADERS}
+      TEST_SOURCES ${gz_gui_add_plugin_TEST_SOURCES}
+      PUBLIC_LINK_LIBS ${gz_gui_add_plugin_PUBLIC_LINK_LIBS}
+      PRIVATE_LINK_LIBS ${gz_gui_add_plugin_PRIVATE_LINK_LIBS}
+    )
+  endif()
+endfunction()
+
+
 # Plugins
-add_subdirectory(camera_fps)
-add_subdirectory(camera_tracking)
-add_subdirectory(grid_config)
-add_subdirectory(image_display)
-add_subdirectory(interactive_view_control)
-add_subdirectory(key_publisher)
-add_subdirectory(plotting)
-add_subdirectory(point_cloud)
-add_subdirectory(publisher)
-add_subdirectory(marker_manager)
-add_subdirectory(minimal_scene)
-add_subdirectory(navsat_map)
-add_subdirectory(screenshot)
-add_subdirectory(shutdown_button)
-add_subdirectory(tape_measure)
-add_subdirectory(teleop)
-add_subdirectory(topic_echo)
-add_subdirectory(topic_viewer)
-add_subdirectory(transport_scene_manager)
-add_subdirectory(world_control)
-add_subdirectory(world_stats)
+
+add_subdirectory(CameraFps)
+add_subdirectory(CameraTracking)
+add_subdirectory(GridConfig)
+add_subdirectory(ImageDisplay)
+add_subdirectory(InteractiveViewControl)
+add_subdirectory(KeyPublisher)
+add_subdirectory(MarkerManager)
+add_subdirectory(MinimalScene)
+add_subdirectory(NavsatMap)
+add_subdirectory(Plotting)
+add_subdirectory(PointCloud)
+add_subdirectory(Publisher)
+add_subdirectory(Screenshot)
+add_subdirectory(ShutdownButton)
+add_subdirectory(TapeMeasure)
+add_subdirectory(Teleop)
+add_subdirectory(TopicEcho)
+add_subdirectory(TopicViewer)
+add_subdirectory(TransportSceneManager)
+add_subdirectory(WorldControl)
+add_subdirectory(WorldStats)
