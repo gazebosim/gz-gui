@@ -1,5 +1,27 @@
 ## Gazebo GUI 8
 
+### Gazebo GUI 8.1.0 (2024-03-14)
+
+1. Update CI badges in README
+    * [Pull request #603](https://github.com/gazebosim/gz-gui/pull/603)
+
+1. Fix plugin filter on Windows
+    * [Pull request #567](https://github.com/gazebosim/gz-gui/pull/567)
+
+1. Tidy namespaces
+    * [Pull request #590](https://github.com/gazebosim/gz-gui/pull/590)
+
+1. Infrastructure
+    * [Pull request #591](https://github.com/gazebosim/gz-gui/pull/591)
+    * [Pull request #597](https://github.com/gazebosim/gz-gui/pull/597)
+    * [Pull request #608](https://github.com/gazebosim/gz-gui/pull/608)
+
+1. Add check for vulkan support in rendering
+    * [Pull request #589](https://github.com/gazebosim/gz-gui/pull/589)
+
+1. Add optional binary relocatability
+    * [Pull request #580](https://github.com/gazebosim/gz-gui/pull/580)
+
 ### Gazebo GUI 8.0.0 (2023-09-29)
 
 1. Use fully-qualified message names to avoid deprecation warning
