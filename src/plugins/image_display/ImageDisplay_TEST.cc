@@ -27,7 +27,6 @@
 #include "gz/gui/Application.hh"
 #include "gz/gui/MainWindow.hh"
 #include "gz/gui/Plugin.hh"
-#include "test_config.hh"  // NOLINT(build/include)
 #include "ImageDisplay.hh"
 
 int g_argc = 1;
