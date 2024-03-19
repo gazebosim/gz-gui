@@ -42,6 +42,7 @@
   <depend>qml-module-qtquick2</depend>
   <depend>qtbase5-dev</depend>
   <depend>qtdeclarative5-dev</depend>
+  <depend>qtquickcontrols2-5-dev</depend>
   <depend>tinyxml2</depend>
 
   <test_depend>xvfb</test_depend>
