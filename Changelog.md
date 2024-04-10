@@ -1,5 +1,10 @@
 ## Gazebo GUI 8
 
+### Gazebo GUI 8.1.1 (2024-04-10)
+
+1. Use relative install paths for plugin shared libraries and gz-tools data
+    * [Pull request #614](https://github.com/gazebosim/gz-gui/pull/614)
+
 ### Gazebo GUI 8.1.0 (2024-03-14)
 
 1. Update CI badges in README
