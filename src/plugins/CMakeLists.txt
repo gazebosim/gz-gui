@@ -110,7 +110,7 @@ function(gz_gui_add_plugin plugin_name)
         COMPILE_FLAGS "/wd4251")
   endif()
 
-  install (TARGETS ${plugin_name} DESTINATION ${GZ_GUI_PLUGIN_INSTALL_DIR})
+  install (TARGETS ${plugin_name} DESTINATION ${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR})
 endfunction()
 
 # Plugins
