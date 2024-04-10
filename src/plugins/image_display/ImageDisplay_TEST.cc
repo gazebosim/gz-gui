@@ -269,7 +269,7 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImage))
 
     // red image
     int bufferSize = msg.width() * msg.height() * bpp;
-    std::shared_ptr<unsigned char> buffer(new unsigned char[bufferSize]);
+    std::shared_ptr<unsigned char[]> buffer(new unsigned char[bufferSize]);
     for (int i = 0; i < bufferSize; i += bpp)
     {
       buffer.get()[i] = 255u;
@@ -371,7 +371,7 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageFloat32))
 
     // first half is gray, second half is black
     int bufferSize = msg.width() * msg.height() * bpp;
-    std::shared_ptr<float> buffer(new float[bufferSize]);
+    std::shared_ptr<float[]> buffer(new float[bufferSize]);
     for (unsigned int y = 0; y < msg.width(); ++y)
     {
       float v = 0.5f * static_cast<int>(y / (msg.height() / 2.0) + 1);
@@ -485,7 +485,7 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageInt16))
 
     // first half is black, second half is white
     int bufferSize = msg.width() * msg.height() * bpp;
-    std::shared_ptr<uint16_t> buffer(new uint16_t[bufferSize]);
+    std::shared_ptr<uint16_t[]> buffer(new uint16_t[bufferSize]);
     for (unsigned int y = 0; y < msg.width(); ++y)
     {
       uint16_t v = 100 * static_cast<int>(y / (msg.height() / 2.0) + 1);
