@@ -22,6 +22,7 @@
 #include <gz/msgs/gui_camera.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
 #include <gz/msgs/vector3d.pb.h>
+#include <gz/msgs/cameratrack.pb.h>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Profiler.hh>
@@ -59,25 +60,15 @@ class CameraTrackingPrivate
   public: bool OnMoveTo(const msgs::StringMsg &_msg,
       msgs::Boolean &_res);
 
-  /// \brief Callback for a follow request
-  /// \param[in] _msg Request message to set the target to follow.
-  /// \param[in] _res Response data
-  /// \return True if the request is received
-  public: bool OnFollow(const msgs::StringMsg &_msg,
-      msgs::Boolean &_res);
+  /// \brief Callback for a track message
+  /// \param[in] _msg Message consistes of the target to track, type of tracking, offset and pgain.
+  public: void OnTrackSub(const msgs::CameraTrack &_msg);
 
   /// \brief Callback for a move to pose request.
   /// \param[in] _msg GUICamera request message.
   /// \param[in] _res Response data
   /// \return True if the request is received
   public: bool OnMoveToPose(const msgs::GUICamera &_msg,
-               msgs::Boolean &_res);
-
-  /// \brief Callback for a follow offset request
-  /// \param[in] _msg Request message to set the camera's follow offset.
-  /// \param[in] _res Response data
-  /// \return True if the request is received
-  public: bool OnFollowOffset(const msgs::Vector3d &_msg,
                msgs::Boolean &_res);
 
   /// \brief Callback when a move to animation is complete
@@ -96,27 +87,29 @@ class CameraTrackingPrivate
   //// \brief Pointer to the rendering scene
   public: rendering::ScenePtr scene = nullptr;
 
-  /// \brief Target to follow
-  public: std::string followTarget;
+  /// \brief Target to track
+  public: std::string selectedTarget;
 
-  /// \brief Wait for follow target
-  public: bool followTargetWait = false;
+  /// \brief Wait for target to track
+  public: bool selectedTargetWait = false;
 
-  /// \brief Offset of camera from target being followed
-  public: math::Vector3d followOffset = math::Vector3d(-5, 0, 3);
+  /// \brief Offset of camera from target being tracked
+  public: math::Vector3d trackOffset = math::Vector3d(-5, 0, 3);
 
-  /// \brief Flag to indicate the follow offset needs to be updated
-  public: bool followOffsetDirty = false;
+  public: gz::msgs::CameraTrack trackMsg;
 
-  /// \brief Flag to indicate the follow offset has been updated
-  public: bool newFollowOffset = true;
+  /// \brief Flag to indicate the tracking offset needs to be updated
+  public: bool trackOffsetDirty = false;
 
-  /// \brief Follow P gain
-  public: double followPGain = 0.01;
+  /// \brief Flag to indicate new tracking
+  public: bool newTrack = true;
 
-  /// \brief True follow the target at an offset that is in world frame,
-  /// false to follow in target's local frame
-  public: bool followWorldFrame = false;
+  /// \brief Track P gain
+  public: double trackPGain = 0.01;
+
+  /// \brief True track the target at an offset that is in world frame,
+  /// false to track in target's local frame
+  public: bool trackWorldFrame = false;
 
   /// \brief Last move to animation time
   public: std::chrono::time_point<std::chrono::system_clock> prevMoveToTime;
@@ -139,17 +132,20 @@ class CameraTrackingPrivate
   /// \brief The pose set from the move to pose service.
   public: std::optional<math::Pose3d> moveToPoseValue;
 
-  /// \brief Follow service
-  public: std::string followService;
+  /// \brief Track topic
+  public: std::string trackTopic;
 
-  /// \brief Follow offset service
-  public: std::string followOffsetService;
+  /// \brief Track status topic
+  public: std::string trackStatusTopic;
 
   /// \brief Camera pose topic
   public: std::string cameraPoseTopic;
 
   /// \brief Move to pose service
   public: std::string moveToPoseService;
+
+  /// \brief Camera pose publisher
+  public: transport::Node::Publisher trackStatusPub;
 
   /// \brief Camera pose publisher
   public: transport::Node::Publisher cameraPosePub;
@@ -187,12 +183,19 @@ void CameraTrackingPrivate::Initialize()
   gzmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
-  // follow
-  this->followService = "/gui/follow";
-  this->node.Advertise(this->followService,
-      &CameraTrackingPrivate::OnFollow, this);
-  gzmsg << "Follow service on ["
-         << this->followService << "]" << std::endl;
+  // track
+  this->trackTopic = "/gui/track";
+  this->node.Subscribe(this->trackTopic, 
+      &CameraTrackingPrivate::OnTrackSub, this);
+  gzmsg << "Tracking topic on ["
+         << this->trackTopic << "]" << std::endl;
+
+  // tracking status
+  this->trackStatusTopic = "/gui/currently_tracked";
+  this->trackStatusPub =
+    this->node.Advertise<msgs::CameraTrack>(this->trackStatusTopic);
+  gzmsg << "Tracking status topic on ["
+         << this->trackStatusTopic << "]" << std::endl;
 
   // move to pose service
   this->moveToPoseService =
@@ -208,13 +211,6 @@ void CameraTrackingPrivate::Initialize()
     this->node.Advertise<msgs::Pose>(this->cameraPoseTopic);
   gzmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
-
-   // follow offset
-   this->followOffsetService = "/gui/follow/offset";
-   this->node.Advertise(this->followOffsetService,
-       &CameraTrackingPrivate::OnFollowOffset, this);
-   gzmsg << "Follow offset service on ["
-          << this->followOffsetService << "]" << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -229,14 +225,30 @@ bool CameraTrackingPrivate::OnMoveTo(const msgs::StringMsg &_msg,
 }
 
 /////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
-  msgs::Boolean &_res)
+void CameraTrackingPrivate::OnTrackSub(const msgs::CameraTrack &_msg)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
-  this->followTarget = _msg.data();
+  gzmsg << "Got new track message."<< std::endl;
+  if (!_msg.target().empty())
+  {
+    this->selectedTarget = _msg.target(); 
+  }
+  else
+  {
+    gzmsg << "Target name empty."<< std::endl;
+  }
+  if (_msg.has_offset())
+  {
+    this->trackOffset = msgs::Convert(_msg.offset());
+  }
 
-  _res.set_data(true);
-  return true;
+  if (_msg.pgain() > 0.00001)
+  {
+    this->trackPGain = _msg.pgain();
+  }
+
+  this->newTrack = true;
+  return;
 }
 
 /////////////////////////////////////////////////
@@ -249,21 +261,6 @@ void CameraTrackingPrivate::OnMoveToComplete()
 void CameraTrackingPrivate::OnMoveToPoseComplete()
 {
   this->moveToPoseValue.reset();
-}
-
-/////////////////////////////////////////////////
-bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
-  msgs::Boolean &_res)
-{
-  std::lock_guard<std::mutex> lock(this->mutex);
-  if (!this->followTarget.empty())
-  {
-    this->newFollowOffset = true;
-    this->followOffset = msgs::Convert(_msg);
-  }
-
-  _res.set_data(true);
-  return true;
 }
 
 /////////////////////////////////////////////////
@@ -364,63 +361,63 @@ void CameraTrackingPrivate::OnRender()
     }
   }
 
-  // Follow
+  // Track
   {
-    GZ_PROFILE("CameraTrackingPrivate::OnRender Follow");
-    // reset follow mode if target node got removed
-    if (!this->followTarget.empty())
+    GZ_PROFILE("CameraTrackingPrivate::OnRender Track");
+    // reset track mode if target node got removed
+    if (!this->selectedTarget.empty())
     {
-      rendering::NodePtr target = this->scene->NodeByName(this->followTarget);
-      if (!target && !this->followTargetWait)
+      rendering::NodePtr target = this->scene->NodeByName(this->selectedTarget);
+      if (!target && !this->selectedTargetWait)
       {
         this->camera->SetFollowTarget(nullptr);
         this->camera->SetTrackTarget(nullptr);
-        this->followTarget.clear();
+        this->selectedTarget.clear();
       }
     }
 
     if (!this->moveToTarget.empty())
       return;
-    rendering::NodePtr followTargetTmp = this->camera->FollowTarget();
-    if (!this->followTarget.empty())
+    rendering::NodePtr selectedTargetTmp = this->camera->FollowTarget();
+    if (!this->selectedTarget.empty())
     {
       rendering::NodePtr target = scene->NodeByName(
-          this->followTarget);
+          this->selectedTarget);
       if (target)
       {
-        if (!followTargetTmp || target != followTargetTmp
-              || this->newFollowOffset)
+        if (!selectedTargetTmp || target != selectedTargetTmp
+              || this->newTrack)
         {
           this->camera->SetFollowTarget(target,
-              this->followOffset,
-              this->followWorldFrame);
-          this->camera->SetFollowPGain(this->followPGain);
+              this->trackOffset,
+              this->trackWorldFrame);
+          this->camera->SetFollowPGain(this->trackPGain);
 
           this->camera->SetTrackTarget(target);
           // found target, no need to wait anymore
-          this->newFollowOffset = false;
-          this->followTargetWait = false;
+          this->newTrack = false;
+          this->selectedTargetWait = false;
         }
-        else if (this->followOffsetDirty)
+        else if (this->trackOffsetDirty)
         {
           math::Vector3d offset =
               this->camera->WorldPosition() - target->WorldPosition();
-          if (!this->followWorldFrame)
+          if (!this->trackWorldFrame)
           {
             offset = target->WorldRotation().RotateVectorReverse(offset);
           }
           this->camera->SetFollowOffset(offset);
-          this->followOffsetDirty = false;
+          this->trackOffsetDirty = false;
         }
       }
-      else if (!this->followTargetWait)
+      else if (!this->selectedTargetWait)
       {
-        gzerr << "Unable to follow target. Target: '"
-               << this->followTarget << "' not found" << std::endl;
-        this->followTarget.clear();
+        gzerr << "Unable to track target. Target: '"
+               << this->selectedTarget << "' not found" << std::endl;
+        this->selectedTarget.clear();
       }
     }
-    else if (followTargetTmp)
+    else if (selectedTargetTmp)
     {
       this->camera->SetFollowTarget(nullptr);
       this->camera->SetTrackTarget(nullptr);
@@ -443,6 +440,15 @@ CameraTracking::CameraTracking()
       auto poseMsg = msgs::Convert(this->dataPtr->camera->WorldPose());
       this->dataPtr->cameraPosePub.Publish(poseMsg);
     }
+    if (this->dataPtr->trackStatusPub.HasConnections())
+    {
+      this->dataPtr->trackMsg.set_target(this->dataPtr->selectedTarget);
+      this->dataPtr->trackMsg.mutable_offset()->set_x(this->dataPtr->trackOffset.X());
+      this->dataPtr->trackMsg.mutable_offset()->set_y(this->dataPtr->trackOffset.Y());
+      this->dataPtr->trackMsg.mutable_offset()->set_z(this->dataPtr->trackOffset.Z());
+      this->dataPtr->trackMsg.set_pgain(this->dataPtr->trackPGain);
+      this->dataPtr->trackStatusPub.Publish(this->dataPtr->trackMsg);
+    }
   });
   this->dataPtr->timer->setInterval(1000.0 / 50.0);
   this->dataPtr->timer->start();
@@ -452,10 +458,37 @@ CameraTracking::CameraTracking()
 CameraTracking::~CameraTracking() = default;
 
 /////////////////////////////////////////////////
-void CameraTracking::LoadConfig(const tinyxml2::XMLElement *)
+void CameraTracking::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Camera tracking";
+
+  if (_pluginElem)
+  {
+    if (auto nameElem = _pluginElem->FirstChildElement("target"))
+    {
+      this->dataPtr->selectedTarget = nameElem->GetText();
+      gzmsg << "CameraTracking: Loaded target from sdf ["
+            << this->dataPtr->selectedTarget << "]" << std::endl;
+      this->dataPtr->selectedTargetWait = true;
+    }
+    if (auto offsetElem = _pluginElem->FirstChildElement("offset"))
+    {
+      std::stringstream offsetStr;
+      offsetStr << std::string(offsetElem->GetText());
+      offsetStr >> this->dataPtr->trackOffset;
+      gzmsg << "CameraTracking: Loaded offset from sdf ["
+            << this->dataPtr->trackOffset << "]" << std::endl;
+      this->dataPtr->newTrack = true;
+    }
+    if (auto pGainElem = _pluginElem->FirstChildElement("pgain"))
+    {
+      this->dataPtr->trackPGain = std::stod(std::string(pGainElem->GetText()));
+      gzmsg << "CameraTracking: Loaded pgain from sdf ["
+            << this->dataPtr->trackPGain << "]" << std::endl;
+      this->dataPtr->newTrack = true;
+    }
+  }
 
   App()->findChild<MainWindow *>()->installEventFilter(this);
 }
@@ -465,9 +498,9 @@ void CameraTrackingPrivate::HandleKeyRelease(events::KeyReleaseOnScene *_e)
 {
   if (_e->Key().Key() == Qt::Key_Escape)
   {
-    if (!this->followTarget.empty())
+    if (!this->selectedTarget.empty())
     {
-      this->followTarget = std::string();
+      this->selectedTarget = std::string();
 
       _e->accept();
     }
