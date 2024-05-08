@@ -38,15 +38,24 @@ ColumnLayout {
   // P Gain camera follow distance
   property double pGainFollow: 0.01
 
+  CheckBox {
+    objectName: "freelookCheck"
+    text: qsTr("Free Look")
+    checked: FollowConfig.freelook
+    onClicked: {
+      FollowConfig.SetFreeLook(checked)
+    }
+  }
+
   GridLayout {
     Layout.fillWidth: true
     Layout.margins: 2
     columns: 2
-  
+
     // X follow offset distance
     Label {
       id: xFollowOffsetLabel
-      text: "Camera follow X (m)"
+      text: "Camera offset X (m)"
       color: "dimgrey"
     }
     GzSpinBox {
@@ -65,7 +74,7 @@ ColumnLayout {
     // Y follow offset distance
     Label {
       id: yFollowOffsetLabel
-      text: "Camera follow Y (m)"
+      text: "Camera offset Y (m)"
       color: "dimgrey"
     }
     GzSpinBox {
@@ -84,7 +93,7 @@ ColumnLayout {
     // Z follow offset distance
     Label {
       id: zFollowOffsetLabel
-      text: "Camera follow Z (m)"
+      text: "Camera offset Z (m)"
       color: "dimgrey"
     }
     GzSpinBox {
@@ -103,7 +112,7 @@ ColumnLayout {
     // P Gain follow
     Label {
       id: pGainFollowLabel
-      text: "Camera follow P Gain"
+      text: "Camera offset P Gain"
       color: "dimgrey"
     }
     GzSpinBox {

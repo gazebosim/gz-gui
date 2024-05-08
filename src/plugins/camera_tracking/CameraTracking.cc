@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2024 Rudis Laboratories LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,6 +97,9 @@ class CameraTrackingPrivate
   /// \brief Offset of camera from target being tracked
   public: math::Vector3d trackOffset = math::Vector3d(-5, 0, 3);
 
+  /// \brief Pose of camera in world target is being tracked from
+  public: math::Vector3d trackPose = math::Vector3d(0, 0, 0);
+
   public: gz::msgs::CameraTrack trackMsg;
 
   /// \brief Flag to indicate the tracking offset needs to be updated
@@ -106,6 +110,12 @@ class CameraTrackingPrivate
 
   /// \brief Track P gain
   public: double trackPGain = 0.01;
+
+  /// \brief Free Look P gain
+  public: double freeLookPGain = 1.0;
+
+  /// \brief Default track mode to Follow
+  public: int trackMode = gz::msgs::CameraTrack::FOLLOW;
 
   /// \brief True track the target at an offset that is in world frame,
   /// false to track in target's local frame
@@ -229,6 +239,9 @@ void CameraTrackingPrivate::OnTrackSub(const msgs::CameraTrack &_msg)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
   gzmsg << "Got new track message."<< std::endl;
+
+  this->trackMode = _msg.track_mode();
+
   if (!_msg.target().empty())
   {
     this->selectedTarget = _msg.target(); 
@@ -241,7 +254,10 @@ void CameraTrackingPrivate::OnTrackSub(const msgs::CameraTrack &_msg)
   {
     this->trackOffset = msgs::Convert(_msg.offset());
   }
-
+  if (_msg.has_track_pose())
+  {
+    this->trackPose = msgs::Convert(_msg.track_pose());
+  }
   if (_msg.pgain() > 0.00001)
   {
     this->trackPGain = _msg.pgain();
@@ -378,36 +394,53 @@ void CameraTrackingPrivate::OnRender()
 
     if (!this->moveToTarget.empty())
       return;
-    rendering::NodePtr selectedTargetTmp = this->camera->FollowTarget();
+    rendering::NodePtr selectedFollowTargetTmp = this->camera->FollowTarget();
+    rendering::NodePtr selectedTrackTargetTmp = this->camera->TrackTarget();
     if (!this->selectedTarget.empty())
     {
       rendering::NodePtr target = scene->NodeByName(
           this->selectedTarget);
       if (target)
       {
-        if (!selectedTargetTmp || target != selectedTargetTmp
-              || this->newTrack)
+        if (this->trackMode == gz::msgs::CameraTrack::FOLLOW_FREE_LOOK ||
+              this->trackMode == gz::msgs::CameraTrack::FOLLOW)
         {
-          this->camera->SetFollowTarget(target,
-              this->trackOffset,
-              this->trackWorldFrame);
-          this->camera->SetFollowPGain(this->trackPGain);
-
-          this->camera->SetTrackTarget(target);
-          // found target, no need to wait anymore
-          this->newTrack = false;
-          this->selectedTargetWait = false;
-        }
-        else if (this->trackOffsetDirty)
-        {
-          math::Vector3d offset =
-              this->camera->WorldPosition() - target->WorldPosition();
-          if (!this->trackWorldFrame)
+          if (!selectedFollowTargetTmp || target != selectedFollowTargetTmp
+                || this->newTrack)
           {
-            offset = target->WorldRotation().RotateVectorReverse(offset);
+            this->trackWorldFrame = false;
+            this->camera->SetFollowTarget(target,
+                this->trackOffset,
+                this->trackWorldFrame);
+            if (this->trackMode == gz::msgs::CameraTrack::FOLLOW)
+            {
+              this->camera->SetTrackTarget(target);
+              this->camera->SetTrackPGain(this->trackPGain);
+              this->camera->SetFollowPGain(this->trackPGain);
+            }
+            else
+            {
+              this->camera->SetTrackTarget(nullptr);
+              this->camera->SetFollowPGain(this->freeLookPGain);
+            }
+            this->newTrack = false;
+            this->selectedTargetWait = false;
           }
-          this->camera->SetFollowOffset(offset);
-          this->trackOffsetDirty = false;
+        }
+        if (this->trackMode == gz::msgs::CameraTrack::TRACK)
+        {
+          if (!selectedTrackTargetTmp || target != selectedTrackTargetTmp
+                || this->newTrack)
+          {
+            this->trackWorldFrame = true;
+            this->camera->SetFollowTarget(nullptr);
+            this->camera->SetTrackTarget(target,
+                this->trackPose,
+                this->trackWorldFrame);
+            this->camera->SetTrackPGain(this->trackPGain);
+            this->newTrack = false;
+            this->selectedTargetWait = false;
+          }
         }
       }
       else if (!this->selectedTargetWait)
@@ -417,10 +450,16 @@ void CameraTrackingPrivate::OnRender()
         this->selectedTarget.clear();
       }
     }
-    else if (selectedTargetTmp)
+    else
     {
-      this->camera->SetFollowTarget(nullptr);
-      this->camera->SetTrackTarget(nullptr);
+      if (selectedFollowTargetTmp)
+      {
+        this->camera->SetFollowTarget(nullptr);
+      }
+      if (selectedTrackTargetTmp)
+      {
+        this->camera->SetTrackTarget(nullptr);
+      }
     }
   }
 }
@@ -526,6 +565,7 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
 }
+
 }  // namespace gz::gui::plugins
 
 // Register this plugin

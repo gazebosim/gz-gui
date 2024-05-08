@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="TrackConfig/">
+  <file>TrackConfig.qml</file>
+</qresource>
+</RCC>

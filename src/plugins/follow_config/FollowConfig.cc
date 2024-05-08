@@ -46,6 +46,9 @@ class gz::gui::plugins::FollowConfigPrivate
   /// \brief Follow P gain
   public: double followPGain{0.01};
 
+  /// \brief Flag used to set free look.
+  public: bool freelook{false};
+
   public: transport::Node node;
 
   /// \brief Process updated follow
@@ -119,6 +122,19 @@ void FollowConfig::SetFollow(double _x,
   }
 }
 
+/////////////////////////////////////////////////
+bool FollowConfig::FreeLook() const
+{
+  return this->dataPtr->freelook;
+}
+
+/////////////////////////////////////////////////
+void FollowConfig::SetFreeLook(const bool &_freelook)
+{
+  this->dataPtr->freelook = _freelook;
+  this->FreeLookChanged();
+  this->dataPtr->UpdateFollow();
+}
 
 /////////////////////////////////////////////////
 void FollowConfigPrivate::UpdateFollow()
@@ -129,6 +145,15 @@ void FollowConfigPrivate::UpdateFollow()
   followMsg.mutable_offset()->set_y(this->followOffset.Y());
   followMsg.mutable_offset()->set_z(this->followOffset.Z());
   followMsg.set_pgain(this->followPGain);
+  if (this->freelook)
+  {
+    followMsg.set_track_mode(msgs::CameraTrack::FOLLOW_FREE_LOOK);
+  }
+  else
+  {
+    followMsg.set_track_mode(msgs::CameraTrack::FOLLOW);
+  }
+
   this->followPub.Publish(followMsg);
   gzmsg << "FollowConfig: Publishing message." << std::endl;
   this->newFollowUpdate = false;

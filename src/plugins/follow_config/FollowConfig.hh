@@ -33,6 +33,14 @@ namespace plugins
   {
     Q_OBJECT
 
+    /// \brief Free Look
+    Q_PROPERTY(
+      bool freelook
+      READ FreeLook
+      WRITE SetFreeLook
+      NOTIFY FreeLookChanged
+    )
+
     /// \brief Constructor
     public: FollowConfig();
 
@@ -53,6 +61,17 @@ namespace plugins
 
     // Documentation inherited
     private: bool eventFilter(QObject *_obj, QEvent *_event) override;
+
+    /// \brief Get whether it is free look
+    /// \return True if freelook
+    public: Q_INVOKABLE bool FreeLook() const;
+
+    /// \brief Set to free look
+    /// \param[in] _freelook True if free look
+    public: Q_INVOKABLE void SetFreeLook(const bool &_freelook);
+
+    /// \brief Notify that free look has changed
+    signals: void FreeLookChanged();
 
     /// \internal
     /// \brief Pointer to private data.
