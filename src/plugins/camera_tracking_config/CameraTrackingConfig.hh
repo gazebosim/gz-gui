@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef GZ_GUI_PLUGINS_TRACKCONFIG_HH_
-#define GZ_GUI_PLUGINS_TRACKCONFIG_HH_
+#ifndef GZ_GUI_PLUGINS_CAMERATRACKINGCONFIG_HH_
+#define GZ_GUI_PLUGINS_CAMERATRACKINGCONFIG_HH_
 
 #include <memory>
 
@@ -27,36 +27,41 @@ namespace gui
 {
 namespace plugins
 {
-  class TrackConfigPrivate;
+  class CameraTrackingConfigPrivate;
 
-  class TrackConfig : public Plugin
+  class CameraTrackingConfig : public Plugin
   {
     Q_OBJECT
 
     /// \brief Constructor
-    public: TrackConfig();
+    public: CameraTrackingConfig();
 
     /// \brief Destructor
-    public: virtual ~TrackConfig();
+    public: virtual ~CameraTrackingConfig();
 
     // Documentation inherited
     public: virtual void LoadConfig(const tinyxml2::XMLElement *)
         override;
 
-    /// \brief Set the track camera pose location, requested from the GUI.
-    /// \param[in] _x The track camera pose location in x
-    /// \param[in] _y The track camera pose location in y
-    /// \param[in] _z The track camera pose location in z
-    /// \param[in] _p The track camera P gain
-    public slots: void SetTrack(double _x,
-          double _y, double _z, double _p);
+    /// \brief Set the tracking camera, requested from the GUI.
+    /// \param[in] _tx The track offset in x
+    /// \param[in] _ty The track offset in y
+    /// \param[in] _tz The track offset in z
+    /// \param[in] _tp The track camera P gain
+    /// \param[in] _fx The follow offset in x
+    /// \param[in] _fy The follow offset in y
+    /// \param[in] _fz The follow offset in z
+    /// \param[in] _fp The follow camera P gain
+    public slots: void SetTracking(
+          double _tx, double _ty, double _tz, double _tp,
+          double _fx, double _fy, double _fz, double _fp);
 
     // Documentation inherited
     private: bool eventFilter(QObject *_obj, QEvent *_event) override;
 
     /// \internal
     /// \brief Pointer to private data.
-    private: std::unique_ptr<TrackConfigPrivate> dataPtr;
+    private: std::unique_ptr<CameraTrackingConfigPrivate> dataPtr;
   };
 }
 }
