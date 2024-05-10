@@ -18,6 +18,8 @@
 #define GZ_GUI_PLUGINS_CAMERATRACKINGCONFIG_HH_
 
 #include <memory>
+#include <QEvent>
+#include <QObject>
 
 #include "gz/gui/Plugin.hh"
 

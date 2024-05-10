@@ -14,6 +14,7 @@
  * limitations under the License.
  *
 */
+#include <memory>
 #include <string>
 
 #include <gz/msgs/double.pb.h>
@@ -21,6 +22,7 @@
 #include <gz/msgs/vector3d.pb.h>
 
 #include <gz/common/Console.hh>
+#include <gz/math/Vector3.h>
 #include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
 
@@ -86,7 +88,8 @@ void CameraTrackingConfig::LoadConfig(const tinyxml2::XMLElement *)
   // Track target pose service
   this->dataPtr->cameraTrackingTopic = "/gui/track";
   this->dataPtr->trackingPub =
-    this->dataPtr->node.Advertise<msgs::CameraTrack>(this->dataPtr->cameraTrackingTopic);
+    this->dataPtr->node.Advertise<msgs::CameraTrack>(
+          this->dataPtr->cameraTrackingTopic);
   gzmsg << "CameraTrackingConfig: Tracking topic publisher advertised on ["
          << this->dataPtr->cameraTrackingTopic << "]" << std::endl;
 
@@ -112,7 +115,7 @@ bool CameraTrackingConfig::eventFilter(QObject *_obj, QEvent *_event)
 /////////////////////////////////////////////////
 void CameraTrackingConfig::SetTracking(
           double _tx, double _ty, double _tz, double _tp,
-          double _fx,double _fy, double _fz, double _fp)
+          double _fx, double _fy, double _fz, double _fp)
 {
   if (!this->dataPtr->newTrackingUpdate)
   {

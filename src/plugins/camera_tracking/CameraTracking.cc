@@ -20,10 +20,10 @@
 #include <string>
 
 #include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/cameratrack.pb.h>
 #include <gz/msgs/gui_camera.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
 #include <gz/msgs/vector3d.pb.h>
-#include <gz/msgs/cameratrack.pb.h>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Profiler.hh>
@@ -62,7 +62,7 @@ class CameraTrackingPrivate
       msgs::Boolean &_res);
 
   /// \brief Callback for a track message
-  /// \param[in] _msg Message consists of the target to track, type of tracking, offset and pgain.
+  /// \param[in] _msg Message is of type CamerTrack.
   public: void OnTrackSub(const msgs::CameraTrack &_msg);
 
   /// \brief Callback for a follow request
@@ -214,7 +214,7 @@ void CameraTrackingPrivate::Initialize()
 
   // track
   this->trackTopic = "/gui/track";
-  this->node.Subscribe(this->trackTopic, 
+  this->node.Subscribe(this->trackTopic,
       &CameraTrackingPrivate::OnTrackSub, this);
   gzmsg << "Tracking topic on ["
          << this->trackTopic << "]" << std::endl;
@@ -272,7 +272,7 @@ bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
 void CameraTrackingPrivate::OnTrackSub(const msgs::CameraTrack &_msg)
 {
   std::lock_guard<std::mutex> lock(this->mutex);
-  gzmsg << "Got new track message."<< std::endl;
+  gzmsg << "Got new track message." << std::endl;
 
   if (_msg.track_mode() != gz::msgs::CameraTrack::USE_LAST)
   {
@@ -280,11 +280,11 @@ void CameraTrackingPrivate::OnTrackSub(const msgs::CameraTrack &_msg)
   }
   if (!_msg.follow_target().empty())
   {
-    this->selectedFollowTarget = _msg.follow_target(); 
+    this->selectedFollowTarget = _msg.follow_target();
   }
   if (!_msg.track_target().empty())
   {
-    this->selectedTrackTarget = _msg.track_target(); 
+    this->selectedTrackTarget = _msg.track_target();
   }
   if (_msg.follow_target().empty() && _msg.track_target().empty()
         && _msg.track_mode() != gz::msgs::CameraTrack::USE_LAST)
@@ -428,7 +428,8 @@ void CameraTrackingPrivate::OnRender()
     // reset track mode if target node got removed
     if (!this->selectedFollowTarget.empty())
     {
-      rendering::NodePtr targetFollow = this->scene->NodeByName(this->selectedFollowTarget);
+      rendering::NodePtr targetFollow = this->scene->NodeByName(
+            this->selectedFollowTarget);
       if (!targetFollow && !this->selectedTargetWait)
       {
         this->camera->SetFollowTarget(nullptr);
@@ -437,7 +438,8 @@ void CameraTrackingPrivate::OnRender()
     }
     if (!this->selectedTrackTarget.empty())
     {
-      rendering::NodePtr targetTrack = this->scene->NodeByName(this->selectedTrackTarget);
+      rendering::NodePtr targetTrack = this->scene->NodeByName(
+            this->selectedTrackTarget);
       if (!targetTrack && !this->selectedTargetWait)
       {
         this->camera->SetTrackTarget(nullptr);
@@ -449,18 +451,22 @@ void CameraTrackingPrivate::OnRender()
       return;
     rendering::NodePtr selectedFollowTargetTmp = this->camera->FollowTarget();
     rendering::NodePtr selectedTrackTargetTmp = this->camera->TrackTarget();
-    if (!this->selectedTrackTarget.empty() || !this->selectedFollowTarget.empty())
+    if (!this->selectedTrackTarget.empty() ||
+          !this->selectedFollowTarget.empty())
     {
-      rendering::NodePtr targetFollow = this->scene->NodeByName(this->selectedFollowTarget);
-      rendering::NodePtr targetTrack = this->scene->NodeByName(this->selectedTrackTarget);
+      rendering::NodePtr targetFollow = this->scene->NodeByName(
+            this->selectedFollowTarget);
+      rendering::NodePtr targetTrack = this->scene->NodeByName(
+            this->selectedTrackTarget);
       if (targetFollow || targetTrack)
       {
         if (this->trackMode == gz::msgs::CameraTrack::FOLLOW_FREE_LOOK ||
               this->trackMode == gz::msgs::CameraTrack::FOLLOW ||
               this->trackMode == gz::msgs::CameraTrack::FOLLOW_LOOK_AT )
         {
-          if (!selectedFollowTargetTmp || targetFollow != selectedFollowTargetTmp
-                || this->newTrack)
+          if (!selectedFollowTargetTmp ||
+                targetFollow != selectedFollowTargetTmp ||
+                this->newTrack)
           {
             this->trackWorldFrame = false;
             this->camera->SetFollowTarget(targetFollow,
@@ -489,8 +495,9 @@ void CameraTrackingPrivate::OnRender()
         }
         if (this->trackMode == gz::msgs::CameraTrack::TRACK)
         {
-          if (!selectedTrackTargetTmp || targetTrack != selectedTrackTargetTmp
-                || this->newTrack)
+          if (!selectedTrackTargetTmp ||
+                targetTrack != selectedTrackTargetTmp ||
+                this->newTrack)
           {
             this->trackWorldFrame = true;
             this->camera->SetFollowTarget(nullptr);
@@ -547,11 +554,16 @@ CameraTracking::CameraTracking()
       if (this->dataPtr->trackMode == gz::msgs::CameraTrack::TRACK)
       {
         this->dataPtr->trackMsg.set_track_mode(gz::msgs::CameraTrack::TRACK);
-        this->dataPtr->trackMsg.set_track_target(this->dataPtr->selectedTrackTarget);
-        this->dataPtr->trackMsg.mutable_track_offset()->set_x(this->dataPtr->trackOffset.X());
-        this->dataPtr->trackMsg.mutable_track_offset()->set_y(this->dataPtr->trackOffset.Y());
-        this->dataPtr->trackMsg.mutable_track_offset()->set_z(this->dataPtr->trackOffset.Z());
-        this->dataPtr->trackMsg.set_track_pgain(this->dataPtr->trackPGain);
+        this->dataPtr->trackMsg.set_track_target(
+              this->dataPtr->selectedTrackTarget);
+        this->dataPtr->trackMsg.mutable_track_offset()->set_x(
+              this->dataPtr->trackOffset.X());
+        this->dataPtr->trackMsg.mutable_track_offset()->set_y(
+              this->dataPtr->trackOffset.Y());
+        this->dataPtr->trackMsg.mutable_track_offset()->set_z(
+              this->dataPtr->trackOffset.Z());
+        this->dataPtr->trackMsg.set_track_pgain(
+              this->dataPtr->trackPGain);
         this->dataPtr->trackMsg.clear_follow_target();
         this->dataPtr->trackMsg.clear_follow_offset();
         this->dataPtr->trackMsg.clear_follow_pgain();
@@ -559,38 +571,58 @@ CameraTracking::CameraTracking()
       else if (this->dataPtr->trackMode == gz::msgs::CameraTrack::FOLLOW)
       {
         this->dataPtr->trackMsg.set_track_mode(gz::msgs::CameraTrack::FOLLOW);
-        this->dataPtr->trackMsg.set_follow_target(this->dataPtr->selectedFollowTarget);
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_x(this->dataPtr->followOffset.X());
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_y(this->dataPtr->followOffset.Y());
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_z(this->dataPtr->followOffset.Z());
+        this->dataPtr->trackMsg.set_follow_target(
+              this->dataPtr->selectedFollowTarget);
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_x(
+              this->dataPtr->followOffset.X());
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_y(
+              this->dataPtr->followOffset.Y());
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_z(
+              this->dataPtr->followOffset.Z());
         this->dataPtr->trackMsg.set_follow_pgain(this->dataPtr->followPGain);
         this->dataPtr->trackMsg.clear_track_target();
         this->dataPtr->trackMsg.clear_track_offset();
         this->dataPtr->trackMsg.clear_track_pgain();
       }
-      else if (this->dataPtr->trackMode == gz::msgs::CameraTrack::FOLLOW_FREE_LOOK)
+      else if (this->dataPtr->trackMode ==
+            gz::msgs::CameraTrack::FOLLOW_FREE_LOOK)
       {
-        this->dataPtr->trackMsg.set_track_mode(gz::msgs::CameraTrack::FOLLOW_FREE_LOOK);
-        this->dataPtr->trackMsg.set_follow_target(this->dataPtr->selectedFollowTarget);
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_x(this->dataPtr->followOffset.X());
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_y(this->dataPtr->followOffset.Y());
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_z(this->dataPtr->followOffset.Z());
+        this->dataPtr->trackMsg.set_track_mode(
+              gz::msgs::CameraTrack::FOLLOW_FREE_LOOK);
+        this->dataPtr->trackMsg.set_follow_target(
+              this->dataPtr->selectedFollowTarget);
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_x(
+              this->dataPtr->followOffset.X());
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_y(
+              this->dataPtr->followOffset.Y());
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_z(
+              this->dataPtr->followOffset.Z());
         this->dataPtr->trackMsg.set_follow_pgain(this->dataPtr->followPGain);
         this->dataPtr->trackMsg.clear_track_target();
         this->dataPtr->trackMsg.clear_track_offset();
         this->dataPtr->trackMsg.clear_track_pgain();
       }
-      else if (this->dataPtr->trackMode == gz::msgs::CameraTrack::FOLLOW_LOOK_AT)
+      else if (this->dataPtr->trackMode ==
+            gz::msgs::CameraTrack::FOLLOW_LOOK_AT)
       {
-        this->dataPtr->trackMsg.set_track_mode(gz::msgs::CameraTrack::FOLLOW_LOOK_AT);
-        this->dataPtr->trackMsg.set_follow_target(this->dataPtr->selectedFollowTarget);
-        this->dataPtr->trackMsg.set_track_target(this->dataPtr->selectedTrackTarget);
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_x(this->dataPtr->followOffset.X());
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_y(this->dataPtr->followOffset.Y());
-        this->dataPtr->trackMsg.mutable_follow_offset()->set_z(this->dataPtr->followOffset.Z());
-        this->dataPtr->trackMsg.mutable_track_offset()->set_x(this->dataPtr->trackOffset.X());
-        this->dataPtr->trackMsg.mutable_track_offset()->set_y(this->dataPtr->trackOffset.Y());
-        this->dataPtr->trackMsg.mutable_track_offset()->set_z(this->dataPtr->trackOffset.Z());
+        this->dataPtr->trackMsg.set_track_mode(
+              gz::msgs::CameraTrack::FOLLOW_LOOK_AT);
+        this->dataPtr->trackMsg.set_follow_target(
+              this->dataPtr->selectedFollowTarget);
+        this->dataPtr->trackMsg.set_track_target(
+              this->dataPtr->selectedTrackTarget);
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_x(
+              this->dataPtr->followOffset.X());
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_y(
+              this->dataPtr->followOffset.Y());
+        this->dataPtr->trackMsg.mutable_follow_offset()->set_z(
+              this->dataPtr->followOffset.Z());
+        this->dataPtr->trackMsg.mutable_track_offset()->set_x(
+              this->dataPtr->trackOffset.X());
+        this->dataPtr->trackMsg.mutable_track_offset()->set_y(
+              this->dataPtr->trackOffset.Y());
+        this->dataPtr->trackMsg.mutable_track_offset()->set_z(
+              this->dataPtr->trackOffset.Z());
         this->dataPtr->trackMsg.set_follow_pgain(this->dataPtr->followPGain);
         this->dataPtr->trackMsg.set_track_pgain(this->dataPtr->trackPGain);
       }
@@ -641,7 +673,8 @@ void CameraTracking::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
     if (auto followPGainElem = _pluginElem->FirstChildElement("follow_pgain"))
     {
-      this->dataPtr->followPGain = std::stod(std::string(followPGainElem->GetText()));
+      this->dataPtr->followPGain = std::stod(
+            std::string(followPGainElem->GetText()));
       gzmsg << "CameraTracking: Loaded follow pgain from sdf ["
             << this->dataPtr->followPGain << "]" << std::endl;
       this->dataPtr->newTrack = true;
@@ -657,7 +690,8 @@ void CameraTrackingPrivate::HandleKeyRelease(events::KeyReleaseOnScene *_e)
   if (_e->Key().Key() == Qt::Key_Escape)
   {
     this->trackMode = gz::msgs::CameraTrack::NONE;
-    if (!this->selectedFollowTarget.empty() || !this->selectedTrackTarget.empty() )
+    if (!this->selectedFollowTarget.empty() ||
+          !this->selectedTrackTarget.empty())
     {
       this->selectedFollowTarget = std::string();
       this->selectedTrackTarget = std::string();
@@ -686,7 +720,6 @@ bool CameraTracking::eventFilter(QObject *_obj, QEvent *_event)
   // Standard event processing
   return QObject::eventFilter(_obj, _event);
 }
-
 }  // namespace gz::gui::plugins
 
 // Register this plugin

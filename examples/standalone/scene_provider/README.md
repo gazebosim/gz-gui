@@ -54,7 +54,7 @@ gz topic -e -t /gui/camera/pose
 
 Echo camera tracking information:
 
-```
+```bash
 gz topic -e -t /gui/currently_tracked
 ```
 
@@ -66,7 +66,7 @@ gz service -s /gui/follow --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean 
 
 Follow box from service (depricated):
 
-```
+```bash
 gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: "box_model"'
 ```
 
