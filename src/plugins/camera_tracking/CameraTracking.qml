@@ -27,10 +27,12 @@ ColumnLayout {
   anchors.margins: 10
 
   property string message: 'Services provided:<br><ul>' +
+      '<li>/gui/follow/pose</li>' +
       '<li>/gui/move_to</li>' +
       '<li>/gui/move_to/pose</li>' +
       '<li>/gui/track</li></ul><br>Topics provided:<br><ul>' +
-      '<li>/gui/camera/pose</li></ul>'
+      '<li>/gui/camera/pose</li>'+
+      '<li>/gui/currently_tracked</li></ul>'
 
   Label {
     Layout.fillWidth: true

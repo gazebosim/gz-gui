@@ -62,8 +62,15 @@ class CameraTrackingPrivate
       msgs::Boolean &_res);
 
   /// \brief Callback for a track message
-  /// \param[in] _msg Message consistes of the target to track, type of tracking, offset and pgain.
+  /// \param[in] _msg Message consists of the target to track, type of tracking, offset and pgain.
   public: void OnTrackSub(const msgs::CameraTrack &_msg);
+
+  /// \brief Callback for a follow request
+  /// \param[in] _msg Request message to set the target to follow.
+  /// \param[in] _res Response data
+  /// \return True if the request is received
+  public: bool OnFollow(const msgs::StringMsg &_msg,
+      msgs::Boolean &_res);
 
   /// \brief Callback for a move to pose request.
   /// \param[in] _msg GUICamera request message.
@@ -142,6 +149,9 @@ class CameraTrackingPrivate
   /// \brief Move to service
   public: std::string moveToService;
 
+  /// \brief Follow service
+  public: std::string followService;
+
   /// \brief The pose set from the move to pose service.
   public: std::optional<math::Pose3d> moveToPoseValue;
 
@@ -196,6 +206,12 @@ void CameraTrackingPrivate::Initialize()
   gzmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
+  this->followService = "/gui/follow";
+  this->node.Advertise(this->followService,
+      &CameraTrackingPrivate::OnFollow, this);
+  gzmsg << "Follow service on ["
+         << this->followService << "]" << std::endl;
+
   // track
   this->trackTopic = "/gui/track";
   this->node.Subscribe(this->trackTopic, 
@@ -234,6 +250,21 @@ bool CameraTrackingPrivate::OnMoveTo(const msgs::StringMsg &_msg,
   this->moveToTarget = _msg.data();
 
   _res.set_data(true);
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool CameraTrackingPrivate::OnFollow(const msgs::StringMsg &_msg,
+  msgs::Boolean &_res)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  this->selectedFollowTarget = _msg.data();
+
+  _res.set_data(true);
+
+  this->trackMode = gz::msgs::CameraTrack::FOLLOW;
+
+  this->newTrack = true;
   return true;
 }
 

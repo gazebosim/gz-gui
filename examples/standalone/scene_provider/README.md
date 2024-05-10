@@ -52,14 +52,26 @@ Echo camera pose:
 gz topic -e -t /gui/camera/pose
 ```
 
-Follow box:
+Echo camera tracking information:
+
+```
+gz topic -e -t /gui/currently_tracked
+```
+
+Follow box from service (depricated):
 
 ```
 gz service -s /gui/follow --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean --timeout 2000 --req 'data: "box_model"'
 ```
 
+Follow box from service (depricated):
+
+```
+gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: "box_model"'
+```
+
 Update follow offset:
 
 ```
-gz service -s /gui/follow/offset --reqtype gz.msgs.Vector3d --reptype gz.msgs.Boolean --timeout 2000 --req 'x: 5, y: 5, z: 5'
+gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: "box_model", follow_offset: {x: -1, y: 0, z: 1}'
 ```
