@@ -17,12 +17,13 @@
 #include <memory>
 #include <string>
 
-#include <gz/msgs/double.pb.h>
 #include <gz/msgs/cameratrack.pb.h>
+#include <gz/msgs/double.pb.h>
+#include <gz/msgs/entity.pb.h>
 #include <gz/msgs/vector3d.pb.h>
 
 #include <gz/common/Console.hh>
-#include <gz/math/Vector3.h>
+#include <gz/math/Vector3.hh>
 #include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
 

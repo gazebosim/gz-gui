@@ -21,6 +21,7 @@
 
 #include <gz/msgs/boolean.pb.h>
 #include <gz/msgs/cameratrack.pb.h>
+#include <gz/msgs/entity.pb.h>
 #include <gz/msgs/gui_camera.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
 #include <gz/msgs/vector3d.pb.h>
@@ -62,7 +63,7 @@ class CameraTrackingPrivate
       msgs::Boolean &_res);
 
   /// \brief Callback for a track message
-  /// \param[in] _msg Message is of type CamerTrack.
+  /// \param[in] _msg Message is of type CameraTrack.
   public: void OnTrackSub(const msgs::CameraTrack &_msg);
 
   /// \brief Callback for a follow request
@@ -77,6 +78,13 @@ class CameraTrackingPrivate
   /// \param[in] _res Response data
   /// \return True if the request is received
   public: bool OnMoveToPose(const msgs::GUICamera &_msg,
+               msgs::Boolean &_res);
+
+  /// \brief Callback for a follow offset request
+  /// \param[in] _msg Request message to set the camera's follow offset.
+  /// \param[in] _res Response data
+  /// \return True if the request is received
+  public: bool OnFollowOffset(const msgs::Vector3d &_msg,
                msgs::Boolean &_res);
 
   /// \brief Callback when a move to animation is complete
@@ -151,6 +159,9 @@ class CameraTrackingPrivate
 
   /// \brief Follow service
   public: std::string followService;
+
+  /// \brief Follow offset service
+  public: std::string followOffsetService;
 
   /// \brief The pose set from the move to pose service.
   public: std::optional<math::Pose3d> moveToPoseValue;
@@ -240,6 +251,13 @@ void CameraTrackingPrivate::Initialize()
     this->node.Advertise<msgs::Pose>(this->cameraPoseTopic);
   gzmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
+
+   // follow offset
+   this->followOffsetService = "/gui/follow/offset";
+   this->node.Advertise(this->followOffsetService,
+       &CameraTrackingPrivate::OnFollowOffset, this);
+   gzmsg << "Follow offset service on ["
+          << this->followOffsetService << "]" << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -278,15 +296,15 @@ void CameraTrackingPrivate::OnTrackSub(const msgs::CameraTrack &_msg)
   {
     this->trackMode = _msg.track_mode();
   }
-  if (!_msg.follow_target().empty())
+  if (!_msg.follow_target().name().empty())
   {
-    this->selectedFollowTarget = _msg.follow_target();
+    this->selectedFollowTarget = _msg.follow_target().name();
   }
-  if (!_msg.track_target().empty())
+  if (!_msg.track_target().name().empty())
   {
-    this->selectedTrackTarget = _msg.track_target();
+    this->selectedTrackTarget = _msg.track_target().name();
   }
-  if (_msg.follow_target().empty() && _msg.track_target().empty()
+  if (_msg.follow_target().name().empty() && _msg.track_target().name().empty()
         && _msg.track_mode() != gz::msgs::CameraTrack::USE_LAST)
   {
     gzmsg << "Track and Follow target names empty."<< std::endl;
@@ -322,6 +340,21 @@ void CameraTrackingPrivate::OnMoveToComplete()
 void CameraTrackingPrivate::OnMoveToPoseComplete()
 {
   this->moveToPoseValue.reset();
+}
+
+/////////////////////////////////////////////////
+bool CameraTrackingPrivate::OnFollowOffset(const msgs::Vector3d &_msg,
+  msgs::Boolean &_res)
+{
+  std::lock_guard<std::mutex> lock(this->mutex);
+  if (!this->selectedFollowTarget.empty())
+  {
+    this->newTrack = true;
+    this->followOffset = msgs::Convert(_msg);
+  }
+
+  _res.set_data(true);
+  return true;
 }
 
 /////////////////////////////////////////////////
@@ -554,7 +587,7 @@ CameraTracking::CameraTracking()
       if (this->dataPtr->trackMode == gz::msgs::CameraTrack::TRACK)
       {
         this->dataPtr->trackMsg.set_track_mode(gz::msgs::CameraTrack::TRACK);
-        this->dataPtr->trackMsg.set_track_target(
+        this->dataPtr->trackMsg.mutable_track_target()->set_name(
               this->dataPtr->selectedTrackTarget);
         this->dataPtr->trackMsg.mutable_track_offset()->set_x(
               this->dataPtr->trackOffset.X());
@@ -571,7 +604,7 @@ CameraTracking::CameraTracking()
       else if (this->dataPtr->trackMode == gz::msgs::CameraTrack::FOLLOW)
       {
         this->dataPtr->trackMsg.set_track_mode(gz::msgs::CameraTrack::FOLLOW);
-        this->dataPtr->trackMsg.set_follow_target(
+        this->dataPtr->trackMsg.mutable_follow_target()->set_name(
               this->dataPtr->selectedFollowTarget);
         this->dataPtr->trackMsg.mutable_follow_offset()->set_x(
               this->dataPtr->followOffset.X());
@@ -589,7 +622,7 @@ CameraTracking::CameraTracking()
       {
         this->dataPtr->trackMsg.set_track_mode(
               gz::msgs::CameraTrack::FOLLOW_FREE_LOOK);
-        this->dataPtr->trackMsg.set_follow_target(
+        this->dataPtr->trackMsg.mutable_follow_target()->set_name(
               this->dataPtr->selectedFollowTarget);
         this->dataPtr->trackMsg.mutable_follow_offset()->set_x(
               this->dataPtr->followOffset.X());
@@ -607,9 +640,9 @@ CameraTracking::CameraTracking()
       {
         this->dataPtr->trackMsg.set_track_mode(
               gz::msgs::CameraTrack::FOLLOW_LOOK_AT);
-        this->dataPtr->trackMsg.set_follow_target(
+        this->dataPtr->trackMsg.mutable_follow_target()->set_name(
               this->dataPtr->selectedFollowTarget);
-        this->dataPtr->trackMsg.set_track_target(
+        this->dataPtr->trackMsg.mutable_track_target()->set_name(
               this->dataPtr->selectedTrackTarget);
         this->dataPtr->trackMsg.mutable_follow_offset()->set_x(
               this->dataPtr->followOffset.X());

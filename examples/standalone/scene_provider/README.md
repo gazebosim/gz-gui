@@ -9,7 +9,7 @@ plugin to update the scene using Gazebo Transport.
 
 ## Build
 
-```
+```bash
 cd examples/standalone/scene_provider
 mkdir build
 cd build
@@ -21,14 +21,14 @@ make
 
 In one terminal, start the scene provider:
 
-```
+```bash
 cd examples/standalone/scene_provider/build
 ./scene_provider
 ```
 
 On another terminal, start the example config:
 
-```
+```bash
 gz gui -c examples/config/scene3d.config
 ```
 
@@ -42,13 +42,13 @@ Some commands to test camera tracking with this demo:
 
 Move to box:
 
-```
+```bash
 gz service -s /gui/move_to --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean --timeout 2000 --req 'data: "box_model"'
 ```
 
 Echo camera pose:
 
-```
+```bash
 gz topic -e -t /gui/camera/pose
 ```
 
@@ -58,20 +58,32 @@ Echo camera tracking information:
 gz topic -e -t /gui/currently_tracked
 ```
 
-Follow box from service (depricated):
+Follow box from track topic:
 
+```bash
+gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: { name: "box_model"}'
 ```
-gz service -s /gui/follow --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean --timeout 2000 --req 'data: "box_model"'
+
+Follow box from track topic:
+
+```bash
+gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: "box_model", follow_offset: {x: -1, y: 0, z: 1}'
+```
+
+Update follow offset from track topic:
+
+```bash
+gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: {name: "box_model"}, follow_offset: {x: -1, y: 0, z: 1}'
 ```
 
 Follow box from service (depricated):
 
 ```bash
-gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: "box_model"'
+gz service -s /gui/follow --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean --timeout 2000 --req 'data: "box_model"'
 ```
 
-Update follow offset:
+Update follow offset from follow offset service (depricated):
 
-```
-gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: "box_model", follow_offset: {x: -1, y: 0, z: 1}'
+```bash
+gz service -s /gui/follow/offset --reqtype gz.msgs.Vector3d --reptype gz.msgs.Boolean --timeout 2000 --req 'x: 5, y: 5, z: 5'
 ```
