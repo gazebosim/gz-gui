@@ -17,7 +17,9 @@
 */
 
 #include <mutex>
+#include <sstream>
 #include <string>
+#include <optional>
 
 #include <gz/msgs/boolean.pb.h>
 #include <gz/msgs/cameratrack.pb.h>
