@@ -120,6 +120,7 @@ class CameraTrackingPrivate
   /// \brief Offset on target to be tracked
   public: math::Vector3d trackOffset = math::Vector3d(0, 0, 0);
 
+  /// \brief Camera tracking message
   public: gz::msgs::CameraTrack trackMsg;
 
   /// \brief Flag to indicate new tracking
@@ -159,10 +160,10 @@ class CameraTrackingPrivate
   /// \brief Move to service
   public: std::string moveToService;
 
-  /// \brief Follow service
+  /// \brief Follow service (deprecated)
   public: std::string followService;
 
-  /// \brief Follow offset service
+  /// \brief Follow offset service (deprecated)
   public: std::string followOffsetService;
 
   /// \brief The pose set from the move to pose service.
@@ -219,11 +220,12 @@ void CameraTrackingPrivate::Initialize()
   gzmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
+  // follow
   this->followService = "/gui/follow";
   this->node.Advertise(this->followService,
       &CameraTrackingPrivate::OnFollow, this);
   gzmsg << "Follow service on ["
-         << this->followService << "]" << std::endl;
+         << this->followService << "] (deprecated)" << std::endl;
 
   // track
   this->trackTopic = "/gui/track";
@@ -259,7 +261,7 @@ void CameraTrackingPrivate::Initialize()
    this->node.Advertise(this->followOffsetService,
        &CameraTrackingPrivate::OnFollowOffset, this);
    gzmsg << "Follow offset service on ["
-          << this->followOffsetService << "]" << std::endl;
+          << this->followOffsetService << "] (deprecated)" << std::endl;
 }
 
 /////////////////////////////////////////////////

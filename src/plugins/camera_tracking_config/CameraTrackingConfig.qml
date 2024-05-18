@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024 CogniPilot Foundation
  * Copyright (C) 2024 Rudis Laboratories LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

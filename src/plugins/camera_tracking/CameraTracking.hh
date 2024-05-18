@@ -31,6 +31,9 @@ namespace gz::gui::plugins
   /// and "follow".
   ///
   /// Services:
+  /// * `/gui/follow`: Set the user camera to follow a given target,
+  ///                   identified by name (deprecated).
+  /// * `/gui/follow/offset`: Set the offset for following (deprecated).
   /// * `/gui/move_to`: Move the user camera to look at a given target,
   ///                   identified by name.
   /// * `/gui/move_to/pose`: Move the user camera to a given pose.

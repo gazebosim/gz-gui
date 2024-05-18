@@ -76,13 +76,13 @@ Update follow offset from track topic:
 gz topic -t /gui/track -m gz.msgs.CameraTrack -p 'track_mode: 2, follow_target: {name: "box_model"}, follow_offset: {x: -1, y: 0, z: 1}'
 ```
 
-Follow box from service (depricated):
+Follow box from service (deprecated):
 
 ```bash
 gz service -s /gui/follow --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean --timeout 2000 --req 'data: "box_model"'
 ```
 
-Update follow offset from follow offset service (depricated):
+Update follow offset from follow offset service (deprecated):
 
 ```bash
 gz service -s /gui/follow/offset --reqtype gz.msgs.Vector3d --reptype gz.msgs.Boolean --timeout 2000 --req 'x: 5, y: 5, z: 5'
