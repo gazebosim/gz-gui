@@ -116,6 +116,7 @@ endfunction()
 # Plugins
 add_subdirectory(camera_fps)
 add_subdirectory(camera_tracking)
+add_subdirectory(camera_tracking_config)
 add_subdirectory(grid_config)
 add_subdirectory(image_display)
 add_subdirectory(interactive_view_control)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2024 Rudis Laboratories LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +31,14 @@ namespace gz::gui::plugins
   /// and "follow".
   ///
   /// Services:
+  /// * `/gui/follow`: Set the user camera to follow a given target,
+  ///                   identified by name (deprecated).
+  /// * `/gui/follow/offset`: Set the offset for following (deprecated).
   /// * `/gui/move_to`: Move the user camera to look at a given target,
   ///                   identified by name.
   /// * `/gui/move_to/pose`: Move the user camera to a given pose.
-  /// * `/gui/follow`: Set the user camera to follow a given target,
-  ///                   identified by name.
-  /// * `/gui/follow/offset`: Set the offset for following.
+  /// * `/gui/track`: Set the user camera to follow a given target,
+  ///                   identified by name, offset, pgain, track type.
   ///
   /// Topics:
   /// * `/gui/camera/pose`: Publishes the current user camera pose.
