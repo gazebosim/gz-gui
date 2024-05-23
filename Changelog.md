@@ -1,6 +1,24 @@
 ## Gazebo GUI 7
 
-### Gazebo GUI 7.X.X (202X-XX-XX)
+### Gazebo GUI 7.2.2 (2024-05-23)
+
+1. Merge 6 ➡️ 7
+    * [Pull request #604](https://github.com/gazebosim/gz-gui/pull/604)
+
+1. Update github action workflows
+    * [Pull request #597](https://github.com/gazebosim/ign-gui/pull/597)
+
+1. Tidy namespaces
+    * [Pull request #590](https://github.com/gazebosim/ign-gui/pull/590)
+
+1. Update github issue template
+    * [Pull request #591](https://github.com/gazebosim/ign-gui/pull/591)
+
+1. Find any major version of Protobuf
+    * [Pull request #544](https://github.com/gazebosim/ign-gui/pull/544)
+
+1. Adds a basic unit test for PointCloud functionality
+    * [Pull request #496]((https://github.com/gazebosim/ign-gui/pull/496)
 
 ### Gazebo GUI 7.2.1 (2023-09-26)
 
