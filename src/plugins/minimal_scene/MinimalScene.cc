@@ -1014,6 +1014,7 @@ TextureNode::TextureNode(QQuickWindow *_window, RenderSync &_renderSync,
   renderSync(_renderSync),
   window(_window)
 {
+  (void) _camera;
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
   {
     gzdbg << "Creating texture node render interface for OpenGL" << std::endl;
