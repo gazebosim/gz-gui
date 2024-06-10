@@ -1,0 +1,495 @@
+load(
+    "@gz//bazel/skylark:build_defs.bzl",
+    "GZ_FEATURES",
+    "GZ_ROOT",
+    "GZ_VISIBILITY",
+    "gz_configure_header",
+    "gz_export_header",
+    "gz_include_header",
+)
+load("@com_justbuchanan_rules_qt//:qt.bzl", "gencpp", "genqrc", "qt_cc_library", "qt_ui_library")
+load("gz_gui_plugin.bzl", "gz_gui_plugin")
+
+package(
+    default_visibility = GZ_VISIBILITY,
+    features = GZ_FEATURES,
+)
+
+licenses(["notice"])  # Apache-2.0
+
+exports_files(["LICENSE"])
+
+gz_configure_header(
+    name = "gui_config_hh",
+    src = "include/gz/gui/config.hh.in",
+    cmakelists = ["CMakeLists.txt"],
+    package = "gui",
+)
+
+gz_export_header(
+    name = "include/gz/gui/Export.hh",
+    export_base = "GZ_GUI",
+    lib_name = "gz-gui",
+    visibility = ["//visibility:private"],
+)
+
+public_headers_no_gen = glob([
+    "include/gz/gui/*.hh",
+    "include/gz/gui/*.h",
+])
+
+sources = glob(
+    [
+        "src/*.cc",
+        "src/*.hh",
+    ],
+    exclude = [
+        "src/main.cc",
+        "src/gz.cc",
+        "src/*_TEST.cc",
+    ],
+)
+
+gz_include_header(
+    name = "gui_hh_genrule",
+    out = "include/gz/gui.hh",
+    hdrs = public_headers_no_gen + [
+        "include/gz/gui/config.hh",
+        "include/gz/gui/Export.hh",
+    ],
+)
+
+public_headers = public_headers_no_gen + [
+    "include/gz/gui/config.hh",
+    "include/gz/gui/Export.hh",
+]
+
+gencpp(
+    name = "gui_resources_gen",
+    cpp = "gui_resources.cpp",
+    files = glob([
+        "include/gz/gui/qtquickcontrols2.conf",
+        "include/gz/gui/qml/*.qml",
+        "include/gz/gui/qml/images/*.*",
+        "include/gz/gui/qml/qmldir",
+        "include/gz/gui/qml/qmldir_deprecated",
+    ]),
+    qrc = "include/gz/gui/resources.qrc",
+    resource_name = "resources",
+)
+
+qt_cc_library(
+    name = "gui",
+    srcs = sources + ["gui_resources.cpp"],
+    hdrs = [
+        "include/gz/gui/Application.hh",
+        "include/gz/gui/Dialog.hh",
+        "include/gz/gui/MainWindow.hh",
+        "include/gz/gui/PlottingInterface.hh",
+        "include/gz/gui/Plugin.hh",
+    ],
+    includes = ["include"],
+    normal_hdrs = [
+        "include/gz/gui/qt.h",
+        "include/gz/gui/Conversions.hh",
+        "include/gz/gui/DragDropModel.hh",
+        "include/gz/gui/GuiEvents.hh",
+        "include/gz/gui/Enums.hh",
+        "include/gz/gui/config.hh",
+        "include/gz/gui/Export.hh",
+        "include/gz/gui/Helpers.hh",
+        "include/gz/gui/SearchModel.hh",
+    ],
+    deps = [
+        GZ_ROOT + "common/events",
+        GZ_ROOT + "msgs",
+        GZ_ROOT + "transport",
+        GZ_ROOT + "plugin:loader",
+        "@qt//:qt_core",
+        "@qt//:qt_gui",
+        "@qt//:qt_qml",
+        "@qt//:qt_quick",
+        "@qt//:qt_quickcontrols2",
+        "@qt//:qt_widgets",
+    ],
+    alwayslink = 1,
+)
+
+gz_gui_plugin(
+    name = "camera_fps",
+    srcs = ["src/plugins/camera_fps/CameraFps.cc"],
+    hdrs = ["src/plugins/camera_fps/CameraFps.hh"],
+    qrc_file = "src/plugins/camera_fps/CameraFps.qrc",
+    qrc_resources = ["src/plugins/camera_fps/CameraFps.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "common/profiler",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "camera_tracking",
+    srcs = ["src/plugins/camera_tracking/CameraTracking.cc"],
+    hdrs = ["src/plugins/camera_tracking/CameraTracking.hh"],
+    qrc_file = "src/plugins/camera_tracking/CameraTracking.qrc",
+    qrc_resources = ["src/plugins/camera_tracking/CameraTracking.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "common/profiler",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "grid_config",
+    srcs = ["src/plugins/grid_config/GridConfig.cc"],
+    hdrs = ["src/plugins/grid_config/GridConfig.hh"],
+    qrc_file = "src/plugins/grid_config/GridConfig.qrc",
+    qrc_resources = ["src/plugins/grid_config/GridConfig.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "common/profiler",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "image_display",
+    srcs = ["src/plugins/image_display/ImageDisplay.cc"],
+    hdrs = ["src/plugins/image_display/ImageDisplay.hh"],
+    qrc_file = "src/plugins/image_display/ImageDisplay.qrc",
+    qrc_resources = ["src/plugins/image_display/ImageDisplay.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "interactive_view_control",
+    srcs = ["src/plugins/interactive_view_control/InteractiveViewControl.cc"],
+    hdrs = ["src/plugins/interactive_view_control/InteractiveViewControl.hh"],
+    qrc_file = "src/plugins/interactive_view_control/InteractiveViewControl.qrc",
+    qrc_resources = ["src/plugins/interactive_view_control/InteractiveViewControl.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "key_publisher",
+    srcs = ["src/plugins/key_publisher/KeyPublisher.cc"],
+    hdrs = ["src/plugins/key_publisher/KeyPublisher.hh"],
+    qrc_file = "src/plugins/key_publisher/KeyPublisher.qrc",
+    qrc_resources = ["src/plugins/key_publisher/KeyPublisher.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "marker_manager",
+    srcs = ["src/plugins/marker_manager/MarkerManager.cc"],
+    hdrs = ["src/plugins/marker_manager/MarkerManager.hh"],
+    qrc_file = "src/plugins/marker_manager/MarkerManager.qrc",
+    qrc_resources = ["src/plugins/marker_manager/MarkerManager.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "common/profiler",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "minimal_scene",
+    srcs = [
+        "src/plugins/minimal_scene/MinimalScene.cc",
+        "src/plugins/minimal_scene/MinimalSceneRhi.cc",
+        "src/plugins/minimal_scene/MinimalSceneRhiOpenGL.cc",
+    ],
+    hdrs = [
+        "src/plugins/minimal_scene/MinimalScene.hh",
+    ],
+    normal_headers = [
+        "src/plugins/minimal_scene/MinimalSceneRhi.hh",
+        "src/plugins/minimal_scene/MinimalSceneRhiMetal.hh",
+        "src/plugins/minimal_scene/MinimalSceneRhiOpenGL.hh",
+    ],
+    qrc_file = "src/plugins/minimal_scene/MinimalScene.qrc",
+    qrc_resources = ["src/plugins/minimal_scene/MinimalScene.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "navsat_map",
+    srcs = ["src/plugins/navsat_map/NavSatMap.cc"],
+    hdrs = ["src/plugins/navsat_map/NavSatMap.hh"],
+    qrc_file = "src/plugins/navsat_map/NavSatMap.qrc",
+    qrc_resources = ["src/plugins/navsat_map/NavSatMap.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "plotting",
+    srcs = ["src/plugins/plotting/TransportPlotting.cc"],
+    hdrs = ["src/plugins/plotting/TransportPlotting.hh"],
+    qrc_file = "src/plugins/plotting/TransportPlotting.qrc",
+    qrc_resources = ["src/plugins/plotting/TransportPlotting.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "point_cloud",
+    srcs = ["src/plugins/point_cloud/PointCloud.cc"],
+    hdrs = ["src/plugins/point_cloud/PointCloud.hh"],
+    qrc_file = "src/plugins/point_cloud/PointCloud.qrc",
+    qrc_resources = ["src/plugins/point_cloud/PointCloud.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "common/profiler",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "publisher",
+    srcs = ["src/plugins/publisher/Publisher.cc"],
+    hdrs = ["src/plugins/publisher/Publisher.hh"],
+    qrc_file = "src/plugins/publisher/Publisher.qrc",
+    qrc_resources = ["src/plugins/publisher/Publisher.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "screenshot",
+    srcs = ["src/plugins/screenshot/Screenshot.cc"],
+    hdrs = ["src/plugins/screenshot/Screenshot.hh"],
+    qrc_file = "src/plugins/screenshot/Screenshot.qrc",
+    qrc_resources = [
+        "src/plugins/screenshot/folder.png",
+        "src/plugins/screenshot/Screenshot.qml",
+        "src/plugins/screenshot/screenshot.png",
+    ],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "common/graphics",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "shutdown_button",
+    srcs = ["src/plugins/shutdown_button/ShutdownButton.cc"],
+    hdrs = ["src/plugins/shutdown_button/ShutdownButton.hh"],
+    qrc_file = "src/plugins/shutdown_button/ShutdownButton.qrc",
+    qrc_resources = ["src/plugins/shutdown_button/ShutdownButton.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "tape_measure",
+    srcs = ["src/plugins/tape_measure/TapeMeasure.cc"],
+    hdrs = ["src/plugins/tape_measure/TapeMeasure.hh"],
+    qrc_file = "src/plugins/tape_measure/TapeMeasure.qrc",
+    qrc_resources = [
+        "src/plugins/tape_measure/tape_measure.png",
+        "src/plugins/tape_measure/TapeMeasure.qml",
+        "src/plugins/tape_measure/trashcan.png",
+    ],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "teleop",
+    srcs = ["src/plugins/teleop/Teleop.cc"],
+    hdrs = ["src/plugins/teleop/Teleop.hh"],
+    qrc_file = "src/plugins/teleop/Teleop.qrc",
+    qrc_resources = ["src/plugins/teleop/Teleop.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "topic_echo",
+    srcs = ["src/plugins/topic_echo/TopicEcho.cc"],
+    hdrs = ["src/plugins/topic_echo/TopicEcho.hh"],
+    qrc_file = "src/plugins/topic_echo/TopicEcho.qrc",
+    qrc_resources = ["src/plugins/topic_echo/TopicEcho.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "topic_viewer",
+    srcs = ["src/plugins/topic_viewer/TopicViewer.cc"],
+    hdrs = ["src/plugins/topic_viewer/TopicViewer.hh"],
+    qrc_file = "src/plugins/topic_viewer/TopicViewer.qrc",
+    qrc_resources = [
+        "src/plugins/topic_viewer/minus.png",
+        "src/plugins/topic_viewer/plottable_icon.svg",
+        "src/plugins/topic_viewer/plus.png",
+        "src/plugins/topic_viewer/TopicViewer.qml",
+    ],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "transport_scene_manager",
+    srcs = ["src/plugins/transport_scene_manager/TransportSceneManager.cc"],
+    hdrs = ["src/plugins/transport_scene_manager/TransportSceneManager.hh"],
+    qrc_file = "src/plugins/transport_scene_manager/TransportSceneManager.qrc",
+    qrc_resources = ["src/plugins/transport_scene_manager/TransportSceneManager.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "common/graphics",
+        GZ_ROOT + "plugin:register",
+        GZ_ROOT + "rendering",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "world_control",
+    srcs = [
+        "src/plugins/world_control/WorldControl.cc",
+        "src/plugins/world_control/WorldControlEventListener.cc",
+    ],
+    hdrs = [
+        "src/plugins/world_control/WorldControl.hh",
+        "src/plugins/world_control/WorldControlEventListener.hh",
+    ],
+    qrc_file = "src/plugins/world_control/WorldControl.qrc",
+    qrc_resources = ["src/plugins/world_control/WorldControl.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+gz_gui_plugin(
+    name = "world_stats",
+    srcs = ["src/plugins/world_stats/WorldStats.cc"],
+    hdrs = ["src/plugins/world_stats/WorldStats.hh"],
+    qrc_file = "src/plugins/world_stats/WorldStats.qrc",
+    qrc_resources = ["src/plugins/world_stats/WorldStats.qml"],
+    deps = [
+        GZ_ROOT + "common",
+        GZ_ROOT + "plugin:register",
+        ":gui",
+    ],
+)
+
+cc_library(
+    name = "plugins",
+    deps = [
+        ":camera_fps",
+        ":camera_tracking",
+        ":grid_config",
+        ":image_display",
+        ":interactive_view_control",
+        ":key_publisher",
+        ":marker_manager",
+        ":minimal_scene",
+        ":navsat_map",
+        ":plotting",
+        ":point_cloud",
+        ":publisher",
+        ":screenshot",
+        ":shutdown_button",
+        ":tape_measure",
+        ":teleop",
+        ":topic_echo",
+        ":topic_viewer",
+        ":transport_scene_manager",
+        ":world_control",
+        ":world_stats",
+    ],
+)
+
+cc_binary(
+    name = "main",
+    srcs = ["src/main.cc"],
+    defines = [
+        "GZ_PLUGIN_STATIC_ONLY=1",
+    ],
+    deps = [
+        ":gui",
+        ":plugins",
+    ],
+)
+
+test_sources = glob(
+    #include = ["src/*_TEST.cc"],
+)
+
+[cc_test(
+    name = src.replace("/", "_").replace(".cc", "").replace("src_", ""),
+    srcs = [src],
+    env = {
+        "GZ_BAZEL": "1",
+        "GZ_BAZEL_PATH": "gui",
+    },
+    deps = [
+        ":gui",
+        GZ_ROOT + "common/testing",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+) for src in test_sources]
