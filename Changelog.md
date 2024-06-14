@@ -1,5 +1,13 @@
 ## Gazebo GUI 8
 
+### Gazebo GUI 8.2.0 (2024-06-14)
+
+1. Enhanced tracking camera and user visualization experience
+    * [Pull request #619](https://github.com/gazebosim/gz-gui/pull/619)
+
+1. Add package.xml
+    * [Pull request #613](https://github.com/gazebosim/gz-gui/pull/613)
+
 ### Gazebo GUI 8.1.1 (2024-04-10)
 
 1. Fix compiler warnings in GCC-13 (Noble)
