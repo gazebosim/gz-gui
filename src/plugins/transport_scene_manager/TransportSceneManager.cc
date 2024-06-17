@@ -687,6 +687,13 @@ rendering::GeometryPtr TransportSceneManagerPrivate::LoadGeometry(
     if (_msg.box().has_size())
       scale = msgs::Convert(_msg.box().size());
   }
+  else if (_msg.has_cone())
+  {
+    geom = this->scene->CreateCone();
+    scale.X() = _msg.cone().radius() * 2;
+    scale.Y() = scale.X();
+    scale.Z() = _msg.cone().length();
+  }
   else if (_msg.has_cylinder())
   {
     geom = this->scene->CreateCylinder();
