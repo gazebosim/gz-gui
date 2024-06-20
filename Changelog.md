@@ -1,5 +1,10 @@
 ## Gazebo GUI 8
 
+### Gazebo GUI 8.3.0 (2024-06-20)
+
+1. Backport: Adding cone primitives.
+    * [Pull request #621](https://github.com/gazebosim/gz-gui/pull/621)
+
 ### Gazebo GUI 8.2.0 (2024-06-14)
 
 1. Enhanced tracking camera and user visualization experience
