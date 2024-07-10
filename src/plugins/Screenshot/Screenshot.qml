@@ -14,13 +14,12 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.2
-import QtQuick.Controls.Material.impl 2.2
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Controls.Material.impl
+import QtQuick.Layouts
+import QtQuick.Dialogs
 
 ToolBar {
   Layout.minimumWidth: 200
@@ -65,18 +64,16 @@ ToolBar {
         sourceSize.height: 40
       }
       onClicked: {
-        fileDialog.open()
+        folderDialog.open()
       }
     }
 
-    FileDialog {
-      id: fileDialog
+    FolderDialog {
+      id: folderDialog
       title: "Save screenshots"
-      folder: Screenshot.directory
-      selectExisting: false
-      selectFolder: true
+      currentFolder: Screenshot.directory
       onAccepted: {
-        Screenshot.SetDirectory(fileDialog.folder)
+        Screenshot.SetDirectory(folderDialog.folder)
         close()
       }
     }

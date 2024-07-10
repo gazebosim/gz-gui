@@ -15,12 +15,12 @@
  *
 */
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.1
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.3
-import gz.gui 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Controls.Styles
+import QtQuick.Layouts
+import gz.gui
 
 ColumnLayout {
   Layout.minimumWidth: 400

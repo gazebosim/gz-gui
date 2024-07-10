@@ -82,7 +82,7 @@ set(GZ_TOOLS_VER 2)
 #--------------------------------------
 # Find QT
 set(QT_MAJOR_VERSION 6)
-set(QT_MINOR_VERSION 0)
+set(QT_MINOR_VERSION 4)
 gz_find_package (Qt${QT_MAJOR_VERSION}
   VERSION ${QT_MAJOR_VERSION}.${QT_MINOR_VERSION}
   COMPONENTS

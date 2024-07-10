@@ -15,9 +15,7 @@
  *
 */
 import QtQuick
-import QtQuick.Control
-import QtQuick.Layout
-import QtQuick.Controls.Styles
+import QtQuick.Layouts
 
 /**
  *  Item displaying 3D pose information.
@@ -80,7 +78,7 @@ Item {
   signal gzPoseSet(double _x, double _y, double _z, double _roll, double _pitch, double _yaw)
 
   // Maximum spinbox value
-  property double spinMax: Number.MAX_VALUE
+  property int spinMax: Number.MAX_VALUE
 
   // Expand/Collapse of this widget
   property bool expand: true
@@ -121,10 +119,10 @@ Item {
     GzSpinBox {
       id: writableSpin
       value:  numberValue
-      minimumValue: -spinMax
-      maximumValue: spinMax
-      decimals: gzHelper.getDecimals(writableSpin.width)
-      onEditingFinished: {
+      from: -spinMax
+      to: spinMax
+      //decimals: gzHelper.getDecimals(writableSpin.width)
+      onValueChanged: {
         gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value,
                              rollItem.value, pitchItem.value, yawItem.value)
       }

@@ -14,7 +14,7 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
+import QtQuick
 
 Rectangle {
   banana: fail

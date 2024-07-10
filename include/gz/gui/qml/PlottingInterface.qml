@@ -21,7 +21,7 @@ import QtQuick.Controls.Styles
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 import Qt.labs.platform
-import "qrc:/qml"
+import "qrc:/gz/gui/qml"
 
 Rectangle
 {

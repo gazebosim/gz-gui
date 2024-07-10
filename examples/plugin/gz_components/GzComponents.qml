@@ -14,9 +14,9 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.0
-import gz.gui 1.0
+import QtQuick
+import QtQuick.Controls
+import gz.gui
 
 Column {
   anchors.fill: parent

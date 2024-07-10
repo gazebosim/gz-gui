@@ -83,8 +83,19 @@ if (QT_MAJOR_VERSION EQUAL 6)
   target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
     PUBLIC
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+    $<INSTALL_INTERFACE:include/gz/gui9>
   )
+
+  install(
+    TARGETS ${PROJECT_LIBRARY_TARGET_NAME}
+    EXPORT ${PROJECT_LIBRARY_TARGET_NAME}
+    LIBRARY DESTINATION ${GZ_LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${GZ_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${GZ_BIN_INSTALL_DIR}
+    COMPONENT libraries)
+
+  _gz_create_cmake_package()
+  _gz_create_pkgconfig()
 
 else()
   set (resources resources.qrc)

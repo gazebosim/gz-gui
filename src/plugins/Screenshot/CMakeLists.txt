@@ -3,6 +3,8 @@ gz_gui_add_plugin(Screenshot
     Screenshot.cc
   QT_HEADERS
     Screenshot.hh
+  QML_SOURCES
+    Screenshot.qml
   PUBLIC_LINK_LIBS
     gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
   TEST_SOURCES

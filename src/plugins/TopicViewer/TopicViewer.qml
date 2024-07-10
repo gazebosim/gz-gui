@@ -14,7 +14,7 @@
  * limitations under the License.
  *
 */
-import QtQml.Models 2.2
+import QtQml.Models
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
