@@ -611,6 +611,8 @@ MarkerManager::Implementation::MsgToType(const gz::msgs::Marker &_msg)
       return gz::rendering::MarkerType::MT_BOX;
     case gz::msgs::Marker::CAPSULE:
       return gz::rendering::MarkerType::MT_CAPSULE;
+    case gz::msgs::Marker::CONE:
+      return gz::rendering::MarkerType::MT_CONE;
     case gz::msgs::Marker::CYLINDER:
       return gz::rendering::MarkerType::MT_CYLINDER;
     case gz::msgs::Marker::LINE_STRIP:
