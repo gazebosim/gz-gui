@@ -109,7 +109,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #ifdef __APPLE__
   AvailableAPIs api = AvailableAPIs::Metal;
 #else
-  AvailableAPIs api = AvailableAPIs::Vulkan;
+  AvailableAPIs api = AvailableAPIs::OpenGL;
 #endif
   if (_renderEngineGuiApiBackend)
   {
