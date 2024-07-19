@@ -52,8 +52,19 @@ namespace gz::gui::plugins
 
   class TextureNodeRhiOpenGLPrivate
   {
+    // Current texture id from the render engine
     public: GLuint textureId = 0;
+
+    // New texture id from the render engine
     public: GLuint newTextureId = 0;
+
+    // Intermediate FBO for copying texture data
+    public: GLuint rhiFbo  = 0;
+
+    // Texture id for internal texture that holds texture data from
+    // the render engine texture. The texture data is in GL_RGB format
+    public: GLuint rhiTextureId = 0;
+
     public: QSize size {0, 0};
     public: QSize newSize {0, 0};
     public: QMutex mutex;
@@ -195,6 +206,13 @@ void RenderThreadRhiOpenGL::ShutDown()
 /////////////////////////////////////////////////
 TextureNodeRhiOpenGL::~TextureNodeRhiOpenGL()
 {
+  // clean up opengl resources owned by this rhi
+  QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+  if (this->dataPtr->rhiFbo)
+    f->glDeleteFramebuffers(1, &this->dataPtr->rhiFbo);
+  if (this->dataPtr->rhiTextureId)
+    f->glDeleteTextures(1, &this->dataPtr->rhiTextureId);
+
   delete this->dataPtr->texture;
   this->dataPtr->texture = nullptr;
 }
@@ -265,13 +283,33 @@ void TextureNodeRhiOpenGL::PrepareNode()
     delete this->dataPtr->texture;
     this->dataPtr->texture = nullptr;
 
+    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+    // get the currently bound fbo so we can restore it later.
+    GLint currentFbo;
+    f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFbo);
+
+    // bind the texture from the rendering engine to our own RHI fbo
+    if (!this->dataPtr->rhiFbo)
+      f->glGenFramebuffers(1, &this->dataPtr->rhiFbo);
+    f->glBindFramebuffer(GL_FRAMEBUFFER, this->dataPtr->rhiFbo);
+    f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D, this->dataPtr->newTextureId, 0);
+
+    // copy the source render engine texture data to our own internal texture
+    // The copied texture is the one we will pass to Qt
+    if (!this->dataPtr->rhiTextureId)
+      f->glGenTextures(1, &this->dataPtr->rhiTextureId);
+    f->glBindTexture(GL_TEXTURE_2D, this->dataPtr->rhiTextureId);
+    f->glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0,
+        this->dataPtr->newSize.width(), this->dataPtr->newSize.height(), 0);
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 # ifndef _WIN32
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 # endif
     this->dataPtr->texture = this->dataPtr->window->createTextureFromId(
-        this->dataPtr->newTextureId,
+        this->dataPtr->rhiTextureId,
         this->dataPtr->newSize,
         QQuickWindow::TextureIsOpaque);
 # ifndef _WIN32
@@ -281,9 +319,15 @@ void TextureNodeRhiOpenGL::PrepareNode()
     this->dataPtr->texture =
         this->dataPtr->window->createTextureFromNativeObject(
             QQuickWindow::NativeObjectTexture,
-            static_cast<void*>(&this->dataPtr->newTextureId),
+            static_cast<void*>(&this->dataPtr->rhiTextureId),
             0,
             this->dataPtr->newSize);
+
+     // unbind the render engine texture from RHI fbo and rebind the previously bound fbo.
+     f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+         GL_TEXTURE_2D, 0, 0);
+     f->glBindTexture(GL_TEXTURE_2D, 0);
+     f->glBindFramebuffer(GL_FRAMEBUFFER, (GLuint) currentFbo);
 #endif
   }
 }

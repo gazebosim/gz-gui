@@ -1085,6 +1085,7 @@ void TextureNode::PrepareNode()
     // rendered and it can start rendering to the other one.
     // emit TextureInUse(&this->renderSync); See comment below
   }
+
   // NOTE: The original code from Qt samples only emitted when
   // newId is not null.
   //
