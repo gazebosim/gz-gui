@@ -3,6 +3,8 @@ gz_gui_add_plugin(TopicViewer
     TopicViewer.cc
   QT_HEADERS
     TopicViewer.hh
+  QML_SOURCES
+    TopicViewer.qml
   TEST_SOURCES
     TopicViewer_TEST.cc
   PUBLIC_LINK_LIBS

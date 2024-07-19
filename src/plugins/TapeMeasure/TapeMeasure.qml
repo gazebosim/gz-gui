@@ -20,7 +20,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Controls.Material.impl
 import QtQuick.Layouts
-import QtQuick.Controls.Styles
 import "qrc:/gz/gui/qml"
 
 ToolBar {
@@ -28,7 +27,7 @@ ToolBar {
   Layout.minimumWidth: 250
   Layout.minimumHeight: 100
 
-  property var distance: 0.0
+  property real distance: 0.0
 
   function updateDistance() {
     distance = TapeMeasure.Distance();

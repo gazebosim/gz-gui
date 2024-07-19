@@ -3,6 +3,8 @@ gz_gui_add_plugin(PointCloud
     PointCloud.cc
   QT_HEADERS
     PointCloud.hh
+  QML_SOURCES
+    PointCloud.qml
   PUBLIC_LINK_LIBS
     gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
   TEST_SOURCES

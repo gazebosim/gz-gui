@@ -3,6 +3,8 @@ gz_gui_add_plugin(TransportSceneManager
     TransportSceneManager.cc
   QT_HEADERS
     TransportSceneManager.hh
+  QML_SOURCES
+    TransportSceneManager.qml
   TEST_SOURCES
     # TransportSceneManager_TEST.cc
   PUBLIC_LINK_LIBS

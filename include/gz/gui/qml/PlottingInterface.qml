@@ -17,7 +17,6 @@
 import QtQuick
 import QtCharts
 import QtQuick.Controls
-import QtQuick.Controls.Styles
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 import Qt.labs.platform

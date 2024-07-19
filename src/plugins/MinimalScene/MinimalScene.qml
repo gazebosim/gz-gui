@@ -39,7 +39,7 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.NoButton
-    visible: MinimalScene.loadingError.length == 0
+    visible: MinimalScene.loadingError.length === 0
     onEntered: {
       MinimalScene.OnFocusWindow()
     }

@@ -18,9 +18,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
-import QtQuick.Controls.Styles
 import QtQuick.Layouts
 import gz.gui
+import "qrc:/gz/gui/qml"
 
 ColumnLayout {
   Layout.minimumWidth: 400
@@ -123,11 +123,11 @@ ColumnLayout {
       id: maxForwardVelField
       Layout.fillWidth: true
       value: maxForwardVel
-      maximumValue: 10000.0
-      minimumValue: 0.0
-      decimals: 2
-      stepSize: 0.10
-      onEditingFinished:{
+      to: 10000
+      from: 0
+      // decimals: 2
+      stepSize: 1
+      onValueChanged:{
         Teleop.SetMaxForwardVel(value)
       }
     }
@@ -142,11 +142,11 @@ ColumnLayout {
       id: maxVerticalVelField
       Layout.fillWidth: true
       value: maxVerticalVel
-      maximumValue: 10000.0
-      minimumValue: 0.0
-      decimals: 2
-      stepSize: 0.10
-      onEditingFinished:{
+      to: 10000
+      from: 0
+      // decimals: 2
+      stepSize: 1
+      onValueChanged:{
         Teleop.SetMaxVerticalVel(value)
       }
     }
@@ -161,11 +161,11 @@ ColumnLayout {
       id: maxYawVelField
       Layout.fillWidth: true
       value: maxYawVel
-      maximumValue: 10000.0
-      minimumValue: 0.0
-      decimals: 2
-      stepSize: 0.10
-      onEditingFinished:{
+      to: 10000
+      from: 0
+      // decimals: 2
+      stepSize: 1
+      onValueChanged:{
         Teleop.SetMaxYawVel(value)
       }
     }

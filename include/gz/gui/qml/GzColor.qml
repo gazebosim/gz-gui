@@ -55,7 +55,9 @@ Item {
     id: gzColorDialog
     title: "Choose a color"
     visible: false
-    showAlphaChannel: true
+    options: {
+      ShowAlphaChannel: true
+    }
     onAccepted: {
       r = gzColorDialog.color.r
       g = gzColorDialog.color.g
