@@ -427,7 +427,7 @@ QQuickItem *Plugin::CardItem() const
   if (!cardItem)
   {
     gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
-           << "]" << std::endl;
+           << "]\n" << cardComp.errorString().toStdString() << std::endl;
     return nullptr;
   }
 

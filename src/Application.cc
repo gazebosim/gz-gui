@@ -298,17 +298,10 @@ bool Application::RemovePlugin(const std::string &_pluginName)
   if (nullptr == cardItem)
     return false;
 
+  QMetaObject::invokeMethod(cardItem, "removeFromParent");
+
   // Remove on QML
   cardItem->deleteLater();
-
-  // Remove split on QML
-  auto bgItem = this->dataPtr->mainWin->QuickWindow()
-      ->findChild<QQuickItem *>("background");
-  if (bgItem && cardItem->parentItem())
-  {
-    QMetaObject::invokeMethod(bgItem, "removeSplitItem",
-        Q_ARG(QVariant, cardItem->parentItem()->objectName()));
-  }
 
   // Unload shared library
   this->RemovePlugin(plugin);
@@ -737,22 +730,12 @@ bool Application::AddPluginsToWindow()
     if (!cardItem)
       continue;
 
-    // Add split item
-    QVariant splitName;
-    QMetaObject::invokeMethod(bgItem, "addSplitItem",
-        Q_RETURN_ARG(QVariant, splitName));
-
-    auto *splitItem = bgItem->findChild<QQuickItem *>(
-        splitName.toString());
-    if (!splitItem)
-    {
-      gzerr << "Internal error: failed to create split ["
-             << splitName.toString().toStdString() << "]" << std::endl;
-      return false;
-    }
+    // Add card to GzSplit
+    QMetaObject::invokeMethod(bgItem, "addCard",
+        Q_ARG(QVariant, QVariant::fromValue(cardItem)));
 
     // Add card to main window
-    cardItem->setParentItem(splitItem);
+    // gzdbg << "Adding to:" << splitItem.toString().toStdString() << std::endl;
     cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 

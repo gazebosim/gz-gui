@@ -15,8 +15,7 @@
  *
 */
 import QtQuick 2.9
-import QtQuick.Controls 1.4 as QQC1
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
@@ -24,6 +23,7 @@ import "qrc:/qml"
 
 // TODO: don't use "parent"
 Pane {
+  clip: true
   /**
    * Minimum length of each dimension
    */
@@ -95,16 +95,6 @@ Pane {
   property string cardBackground: "#00000000"
 
   /**
-   *
-   */
-  property var backgroundItem: null
-
-  /**
-   * Stores last height of plugin to expand to.
-   */
-  property int lastHeight: 50
-
-  /**
    * True if there's at least one anchor set for the card.
    * There's no way to check the anchors themselves, so we need
    * to keep track of this ourselves.
@@ -112,14 +102,23 @@ Pane {
   property bool anchored: false
 
   /**
+   * Keep track of whether the card is floating
+   */
+  property bool floating: false
+
+  /**
    * Minimum width of the card pane
    */
-  property int cardMinimumWidth: 250;
+  property alias cardMinimumWidth: content.minimumWidth;
 
   /**
    * Minimum height of the card pane
    */
-  property int cardMinimumHeight: 250;
+  property double cardMinimumHeight: content.minimumHeight;
+
+
+  property double cardMaximumHeight: Infinity
+
 
   /**
    * Tool bar background color
@@ -158,6 +157,10 @@ Pane {
    */
   objectName: "plugin" + Math.floor(Math.random() * 100000);
 
+
+  contentWidth: content.implicitWidth
+  contentHeight: content.implicitHeight
+
   // Stop scroll propagation to widgets below
   MouseArea {
     anchors.fill: parent
@@ -166,66 +169,10 @@ Pane {
     }
   }
 
-  /**
-   * Callback when the parent has changed.
-   */
-  onParentChanged: {
-    if (undefined === parent || null === parent)
-      return;
-
-    // Bind anchors
-    anchors.fill = Qt.binding(function() {return parent})
-    parent.height = Qt.binding(function() {return height})
-    parent.width = Qt.binding(function() {return width})
-
-    // Keep a reference to the background
-    // TODO(louise) This feels hacky, the card shouldn't care about the background,
-    // but I haven't figured out yet how the card can tell GzSplit to create
-    // a new split and add the card to it. There must be a way using signals, events
-    // or global functions...?
-    var bgItemTemp = helpers.ancestorByName(cardPane, "background")
-    if (bgItemTemp)
-      backgroundItem = bgItemTemp;
-
-    this.syncTheFamily();
-  }
-
-  /**
-   * Forward the child content's size preferences to the parent split's layout
-   * TODO(louise) This looks really clunky, ideally the card shouldn't need
-   * any knowledge of splits
-   */
-  function syncTheFamily() {
-    var parentSplit = helpers.ancestorByName(cardPane, /^split_item/);
-
-    if (undefined == parentSplit)
-      return;
-
-    if (content.children.length != 1)
-      return;
-
-    parentSplit.Layout.minimumWidth = content.children[0].Layout.minimumWidth;
-    parentSplit.Layout.minimumHeight = content.children[0].Layout.minimumHeight;
-  }
-
-  /**
-   * Clear all anchors
-   */
-  function clearAnchors() {
-    cardPane.anchors.right = undefined
-    cardPane.anchors.left = undefined
-    cardPane.anchors.top = undefined
-    cardPane.anchors.bottom = undefined
-    cardPane.anchors.fill = undefined
-    cardPane.anchors.horizontalCenter = undefined
-    cardPane.anchors.verticalCenter = undefined
-    cardPane.anchors.baseline = undefined
-
-    anchored = false
-  }
 
   GzHelpers {
     id: helpers
+    visible: false
   }
 
   // TODO(louise) Support choosing between:
@@ -242,171 +189,80 @@ Pane {
   state: "docked"
 
   states: [
-//    State {
-//      name: "cardWindow"
-//      ParentChange {
-//        target: cardPane;
-//        parent: cardWindowContent;
-//        x: 0
-//        y: 0
-//        width: cardWindowContent.width
-//        height: cardWindowContent.height
-//      }
-//    },
     // Floating and Docked state are the expanded states
     State {
       name: "docked"
+      StateChangeScript { script: enterDockedState() }
+      PropertyChanges {
+        target: cardPane
+        cardMinimumHeight: content.minimumHeight
+        cardMaximumHeight: Infinity
+        anchors.fill: parent
+      }
     },
     State {
       name: "floating"
+      StateChangeScript { script: enterFloatingState() }
+      PropertyChanges {
+        target: cardPane
+        height: cardPane.implicitHeight
+        anchors.fill: undefined
+      }
     },
     // Docked collapsed state
     State {
       name: "docked_collapsed"
+      StateChangeScript { script: enterDockedState() }
+      PropertyChanges {
+        target: cardPane
+        cardMaximumHeight: cardToolbar.height
+        cardMinimumHeight: cardToolbar.height
+        anchors.fill: parent
+      }
     },
     // Floating collapsed state
     State {
       name: "floating_collapsed"
-    }
-  ]
-
-  transitions: [
-    Transition {
-      from: "docked"
-      to: "floating"
-      SequentialAnimation {
-        ScriptAction {script: leaveDockedState()}
-        ScriptAction {script: enterFloatingState()}
-      }
-    },
-    Transition {
-      from: "floating"
-      to: "docked"
-      SequentialAnimation {
-        ScriptAction {script: leaveFloatingState()}
-        ScriptAction {script: enterDockedState()}
-      }
-    },
-    Transition {
-      from: "floating"
-      to: "floating_collapsed"
-      NumberAnimation {
+      StateChangeScript { script: enterFloatingState() }
+      PropertyChanges {
         target: cardPane
-        property: "height"
-        duration: 200
-        easing.type: Easing.OutCubic
-        from: cardPane.height
-        to: 50
-      }
-    },
-    Transition {
-      from: "floating_collapsed"
-      to: "floating"
-      NumberAnimation {
-        target: cardPane
-        property: "height"
-        duration: 200
-        easing.type: Easing.InCubic
-        from: 50
-        to: lastHeight
-      }
-    },
-    Transition {
-      from: "floating_collapsed"
-      to: "docked"
-      SequentialAnimation {
-        ScriptAction {script: leaveFloatingState()}
-        ScriptAction {script: enterDockedState()}
-      }
-    },
-    Transition {
-      from: "docked"
-      to: "docked_collapsed"
-      SequentialAnimation {
-        NumberAnimation {
-          target: cardPane
-          property: "parent.Layout.maximumHeight"
-          duration: 200
-          easing.type: Easing.OutCubic
-          from: cardPane.height
-          to: 50
-        }
-        ScriptAction {script: recalculateSplitSizes()}
-      }
-    },
-    Transition {
-      from: "docked_collapsed"
-      to: "docked"
-      SequentialAnimation {
-        NumberAnimation {
-          target: cardPane
-          property: "parent.Layout.maximumHeight"
-          duration: 200
-          easing.type: Easing.InCubic
-          from: 50
-          to: backgroundItem.height
-        }
-        ScriptAction {script: recalculateSplitSizes()}
-      }
-    },
-    Transition {
-      from: "docked_collapsed"
-      to: "floating"
-      SequentialAnimation {
-        ScriptAction {script: leaveDockedState()}
-        ScriptAction {script: enterFloatingState()}
-      }
-    },
-    Transition {
-      from: "docked"
-      to: "floating_collapsed"
-      SequentialAnimation {
-        ScriptAction {script: leaveDockedState()}
-        ScriptAction {script: enterFloatingState()}
-        NumberAnimation {
-          target: cardPane
-          property: "height"
-          duration: 200
-          easing.type: Easing.OutCubic
-          from: cardPane.height
-          to: 50
-        }
-      }
-    },
-    Transition {
-      from: "docked_collapsed"
-      to: "floating_collapsed"
-      SequentialAnimation {
-        ScriptAction {script: leaveDockedState()}
-        ScriptAction {script: enterFloatingState()}
-      }
-    },
-    Transition {
-      from: "floating_collapsed"
-      to: "docked_collapsed"
-      SequentialAnimation {
-        ScriptAction {script: leaveFloatingState()}
-        ScriptAction {script: enterDockedState()}
+        height: cardToolbar.height
+        anchors.fill: undefined
       }
     }
   ]
 
+
+  /**
+   * Clear all anchors
+   */
+  function clearAnchors() {
+    cardPane.anchors.right = undefined
+    cardPane.anchors.left = undefined
+    cardPane.anchors.top = undefined
+    cardPane.anchors.bottom = undefined
+    cardPane.anchors.fill = undefined
+    cardPane.anchors.horizontalCenter = undefined
+    cardPane.anchors.verticalCenter = undefined
+    cardPane.anchors.baseline = undefined
+
+    anchored = false
+  }
   /**
    * Called when the docked state is entered.
    */
   function enterDockedState()
   {
-    // Add new split
-    var splitName = backgroundItem.addSplitItem();
-    var splitItem = backgroundItem.childItems[splitName];
+    // It's possible to enter the docking state when not floating 
+    // (e.g. at initialization or when transitioning from docked_collapsed).
+    // Do the actual docking only if the card is floating currently.
+    if (cardPane.floating)
+    {
+      var dockingArea = cardPane.parent.dockingArea()
+      dockingArea.addCard(cardPane);
+    }
 
-    const collapsed = cardPane.height === 50
-
-    // Reparent to split
-    cardPane.parent = splitItem;
-
-    // Retain collapsed or expanded state
-    cardPane.parent.Layout.minimumHeight = collapsed ? 50 : content.children[0].Layout.minimumHeight;
+    cardPane.floating = false
   }
 
   /**
@@ -414,44 +270,24 @@ Pane {
    */
   function enterFloatingState()
   {
-    const collapsed = cardPane.parent.Layout.minimumHeight === 50;
-    // Reparent to main window's background
-    cardPane.parent = backgroundItem
+    if (cardPane.floating)
+      return
 
+    parent.floatCard(cardPane)
     // Resize to minimum size
     cardPane.clearAnchors();
-    cardPane.width = content.children[0].Layout.minimumWidth;
-
-    // Retain collapsed or expanded state
-    cardPane.height = collapsed ? 50 : content.children[0].Layout.minimumHeight;
-    lastHeight = content.children[0].Layout.minimumHeight;
+    // Set width since we're clearing anchors
+    cardPane.width = content.minimumWidth;
+    cardPane.height = content.minimumHeight;
+    cardPane.floating = true
   }
 
-  /**
-   * Called when the docked state is left.
-   */
-  function leaveDockedState()
+  function removeFromParent()
   {
-    // Remove from split (delete split if needed)
-    backgroundItem.removeSplitItem(helpers.ancestorByName(cardPane,
-        /^split_item/).objectName)
+    if (!cardPane.floating)
+      parent.removeFromParent()
   }
 
-  /**
-   * Called when the floating state is left.
-   */
-  function leaveFloatingState()
-  {
-    // Do nothing
-  }
-
-  /**
-   * Recalculate split sizes
-   */
-  function recalculateSplitSizes()
-  {
-    backgroundItem.recalculateMinimumSizes();
-  }
 
 // TODO(louise): re-enable window state support
 //  /**
@@ -575,20 +411,7 @@ Pane {
               break;
             }
             case "floating": {
-              // When user manually minimized the plugin using resize
-              if(cardPane.height === 50) {
-                // Handles the case when a floating plugin is loaded using config
-                if(lastHeight === 50) {
-                  lastHeight = content.children[0].Layout.minimumHeight;
-                }
-                // Set state to floating collapsed and then expand for animation
-                cardPane.state = "floating_collapsed"
-                cardPane.state = "floating"
-              } else {
-                lastHeight = cardPane.height
-                // Set card state to collapsed
-                cardPane.state = "floating_collapsed"
-              }
+              cardPane.state = "floating_collapsed"
               break;
             }
             case "docked": {
@@ -670,22 +493,23 @@ Pane {
   Rectangle {
     objectName: "content"
     id: content
-    anchors.fill: parent
-    anchors.topMargin: cardPane.showTitleBar ? 50 : 0
+
     clip: true
     color: cardBackground
+    readonly property double minimumWidth: children.length > 0 ? children[0].Layout.minimumWidth : 0
+    readonly property double minimumHeight: children.length > 0 ? children[0].Layout.minimumHeight : 0
 
-    onChildrenChanged: {
-      // Set the height and width of the cardPane when child plugin is attached
-      if (children.length > 0) {
-        cardMinimumWidth = content.children[0].Layout.minimumWidth;
-        cardMinimumHeight = content.children[0].Layout.minimumHeight;
-        cardPane.width = cardMinimumWidth
-        cardPane.height = cardMinimumHeight
-      }
+    // We're using minimumWidth and minimumHeight for the implicit sizes because plugins generally
+    // only provide those. Ideally, each plugin would also provide implicit or preferred sizes,
+    // but that hasn't been the case historically.
+    implicitWidth: minimumWidth
+    implicitHeight: minimumHeight
 
-      cardPane.syncTheFamily()
-    }
+    // Anchor content under the toolbar
+    anchors.top: cardToolbar.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
 
     /**
      * Conveniently expose card to children
