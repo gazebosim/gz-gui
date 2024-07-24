@@ -1546,12 +1546,6 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 
   renderWindow->SetEngineName(cmdRenderEngine);
-  // there is a problem with displaying ogre2 render textures that are in
-  // sRGB format. Workaround for now is to apply gamma correction
-  // manually.
-  // There maybe a better way to solve the problem by making OpenGL calls.
-  if (cmdRenderEngine == std::string("ogre2"))
-    this->PluginItem()->setProperty("gammaCorrect", true);
 }
 
 /////////////////////////////////////////////////

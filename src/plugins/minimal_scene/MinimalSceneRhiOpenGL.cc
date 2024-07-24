@@ -292,7 +292,7 @@ void TextureNodeRhiOpenGL::PrepareNode()
     GLint texFormat = 0;
     glGetTexLevelParameteriv(
         GL_TEXTURE_2D,
-        0, //e.g. 0
+        0,
         GL_TEXTURE_INTERNAL_FORMAT,
         &texFormat
     );
