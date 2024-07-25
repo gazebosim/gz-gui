@@ -1073,7 +1073,10 @@ void TextureNode::NewTexture(void* _texturePtr, const QSize &_size)
 /////////////////////////////////////////////////
 void TextureNode::PrepareNode()
 {
-  this->rhi->PrepareNode();
+  {
+    std::unique_lock<std::mutex> lock(this->renderSync.mutex);
+    this->rhi->PrepareNode();
+  }
 
   if (this->rhi->HasNewTexture())
   {
