@@ -136,7 +136,12 @@ GLuint EngineToQtInterface::TextureId(gz::rendering::CameraPtr &_camera)
 {
   if (!this->NeedsFallback(_camera))
   {
-    return _camera->RenderTextureGLId();
+    auto textureId = _camera->RenderTextureGLId();
+
+    QOpenGLFunctions *glFuncs = this->dataPtr->glContext->functions();
+    glFuncs->glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    return textureId;
   }
   else
   {
