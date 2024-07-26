@@ -140,7 +140,8 @@ GLuint EngineToQtInterface::TextureId(gz::rendering::CameraPtr &_camera)
 
     QOpenGLFunctions *glFuncs = this->dataPtr->glContext->functions();
     glFuncs->glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT,
+                    GL_SKIP_DECODE_EXT);
     return textureId;
   }
   else
