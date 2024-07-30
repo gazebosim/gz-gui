@@ -98,6 +98,8 @@ namespace gz::gui
       /// \sa InitializeDialogs
       public: bool LoadConfig(const std::string &_path);
 
+      public: bool LoadWindowConfig(const tinyxml2::XMLElement &_window);
+
       /// \brief Load the configuration from the default config file.
       /// \return True if successful
       /// \sa SetDefaultConfigPath
@@ -119,6 +121,8 @@ namespace gz::gui
       /// \sa LoadDefaultConfig
       /// \sa SetDefaultConfigPath
       public: std::string DefaultConfigPath();
+
+      public: std::string ResolveConfigFile(const std::string &_path);
 
       /// \brief Set the environment variable which defines the paths to
       /// look for plugins.

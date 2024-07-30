@@ -325,31 +325,7 @@ bool Application::LoadConfig(const std::string &_config)
     return false;
   }
 
-  std::string configFull = _config;
-
-  // Check if the passed in config file exists.
-  // (If the default config path doesn't exist yet, it's expected behavior.
-  // It will be created the first time the user presses "Save configuration".)
-  if (!common::exists(configFull) && (configFull != this->DefaultConfigPath()))
-  {
-    // If not, then check environment variable
-    std::string configPathEnv;
-    common::env("GZ_GUI_RESOURCE_PATH", configPathEnv);
-
-    if (!configPathEnv.empty())
-    {
-      std::vector<std::string> parentPaths = common::Split(configPathEnv, ':');
-      for (const auto &parentPath : parentPaths)
-      {
-        std::string tempPath = common::joinPaths(parentPath, configFull);
-        if (common::exists(tempPath))
-        {
-          configFull = tempPath;
-          break;
-        }
-      }
-    }
-  }
+  const auto configFull = this->ResolveConfigFile(_config);
 
   // Use tinyxml to read config
   tinyxml2::XMLDocument doc;
@@ -404,101 +380,7 @@ bool Application::LoadConfig(const std::string &_config)
   // Process window properties
   if (auto *winElem = doc.FirstChildElement("window"))
   {
-    gzdbg << "Loading window config" << std::endl;
-
-    tinyxml2::XMLPrinter printer;
-    if (!winElem->Accept(&printer))
-    {
-      gzwarn << "There was an error parsing the <window> element"
-              << std::endl;
-      return false;
-    }
-    this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
-
-    // Closing behavior.
-    if (auto *defaultExitActionElem =
-      winElem->FirstChildElement("default_exit_action"))
-    {
-      ExitAction action{ExitAction::CLOSE_GUI};
-      const auto value = common::lowercase(defaultExitActionElem->GetText());
-      if (value == "shutdown_server")
-      {
-        action = ExitAction::SHUTDOWN_SERVER;
-      }
-      else if (value != "close_gui" && !value.empty())
-      {
-        gzwarn << "Value '" << value << "' of <default_exit_action> is "
-                << "invalid. Allowed values are CLOSE_GUI and SHUTDOWN_SERVER. "
-                << "Selecting CLOSE_GUI as fallback." << std::endl;
-      }
-      this->dataPtr->mainWin->SetDefaultExitAction(action);
-    }
-
-    // Dialog on exit
-    if (auto *dialogOnExitElem = winElem->FirstChildElement("dialog_on_exit"))
-    {
-      bool showDialogOnExit{false};
-      dialogOnExitElem->QueryBoolText(&showDialogOnExit);
-      this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
-    }
-
-    if (auto *dialogOnExitOptionsElem =
-      winElem->FirstChildElement("dialog_on_exit_options"))
-    {
-      if (auto *promptElem =
-        dialogOnExitOptionsElem->FirstChildElement("prompt_text"))
-      {
-        this->dataPtr->mainWin->SetDialogOnExitText(
-          QString::fromStdString(promptElem->GetText()));
-      }
-      if (auto *showShutdownElem =
-        dialogOnExitOptionsElem->FirstChildElement("show_shutdown_button"))
-      {
-        bool showShutdownButton{false};
-        showShutdownElem->QueryBoolText(&showShutdownButton);
-        this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
-      }
-      if (auto *showCloseGuiElem =
-        dialogOnExitOptionsElem->FirstChildElement("show_close_gui_button"))
-      {
-        bool showCloseGuiButton{false};
-        showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
-        this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
-      }
-      if (auto *shutdownTextElem =
-        dialogOnExitOptionsElem->FirstChildElement("shutdown_button_text"))
-      {
-        this->dataPtr->mainWin->SetExitDialogShutdownText(
-          QString::fromStdString(shutdownTextElem->GetText()));
-      }
-      if (auto *closeGuiTextElem =
-        dialogOnExitOptionsElem->FirstChildElement("close_gui_button_text"))
-      {
-        this->dataPtr->mainWin->SetExitDialogCloseGuiText(
-          QString::fromStdString(closeGuiTextElem->GetText()));
-      }
-    }
-
-    // Server control service topic
-    std::string serverControlService{"/server_control"};
-    auto *serverControlElem =
-      winElem->FirstChildElement("server_control_service");
-    if (nullptr != serverControlElem && nullptr != serverControlElem->GetText())
-    {
-      serverControlService = transport::TopicUtils::AsValidTopic(
-        serverControlElem->GetText());
-    }
-
-    if (serverControlService.empty())
-    {
-      gzerr << "Failed to create valid server control service" << std::endl;
-    }
-    else
-    {
-      gzmsg << "Using server control service [" << serverControlService
-             << "]" << std::endl;
-      this->dataPtr->mainWin->SetServerControlService(serverControlService);
-    }
+    this->LoadWindowConfig(*winElem);
   }
 
   this->ApplyConfig();
@@ -506,6 +388,106 @@ bool Application::LoadConfig(const std::string &_config)
   return true;
 }
 
+/////////////////////////////////////////////////
+bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
+{
+  gzdbg << "Loading window config" << std::endl;
+
+  tinyxml2::XMLPrinter printer;
+  if (!_winElem.Accept(&printer))
+  {
+    gzwarn << "There was an error parsing the <window> element"
+            << std::endl;
+    return false;
+  }
+  this->dataPtr->windowConfig.MergeFromXML(std::string(printer.CStr()));
+
+  // Closing behavior.
+  if (auto *defaultExitActionElem =
+    _winElem.FirstChildElement("default_exit_action"))
+  {
+    ExitAction action{ExitAction::CLOSE_GUI};
+    const auto value = common::lowercase(defaultExitActionElem->GetText());
+    if (value == "shutdown_server")
+    {
+      action = ExitAction::SHUTDOWN_SERVER;
+    }
+    else if (value != "close_gui" && !value.empty())
+    {
+      gzwarn << "Value '" << value << "' of <default_exit_action> is "
+              << "invalid. Allowed values are CLOSE_GUI and SHUTDOWN_SERVER. "
+              << "Selecting CLOSE_GUI as fallback." << std::endl;
+    }
+    this->dataPtr->mainWin->SetDefaultExitAction(action);
+  }
+
+  // Dialog on exit
+  if (auto *dialogOnExitElem = _winElem.FirstChildElement("dialog_on_exit"))
+  {
+    bool showDialogOnExit{false};
+    dialogOnExitElem->QueryBoolText(&showDialogOnExit);
+    this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
+  }
+
+  if (auto *dialogOnExitOptionsElem =
+    _winElem.FirstChildElement("dialog_on_exit_options"))
+  {
+    if (auto *promptElem =
+      dialogOnExitOptionsElem->FirstChildElement("prompt_text"))
+    {
+      this->dataPtr->mainWin->SetDialogOnExitText(
+        QString::fromStdString(promptElem->GetText()));
+    }
+    if (auto *showShutdownElem =
+      dialogOnExitOptionsElem->FirstChildElement("show_shutdown_button"))
+    {
+      bool showShutdownButton{false};
+      showShutdownElem->QueryBoolText(&showShutdownButton);
+      this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
+    }
+    if (auto *showCloseGuiElem =
+      dialogOnExitOptionsElem->FirstChildElement("show_close_gui_button"))
+    {
+      bool showCloseGuiButton{false};
+      showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
+      this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
+    }
+    if (auto *shutdownTextElem =
+      dialogOnExitOptionsElem->FirstChildElement("shutdown_button_text"))
+    {
+      this->dataPtr->mainWin->SetExitDialogShutdownText(
+        QString::fromStdString(shutdownTextElem->GetText()));
+    }
+    if (auto *closeGuiTextElem =
+      dialogOnExitOptionsElem->FirstChildElement("close_gui_button_text"))
+    {
+      this->dataPtr->mainWin->SetExitDialogCloseGuiText(
+        QString::fromStdString(closeGuiTextElem->GetText()));
+    }
+  }
+
+  // Server control service topic
+  std::string serverControlService{"/server_control"};
+  auto *serverControlElem =
+    _winElem.FirstChildElement("server_control_service");
+  if (nullptr != serverControlElem && nullptr != serverControlElem->GetText())
+  {
+    serverControlService = transport::TopicUtils::AsValidTopic(
+      serverControlElem->GetText());
+  }
+
+  if (serverControlService.empty())
+  {
+    gzerr << "Failed to create valid server control service" << std::endl;
+  }
+  else
+  {
+    gzmsg << "Using server control service [" << serverControlService
+            << "]" << std::endl;
+    this->dataPtr->mainWin->SetServerControlService(serverControlService);
+  }
+  return true;
+}
 /////////////////////////////////////////////////
 bool Application::LoadDefaultConfig()
 {
@@ -522,6 +504,37 @@ void Application::SetDefaultConfigPath(const std::string &_path)
 std::string Application::DefaultConfigPath()
 {
   return this->dataPtr->defaultConfigPath;
+}
+
+std::string Application::ResolveConfigFile(const std::string &_path)
+{
+  std::string configFull = _path;
+
+  // Check if the passed in config file exists.
+  // (If the default config path doesn't exist yet, it's expected behavior.
+  // It will be created the first time the user presses "Save configuration".)
+  if (!common::exists(configFull) && (configFull != this->DefaultConfigPath()))
+  {
+    // If not, then check environment variable
+    std::string configPathEnv;
+    common::env("GZ_GUI_RESOURCE_PATH", configPathEnv);
+
+    if (!configPathEnv.empty())
+    {
+      std::vector<std::string> parentPaths = common::Split(configPathEnv, ':');
+      for (const auto &parentPath : parentPaths)
+      {
+        std::string tempPath = common::joinPaths(parentPath, configFull);
+        if (common::exists(tempPath))
+        {
+          configFull = tempPath;
+          break;
+        }
+      }
+    }
+  }
+
+  return configFull;
 }
 
 /////////////////////////////////////////////////
