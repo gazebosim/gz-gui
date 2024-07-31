@@ -4,6 +4,49 @@
 
 ## Gazebo GUI 8
 
+### Gazebo GUI 8.3.0 (2024-06-20)
+
+1. Backport: Adding cone primitives.
+    * [Pull request #621](https://github.com/gazebosim/gz-gui/pull/621)
+
+### Gazebo GUI 8.2.0 (2024-06-14)
+
+1. Enhanced tracking camera and user visualization experience
+    * [Pull request #619](https://github.com/gazebosim/gz-gui/pull/619)
+
+1. Add package.xml
+    * [Pull request #613](https://github.com/gazebosim/gz-gui/pull/613)
+
+### Gazebo GUI 8.1.1 (2024-04-10)
+
+1. Fix compiler warnings in GCC-13 (Noble)
+    * [Pull request #616](https://github.com/gazebosim/gz-gui/pull/616)
+
+1. Use relative install paths for plugin shared libraries and gz-tools data
+    * [Pull request #614](https://github.com/gazebosim/gz-gui/pull/614)
+
+### Gazebo GUI 8.1.0 (2024-03-14)
+
+1. Update CI badges in README
+    * [Pull request #603](https://github.com/gazebosim/gz-gui/pull/603)
+
+1. Fix plugin filter on Windows
+    * [Pull request #567](https://github.com/gazebosim/gz-gui/pull/567)
+
+1. Tidy namespaces
+    * [Pull request #590](https://github.com/gazebosim/gz-gui/pull/590)
+
+1. Infrastructure
+    * [Pull request #591](https://github.com/gazebosim/gz-gui/pull/591)
+    * [Pull request #597](https://github.com/gazebosim/gz-gui/pull/597)
+    * [Pull request #608](https://github.com/gazebosim/gz-gui/pull/608)
+
+1. Add check for vulkan support in rendering
+    * [Pull request #589](https://github.com/gazebosim/gz-gui/pull/589)
+
+1. Add optional binary relocatability
+    * [Pull request #580](https://github.com/gazebosim/gz-gui/pull/580)
+
 ### Gazebo GUI 8.0.0 (2023-09-29)
 
 1. Use fully-qualified message names to avoid deprecation warning

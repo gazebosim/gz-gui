@@ -189,8 +189,8 @@ ApplicationWindow
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
-          verticalAlignment: Image.AlignVCenter
-          source: "images/drawer.png"
+          verticalAlignment: Image.AlignVCenter 
+          source: Material.theme === Material.Light ? "images/drawer.png" : "images/drawer_dark.png"
         }
         onClicked: drawer.open()
       }
@@ -221,7 +221,7 @@ ApplicationWindow
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: "images/menu.png"
+          source: Material.theme === Material.Light ? "images/menu.png"  : "images/menu_dark.png"
         }
         onClicked: pluginMenu.open()
 
