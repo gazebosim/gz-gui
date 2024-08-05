@@ -14,12 +14,12 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Layouts 1.3
-import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.0
-import "qrc:/qml"
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
+import QtQuick.Dialogs
+import "qrc:/gz/gui/qml"
 
 Dialog {
   id: settingsDialog
@@ -208,7 +208,7 @@ Dialog {
   ColorDialog {
     id: colorDialog
     title: "Please choose a color"
-    showAlphaChannel : true
+    options: ColorDialog.ShowAlphaChannel
     onAccepted: {
       content.color = colorDialog.color
       bgColor.color = colorDialog.color

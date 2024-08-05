@@ -1,0 +1,10 @@
+gz_gui_add_plugin(NavSatMap
+  SOURCES
+    NavSatMap.cc
+  QT_HEADERS
+    NavSatMap.hh
+  QML_SOURCES
+    NavSatMap.qml
+  QML_URI
+    NavSatMap
+)

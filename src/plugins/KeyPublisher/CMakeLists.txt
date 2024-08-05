@@ -1,0 +1,12 @@
+gz_gui_add_plugin(KeyPublisher
+  SOURCES
+    KeyPublisher.cc
+  QT_HEADERS
+    KeyPublisher.hh
+  QML_SOURCES
+    KeyPublisher.qml
+  QML_URI
+    KeyPublisher
+  TEST_SOURCES
+    KeyPublisher_TEST.cc
+)

@@ -1,0 +1,12 @@
+gz_gui_add_plugin(TopicEcho
+  SOURCES
+    TopicEcho.cc
+  QT_HEADERS
+    TopicEcho.hh
+  QML_SOURCES
+    TopicEcho.qml
+  TEST_SOURCES
+    TopicEcho_TEST.cc
+  QML_URI
+    TopicEcho
+)

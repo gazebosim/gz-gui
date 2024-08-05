@@ -1,0 +1,12 @@
+gz_gui_add_plugin(Teleop
+  SOURCES
+    Teleop.cc
+  QT_HEADERS
+    Teleop.hh
+  QML_SOURCES
+    Teleop.qml
+  TEST_SOURCES
+    Teleop_TEST.cc
+  QML_URI
+    Teleop
+)

@@ -172,6 +172,8 @@ std::string uniqueFilePath(const std::string &_pathAndName,
 /////////////////////////////////////////////////
 QStringList worldNames()
 {
+  auto app = gz::gui::App();
+
   auto win = App()->findChild<MainWindow *>();
   if (nullptr == win)
     return {};

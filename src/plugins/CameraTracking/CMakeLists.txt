@@ -1,0 +1,13 @@
+gz_gui_add_plugin(CameraTracking
+  SOURCES
+    CameraTracking.cc
+  QT_HEADERS
+    CameraTracking.hh
+  QML_SOURCES
+    CameraTracking.qml
+  QML_URI
+    CameraTracking
+  PUBLIC_LINK_LIBS
+   gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+   gz-common${GZ_COMMON_VER}::profiler
+)

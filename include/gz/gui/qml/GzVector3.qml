@@ -14,9 +14,8 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Layouts
 
 /**
  *  Item displaying a 3D vector

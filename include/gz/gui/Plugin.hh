@@ -49,7 +49,7 @@ namespace gz::gui
       Q_OBJECT
 
       /// \brief Constructor
-      public: Plugin();
+      public: Plugin(QObject *_parent=nullptr);
 
       /// \brief Destructor
       public: virtual ~Plugin();

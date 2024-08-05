@@ -101,7 +101,7 @@ MainWindow::MainWindow()
   App()->Engine()->rootContext()->setContextProperty("MainWindow", this);
 
   // Load QML and keep pointer to generated QQuickWindow
-  std::string qmlFile("qrc:qml/Main.qml");
+  std::string qmlFile("qrc:gz/gui/qml/Main.qml");
   App()->Engine()->load(QUrl(QString::fromStdString(qmlFile)));
 
   this->dataPtr->quickWindow = qobject_cast<QQuickWindow *>(
@@ -1023,3 +1023,5 @@ void MainWindow::SetServerControlService(const std::string &_service)
   this->dataPtr->controlService = _service;
 }
 }  // namespace gz::gui
+
+#include "moc_MainWindow.cpp"

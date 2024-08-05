@@ -1,0 +1,12 @@
+gz_gui_add_plugin(InteractiveViewControl
+  SOURCES
+    InteractiveViewControl.cc
+  QT_HEADERS
+    InteractiveViewControl.hh
+  QML_SOURCES
+    InteractiveViewControl.qml
+  QML_URI
+    InteractiveViewControl
+  PUBLIC_LINK_LIBS
+   gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+)

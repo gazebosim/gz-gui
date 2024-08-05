@@ -87,7 +87,9 @@ class Plugin::Implementation
 };
 
 /////////////////////////////////////////////////
-Plugin::Plugin() : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
+Plugin::Plugin(QObject *_parent) :
+  QObject(_parent),
+  dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
 }
 
@@ -121,27 +123,22 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   }
 
   // Qml file
-  std::string filename = _pluginElem->Attribute("filename");
-
-  // This let's <filename>.qml use <pluginclass> functions and properties
-  this->dataPtr->context = new QQmlContext(App()->Engine()->rootContext());
-  this->dataPtr->context->setContextProperty(QString::fromStdString(filename),
-      this);
+  auto filename = QString::fromStdString(_pluginElem->Attribute("filename"));
 
   // Instantiate plugin QML file into a component
-  std::string qmlFile(":/" + filename + "/" + filename + ".qml");
-  if (!QFile(QString::fromStdString(qmlFile)).exists())
+  auto qmlFile = ":/" + filename + "/" + filename + ".qml";
+  if (!QFile(qmlFile).exists())
   {
-    gzerr << "Can't find [" << qmlFile
+    gzerr << "Can't find [" << qmlFile.toStdString()
            << "]. Are you sure it was added to the .qrc file?" << std::endl;
     return;
   }
 
-  QQmlComponent component(App()->Engine(), QString::fromStdString(qmlFile));
+  QQmlComponent component(App()->Engine(), qmlFile);
   if (component.isError())
   {
     std::stringstream errors;
-    errors << "Failed to instantiate QML file [" << qmlFile << "]."
+    errors << "Failed to instantiate QML file [" << qmlFile.toStdString() << "]."
            << std::endl;
     // Qt considers range-based for loops over temporary objects
     // potentially dangerous, so explicitly create a container.
@@ -155,18 +152,26 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
   }
   if (!component.isReady())
   {
-    gzerr << "Component from QML file [" << qmlFile
+    gzerr << "Component from QML file [" << qmlFile.toStdString()
            << "] is not ready. Progress: " << component.progress()
            << " / 1.0" << std::endl;
     return;
   }
 
+  // This let's <filename>.qml use <pluginclass> functions and properties
+  this->dataPtr->context = new QQmlContext(App()->Engine()->rootContext());
+  this->dataPtr->context->setContextProperty(filename, this);
+  this->dataPtr->context->setContextProperty("module", this);
+
   // Create an item for the plugin
-  this->dataPtr->pluginItem =
-      qobject_cast<QQuickItem *>(component.create(this->dataPtr->context));
+  auto *plugin = component.beginCreate(this->dataPtr->context);
+  this->dataPtr->pluginItem = qobject_cast<QQuickItem *>(plugin);
+  this->dataPtr->pluginItem->setParent(this);
+  component.completeCreate();
+
   if (!this->dataPtr->pluginItem)
   {
-    gzerr << "Failed to instantiate QML file [" << qmlFile << "]." << std::endl
+    gzerr << "Failed to instantiate QML file [" << qmlFile.toStdString() << "]." << std::endl
            << "Are you sure the file is valid QML? "
            << "You can check with the `qmlscene` tool" << std::endl;
     return;
@@ -421,13 +426,14 @@ QQuickItem *Plugin::CardItem() const
     return this->dataPtr->cardItem;
 
   // Instantiate a card
-  std::string qmlFile(":qml/GzCard.qml");
+  std::string qmlFile("qrc:gz/gui/qml/GzCard.qml");
   QQmlComponent cardComp(App()->Engine(), QString::fromStdString(qmlFile));
   auto *cardItem = qobject_cast<QQuickItem *>(cardComp.create());
-  if (!cardItem)
+  if (cardItem == nullptr)
   {
     gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
            << "]" << std::endl;
+    qWarning() << cardComp.errors();
     return nullptr;
   }
 
@@ -599,3 +605,5 @@ void Plugin::ApplyAnchors()
   this->CardItem()->setProperty("anchored", true);
 }
 }  // namespace gz::gui
+
+#include "moc_Plugin.cpp"
