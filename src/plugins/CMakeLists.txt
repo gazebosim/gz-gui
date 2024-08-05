@@ -110,12 +110,13 @@ function(gz_gui_add_plugin plugin_name)
         COMPILE_FLAGS "/wd4251")
   endif()
 
-  install (TARGETS ${plugin_name} DESTINATION ${GZ_GUI_PLUGIN_INSTALL_DIR})
+  install (TARGETS ${plugin_name} DESTINATION ${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR})
 endfunction()
 
 # Plugins
 add_subdirectory(camera_fps)
 add_subdirectory(camera_tracking)
+add_subdirectory(camera_tracking_config)
 add_subdirectory(grid_config)
 add_subdirectory(image_display)
 add_subdirectory(interactive_view_control)

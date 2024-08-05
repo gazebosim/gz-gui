@@ -26,11 +26,6 @@ Rectangle {
   anchors.fill: parent
 
   /**
-   * True to enable gamma correction
-   */
-  property bool gammaCorrect: false
-
-  /**
    * Get mouse position on 3D widget
    */
   MouseArea {
@@ -54,16 +49,6 @@ Rectangle {
     visible: MinimalScene.loadingError.length == 0
   }
 
-  /*
-   * Gamma correction for sRGB output. Enabled when engine is set to ogre2
-   */
-  GammaAdjust {
-      anchors.fill: renderWindow
-      source: renderWindow
-      gamma: 2.4
-      enabled: gammaCorrect
-      visible: gammaCorrect
-  }
 
   onParentChanged: {
     if (undefined === parent)
