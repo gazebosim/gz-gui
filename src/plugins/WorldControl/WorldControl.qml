@@ -179,7 +179,7 @@ RowLayout {
         }
 
         GzSpinBox {
-          to: 10000
+          maximumValue: 10000
           Layout.alignment: Qt.AlignVCenter
           value: 1
           onValueChanged: {

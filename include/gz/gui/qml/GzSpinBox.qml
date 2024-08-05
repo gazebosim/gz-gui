@@ -17,10 +17,39 @@
 import QtQuick
 import QtQuick.Controls
 
-SpinBox {
-  background: Rectangle {
-    implicitWidth: 70
-    implicitHeight: 40
-    border.color: "gray"
-  }
+Item {
+    id: root
+    property int decimals: 2
+    property real value: 0.0
+    property real from: 0.0
+    property real to: 100.0
+    property alias minimumValue: root.from
+    property alias maximumValue: root.to
+    property real stepSize: 1.0
+    signal editingFinished(real _value)
+
+    SpinBox{
+        id: spinbox
+        property real factor: Math.pow(10, root.decimals)
+        stepSize: root.stepSize*factor
+        value: root.value*factor
+        to : root.to*factor
+        from : root.from*factor
+        editable: true
+
+        validator: DoubleValidator {
+            bottom: Math.min(spinbox.from, spinbox.to)
+            top:  Math.max(spinbox.from, spinbox.to)
+        }
+
+        textFromValue: function(value, locale) {
+            return Number(value / factor).toLocaleString(locale, 'f', root.decimals)
+        }
+
+        valueFromText: function(text, locale) {
+            return Math.round(Number.fromLocaleString(locale, text) * factor)
+        }
+
+        onValueChanged: root.editingFinished(spinbox.value / spinbox.factor)
+    }
 }

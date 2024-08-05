@@ -78,7 +78,7 @@ Item {
   signal gzPoseSet(double _x, double _y, double _z, double _roll, double _pitch, double _yaw)
 
   // Maximum spinbox value
-  property int spinMax: Number.MAX_VALUE
+  property double spinMax: Number.MAX_VALUE
 
   // Expand/Collapse of this widget
   property bool expand: true
@@ -119,10 +119,10 @@ Item {
     GzSpinBox {
       id: writableSpin
       value:  numberValue
-      from: -spinMax
-      to: spinMax
-      //decimals: gzHelper.getDecimals(writableSpin.width)
-      onValueChanged: {
+      minimumValue: -spinMax
+      maximumValue: spinMax
+      decimals: gzHelper.getDecimals(writableSpin.width)
+      onEditingFinished: {
         gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value,
                              rollItem.value, pitchItem.value, yawItem.value)
       }

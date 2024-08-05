@@ -121,9 +121,11 @@ ColumnLayout {
     GzSpinBox {
       id: pointSizeSpin
       value: PointCloud.pointSize
-      from: 1
+      minimumValue: 1
+      maximumValue: 1
+      decimals: 0
       to: 1000
-      onValueChanged: {
+      onEditingFinished: {
         PointCloud.SetPointSize(pointSizeSpin.value)
       }
     }

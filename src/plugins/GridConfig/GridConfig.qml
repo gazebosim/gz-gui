@@ -112,10 +112,10 @@ GridLayout {
     Layout.columnSpan: 2
     Layout.fillWidth: true
     id: verticalCellCount
-    to: Number.MAX_VALUE
-    from: 0
+    maximumValue: Number.MAX_VALUE
+    minimumValue: 0
     value: 0
-    onValueChanged: GridConfig.UpdateVCellCount(verticalCellCount.value)
+    onEditingFinished: GridConfig.UpdateVCellCount(verticalCellCount.value)
   }
 
   Text {
@@ -129,10 +129,10 @@ GridLayout {
     Layout.columnSpan: 2
     Layout.fillWidth: true
     id: horizontalCellCount
-    to: Number.MAX_VALUE
-    from: 1
+    maximumValue: Number.MAX_VALUE
+    minimumValue: 1
     value: 20
-    onValueChanged: GridConfig.UpdateHCellCount(horizontalCellCount.value)
+    onEditingFinished: GridConfig.UpdateHCellCount(horizontalCellCount.value)
   }
 
   Text {
@@ -153,12 +153,12 @@ GridLayout {
     Layout.columnSpan: 2
     Layout.fillWidth: true
     id: cellLength
-    to: Number.MAX_VALUE
-    from: 0
-    value: 1
-    //decimals: gzHelpers.getDecimals(cellLength.width)
-    stepSize: 1
-    onValueChanged: GridConfig.UpdateCellLength(cellLength.value)
+    maximumValue: Number.MAX_VALUE
+    minimumValue: 0
+    value: 1.00
+    decimals: gzHelpers.getDecimals(cellLength.width)
+    stepSize: 0.01
+    onEditingFinished: GridConfig.UpdateCellLength(cellLength.value)
   }
 
   Text {

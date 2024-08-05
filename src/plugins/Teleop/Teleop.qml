@@ -123,11 +123,11 @@ ColumnLayout {
       id: maxForwardVelField
       Layout.fillWidth: true
       value: maxForwardVel
-      to: 10000
-      from: 0
-      // decimals: 2
-      stepSize: 1
-      onValueChanged:{
+      maximumValue: 10000.0
+      minimumValue: 0.0
+      decimals: 2
+      stepSize: 0.10
+      onEditingFinished: {
         Teleop.SetMaxForwardVel(value)
       }
     }
@@ -142,11 +142,11 @@ ColumnLayout {
       id: maxVerticalVelField
       Layout.fillWidth: true
       value: maxVerticalVel
-      to: 10000
-      from: 0
-      // decimals: 2
-      stepSize: 1
-      onValueChanged:{
+      maximumValue: 10000.0
+      minimumValue: 0.0
+      decimals: 2
+      stepSize: 0.10
+      onEditingFinished:{
         Teleop.SetMaxVerticalVel(value)
       }
     }
@@ -161,12 +161,12 @@ ColumnLayout {
       id: maxYawVelField
       Layout.fillWidth: true
       value: maxYawVel
-      to: 10000
-      from: 0
-      // decimals: 2
-      stepSize: 1
-      onValueChanged:{
-        Teleop.SetMaxYawVel(value)
+      maximumValue: 10000.0
+      minimumValue: 0.0
+      decimals: 2
+      stepSize: 0.10
+      onEditingFinished:{
+        Teleop.SetMaxYawVel(1.0)
       }
     }
   }
