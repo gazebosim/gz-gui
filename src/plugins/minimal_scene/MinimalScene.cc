@@ -762,6 +762,8 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
     scene->SetSkyEnabled(true);
   }
 
+  scene->SetTexSize(this->texSize);
+
   auto root = scene->RootVisual();
 
   // Camera
@@ -1321,6 +1323,11 @@ void RenderWindowItem::SetSkyEnabled(const bool &_sky)
   this->dataPtr->renderThread->gzRenderer.skyEnable = _sky;
 }
 
+void RenderWindowItem::SetTexSize(unsigned int _texSize)
+{
+  this->dataPtr->renderThread->gzRenderer.texSize = _texSize;
+}
+
 /////////////////////////////////////////////////
 void RenderWindowItem::SetGraphicsAPI(
     const rendering::GraphicsAPI &_graphicsAPI)
@@ -1462,6 +1469,16 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       if (!elem->NoChildren())
         gzwarn << "Child elements of <sky> are not supported yet"
                 << std::endl;
+    }
+
+    elem = _pluginElem->FirstChildElement("tex_size");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      unsigned int texSize;
+      std::stringstream texSizeStr;
+      texSizeStr << std::string(elem->GetText());
+      texSizeStr >> texSize;
+      renderWindow->SetTexSize(texSize);
     }
 
     const std::string backendApiName = gz::gui::renderEngineBackendApiName();
