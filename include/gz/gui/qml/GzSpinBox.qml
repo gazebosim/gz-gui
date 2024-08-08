@@ -18,38 +18,68 @@ import QtQuick
 import QtQuick.Controls
 
 Item {
-    id: root
-    property int decimals: 2
-    property real value: 0.0
-    property real from: 0.0
-    property real to: 100.0
-    property alias minimumValue: root.from
-    property alias maximumValue: root.to
-    property real stepSize: 1.0
-    signal editingFinished(real _value)
+  id: root
+  property int decimals: 2
+  property real value: 0.0
+  property real from: 0.0
+  property real to: 100.0
+  property alias minimumValue: root.from
+  property alias maximumValue: root.to
+  property real stepSize: 1.0
+  signal editingFinished(real _value)
+  implicitWidth: spinbox.implicitWidth
+  implicitHeight: spinbox.implicitHeight
+  // Timer {
+  //     interval: 50; running: true; repeat: true
+  //     onTriggered: {
+  //       console.log("root. w: ", root.parent.objectName, spinbox.objectName, " = ", root.width, root.height, root.implicitWidth, root.implicitHeight)
+  //     }
+  // }
 
-    SpinBox{
-        id: spinbox
-        property real factor: Math.pow(10, root.decimals)
-        stepSize: root.stepSize*factor
-        value: root.value*factor
-        to : root.to*factor
-        from : root.from*factor
-        editable: true
 
-        validator: DoubleValidator {
-            bottom: Math.min(spinbox.from, spinbox.to)
-            top:  Math.max(spinbox.from, spinbox.to)
-        }
+  function decimalToInt(decimal) {
+    return Math.round(decimal * spinbox.factor)
+  }
 
-        textFromValue: function(value, locale) {
-            return Number(value / factor).toLocaleString(locale, 'f', root.decimals)
-        }
+  readonly property int maxInt32: Math.pow( 2, 31 ) - 1;
+  clip: true
 
-        valueFromText: function(text, locale) {
-            return Math.round(Number.fromLocaleString(locale, text) * factor)
-        }
+  SpinBox{
+    id: spinbox
+    anchors.fill: parent
+    property real factor: Math.pow(10, root.decimals)
+    stepSize: decimalToInt(root.stepSize)
+    value: decimalToInt(root.value)
+    to : Math.min(decimalToInt(root.to), maxInt32)
+    from : Math.max(decimalToInt(root.from), -maxInt32)
+    editable: true
+    clip: true
+    topPadding: 0
+    bottomPadding: 0
 
-        onValueChanged: root.editingFinished(spinbox.value / spinbox.factor)
+    validator: DoubleValidator {
+      bottom: Math.min(spinbox.from, spinbox.to)
+      top:  Math.max(spinbox.from, spinbox.to)
     }
+
+    textFromValue: function(value, locale) {
+      return Number(value / factor).toLocaleString(locale, 'f', root.decimals)
+    }
+
+    valueFromText: function(text, locale) {
+      return decimalToInt(Number.fromLocaleString(locale, text))
+    }
+
+    onValueModified: {
+      root.value = spinbox.value / spinbox.factor
+      // console.log("val mod: ", root.value)
+      root.editingFinished(root.value)
+    }
+
+    background: Rectangle {
+      implicitWidth: 80
+      implicitHeight: 80
+      border.color: "red"
+    }
+  }
 }
