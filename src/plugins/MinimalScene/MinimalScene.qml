@@ -39,7 +39,7 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.NoButton
-    visible: MinimalScene.loadingError.length === 0
+    visible: MinimalScene.loadingError? MinimalScene.loadingError.length === 0: false
     onEntered: {
       MinimalScene.OnFocusWindow()
     }
@@ -84,8 +84,8 @@ Rectangle {
   Label {
     anchors.fill: parent
     anchors.margins: 10
-    text: MinimalScene.loadingError
-    visible: (MinimalScene.loadingError.length > 0);
+    text: MinimalScene.loadingError? MinimalScene.loadingError: ""
+    visible: MinimalScene.loadingError? (MinimalScene.loadingError.length > 0): true;
     wrapMode: Text.WordWrap
   }
 }

@@ -27,6 +27,7 @@ SplitView {
 
   id: background
   objectName: "background"
+  clip: true
 
   GzHelpers {
     id: helpers
@@ -42,19 +43,11 @@ SplitView {
    */
   property variant childSplits: new Object()
 
-  /**
-   * Callback when the height changed.
-   */
-  onHeightChanged:
-  {
-    background.recalculateMinimumSizes();
-  }
-
   Rectangle {
     id: startLabel;
-    visible: MainWindow.pluginCount === 0
+    visible: false; //MainWindow.pluginCount === 0
     anchors.fill: parent
-    color: Material.background
+    color: "red" //Material.background
     Label {
       text: "Insert plugins to start!"
       anchors.fill: parent
@@ -63,6 +56,7 @@ SplitView {
       verticalAlignment: Label.AlignVCenter
       wrapMode: Label.Wrap
     }
+    SplitView.fillWidth: true
   }
 
   /**
@@ -88,35 +82,40 @@ SplitView {
    */
   function addSplitItem()
   {
-    var itemName = "";
-
+    var addedItem = "";
     // First section goes in the top level SplitView, which is Qt.Horizontal
     // 2 for helpers and startLabel
-    if (background.count <= 2)
+    console.log("bg count:", background.count, background.contentChildren.length, Object.keys(childSplits).length)
+    if (background.contentChildren.length <= 2)
     {
-      itemName = _addNewItem(background);
+      console.log("Add to bg split")
+      addedItem = _addNewItem(background);
     }
     // The next one adds a Qt.Vertical split to the right
     else if (Object.keys(childSplits).length === 0)
     {
+      console.log("Creating side split")
       // Add the split
       var split = _addNewSplit(background);
-      split.split.orientation = Qt.Vertical;
+      console.log("Created ", split.objectName)
+
 
       // Then add a new item to the newly created split
-      itemName = _addNewItem(split);
+      addedItem = _addNewItem(split);
     }
     // All subsequent ones are added to the vertical child split on the right
     else
     {
+      console.log("Adding side split")
       // Get desired split (for now we have only one)
       var firstChildSplit = childSplits[Object.keys(childSplits)[0]];
 
       // Then add a new item to it
-      itemName = _addNewItem(firstChildSplit);
+      addedItem = _addNewItem(firstChildSplit);
     }
 
-    return itemName
+    helpers.dump(background, "", 5)
+    return addedItem
   }
 
   /**
@@ -125,6 +124,7 @@ SplitView {
    */
   function removeSplitItem(_name)
   {
+    console.log("Removing ", _name)
     // Remove from split
     _removeFromSplits(childItems[_name]);
 
@@ -154,18 +154,15 @@ SplitView {
     if (_split === background)
     {
       _split.addItem(item);
+      item.SplitView.fillWidth = true;
     }
     else
     {
-      _split.split.addItem(item);
-
-      // Make sure that changes to the item's minimum size get propagated to the
-      // split.
-      item.minimumSizeChanged.connect(function(){
-        _split.split.recalculateMinimumSize()
-      });
+      _split.addItem(item);
     }
+    console.log(itemName, item.objectName, "size: ", item.width, item.height)
 
+    // return childItems[itemName];
     return itemName;
   }
 
@@ -188,7 +185,7 @@ SplitView {
     childSplits[splitName] = splitWrapper;
 
     // Add to parent
-    _parentSplit.addItem(splitWrapper);
+    // _parentSplit.addItem(splitWrapper);
 
     return splitWrapper;
   }
@@ -205,6 +202,7 @@ SplitView {
       return;
 
     var split = helpers.ancestorByName(_item, /^split_|^background$/);
+    console.log("Ancestor ", split.objectName)
 
     if (!split)
     {
@@ -214,15 +212,21 @@ SplitView {
 
     if (split === background)
     {
+      console.log("Final remove ", _item.objectName, " from  bg")
       split.removeItem(_item);
+      for (var i in split.contentChildren)
+      {
+        console.log("   ", split.contentChildren[i])
+      }
     }
     else
     {
-      split.split.removeItem(_item);
+      split.removeItem(_item);
 
       // If split is now empty, remove split
-      if (split.split.__items.length === 0)
-      {
+      // if (split.contentChildren.length === 0)
+      // {
+        console.log("Removing side split from bg", split.objectName)
         // Remove from array
         delete childSplits[split.objectName]
 
@@ -231,11 +235,12 @@ SplitView {
 
         // Destroy
         split.destroy();
-      }
-      else
-      {
-        split.split.recalculateMinimumSize();
-      }
+        helpers.dump(background, "", 5)
+      // }
+      // else
+      // {
+      //   split.recalculateMinimumSize();
+      // }
     }
   }
 
@@ -245,48 +250,11 @@ SplitView {
   Component {
     id: newItem
 
-    Rectangle {
-      Layout.minimumWidth: 100
-      Layout.minimumHeight: 100
-      Layout.fillHeight: false
-      Layout.fillWidth: true
-      color: Material.background
-
-      /**
-       * Notifies that its minimum size has changed.
-       */
-      signal minimumSizeChanged();
-
-      /**
-       * Callback when the layout's minimum width changes.
-       */
-      Layout.onMinimumWidthChanged: {
-        minimumSizeChanged();
-      }
-
-      /**
-       * Callback when the layout's minimum height changes.
-       */
-      Layout.onMinimumHeightChanged: {
-        minimumSizeChanged();
-      }
-
-      /**
-       * Callback when the children array has been changed.
-       */
-      onChildrenChanged: {
-        // Propagate child's minimum size changes to the item.
-        newItem.Layout.minimumWidth = Qt.binding(function() {
-          if (children.length === 0 || children[0] === undefined)
-            return 0;
-          return children[0].Layout.minimumWidth
-        });
-        newItem.Layout.minimumHeight = Qt.binding(function() {
-          if (children.length === 0 || children[0] === undefined)
-            return 0;
-          return children[0].Layout.minimumHeight
-        });
-      }
+    ColumnLayout {
+      id: rectContainer
+      SplitView.minimumWidth: children[0]? children[0].Layout.minimumWidth : 0
+      SplitView.minimumHeight: children[0]? children[0].Layout.minimumHeight : 0
+      clip: true
     }
   }
 
@@ -295,89 +263,11 @@ SplitView {
    */
   Component {
     id: newSplit
-
-    /**
-     * For some reason, the scroll view doesn't work well within a split view,
-     * so we wrap it in a rectangle.
-    */
-    Rectangle {
-      id: splitWrapper
-      color: "transparent"
-
-      /**
-       * Expose the split view.
-       */
-      property var split: split
-
-      /**
-       * Offset of 17 to accommodate for ScrollView scroll bar
-       */
-      property var scrollBarWidth: 17
-
-      Layout.minimumWidth: split.Layout.minimumWidth + scrollBarWidth
-      Layout.minimumHeight: split.Layout.minimumHeight
-
-      ScrollView {
-        contentHeight: split.height
-        contentWidth: split.width + scrollBarWidth
-
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-
-        // TODO(louise) This only works for a very specific split
-        height: window.height - window.header.height
-
-        SplitView {
-          id: split
-          width: splitWrapper.width - scrollBarWidth
-          height: Math.max(childItems[Object.keys(childItems)[0]].height,
-                      split.Layout.minimumHeight)
-
-          /**
-           * Iterate over all current child items and update the split's minimum
-           * width accordingly.
-           */
-          function recalculateMinimumSize()
-          {
-            // TODO(louise): generalize to support horizontal splits
-            if (orientation === Qt.Horizontal)
-            {
-              return;
-            }
-
-            // Sync minimum sizes
-            var heightSum = 0;
-            var minHeightSum = 0;
-            for (var i = 0; i < __items.length; i++)
-            {
-              var child = __items[i];
-
-              // Minimum width matches the largest minimum width among children
-              if (child.Layout.minimumWidth > Layout.minimumWidth)
-              {
-                Layout.minimumWidth = child.Layout.minimumWidth;
-              }
-              heightSum += child.height;
-
-              var collapsed = child.Layout.maximumHeight == 50
-              minHeightSum += collapsed ? child.height : child.Layout.minimumHeight
-            }
-
-            // Minimum height to show all children
-            Layout.minimumHeight = minHeightSum;
-            split.height = Math.max(minHeightSum, background.height);
-
-            // Squish all children if there's no slack
-            if (heightSum > background.height)
-            {
-              for (var i = 0; i < __items.length; i++)
-              {
-                var child = __items[i];
-                child.height = child.Layout.minimumHeight;
-              }
-            }
-          }
-        }
-      }
+    SplitView {
+      id: __split
+      orientation: Qt.Vertical
+      clip: true
+      SplitView.minimumWidth: __split.contentChildren[0]? __split.contentChildren[0].SplitView.minimumWidth : 0
     }
   }
 }

@@ -23,6 +23,7 @@ import "qrc:/gz/gui/qml"
 
 // TODO: don't use "parent"
 Pane {
+  clip: true
   /**
    * Minimum length of each dimension
    */
@@ -157,6 +158,8 @@ Pane {
    */
   objectName: "plugin" + Math.floor(Math.random() * 100000);
 
+  anchors.fill: parent
+
   // Stop scroll propagation to widgets below
   MouseArea {
     anchors.fill: parent
@@ -173,9 +176,9 @@ Pane {
       return;
 
     // Bind anchors
-    anchors.fill = Qt.binding(function() {return parent})
-    parent.height = Qt.binding(function() {return height})
-    parent.width = Qt.binding(function() {return width})
+    // anchors.fill = Qt.binding(function() {return parent})
+    // parent.height = Qt.binding(function() {return height})
+    // parent.width = Qt.binding(function() {return width})
 
     // Keep a reference to the background
     // TODO(louise) This feels hacky, the card shouldn't care about the background,
@@ -195,16 +198,16 @@ Pane {
    * any knowledge of splits
    */
   function syncTheFamily() {
-    var parentSplit = helpers.ancestorByName(cardPane, /^split_item/);
-
-    if (undefined == parentSplit)
-      return;
-
-    if (content.children.length != 1)
-      return;
-
-    parentSplit.Layout.minimumWidth = content.children[0].Layout.minimumWidth;
-    parentSplit.Layout.minimumHeight = content.children[0].Layout.minimumHeight;
+    // var parentSplit = helpers.ancestorByName(cardPane, /^split_item/);
+    //
+    // if (undefined == parentSplit)
+    //   return;
+    //
+    // if (content.children.length != 1)
+    //   return;
+    //
+    // parentSplit.Layout.minimumWidth = content.children[0].Layout.minimumWidth;
+    // parentSplit.Layout.minimumHeight = content.children[0].Layout.minimumHeight;
   }
 
   /**
@@ -415,7 +418,7 @@ Pane {
   {
     const collapsed = cardPane.parent.Layout.minimumHeight === 50;
     // Reparent to main window's background
-    cardPane.parent = backgroundItem
+    cardPane.parent = backgroundItem.contentChildren[0]
 
     // Resize to minimum size
     cardPane.clearAnchors();
@@ -449,7 +452,7 @@ Pane {
    */
   function recalculateSplitSizes()
   {
-    backgroundItem.recalculateMinimumSizes();
+    // backgroundItem.recalculateMinimumSizes();
   }
 
 // TODO(louise): re-enable window state support
@@ -669,21 +672,31 @@ Pane {
   Rectangle {
     objectName: "content"
     id: content
+    // anchors.horizontalCenter: parent.horizontalCenter
+
     anchors.fill: parent
     anchors.topMargin: cardPane.showTitleBar ? 50 : 0
+    // height: 100
+    // implicitHeight: 123
     clip: true
     color: cardBackground
 
     onChildrenChanged: {
       // Set the height and width of the cardPane when child plugin is attached
+      // if (children.length > 0) {
+      //   cardMinimumWidth = content.children[0].Layout.minimumWidth;
+      //   cardMinimumHeight = content.children[0].Layout.minimumHeight;
+      //   cardPane.width = cardMinimumWidth
+      //   cardPane.height = cardMinimumHeight
+      // }
+      //
+      // cardPane.syncTheFamily()
       if (children.length > 0) {
         cardMinimumWidth = content.children[0].Layout.minimumWidth;
         cardMinimumHeight = content.children[0].Layout.minimumHeight;
-        cardPane.width = cardMinimumWidth
-        cardPane.height = cardMinimumHeight
+        cardPane.Layout.minimumWidth = cardMinimumWidth
+        cardPane.Layout.minimumHeight = cardMinimumHeight
       }
-
-      cardPane.syncTheFamily()
     }
 
     /**
