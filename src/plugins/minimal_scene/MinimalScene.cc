@@ -762,7 +762,7 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
     scene->SetSkyEnabled(true);
   }
 
-  scene->SetTexSize(this->texSize);
+  scene->SetShadowTextureSize(this->directionalLightTextureSize);
 
   auto root = scene->RootVisual();
 
@@ -1323,9 +1323,9 @@ void RenderWindowItem::SetSkyEnabled(const bool &_sky)
   this->dataPtr->renderThread->gzRenderer.skyEnable = _sky;
 }
 
-void RenderWindowItem::SetTexSize(unsigned int _texSize)
+void RenderWindowItem::SetShadowTextureSize(unsigned int _textureSize)
 {
-  this->dataPtr->renderThread->gzRenderer.texSize = _texSize;
+  this->dataPtr->renderThread->gzRenderer.directionalLightTextureSize = _textureSize;
 }
 
 /////////////////////////////////////////////////
@@ -1471,14 +1471,37 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
                 << std::endl;
     }
 
-    elem = _pluginElem->FirstChildElement("tex_size");
-    if (nullptr != elem && nullptr != elem->GetText())
+    elem = _pluginElem->FirstChildElement("shadows");
+    if (nullptr != elem && !elem->NoChildren())
     {
-      unsigned int texSize;
-      std::stringstream texSizeStr;
-      texSizeStr << std::string(elem->GetText());
-      texSizeStr >> texSize;
-      renderWindow->SetTexSize(texSize);
+      auto textureSizeElem = elem->FirstChildElement("texture_size");
+      if (nullptr != elem && nullptr != textureSizeElem->GetText())
+      {
+        std::string lightType = textureSizeElem->Attribute("light_type");
+        if (lightType == "directional")
+        {
+          unsigned int texSize;
+          std::stringstream texSizeStr;
+          texSizeStr << std::string(textureSizeElem->GetText());
+          texSizeStr >> texSize;
+          printf("texSize: %d\n", texSize);
+          if (texSizeStr.fail())
+          {
+            gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
+                  << "' using default directional light texture size" << std::endl;
+          }
+          else
+          {
+            printf("setting texsize now\n");
+            renderWindow->SetShadowTextureSize(texSize);
+          }
+        }
+        else
+        {
+          gzwarn << "Light type [" << lightType << "] is not supported."
+                  << std::endl;
+        }
+      }
     }
 
     const std::string backendApiName = gz::gui::renderEngineBackendApiName();

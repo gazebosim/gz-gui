@@ -238,7 +238,7 @@ namespace gz::gui::plugins
     /// \brief True if sky is enabled;
     public: bool skyEnable = false;
 
-    public: unsigned int texSize = 2048u;
+    public: unsigned int directionalLightTextureSize = 2048u;
 
     /// \brief Horizontal FOV of the camera;
     public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
@@ -370,7 +370,7 @@ namespace gz::gui::plugins
     /// \param[in] _sky True to enable the sky, false otherwise.
     public: void SetSkyEnabled(const bool &_sky);
 
-    public: void SetTexSize(unsigned int _texSize);
+    public: void SetShadowTextureSize(unsigned int _textureSize);
 
     /// \brief Set the Horizontal FOV of the camera
     /// \param[in] _fov FOV of the camera in degree
