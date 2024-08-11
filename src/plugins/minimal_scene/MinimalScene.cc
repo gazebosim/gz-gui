@@ -1488,7 +1488,6 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           std::stringstream texSizeStr;
           texSizeStr << std::string(textureSizeElem->GetText());
           texSizeStr >> texSize;
-          printf("texSize: %d\n", texSize);
           if (texSizeStr.fail())
           {
             gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
@@ -1496,7 +1495,6 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           }
           else
           {
-            printf("setting texsize now\n");
             renderWindow->SetShadowTextureSize(rendering::LightType::LT_DIRECTIONAL, texSize);
           }
         }
