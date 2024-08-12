@@ -762,7 +762,8 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
     scene->SetSkyEnabled(true);
   }
 
-  scene->SetShadowTextureSize(rendering::LightType::LT_DIRECTIONAL, this->directionalLightTextureSize);
+  scene->SetShadowTextureSize(rendering::LightType::LT_DIRECTIONAL,
+      this->directionalLightTextureSize);
 
   auto root = scene->RootVisual();
 
@@ -1324,11 +1325,13 @@ void RenderWindowItem::SetSkyEnabled(const bool &_sky)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::SetShadowTextureSize(rendering::LightType _lightType, unsigned int _textureSize)
+void RenderWindowItem::SetShadowTextureSize(rendering::LightType _lightType,
+    unsigned int _textureSize)
 {
   if (_lightType == rendering::LightType::LT_DIRECTIONAL)
   {
-    this->dataPtr->renderThread->gzRenderer.directionalLightTextureSize = _textureSize;
+    this->dataPtr->renderThread->gzRenderer.directionalLightTextureSize =
+        _textureSize;
   }
 }
 
@@ -1491,11 +1494,13 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           if (texSizeStr.fail())
           {
             gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
-                  << "' using default directional light texture size" << std::endl;
+                  << "' using default directional light texture size"
+                  << std::endl;
           }
           else
           {
-            renderWindow->SetShadowTextureSize(rendering::LightType::LT_DIRECTIONAL, texSize);
+            renderWindow->SetShadowTextureSize(
+                rendering::LightType::LT_DIRECTIONAL, texSize);
           }
         }
         else

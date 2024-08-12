@@ -373,8 +373,9 @@ namespace gz::gui::plugins
 
     /// @brief  \brief Set the shadow texture size for the given light type.
     /// @param _lightType Light type that creates the shadow
-    /// @param _textureSize Shadow texture size 
-    public: void SetShadowTextureSize(rendering::LightType _lightType, unsigned int _textureSize);
+    /// @param _textureSize Shadow texture size
+    public: void SetShadowTextureSize(rendering::LightType _lightType,
+        unsigned int _textureSize);
 
     /// \brief Set the Horizontal FOV of the camera
     /// \param[in] _fov FOV of the camera in degree
