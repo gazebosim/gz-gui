@@ -1484,29 +1484,29 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       auto textureSizeElem = elem->FirstChildElement("texture_size");
       if (nullptr != elem && nullptr != textureSizeElem->GetText())
       {
-        std::string lightType = textureSizeElem->Attribute("light_type");
-        if (lightType == "directional")
+        unsigned int texSize;
+        std::stringstream texSizeStr;
+        texSizeStr << std::string(textureSizeElem->GetText());
+        texSizeStr >> texSize;
+        if (texSizeStr.fail())
         {
-          unsigned int texSize;
-          std::stringstream texSizeStr;
-          texSizeStr << std::string(textureSizeElem->GetText());
-          texSizeStr >> texSize;
-          if (texSizeStr.fail())
-          {
-            gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
-                  << "' using default directional light texture size"
-                  << std::endl;
-          }
-          else
+          gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
+                << "' using default directional light texture size"
+                << std::endl;
+        }
+        else
+        {
+          std::string lightType = textureSizeElem->Attribute("light_type");
+          if (lightType == "directional")
           {
             renderWindow->SetShadowTextureSize(
                 rendering::LightType::LT_DIRECTIONAL, texSize);
           }
-        }
-        else
-        {
-          gzerr << "Light type [" << lightType << "] is not supported."
+          else
+          {
+            gzerr << "Light type [" << lightType << "] is not supported."
                   << std::endl;
+          }
         }
       }
     }

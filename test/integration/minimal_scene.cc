@@ -90,6 +90,9 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
       "  <near>0.1</near>"
       "  <far>5000</far>"
       "</camera_clip>"
+      "<shadows>"
+      "  <texture_size light_type=\"directional\">8192</texture_size>"
+      "</shadows>"
       "<horizontal_fov>60</horizontal_fov>"
       "<view_controller>ortho</view_controller>"
     "</plugin>";
@@ -130,6 +133,11 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_EQ(math::Pose3d(1, 2, 3, 0, 0, 1.57), camera->WorldPose());
   EXPECT_DOUBLE_EQ(0.1, camera->NearClipPlane());
   EXPECT_DOUBLE_EQ(5000.0, camera->FarClipPlane());
+
+  EXPECT_EQ(8192u, scene->ShadowTextureSize(
+      rendering::LightType::LT_DIRECTIONAL));
+  EXPECT_EQ(2048u, scene->ShadowTextureSize(rendering::LightType::LT_SPOT));
+  EXPECT_EQ(2048u, scene->ShadowTextureSize(rendering::LightType::LT_POINT));
 
   EXPECT_NEAR(60, camera->HFOV().Degree(), 1e-4);
 
