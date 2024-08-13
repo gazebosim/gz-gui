@@ -1491,8 +1491,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         if (texSizeStr.fail())
         {
           gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
-                << "' using default directional light texture size"
-                << std::endl;
+                << "' using default texture size" << std::endl;
         }
         else
         {
