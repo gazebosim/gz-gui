@@ -762,8 +762,12 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
     scene->SetSkyEnabled(true);
   }
 
-  scene->SetShadowTextureSize(rendering::LightType::LT_DIRECTIONAL,
-      this->directionalLightTextureSize);
+  if (!scene->SetShadowTextureSize(rendering::LightType::DIRECTIONAL,
+      this->directionalLightTextureSize))
+  {
+    gzerr << "Unable to set <texture_size> to '" << this->directionalLightTextureSize
+          << "' using default texture size" << std::endl;
+  }
 
   auto root = scene->RootVisual();
 
@@ -1325,14 +1329,17 @@ void RenderWindowItem::SetSkyEnabled(const bool &_sky)
 }
 
 /////////////////////////////////////////////////
-void RenderWindowItem::SetShadowTextureSize(rendering::LightType _lightType,
+bool RenderWindowItem::SetShadowTextureSize(rendering::LightType _lightType,
     unsigned int _textureSize)
 {
-  if (_lightType == rendering::LightType::LT_DIRECTIONAL)
+  if (_lightType == rendering::LightType::DIRECTIONAL)
   {
     this->dataPtr->renderThread->gzRenderer.directionalLightTextureSize =
         _textureSize;
+    return true;
   }
+
+  return false;
 }
 
 /////////////////////////////////////////////////
@@ -1498,8 +1505,12 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
           std::string lightType = textureSizeElem->Attribute("light_type");
           if (lightType == "directional")
           {
-            renderWindow->SetShadowTextureSize(
-                rendering::LightType::LT_DIRECTIONAL, texSize);
+            if (!renderWindow->SetShadowTextureSize(
+                rendering::LightType::DIRECTIONAL, texSize))
+            {
+              gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
+                    << "' using default texture size" << std::endl;
+            }
           }
           else
           {

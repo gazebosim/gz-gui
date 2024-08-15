@@ -135,9 +135,9 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_DOUBLE_EQ(5000.0, camera->FarClipPlane());
 
   EXPECT_EQ(8192u, scene->ShadowTextureSize(
-      rendering::LightType::LT_DIRECTIONAL));
-  EXPECT_EQ(2048u, scene->ShadowTextureSize(rendering::LightType::LT_SPOT));
-  EXPECT_EQ(2048u, scene->ShadowTextureSize(rendering::LightType::LT_POINT));
+      rendering::LightType::DIRECTIONAL));
+  EXPECT_EQ(2048u, scene->ShadowTextureSize(rendering::LightType::SPOT));
+  EXPECT_EQ(2048u, scene->ShadowTextureSize(rendering::LightType::POINT));
 
   EXPECT_NEAR(60, camera->HFOV().Degree(), 1e-4);
 
