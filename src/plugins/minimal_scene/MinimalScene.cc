@@ -765,7 +765,8 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   if (!scene->SetShadowTextureSize(rendering::LightType::DIRECTIONAL,
       this->directionalLightTextureSize))
   {
-    gzerr << "Unable to set <texture_size> to '" << this->directionalLightTextureSize
+    gzerr << "Unable to set <texture_size> to '"
+          << this->directionalLightTextureSize
           << "' using default texture size" << std::endl;
   }
 
