@@ -371,7 +371,7 @@ namespace gz::gui::plugins
     /// \param[in] _sky True to enable the sky, false otherwise.
     public: void SetSkyEnabled(const bool &_sky);
 
-    /// @brief  \brief Set the shadow texture size for the given light type.
+    /// \brief Set the shadow texture size for the given light type.
     /// @param _lightType Light type that creates the shadow
     /// @param _textureSize Shadow texture size
     public: bool SetShadowTextureSize(rendering::LightType _lightType,

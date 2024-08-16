@@ -765,9 +765,11 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   if (!scene->SetShadowTextureSize(rendering::LightType::DIRECTIONAL,
       this->directionalLightTextureSize))
   {
-    gzerr << "Unable to set <texture_size> to '"
+    gzerr << "Unable to set directional light shadow <texture_size> to '"
           << this->directionalLightTextureSize
-          << "' using default texture size" << std::endl;
+          << "'. Using default texture size of "
+          << scene->ShadowTextureSize(rendering::LightType::DIRECTIONAL)
+          << std::endl;
   }
 
   auto root = scene->RootVisual();
@@ -1498,7 +1500,7 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         texSizeStr >> texSize;
         if (texSizeStr.fail())
         {
-          gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
+          gzerr << "Unable to set shadow <texture_size> to '" << texSizeStr.str()
                 << "' using default texture size" << std::endl;
         }
         else
@@ -1509,14 +1511,14 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
             if (!renderWindow->SetShadowTextureSize(
                 rendering::LightType::DIRECTIONAL, texSize))
             {
-              gzerr << "Unable to set <texture_size> to '" << texSizeStr.str()
+              gzerr << "Unable to set shadow <texture_size> to '" << texSizeStr.str()
                     << "' using default texture size" << std::endl;
             }
           }
           else
           {
-            gzerr << "Light type [" << lightType << "] is not supported."
-                  << std::endl;
+            gzerr << "Setting shadow <texture_size> for light type [" 
+                  << lightType << "] is not supported." << std::endl;
           }
         }
       }
