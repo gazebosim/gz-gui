@@ -1500,7 +1500,8 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         texSizeStr >> texSize;
         if (texSizeStr.fail())
         {
-          gzerr << "Unable to set shadow <texture_size> to '" << texSizeStr.str()
+          gzerr << "Unable to set shadow <texture_size> to '"
+                << texSizeStr.str()
                 << "' using default texture size" << std::endl;
         }
         else
@@ -1511,13 +1512,14 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
             if (!renderWindow->SetShadowTextureSize(
                 rendering::LightType::DIRECTIONAL, texSize))
             {
-              gzerr << "Unable to set shadow <texture_size> to '" << texSizeStr.str()
+              gzerr << "Unable to set shadow <texture_size> to '"
+                    << texSizeStr.str()
                     << "' using default texture size" << std::endl;
             }
           }
           else
           {
-            gzerr << "Setting shadow <texture_size> for light type [" 
+            gzerr << "Setting shadow <texture_size> for light type ["
                   << lightType << "] is not supported." << std::endl;
           }
         }

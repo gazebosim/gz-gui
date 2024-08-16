@@ -239,6 +239,7 @@ namespace gz::gui::plugins
     /// \brief True if sky is enabled;
     public: bool skyEnable = false;
 
+    /// \brief Shadow texture size for directional light
     public: unsigned int directionalLightTextureSize = 2048u;
 
     /// \brief Horizontal FOV of the camera;
@@ -372,8 +373,8 @@ namespace gz::gui::plugins
     public: void SetSkyEnabled(const bool &_sky);
 
     /// \brief Set the shadow texture size for the given light type.
-    /// @param _lightType Light type that creates the shadow
-    /// @param _textureSize Shadow texture size
+    /// \param _lightType Light type that creates the shadow
+    /// \param _textureSize Shadow texture size
     public: bool SetShadowTextureSize(rendering::LightType _lightType,
         unsigned int _textureSize);
 
