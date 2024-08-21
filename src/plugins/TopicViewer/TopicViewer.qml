@@ -59,33 +59,36 @@ TreeView {
     //     model: tree.model
     // }
     // selectionMode: SelectionMode.SingleSelection
+    // selectionModel: ItemSelectionModel {}
 
     // =========== Delegates ============
-    delegate: Rectangle
-    {
-        id: row
-        color: (styleData.selected)? highlightColor :
-                                     (styleData.row % 2 == 0) ? evenColor : oddColor
-        height: itemHeight;
-    }
+    // delegate: Rectangle
+    // {
+    //     id: row
+    //     color: (styleData.selected)? highlightColor :
+    //                                  (styleData.row % 2 == 0) ? evenColor : oddColor
+    //     height: itemHeight;
+    // }
 
-    // itemDelegate: Item {
+    delegate: TreeViewDelegate {}
+
+    // delegate: Item {
     //     id: item
-    //
+// 
     //     // for fixing the item position
     //     // item pos changes randomly when drag happens (with the copy drag)
     //     anchors.top: parent.top
     //     anchors.right: parent.right
-    //
+// 
     //     Drag.mimeData: { "text/plain" : (model === null) ? "" : model.topic + "," + model.path }
-    //
+    // 
     //     Drag.dragType: Drag.Automatic
     //     Drag.supportedActions : Qt.CopyAction
     //     Drag.active: dragMouse.drag.active
     //     // a point to drag from
     //     Drag.hotSpot.x: 0
     //     Drag.hotSpot.y: itemHeight
-    //
+    // 
     //     // used by DropArea that accepts the dragged items
     //     function itemData ()
     //     {
@@ -96,68 +99,68 @@ TreeView {
     //             "topic": model.topic
     //         }
     //     }
-    //
+// 
     //     MouseArea {
     //         id: dragMouse
     //         anchors.fill: parent
-    //
+    // 
     //         // only plottable items are dragable
     //         drag.target: (model === null) ? null :
     //                      (model.plottable) ? parent : null
-    //
+    // 
     //         // get a copy image of the dragged item
     //         onPressed: parent.grabToImage(function(result) {
     //             parent.Drag.imageSource = result.url
     //         })
-    //
+    // 
     //         onReleased:
     //         {
     //             // emit drop event to notify the DropArea (must manually)
     //             parent.Drag.drop();
     //         }
-    //
+    // 
     //         hoverEnabled: true
     //         propagateComposedEvents: true
     //         // make the cursor with a drag shape at the plottable items
     //         cursorShape: (model === null) ?  Qt.ArrowCursor : (model.plottable) ?
     //                                             Qt.DragCopyCursor : Qt.ArrowCursor
-    //
+    // 
     //         onClicked: {
     //             // change the selection of the tree by clearing the prev, select a new one
     //             tree.selection.select(styleData.index,ItemSelectionModel.ClearAndSelect)
-    //
+    // 
     //             // set the selection index to the index of the clicked item (must set manually)
     //             tree.selection.setCurrentIndex(styleData.index,ItemSelectionModel.ClearAndSelect)
-    //
+    // 
     //             // the currentIndex of the tree.selection is not the same
     //             // of the tree.currentIndex, so set the tree.currentIndex.
     //             // this is the way to access it as it is read-only
     //             tree.__currentRow = styleData.row
-    //
+    // 
     //             // set the focus to the selected item to receive the keyboard events
     //             // this is useful to enable navigating with keyboard from the right position
     //             item.forceActiveFocus();
-    //
+    // 
     //             tree.expandCollapseMsg(tree.currentIndex);
     //         }
     //     }
-    //
+    // 
     //     Image {
     //         id: icon
-    //         source: "plottable_icon.svg"
+    //         source: "images/plottable_icon.svg"
     //         height: itemHeight * 0.6
     //         width: itemHeight * 0.6
     //         y : itemHeight * 0.2
     //         visible: (model === null) ? false : model.plottable
     //     }
-    //
+    // 
     //     Text {
     //         id : field
     //         text: (model === null) ? "" : model.name
     //         color: (Material.theme == Material.Light || styleData.selected) ?
     //                 Material.color(Material.Grey, Material.Shade800):
     //                 Material.color(Material.Grey, Material.Shade400);
-    //
+    // 
     //         font.pointSize: 12
     //         anchors.leftMargin: 5
     //         anchors.left: icon.right
@@ -165,7 +168,7 @@ TreeView {
     //         elide: Text.ElideMiddle
     //         y: icon.y
     //     }
-    //
+    // 
     //     ToolTip {
     //         id: tool_tip
     //         delay: 200
@@ -223,29 +226,29 @@ TreeView {
             tree.expand(index);
     }
 
-    Transition {
-        id: expandTransition
-        NumberAnimation {
-            property: "y";
-            from: (tree.__listView.currentItem) ? tree.__listView.currentItem.y : 0;
-            duration: 200;
-            easing.type: Easing.OutQuad
-        }
-    }
+    // Transition {
+    //     id: expandTransition
+    //     NumberAnimation {
+    //         property: "y";
+    //         from: (tree.__listView.currentItem) ? tree.__listView.currentItem.y : 0;
+    //         duration: 200;
+    //         easing.type: Easing.OutQuad
+    //     }
+    // }
+// 
+    // Transition {
+    //     id: displacedTransition
+    //     NumberAnimation {
+    //         property: "y";
+    //         duration: 200;
+    //         easing.type: Easing.OutQuad;
+    //     }
+    // }
 
-    Transition {
-        id: displacedTransition
-        NumberAnimation {
-            property: "y";
-            duration: 200;
-            easing.type: Easing.OutQuad;
-        }
-    }
-
-    Component.onCompleted: {
-        tree.__listView.add = expandTransition;
-        tree.__listView.displaced = displacedTransition;
-        tree.__listView.removeDisplaced = displacedTransition;
-    }
+    // Component.onCompleted: {
+    //     tree.__listView.add = expandTransition;
+    //     tree.__listView.displaced = displacedTransition;
+    //     tree.__listView.removeDisplaced = displacedTransition;
+    // }
 
 }
