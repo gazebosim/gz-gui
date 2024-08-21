@@ -28,6 +28,7 @@
 #include <gz/math/Vector2.hh>
 #include <gz/utils/ImplPtr.hh>
 #include <gz/rendering/GraphicsAPI.hh>
+#include <gz/rendering/Light.hh>
 
 #include "gz/gui/Plugin.hh"
 
@@ -238,6 +239,9 @@ namespace gz::gui::plugins
     /// \brief True if sky is enabled;
     public: bool skyEnable = false;
 
+    /// \brief Shadow texture size for directional light
+    public: unsigned int directionalLightTextureSize = 2048u;
+
     /// \brief Horizontal FOV of the camera;
     public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
 
@@ -367,6 +371,12 @@ namespace gz::gui::plugins
     /// \brief Set if sky is enabled
     /// \param[in] _sky True to enable the sky, false otherwise.
     public: void SetSkyEnabled(const bool &_sky);
+
+    /// \brief Set the shadow texture size for the given light type.
+    /// \param _lightType Light type that creates the shadow
+    /// \param _textureSize Shadow texture size
+    public: bool SetShadowTextureSize(rendering::LightType _lightType,
+        unsigned int _textureSize);
 
     /// \brief Set the Horizontal FOV of the camera
     /// \param[in] _fov FOV of the camera in degree
