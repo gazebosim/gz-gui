@@ -44,11 +44,9 @@
 1. Use gz::utils::ImplPtr as much as possible
     * [Pull request #583](https://github.com/gazebosim/gz-gui/pull/583)
 
-1. Bumps in ionic : ci_matching_branch/bump_ionic_gz-gui9
-    * [Pull request #588](https://github.com/gazebosim/gz-gui/pull/588)
-
 1. Bumps in Ionic: gz-gui9
     * [Pull request #587](https://github.com/gazebosim/gz-gui/pull/587)
+    * [Pull request #588](https://github.com/gazebosim/gz-gui/pull/588)
 
 ## Gazebo GUI 8
 
