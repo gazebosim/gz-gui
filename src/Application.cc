@@ -506,6 +506,7 @@ std::string Application::DefaultConfigPath()
   return this->dataPtr->defaultConfigPath;
 }
 
+/////////////////////////////////////////////////
 std::string Application::ResolveConfigFile(const std::string &_path)
 {
   std::string configFull = _path;
@@ -532,6 +533,11 @@ std::string Application::ResolveConfigFile(const std::string &_path)
         }
       }
     }
+  }
+
+  if (common::isRelativePath(configFull))
+  {
+    configFull = common::absPath(configFull);
   }
 
   return configFull;
