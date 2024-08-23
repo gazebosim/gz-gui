@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Open Source Robotics Foundation
+ * Copyright (C) 2024 Rudis Laboratories LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +27,12 @@ ColumnLayout {
   anchors.margins: 10
 
   property string message: 'Services provided:<br><ul>' +
+      '<li>/gui/follow/pose</li>' +
       '<li>/gui/move_to</li>' +
       '<li>/gui/move_to/pose</li>' +
-      '<li>/gui/follow</li>' +
-      '<li>/gui/follow/offset</li></ul><br>Topics provided:<br><ul>' +
-      '<li>/gui/camera/pose</li></ul>'
+      '<li>/gui/track</li></ul><br>Topics provided:<br><ul>' +
+      '<li>/gui/camera/pose</li>'+
+      '<li>/gui/currently_tracked</li></ul>'
 
   Label {
     Layout.fillWidth: true
