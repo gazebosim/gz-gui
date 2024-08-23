@@ -1,6 +1,54 @@
 ## Gazebo GUI 9
 
-### Gazebo GUI 9.0.0 (2023-XX-XX)
+### Gazebo GUI 9.0.0 (2024-09-24)
+
+1. Expose shadow texture size for directional lighting in SDF
+    * [Pull request #633](https://github.com/gazebosim/gz-gui/pull/633)
+
+1. Enable ubuntu noble github actions, require 3.22.1
+    * [Pull request #634](https://github.com/gazebosim/gz-gui/pull/634)
+
+1. Fix color distortion in low light conditions
+    * [Pull request #630](https://github.com/gazebosim/gz-gui/pull/630)
+
+1. Added dark mode for drawer and menu buttons
+    * [Pull request #626](https://github.com/gazebosim/gz-gui/pull/626)
+
+1. Adding cone primitives.
+    * [Pull request #621](https://github.com/gazebosim/gz-gui/pull/621)
+
+1. Fix compiler warnings
+    * [Pull request #623](https://github.com/gazebosim/gz-gui/pull/623)
+
+1. Define GZ_GUI_VERSION_NAMESPACE in config.hh
+    * [Pull request #611](https://github.com/gazebosim/gz-gui/pull/611)
+
+1. Use >= for Qt PKGCONFIG_VER_COMPARISON
+    * [Pull request #610](https://github.com/gazebosim/gz-gui/pull/610)
+
+1. Remove HIDE_SYMBOLS_BY_DEFAULT: replace by a default configuration in gz-cmake.
+    * [Pull request #605](https://github.com/gazebosim/gz-gui/pull/605)
+
+1. Enable HIDE_SYMBOLS_BY_DEFAULT + patches (take II)
+    * [Pull request #601](https://github.com/gazebosim/gz-gui/pull/601)
+
+1. Qt6 migrations that are compatible with Qt5
+    * [Pull request #598](https://github.com/gazebosim/gz-gui/pull/598)
+
+1. Added motion duration to the 'move to pose' service of the camera tracking plugin.
+    * [Pull request #594](https://github.com/gazebosim/gz-gui/pull/594)
+
+1. First pass at level1 clazy checks for qt
+    * [Pull request #584](https://github.com/gazebosim/gz-gui/pull/584)
+
+1. Use gz::utils::ImplPtr as much as possible
+    * [Pull request #583](https://github.com/gazebosim/gz-gui/pull/583)
+
+1. Bumps in ionic : ci_matching_branch/bump_ionic_gz-gui9
+    * [Pull request #588](https://github.com/gazebosim/gz-gui/pull/588)
+
+1. Bumps in Ionic: gz-gui9
+    * [Pull request #587](https://github.com/gazebosim/gz-gui/pull/587)
 
 ## Gazebo GUI 8
 
