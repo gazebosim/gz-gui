@@ -501,13 +501,13 @@ void Application::SetDefaultConfigPath(const std::string &_path)
 }
 
 /////////////////////////////////////////////////
-std::string Application::DefaultConfigPath()
+std::string Application::DefaultConfigPath() const
 {
   return this->dataPtr->defaultConfigPath;
 }
 
 /////////////////////////////////////////////////
-std::string Application::ResolveConfigFile(const std::string &_path)
+std::string Application::ResolveConfigFile(const std::string &_path) const
 {
   std::string configFull = _path;
 

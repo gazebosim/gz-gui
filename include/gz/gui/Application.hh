@@ -124,14 +124,14 @@ namespace gz::gui
       /// \return The default configuration path.
       /// \sa LoadDefaultConfig
       /// \sa SetDefaultConfigPath
-      public: std::string DefaultConfigPath();
+      public: std::string DefaultConfigPath() const;
 
       /// \brief Given an input config path, resolve its absolute path,
       /// potentially searching for it in locations specified by
       /// `GZ_GUI_RESOURCE_PATH`.
       /// \param[in] _path Path to a config file. If the path is absolute
       /// \return The resolved path
-      public: std::string ResolveConfigFile(const std::string &_path);
+      public: std::string ResolveConfigFile(const std::string &_path) const;
 
       /// \brief Set the environment variable which defines the paths to
       /// look for plugins.
