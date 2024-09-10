@@ -75,7 +75,7 @@ Add OSRF packages:
 
 Clone source code:
   ```
-  # This checks out the default branch. You can append `-b gz-gui#` (replace # with a number) to checkout a specific version
+  # This checks out the default branch. You can append `-b gz-gui<#>` (replace # with a number) to checkout a specific version
   git clone http://github.com/gazebosim/gz-gui
   ```
 
