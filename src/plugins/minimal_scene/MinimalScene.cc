@@ -762,11 +762,12 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
     scene->SetSkyEnabled(true);
   }
 
-  if (!scene->SetShadowTextureSize(rendering::LightType::DIRECTIONAL,
-      this->directionalLightTextureSize))
+  if (this->directionalLightTextureSize.has_value() &&
+    !scene->SetShadowTextureSize(rendering::LightType::DIRECTIONAL,
+      *this->directionalLightTextureSize))
   {
     gzerr << "Unable to set directional light shadow <texture_size> to '"
-          << this->directionalLightTextureSize
+          << *this->directionalLightTextureSize
           << "'. Using default texture size of "
           << scene->ShadowTextureSize(rendering::LightType::DIRECTIONAL)
           << std::endl;
