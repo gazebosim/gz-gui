@@ -1,8 +1,16 @@
 ## Gazebo GUI 9
 
-### Gazebo GUI 9.0.0 (2024-09-XX)
+### Gazebo GUI 9.0.0 (2024-09-25)
 
 1. **Baseline:** this includes all changes from 8.3.0 and earlier.
+
+1. Only set shadow texture size if configured by the user in the SDFormat file
+    * [Pull request #642](https://github.com/gazebosim/gz-gui/pull/642)
+
+1. Miscellaneous documentation fixes
+    * [Pull request #640](https://github.com/gazebosim/gz-gui/pull/640)
+    * [Pull request #639](https://github.com/gazebosim/gz-gui/pull/639)
+    * [Pull request #638](https://github.com/gazebosim/gz-gui/pull/638)
 
 1. Update badges for ionic gz-gui9
     * [Pull request #636](https://github.com/gazebosim/gz-gui/pull/636)
