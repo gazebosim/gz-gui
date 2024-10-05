@@ -98,6 +98,12 @@ namespace gz::gui
       /// \sa InitializeDialogs
       public: bool LoadConfig(const std::string &_path);
 
+      /// \brief Load window configuration from XML element.
+      /// This is the `<window>` element inside a gui config file.
+      /// \param[in] _window XML element that contains the window configuration
+      /// \return True if successful
+      public: bool LoadWindowConfig(const tinyxml2::XMLElement &_window);
+
       /// \brief Load the configuration from the default config file.
       /// \return True if successful
       /// \sa SetDefaultConfigPath
@@ -118,7 +124,14 @@ namespace gz::gui
       /// \return The default configuration path.
       /// \sa LoadDefaultConfig
       /// \sa SetDefaultConfigPath
-      public: std::string DefaultConfigPath();
+      public: std::string DefaultConfigPath() const;
+
+      /// \brief Given an input config path, resolve its absolute path,
+      /// potentially searching for it in locations specified by
+      /// `GZ_GUI_RESOURCE_PATH`.
+      /// \param[in] _path Path to a config file. If the path is absolute
+      /// \return The resolved path
+      public: std::string ResolveConfigFile(const std::string &_path) const;
 
       /// \brief Set the environment variable which defines the paths to
       /// look for plugins.

@@ -20,6 +20,7 @@
 
 #include <string>
 #include <memory>
+#include <optional>
 
 #include <gz/common/KeyEvent.hh>
 #include <gz/common/MouseEvent.hh>
@@ -240,7 +241,7 @@ namespace gz::gui::plugins
     public: bool skyEnable = false;
 
     /// \brief Shadow texture size for directional light
-    public: unsigned int directionalLightTextureSize = 2048u;
+    public: std::optional<unsigned int> directionalLightTextureSize;
 
     /// \brief Horizontal FOV of the camera;
     public: math::Angle cameraHFOV = math::Angle(M_PI * 0.5);
