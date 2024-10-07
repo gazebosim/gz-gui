@@ -9,7 +9,7 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/gazebosim/gz-gui/branch/main/graph/badge.svg)](https://codecov.io/gh/gazebosim/gz-gui/branch/main)
+Test coverage | [![codecov](https://codecov.io/gh/gazebosim/gz-gui/tree/main/graph/badge.svg)](https://codecov.io/gh/gazebosim/gz-gui/tree/main)
 Ubuntu Noble| [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-ci-main-noble-amd64)](https://build.osrfoundation.org/job/gz_gui-ci-main-noble-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/gz_gui-ci-main-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-main-win)](https://build.osrfoundation.org/job/gz_gui-main-win)
@@ -33,9 +33,9 @@ which can be used to add custom widgets.
 
 [Folder Structure](#folder-structure)
 
-[Code of Conduct](#code-of-conduct)
+[Contributing](#contributing)
 
-[Contributing](#code-of-contributing)
+[Code of Conduct](#code-of-conduct)
 
 [Versioning](#versioning)
 
@@ -66,12 +66,12 @@ line tools from `gz-tools` may not work correctly.
 A workaround for a single package is to define the environment variable
 `GZ_CONFIG_PATH` to point to the location of the Gazebo library installation,
 where the YAML file for the package is found, such as
-```{.sh}
+```bash
 export GZ_CONFIG_PATH=/usr/local/share/gz
 ```
 
 Multiple paths can be specified using the `:` delimiter. For example,
-```{.sh}
+```bash
 export GZ_CONFIG_PATH=/user/local/share/gz/:/path/to/some/other/location
 ```
 
@@ -106,7 +106,7 @@ export GZ_CONFIG_PATH=/user/local/share/gz/:/path/to/some/other/location
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://gazebosim.org/docs/all/contributing).
+[the contribution guide](https://gazebosim.org/docs/all/contributing).
 
 # Code of Conduct
 

@@ -60,7 +60,7 @@ Binary install is pending `gz-rendering` and `gz-gui` being added to conda-forge
 
 ## Source Install
 
-### Ubuntu Focal 20.04 or above
+### Ubuntu Noble 24.04 or above
 
 #### Install Prerequisites
 
@@ -75,7 +75,7 @@ Add OSRF packages:
 
 Clone source code:
   ```
-  # This checks out the default branch. You can append `-b ign-gui#` (replace # with a number) to checkout a specific version
+  # This checks out the default branch. You can append `-b gz-gui<#>` (replace # with a number) to checkout a specific version
   git clone http://github.com/gazebosim/gz-gui
   ```
 
@@ -161,7 +161,7 @@ Before [gz-rendering](https://github.com/gazebosim/gz-rendering) becomes availab
 
 1. Navigate to where you would like to build the library, and clone the repository.
   ```
-  # Optionally, append `-b ign-gui#` (replace # with a number) to check out a specific version
+  # Optionally, append `-b gz-gui#` (replace # with a number) to check out a specific version
   git clone https://github.com/gazebosim/gz-gui.git
   ```
 
