@@ -65,7 +65,7 @@ ApplicationWindow
   property string toolBarColor:
     MainWindow.toolBarColorLight === "" ||
     MainWindow.toolBarColorDark === "" ?
-    Material.primary :
+    "#f3f3f3" :
     (Material.theme === Material.Light) ?
     MainWindow.toolBarColorLight : MainWindow.toolBarColorDark
 
@@ -75,7 +75,7 @@ ApplicationWindow
   property string toolBarTextColor:
     MainWindow.toolBarTextColorLight === "" ||
     MainWindow.toolBarTextColorDark === "" ?
-    Material.background :
+    "#111111" :
     (Material.theme === Material.Light) ?
     MainWindow.toolBarTextColorLight : MainWindow.toolBarTextColorDark
 
