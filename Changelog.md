@@ -1,3 +1,7 @@
+## Gazebo GUI 10
+
+### Gazebo GUI 10.0.0 (202X-XX-XX)
+
 ## Gazebo GUI 9
 
 ### Gazebo GUI 9.0.0 (2024-09-25)

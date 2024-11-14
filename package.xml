@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
-  <name>gz-gui9</name>
-  <version>9.0.0</version>
+  <name>gz-gui10</name>
+  <version>10.0.0</version>
   <description>Gazebo GUI : Graphical interfaces for robotics applications</description>
   <maintainer email="jennuine@google.com">Jenn Nguyen</maintainer>
   <license>Apache License 2.0</license>
