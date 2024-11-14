@@ -17,8 +17,8 @@ find_package (Qt5 5.15
 )
 
 # Find the Gazebo GUI library
-find_package(gz-gui9 REQUIRED)
-set(GZ_GUI_VER ${gz-gui9_VERSION_MAJOR})
+find_package(gz-gui10 REQUIRED)
+set(GZ_GUI_VER ${gz-gui10_VERSION_MAJOR})
 
 # Generate example
 add_executable(dialogs
