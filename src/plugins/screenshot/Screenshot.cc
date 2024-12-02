@@ -140,7 +140,7 @@ void Screenshot::SaveScreenshot()
       rendering::PixelUtil::Name(this->dataPtr->userCamera->ImageFormat());
   auto format = common::Image::ConvertPixelFormat(formatStr);
 
-  std::string time = common::systemTimeISO() + ".png";
+  std::string time = common::systemTimeIso() + ".png";
   std::string savePath = common::joinPaths(this->dataPtr->directory, time);
 
   common::Image image;
