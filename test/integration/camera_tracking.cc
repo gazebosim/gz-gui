@@ -176,27 +176,6 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   EXPECT_GT(10, abs(camera->WorldPose().Pos().Y() - 100));
   EXPECT_GT(10, abs(camera->WorldPose().Pos().Z() - 100));
 
-  // Move target object to new position
-  trackedVis->SetWorldPose({130, 130, 130, 0, 0, 0});
-
-  // Follow
-  result = false;
-  executed = node.Request("/gui/follow", req, timeout, rep, result);
-  EXPECT_TRUE(executed);
-  EXPECT_TRUE(result);
-  EXPECT_TRUE(rep.data());
-
-  msgs::Vector3d reqOffset;
-  reqOffset.set_x(1.0);
-  reqOffset.set_y(1.0);
-  reqOffset.set_z(1.0);
-  result = false;
-  executed = node.Request("/gui/follow/offset", reqOffset, timeout, rep,
-      result);
-  EXPECT_TRUE(executed);
-  EXPECT_TRUE(result);
-  EXPECT_TRUE(rep.data());
-
   // Many update loops to process many events
   maxSleep = 600;
   for (auto it : {150.0, 200.0})

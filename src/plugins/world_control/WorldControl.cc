@@ -245,8 +245,6 @@ void WorldControl::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  // ignore the message if it's associated with a step
-  const auto &header = this->dataPtr->msg.header();
   if (this->dataPtr->msg.stepping())
   {
     return;
