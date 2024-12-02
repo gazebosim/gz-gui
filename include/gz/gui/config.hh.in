@@ -31,6 +31,4 @@
 
 #define GZ_GUI_VERSION_HEADER "Gazebo GUI, version ${PROJECT_VERSION_FULL}\nCopyright (C) 2017 Open Source Robotics Foundation.\nReleased under the Apache 2.0 License.\n\n"
 
-#define GZ_GUI_PLUGIN_INSTALL_DIR _Pragma ("GCC warning \"'GZ_GUI_PLUGIN_INSTALL_DIR' macro is deprecated, use gz::gui::getPluginInstallDir() function instead. \"") "${GZ_GUI_PLUGIN_INSTALL_DIR}"
-
 #endif  // GZ_GUI_CONFIG_HH_
