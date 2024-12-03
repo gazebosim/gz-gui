@@ -245,11 +245,7 @@ void WorldControl::ProcessMsg()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
 
-  // ignore the message if it's associated with a step
-  const auto &header = this->dataPtr->msg.header();
-  if (this->dataPtr->msg.stepping() ||
-      // (deprecated) Remove this check in Gazebo H
-      ((header.data_size() > 0) && (header.data(0).key() == "step")))
+  if (this->dataPtr->msg.stepping())
   {
     return;
   }

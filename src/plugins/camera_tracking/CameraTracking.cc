@@ -69,25 +69,11 @@ class CameraTracking::Implementation
   /// \param[in] _msg Message is of type CameraTrack.
   public: void OnTrackSub(const msgs::CameraTrack &_msg);
 
-  /// \brief Callback for a follow request
-  /// \param[in] _msg Request message to set the target to follow.
-  /// \param[in] _res Response data
-  /// \return True if the request is received
-  public: bool OnFollow(const msgs::StringMsg &_msg,
-      msgs::Boolean &_res);
-
   /// \brief Callback for a move to pose request.
   /// \param[in] _msg GUICamera request message.
   /// \param[in] _res Response data
   /// \return True if the request is received
   public: bool OnMoveToPose(const msgs::GUICamera &_msg,
-               msgs::Boolean &_res);
-
-  /// \brief Callback for a follow offset request
-  /// \param[in] _msg Request message to set the camera's follow offset.
-  /// \param[in] _res Response data
-  /// \return True if the request is received
-  public: bool OnFollowOffset(const msgs::Vector3d &_msg,
                msgs::Boolean &_res);
 
   /// \brief Callback when a move to animation is complete
@@ -161,12 +147,6 @@ class CameraTracking::Implementation
   /// \brief Move to service
   public: std::string moveToService;
 
-  /// \brief Follow service (deprecated)
-  public: std::string followService;
-
-  /// \brief Follow offset service (deprecated)
-  public: std::string followOffsetService;
-
   /// \brief The pose set from the move to pose service.
   public: std::optional<math::Pose3d> moveToPoseValue;
 
@@ -224,13 +204,6 @@ void CameraTracking::Implementation::Initialize()
   gzmsg << "Move to service on ["
          << this->moveToService << "]" << std::endl;
 
-  // follow
-  this->followService = "/gui/follow";
-  this->node.Advertise(this->followService,
-      &Implementation::OnFollow, this);
-  gzmsg << "Follow service on ["
-         << this->followService << "] (deprecated)" << std::endl;
-
   // track
   this->trackTopic = "/gui/track";
   this->node.Subscribe(this->trackTopic,
@@ -259,13 +232,6 @@ void CameraTracking::Implementation::Initialize()
     this->node.Advertise<msgs::Pose>(this->cameraPoseTopic);
   gzmsg << "Camera pose topic advertised on ["
          << this->cameraPoseTopic << "]" << std::endl;
-
-  // follow offset
-  this->followOffsetService = "/gui/follow/offset";
-  this->node.Advertise(this->followOffsetService,
-      &Implementation::OnFollowOffset, this);
-  gzmsg << "Follow offset service on ["
-          << this->followOffsetService << "] (deprecated)" << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -276,21 +242,6 @@ bool CameraTracking::Implementation::OnMoveTo(const msgs::StringMsg &_msg,
   this->moveToTarget = _msg.data();
 
   _res.set_data(true);
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool CameraTracking::Implementation::OnFollow(const msgs::StringMsg &_msg,
-  msgs::Boolean &_res)
-{
-  std::lock_guard<std::mutex> lock(this->mutex);
-  this->selectedFollowTarget = _msg.data();
-
-  _res.set_data(true);
-
-  this->trackMode = gz::msgs::CameraTrack::FOLLOW;
-
-  this->newTrack = true;
   return true;
 }
 
@@ -349,21 +300,6 @@ void CameraTracking::Implementation::OnMoveToPoseComplete()
 {
   this->moveToPoseValue.reset();
   this->moveToPoseDuration.reset();
-}
-
-/////////////////////////////////////////////////
-bool CameraTracking::Implementation::OnFollowOffset(const msgs::Vector3d &_msg,
-  msgs::Boolean &_res)
-{
-  std::lock_guard<std::mutex> lock(this->mutex);
-  if (!this->selectedFollowTarget.empty())
-  {
-    this->newTrack = true;
-    this->followOffset = msgs::Convert(_msg);
-  }
-
-  _res.set_data(true);
-  return true;
 }
 
 /////////////////////////////////////////////////
