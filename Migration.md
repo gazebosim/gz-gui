@@ -5,6 +5,15 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Gazebo GUI 9.X to 10.X
+
+* The environment variable `GZ_GUI_PLUGIN_INSTALL_DIR` is removed. Use
+`gz::gui::getPluginInstallDir()` instead.
+
+* The camera tracking `/gui/follow` and `/gui/follow/offset` services are
+removed. You can now publish a regular message on the `/gui/track` topic
+passing a `gz::msgs::CameraTrack` message.
+
 ## Gazebo GUI 6.X to 7.X
 
 * The environment variable `IGN_GUI_PLUGIN_PATH` is deprecated. Use `GZ_GUI_PLUGIN_PATH` instead.
