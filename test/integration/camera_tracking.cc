@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 
 #include <gz/msgs/boolean.pb.h>
+#include <gz/msgs/cameratrack.pb.h>
 #include <gz/msgs/pose.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
 #include <gz/msgs/vector3d.pb.h>
@@ -180,22 +181,16 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
   trackedVis->SetWorldPose({130, 130, 130, 0, 0, 0});
 
   // Follow
-  result = false;
-  executed = node.Request("/gui/follow", req, timeout, rep, result);
-  EXPECT_TRUE(executed);
-  EXPECT_TRUE(result);
-  EXPECT_TRUE(rep.data());
+  auto trackPub = node.Advertise<gz::msgs::CameraTrack>("/gui/track");
+  msgs::CameraTrack trackMsg;
+  trackMsg.set_track_mode(msgs::CameraTrack::FOLLOW);
+  trackMsg.mutable_follow_target()->set_name("track_me");
+  trackPub.Publish(trackMsg);
 
-  msgs::Vector3d reqOffset;
-  reqOffset.set_x(1.0);
-  reqOffset.set_y(1.0);
-  reqOffset.set_z(1.0);
-  result = false;
-  executed = node.Request("/gui/follow/offset", reqOffset, timeout, rep,
-      result);
-  EXPECT_TRUE(executed);
-  EXPECT_TRUE(result);
-  EXPECT_TRUE(rep.data());
+  trackMsg.mutable_follow_offset()->set_x(1);
+  trackMsg.mutable_follow_offset()->set_y(1);
+  trackMsg.mutable_follow_offset()->set_z(1);
+  trackPub.Publish(trackMsg);
 
   // Many update loops to process many events
   maxSleep = 600;
