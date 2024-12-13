@@ -1,5 +1,20 @@
 ## Gazebo GUI 3
 
+### Gazebo GUI 3.12.1 (2024-12-12)
+
+1. Find any major version of Protobuf
+    * [Pull request #544](https://github.com/gazebosim/gz-gui/pull/544)
+
+1. Infrastructure
+    * [Pull request #526](https://github.com/gazebosim/gz-gui/pull/526)
+    * [Pull request #597](https://github.com/gazebosim/gz-gui/pull/597)
+
+1. Rename COPYING to LICENSE
+    * [Pull request #525](https://github.com/gazebosim/gz-gui/pull/525)
+
+1. Update maintainer email
+    * [Pull request #521](https://github.com/gazebosim/gz-gui/pull/521)
+
 ### Gazebo GUI 3.12.0 (2022-11-30)
 
 1. Add degree as an optional unit for rotation in GzPose.
