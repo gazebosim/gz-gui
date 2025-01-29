@@ -115,6 +115,9 @@ namespace gz::gui::plugins
     /// \param[in] _topicList Message type
     public: Q_INVOKABLE void SetTopicList(const QStringList &_topicList);
 
+    /// \brief Get the provider name unique to this plugin instance
+    public: Q_INVOKABLE QString ImageProviderName();
+
     /// \brief Notify that topic list has changed
     signals: void TopicListChanged();
 

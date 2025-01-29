@@ -21,8 +21,11 @@
 
 #include <iostream>
 #include <limits>
+#include <qchar.h>
 #include <string>
 #include <vector>
+
+#include <QUuid>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Image.hh>
@@ -51,19 +54,32 @@ class ImageDisplay::Implementation
 
   /// \brief To provide images for QML.
   public: ImageProvider *provider{nullptr};
+
+  /// \brief Holds the provider name unique to this plugin instance
+  public: QString providerName;
 };
 
 /////////////////////////////////////////////////
 ImageDisplay::ImageDisplay()
   : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
+  this->dataPtr->providerName =
+      QUuid::createUuid().toString(QUuid::WithoutBraces) + "_imagedisplay";
+
+  this->dataPtr->provider = new ImageProvider();
+
+  App()->Engine()->addImageProvider(this->dataPtr->providerName,
+                                    this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////
 ImageDisplay::~ImageDisplay()
 {
-  App()->Engine()->removeImageProvider(
-      this->CardItem()->objectName() + "imagedisplay");
+  App()->Engine()->removeImageProvider(this->ImageProviderName());
+}
+
+QString ImageDisplay::ImageProviderName() {
+  return this->dataPtr->providerName;
 }
 
 /////////////////////////////////////////////////
@@ -95,13 +111,12 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->PluginItem()->setProperty("showPicker", topicPicker);
 
   if (!topic.empty())
-    this->OnTopic(QString::fromStdString(topic));
+  {
+    auto qTopic =  QString::fromStdString(topic);
+    this->SetTopicList({qTopic});
+  }
   else
     this->OnRefresh();
-
-  this->dataPtr->provider = new ImageProvider();
-  App()->Engine()->addImageProvider(
-      this->CardItem()->objectName() + "imagedisplay", this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////
@@ -225,6 +240,7 @@ void ImageDisplay::OnTopic(const QString _topic)
 /////////////////////////////////////////////////
 void ImageDisplay::OnRefresh()
 {
+  gzwarn << "OnRefresh\n";
   // Clear
   this->dataPtr->topicList.clear();
 
@@ -249,6 +265,7 @@ void ImageDisplay::OnRefresh()
   // Select first one
   if (this->dataPtr->topicList.count() > 0)
     this->OnTopic(this->dataPtr->topicList.at(0));
+  gzwarn << "TopicListChanged\n";
   emit this->TopicListChanged();
 }
 

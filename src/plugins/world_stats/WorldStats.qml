@@ -93,7 +93,7 @@ Rectangle {
         }
         PropertyChanges {
           target: hideButton
-          x: worldStats.width - hideToolButton.width - compactLabel.width - 10
+          x: worldStats.width - hideToolButton.width - compactLabel.implicitWidth - 10
         }
         PropertyChanges {
           target: compactLabel
