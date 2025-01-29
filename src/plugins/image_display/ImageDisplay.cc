@@ -110,8 +110,7 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   if (!topic.empty())
   {
-    auto qTopic =  QString::fromStdString(topic);
-    this->SetTopicList({qTopic});
+    this->SetTopicList({QString::fromStdString(topic)});
   }
   else
     this->OnRefresh();
