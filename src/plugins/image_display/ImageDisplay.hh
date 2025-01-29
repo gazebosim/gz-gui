@@ -54,8 +54,7 @@ namespace gz::gui::plugins
       if (!this->img.isNull())
       {
         // Must return a copy
-        QImage copy(this->img);
-        return copy;
+        return this->img;
       }
 
       // Placeholder in case we have no image yet
