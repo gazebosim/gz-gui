@@ -21,11 +21,8 @@
 
 #include <iostream>
 #include <limits>
-#include <qchar.h>
 #include <string>
 #include <vector>
-
-#include <QUuid>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Image.hh>
@@ -63,19 +60,20 @@ class ImageDisplay::Implementation
 ImageDisplay::ImageDisplay()
   : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
-  this->dataPtr->providerName =
-      QUuid::createUuid().toString(QUuid::WithoutBraces) + "_imagedisplay";
-
   this->dataPtr->provider = new ImageProvider();
-
-  App()->Engine()->addImageProvider(this->dataPtr->providerName,
-                                    this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////
 ImageDisplay::~ImageDisplay()
 {
   App()->Engine()->removeImageProvider(this->ImageProviderName());
+}
+
+void ImageDisplay::RegisterImageProvider(const QString &_uniqueName)
+{
+  this->dataPtr->providerName = _uniqueName;
+  App()->Engine()->addImageProvider(_uniqueName,
+                                    this->dataPtr->provider);
 }
 
 QString ImageDisplay::ImageProviderName() {
@@ -240,7 +238,6 @@ void ImageDisplay::OnTopic(const QString _topic)
 /////////////////////////////////////////////////
 void ImageDisplay::OnRefresh()
 {
-  gzwarn << "OnRefresh\n";
   // Clear
   this->dataPtr->topicList.clear();
 
@@ -265,7 +262,6 @@ void ImageDisplay::OnRefresh()
   // Select first one
   if (this->dataPtr->topicList.count() > 0)
     this->OnTopic(this->dataPtr->topicList.at(0));
-  gzwarn << "TopicListChanged\n";
   emit this->TopicListChanged();
 }
 

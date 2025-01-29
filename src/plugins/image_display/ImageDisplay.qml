@@ -43,7 +43,8 @@ Rectangle {
     if (undefined === parent)
       return;
 
-    uniqueName = ImageDisplay.ImageProviderName();
+    uniqueName = parent.card().objectName + "imagedisplay";
+    ImageDisplay.RegisterImageProvider(uniqueName);
     image.reload();
   }
 

@@ -18,8 +18,9 @@
 #ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 #define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
-#include <algorithm>
-#include <memory>
+#include <QImage>
+#include <QString>
+#include <QStringList>
 #include <QQuickImageProvider>
 
 #include <gz/msgs/image.pb.h>
@@ -114,6 +115,10 @@ namespace gz::gui::plugins
     /// 'gz.msgs.StringMsg'
     /// \param[in] _topicList Message type
     public: Q_INVOKABLE void SetTopicList(const QStringList &_topicList);
+
+    /// \brief Register the image provider with the given name
+    /// \param[in] _uniqueName Unique name for the provider to be registered
+    public: Q_INVOKABLE void RegisterImageProvider(const QString &_uniqueName);
 
     /// \brief Get the provider name unique to this plugin instance
     public: Q_INVOKABLE QString ImageProviderName();
