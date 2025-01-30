@@ -51,19 +51,33 @@ class ImageDisplay::Implementation
 
   /// \brief To provide images for QML.
   public: ImageProvider *provider{nullptr};
+
+  /// \brief Holds the provider name unique to this plugin instance
+  public: QString providerName;
 };
 
 /////////////////////////////////////////////////
 ImageDisplay::ImageDisplay()
   : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
+  this->dataPtr->provider = new ImageProvider();
 }
 
 /////////////////////////////////////////////////
 ImageDisplay::~ImageDisplay()
 {
-  App()->Engine()->removeImageProvider(
-      this->CardItem()->objectName() + "imagedisplay");
+  App()->Engine()->removeImageProvider(this->ImageProviderName());
+}
+
+void ImageDisplay::RegisterImageProvider(const QString &_uniqueName)
+{
+  this->dataPtr->providerName = _uniqueName;
+  App()->Engine()->addImageProvider(_uniqueName,
+                                    this->dataPtr->provider);
+}
+
+QString ImageDisplay::ImageProviderName() {
+  return this->dataPtr->providerName;
 }
 
 /////////////////////////////////////////////////
@@ -95,13 +109,11 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   this->PluginItem()->setProperty("showPicker", topicPicker);
 
   if (!topic.empty())
-    this->OnTopic(QString::fromStdString(topic));
+  {
+    this->SetTopicList({QString::fromStdString(topic)});
+  }
   else
     this->OnRefresh();
-
-  this->dataPtr->provider = new ImageProvider();
-  App()->Engine()->addImageProvider(
-      this->CardItem()->objectName() + "imagedisplay", this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////

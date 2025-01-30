@@ -44,6 +44,7 @@ Rectangle {
       return;
 
     uniqueName = parent.card().objectName + "imagedisplay";
+    ImageDisplay.RegisterImageProvider(uniqueName);
     image.reload();
   }
 
