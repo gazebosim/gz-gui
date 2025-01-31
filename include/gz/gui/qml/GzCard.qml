@@ -114,7 +114,7 @@ Pane {
   /**
    * Minimum height of the card pane
    */
-  property double cardMinimumHeight: content.minimumHeight;
+  property int cardMinimumHeight: content.minimumHeight;
 
 
   property double cardMaximumHeight: Infinity

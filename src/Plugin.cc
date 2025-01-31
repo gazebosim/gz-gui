@@ -52,7 +52,11 @@ const std::unordered_set<std::string> kAnchorLineSet{
 const std::unordered_set<std::string> kIgnoredProps{
     "objectName",
     "pluginName",
-    "anchored"};
+    "anchored",
+    "floating",
+    "cardMinimumWidth",
+    "cardMinimumHeight",
+    "cardMaximumHeight"};
 }  // namespace
 
 namespace gz::gui

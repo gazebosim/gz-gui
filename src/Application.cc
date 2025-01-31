@@ -735,7 +735,6 @@ bool Application::AddPluginsToWindow()
         Q_ARG(QVariant, QVariant::fromValue(cardItem)));
 
     // Add card to main window
-    // gzdbg << "Adding to:" << splitItem.toString().toStdString() << std::endl;
     cardItem->setParent(this->dataPtr->engine);
     plugin->setParent(this->dataPtr->mainWin);
 

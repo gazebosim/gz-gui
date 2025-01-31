@@ -742,8 +742,8 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
     WindowConfig c;
 //    c.posX = 1000;
 //    c.posY = 2000;
-    c.width = 100;
-    c.height = 200;
+    c.width = 300;
+    c.height = 400;
     c.materialTheme = "Dark";
     c.materialPrimary = "#ff0000";
     c.materialAccent = "Indigo";
@@ -765,8 +765,8 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 //    EXPECT_NE(c.posX, 1000);
 //    EXPECT_NE(c.posY, 2000);
 
-    EXPECT_EQ(c.width, 100);
-    EXPECT_EQ(c.height, 200);
+    EXPECT_EQ(c.width, 300);
+    EXPECT_EQ(c.height, 400);
     EXPECT_EQ(c.materialTheme, "Dark");
     EXPECT_EQ(c.materialPrimary, "#ff0000");
     // Always save hex
