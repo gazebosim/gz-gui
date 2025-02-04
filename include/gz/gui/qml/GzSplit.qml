@@ -122,7 +122,9 @@ Item
         anchors.fill: parent
         anchors.rightMargin: scrollView.scrollBarWidth
 
-        readonly property double handleHeight: 6 //handle.createObject().implicitHeight
+        // Temporarily create the handle object to get its height. Use `helpers` as the parent
+        // to avoid warnings.
+        readonly property double handleHeight: handle.createObject(helpers).implicitHeight
 
         // Establish a binding for contentHeight on the children's minimumHeight and maximumHeight,
         // but not their height as doing so causes a subtle binding loop.
