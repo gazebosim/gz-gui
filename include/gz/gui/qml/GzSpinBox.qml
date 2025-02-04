@@ -14,16 +14,112 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQml 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-SpinBox {
-  style: SpinBoxStyle{
-    background: Rectangle {
-      implicitWidth: 70
-      implicitHeight: 40
-      border.color: "gray"
+
+Item {
+  id: root
+  signal editingFinished
+  property real minimumValue: 0
+  property real maximumValue: 100
+  property real value: 0.0
+  property real stepSize: 1.0
+  property int decimals: 0
+
+  implicitWidth: spinBox.implicitWidth
+  implicitHeight: spinBox.implicitHeight
+
+  readonly property int kMaxInt: Math.pow(2, 31) - 1
+
+  function decimalToInt(decimal) {
+    var result = decimal * spinBox.decimalFactor
+    if (result >= kMaxInt) {
+      return kMaxInt
     }
+    else if (result <= -kMaxInt) {
+      return -kMaxInt
+    }
+    return result
+  }
+
+  function intToDecimal(intVal) {
+    return intVal / spinBox.decimalFactor
+  }
+
+  // Used to update root.value without breaking existing bindings
+  // TODO(azeey) When migrating to Qt6, we might need to set
+  // the restoreMode property
+  Binding on value {
+    id: valueUpdater
+    target: root
+    property: 'value'
+    value: intToDecimal(spinBox.value)
+    when: false
+  }
+
+  SpinBox {
+      id: spinBox
+
+      anchors.fill : parent
+      bottomPadding: 0
+      topPadding: 0
+      implicitHeight: 40
+      clip: true
+
+      value: root.decimalToInt(root.value)
+
+      onValueModified: {
+        // Set the "value" property without breaking/changing its bindings.
+        // This is done by temporarily enabling the binding (valueUpdater),
+        // emitting the editingFinished signal so users GzSpinBox can be
+        // notified and take the new value of the spinbox, and finally
+        // disabling valueUpdater to restore the original bindings.
+        valueUpdater.when = true
+        root.editingFinished()
+        valueUpdater.when = false
+      }
+
+      from: decimalToInt(minimumValue)
+      to: decimalToInt(root.maximumValue)
+
+      stepSize: decimalToInt(root.stepSize)
+      editable: true
+      anchors.centerIn: parent
+
+      readonly property real decimalFactor: Math.pow(10, root.decimals)
+
+      contentItem: TextInput {
+        font.pointSize: 10
+        text: spinBox.textFromValue(spinBox.value, spinBox.locale)
+        horizontalAlignment: Qt.AlignHCenter
+        verticalAlignment: Qt.AlignVCenter
+        readOnly: !spinBox.editable
+        validator: spinBox.validator
+        inputMethodHints: Qt.ImhFormattedNumbersOnly
+        selectByMouse: true
+      }
+
+      validator: DoubleValidator {
+          bottom: Math.min(spinBox.from, spinBox.to)
+          top:  Math.max(spinBox.from, spinBox.to)
+          decimals: root.decimals
+          notation: DoubleValidator.StandardNotation
+      }
+
+      textFromValue: function(value, locale) {
+          return intToDecimal(value).toLocaleString(locale, 'f', parent.decimals)
+      }
+
+      valueFromText: function(text, locale) {
+          return Math.round(decimalToInt(Number.fromLocaleString(locale, text)))
+      }
+
+      background: Rectangle {
+        implicitWidth: 70
+        implicitHeight: parent.implicitHeight
+        border.color: "gray"
+      }
   }
 }
