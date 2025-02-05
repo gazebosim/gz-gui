@@ -52,7 +52,11 @@ const std::unordered_set<std::string> kAnchorLineSet{
 const std::unordered_set<std::string> kIgnoredProps{
     "objectName",
     "pluginName",
-    "anchored"};
+    "anchored",
+    "floating",
+    "cardMinimumWidth",
+    "cardMinimumHeight",
+    "cardMaximumHeight"};
 }  // namespace
 
 namespace gz::gui
@@ -427,7 +431,7 @@ QQuickItem *Plugin::CardItem() const
   if (!cardItem)
   {
     gzerr << "Internal error: Failed to instantiate QML file [" << qmlFile
-           << "]" << std::endl;
+           << "]\n" << cardComp.errorString().toStdString() << std::endl;
     return nullptr;
   }
 
