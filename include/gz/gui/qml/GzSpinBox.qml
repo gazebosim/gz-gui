@@ -65,6 +65,7 @@ Item {
       anchors.fill : parent
       bottomPadding: 0
       topPadding: 0
+      leftPadding: 5
       implicitHeight: 40
       clip: true
 
@@ -93,12 +94,43 @@ Item {
       contentItem: TextInput {
         font.pointSize: 10
         text: spinBox.textFromValue(spinBox.value, spinBox.locale)
-        horizontalAlignment: Qt.AlignHCenter
+        horizontalAlignment: Qt.AlignRight
         verticalAlignment: Qt.AlignVCenter
         readOnly: !spinBox.editable
         validator: spinBox.validator
         inputMethodHints: Qt.ImhFormattedNumbersOnly
         selectByMouse: true
+        clip: true
+      }
+
+       up.indicator: Rectangle {
+        x: spinBox.mirrored ? 0 : parent.width - width
+        implicitWidth: 20
+        implicitHeight: 20
+        color: "transparent"
+
+        Text {
+            text: "⏶"
+            opacity: spinBox.up.pressed ? 1: 0.6
+            anchors.fill: parent
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignBottom
+        }
+      }
+       down.indicator: Rectangle {
+        x: spinBox.mirrored ? 0 : parent.width - width
+        y: 20
+        implicitWidth: 20
+        implicitHeight: 20
+        color: "transparent"
+
+        Text {
+            text: "⏷"
+            opacity: spinBox.down.pressed ? 1: 0.6
+            anchors.fill: parent
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignTop
+        }
       }
 
       validator: DoubleValidator {
@@ -117,9 +149,9 @@ Item {
       }
 
       background: Rectangle {
-        implicitWidth: 70
+        implicitWidth: 40
         implicitHeight: parent.implicitHeight
         border.color: "gray"
       }
+    }
   }
-}
