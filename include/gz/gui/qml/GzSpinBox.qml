@@ -14,9 +14,9 @@
  * limitations under the License.
  *
 */
-import QtQml 2.15
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQml 2.15
 
 
 Item {
@@ -28,7 +28,6 @@ Item {
   property real stepSize: 1.0
   property int decimals: 0
 
-  implicitWidth: spinBox.implicitWidth
   implicitHeight: spinBox.implicitHeight
 
   readonly property int kMaxInt: Math.pow(2, 31) - 1
@@ -57,6 +56,7 @@ Item {
     property: 'value'
     value: intToDecimal(spinBox.value)
     when: false
+    restoreMode: Binding.RestoreBinding
   }
 
   SpinBox {
