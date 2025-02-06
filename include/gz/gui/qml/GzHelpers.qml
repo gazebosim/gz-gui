@@ -17,6 +17,7 @@
 import QtQuick 2.9
 
 Item {
+  visible: false
   /**
    * Helper function to get an item's ancestor by name.
    * @param _item Item whose parent we're looking for.
@@ -56,4 +57,16 @@ Item {
 
     return 4
   }
+  function dump(object, indent, depth) {
+    console.log(indent + object)
+    if (depth > 0) {
+      for (const i in object.children)
+        dump(object.children[i], indent + "    ", depth - 1)
+    }
+  }
+
+  function clamp(val, min, max) {
+    return Math.max(min, Math.min(val, max))
+  }
+
 }

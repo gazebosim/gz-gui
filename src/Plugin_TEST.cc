@@ -273,15 +273,11 @@ TEST(PluginTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ConfigStrInputNoPlugin))
   std::unordered_map<std::string, std::string> pluginTypes;
   pluginProps["showTitleBar"] = "true";
   pluginProps["resizable"] = "true";
-  pluginProps["cardMinimumWidth"] = "290";
-  pluginProps["cardMinimumHeight"] = "110";
   pluginProps["z"] = "0";
   pluginProps["state"] = "docked";
 
   pluginTypes["showTitleBar"] = "bool";
   pluginTypes["resizable"] = "bool";
-  pluginTypes["cardMinimumWidth"] = "int";
-  pluginTypes["cardMinimumHeight"] = "int";
   pluginTypes["z"] = "double";
   pluginTypes["state"] = "string";
 
