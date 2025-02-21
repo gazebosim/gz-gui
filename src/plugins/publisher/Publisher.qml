@@ -38,7 +38,7 @@ Rectangle {
 
     TextField {
       id: msgTypeField
-      text: Publisher.msgType
+      text: _Publisher.msgType
       selectByMouse: true
     }
 
@@ -48,7 +48,7 @@ Rectangle {
 
     TextField {
       id: topicField
-      text: Publisher.topic
+      text: _Publisher.topic
       selectByMouse: true
     }
 
@@ -58,7 +58,7 @@ Rectangle {
 
     TextArea {
       id: msgDataField
-      text: Publisher.msgData
+      text: _Publisher.msgData
       selectByMouse: true
     }
 
@@ -90,12 +90,12 @@ Rectangle {
       onToggled: {
 
         // Is there a way to 2-way bind properties, or is this needed?
-        Publisher.msgType = msgTypeField.text
-        Publisher.topic = topicField.text
-        Publisher.msgData = msgDataField.text
-        Publisher.frequency = frequencyField.value
+        _Publisher.msgType = msgTypeField.text
+        _Publisher.topic = topicField.text
+        _Publisher.msgData = msgDataField.text
+        _Publisher.frequency = frequencyField.value
 
-        Publisher.OnPublish(checked);
+        _Publisher.OnPublish(checked);
       }
       ToolTip.visible: hovered
       ToolTip.delay: tooltipDelay

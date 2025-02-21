@@ -17,7 +17,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
+import Qt.labs.platform as Platform
 
 /**
  * Style dialog
@@ -318,7 +319,7 @@ Dialog {
       text: "Primary"
     }
 
-    ColorDialog {
+    Platform.ColorDialog {
       id: materialPrimaryDialog
       title: "Primary color"
       // options: ColorDialog.NoButtons
@@ -364,7 +365,7 @@ Dialog {
       text: "Accent"
     }
 
-    ColorDialog {
+    Platform.ColorDialog {
       id: materialAccentDialog
       title: "Accent color"
       // options: ColorDialog.NoButtons

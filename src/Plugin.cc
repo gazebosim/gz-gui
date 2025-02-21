@@ -15,6 +15,7 @@
  *
  */
 
+#include <cctype>
 #include <gz/utils/ImplPtr.hh>
 #include <unordered_set>
 
@@ -129,8 +130,8 @@ void Plugin::Load(const tinyxml2::XMLElement *_pluginElem)
 
   // This let's <filename>.qml use <pluginclass> functions and properties
   this->dataPtr->context = new QQmlContext(App()->Engine()->rootContext());
-  this->dataPtr->context->setContextProperty(QString::fromStdString(filename),
-      this);
+  this->dataPtr->context->setContextProperty(
+      QString::fromStdString("_" + filename), this);
 
   // Instantiate plugin QML file into a component
   std::string qmlFile(":/" + filename + "/" + filename + ".qml");

@@ -47,6 +47,7 @@ namespace gz::gui
     class GZ_GUI_VISIBLE Plugin : public QObject
     {
       Q_OBJECT
+      QML_ELEMENT
 
       /// \brief Constructor
       public: Plugin();
