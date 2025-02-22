@@ -28,6 +28,13 @@ Item {
   property real stepSize: 1.0
   property int decimals: 0
 
+  onValueChanged: {
+    if (!spinBox.__modifying)
+    {
+      spinBox.value = decimalToInt(root.value)
+    }
+  }
+
   implicitHeight: spinBox.implicitHeight
 
   readonly property int kMaxInt: Math.pow(2, 31) - 1
@@ -61,6 +68,12 @@ Item {
 
   SpinBox {
       id: spinBox
+      // This property is used to guard against binding loops. When
+      // spinBox.value is modified through user input, (e.g. clicking on the
+      // up arrow), we set the root.value. Without this guard condition, the
+      // ValueChanged event of root.value would fire which would then try to
+      // set spinBox.value, i.e a binding loop.
+      property bool __modifying: false
 
       anchors.fill : parent
       bottomPadding: 0
@@ -69,9 +82,11 @@ Item {
       implicitHeight: 40
       clip: true
 
-      value: root.decimalToInt(root.value)
-
+      // Note that this is a different event than ValueChanged. The
+      // ValueModified event only fires when the value is edited by user
+      // input from the GUI.
       onValueModified: {
+        __modifying = true
         // Set the "value" property without breaking/changing its bindings.
         // This is done by temporarily enabling the binding (valueUpdater),
         // emitting the editingFinished signal so users GzSpinBox can be
@@ -80,6 +95,7 @@ Item {
         valueUpdater.when = true
         root.editingFinished()
         valueUpdater.when = false
+        __modifying = false
       }
 
       from: decimalToInt(minimumValue)
