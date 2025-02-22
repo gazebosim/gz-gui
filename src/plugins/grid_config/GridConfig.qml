@@ -38,7 +38,6 @@ GridLayout {
   Connections {
     target: GridConfig
     function onNewParams(_hCellCount, _vCellCount, _cellLength, _pos, _rot, _color) {
-      console.log("newParams", _pos, _pos.x)
       horizontalCellCount.value = _hCellCount;
       verticalCellCount.value = _vCellCount;
       cellLength.value = _cellLength;

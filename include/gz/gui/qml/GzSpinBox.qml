@@ -29,7 +29,6 @@ Item {
   property int decimals: 0
 
   onValueChanged: {
-    console.log("root val", value)
     if (!spinBox.__modifying)
     {
       spinBox.value = decimalToInt(root.value)
@@ -41,7 +40,6 @@ Item {
   readonly property int kMaxInt: Math.pow(2, 31) - 1
 
   function decimalToInt(decimal) {
-    //console.log("dec:", decimal)
     var result = decimal * spinBox.decimalFactor
     if (result >= kMaxInt) {
       return kMaxInt
@@ -53,7 +51,6 @@ Item {
   }
 
   function intToDecimal(intVal) {
-    //console.log("int:", intVal)
     return intVal / spinBox.decimalFactor
   }
 
@@ -92,7 +89,6 @@ Item {
       // cannot be modified from outside of this SpinBox element.
       property real __valueAsDecimal: 0.0
       onValueChanged: {
-        console.log("spinbox val ch:", value)
         __valueAsDecimal = intToDecimal(value)
       }
       // Note that this is a different event than ValueChanged. The
@@ -105,13 +101,9 @@ Item {
         // emitting the editingFinished signal so users GzSpinBox can be
         // notified and take the new value of the spinbox, and finally
         // disabling valueUpdater to restore the original bindings.
-        console.log("valUp before when=true", value)
         valueUpdater.when = true
-        console.log("valUp after when=true", value)
         root.editingFinished()
-        console.log("valUp before when=false", value)
         valueUpdater.when = false
-        console.log("valUp after when=false", value)
         __modifying = false
       }
 
@@ -124,9 +116,7 @@ Item {
 
       readonly property real decimalFactor: Math.pow(10, root.decimals)
       onDecimalFactorChanged: {
-        console.log("dec chang:", decimals, root.value, spinBox.value)
         value = decimalToInt(__valueAsDecimal)
-        console.log("after dec chang:", decimals, root.value, spinBox.value)
       }
 
       contentItem: TextInput {
