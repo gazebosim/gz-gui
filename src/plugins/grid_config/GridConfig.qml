@@ -40,7 +40,6 @@ GridLayout {
   Connections {
     target: _GridConfig
     function onNewParams(_hCellCount, _vCellCount, _cellLength, _pos, _rot, _color) {
-      console.log("Got new params")
       horizontalCellCount.value = _hCellCount;
       verticalCellCount.value = _vCellCount;
       cellLength.value = _cellLength;
@@ -193,8 +192,7 @@ GridLayout {
     yawValue: 0.00
 
     onGzPoseSet: (_x, _y, _z, _roll, _pitch, _yaw) => {
-      console.log("Set x:", _x)
-      //_GridConfig.SetPose(_x, _y, _z, _roll, _pitch, _yaw)
+      _GridConfig.SetPose(_x, _y, _z, _roll, _pitch, _yaw)
     }
     expand: true
     gzPlotEnabled: false

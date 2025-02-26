@@ -15,7 +15,6 @@
  *
 */
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -287,7 +286,6 @@ void GridConfig::ConnectToGrid()
         this->dataPtr->gridParam.cellLength = grid->CellLength();
         this->dataPtr->gridParam.pose = grid->Parent()->LocalPose();
         this->dataPtr->gridParam.color = grid->Parent()->Material()->Ambient();
-        gzdbg << "emig newParams\n";
         emit this->newParams(
             grid->CellCount(),
             grid->VerticalCellCount(),
@@ -351,7 +349,6 @@ void GridConfig::SetPose(
   double _x, double _y, double _z,
   double _roll, double _pitch, double _yaw)
 {
-  gzdbg << "GridConfig::SetPose\n";
   this->dataPtr->gridParam.pose = math::Pose3d(_x, _y, _z, _roll, _pitch, _yaw);
   this->dataPtr->dirty = true;
 }

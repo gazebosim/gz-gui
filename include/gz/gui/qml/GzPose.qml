@@ -14,9 +14,10 @@
  * limitations under the License.
  *
 */
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls.Material
+import QtQuick 2.9
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.1
+import QtQuick.Layouts 1.3
 
 /**
  *  Item displaying 3D pose information.
@@ -119,12 +120,11 @@ Item {
     id: writableNumber
     GzSpinBox {
       id: writableSpin
-      value:  0
+      value:  numberValue
       minimumValue: -spinMax
       maximumValue: spinMax
       decimals: gzHelper.getDecimals(writableSpin.width)
       onEditingFinished: {
-        console.log("Done edit", xItem.value)
         gzPoseRoot.gzPoseSet(xItem.value, yItem.value, zItem.value,
                              rollItem.value, pitchItem.value, yawItem.value)
       }

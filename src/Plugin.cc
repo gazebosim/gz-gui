@@ -15,7 +15,6 @@
  *
  */
 
-#include <cctype>
 #include <gz/utils/ImplPtr.hh>
 #include <unordered_set>
 
