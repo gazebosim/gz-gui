@@ -41,7 +41,7 @@ Rectangle {
         TextField {
           id: topicField
           objectName: "topicField"
-          text: TopicEcho.topic
+          text: _TopicEcho.topic
           selectByMouse: true
         }
       }
@@ -50,8 +50,8 @@ Rectangle {
         objectName: "echoSwitch"
         text: qsTr("Echo")
         onToggled: {
-          TopicEcho.topic = topicField.text
-          TopicEcho.OnEcho(checked);
+          _TopicEcho.topic = topicField.text
+          _TopicEcho.OnEcho(checked);
         }
         ToolTip.visible: hovered
         ToolTip.delay: tooltipDelay
@@ -69,16 +69,16 @@ Rectangle {
       objectName: "bufferField"
       value: 10
       onValueChanged: {
-        TopicEcho.OnBuffer(value)
+        _TopicEcho.OnBuffer(value)
       }
     }
 
     CheckBox {
       objectName: "pauseCheck"
       text: qsTr("Pause")
-      checked: TopicEcho.paused
+      checked: _TopicEcho.paused
       onClicked: {
-        TopicEcho.SetPaused(checked)
+        _TopicEcho.SetPaused(checked)
       }
     }
 
