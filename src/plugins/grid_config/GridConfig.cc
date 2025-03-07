@@ -292,8 +292,6 @@ void GridConfig::ConnectToGrid()
             grid->CellCount(),
             grid->VerticalCellCount(),
             grid->CellLength(),
-            convert(grid->Parent()->LocalPose().Pos()),
-            convert(grid->Parent()->LocalPose().Rot().Euler()),
             convert(grid->Parent()->Material()->Ambient()));
       }
     }

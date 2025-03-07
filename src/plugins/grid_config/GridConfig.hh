@@ -146,8 +146,6 @@ namespace gz::gui::plugins
         int _hCellCount,
         int _vCellCount,
         double _cellLength,
-        QVector3D _pos,
-        QVector3D _rot,
         QColor _color);
 
     /// \internal
