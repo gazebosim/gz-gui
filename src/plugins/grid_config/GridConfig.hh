@@ -56,6 +56,14 @@ namespace gz::gui::plugins
       NOTIFY NameListChanged
     )
 
+    /// \brief Grid pose (QList order is x, y, z, roll, pitch, yaw)
+    Q_PROPERTY(
+      QList<double> gridPose
+      READ GridPose
+      WRITE SetGridPose
+      NOTIFY GridPoseChanged
+    )
+
     /// \brief Constructor
     public: GridConfig();
 
@@ -79,6 +87,17 @@ namespace gz::gui::plugins
 
     /// \brief Refresh list of grids. This is called in the rendering thread.
     public: void RefreshList();
+
+    /// \brief Get the current grid camera pose.
+    public: Q_INVOKABLE QList<double> GridPose() const;
+
+    /// \brief Set the grid pose
+    /// \param[in] _gridPose GridPose to set.
+    /// The QList elements are x, y, z, roll, pitch, yaw
+    public slots: void SetGridPose(const QList<double> &_gridPose);
+
+    /// \brief Notify that the grid pose has changed.
+    signals: void GridPoseChanged();
 
     /// \brief Callback when refresh button is pressed.
     public slots: void OnRefresh();
@@ -110,12 +129,6 @@ namespace gz::gui::plugins
     /// \param[in] _length new cell length
     public slots: void UpdateCellLength(double _length);
 
-    /// \brief Callback to update grid pose
-    /// \param[in] _x, _y, _z cartesion coordinates
-    /// \param[in] _roll, _pitch, _yaw principal coordinates
-    public slots: void SetPose(double _x, double _y, double _z,
-                               double _roll, double _pitch, double _yaw);
-
     /// \brief Callback to update grid color
     /// \param[in] _r, _g, _b, _a RGB color model with fourth alpha channel
     public slots: void SetColor(double _r, double _g, double _b, double _a);
@@ -128,15 +141,11 @@ namespace gz::gui::plugins
     /// \param[in] _hCellCount Horizontal cell count
     /// \param[in] _vCellCount Vertical cell count
     /// \param[in] _cellLength Cell length
-    /// \param[in] _pos XYZ Position
-    /// \param[in] _rot RPY orientation
     /// \param[in] _color Grid color
     signals: void newParams(
         int _hCellCount,
         int _vCellCount,
         double _cellLength,
-        QVector3D _pos,
-        QVector3D _rot,
         QColor _color);
 
     /// \internal
