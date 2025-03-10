@@ -16,7 +16,7 @@
 */
 import QtQuick 2.9
 import QtQuick.Controls 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.1
 
@@ -56,7 +56,7 @@ Item {
     id: gzColorDialog
     title: "Choose a color"
     visible: false
-    showAlphaChannel: true
+    options: ColorDialog.ShowAlphaChannel
     onAccepted: {
       r = gzColorDialog.color.r
       g = gzColorDialog.color.g

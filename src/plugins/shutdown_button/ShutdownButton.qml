@@ -46,7 +46,7 @@ RowLayout {
     Layout.minimumWidth: width
     Layout.leftMargin: 10
     onClicked: {
-      ShutdownButton.OnStop()
+      _ShutdownButton.OnStop()
     }
     Material.background: Material.primary
     ToolTip.visible: hovered
