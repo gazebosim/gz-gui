@@ -146,7 +146,7 @@
 1. Find any major version of Protobuf
     * [Pull request #544](https://github.com/gazebosim/gz-gui/pull/544)
 
-1. Fix TopicInfo depcrecation warnings
+1. Fix TopicInfo deprecation warnings
     * [Pull request #543](https://github.com/gazebosim/gz-gui/pull/543)
 
 1. Fix data race issues in CameraTracking plugin
@@ -706,7 +706,7 @@
 1. Improved doxygen
     * [Pull request #275](https://github.com/gazebosim/gz-gui/pull/275)
 
-1. Fix mimimal scene deadlock on shutdown
+1. Fix minimal scene deadlock on shutdown
     * [Pull request #300](https://github.com/gazebosim/gz-gui/pull/300)
 
 1. Fix memory leak

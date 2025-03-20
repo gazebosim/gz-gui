@@ -33,7 +33,7 @@ class MultipleQml : public gz::gui::Plugin
   /// \brief Destructor
   public: virtual ~MultipleQml();
 
-  /// \brief Callback trigged when the button is pressed.
+  /// \brief Callback triggered when the button is pressed.
   /// \param[in] _text Button text.
   protected slots: void OnButton(const QString &_text);
 };

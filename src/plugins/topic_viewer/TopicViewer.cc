@@ -54,7 +54,7 @@ namespace gz::gui::plugins
 {
 /// \brief Model for the Topics and their Msgs and Fields
 /// a tree model that represents the topics tree with its Msgs
-/// Childeren and each msg node has its own fileds/msgs childeren
+/// Children and each msg node has its own fields/msgs children
 class TopicsModel : public QStandardItemModel
 {
   /// \brief roles and names of the model
@@ -121,7 +121,7 @@ class TopicViewer::Implementation
   /// \param[in] _item item ref to set its topic
   public: void SetItemTopic(QStandardItem *_item);
 
-  /// \brief set the path/ID of the givin item starting from
+  /// \brief set the path/ID of the given item starting from
   /// the most topic parent to the field itself
   /// \param[in] _item item ref to set its path
   public: void SetItemPath(QStandardItem *_item);

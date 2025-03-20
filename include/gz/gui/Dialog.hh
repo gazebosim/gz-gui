@@ -53,8 +53,8 @@ namespace gz::gui
       public: void SetDefaultConfig(const std::string &_config);
 
       /// \brief Update an attribute on an XML file. The attribute belongs to
-      /// a `<dialog>` element that has a `name` attrbute matching this dialog's
-      /// name, i.e.
+      /// a `<dialog>` element that has a `name` attribute matching this
+      /// dialog's name, i.e.
       ///
       /// `<dialog name="dialog_name" attribute="value"/>`
       ///
