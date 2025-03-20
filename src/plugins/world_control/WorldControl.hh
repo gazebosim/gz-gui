@@ -47,7 +47,7 @@ namespace gz::gui::plugins
   ///                    false by default.
   /// * \<step\> : Set to true to see a step button, false by default.
   /// * \<start_paused\> : Set to false to start playing, false by default.
-  /// * \<service\> : Service for world control, optional. If not presnt,
+  /// * \<service\> : Service for world control, optional. If not present,
   ///               the plugin will attempt to create a topic with the main
   ///               window's `worldName` property.
   /// * \<stats_topic\> : Topic to receive world statistics, optional. If not
@@ -94,7 +94,7 @@ namespace gz::gui::plugins
     /// \brief Notify that it's now paused.
     signals: void paused();
 
-    /// \brief Notify that it's now resetted.
+    /// \brief Notify that it's now reset.
     signals: void reset();
 
     /// \brief Subscriber callback when new world statistics are received
