@@ -561,7 +561,7 @@ namespace gz::gui
 
       /// \brief Displays a message to the user
       /// The message will appear in a snackbar, this message requires to
-      /// click on the botton "Dismiss" to close the dialog.
+      /// click on the button "Dismiss" to close the dialog.
       signals: void notify(const QString &_message);
 
       /// \brief Displays a message to the user
@@ -583,7 +583,7 @@ namespace gz::gui
     struct GZ_GUI_VISIBLE WindowConfig
     {
       /// \brief Update this config from an XML string. Only fields present on
-      /// the XML will be overriden / appended / created.
+      /// the XML will be overridden / appended / created.
       /// \param[in] _xml A config XML file in string format
       /// \return True if successful. It may fail for example if the string
       /// can't be parsed into XML.

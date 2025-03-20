@@ -104,7 +104,7 @@ TreeView {
             id: dragMouse
             anchors.fill: parent
 
-            // only plottable items are dragable
+            // only plottable items are draggable
             drag.target: (model === null) ? null :
                          (model.plottable) ? parent : null
 
@@ -207,7 +207,7 @@ TreeView {
 
               // set the current index & current selection and active focus for keyboard
               // the reason for that to make the branch selection just like the item selection
-              // and to fix the animation as it ueses item selection's info
+              // and to fix the animation as it uses item selection's info
               tree.selection.select(styleData.index,ItemSelectionModel.ClearAndSelect)
               tree.selection.setCurrentIndex(styleData.index,ItemSelectionModel.ClearAndSelect)
               tree.__currentRow = styleData.row

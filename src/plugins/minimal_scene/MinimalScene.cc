@@ -134,7 +134,7 @@ class GzRenderer::Implementation
 /// drawing preparation, it halts and Ogre worker thread starts rendering,
 /// then resumes when Ogre is done.
 ///
-/// This code is admitedly more complicated than it should be
+/// This code is admittedly more complicated than it should be
 /// because Qt's synchronization using signals and slots causes
 /// deadlocks when other means of synchronization are introduced.
 /// The whole threaded loop should be rewritten.

@@ -200,14 +200,14 @@ Rectangle
     main.fixOpenGL();
   }
 
-  // Horizonal Layout to hold multi charts (small charts)
+  // Horizontal Layout to hold multi charts (small charts)
   Rectangle {
     id: rowCharts
     width: parent.width
     height: (multiChartsMode) ? 150 : 0
     color: (Material.theme == Material.Light) ? Material.color(Material.Grey,Material.Shade200)
                         : Material.color(Material.BlueGrey, Material.Shade800)
-    // Make it Scrolable
+    // Make it scrollable
     ScrollView {
       anchors.fill: parent
       ScrollBar.horizontal.policy: ScrollBar.AsNeeded
@@ -478,7 +478,7 @@ Rectangle
         anchors.fill: parent
         id: exportWidget
 
-        // make it scrolable
+        // make it scrollable
         ScrollView {
           width: parent.width
           height: parent.height - exportBtn.height * 1.5
@@ -595,7 +595,7 @@ Rectangle
           }
 
           /**
-          index of the assosiated chart object in the charts array
+          index of the associated chart object in the charts array
           */
           property int chartIndex: 0
 
