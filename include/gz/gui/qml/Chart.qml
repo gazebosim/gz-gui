@@ -49,7 +49,7 @@ Rectangle {
 
   /**
     Points Limitation: max points of each series
-    When points exceed that limit, some points from begining are deleted
+    When points exceed that limit, some points from beginning are deleted
   */
   property int maxPoints: 10000
   /**
@@ -275,7 +275,7 @@ Rectangle {
       visible: (multiChartsMode) ? false : true
     }
 
-    // make it scrolable
+    // make it scrollable
     ScrollView {
       anchors.fill: parent
       ScrollBar.horizontal.policy: ScrollBar.AsNeeded
@@ -412,7 +412,7 @@ Rectangle {
                                           component.attribute, main.chartID)
 
 
-            // delete the series points and deattache it from the chart
+            // delete the series points and detache it from the chart
             if (component.type === "Field")
               chart.deleteSeries(component.topic + "-" + component.path)
 
@@ -529,7 +529,7 @@ Rectangle {
         return;
       }
 
-      // expand the chart boundries if needed
+      // expand the chart boundaries if needed
       if (xAxis.max  < _x)
       {
         xAxis.max = _x;
@@ -660,7 +660,7 @@ Rectangle {
           zoomType = -1;
 
 
-        // plot size (width & height) will always increase/decrese by 2*shift
+        // plot size (width & height) will always increase/decrease by 2*shift
         // (imagine the size is centered with shift distance at both sides of width (same of height) )
 
         // the location of zooming is determine by changing the x,y (top left corner) of the zoom rect
@@ -698,7 +698,7 @@ Rectangle {
       tickCount: 9
     }
 
-    // to just show the plot at begining
+    // to just show the plot at beginning
     LineSeries {
       id: lineSeries
       axisX: xAxis

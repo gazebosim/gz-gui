@@ -81,7 +81,7 @@ TEST(PlottingInterfaceTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Topic))
   EXPECT_TRUE(fields["pose-position-y"]->Charts().find(1) !=
           fields["pose-position-x"]->Charts().end());
 
-  // test the removing of the field if it has not attatched charts
+  // test the removing of the field if it has not attached charts
   topic.UnRegister("pose-position-y", 1);
   EXPECT_EQ(topic.FieldCount(), 1);
 

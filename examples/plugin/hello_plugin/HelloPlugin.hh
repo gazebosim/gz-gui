@@ -38,7 +38,7 @@ class HelloPlugin : public gz::gui::Plugin
   public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       override;
 
-  /// \brief Callback trigged when the button is pressed.
+  /// \brief Callback triggered when the button is pressed.
   protected slots: void OnButton();
 
   /// \brief Message to be printed when button is pressed.

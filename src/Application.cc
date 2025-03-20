@@ -101,7 +101,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setApplicationName("Gazebo GUI");
 
   // Disable deprecation messages about onFoo connections since the new way of
-  // definining connections is only available as of Qt 5.12, which is not
+  // defining connections is only available as of Qt 5.12, which is not
   // available in Ubuntu Focal
   // TODO(azeey) Remove once Qt 5.12 is available in all supported platforms.
   QLoggingCategory::setFilterRules("qt.qml.connections=false");
