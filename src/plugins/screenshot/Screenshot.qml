@@ -65,20 +65,18 @@ ToolBar {
         sourceSize.height: 40
       }
       onClicked: {
-        fileDialog.open()
+        folderDialog.open()
       }
     }
 
-    FileDialog {
-      id: fileDialog
+    FolderDialog {
+      id: folderDialog
       title: "Save screenshots"
-      //folder: _Screenshot.directory
-      //selectExisting: false
-      //selectFolder: true
-      //onAccepted: {
-      //  _Screenshot.SetDirectory(fileDialog.folder)
-      //  close()
-      //}
+      currentFolder: _Screenshot.directory
+      onAccepted: {
+        _Screenshot.SetDirectory(folderDialog.selectedFolder)
+        close()
+      }
     }
   }
 }
