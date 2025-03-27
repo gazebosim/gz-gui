@@ -14,14 +14,25 @@
  * limitations under the License.
  *
 */
+#include <gz/gui/PlottingInterface.hh>
 #include <gz/plugin/Register.hh>
-#include <gz/utils/ImplPtr.hh>
 #include "TransportPlotting.hh"
 
 namespace gz::gui::plugins
 {
+
+class TransportPlotting::Implementation
+{
+  /// \brief Interface to communicate with Qml
+  public: std::unique_ptr<gui::PlottingInterface> plottingIface{nullptr};
+};
+
 //////////////////////////////////////////
-TransportPlotting::TransportPlotting() = default;
+TransportPlotting::TransportPlotting()
+  : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
+{
+  this->dataPtr->plottingIface = std::make_unique<gui::PlottingInterface>();
+};
 
 //////////////////////////////////////////
 TransportPlotting::~TransportPlotting() = default;
