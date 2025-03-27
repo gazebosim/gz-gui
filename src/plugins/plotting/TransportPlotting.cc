@@ -27,7 +27,7 @@ namespace gz::gui::plugins
 class TransportPlotting::Implementation
 {
   /// \brief Interface to communicate with Qml
-  public: std::unique_ptr<gui::PlottingInterface> plottingIface{nullptr};
+  public: std::unique_ptr<gui::PlottingInterface> plottingIface;
 };
 
 //////////////////////////////////////////
