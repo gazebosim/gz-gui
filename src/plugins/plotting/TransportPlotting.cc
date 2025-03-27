@@ -14,6 +14,9 @@
  * limitations under the License.
  *
 */
+
+#include <memory>
+
 #include <gz/gui/PlottingInterface.hh>
 #include <gz/plugin/Register.hh>
 #include "TransportPlotting.hh"
