@@ -19,11 +19,7 @@
 #define GZ_GUI_PLUGINS_TRANSPORTPLOTTING_HH_
 
 #include <gz/gui/Plugin.hh>
-#include <gz/gui/PlottingInterface.hh>
 #include <gz/utils/ImplPtr.hh>
-#include <gz/utils/SuppressWarning.hh>
-
-#include <memory>
 
 namespace gz::gui::plugins
 {
@@ -41,6 +37,9 @@ class TransportPlotting : public gz::gui::Plugin
 
   // Documentation inherited
   public: void LoadConfig(const tinyxml2::XMLElement *) override;
+
+  /// \brief Private data member.
+  private: GZ_UTILS_UNIQUE_IMPL_PTR(dataPtr)
 };
 }  // namespace gz::gui::plugins
 

@@ -36,6 +36,7 @@ Item {
   }
 
   implicitHeight: spinBox.implicitHeight
+  implicitWidth: 70
 
   readonly property int kMaxInt: Math.pow(2, 31) - 1
 

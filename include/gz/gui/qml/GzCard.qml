@@ -164,7 +164,7 @@ Pane {
   // Stop scroll propagation to widgets below
   MouseArea {
     anchors.fill: parent
-    onWheel: {
+    onWheel: (wheel) => {
       wheel.accepted = true
     }
   }
@@ -253,7 +253,7 @@ Pane {
    */
   function enterDockedState()
   {
-    // It's possible to enter the docking state when not floating 
+    // It's possible to enter the docking state when not floating
     // (e.g. at initialization or when transitioning from docked_collapsed).
     // Do the actual docking only if the card is floating currently.
     if (cardPane.floating)

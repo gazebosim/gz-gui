@@ -87,7 +87,7 @@ Popup {
           }
           Keys.onUpPressed: {
             pluginMenuListView.decrementCurrentIndex();
-          } 
+          }
         }
       }
     }
@@ -127,7 +127,7 @@ Popup {
 
     delegate: ItemDelegate {
       property variant pluginModel: model
-      width: parent.width
+      width: pluginMenu.width
       text: modelData
       highlighted: ListView.isCurrentItem
       onClicked: {

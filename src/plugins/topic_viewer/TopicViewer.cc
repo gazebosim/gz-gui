@@ -159,7 +159,7 @@ TopicViewer::TopicViewer()
   this->dataPtr->CreateModel();
 
   gui::App()->Engine()->rootContext()->setContextProperty(
-                "TopicsModel", this->dataPtr->model);
+                "_TopicsModel", this->dataPtr->model);
 
   this->dataPtr->timer = new QTimer();
   connect(this->dataPtr->timer, SIGNAL(timeout()), this, SLOT(UpdateModel()));
