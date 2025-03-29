@@ -96,6 +96,15 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(DefaultConfig))
   auto topicList = topicProp.toStringList();
   EXPECT_EQ(topicList.size(), 0);
 
+  auto flipDepthImageColorCheckBox = 
+    plugin->PluginItem()->findChild<QObject *>("flipDepthImageColorCheckBox");
+  ASSERT_NE(flipDepthImageColorCheckBox, nullptr);
+  
+  auto flipDepthImageColorCheckBoxProp 
+    = flipDepthImageColorCheckBox->property("checked");
+  EXPECT_TRUE(flipDepthImageColorCheckBoxProp.isValid());
+  EXPECT_FALSE(flipDepthImageColorCheckBoxProp.toBool());
+
   auto refreshButton =
     plugin->PluginItem()->findChild<QObject *>("refreshButton");
   ASSERT_NE(refreshButton, nullptr);

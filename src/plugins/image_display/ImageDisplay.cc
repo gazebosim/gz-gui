@@ -23,6 +23,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Image.hh>
@@ -49,8 +50,15 @@ class ImageDisplay::Implementation
   /// \brief Mutex for accessing image data
   public: std::recursive_mutex imageMutex;
 
+  /// \brief Mutex for variable mutated by the checkbox.
+  /// The variables are: flipDepthVisual
+  public: std::mutex serviceMutex;
+
   /// \brief To provide images for QML.
   public: ImageProvider *provider{nullptr};
+
+  /// \brief Flip visual flag
+  public: bool flipDepthVisual{true};
 
   /// \brief Holds the provider name unique to this plugin instance
   public: QString providerName;
@@ -108,6 +116,8 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   this->PluginItem()->setProperty("showPicker", topicPicker);
 
+  this->dataPtr->flipDepthVisual = true;
+
   if (!topic.empty())
   {
     this->SetTopicList({QString::fromStdString(topic)});
@@ -120,6 +130,7 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 void ImageDisplay::ProcessImage()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->imageMutex);
+  std::lock_guard<std::mutex> service_lock(this->dataPtr->serviceMutex);
 
   unsigned int height = this->dataPtr->imageMsg.height();
   unsigned int width = this->dataPtr->imageMsg.width();
@@ -142,7 +153,8 @@ void ImageDisplay::ProcessImage()
       // i.e. darker pixels = higher values and brighter pixels = lower values
       common::Image::ConvertToRGBImage<float>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output,
-          0.0f, std::numeric_limits<float>::lowest(), true);
+          0.0f, std::numeric_limits<float>::lowest(),
+          this->dataPtr->flipDepthVisual);
       break;
     case msgs::PixelFormatType::L_INT16:
       common::Image::ConvertToRGBImage<uint16_t>(
@@ -193,6 +205,15 @@ void ImageDisplay::ProcessImage()
 
   this->dataPtr->provider->SetImage(image);
   emit this->newImage();
+}
+
+//////////////////////////////////////////////////
+void ImageDisplay::FlipDepthVisual(bool _value)
+{
+  std::lock_guard<std::mutex> service_lock(this->dataPtr->serviceMutex);
+  this->dataPtr->flipDepthVisual = !_value;
+  gzmsg << "Depth Visualization " << ((_value) ? "Flipped." : "Standard.")
+        << std::endl;
 }
 
 /////////////////////////////////////////////////

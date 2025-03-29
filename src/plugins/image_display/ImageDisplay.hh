@@ -122,6 +122,12 @@ namespace gz::gui::plugins
     /// \brief Get the provider name unique to this plugin instance
     public: Q_INVOKABLE QString ImageProviderName();
 
+    /// \brief Set whether darker pixels in depth image have
+    /// higher values or lower values
+    /// \param[in] _value Boolean value for flipping the depth image
+    /// display style
+    public: Q_INVOKABLE void FlipDepthVisual(bool _value);
+
     /// \brief Notify that topic list has changed
     signals: void TopicListChanged();
 

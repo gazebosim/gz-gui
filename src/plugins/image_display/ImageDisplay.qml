@@ -58,6 +58,19 @@ Rectangle {
     anchors.fill: parent
     anchors.margins: 10
 
+    CheckBox {
+      objectName: "flipDepthImageColorCheckBox"
+      Layout.alignment: Qt.AlignHCenter
+      id: displayVisual
+      Layout.columnSpan: 6
+      Layout.fillWidth: true
+      text: qsTr("Flip Depth Visual")
+      checked: false
+      onClicked: {
+        ImageDisplay.FlipDepthVisual(checked);
+      }
+    }
+
     RowLayout {
       visible: showPicker
       RoundButton {
