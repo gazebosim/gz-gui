@@ -15,8 +15,6 @@
  *
 */
 import QtQml.Models 2.2
-//import QtQuick 2.0
-//import QtQuick.Controls 2.2
 import QtQuick
 import QtQuick.Controls
 
@@ -25,7 +23,7 @@ import QtQuick.Layouts 1.3
 
 TreeView {
     objectName: "treeView"
-    id:tree
+    id: tree
     model: _TopicsModel
 
     Layout.minimumHeight: 400

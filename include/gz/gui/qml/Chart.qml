@@ -291,7 +291,7 @@ Rectangle {
 
     DropArea {
       anchors.fill: parent
-      onDropped:
+      onDropped: (drop) =>
       {
         var text = drop.getDataAsString("text/plain");
         infoRect.onDrop(text);

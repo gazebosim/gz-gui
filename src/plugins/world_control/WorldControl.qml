@@ -24,7 +24,7 @@ RowLayout {
   id: worldControl
   spacing: 10
   Layout.leftMargin: 10
-  Layout.minimumWidth: 100
+  Layout.minimumWidth: 150
   Layout.minimumHeight: 100
 
   Connections {
