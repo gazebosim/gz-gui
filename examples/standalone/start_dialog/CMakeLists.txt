@@ -8,8 +8,7 @@ endif()
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(gz-gui10 REQUIRED)
-set(GZ_GUI_VER ${gz-gui10_VERSION_MAJOR})
+find_package(gz-gui REQUIRED)
 
 set(EXEC_NAME "start_dialog")
 
@@ -20,6 +19,6 @@ add_executable(${EXEC_NAME}
   ${resources_RCC}
 )
 target_link_libraries(${EXEC_NAME}
-  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
+  gz-gui::gz-gui
 )
 
