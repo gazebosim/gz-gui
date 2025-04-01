@@ -32,6 +32,11 @@ Rectangle {
   property bool showPicker: false
 
   /**
+   * True to show the checkbox to flip depth visualization
+   */
+  property bool showDepthFlip: false
+
+  /**
    * Unique name for this plugin instance
    */
   property string uniqueName: ""
@@ -59,16 +64,21 @@ Rectangle {
     anchors.margins: 10
 
     CheckBox {
+      visible: showDepthFlip
       objectName: "flipDepthImageColorCheckBox"
       Layout.alignment: Qt.AlignHCenter
       id: displayVisual
       Layout.columnSpan: 6
       Layout.fillWidth: true
-      text: qsTr("Flip Depth Visual")
+      text: qsTr("Flip Depth Visualization")
       checked: false
       onClicked: {
-        ImageDisplay.FlipDepthVisual(checked);
+        ImageDisplay.SetFlipDepthVisualization(checked);
       }
+      ToolTip.visible: hovered
+      ToolTip.delay: tooltipDelay
+      ToolTip.timeout: tooltipTimeout
+      ToolTip.text: qsTr("Flip the depth image color to match rviz")
     }
 
     RowLayout {

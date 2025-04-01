@@ -78,6 +78,8 @@ namespace gz::gui::plugins
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
   ///                    this is false, a \<topic\> must be specified.
+  /// \<show_depth_flip\> : Wheter to show the Flip Depth Image
+  ///                                Visualization Checkbox, true by default.
   class ImageDisplay_EXPORTS_API ImageDisplay : public Plugin
   {
     Q_OBJECT
@@ -126,7 +128,7 @@ namespace gz::gui::plugins
     /// higher values or lower values
     /// \param[in] _value Boolean value for flipping the depth image
     /// display style
-    public: Q_INVOKABLE void FlipDepthVisual(bool _value);
+    public: Q_INVOKABLE void SetFlipDepthVisualization(bool _value);
 
     /// \brief Notify that topic list has changed
     signals: void TopicListChanged();

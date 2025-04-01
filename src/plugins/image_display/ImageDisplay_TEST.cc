@@ -100,10 +100,15 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(DefaultConfig))
     plugin->PluginItem()->findChild<QObject *>("flipDepthImageColorCheckBox");
   ASSERT_NE(flipDepthImageColorCheckBox, nullptr);
 
-  auto flipDepthImageColorCheckBoxProp
-    = flipDepthImageColorCheckBox->property("checked");
+  auto flipDepthImageColorCheckBoxProp =
+    flipDepthImageColorCheckBox->property("checked");
   EXPECT_TRUE(flipDepthImageColorCheckBoxProp.isValid());
   EXPECT_FALSE(flipDepthImageColorCheckBoxProp.toBool());
+
+  auto showDepthFlipCheckboxProp =
+    plugin->PluginItem()->property("visible");
+  EXPECT_TRUE(showDepthFlipCheckboxProp.isValid());
+  EXPECT_TRUE(showDepthFlipCheckboxProp.toBool());
 
   auto refreshButton =
     plugin->PluginItem()->findChild<QObject *>("refreshButton");
@@ -207,6 +212,7 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImage))
     "<plugin filename=\"ImageDisplay\">"
       "<topic>/image_test</topic>"
       "<topic_picker>false</topic_picker>"
+      "<show_depth_flip>false</show_depth_flip>"
     "</plugin>";
 
   tinyxml2::XMLDocument pluginDoc;
@@ -233,6 +239,16 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImage))
   auto pickerProp = picker->property("visible");
   EXPECT_TRUE(pickerProp.isValid());
   EXPECT_FALSE(pickerProp.toBool());
+
+  // Doesn't have a flip depth image color checkbox by checking
+  // `showDepthFlipCheckbox == false`
+  auto flipDepthImageColorCheckBox =
+    plugin->PluginItem()->findChild<QObject *>("flipDepthImageColorCheckBox");
+  ASSERT_NE(flipDepthImageColorCheckBox, nullptr);
+  auto showDepthFlipCheckboxProp =
+    flipDepthImageColorCheckBox->property("visible");
+  EXPECT_TRUE(showDepthFlipCheckboxProp.isValid());
+  EXPECT_FALSE(showDepthFlipCheckboxProp.toBool());
 
   // Starts with no image (gray image)
   auto providerBase = app.Engine()->imageProvider(
