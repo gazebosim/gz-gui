@@ -25,9 +25,9 @@ Popup {
   padding: 0
 
   Connections {
-    target: MainWindow
+    target: _MainWindow
     function onConfigChanged() {
-      filteredModel.model = MainWindow.PluginListModel()
+      filteredModel.model = _MainWindow.PluginListModel()
     }
   }
 
@@ -77,7 +77,7 @@ Popup {
             filteredModel.update();
           }
           Keys.onReturnPressed: {
-            MainWindow.OnAddPlugin(
+            _MainWindow.OnAddPlugin(
               pluginMenuListView.currentItem.pluginModel.modelData);
             drawer.close();
             pluginMenu.close();
@@ -123,7 +123,7 @@ Popup {
       return itemStr.includes(filterStr);
     }
 
-    model: MainWindow.PluginListModel()
+    model: _MainWindow.PluginListModel()
 
     delegate: ItemDelegate {
       property variant pluginModel: model
@@ -131,7 +131,7 @@ Popup {
       text: modelData
       highlighted: ListView.isCurrentItem
       onClicked: {
-        MainWindow.OnAddPlugin(modelData);
+        _MainWindow.OnAddPlugin(modelData);
         drawer.close()
         pluginMenu.close()
       }

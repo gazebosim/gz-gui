@@ -124,23 +124,23 @@ Pane {
    * Tool bar background color
    */
   property string pluginToolBarColor:
-    typeof MainWindow === "undefined" ||
-    MainWindow.pluginToolBarColorLight === "" ||
-    MainWindow.pluginToolBarColorDark === "" ?
+    typeof _MainWindow === "undefined" ||
+    _MainWindow.pluginToolBarColorLight === "" ||
+    _MainWindow.pluginToolBarColorDark === "" ?
     Material.accent :
     (Material.theme === Material.Light) ?
-    MainWindow.pluginToolBarColorLight : MainWindow.pluginToolBarColorDark
+    _MainWindow.pluginToolBarColorLight : _MainWindow.pluginToolBarColorDark
 
   /**
    * Tool bar text color
    */
   property string pluginToolBarTextColor:
-    typeof MainWindow === "undefined" ||
-    MainWindow.pluginToolBarTextColorLight === "" ||
-    MainWindow.pluginToolBarTextColorDark === "" ?
+    typeof _MainWindow === "undefined" ||
+    _MainWindow.pluginToolBarTextColorLight === "" ||
+    _MainWindow.pluginToolBarTextColorDark === "" ?
     Material.background :
     (Material.theme === Material.Light) ?
-    MainWindow.pluginToolBarTextColorLight : MainWindow.pluginToolBarTextColorDark
+    _MainWindow.pluginToolBarTextColorLight : _MainWindow.pluginToolBarTextColorDark
 
   /**
    * Close signal

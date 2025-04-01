@@ -68,7 +68,6 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(OnSaveConfig))
 
   // Create window
   auto *mainWindow = new MainWindow;
-  ASSERT_NE(nullptr, mainWindow);
 
   // Save to default location
   {
@@ -100,8 +99,8 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
   common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
-  auto *mainWindow = new MainWindow;
-  ASSERT_NE(nullptr, mainWindow);
+   auto *mainWindow = new MainWindow;
+   ASSERT_NE(nullptr, mainWindow);
 
   // Save to file
   {
@@ -582,8 +581,6 @@ TEST(MainWindowTest,
   mainWindow->QuickWindow()->close();
   EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
 
-  QCoreApplication::processEvents();
-
   std::unordered_set<ButtonRole> roles;
   std::unordered_map<ButtonRole, QQuickItem *> buttonRoles;
   FindExitDialogButtons(mainWindow, roles, buttonRoles);
@@ -642,8 +639,6 @@ TEST(MainWindowTest,
   mainWindow->QuickWindow()->close();
   EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
 
-  QCoreApplication::processEvents();
-
   std::unordered_set<ButtonRole> roles;
   std::unordered_map<ButtonRole, QQuickItem *> buttonRoles;
   FindExitDialogButtons(mainWindow, roles, buttonRoles);
@@ -690,8 +685,6 @@ TEST(MainWindowTest,
   mainWindow->QuickWindow()->close();
   EXPECT_TRUE(mainWindow->QuickWindow()->isVisible());
 
-  QCoreApplication::processEvents();
-
   std::unordered_set<ButtonRole> roles;
   std::unordered_map<ButtonRole, QQuickItem *> buttonRoles;
   FindExitDialogButtons(mainWindow, roles, buttonRoles);
@@ -703,6 +696,7 @@ TEST(MainWindowTest,
       ButtonRole::RejectRole
     });
   ASSERT_EQ(expectedRoles, roles);
+
 
   auto *closeGui = buttonRoles[ButtonRole::AcceptRole];
   EXPECT_EQ("close_gui",
@@ -722,8 +716,6 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
   // Main window
   auto *mainWindow = new MainWindow;
   ASSERT_NE(nullptr, mainWindow);
-
-  app.processEvents(QEventLoop::ExcludeUserInputEvents);
 
   // Default config
   {
@@ -754,8 +746,6 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ApplyConfig))
 
     EXPECT_TRUE(mainWindow->ApplyConfig(c));
   }
-
-  app.processEvents(QEventLoop::ExcludeUserInputEvents);
 
   // Check applied config
   {

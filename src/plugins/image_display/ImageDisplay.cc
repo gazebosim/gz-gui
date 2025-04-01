@@ -186,11 +186,13 @@ void ImageDisplay::ProcessImage()
 /////////////////////////////////////////////////
 void ImageDisplay::OnImageMsg(const msgs::Image &_msg)
 {
-  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->imageMutex);
-  this->dataPtr->imageMsg = _msg;
+  {
+    std::lock_guard<std::recursive_mutex> lock(this->dataPtr->imageMutex);
+    this->dataPtr->imageMsg = _msg;
+  }
 
   // Signal to main thread that the image changed
-  QMetaObject::invokeMethod(this, "ProcessImage");
+  QMetaObject::invokeMethod(this, "ProcessImage", Qt::QueuedConnection);
 }
 
 /////////////////////////////////////////////////

@@ -100,11 +100,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setOrganizationDomain("gazebosim.org");
   this->setApplicationName("Gazebo GUI");
 
-  // Disable deprecation messages about onFoo connections since the new way of
-  // definining connections is only available as of Qt 5.12, which is not
-  // available in Ubuntu Focal
-  // TODO(azeey) Remove once Qt 5.12 is available in all supported platforms.
-  QLoggingCategory::setFilterRules("qt.qml.connections=false");
+  QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(Shutdown()));
 
 #ifdef __APPLE__
   AvailableAPIs api = AvailableAPIs::Metal;
@@ -132,7 +128,6 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #else
     QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
 #endif
-
   }
 
   // TODO(srmainwaring): implement facility for overriding the default
@@ -242,6 +237,12 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 /////////////////////////////////////////////////
 Application::~Application()
 {
+  this->Shutdown();
+}
+
+/////////////////////////////////////////////////
+void Application::Shutdown()
+{
   gzdbg << "Terminating application." << std::endl;
 
   if (this->dataPtr->mainWin && this->dataPtr->mainWin->QuickWindow())
@@ -256,6 +257,7 @@ Application::~Application()
     if (this->dataPtr->mainWin->QuickWindow()->isVisible())
       this->dataPtr->mainWin->QuickWindow()->close();
     this->dataPtr->mainWin->deleteLater();
+    this->dataPtr->mainWin = nullptr;
   }
 
   for (auto dialog : this->dataPtr->dialogs)
@@ -266,7 +268,11 @@ Application::~Application()
   }
   this->dataPtr->dialogs.clear();
 
-  delete this->dataPtr->engine;
+  if (this->dataPtr->engine)
+  {
+    delete this->dataPtr->engine;
+    this->dataPtr->engine = nullptr;
+  }
 
   std::queue<std::shared_ptr<Plugin>> empty;
   std::swap(this->dataPtr->pluginsToAdd, empty);

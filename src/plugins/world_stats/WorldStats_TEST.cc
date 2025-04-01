@@ -185,6 +185,8 @@ TEST(WorldStatsTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(WorldStats))
   EXPECT_EQ(plugin->SimTime().toStdString(), "00 01:00:00.123");
   EXPECT_EQ(plugin->RealTime().toStdString(), "01 00:00:00.001");
   EXPECT_EQ(plugin->RealTimeFactor().toStdString(), "100.00 %");
+  app.Shutdown();
+  app.sync();
 }
 
 /////////////////////////////////////////////////
