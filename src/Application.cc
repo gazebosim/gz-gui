@@ -100,8 +100,6 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setOrganizationDomain("gazebosim.org");
   this->setApplicationName("Gazebo GUI");
 
-  QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(Shutdown()));
-
 #ifdef __APPLE__
   AvailableAPIs api = AvailableAPIs::Metal;
 #else

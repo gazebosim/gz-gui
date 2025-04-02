@@ -69,6 +69,10 @@ class TopicsModel : public QStandardItemModel
         {PLOT_ROLE, PLOT_KEY},
     };
   }
+
+  // public: ~TopicsModel() {
+  //    std::cerr << "topics model destructor " << std::endl;
+  // }
 };
 
 class TopicViewer::Implementation

@@ -266,6 +266,10 @@ TEST(ApplicationTest,
     app.exec();
   }
 
+  ASSERT_EQ(nullptr, qGuiApp);
+  QCoreApplication::processEvents();
+  ASSERT_EQ(nullptr, qGuiApp);
+
   // Load plugin
   {
     Application app(g_argc, g_argv);
@@ -285,6 +289,8 @@ TEST(ApplicationTest,
     // Show window
     app.exec();
   }
+
+  QCoreApplication::processEvents();
 
   // Test config
   auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -313,6 +319,8 @@ TEST(ApplicationTest,
     // Show window
     app.exec();
   }
+
+  QCoreApplication::processEvents();
 }
 
 //////////////////////////////////////////////////
