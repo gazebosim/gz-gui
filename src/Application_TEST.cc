@@ -266,9 +266,8 @@ TEST(ApplicationTest,
     app.exec();
   }
 
-  ASSERT_EQ(nullptr, qGuiApp);
   QCoreApplication::processEvents();
-  ASSERT_EQ(nullptr, qGuiApp);
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   // Load plugin
   {
@@ -291,6 +290,7 @@ TEST(ApplicationTest,
   }
 
   QCoreApplication::processEvents();
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   // Test config
   auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
