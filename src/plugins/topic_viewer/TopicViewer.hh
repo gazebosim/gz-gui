@@ -38,7 +38,7 @@ namespace gz::gui::plugins
   class TopicsModel;
 
   /// \brief a Plugin to view the topics and their msgs & fields
-  /// Field's informations can be passed by dragging them via the UI
+  /// Field's information can be passed by dragging them via the UI
   class TopicViewer_EXPORTS_API TopicViewer : public Plugin
   {
     Q_OBJECT

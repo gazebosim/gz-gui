@@ -407,7 +407,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(messageHandler))
 
   Application app(g_argc, g_argv);
 
-  // \todo Verify output, see commmon::Console_TEST for example
+  // \todo Verify output, see common::Console_TEST for example
   qDebug("This came from qDebug");
   qInfo("This came from qInfo");
   qWarning("This came from qWarning");

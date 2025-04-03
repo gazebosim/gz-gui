@@ -78,7 +78,7 @@ class Plugin::Implementation
   /// \brief Pointer to wrapping card item
   public: QQuickItem *cardItem{nullptr};
 
-  /// \brief Context in which plugin item was cerated
+  /// \brief Context in which plugin item was created
   public: QQmlContext *context{nullptr};
 
   /// \brief Map of card properties to be passed to QML card object.
@@ -466,7 +466,7 @@ QQuickItem *Plugin::CardItem() const
     cardItem->setProperty(prop.first.c_str(), prop.second);
   }
 
-  // Adjust size to accomodate plugin if not explicitly set in config
+  // Adjust size to accommodate plugin if not explicitly set in config
   if (this->dataPtr->cardProperties.find("width") ==
       this->dataPtr->cardProperties.end())
   {

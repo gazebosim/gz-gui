@@ -130,6 +130,7 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         std::stringstream poseStr;
         poseStr << std::string(elem->GetText());
         poseStr >> gridParam.pose;
+        this->emit GridPoseChanged();
       }
 
       elem = insertElem->FirstChildElement("color");
@@ -285,13 +286,12 @@ void GridConfig::ConnectToGrid()
         this->dataPtr->gridParam.vCellCount = grid->VerticalCellCount();
         this->dataPtr->gridParam.cellLength = grid->CellLength();
         this->dataPtr->gridParam.pose = grid->Parent()->LocalPose();
+        this->emit GridPoseChanged();
         this->dataPtr->gridParam.color = grid->Parent()->Material()->Ambient();
         emit this->newParams(
             grid->CellCount(),
             grid->VerticalCellCount(),
             grid->CellLength(),
-            convert(grid->Parent()->LocalPose().Pos()),
-            convert(grid->Parent()->LocalPose().Rot().Euler()),
             convert(grid->Parent()->Material()->Ambient()));
       }
     }
@@ -345,11 +345,20 @@ void GridConfig::UpdateCellLength(double _length)
 }
 
 /////////////////////////////////////////////////
-void GridConfig::SetPose(
-  double _x, double _y, double _z,
-  double _roll, double _pitch, double _yaw)
+void GridConfig::SetGridPose(const QList<double> &_gridPose)
 {
-  this->dataPtr->gridParam.pose = math::Pose3d(_x, _y, _z, _roll, _pitch, _yaw);
+  if (_gridPose == this->GridPose())
+    return;
+
+  this->dataPtr->gridParam.pose = math::Pose3d(
+    _gridPose[0],
+    _gridPose[1],
+    _gridPose[2],
+    _gridPose[3],
+    _gridPose[4],
+    _gridPose[5]);
+  emit this->GridPoseChanged();
+
   this->dataPtr->dirty = true;
 }
 
@@ -405,6 +414,20 @@ void GridConfig::RefreshList()
     this->OnName(this->dataPtr->nameList.at(0));
   emit this->NameListChanged();
 }
+
+/////////////////////////////////////////////////
+QList<double> GridConfig::GridPose() const
+{
+  return QList({
+    this->dataPtr->gridParam.pose.Pos().X(),
+    this->dataPtr->gridParam.pose.Pos().Y(),
+    this->dataPtr->gridParam.pose.Pos().Z(),
+    this->dataPtr->gridParam.pose.Rot().Roll(),
+    this->dataPtr->gridParam.pose.Rot().Pitch(),
+    this->dataPtr->gridParam.pose.Rot().Yaw()
+  });
+}
+
 }  // namespace gz::gui
 
 // Register this plugin

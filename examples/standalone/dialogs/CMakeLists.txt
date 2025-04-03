@@ -17,13 +17,12 @@ find_package (Qt6 6.4
 )
 
 # Find the Gazebo GUI library
-find_package(gz-gui10 REQUIRED)
-set(GZ_GUI_VER ${gz-gui10_VERSION_MAJOR})
+find_package(gz-gui REQUIRED)
 
 # Generate example
 add_executable(dialogs
   dialogs.cc
 )
 target_link_libraries(dialogs
-  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
+  gz-gui::gz-gui
 )

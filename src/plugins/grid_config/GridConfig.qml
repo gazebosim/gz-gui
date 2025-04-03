@@ -19,9 +19,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs
 import QtQuick.Layouts 1.3
-
 import "qrc:/qml"
-
 
 GridLayout {
   columns: 4
@@ -39,16 +37,10 @@ GridLayout {
 
   Connections {
     target: _GridConfig
-    function onNewParams(_hCellCount, _vCellCount, _cellLength, _pos, _rot, _color) {
+    function onNewParams(_hCellCount, _vCellCount, _cellLength, _color) {
       horizontalCellCount.value = _hCellCount;
       verticalCellCount.value = _vCellCount;
       cellLength.value = _cellLength;
-      gzPoseInstance.xValue = _pos.x;
-      gzPoseInstance.yValue = _pos.y;
-      gzPoseInstance.zValue = _pos.z;
-      gzPoseInstance.rollValue = _rot.x;
-      gzPoseInstance.pitchValue = _rot.y;
-      gzPoseInstance.yawValue = _rot.z;
       gzColorGrid.r = _color.r;
       gzColorGrid.g = _color.g;
       gzColorGrid.b = _color.b;
@@ -184,15 +176,18 @@ GridLayout {
     Layout.columnSpan: 4
     Layout.fillWidth: true
     readOnly: false
-    xValue: 0.00
-    yValue: 0.00
-    zValue: 0.00
-    rollValue: 0.00
-    pitchValue: 0.00
-    yawValue: 0.00
+
+    xValue: _GridConfig.gridPose[0]
+    yValue: _GridConfig.gridPose[1]
+    zValue: _GridConfig.gridPose[2]
+    rollValue: _GridConfig.gridPose[3]
+    pitchValue: _GridConfig.gridPose[4]
+    yawValue: _GridConfig.gridPose[5]
 
     onGzPoseSet: (_x, _y, _z, _roll, _pitch, _yaw) => {
-      _GridConfig.SetPose(_x, _y, _z, _roll, _pitch, _yaw)
+      // _x, _y, _z, _roll, _pitch, _yaw are parameters of signal gzPoseSet
+      // from gz-gui GzPose.qml
+      _GridConfig.SetGridPose([_x, _y, _z, _roll, _pitch, _yaw])
     }
     expand: true
     gzPlotEnabled: false
@@ -220,4 +215,3 @@ GridLayout {
     onGzColorSet: _GridConfig.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
   }
 }
-

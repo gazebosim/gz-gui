@@ -42,7 +42,7 @@
 
 namespace gz::gui
 {
-/// \brief Plot Data containter to hold value and registered charts
+/// \brief Plot Data container to hold value and registered charts
 /// Can be a Field or a PlotComponent
 /// Used by PlottingInterface and Gazebo Plotting
 class GZ_GUI_VISIBLE PlotData
@@ -161,7 +161,7 @@ class GZ_GUI_VISIBLE Transport : public QObject
   /// \brief Destructor
   public: ~Transport();
 
-  /// \brief Unsubscribe/deattatch a field from a certain chart
+  /// \brief Unsubscribe/detach a field from a certain chart
   /// \param[in] _topic topic name
   /// \param[in] _fieldPath field path ID
   /// \param[in] _chart chart ID
@@ -169,7 +169,7 @@ class GZ_GUI_VISIBLE Transport : public QObject
                            const std::string &_fieldPath,
                            int _chart);
 
-  /// \brief Subscribe/attatch a field from a certain chart
+  /// \brief Subscribe/attach a field from a certain chart
   /// \param[in] _topic topic name
   /// \param[in] _fieldPath field path ID
   /// \param[in] _chart chart ID
@@ -226,10 +226,10 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
                                QString _fieldPath,
                                QString _topic);
 
-  /// \brief unsubscribe from a field and deattach it from a chart
+  /// \brief unsubscribe from a field and detach it from a chart
   /// \brief param[in] _topic the topic that includes that field
   /// \brief param[in] _fieldPath path to the field to reach it from the msg
-  /// \brief param[in] _chart chart id to be deattached to that field
+  /// \brief param[in] _chart chart id to be detached to that field
   public slots: void unsubscribe(int _chart,
                                  QString _fieldPath,
                                  QString _topic);
@@ -256,7 +256,7 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   /// \param[in] _entity entity id which has the component
   /// \param[in] _typeId component type id
   /// \param[in] _type component data type
-  /// \param[in] _attribute component specefice attribte
+  /// \param[in] _attribute component specefice attribute
   /// \param[in] _chart chart id
   public slots: void onComponentSubscribe(QString _entity,
                                           QString _typeId,
@@ -267,7 +267,7 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   /// \brief called by Qml to remove a chart from a component attribute
   /// \param[in] _entity entity id which has the component
   /// \param[in] _typeId component type id
-  /// \param[in] _attribute component specefice attribte
+  /// \param[in] _attribute component specefice attribute
   /// \param[in] _chart chart id
   public slots: void onComponentUnSubscribe(QString _entity,
                                             QString _typeId,
@@ -278,7 +278,7 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   /// \param[in] _entity entity id which has the component
   /// \param[in] _typeId component type id
   /// \param[in] _type component data type
-  /// \param[in] _attribute component specefice attribte
+  /// \param[in] _attribute component specefice attribute
   /// \param[in] _chart chart id
   signals: void ComponentSubscribe(uint64_t _entity,
                                    uint64_t _typeId,
@@ -289,19 +289,19 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   /// \brief Notify the gazebo plugin to unsubscribe a component data
   /// \param[in] _entity entity id which has the component
   /// \param[in] _typeId component type id
-  /// \param[in] _attribute component specefice attribte
+  /// \param[in] _attribute component specefice attribute
   /// \param[in] _chart chart id
   signals: void ComponentUnSubscribe(uint64_t _entity,
                                      uint64_t _typeId,
                                      const std::string &_attribute,
                                      int _chart);
 
-  /// \brief Create suitable file path with unique name and extention
+  /// \brief Create suitable file path with unique name and extension
   /// \param[in] _path path selected from the UI
   /// \param[in] _name file name
-  /// \param[in] _extention file extention (csv or pdf)
+  /// \param[in] _extension file extension (csv or pdf)
   public slots: std::string FilePath(QString _path, std::string _name,
-                                     std::string _extention);
+                                     std::string _extension);
 
   /// \brief export plot graphs to csv files
   /// \param[in] _path path of folder to save the csv files
@@ -316,7 +316,7 @@ class GZ_GUI_VISIBLE PlottingInterface : public QObject
   /// \return Component name
   signals: std::string ComponentName(uint64_t _typeId);
 
-  /// \brief configration of the timer
+  /// \brief configuration of the timer
   public: void InitTimer();
 
   /// \brief update the plotting tool time

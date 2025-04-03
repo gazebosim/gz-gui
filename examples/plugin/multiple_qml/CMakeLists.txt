@@ -17,8 +17,7 @@ find_package (Qt6 6.4
 )
 
 # Find the Gazebo GUI library
-find_package(gz-gui10 REQUIRED)
-set(GZ_GUI_VER ${gz-gui10_VERSION_MAJOR})
+find_package(gz-gui REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 
@@ -30,5 +29,5 @@ add_library(MultipleQml SHARED ${headers_MOC}
   ${resources_RCC}
 )
 target_link_libraries(MultipleQml
-  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
+  gz-gui::gz-gui
 )

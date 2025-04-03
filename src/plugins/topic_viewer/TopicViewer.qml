@@ -139,7 +139,7 @@ TreeView {
             id: dragMouse
             anchors.fill: parent
 
-            // only plottable items are dragable
+            // only plottable items are draggable
             drag.target: (model === null) ? null :
                          (model.plottable) ? parent : null
 

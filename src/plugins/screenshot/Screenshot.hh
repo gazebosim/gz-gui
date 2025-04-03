@@ -35,7 +35,7 @@ namespace gz::gui::plugins
   ///
   /// /gui/screenshot service:
   ///     Data: Path to save to, leave empty to save to latest path.
-  ///     Response: True if screenshot has been queued succesfully.
+  ///     Response: True if screenshot has been queued successfully.
   class Screenshot : public Plugin
   {
     Q_OBJECT
@@ -68,7 +68,7 @@ namespace gz::gui::plugins
     /// \brief Callback when screenshot is requested from the GUI.
     public slots: void OnScreenshot();
 
-    /// \brief Callback for all installed event filders.
+    /// \brief Callback for all installed event filters.
     /// \param[in] _obj Object that received the event
     /// \param[in] _event Event
     private: bool eventFilter(QObject *_obj, QEvent *_event) override;

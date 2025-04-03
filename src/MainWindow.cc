@@ -376,7 +376,7 @@ WindowConfig MainWindow::CurrentWindowConfig() const
     "toolBarTextColorDark").toString().toStdString();
 
   // Menus configuration and ignored properties are kept the same as the
-  // initial ones. They might have been changed programatically but we
+  // initial ones. They might have been changed programmatically but we
   // don't guarantee that will be saved.
   config.showDrawer = this->dataPtr->windowConfig.showDrawer;
   config.showDefaultDrawerOpts =

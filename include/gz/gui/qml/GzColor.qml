@@ -19,6 +19,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Dialogs
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.1
+import Qt.labs.platform
 
 
 // RGBA using range 0 - 1.0
@@ -58,10 +59,10 @@ Item {
     visible: false
     options: ColorDialog.ShowAlphaChannel
     onAccepted: {
-      r = gzColorDialog.color.r
-      g = gzColorDialog.color.g
-      b = gzColorDialog.color.b
-      a = gzColorDialog.color.a
+      gzColorRoot.r = gzColorDialog.color.r
+      gzColorRoot.g = gzColorDialog.color.g
+      gzColorRoot.b = gzColorDialog.color.b
+      gzColorRoot.a = gzColorDialog.color.a
       gzColorRoot.gzColorSet()
       gzColorDialog.close()
     }

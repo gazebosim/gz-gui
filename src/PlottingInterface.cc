@@ -584,9 +584,9 @@ void PlottingInterface::UpdateTime()
 
 //////////////////////////////////////////////////////
 std::string PlottingInterface::FilePath(QString _path, std::string _name,
-                                        std::string _extention)
+                                        std::string _extension)
 {
-  if (_extention != "csv" && _extention != "pdf")
+  if (_extension != "csv" && _extension != "pdf")
     return "";
 
   if (_path.toStdString().size() < 8)
@@ -602,7 +602,7 @@ std::string PlottingInterface::FilePath(QString _path, std::string _name,
   std::replace(_name.begin(), _name.end(), '-', '_');
   std::replace(_name.begin(), _name.end(), ',', '_');
 
-  return _path.toStdString() + "/" + "\'" + _name + "." + _extention + "\'";
+  return _path.toStdString() + "/" + "\'" + _name + "." + _extension + "\'";
 }
 
 //////////////////////////////////////////////////////

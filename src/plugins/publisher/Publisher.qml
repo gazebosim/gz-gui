@@ -100,7 +100,7 @@ Rectangle {
       ToolTip.visible: hovered
       ToolTip.delay: tooltipDelay
       ToolTip.timeout: tooltipTimeout
-      ToolTip.text: checked ? qsTr("Stop publising") : qsTr("Start publishing")
+      ToolTip.text: checked ? qsTr("Stop publishing") : qsTr("Start publishing")
     }
   }
 }

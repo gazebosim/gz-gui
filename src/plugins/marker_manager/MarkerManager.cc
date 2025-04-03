@@ -57,7 +57,7 @@ class MarkerManager::Implementation
   /// \brief Update markers based on msgs received
   public: void OnRender();
 
-  /// \brief Initialize services and subcriptions
+  /// \brief Initialize services and subscriptions
   public: void Initialize();
 
   /// \brief Processes a marker message.
@@ -699,7 +699,7 @@ void MarkerManager::LoadConfig(const tinyxml2::XMLElement * _pluginElem)
       if (elem->QueryBoolText(&this->dataPtr->warnOnActionFailure) !=
           tinyxml2::XML_SUCCESS)
       {
-        gzerr << "Faild to parse <warn_on_action_failure> value: "
+        gzerr << "Failed to parse <warn_on_action_failure> value: "
                << elem->GetText() << std::endl;
       }
     }
