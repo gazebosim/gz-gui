@@ -98,7 +98,7 @@ MainWindow::MainWindow()
     "ExitAction", 1, 0, "ExitAction", "Error: namespace enum");
 
   // Make MainWindow functions available from all QML files (using root)
-  App()->Engine()->rootContext()->setContextProperty("MainWindow", this);
+  App()->Engine()->rootContext()->setContextProperty("_MainWindow", this);
 
   // Load QML and keep pointer to generated QQuickWindow
   std::string qmlFile("qrc:qml/Main.qml");

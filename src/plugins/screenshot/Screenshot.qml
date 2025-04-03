@@ -19,8 +19,8 @@ import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.0
+
+import QtQuick.Dialogs
 
 ToolBar {
   Layout.minimumWidth: 200
@@ -47,13 +47,13 @@ ToolBar {
         sourceSize.height: 30
       }
       onClicked: {
-        Screenshot.OnScreenshot()
+        _Screenshot.OnScreenshot()
       }
     }
 
     ToolButton {
       id: directory
-      ToolTip.text: "Change directory\nCurrent: " + Screenshot.directory
+      ToolTip.text: "Change directory\nCurrent: " + _Screenshot.directory
       ToolTip.visible: hovered
       ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
       contentItem: Image {
@@ -65,18 +65,16 @@ ToolBar {
         sourceSize.height: 40
       }
       onClicked: {
-        fileDialog.open()
+        folderDialog.open()
       }
     }
 
-    FileDialog {
-      id: fileDialog
+    FolderDialog {
+      id: folderDialog
       title: "Save screenshots"
-      folder: Screenshot.directory
-      selectExisting: false
-      selectFolder: true
+      currentFolder: _Screenshot.directory
       onAccepted: {
-        Screenshot.SetDirectory(fileDialog.folder)
+        _Screenshot.SetDirectory(folderDialog.selectedFolder)
         close()
       }
     }

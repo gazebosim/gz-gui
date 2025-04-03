@@ -12,7 +12,7 @@ find_package(gz-gui REQUIRED)
 
 set(EXEC_NAME "start_dialog")
 
-QT5_ADD_RESOURCES(resources_RCC ${EXEC_NAME}.qrc)
+QT_ADD_RESOURCES(resources_RCC ${EXEC_NAME}.qrc)
 
 add_executable(${EXEC_NAME}
   ${EXEC_NAME}.cc

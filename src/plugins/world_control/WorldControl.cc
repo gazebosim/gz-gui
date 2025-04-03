@@ -270,10 +270,12 @@ void WorldControl::ProcessMsg()
 /////////////////////////////////////////////////
 void WorldControl::OnWorldStatsMsg(const msgs::WorldStatistics &_msg)
 {
-  std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
+  {
+    std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
+    this->dataPtr->msg.CopyFrom(_msg);
+  }
 
-  this->dataPtr->msg.CopyFrom(_msg);
-  QMetaObject::invokeMethod(this, "ProcessMsg");
+  QMetaObject::invokeMethod(this, "ProcessMsg", Qt::QueuedConnection);
 }
 
 /////////////////////////////////////////////////

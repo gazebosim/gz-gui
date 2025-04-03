@@ -64,6 +64,8 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Load))
 
   // Cleanup
   plugins.clear();
+  app.Shutdown();
+  QCoreApplication::processEvents();
 }
 
 /////////////////////////////////////////////////
@@ -119,6 +121,8 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(DefaultConfig))
 
   // Cleanup
   plugins.clear();
+  app.Shutdown();
+  QCoreApplication::processEvents();
 }
 
 /////////////////////////////////////////////////
@@ -182,6 +186,8 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(NoPickerNeedsTopic))
 
   // Cleanup
   plugins.clear();
+  app.Shutdown();
+  QCoreApplication::processEvents();
 }
 
 /////////////////////////////////////////////////
@@ -309,6 +315,8 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImage))
 
   // Cleanup
   plugins.clear();
+  app.Shutdown();
+  QCoreApplication::processEvents();
 }
 
 /////////////////////////////////////////////////
@@ -423,6 +431,8 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageFloat32))
 
   // Cleanup
   plugins.clear();
+  app.Shutdown();
+  QCoreApplication::processEvents();
 }
 
 /////////////////////////////////////////////////
@@ -537,6 +547,8 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageInt16))
 
   // Cleanup
   plugins.clear();
+  app.Shutdown();
+  QCoreApplication::processEvents();
 }
 
 /////////////////////////////////////////////////
@@ -611,4 +623,6 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(TopicPicker))
 
   // Cleanup
   plugins.clear();
+  app.Shutdown();
+  QCoreApplication::processEvents();
 }

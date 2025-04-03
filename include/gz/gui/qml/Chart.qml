@@ -17,7 +17,7 @@
 import QtQuick 2.9
 import QtCharts 2.2
 import QtQuick.Controls 2.2
-import QtQuick.Controls.Styles 1.4
+
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 
@@ -291,7 +291,7 @@ Rectangle {
 
     DropArea {
       anchors.fill: parent
-      onDropped:
+      onDropped: (drop) =>
       {
         var text = drop.getDataAsString("text/plain");
         infoRect.onDrop(text);
@@ -636,7 +636,7 @@ Rectangle {
       /**
         Zoom
       */
-      onWheel:{
+      onWheel: (wheel) => {
         if (multiChartsMode)
           return
 
@@ -677,7 +677,7 @@ Rectangle {
 
     DropArea {
       anchors.fill: parent
-      onDropped:
+      onDropped: (drop) =>
       {
         var text = drop.getDataAsString("text/plain");
         infoRect.onDrop(text);

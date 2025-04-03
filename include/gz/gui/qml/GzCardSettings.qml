@@ -18,7 +18,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
 import "qrc:/qml"
 
 Dialog {
@@ -208,7 +208,7 @@ Dialog {
   ColorDialog {
     id: colorDialog
     title: "Please choose a color"
-    showAlphaChannel : true
+    options: ColorDialog.ShowAlphaChannel
     onAccepted: {
       content.color = colorDialog.color
       bgColor.color = colorDialog.color
