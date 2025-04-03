@@ -103,12 +103,17 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(DefaultConfig))
   auto flipDepthImageColorCheckBoxProp =
     flipDepthImageColorCheckBox->property("checked");
   EXPECT_TRUE(flipDepthImageColorCheckBoxProp.isValid());
-  EXPECT_FALSE(flipDepthImageColorCheckBoxProp.toBool());
+  EXPECT_TRUE(flipDepthImageColorCheckBoxProp.toBool());
 
   auto showDepthFlipCheckboxProp =
-    plugin->PluginItem()->property("visible");
+    flipDepthImageColorCheckBox->property("visible");
   EXPECT_TRUE(showDepthFlipCheckboxProp.isValid());
   EXPECT_TRUE(showDepthFlipCheckboxProp.toBool());
+
+  auto enaledDepthFlipCheckBoxProp =
+    flipDepthImageColorCheckBox->property("enabled");
+  EXPECT_TRUE(enaledDepthFlipCheckBoxProp.isValid());
+  EXPECT_TRUE(enaledDepthFlipCheckBoxProp.toBool());
 
   auto refreshButton =
     plugin->PluginItem()->findChild<QObject *>("refreshButton");
@@ -446,6 +451,16 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageFloat32))
     }
   }
 
+  // Check that the flip depth image color checkbox is enabled
+  auto flipDepthImageColorCheckBox =
+    plugin->PluginItem()->findChild<QObject *>("flipDepthImageColorCheckBox");
+  ASSERT_NE(flipDepthImageColorCheckBox, nullptr);
+
+  auto enaledDepthFlipCheckBoxProp =
+    flipDepthImageColorCheckBox->property("enabled");
+  EXPECT_TRUE(enaledDepthFlipCheckBoxProp.isValid());
+  EXPECT_TRUE(enaledDepthFlipCheckBoxProp.toBool());
+
   // Cleanup
   plugins.clear();
 }
@@ -559,6 +574,16 @@ TEST(ImageDisplayTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(ReceiveImageInt16))
       }
     }
   }
+
+  // Check that the flip depth image color checkbox is disabled
+  auto flipDepthImageColorCheckBox =
+    plugin->PluginItem()->findChild<QObject *>("flipDepthImageColorCheckBox");
+  ASSERT_NE(flipDepthImageColorCheckBox, nullptr);
+
+  auto enaledDepthFlipCheckBoxProp =
+    flipDepthImageColorCheckBox->property("enabled");
+  EXPECT_TRUE(enaledDepthFlipCheckBoxProp.isValid());
+  EXPECT_FALSE(enaledDepthFlipCheckBoxProp.toBool());
 
   // Cleanup
   plugins.clear();

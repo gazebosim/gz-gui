@@ -78,7 +78,7 @@ namespace gz::gui::plugins
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
   ///                    this is false, a \<topic\> must be specified.
-  /// \<show_depth_flip\> : Wheter to show the Flip Depth Image
+  /// \<show_depth_flip\> : Whether to show the Flip Depth Image
   ///                                Visualization Checkbox, true by default.
   class ImageDisplay_EXPORTS_API ImageDisplay : public Plugin
   {
@@ -123,6 +123,13 @@ namespace gz::gui::plugins
 
     /// \brief Get the provider name unique to this plugin instance
     public: Q_INVOKABLE QString ImageProviderName();
+
+    /// \brief Enable or disable the depth image flip checkbox
+    /// \param[in] _enable Boolean value for enabling/disabling the
+    ///                    depth image flip checkbox
+    /// \note This is used to disable the checkbox when the image
+    ///       format is not depth
+    public: inline void SetEnableDepthFlip(bool _enable);
 
     /// \brief Set whether darker pixels in depth image have
     /// higher values or lower values

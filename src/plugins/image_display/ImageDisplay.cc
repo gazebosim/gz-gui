@@ -57,6 +57,9 @@ class ImageDisplay::Implementation
   /// \brief To provide images for QML.
   public: ImageProvider *provider{nullptr};
 
+  /// \brief Enable Flip visualization flag
+  public: bool enableDepthFlipCheck{true};
+
   /// \brief Flip visualization flag
   public: bool flipDepthVisualization{true};
 
@@ -124,6 +127,10 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     "showDepthFlip",
     showDepthFlip
   );
+  this->PluginItem()->setProperty(
+    "enableDepthFlip",
+    this->dataPtr->enableDepthFlipCheck
+  );
 
   this->dataPtr->flipDepthVisualization = true;
 
@@ -151,6 +158,9 @@ void ImageDisplay::ProcessImage()
   switch (this->dataPtr->imageMsg.pixel_format_type())
   {
     case msgs::PixelFormatType::RGB_INT8:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       // copy image data buffer directly to QImage
       image = QImage(reinterpret_cast<const uchar *>(
           this->dataPtr->imageMsg.data().c_str()), width, height,
@@ -158,6 +168,9 @@ void ImageDisplay::ProcessImage()
       break;
     // for other cases, convert to RGB common::Image
     case msgs::PixelFormatType::R_FLOAT32:
+      // Enable depth flip checkbox
+      this->SetEnableDepthFlip(true);
+
       // specify custom min max and also flip the pixel values
       // i.e. darker pixels = higher values and brighter pixels = lower values
       common::Image::ConvertToRGBImage<float>(
@@ -166,10 +179,16 @@ void ImageDisplay::ProcessImage()
           this->dataPtr->flipDepthVisualization);
       break;
     case msgs::PixelFormatType::L_INT16:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       common::Image::ConvertToRGBImage<uint16_t>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output);
        break;
     case msgs::PixelFormatType::L_INT8:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       common::Image::ConvertToRGBImage<uint8_t>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output);
       break;
@@ -177,11 +196,17 @@ void ImageDisplay::ProcessImage()
     case msgs::PixelFormatType::BAYER_BGGR8:
     case msgs::PixelFormatType::BAYER_GBRG8:
     case msgs::PixelFormatType::BAYER_GRBG8:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       common::Image::ConvertToRGBImage<uint8_t>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output);
       break;
     default:
     {
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       gzwarn << "Unsupported image type: "
               << this->dataPtr->imageMsg.pixel_format_type() << std::endl;
       return;
@@ -216,12 +241,23 @@ void ImageDisplay::ProcessImage()
   emit this->newImage();
 }
 
+inline void ImageDisplay::SetEnableDepthFlip(bool _enable)
+{
+  if (_enable != this->dataPtr->enableDepthFlipCheck)
+  {
+    this->dataPtr->enableDepthFlipCheck = _enable;
+    this->PluginItem()->setProperty("enableDepthFlip", _enable);
+    gzdbg << "Enable Depth Flip: " << ((_enable) ? "Enabled": "Disabled")
+          << std::endl;
+  }
+}
+
 //////////////////////////////////////////////////
 void ImageDisplay::SetFlipDepthVisualization(bool _value)
 {
   std::lock_guard<std::mutex> service_lock(this->dataPtr->serviceMutex);
-  this->dataPtr->flipDepthVisualization = !_value;
-  gzmsg << "Depth Visualization " << ((_value) ? "Flipped." : "Standard.")
+  this->dataPtr->flipDepthVisualization = _value;
+  gzdbg << "Depth Visualization " << ((_value) ? "Flipped." : "Standard.")
         << std::endl;
 }
 
