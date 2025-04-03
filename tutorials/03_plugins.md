@@ -5,7 +5,9 @@ Previous Tutorial: \ref commandline
 
 ## About Plugins
 
-A Gazebo GUI plugin is a shared library that defines a widget. The plugin contains [QML](http://doc.qt.io/qt-5/qtqml-index.html) code that specifies what the widget looks like, as well as C++ code that defines the plugin's behavior and ties it to other libraries.
+A Gazebo GUI plugin is a shared library that defines a widget. 
+
+The plugin contains [QML](http://doc.qt.io/qt-5/qtqml-index.html) code that specifies what the widget looks like, as well as C++ code that defines the plugin's behavior and ties it to other libraries.
 
 ## Starting a pre-built plugin (example)
 
@@ -136,7 +138,9 @@ void HelloPlugin::OnButton()
 }
 ```
 
-Thereafter, `GZ_ADD_PLUGIN` registers the plugin with the Gazebo GUI system, making it discoverable at runtime. Refer to [documentation](https://gazebosim.org/api/plugin/2/gz_2plugin_2Register_8hh.html).
+Thereafter, `GZ_ADD_PLUGIN` registers the plugin with the Gazebo GUI system, making it discoverable at runtime.
+
+Refer to the [documentation](https://gazebosim.org/api/plugin/2/gz_2plugin_2Register_8hh.html).
 
 ```cpp
 GZ_ADD_PLUGIN(HelloPlugin,
@@ -164,36 +168,34 @@ Gazebo GUI will look for plugins on the following paths, in this order:
 Display images from a Gazebo Transport topic.
 
 ```sh
-gz gui -c examples/config/image.config      
+gz gui -c examples/config/image.config
 ```
-or                                                                            
-                                                                                  
+or
+
 ```sh
 gz gui -s ImageDisplay
 ```
 
-
-
 ### World stats and control
 
 - Stats: Display sim / real time published on a topic
-- Control: Buttons to make play / pause / step service requests                
+- Control: Buttons to make play / pause / step service requests
 
 ```sh
 gz gui -c examples/config/time.config
 ```
 
 ### Topic echo
-                                                                                  
-Echo messages from a Gazebo Transport topic.                                    
+
+Echo messages from a Gazebo Transport topic.
 
 ```sh
-gz gui -c examples/config/pubsub.config  
+gz gui -c examples/config/pubsub.config
 ```
 
 ![topic_echo](images/screenshot_plugins_tutorial_6.png)
 
-In the above image, the `Publisher` publishes `data: "Hello"` to the topic `/echo`. 
+In the above image, the `Publisher` publishes `data: "Hello"` to the topic `/echo`.
 
 The `Topic Echo`  plugin (right) is used to echo the messages. Here it is echoing the messages published on the topic `/echo`.
 
@@ -214,4 +216,3 @@ In the above image, the keys `A`, `S`, `D`, `Space`, `Super`, `S` were pressed i
 Additionally, the keycodes can also be viewed on the `Topic Echo` plugin as can be seen below under `Messages`:
 
 ![key_publisher_plugin_2](images/screenshot_plugins_tutorial_5.png)
-
