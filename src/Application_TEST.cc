@@ -267,7 +267,7 @@ TEST(ApplicationTest,
   }
 
   QCoreApplication::processEvents();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
   // Load plugin
   {
@@ -290,7 +290,7 @@ TEST(ApplicationTest,
   }
 
   QCoreApplication::processEvents();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
   // Test config
   auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -321,6 +321,7 @@ TEST(ApplicationTest,
   }
 
   QCoreApplication::processEvents();
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
 //////////////////////////////////////////////////
