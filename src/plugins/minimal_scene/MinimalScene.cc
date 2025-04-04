@@ -1121,7 +1121,7 @@ RenderWindowItem::~RenderWindowItem()
 void RenderWindowItem::StopRendering()
 {
   // Disconnect our QT connections.
-  for (const auto &conn : qAsConst(this->dataPtr->connections))
+  for (const auto &conn : std::as_const(this->dataPtr->connections))
     QObject::disconnect(conn);
 
   this->dataPtr->renderSync.Shutdown();
