@@ -124,23 +124,23 @@ Pane {
    * Tool bar background color
    */
   property string pluginToolBarColor:
-    typeof MainWindow === "undefined" ||
-    MainWindow.pluginToolBarColorLight === "" ||
-    MainWindow.pluginToolBarColorDark === "" ?
+    typeof _MainWindow === "undefined" ||
+    _MainWindow.pluginToolBarColorLight === "" ||
+    _MainWindow.pluginToolBarColorDark === "" ?
     Material.accent :
     (Material.theme === Material.Light) ?
-    MainWindow.pluginToolBarColorLight : MainWindow.pluginToolBarColorDark
+    _MainWindow.pluginToolBarColorLight : _MainWindow.pluginToolBarColorDark
 
   /**
    * Tool bar text color
    */
   property string pluginToolBarTextColor:
-    typeof MainWindow === "undefined" ||
-    MainWindow.pluginToolBarTextColorLight === "" ||
-    MainWindow.pluginToolBarTextColorDark === "" ?
+    typeof _MainWindow === "undefined" ||
+    _MainWindow.pluginToolBarTextColorLight === "" ||
+    _MainWindow.pluginToolBarTextColorDark === "" ?
     Material.background :
     (Material.theme === Material.Light) ?
-    MainWindow.pluginToolBarTextColorLight : MainWindow.pluginToolBarTextColorDark
+    _MainWindow.pluginToolBarTextColorLight : _MainWindow.pluginToolBarTextColorDark
 
   /**
    * Close signal
@@ -164,7 +164,7 @@ Pane {
   // Stop scroll propagation to widgets below
   MouseArea {
     anchors.fill: parent
-    onWheel: {
+    onWheel: (wheel) => {
       wheel.accepted = true
     }
   }
@@ -253,7 +253,7 @@ Pane {
    */
   function enterDockedState()
   {
-    // It's possible to enter the docking state when not floating 
+    // It's possible to enter the docking state when not floating
     // (e.g. at initialization or when transitioning from docked_collapsed).
     // Do the actual docking only if the card is floating currently.
     if (cardPane.floating)

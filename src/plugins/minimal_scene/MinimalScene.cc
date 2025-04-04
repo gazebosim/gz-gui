@@ -58,7 +58,7 @@
 #  include <gz/rendering/RenderEngineVulkanExternalDeviceStructs.hh>
 #endif  // GZ_GUI_HAVE_VULKAN
 
-Q_DECLARE_METATYPE(gz::gui::plugins::RenderSync*)
+Q_DECLARE_OPAQUE_POINTER(gz::gui::plugins::RenderSync*)
 
 namespace gz::gui::plugins
 {
@@ -1121,7 +1121,7 @@ RenderWindowItem::~RenderWindowItem()
 void RenderWindowItem::StopRendering()
 {
   // Disconnect our QT connections.
-  for (const auto &conn : qAsConst(this->dataPtr->connections))
+  for (const auto &conn : std::as_const(this->dataPtr->connections))
     QObject::disconnect(conn);
 
   this->dataPtr->renderSync.Shutdown();

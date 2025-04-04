@@ -61,6 +61,15 @@ namespace plugins
     public: QMutex mutex;
     public: QSGTexture *texture = nullptr;
     public: QQuickWindow *window = nullptr;
+
+    public: void CreateTexture(id<MTLTexture> _id, QSize _size)
+    {
+      delete this->texture;
+      this->texture = QNativeInterface::QSGMetalTexture::fromNative(
+        _id,
+        this->window,
+        _size);
+    }
   };
 }
 }
@@ -165,12 +174,8 @@ TextureNodeRhiMetal::TextureNodeRhiMetal(QQuickWindow *_window)
   this->dataPtr->window = _window;
 
   // Our texture node must have a texture, so use the default 0 texture.
-  this->dataPtr->texture =
-      this->dataPtr->window->createTextureFromNativeObject(
-        QQuickWindow::NativeObjectTexture,
-        static_cast<void*>(&this->dataPtr->metalTexture),
-        0,
-        QSize(1, 1));
+  this->dataPtr->CreateTexture(
+    this->dataPtr->metalTexture, QSize(1, 1));
 }
 
 /////////////////////////////////////////////////
@@ -206,14 +211,7 @@ void TextureNodeRhiMetal::PrepareNode()
 
   if (this->dataPtr->newMetalTexture)
   {
-    delete this->dataPtr->texture;
-    this->dataPtr->texture = nullptr;
-
-    this->dataPtr->texture =
-        this->dataPtr->window->createTextureFromNativeObject(
-            QQuickWindow::NativeObjectTexture,
-            static_cast<void*>(&this->dataPtr->newMetalTexture),
-            0,
-            this->dataPtr->newSize);
+    this->dataPtr->CreateTexture(
+      this->dataPtr->newMetalTexture, this->dataPtr->newSize);
   }
 }

@@ -48,20 +48,20 @@ Item {
         text: "\u21bb"
         Material.background: Material.primary
         onClicked: {
-          NavSatMap.OnRefresh();
+          _NavSatMap.OnRefresh();
         }
       }
 
       ComboBox {
         id: combo
         Layout.fillWidth: true
-        model: NavSatMap.topicList
+        model: _NavSatMap.topicList
         onCurrentIndexChanged: {
           if (currentIndex < 0) {
             return;
           }
 
-          NavSatMap.OnTopic(textAt(currentIndex));
+          _NavSatMap.OnTopic(textAt(currentIndex));
         }
         ToolTip.visible: hovered
         ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
@@ -158,7 +158,7 @@ Item {
   }
 
   Connections {
-    target: NavSatMap
+    target: _NavSatMap
     onNewMessage: {
       latitude = _latitudeDeg
       longitude = _longitudeDeg

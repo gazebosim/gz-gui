@@ -46,7 +46,7 @@ Item
   Rectangle
   {
     id: startLabel;
-    visible: MainWindow.pluginCount === 0
+    visible: _MainWindow.pluginCount === 0
     anchors.fill: parent
     color: Material.background
     Label {

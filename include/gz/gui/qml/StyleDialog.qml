@@ -17,7 +17,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
+import Qt.labs.platform as Platform
 
 /**
  * Style dialog
@@ -96,23 +97,23 @@ Dialog {
 
   // Connections (C++ signal to QML slot)
   Connections {
-    target: MainWindow
+    target: _MainWindow
     function onMaterialThemeChanged() {
-      updateTheme(MainWindow.materialTheme);
+      updateTheme(_MainWindow.materialTheme);
     }
   }
 
   Connections {
-    target: MainWindow
+    target: _MainWindow
     function onMaterialPrimaryChanged() {
-      updatePrimary(MainWindow.materialPrimary);
+      updatePrimary(_MainWindow.materialPrimary);
     }
   }
 
   Connections {
-    target: MainWindow
+    target: _MainWindow
     function onMaterialAccentChanged() {
-      updateAccent(MainWindow.materialAccent);
+      updateAccent(_MainWindow.materialAccent);
     }
   }
 
@@ -144,7 +145,7 @@ Dialog {
 
     var index = -1;
 
-    // When setting from MainWindow / ColorDialog
+    // When setting from _MainWindow / ColorDialog
     if (typeof _primary === "string")
     {
       index = materialColorStrs.indexOf(_primary)
@@ -189,7 +190,7 @@ Dialog {
 
     var index = -1;
 
-    // When setting from MainWindow / ColorDialog
+    // When setting from _MainWindow / ColorDialog
     if (typeof _accent === "string")
     {
       index = materialColorStrs.indexOf(_accent)
@@ -318,7 +319,7 @@ Dialog {
       text: "Primary"
     }
 
-    ColorDialog {
+    Platform.ColorDialog {
       id: materialPrimaryDialog
       title: "Primary color"
       // options: ColorDialog.NoButtons
@@ -364,7 +365,7 @@ Dialog {
       text: "Accent"
     }
 
-    ColorDialog {
+    Platform.ColorDialog {
       id: materialAccentDialog
       title: "Accent color"
       // options: ColorDialog.NoButtons

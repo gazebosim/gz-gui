@@ -69,6 +69,10 @@ class TopicsModel : public QStandardItemModel
         {PLOT_ROLE, PLOT_KEY},
     };
   }
+
+  // public: ~TopicsModel() {
+  //    std::cerr << "topics model destructor " << std::endl;
+  // }
 };
 
 class TopicViewer::Implementation
@@ -159,7 +163,7 @@ TopicViewer::TopicViewer()
   this->dataPtr->CreateModel();
 
   gui::App()->Engine()->rootContext()->setContextProperty(
-                "TopicsModel", this->dataPtr->model);
+                "_TopicsModel", this->dataPtr->model);
 
   this->dataPtr->timer = new QTimer();
   connect(this->dataPtr->timer, SIGNAL(timeout()), this, SLOT(UpdateModel()));
