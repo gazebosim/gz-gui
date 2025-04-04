@@ -58,7 +58,7 @@
 #  include <gz/rendering/RenderEngineVulkanExternalDeviceStructs.hh>
 #endif  // GZ_GUI_HAVE_VULKAN
 
-Q_DECLARE_METATYPE(gz::gui::plugins::RenderSync*)
+Q_DECLARE_OPAQUE_POINTER(gz::gui::plugins::RenderSync*)
 
 namespace gz::gui::plugins
 {
