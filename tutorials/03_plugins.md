@@ -11,29 +11,9 @@ The plugin contains [QML](http://doc.qt.io/qt-5/qtqml-index.html) code that spec
 
 ## Starting a pre-built plugin (example)
 
-### Step 1: Setting up the environment
+### Step 1: Running the Publisher Plugin
 
-If you have built `gz-gui` from source, follow the steps below:
-
-1. Navigate to the directory where gz-gui is present.
-
-```sh
-cd ~/workspace/gz-gui
-```
-
-2. Set `GZ_GUI_PLUGIN_PATH` environment variable as follows:
-```sh
-export GZ_GUI_PLUGIN_PATH=$(pwd)
-```
-
-To check if GZ_GUI_PLUGIN_PATH was correctly set, do
-```sh
-echo $GZ_GUI_PLUGIN_PATH
-```
-
-### Step 2: Running the Publisher Plugin
-
-1. Run the following command to run the Publisher Plugin. A `gz-gui` window would pop-up.
+1. Run the following command to run the Publisher plugin. A `gz-gui` window would pop-up.
 
 ```sh
 gz gui -s Publisher
@@ -47,7 +27,7 @@ gz gui -s Publisher
 
 This makes the Publisher plugin to publish the message `data: "Hello"` on the topic /echo.
 
-### Step 3: Printing the published messages
+### Step 2: Printing the published messages
 
 ```sh
 gz topic -e -t /echo
@@ -158,11 +138,33 @@ tutorial for more information.
 Gazebo GUI will look for plugins on the following paths, in this order:
 
 1. All paths set on the `GZ_GUI_PLUGIN_PATH` environment variable
-2. All paths added by calling `gz::gui::addPluginPath`
+2. All paths added by calling `gz::gui::App()->AddPluginPath("<<<custom_path>>>");`. Here `App()` is the pointer to running application in the `gz::gui` namespace.
 3. `~/.gz/gui/plugins`
-4. [Plugins which are installed with Gazebo GUI](https://gazebosim.org/api/gui/9/namespacegz_1_1gui_1_1plugins.html)
+4. [Plugins which are installed with Gazebo GUI](https://github.com/gazebosim/gz-gui/tree/gz-gui9/src/plugins)
+
+## Setting up the environment for custom plugins
+
+If you have built `gz-gui` from source, follow the steps below:
+
+1. Navigate to the directory where gz-gui is present.
+
+```sh
+cd ~/workspace/gz-gui
+```
+
+2. Set `GZ_GUI_PLUGIN_PATH` environment variable as follows:
+```sh
+export GZ_GUI_PLUGIN_PATH=$(pwd)
+```
+
+To check if GZ_GUI_PLUGIN_PATH was correctly set, do
+```sh
+echo $GZ_GUI_PLUGIN_PATH
+```
 
 ## More Built-in plugins
+
+**Note:** The environment needs to be correctly configured as mentioned above.
 
 ### Image Display
 Display images from a Gazebo Transport topic.
@@ -211,7 +213,7 @@ Change the topic to echo to `/keyboard/keypress`, echo, and start pressing keys.
 
 ![key_publisher_plugin_1](images/screenshot_plugins_tutorial_4.png)
 
-In the above image, the keys `A`, `S`, `D`, `Space`, `Super`, `S` were pressed in order. The keycode values are printed on the right terminal.
+In the above image, the keys `A`, `S`, `D`, `Space`, `Shift`, `S` were pressed in order. The keycode values are printed on the right terminal.
 
 Additionally, the keycodes can also be viewed on the `Topic Echo` plugin as can be seen below under `Messages`:
 
