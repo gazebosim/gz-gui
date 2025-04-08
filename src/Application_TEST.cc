@@ -260,14 +260,11 @@ TEST(ApplicationTest,
     ASSERT_EQ(wins.size(), 1);
 
     // Close window after some time
-    QTimer::singleShot(300, wins[0], SLOT(close()));
+    QTimer::singleShot(100, wins[0], SLOT(close()));
 
     // Show window
     app.exec();
   }
-
-  QCoreApplication::processEvents();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   // Load plugin
   {
@@ -283,14 +280,11 @@ TEST(ApplicationTest,
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+    QTimer::singleShot(100, win->QuickWindow(), SLOT(close()));
 
     // Show window
     app.exec();
   }
-
-  QCoreApplication::processEvents();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   // Test config
   auto testBuildPath = std::string(PROJECT_BINARY_PATH) + "/lib/";
@@ -314,14 +308,11 @@ TEST(ApplicationTest,
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+    QTimer::singleShot(100, win->QuickWindow(), SLOT(close()));
 
     // Show window
     app.exec();
   }
-
-  QCoreApplication::processEvents();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 //////////////////////////////////////////////////

@@ -71,9 +71,6 @@ namespace gz::gui
       /// \brief Destructor
       public: virtual ~Application();
 
-      /// \brief Shutdown and cleanup application
-      public slots: void Shutdown();
-
       /// \brief Get the QML engine
       /// \return Pointer to QML engine
       public: QQmlApplicationEngine *Engine() const;
