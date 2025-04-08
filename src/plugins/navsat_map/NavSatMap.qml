@@ -14,12 +14,12 @@
  * limitations under the License.
  *
 */
-import QtQuick 2.9
+import QtQuick
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.1
-import QtLocation 5.6
-import QtPositioning 5.6
+import QtLocation
+import QtPositioning
 
 Item {
   id: navSatMap
@@ -122,8 +122,37 @@ Item {
     copyrightsVisible: false
     zoomLevel: 16
 
-    gesture.onPanStarted: {
-      centering = false
+    PinchHandler {
+        id: pinch
+        target: null
+        onActiveChanged: if (active) {
+            map.startCentroid = map.toCoordinate(pinch.centroid.position, false)
+        }
+        onScaleChanged: (delta) => {
+            map.zoomLevel += Math.log2(delta)
+            map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
+        }
+        onRotationChanged: (delta) => {
+            map.bearing -= delta
+            map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
+        }
+        grabPermissions: PointerHandler.TakeOverForbidden
+    }
+    WheelHandler {
+        id: wheel
+        // workaround for QTBUG-87646 / QTBUG-112394 / QTBUG-112432:
+        // Magic Mouse pretends to be a trackpad but doesn't work with PinchHandler
+        // and we don't yet distinguish mice and trackpads on Wayland either
+        acceptedDevices: Qt.platform.pluginName === "cocoa" || Qt.platform.pluginName === "wayland"
+                         ? PointerDevice.Mouse | PointerDevice.TouchPad
+                         : PointerDevice.Mouse
+        rotationScale: 1/120
+        property: "zoomLevel"
+    }
+    DragHandler {
+        id: drag
+        target: null
+        onTranslationChanged: (delta) => map.pan(-delta.x, -delta.y)
     }
 
     onZoomLevelChanged: {
@@ -159,7 +188,7 @@ Item {
 
   Connections {
     target: _NavSatMap
-    onNewMessage: {
+    function onNewMessage(_latitudeDeg, _longitudeDeg) {
       latitude = _latitudeDeg
       longitude = _longitudeDeg
     }
