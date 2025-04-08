@@ -235,12 +235,6 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 /////////////////////////////////////////////////
 Application::~Application()
 {
-  this->Shutdown();
-}
-
-/////////////////////////////////////////////////
-void Application::Shutdown()
-{
   gzdbg << "Terminating application." << std::endl;
 
   if (this->dataPtr->mainWin && this->dataPtr->mainWin->QuickWindow())
@@ -277,6 +271,15 @@ void Application::Shutdown()
   this->dataPtr->pluginsAdded.clear();
   this->dataPtr->pluginPaths.clear();
   this->dataPtr->pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
+
+  // Process DeferredDelete events to ensure that the main window is
+  // deleted properly when the application quits. This is necessary for our
+  // tests as they create and delete a Qt Application between tests.
+  if (QCoreApplication::eventDispatcher())
+  {
+    QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+    QCoreApplication::eventDispatcher()->processEvents(QEventLoop::AllEvents);
+  }
 }
 
 /////////////////////////////////////////////////
