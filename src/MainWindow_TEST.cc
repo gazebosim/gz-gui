@@ -99,8 +99,8 @@ TEST(MainWindowTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(SaveConfigAs))
   common::Console::SetVerbosity(4);
   Application app(g_argc, g_argv);
 
-   auto *mainWindow = new MainWindow;
-   ASSERT_NE(nullptr, mainWindow);
+  auto *mainWindow = new MainWindow;
+  ASSERT_NE(nullptr, mainWindow);
 
   // Save to file
   {
