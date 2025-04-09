@@ -242,22 +242,13 @@ RowLayout {
     closePolicy: Popup.CloseOnEscape
     standardButtons: Dialog.Ok  | Dialog.Discard
 
-    onAboutToShow: function () {
-      footer.standardButton(Dialog.Discard).text = "Cancel"
-      footer.standardButton(Dialog.Ok).text = "Reset"
+    Component.onCompleted: {
+      confirmationDialogOnReset.standardButton(Dialog.Discard).text = "Cancel"
+      confirmationDialogOnReset.standardButton(Dialog.Ok).text = "Reset"
     }
 
-    footer:
-      DialogButtonBox
-      {
-        onClicked: function (btn)
-        {
-          confirmationDialogOnReset.close()
-          if (btn == this.standardButton(Dialog.Ok))
-          {
-            _WorldControl.OnReset()
-          }
-        }
-      }
+    onAccepted: {
+      _WorldControl.OnReset()
+    }
   }
 }
