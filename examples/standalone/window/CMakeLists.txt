@@ -18,8 +18,7 @@ find_package (Qt5 5.15
 )
 
 # Find the Gazebo GUI library
-find_package(gz-gui10 REQUIRED)
-set(GZ_GUI_VER ${gz-gui10_VERSION_MAJOR})
+find_package(gz-gui REQUIRED)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GZ-GUI_CXX_FLAGS}")
 
@@ -28,5 +27,5 @@ add_executable(window
   window.cc
 )
 target_link_libraries(window
-  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
+  gz-gui::gz-gui
 )

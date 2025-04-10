@@ -18,8 +18,7 @@ find_package (Qt5 5.15
 )
 
 # Find the Gazebo GUI library
-find_package(gz-gui10 REQUIRED)
-set(GZ_GUI_VER ${gz-gui10_VERSION_MAJOR})
+find_package(gz-gui REQUIRED)
 
 qt_add_resources(resources_RCC CustomContext.qrc)
 
@@ -29,5 +28,5 @@ add_library(CustomContext SHARED ${headers_MOC}
   ${resources_RCC}
 )
 target_link_libraries(CustomContext
-  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
+  gz-gui::gz-gui
 )

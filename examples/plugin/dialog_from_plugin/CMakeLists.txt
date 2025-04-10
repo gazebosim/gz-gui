@@ -17,8 +17,7 @@ find_package (Qt5
 )
 
 # Find the Gazebo GUI library
-find_package(gz-gui10 REQUIRED)
-set(GZ_GUI_VER ${gz-gui10_VERSION_MAJOR})
+find_package(gz-gui REQUIRED)
 
 qt_add_resources(resources_RCC DialogFromPlugin.qrc)
 
@@ -28,5 +27,5 @@ add_library(DialogFromPlugin SHARED ${headers_MOC}
   ${resources_RCC}
 )
 target_link_libraries(DialogFromPlugin
-  gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
+  gz-gui::gz-gui
 )
