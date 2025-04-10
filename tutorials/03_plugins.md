@@ -144,12 +144,12 @@ Gazebo GUI will look for plugins on the following paths, in this order:
 
 ## Setting up the environment for custom plugins
 
-If you have built `gz-gui` from source, follow the steps below:
+To run your custom plugin, follow the steps below:
 
-1. Navigate to the directory where gz-gui is present.
+1. Navigate to the directory where your custom plugin is built.
 
 ```sh
-cd ~/workspace/gz-gui
+cd ~/path/to/your_gz_gui_plugin_library
 ```
 
 2. Set `GZ_GUI_PLUGIN_PATH` environment variable as follows:
@@ -163,8 +163,6 @@ echo $GZ_GUI_PLUGIN_PATH
 ```
 
 ## More Built-in plugins
-
-**Note:** The environment needs to be correctly configured as mentioned above.
 
 ### Image Display
 Display images from a Gazebo Transport topic.
