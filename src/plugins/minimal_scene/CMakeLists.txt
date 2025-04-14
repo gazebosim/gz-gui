@@ -29,7 +29,7 @@ gz_gui_add_plugin(MinimalScene
     MinimalScene.hh
   PUBLIC_LINK_LIBS
    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
-   gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
+   gz-transport::gz-transport
    ${PROJECT_LINK_LIBS}
 )
 

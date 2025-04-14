@@ -61,7 +61,6 @@ set(GZ_PLUGIN_VER ${gz-plugin3_VERSION_MAJOR})
 #--------------------------------------
 # Find gz-transport
 gz_find_package(gz-transport REQUIRED)
-set(GZ_TRANSPORT_VER ${gz-transport15_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-rendering
