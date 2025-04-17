@@ -13,4 +13,3 @@ Quickly check try your plugin as follows:
 
     cd build
     export GZ_GUI_PLUGIN_PATH=`pwd`; gz gui -s MultipleQml
-

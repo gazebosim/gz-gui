@@ -87,7 +87,7 @@ Popup {
           }
           Keys.onUpPressed: {
             pluginMenuListView.decrementCurrentIndex();
-          } 
+          }
         }
       }
     }
@@ -138,4 +138,3 @@ Popup {
     }
   }
 }
-
