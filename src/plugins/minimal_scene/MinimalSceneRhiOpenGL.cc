@@ -210,6 +210,7 @@ void RenderThreadRhiOpenGL::ShutDown()
   if (this->dataPtr->surface)
   {
     this->dataPtr->surface->deleteLater();
+    this->dataPtr->surface = nullptr;
   }
 }
 

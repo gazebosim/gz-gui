@@ -837,6 +837,9 @@ void GzRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 /////////////////////////////////////////////////
 void GzRenderer::Destroy()
 {
+  if (!this->initialized)
+    return;
+
   auto *engine = rendering::engine(this->engineName);
   if (engine == nullptr)
     return;
