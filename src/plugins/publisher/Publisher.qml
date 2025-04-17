@@ -28,7 +28,7 @@ Rectangle {
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
 
-  Column {
+  ColumnLayout {
     anchors.fill: parent
     anchors.margins: 10
 
@@ -40,6 +40,7 @@ Rectangle {
       id: msgTypeField
       text: _Publisher.msgType
       selectByMouse: true
+      Layout.fillWidth: true
     }
 
     Label {
@@ -50,6 +51,7 @@ Rectangle {
       id: topicField
       text: _Publisher.topic
       selectByMouse: true
+      Layout.fillWidth: true
     }
 
     Label {
@@ -60,6 +62,7 @@ Rectangle {
       id: msgDataField
       text: _Publisher.msgData
       selectByMouse: true
+      Layout.fillWidth: true
     }
 
     Label {
