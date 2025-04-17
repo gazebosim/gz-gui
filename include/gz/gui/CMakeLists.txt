@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
     gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
     gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER}
     gz-plugin${GZ_PLUGIN_VER}::loader
-    gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
+    gz-transport::gz-transport
     Qt::Core
     Qt::Qml
     Qt::Quick
