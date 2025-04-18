@@ -493,7 +493,7 @@ PlottingInterface::PlottingInterface():
   this->dataPtr->timeout = 1;
   this->InitTimer();
 
-  App()->Engine()->rootContext()->setContextProperty("PlottingIface", this);
+  App()->Engine()->rootContext()->setContextProperty("_PlottingIface", this);
 }
 
 //////////////////////////////////////////////////////

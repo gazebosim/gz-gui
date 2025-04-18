@@ -260,7 +260,7 @@ TEST(ApplicationTest,
     ASSERT_EQ(wins.size(), 1);
 
     // Close window after some time
-    QTimer::singleShot(300, wins[0], SLOT(close()));
+    QTimer::singleShot(100, wins[0], SLOT(close()));
 
     // Show window
     app.exec();
@@ -280,7 +280,7 @@ TEST(ApplicationTest,
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+    QTimer::singleShot(100, win->QuickWindow(), SLOT(close()));
 
     // Show window
     app.exec();
@@ -308,7 +308,7 @@ TEST(ApplicationTest,
     EXPECT_EQ(1, plugins.count());
 
     // Close window after some time
-    QTimer::singleShot(300, win->QuickWindow(), SLOT(close()));
+    QTimer::singleShot(100, win->QuickWindow(), SLOT(close()));
 
     // Show window
     app.exec();

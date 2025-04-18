@@ -2,7 +2,7 @@
 
 Next Tutorial: \ref commandline
 
-# Install
+# Installation
 
 These instructions are for installing only Gazebo GUI. If you're interested
 in using all the Gazebo libraries, not only Gazebo GUI, check out this

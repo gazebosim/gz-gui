@@ -17,7 +17,7 @@
 import QtQuick 2.9
 import QtCharts 2.2
 import QtQuick.Controls 2.2
-import QtQuick.Controls.Styles 1.4
+
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.0
@@ -111,19 +111,19 @@ Rectangle
 
   function onSubscribe(_Id, _topic, _path)
   {
-    PlottingIface.subscribe(_Id, _topic, _path);
+    _PlottingIface.subscribe(_Id, _topic, _path);
   }
   function onUnSubscribe(_Id, _topic, _path)
   {
-    PlottingIface.unsubscribe(_Id, _topic, _path);
+    _PlottingIface.unsubscribe(_Id, _topic, _path);
   }
   function onComponentSubscribe(entity, typeId, type, attribute, Id)
   {
-    PlottingIface.onComponentSubscribe(entity, typeId, type, attribute, Id);
+    _PlottingIface.onComponentSubscribe(entity, typeId, type, attribute, Id);
   }
   function onComponentUnSubscribe(entity, typeId, attribute, Id)
   {
-    PlottingIface.onComponentUnSubscribe(entity, typeId, attribute, Id);
+    _PlottingIface.onComponentUnSubscribe(entity, typeId, attribute, Id);
   }
 
   /**
@@ -185,8 +185,8 @@ Rectangle
   }
 
   Connections {
-    target: PlottingIface
-    onPlot : handlePlot(_chart, _fieldID, _x, _y);
+    target: _PlottingIface
+    onPlot : (_chart, _fieldID, _x, _y) => handlePlot(_chart, _fieldID, _x, _y);
   }
 
 
@@ -449,7 +449,7 @@ Rectangle
           chartSerieses[key] = seriesArray;
         });
 
-        return PlottingIface.exportCSV(path, chart_id, chartSerieses);
+        return _PlottingIface.exportCSV(path, chart_id, chartSerieses);
       }
       }
 

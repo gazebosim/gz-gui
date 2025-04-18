@@ -17,7 +17,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
 import QtQuick.Layouts 1.3
 import "qrc:/qml"
 
@@ -36,7 +36,7 @@ GridLayout {
   }
 
   Connections {
-    target: GridConfig
+    target: _GridConfig
     function onNewParams(_hCellCount, _vCellCount, _cellLength, _color) {
       horizontalCellCount.value = _hCellCount;
       verticalCellCount.value = _vCellCount;
@@ -52,12 +52,12 @@ GridLayout {
     id: combo
     Layout.columnSpan: 2
     Layout.fillWidth: true
-    model: GridConfig.nameList
+    model: _GridConfig.nameList
     onCurrentIndexChanged: {
       if (currentIndex < 0)
         return;
 
-      GridConfig.OnName(textAt(currentIndex));
+      _GridConfig.OnName(textAt(currentIndex));
     }
     popup.width: parent.width
     ToolTip.visible: hovered
@@ -70,7 +70,7 @@ GridLayout {
     Layout.columnSpan: 1
     Material.background: Material.primary
     onClicked: {
-      GridConfig.OnRefresh();
+      _GridConfig.OnRefresh();
     }
     ToolTip.visible: hovered
     ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
@@ -84,7 +84,7 @@ GridLayout {
     text: qsTr("Show")
     checked: true
     onClicked: {
-      GridConfig.OnShow(checked)
+      _GridConfig.OnShow(checked)
     }
   }
 
@@ -109,7 +109,7 @@ GridLayout {
     maximumValue: Number.MAX_VALUE
     minimumValue: 0
     value: 0
-    onEditingFinished: GridConfig.UpdateVCellCount(verticalCellCount.value)
+    onEditingFinished: _GridConfig.UpdateVCellCount(verticalCellCount.value)
   }
 
   Text {
@@ -126,7 +126,7 @@ GridLayout {
     maximumValue: Number.MAX_VALUE
     minimumValue: 1
     value: 20
-    onEditingFinished: GridConfig.UpdateHCellCount(horizontalCellCount.value)
+    onEditingFinished: _GridConfig.UpdateHCellCount(horizontalCellCount.value)
   }
 
   Text {
@@ -152,7 +152,7 @@ GridLayout {
     value: 1.00
     decimals: gzHelpers.getDecimals(cellLength.width)
     stepSize: 0.01
-    onEditingFinished: GridConfig.UpdateCellLength(cellLength.value)
+    onEditingFinished: _GridConfig.UpdateCellLength(cellLength.value)
   }
 
   Text {
@@ -177,17 +177,17 @@ GridLayout {
     Layout.fillWidth: true
     readOnly: false
 
-    xValue: GridConfig.gridPose[0]
-    yValue: GridConfig.gridPose[1]
-    zValue: GridConfig.gridPose[2]
-    rollValue: GridConfig.gridPose[3]
-    pitchValue: GridConfig.gridPose[4]
-    yawValue: GridConfig.gridPose[5]
+    xValue: _GridConfig.gridPose[0]
+    yValue: _GridConfig.gridPose[1]
+    zValue: _GridConfig.gridPose[2]
+    rollValue: _GridConfig.gridPose[3]
+    pitchValue: _GridConfig.gridPose[4]
+    yawValue: _GridConfig.gridPose[5]
 
-    onGzPoseSet: {
+    onGzPoseSet: (_x, _y, _z, _roll, _pitch, _yaw) => {
       // _x, _y, _z, _roll, _pitch, _yaw are parameters of signal gzPoseSet
       // from gz-gui GzPose.qml
-      GridConfig.SetGridPose([_x, _y, _z, _roll, _pitch, _yaw])
+      _GridConfig.SetGridPose([_x, _y, _z, _roll, _pitch, _yaw])
     }
     expand: true
     gzPlotEnabled: false
@@ -212,6 +212,6 @@ GridLayout {
     Layout.alignment: Qt.AlignRight
     Layout.bottomMargin: 10
     Layout.rightMargin: 20
-    onGzColorSet: GridConfig.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
+    onGzColorSet: _GridConfig.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
   }
 }

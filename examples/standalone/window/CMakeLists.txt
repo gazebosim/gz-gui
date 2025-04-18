@@ -8,8 +8,8 @@ endif()
 
 set (CMAKE_AUTOMOC ON)
 
-# Find Qt5
-find_package (Qt5 5.15
+# Find Qt6
+find_package (Qt6 6.4
   COMPONENTS
     Core
     Quick

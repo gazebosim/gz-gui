@@ -14,7 +14,7 @@
  * limitations under the License.
  *
 */
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 import QtQuick 2.9
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
@@ -33,12 +33,12 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.NoButton
-    visible: MinimalScene.loadingError.length == 0
+    visible: _MinimalScene.loadingError.length == 0
     onEntered: {
-      MinimalScene.OnFocusWindow()
+      _MinimalScene.OnFocusWindow()
     }
     onPositionChanged: {
-      MinimalScene.OnHovered(mouseArea.mouseX, mouseArea.mouseY);
+      _MinimalScene.OnHovered(mouseArea.mouseX, mouseArea.mouseY);
     }
   }
 
@@ -46,7 +46,7 @@ Rectangle {
     id: renderWindow
     objectName: "rw"
     anchors.fill: parent
-    visible: MinimalScene.loadingError.length == 0
+    visible: _MinimalScene.loadingError.length == 0
   }
 
 
@@ -62,14 +62,14 @@ Rectangle {
   anchors.fill: renderWindow
 
   onDropped: {
-    MinimalScene.OnDropped(drop.text, drag.x, drag.y)
+    _MinimalScene.OnDropped(drop.text, drag.x, drag.y)
   }
 
   Label {
     anchors.fill: parent
     anchors.margins: 10
-    text: MinimalScene.loadingError
-    visible: (MinimalScene.loadingError.length > 0);
+    text: _MinimalScene.loadingError
+    visible: (_MinimalScene.loadingError.length > 0);
     wrapMode: Text.WordWrap
   }
 }

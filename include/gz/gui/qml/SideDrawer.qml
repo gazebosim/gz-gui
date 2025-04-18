@@ -90,7 +90,7 @@ Drawer {
     ListView {
       id: listView
       anchors.fill: parent
-      visible: MainWindow.showDefaultDrawerOpts
+      visible: _MainWindow.showDefaultDrawerOpts
 
       delegate: ItemDelegate {
         width: parent.width

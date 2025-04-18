@@ -24,11 +24,11 @@ RowLayout {
   id: worldControl
   spacing: 10
   Layout.leftMargin: 10
-  Layout.minimumWidth: 100
+  Layout.minimumWidth: 150
   Layout.minimumHeight: 100
 
   Connections {
-    target: WorldControl
+    target: _WorldControl
     function onPlaying() {
       paused = false;
     }
@@ -41,9 +41,9 @@ RowLayout {
     sequence: "Space"
     onActivated: {
       if (paused)
-        WorldControl.OnPlay()
+        _WorldControl.OnPlay()
       else
-        WorldControl.OnPause()
+        _WorldControl.OnPause()
     }
   }
 
@@ -104,9 +104,9 @@ RowLayout {
     Layout.alignment : Qt.AlignVCenter
     onClicked: {
       if (paused)
-        WorldControl.OnPlay()
+        _WorldControl.OnPlay()
       else
-        WorldControl.OnPause()
+        _WorldControl.OnPause()
     }
     ToolTip.visible: hovered
     ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
@@ -147,7 +147,7 @@ RowLayout {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         onClicked: {
-          WorldControl.OnStep()
+          _WorldControl.OnStep()
         }
         Material.background: Material.primary
 
@@ -183,7 +183,7 @@ RowLayout {
           Layout.alignment: Qt.AlignVCenter
           value: 1
           onValueChanged: {
-            WorldControl.OnStepCount(value)
+            _WorldControl.OnStepCount(value)
           }
         }
       }
@@ -242,22 +242,13 @@ RowLayout {
     closePolicy: Popup.CloseOnEscape
     standardButtons: Dialog.Ok  | Dialog.Discard
 
-    onAboutToShow: function () {
-      footer.standardButton(Dialog.Discard).text = "Cancel"
-      footer.standardButton(Dialog.Ok).text = "Reset"
+    Component.onCompleted: {
+      confirmationDialogOnReset.standardButton(Dialog.Discard).text = "Cancel"
+      confirmationDialogOnReset.standardButton(Dialog.Ok).text = "Reset"
     }
 
-    footer:
-      DialogButtonBox
-      {
-        onClicked: function (btn)
-        {
-          confirmationDialogOnReset.close()
-          if (btn == this.standardButton(Dialog.Ok))
-          {
-            WorldControl.OnReset()
-          }
-        }
-      }
+    onAccepted: {
+      _WorldControl.OnReset()
+    }
   }
 }

@@ -14,10 +14,11 @@
  * limitations under the License.
  *
 */
+import QtCore
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
 import QtQuick.Layouts 1.3
 import ExitAction 1.0
 import "qrc:/qml"
@@ -38,22 +39,22 @@ ApplicationWindow
   property string materialTheme: window.Material.theme
   property string materialPrimary: window.Material.primary
   property string materialAccent: window.Material.accent
-  property string toolBarColorLight: MainWindow.toolBarColorLight
-  property string toolBarTextColorLight: MainWindow.toolBarTextColorLight
-  property string toolBarColorDark: MainWindow.toolBarColorDark
-  property string toolBarTextColorDark: MainWindow.toolBarTextColorDark
-  property string pluginToolBarColorLight: MainWindow.pluginToolBarColorLight
-  property string pluginToolBarTextColorLight: MainWindow.pluginToolBarTextColorLight
-  property string pluginToolBarColorDark: MainWindow.pluginToolBarColorDark
-  property string pluginToolBarTextColorDark: MainWindow.pluginToolBarTextColorDark
+  property string toolBarColorLight: _MainWindow.toolBarColorLight
+  property string toolBarTextColorLight: _MainWindow.toolBarTextColorLight
+  property string toolBarColorDark: _MainWindow.toolBarColorDark
+  property string toolBarTextColorDark: _MainWindow.toolBarTextColorDark
+  property string pluginToolBarColorLight: _MainWindow.pluginToolBarColorLight
+  property string pluginToolBarTextColorLight: _MainWindow.pluginToolBarTextColorLight
+  property string pluginToolBarColorDark: _MainWindow.pluginToolBarColorDark
+  property string pluginToolBarTextColorDark: _MainWindow.pluginToolBarTextColorDark
   // Expose config properties to C++
-  property int defaultExitAction: MainWindow.defaultExitAction
-  property bool showDialogOnExit: MainWindow.showDialogOnExit
-  property string dialogOnExitText: MainWindow.dialogOnExitText
-  property bool exitDialogShowShutdown: MainWindow.exitDialogShowShutdown
-  property bool exitDialogShowCloseGui: MainWindow.exitDialogShowCloseGui
-  property string exitDialogShutdownText: MainWindow.exitDialogShutdownText
-  property string exitDialogCloseGuiText: MainWindow.exitDialogCloseGuiText
+  property int defaultExitAction: _MainWindow.defaultExitAction
+  property bool showDialogOnExit: _MainWindow.showDialogOnExit
+  property string dialogOnExitText: _MainWindow.dialogOnExitText
+  property bool exitDialogShowShutdown: _MainWindow.exitDialogShowShutdown
+  property bool exitDialogShowCloseGui: _MainWindow.exitDialogShowCloseGui
+  property string exitDialogShutdownText: _MainWindow.exitDialogShutdownText
+  property string exitDialogCloseGuiText: _MainWindow.exitDialogCloseGuiText
   /**
    * Flag to indicate if the close event was triggered by the close dialog.
    */
@@ -63,21 +64,21 @@ ApplicationWindow
    * Tool bar background color
    */
   property string toolBarColor:
-    MainWindow.toolBarColorLight === "" ||
-    MainWindow.toolBarColorDark === "" ?
+    _MainWindow.toolBarColorLight === "" ||
+    _MainWindow.toolBarColorDark === "" ?
     Material.primary :
     (Material.theme === Material.Light) ?
-    MainWindow.toolBarColorLight : MainWindow.toolBarColorDark
+    _MainWindow.toolBarColorLight : _MainWindow.toolBarColorDark
 
   /**
    * Tool bar text color
    */
   property string toolBarTextColor:
-    MainWindow.toolBarTextColorLight === "" ||
-    MainWindow.toolBarTextColorDark === "" ?
+    _MainWindow.toolBarTextColorLight === "" ||
+    _MainWindow.toolBarTextColorDark === "" ?
     Material.background :
     (Material.theme === Material.Light) ?
-    MainWindow.toolBarTextColorLight : MainWindow.toolBarTextColorDark
+    _MainWindow.toolBarTextColorLight : _MainWindow.toolBarTextColorDark
 
   // Not sure why the binding doesn't take care of this
   onTitleChanged: {
@@ -85,7 +86,7 @@ ApplicationWindow
   }
 
   // Handler for window closing
-  onClosing: {
+  onClosing: (close) => {
     close.accepted = !showDialogOnExit
     if(showDialogOnExit){
       if (closingFromDialog) {
@@ -94,13 +95,13 @@ ApplicationWindow
         confirmationDialogOnExit.open()
       }
     } else if (defaultExitAction == ExitAction.SHUTDOWN_SERVER) {
-      MainWindow.OnStopServer()
+      _MainWindow.OnStopServer()
     }
   }
 
   // C++ signals to QML slots
   Connections {
-    target: MainWindow
+    target: _MainWindow
     function onNotify(_message) {
       notificationDialog.setTextDuration(_message, 0)
     }
@@ -120,7 +121,7 @@ ApplicationWindow
    * Save a configuration file
    */
   function saveConfig() {
-    MainWindow.OnSaveConfig()
+    _MainWindow.OnSaveConfig()
   }
 
   /**
@@ -185,11 +186,11 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
-        visible: MainWindow.showDrawer
+        visible: _MainWindow.showDrawer
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
-          verticalAlignment: Image.AlignVCenter 
+          verticalAlignment: Image.AlignVCenter
           source: Material.theme === Material.Light ? "images/drawer.png" : "images/drawer_dark.png"
         }
         onClicked: drawer.open()
@@ -199,7 +200,7 @@ ApplicationWindow
       Rectangle {
         height: 1
         width: 1
-        visible: !MainWindow.showDrawer
+        visible: !_MainWindow.showDrawer
         color: "transparent"
       }
 
@@ -216,7 +217,7 @@ ApplicationWindow
 
       ToolButton {
         highlighted: true
-        visible: MainWindow.showPluginMenu
+        visible: _MainWindow.showPluginMenu
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -248,7 +249,7 @@ ApplicationWindow
    */
   SideDrawer {
     id: drawer
-    interactive: MainWindow.showDrawer
+    interactive: _MainWindow.showDrawer
     width: Math.min(window.width * 0.3, 500)
     height: window.height
   }
@@ -295,12 +296,11 @@ ApplicationWindow
   FileDialog {
     id: loadFileDialog
     title: "Load configuration"
-    folder: shortcuts.home
+    fileMode: FileDialog.OpenFile
+    currentFolder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
     nameFilters: [ "Config files (*.config)" ]
-    selectMultiple: false
-    selectExisting: true
     onAccepted: {
-      MainWindow.OnLoadConfig(fileUrl)
+      _MainWindow.OnLoadConfig(fileUrl)
     }
   }
 
@@ -310,10 +310,9 @@ ApplicationWindow
   FileDialog {
     id: saveFileDialog
     title: "Save configuration"
-    folder: shortcuts.home
+    fileMode: FileDialog.SaveFile
+    currentFolder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
     nameFilters: [ "Config files (*.config)" ]
-    selectMultiple: false
-    selectExisting: false
     onAccepted: {
       var selected = fileUrl.toString();
 
@@ -322,7 +321,7 @@ ApplicationWindow
         selected += ".config";
       }
 
-      MainWindow.OnSaveConfigAs(selected);
+      _MainWindow.OnSaveConfigAs(selected);
     }
   }
 
@@ -371,7 +370,7 @@ ApplicationWindow
             window.close();
           }
           else if (btn == this.standardButton(Dialog.Discard)) {
-            MainWindow.OnStopServer()
+            _MainWindow.OnStopServer()
             // if GUI and server run in the same process, give server opportunity to kill the GUI
             timer.interval = 100;
             timer.repeat = false;

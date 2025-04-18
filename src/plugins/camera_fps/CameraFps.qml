@@ -38,7 +38,7 @@ Rectangle {
 
     Label {
       objectName: "cameraFps"
-      text: CameraFps.cameraFPSValue
+      text: _CameraFps.cameraFPSValue
       Layout.alignment: Qt.AlignRight
     }
   }

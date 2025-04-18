@@ -28,7 +28,7 @@ Rectangle {
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
 
-  Column {
+  ColumnLayout {
     anchors.fill: parent
     anchors.margins: 10
 
@@ -38,8 +38,9 @@ Rectangle {
 
     TextField {
       id: msgTypeField
-      text: Publisher.msgType
+      text: _Publisher.msgType
       selectByMouse: true
+      Layout.fillWidth: true
     }
 
     Label {
@@ -48,8 +49,9 @@ Rectangle {
 
     TextField {
       id: topicField
-      text: Publisher.topic
+      text: _Publisher.topic
       selectByMouse: true
+      Layout.fillWidth: true
     }
 
     Label {
@@ -58,8 +60,9 @@ Rectangle {
 
     TextArea {
       id: msgDataField
-      text: Publisher.msgData
+      text: _Publisher.msgData
       selectByMouse: true
+      Layout.fillWidth: true
     }
 
     Label {
@@ -90,12 +93,12 @@ Rectangle {
       onToggled: {
 
         // Is there a way to 2-way bind properties, or is this needed?
-        Publisher.msgType = msgTypeField.text
-        Publisher.topic = topicField.text
-        Publisher.msgData = msgDataField.text
-        Publisher.frequency = frequencyField.value
+        _Publisher.msgType = msgTypeField.text
+        _Publisher.topic = topicField.text
+        _Publisher.msgData = msgDataField.text
+        _Publisher.frequency = frequencyField.value
 
-        Publisher.OnPublish(checked);
+        _Publisher.OnPublish(checked);
       }
       ToolTip.visible: hovered
       ToolTip.delay: tooltipDelay
