@@ -60,8 +60,7 @@ set(GZ_PLUGIN_VER ${gz-plugin3_VERSION_MAJOR})
 
 #--------------------------------------
 # Find gz-transport
-gz_find_package(gz-transport14 REQUIRED)
-set(GZ_TRANSPORT_VER ${gz-transport14_VERSION_MAJOR})
+gz_find_package(gz-transport REQUIRED)
 
 #--------------------------------------
 # Find gz-rendering
@@ -81,8 +80,8 @@ set(GZ_TOOLS_VER 2)
 
 #--------------------------------------
 # Find QT
-set(QT_MAJOR_VERSION 5)
-set(QT_MINOR_VERSION 15)
+set(QT_MAJOR_VERSION 6)
+set(QT_MINOR_VERSION 4)
 gz_find_package (Qt${QT_MAJOR_VERSION}
   VERSION ${QT_MAJOR_VERSION}.${QT_MINOR_VERSION}
   COMPONENTS
@@ -94,7 +93,14 @@ gz_find_package (Qt${QT_MAJOR_VERSION}
   REQUIRED
   PKGCONFIG_VER_COMPARISON >=
   PKGCONFIG "Qt${QT_MAJOR_VERSION}Core Qt${QT_MAJOR_VERSION}Quick Qt${QT_MAJOR_VERSION}QuickControls2 Qt${QT_MAJOR_VERSION}Widgets")
+
 add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
+set(CMAKE_AUTOMOC TRUE)
+set(CMAKE_AUTOUIC TRUE)
+set(CMAKE_AUTORCC TRUE)
+if(POLICY CMP0100)
+  cmake_policy(SET CMP0100 NEW)
+endif()
 
 set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
   ${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins

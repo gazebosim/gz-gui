@@ -100,12 +100,6 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setOrganizationDomain("gazebosim.org");
   this->setApplicationName("Gazebo GUI");
 
-  // Disable deprecation messages about onFoo connections since the new way of
-  // defining connections is only available as of Qt 5.12, which is not
-  // available in Ubuntu Focal
-  // TODO(azeey) Remove once Qt 5.12 is available in all supported platforms.
-  QLoggingCategory::setFilterRules("qt.qml.connections=false");
-
 #ifdef __APPLE__
   AvailableAPIs api = AvailableAPIs::Metal;
 #else
@@ -132,7 +126,6 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #else
     QQuickWindow::setSceneGraphBackend(QSGRendererInterface::MetalRhi);
 #endif
-
   }
 
   // TODO(srmainwaring): implement facility for overriding the default
@@ -256,6 +249,7 @@ Application::~Application()
     if (this->dataPtr->mainWin->QuickWindow()->isVisible())
       this->dataPtr->mainWin->QuickWindow()->close();
     this->dataPtr->mainWin->deleteLater();
+    this->dataPtr->mainWin = nullptr;
   }
 
   for (auto dialog : this->dataPtr->dialogs)
@@ -266,13 +260,26 @@ Application::~Application()
   }
   this->dataPtr->dialogs.clear();
 
-  delete this->dataPtr->engine;
+  if (this->dataPtr->engine)
+  {
+    delete this->dataPtr->engine;
+    this->dataPtr->engine = nullptr;
+  }
 
   std::queue<std::shared_ptr<Plugin>> empty;
   std::swap(this->dataPtr->pluginsToAdd, empty);
   this->dataPtr->pluginsAdded.clear();
   this->dataPtr->pluginPaths.clear();
   this->dataPtr->pluginPathEnv = "GZ_GUI_PLUGIN_PATH";
+
+  // Process DeferredDelete events to ensure that the main window is
+  // deleted properly when the application quits. This is necessary for our
+  // tests as they create and delete a Qt Application between tests.
+  if (QCoreApplication::eventDispatcher())
+  {
+    QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+    QCoreApplication::eventDispatcher()->processEvents(QEventLoop::AllEvents);
+  }
 }
 
 /////////////////////////////////////////////////

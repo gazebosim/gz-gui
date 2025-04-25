@@ -30,7 +30,7 @@ RowLayout {
    * Close icon
    */
   property string closeIcon: "\u2A2F"
-  
+
   property int tooltipDelay: 500
   property int tooltipTimeout: 1000
 
@@ -46,7 +46,7 @@ RowLayout {
     Layout.minimumWidth: width
     Layout.leftMargin: 10
     onClicked: {
-      ShutdownButton.OnStop()
+      _ShutdownButton.OnStop()
     }
     Material.background: Material.primary
     ToolTip.visible: hovered

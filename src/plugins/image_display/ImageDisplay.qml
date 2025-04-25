@@ -48,7 +48,7 @@ Rectangle {
   }
 
   Connections {
-    target: ImageDisplay
+    target: _ImageDisplay
     function onNewImage(){ image.reload(); }
   }
 
@@ -64,7 +64,7 @@ Rectangle {
         text: "\u21bb"
         Material.background: Material.primary
         onClicked: {
-          ImageDisplay.OnRefresh();
+          _ImageDisplay.OnRefresh();
         }
         ToolTip.visible: hovered
         ToolTip.delay: tooltipDelay
@@ -75,12 +75,12 @@ Rectangle {
         id: combo
         objectName: "topicsCombo"
         Layout.fillWidth: true
-        model: ImageDisplay.topicList
+        model: _ImageDisplay.topicList
         onCurrentIndexChanged: {
           if (currentIndex < 0)
             return;
 
-          ImageDisplay.OnTopic(textAt(currentIndex));
+          _ImageDisplay.OnTopic(textAt(currentIndex));
         }
         ToolTip.visible: hovered
         ToolTip.delay: tooltipDelay

@@ -20,7 +20,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.Controls.Styles 1.4
+
 import "qrc:/qml"
 
 ToolBar {
@@ -31,11 +31,11 @@ ToolBar {
   property var distance: 0.0
 
   function updateDistance() {
-    distance = TapeMeasure.Distance();
+    distance = _TapeMeasure.Distance();
   }
 
   Connections {
-    target: TapeMeasure
+    target: _TapeMeasure
     onNewDistance: {
       updateDistance();
     }
@@ -68,7 +68,7 @@ ToolBar {
         sourceSize.height: 36;
       }
       onClicked: {
-        TapeMeasure.OnMeasure();
+        _TapeMeasure.OnMeasure();
       }
     }
     ToolButton {
@@ -88,7 +88,7 @@ ToolBar {
         sourceSize.height: 36;
       }
       onClicked: {
-        TapeMeasure.OnReset();
+        _TapeMeasure.OnReset();
       }
     }
     Text {

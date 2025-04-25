@@ -18,7 +18,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
-import QtQuick.Controls.Styles 1.4
+
 import QtQuick.Layouts 1.3
 import gz.gui 1.0
 
@@ -30,20 +30,20 @@ ColumnLayout {
   focus: true
 
   // Maximum forward velocity
-  property double maxForwardVel: Teleop.maxForwardVel
+  property double maxForwardVel: _Teleop.maxForwardVel
 
   // Maximum vertical velocity
-  property double maxVerticalVel: Teleop.maxVerticalVel
+  property double maxVerticalVel: _Teleop.maxVerticalVel
 
   // Maximum yaw velocity
-  property double maxYawVel: Teleop.maxYawVel
+  property double maxYawVel: _Teleop.maxYawVel
 
   // Send command according to given scale
   function sendCommand(_forwardScale, _verticalScale, _yawScale) {
     var forwardVel = _forwardScale * maxForwardVel;
     var verticalVel = _verticalScale * maxVerticalVel;
     var yawVel = _yawScale * maxYawVel;
-    Teleop.OnTeleopTwist(forwardVel, verticalVel, yawVel)
+    _Teleop.OnTeleopTwist(forwardVel, verticalVel, yawVel)
   }
 
   // Forward scale based on button state
@@ -87,10 +87,10 @@ ColumnLayout {
     id: topicField
     Layout.fillWidth: true
     Layout.margins: 10
-    text: Teleop.topic
+    text: _Teleop.topic
     placeholderText: qsTr("Topic to publish...")
     onEditingFinished: {
-      Teleop.SetTopic(text)
+      _Teleop.SetTopic(text)
     }
   }
 
@@ -128,7 +128,7 @@ ColumnLayout {
       decimals: 2
       stepSize: 0.10
       onEditingFinished:{
-        Teleop.SetMaxForwardVel(value)
+        _Teleop.SetMaxForwardVel(value)
       }
     }
 
@@ -147,7 +147,7 @@ ColumnLayout {
       decimals: 2
       stepSize: 0.10
       onEditingFinished:{
-        Teleop.SetMaxVerticalVel(value)
+        _Teleop.SetMaxVerticalVel(value)
       }
     }
 
@@ -166,7 +166,7 @@ ColumnLayout {
       decimals: 2
       stepSize: 0.10
       onEditingFinished:{
-        Teleop.SetMaxYawVel(value)
+        _Teleop.SetMaxYawVel(value)
       }
     }
   }
@@ -177,7 +177,7 @@ ColumnLayout {
     Layout.margins: 10
 
     onCurrentIndexChanged: {
-      Teleop.OnKeySwitch(currentIndex == 1);
+      _Teleop.OnKeySwitch(currentIndex == 1);
     }
 
     TabButton {

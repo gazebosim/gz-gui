@@ -172,6 +172,9 @@ std::string uniqueFilePath(const std::string &_pathAndName,
 /////////////////////////////////////////////////
 QStringList worldNames()
 {
+  if (!App())
+    return {};
+
   auto win = App()->findChild<MainWindow *>();
   if (nullptr == win)
     return {};
@@ -186,9 +189,12 @@ QStringList worldNames()
 /////////////////////////////////////////////////
 std::string renderEngineName()
 {
+  if (!App())
+    return "";
+
   auto win = App()->findChild<MainWindow *>();
   if (nullptr == win)
-    return {};
+    return "";
 
   auto renderEngineNameVariant = win->property("renderEngine");
   if (!renderEngineNameVariant.isValid())
@@ -200,9 +206,12 @@ std::string renderEngineName()
 /////////////////////////////////////////////////
 std::string renderEngineBackendApiName()
 {
+  if (!App())
+    return "";
+
   auto win = App()->findChild<MainWindow *>();
   if (nullptr == win)
-    return {};
+    return "";
 
   auto renderEngineNameVariant = win->property("renderEngineBackendApiName");
   if (!renderEngineNameVariant.isValid())

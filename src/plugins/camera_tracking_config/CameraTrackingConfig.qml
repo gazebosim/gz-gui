@@ -19,7 +19,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.1
-import QtQuick.Controls.Styles 1.4
+
 import QtQuick.Layouts 1.3
 import gz.gui 1.0
 
@@ -68,7 +68,7 @@ ColumnLayout {
       stepSize: 0.5
       onEditingFinished:{
         xTrackPose = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
       }
     }
     // Y Track Offset 
@@ -87,7 +87,7 @@ ColumnLayout {
       stepSize: 0.5
       onEditingFinished:{
         yTrackPose = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
       }
     }
     // Z Track Offset 
@@ -106,7 +106,7 @@ ColumnLayout {
       stepSize: 0.5
       onEditingFinished:{
         zTrackPose = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
       }
     }
     // P Gain track
@@ -125,7 +125,7 @@ ColumnLayout {
       stepSize: 0.01
       onEditingFinished:{
         pGainTrack = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
       }
     }
     // X Follow Offset
@@ -144,7 +144,7 @@ ColumnLayout {
       stepSize: 0.5
       onEditingFinished:{
         xFollowOffset = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
       }
     }
     // Y Follow Offset
@@ -163,7 +163,7 @@ ColumnLayout {
       stepSize: 0.5
       onEditingFinished:{
         yFollowOffset = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
       }
     }
     // Z Follow Offset
@@ -182,7 +182,7 @@ ColumnLayout {
       stepSize: 0.5
       onEditingFinished:{
         zFollowOffset = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
       }
     }
     // P Gain follow
@@ -201,7 +201,7 @@ ColumnLayout {
       stepSize: 0.01
       onEditingFinished:{
         pGainFollow = value
-        CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
+        _CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset,pGainFollow)
       }
     }
   }

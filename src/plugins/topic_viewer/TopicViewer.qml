@@ -15,23 +15,29 @@
  *
 */
 import QtQml.Models 2.2
-import QtQuick 2.0
-import QtQuick.Controls 1.4
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Styles 1.4
+import QtQuick
+import QtQuick.Controls
+
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 
 TreeView {
     objectName: "treeView"
-    id:tree
-    model: TopicsModel
+    id: tree
+    model: _TopicsModel
 
     Layout.minimumHeight: 400
     Layout.minimumWidth: 300
     anchors.fill: parent
 
     property int itemHeight: 30;
+
+    function expandCollapseMsg(index){
+        if (tree.isExpanded(index))
+            tree.collapse(index)
+        else
+            tree.expand(index);
+    }
 
     // =========== Colors ===========
     property color oddColor: (Material.theme == Material.Light) ?
@@ -44,36 +50,65 @@ TreeView {
 
     property color highlightColor: Material.accentColor;
 
-
-    verticalScrollBarPolicy: Qt.ScrollBarAsNeeded
-    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-    headerVisible: false
-    headerDelegate: Rectangle {
-        visible: false
-    }
-    backgroundVisible: false;
-    TableViewColumn
-    {
-        role: "name";
+    palette {
+      base: oddColor
+      alternateBase: evenColor
+      highlight: highlightColor
+      windowText: "black"
     }
 
     // =========== Selection ===========
-    selection: ItemSelectionModel {
+    selectionModel: ItemSelectionModel {
         model: tree.model
     }
-    selectionMode: SelectionMode.SingleSelection
 
-    // =========== Delegates ============
-    rowDelegate: Rectangle
-    {
-        id: row
-        color: (styleData.selected)? highlightColor :
-                                     (styleData.row % 2 == 0) ? evenColor : oddColor
-        height: itemHeight;
-    }
+    // =========== Delegate ============
+    delegate: TreeViewDelegate {
+      id: treeDelegate
+      implicitWidth: tree.width
+      leftMargin: 0
+      rightMargin: 0
+      indentation: 20
+      spacing: 0
 
-    itemDelegate: Item {
+      indicator: Rectangle {
+        x: leftMargin + (depth * indentation)
+        height: itemHeight
+        width: itemHeight
+        color: "transparent"
+        Image {
+          id: branchImage
+          fillMode: Image.Pad
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          sourceSize.height: itemHeight * 0.4
+          sourceSize.width: itemHeight * 0.4
+          source: tree.isExpanded(row) ? "minus.png" : "plus.png"
+        }
+        MouseArea {
+          anchors.fill: parent
+          hoverEnabled: true
+          propagateComposedEvents: true
+          onClicked: (mouse) => {
+            mouse.accepted = true
+
+            // set the current index & current selection and active focus for keyboard
+            // the reason for that to make the branch selection just like the item selection
+            // and to fix the animation as it ueses item selection's info
+            var mi = treeDelegate.treeView.modelIndex(Qt.point(column, row))
+            tree.selectionModel.select(mi,ItemSelectionModel.ClearAndSelect)
+
+            item.forceActiveFocus();
+
+            tree.expandCollapseMsg(row);
+          }
+        }
+      }
+      contentItem: Rectangle {
         id: item
+        color: "transparent"
+        implicitHeight: itemHeight
+
 
         // for fixing the item position
         // item pos changes randomly when drag happens (with the copy drag)
@@ -127,21 +162,14 @@ TreeView {
 
             onClicked: {
                 // change the selection of the tree by clearing the prev, select a new one
-                tree.selection.select(styleData.index,ItemSelectionModel.ClearAndSelect)
-
-                // set the selection index to the index of the clicked item (must set manually)
-                tree.selection.setCurrentIndex(styleData.index,ItemSelectionModel.ClearAndSelect)
-
-                // the currentIndex of the tree.selection is not the same
-                // of the tree.currentIndex, so set the tree.currentIndex.
-                // this is the way to access it as it is read-only
-                tree.__currentRow = styleData.row
+                var mi = treeDelegate.treeView.modelIndex(Qt.point(column, row))
+                tree.selectionModel.select(mi, ItemSelectionModel.ClearAndSelect)
 
                 // set the focus to the selected item to receive the keyboard events
                 // this is useful to enable navigating with keyboard from the right position
                 item.forceActiveFocus();
 
-                tree.expandCollapseMsg(tree.currentIndex);
+                tree.expandCollapseMsg(row);
             }
         }
 
@@ -157,9 +185,7 @@ TreeView {
         Text {
             id : field
             text: (model === null) ? "" : model.name
-            color: (Material.theme == Material.Light || styleData.selected) ?
-                    Material.color(Material.Grey, Material.Shade800):
-                    Material.color(Material.Grey, Material.Shade400);
+            color: Material.theme == Material.Light ? "black" : "white"
 
             font.pointSize: 12
             anchors.leftMargin: 5
@@ -180,75 +206,6 @@ TreeView {
             enter: null
             exit: null
         }
+      }
     }
-
-    property int y_pos: 0
-
-    style: TreeViewStyle {
-        branchDelegate: Rectangle {
-          height: itemHeight
-          width: itemHeight
-          color: "transparent"
-          Image {
-            id: branchImage
-            fillMode: Image.Pad
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            sourceSize.height: itemHeight * 0.4
-            sourceSize.width: itemHeight * 0.4
-            source: styleData.isExpanded ? "minus.png" : "plus.png"
-          }
-          MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            onClicked: {
-              mouse.accepted = true
-
-              // set the current index & current selection and active focus for keyboard
-              // the reason for that to make the branch selection just like the item selection
-              // and to fix the animation as it uses item selection's info
-              tree.selection.select(styleData.index,ItemSelectionModel.ClearAndSelect)
-              tree.selection.setCurrentIndex(styleData.index,ItemSelectionModel.ClearAndSelect)
-              tree.__currentRow = styleData.row
-              item.forceActiveFocus();
-
-              expandCollapseMsg(styleData.index);
-            }
-          }
-        }
-    }
-
-    function expandCollapseMsg(index){
-        if (tree.isExpanded(index))
-            tree.collapse(index)
-        else
-            tree.expand(index);
-    }
-
-    Transition {
-        id: expandTransition
-        NumberAnimation {
-            property: "y";
-            from: (tree.__listView.currentItem) ? tree.__listView.currentItem.y : 0;
-            duration: 200;
-            easing.type: Easing.OutQuad
-        }
-    }
-
-    Transition {
-        id: displacedTransition
-        NumberAnimation {
-            property: "y";
-            duration: 200;
-            easing.type: Easing.OutQuad;
-        }
-    }
-
-    Component.onCompleted: {
-        tree.__listView.add = expandTransition;
-        tree.__listView.displaced = displacedTransition;
-        tree.__listView.removeDisplaced = displacedTransition;
-    }
-
 }

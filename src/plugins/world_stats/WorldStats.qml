@@ -69,7 +69,7 @@ Rectangle {
       verticalAlignment: Text.AlignVCenter
       Layout.alignment: Qt.AlignBottom
       Layout.bottomMargin: hideToolButton.height * 0.3
-      text: WorldStats.realTimeFactor
+      text: _WorldStats.realTimeFactor
     }
   }
 
@@ -167,7 +167,7 @@ Rectangle {
       }
       Label {
         objectName: "realTimeFactorValue"
-        text: WorldStats.realTimeFactor
+        text: _WorldStats.realTimeFactor
         visible: showRealTimeFactor
         Layout.alignment: Qt.AlignRight
       }
@@ -192,7 +192,7 @@ Rectangle {
       }
       Label {
         objectName: "simTimeValue"
-        text: WorldStats.simTime
+        text: _WorldStats.simTime
         visible: showSimTime
         Layout.alignment: Qt.AlignRight
       }
@@ -217,7 +217,7 @@ Rectangle {
       }
       Label {
         objectName: "realTimeValue"
-        text: WorldStats.realTime
+        text: _WorldStats.realTime
         visible: showRealTime
         Layout.alignment: Qt.AlignRight
       }
@@ -242,7 +242,7 @@ Rectangle {
       }
       Label {
         objectName: "iterationsValue"
-        text: WorldStats.iterations
+        text: _WorldStats.iterations
         visible: showIterations
         Layout.alignment: Qt.AlignRight
       }

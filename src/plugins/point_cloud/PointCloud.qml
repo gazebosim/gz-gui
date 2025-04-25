@@ -17,7 +17,7 @@
 
 import QtQuick 2.9
 import QtQuick.Controls 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 import gz.gui 1.0
@@ -32,7 +32,7 @@ ColumnLayout {
   anchors.rightMargin: 10
 
   function isUniform() {
-    return PointCloud.minFloatV >= PointCloud.maxFloatV
+    return _PointCloud.minFloatV >= _PointCloud.maxFloatV
   }
 
   RowLayout {
@@ -47,7 +47,7 @@ ColumnLayout {
       text: qsTr("Show")
       checked: true
       onToggled: {
-        PointCloud.Show(checked)
+        _PointCloud.Show(checked)
       }
     }
 
@@ -56,7 +56,7 @@ ColumnLayout {
       text: "\u21bb"
       Material.background: Material.primary
       onClicked: {
-        PointCloud.OnRefresh();
+        _PointCloud.OnRefresh();
         pcCombo.currentIndex = 0
         floatCombo.currentIndex = 0
       }
@@ -80,16 +80,16 @@ ColumnLayout {
       Layout.columnSpan: 2
       id: pcCombo
       Layout.fillWidth: true
-      model: PointCloud.pointCloudTopicList
+      model: _PointCloud.pointCloudTopicList
       currentIndex: 0
       onCurrentIndexChanged: {
         if (currentIndex < 0)
           return;
-        PointCloud.OnPointCloudTopic(textAt(currentIndex));
+        _PointCloud.On_PointCloudTopic(textAt(currentIndex));
       }
       ToolTip.visible: hovered
       ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
-      ToolTip.text: qsTr("Gazebo Transport topics publishing PointCloudPacked messages")
+      ToolTip.text: qsTr("Gazebo Transport topics publishing _PointCloudPacked messages")
     }
 
     Label {
@@ -101,12 +101,12 @@ ColumnLayout {
       Layout.columnSpan: 2
       id: floatCombo
       Layout.fillWidth: true
-      model: PointCloud.floatVTopicList
+      model: _PointCloud.floatVTopicList
       currentIndex: 0
       onCurrentIndexChanged: {
         if (currentIndex < 0)
           return;
-        PointCloud.OnFloatVTopic(textAt(currentIndex));
+        _PointCloud.OnFloatVTopic(textAt(currentIndex));
       }
       ToolTip.visible: hovered
       ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
@@ -120,12 +120,12 @@ ColumnLayout {
 
     GzSpinBox {
       id: pointSizeSpin
-      value: PointCloud.pointSize
+      value: _PointCloud.pointSize
       minimumValue: 1
       maximumValue: 1000
       decimals: 0
       onEditingFinished: {
-        PointCloud.SetPointSize(pointSizeSpin.value)
+        _PointCloud.SetPointSize(pointSizeSpin.value)
       }
     }
   }
@@ -142,7 +142,7 @@ ColumnLayout {
     Label {
       Layout.columnSpan: 1
       Layout.maximumWidth: 50
-      text: PointCloud.minFloatV.toFixed(4)
+      text: _PointCloud.minFloatV.toFixed(4)
       elide: Text.ElideRight
       visible: !isUniform()
     }
@@ -158,16 +158,16 @@ ColumnLayout {
         implicitWidth: 40
         implicitHeight: 40
         radius: 5
-        border.color: PointCloud.minColor
+        border.color: _PointCloud.minColor
         border.width: 2
-        color: PointCloud.minColor
+        color: _PointCloud.minColor
       }
       ColorDialog {
         id: minColorDialog
         title: "Choose a color for the minimum value"
         visible: false
         onAccepted: {
-          PointCloud.SetMinColor(minColorDialog.color)
+          _PointCloud.SetMinColor(minColorDialog.color)
           minColorDialog.close()
         }
         onRejected: {
@@ -188,16 +188,16 @@ ColumnLayout {
         implicitWidth: 40
         implicitHeight: 40
         radius: 5
-        border.color: PointCloud.maxColor
+        border.color: _PointCloud.maxColor
         border.width: 2
-        color: PointCloud.maxColor
+        color: _PointCloud.maxColor
       }
       ColorDialog {
         id: maxColorDialog
         title: "Choose a color for the maximum value"
         visible: false
         onAccepted: {
-          PointCloud.SetMaxColor(maxColorDialog.color)
+          _PointCloud.SetMaxColor(maxColorDialog.color)
           maxColorDialog.close()
         }
         onRejected: {
@@ -209,7 +209,7 @@ ColumnLayout {
     Label {
       Layout.columnSpan: 1
       Layout.maximumWidth: 50
-      text: PointCloud.maxFloatV.toFixed(4)
+      text: _PointCloud.maxFloatV.toFixed(4)
       elide: Text.ElideRight
       visible: !isUniform()
     }
