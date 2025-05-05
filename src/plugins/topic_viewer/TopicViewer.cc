@@ -70,9 +70,13 @@ class TopicsModel : public QStandardItemModel
     };
   }
 
-  // public: ~TopicsModel() {
-  //    std::cerr << "topics model destructor " << std::endl;
-  // }
+  public: ~TopicsModel()
+  {
+    // Disconnect all signals/slots manually. This prevents Qt from printing
+    // warnings when closing the plugin as it tries to disconnect signals/slots
+    // from the (already deleted) model.
+    this->disconnect();
+  }
 };
 
 class TopicViewer::Implementation
@@ -81,7 +85,7 @@ class TopicViewer::Implementation
   public: gz::transport::Node node;
 
   /// \brief Model to create it from the available topics and messages
-  public: TopicsModel *model {nullptr};
+  public: TopicsModel model;
 
   /// \brief Timer to update the model and keep track of its changes
   public: QTimer *timer {nullptr};
@@ -163,7 +167,7 @@ TopicViewer::TopicViewer()
   this->dataPtr->CreateModel();
 
   gui::App()->Engine()->rootContext()->setContextProperty(
-                "_TopicsModel", this->dataPtr->model);
+                "_TopicsModel", &this->dataPtr->model);
 
   this->dataPtr->timer = new QTimer();
   connect(this->dataPtr->timer, SIGNAL(timeout()), this, SLOT(UpdateModel()));
@@ -183,14 +187,12 @@ void TopicViewer::LoadConfig(const tinyxml2::XMLElement *)
 //////////////////////////////////////////////////
 QStandardItemModel *TopicViewer::Model()
 {
-  return reinterpret_cast<QStandardItemModel *>(this->dataPtr->model);
+  return reinterpret_cast<QStandardItemModel *>(&this->dataPtr->model);
 }
 
 //////////////////////////////////////////////////
 void TopicViewer::Implementation::CreateModel()
 {
-  this->model = new TopicsModel();
-
   std::vector<std::string> topics;
   this->node.TopicList(topics);
 
@@ -213,7 +215,7 @@ void TopicViewer::Implementation::AddTopic(const std::string &_topic,
 {
   QStandardItem *topicItem = this->FactoryItem(_topic, _msg);
   topicItem->setWhatsThis("Topic");
-  QStandardItem *parent = this->model->invisibleRootItem();
+  QStandardItem *parent = this->model.invisibleRootItem();
   parent->appendRow(topicItem);
 
   this->AddField(topicItem , _msg, _msg);
@@ -416,7 +418,7 @@ void TopicViewer::UpdateModel()
   // remove the topics that don't exist in the network
   for (const auto &topic : topicsToRemove)
   {
-    auto *root = this->dataPtr->model->invisibleRootItem();
+    auto *root = this->dataPtr->model.invisibleRootItem();
 
     // search for the topic in the model
     for (int i = 0; i < root->rowCount(); ++i)
