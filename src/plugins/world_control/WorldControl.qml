@@ -15,7 +15,7 @@
  *
 */
 import QtQuick 2.9
-import QtQuick.Controls 2.5
+import QtQuick.Controls
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 import "qrc:/qml"
@@ -235,15 +235,14 @@ RowLayout {
 
     modal: true
     focus: true
-    parent: ApplicationWindow.overlay
+    parent: Overlay.overlay
     width: 500
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
     closePolicy: Popup.CloseOnEscape
-    standardButtons: Dialog.Ok  | Dialog.Discard
+    standardButtons: Dialog.Ok  | Dialog.Cancel
 
     Component.onCompleted: {
-      confirmationDialogOnReset.standardButton(Dialog.Discard).text = "Cancel"
       confirmationDialogOnReset.standardButton(Dialog.Ok).text = "Reset"
     }
 
