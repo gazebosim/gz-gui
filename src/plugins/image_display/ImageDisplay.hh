@@ -18,8 +18,9 @@
 #ifndef GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 #define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
-#include <algorithm>
-#include <memory>
+#include <QImage>
+#include <QString>
+#include <QStringList>
 #include <QQuickImageProvider>
 
 #include <gz/msgs/image.pb.h>
@@ -53,8 +54,7 @@ namespace gz::gui::plugins
       if (!this->img.isNull())
       {
         // Must return a copy
-        QImage copy(this->img);
-        return copy;
+        return this->img;
       }
 
       // Placeholder in case we have no image yet
@@ -78,6 +78,8 @@ namespace gz::gui::plugins
   /// \<topic\> : Set the topic to receive image messages.
   /// \<topic_picker\> : Whether to show the topic picker, true by default. If
   ///                    this is false, a \<topic\> must be specified.
+  /// \<show_depth_flip\> : Whether to show the Flip Depth Image
+  ///                                Visualization Checkbox, true by default.
   class ImageDisplay_EXPORTS_API ImageDisplay : public Plugin
   {
     Q_OBJECT
@@ -114,6 +116,26 @@ namespace gz::gui::plugins
     /// 'gz.msgs.StringMsg'
     /// \param[in] _topicList Message type
     public: Q_INVOKABLE void SetTopicList(const QStringList &_topicList);
+
+    /// \brief Register the image provider with the given name
+    /// \param[in] _uniqueName Unique name for the provider to be registered
+    public: Q_INVOKABLE void RegisterImageProvider(const QString &_uniqueName);
+
+    /// \brief Get the provider name unique to this plugin instance
+    public: Q_INVOKABLE QString ImageProviderName();
+
+    /// \brief Enable or disable the depth image flip checkbox
+    /// \param[in] _enable Boolean value for enabling/disabling the
+    ///                    depth image flip checkbox
+    /// \note This is used to disable the checkbox when the image
+    ///       format is not depth
+    public: inline void SetEnableDepthFlip(bool _enable);
+
+    /// \brief Set whether darker pixels in depth image have
+    /// higher values or lower values
+    /// \param[in] _value Boolean value for flipping the depth image
+    /// display style
+    public: Q_INVOKABLE void SetFlipDepthVisualization(bool _value);
 
     /// \brief Notify that topic list has changed
     signals: void TopicListChanged();

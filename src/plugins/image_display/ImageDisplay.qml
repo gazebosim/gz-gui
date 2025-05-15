@@ -32,6 +32,16 @@ Rectangle {
   property bool showPicker: false
 
   /**
+   * True to show the checkbox to flip depth visualization
+   */
+  property bool showDepthFlip: false
+
+  /**
+   * True to enable the checkbox to flip depth visualization
+   */
+  property bool enableDepthFlip: false
+
+  /**
    * Unique name for this plugin instance
    */
   property string uniqueName: ""
@@ -44,6 +54,7 @@ Rectangle {
       return;
 
     uniqueName = parent.card().objectName + "imagedisplay";
+    ImageDisplay.RegisterImageProvider(uniqueName);
     image.reload();
   }
 
@@ -56,6 +67,25 @@ Rectangle {
     id: imageDisplayColumn
     anchors.fill: parent
     anchors.margins: 10
+
+    CheckBox {
+      enabled: enableDepthFlip
+      visible: showDepthFlip
+      objectName: "flipDepthImageColorCheckBox"
+      Layout.alignment: Qt.AlignHCenter
+      id: displayVisual
+      Layout.columnSpan: 6
+      Layout.fillWidth: true
+      text: qsTr("Flip Depth Visualization")
+      checked: true   // default behavior is to flip depth image
+      onClicked: {
+        ImageDisplay.SetFlipDepthVisualization(checked);
+      }
+      ToolTip.visible: hovered
+      ToolTip.delay: tooltipDelay
+      ToolTip.timeout: tooltipTimeout
+      ToolTip.text: qsTr("Flip the depth image color")
+    }
 
     RowLayout {
       visible: showPicker
