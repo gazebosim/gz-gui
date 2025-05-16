@@ -23,6 +23,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include <gz/common/Console.hh>
 #include <gz/common/Image.hh>
@@ -49,21 +50,45 @@ class ImageDisplay::Implementation
   /// \brief Mutex for accessing image data
   public: std::recursive_mutex imageMutex;
 
+  /// \brief Mutex for variable mutated by the checkbox.
+  /// The variables are: flipDepthVisualization
+  public: std::mutex serviceMutex;
+
   /// \brief To provide images for QML.
   public: ImageProvider *provider{nullptr};
+
+  /// \brief Enable Flip visualization flag
+  public: bool enableDepthFlipCheck{true};
+
+  /// \brief Flip visualization flag
+  public: bool flipDepthVisualization{true};
+
+  /// \brief Holds the provider name unique to this plugin instance
+  public: QString providerName;
 };
 
 /////////////////////////////////////////////////
 ImageDisplay::ImageDisplay()
   : dataPtr(gz::utils::MakeUniqueImpl<Implementation>())
 {
+  this->dataPtr->provider = new ImageProvider();
 }
 
 /////////////////////////////////////////////////
 ImageDisplay::~ImageDisplay()
 {
-  App()->Engine()->removeImageProvider(
-      this->CardItem()->objectName() + "imagedisplay");
+  App()->Engine()->removeImageProvider(this->ImageProviderName());
+}
+
+void ImageDisplay::RegisterImageProvider(const QString &_uniqueName)
+{
+  this->dataPtr->providerName = _uniqueName;
+  App()->Engine()->addImageProvider(_uniqueName,
+                                    this->dataPtr->provider);
+}
+
+QString ImageDisplay::ImageProviderName() {
+  return this->dataPtr->providerName;
 }
 
 /////////////////////////////////////////////////
@@ -75,6 +100,7 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   std::string topic;
   bool topicPicker = true;
+  bool showDepthFlip = true;
 
   // Read configuration
   if (_pluginElem)
@@ -84,6 +110,10 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
     if (auto pickerElem = _pluginElem->FirstChildElement("topic_picker"))
       pickerElem->QueryBoolText(&topicPicker);
+
+    if (auto flipElem =
+              _pluginElem->FirstChildElement("show_depth_flip"))
+      flipElem->QueryBoolText(&showDepthFlip);
   }
 
   if (topic.empty() && !topicPicker)
@@ -93,21 +123,30 @@ void ImageDisplay::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   }
 
   this->PluginItem()->setProperty("showPicker", topicPicker);
+  this->PluginItem()->setProperty(
+    "showDepthFlip",
+    showDepthFlip
+  );
+  this->PluginItem()->setProperty(
+    "enableDepthFlip",
+    this->dataPtr->enableDepthFlipCheck
+  );
+
+  this->dataPtr->flipDepthVisualization = true;
 
   if (!topic.empty())
-    this->OnTopic(QString::fromStdString(topic));
+  {
+    this->SetTopicList({QString::fromStdString(topic)});
+  }
   else
     this->OnRefresh();
-
-  this->dataPtr->provider = new ImageProvider();
-  App()->Engine()->addImageProvider(
-      this->CardItem()->objectName() + "imagedisplay", this->dataPtr->provider);
 }
 
 /////////////////////////////////////////////////
 void ImageDisplay::ProcessImage()
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->imageMutex);
+  std::lock_guard<std::mutex> service_lock(this->dataPtr->serviceMutex);
 
   unsigned int height = this->dataPtr->imageMsg.height();
   unsigned int width = this->dataPtr->imageMsg.width();
@@ -119,6 +158,9 @@ void ImageDisplay::ProcessImage()
   switch (this->dataPtr->imageMsg.pixel_format_type())
   {
     case msgs::PixelFormatType::RGB_INT8:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       // copy image data buffer directly to QImage
       image = QImage(reinterpret_cast<const uchar *>(
           this->dataPtr->imageMsg.data().c_str()), width, height,
@@ -126,17 +168,27 @@ void ImageDisplay::ProcessImage()
       break;
     // for other cases, convert to RGB common::Image
     case msgs::PixelFormatType::R_FLOAT32:
+      // Enable depth flip checkbox
+      this->SetEnableDepthFlip(true);
+
       // specify custom min max and also flip the pixel values
       // i.e. darker pixels = higher values and brighter pixels = lower values
       common::Image::ConvertToRGBImage<float>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output,
-          0.0f, std::numeric_limits<float>::lowest(), true);
+          0.0f, std::numeric_limits<float>::lowest(),
+          this->dataPtr->flipDepthVisualization);
       break;
     case msgs::PixelFormatType::L_INT16:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       common::Image::ConvertToRGBImage<uint16_t>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output);
        break;
     case msgs::PixelFormatType::L_INT8:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       common::Image::ConvertToRGBImage<uint8_t>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output);
       break;
@@ -144,11 +196,17 @@ void ImageDisplay::ProcessImage()
     case msgs::PixelFormatType::BAYER_BGGR8:
     case msgs::PixelFormatType::BAYER_GBRG8:
     case msgs::PixelFormatType::BAYER_GRBG8:
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       common::Image::ConvertToRGBImage<uint8_t>(
           this->dataPtr->imageMsg.data().c_str(), width, height, output);
       break;
     default:
     {
+      // Disable depth flip checkbox
+      this->SetEnableDepthFlip(false);
+
       gzwarn << "Unsupported image type: "
               << this->dataPtr->imageMsg.pixel_format_type() << std::endl;
       return;
@@ -181,6 +239,26 @@ void ImageDisplay::ProcessImage()
 
   this->dataPtr->provider->SetImage(image);
   emit this->newImage();
+}
+
+inline void ImageDisplay::SetEnableDepthFlip(bool _enable)
+{
+  if (_enable != this->dataPtr->enableDepthFlipCheck)
+  {
+    this->dataPtr->enableDepthFlipCheck = _enable;
+    this->PluginItem()->setProperty("enableDepthFlip", _enable);
+    gzdbg << "Enable Depth Flip: " << ((_enable) ? "Enabled": "Disabled")
+          << std::endl;
+  }
+}
+
+//////////////////////////////////////////////////
+void ImageDisplay::SetFlipDepthVisualization(bool _value)
+{
+  std::lock_guard<std::mutex> service_lock(this->dataPtr->serviceMutex);
+  this->dataPtr->flipDepthVisualization = _value;
+  gzdbg << "Depth Visualization " << ((_value) ? "Flipped." : "Standard.")
+        << std::endl;
 }
 
 /////////////////////////////////////////////////

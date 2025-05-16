@@ -4,6 +4,11 @@
 
 ## Gazebo GUI 9
 
+### Gazebo GUI 9.0.1 (2025-02-12)
+
+1. Fix miscellaneous issues and warnings
+    * [Pull request #652](https://github.com/gazebosim/gz-gui/pull/652)
+
 ### Gazebo GUI 9.0.0 (2024-09-25)
 
 1. **Baseline:** this includes all changes from 8.3.0 and earlier.
