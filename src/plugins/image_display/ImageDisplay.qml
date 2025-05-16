@@ -54,7 +54,7 @@ Rectangle {
       return;
 
     uniqueName = parent.card().objectName + "imagedisplay";
-    ImageDisplay.RegisterImageProvider(uniqueName);
+    _ImageDisplay.RegisterImageProvider(uniqueName);
     image.reload();
   }
 
@@ -79,7 +79,7 @@ Rectangle {
       text: qsTr("Flip Depth Visualization")
       checked: true   // default behavior is to flip depth image
       onClicked: {
-        ImageDisplay.SetFlipDepthVisualization(checked);
+        _ImageDisplay.SetFlipDepthVisualization(checked);
       }
       ToolTip.visible: hovered
       ToolTip.delay: tooltipDelay
