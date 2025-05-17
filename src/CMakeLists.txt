@@ -49,8 +49,8 @@ gz_build_tests(TYPE UNIT
                 SOURCES
                   ${gtest_sources}
                 LIB_DEPS
-                  gz-common${GZ_COMMON_VER}::events
-                  gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
+                  gz-common::events
+                  gz-math::gz-math
                   TINYXML2::TINYXML2
                 TEST_LIST
                   gtest_targets

@@ -140,7 +140,7 @@ Gazebo GUI will look for plugins on the following paths, in this order:
 1. All paths set on the `GZ_GUI_PLUGIN_PATH` environment variable
 2. All paths added by calling `gz::gui::App()->AddPluginPath("<<<custom_path>>>");`. Here `App()` is the pointer to running application in the `gz::gui` namespace.
 3. `~/.gz/gui/plugins`
-4. [Plugins which are installed with Gazebo GUI](https://github.com/gazebosim/gz-gui/tree/gz-gui9/src/plugins)
+4. [Plugins which are installed with Gazebo GUI](https://github.com/gazebosim/gz-gui/tree/gz-gui10/src/plugins)
 
 ## Setting up the environment for custom plugins
 

@@ -28,7 +28,7 @@ gz_gui_add_plugin(MinimalScene
   QT_HEADERS
     MinimalScene.hh
   PUBLIC_LINK_LIBS
-   gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+   gz-rendering::gz-rendering
    gz-transport::gz-transport
    ${PROJECT_LINK_LIBS}
 )

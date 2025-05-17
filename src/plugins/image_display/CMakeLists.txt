@@ -4,7 +4,7 @@ gz_gui_add_plugin(ImageDisplay
   QT_HEADERS
     ImageDisplay.hh
   PUBLIC_LINK_LIBS
-    gz-common${GZ_COMMON_VER}::graphics
+    gz-common::graphics
   TEST_SOURCES
     ImageDisplay_TEST.cc
 )

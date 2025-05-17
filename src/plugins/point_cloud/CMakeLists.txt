@@ -4,7 +4,7 @@ gz_gui_add_plugin(PointCloud
   QT_HEADERS
     PointCloud.hh
   PUBLIC_LINK_LIBS
-    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+    gz-rendering::gz-rendering
   TEST_SOURCES
     PointCloud_TEST.cc
 )

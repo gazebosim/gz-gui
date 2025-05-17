@@ -6,6 +6,6 @@ gz_gui_add_plugin(CameraTracking
   TEST_SOURCES
     # CameraTracking_TEST.cc
   PUBLIC_LINK_LIBS
-   gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
-   gz-common${GZ_COMMON_VER}::profiler
+   gz-rendering::gz-rendering
+   gz-common::profiler
 )
