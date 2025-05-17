@@ -20,9 +20,9 @@
   <depend>gz-tools2</depend>
   <depend>gz-transport</depend>
   <depend>gz-utils</depend>
-  <depend>libqt6svg6</depend>
+  <!--depend>libqt6svg6</depend-->
   <depend>protobuf-dev</depend>
-  <depend>qml6-module-qt-labs-folderlistmodel</depend>
+  <!--depend>qml6-module-qt-labs-folderlistmodel</depend>
   <depend>qml6-module-qt-labs-platform</depend>
   <depend>qml6-module-qt-labs-settings</depend>
   <depend>qml6-module-qtcharts</depend>
@@ -32,17 +32,17 @@
   <depend>qml6-module-qtquick-dialogs</depend>
   <depend>qml6-module-qtquick-layouts</depend>
   <depend>qml6-module-qtquick-templates</depend>
-  <depend>qml6-module-qtquick-window</depend>
+  <depend>qml6-module-qtquick-window</depend-->
   <depend>qml6-module-qtquick</depend>
-  <depend>qml6-module-qtqml</depend>
-  <depend>qml6-module-qtcore</depend>
+  <!--depend>qml6-module-qtqml</depend>
+  <depend>qml6-module-qtcore</depend-->
   <depend>qml6-module-qtqml-workerscript</depend>
-  <depend>qml6-module-qt5compat-graphicaleffects</depend>
-  <depend>qt6-5compat-dev</depend>
+  <!--depend>qml6-module-qt5compat-graphicaleffects</depend>
+  <depend>qt6-5compat-dev</depend-->
   <depend>qt6-base-dev</depend>
-  <depend>qt6-base-private-dev</depend>
+  <!--depend>qt6-base-private-dev</depend-->
   <depend>qt6-declarative-dev</depend>
-  <depend>qt6-declarative-private-dev</depend>
+  <!--depend>qt6-declarative-private-dev</depend-->
   <depend>tinyxml2</depend>
 
   <test_depend>xvfb</test_depend>
