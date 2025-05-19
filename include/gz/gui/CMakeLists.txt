@@ -45,10 +45,10 @@ set_property(
 
 target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}
   PUBLIC
-    gz-common${GZ_COMMON_VER}::events
-    gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
-    gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER}
-    gz-plugin${GZ_PLUGIN_VER}::loader
+    gz-common::events
+    gz-math::gz-math
+    gz-msgs::gz-msgs
+    gz-plugin::loader
     gz-transport::gz-transport
     Qt::Core
     Qt::Qml
