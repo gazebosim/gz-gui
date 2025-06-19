@@ -1,4 +1,4 @@
-## Gazebo GUI 9 mo mo fix
+## Gazebo GUI 9
 
 ### Gazebo GUI 9.0.1 (2025-02-12)
 
