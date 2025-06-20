@@ -666,7 +666,7 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
 {
   if (this->initialized)
     return {};
-  // make sure ervery part is initialized
+  // make sure every part is initialized
   auto *mainWindow = gz::gui::App()->findChild<gz::gui::MainWindow *>();
   if (!mainWindow) {
     return "Failed to find main window.";
