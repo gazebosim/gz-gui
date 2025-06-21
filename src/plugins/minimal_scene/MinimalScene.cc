@@ -682,9 +682,6 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   // Load engine if there's no engine yet
   if (loadedEngines.empty())
   {
-    QQuickWindow *quickWindow =
-      gz::gui::App()->findChild<gz::gui::MainWindow *>()->QuickWindow();
-
     this->dataPtr->rhiParams["winID"] = std::to_string(quickWindow->winId());
 
 #if GZ_GUI_HAVE_VULKAN
