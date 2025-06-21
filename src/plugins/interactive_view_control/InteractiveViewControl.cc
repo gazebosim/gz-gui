@@ -428,8 +428,11 @@ void InteractiveViewControl::LoadConfig(
         << this->dataPtr->cameraViewControlSensitivityService << "]"
         << std::endl;
 
-  gz::gui::App()->findChild<
-    gz::gui::MainWindow *>()->installEventFilter(this);
+  if (auto app = gz::gui::App()) {
+    if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
+      mainWindow->installEventFilter(this);
+    }
+  }
 }
 
 /////////////////////////////////////////////////

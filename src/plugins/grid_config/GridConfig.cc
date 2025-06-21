@@ -144,8 +144,11 @@ void GridConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     }
   }
 
-  gui::App()->findChild<
-      MainWindow *>()->installEventFilter(this);
+  if (auto app = gz::gui::App()) {
+    if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
+      mainWindow->installEventFilter(this);
+    }
+  }
 }
 
 /////////////////////////////////////////////////

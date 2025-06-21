@@ -96,7 +96,11 @@ void CameraFps::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Camera FPS";
 
-  App()->findChild<MainWindow *>()->installEventFilter(this);
+  if (auto app = gz::gui::App()) {
+    if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
+      mainWindow->installEventFilter(this);
+    }
+  }
 }
 
 /////////////////////////////////////////////////
