@@ -104,10 +104,12 @@ void TapeMeasure::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Tape measure";
 
-  gz::gui::App()->findChild<gz::gui::MainWindow *>
-      ()->installEventFilter(this);
-  gz::gui::App()->findChild<gz::gui::MainWindow *>
-      ()->QuickWindow()->installEventFilter(this);
+  if (auto *mainWindow = gz::gui::App()->findChild<MainWindow *>()) {
+    mainWindow->installEventFilter(this);
+    if (auto *quickWindow = mainWindow->QuickWindow()) {
+      quickWindow->installEventFilter(this);
+    }
+  }
 }
 
 /////////////////////////////////////////////////
