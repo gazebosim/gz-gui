@@ -139,8 +139,8 @@ void PointCloud::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 
   }
 
-    if (auto app = gz::gui::App()) {
-      if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
+  if (auto app = gz::gui::App()) {
+    if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
           mainWindow->installEventFilter(this);
     }
   }
