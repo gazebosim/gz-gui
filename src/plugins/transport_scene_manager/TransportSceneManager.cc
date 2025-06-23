@@ -249,9 +249,9 @@ void TransportSceneManager::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   else
   {
     if (auto app = gz::gui::App()) {
-    if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
-      mainWindow->installEventFilter(this);
-    }
+      if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
+        mainWindow->installEventFilter(this);
+      }
   }
   }
 }
