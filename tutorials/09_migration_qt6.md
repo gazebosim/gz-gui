@@ -5,7 +5,7 @@ Prerequisite Tutorial: \ref plugins
 ## Overview
 
 Qt5 is planned to be removed in Ubuntu 26.04 LTS. In response to this,
-Gazebo GUI has upgraded its GUI framework from Qt5 to Qt6 in gz-gui10
+Gazebo GUI has upgraded its GUI framework from Qt5 to Qt6 in `gz-gui10`
 (Gazebo Jetty). This directly impacts all users who have developed
 their own custom Gazebo GUI plugins in Qt5.
 
@@ -20,7 +20,7 @@ required changes for porting to Qt6 will be in the QML code.
 
 In a Gazebo GUI plugin, users can create a QML interface that invokes C++
 functionality and vice versa. There is one major syntax change to how
-this should be done from gz-gui10 onwards. Prior to gz-gui10, access to
+this should be done from `gz-gui10` onwards. Prior to `gz-gui10`, access to
 C++ functions or properties was done with the following syntax in QML:
 
 ```qml
@@ -55,7 +55,6 @@ the C++ end.
 > [screenshot](https://github.com/gazebosim/gz-gui/blob/c7093159ac92031350cdf2c31283e3fdfd944194/src/plugins/screenshot/Screenshot.qml#L37).
 > Hence a decision was made to add the `_` prefix to avoid any potential
 > naming conflicts.
-
 
 ## QML Migration
 
