@@ -5,9 +5,9 @@ Previous Tutorial: \ref commandline
 
 ## About Plugins
 
-A Gazebo GUI plugin is a shared library that defines a widget. 
+A Gazebo GUI plugin is a shared library that defines a widget.
 
-The plugin contains [QML](http://doc.qt.io/qt-5/qtqml-index.html) code that specifies what the widget looks like, as well as C++ code that defines the plugin's behavior and ties it to other libraries.
+The plugin contains [QML](https://doc.qt.io/qt-6/qtqml-index.html) code that specifies what the widget looks like, as well as C++ code that defines the plugin's behavior and ties it to other libraries.
 
 ## Starting a pre-built plugin (example)
 
