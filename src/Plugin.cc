@@ -83,7 +83,7 @@ class Plugin::Implementation
 
   /// \brief Map of card properties to be passed to QML card object.
   /// Accepts all QML Pane properties plus custom Gazebo: GUI properties.
-  /// https://doc.qt.io/qt-5/qml-qtquick-controls2-pane-members.html
+  /// https://doc.qt.io/qt-6/qml-qtquick-controls-pane-members.html
   public: std::map<std::string, QVariant> cardProperties;
 
   /// \brief Holds all anchor information

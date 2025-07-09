@@ -124,7 +124,7 @@ gz_create_docs(
   ADDITIONAL_INPUT_DIRS "${CMAKE_SOURCE_DIR}/src/plugins"
   IMAGE_PATH_DIRS "${CMAKE_SOURCE_DIR}/tutorials/images"
   TAGFILES
-    "${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=http://doc.qt.io/qt-5/"
+    "${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=https://doc.qt.io/qt-6/"
     "${GZ-MATH_DOXYGEN_TAGFILE} = ${GZ-MATH_API_URL}"
     "${GZ-MSGS_DOXYGEN_TAGFILE} = ${GZ-MSGS_API_URL}"
     "${GZ-RENDERING_DOXYGEN_TAGFILE} = ${GZ-RENDERING_API_URL}"

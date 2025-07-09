@@ -19,7 +19,7 @@ Gazebo @GZ_DESIGNATION_CAP@ library and how to use the library effectively.
 
 1. \subpage scene "3D Scene": How to use the rendering scene
 2. \subpage screenshot "Screenshot": Save screenshots of the 3D scene
-2. \subpage migration_qt6 "Qt6 Migration": Migrating Qt5 GUI plugins to Qt6
+3. \subpage migration_qt6 "Qt6 Migration": Migrating Qt5 GUI plugins to Qt6
 
 ## License
 
