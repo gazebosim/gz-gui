@@ -6,7 +6,7 @@ Previous Tutorial: \ref layout
 ## Overview
 
 Gazebo GUI leverages
-[QtQuick Controls 2 Styles](https://doc.qt.io/qt-5.9/qtquickcontrols2-styles.html)
+[QtQuick Controls Styles](https://doc.qt.io/qt-6/qtquickcontrols-styles.html)
 for styling. The recommended and best supported style is the Material Style,
 but it is also possible to use others such as Default and Universal. This tutorial
 focuses on customizing the Material style.
@@ -34,7 +34,7 @@ Users can customize the whole application's material style using just a few vari
 * Accent color
 
 QML types provided by
-[QtQuick Controls 2](https://doc.qt.io/qt-5/qtquick-controls2-qmlmodule.html),
+[QtQuick Controls](https://doc.qt.io/qt-6/qtquick-controls-qmlmodule.html),
 as well as QML types provided by Gazebo GUI, use these variables as appropriate.
 It's recommended that developers make sure their plugins use these variables
 for a more integrated experience.
@@ -65,7 +65,7 @@ choose "Style settings".
 
 A dialog will open, where you can change the theme (Light / Dark) and primary /
 accent colors. From the color dropdown menu, it is possible to choose one of the
-[pre-defined material colors](https://doc.qt.io/qt-5.9/qtquickcontrols2-material.html#pre-defined-material-colors),
+[pre-defined material colors](https://doc.qt.io/qt-6/qtquickcontrols-material.html#pre-defined-material-colors),
 and from the button next to it, it is possible to choose any custom color.
 
 \note Custom colors won't be automatically shaded based on the theme.
@@ -75,7 +75,7 @@ and from the button next to it, it is possible to choose any custom color.
 ## Environment variables
 
 See
-[Supported Environment Variables in Qt Quick Controls 2](https://doc.qt.io/qt-5.9/qtquickcontrols2-environment.html).
+[Supported Environment Variables in Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-environment.html).
 
 You can try running the following command for example:
 

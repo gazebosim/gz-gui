@@ -7,6 +7,12 @@ release will remove the deprecated code.
 
 ## Gazebo GUI 9.X to 10.X
 
+* Upgraded GUI framework from Qt5 to Qt6. All GUI plugins distributed by gz-gui
+have been migrated. This upgrade affects all users' custom Gazebo GUI plugins.
+Please see the
+[Qt6 Migration tutorial](https://github.com/gazebosim/gz-gui/blob/main/tutorials/09_migration_qt6.html)
+for information on how to port your Qt5 based plugins to Qt6.
+
 * The environment variable `GZ_GUI_PLUGIN_INSTALL_DIR` is removed. Use
 `gz::gui::getPluginInstallDir()` instead.
 
