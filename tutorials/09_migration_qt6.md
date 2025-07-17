@@ -24,13 +24,13 @@ this should be done from `gz-gui10` onwards. Prior to `gz-gui10`, access to
 C++ functions or properties was done with the following syntax in QML:
 
 ```qml
-MyClass::FunctionFoo()
+MyClass.FunctionFoo()
 ```
 
 The new syntax for doing this in Qt6 based Gazebo GUI plugin is:
 
 ```qml
-_MyClass::FunctionFoo()
+_MyClass.FunctionFoo()
 ```
 
 As an example, in the Qt5 based `Screenshot` GUI plugin's QML code, we call
