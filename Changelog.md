@@ -72,6 +72,14 @@
 
 ## Gazebo GUI 8
 
+### Gazebo GUI 8.4.0 (2025-01-30)
+
+1. Fix color distortion in low light conditions
+    * [Pull request #630](https://github.com/gazebosim/gz-gui/pull/630)
+
+1. Added dark mode for drawer and menu buttons
+    * [Pull request #626](https://github.com/gazebosim/gz-gui/pull/626)
+
 ### Gazebo GUI 8.3.0 (2024-06-20)
 
 1. Backport: Adding cone primitives.

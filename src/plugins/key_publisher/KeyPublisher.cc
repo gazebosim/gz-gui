@@ -67,8 +67,11 @@ void KeyPublisher::LoadConfig(const tinyxml2::XMLElement *)
   if (this->title.empty())
     this->title = "Key publisher";
 
-  gui::App()->findChild
-    <MainWindow *>()->QuickWindow()->installEventFilter(this);
+  if (auto *mainWindow = gui::App()->findChild<MainWindow *>()) {
+    if (auto *quickWindow = mainWindow->QuickWindow()) {
+      quickWindow->installEventFilter(this);
+    }
+  }
 }
 
 /////////////////////////////////////////////////
