@@ -94,7 +94,7 @@ TreeView {
 
             // set the current index & current selection and active focus for keyboard
             // the reason for that to make the branch selection just like the item selection
-            // and to fix the animation as it ueses item selection's info
+            // and to fix the animation as it uses item selection's info
             var mi = treeDelegate.treeView.modelIndex(Qt.point(column, row))
             tree.selectionModel.select(mi,ItemSelectionModel.ClearAndSelect)
 

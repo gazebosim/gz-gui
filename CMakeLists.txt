@@ -8,7 +8,7 @@ project(gz-gui VERSION 10.0.0)
 #============================================================================
 # Find gz-cmake
 #============================================================================
-find_package(gz-cmake4 REQUIRED)
+find_package(gz-cmake REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -40,23 +40,19 @@ gz_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
 # Find gz-utils
-gz_find_package(gz-utils3 REQUIRED)
-set(GZ_UTILS_VER ${gz-utils3_VERSION_MAJOR})
+gz_find_package(gz-utils REQUIRED)
 
 #--------------------------------------
 # Find gz-math
-gz_find_package(gz-math8 REQUIRED)
-set(GZ_MATH_VER ${gz-math8_VERSION_MAJOR})
+gz_find_package(gz-math REQUIRED)
 
 #--------------------------------------
 # Find gz-common
-gz_find_package(gz-common6 REQUIRED COMPONENTS profiler)
-set(GZ_COMMON_VER ${gz-common6_VERSION_MAJOR})
+gz_find_package(gz-common REQUIRED COMPONENTS profiler)
 
 #--------------------------------------
 # Find gz-plugin
-gz_find_package(gz-plugin3 REQUIRED COMPONENTS loader register)
-set(GZ_PLUGIN_VER ${gz-plugin3_VERSION_MAJOR})
+gz_find_package(gz-plugin REQUIRED COMPONENTS loader register)
 
 #--------------------------------------
 # Find gz-transport
@@ -64,13 +60,11 @@ gz_find_package(gz-transport REQUIRED)
 
 #--------------------------------------
 # Find gz-rendering
-gz_find_package(gz-rendering9 REQUIRED)
-set(GZ_RENDERING_VER ${gz-rendering9_VERSION_MAJOR})
+gz_find_package(gz-rendering REQUIRED)
 
 #--------------------------------------
 # Find gz-msgs
-gz_find_package(gz-msgs11 REQUIRED)
-set(GZ_MSGS_VER ${gz-msgs11_VERSION_MAJOR})
+gz_find_package(gz-msgs REQUIRED)
 
 # Find if command is available. This is used to enable tests.
 # Note that CLI files are installed regardless of whether the dependency is
@@ -130,7 +124,7 @@ gz_create_docs(
   ADDITIONAL_INPUT_DIRS "${CMAKE_SOURCE_DIR}/src/plugins"
   IMAGE_PATH_DIRS "${CMAKE_SOURCE_DIR}/tutorials/images"
   TAGFILES
-    "${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=http://doc.qt.io/qt-5/"
+    "${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=https://doc.qt.io/qt-6/"
     "${GZ-MATH_DOXYGEN_TAGFILE} = ${GZ-MATH_API_URL}"
     "${GZ-MSGS_DOXYGEN_TAGFILE} = ${GZ-MSGS_API_URL}"
     "${GZ-RENDERING_DOXYGEN_TAGFILE} = ${GZ-RENDERING_API_URL}"

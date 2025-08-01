@@ -5,8 +5,8 @@ gz_build_tests(
   SOURCES ${tests}
   LIB_DEPS
     ${PROJECT_NAME}_test_helpers
-    gz-plugin${GZ_PLUGIN_VER}::loader
-    gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+    gz-plugin::loader
+    gz-rendering::gz-rendering
     Qt::Test
   ENVIRONMENT
     GZ_GUI_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}

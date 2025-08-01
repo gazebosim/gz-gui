@@ -1,7 +1,7 @@
 find_package(Doxygen)
 
 set(GZ_DOXYGEN_TAGFILES
-  "\"${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=http://doc.qt.io/qt-5/\" \
+  "\"${CMAKE_SOURCE_DIR}/doc/qt.tag.xml=https://doc.qt.io/qt-6/\" \
    \"${GZ-MATH_DOXYGEN_TAGFILE} = ${GZ-MATH_API_URL}\" \
    \"${GZ-MSGS_DOXYGEN_TAGFILE} = ${GZ-MSGS_API_URL}\" \
    \"${GZ-TRANSPORT_DOXYGEN_TAGFILE} = ${GZ-TRANSPORT_API_URL}\" \
@@ -24,6 +24,6 @@ if (DOXYGEN_FOUND)
 
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
-  install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml 
+  install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gz/${PROJECT_NAME_LOWER}_${PROJECT_VERSION_MINOR})
 endif()

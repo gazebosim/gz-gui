@@ -4,6 +4,11 @@
 
 ## Gazebo GUI 9
 
+### Gazebo GUI 9.0.1 (2025-02-12)
+
+1. Fix miscellaneous issues and warnings
+    * [Pull request #652](https://github.com/gazebosim/gz-gui/pull/652)
+
 ### Gazebo GUI 9.0.0 (2024-09-25)
 
 1. **Baseline:** this includes all changes from 8.3.0 and earlier.
@@ -66,6 +71,14 @@
     * [Pull request #588](https://github.com/gazebosim/gz-gui/pull/588)
 
 ## Gazebo GUI 8
+
+### Gazebo GUI 8.4.0 (2025-01-30)
+
+1. Fix color distortion in low light conditions
+    * [Pull request #630](https://github.com/gazebosim/gz-gui/pull/630)
+
+1. Added dark mode for drawer and menu buttons
+    * [Pull request #626](https://github.com/gazebosim/gz-gui/pull/626)
 
 ### Gazebo GUI 8.3.0 (2024-06-20)
 
