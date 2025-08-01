@@ -265,12 +265,17 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
     auto messageType = msgField->message_type();
 
     if (messageType)
+<<<<<<< HEAD
       this->AddField(msgItem, msgField->name(), messageType->name());
+=======
+      this->AddField(msgItem, std::string(msgField->name()),
+          std::string(messageType->full_name()));
+>>>>>>> e1eb227 (Fix compatibility with protobuf v30 (cpp 6.30.0) (#677))
 
     else
     {
-      auto msgFieldItem = this->FactoryItem(msgField->name(),
-                                            msgField->type_name());
+      auto msgFieldItem = this->FactoryItem(std::string(msgField->name()),
+                                            std::string(msgField->type_name()));
       msgItem->appendRow(msgFieldItem);
 
       this->SetItemPath(msgFieldItem);
