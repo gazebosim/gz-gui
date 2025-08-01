@@ -666,7 +666,15 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
 {
   if (this->initialized)
     return {};
-
+  // make sure every part is initialized
+  auto *mainWindow = gz::gui::App()->findChild<gz::gui::MainWindow *>();
+  if (!mainWindow) {
+    return "Failed to find main window.";
+  }
+  QQuickWindow *quickWindow = mainWindow->QuickWindow();
+  if (!quickWindow) {
+    return "Failed to get quick window from main window.";
+  }
   // Currently only support one engine at a time
   rendering::RenderEngine *engine{nullptr};
   auto loadedEngines = rendering::loadedEngines();
@@ -674,9 +682,6 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   // Load engine if there's no engine yet
   if (loadedEngines.empty())
   {
-    QQuickWindow *quickWindow =
-      gz::gui::App()->findChild<gz::gui::MainWindow *>()->QuickWindow();
-
     this->dataPtr->rhiParams["winID"] = std::to_string(quickWindow->winId());
 
 #if GZ_GUI_HAVE_VULKAN
@@ -837,6 +842,9 @@ void GzRenderer::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 /////////////////////////////////////////////////
 void GzRenderer::Destroy()
 {
+  if (!this->initialized)
+    return;
+
   auto *engine = rendering::engine(this->engineName);
   if (engine == nullptr)
     return;
