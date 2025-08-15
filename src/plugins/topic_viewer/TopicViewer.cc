@@ -256,12 +256,13 @@ void TopicViewerPrivate::AddField(QStandardItem *_parentItem,
     auto messageType = msgField->message_type();
 
     if (messageType)
-      this->AddField(msgItem, msgField->name(), messageType->full_name());
+      this->AddField(msgItem, std::string(msgField->name()),
+          std::string(messageType->full_name()));
 
     else
     {
-      auto msgFieldItem = this->FactoryItem(msgField->name(),
-                                            msgField->type_name());
+      auto msgFieldItem = this->FactoryItem(std::string(msgField->name()),
+                                            std::string(msgField->type_name()));
       msgItem->appendRow(msgFieldItem);
 
       this->SetItemPath(msgFieldItem);
