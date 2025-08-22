@@ -1,6 +1,65 @@
 ## Gazebo GUI 10
 
-### Gazebo GUI 10.0.0 (202X-XX-XX)
+### Gazebo GUI 10.X.X (202X-XX-XX)
+
+### Gazebo GUI 10.0.0 (2025-09-XX)
+
+1. Qt6 migration and updates
+    * [Pull request #697](https://github.com/gazebosim/gz-gui/pull/697)
+    * [Pull request #693](https://github.com/gazebosim/gz-gui/pull/693)
+    * [Pull request #691](https://github.com/gazebosim/gz-gui/pull/691)
+    * [Pull request #690](https://github.com/gazebosim/gz-gui/pull/690)
+    * [Pull request #682](https://github.com/gazebosim/gz-gui/pull/682)
+    * [Pull request #666](https://github.com/gazebosim/gz-gui/pull/666)
+
+1. Remove build RUNPATH from installed libGrid3D.so
+    * [Pull request #676](https://github.com/gazebosim/gz-gui/pull/676)
+
+1. Fix compatibility with protobuf v30 (cpp 6.30.0)
+    * [Pull request #677](https://github.com/gazebosim/gz-gui/pull/677)
+
+1. Increase the test setting parameters to avoid being less than the minimum height and width in Main.qml
+    * [Pull request #689](https://github.com/gazebosim/gz-gui/pull/689)
+
+1. Fix null pointer crashes when running a plugin as a standalone window
+    * [Pull request #688](https://github.com/gazebosim/gz-gui/pull/688)
+
+1. Bumps for Jetty
+    * [Pull request #683](https://github.com/gazebosim/gz-gui/pull/683)
+    * [Pull request #674](https://github.com/gazebosim/gz-gui/pull/674)
+    * [Pull request #646](https://github.com/gazebosim/gz-gui/pull/646)
+
+1. Fix world reset dialog crash and cancel button in WorldControl plugin
+    * [Pull request #681](https://github.com/gazebosim/gz-gui/pull/681)
+
+1. Fix deleting TopicsModel in TopicsViewer
+    * [Pull request #680](https://github.com/gazebosim/gz-gui/pull/680)
+
+1. Remove Jammy github actions CI in main (Jetty)
+    * [Pull request #672](https://github.com/gazebosim/gz-gui/pull/672)
+
+1. Image Display Depth Visual Flip
+    * [Pull request #669](https://github.com/gazebosim/gz-gui/pull/669)
+
+1. Remove major version from package name
+    * [Pull request #670](https://github.com/gazebosim/gz-gui/pull/670)
+
+1. Fix Transport Plotting GUI plugin
+    * [Pull request #667](https://github.com/gazebosim/gz-gui/pull/667)
+
+1. Fix GridConfig pose updates
+    * [Pull request #658](https://github.com/gazebosim/gz-gui/pull/658)
+
+1. GzSpinBox updates
+    * [Pull request #656](https://github.com/gazebosim/gz-gui/pull/656)
+    * [Pull request #654](https://github.com/gazebosim/gz-gui/pull/654)
+
+1. Use SplitView from QtQuick.Controls 2 for GzSplit
+    * [Pull request #651](https://github.com/gazebosim/gz-gui/pull/651)
+
+1. Replace systemTimeISO with systemTimeIso
+    * [Pull request #647](https://github.com/gazebosim/gz-gui/pull/647)
+
 
 ## Gazebo GUI 9
 
