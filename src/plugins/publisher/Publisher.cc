@@ -23,11 +23,14 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+#include "Publisher.hh"
+
+#include <google/protobuf/text_format.h>
+
 #include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
 #include <gz/transport/Node.hh>
-
-#include "Publisher.hh"
+#include <string>
 
 namespace ignition
 {
@@ -125,7 +128,14 @@ void Publisher::OnPublish(const bool _checked)
 
   // Check it's possible to create message
   auto msg = msgs::Factory::New(msgType, msgData);
-  if (!msg || (msg->DebugString() == "" && msgData != ""))
+
+  std::string msgToText;
+  using google::protobuf::TextFormat;
+  if (msg)
+  {
+    TextFormat::PrintToString(*msg, &msgToText);
+  }
+  if (!msg || (msgToText.empty() && !msgData.empty()))
   {
     ignerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";
