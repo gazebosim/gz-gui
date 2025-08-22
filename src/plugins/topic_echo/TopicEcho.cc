@@ -15,13 +15,17 @@
  *
 */
 
-#include <iostream>
+#include "TopicEcho.hh"
+
+#include <google/protobuf/text_format.h>
+
 #include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
 #include <gz/transport/Node.hh>
+#include <iostream>
+#include <string>
 
 #include "gz/gui/Application.hh"
-#include "TopicEcho.hh"
 
 namespace gz::gui::plugins
 {
@@ -108,8 +112,14 @@ void TopicEcho::OnMessage(const google::protobuf::Message &_msg)
     return;
 
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
-
-  this->AddMsg(QString::fromStdString(_msg.DebugString()));
+  if (std::string str; google::protobuf::TextFormat::PrintToString(_msg, &str))
+  {
+    emit this->AddMsg(QString::fromStdString(str));
+  }
+  else
+  {
+    gzerr << "Error printing message" << std::endl;
+  }
 }
 
 /////////////////////////////////////////////////

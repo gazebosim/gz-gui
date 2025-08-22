@@ -15,13 +15,15 @@
  *
 */
 
-#include <iostream>
+#include "Publisher.hh"
+
+#include <google/protobuf/text_format.h>
+
 #include <gz/common/Console.hh>
 #include <gz/msgs/Utility.hh>
 #include <gz/plugin/Register.hh>
 #include <gz/transport/Node.hh>
-
-#include "Publisher.hh"
+#include <string>
 
 namespace gz::gui::plugins
 {
@@ -106,7 +108,14 @@ void Publisher::OnPublish(const bool _checked)
 
   // Check it's possible to create message
   auto msg = msgs::Factory::New(msgType, msgData);
-  if (!msg || (msg->DebugString() == "" && msgData != ""))
+
+  std::string msgToText;
+  using google::protobuf::TextFormat;
+  if (msg)
+  {
+    TextFormat::PrintToString(*msg, &msgToText);
+  }
+  if (!msg || (msgToText.empty() && !msgData.empty()))
   {
     gzerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";
