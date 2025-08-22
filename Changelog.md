@@ -47,9 +47,6 @@
 1. Fix Transport Plotting GUI plugin
     * [Pull request #667](https://github.com/gazebosim/gz-gui/pull/667)
 
-1. Fix Transport Plotting GUI plugin
-    * [Pull request #667](https://github.com/gazebosim/gz-gui/pull/667)
-
 1. Fix GridConfig pose updates
     * [Pull request #658](https://github.com/gazebosim/gz-gui/pull/658)
 
