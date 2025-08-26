@@ -36,7 +36,7 @@ will process those and update the 3D scene, and then the `MinimalScene` will
 paint the scene to the window.
 
 Follow the instructions in the
-[scene_provider example](https://github.com/gazebosim/gz-gui/tree/main/examples/standalone/scene_provider)
+[scene_provider example](https://github.com/gazebosim/gz-gui/tree/gz-gui10/examples/standalone/scene_provider)
 and see visuals being added and moved on the 3D scene.
 
 ### Getting the scene
