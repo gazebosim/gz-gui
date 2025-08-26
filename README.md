@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/gazebosim/gz-gui/tree/main/graph/badge.svg)](https://codecov.io/gh/gazebosim/gz-gui/tree/main)
-Ubuntu Noble  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-ci-main-noble-amd64)](https://build.osrfoundation.org/job/gz_gui-ci-main-noble-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/gz_gui-ci-main-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-main-clowin)](https://build.osrfoundation.org/job/gz_gui-main-clowin)
+Test coverage | [![codecov](https://codecov.io/gh/gazebosim/gz-gui/tree/gz-gui10/graph/badge.svg)](https://codecov.io/gh/gazebosim/gz-gui/tree/gz-gui10)
+Ubuntu Noble  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-ci-gz-gui10-noble-amd64)](https://build.osrfoundation.org/job/gz_gui-ci-gz-gui10-noble-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-ci-gz-gui10-homebrew-amd64)](https://build.osrfoundation.org/job/gz_gui-ci-gz-gui10-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_gui-10-cnlwin)](https://build.osrfoundation.org/job/gz_gui-10-cnlwin)
 
 Gazebo GUI builds on top of [Qt](https://www.qt.io/) to provide widgets which are
 useful when developing robotics applications, such as a 3D view, plots, dashboard, etc,

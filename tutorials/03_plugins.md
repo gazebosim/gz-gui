@@ -41,7 +41,7 @@ Here the `topic` command of gz binary is used. In that, we want to echo (`-e`) t
 
 We will walk through the HelloPlugin to see how the Plugin is implemented.
 
-We refer to the files [HelloPlugin.hh](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/HelloPlugin.hh) and [HelloPlugin.cc](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/HelloPlugin.cc) in `examples/plugin/hello_plugin/` in `gz-gui`.
+We refer to the files [HelloPlugin.hh](https://github.com/gazebosim/gz-gui/blob/gz-gui10/examples/plugin/hello_plugin/HelloPlugin.hh) and [HelloPlugin.cc](https://github.com/gazebosim/gz-gui/blob/gz-gui10/examples/plugin/hello_plugin/HelloPlugin.cc) in `examples/plugin/hello_plugin/` in `gz-gui`.
 
 A new plugin should inherit from `gz::gui::Plugin` class.
 
@@ -86,7 +86,7 @@ A plugin may require certain configuration files to specify certain parameter va
 
 In this case, we would want the configuration file to hold the message to be printed on the display (here the display is the terminal) when the `Hello, Plugin!` button is clicked.
 
-Thus, the [HelloPlugin.config](https://github.com/gazebosim/gz-gui/blob/main/examples/plugin/hello_plugin/HelloPlugin.config) looks like this:
+Thus, the [HelloPlugin.config](https://github.com/gazebosim/gz-gui/blob/gz-gui10/examples/plugin/hello_plugin/HelloPlugin.config) looks like this:
 
 ```xml
 <plugin filename="HelloPlugin">
