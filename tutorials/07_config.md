@@ -30,7 +30,7 @@ environment variable `GZ_GUI_RESOURCE_PATH`, like so:
 `GZ_GUI_RESOURCE_PATH=/absolute/path/to/ gz gui --config example.config`
 
 From the C++ API, pass the file path to
-[Application::LoadConfig](https://gazebosim.org/api/gui/6.0/classignition_1_1gui_1_1Application.html#a03c4c3a1b1e58cc4bff05658f21fff17).
+[Application::LoadConfig](https://gazebosim.org/api/gui/10/classgz_1_1gui_1_1Application.html#a9bcca11f0018a1fb97007f7817a10b75).
 
 ### File structure
 
@@ -45,7 +45,7 @@ Gazebo GUI accepts the following top-level elements on a config file:
       [plugin_params.config](https://github.com/gazebosim/gz-gui/blob/gz-gui10/examples/config/plugin_params.config)
       for an example.
     * custom elements: Developers can read custom plugin configurations overriding the
-      [Plugin::LoadConfig](https://gazebosim.org/api/gui/6.0/classignition_1_1gui_1_1Plugin.html#a720646.0af4cd247b994b905559fd4ee)
+      [Plugin::LoadConfig](https://gazebosim.org/api/gui/10/classgz_1_1gui_1_1Plugin.html#a23b77569f666353a9794d926b949a179)
       function, see the
       [HelloPlugin](https://github.com/gazebosim/gz-gui/blob/gz-gui10/examples/plugin/hello_plugin/HelloPlugin.cc)
       example.
