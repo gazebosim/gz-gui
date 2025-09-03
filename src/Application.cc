@@ -168,6 +168,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   }
   else
   {
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     gzdbg << "Qt using OpenGL graphics interface" << std::endl;
   }
 #endif
