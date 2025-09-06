@@ -300,7 +300,7 @@ ApplicationWindow
     currentFolder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
     nameFilters: [ "Config files (*.config)" ]
     onAccepted: {
-      _MainWindow.OnLoadConfig(fileUrl)
+      _MainWindow.OnLoadConfig(selectedFile)
     }
   }
 
@@ -314,7 +314,7 @@ ApplicationWindow
     currentFolder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
     nameFilters: [ "Config files (*.config)" ]
     onAccepted: {
-      var selected = fileUrl.toString();
+      var selected = selectedFile.toString();
 
       if (!selected.endsWith(".config"))
       {
