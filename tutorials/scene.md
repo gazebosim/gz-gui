@@ -17,7 +17,7 @@ adding, modifying and removing rendering elements from the scene must be
 performed by other plugins that work alongside the minimal scene.
 
 Each application will have a different way of updating the 3D scene. For example,
-[Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo) updates the scene
+[Ignition Gazebo](https://gazebosim.org/libs/sim) updates the scene
 based on its entities and components, and
 [Ignition RViz](https://github.com/ignitionrobotics/ign-rviz/)
 updates the scene based on ROS 2 messages. Each of these applications provides
@@ -63,4 +63,3 @@ emitted by the `MinimalScene`.
 See how the `TransportSceneManager` installs an event filter with
 `installEventFilter`, registers an `eventFilter` callback and performs all
 rendering operations within the `OnRender` function.
-
