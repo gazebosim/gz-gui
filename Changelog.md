@@ -1,8 +1,6 @@
 ## Gazebo GUI 10
 
-### Gazebo GUI 10.X.X (202X-XX-XX)
-
-### Gazebo GUI 10.0.0 (2025-09-XX)
+### Gazebo GUI 10.0.0 (2025-09-30)
 
 1. Qt6 migration and updates
     * [Pull request #697](https://github.com/gazebosim/gz-gui/pull/697)
