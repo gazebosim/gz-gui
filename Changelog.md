@@ -1,10 +1,33 @@
 ## Gazebo GUI 10
 
-### Gazebo GUI 10.X.X (202X-XX-XX)
+### Gazebo GUI 10.0.0 (2025-09-30)
 
-### Gazebo GUI 10.0.0 (2025-09-XX)
+1. Fix link in scene tutorial
+    * [Pull request #714](https://github.com/gazebosim/gz-gui/pull/714)
+
+1. Update dependency on gz-cmake3 to gz-cmake
+    * [Pull request #713](https://github.com/gazebosim/gz-gui/pull/713)
+
+1. Fix loading and saving gui config
+    * [Pull request #711](https://github.com/gazebosim/gz-gui/pull/711)
+
+1. Fix syntax error in package.xml entry
+    * [Pull request #710](https://github.com/gazebosim/gz-gui/pull/710)
+
+1. Fix dead links in config tutorial
+    * [Pull request #709](https://github.com/gazebosim/gz-gui/pull/709)
+
+1. Update 02_commandline.md tutorial with help message
+    * [Pull request #708](https://github.com/gazebosim/gz-gui/pull/708)
+
+1. Update references of main to gz-gui10
+    * [Pull request #707](https://github.com/gazebosim/gz-gui/pull/707)
+
+1. Replace Protobuf DebugString with PrintToString
+    * [Pull request #703](https://github.com/gazebosim/gz-gui/pull/703)
 
 1. Qt6 migration and updates
+    * [Pull request #712](https://github.com/gazebosim/gz-gui/pull/712)
     * [Pull request #697](https://github.com/gazebosim/gz-gui/pull/697)
     * [Pull request #693](https://github.com/gazebosim/gz-gui/pull/693)
     * [Pull request #691](https://github.com/gazebosim/gz-gui/pull/691)
