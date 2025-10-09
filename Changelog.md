@@ -22,20 +22,11 @@
 1. Fix null pointer crashes when running a plugin as a standalone window
     * [Pull request #688](https://github.com/gazebosim/gz-gui/pull/688)
 
-1. Update publisher layout
-    * [Pull request #update publisher layout](https://github.com/gazebosim/gz-gui/pull/update publisher layout)
-
-1. fix shutting down minimal scene
-    * [Pull request #fix shutting down minimal scene](https://github.com/gazebosim/gz-gui/pull/fix shutting down minimal scene)
-
 1. Image Display Depth Visual Flip
     * [Pull request #669](https://github.com/gazebosim/gz-gui/pull/669)
 
 1. Fix Transport Plotting GUI plugin
     * [Pull request #667](https://github.com/gazebosim/gz-gui/pull/667)
-
-1. Docs: fix typos across files
-    * [Pull request #docs: fix typos across files](https://github.com/gazebosim/gz-gui/pull/docs: fix typos across files)
 
 ### Gazebo GUI 9.0.1 (2025-02-12)
 
