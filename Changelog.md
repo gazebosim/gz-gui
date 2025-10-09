@@ -1,5 +1,33 @@
 ## Gazebo GUI 9
 
+### Gazebo GUI 9.0.2 (2025-10-08)
+
+1. **Baseline:** this includes all changes from 9.0.1 and earlier.
+
+1. Fix link in scene tutorial (#714)
+    * [Pull request #714](https://github.com/gazebosim/gz-gui/pull/714)
+
+1. Replace Protobuf DebugString with PrintToString
+    * [Pull request #703](https://github.com/gazebosim/gz-gui/pull/703)
+
+1. Fix compatibility with protobuf v30 (cpp 6.30.0)
+    * [Pull request #677](https://github.com/gazebosim/gz-gui/pull/677)
+
+1. Remove build RUNPATH from installed libGrid3D.so
+    * [Pull request #676](https://github.com/gazebosim/gz-gui/pull/676)
+
+1. Increase the test setting parameters to avoid being less than the minimum height and width in Main.qml
+    * [Pull request #689](https://github.com/gazebosim/gz-gui/pull/689)
+
+1. Fix null pointer crashes when running a plugin as a standalone window
+    * [Pull request #688](https://github.com/gazebosim/gz-gui/pull/688)
+
+1. Image Display Depth Visual Flip
+    * [Pull request #669](https://github.com/gazebosim/gz-gui/pull/669)
+
+1. Fix Transport Plotting GUI plugin
+    * [Pull request #667](https://github.com/gazebosim/gz-gui/pull/667)
+
 ### Gazebo GUI 9.0.1 (2025-02-12)
 
 1. Fix miscellaneous issues and warnings
