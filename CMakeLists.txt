@@ -8,7 +8,7 @@ project(gz-gui VERSION 10.0.0)
 #============================================================================
 # Find gz-cmake
 #============================================================================
-find_package(gz-cmake REQUIRED)
+find_package(gz-cmake 5 REQUIRED)
 
 #============================================================================
 # Configure the project
@@ -40,31 +40,31 @@ gz_find_package(TINYXML2 REQUIRED PRIVATE PRETTY tinyxml2)
 
 #--------------------------------------
 # Find gz-utils
-gz_find_package(gz-utils REQUIRED)
+gz_find_package(gz-utils VERSION 4 REQUIRED)
 
 #--------------------------------------
 # Find gz-math
-gz_find_package(gz-math REQUIRED)
+gz_find_package(gz-math VERSION 9 REQUIRED)
 
 #--------------------------------------
 # Find gz-common
-gz_find_package(gz-common REQUIRED COMPONENTS profiler)
+gz_find_package(gz-common VERSION 7 REQUIRED COMPONENTS profiler)
 
 #--------------------------------------
 # Find gz-plugin
-gz_find_package(gz-plugin REQUIRED COMPONENTS loader register)
+gz_find_package(gz-plugin VERSION 4 REQUIRED COMPONENTS loader register)
 
 #--------------------------------------
 # Find gz-transport
-gz_find_package(gz-transport REQUIRED)
+gz_find_package(gz-transport VERSION 15 REQUIRED)
 
 #--------------------------------------
 # Find gz-rendering
-gz_find_package(gz-rendering REQUIRED)
+gz_find_package(gz-rendering VERSION 10 REQUIRED)
 
 #--------------------------------------
 # Find gz-msgs
-gz_find_package(gz-msgs REQUIRED)
+gz_find_package(gz-msgs VERSION 12 REQUIRED)
 
 # Find if command is available. This is used to enable tests.
 # Note that CLI files are installed regardless of whether the dependency is
