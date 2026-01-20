@@ -63,6 +63,12 @@ namespace plugins
   /// * \<sky\> : If present, sky is enabled.
   /// * \<horizontal_fov\> : Horizontal FOV of the user camera in degrees,
   ///                        defaults to 90
+<<<<<<< HEAD
+=======
+  /// * \<anti_aliasing> : Optional level of anti-aliasing, default is 8
+  /// * \<graphics_api\> : Optional graphics API name. Valid choices are:
+  ///                      'opengl', 'metal'. Defaults to 'opengl'.
+>>>>>>> a71c5e6 (Configurable anti-aliasing for MinimalScene (#723))
   /// * \<view_controller> : Set the view controller (InteractiveViewControl
   ///                        currently supports types: ortho or orbit).
   class MinimalScene : public Plugin
@@ -223,6 +229,9 @@ namespace plugins
     /// \brief Default camera far clipping plane distance
     public: double cameraFarClip = 1000.0;
 
+    /// \brief Default camera anit-aliasing level
+    public: unsigned int cameraAntiAliasing = 8;
+
     /// \brief Scene background color
     public: math::Color backgroundColor = math::Color::Black;
 
@@ -332,6 +341,10 @@ namespace plugins
     /// \brief Set the render window camera's far clipping plane distance
     /// \param[in] _far Far clipping plane distance
     public: void SetCameraFarClip(double _far);
+
+    /// \brief Set the render window camera's anti-aliasing level
+    /// \param[in] _aa Anti-aliasing level
+    public: void SetAntiAliasing(unsigned int _aa);
 
     /// \brief Called when the mouse hovers to a new position.
     /// \param[in] _hoverPos 2D coordinates of the hovered mouse position on
