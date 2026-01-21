@@ -775,7 +775,7 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   this->dataPtr->camera->SetImageHeight(this->textureSize.height());
   this->dataPtr->camera->SetImageFormat(this->dataPtr->camera->ImageFormat(),
                                         true);
-  this->dataPtr->camera->SetAntiAliasing(8);
+  this->dataPtr->camera->SetAntiAliasing(this->cameraAntiAliasing);
   this->dataPtr->camera->SetHFOV(this->cameraHFOV);
   // setting the size and calling PreRender should cause the render texture to
   // be rebuilt
@@ -1347,6 +1347,12 @@ void RenderWindowItem::SetCameraFarClip(double _far)
 }
 
 /////////////////////////////////////////////////
+void RenderWindowItem::SetAntiAliasing(unsigned int _aa)
+{
+  this->dataPtr->renderThread->gzRenderer.cameraAntiAliasing = _aa;
+}
+
+/////////////////////////////////////////////////
 void RenderWindowItem::SetSkyEnabled(const bool &_sky)
 {
   this->dataPtr->renderThread->gzRenderer.skyEnable = _sky;
@@ -1483,6 +1489,24 @@ void MinimalScene::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         {
           renderWindow->SetCameraFarClip(f);
         }
+      }
+    }
+
+    elem = _pluginElem->FirstChildElement("anti_aliasing");
+    if (nullptr != elem && nullptr != elem->GetText())
+    {
+      unsigned int aa{};
+      std::stringstream aaStr(std::string(elem->GetText()));
+      aaStr >> aa;
+      if (aaStr.fail())
+      {
+        gzerr << "Unable to set anti-aliasing <anti_aliasing> to '"
+              << elem->GetText()
+              << "' using default value" << std::endl;
+      }
+      else
+      {
+        renderWindow->SetAntiAliasing(aa);
       }
     }
 
