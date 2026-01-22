@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 
 project(gz-gui-point-cloud-example)
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") OR
+   (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
   find_package(gz-transport14 QUIET REQUIRED OPTIONAL_COMPONENTS log)
   set(GZ_TRANSPORT_VER ${gz-transport14_VERSION_MAJOR})
 
