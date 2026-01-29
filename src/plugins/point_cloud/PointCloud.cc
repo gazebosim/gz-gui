@@ -375,6 +375,11 @@ void PointCloudPrivate::PublishMarkers()
   marker.set_type(gz::msgs::Marker::POINTS);
   marker.set_visibility(gz::msgs::Marker::GUI);
 
+  // Set a default material - this will disable shadow casting when
+  // the material is processed by the MarkerManager.
+  gz::msgs::Material material;
+  marker.mutable_material()->CopyFrom(material);
+
   gz::msgs::Set(marker.mutable_scale(),
     gz::math::Vector3d::One * this->pointSize);
 
