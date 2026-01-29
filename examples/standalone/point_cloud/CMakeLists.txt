@@ -2,9 +2,15 @@ cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 
 project(gz-gui-point-cloud-example)
 
+<<<<<<< HEAD
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   find_package(gz-transport14 QUIET REQUIRED OPTIONAL_COMPONENTS log)
   set(GZ_TRANSPORT_VER ${gz-transport14_VERSION_MAJOR})
+=======
+if((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") OR
+   (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+  find_package(gz-transport QUIET REQUIRED OPTIONAL_COMPONENTS log)
+>>>>>>> 308ceaf (Disable shadows when viewing point cloud markers (#720))
 
   find_package(gz-common6 REQUIRED)
   set(GZ_COMMON_VER ${gz-common6_VERSION_MAJOR})
