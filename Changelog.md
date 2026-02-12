@@ -1,6 +1,38 @@
 ## Gazebo GUI 6
 
-### Gazebo GUI 6.7.0 (2023-05-12)
+### Gazebo GUI 6.9.0 (2026-02-12)
+
+1. Configurable anti-aliasing for MinimalScene
+    * [Pull request #723](https://github.com/gazebosim/gz-gui/pull/723)
+
+1. Fortress: disable Ubuntu Focal CI
+    * [Pull request #732](https://github.com/gazebosim/gz-gui/pull/732)
+
+1. Suppress new Jammy warnings
+    * [Pull request #404](https://github.com/gazebosim/gz-gui/pull/404)
+
+1. Fix link in scene tutorial
+    * [Pull request #714](https://github.com/gazebosim/gz-gui/pull/714)
+
+1. Replace Protobuf DebugString with PrintToString
+    * [Pull request #703](https://github.com/gazebosim/gz-gui/pull/703)
+
+1. Fix compatibility with protobuf v30 (cpp 6.30.0)
+    * [Pull request #677](https://github.com/gazebosim/gz-gui/pull/677)
+
+1. Support `<gz-gui>` tag in plugin config
+    * [Pull request #607](https://github.com/gazebosim/gz-gui/pull/607)
+
+1. Update github action workflows
+    * [Pull request #597](https://github.com/gazebosim/gz-gui/pull/597)
+
+1. Update github issue template
+    * [Pull request #591](https://github.com/gazebosim/gz-gui/pull/591)
+
+1. Find any major version of Protobuf
+    * [Pull request #544](https://github.com/gazebosim/gz-gui/pull/544)
+
+### Gazebo GUI 6.8.0 (2023-05-12)
 
 1. Add degree as an optional unit for rotation in GzPose.
     * [Pull request #475](https://github.com/gazebosim/gz-gui/pull/475)
