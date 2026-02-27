@@ -32,7 +32,7 @@
   <depend>qml6-module-qtquick-dialogs</depend>
   <depend>qml6-module-qtquick-layouts</depend>
   <depend>qml6-module-qtquick-templates</depend>
-  <depend>qml6-module-qtquick-window</depend-->
+  <depend>qml6-module-qtquick-window</depend>
   <depend>qml6-module-qtquick</depend>
   <depend>qml6-module-qtqml</depend>
   <depend>qml6-module-qtcore</depend>
