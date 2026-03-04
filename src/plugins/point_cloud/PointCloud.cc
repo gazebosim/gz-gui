@@ -21,6 +21,8 @@
 #include "gz/msgs/pointcloud_packed.pb.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <gz/msgs/details/pointcloud_packed.pb.h>
 #include <gz/utils/ImplPtr.hh>
 #include <limits>
 #include <string>
@@ -96,6 +98,11 @@ class PointCloud::Implementation
 
   /// \brief True if showing, changeable at runtime
   public: bool showing{true};
+  
+  /// Sometimes we may just want to have a pointcloud
+  /// Without a float field. This is triggered when we
+  /// set a scalar float topic to subscribe to.
+  public: bool hasFloatTopic{false};
 };
 
 /////////////////////////////////////////////////
@@ -182,6 +189,7 @@ void PointCloud::OnPointCloudTopic(const QString &_pointCloudTopic)
 void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
 {
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->mutex);
+  
   // Unsubscribe from previous choice
   if (!this->dataPtr->floatVTopic.empty() &&
       !this->dataPtr->node.Unsubscribe(this->dataPtr->floatVTopic))
@@ -208,6 +216,7 @@ void PointCloud::OnFloatVTopic(const QString &_floatVTopic)
     return;
   }
   gzmsg << "Subscribed to " << this->dataPtr->floatVTopic << std::endl;
+  this->dataPtr->hasFloatTopic = true;
 }
 
 //////////////////////////////////////////////////
@@ -411,30 +420,99 @@ void PointCloud::Implementation::PublishMarkers()
     gzwarn << "Mal-formatted pointcloud" << std::endl;
   }
 
-  for (; ptIdx < std::min<int>(this->floatVMsg.data().size(), num_points);
-    ++iterX, ++iterY, ++iterZ, ++ptIdx)
-  {
-    // Value from float vector, if available. Otherwise publish all data as
-    // zeroes.
-    float dataVal = this->floatVMsg.data(ptIdx);
+  if (this->hasFloatTopic) {
+    for (; ptIdx < std::min<int>(this->floatVMsg.data().size(), num_points);
+      ++iterX, ++iterY, ++iterZ, ++ptIdx)
+    {
+      // Value from float vector, if available. Otherwise publish all data as
+      // zeroes.
+      float dataVal = this->floatVMsg.data(ptIdx);
 
-    // Don't visualize NaN
-    if (std::isnan(dataVal))
-      continue;
+      // Don't visualize NaN
+      if (std::isnan(dataVal))
+        continue;
 
-    auto ratio = floatRange > 0 ?
-        (dataVal - this->minFloatV) / floatRange : 0.0f;
-    gz:: math::Color color{
-      minC.R() + (maxC.R() - minC.R()) * ratio,
-      minC.G() + (maxC.G() - minC.G()) * ratio,
-      minC.B() + (maxC.B() - minC.B()) * ratio
-    };
+      auto ratio = floatRange > 0 ?
+          (dataVal - this->minFloatV) / floatRange : 0.0f;
+      gz:: math::Color color{
+        minC.R() + (maxC.R() - minC.R()) * ratio,
+        minC.G() + (maxC.G() - minC.G()) * ratio,
+        minC.B() + (maxC.B() - minC.B()) * ratio
+      };
 
-    gz::msgs::Set(marker.add_materials()->mutable_diffuse(), color);
-    gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
-      *iterX,
-      *iterY,
-      *iterZ));
+      gz::msgs::Set(marker.add_materials()->mutable_diffuse(), color);
+      gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
+        *iterX,
+        *iterY,
+        *iterZ));
+    }
+  }
+  else {
+    // Falback to coloring using the point cloud (if possible)
+    // Else fall back to a default color
+    std::string r_detected = "", g_detected = "", b_detected = "";
+    for(auto field : this->pointCloudMsg.field()){
+      if(field.name() == "r" || field.name() == "red") {
+        if (field.datatype() != msgs::PointCloudPacked::Field::UINT8)
+        {
+          gzwarn << "Only 256 bit color supported" << std::endl;
+          continue;
+        }
+        r_detected = field.name();
+      }
+
+      if(field.name() == "g" || field.name() == "green") {
+        if (field.datatype() != msgs::PointCloudPacked::Field::UINT8)
+        {
+          gzwarn << "Only 256 bit color supported" << std::endl;
+          continue;
+        }
+        g_detected = field.name();
+      }
+
+      if(field.name() == "b" || field.name() == "blue") {
+        if (field.datatype() != msgs::PointCloudPacked::Field::UINT8)
+        {
+          gzwarn << "Only 256 bit color supported" << std::endl;
+          continue;
+        }        
+        b_detected = field.name();
+      }   
+    }
+
+    if (r_detected.empty() || g_detected.empty() || b_detected.empty()) 
+    {
+      // Color fields unavailable just set the color based on our max color
+      for (std::size_t i = 0;  i < num_points; ++iterX, ++iterY, ++iterZ, ++i)
+      {
+        gz::msgs::Set(marker.add_materials()->mutable_diffuse(), maxC);
+        gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
+          *iterX,
+          *iterY,
+          *iterZ));      
+      } 
+    }
+    else
+    {
+          
+      gz::msgs::PointCloudPackedIterator<uint8_t>
+        iterR(this->pointCloudMsg, r_detected);
+      gz::msgs::PointCloudPackedIterator<uint8_t>
+        iterG(this->pointCloudMsg, g_detected);
+      gz::msgs::PointCloudPackedIterator<uint8_t>
+        iterB(this->pointCloudMsg, b_detected);
+      
+      for (std::size_t i = 0;  i < num_points; ++iterX, ++iterY, ++iterZ, ++i, ++iterR, ++iterG, ++iterB)
+      {
+        gz::msgs::Set(marker.add_materials()->mutable_diffuse(), math::Color(
+                        ((float)*iterR)/255.0, ((float)*iterG)/255.0 , ((float)*iterB)/255.0
+                      ));
+        gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
+          *iterX,
+          *iterY,
+          *iterZ));      
+      }  
+    }
   }
 
   this->node.Request("/marker", marker);
