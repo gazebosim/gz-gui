@@ -5,6 +5,10 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+
+## Gazebo Gui 10.X to 11.X
+
+
 ## Gazebo GUI 9.X to 10.X
 
 * Upgraded GUI framework from Qt5 to Qt6. All GUI plugins distributed by gz-gui
@@ -98,4 +102,3 @@ passing a `gz::msgs::CameraTrack` message.
 ## Gazebo GUI 0.1.0 to 1.0.0
 
 * Gazebo GUI v1 uses QtQuick and it is not compatible with v0, which uses QWidgets.
-
