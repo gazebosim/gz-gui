@@ -16,6 +16,7 @@
 */
 
 #include <gz/common/Console.hh>
+#include <gz/utils/SuppressWarning.hh>
 
 #include "gz/gui/Enums.hh"
 #include "gz/gui/SearchModel.hh"
@@ -148,8 +149,12 @@ void SearchModel::SetSearch(const QString &_search)
 {
   this->search = _search;
 
+  // invalidateFilter is deprecated in qt 6.10
+  // https://github.com/gazebosim/gz-gui/issues/729
+  GZ_UTILS_WARN_IGNORE__DEPRECATED_DECLARATION
   // Trigger repaint on whole model
   this->invalidateFilter();
+  GZ_UTILS_WARN_RESUME__DEPRECATED_DECLARATION
 
   // TODO(anyone): Figure out why filterChanged works for TopicViewer but not
   // TopicsStats
