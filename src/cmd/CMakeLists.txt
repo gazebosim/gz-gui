@@ -1,7 +1,5 @@
 #===============================================================================
 # Generate the ruby script for internal testing.
-# Note that the major version of the library is included in the name.
-# Ex: cmdgui3.rb
 set(cmd_script_generated_test "${CMAKE_BINARY_DIR}/test/lib/ruby/gz/cmd${GZ_DESIGNATION}.rb")
 set(cmd_script_configured_test "${cmd_script_generated_test}.configured")
 
@@ -22,8 +20,6 @@ file(GENERATE
 #===============================================================================
 # Used for the installed version.
 # Generate the ruby script that gets installed.
-# Note that the major version of the library is included in the name.
-# Ex: cmdgui3.rb
 set(cmd_script_generated "${CMAKE_CURRENT_BINARY_DIR}/cmd${GZ_DESIGNATION}.rb")
 set(cmd_script_configured "${cmd_script_generated}.configured")
 
