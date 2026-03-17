@@ -448,7 +448,7 @@ void PointCloud::Implementation::PublishMarkers()
     }
   }
   else {
-    // Falback to coloring using the point cloud (if possible)
+    // Fall back to coloring using the point cloud (if possible)
     // Else fall back to a default color
     std::string r_detected = "", g_detected = "", b_detected = "";
     for(auto field : this->pointCloudMsg.field()){
