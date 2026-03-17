@@ -1,3 +1,7 @@
+## Gazebo Gui 11.x
+
+### Gazebo Gui 11.0.0 (20XX-XX-XX)
+
 ## Gazebo GUI 10
 
 ### Gazebo GUI 10.X.X (202X-XX-XX)

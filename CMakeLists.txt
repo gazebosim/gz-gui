@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(gz-gui VERSION 10.0.0)
+project(gz-gui VERSION 11.0.0)
 
 #============================================================================
 # Find gz-cmake
@@ -70,7 +70,6 @@ gz_find_package(gz-msgs REQUIRED)
 # Note that CLI files are installed regardless of whether the dependency is
 # available during build time
 find_program(HAVE_GZ_TOOLS gz)
-set(GZ_TOOLS_VER 2)
 
 #--------------------------------------
 # Find QT
@@ -97,7 +96,7 @@ if(POLICY CMP0100)
 endif()
 
 set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
-  ${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}-${PROJECT_VERSION_MAJOR}/plugins
+  ${GZ_LIB_INSTALL_DIR}/gz-${GZ_DESIGNATION}/plugins
 )
 
 #============================================================================
