@@ -453,7 +453,8 @@ void PointCloud::Implementation::PublishMarkers()
     // Fall back to coloring using the point cloud (if possible)
     // Else fall back to a default color
     std::string r_detected = "", g_detected = "", b_detected = "";
-    for(auto field : this->pointCloudMsg.field()){
+    for (auto field : this->pointCloudMsg.field())
+    {
       if(field.name() == "r" || field.name() == "red") {
         if (field.datatype() != msgs::PointCloudPacked::Field::UINT8)
         {
