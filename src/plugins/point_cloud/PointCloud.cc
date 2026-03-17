@@ -496,7 +496,7 @@ void PointCloud::Implementation::PublishMarkers()
       }
     }
     else
-    {    
+    {
       gz::msgs::PointCloudPackedIterator<uint8_t>
         iterR(this->pointCloudMsg, r_detected);
       gz::msgs::PointCloudPackedIterator<uint8_t>
@@ -507,15 +507,15 @@ void PointCloud::Implementation::PublishMarkers()
         ++iterX, ++iterY, ++iterZ, ++i, ++iterR, ++iterG, ++iterB)
       {
         gz::msgs::Set(marker.add_materials()->mutable_diffuse(), math::Color(
-                        ((float)*iterR)/255.0,
-                        ((float)*iterG)/255.0,
-                        ((float)*iterB)/255.0
+                        static_cast<float>(*iterR)/255.0,
+                        static_cast<float>(*iterG)/255.0,
+                        static_cast<float>(*iterB)/255.0
                       ));
         gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
           *iterX,
           *iterY,
-          *iterZ));      
-      }  
+          *iterZ));
+      }
     }
   }
 
