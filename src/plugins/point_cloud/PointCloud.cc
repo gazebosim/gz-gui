@@ -482,10 +482,11 @@ void PointCloud::Implementation::PublishMarkers()
 
     if (r_detected.empty() || g_detected.empty() || b_detected.empty()) 
     {
+      gzerr << "Using default color" << std::endl;
       // Color fields unavailable just set the color based on our max color
       for (std::size_t i = 0;  i < num_points; ++iterX, ++iterY, ++iterZ, ++i)
       {
-        gz::msgs::Set(marker.add_materials()->mutable_diffuse(), maxC);
+        gz::msgs::Set(marker.add_materials()->mutable_diffuse(), minC);
         gz::msgs::Set(marker.add_point(), gz::math::Vector3d(
           *iterX,
           *iterY,
