@@ -99,7 +99,7 @@ class PointCloud::Implementation
   /// \brief True if showing, changeable at runtime
   public: bool showing{true};
 
-  /// Sometimes we may just want to have a pointcloud
+  /// \brief Sometimes we may just want to have a pointcloud
   /// Without a float field. This is triggered when we
   /// set a scalar float topic to subscribe to.
   public: bool hasFloatTopic{false};
@@ -452,10 +452,11 @@ void PointCloud::Implementation::PublishMarkers()
   {
     // Fall back to coloring using the point cloud (if possible)
     // Else fall back to a default color
-    std::string r_detected = "", g_detected = "", b_detected = "";
+    std::string r_detected, g_detected, b_detected;
     for (auto field : this->pointCloudMsg.field())
     {
-      if(field.name() == "r" || field.name() == "red") {
+      if (field.name() == "r" || field.name() == "red")
+      {
         if (field.datatype() != msgs::PointCloudPacked::Field::UINT8)
         {
           gzwarn << "Only 256 bit color supported" << std::endl;
@@ -464,7 +465,8 @@ void PointCloud::Implementation::PublishMarkers()
         r_detected = field.name();
       }
 
-      if(field.name() == "g" || field.name() == "green") {
+      if (field.name() == "g" || field.name() == "green")
+      {
         if (field.datatype() != msgs::PointCloudPacked::Field::UINT8)
         {
           gzwarn << "Only 256 bit color supported" << std::endl;
@@ -473,7 +475,8 @@ void PointCloud::Implementation::PublishMarkers()
         g_detected = field.name();
       }
 
-      if(field.name() == "b" || field.name() == "blue") {
+      if (field.name() == "b" || field.name() == "blue")
+      {
         if (field.datatype() != msgs::PointCloudPacked::Field::UINT8)
         {
           gzwarn << "Only 256 bit color supported" << std::endl;
