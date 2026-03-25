@@ -19,6 +19,7 @@ jobs:
         id: ci
         uses: gazebo-tooling/action-gz-ci@noble
         with:
+          gzdev-project-name: rotary
           # https://github.com/gazebo-tooling/release-tools/issues/1222
           # codecov-enabled: true
           cppcheck-enabled: true
