@@ -10,7 +10,7 @@
 
   <buildtool_depend>cmake</buildtool_depend>
 
-  <build_depend>gz-cmake3</build_depend>
+  <build_depend>gz-cmake</build_depend>
 
   <depend>gz-common</depend>
   <depend>gz-math</depend>
