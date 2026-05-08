@@ -128,7 +128,12 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
       this->SetTopic(topicElem->GetText());
   }
 
-  App()->findChild<MainWindow *>()->QuickWindow()->installEventFilter(this);
+  if (auto *qw = App() ? App()->findChild<MainWindow *>() ?
+                        App()->findChild<MainWindow *>()->QuickWindow():
+                        nullptr : nullptr)
+  {
+    qw->installEventFilter(this);
+  }
 }
 
 /////////////////////////////////////////////////

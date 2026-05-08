@@ -118,11 +118,14 @@ TEST(TopicEchoTest, GZ_UTILS_TEST_DISABLED_ON_WIN32(Echo))
   EXPECT_FALSE(plugin->Paused());
 
   // Start echoing
+  // Use a unique topic to avoid collisions with Publisher_TEST (whose default
+  // topic is also "/echo") when tests run in parallel.
+  plugin->SetTopic("/test_topic_echo");
   plugin->OnEcho(true);
 
   // Publish string
   transport::Node node;
-  auto pub = node.Advertise<msgs::StringMsg>("/echo");
+  auto pub = node.Advertise<msgs::StringMsg>("/test_topic_echo");
   msgs::StringMsg msg;
   msg.set_data("example string");
   pub.Publish(msg);

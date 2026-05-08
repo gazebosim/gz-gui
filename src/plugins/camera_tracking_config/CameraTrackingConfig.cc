@@ -95,8 +95,11 @@ void CameraTrackingConfig::LoadConfig(const tinyxml2::XMLElement *)
   gzmsg << "CameraTrackingConfig: Tracking topic publisher advertised on ["
          << this->dataPtr->cameraTrackingTopic << "]" << std::endl;
 
-  gui::App()->findChild<
-      MainWindow *>()->installEventFilter(this);
+  if (auto app = gz::gui::App()) {
+    if (auto mainWindow = app->findChild<gz::gui::MainWindow *>()) {
+      mainWindow->installEventFilter(this);
+    }
+  }
 }
 
 /////////////////////////////////////////////////
