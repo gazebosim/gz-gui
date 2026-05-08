@@ -41,4 +41,3 @@ GridLayout {
     Layout.fillHeight: true
   }
 }
-

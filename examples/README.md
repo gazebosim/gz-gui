@@ -14,4 +14,3 @@ command line tool, or used by standalone applications.
 
 Example configuration files which can be used with Gazebo GUI's command
 line tool or with standalone applications
-

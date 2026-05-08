@@ -52,7 +52,7 @@ ColumnLayout {
     Layout.margins: 2
     columns: 2
 
-    // X Track Offset 
+    // X Track Offset
     Label {
       id: xTrackPoseLabel
       text: "Track Offset X (m)"
@@ -71,7 +71,7 @@ ColumnLayout {
         CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
       }
     }
-    // Y Track Offset 
+    // Y Track Offset
     Label {
       id: yTrackPoseLabel
       text: "Track Offset Y (m)"
@@ -90,7 +90,7 @@ ColumnLayout {
         CameraTrackingConfig.SetTracking(xTrackPose, yTrackPose, zTrackPose, pGainTrack, xFollowOffset, yFollowOffset, zFollowOffset, pGainFollow)
       }
     }
-    // Z Track Offset 
+    // Z Track Offset
     Label {
       id: zTrackPoseLabel
       text: "Track Offset Z (m)"
