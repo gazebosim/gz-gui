@@ -60,6 +60,7 @@ TEST(ApplicationTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Constructor))
   // No Qt app
   EXPECT_EQ(nullptr, qGuiApp);
   EXPECT_EQ(nullptr, App());
+  FAIL() << "Fail on purpose to see GitHub workflow console output";
 }
 
 //////////////////////////////////////////////////
