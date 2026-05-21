@@ -660,7 +660,7 @@ bool Application::LoadPlugin(const std::string &_filename,
 std::shared_ptr<Plugin> Application::PluginByName(
     const std::string &_pluginName) const
 {
-  for (auto &plugin : this->dataPtr->pluginsAdded)
+  for (const auto &plugin : this->dataPtr->pluginsAdded)
   {
     auto *cardItem = plugin->CardItem();
     if (!cardItem)
