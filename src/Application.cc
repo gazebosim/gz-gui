@@ -861,7 +861,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
       // This computation could underflow the unsigned range, but that is okay
       // as in such case we would check if the suffix is placed somewhere much
       // further than allowed filename length.
-      const auto suffixPos = plugin.length() - strlen(SHARED_LIBRARY_SUFFIX);
+      const auto suffixPos = plugin.size() - strlen(SHARED_LIBRARY_SUFFIX);
 
       if (plugin.find(SHARED_LIBRARY_PREFIX) == 0 &&
           plugin.rfind(SHARED_LIBRARY_SUFFIX) == suffixPos)
