@@ -17,7 +17,7 @@
   <depend>gz-msgs</depend>
   <depend>gz-plugin</depend>
   <depend>gz-rendering</depend>
-  <depend>gz-tools2</depend>
+  <depend>gz-tools</depend>
   <depend>gz-transport</depend>
   <depend>gz-utils</depend>
   <depend>libqt6svg6</depend>
