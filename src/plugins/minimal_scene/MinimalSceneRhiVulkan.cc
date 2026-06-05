@@ -32,6 +32,8 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <cstdio>
+#include <cstdlib>
 #include <memory>
 #include <string>
 
@@ -72,6 +74,17 @@ class TextureNodeRhiVulkanPrivate
       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
       this->window,
       _size);
+    // Diagnostic (GZ_GUI_VULKAN_DIAG=1): the VkImage and QSGTexture handles +
+    // size at every fromNative() call. Used to confirm that the imported image
+    // handle Qt wraps matches the producer's exported image, when debugging an
+    // external engine zero-copy display path.
+    if (std::getenv("GZ_GUI_VULKAN_DIAG"))
+    {
+      std::fprintf(stderr,
+        "[gz-gui-diag] CreateTexture VkImage=%p size=%dx%d window=%p texture=%p\n",
+        reinterpret_cast<void *>(*_id), _size.width(), _size.height(),
+        static_cast<void *>(this->window), static_cast<void *>(this->texture));
+    }
 #else
     this->texture = this->window->createTextureFromNativeObject(
       QQuickWindow::NativeObjectTexture,
@@ -245,6 +258,18 @@ void TextureNodeRhiVulkan::PrepareNode()
   // while the GPU is still drawing to it, or the caches aren't flushed, etc.
   auto lastCamera = this->dataPtr->lastCamera.lock();
   lastCamera->PrepareForExternalSampling();
+
+  // Diagnostic (GZ_GUI_VULKAN_DIAG=1): which VkImage the scene-graph thread is
+  // about to re-wrap. Pair with [gz-gui-diag] CreateTexture above to verify the
+  // handle threading from the producer through to QSGSimpleTextureNode.
+  if (std::getenv("GZ_GUI_VULKAN_DIAG"))
+  {
+    std::fprintf(stderr,
+      "[gz-gui-diag] PrepareNode newTextureId=%p newSize=%dx%d (will %srecreate)\n",
+      reinterpret_cast<void *>(this->dataPtr->newTextureId),
+      this->dataPtr->newSize.width(), this->dataPtr->newSize.height(),
+      this->dataPtr->newTextureId != nullptr ? "" : "NOT ");
+  }
 
   if (this->dataPtr->newTextureId != nullptr)
   {
