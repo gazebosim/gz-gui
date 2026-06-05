@@ -18,9 +18,12 @@
 #ifndef GZ_GUI_PLUGINS_MINIMALSCENE_HH_
 #define GZ_GUI_PLUGINS_MINIMALSCENE_HH_
 
+#include <map>
 #include <string>
 #include <memory>
 #include <optional>
+
+#include <QVariantMap>
 
 #include <gz/common/KeyEvent.hh>
 #include <gz/common/MouseEvent.hh>
@@ -111,6 +114,16 @@ namespace gz::gui::plugins
     /// \brief Set the loading error message.
     /// \param[in] _loadingError Error message.
     public: Q_INVOKABLE void SetLoadingError(const QString &_loadingError);
+
+    /// \brief Get the RHI parameters populated during Vulkan initialisation.
+    /// Keys vulkan_instance, vulkan_physical_device, vulkan_device, and
+    /// vulkan_graphics_queue are present (with non-empty values) when the
+    /// Vulkan backend is active and the render thread has initialised.
+    /// Returns an empty map if the render thread has not started yet.
+    /// Callable from QML via Q_INVOKABLE; also accessible via
+    /// QMetaObject::invokeMethod from C++ without static linking.
+    /// \return Copy of the RHI parameter map.
+    public: Q_INVOKABLE QVariantMap RhiParams() const;
 
     /// \brief Notify that loading error has changed
     signals: void LoadingErrorChanged();
@@ -256,6 +269,10 @@ namespace gz::gui::plugins
     /// \brief Retrieves the internal camera.
     /// TODO(darksylinc): Remove this hack.
     public: rendering::CameraPtr Camera();
+
+    /// \brief Get the RHI parameters populated during Vulkan initialisation.
+    /// \return Copy of the rhiParams map; empty until the render thread starts.
+    public: std::map<std::string, std::string> RhiParams() const;
 
     /// \internal
     /// \brief Pointer to private data.
@@ -416,6 +433,10 @@ namespace gz::gui::plugins
 
     /// \brief Stop rendering and shutdown resources.
     public: void StopRendering();
+
+    /// \brief Get the RHI parameters populated during Vulkan initialisation.
+    /// \return Copy of the rhiParams map; empty until the render thread starts.
+    public: std::map<std::string, std::string> RhiParams() const;
 
     // Documentation inherited
     protected: virtual void mousePressEvent(QMouseEvent *_e) override;

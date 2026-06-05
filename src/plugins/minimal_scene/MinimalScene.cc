@@ -584,6 +584,12 @@ rendering::CameraPtr GzRenderer::Camera()
   return this->dataPtr->camera;
 }
 
+/////////////////////////////////////////////////
+std::map<std::string, std::string> GzRenderer::RhiParams() const
+{
+  return this->dataPtr->rhiParams;
+}
+
 #if GZ_GUI_HAVE_VULKAN
 namespace {
 /////////////////////////////////////////////////
@@ -950,8 +956,10 @@ void RenderThread::RenderNext(RenderSync *_renderSync)
 /////////////////////////////////////////////////
 void RenderThread::ShutDown()
 {
-  // The render interface calls Destroy on GzRendering
-  this->rhi->ShutDown();
+  // rhi is null if the scene graph never ran updatePaintNode (e.g. Vulkan
+  // initialisation failed before the first paint); guard to avoid crash.
+  if (this->rhi)
+    this->rhi->ShutDown();
 
   // Stop event processing, move the thread to GUI and make sure it is deleted.
   this->exit();
@@ -1033,6 +1041,13 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 /////////////////////////////////////////////////
 std::string RenderThread::Initialize()
 {
+  // rhi is null if SetGraphicsAPI() was not called before initialization.
+  if (!this->rhi)
+  {
+    const std::string err = "RHI not initialised: SetGraphicsAPI() not called";
+    this->errorCb(QString::fromStdString(err));
+    return err;
+  }
   auto loadingError = this->rhi->Initialize();
   if (!loadingError.empty())
   {
@@ -1647,6 +1662,14 @@ void RenderWindowItem::SetErrorCb(std::function<void(const QString&)> _cb)
 }
 
 /////////////////////////////////////////////////
+std::map<std::string, std::string> RenderWindowItem::RhiParams() const
+{
+  if (!this->dataPtr->renderThread)
+    return {};
+  return this->dataPtr->renderThread->gzRenderer.RhiParams();
+}
+
+/////////////////////////////////////////////////
 void RenderWindowItem::mousePressEvent(QMouseEvent *_e)
 {
   this->dataPtr->mouseEvent = convert(*_e);
@@ -1766,6 +1789,19 @@ void MinimalScene::SetLoadingError(const QString &_loadingError)
   }
   this->loadingError = _loadingError;
   emit this->LoadingErrorChanged();
+}
+
+/////////////////////////////////////////////////
+QVariantMap MinimalScene::RhiParams() const
+{
+  auto *renderWindow =
+      this->PluginItem()->findChild<RenderWindowItem *>();
+  if (!renderWindow)
+    return {};
+  QVariantMap result;
+  for (const auto &[k, v] : renderWindow->RhiParams())
+    result[QString::fromStdString(k)] = QString::fromStdString(v);
+  return result;
 }
 }  // namespace gz::gui::plugins
 
