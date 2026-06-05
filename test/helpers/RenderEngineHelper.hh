@@ -23,6 +23,7 @@
 #include <string>
 
 #include <gz/rendering/RenderEngine.hh>
+#include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/RenderTypes.hh>
 
 #include "gz/gui/GuiEvents.hh"
