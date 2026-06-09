@@ -220,4 +220,3 @@ GridLayout {
     onGzColorSet: GridConfig.SetColor(gzColorGrid.r, gzColorGrid.g, gzColorGrid.b, gzColorGrid.a)
   }
 }
-

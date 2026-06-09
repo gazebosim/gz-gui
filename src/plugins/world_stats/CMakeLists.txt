@@ -6,4 +6,3 @@ gz_gui_add_plugin(WorldStats
   TEST_SOURCES
     WorldStats_TEST.cc
 )
-

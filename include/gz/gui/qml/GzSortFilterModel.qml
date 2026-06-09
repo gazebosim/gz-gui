@@ -83,4 +83,3 @@ DelegateModel {
 
   filterOnGroup: "visible"
 }
-

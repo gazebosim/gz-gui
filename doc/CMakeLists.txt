@@ -24,6 +24,6 @@ if (DOXYGEN_FOUND)
 
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
-  install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml 
+  install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gz/${PROJECT_NAME_LOWER}_${PROJECT_VERSION_MINOR})
 endif()

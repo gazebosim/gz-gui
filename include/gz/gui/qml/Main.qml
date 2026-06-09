@@ -189,7 +189,7 @@ ApplicationWindow
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
-          verticalAlignment: Image.AlignVCenter 
+          verticalAlignment: Image.AlignVCenter
           source: Material.theme === Material.Light ? "images/drawer.png" : "images/drawer_dark.png"
         }
         onClicked: drawer.open()

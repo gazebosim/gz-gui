@@ -33,4 +33,3 @@ TestNotRegisteredPlugin::TestNotRegisteredPlugin()
 TestNotRegisteredPlugin::~TestNotRegisteredPlugin()
 {
 }
-
