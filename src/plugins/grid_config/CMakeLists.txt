@@ -10,11 +10,11 @@ gz_gui_add_plugin(GridConfig
 # Also install Grid3D (a legacy plugin with a subset of features) by copying the installed GridConfig library. This ensures the correct RUNPATH is used.
 
 install(CODE "
-  if(EXISTS \"\${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGridConfig.so\")
+  if(EXISTS \"\${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGridConfig${CMAKE_SHARED_LIBRARY_SUFFIX}\")
     execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    \"\${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGridConfig.so\"
-    \"\${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGrid3D.so\")
+    \"\${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGridConfig${CMAKE_SHARED_LIBRARY_SUFFIX}\"
+    \"\${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGrid3D${CMAKE_SHARED_LIBRARY_SUFFIX}\")
   else()
-    message(WARNING \"Source file for Grid3D (legacy plugin) copy not found, skipping copy: \${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGridConfig.so\")
+    message(WARNING \"Source file for Grid3D (legacy plugin) copy not found, skipping copy: \${CMAKE_INSTALL_PREFIX}/${GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR}/libGridConfig${CMAKE_SHARED_LIBRARY_SUFFIX}\")
   endif()
 ")
