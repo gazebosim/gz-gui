@@ -347,9 +347,6 @@ void GzRenderer::Render(RenderSync *_renderSync,
     // _renderSync->ReleaseQtThreadFromBlock(lock);
   }
 
-  // Update the render interface (texture)
-  _renderThreadRhi.Update(this->dataPtr->camera);
-
   // view control
   this->HandleMouseEvent();
 
@@ -362,6 +359,17 @@ void GzRenderer::Render(RenderSync *_renderSync,
 
   // update and render to texture
   this->dataPtr->camera->Update();
+
+  // Update the render interface (texture) AFTER camera->Update(). camera
+  // ->Update() runs the scene PreRender, which can rebuild the render target
+  // (e.g. when a GUI scene-update plugin adds content and marks it dirty),
+  // destroying the previous image and allocating a new one. Capturing the
+  // texture handle here, after the rebuild, guarantees we hand Qt the current,
+  // valid image rather than a stale handle to an image that was just freed
+  // (which would crash an externally sampled Vulkan target at QRhi::endFrame,
+  // VUID-VkImageMemoryBarrier-image-parameter).
+  // See https://github.com/gazebosim/gz-rendering/issues/304
+  _renderThreadRhi.Update(this->dataPtr->camera);
 
   if (!this->cameraViewController.empty())
   {
@@ -1107,6 +1115,33 @@ void TextureNode::NewTexture(void* _texturePtr, const QSize &_size)
 /////////////////////////////////////////////////
 void TextureNode::PrepareNode()
 {
+  // Run the worker thread's render FIRST, then commit the resulting texture to
+  // the Qt scene graph. The order matters for externally-sampled images.
+  //
+  // The worker's render (driven by TextureInUse -> RenderNext, completed inside
+  // WaitForWorkerThread() below) can rebuild the render target and DESTROY the
+  // previous image (e.g. when a GUI scene-update plugin adds content and marks
+  // the target dirty). With the old ordering -- import+setTexture() first, then
+  // release the worker -- Qt committed its in-flight frame to image X and only
+  // then let the worker run, which freed X before Qt's QRhi::endFrame sampled
+  // it, crashing on an invalid VkImage (VUID-VkImageMemoryBarrier-image-
+  // parameter).
+  //
+  // By letting the worker render (and do any destroy/rebuild) before we import
+  // and setTexture(), Qt always commits the freshly produced, valid image, and
+  // the freed predecessor was already retired by a previous Qt frame. The next
+  // frame's worker render may free THIS image, but only after Qt has finished
+  // (endFrame'd) the frame that used it.
+  //
+  // We emit TextureInUse unconditionally (even when no new texture is pending)
+  // because the two threads run in forced lockstep: skipping the emit would
+  // leave WaitForWorkerThread() without a matching worker cycle and can
+  // deadlock on newer Qt versions.
+  // See https://github.com/gazebosim/gz-rendering/issues/304
+  emit TextureInUse(&this->renderSync);
+
+  this->renderSync.WaitForWorkerThread();
+
   this->rhi->PrepareNode();
 
   if (this->rhi->HasNewTexture())
@@ -1114,34 +1149,7 @@ void TextureNode::PrepareNode()
     this->setTexture(this->rhi->Texture());
 
     this->markDirty(DirtyMaterial);
-
-    // This will notify the rendering thread that the texture is now being
-    // rendered and it can start rendering to the other one.
-    // emit TextureInUse(&this->renderSync); See comment below
   }
-  // NOTE: The original code from Qt samples only emitted when
-  // newId is not null.
-  //
-  // This is correct... for their case.
-  // However we need to synchronize the threads when resolution changes,
-  // and we're also currently doing everything in lockstep (i.e. both Qt
-  // and worker thread are serialized,
-  // see https://github.com/gazebosim/gz-rendering/issues/304 )
-  //
-  // We need to emit even if newId == 0 because it's safe as long as both
-  // threads are forcefully serialized and otherwise we may get a
-  // deadlock (this func. called twice in a row with the worker thread still
-  // finishing the 1st iteration, may result in a deadlock for newer versions
-  // of Qt; as WaitForWorkerThread will be called with no corresponding
-  // WaitForQtThreadAndBlock as the worker thread thinks there are
-  // no more jobs to do.
-  //
-  // If we want these to run in worker thread and stay resolution-synchronized,
-  // we probably should use a different method of signals and slots
-  // to send work to the worker thread and get results back
-  emit TextureInUse(&this->renderSync);
-
-  this->renderSync.WaitForWorkerThread();
 }
 
 /////////////////////////////////////////////////
@@ -1186,6 +1194,22 @@ void RenderWindowItem::Ready()
     this->dataPtr->renderThread->Surface()->create();
   }
 
+  // Build the camera render target at the real viewport size up front, BEFORE
+  // Initialize() creates it. Otherwise Initialize() builds the target at the
+  // default size (textureSize, ~1024x1024), Qt imports that first image, and
+  // the very first GzRenderer::Render() then resizes the camera to the real
+  // viewport size, rebuilding the render target and freeing the image Qt just
+  // committed to its in-flight frame. With an externally-sampled Vulkan target
+  // that frees a VkImage mid-frame and crashes at QRhi::endFrame
+  // (VUID-VkImageMemoryBarrier-image-parameter). Setting textureSize here and
+  // clearing textureDirty makes the first (and only) build happen at the right
+  // size, so no first-frame rebuild churn occurs.
+  // See https://github.com/gazebosim/gz-rendering/issues/304
+  this->dataPtr->renderThread->gzRenderer.textureSize =
+    QSize(static_cast<int>(std::max({ this->width(), 1.0 })),
+          static_cast<int>(std::max({ this->height(), 1.0 })));
+  this->dataPtr->renderThread->gzRenderer.textureDirty = false;
+
   // Carry out initialization on main thread before moving to render thread
   if (!this->dataPtr->renderThread->Initialize().empty())
   {
@@ -1200,10 +1224,6 @@ void RenderWindowItem::Ready()
   }
 
   this->dataPtr->renderThread->moveToThread(this->dataPtr->renderThread);
-
-  this->dataPtr->renderThread->gzRenderer.textureSize =
-    QSize(static_cast<int>(std::max({ this->width(), 1.0 })),
-          static_cast<int>(std::max({ this->height(), 1.0 })));
 
   this->connect(this, &QQuickItem::widthChanged,
       this->dataPtr->renderThread, &RenderThread::SizeChanged);
