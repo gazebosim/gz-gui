@@ -104,6 +104,11 @@ set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
 #============================================================================
 gz_configure_build(QUIT_IF_BUILD_ERRORS)
 
+# Application.cc reads GZ_RENDERING_HAVE_VULKAN from gz/rendering/config.hh at
+# compile time.
+target_include_directories(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE
+  $<TARGET_PROPERTY:gz-rendering::gz-rendering,INTERFACE_INCLUDE_DIRECTORIES>)
+
 #============================================================================
 # gz command line support
 #============================================================================
