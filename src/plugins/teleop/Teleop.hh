@@ -45,6 +45,9 @@ namespace gz::gui::plugins
   /// vehicle in the world.
   /// ## Configuration
   /// * `<topic>`: Topic to publish twist messages to.
+  /// * `<max_forward_velocity>`: Maximum forward velocity.
+  /// * `<max_vertical_velocity>`: Maximum vertical velocity.
+  /// * `<max_yaw_velocity>`: Maximum yaw velocity.
   class Teleop_EXPORTS_API Teleop : public Plugin
   {
     Q_OBJECT
