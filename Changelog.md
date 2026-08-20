@@ -1,5 +1,34 @@
 ## Gazebo GUI 10
 
+### Gazebo GUI 10.1.0 (2026-08-20)
+
+1. Capture `this `explicitly in the QTimer timeout callbacks
+    * [Pull request #776](https://github.com/gazebosim/gz-gui/pull/776)
+
+1. Fix Grid3D cmake warning on non-Linux OS
+    * [Pull request #770](https://github.com/gazebosim/gz-gui/pull/770)
+
+1. Fix `TopicEcho_TEST `race condition with `Publisher_TEST`
+    * [Pull request #761](https://github.com/gazebosim/gz-gui/pull/761)
+
+1. Reintroduce pointcloud render without `Float_V `message
+    * [Pull request #756](https://github.com/gazebosim/gz-gui/pull/756)
+
+1. Publisher: check result of PrintToString
+    * [Pull request #746](https://github.com/gazebosim/gz-gui/pull/746)
+
+1. Suppress deprecation warnings for invalidateFilter
+    * [Pull request #737](https://github.com/gazebosim/gz-gui/pull/737)
+
+1. Disable shadows when viewing point cloud markers
+    * [Pull request #720](https://github.com/gazebosim/gz-gui/pull/720)
+
+1. Configurable anti-aliasing for MinimalScene
+    * [Pull request #723](https://github.com/gazebosim/gz-gui/pull/723)
+
+1. Find jetty packages with explicit version
+    * [Pull request #722](https://github.com/gazebosim/gz-gui/pull/722)
+
 ### Gazebo GUI 10.0.0 (2025-09-30)
 
 1. Fix link in scene tutorial
