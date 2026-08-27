@@ -155,6 +155,10 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
     qputenv("QT_VULKAN_DEVICE_EXTENSIONS",
             "VK_KHR_maintenance2;VK_EXT_shader_subgroup_vote;"
             "VK_EXT_shader_viewport_index_layer;"
+            // External memory / semaphore: required for cross-device FD import
+            // (VkImage exported by a render engine, imported onto Qt's QRhi device).
+            "VK_KHR_external_memory;VK_KHR_external_memory_fd;"
+            "VK_KHR_external_semaphore;VK_KHR_external_semaphore_fd;"
 #  ifdef GZ_USE_VULKAN_DEBUG_EXT
             ";VK_EXT_debug_marker"
 #  endif
