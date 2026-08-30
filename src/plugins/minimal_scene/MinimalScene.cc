@@ -58,6 +58,12 @@
 #  include <gz/rendering/RenderEngineVulkanExternalDeviceStructs.hh>
 #endif  // GZ_GUI_HAVE_VULKAN
 
+#if GZ_GUI_HAVE_WAYLAND
+#  include <QGuiApplication>
+#  include <QtGui/qguiapplication_platform.h>
+#  include "WaylandNativeSurface.hh"
+#endif  // GZ_GUI_HAVE_WAYLAND
+
 Q_DECLARE_OPAQUE_POINTER(gz::gui::plugins::RenderSync*)
 
 namespace gz::gui::plugins
@@ -117,6 +123,14 @@ class GzRenderer::Implementation
 
   /// \brief Render hardware interface for the texture
   public: std::unique_ptr<GzCameraTextureRhi> rhi;
+
+#if GZ_GUI_HAVE_WAYLAND
+  /// \brief Throwaway Wayland surface used only to bootstrap OGRE-Next's
+  /// native Wayland EGL primary render window (see WaylandNativeSurface's
+  /// class comment). Must outlive the render engine, hence owned here
+  /// rather than as a function-local in Initialize().
+  public: std::unique_ptr<WaylandNativeSurface> waylandSurface;
+#endif  // GZ_GUI_HAVE_WAYLAND
 };
 
 /// \brief Qt and Ogre rendering is happening in different threads
@@ -682,7 +696,47 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   // Load engine if there's no engine yet
   if (loadedEngines.empty())
   {
-    this->dataPtr->rhiParams["winID"] = std::to_string(quickWindow->winId());
+#if GZ_GUI_HAVE_WAYLAND
+    bool nativeWayland = QGuiApplication::platformName() == "wayland";
+#else
+    bool nativeWayland = false;
+#endif  // GZ_GUI_HAVE_WAYLAND
+
+    if (nativeWayland)
+    {
+#if GZ_GUI_HAVE_WAYLAND
+      auto *waylandApp =
+          qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>();
+      wl_display *display = waylandApp ? waylandApp->display() : nullptr;
+      if (!display)
+      {
+        return "Failed to obtain wl_display from Qt's Wayland platform "
+               "integration.";
+      }
+
+      try
+      {
+        this->dataPtr->waylandSurface =
+            std::make_unique<WaylandNativeSurface>(display);
+      }
+      catch (const std::exception &_e)
+      {
+        return std::string(
+            "Failed to create a native Wayland surface: ") + _e.what();
+      }
+
+      this->dataPtr->rhiParams["wayland"] = "true";
+      this->dataPtr->rhiParams["waylandDisplay"] =
+          std::to_string(reinterpret_cast<size_t>(display));
+      this->dataPtr->rhiParams["waylandSurface"] = std::to_string(
+          reinterpret_cast<size_t>(this->dataPtr->waylandSurface->Surface()));
+#endif  // GZ_GUI_HAVE_WAYLAND
+    }
+    else
+    {
+      this->dataPtr->rhiParams["winID"] =
+          std::to_string(quickWindow->winId());
+    }
 
 #if GZ_GUI_HAVE_VULKAN
     // externalInstance & externalDevice MUST be declared at this scope
