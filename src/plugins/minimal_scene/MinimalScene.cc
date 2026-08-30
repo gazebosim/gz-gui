@@ -702,6 +702,17 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
     bool nativeWayland = false;
 #endif  // GZ_GUI_HAVE_WAYLAND
 
+    gzdbg << "[GUI] Qt platform: ["
+          << QGuiApplication::platformName().toStdString()
+          << "], GZ_GUI_HAVE_WAYLAND=" <<
+#if GZ_GUI_HAVE_WAYLAND
+          "1"
+#else
+          "0"
+#endif  // GZ_GUI_HAVE_WAYLAND
+          << ", nativeWayland=" << (nativeWayland ? "true" : "false")
+          << std::endl;
+
     if (nativeWayland)
     {
 #if GZ_GUI_HAVE_WAYLAND
@@ -725,7 +736,7 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
             "Failed to create a native Wayland surface: ") + _e.what();
       }
 
-      this->dataPtr->rhiParams["wayland"] = "true";
+      this->dataPtr->rhiParams["wayland"] = "1";
       this->dataPtr->rhiParams["waylandDisplay"] =
           std::to_string(reinterpret_cast<size_t>(display));
       this->dataPtr->rhiParams["waylandSurface"] = std::to_string(

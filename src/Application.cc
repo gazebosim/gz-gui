@@ -16,6 +16,7 @@
  */
 
 #include <qsgrendererinterface.h>
+#include <qsurfaceformat.h>
 #include <tinyxml2.h>
 #include <queue>
 
@@ -168,6 +169,21 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   }
   else
   {
+    // Explicitly request a desktop OpenGL context. Without this, Qt's
+    // Wayland EGL platform integration was observed to default to
+    // EGL_OPENGL_ES_API (GLES) instead - confirmed via
+    // eglQueryContext(..., EGL_CONTEXT_CLIENT_TYPE, ...) on the context
+    // Qt made current, which reported EGL_OPENGL_ES_API / GLES 3.2. Ogre's
+    // GL3Plus RenderSystem (used by the "ogre2" render engine here) is
+    // desktop-GL-only, so under native Wayland (GZ_GUI_WAYLAND=1) adopting
+    // that GLES context via "currentGLContext" fails outright (gl3w can't
+    // initialise against it). XWayland/GLX never hit this because GLX
+    // contexts are inherently desktop GL only. Setting this unconditionally
+    // is harmless for XWayland/GLX too - it's already desktop GL there.
+    QSurfaceFormat format;
+    format.setRenderableType(QSurfaceFormat::OpenGL);
+    QSurfaceFormat::setDefaultFormat(format);
+
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     gzdbg << "Qt using OpenGL graphics interface" << std::endl;
   }
