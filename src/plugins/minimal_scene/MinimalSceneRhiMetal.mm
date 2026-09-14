@@ -82,7 +82,10 @@ namespace plugins
         // sampler decoding, passing through the encoded sRGB bytes bit-exact.
         this->viewTexture =
             [_id newTextureViewWithPixelFormat:MTLPixelFormatRGBA8Unorm];
-        tex = this->viewTexture;
+        if (this->viewTexture)
+        {
+          tex = this->viewTexture;
+        }
       }
       else
       {
