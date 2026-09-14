@@ -56,11 +56,50 @@ namespace plugins
   {
     public: id<MTLTexture> metalTexture = nil;
     public: id<MTLTexture> newMetalTexture = nil;
+    public: id<MTLTexture> viewTexture = nil;
     public: QSize size {0, 0};
     public: QSize newSize {0, 0};
     public: QMutex mutex;
     public: QSGTexture *texture = nullptr;
     public: QQuickWindow *window = nullptr;
+<<<<<<< HEAD
+=======
+
+    public: void CreateTexture(id<MTLTexture> _id, QSize _size)
+    {
+      delete this->texture;
+      this->texture = nullptr;
+
+      id<MTLTexture> tex = _id;
+      if (_id && _id.pixelFormat == MTLPixelFormatRGBA8Unorm_sRGB)
+      {
+        // Metal counterpart to GL_SKIP_DECODE_EXT (see PR #630):
+        // Ogre2 renders to an sRGB render target, where hardware ROP encodes linear
+        // RGB values into sRGB colorspace bytes.
+        // Qt Quick's Scene Graph samples this texture and writes it to a non-sRGB
+        // swapchain framebuffer. If sampled as an sRGB texture, the Metal hardware
+        // sampler automatically decodes sRGB -> linear, and the display server then
+        // applies gamma to already-linearized values, causing severe darkening.
+        // Creating a texture view reinterpreted as MTLPixelFormatRGBA8Unorm prevents
+        // sampler decoding, passing through the encoded sRGB bytes bit-exact.
+        this->viewTexture =
+            [_id newTextureViewWithPixelFormat:MTLPixelFormatRGBA8Unorm];
+        if (this->viewTexture)
+        {
+          tex = this->viewTexture;
+        }
+      }
+      else
+      {
+        this->viewTexture = nil;
+      }
+
+      this->texture = QNativeInterface::QSGMetalTexture::fromNative(
+        tex,
+        this->window,
+        _size);
+    }
+>>>>>>> 323b230 (Fix macOS Metal viewport gamma by reinterpreting sRGB texture view (#783))
   };
 }
 }
