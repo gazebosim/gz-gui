@@ -62,8 +62,6 @@ namespace plugins
     public: QMutex mutex;
     public: QSGTexture *texture = nullptr;
     public: QQuickWindow *window = nullptr;
-<<<<<<< HEAD
-=======
 
     public: void CreateTexture(id<MTLTexture> _id, QSize _size)
     {
@@ -94,12 +92,12 @@ namespace plugins
         this->viewTexture = nil;
       }
 
-      this->texture = QNativeInterface::QSGMetalTexture::fromNative(
-        tex,
-        this->window,
+      this->texture = this->window->createTextureFromNativeObject(
+        QQuickWindow::NativeObjectTexture,
+        static_cast<void*>(&tex),
+        0,
         _size);
     }
->>>>>>> 323b230 (Fix macOS Metal viewport gamma by reinterpreting sRGB texture view (#783))
   };
 }
 }
@@ -204,12 +202,8 @@ TextureNodeRhiMetal::TextureNodeRhiMetal(QQuickWindow *_window)
   this->dataPtr->window = _window;
 
   // Our texture node must have a texture, so use the default 0 texture.
-  this->dataPtr->texture =
-      this->dataPtr->window->createTextureFromNativeObject(
-        QQuickWindow::NativeObjectTexture,
-        static_cast<void*>(&this->dataPtr->metalTexture),
-        0,
-        QSize(1, 1));
+  this->dataPtr->CreateTexture(
+    this->dataPtr->metalTexture, QSize(1, 1));
 }
 
 /////////////////////////////////////////////////
@@ -245,14 +239,7 @@ void TextureNodeRhiMetal::PrepareNode()
 
   if (this->dataPtr->newMetalTexture)
   {
-    delete this->dataPtr->texture;
-    this->dataPtr->texture = nullptr;
-
-    this->dataPtr->texture =
-        this->dataPtr->window->createTextureFromNativeObject(
-            QQuickWindow::NativeObjectTexture,
-            static_cast<void*>(&this->dataPtr->newMetalTexture),
-            0,
-            this->dataPtr->newSize);
+    this->dataPtr->CreateTexture(
+      this->dataPtr->newMetalTexture, this->dataPtr->newSize);
   }
 }
