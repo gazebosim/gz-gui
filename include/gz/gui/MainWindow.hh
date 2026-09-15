@@ -598,65 +598,65 @@ namespace gz::gui
       bool IsIgnoring(const std::string &_prop) const;
 
       /// \brief Window X position in px
-      int posX{-1};
+      int posX = -1;
 
       /// \brief Window Y position in px
-      int posY{-1};
+      int posY = -1;
 
       /// \brief Window width in px
-      int width{-1};
+      int width = -1;
 
       /// \brief Window height in px
-      int height{-1};
+      int height = -1;
 
       /// \brief Window state (dock configuration)
       QByteArray state;
 
       /// \brief Material theme (light / dark)
-      std::string materialTheme{""};
+      std::string materialTheme = "";
 
       /// \brief Material primary color
-      std::string materialPrimary{""};
+      std::string materialPrimary = "";
 
       /// \brief Material accent color
-      std::string materialAccent{""};
+      std::string materialAccent = "";
 
       /// \brief Top toolbar color light
-      std::string toolBarColorLight{""};
+      std::string toolBarColorLight = "";
 
       /// \brief Top toolbar text color light
-      std::string toolBarTextColorLight{""};
+      std::string toolBarTextColorLight = "";
 
       /// \brief Top toolbar color dark
-      std::string toolBarColorDark{""};
+      std::string toolBarColorDark = "";
 
       /// \brief Top toolbar text color dark
-      std::string toolBarTextColorDark{""};
+      std::string toolBarTextColorDark = "";
 
       /// \brief Plugin toolbar color light
-      std::string pluginToolBarColorLight{""};
+      std::string pluginToolBarColorLight = "";
 
       /// \brief Plugin toolbar text color light
-      std::string pluginToolBarTextColorLight{""};
+      std::string pluginToolBarTextColorLight = "";
 
       /// \brief Plugin toolbar color dark
-      std::string pluginToolBarColorDark{""};
+      std::string pluginToolBarColorDark = "";
 
       /// \brief Plugin toolbar text color dark
-      std::string pluginToolBarTextColorDark{""};
+      std::string pluginToolBarTextColorDark = "";
 
       /// \brief Show the side drawer
-      bool showDrawer{true};
+      bool showDrawer = true;
 
       /// \brief Show the default options of the drawer
-      bool showDefaultDrawerOpts{true};
+      bool showDefaultDrawerOpts = true;
 
       /// \brief Show the plugins menu
-      bool showPluginMenu{true};
+      bool showPluginMenu = true;
 
       /// \brief True if plugins found in plugin paths should be listed under
       /// the Plugins menu. True by default.
-      bool pluginsFromPaths{true};
+      bool pluginsFromPaths = true;
 
       /// \brief List of plugins which should be shown on the list
       std::vector<std::string> showPlugins;
@@ -665,7 +665,7 @@ namespace gz::gui
       std::set<std::string> ignoredProps;
 
       /// \brief Concatenation of all plugin configurations.
-      std::string plugins{""};
+      std::string plugins = "";
     };
 }  // namespace gz::gui
 #endif  // GZ_GUI_MAINWINDOW_HH_
