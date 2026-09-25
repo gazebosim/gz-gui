@@ -82,10 +82,70 @@ CameraTrackingConfig::CameraTrackingConfig()
 CameraTrackingConfig::~CameraTrackingConfig() = default;
 
 /////////////////////////////////////////////////
-void CameraTrackingConfig::LoadConfig(const tinyxml2::XMLElement *)
+void CameraTrackingConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
 {
   if (this->title.empty())
     this->title = "Camera Tracking Config";
+
+  if (_pluginElem)
+  {
+    if (auto elem = _pluginElem->FirstChildElement("camera_follow"))
+    {
+      if (auto gainElem = elem->FirstChildElement("p_gain"))
+      {
+        double gain;
+        std::stringstream gainStr;
+        gainStr << std::string(gainElem->GetText());
+        gainStr >> gain;
+        if (gain >= 0 && gain <= 1.0)
+        {
+          this->dataPtr->followPGain = gain;
+          this->dataPtr->newTrack = true;
+        } 
+        else 
+        {
+          gzerr << "Camera follow p gain outside of range [0, 1]" << std::endl;
+        }
+      }
+
+      if (auto targetElem = elem->FirstChildElement("target"))
+      {
+        this->dataPtr->selectedFollowTarget = targetElem->GetText();
+        this->dataPtr->selectedTargetWait = true;
+        this->dataPtr->newTrack = true;
+      }
+
+      if (auto worldFrameElem = elem->FirstChildElement("world_frame"))
+      {
+        std::string worldFrameStr =
+            common::lowercase(worldFrameElem->GetText());
+        if (worldFrameStr == "true" || worldFrameStr == "1")
+        {
+          this->dataPtr->followWorldFrame = true;
+        }
+        else if (worldFrameStr == "false" || worldFrameStr == "0")
+        {
+          this->dataPtr->followWorldFrame = false;
+        }
+        else
+        {
+          gzerr << "Failed to parse <world_frame> value: "
+                << worldFrameStr << std::endl;
+        }
+      }
+
+      if (auto offsetElem = elem->FirstChildElement("offset"))
+      {
+        math::Vector3d offset;
+        std::stringstream offsetStr;
+        offsetStr << std::string(offsetElem->GetText());
+        offsetStr >> offset;
+
+        this->dataPtr->followOffset = offset;
+        this->dataPtr->newTrack = true;
+      }
+    }
+  }
 
   // Track target pose service
   this->dataPtr->cameraTrackingTopic = "/gui/track";
