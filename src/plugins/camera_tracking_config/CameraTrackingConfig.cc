@@ -44,17 +44,26 @@ class gz::gui::plugins::CameraTrackingConfigPrivate
   /// \brief Topic for track message
   public: std::string cameraTrackingTopic;
 
-  /// \brief tracking offset
-  public: math::Vector3d trackOffset{math::Vector3d(0.0, 0.0, 0.0)};
+  /// \brief Tracking Mode
+  public: int trackMode = gz::msgs::CameraTrack::NONE;
 
-  /// \brief track P gain
-  public: double trackPGain{0.01};
+  /// \brief Follow Target
+  public: std::string selectedFollowTarget;
+
+  /// \brief Track Target
+  public: std::string selectedTrackTarget;
 
   /// \brief Offset of camera from target being followed
   public: math::Vector3d followOffset{math::Vector3d(-3.0, 0.0, -2.0)};
 
+  /// \brief tracking offset
+  public: math::Vector3d trackOffset{math::Vector3d(0.0, 0.0, 0.0)};
+
   /// \brief Follow P gain
   public: double followPGain{0.01};
+
+  /// \brief track P gain
+  public: double trackPGain{0.01};
 
   public: transport::Node node;
 
@@ -91,58 +100,113 @@ void CameraTrackingConfig::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
   {
     if (auto elem = _pluginElem->FirstChildElement("camera_follow"))
     {
-      if (auto gainElem = elem->FirstChildElement("p_gain"))
+      if (auto trackModeElem = _pluginElem->FirstChildElement("track_mode"))
       {
-        double gain;
-        std::stringstream gainStr;
-        gainStr << std::string(gainElem->GetText());
-        gainStr >> gain;
-        if (gain >= 0 && gain <= 1.0)
+        std::string trackModeStr = common::lowercase(trackModeElem->GetText());
+        if (trackModeStr == "none")
         {
-          this->dataPtr->followPGain = gain;
-          this->dataPtr->newTrack = true;
-        } 
-        else 
-        {
-          gzerr << "Camera follow p gain outside of range [0, 1]" << std::endl;
+          this->dataPtr->trackMode = gz::msgs::CameraTrack::NONE;
         }
-      }
-
-      if (auto targetElem = elem->FirstChildElement("target"))
-      {
-        this->dataPtr->selectedFollowTarget = targetElem->GetText();
-        this->dataPtr->selectedTargetWait = true;
-        this->dataPtr->newTrack = true;
-      }
-
-      if (auto worldFrameElem = elem->FirstChildElement("world_frame"))
-      {
-        std::string worldFrameStr =
-            common::lowercase(worldFrameElem->GetText());
-        if (worldFrameStr == "true" || worldFrameStr == "1")
+        else if (trackModeStr == "track")
         {
-          this->dataPtr->followWorldFrame = true;
+          this->dataPtr->trackMode = gz::msgs::CameraTrack::TRACK;
         }
-        else if (worldFrameStr == "false" || worldFrameStr == "0")
+        else if (trackModeStr == "follow")
         {
-          this->dataPtr->followWorldFrame = false;
+          this->dataPtr->trackMode = gz::msgs::CameraTrack::FOLLOW;
+        }
+        else if (trackModeStr == "follow_free_look")
+        {
+          this->dataPtr->trackMode = gz::msgs::CameraTrack::FOLLOW_FREE_LOOK;
+        }
+        else if (trackModeStr == "follow_look_at")
+        {
+          this->dataPtr->trackMode = gz::msgs::CameraTrack::FOLLOW_LOOK_AT;
+        }
+        else if (trackModeStr == "use_last")
+        {
+          this->dataPtr->trackMode = gz::msgs::CameraTrack::USE_LAST;
         }
         else
         {
-          gzerr << "Failed to parse <world_frame> value: "
-                << worldFrameStr << std::endl;
+          gzerr << "CameraTrackingConfig: Unknown track mode [" << trackModeStr << "]" << std::endl;
         }
       }
 
-      if (auto offsetElem = elem->FirstChildElement("offset"))
+      if (auto followTargetElem = _pluginElem->FirstChildElement("follow_target"))
       {
-        math::Vector3d offset;
-        std::stringstream offsetStr;
-        offsetStr << std::string(offsetElem->GetText());
-        offsetStr >> offset;
+        this->dataPtr->selectedFollowTarget = followTargetElem->GetText();
+      } 
+      else 
+      {
+        gzerr << "CameraTrackingConfig: No follow target specified in config." << std::endl;
+      }
 
-        this->dataPtr->followOffset = offset;
-        this->dataPtr->newTrack = true;
+      if (auto trackTargetElem = _pluginElem->FirstChildElement("track_target"))
+      {
+        this->dataPtr->selectedTrackTarget = trackTargetElem->GetText();
+      } 
+      else 
+      {
+        gzerr << "CameraTrackingConfig: No track target specified in config." << std::endl;
+      }
+
+      if (auto followOffsetElem = _pluginElem->FirstChildElement("follow_offset"))
+      {
+        std::stringstream followOffsetStr;
+        followOffsetStr << std::string(followOffsetElem->GetText());
+        followOffsetStr >> this->dataPtr->followOffset;
+      } 
+      else 
+      {
+        gzerr << "CameraTrackingConfig: No follow offset specified in config." << std::endl;
+      }
+
+      if (auto trackOffsetElem = _pluginElem->FirstChildElement("track_offset"))
+      {
+        std::stringstream trackOffsetStr;
+        trackOffsetStr << std::string(trackOffsetElem->GetText());
+        trackOffsetStr >> this->dataPtr->trackOffset;
+      } 
+      else 
+      {
+        gzerr << "CameraTrackingConfig: No track offset specified in config." << std::endl;
+      }
+
+      if (auto followPGainElem = _pluginElem->FirstChildElement("follow_pgain"))
+      {
+        double followGain = std::stod(
+              std::string(followPGainElem->GetText()));
+        if (followGain >= 0 && followGain <= 1.0)
+        {
+          this->dataPtr->followPGain = followGain;
+        }
+        else
+        {
+          gzerr << "Camera follow p gain outside of range [0, 1]" << std::endl;
+        }
+      } 
+      else 
+      {
+        gzerr << "CameraTrackingConfig: No follow P gain specified in config." << std::endl;
+      }
+
+      if (auto trackPGainElem = _pluginElem->FirstChildElement("track_pgain"))
+      {
+        double trackGain = std::stod(
+              std::string(trackPGainElem->GetText()));
+        if (trackGain >= 0 && trackGain <= 1.0)
+        {
+          this->dataPtr->trackPGain = trackGain;
+        }
+        else
+        {
+          gzerr << "Camera track p gain outside of range [0, 1]" << std::endl;
+        }
+      } 
+      else 
+      {
+        gzerr << "CameraTrackingConfig: No track P gain specified in config." << std::endl;
       }
     }
   }

@@ -125,10 +125,6 @@ class CameraTracking::Implementation
   /// \brief Default track mode to None
   public: int trackMode = gz::msgs::CameraTrack::NONE;
 
-  /// \brief True to follow the target at an offset in the world frame,
-  /// false to follow in the target's local frame.
-  public: bool followWorldFrame = false;
-
   /// \brief True track the target at an offset that is in world frame,
   /// false to track in target's local frame
   public: bool trackWorldFrame = false;
@@ -463,11 +459,9 @@ void CameraTracking::Implementation::OnRender()
             this->trackWorldFrame = false;
             this->camera->SetFollowTarget(targetFollow,
                 this->followOffset,
-                this->followWorldFrame);
+                this->trackWorldFrame);
             if (this->trackMode == gz::msgs::CameraTrack::FOLLOW)
             {
-              // This is confusing to me, why not targetTrack here? 
-              // or use setFollowTarget instead of setTrackTarget?
               this->camera->SetTrackTarget(targetFollow);
               this->camera->SetTrackPGain(this->followPGain);
               this->camera->SetFollowPGain(this->trackPGain);
