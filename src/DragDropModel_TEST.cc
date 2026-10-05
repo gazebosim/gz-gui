@@ -48,4 +48,3 @@ TEST(DragDropModelTest, Mime)
 
   EXPECT_EQ(model->mimeData(ids)->data("application/x-item"), "/example/URI");
 }
-

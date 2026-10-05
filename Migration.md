@@ -83,4 +83,3 @@ release will remove the deprecated code.
 ## Gazebo GUI 0.1.0 to 1.0.0
 
 * Gazebo GUI v1 uses QtQuick and it is not compatible with v0, which uses QWidgets.
-
