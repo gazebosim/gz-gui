@@ -133,7 +133,7 @@ QStringList MainWindow::PluginListModel() const
       // Remove shared library prefix and shared library suffix
       auto pluginName = plugin.substr(
         strlen(SHARED_LIBRARY_PREFIX),
-        plugin.length() - strlen(SHARED_LIBRARY_PREFIX) -
+        plugin.size() - strlen(SHARED_LIBRARY_PREFIX) -
         strlen(SHARED_LIBRARY_SUFFIX));
 
       // Split WWWCamelCase3D -> WWW Camel Case 3D

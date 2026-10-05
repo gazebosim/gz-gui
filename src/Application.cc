@@ -407,7 +407,7 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
   if (auto *defaultExitActionElem =
     _winElem.FirstChildElement("default_exit_action"))
   {
-    ExitAction action{ExitAction::CLOSE_GUI};
+    ExitAction action = ExitAction::CLOSE_GUI;
     const auto value = common::lowercase(defaultExitActionElem->GetText());
     if (value == "shutdown_server")
     {
@@ -425,7 +425,7 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
   // Dialog on exit
   if (auto *dialogOnExitElem = _winElem.FirstChildElement("dialog_on_exit"))
   {
-    bool showDialogOnExit{false};
+    bool showDialogOnExit = false;
     dialogOnExitElem->QueryBoolText(&showDialogOnExit);
     this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
   }
@@ -442,14 +442,14 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
     if (auto *showShutdownElem =
       dialogOnExitOptionsElem->FirstChildElement("show_shutdown_button"))
     {
-      bool showShutdownButton{false};
+      bool showShutdownButton = false;
       showShutdownElem->QueryBoolText(&showShutdownButton);
       this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
     }
     if (auto *showCloseGuiElem =
       dialogOnExitOptionsElem->FirstChildElement("show_close_gui_button"))
     {
-      bool showCloseGuiButton{false};
+      bool showCloseGuiButton = false;
       showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
       this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
     }
@@ -468,7 +468,7 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
   }
 
   // Server control service topic
-  std::string serverControlService{"/server_control"};
+  std::string serverControlService = "/server_control";
   auto *serverControlElem =
     _winElem.FirstChildElement("server_control_service");
   if (nullptr != serverControlElem && nullptr != serverControlElem->GetText())
@@ -660,7 +660,7 @@ bool Application::LoadPlugin(const std::string &_filename,
 std::shared_ptr<Plugin> Application::PluginByName(
     const std::string &_pluginName) const
 {
-  for (auto &plugin : this->dataPtr->pluginsAdded)
+  for (const auto &plugin : this->dataPtr->pluginsAdded)
   {
     auto *cardItem = plugin->CardItem();
     if (!cardItem)
@@ -861,7 +861,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
       // This computation could underflow the unsigned range, but that is okay
       // as in such case we would check if the suffix is placed somewhere much
       // further than allowed filename length.
-      const auto suffixPos = plugin.length() - strlen(SHARED_LIBRARY_SUFFIX);
+      const auto suffixPos = plugin.size() - strlen(SHARED_LIBRARY_SUFFIX);
 
       if (plugin.find(SHARED_LIBRARY_PREFIX) == 0 &&
           plugin.rfind(SHARED_LIBRARY_SUFFIX) == suffixPos)
