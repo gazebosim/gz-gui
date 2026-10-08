@@ -1,5 +1,16 @@
 ## Gazebo GUI 10
 
+### Gazebo GUI 10.1.1 (2026-10-08)
+
+1. Use the SPDX identifier Apache-2.0 in the license declaration
+    * [Pull request #793](https://github.com/gazebosim/gz-gui/pull/793)
+
+1. Fix macOS Metal viewport gamma by reinterpreting sRGB texture view
+    * [Pull request #783](https://github.com/gazebosim/gz-gui/pull/783)
+
+1. ci: test on Ubuntu Resolute (26.04)
+    * [Pull request #781](https://github.com/gazebosim/gz-gui/pull/781)
+
 ### Gazebo GUI 10.1.0 (2026-08-20)
 
 1. Capture `this `explicitly in the QTimer timeout callbacks
