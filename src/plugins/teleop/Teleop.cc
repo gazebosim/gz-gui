@@ -126,6 +126,13 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto topicElem = _pluginElem->FirstChildElement("topic");
     if (nullptr != topicElem && nullptr != topicElem->GetText())
       this->SetTopic(topicElem->GetText());
+    if (auto maxFwd = _pluginElem->FirstChildElement("max_forward_velocity"))
+      this->SetMaxForwardVel(maxFwd->DoubleText(this->dataPtr->maxForwardVel));
+    if (auto maxVrt = _pluginElem->FirstChildElement("max_vertical_velocity"))
+      this->SetMaxVerticalVel(
+        maxVrt->DoubleText(this->dataPtr->maxVerticalVel));
+    if (auto maxYaw = _pluginElem->FirstChildElement("max_yaw_velocity"))
+      this->SetMaxYawVel(maxYaw->DoubleText(this->dataPtr->maxYawVel));
   }
 
   if (auto *qw = App() ? App()->findChild<MainWindow *>() ?
