@@ -21,12 +21,7 @@
 #include "gz/msgs/pointcloud_packed.pb.h"
 
 #include <algorithm>
-<<<<<<< HEAD
-=======
 #include <cstdint>
-#include <gz/msgs/details/pointcloud_packed.pb.h>
-#include <gz/utils/ImplPtr.hh>
->>>>>>> d8b6a54 (Reintroduce pointcloud render without Float_V message (#755))
 #include <limits>
 #include <string>
 #include <utility>
