@@ -249,13 +249,17 @@ void RenderSync::WaitForQtThreadAndBlock(std::unique_lock<std::mutex> &_lock)
   { return this->renderStallState == RenderStallState::WorkerCanProceed ||
            this->renderStallState == RenderStallState::ShuttingDown; });
 
+  if (this->renderStallState == RenderStallState::ShuttingDown)
+    return;
+
   this->renderStallState = RenderStallState::WorkerIsProceeding;
 }
 
 /////////////////////////////////////////////////
 void RenderSync::ReleaseQtThreadFromBlock(std::unique_lock<std::mutex> &_lock)
 {
-  this->renderStallState = RenderStallState::QtCanProceed;
+  if (this->renderStallState != RenderStallState::ShuttingDown)
+    this->renderStallState = RenderStallState::QtCanProceed;
   _lock.unlock();
   this->cv.notify_one();
 }
@@ -271,6 +275,9 @@ void RenderSync::WaitForWorkerThread()
     return this->renderStallState == RenderStallState::QtCanProceed ||
            this->renderStallState == RenderStallState::ShuttingDown;
   } );
+
+  if (this->renderStallState == RenderStallState::ShuttingDown)
+    return;
 
   // Worker thread asked us to wait!
   this->renderStallState = RenderStallState::WorkerCanProceed;
@@ -296,7 +303,7 @@ void RenderSync::Shutdown()
     this->renderStallState = RenderStallState::ShuttingDown;
 
     lock.unlock();
-    this->cv.notify_one();
+    this->cv.notify_all();
   }
 }
 
