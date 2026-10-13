@@ -721,6 +721,21 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
         std::to_string(reinterpret_cast<uintptr_t>(&externalInstance));
       this->dataPtr->rhiParams["external_device"] =
         std::to_string(reinterpret_cast<uintptr_t>(&externalDevice));
+
+      // Expose raw Vulkan handles for engines that manage their own VkDevice
+      // and import their rendered image onto Qt's device via external memory.
+      // Engines using QRhi device adoption (e.g. OgreNext) continue using the
+      // external_instance / external_device keys above and ignore these.
+      this->dataPtr->rhiParams["vulkan_instance"] =
+        std::to_string(reinterpret_cast<uintptr_t>(&externalInstance.instance));
+      this->dataPtr->rhiParams["vulkan_physical_device"] =
+        std::to_string(
+          reinterpret_cast<uintptr_t>(&externalDevice.physicalDevice));
+      this->dataPtr->rhiParams["vulkan_device"] =
+        std::to_string(reinterpret_cast<uintptr_t>(&externalDevice.device));
+      this->dataPtr->rhiParams["vulkan_graphics_queue"] =
+        std::to_string(
+          reinterpret_cast<uintptr_t>(&externalDevice.graphicsQueue));
     }
 #endif
 
