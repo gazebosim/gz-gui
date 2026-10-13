@@ -17,6 +17,7 @@
 
 #include <qsgrendererinterface.h>
 #include <tinyxml2.h>
+#include <cstdlib>
 #include <queue>
 
 #include <gz/common/Console.hh>
@@ -105,9 +106,19 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #else
   AvailableAPIs api = AvailableAPIs::OpenGL;
 #endif
-  if (_renderEngineGuiApiBackend)
+  // Backend selection: explicit C++ option first, then env var fallback,
+  // then OpenGL default.  The env var lets standalone `gz gui -c <config>`
+  // pick a backend when no CLI flag is forwarded by the caller.
+  std::string renderEngineGuiApiBackend =
+      _renderEngineGuiApiBackend ? _renderEngineGuiApiBackend : "";
+  if (renderEngineGuiApiBackend.empty())
   {
-    const std::string renderEngineGuiApiBackend = _renderEngineGuiApiBackend;
+    if (const char *envBackend =
+            std::getenv("GZ_GUI_RENDER_ENGINE_GUI_API_BACKEND"))
+      renderEngineGuiApiBackend = envBackend;
+  }
+  if (!renderEngineGuiApiBackend.empty())
+  {
     if (renderEngineGuiApiBackend == "vulkan")
       api = AvailableAPIs::Vulkan;
 #ifdef __APPLE__
