@@ -15,6 +15,13 @@
  *
 */
 
+#include <array>
+#include <chrono>
+#include <optional>
+#include <string>
+#include <sstream>
+#include <thread>
+
 #include <gtest/gtest.h>
 
 #include <gz/msgs/stringmsg.pb.h>
@@ -39,23 +46,50 @@ char* g_argv[] =
 using namespace gz;
 using namespace gui;
 
-class TeleopTest : public ::testing::Test
+class TeleopTest : public ::testing::TestWithParam<
+                              std::optional<std::array<double, 3>>>
 {
-  // Set up function.
   protected: void SetUp() override
     {
       common::Console::SetVerbosity(4);
 
       this->app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
 
+      // If we have extra parameters, we will convert it to xml for plugin
+      // This parameters also can be invalid and we won't use it for asserts
+      std::string extraTags;
+      if (const auto &params = GetParam(); params.has_value())
+      {
+        const auto forwardVel = params.value()[0];
+        const auto verticalVel = params.value()[1];
+        const auto yawVel = params.value()[2];
+
+        if (forwardVel >= 0.0)
+          this->maxForwardVel = forwardVel;
+        if (verticalVel >= 0.0)
+          this->maxVerticalVel = verticalVel;
+        if (yawVel >= 0.0)
+          this->maxYawVel = yawVel;
+
+        std::stringstream tags;
+        tags << "<max_forward_velocity>"
+             << forwardVel << "</max_forward_velocity>"
+                "<max_vertical_velocity>"
+             << verticalVel << "</max_vertical_velocity>"
+                "<max_yaw_velocity>"
+             << yawVel << "</max_yaw_velocity>";
+        extraTags = tags.str();
+      }
+
       // Load plugin
       const std::string kTopic{"/test/cmd_vel"};
-      std::string pluginStr =
+      const std::string pluginStr =
         "<plugin filename=\"Teleop\">"
           "<gz-gui>"
             "<title>Teleop!</title>"
           "</gz-gui>"
           "<topic>" + kTopic + "</topic>"
+          + extraTags +
         "</plugin>";
 
       tinyxml2::XMLDocument pluginDoc;
@@ -84,13 +118,15 @@ class TeleopTest : public ::testing::Test
       // one the node is subscribed to.
       plugin->SetTopic(QString::fromStdString(kTopic));
 
-      // Set velocity value and movement direction.
-      plugin->SetMaxForwardVel(this->kMaxForwardVel);
-      plugin->SetMaxVerticalVel(this->kMaxVerticalVel);
-      plugin->SetMaxYawVel(this->kMaxYawVel);
+      EXPECT_GE(plugin->MaxForwardVel(), 0.0);
+      EXPECT_GE(plugin->MaxVerticalVel(), 0.0);
+      EXPECT_GE(plugin->MaxYawVel(), 0.0);
+
+      EXPECT_DOUBLE_EQ(this->maxForwardVel, plugin->MaxForwardVel());
+      EXPECT_DOUBLE_EQ(this->maxVerticalVel, plugin->MaxVerticalVel());
+      EXPECT_DOUBLE_EQ(this->maxYawVel, plugin->MaxYawVel());
     }
 
-  // Set up function.
   protected: void TearDown() override
     {
       // Cleanup
@@ -135,19 +171,19 @@ class TeleopTest : public ::testing::Test
 
   // List of plugins.
   protected: QList<plugins::Teleop *> plugins;
-  protected: plugins::Teleop * plugin;
+  protected: plugins::Teleop * plugin{};
 
   // Instance of the main window.
-  protected: MainWindow * win;
+  protected: MainWindow * win{};
 
   // Checks if a new command has been received.
   protected: bool received = false;
   protected: transport::Node node;
 
   // Maximum velocities
-  protected: const double kMaxForwardVel = 1.0;
-  protected: const double kMaxVerticalVel = 1.0;
-  protected: const double kMaxYawVel = 0.5;
+  protected: double maxForwardVel = 1.0;
+  protected: double maxVerticalVel = 1.0;
+  protected: double maxYawVel = 0.5;
 
   // Current vel
   protected: double forwardVel = 0.0;
@@ -156,7 +192,7 @@ class TeleopTest : public ::testing::Test
 };
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ButtonCommand))
+TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ButtonCommand))
 {
   this->forwardVel = 0.1;
   this->verticalVel = 0.2;
@@ -177,7 +213,7 @@ TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ButtonCommand))
 }
 
 /////////////////////////////////////////////////
-TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
+TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
 {
   QKeyEvent *keypress_W = new QKeyEvent(QKeyEvent::KeyPress,
     Qt::Key_W, Qt::NoModifier);
@@ -190,11 +226,11 @@ TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   plugin->OnKeySwitch(true);
 
   gzdbg << "Press W" << std::endl;
-  this->forwardVel = this->kMaxForwardVel;
+  this->forwardVel = this->maxForwardVel;
   this->KeyEvent(true, Qt::Key_W);
 
   gzdbg << "Press D" << std::endl;
-  this->yawVel = -this->kMaxYawVel;
+  this->yawVel = -this->maxYawVel;
   this->KeyEvent(true, Qt::Key_D);
 
   gzdbg << "Release D" << std::endl;
@@ -202,7 +238,7 @@ TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   this->KeyEvent(false, Qt::Key_D);
 
   gzdbg << "Press A" << std::endl;
-  this->yawVel = this->kMaxYawVel;
+  this->yawVel = this->maxYawVel;
   this->KeyEvent(true, Qt::Key_A);
 
   gzdbg << "Release A" << std::endl;
@@ -214,7 +250,7 @@ TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   this->KeyEvent(false, Qt::Key_W);
 
   gzdbg << "Press S" << std::endl;
-  this->forwardVel = -this->kMaxForwardVel;
+  this->forwardVel = -this->maxForwardVel;
   this->KeyEvent(true, Qt::Key_S);
 
   gzdbg << "Release S" << std::endl;
@@ -228,14 +264,24 @@ TEST_F(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   this->KeyEvent(false, Qt::Key_X);
 
   gzdbg << "Press Q" << std::endl;
-  this->verticalVel = this->kMaxVerticalVel;
+  this->verticalVel = this->maxVerticalVel;
   this->KeyEvent(true, Qt::Key_Q);
 
   gzdbg << "Press E" << std::endl;
-  this->verticalVel = -this->kMaxVerticalVel;
+  this->verticalVel = -this->maxVerticalVel;
   this->KeyEvent(true, Qt::Key_E);
 
   gzdbg << "Release E" << std::endl;
   this->verticalVel = 0.0;
   this->KeyEvent(false, Qt::Key_E);
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    TeleopOperations,
+    TeleopTest,
+    ::testing::Values(
+        std::nullopt,
+        std::make_optional(std::array<double, 3>{2.0, 3.0, 1.5}),
+        std::make_optional(std::array<double, 3>{-2.0, -3.0, -1.5})
+    )
+);
