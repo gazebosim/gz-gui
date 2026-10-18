@@ -23,6 +23,7 @@
 
 #include "Teleop.hh"
 
+#include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
 
 #include <gz/gui/Application.hh>
@@ -198,6 +199,11 @@ void Teleop::SetTopic(const QString &_topic)
 /////////////////////////////////////////////////
 void Teleop::SetMaxForwardVel(double _velocity)
 {
+  if (_velocity < 0.0)
+  {
+    gzwarn << "MaxForwardVel should be >= 0.0" << std::endl;
+    return;
+  }
   this->dataPtr->maxForwardVel = _velocity;
   emit this->MaxForwardVelChanged();
 }
@@ -211,6 +217,11 @@ double Teleop::MaxForwardVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxVerticalVel(double _velocity)
 {
+  if (_velocity < 0.0)
+  {
+    gzwarn << "MaxVerticalVel should be >= 0.0" << std::endl;
+    return;
+  }
   this->dataPtr->maxVerticalVel = _velocity;
   emit this->MaxVerticalVelChanged();
 }
@@ -224,6 +235,11 @@ double Teleop::MaxVerticalVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxYawVel(double _velocity)
 {
+  if (_velocity < 0.0)
+  {
+    gzwarn << "MaxYawVel should be >= 0.0" << std::endl;
+    return;
+  }
   this->dataPtr->maxYawVel = _velocity;
   emit this->MaxYawVelChanged();
 }
