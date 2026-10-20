@@ -1019,19 +1019,29 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
   // support, GZ_GUI_HAVE_VULKAN == 0), none of the branches above run and
   // this->rhi stays null.
   //
-  // Fall back to OpenGL. gz::gui::Application applies the same fallback to the
-  // Qt scene graph when Vulkan is unavailable, so the OpenGL context and the Qt
-  // scene graph stay consistent (an OpenGL interface under a Vulkan scene graph
-  // would crash in QOpenGLContext::makeCurrent()).
+  // Fall back to the platform default (OpenGL, or Metal on macOS).
+  // gz::gui::Application applies the same fallback to the Qt scene graph when
+  // Vulkan is unavailable, so the render interface and the Qt scene graph stay
+  // consistent (an OpenGL interface under a Vulkan or Metal scene graph would
+  // crash in QOpenGLContext::makeCurrent()).
   if (this->rhi == nullptr)
   {
+#if GZ_GUI_HAVE_METAL
+    const auto fallbackAPI = rendering::GraphicsAPI::METAL;
+#else
+    const auto fallbackAPI = rendering::GraphicsAPI::OPENGL;
+#endif  // GZ_GUI_HAVE_METAL
     gzerr << "GUI render backend ["
           << rendering::GraphicsAPIUtils::Str(_graphicsAPI)
-          << "] is not available in this gz-gui build. Falling back to OpenGL. "
-          << "Rebuild gz-rendering and gz-gui with Vulkan support to use it."
+          << "] is not available in this gz-gui build. Falling back to ["
+          << rendering::GraphicsAPIUtils::Str(fallbackAPI) << "]."
           << std::endl;
-    this->gzRenderer.SetGraphicsAPI(rendering::GraphicsAPI::OPENGL);
+    this->gzRenderer.SetGraphicsAPI(fallbackAPI);
+#if GZ_GUI_HAVE_METAL
+    this->rhi = std::make_unique<RenderThreadRhiMetal>(&this->gzRenderer);
+#else
     this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->gzRenderer);
+#endif  // GZ_GUI_HAVE_METAL
   }
 }
 

@@ -105,10 +105,13 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setApplicationName("Gazebo GUI");
 
 #ifdef __APPLE__
-  AvailableAPIs api = AvailableAPIs::Metal;
+  const AvailableAPIs defaultApi = AvailableAPIs::Metal;
+  const char *defaultApiName = "Metal";
 #else
-  AvailableAPIs api = AvailableAPIs::OpenGL;
+  const AvailableAPIs defaultApi = AvailableAPIs::OpenGL;
+  const char *defaultApiName = "OpenGL";
 #endif
+  AvailableAPIs api = defaultApi;
   if (_renderEngineGuiApiBackend)
   {
     const std::string renderEngineGuiApiBackend = _renderEngineGuiApiBackend;
@@ -121,10 +124,12 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   }
 
   // If the requested API is not actually available in this build, fall back to
-  // OpenGL *before* the Qt scene graph backend and the
-  // "renderEngineBackendApiName" window property are derived from `api`. This
-  // keeps the whole GUI stack consistent (Qt scene graph + the render interface
-  // the MinimalScene plugin creates). Requesting a backend that was not built
+  // the platform default (OpenGL, or Metal on macOS) *before* the Qt scene
+  // graph backend and the "renderEngineBackendApiName" window property are
+  // derived from `api`. This keeps the whole GUI stack consistent (Qt scene
+  // graph + the render interface the MinimalScene plugin creates). On macOS,
+  // falling back to OpenGL would leave Qt on its default Metal scene graph
+  // under an OpenGL render interface. Requesting a backend that was not built
   // in (e.g. Vulkan when gz-rendering/gz-gui were built without Vulkan support)
   // would otherwise leave the render interface null and crash during init.
 #if !(defined(GZ_RENDERING_HAVE_VULKAN) && QT_CONFIG(vulkan))
@@ -132,8 +137,9 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   {
     gzerr << "Vulkan GUI graphics backend was requested but this build has no "
           << "Vulkan support. Rebuild gz-rendering and gz-gui with Vulkan "
-          << "support to use it. Falling back to OpenGL." << std::endl;
-    api = AvailableAPIs::OpenGL;
+          << "support to use it. Falling back to " << defaultApiName << "."
+          << std::endl;
+    api = defaultApi;
   }
 #endif
 
