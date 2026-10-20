@@ -987,10 +987,16 @@ void RenderThread::SetContext(QOpenGLContext *_context)
 }
 
 /////////////////////////////////////////////////
-void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
+rendering::GraphicsAPI RenderThread::SetGraphicsAPI(
+    const rendering::GraphicsAPI &_graphicsAPI)
 {
   // Set the graphics API for the GzRenderer
   this->gzRenderer.SetGraphicsAPI(_graphicsAPI);
+
+  // Drop any interface created by a previous call, so the null check below
+  // also catches an unavailable backend requested after the constructor
+  // already created one (e.g. through <graphics_api>).
+  this->rhi.reset();
 
   // Create the render interface
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
@@ -1042,7 +1048,9 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
 #else
     this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->gzRenderer);
 #endif  // GZ_GUI_HAVE_METAL
+    return fallbackAPI;
   }
+  return _graphicsAPI;
 }
 
 /////////////////////////////////////////////////
@@ -1407,8 +1415,11 @@ bool RenderWindowItem::SetShadowTextureSize(rendering::LightType _lightType,
 void RenderWindowItem::SetGraphicsAPI(
     const rendering::GraphicsAPI &_graphicsAPI)
 {
-  this->dataPtr->graphicsAPI = _graphicsAPI;
-  this->dataPtr->renderThread->SetGraphicsAPI(_graphicsAPI);
+  // Keep the API the render thread actually used, which differs from
+  // _graphicsAPI if that one is unavailable in this build. The OpenGL context
+  // setup in updatePaintNode() and the TextureNode must match it.
+  this->dataPtr->graphicsAPI =
+      this->dataPtr->renderThread->SetGraphicsAPI(_graphicsAPI);
 }
 
 /////////////////////////////////////////////////

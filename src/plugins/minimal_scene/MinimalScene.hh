@@ -310,7 +310,10 @@ namespace gz::gui::plugins
 
     /// \brief Set the graphics API
     /// \param[in] _graphicsAPI The type of graphics API
-    public: void SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI);
+    /// \return The graphics API in use. It is the platform default (OpenGL,
+    /// or Metal on macOS) if _graphicsAPI is not available in this build.
+    public: rendering::GraphicsAPI SetGraphicsAPI(
+        const rendering::GraphicsAPI &_graphicsAPI);
 
     /// \brief Carry out initialisation.
     /// On macOS this must be run on the main thread
