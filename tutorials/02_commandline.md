@@ -36,6 +36,9 @@ If you have Gazebo Tools installed, you can use the `gz gui` command line tool:
     Environment variables:
       GZ_GUI_RESOURCE_PATH    Colon separated paths used to locate GUI
      resources such as configuration files.
+      GZ_GUI_RENDER_ENGINE_GUI_API_BACKEND    Graphics API used by the GUI
+     render engine: "opengl", "vulkan" or "metal" (macOS only).
+     Defaults to "opengl" ("metal" on macOS).
 
 
 
