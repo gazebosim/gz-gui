@@ -145,7 +145,8 @@ void Publisher::OnPublish(const bool _checked)
   }
 
   this->dataPtr->timer->setInterval(1000/this->dataPtr->frequency);
-  connect(this->dataPtr->timer, &QTimer::timeout, this->dataPtr->timer, [=]()
+  connect(this->dataPtr->timer, &QTimer::timeout, this->dataPtr->timer,
+      [this, msgType, msgData]()
   {
     auto newMsg = msgs::Factory::New(msgType, msgData);
     this->dataPtr->pub.Publish(*newMsg);
