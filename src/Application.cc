@@ -105,9 +105,20 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
 #else
   AvailableAPIs api = AvailableAPIs::OpenGL;
 #endif
-  if (_renderEngineGuiApiBackend)
+  // Backend selection: explicit C++ option first, then env var fallback,
+  // then the platform default. The env var lets standalone
+  // `gz gui -c <config>` pick a backend when no CLI flag is forwarded by the
+  // caller.
+  std::string renderEngineGuiApiBackend =
+      _renderEngineGuiApiBackend ? _renderEngineGuiApiBackend : "";
+  if (renderEngineGuiApiBackend.empty())
   {
-    const std::string renderEngineGuiApiBackend = _renderEngineGuiApiBackend;
+    common::env("GZ_GUI_RENDER_ENGINE_GUI_API_BACKEND",
+                renderEngineGuiApiBackend);
+  }
+  renderEngineGuiApiBackend = common::lowercase(renderEngineGuiApiBackend);
+  if (!renderEngineGuiApiBackend.empty())
+  {
     if (renderEngineGuiApiBackend == "vulkan")
       api = AvailableAPIs::Vulkan;
 #ifdef __APPLE__
