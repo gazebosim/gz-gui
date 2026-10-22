@@ -104,12 +104,14 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setOrganizationDomain("gazebosim.org");
   this->setApplicationName("Gazebo GUI");
 
+  // defaultApiName is only used by the no-Vulkan fallback below, so it is
+  // unused in builds with Vulkan support.
 #ifdef __APPLE__
   const AvailableAPIs defaultApi = AvailableAPIs::Metal;
-  const char *defaultApiName = "Metal";
+  [[maybe_unused]] const char *defaultApiName = "Metal";
 #else
   const AvailableAPIs defaultApi = AvailableAPIs::OpenGL;
-  const char *defaultApiName = "OpenGL";
+  [[maybe_unused]] const char *defaultApiName = "OpenGL";
 #endif
   AvailableAPIs api = defaultApi;
   // Backend selection: explicit C++ option first, then env var fallback,
