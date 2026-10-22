@@ -63,7 +63,8 @@ namespace gz::gui
       /// \param[in] _argv Argument values.
       /// \param[in] _type Window type, by default it's a main window.
       /// \param[in] _renderEngineGuiApiBackend --render-engine-gui-api-backend
-      /// option
+      /// option. If null or empty, the GZ_GUI_RENDER_ENGINE_GUI_API_BACKEND
+      /// environment variable is used instead.
       public: Application(int &_argc, char **_argv,
           const WindowType _type = WindowType::kMainWindow,
           const char *_renderEngineGuiApiBackend = nullptr);

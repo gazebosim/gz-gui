@@ -5,7 +5,7 @@
   <version>11.0.0</version>
   <description>Gazebo GUI : Graphical interfaces for robotics applications</description>
   <maintainer email="jennuine@google.com">Jenn Nguyen</maintainer>
-  <license>Apache License 2.0</license>
+  <license>Apache-2.0</license>
   <url type="website">https://github.com/gazebosim/gz-rendering</url>
 
   <buildtool_depend>cmake</buildtool_depend>
@@ -17,7 +17,7 @@
   <depend>gz-msgs</depend>
   <depend>gz-plugin</depend>
   <depend>gz-rendering</depend>
-  <depend>gz-tools2</depend>
+  <depend>gz-tools</depend>
   <depend>gz-transport</depend>
   <depend>gz-utils</depend>
   <depend>libqt6svg6</depend>
