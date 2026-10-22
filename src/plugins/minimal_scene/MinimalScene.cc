@@ -1002,10 +1002,16 @@ void RenderThread::SetContext(QOpenGLContext *_context)
 }
 
 /////////////////////////////////////////////////
-void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
+rendering::GraphicsAPI RenderThread::SetGraphicsAPI(
+    const rendering::GraphicsAPI &_graphicsAPI)
 {
   // Set the graphics API for the GzRenderer
   this->gzRenderer.SetGraphicsAPI(_graphicsAPI);
+
+  // Drop any interface created by a previous call, so the null check below
+  // also catches an unavailable backend requested after the constructor
+  // already created one (e.g. through <graphics_api>).
+  this->rhi.reset();
 
   // Create the render interface
   if (_graphicsAPI == rendering::GraphicsAPI::OPENGL)
@@ -1028,11 +1034,56 @@ void RenderThread::SetGraphicsAPI(const rendering::GraphicsAPI &_graphicsAPI)
     this->rhi = std::make_unique<RenderThreadRhiMetal>(&this->gzRenderer);
   }
 #endif  // GZ_GUI_HAVE_METAL
+
+  // Safety net: if the requested backend's render interface was not compiled
+  // into this build (e.g. Vulkan requested but gz-gui was built without Vulkan
+  // support, GZ_GUI_HAVE_VULKAN == 0), none of the branches above run and
+  // this->rhi stays null.
+  //
+  // Fall back to the platform default (OpenGL, or Metal on macOS).
+  // gz::gui::Application applies the same fallback to the Qt scene graph when
+  // Vulkan is unavailable, so the render interface and the Qt scene graph stay
+  // consistent (an OpenGL interface under a Vulkan or Metal scene graph would
+  // crash in QOpenGLContext::makeCurrent()).
+  if (this->rhi == nullptr)
+  {
+#if GZ_GUI_HAVE_METAL
+    const auto fallbackAPI = rendering::GraphicsAPI::METAL;
+#else
+    const auto fallbackAPI = rendering::GraphicsAPI::OPENGL;
+#endif  // GZ_GUI_HAVE_METAL
+    gzerr << "GUI render backend ["
+          << rendering::GraphicsAPIUtils::Str(_graphicsAPI)
+          << "] is not available in this gz-gui build. Falling back to ["
+          << rendering::GraphicsAPIUtils::Str(fallbackAPI) << "]."
+          << std::endl;
+    this->gzRenderer.SetGraphicsAPI(fallbackAPI);
+#if GZ_GUI_HAVE_METAL
+    this->rhi = std::make_unique<RenderThreadRhiMetal>(&this->gzRenderer);
+#else
+    this->rhi = std::make_unique<RenderThreadRhiOpenGL>(&this->gzRenderer);
+#endif  // GZ_GUI_HAVE_METAL
+    return fallbackAPI;
+  }
+  return _graphicsAPI;
 }
 
 /////////////////////////////////////////////////
 std::string RenderThread::Initialize()
 {
+  // If SetGraphicsAPI() could not create a render interface for the requested
+  // backend (unavailable in this build), report a clean error instead of
+  // dereferencing a null pointer. RenderWindowItem::Ready() checks this return
+  // value and aborts initialization, so the GUI stays alive.
+  if (this->rhi == nullptr)
+  {
+    const std::string err = "GUI render interface not initialized: the "
+        "requested graphics backend is unavailable in this build.";
+    if (this->errorCb)
+      this->errorCb(QString::fromStdString(err));
+    return err;
+  }
+
   auto loadingError = this->rhi->Initialize();
   if (!loadingError.empty())
   {
@@ -1379,8 +1430,11 @@ bool RenderWindowItem::SetShadowTextureSize(rendering::LightType _lightType,
 void RenderWindowItem::SetGraphicsAPI(
     const rendering::GraphicsAPI &_graphicsAPI)
 {
-  this->dataPtr->graphicsAPI = _graphicsAPI;
-  this->dataPtr->renderThread->SetGraphicsAPI(_graphicsAPI);
+  // Keep the API the render thread actually used, which differs from
+  // _graphicsAPI if that one is unavailable in this build. The OpenGL context
+  // setup in updatePaintNode() and the TextureNode must match it.
+  this->dataPtr->graphicsAPI =
+      this->dataPtr->renderThread->SetGraphicsAPI(_graphicsAPI);
 }
 
 /////////////////////////////////////////////////

@@ -28,6 +28,10 @@
 
 #include <gz/plugin/Loader.hh>
 
+// For GZ_RENDERING_HAVE_VULKAN: only switch the Qt scene graph to Vulkan when
+// the rendering stack actually has Vulkan support compiled in.
+#include <gz/rendering/config.hh>
+
 #include "gz/gui/Application.hh"
 #include "gz/gui/config.hh"
 #include "gz/gui/Dialog.hh"
@@ -101,10 +105,13 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setApplicationName("Gazebo GUI");
 
 #ifdef __APPLE__
-  AvailableAPIs api = AvailableAPIs::Metal;
+  const AvailableAPIs defaultApi = AvailableAPIs::Metal;
+  const char *defaultApiName = "Metal";
 #else
-  AvailableAPIs api = AvailableAPIs::OpenGL;
+  const AvailableAPIs defaultApi = AvailableAPIs::OpenGL;
+  const char *defaultApiName = "OpenGL";
 #endif
+  AvailableAPIs api = defaultApi;
   // Backend selection: explicit C++ option first, then env var fallback,
   // then the platform default. The env var lets standalone
   // `gz gui -c <config>` pick a backend when no CLI flag is forwarded by the
@@ -126,6 +133,26 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
       api = AvailableAPIs::Metal;
 #endif
   }
+
+  // If the requested API is not actually available in this build, fall back to
+  // the platform default (OpenGL, or Metal on macOS) *before* the Qt scene
+  // graph backend and the "renderEngineBackendApiName" window property are
+  // derived from `api`. This keeps the whole GUI stack consistent (Qt scene
+  // graph + the render interface the MinimalScene plugin creates). On macOS,
+  // falling back to OpenGL would leave Qt on its default Metal scene graph
+  // under an OpenGL render interface. Requesting a backend that was not built
+  // in (e.g. Vulkan when gz-rendering/gz-gui were built without Vulkan support)
+  // would otherwise leave the render interface null and crash during init.
+#if !(defined(GZ_RENDERING_HAVE_VULKAN) && QT_CONFIG(vulkan))
+  if (api == AvailableAPIs::Vulkan)
+  {
+    gzerr << "Vulkan GUI graphics backend was requested but this build has no "
+          << "Vulkan support. Rebuild gz-rendering and gz-gui with Vulkan "
+          << "support to use it. Falling back to " << defaultApiName << "."
+          << std::endl;
+    api = defaultApi;
+  }
+#endif
 
 #ifdef __APPLE__
   if (api == AvailableAPIs::Metal)
