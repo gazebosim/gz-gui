@@ -142,15 +142,22 @@ class GzRenderer::Implementation
 /// All RenderSync does is conceptually:
 ///
 /// \code
-///   TextureNode::PrepareNode()
+///   TextureNode::PrepareNode()           // Qt thread
 ///   {
-///     renderSync.WaitForWorkerThread(); // Qt thread
-///       // WaitForQtThreadAndBlock();
-///       // Now worker thread begins executing what's between
-///       // ReleaseQtThreadFromBlock();
-///     continue with qt code...
+///     emit TextureInUse();               // queue the worker's next cycle
+///     renderSync.WaitForWorkerThread();
+///       // Worker thread, RenderThread::RenderNext():
+///       //   WaitForQtThreadAndBlock();
+///       //   render, then hand the texture over (TextureReady -> NewTexture)
+///       //   ReleaseQtThreadFromBlock();
+///     commit the texture just handed over (rhi->PrepareNode, setTexture)
 ///   }
 /// \endcode
+///
+/// The worker always has one RenderNext() parked in WaitForQtThreadAndBlock(),
+/// queued by the previous frame's TextureInUse (or by updatePaintNode for the
+/// first frame), so the cycle WaitForWorkerThread() releases renders the
+/// current frame.
 ///
 ///
 /// For more info see
@@ -320,12 +327,9 @@ GzRenderer::GzRenderer()
 }
 
 /////////////////////////////////////////////////
-void GzRenderer::Render(RenderSync *_renderSync,
+void GzRenderer::Render(RenderSync * /*_renderSync*/,
                         RenderThreadRhi &_renderThreadRhi)
 {
-  std::unique_lock<std::mutex> lock(_renderSync->mutex);
-  _renderSync->WaitForQtThreadAndBlock(lock);
-
   if (this->textureDirty)
   {
     // TODO(anyone) If SwapFromThread gets implemented,
@@ -399,7 +403,6 @@ void GzRenderer::Render(RenderSync *_renderSync,
         gz::gui::App()->findChild<gz::gui::MainWindow *>(),
         new gui::events::Render());
   }
-  _renderSync->ReleaseQtThreadFromBlock(lock);
 }
 
 /////////////////////////////////////////////////
@@ -949,10 +952,22 @@ void RenderThread::SetErrorCb(std::function<void(const QString&)> _cb)
 /////////////////////////////////////////////////
 void RenderThread::RenderNext(RenderSync *_renderSync)
 {
+  // Keep the Qt thread blocked for the whole cycle: render, hand the texture
+  // over (TextureReady -> TextureNode::NewTexture, a direct connection), and
+  // only then release it. Releasing Qt before the hand-over would let
+  // TextureNode::PrepareNode() miss the new texture and keep sampling the
+  // previous one, which this render may have just destroyed. It also makes
+  // the OpenGL backend's doneCurrent(), which flushes the worker's context,
+  // happen before Qt samples the texture.
+  std::unique_lock<std::mutex> lock(_renderSync->mutex);
+  _renderSync->WaitForQtThreadAndBlock(lock);
+
   this->rhi->RenderNext(_renderSync);
   emit this->TextureReady(
     this->rhi->TexturePtr(),
     this->rhi->TextureSize());
+
+  _renderSync->ReleaseQtThreadFromBlock(lock);
 }
 
 /////////////////////////////////////////////////
@@ -1147,28 +1162,21 @@ void TextureNode::NewTexture(void* _texturePtr, const QSize &_size)
 /////////////////////////////////////////////////
 void TextureNode::PrepareNode()
 {
-  // Run the worker thread's render FIRST, then commit the resulting texture to
-  // the Qt scene graph. The order matters for externally-sampled images.
+  // Let the worker render this frame BEFORE committing its texture to the
+  // scene graph. A render can destroy the previous image and create a new one
+  // (on a resize, or when a GUI scene-update plugin marks the target dirty).
+  // Committing first and rendering afterwards would let the worker free the
+  // image Qt samples in this frame; with an externally sampled Vulkan image
+  // that crashes in QRhi::endFrame (VUID-VkImageMemoryBarrier-image-parameter).
+  // Rendering first means Qt always commits the image the worker has just
+  // handed over (see RenderThread::RenderNext()). The next frame's render may
+  // destroy it, but by then Qt has ended the frame that samples it.
   //
-  // The worker's render (driven by TextureInUse -> RenderNext, completed inside
-  // WaitForWorkerThread() below) can rebuild the render target and DESTROY the
-  // previous image (e.g. when a GUI scene-update plugin adds content and marks
-  // the target dirty). With the old ordering -- import+setTexture() first, then
-  // release the worker -- Qt committed its in-flight frame to image X and only
-  // then let the worker run, which freed X before Qt's QRhi::endFrame sampled
-  // it, crashing on an invalid VkImage (VUID-VkImageMemoryBarrier-image-
-  // parameter).
-  //
-  // By letting the worker render (and do any destroy/rebuild) before we import
-  // and setTexture(), Qt always commits the freshly produced, valid image, and
-  // the freed predecessor was already retired by a previous Qt frame. The next
-  // frame's worker render may free THIS image, but only after Qt has finished
-  // (endFrame'd) the frame that used it.
-  //
-  // We emit TextureInUse unconditionally (even when no new texture is pending)
-  // because the two threads run in forced lockstep: skipping the emit would
-  // leave WaitForWorkerThread() without a matching worker cycle and can
-  // deadlock on newer Qt versions.
+  // TextureInUse queues the worker's next cycle; the cycle released by
+  // WaitForWorkerThread() was queued by the previous frame (see RenderSync).
+  // Emit it unconditionally: the two threads run in lockstep, and a
+  // WaitForWorkerThread() without a matching worker cycle can deadlock on
+  // newer Qt versions.
   // See https://github.com/gazebosim/gz-rendering/issues/304
   emit TextureInUse(&this->renderSync);
 
@@ -1340,16 +1348,16 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
     // Set up connections to get the production of render texture in sync with
     // vsync on the rendering thread.
     //
-    // When a new texture is ready on the rendering thread, we use a direct
-    // connection to the texture node to let it know a new texture can be used.
-    // The node will then emit PendingNewTexture which we bind to
-    // QQuickWindow::update to schedule a redraw.
+    // When the scene graph starts rendering a frame, PrepareNode() emits
+    // TextureInUse(), which we connect to the rendering thread's RenderNext()
+    // to queue its next cycle, and then blocks in WaitForWorkerThread() while
+    // the rendering thread renders the current one (see RenderSync).
     //
-    // When the scene graph starts rendering the next frame, the PrepareNode()
-    // function is used to update the node with the new texture. Once it
-    // completes, it emits TextureInUse() which we connect to the rendering
-    // thread's RenderNext() to have it start producing content into its render
-    // texture.
+    // Before releasing the scene graph thread, the rendering thread emits
+    // TextureReady(). We use a direct connection to the texture node so the
+    // new texture is stored before PrepareNode() resumes. The node then emits
+    // PendingNewTexture which we bind to QQuickWindow::update to schedule a
+    // redraw, and PrepareNode() updates the node with the new texture.
     //
     // This rendering pipeline is throttled by vsync on the scene graph
     // rendering thread.
@@ -1367,7 +1375,8 @@ QSGNode *RenderWindowItem::updatePaintNode(QSGNode *_node,
         &TextureNode::TextureInUse, this->dataPtr->renderThread,
         &RenderThread::RenderNext, Qt::QueuedConnection);
 
-    // Get the production of FBO textures started..
+    // Get the production of FBO textures started. This first cycle waits for
+    // the first PrepareNode().
     QMetaObject::invokeMethod(this->dataPtr->renderThread, "RenderNext",
       Qt::QueuedConnection,
       Q_ARG(RenderSync*, &node->renderSync));
