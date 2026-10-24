@@ -214,3 +214,110 @@ TEST(MinimalSceneTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(Config))
     EXPECT_GT(10, abs(camera->WorldPose().Pos().Z() - it));
   }
 }
+
+/////////////////////////////////////////////////
+TEST(CameraTrackingTest, LoadConfig)
+{
+  common::Console::SetVerbosity(4);
+
+  Application app(g_argc, g_argv);
+  app.AddPluginPath(std::string(PROJECT_BINARY_PATH) + "/lib");
+
+  // Load the scene plugin.
+  const char *pluginStr =
+    "<plugin filename=\"MinimalScene\">"
+      "<engine>ogre2</engine>"
+      "<scene>banana</scene>"
+      "<camera_pose>0 0 10 0 0 0</camera_pose>"
+    "</plugin>";
+
+  tinyxml2::XMLDocument pluginDoc;
+  pluginDoc.Parse(pluginStr);
+  ASSERT_TRUE(app.LoadPlugin("MinimalScene",
+      pluginDoc.FirstChildElement("plugin")));
+
+  // Load CameraTracking with the legacy camera_follow configuration.
+  pluginStr =
+    "<plugin filename=\"CameraTracking\">"
+      "<camera_follow>"
+        "<target>track_me</target>"
+        "<offset>1 2 3</offset>"
+        "<p_gain>0.25</p_gain>"
+        "<world_frame>true</world_frame>"
+      "</camera_follow>"
+    "</plugin>";
+
+  pluginDoc.Parse(pluginStr);
+  ASSERT_TRUE(app.LoadPlugin("CameraTracking",
+      pluginDoc.FirstChildElement("plugin")));
+
+  auto win = app.findChild<MainWindow *>();
+  ASSERT_NE(nullptr, win);
+
+  // Show, but don't exec, so we don't block.
+  win->QuickWindow()->show();
+
+  auto engine = rendering::engine("ogre2");
+  ASSERT_NE(nullptr, engine);
+
+  auto scene = engine->SceneByName("banana");
+  ASSERT_NE(nullptr, scene);
+
+  auto root = scene->RootVisual();
+  ASSERT_NE(nullptr, root);
+
+  auto camera = std::dynamic_pointer_cast<rendering::Camera>(
+      root->ChildByIndex(0));
+  ASSERT_NE(nullptr, camera);
+
+  // The target does not exist yet. The plugin should wait for it.
+  EXPECT_EQ(nullptr, scene->NodeByName("track_me"));
+
+  // Let the plugin initialize and process the initial configuration.
+  for (int i = 0; i < 30; ++i)
+  {
+    std::this_thread::sleep_for(100ms);
+    QCoreApplication::processEvents();
+  }
+
+  // Add the target after CameraTracking has been initialized.
+  auto trackedVis = scene->CreateVisual("track_me");
+  ASSERT_NE(nullptr, trackedVis);
+  trackedVis->SetWorldPose({100, 100, 100, 0, 0, 0});
+
+  // CameraTracking should find the target and start following it using
+  // the configuration loaded from XML.
+  int sleep = 0;
+  const int maxSleep = 600;
+
+  while (abs(camera->WorldPose().Pos().X() - 101) > 10 &&
+      sleep++ < maxSleep)
+  {
+    std::this_thread::sleep_for(10ms);
+    QCoreApplication::processEvents();
+  }
+
+  EXPECT_LT(sleep, maxSleep);
+
+  // The camera should be close to the target plus the configured offset.
+  EXPECT_LT(abs(camera->WorldPose().Pos().X() - 101), 10);
+  EXPECT_LT(abs(camera->WorldPose().Pos().Y() - 102), 10);
+  EXPECT_LT(abs(camera->WorldPose().Pos().Z() - 103), 10);
+
+  // Move the target and verify that the camera continues following it.
+  trackedVis->SetWorldPose({150, 150, 150, 0, 0, 0});
+
+  sleep = 0;
+  while (abs(camera->WorldPose().Pos().X() - 151) > 10 &&
+      sleep++ < maxSleep)
+  {
+    std::this_thread::sleep_for(10ms);
+    QCoreApplication::processEvents();
+  }
+
+  EXPECT_LT(sleep, maxSleep);
+
+  EXPECT_LT(abs(camera->WorldPose().Pos().X() - 151), 10);
+  EXPECT_LT(abs(camera->WorldPose().Pos().Y() - 152), 10);
+  EXPECT_LT(abs(camera->WorldPose().Pos().Z() - 153), 10);
+}

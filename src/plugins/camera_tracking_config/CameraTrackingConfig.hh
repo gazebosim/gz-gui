@@ -43,7 +43,7 @@ namespace plugins
     public: virtual ~CameraTrackingConfig();
 
     // Documentation inherited
-    public: virtual void LoadConfig(const tinyxml2::XMLElement *)
+    public: virtual void LoadConfig(const tinyxml2::XMLElement *_pluginElem)
         override;
 
     /// \brief Set the tracking camera, requested from the GUI.
