@@ -4,7 +4,8 @@
   <name>gz-gui8</name>
   <version>8.4.0</version>
   <description>Gazebo GUI : Graphical interfaces for robotics applications</description>
-  <maintainer email="jennuine@google.com">Jenn Nguyen</maintainer>
+  <maintainer email="caguero@honurobotics.com">Carlos Agüero</maintainer>
+  <maintainer email="acordero@honurobotics.com">Alejandro Hernández Cordero</maintainer>
   <license>Apache-2.0</license>
   <url type="website">https://github.com/gazebosim/gz-rendering</url>
 
