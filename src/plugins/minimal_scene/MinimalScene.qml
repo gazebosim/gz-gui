@@ -49,15 +49,6 @@ Rectangle {
     visible: _MinimalScene.loadingError.length == 0
   }
 
-
-  onParentChanged: {
-    if (undefined === parent)
-      return;
-
-      width = Qt.binding(function() {return parent.parent.width})
-      height = Qt.binding(function() {return parent.parent.height})
-  }
-
   DropArea {
   anchors.fill: renderWindow
 
