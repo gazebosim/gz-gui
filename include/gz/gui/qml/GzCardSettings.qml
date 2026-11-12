@@ -207,12 +207,15 @@ Dialog {
 
   ColorDialog {
     id: colorDialog
+    // Qt 6.4 looks up the parent window only on creation, before gz-gui puts the
+    // card in a window; without it the non-native dialog never opens.
+    parentWindow: settingsColumn.Window.window
     title: "Please choose a color"
     options: ColorDialog.ShowAlphaChannel
     onAccepted: {
-      content.color = colorDialog.color
-      bgColor.color = colorDialog.color
-      cardBackground = colorDialog.color
+      content.color = colorDialog.selectedColor
+      bgColor.color = colorDialog.selectedColor
+      cardBackground = colorDialog.selectedColor
     }
     onRejected: {
       console.log("Canceled")
