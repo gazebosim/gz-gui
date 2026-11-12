@@ -106,6 +106,16 @@ Item {
     }
   }
 
+  Label {
+    anchors.fill: parent
+    anchors.margins: 10
+    visible: mapPlugin.availableServiceProviders.indexOf(mapPlugin.name) < 0
+    wrapMode: Text.WordWrap
+    horizontalAlignment: Text.AlignHCenter
+    verticalAlignment: Text.AlignVCenter
+    text: qsTr("Map not available: the \"osm\" map plugin of Qt Location is not installed.")
+  }
+
   RoundButton {
     height: 40
     width: 40
