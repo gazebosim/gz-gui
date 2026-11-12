@@ -24,6 +24,9 @@ Item {
   property double latitude: 0.0
   property double longitude: 0.0
 
+  // Set from C++ with the <topic_picker> configuration
+  property bool showPicker: true
+
   Layout.minimumWidth: 280
   Layout.minimumHeight: 455
   anchors.topMargin: 5
@@ -37,6 +40,7 @@ Item {
 
     RowLayout {
       width: parent.width
+      visible: showPicker
 
       Layout.fillWidth: true
       Layout.fillHeight: true
