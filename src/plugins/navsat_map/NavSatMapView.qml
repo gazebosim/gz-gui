@@ -29,7 +29,8 @@ Item {
   property double latitude: 0.0
   property double longitude: 0.0
 
-  // True to keep the map centered on the position.
+  // True to keep the map centered on the position. Dragging the map clears
+  // it and the "Track position" button sets it again.
   property bool centering: true
 
   Plugin {
@@ -40,6 +41,9 @@ Item {
   Map {
     id: map
     anchors.fill: parent
+
+    // Map coordinate under the pinch centroid when the pinch started
+    property geoCoordinate startCentroid
 
     MapCircle {
       id: circle
@@ -89,6 +93,9 @@ Item {
     DragHandler {
         id: drag
         target: null
+        onActiveChanged: if (active) {
+            mapView.centering = false
+        }
         onTranslationChanged: (delta) => map.pan(-delta.x, -delta.y)
     }
 
