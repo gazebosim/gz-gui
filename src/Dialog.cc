@@ -95,7 +95,7 @@ bool Dialog::UpdateConfigAttribute(const std::string &_path,
   }
 
   // Update attribute value for the correct dialog
-  bool updated{false};
+  bool updated = false;
   for (auto dialogElem = doc.FirstChildElement("dialog");
     dialogElem != nullptr;
     dialogElem = dialogElem->NextSiblingElement("dialog"))
