@@ -49,7 +49,7 @@ Rectangle {
   }
 
   DropArea {
-  anchors.fill: renderWindow
+  anchors.fill: parent
 
   onDropped: (drop) => {
     _MinimalScene.OnDropped(drop.text, drop.x, drop.y)
