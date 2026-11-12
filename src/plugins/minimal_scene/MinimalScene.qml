@@ -52,8 +52,8 @@ Rectangle {
   DropArea {
   anchors.fill: renderWindow
 
-  onDropped: {
-    _MinimalScene.OnDropped(drop.text, drag.x, drag.y)
+  onDropped: (drop) => {
+    _MinimalScene.OnDropped(drop.text, drop.x, drop.y)
   }
 
   Label {
