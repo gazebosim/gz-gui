@@ -14,7 +14,6 @@
  * limitations under the License.
  *
 */
-import Qt5Compat.GraphicalEffects
 import QtQuick 2.9
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
