@@ -18,11 +18,11 @@
 #ifndef GZ_GUI_PLUGINS_TELEOP_HH_
 #define GZ_GUI_PLUGINS_TELEOP_HH_
 
-#include <memory>
+#include <QEvent>
+#include <QObject>
+#include <QString>
 
 #include <gz/gui/Plugin.hh>
-#include <gz/gui/qt.h>
-#include <gz/transport/Node.hh>
 #include <gz/utils/ImplPtr.hh>
 
 #ifndef _WIN32

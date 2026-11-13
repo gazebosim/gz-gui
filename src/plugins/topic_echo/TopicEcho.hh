@@ -37,7 +37,8 @@
 #  endif
 #endif
 
-#include <memory>
+#include <QObject>
+#include <QString>
 
 #include "gz/gui/Plugin.hh"
 #include <gz/utils/ImplPtr.hh>

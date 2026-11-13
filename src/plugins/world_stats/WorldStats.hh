@@ -18,9 +18,10 @@
 #ifndef GZ_GUI_PLUGINS_WORLDSTATS_HH_
 #define GZ_GUI_PLUGINS_WORLDSTATS_HH_
 
-#include <memory>
-
 #include <gz/msgs/world_stats.pb.h>
+
+#include <QObject>
+#include <QString>
 
 #include "gz/gui/Plugin.hh"
 

@@ -19,6 +19,9 @@
 #define GZ_GUI_PLUGINS_IMAGEDISPLAY_HH_
 
 #include <QImage>
+#include <QColor>
+#include <QSize>
+
 #include <QString>
 #include <QStringList>
 #include <QQuickImageProvider>

@@ -19,8 +19,10 @@
 #ifndef GZ_GUI_PLUGINS_CAMERATRACKING_HH_
 #define GZ_GUI_PLUGINS_CAMERATRACKING_HH_
 
+#include <QEvent>
+#include <QObject>
+
 #include <gz/utils/ImplPtr.hh>
-#include <memory>
 
 #include "gz/gui/Plugin.hh"
 
