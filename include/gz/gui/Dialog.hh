@@ -18,7 +18,6 @@
 #ifndef GZ_GUI_DIALOG_HH_
 #define GZ_GUI_DIALOG_HH_
 
-#include <memory>
 #include <string>
 
 #include "gz/gui/qt.h"

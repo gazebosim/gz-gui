@@ -18,7 +18,12 @@
 #ifndef GZ_GUI_GRIDCONFIG_HH_
 #define GZ_GUI_GRIDCONFIG_HH_
 
-#include <memory>
+#include <QColor>
+#include <QEvent>
+#include <QList>
+#include <QObject>
+#include <QString>
+#include <QStringList>
 
 #include <gz/gui/Plugin.hh>
 

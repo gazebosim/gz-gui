@@ -17,10 +17,8 @@
 #ifndef GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_
 #define GZ_GUI_WORLDCONTROLEVENTLISTENER_HH_
 
-#include "gz/gui/Application.hh"
-#include "gz/gui/GuiEvents.hh"
-#include "gz/gui/MainWindow.hh"
-#include "gz/gui/qt.h"
+#include <QEvent>
+#include <QObject>
 
 #ifndef _WIN32
 #  define WorldControl_EXPORTS_API __attribute__ ((visibility ("default")))
@@ -31,7 +29,6 @@
 #    define WorldControl_EXPORTS_API __declspec(dllimport)
 #  endif
 #endif
-
 
 namespace gz::gui
 {

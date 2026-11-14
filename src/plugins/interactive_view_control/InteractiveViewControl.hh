@@ -18,7 +18,8 @@
 #ifndef GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
 #define GZ_GUI_PLUGINS_INTERACTIVEVIEWCONTROL_HH_
 
-#include <memory>
+#include <QEvent>
+#include <QObject>
 
 #include "gz/gui/Plugin.hh"
 

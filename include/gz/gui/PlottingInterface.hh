@@ -30,11 +30,12 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+#include <cstdint>
+
 #include <map>
 #include <set>
 #include <string>
 #include <memory>
-#include <limits>
 
 #include "gz/gui/Export.hh"
 

@@ -18,10 +18,7 @@
 #define GZ_GUI_GUIEVENTS_HH_
 
 #include <QEvent>
-#include <memory>
 #include <string>
-#include <utility>
-#include <vector>
 
 #include <gz/common/KeyEvent.hh>
 #include <gz/common/MouseEvent.hh>

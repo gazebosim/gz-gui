@@ -28,13 +28,11 @@
 #  endif
 #endif
 
-#include <gz/gui/qt.h>
-
-#include <memory>
+#include <QEvent>
+#include <QObject>
 
 #include <gz/gui/Plugin.hh>
 #include <gz/utils/ImplPtr.hh>
-#include <gz/transport/Node.hh>
 
 namespace gz::gui::plugins
 {

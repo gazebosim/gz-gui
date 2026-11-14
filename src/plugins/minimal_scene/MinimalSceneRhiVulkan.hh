@@ -19,7 +19,9 @@
 #define GZ_GUI_PLUGINS_MINIMALSCENE_MINIMALSCENERHIVULKAN_HH_
 
 #include "MinimalSceneRhi.hh"
-#include "gz/gui/Plugin.hh"
+
+#include <gz/rendering/RenderTypes.hh>
+#include <QOffscreenSurface>
 
 #include <QQuickWindow>
 #include <QSGTexture>

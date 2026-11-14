@@ -24,6 +24,7 @@
 #include "Teleop.hh"
 
 #include <gz/plugin/Register.hh>
+#include <gz/transport/Node.hh>
 
 #include <gz/gui/Application.hh>
 #include <gz/gui/MainWindow.hh>
