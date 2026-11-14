@@ -18,14 +18,14 @@ import QtQuick
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.1
-import QtLocation
-import QtPositioning
 
 Item {
   id: navSatMap
   property double latitude: 0.0
   property double longitude: 0.0
-  property bool centering: true
+
+  // Set from C++ with the <topic_picker> configuration
+  property bool showPicker: true
 
   Layout.minimumWidth: 280
   Layout.minimumHeight: 455
@@ -40,6 +40,7 @@ Item {
 
     RowLayout {
       width: parent.width
+      visible: showPicker
 
       Layout.fillWidth: true
       Layout.fillHeight: true
@@ -89,13 +90,10 @@ Item {
     }
   }
 
-  Plugin {
-    id: mapPlugin
-    name: "osm"
-  }
-
-  Map {
-    id: map
+  // The map is in its own file so that, if the QtLocation module is missing
+  // (Qt older than 6.5, or not installed), only the map is disabled.
+  Loader {
+    id: mapLoader
     anchors.top: configColumn.bottom
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -105,85 +103,31 @@ Item {
     anchors.leftMargin: -5
     anchors.rightMargin: -5
 
-    MapCircle {
-      id: circle
-      center {
-        latitude: latitude
-        longitude: longitude
-      }
-      radius: 23.0
-      color: '#4285f4'
-      border.width: 3
-      border.color: "white"
-    }
-
-    plugin: mapPlugin
-    center: centering ? QtPositioning.coordinate(latitude, longitude) : center
-    copyrightsVisible: false
-    zoomLevel: 16
-
-    PinchHandler {
-        id: pinch
-        target: null
-        onActiveChanged: if (active) {
-            map.startCentroid = map.toCoordinate(pinch.centroid.position, false)
-        }
-        onScaleChanged: (delta) => {
-            map.zoomLevel += Math.log2(delta)
-            map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
-        }
-        onRotationChanged: (delta) => {
-            map.bearing -= delta
-            map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
-        }
-        grabPermissions: PointerHandler.TakeOverForbidden
-    }
-    WheelHandler {
-        id: wheel
-        // workaround for QTBUG-87646 / QTBUG-112394 / QTBUG-112432:
-        // Magic Mouse pretends to be a trackpad but doesn't work with PinchHandler
-        // and we don't yet distinguish mice and trackpads on Wayland either
-        acceptedDevices: Qt.platform.pluginName === "cocoa" || Qt.platform.pluginName === "wayland"
-                         ? PointerDevice.Mouse | PointerDevice.TouchPad
-                         : PointerDevice.Mouse
-        rotationScale: 1/120
-        property: "zoomLevel"
-    }
-    DragHandler {
-        id: drag
-        target: null
-        onTranslationChanged: (delta) => map.pan(-delta.x, -delta.y)
-    }
-
-    onZoomLevelChanged: {
-      // Scaling the location marker according to zoom level.
-      // Marker radius = meters per pixel * 10
-      circle.radius = 156543.03392 * Math.cos(latitude * Math.PI / 180) / Math.pow(2, map.zoomLevel) * 10
-    }
+    source: "NavSatMapView.qml"
   }
 
-  RoundButton {
-    height: 40
-    width: 40
-    anchors.top: map.top
-    anchors.right: map.right
+  Binding {
+    target: mapLoader.item
+    property: "latitude"
+    value: navSatMap.latitude
+    when: mapLoader.status === Loader.Ready
+  }
 
-    // Strangely, \u2316 doesn't work on Bionic
-    text: "\u2732"
-    font.pixelSize: 25
+  Binding {
+    target: mapLoader.item
+    property: "longitude"
+    value: navSatMap.longitude
+    when: mapLoader.status === Loader.Ready
+  }
 
-    Material.background: Material.primary
-    Material.foreground: centering ? "white" : "black"
-
-    onClicked: {
-      centering = true
-    }
-
-    hoverEnabled: true
-
-    ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
-    ToolTip.visible: hovered
-    ToolTip.text: qsTr("Track position")
+  Label {
+    anchors.fill: mapLoader
+    anchors.margins: 10
+    visible: mapLoader.status === Loader.Error
+    wrapMode: Text.WordWrap
+    horizontalAlignment: Text.AlignHCenter
+    verticalAlignment: Text.AlignVCenter
+    text: qsTr("Map not available: it needs the QtLocation QML module (Qt 6.5 or newer), which is not installed.")
   }
 
   Connections {

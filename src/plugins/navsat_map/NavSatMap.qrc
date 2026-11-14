@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="NavSatMap/">
   <file>NavSatMap.qml</file>
+  <file>NavSatMapView.qml</file>
 </qresource>
 </RCC>
