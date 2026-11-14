@@ -6,4 +6,3 @@ gz_gui_add_plugin(Publisher
   TEST_SOURCES
     Publisher_TEST.cc
 )
-

@@ -63,4 +63,3 @@ emitted by the `MinimalScene`.
 See how the `TransportSceneManager` installs an event filter with
 `installEventFilter`, registers an `eventFilter` callback and performs all
 rendering operations within the `OnRender` function.
-

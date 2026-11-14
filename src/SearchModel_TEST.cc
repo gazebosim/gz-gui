@@ -172,4 +172,3 @@ TEST(SearchModelTest, NestedStructure)
     EXPECT_EQ(countRowsOfIndex(id) + 1, 3);
   }
 }
-

@@ -4,4 +4,3 @@ gz_gui_add_plugin(NavSatMap
   QT_HEADERS
     NavSatMap.hh
 )
-
