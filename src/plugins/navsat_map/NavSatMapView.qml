@@ -127,8 +127,7 @@ Item {
     anchors.top: map.top
     anchors.right: map.right
 
-    // Strangely, ⌖ doesn't work on Bionic
-    text: "✲"
+    text: "\u2732"
     font.pixelSize: 25
 
     Material.background: Material.primary
