@@ -103,7 +103,15 @@ Item {
     anchors.leftMargin: -5
     anchors.rightMargin: -5
 
-    source: "NavSatMapView.qml"
+    // Created here, not with `source`, to log why it failed: the Loader only
+    // logs it as a warning, which the default verbosity hides.
+    sourceComponent: Qt.createComponent("NavSatMapView.qml")
+    onStatusChanged: {
+      if (status === Loader.Error) {
+        console.error("NavSatMap: map not available: " +
+                      sourceComponent.errorString())
+      }
+    }
   }
 
   Binding {
@@ -127,7 +135,7 @@ Item {
     wrapMode: Text.WordWrap
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
-    text: qsTr("Map not available: it needs the QtLocation QML module (Qt 6.5 or newer), which is not installed.")
+    text: qsTr("Map not available, see the log. It needs the QtLocation QML module (Qt 6.5 or newer).")
   }
 
   Connections {
