@@ -30,7 +30,8 @@ Item {
   property double longitude: 0.0
 
   // True to keep the map centered on the position. Dragging the map clears
-  // it and the "Track position" button sets it again.
+  // it and the "Track position" button sets it again. Zooming and rotating
+  // keep it.
   property bool centering: true
 
   Plugin {
@@ -69,13 +70,17 @@ Item {
         onActiveChanged: if (active) {
             map.startCentroid = map.toCoordinate(pinch.centroid.position, false)
         }
+        // While tracking, zoom and rotate around the vehicle, like the wheel
+        // does; otherwise the next position would move the map back.
         onScaleChanged: (delta) => {
             map.zoomLevel += Math.log2(delta)
-            map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
+            if (!mapView.centering)
+                map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
         }
         onRotationChanged: (delta) => {
             map.bearing -= delta
-            map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
+            if (!mapView.centering)
+                map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
         }
         grabPermissions: PointerHandler.TakeOverForbidden
     }
