@@ -129,13 +129,14 @@ void Publisher::OnPublish(const bool _checked)
   // Check it's possible to create message
   auto msg = msgs::Factory::New(msgType, msgData);
 
+  bool msgToTextResult = true;
   std::string msgToText;
   using google::protobuf::TextFormat;
   if (msg)
   {
-    TextFormat::PrintToString(*msg, &msgToText);
+    msgToTextResult = TextFormat::PrintToString(*msg, &msgToText);
   }
-  if (!msg || (msgToText.empty() && !msgData.empty()))
+  if (!msg || !msgToTextResult || (msgToText.empty() && !msgData.empty()))
   {
     ignerr << "Unable to create message of type[" << msgType << "] "
       << "with data[" << msgData << "].\n";

@@ -97,21 +97,21 @@ Dialog {
   // Connections (C++ signal to QML slot)
   Connections {
     target: MainWindow
-    function onMaterialThemeChanged() {
+    onMaterialThemeChanged: {
       updateTheme(MainWindow.materialTheme);
     }
   }
 
   Connections {
     target: MainWindow
-    function onMaterialPrimaryChanged() {
+    onMaterialPrimaryChanged: {
       updatePrimary(MainWindow.materialPrimary);
     }
   }
 
   Connections {
     target: MainWindow
-    function onMaterialAccentChanged() {
+    onMaterialAccentChanged: {
       updateAccent(MainWindow.materialAccent);
     }
   }

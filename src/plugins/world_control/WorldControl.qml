@@ -29,10 +29,10 @@ RowLayout {
 
   Connections {
     target: WorldControl
-    function onPlaying() {
+    onPlaying: {
       paused = false;
     }
-    function onPaused() {
+    onPaused: {
       paused = true;
     }
   }

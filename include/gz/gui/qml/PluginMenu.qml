@@ -26,7 +26,7 @@ Popup {
 
   Connections {
     target: MainWindow
-    function onConfigChanged() {
+    onConfigChanged: {
       filteredModel.model = MainWindow.PluginListModel()
     }
   }
