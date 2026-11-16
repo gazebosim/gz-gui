@@ -55,6 +55,7 @@ Item {
 
       ComboBox {
         id: combo
+        objectName: "topicsCombo"
         Layout.fillWidth: true
         model: _NavSatMap.topicList
         onCurrentIndexChanged: {
@@ -94,6 +95,7 @@ Item {
   // (Qt older than 6.5, or not installed), only the map is disabled.
   Loader {
     id: mapLoader
+    objectName: "mapLoader"
     anchors.top: configColumn.bottom
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -129,6 +131,7 @@ Item {
   }
 
   Label {
+    objectName: "mapNotAvailableLabel"
     anchors.fill: mapLoader
     anchors.margins: 10
     visible: mapLoader.status === Loader.Error
