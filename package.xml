@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>gz-gui9</name>
-  <version>9.0.2</version>
+  <version>9.1.0</version>
   <description>Gazebo GUI : Graphical interfaces for robotics applications</description>
   <maintainer email="caguero@honurobotics.com">Carlos Agüero</maintainer>
   <maintainer email="acordero@honurobotics.com">Alejandro Hernández Cordero</maintainer>
