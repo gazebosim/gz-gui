@@ -19,7 +19,6 @@
 
 #include <tinyxml2.h>
 #include <gz/utils/ImplPtr.hh>
-#include <memory>
 #include <string>
 
 #include "gz/gui/qt.h"

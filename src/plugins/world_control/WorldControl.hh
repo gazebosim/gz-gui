@@ -18,8 +18,6 @@
 #ifndef GZ_GUI_PLUGINS_WORLDCONTROL_HH_
 #define GZ_GUI_PLUGINS_WORLDCONTROL_HH_
 
-#include <memory>
-
 #include <gz/msgs/world_stats.pb.h>
 
 #include "gz/gui/Plugin.hh"

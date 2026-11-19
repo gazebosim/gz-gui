@@ -18,7 +18,8 @@
 #ifndef GZ_GUI_PLUGINS_PUBLISHER_HH_
 #define GZ_GUI_PLUGINS_PUBLISHER_HH_
 
-#include <memory>
+#include <QObject>
+#include <QString>
 
 #include "gz/gui/Plugin.hh"
 #include <gz/utils/ImplPtr.hh>

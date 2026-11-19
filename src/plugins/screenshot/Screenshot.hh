@@ -21,9 +21,10 @@
 #include <gz/msgs/boolean.pb.h>
 #include <gz/msgs/stringmsg.pb.h>
 
-#include <memory>
+#include <QEvent>
+#include <QObject>
+#include <QString>
 
-#include "gz/gui/qt.h"
 #include "gz/gui/Plugin.hh"
 
 #include <gz/utils/ImplPtr.hh>

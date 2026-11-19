@@ -18,10 +18,13 @@
 #ifndef GZ_GUI_PLUGINS_POINTCLOUD_HH_
 #define GZ_GUI_PLUGINS_POINTCLOUD_HH_
 
-#include <memory>
-
 #include <gz/msgs/float_v.pb.h>
 #include <gz/msgs/pointcloud_packed.pb.h>
+
+#include <QColor>
+#include <QObject>
+#include <QString>
+#include <QStringList>
 
 #include "gz/gui/Plugin.hh"
 

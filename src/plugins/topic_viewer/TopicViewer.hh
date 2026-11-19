@@ -18,7 +18,7 @@
 #ifndef GZ_GUI_PLUGINS_TOPICVIEWER_HH_
 #define GZ_GUI_PLUGINS_TOPICVIEWER_HH_
 
-#include <memory>
+#include <QStandardItemModel>
 
 #include <gz/gui/Plugin.hh>
 #include <gz/utils/ImplPtr.hh>

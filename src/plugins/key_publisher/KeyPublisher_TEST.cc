@@ -20,6 +20,7 @@
 
 #include <gz/common/Console.hh>
 #include <gz/common/Filesystem.hh>
+#include <gz/transport/Node.hh>
 #include <gz/utils/ExtraTestMacros.hh>
 
 #include "gz/gui/Application.hh"
