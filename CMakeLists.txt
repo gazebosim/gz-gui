@@ -13,10 +13,15 @@ find_package(gz-cmake REQUIRED)
 #============================================================================
 # Configure the project
 #============================================================================
-set(CMAKE_CXX_STANDARD 17)
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+if(CMAKE_CXX_STANDARD LESS 17)
+  message(FATAL_ERROR "${PROJECT_NAME} requires C++17 or newer")
+endif()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-gz_configure_project(VERSION_SUFFIX pre1)
+gz_configure_project(VERSION_SUFFIX pre2)
 
 #============================================================================
 # Set project-specific options
@@ -103,6 +108,11 @@ set(GZ_GUI_PLUGIN_RELATIVE_INSTALL_DIR
 # Configure the build
 #============================================================================
 gz_configure_build(QUIT_IF_BUILD_ERRORS)
+
+# Application.cc reads GZ_RENDERING_HAVE_VULKAN from gz/rendering/config.hh at
+# compile time.
+target_include_directories(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE
+  $<TARGET_PROPERTY:gz-rendering::gz-rendering,INTERFACE_INCLUDE_DIRECTORIES>)
 
 #============================================================================
 # gz command line support

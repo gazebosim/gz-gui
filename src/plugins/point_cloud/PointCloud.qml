@@ -85,11 +85,11 @@ ColumnLayout {
       onCurrentIndexChanged: {
         if (currentIndex < 0)
           return;
-        _PointCloud.On_PointCloudTopic(textAt(currentIndex));
+        _PointCloud.OnPointCloudTopic(textAt(currentIndex));
       }
       ToolTip.visible: hovered
       ToolTip.delay: Qt.styleHints.mousePressAndHoldInterval
-      ToolTip.text: qsTr("Gazebo Transport topics publishing _PointCloudPacked messages")
+      ToolTip.text: qsTr("Gazebo Transport topics publishing PointCloudPacked messages")
     }
 
     Label {

@@ -15,6 +15,7 @@
  *
 */
 
+#include <chrono>
 #include <sstream>
 #include <gz/common/Console.hh>
 #include <gz/common/StringUtils.hh>
@@ -85,7 +86,7 @@ class PlottingInterface::Implementation
   public: std::shared_ptr<double> plottingTimeRef = std::make_shared<double>();
 
   /// \brief timeout to update the plot with the timer
-  public: int timeout;
+  public: std::chrono::milliseconds timeout{0};
 
   /// \brief timer to update the plotting each time step
   public: QTimer timer {nullptr};
@@ -490,7 +491,7 @@ PlottingInterface::PlottingInterface():
           SIGNAL(plot(int, QString, double, double)), this,
           SLOT(onPlot(int, QString, double, double)));
 
-  this->dataPtr->timeout = 1;
+  this->dataPtr->timeout = std::chrono::milliseconds(1);
   this->InitTimer();
 
   App()->Engine()->rootContext()->setContextProperty("_PlottingIface", this);
@@ -579,7 +580,7 @@ void PlottingInterface::onPlot(int _chart, QString _fieldID,
 //////////////////////////////////////////////////////
 void PlottingInterface::UpdateTime()
 {
-  *this->dataPtr->plottingTimeRef += this->dataPtr->timeout * 0.001;
+  *this->dataPtr->plottingTimeRef += this->dataPtr->timeout.count() * 0.001;
 }
 
 //////////////////////////////////////////////////////

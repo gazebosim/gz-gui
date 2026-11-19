@@ -29,6 +29,10 @@
 
 #include <gz/plugin/Loader.hh>
 
+// For GZ_RENDERING_HAVE_VULKAN: only switch the Qt scene graph to Vulkan when
+// the rendering stack actually has Vulkan support compiled in.
+#include <gz/rendering/config.hh>
+
 #include "gz/gui/Application.hh"
 #include "gz/gui/config.hh"
 #include "gz/gui/Dialog.hh"
@@ -101,14 +105,30 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
   this->setOrganizationDomain("gazebosim.org");
   this->setApplicationName("Gazebo GUI");
 
+  // defaultApiName is only used by the no-Vulkan fallback below, so it is
+  // unused in builds with Vulkan support.
 #ifdef __APPLE__
-  AvailableAPIs api = AvailableAPIs::Metal;
+  const AvailableAPIs defaultApi = AvailableAPIs::Metal;
+  [[maybe_unused]] const char *defaultApiName = "Metal";
 #else
-  AvailableAPIs api = AvailableAPIs::OpenGL;
+  const AvailableAPIs defaultApi = AvailableAPIs::OpenGL;
+  [[maybe_unused]] const char *defaultApiName = "OpenGL";
 #endif
-  if (_renderEngineGuiApiBackend)
+  AvailableAPIs api = defaultApi;
+  // Backend selection: explicit C++ option first, then env var fallback,
+  // then the platform default. The env var lets standalone
+  // `gz gui -c <config>` pick a backend when no CLI flag is forwarded by the
+  // caller.
+  std::string renderEngineGuiApiBackend =
+      _renderEngineGuiApiBackend ? _renderEngineGuiApiBackend : "";
+  if (renderEngineGuiApiBackend.empty())
   {
-    const std::string renderEngineGuiApiBackend = _renderEngineGuiApiBackend;
+    common::env("GZ_GUI_RENDER_ENGINE_GUI_API_BACKEND",
+                renderEngineGuiApiBackend);
+  }
+  renderEngineGuiApiBackend = common::lowercase(renderEngineGuiApiBackend);
+  if (!renderEngineGuiApiBackend.empty())
+  {
     if (renderEngineGuiApiBackend == "vulkan")
       api = AvailableAPIs::Vulkan;
 #ifdef __APPLE__
@@ -116,6 +136,26 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
       api = AvailableAPIs::Metal;
 #endif
   }
+
+  // If the requested API is not actually available in this build, fall back to
+  // the platform default (OpenGL, or Metal on macOS) *before* the Qt scene
+  // graph backend and the "renderEngineBackendApiName" window property are
+  // derived from `api`. This keeps the whole GUI stack consistent (Qt scene
+  // graph + the render interface the MinimalScene plugin creates). On macOS,
+  // falling back to OpenGL would leave Qt on its default Metal scene graph
+  // under an OpenGL render interface. Requesting a backend that was not built
+  // in (e.g. Vulkan when gz-rendering/gz-gui were built without Vulkan support)
+  // would otherwise leave the render interface null and crash during init.
+#if !(defined(GZ_RENDERING_HAVE_VULKAN) && QT_CONFIG(vulkan))
+  if (api == AvailableAPIs::Vulkan)
+  {
+    gzerr << "Vulkan GUI graphics backend was requested but this build has no "
+          << "Vulkan support. Rebuild gz-rendering and gz-gui with Vulkan "
+          << "support to use it. Falling back to " << defaultApiName << "."
+          << std::endl;
+    api = defaultApi;
+  }
+#endif
 
 #ifdef __APPLE__
   if (api == AvailableAPIs::Metal)
@@ -156,6 +196,11 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
     qputenv("QT_VULKAN_DEVICE_EXTENSIONS",
             "VK_KHR_maintenance2;VK_EXT_shader_subgroup_vote;"
             "VK_EXT_shader_viewport_index_layer;"
+            // External memory / semaphore: required for cross-device FD import
+            // (VkImage exported by a render engine, imported onto Qt's QRhi
+            // device).
+            "VK_KHR_external_memory;VK_KHR_external_memory_fd;"
+            "VK_KHR_external_semaphore;VK_KHR_external_semaphore_fd;"
 #  ifdef GZ_USE_VULKAN_DEBUG_EXT
             ";VK_EXT_debug_marker"
 #  endif
@@ -423,7 +468,7 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
   if (auto *defaultExitActionElem =
     _winElem.FirstChildElement("default_exit_action"))
   {
-    ExitAction action{ExitAction::CLOSE_GUI};
+    ExitAction action = ExitAction::CLOSE_GUI;
     const auto value = common::lowercase(defaultExitActionElem->GetText());
     if (value == "shutdown_server")
     {
@@ -441,7 +486,7 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
   // Dialog on exit
   if (auto *dialogOnExitElem = _winElem.FirstChildElement("dialog_on_exit"))
   {
-    bool showDialogOnExit{false};
+    bool showDialogOnExit = false;
     dialogOnExitElem->QueryBoolText(&showDialogOnExit);
     this->dataPtr->mainWin->SetShowDialogOnExit(showDialogOnExit);
   }
@@ -458,14 +503,14 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
     if (auto *showShutdownElem =
       dialogOnExitOptionsElem->FirstChildElement("show_shutdown_button"))
     {
-      bool showShutdownButton{false};
+      bool showShutdownButton = false;
       showShutdownElem->QueryBoolText(&showShutdownButton);
       this->dataPtr->mainWin->SetExitDialogShowShutdown(showShutdownButton);
     }
     if (auto *showCloseGuiElem =
       dialogOnExitOptionsElem->FirstChildElement("show_close_gui_button"))
     {
-      bool showCloseGuiButton{false};
+      bool showCloseGuiButton = false;
       showCloseGuiElem->QueryBoolText(&showCloseGuiButton);
       this->dataPtr->mainWin->SetExitDialogShowCloseGui(showCloseGuiButton);
     }
@@ -484,7 +529,7 @@ bool Application::LoadWindowConfig(const tinyxml2::XMLElement &_winElem)
   }
 
   // Server control service topic
-  std::string serverControlService{"/server_control"};
+  std::string serverControlService = "/server_control";
   auto *serverControlElem =
     _winElem.FirstChildElement("server_control_service");
   if (nullptr != serverControlElem && nullptr != serverControlElem->GetText())
@@ -676,7 +721,7 @@ bool Application::LoadPlugin(const std::string &_filename,
 std::shared_ptr<Plugin> Application::PluginByName(
     const std::string &_pluginName) const
 {
-  for (auto &plugin : this->dataPtr->pluginsAdded)
+  for (const auto &plugin : this->dataPtr->pluginsAdded)
   {
     auto *cardItem = plugin->CardItem();
     if (!cardItem)
@@ -877,7 +922,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>>
       // This computation could underflow the unsigned range, but that is okay
       // as in such case we would check if the suffix is placed somewhere much
       // further than allowed filename length.
-      const auto suffixPos = plugin.length() - strlen(SHARED_LIBRARY_SUFFIX);
+      const auto suffixPos = plugin.size() - strlen(SHARED_LIBRARY_SUFFIX);
 
       if (plugin.find(SHARED_LIBRARY_PREFIX) == 0 &&
           plugin.rfind(SHARED_LIBRARY_SUFFIX) == suffixPos)
