@@ -14,7 +14,6 @@
  * limitations under the License.
  *
 */
-import Qt5Compat.GraphicalEffects
 import QtQuick 2.9
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
@@ -49,20 +48,11 @@ Rectangle {
     visible: _MinimalScene.loadingError.length == 0
   }
 
-
-  onParentChanged: {
-    if (undefined === parent)
-      return;
-
-      width = Qt.binding(function() {return parent.parent.width})
-      height = Qt.binding(function() {return parent.parent.height})
-  }
-
   DropArea {
-  anchors.fill: renderWindow
+  anchors.fill: parent
 
-  onDropped: {
-    _MinimalScene.OnDropped(drop.text, drag.x, drag.y)
+  onDropped: (drop) => {
+    _MinimalScene.OnDropped(drop.text, drop.x, drop.y)
   }
 
   Label {
