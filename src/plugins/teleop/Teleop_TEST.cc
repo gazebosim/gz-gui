@@ -60,24 +60,21 @@ class TeleopTest : public ::testing::TestWithParam<
       std::string extraTags;
       if (const auto &params = GetParam(); params.has_value())
       {
-        const auto forwardVel = params.value()[0];
-        const auto verticalVel = params.value()[1];
-        const auto yawVel = params.value()[2];
+        const auto fwd = params.value()[0];
+        const auto vrt = params.value()[1];
+        const auto yaw = params.value()[2];
 
-        if (forwardVel >= 0.0)
-          this->maxForwardVel = forwardVel;
-        if (verticalVel >= 0.0)
-          this->maxVerticalVel = verticalVel;
-        if (yawVel >= 0.0)
-          this->maxYawVel = yawVel;
+        if (fwd >= 0.0)
+          this->maxForwardVel = fwd;
+        if (vrt >= 0.0)
+          this->maxVerticalVel = vrt;
+        if (yaw >= 0.0)
+          this->maxYawVel = yaw;
 
         std::stringstream tags;
-        tags << "<max_forward_velocity>"
-             << forwardVel << "</max_forward_velocity>"
-                "<max_vertical_velocity>"
-             << verticalVel << "</max_vertical_velocity>"
-                "<max_yaw_velocity>"
-             << yawVel << "</max_yaw_velocity>";
+        tags << "<max_forward_velocity>" << fwd << "</max_forward_velocity>"
+                "<max_vertical_velocity>" << vrt << "</max_vertical_velocity>"
+                "<max_yaw_velocity>" << yaw << "</max_yaw_velocity>";
         extraTags = tags.str();
       }
 

@@ -16,6 +16,7 @@
 */
 
 #include <gz/utils/ImplPtr.hh>
+#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -199,9 +200,10 @@ void Teleop::SetTopic(const QString &_topic)
 /////////////////////////////////////////////////
 void Teleop::SetMaxForwardVel(double _velocity)
 {
-  if (_velocity < 0.0)
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
   {
-    gzwarn << "MaxForwardVel should be >= 0.0" << std::endl;
+    gzwarn << "Ignoring max forward velocity [" << _velocity
+           << "], it must be finite and >= 0" << std::endl;
     return;
   }
   this->dataPtr->maxForwardVel = _velocity;
@@ -217,9 +219,10 @@ double Teleop::MaxForwardVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxVerticalVel(double _velocity)
 {
-  if (_velocity < 0.0)
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
   {
-    gzwarn << "MaxVerticalVel should be >= 0.0" << std::endl;
+    gzwarn << "Ignoring max vertical velocity [" << _velocity
+           << "], it must be finite and >= 0" << std::endl;
     return;
   }
   this->dataPtr->maxVerticalVel = _velocity;
@@ -235,9 +238,10 @@ double Teleop::MaxVerticalVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxYawVel(double _velocity)
 {
-  if (_velocity < 0.0)
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
   {
-    gzwarn << "MaxYawVel should be >= 0.0" << std::endl;
+    gzwarn << "Ignoring max yaw velocity [" << _velocity
+           << "], it must be finite and >= 0" << std::endl;
     return;
   }
   this->dataPtr->maxYawVel = _velocity;
