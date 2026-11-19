@@ -32,7 +32,7 @@ If you have Gazebo Tools installed, you can use the `gz gui` command line tool:
       --force-version <VERSION>  Use a specific library version.
 
       --versions                 Show the available versions.
-      
+
     Environment variables:
       GZ_GUI_RESOURCE_PATH    Colon separated paths used to locate GUI
      resources such as configuration files.

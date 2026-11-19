@@ -6,4 +6,3 @@ gz_gui_add_plugin(ShutdownButton
   TEST_SOURCES
     ShutdownButton_TEST.cc
 )
-

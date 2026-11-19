@@ -315,7 +315,7 @@ bool TransportSceneManager::eventFilter(QObject *_obj, QEvent *_event)
 /////////////////////////////////////////////////
 void TransportSceneManager::Implementation::Request()
 {
-  // wait for the service to be advertized
+  // wait for the service to be advertised
   std::vector<transport::ServicePublisher> publishers;
   const std::chrono::duration<double> sleepDuration{1.0};
   const std::size_t tries = 30;
