@@ -136,8 +136,11 @@ namespace gz::gui::plugins
     ///  \brief Constructor
     public: GzRenderer();
 
-    /// \param[in] _renderSync RenderSync to safely
-    /// synchronize Qt and worker thread (this)
+    /// \brief Render the scene into the camera's render texture. Must be
+    /// called with the Qt thread blocked, which RenderThread::RenderNext()
+    /// takes care of.
+    /// \param[in] _renderSync Unused, RenderThread::RenderNext() holds it
+    /// around this call
     /// \param[in] _renderThreadRhi Our caller
     public: void Render(RenderSync *_renderSync,
                         RenderThreadRhi &_renderThreadRhi);
@@ -478,10 +481,13 @@ namespace gz::gui::plugins
     // public slots: void NewTexture(uint _id, const QSize &_size);
     public slots: void NewTexture(void* _texturePtr, const QSize &_size);
 
-    /// \brief Before the scene graph starts to render, we update to the
-    /// pending texture
+    /// \brief Before the scene graph starts to render, let the worker thread
+    /// render the frame (see RenderSync) and then update to the texture it
+    /// handed over
     public slots: void PrepareNode();
 
+    /// \brief Signal emitted by PrepareNode() to queue the worker thread's
+    /// next render cycle
     /// \param[in] _renderSync RenderSync to send to the worker thread
           signals: void TextureInUse(gz::gui::plugins::RenderSync *_renderSync);
 
