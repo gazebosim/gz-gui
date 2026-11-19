@@ -58,10 +58,11 @@
 #  include <gz/rendering/RenderEngineVulkanExternalDeviceStructs.hh>
 #endif  // GZ_GUI_HAVE_VULKAN
 
+#include <QGuiApplication>
+
 #if GZ_GUI_HAVE_WAYLAND
-#  include <QGuiApplication>
 #  include <QtGui/qguiapplication_platform.h>
-#  include "WaylandNativeSurface.hh"
+#  include <wayland-client.h>
 #endif  // GZ_GUI_HAVE_WAYLAND
 
 Q_DECLARE_OPAQUE_POINTER(gz::gui::plugins::RenderSync*)
@@ -123,14 +124,6 @@ class GzRenderer::Implementation
 
   /// \brief Render hardware interface for the texture
   public: std::unique_ptr<GzCameraTextureRhi> rhi;
-
-#if GZ_GUI_HAVE_WAYLAND
-  /// \brief Throwaway Wayland surface used only to bootstrap OGRE-Next's
-  /// native Wayland EGL primary render window (see WaylandNativeSurface's
-  /// class comment). Must outlive the render engine, hence owned here
-  /// rather than as a function-local in Initialize().
-  public: std::unique_ptr<WaylandNativeSurface> waylandSurface;
-#endif  // GZ_GUI_HAVE_WAYLAND
 };
 
 /// \brief Qt and Ogre rendering is happening in different threads
@@ -703,20 +696,12 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   // Load engine if there's no engine yet
   if (loadedEngines.empty())
   {
-#if GZ_GUI_HAVE_WAYLAND
-    bool nativeWayland = QGuiApplication::platformName() == "wayland";
-#else
-    bool nativeWayland = false;
-#endif  // GZ_GUI_HAVE_WAYLAND
+    const bool nativeWayland = GZ_GUI_HAVE_WAYLAND &&
+        QGuiApplication::platformName() == "wayland";
 
-    gzdbg << "[GUI] Qt platform: ["
+    gzdbg << "Qt platform: ["
           << QGuiApplication::platformName().toStdString()
-          << "], GZ_GUI_HAVE_WAYLAND=" <<
-#if GZ_GUI_HAVE_WAYLAND
-          "1"
-#else
-          "0"
-#endif  // GZ_GUI_HAVE_WAYLAND
+          << "], GZ_GUI_HAVE_WAYLAND=" << GZ_GUI_HAVE_WAYLAND
           << ", nativeWayland=" << (nativeWayland ? "true" : "false")
           << std::endl;
 
@@ -726,28 +711,33 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
       auto *waylandApp =
           qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>();
       wl_display *display = waylandApp ? waylandApp->display() : nullptr;
-      if (!display)
+      wl_compositor *compositor =
+          waylandApp ? waylandApp->compositor() : nullptr;
+      if (!display || !compositor)
       {
-        return "Failed to obtain wl_display from Qt's Wayland platform "
-               "integration.";
+        return "Failed to obtain wl_display / wl_compositor from Qt's "
+               "Wayland platform integration.";
       }
 
-      try
-      {
-        this->dataPtr->waylandSurface =
-            std::make_unique<WaylandNativeSurface>(display);
-      }
-      catch (const std::exception &_e)
-      {
-        return std::string(
-            "Failed to create a native Wayland surface: ") + _e.what();
-      }
+      // Role-less, never-mapped surface that only bootstraps OGRE-Next's
+      // primary Wayland EGL window; the scene itself is rendered to an
+      // offscreen texture handed to Qt Quick. Created on Qt's own
+      // wl_compositor, so no registry roundtrip on Qt's event queue.
+      // Static and intentionally never destroyed: the render engine is
+      // global and never unloaded, so the surface must outlive any single
+      // GzRenderer, and the wl_display is already gone by static
+      // destruction time.
+      static wl_surface *bootstrapSurface = nullptr;
+      if (!bootstrapSurface)
+        bootstrapSurface = wl_compositor_create_surface(compositor);
+      if (!bootstrapSurface)
+        return "Failed to create a native Wayland surface.";
 
       this->dataPtr->rhiParams["wayland"] = "1";
       this->dataPtr->rhiParams["waylandDisplay"] =
           std::to_string(reinterpret_cast<size_t>(display));
-      this->dataPtr->rhiParams["waylandSurface"] = std::to_string(
-          reinterpret_cast<size_t>(this->dataPtr->waylandSurface->Surface()));
+      this->dataPtr->rhiParams["waylandSurface"] =
+          std::to_string(reinterpret_cast<size_t>(bootstrapSurface));
 #endif  // GZ_GUI_HAVE_WAYLAND
     }
     else

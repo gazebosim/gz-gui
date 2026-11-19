@@ -10,6 +10,7 @@ libgz-rotary-utils-dev
 libprotobuf-dev
 libprotoc-dev
 libtinyxml2-dev
+libwayland-dev
 qml6-module-qt-labs-folderlistmodel
 qml6-module-qt-labs-platform
 qml6-module-qt-labs-settings

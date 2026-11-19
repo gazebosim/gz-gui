@@ -225,7 +225,7 @@ Application::Application(int &_argc, char **_argv, const WindowType _type,
     // initialise against it). XWayland/GLX never hit this because GLX
     // contexts are inherently desktop GL only. Setting this unconditionally
     // is harmless for XWayland/GLX too - it's already desktop GL there.
-    QSurfaceFormat format;
+    QSurfaceFormat format = QSurfaceFormat::defaultFormat();
     format.setRenderableType(QSurfaceFormat::OpenGL);
     QSurfaceFormat::setDefaultFormat(format);
 
