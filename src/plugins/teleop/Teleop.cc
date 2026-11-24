@@ -15,11 +15,7 @@
  *
 */
 
-<<<<<<< HEAD
-=======
-#include <gz/utils/ImplPtr.hh>
 #include <cmath>
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
 #include <iostream>
 #ifdef _MSC_VER
 #pragma warning(push, 0)
@@ -31,12 +27,9 @@
 
 #include "Teleop.hh"
 
-<<<<<<< HEAD
 #include <string>
 
-=======
 #include <gz/common/Console.hh>
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
 #include <gz/plugin/Register.hh>
 
 #include <gz/gui/Application.hh>
@@ -218,8 +211,8 @@ void Teleop::SetMaxForwardVel(double _velocity)
 {
   if (!std::isfinite(_velocity) || _velocity < 0.0)
   {
-    gzwarn << "Ignoring max forward velocity [" << _velocity
-           << "], it must be finite and >= 0" << std::endl;
+    ignwarn << "Ignoring max forward velocity [" << _velocity
+            << "], it must be finite and >= 0" << std::endl;
     return;
   }
   this->dataPtr->maxForwardVel = _velocity;
@@ -237,8 +230,8 @@ void Teleop::SetMaxVerticalVel(double _velocity)
 {
   if (!std::isfinite(_velocity) || _velocity < 0.0)
   {
-    gzwarn << "Ignoring max vertical velocity [" << _velocity
-           << "], it must be finite and >= 0" << std::endl;
+    ignwarn << "Ignoring max vertical velocity [" << _velocity
+            << "], it must be finite and >= 0" << std::endl;
     return;
   }
   this->dataPtr->maxVerticalVel = _velocity;
@@ -256,8 +249,8 @@ void Teleop::SetMaxYawVel(double _velocity)
 {
   if (!std::isfinite(_velocity) || _velocity < 0.0)
   {
-    gzwarn << "Ignoring max yaw velocity [" << _velocity
-           << "], it must be finite and >= 0" << std::endl;
+    ignwarn << "Ignoring max yaw velocity [" << _velocity
+            << "], it must be finite and >= 0" << std::endl;
     return;
   }
   this->dataPtr->maxYawVel = _velocity;

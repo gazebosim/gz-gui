@@ -193,11 +193,7 @@ class TeleopTest : public ::testing::TestWithParam<
 };
 
 /////////////////////////////////////////////////
-<<<<<<< HEAD
-TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
-=======
-TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ButtonCommand))
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
+TEST_P(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(ButtonCommand))
 {
   this->forwardVel = 0.1;
   this->verticalVel = 0.2;
@@ -218,11 +214,7 @@ TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(ButtonCommand))
 }
 
 /////////////////////////////////////////////////
-<<<<<<< HEAD
-TEST_F(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
-=======
-TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
+TEST_P(TeleopTest, IGN_UTILS_TEST_DISABLED_ON_WIN32(KeyboardCommand))
 {
   QKeyEvent *keypress_W = new QKeyEvent(QKeyEvent::KeyPress,
     Qt::Key_W, Qt::NoModifier);
@@ -234,34 +226,20 @@ TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   // Enables key input.
   plugin->OnKeySwitch(true);
 
-<<<<<<< HEAD
   igndbg << "Press W" << std::endl;
-  this->forwardVel = this->kMaxForwardVel;
-  this->KeyEvent(true, Qt::Key_W);
-
-  igndbg << "Press D" << std::endl;
-  this->yawVel = -this->kMaxYawVel;
-=======
-  gzdbg << "Press W" << std::endl;
   this->forwardVel = this->maxForwardVel;
   this->KeyEvent(true, Qt::Key_W);
 
-  gzdbg << "Press D" << std::endl;
+  igndbg << "Press D" << std::endl;
   this->yawVel = -this->maxYawVel;
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
   this->KeyEvent(true, Qt::Key_D);
 
   igndbg << "Release D" << std::endl;
   this->yawVel = 0.0;
   this->KeyEvent(false, Qt::Key_D);
 
-<<<<<<< HEAD
   igndbg << "Press A" << std::endl;
-  this->yawVel = this->kMaxYawVel;
-=======
-  gzdbg << "Press A" << std::endl;
   this->yawVel = this->maxYawVel;
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
   this->KeyEvent(true, Qt::Key_A);
 
   igndbg << "Release A" << std::endl;
@@ -272,13 +250,8 @@ TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   this->forwardVel = 0.0;
   this->KeyEvent(false, Qt::Key_W);
 
-<<<<<<< HEAD
   igndbg << "Press S" << std::endl;
-  this->forwardVel = -this->kMaxForwardVel;
-=======
-  gzdbg << "Press S" << std::endl;
   this->forwardVel = -this->maxForwardVel;
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
   this->KeyEvent(true, Qt::Key_S);
 
   igndbg << "Release S" << std::endl;
@@ -291,21 +264,12 @@ TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   igndbg << "Release X" << std::endl;
   this->KeyEvent(false, Qt::Key_X);
 
-<<<<<<< HEAD
   igndbg << "Press Q" << std::endl;
-  this->verticalVel = this->kMaxVerticalVel;
-  this->KeyEvent(true, Qt::Key_Q);
-
-  igndbg << "Press E" << std::endl;
-  this->verticalVel = -this->kMaxVerticalVel;
-=======
-  gzdbg << "Press Q" << std::endl;
   this->verticalVel = this->maxVerticalVel;
   this->KeyEvent(true, Qt::Key_Q);
 
-  gzdbg << "Press E" << std::endl;
+  igndbg << "Press E" << std::endl;
   this->verticalVel = -this->maxVerticalVel;
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
   this->KeyEvent(true, Qt::Key_E);
 
   igndbg << "Release E" << std::endl;
@@ -313,7 +277,7 @@ TEST_P(TeleopTest, GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(KeyboardCommand))
   this->KeyEvent(false, Qt::Key_E);
 }
 
-INSTANTIATE_TEST_SUITE_P(
+INSTANTIATE_TEST_CASE_P(
     TeleopOperations,
     TeleopTest,
     ::testing::Values(
