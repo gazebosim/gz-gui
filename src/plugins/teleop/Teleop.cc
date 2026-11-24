@@ -16,6 +16,7 @@
 */
 
 #include <gz/utils/ImplPtr.hh>
+#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -23,6 +24,7 @@
 
 #include "Teleop.hh"
 
+#include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
 
 #include <gz/gui/Application.hh>
@@ -126,6 +128,13 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto topicElem = _pluginElem->FirstChildElement("topic");
     if (nullptr != topicElem && nullptr != topicElem->GetText())
       this->SetTopic(topicElem->GetText());
+    if (auto maxFwd = _pluginElem->FirstChildElement("max_forward_velocity"))
+      this->SetMaxForwardVel(maxFwd->DoubleText(this->dataPtr->maxForwardVel));
+    if (auto maxVrt = _pluginElem->FirstChildElement("max_vertical_velocity"))
+      this->SetMaxVerticalVel(
+        maxVrt->DoubleText(this->dataPtr->maxVerticalVel));
+    if (auto maxYaw = _pluginElem->FirstChildElement("max_yaw_velocity"))
+      this->SetMaxYawVel(maxYaw->DoubleText(this->dataPtr->maxYawVel));
   }
 
   if (auto *qw = App() ? App()->findChild<MainWindow *>() ?
@@ -191,6 +200,12 @@ void Teleop::SetTopic(const QString &_topic)
 /////////////////////////////////////////////////
 void Teleop::SetMaxForwardVel(double _velocity)
 {
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
+  {
+    gzwarn << "Ignoring max forward velocity [" << _velocity
+           << "], it must be finite and >= 0" << std::endl;
+    return;
+  }
   this->dataPtr->maxForwardVel = _velocity;
   emit this->MaxForwardVelChanged();
 }
@@ -204,6 +219,12 @@ double Teleop::MaxForwardVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxVerticalVel(double _velocity)
 {
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
+  {
+    gzwarn << "Ignoring max vertical velocity [" << _velocity
+           << "], it must be finite and >= 0" << std::endl;
+    return;
+  }
   this->dataPtr->maxVerticalVel = _velocity;
   emit this->MaxVerticalVelChanged();
 }
@@ -217,6 +238,12 @@ double Teleop::MaxVerticalVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxYawVel(double _velocity)
 {
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
+  {
+    gzwarn << "Ignoring max yaw velocity [" << _velocity
+           << "], it must be finite and >= 0" << std::endl;
+    return;
+  }
   this->dataPtr->maxYawVel = _velocity;
   emit this->MaxYawVelChanged();
 }
