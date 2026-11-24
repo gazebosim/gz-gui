@@ -32,6 +32,7 @@ gz_create_core_library(SOURCES
   ${sources}
   ${headers_MOC}
   ${resources_RCC}
+  CXX_STANDARD ${CMAKE_CXX_STANDARD}
 )
 gz_add_get_install_prefix_impl(GET_INSTALL_PREFIX_FUNCTION gz::gui::getInstallPrefix
                                GET_INSTALL_PREFIX_HEADER gz/gui/InstallationDirectories.hh
