@@ -15,11 +15,7 @@
  *
 */
 
-<<<<<<< HEAD
-=======
-#include <gz/utils/ImplPtr.hh>
 #include <cmath>
->>>>>>> 858827f (Teleop: make default velocities configurable (#784))
 #include <iostream>
 #include <string>
 
