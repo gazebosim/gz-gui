@@ -164,10 +164,13 @@ ColumnLayout {
       }
       ColorDialog {
         id: minColorDialog
+        // Qt 6.4 looks up the parent window only on creation, before gz-gui puts the
+        // card in a window; without it the non-native dialog never opens.
+        parentWindow: minColorButton.Window.window
         title: "Choose a color for the minimum value"
         visible: false
         onAccepted: {
-          _PointCloud.SetMinColor(minColorDialog.color)
+          _PointCloud.SetMinColor(minColorDialog.selectedColor)
           minColorDialog.close()
         }
         onRejected: {
@@ -194,10 +197,13 @@ ColumnLayout {
       }
       ColorDialog {
         id: maxColorDialog
+        // Qt 6.4 looks up the parent window only on creation, before gz-gui puts the
+        // card in a window; without it the non-native dialog never opens.
+        parentWindow: maxColorButton.Window.window
         title: "Choose a color for the maximum value"
         visible: false
         onAccepted: {
-          _PointCloud.SetMaxColor(maxColorDialog.color)
+          _PointCloud.SetMaxColor(maxColorDialog.selectedColor)
           maxColorDialog.close()
         }
         onRejected: {
