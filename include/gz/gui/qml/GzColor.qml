@@ -19,7 +19,6 @@ import QtQuick.Controls 2.1
 import QtQuick.Dialogs
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.1
-import Qt.labs.platform
 
 
 // RGBA using range 0 - 1.0
@@ -55,14 +54,17 @@ Item {
 
   ColorDialog {
     id: gzColorDialog
+    // Qt 6.4 looks up the parent window only on creation, before gz-gui puts the
+    // card in a window; without it the non-native dialog never opens.
+    parentWindow: gzColorRoot.Window.window
     title: "Choose a color"
     visible: false
     options: ColorDialog.ShowAlphaChannel
     onAccepted: {
-      gzColorRoot.r = gzColorDialog.color.r
-      gzColorRoot.g = gzColorDialog.color.g
-      gzColorRoot.b = gzColorDialog.color.b
-      gzColorRoot.a = gzColorDialog.color.a
+      gzColorRoot.r = gzColorDialog.selectedColor.r
+      gzColorRoot.g = gzColorDialog.selectedColor.g
+      gzColorRoot.b = gzColorDialog.selectedColor.b
+      gzColorRoot.a = gzColorDialog.selectedColor.a
       gzColorRoot.gzColorSet()
       gzColorDialog.close()
     }
