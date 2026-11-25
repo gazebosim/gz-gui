@@ -58,6 +58,13 @@
 #  include <gz/rendering/RenderEngineVulkanExternalDeviceStructs.hh>
 #endif  // GZ_GUI_HAVE_VULKAN
 
+#include <QGuiApplication>
+
+#if GZ_GUI_HAVE_WAYLAND
+#  include <QtGui/qguiapplication_platform.h>
+#  include <wayland-client.h>
+#endif  // GZ_GUI_HAVE_WAYLAND
+
 Q_DECLARE_OPAQUE_POINTER(gz::gui::plugins::RenderSync*)
 
 namespace gz::gui::plugins
@@ -689,7 +696,55 @@ std::string GzRenderer::Initialize(RenderThreadRhi &_rhi)
   // Load engine if there's no engine yet
   if (loadedEngines.empty())
   {
-    this->dataPtr->rhiParams["winID"] = std::to_string(quickWindow->winId());
+    const bool nativeWayland = GZ_GUI_HAVE_WAYLAND &&
+        QGuiApplication::platformName() == "wayland";
+
+    gzdbg << "Qt platform: ["
+          << QGuiApplication::platformName().toStdString()
+          << "], GZ_GUI_HAVE_WAYLAND=" << GZ_GUI_HAVE_WAYLAND
+          << ", nativeWayland=" << (nativeWayland ? "true" : "false")
+          << std::endl;
+
+    if (nativeWayland)
+    {
+#if GZ_GUI_HAVE_WAYLAND
+      auto *waylandApp =
+          qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>();
+      wl_display *display = waylandApp ? waylandApp->display() : nullptr;
+      wl_compositor *compositor =
+          waylandApp ? waylandApp->compositor() : nullptr;
+      if (!display || !compositor)
+      {
+        return "Failed to obtain wl_display / wl_compositor from Qt's "
+               "Wayland platform integration.";
+      }
+
+      // Role-less, never-mapped surface that only bootstraps OGRE-Next's
+      // primary Wayland EGL window; the scene itself is rendered to an
+      // offscreen texture handed to Qt Quick. Created on Qt's own
+      // wl_compositor, so no registry roundtrip on Qt's event queue.
+      // Static and intentionally never destroyed: the render engine is
+      // global and never unloaded, so the surface must outlive any single
+      // GzRenderer, and the wl_display is already gone by static
+      // destruction time.
+      static wl_surface *bootstrapSurface = nullptr;
+      if (!bootstrapSurface)
+        bootstrapSurface = wl_compositor_create_surface(compositor);
+      if (!bootstrapSurface)
+        return "Failed to create a native Wayland surface.";
+
+      this->dataPtr->rhiParams["wayland"] = "1";
+      this->dataPtr->rhiParams["waylandDisplay"] =
+          std::to_string(reinterpret_cast<size_t>(display));
+      this->dataPtr->rhiParams["waylandSurface"] =
+          std::to_string(reinterpret_cast<size_t>(bootstrapSurface));
+#endif  // GZ_GUI_HAVE_WAYLAND
+    }
+    else
+    {
+      this->dataPtr->rhiParams["winID"] =
+          std::to_string(quickWindow->winId());
+    }
 
 #if GZ_GUI_HAVE_VULKAN
     // externalInstance & externalDevice MUST be declared at this scope

@@ -33,6 +33,22 @@
 
 #define GZ_GUI_HAVE_METAL __APPLE__
 
+// GZ_GUI_BUILD_HAVE_WAYLAND_CLIENT is a CMake-provided compile definition
+// (see this plugin's CMakeLists.txt), set when wayland-client was found at
+// configure time. QNativeInterface::QWaylandApplication (wl_display and
+// wl_compositor) was added in Qt 6.5 and is only declared when Qt was built
+// with Wayland support. The checks are nested so QT_CONFIG(wayland) is never
+// evaluated on older Qt, and GZ_GUI_HAVE_WAYLAND is always a plain 0 or 1.
+#if defined(GZ_GUI_BUILD_HAVE_WAYLAND_CLIENT) && \
+    QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+#  if QT_CONFIG(wayland)
+#    define GZ_GUI_HAVE_WAYLAND 1
+#  endif
+#endif
+#ifndef GZ_GUI_HAVE_WAYLAND
+#  define GZ_GUI_HAVE_WAYLAND 0
+#endif
+
 namespace gz::gui::plugins
 {
   /// \brief Render interface class to handle OpenGL / Metal compatibility
