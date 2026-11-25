@@ -58,7 +58,6 @@ Rectangle
   {
     main.idIncrementor++;
 
-    var chartComponent = Qt.createComponent("Chart.qml");
     var chartObject;
     // if the mode is many charts that are organized in horizontal layout
     if (multiChartsMode)
@@ -235,6 +234,12 @@ Rectangle
     anchors.topMargin: 10
     anchors.top: rowCharts.bottom
     anchors.bottom: parent.bottom
+  }
+
+  // Chart instantiated by addChart()
+  Component {
+    id: chartComponent
+    Chart {}
   }
 
   Rectangle {
