@@ -118,8 +118,8 @@ RowLayout {
    * Step button
    */
   Rectangle {
-     width: stepButton.width
-     height: stepButton.height
+     Layout.preferredWidth: stepButton.width
+     Layout.preferredHeight: stepButton.height
      color: "transparent"
 
     MouseArea {

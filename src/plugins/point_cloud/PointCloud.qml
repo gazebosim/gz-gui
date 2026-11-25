@@ -229,7 +229,7 @@ ColumnLayout {
 
   Item {
     Layout.columnSpan: 6
-    width: 10
+    Layout.preferredWidth: 10
     Layout.fillHeight: true
   }
 }

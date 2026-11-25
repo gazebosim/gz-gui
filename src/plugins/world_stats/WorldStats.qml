@@ -65,7 +65,6 @@ Rectangle {
     Label {
       id: compactLabel
       visible: showRealTimeFactor
-      width: 60
       verticalAlignment: Text.AlignVCenter
       Layout.alignment: Qt.AlignBottom
       Layout.bottomMargin: hideToolButton.height * 0.3

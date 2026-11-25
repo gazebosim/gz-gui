@@ -39,7 +39,6 @@ Item {
     width: parent.width
 
     RowLayout {
-      width: parent.width
       visible: showPicker
 
       Layout.fillWidth: true
@@ -72,9 +71,9 @@ Item {
     }
 
     RowLayout {
-      width: parent.width
+      Layout.fillWidth: true
       Item {
-        height: 1
+        Layout.preferredHeight: 1
         Layout.fillWidth: true
       }
       Text {
@@ -85,7 +84,7 @@ Item {
         text: "<b>Longitude: </b>" + longitude.toFixed(6)
       }
       Item {
-        height: 1
+        Layout.preferredHeight: 1
         Layout.fillWidth: true
       }
     }

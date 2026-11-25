@@ -179,7 +179,7 @@ Item {
 
       Rectangle {
         color: "transparent"
-        height: 40
+        Layout.preferredHeight: 40
         Layout.preferredWidth: xText.width + 40
         Loader {
           id: xPlot
@@ -200,7 +200,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: xLoader
           anchors.fill: parent
@@ -214,7 +214,7 @@ Item {
 
       Rectangle {
         color: "transparent"
-        height: 40
+        Layout.preferredHeight: 40
         Layout.preferredWidth: rollText.width + 40
         Loader {
           id: rollPlot
@@ -235,7 +235,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: rollLoader
           anchors.fill: parent
@@ -249,7 +249,7 @@ Item {
 
       Rectangle {
         color: "transparent"
-        height: 40
+        Layout.preferredHeight: 40
         Layout.preferredWidth: yText.width + 40
         Loader {
           id: yPlot
@@ -270,7 +270,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: yLoader
           anchors.fill: parent
@@ -284,7 +284,7 @@ Item {
 
        Rectangle {
         color: "transparent"
-        height: 40
+        Layout.preferredHeight: 40
         Layout.preferredWidth: pitchText.width + 40
         Loader {
           id: pitchPlot
@@ -305,7 +305,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: pitchLoader
           anchors.fill: parent
@@ -319,7 +319,7 @@ Item {
 
       Rectangle {
         color: "transparent"
-        height: 40
+        Layout.preferredHeight: 40
         Layout.preferredWidth: zText.width + 40
         Loader {
           id: zPlot
@@ -340,7 +340,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: zLoader
           anchors.fill: parent
@@ -354,7 +354,7 @@ Item {
 
       Rectangle {
         color: "transparent"
-        height: 40
+        Layout.preferredHeight: 40
         Layout.preferredWidth: yawText.width + 40
         Loader {
           id: yawPlot
@@ -375,7 +375,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: yawLoader
           anchors.fill: parent
