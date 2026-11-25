@@ -15,6 +15,7 @@
  *
 */
 
+#include <cmath>
 #include <iostream>
 #ifdef _MSC_VER
 #pragma warning(push, 0)
@@ -28,6 +29,7 @@
 
 #include <string>
 
+#include <gz/common/Console.hh>
 #include <gz/plugin/Register.hh>
 
 #include <gz/gui/Application.hh>
@@ -139,6 +141,13 @@ void Teleop::LoadConfig(const tinyxml2::XMLElement *_pluginElem)
     auto topicElem = _pluginElem->FirstChildElement("topic");
     if (nullptr != topicElem && nullptr != topicElem->GetText())
       this->SetTopic(topicElem->GetText());
+    if (auto maxFwd = _pluginElem->FirstChildElement("max_forward_velocity"))
+      this->SetMaxForwardVel(maxFwd->DoubleText(this->dataPtr->maxForwardVel));
+    if (auto maxVrt = _pluginElem->FirstChildElement("max_vertical_velocity"))
+      this->SetMaxVerticalVel(
+        maxVrt->DoubleText(this->dataPtr->maxVerticalVel));
+    if (auto maxYaw = _pluginElem->FirstChildElement("max_yaw_velocity"))
+      this->SetMaxYawVel(maxYaw->DoubleText(this->dataPtr->maxYawVel));
   }
 
   gui::App()->findChild
@@ -200,6 +209,12 @@ void Teleop::SetTopic(const QString &_topic)
 /////////////////////////////////////////////////
 void Teleop::SetMaxForwardVel(double _velocity)
 {
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
+  {
+    ignwarn << "Ignoring max forward velocity [" << _velocity
+            << "], it must be finite and >= 0" << std::endl;
+    return;
+  }
   this->dataPtr->maxForwardVel = _velocity;
   this->MaxForwardVelChanged();
 }
@@ -213,6 +228,12 @@ double Teleop::MaxForwardVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxVerticalVel(double _velocity)
 {
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
+  {
+    ignwarn << "Ignoring max vertical velocity [" << _velocity
+            << "], it must be finite and >= 0" << std::endl;
+    return;
+  }
   this->dataPtr->maxVerticalVel = _velocity;
   this->MaxVerticalVelChanged();
 }
@@ -226,6 +247,12 @@ double Teleop::MaxVerticalVel() const
 /////////////////////////////////////////////////
 void Teleop::SetMaxYawVel(double _velocity)
 {
+  if (!std::isfinite(_velocity) || _velocity < 0.0)
+  {
+    ignwarn << "Ignoring max yaw velocity [" << _velocity
+            << "], it must be finite and >= 0" << std::endl;
+    return;
+  }
   this->dataPtr->maxYawVel = _velocity;
   this->MaxYawVelChanged();
 }
