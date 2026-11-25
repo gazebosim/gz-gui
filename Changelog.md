@@ -1,5 +1,22 @@
 ## Gazebo GUI 10
 
+### Gazebo GUI 10.2.0 (2026-11-26)
+
+1. Teleop: make default velocities configurable
+    * [Pull request #821](https://github.com/gazebosim/gz-gui/pull/821)
+
+1. PointCloud: fix choosing the point cloud topic
+    * [Pull request #817](https://github.com/gazebosim/gz-gui/pull/817)
+
+1. Install Grid3D with DESTDIR and on Windows
+    * [Pull request #810](https://github.com/gazebosim/gz-gui/pull/810)
+
+1. Fix MinimalScene render synchronization during shutdown
+    * [Pull request #800](https://github.com/gazebosim/gz-gui/pull/800)
+
+1. Update maintainers
+    * [Pull request #805](https://github.com/gazebosim/gz-gui/pull/805)
+
 ### Gazebo GUI 10.1.1 (2026-10-08)
 
 1. Use the SPDX identifier Apache-2.0 in the license declaration
