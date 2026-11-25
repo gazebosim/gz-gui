@@ -307,8 +307,9 @@ Dialog {
       currentIndex: initialTheme
       model: ["Light", "Dark"]
       delegate: ItemDelegate {
+        required property string modelData
         text: modelData
-        width: parent.width
+        width: ListView.view.width
       }
       onCurrentTextChanged: {
         updateTheme();
@@ -344,8 +345,9 @@ Dialog {
         displayText: currentText
         model: materialColorStrs
         delegate: ItemDelegate {
+          required property int index
           text: materialColorStrs[index]
-          width: parent.width
+          width: ListView.view.width
         }
         onCurrentTextChanged: {
           updatePrimary()
@@ -390,8 +392,9 @@ Dialog {
         displayText: currentText
         model: materialColorStrs
         delegate: ItemDelegate {
+          required property int index
           text: materialColorStrs[index]
-          width: parent.width
+          width: ListView.view.width
         }
         onCurrentIndexChanged: {
           updateAccent()

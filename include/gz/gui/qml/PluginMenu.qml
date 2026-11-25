@@ -126,6 +126,8 @@ Popup {
     model: _MainWindow.PluginListModel()
 
     delegate: ItemDelegate {
+      required property var model
+      required property string modelData
       property variant pluginModel: model
       width: pluginMenu.width
       text: modelData

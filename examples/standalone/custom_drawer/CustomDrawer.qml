@@ -67,9 +67,11 @@ Rectangle {
     anchors.fill: parent
 
     delegate: ItemDelegate {
+      required property string title
+      required property string actionElement
       // TODO(anyone): follow the application's style
       Material.theme: Material.theme
-      width: parent.width
+      width: ListView.view.width
       text: title
       highlighted: ListView.isCurrentItem
       onClicked: {
