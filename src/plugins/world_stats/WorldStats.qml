@@ -120,13 +120,16 @@ Rectangle {
       }
     ]
 
+    // Not XAnimator/OpacityAnimator: two items change each of these
+    // properties, and an Animator in a Transition matches the changes by
+    // property name, not by target, so only one of the items would animate.
     transitions: [
       Transition {
         to:"show"
         NumberAnimation
         {
           duration: 500
-          properties:"x,width,opacity"
+          properties:"x,opacity"
           easing.type: Easing.OutCubic
         }
       },
@@ -135,7 +138,7 @@ Rectangle {
         NumberAnimation
         {
           duration: 500
-          properties:"x,width,opacity"
+          properties:"x,opacity"
           easing.type: Easing.InCubic
         }
       }
