@@ -2,7 +2,9 @@
 <qresource>
   <file>qtquickcontrols2.conf</file>
 
+  <file>qml/AboutDialog.qml</file>
   <file>qml/Chart.qml</file>
+  <file>qml/ExitDialog.qml</file>
   <file>qml/GzCard.qml</file>
   <file>qml/GzColor.qml</file>
   <file>qml/GzCardSettings.qml</file>
