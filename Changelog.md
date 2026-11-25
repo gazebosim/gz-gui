@@ -1,5 +1,52 @@
 ## Gazebo GUI 8
 
+### Gazebo GUI 8.5.0 (2026-11-26)
+
+1. Teleop: make default velocities configurable
+    * [Pull request #822](https://github.com/gazebosim/gz-gui/pull/822)
+
+1. Install Grid3D with DESTDIR and on Windows
+    * [Pull request #812](https://github.com/gazebosim/gz-gui/pull/812)
+
+1. Fix MinimalScene render synchronization during shutdown
+    * [Pull request #782](https://github.com/gazebosim/gz-gui/pull/782)
+
+1. Update maintainers
+    * [Pull request #807](https://github.com/gazebosim/gz-gui/pull/807)
+
+1. Remove build RUNPATH from installed libGrid3D.so
+    * [Pull request #745](https://github.com/gazebosim/gz-gui/pull/745)
+
+1. Reintroduce pointcloud render without Float_V message
+    * [Pull request #757](https://github.com/gazebosim/gz-gui/pull/757)
+
+1. Fix macOS Metal viewport gamma by reinterpreting sRGB texture view
+    * [Pull request #787](https://github.com/gazebosim/gz-gui/pull/787)
+
+1. Use the SPDX identifier Apache-2.0 in the license declaration
+    * [Pull request #794](https://github.com/gazebosim/gz-gui/pull/794)
+
+1. Fix TopicEcho_TEST race condition with Publisher_TEST
+    * [Pull request #761](https://github.com/gazebosim/gz-gui/pull/761)
+
+1. Publisher: check result of PrintToString
+    * [Pull request #746](https://github.com/gazebosim/gz-gui/pull/746)
+
+1. Disable shadows when viewing point cloud markers
+    * [Pull request #720](https://github.com/gazebosim/gz-gui/pull/720)
+
+1. Configurable anti-aliasing for MinimalScene
+    * [Pull request #727](https://github.com/gazebosim/gz-gui/pull/727)
+
+1. Fix link
+    * [Pull request #716](https://github.com/gazebosim/gz-gui/pull/716)
+
+1. Replace Protobuf DebugString with PrintToString
+    * [Pull request #703](https://github.com/gazebosim/gz-gui/pull/703)
+
+1. Fix compatibility with protobuf v30 (cpp 6.30.0)
+    * [Pull request #677](https://github.com/gazebosim/gz-gui/pull/677)
+
 ### Gazebo GUI 8.4.0 (2025-01-30)
 
 1. Fix color distortion in low light conditions
