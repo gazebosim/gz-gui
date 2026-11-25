@@ -1,5 +1,28 @@
 ## Gazebo GUI 6
 
+### Gazebo GUI 6.10.0 (2026-11-26)
+
+1. Teleop: make default velocities configurable
+    * [Pull request #823](https://github.com/gazebosim/gz-gui/pull/823)
+
+1. Remove build RUNPATH from installed libGrid3D.so
+    * [Pull request #696](https://github.com/gazebosim/gz-gui/pull/696)
+
+1. Fix MinimalScene render synchronization during shutdown
+    * [Pull request #803](https://github.com/gazebosim/gz-gui/pull/803)
+
+1. Update maintainers
+    * [Pull request #808](https://github.com/gazebosim/gz-gui/pull/808)
+
+1. Fix Focal QT connections
+    * [Pull request #752](https://github.com/gazebosim/gz-gui/pull/752)
+
+1. Publisher: check result of PrintToString
+    * [Pull request #746](https://github.com/gazebosim/gz-gui/pull/746)
+
+1. Fix segfaulting tests
+    * [Pull request #429](https://github.com/gazebosim/gz-gui/pull/429)
+
 ### Gazebo GUI 6.9.0 (2026-02-12)
 
 1. Configurable anti-aliasing for MinimalScene
