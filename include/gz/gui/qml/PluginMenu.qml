@@ -72,6 +72,7 @@ Popup {
           id: searchField
           Layout.fillHeight: true
           Layout.fillWidth: true
+          Layout.rightMargin: 5
           selectByMouse: true
           onTextEdited: {
             filteredModel.update();
