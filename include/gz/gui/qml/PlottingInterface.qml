@@ -185,7 +185,9 @@ Rectangle
 
   Connections {
     target: _PlottingIface
-    onPlot : (_chart, _fieldID, _x, _y) => handlePlot(_chart, _fieldID, _x, _y);
+    function onPlot(_chart, _fieldID, _x, _y) {
+      handlePlot(_chart, _fieldID, _x, _y);
+    }
   }
 
 
