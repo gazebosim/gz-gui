@@ -108,7 +108,7 @@ Popup {
     }
   }
 
-  GzSortFilterModel {
+  GzSortFilterModel { // qmllint disable required
     id: filteredModel
 
     lessThan: function(left, right) {
