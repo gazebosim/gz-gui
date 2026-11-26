@@ -75,19 +75,20 @@ Dialog {
   // The button texts need to be changed later than in onCompleted as standardButtons change later
   onAboutToShow: function () {
     if (showCloseGui && closeGuiText)
-      footer.standardButton(Dialog.Ok).text = closeGuiText
+      buttonBox.standardButton(Dialog.Ok).text = closeGuiText
     if (showShutdown)
-      footer.standardButton(Dialog.Discard).text =
+      buttonBox.standardButton(Dialog.Discard).text =
         (shutdownText ? shutdownText : "Shutdown server and GUI")
   }
 
   footer:
     DialogButtonBox {
+      id: buttonBox
       onClicked: function (btn) {
-        if (btn == this.standardButton(Dialog.Ok)) {
+        if (btn == buttonBox.standardButton(Dialog.Ok)) {
           exitDialog.closeRequested();
         }
-        else if (btn == this.standardButton(Dialog.Discard)) {
+        else if (btn == buttonBox.standardButton(Dialog.Discard)) {
           exitDialog.stopServerRequested();
           // if GUI and server run in the same process, give server opportunity to kill the GUI
           closeTimer.start();
