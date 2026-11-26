@@ -210,7 +210,6 @@ ApplicationWindow
         font.pixelSize: 18
         color: toolBarTextColor
         elide: Label.ElideRight
-        horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
       }
