@@ -102,6 +102,7 @@ Rectangle {
         currentIndex: -1
 
         delegate: ItemDelegate {
+          required property var model
           width: listView.width
           text: model.display
         }

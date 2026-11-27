@@ -93,7 +93,9 @@ Drawer {
       visible: _MainWindow.showDefaultDrawerOpts
 
       delegate: ItemDelegate {
-        width: parent.width
+        required property string title
+        required property string actionElement
+        width: ListView.view.width
         text: title
         highlighted: ListView.isCurrentItem
         onClicked: {

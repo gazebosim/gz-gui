@@ -307,8 +307,11 @@ Dialog {
       currentIndex: initialTheme
       model: ["Light", "Dark"]
       delegate: ItemDelegate {
+        required property int index
+        required property string modelData
         text: modelData
-        width: parent.width
+        width: ListView.view.width
+        highlighted: materialThemeCombo.highlightedIndex === index
       }
       onCurrentTextChanged: {
         updateTheme();
@@ -344,8 +347,10 @@ Dialog {
         displayText: currentText
         model: materialColorStrs
         delegate: ItemDelegate {
+          required property int index
           text: materialColorStrs[index]
-          width: parent.width
+          width: ListView.view.width
+          highlighted: materialPrimaryCombo.highlightedIndex === index
         }
         onCurrentTextChanged: {
           updatePrimary()
@@ -390,8 +395,10 @@ Dialog {
         displayText: currentText
         model: materialColorStrs
         delegate: ItemDelegate {
+          required property int index
           text: materialColorStrs[index]
-          width: parent.width
+          width: ListView.view.width
+          highlighted: materialAccentCombo.highlightedIndex === index
         }
         onCurrentIndexChanged: {
           updateAccent()
