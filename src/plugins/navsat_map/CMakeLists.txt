@@ -6,4 +6,3 @@ gz_gui_add_plugin(NavSatMap
   TEST_SOURCES
     NavSatMap_TEST.cc
 )
-

@@ -8,4 +8,3 @@ gz_gui_add_plugin(TransportSceneManager
   PUBLIC_LINK_LIBS
    gz-rendering::gz-rendering
 )
-

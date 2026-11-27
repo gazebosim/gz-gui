@@ -9,6 +9,19 @@ on:
       - 'main'
 
 jobs:
+  pre-commit:
+    name: Pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+
   resolute-ci:
     runs-on: ubuntu-latest
     name: Ubuntu Resolute CI
