@@ -152,7 +152,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: xLoader
           anchors.fill: parent
@@ -173,7 +173,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: yLoader
           anchors.fill: parent
@@ -194,7 +194,7 @@ Item {
 
       Item {
         Layout.fillWidth: true
-        height: 40
+        Layout.preferredHeight: 40
         Loader {
           id: zLoader
           anchors.fill: parent

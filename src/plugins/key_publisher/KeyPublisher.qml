@@ -37,7 +37,7 @@ GridLayout {
 
   Item {
     Layout.columnSpan: 1
-    width: 10
+    Layout.preferredWidth: 10
     Layout.fillHeight: true
   }
 }
