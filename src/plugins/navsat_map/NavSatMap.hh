@@ -18,9 +18,12 @@
 #ifndef GZ_GUI_PLUGINS_NAVSAT_MAP_HH_
 #define GZ_GUI_PLUGINS_NAVSAT_MAP_HH_
 
-#include <memory>
-
 #include <gz/msgs/navsat.pb.h>
+
+#include <gz/utils/ImplPtr.hh>
+#include <QObject>
+#include <QString>
+#include <QStringList>
 
 #include "gz/gui/Plugin.hh"
 

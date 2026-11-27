@@ -20,7 +20,8 @@
 
 #include <gz/rendering/RenderTypes.hh>
 
-#include "gz/gui/qt.h"
+#include <QOpenGLContext>
+#include <qopengl.h>
 
 #include <memory>
 

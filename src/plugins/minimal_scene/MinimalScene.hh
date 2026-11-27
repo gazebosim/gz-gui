@@ -18,18 +18,37 @@
 #ifndef GZ_GUI_PLUGINS_MINIMALSCENE_HH_
 #define GZ_GUI_PLUGINS_MINIMALSCENE_HH_
 
-#include <string>
+#include <cmath>
+#include <functional>
 #include <memory>
 #include <optional>
+#include <string>
+
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QMutex>
+#include <QObject>
+#include <QOffscreenSurface>
+#include <QOpenGLContext>
+#include <QQuickItem>
+#include <QQuickWindow>
+#include <QSGNode>
+#include <QSGSimpleTextureNode>
+#include <QSize>
+#include <QString>
+#include <QThread>
+#include <QWheelEvent>
 
 #include <gz/common/KeyEvent.hh>
 #include <gz/common/MouseEvent.hh>
+#include <gz/math/Angle.hh>
 #include <gz/math/Color.hh>
 #include <gz/math/Pose3.hh>
 #include <gz/math/Vector2.hh>
 #include <gz/utils/ImplPtr.hh>
 #include <gz/rendering/GraphicsAPI.hh>
 #include <gz/rendering/Light.hh>
+#include <gz/rendering/RenderTypes.hh>
 
 #include "gz/gui/Plugin.hh"
 

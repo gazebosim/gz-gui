@@ -17,8 +17,6 @@
 #ifndef GZ_GUI_MAINWINDOW_HH_
 #define GZ_GUI_MAINWINDOW_HH_
 
-#include <map>
-#include <memory>
 #include <set>
 #include <string>
 #include <vector>

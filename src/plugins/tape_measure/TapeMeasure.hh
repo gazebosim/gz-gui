@@ -19,7 +19,9 @@
 #define GZ_GUI_TAPEMEASURE_HH_
 
 #include <gz/utils/ImplPtr.hh>
-#include <memory>
+
+#include <QEvent>
+#include <QObject>
 
 #include <gz/gui/Plugin.hh>
 #include <gz/math/Vector3.hh>

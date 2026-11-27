@@ -17,6 +17,11 @@
 #ifndef GZ_GUI_HELPERS_HH_
 #define GZ_GUI_HELPERS_HH_
 
+#include <QList>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
+
 #include <string>
 
 #include "gz/gui/Enums.hh"

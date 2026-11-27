@@ -17,6 +17,10 @@
 
 #include "WorldControlEventListener.hh"
 
+#include "gz/gui/Application.hh"
+#include "gz/gui/GuiEvents.hh"
+#include "gz/gui/MainWindow.hh"
+
 namespace gz::gui
 {
 WorldControlEventListener::WorldControlEventListener()

@@ -18,8 +18,11 @@
 #ifndef GZ_GUI_PLUGINS_CAMERAFPS_HH_
 #define GZ_GUI_PLUGINS_CAMERAFPS_HH_
 
+#include <QEvent>
+#include <QObject>
+#include <QString>
+
 #include <gz/utils/ImplPtr.hh>
-#include <memory>
 
 #include "gz/gui/Plugin.hh"
 

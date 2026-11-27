@@ -20,11 +20,15 @@
 
 #include <string>
 
-#include "gz/gui/Plugin.hh"
+#include <gz/rendering/config.hh>
+
 #include "gz/rendering/RenderTypes.hh"
 
+#include <QOffscreenSurface>
+#include <QOpenGLContext>
 #include <QSGTexture>
 #include <QSize>
+#include <QtGlobal>
 
 #define GZ_GUI_HAVE_VULKAN \
   QT_VERSION >= QT_VERSION_CHECK(5, 15, 2) && \

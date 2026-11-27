@@ -26,6 +26,7 @@
 
 #include <gz/msgs/stringmsg.pb.h>
 #include <gz/msgs/twist.pb.h>
+#include <gz/transport/Node.hh>
 
 #include <gz/utils/ExtraTestMacros.hh>
 
