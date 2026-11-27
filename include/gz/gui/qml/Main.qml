@@ -257,27 +257,11 @@ ApplicationWindow
   /**
    * About dialog
    */
-  Dialog {
+  AboutDialog {
     id: aboutDialog
-    modal: true
-    focus: true
-    title: "Gazebo GUI"
     x: (window.width - width) / 2
     y: window.height / 6
     width: Math.min(window.width, window.height) / 3 * 2
-    contentHeight: aboutColumn.height
-
-    Column {
-      id: aboutColumn
-      spacing: 20
-
-      Label {
-        width: aboutDialog.availableWidth
-        text: "Gorgeous robotic interfaces since 2018."
-        wrapMode: Label.Wrap
-        font.pixelSize: 12
-      }
-    }
   }
 
   /**
@@ -329,58 +313,22 @@ ApplicationWindow
     id: notificationDialog
   }
 
-  Timer {
-    id: timer
-  }
-
   /**
    *  Confirmation dialog on close button
    */
-  Dialog {
+  ExitDialog {
     id: confirmationDialogOnExit
-    title: (dialogOnExitText ? dialogOnExitText : "Do you really want to exit?")
     objectName: "confirmationDialogOnExit"
+    promptText: window.dialogOnExitText
+    showCloseGui: window.exitDialogShowCloseGui
+    showShutdown: window.exitDialogShowShutdown
+    closeGuiText: window.exitDialogCloseGuiText
+    shutdownText: window.exitDialogShutdownText
 
-    modal: true
-    focus: true
-    parent: ApplicationWindow.overlay
-    width: 500
-    x: (parent.width - width) / 2
-    y: (parent.height - height) / 2
-    closePolicy: Popup.CloseOnEscape
-    standardButtons:
-      (exitDialogShowCloseGui ? Dialog.Ok : Dialog.NoButton) |
-      (exitDialogShowShutdown ? Dialog.Discard : Dialog.NoButton) |
-      Dialog.Cancel
-
-    // The button texts need to be changed later than in onCompleted as standardButtons change later
-    onAboutToShow: function () {
-      if (exitDialogShowCloseGui && exitDialogCloseGuiText)
-        footer.standardButton(Dialog.Ok).text = exitDialogCloseGuiText
-      if (exitDialogShowShutdown)
-        footer.standardButton(Dialog.Discard).text =
-          (exitDialogShutdownText ? exitDialogShutdownText : "Shutdown server and GUI")
+    onStopServerRequested: _MainWindow.OnStopServer()
+    onCloseRequested: {
+      window.closingFromDialog = true;
+      window.close();
     }
-
-    footer:
-      DialogButtonBox {
-        onClicked: function (btn) {
-          if (btn == this.standardButton(Dialog.Ok)) {
-            closingFromDialog = true;
-            window.close();
-          }
-          else if (btn == this.standardButton(Dialog.Discard)) {
-            _MainWindow.OnStopServer()
-            // if GUI and server run in the same process, give server opportunity to kill the GUI
-            timer.interval = 100;
-            timer.repeat = false;
-            timer.triggered.connect(function() {
-              closingFromDialog = true;
-              window.close();
-            });
-            timer.start();
-          }
-        }
-      }
   }
 }

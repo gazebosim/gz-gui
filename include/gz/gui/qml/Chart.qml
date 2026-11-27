@@ -302,137 +302,27 @@ Rectangle {
   // ================ Field / Component ====================
   Component {
     id: fieldInfo
-    Rectangle {
+    ChartFieldInfo {
       id: component
+      onRemoveClicked: {
+        // unSubscribe from the transport / Component
+        if (component.type === "Field")
+          main.unSubscribe(main.chartID, component.topic, component.path);
 
-      /**
-        Field or Component
-      */
-      property string type: ""
-
-      /**
-        field data:
-        topic name
-        path field key
-      */
-      property string topic: ""
-      property string path: ""
-
-      /**
-        component data:
-        entity entity ID
-        typeId type ID
-        type type of the component attribute (Pose3d, Vector3d .. etc)
-        attribute (X, Y, Z, Roll, ... etc)
-      */
-      property string entity: ""
-      property string typeId: ""
-      property string componentType: ""
-      property string attribute: ""
-      property string typeName: ""
-      property string componentId: entity + "," + typeId + "," + attribute;
-      property string displayText: ""
-
-      /**
-        set the field name text
-      */
-      function setText(text) {
-          fieldname.text = text;
-      }
-      signal unsubscribe(string topic, string path);
-
-      radius: width/4
-      Rectangle {
-        height: parent.height
-        width: parent.width
-        radius: width/4
-        color: Material.accentColor
-        clip: true
-
-        MouseArea {
-          id : fieldInfoMouse
-          anchors.fill: parent
-          hoverEnabled: true
-          onEntered: enterAnimation.start();
-          onExited: exitAnimation.start();
-        }
-
-        Text {
-          id: fieldname
-          text: (component.type === "Field") ? component.topic + "/"+ component.path :
-                (component.type === "Component") ? component.entity + "," + component.typeName
-                                                   + "," + component.attribute : ""
-          color: "white"
-          elide: Text.ElideRight
-          width: parent.width * 0.9
-          anchors.verticalCenter: parent.verticalCenter
-          leftPadding: 20;
-        }
-
-        ToolTip {
-          delay: 1000
-          timeout: 2000
-          text: (component.type === "Field" ) ? component.topic + "-"+ component.path :
-                (component.type === "Component") ? "entity: " + component.entity + "\n" +
-                                                    "typeId: " + component.typeId + "\n" +
-                                                    "typeName: " + component.typeName + "\n" +
-                                                    "dataType: " + component.componentType + "\n" +
-                                                    "attribute: " + component.attribute : ""
-          visible: fieldInfoMouse.containsMouse
-          y: fieldInfoMouse.mouseY
-          x: fieldInfoMouse.mouseX
-          enter: null
-          exit: null
-        }
-      }
-
-      Rectangle {
-        id: exitBtn
-        radius: width / 2
-        height: parent.height * 0.8;
-        width: height
-        color: "red"
-        opacity: 0
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: parent.width * 0.05
-        Text { anchors.centerIn: parent; text: "x"; color: "white"}
-
-        MouseArea {
-          anchors.fill: parent
-          onClicked: {
-            exitAnimation.start();
-
-            // unSubscribe from the transport / Component
-            if (component.type === "Field")
-              main.unSubscribe(main.chartID, component.topic, component.path);
-
-            else if (component.type === "Component")
-              main.componentUnSubscribe(component.entity, component.typeId,
-                                          component.attribute, main.chartID)
+        else if (component.type === "Component")
+          main.componentUnSubscribe(component.entity, component.typeId,
+                                      component.attribute, main.chartID)
 
 
-            // delete the series points and detache it from the chart
-            if (component.type === "Field")
-              chart.deleteSeries(component.topic + "-" + component.path)
+        // delete the series points and detache it from the chart
+        if (component.type === "Field")
+          chart.deleteSeries(component.topic + "-" + component.path)
 
-            else if (component.type === "Component")
-              chart.deleteSeries(component.componentId);
+        else if (component.type === "Component")
+          chart.deleteSeries(component.componentId);
 
-            // delete the field info component
-            component.destroy();
-          }
-        }
-        NumberAnimation {
-          id: enterAnimation
-          target: exitBtn; property: "opacity"; duration: 100
-          easing.type: Easing.InOutQuad; from: 0; to: 1;
-        }
-        NumberAnimation {
-          id: exitAnimation
-          target: exitBtn; property: "opacity"; duration: 100;
-          easing.type: Easing.InOutQuad; from: 0.85; to: 0;
-        }
+        // delete the field info component
+        component.destroy();
       }
     }
   }
