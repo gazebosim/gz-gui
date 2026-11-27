@@ -197,11 +197,10 @@ ApplicationWindow
       }
 
       // Padding for title
-      Rectangle {
-        height: 1
-        width: 1
+      Item {
+        Layout.preferredHeight: 1
+        Layout.preferredWidth: 1
         visible: !_MainWindow.showDrawer
-        color: "transparent"
       }
 
       Label {

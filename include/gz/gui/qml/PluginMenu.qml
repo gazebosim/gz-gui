@@ -51,16 +51,16 @@ Popup {
     Rectangle {
       id: searchSortBar
       color: searchColor
-      height: 50
-      width: parent.width
+      Layout.preferredHeight: 50
+      Layout.fillWidth: true
       RowLayout {
         id: rowLayout
         anchors.fill: parent
         spacing: 0
         Rectangle {
           color: "transparent"
-          height: 25
-          width: 25
+          Layout.preferredHeight: 25
+          Layout.preferredWidth: 25
           Layout.leftMargin: 5
           Image {
             id: searchIcon
@@ -71,7 +71,8 @@ Popup {
         TextField {
           id: searchField
           Layout.fillHeight: true
-          Layout.preferredWidth: parent.width - 50
+          Layout.fillWidth: true
+          Layout.rightMargin: 5
           selectByMouse: true
           onTextEdited: {
             filteredModel.update();
@@ -95,7 +96,7 @@ Popup {
     ListView {
       id: pluginMenuListView
       Layout.fillHeight: true
-      width: parent.width
+      Layout.fillWidth: true
       clip: true
 
       model: filteredModel

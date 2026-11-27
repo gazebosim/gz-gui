@@ -389,7 +389,6 @@ ColumnLayout {
 
     // Keyboard
     Item {
-      width: parent.width
       Text {
         textFormat: Text.RichText
         text: "Hold keys:</br><ul>" +
@@ -404,8 +403,6 @@ ColumnLayout {
 
     // Sliders
     Item {
-      width: parent.width
-
       GridLayout {
         columns: 4
         columnSpacing: 10
