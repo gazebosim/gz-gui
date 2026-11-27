@@ -108,7 +108,7 @@ Popup {
     }
   }
 
-  GzSortFilterModel {
+  GzSortFilterModel { // qmllint disable required
     id: filteredModel
 
     lessThan: function(left, right) {
@@ -126,6 +126,8 @@ Popup {
     model: _MainWindow.PluginListModel()
 
     delegate: ItemDelegate {
+      required property var model
+      required property string modelData
       property variant pluginModel: model
       width: pluginMenu.width
       text: modelData
