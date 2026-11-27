@@ -39,7 +39,11 @@ Item {
     width: parent.width
 
     RowLayout {
+<<<<<<< HEAD
       width: parent.width
+=======
+      visible: showPicker
+>>>>>>> 451259a (Size items inside QML layouts with Layout.* properties (#827))
 
       Layout.fillWidth: true
       Layout.fillHeight: true
@@ -70,9 +74,9 @@ Item {
     }
 
     RowLayout {
-      width: parent.width
+      Layout.fillWidth: true
       Item {
-        height: 1
+        Layout.preferredHeight: 1
         Layout.fillWidth: true
       }
       Text {
@@ -83,7 +87,7 @@ Item {
         text: "<b>Longitude: </b>" + longitude.toFixed(6)
       }
       Item {
-        height: 1
+        Layout.preferredHeight: 1
         Layout.fillWidth: true
       }
     }
