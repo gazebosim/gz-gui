@@ -350,7 +350,6 @@ Pane {
         font.pixelSize: 16
         color: pluginToolBarTextColor
         elide: Label.ElideRight
-        horizontalAlignment: Qt.AlignHLeft
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
       }
