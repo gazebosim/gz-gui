@@ -105,7 +105,11 @@ Rectangle {
         name:"show"
         PropertyChanges {
           target: panel
-          x: hideButton.width + 5
+          // Not hideButton.width: the transition reads it before the
+          // RowLayout shrinks compactLabel, so the panel jumped by the label
+          // width when the animation ended
+          x: hideToolButton.width +
+             (compactLabel.visible ? hideButton.spacing : 0) + 5
           opacity: 1
         }
         PropertyChanges {
@@ -120,13 +124,17 @@ Rectangle {
       }
     ]
 
+    // Not XAnimator/OpacityAnimator: two items change each of these
+    // properties, and an Animator in a Transition matches the changes by
+    // property name, not by target, so the panel would stay hidden after
+    // "show".
     transitions: [
       Transition {
         to:"show"
         NumberAnimation
         {
           duration: 500
-          properties:"x,width,opacity"
+          properties:"x,opacity"
           easing.type: Easing.OutCubic
         }
       },
@@ -135,7 +143,7 @@ Rectangle {
         NumberAnimation
         {
           duration: 500
-          properties:"x,width,opacity"
+          properties:"x,opacity"
           easing.type: Easing.InCubic
         }
       }
